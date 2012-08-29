@@ -81,7 +81,6 @@ if(!empty($_SESSION['gauth_data'])){
         <h4>Welcome <span class="username"> </span></h4>
         <form class='form' id="login">
             <input type="text" name='email' class="span3" placeholder="Email Address">
-            <div class='span3'>Login with Google or:</div>
             <input type="password" name='password' class="span3" placeholder="Password">
 
             <div class="pull-right">
@@ -91,7 +90,7 @@ if(!empty($_SESSION['gauth_data'])){
                         style='margin-bottom: 5px'>Register
                 </button>
                 <div class='span3' style="text-align: center"><a id='reset_lnk' href="#">Can't Login?</a></div>
-                <button type="button" id="google_login" name="google" class="span3 btn btn-success" style="margin-bottom: 5px">Login with Google</button>
+                <button type="button" id="google_login" name="google" class="span3 btn " style="margin-bottom: 5px">Login with Google <i class='icon-google-plus'></i></button>
             </div>
         </form>
         <form class='form' id="register" style='display:none'>

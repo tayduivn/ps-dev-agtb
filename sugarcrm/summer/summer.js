@@ -18,6 +18,7 @@
                 _.extend(opts, {modelId: id});
             } else {
                 _.extend(opts, {create: true});
+                opts.layout = "newrecord";
             }
 
             app.controller.loadView(opts);
@@ -294,10 +295,14 @@
                                         }
 
                                         // Assign type
-                                        field.type = field.type || fieldDef.type;
+                                        field.type = field.type || fieldDef.type || "base";
                                         // Patch type
 
-                                        field.type = (_.contains(self.fieldTypeMap, field.type))?self.fieldTypeMap[field.type]: field.type;
+                                        if(self.fieldTypeMap[field.type]){
+                                            field.type = self.fieldTypeMap[field.type]
+                                        }
+
+
                                         // Patch label
 
                                         field.label = field.label || fieldDef.vname ||  field.name;

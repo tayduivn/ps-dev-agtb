@@ -1,6 +1,8 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -35,8 +37,7 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
             array('label' => '10', 'field' => '30'),
         ),
     ),
-    'buttons' =>
-    array(
+    'buttons' => array(
         array(
             'name' => 'edit_button',
             'type' => 'button',
@@ -50,33 +51,37 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_2',
-            'columns'=>2,
-            'labels'=>false,
-            'labelsOnTop'=>true,
-            'placeholders'=>true,
+            'columns' => 1,
+            'labels' => true,
+            'labelsOnTop' => false,
+            'placeholders' => false,
             'fields' => array(
-                array('fields'=>array(array('span'=>12, 'name'=>'first_name', 'label'=>'LBL_NAME', 'css'=>'lead'), array('name'=>'last_name', 'css'=>'lead'))),'',
-                'title', 'primary_address_street',
-
-                'account_name',array('fields'=>array('primary_address_city','primary_address_state', 'primary_address_postalcode')),
-
-                '','primary_address_country',
-
-                'email1','phone_work',
-
-                'assigned_user_name','phone_mobile',
-
+                array(
+                    'fields' => array(
+                        array('span' => 12, 'name' => 'first_name', 'label' => ' ', 'css' => 'big'),
+                        array('name' => 'last_name', 'css' => 'big')
+                    )
+                ),
+                '',
+                'title',
+                'account_name',
+                '',
+                'primary_address_street',
+                array('fields' => array('primary_address_city', 'primary_address_state', 'primary_address_postalcode')),
+                'primary_address_country',
+                '',
+                'email1', 'phone_work', 'phone_mobile',
+                'assigned_user_name',
             ),
         ),
-    array(
-              'label' => 'LBL_PANEL_2',
-              'fields' => array(
-                  #'linkedin',
-                  #'facebook',
-                  'twitter',
-                  #'googleplus',
-              ),
-          )
+        array(
+            'label' => 'LBL_PANEL_2',
+            'fields' => array(
+                #'linkedin',
+                #'facebook',
+                'twitter',
+                #'googleplus',
+            ),
+        )
     )
 );
-?>

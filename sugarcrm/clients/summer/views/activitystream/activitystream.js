@@ -1,5 +1,5 @@
 ({
-    events:{
+    events: {
         'click .reply': 'showAddComment',
         'click .postReply': 'addComment',
         'click .post': 'showAddPost',
@@ -9,6 +9,8 @@
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+
+        _.bindAll(this);
 
         // Check to see if we need to make a related activity stream.
         if (this.module !== "ActivityStream") {
@@ -25,63 +27,78 @@
 
     showAllComments: function(event) {
         event.preventDefault();
-        $(event.currentTarget).closest('li').hide();
-        $(event.currentTarget).closest('ul').find('div.extend').show();
-        $(event.currentTarget).closest('ul').closest('li').find('.activitystream-comment').show();
+        this.$(event.currentTarget).closest('li').hide();
+        this.$(event.currentTarget).closest('ul').find('div.extend').show();
+        this.$(event.currentTarget).closest('ul').closest('li').find('.activitystream-comment').show();
     },
 
     showAddComment: function(event) {
-        $(event.currentTarget).closest('li').find('.activitystream-comment').show();
-        $(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
+        this.$(event.currentTarget).closest('li').find('.activitystream-comment').show();
+        this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
 
     addComment: function(event) {
-        var self = this;
-        var myPost = $(event.currentTarget).closest('li');
-        var myPostContents = myPost.find('input.sayit')[0].value;
-        var myPostId = $(event.currentTarget).data('id');
-        
-        this.app.api.call('create',this.app.api.buildURL('ActivityStream/ActivityStream/'+myPostId),{'value':myPostContents},{success:function(){self.collection.fetch(self.opts)}});
+        var self = this,
+            myPost = this.$(event.currentTarget).closest('li'),
+            myPostContents = myPost.find('input.sayit')[0].value,
+            myPostId = this.$(event.currentTarget).data('id');
+
+        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function() {
+            self.collection.fetch(self.opts)
+        }});
     },
-    
-    showAddPost: function(event) {
+
+    showAddPost: function() {
         this.$(".activitystream-post").show();
     },
 
-    addPost: function(event) {
-        var self = this;
-        var myPost = this.$(".activitystream-post");
-        var myPostContents = myPost.find('input.sayit')[0].value;
-        var myPostId = this.context.get("modelId");
-        var myPostModule = this.module;
+    addPost: function() {
+        var self = this,
+            myPost = this.$(".activitystream-post"),
+            myPostContents = myPost.find('input.sayit')[0].value,
+            myPostId = this.context.get("modelId"),
+            myPostModule = this.module,
+            myPostUrl = 'ActivityStream';
 
-        if(myPostModule == "ActivityStream") {
-        	myPostModule = '';	
+        if (myPostModule !== "" && myPostModule !== "ActivityStream") {
+            myPostUrl += '/' + myPostModule;
+            if (myPostId !== '') {
+                myPostUrl += '/' + myPostId;
+            }
         }
-        this.app.api.call('create',this.app.api.buildURL('ActivityStream'),{'module':myPostModule,'id':myPostId,'value':myPostContents},{success:function(){self.collection.fetch(self.opts)}});
+
+        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function() {
+            self.collection.fetch(self.opts)
+        }});
     },
 
     _renderHtml: function() {
-        for (var i=0; i<this.collection.models.length; i++) {
-            if (this.collection.models[i].attributes.comments.length > 2) {
-                this.collection.models[i].attributes.comments[0]['_starthidden'] = true;
-                this.collection.models[i].attributes.comments[this.collection.models[i].attributes.comments.length-3]['_stophidden'] = true;
+        _.each(this.collection.models, function(model) {
+            var comments = model.get("comments");
+            if (comments.length > 2) {
+                comments[0]['_starthidden'] = true;
+                comments[comments.length - 3]['_stophidden'] = true;
             }
-        }
+        }, this);
+//        for (var i = 0; i < this.collection.models.length; i++) {
+//            if (this.collection.models[i].attributes.comments.length > 2) {
+//                this.collection.models[i].attributes.comments[0]['_starthidden'] = true;
+//                this.collection.models[i].attributes.comments[this.collection.models[i].attributes.comments.length - 3]['_stophidden'] = true;
+//            }
+//        }
 
         return app.view.View.prototype._renderHtml.call(this);
     },
 
     bindDataChange: function() {
-        var self = this;
-        if (self.model) {
-            self.model.on("change", function() {
-                self.collection.fetch(self.opts);
-            }, self);
+        if (this.model) {
+            this.model.on("change", function() {
+                this.collection.fetch(this.opts);
+            }, this);
         }
 
-        if (self.collection) {
-            self.collection.on("reset", self.render, self);
+        if (this.collection) {
+            this.collection.on("reset", this.render, this);
         }
     }
 })

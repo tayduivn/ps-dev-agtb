@@ -1,12 +1,12 @@
 <div class="card2">
     <div class="row-fluid">
-        <div class="span8 record-save-prompt" style="display:none;">
+        <span class=" record-save-prompt pull-right" style="display:none;">
             <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
             <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
-        </div>
-        <div class="span4 record-edit-prompt" style="display:;">
+        </span>
+        <span class="record-edit-prompt pull-right">
             <a style="cursor: pointer" class="btn btn-primary record-edit">Edit</a>
-        </div>
+        </span>
     </div>
     {{#each meta.panels}}
        {{#if ../model.isNotEmpty}}
@@ -18,12 +18,12 @@
                 <span class='record-row'>
                 {{#unless ../../this.labelsOnTop}}
                 {{#if ../../../this.labels}}
-               <div class="span{{../this.labelSpan}} tright"><h6>{{str  ../this.label ../../../../../../this.model.module}}</h6></div>
+               <div class="span{{../this.labelSpan}} tright record-label" >{{str  ../this.label ../../../../../../this.model.module}}</div>
                {{/if}}
                {{/unless}}
                <div class="span{{this.span}}" >
                     {{#if ../../this.labelsOnTop}}
-                        <h6 style='color:gray'>{{str  this.label ../../../../../this.model.module}}</h6>
+                        <div class='record-label'>{{str  this.label ../../../../../this.model.module}}</div>
                     {{/if}}
                     {{#each fields}}
 
@@ -31,7 +31,7 @@
                     <span class="record-edit-link-wrapper" data-name="{{../this.name}}">
                         <a style="cursor: pointer" class="record-edit-link icon-pencil" data-type="{{../this.type}}" data-name="{{../this.name}}"></a>
                     </span>
-                    <span class='{{../this.css}}' style='font-size:150%'>
+                    <span class='normal {{../this.css}}'>
                     {{field ../../../../../../this}}
                     </span>
                     {{/if}}
@@ -56,3 +56,18 @@
          <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
    </div>
 </div>
+<style>
+.normal{
+font-size:150%;
+}
+.big{
+font-size:250%;
+color:black;
+}
+
+.record-label{
+font-size:80%;
+font-color:666666;
+
+}
+</style>

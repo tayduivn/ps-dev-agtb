@@ -56,7 +56,7 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
               'labelsOnTop'=>true,
              'placeholders'=>true,
             'fields' => array(
-                array('name'=>'name', 'css'=>'lead', 'span'=>12),
+                array('name'=>'name', 'css'=>'big', 'span'=>12, 'label'=>' '),
                 '',
                 'assigned_user_name',
                 'billing_address_street',
