@@ -35,7 +35,7 @@ class UnifiedSearchApi extends SugarApi {
             'moduleSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>'),
-                'pathVars' => array('moduleList'),
+                'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search records in this module',
                 'longHelp' => 'include/api/help/getListModule.html',
