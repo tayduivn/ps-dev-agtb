@@ -177,7 +177,7 @@ class TimePeriod extends SugarBean {
 
     /**
      * getTimePeriod
-     *
+     * @param
      */
     static function getTimePeriod($timedate=null)
     {
@@ -199,6 +199,27 @@ class TimePeriod extends SugarBean {
 
         return null;
     }
+
+
+    /**
+     * Return a timeperiod object for a given database date
+     *
+     * @param $db_date String value of database date (ex: 2012-12-30)
+     * @return bool|TimePeriod TimePeriod instance for corresponding database date; false if nothing found
+     */
+    public static function retrieveFromDate($db_date) {
+        global $app_strings;
+        $db = DBManagerFactory::getInstance();
+        $db_date = $db->quote($db_date);
+        $timeperiod_id = $db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$db_date}' AND end_date > '{$db_date}' and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db_date)));
+
+        if(!empty($timeperiod_id)) {
+            return BeanFactory::getBean('TimePeriods', $timeperiod_id);
+        }
+
+        return false;
+    }
+
 
 
     /**

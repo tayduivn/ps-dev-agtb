@@ -33,22 +33,23 @@ class GetOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $manager;
     private $sales_rep;
+    private $timePeriod;
 
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
 
         $this->manager = SugarTestUserUtilities::createAnonymousUser();
-
         $this->sales_rep = SugarTestUserUtilities::createAnonymousUser();
         $this->sales_rep->reports_to_id = $this->manager->id;
         $this->sales_rep->save();
+        $this->timePeriod = SugarTestTimePeriodUtilities::createTimePeriod();
     }
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
     }
@@ -59,16 +60,17 @@ class GetOppSumDataTest extends Sugar_PHPUnit_Framework_TestCase
         $opp_1 = SugarTestOpportunityUtilities::createOpportunity();
         $opp_1->assigned_user_id = $this->sales_rep->id;
         $opp_1->probability = '10';
+        $opp_1->timeperiod_id = $this->timePeriod->id;
         $opp_1->save();
 
         $product_1 = SugarTestProductUtilities::createProduct();
 
-        $result = getOppSummationData($this->sales_rep->id, '', 'Direct');
+        $result = getOppSummationData($this->sales_rep->id, $this->timePeriod->id, 'Direct');
 
         $this->assertTrue($result['direct'][$this->sales_rep->id][0]['opp_id'] == $opp_1->id);
-        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['best_case'] == '1000');
-        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['likely_case'] == '1000');
-        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['worst_case'] == '1000');
+        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['best_case'] == '10000');
+        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['likely_case'] == '10000');
+        $this->assertTrue($result['direct'][$this->sales_rep->id][0]['worst_case'] == '10000');
 
         //case #2: get summation data by sales rep. Opp_line b/l/w cases are NULL. Opp b/l/w cases are not NULL
         $opp_1->best_case = '1300';

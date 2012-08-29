@@ -66,13 +66,13 @@ class RestTestTheme extends RestTestBase
         );
 
         // TEST= GET bootstrap.css with a set of arguments
-        $restReply1 = $this->_restCall('bootstrap.css', json_encode($args1));
+        $restReply1 = $this->_restCall('css', json_encode($args1));
 
         // TEST if the the response is not empty
         $this->assertNotEmpty($restReply1);
 
         // TEST= GET bootstrap.css with another set of arguments
-        $restReply2 = $this->_restCall('bootstrap.css', json_encode($args2));
+        $restReply2 = $this->_restCall('css', json_encode($args2));
 
         // TEST the two generated css are different
         $this->assertNotEquals($restReply1, $restReply2);

@@ -28,8 +28,9 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
 	{
-
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
@@ -47,6 +48,7 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
             if (is_file($file))
                 unlink($file);
         }
+        SugarTestHelper::tearDown();
 	}
 	
 

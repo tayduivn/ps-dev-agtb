@@ -43,7 +43,7 @@
         </tr>
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_LOGO_URL}:
+                {$mod.LBL_PORTAL_LOGO_URL}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_URL}
             </td>
             <td colspan='1' nowrap>
                 <input class='portalProperty portalField' id='logoURL' name='logoURL' value='{$logoURL}' size=60>
@@ -75,7 +75,7 @@
         </tr>
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:<span class="required">*</span>
+                {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:
             </td>
             <td colspan='1' nowrap>
                 <select data-placeholder="{$mod.LBL_USER_SELECT}" class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >

@@ -382,6 +382,7 @@ function post_install() {
 
     upgradeGroupInboundEmailAccounts();
     upgrade_custom_duration_defs();
+    upgrade_panel_tab_defs();
 
 	//BEGIN SUGARCRM flav=pro ONLY
 	//add language pack config information to config.php
@@ -427,7 +428,7 @@ function post_install() {
            _logThis('Renamed cache/blowfish to custom/blowfish');
     }
 
-    if($origVersion < '640') {
+    if($origVersion < '650') {
        // move uploads dir
        if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
 
@@ -436,7 +437,16 @@ function post_install() {
            if(file_exists('upload'))
            {
                _logThis("Renaming existing upload directory to upload_backup");
-               rename('upload', 'upload_backup');
+               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                   //Somehow the upgrade script has been stop completely, the dump /upload path possibly exists.
+                   $ext = '';
+                   while(file_exists('upload/upgrades_backup'.$ext)) {
+                       $ext = empty($ext) ? 1 : $ext + 1;
+                   }
+                   rename('upload', 'upload_backup'.$ext);
+               } else {
+                   rename('upload', 'upload_backup');
+               }
            }
 
            _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
@@ -454,8 +464,21 @@ function post_install() {
            }
 
            mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
+           //Bug#53276: If upgrade patches exists, the move back to the its original path
            if(file_exists('upload/upgrades/temp')) {
-              rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upgrades/temp');
+               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                   //Somehow the upgrade script has been stop completely, the daump cache/upload path possibly exists.
+                   $ext = '';
+                   if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
+                       while(file_exists($sugar_config['cache_dir'].'upload/upgrades_backup'.$ext)) {
+                           $ext = empty($ext) ? 1 : $ext + 1;
+                       }
+                       rename($sugar_config['cache_dir'].'upload/upgrades', $sugar_config['cache_dir'].'upload/upgrades_backup'.$ext);
+                   }
+               } else {
+                   mkdir($sugar_config['cache_dir'].'upload/upgrades', 0755, true);
+               }
+               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upload/upgrades/temp');
            }
        }
     }
@@ -772,3 +795,105 @@ function upgrade_custom_duration_defs()
         }
     }
 }
+
+/**
+ * Bug #55487 we introduced panel/tab switch feature in panels level of detailvew and editview in 6.5.3
+ * when upgrading from older version to 6.5.3 or later, we need to convert the tab setting from old versions
+ */
+function upgrade_panel_tab_defs()
+{
+    require_once('include/utils/file_utils.php');
+    global $path, $moduleList, $beanList;
+    $modsToCheck = array();
+
+    foreach($moduleList as $module)
+    {
+        if (empty($beanList[$module]))
+            continue;
+        else
+            $modsToCheck[] = $module;
+    }
+
+    foreach ($modsToCheck as $mods)
+    {
+        $EditView = false;
+        $DetailView = false;
+        $QuickCreate = false;
+        $dirs = array(
+            'custom/modules/' . $mods . '/metadata/',
+            'modules/' . $mods . '/metadata/'
+        );
+        $files = array(
+            'editviewdefs.php' => 'EditView',
+            'detailviewdefs.php' => 'DetailView',
+            'quickcreatedefs.php' => 'QuickCreate'
+        );
+        //check custom folder first then default folder
+        foreach ($dirs as $dir)
+        {
+            if (file_exists($dir) && is_dir($dir)) {
+
+                //check to see if custom detailviewdefs or editviewdefs exist
+                foreach ($files as $file => $key)
+                {
+                    $rewrite = false;
+                    $viewdefs = array();
+                    if (file_exists($dir . $file) && $$key == false)
+                    {
+                        //view exists, lets do the conversion
+                        $$key = true;
+                        include($dir . $file);
+                        $fieldsList = array();
+                        if (isset($viewdefs[$mods][$key]['panels'])) {
+                            foreach($viewdefs[$mods][$key]['panels'] as $n=>$v)
+                            {
+                                if (!empty($n))
+                                {
+                                    $fieldsList[] = $n;
+                                }
+                            }
+                        }
+
+                        //iterate through and convert the useTabs
+                        foreach ($viewdefs[$mods][$key]['templateMeta'] as $name => $value)
+                        {
+                            if ($name == 'useTabs') {
+                                $tabDefs = array();
+                                foreach($fieldsList as $panelName) {
+                                    $tabDefs[strtoupper($panelName)] = array('newTab'=>$value, 'panelDefault'=>'expanded');
+                                }
+                                if (!empty($tabDefs) && !isset($viewdefs[$mods][$key]['templateMeta']['tabDefs'])) {
+                                    $viewdefs[$mods][$key]['templateMeta']['tabDefs'] = $tabDefs;
+                                    $rewrite = true;
+                                }
+                            }
+                        }
+
+                        //when custom module having detailviewdefs or editviewdefs setup as default (no change on these views)
+                        //useTabs may not exist in these cases, set newTab to false as that's the default value for custom modules
+                        if (!isset($viewdefs[$mods][$key]['templateMeta']['tabDefs'])) {
+                            $tabDefs = array();
+                            foreach($fieldsList as $panelName) {
+                                $tabDefs[strtoupper($panelName)] = array('newTab'=>false, 'panelDefault'=>'expanded');
+                            }
+                            if (!empty($tabDefs)) {
+                                $viewdefs[$mods][$key]['templateMeta']['tabDefs'] = $tabDefs;
+                                $rewrite = true;
+                            }
+                        }
+
+                        //changes are needed, let's rewrite the file
+                        if ($rewrite)
+                        {
+                            if (!write_array_to_file("viewdefs['{$mods}']['" . $key . "']", $viewdefs[$mods][$key], $dir . $file, 'w'))
+                            {
+                                logThis("could not write $mods dictionary to {$dir}{$file}", $path);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
