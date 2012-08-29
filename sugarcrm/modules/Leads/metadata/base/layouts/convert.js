@@ -4,6 +4,10 @@
      */
     convertModel: {},
 
+    /**
+     * Initialize convert layout
+     * @param options
+     */
     initialize: function(options) {
         var leadId;
 
@@ -42,6 +46,9 @@
         return new convertModel();
     },
 
+    /**
+     * Add sub-views defined by the convert metadata to the layout
+     */
     addSubComponents: function() {
         var self = this;
 
@@ -56,8 +63,6 @@
             //initialize child context for sub-model
             context = self.context.getChildContext(def.context);
             context.prepare();
-
-            //todo: map field values from lead to sub-model
 
             //create and add view for sub-model
             view = app.view.createView({
@@ -74,6 +79,9 @@
         });
     },
 
+    /**
+     * Add the convert-top view to the layout
+     */
     addTopView: function() {
         var def = {'view' : 'convert-top'};
         this.addComponent(app.view.createView({
@@ -86,6 +94,9 @@
 
     },
 
+    /**
+     * Add the convert-bottom view to the layout
+     */
     addBottomView: function() {
         var def = {'view' : 'convert-bottom'};
         this.addComponent(app.view.createView({
@@ -97,30 +108,48 @@
         }), def);
     },
 
+    /**
+     * Fetch Leads data to the parent model
+     */
     loadData: function() {
-        var self = this,
-            leadModel;
-
+        var self = this;
         self.model.fetch({
             success: function() {
-                leadModel = self.model;
-                _.each(self.meta, function(moduleMetadata, moduleName) {
-                    var moduleFieldNames = self.getFieldNames(moduleName);
-                    var subModel = self.convertModel.get(moduleName);
-                    _.each(moduleFieldNames, function(moduleFieldName) {
-                        if (leadModel.has(moduleFieldName)) {
-                            subModel.set(moduleFieldName, leadModel.get(moduleFieldName));
-                        }
-                    });
-                    _.each(moduleMetadata.additionalFieldMapping, function(sourceField, targetField) {
-                        debugger;
-                        if (leadModel.has(sourceField)) {
-                            subModel.set(targetField, leadModel.get(sourceField));
-                        }
-                    });
-                    //todo: if moduleName == 'Opportunities' then opportunity.amount = unformat_number(lead.opportunity_amount)
-                });
+                self.populateSubModelsFromLeadsData();
+            },
+            error: function() {
+                //todo: handle error case
             }
+        });
+    },
+
+    /**
+     * Iterate over the sub-models and copy Leads data to the sub-models
+     */
+    populateSubModelsFromLeadsData: function() {
+        var self = this,
+            leadModel = self.model;
+
+        //iterate over sub-models
+        _.each(self.meta, function(moduleMetadata, moduleName) {
+            var moduleFieldNames = self.getFieldNames(moduleName);
+            var subModel = self.convertModel.get(moduleName);
+
+            //default field mapping: copy over data if the field name is the same
+            _.each(moduleFieldNames, function(moduleFieldName) {
+                if (leadModel.has(moduleFieldName)) {
+                    subModel.set(moduleFieldName, leadModel.get(moduleFieldName));
+                }
+            });
+
+            //additional field mapping: copy over data according to the metadata field mapping
+            _.each(moduleMetadata.additionalFieldMapping, function(sourceField, targetField) {
+                if (leadModel.has(sourceField)) {
+                    subModel.set(targetField, leadModel.get(sourceField));
+                }
+            });
+
+            //todo: if moduleName == 'Opportunities' then opportunity.amount = unformat_number(lead.opportunity_amount)
         });
     }
 })
