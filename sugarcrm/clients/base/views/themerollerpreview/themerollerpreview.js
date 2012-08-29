@@ -19,7 +19,7 @@
                     themeName: this.customTheme
                 };
         _.extend(params, this.context.attributes.colors);
-        var cssLink = app.api.buildURL('bootstrap.css', '', {}, params);
+        var cssLink = app.api.buildURL('css', '', {}, params);
         $('iframe#previewTheme').hide();
         self.$(".ajaxLoading").show();
         $.get(cssLink)

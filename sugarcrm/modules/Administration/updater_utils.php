@@ -453,7 +453,7 @@ function shouldCheckSugar(){
 // License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
 
-
+//Adding a comment for 6.5.4
 
 function authenticateDownloadKey(){
 	$data = array();
@@ -467,17 +467,13 @@ function authenticateDownloadKey(){
 	}
 
 
-	if(is_array($GLOBALS['license']->settings['license_validation_key']) && !empty($GLOBALS['license']->settings['license_validation_key']['validation']))return true;
+	if(!empty($GLOBALS['license']->settings['license_validation_key']['validation']))return true;
 	$data['license_expire_date'] = $GLOBALS['license']->settings['license_expire_date'];
 	$data['license_users'] =  intval($GLOBALS['license']->settings['license_users']);
 	$data['license_num_lic_oc'] = intval( $GLOBALS['license']->settings['license_num_lic_oc']);
 	$data['license_num_portal_users'] = intval($GLOBALS['license']->settings['license_num_portal_users']);
 	$data['license_vk_end_date'] = $GLOBALS['license']->settings['license_vk_end_date'];
 	$data['license_key'] = $GLOBALS['license']->settings['license_key'];
-	if(isset($GLOBALS['license']->settings['license_enforce_user_limit'])) {
-	    $data['enforce_user_limit'] = $GLOBALS['license']->settings['license_enforce_user_limit'];
-	}
-	$data['enforce_portal_user_limit'] = $GLOBALS['license']->settings['license_enforce_portal_user_limit'];
 	if(empty($GLOBALS['license']->settings['license_validation_key'])) return false;
 	$og = unserialize(sugarDecode('validation', $GLOBALS['license']->settings['license_validation_key']));
 

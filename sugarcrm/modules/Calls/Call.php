@@ -475,8 +475,10 @@ class Call extends SugarBean {
 		if (!empty($this->contact_id)) {
            // Bug# 46125 - make first name, last name, salutation and title of Contacts respect field level ACLs
             $contact_temp = BeanFactory::getBean("Contacts", $this->contact_id);
-            $contact_temp->_create_proper_name_field();
-            $this->contact_name = $contact_temp->full_name;
+            if(!empty($contact_temp)) {
+                $contact_temp->_create_proper_name_field();
+                $this->contact_name = $contact_temp->full_name;
+            }
 		}
 
         $call_fields['CONTACT_ID'] = $this->contact_id;

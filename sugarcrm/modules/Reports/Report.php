@@ -1312,21 +1312,7 @@ return str_replace(' > ','_',
         $got_join = array();
         foreach ($this->report_def[$key] as $index => $display_column) {
             if ($display_column['name'] == 'count') {
-                if ('self' != $display_column['table_key'])
-                {
-                    // use table name itself, not it's alias
-                    $table_name = $this->alias_lookup[$display_column['table_key']];
-                }
-                else
-                {
-                    // use table alias
-                    if(isset($this->full_table_list['self']['params']['join_table_alias'])) {
-                        $table_name = $this->full_table_list['self']['params']['join_table_alias'];
-                    } else {
-                        $table_name = $this->full_bean_list['self']->table_name;
-                    }
-                }
-                $select_piece = 'COUNT(DISTINCT ' . $table_name . '.id) ' . $table_name . '__count';
+                $select_piece = 'COUNT(*) count';
                 $got_count = 1;
             }
             else {
@@ -1632,16 +1618,17 @@ return str_replace(' > ','_',
             }
 
             // Do not add team security on modules that opt out of row level security
-//            require_once($beanFiles[$table_def['bean_name']]);
-//            $focus = new $table_def['bean_name']();
+            // require_once($beanFiles[$table_def['bean_name']]);
+            // $focus = new $table_def['bean_name']();
             //BEGIN SUGARCRM flav!=sales ONLY
-
-//            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($table_def['bean_name']) && !$focus->disable_row_level_security) {
-//                 $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
-//                                     tst INNER JOIN team_memberships team_memberships ON tst.team_id =
-//                                     team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
-//                //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
-//           }
+            /*
+            if (!is_admin($GLOBALS['current_user']) && !$GLOBALS['current_user']->isAdminForModule($focus->module_dir) && !$focus->disable_row_level_security) {
+                $this->from .= " AND {$params['join_table_alias']}.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
+                                    tst INNER JOIN team_memberships team_memberships ON tst.team_id =
+                                    team_memberships.team_id AND team_memberships.user_id = '{$GLOBALS['current_user']->id}' AND team_memberships.deleted=0)";
+                //$this->focus->add_team_security_where_clause($this->from,$params['join_table_alias'],$team_join_type);
+            }
+            */
             //END SUGARCRM flav!=sales ONLY
         }
         foreach ($this->selected_loaded_custom_links as $custom_table => $params)
@@ -2169,11 +2156,10 @@ return str_replace(' > ','_',
 
             if (isset($display_column['type'])) {
 
-                $alias = $this->alias_lookup[$display_column['table_key']];
-                $array_key = strtoupper($alias . '__count');
+                $fields_name = $this->getTruncatedColumnAlias(strtoupper($display_column['table_alias']) . "_" . strtoupper($display_column['name']));
 
-                if (array_key_exists($array_key, $display_column['fields'])) {
-                    $displayData = $display_column['fields'][$array_key];
+                if (array_key_exists($field_name, $display_column['fields'])) {
+                    $displayData = $display_column['fields'][$field_name];
                     if (empty($displayData) && $display_column['type'] != 'bool' && ($display_column['type'] != 'enum' || $display_column['type'] == 'enum' && $displayData != '0')) {
                         $display = "";
                     }
@@ -2217,19 +2203,8 @@ return str_replace(' > ','_',
 
         $row['cells'] = $cells;
 
-        // calculate summary rows count as the product of all count fields in summary
-        $count = 1;
-        $count_exists = false;
-        foreach ($db_row as $count_column => $count_value)
-        {
-            if (substr($count_column, -7) == "__count" || $count_column == 'count') {
-                $count *= max($count_value, 1);
-                $count_exists = true;
-            }
-        }
-
-        if ($count_exists) {
-            $row['count'] = $count;
+        if (isset($db_row['count'])) {
+            $row['count'] = $db_row['count'];
         }
 
         // for charts
@@ -2249,6 +2224,21 @@ return str_replace(' > ','_',
             $row['group_header'] = $this->group_header;
             $row['group_column_is_invisible'] = $this->group_column_is_invisible;
         }
+
+        
+        // fix for bug47120
+         // RTA - check each column for access, and blank value if no access
+         $col_module = $this->report_def['module'];
+         $is_owner = !empty($this->assigned_user_id) && $this->report_def['assigned_user_id'] == $GLOBALS['current_user']->id;
+         $count=0;
+         foreach($this->report_def['display_columns'] as $column) {
+           if (ACLField::hasAccess($column['name'], $col_module, $GLOBALS['current_user']->id, $is_owner) == 0) {
+             // blank out the value in the column
+           $row['cells'][$count]="";
+           }
+           $count++;
+         }
+         // end of fix
 
         return $row;
     }
