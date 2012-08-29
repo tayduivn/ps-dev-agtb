@@ -514,11 +514,30 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
+            if(isset($options['filter']) && $options['filter']['type'] == 'range')
+            {
+                $moduleFilter = $this->constructRangeFilter($moduleFilter, $options['filter']);
+            }
+
             $mainFilter->addFilter($moduleFilter);
 
         }
 
         return $mainFilter;
+    }
+
+    /**
+     * Construct a Range Filter to
+     * @param object $moduleFilter 
+     * @param array $filter 
+     * @return object $moduleFilter
+     */
+    protected function constructRangeFilter($moduleFilter, $filter)
+    {
+        $filter = new Elastica_Filter_Range($filter['fieldname'], $filter['range']);
+        $moduleFilter->addFilter($filter);
+        $GLOBALS['log']->fatal("\r\n\r\n" . print_r($moduleFilter, true) . "\r\n\r\n");
+        return $moduleFilter;
     }
 
     /**
@@ -625,6 +644,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $query = new Elastica_Query($queryObj);
             }
+
             $query->setParam('from',$offset);
 
             // set query highlight
