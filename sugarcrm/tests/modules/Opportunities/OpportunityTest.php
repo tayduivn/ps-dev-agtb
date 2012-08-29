@@ -28,6 +28,9 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
 	}
 
     public function tearDown()
@@ -35,6 +38,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::tearDown();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
     /**
@@ -64,14 +68,77 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, $opp->$case);
     }
 
+    /**
+     * This test checks to see if we correctly set the timeperiod_id value of an Opportunity record
+     *
+     */
     public function testOpportunitySaveSelectProperTimePeriod()
     {
-        $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        global $timedate;
+        $timedate->getNow();
+
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+
+        if(!($tp instanceof TimePeriod))
+        {
+           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        //We are trying to simulate setting a timeperiod_id based on the date_closed
+        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
+        $opp = new Opportunity();
+        $opp->retrieve($opp->id);
         $opp->date_closed = "2009-02-15";
         $opp->save();
 
         $this->assertEquals($tp->id, $opp->timeperiod_id);
+    }
+
+    /*
+     * Test that the currency_rate field is populated with rate
+     * of currency_id
+     *
+     */
+    public function testCurrencyRate() {
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        // if Euro does not exist, will use default currency
+        $opportunity->currency_id = $currency->id;
+        $opportunity->name = "Test Opportunity Delete Me";
+        $opportunity->amount = "5000.00";
+        $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        $opportunity->best_case = "1000.00";
+        $opportunity->likely_case = "750.00";
+        $opportunity->worst_case = "600.00";
+        $opportunity->save();
+        $this->assertEquals(
+            sprintf('%.6f',$opportunity->currency_rate),
+            sprintf('%.6f',$currency->conversion_rate)
+        );
+    }
+
+    /*
+     * Test that base currency exchange rates from EUR are working properly.
+     */
+    public function testBaseCurrencyAmounts()
+    {
+        $opportunity = SugarTestOpportunityUtilities::createOpportunity();
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        // if Euro does not exist, will use default currency
+        $opportunity->currency_id = $currency->id;
+        $opportunity->name = "Test Opportunity Delete Me";
+        $opportunity->amount = "5000.00";
+        $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        $opportunity->best_case = "1000.00";
+        $opportunity->likely_case = "750.00";
+        $opportunity->worst_case = "600.00";
+        $opportunity->save();
+
+        $this->assertEquals(
+            sprintf('%.6f',$opportunity->currency_rate),
+            sprintf('%.6f',$currency->conversion_rate)
+        );
     }
 }
