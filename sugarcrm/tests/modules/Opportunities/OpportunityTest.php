@@ -68,11 +68,28 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(0, $opp->$case);
     }
 
+    /**
+     * This test checks to see if we correctly set the timeperiod_id value of an Opportunity record
+     *
+     */
     public function testOpportunitySaveSelectProperTimePeriod()
     {
-        $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        global $timedate;
+        $timedate->getNow();
+
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+
+        if(!($tp instanceof TimePeriod))
+        {
+           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        }
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        //We are trying to simulate setting a timeperiod_id based on the date_closed
+        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
+        $opp = new Opportunity();
+        $opp->retrieve($opp->id);
         $opp->date_closed = "2009-02-15";
         $opp->save();
 
