@@ -34,7 +34,6 @@
 
     render: function() {
         var panels = this.meta.panels;
-        var index = 0;
         var totalFieldCount =0;
         for (var i in panels) {
             var columns = (panels[i].columns) ? panels[i].columns : 1;
@@ -79,6 +78,13 @@
 
         this.meta.panels = panels;
         app.view.views.DetailView.prototype.render.call(this);
+
+        // Check if this is a new record, if it is, enable the edit view
+        if (this.context.has("create") && this.model.isNew) {
+            console.log("Toggling edit mode", this.context.get("create"));
+            this.editAllMode = false;
+            this.toggleEdit();
+        }
     },
 
     // Overloaded functions
@@ -109,7 +115,8 @@
     },
 
     // Handler functions
-    toggleEdit: function(e) {
+    toggleEdit: function() {
+        console.log("Toggle Edit", this.editAllMode);
         _.each(this.fields, function(field) {
             field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
             field.render();
