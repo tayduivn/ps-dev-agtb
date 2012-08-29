@@ -74,10 +74,10 @@ class RestTestUpdate extends RestTestBase {
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
         $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('my_favorite' => true)), "PUT");
-        
+
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
         
-        $this->assertEquals($is_fav, (bool) $restReply['reply']['_favorite'], "The returned favorite was not the same.");
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }
 
     public function testRemoveFavorite()

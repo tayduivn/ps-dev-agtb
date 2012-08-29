@@ -223,7 +223,7 @@ class RestTestListFTS extends RestTestBase {
 
         foreach($restReply['reply']['records'] AS $record)
         {
-            $this->assertEquals('true', $record['favorite'], "Did not return a favorite");
+            $this->assertEquals('true', (bool)$record['my_favorite'], "Did not return a favorite");
         }
         
     }

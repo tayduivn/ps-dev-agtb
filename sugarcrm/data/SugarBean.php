@@ -224,6 +224,7 @@ class SugarBean
     var $disable_custom_fields = false;
     var $number_formatting_done = false;
     var $process_field_encrypted=false;
+    var $my_favorite = false;
     /*
     * The default ACL type
     */
@@ -2523,8 +2524,12 @@ function save_relationship_changes($is_update, $exclude=array())
 
         // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
         // TODO: add global vardef for my_favorite field
-        $query_select .= ', sf.id AS my_favorite';
-        $query_from .= " LEFT JOIN sugarfavorites AS sf ON sf.module = '{$this->module_dir}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+        // We should only add Favorites if we know what module we are using and if we have a user. 
+        if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']))
+        {
+            $query_select .= ', sf.id AS my_favorite';
+            $query_from .= " LEFT JOIN sugarfavorites AS sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+        }
 
         $query = "SELECT $query_select FROM $query_from ";
         //BEGIN SUGARCRM flav=pro ONLY
@@ -2641,10 +2646,12 @@ function save_relationship_changes($is_update, $exclude=array())
             }
         }
         // TODO: add a vardef for my_favorite
-        if(isset($row['my_favorite']))
+        $this->my_favorite = false;
+        if(isset($row['my_favorite']) && !empty($row['my_favorite']))
         {
-            $this->my_favorite = $row['my_favorite'];
+            $this->my_favorite = true;
         }
+
     }
 
 
