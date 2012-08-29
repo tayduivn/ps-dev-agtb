@@ -963,3 +963,19 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
     float: right;
     margin: 0px;
 }
+
+// FIXED NAVBAR -from styleguide
+// ------------
+
+.navbar-fixed-top {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: @zindexFixedNavbar;
+}
+.navbar-fixed-top .navbar-inner {
+    padding-left:  0;
+    padding-right: 0;
+    .border-radius(0);
+}

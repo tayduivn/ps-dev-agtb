@@ -56,6 +56,7 @@
 	            'include/Expressions/javascript/expressions.js'  => 'include/javascript/sugar_grp1.js',
 	            'include/Expressions/javascript/dependency.js'   => 'include/javascript/sugar_grp1.js',
 	            //END SUGARCRM flav=pro ONLY
+               'include/EditView/Panels.js'   => 'include/javascript/sugar_grp1.js',
             ),
 			//jquery libraries
 			$sugar_grp_jquery = array(
@@ -194,11 +195,27 @@
                 'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
+            $sugar_grp_portal2 = array(
+                'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'portal2/portal.min.js',
+
+                'styleguide/assets/js/bootstrap-button.js'  => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-tooltip.js' => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-dropdown.js'=> 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-popover.js' => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-modal.js'   => 'portal2/portal.min.js',
+                'styleguide/assets/js/bootstrap-alert.js'   => 'portal2/portal.min.js',
+                'portal2/error.js'               => 'portal2/portal.min.js',
+                'portal2/user.js'                => 'portal2/portal.min.js',
+                'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
+                'portal2/portal.js'              => 'portal2/portal.min.js',
+                'portal2/portal-ui.js'           => 'portal2/portal.min.js',
+
+            ),
         );
 
     /**
      * Check for custom additions to this code
      */
-    if(file_exists("custom/jssource/JSGroupings.php")) {
-        require("custom/jssource/JSGroupings.php");
+    if(file_exists("custom/application/Ext/JSGroupings/jsgroups.ext.php")) {
+        require("custom/application/Ext/JSGroupings/jsgroups.ext.php");
     }

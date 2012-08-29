@@ -35,12 +35,6 @@ $subpanel_layout = array(
 		array('widget_class' => 'SubPanelTopCreateButton'),
 		array('widget_class' => 'SubPanelTopSelectButton', 'popup_module' => 'Quotes'),
 	),
-
-    // bug51043 - just gets the Bill To relationships in count
-    'where' => '( account_role = \'Bill To\' )',
-	
-	
-
 	'list_fields' => array(
 		'name'=>array(
 			'vname' => 'LBL_LIST_QUOTE_NAME',
@@ -75,4 +69,3 @@ $subpanel_layout = array(
 		),
 	),
 );
-?>

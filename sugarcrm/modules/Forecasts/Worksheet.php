@@ -27,6 +27,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class Worksheet extends SugarBean {
 
     var $id;
+    var $user_id;
+    var $timeperiod_id;
+    var $forecast_type;
+    var $related_id;
+    var $related_forecast_type;
+    var $currency_id;
+    var $currency_rate;
+    var $best_case;
+    var $likely_case;
+    var $worst_case;
+    var $date_modified;
+    var $modified_user_id;
+    var $deleted;
+    var $forecast;
+    var $commit_stage;
+    var $op_probability;
+    var $quota;
+    var $version;
 
     var $table_name = "worksheet";
 
@@ -41,12 +59,20 @@ class Worksheet extends SugarBean {
     var $new_schema = true;
     var $module_dir = 'Forecasts';
     function Worksheet() {
-        global $current_user;
         parent::SugarBean();
         $this->disable_row_level_security =true;
     }
 
     function save($check_notify = false){
+        require_once 'include/SugarCurrency.php';
+        if(empty($this->currency_id)) {
+            // use user preferences for currency
+            $currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+        } else {
+            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+        }
+        $this->currency_rate = $currency->conversion_rate;
         //If related_forecast_type is empty it is an opportunity override so we update the best_case_worksheet and likely_case_worksheet values
         if (empty($this->related_forecast_type) && !empty($this->related_id))
         {
@@ -57,6 +83,8 @@ class Worksheet extends SugarBean {
                 $opp->best_case = $this->best_case;
                 $opp->likely_case = $this->likely_case;
                 $opp->worst_case = $this->worst_case;
+                $opp->currency_id = $this->currency_id;
+                $opp->currency_rate = $this->currency_rate;
                 $opp->save();
             }
         }

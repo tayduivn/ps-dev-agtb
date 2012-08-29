@@ -43,17 +43,8 @@
 		{if $hideLevel > 5}
             <input type="hidden" name="calculated" value="{$vardef.calculated}">
         {/if}
-		{sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".gif" other_attributes='id="calcToolTipIcon" '}
+		{sugar_help text=$mod_strings.LBL_POPHELP_CALCULATED FIXX=250 FIXY=80}
 		<input type="hidden" name="enforced" id="enforced" value="{$vardef.enforced}">
-		<script>
-			if (!ModuleBuilder.cfToolTip)
-			     ModuleBuilder.cfToolTip = new YAHOO.widget.Tooltip("cfToolTip", {ldelim}
-				    context:"calcToolTipIcon", text:SUGAR.language.get("ModuleBuilder", "LBL_POPHELP_CALCULATED")
-				 {rdelim});
-		    else if (ModuleBuilder.cfToolTip)
-			    ModuleBuilder.cfToolTip.cfg.setProperty("context", "calcToolTipIcon");
-			ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})
-		</script>
     </td>
 </tr>
 <tr id='formulaRow' {if empty($vardef.formula)}style="display:none"{/if}>
@@ -71,18 +62,7 @@
 <tr id='depCheckboxRow'><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_DEPENDENT"}:</td>
     <td><input type="checkbox" name="dependent" id="dependent" value="1" onclick ="ModuleBuilder.toggleDF(null, '#popup_form_id .toggleDep')"
         {if !empty($vardef.dependency)}CHECKED{/if} {if $hideLevel > 5}disabled{/if}/>
-        {sugar_getimage alt=$mod_strings.LBL_HELP name="helpInline" ext=".gif" other_attributes='id="depToolTipIcon" '}
-        <script>
-			if (!ModuleBuilder.dfToolTip)
-			     ModuleBuilder.dfToolTip = new YAHOO.widget.Tooltip("dfToolTip", {ldelim}
-                        context:"depToolTipIcon", text:SUGAR.language.get("ModuleBuilder", "LBL_POPHELP_DEPENDENT")
-				 {rdelim});
-		    else if (ModuleBuilder.cfToolTip)
-			    ModuleBuilder.cfToolTip.cfg.setProperty("context", "depToolTipIcon");
-		    else
-			    ModuleBuilder.dfToolTip.cfg.setProperty("context", "depToolTipIcon");
-			ModuleBuilder.toggleCF({if empty($vardef.calculated) || empty($vardef.formula)}false{else}{$vardef.calculated}{/if})
-		</script>
+        {sugar_help text=$mod_strings.LBL_POPHELP_DEPENDENT FIXX=250 FIXY=80}
     </td>
 </tr>
 <tr id='visFormulaRow' {if empty($vardef.dependency)}style="display:none"{/if}><td class='mbLBL'>{sugar_translate module="DynamicFields" label="LBL_VISIBLE_IF"}:</td> 

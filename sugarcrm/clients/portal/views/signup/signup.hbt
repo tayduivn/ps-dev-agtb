@@ -1,5 +1,5 @@
 <form name='{{name}}'>
-    <div class="container welcome">
+    <div class="container welcome subhead">
         <div class="row">
             <div class="span4 offset4 thumbnail">
                 <div class="modal-header tcenter">

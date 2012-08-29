@@ -37,12 +37,12 @@ require_once('tests/rest/RestTestBase.php');
 class ForecastsWorksheetManagerApiTest extends RestTestBase
 {
     /**
-     * @var User
+     * @var array
      */
     private static $reportee;
 
     /**
-     * @var User
+     * @var array
      */
     protected static $manager;
     /**
@@ -64,165 +64,83 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
     {
         parent::setUpBeforeClass();
 
-        global $app_list_strings;
-        $app_list_strings = return_app_list_strings_language('en_us');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
 
-        self::$manager = SugarTestUserUtilities::createAnonymousUser();
+        self::$manager = SugarTestForecastUtilities::createForecastUser();
 
-        self::$reportee = SugarTestUserUtilities::createAnonymousUser();
-        self::$reportee->reports_to_id = self::$manager->id;
-        self::$reportee->save();
+        self::$reportee = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager['user']->id)));
 
-        self::$timeperiod = new TimePeriod();
-        self::$timeperiod->start_date = "2012-01-01";
-        self::$timeperiod->end_date = "2012-03-31";
-        self::$timeperiod->name = "Test";
-        self::$timeperiod->save();
+        self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
-        $timeperiod_id = self::$timeperiod->id;
-
-        //setup opps
-        $managerOpp = SugarTestOpportunityUtilities::createOpportunity();
-        $managerOpp->assigned_user_id = self::$manager->id;
-        $managerOpp->timeperiod_id = $timeperiod_id;
-        $managerOpp->amount = 1800;
-        $managerOpp->probability = 80;
-        $managerOpp->forecast = 1;
-        $managerOpp->team_set_id = 1;
-        $managerOpp->team_id = 1;
-        $managerOpp->save();
-
-        $repOpp = SugarTestOpportunityUtilities::createOpportunity();
-        $repOpp->assigned_user_id = self::$reportee->id;
-        $repOpp->timeperiod_id = $timeperiod_id;
-        $repOpp->amount = 1300;
-        $repOpp->probability = 80;
-        $repOpp->forecast = 1;
-        $repOpp->team_set_id = 1;
-        $repOpp->team_id = 1;
-        $repOpp->save();
-
-        //setup quotas
-        $managerQuota = SugarTestQuotaUtilities::createQuota(2000);
-        $managerQuota->user_id = self::$manager->id;
-        $managerQuota->quota_type = "Direct";
-        $managerQuota->timeperiod_id = $timeperiod_id;
-        $managerQuota->save();
-
-        $repQuota = SugarTestQuotaUtilities::createQuota(1500);
-        $repQuota->user_id = self::$reportee->id;
-        $repQuota->quota_type = "Rollup";
-        $repQuota->timeperiod_id = $timeperiod_id;
-        $repQuota->save();
-
-        //setup forecasts
-        $managerForecast = new Forecast();
-        $managerForecast->user_id = self::$manager->id;
-        $managerForecast->best_case = 1500;
-        $managerForecast->likely_case = 1200;
-        $managerForecast->worst_case = 900;
-        $managerForecast->timeperiod_id = $timeperiod_id;
-        $managerForecast->forecast_type = "Direct";
-        $managerForecast->save();
-
-        $repForecast = new Forecast();
-        $repForecast->user_id = self::$reportee->id;
-        $repForecast->best_case = 1100;
-        $repForecast->likely_case = 900;
-        $repForecast->worst_case = 700;
-        $repForecast->timeperiod_id = $timeperiod_id;
-        $repForecast->forecast_type = "Direct";
-        $repForecast->save();
-
-        //setup worksheets
-        $managerWorksheet = SugarTestWorksheetUtilities::createWorksheet();
-        $managerWorksheet->user_id = self::$manager->id;
-        $managerWorksheet->related_id = self::$manager->id;
-        $managerWorksheet->forecast_type = "Direct";
-        $managerWorksheet->timeperiod_id = $timeperiod_id;
-        $managerWorksheet->best_case = 1550;
-        $managerWorksheet->likely_case = 1250;
-        $managerWorksheet->worst_case = 950;
-        $managerWorksheet->forecast = 1;
-        $managerWorksheet->save();
-
-        $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
-        $repWorksheet->user_id = self::$manager->id;
-        $repWorksheet->related_id = self::$reportee->id;
-        $repWorksheet->forecast_type = "Rollup";
-        $repWorksheet->timeperiod_id = $timeperiod_id;
-        $repWorksheet->best_case = 1150;
-        $repWorksheet->likely_case = 950;
-        $repWorksheet->worst_case = 750;
-        $repWorksheet->forecast = 1;
-        $repWorksheet->save();
-
-        self::$managerData = array("amount" => $managerOpp->amount,
-            "quota" => $managerQuota->amount,
-            "quota_id" => $managerQuota->id,
-            "best_case" => $managerForecast->best_case,
-            "likely_case" => $managerForecast->likely_case,
-            "worst_case" => $managerForecast->worst_case,
-            "best_adjusted" => $managerWorksheet->best_case,
-            "likely_adjusted" => $managerWorksheet->likely_case,
-            "worst_adjusted" => $managerWorksheet->worst_case,
-            "forecast" => intval($managerWorksheet->forecast),
-            "forecast_id" => $managerForecast->id,
-            "worksheet_id" => $managerWorksheet->id,
+        self::$managerData = array("amount" => self::$manager['opportunities_total'],
+            "quota" => self::$manager['quota']->amount,
+            "quota_id" => self::$manager['quota']->id,
+            "best_case" => self::$manager['forecast']->best_case,
+            "likely_case" => self::$manager['forecast']->likely_case,
+            "worst_case" => self::$manager['forecast']->worst_case,
+            "best_adjusted" => self::$manager['worksheet']->best_case,
+            "likely_adjusted" => self::$manager['worksheet']->likely_case,
+            "worst_adjusted" => self::$manager['worksheet']->worst_case,
+            "forecast" => intval(self::$manager['worksheet']->forecast),
+            "forecast_id" => self::$manager['forecast']->id,
+            "worksheet_id" => self::$manager['worksheet']->id,
             "show_opps" => true,
-            "id" => self::$manager->id,
-            "name" => 'Opportunities (' . self::$manager->first_name . ' ' . self::$manager->last_name . ')',
-            "user_id" => self::$manager->id,
+            "id" => self::$manager['user']->id,
+            "name" => 'Opportunities (' . self::$manager['user']->first_name . ' ' . self::$manager['user']->last_name . ')',
+            "user_id" => self::$manager['user']->id,
 
         );
 
-        self::$repData = array("amount" => $repOpp->amount,
-            "quota" => $repQuota->amount,
-            "quota_id" => $repQuota->id,
-            "best_case" => $repForecast->best_case,
-            "likely_case" => $repForecast->likely_case,
-            "worst_case" => $repForecast->worst_case,
-            "best_adjusted" => $repWorksheet->best_case,
-            "likely_adjusted" => $repWorksheet->likely_case,
-            "worst_adjusted" => $repWorksheet->worst_case,
-            "forecast" => intval($repWorksheet->forecast),
-            "forecast_id" => $repForecast->id,
-            "worksheet_id" => $repWorksheet->id,
+        self::$repData = array("amount" => self::$reportee['opportunities_total'],
+            "quota" => self::$reportee['quota']->amount,
+            "quota_id" => self::$reportee['quota']->id,
+            "best_case" => self::$reportee['forecast']->best_case,
+            "likely_case" => self::$reportee['forecast']->likely_case,
+            "worst_case" => self::$reportee['forecast']->worst_case,
+            "best_adjusted" => self::$reportee['worksheet']->best_case,
+            "likely_adjusted" => self::$reportee['worksheet']->likely_case,
+            "worst_adjusted" => self::$reportee['worksheet']->worst_case,
+            "forecast" => intval(self::$reportee['worksheet']->forecast),
+            "forecast_id" => self::$reportee['forecast']->id,
+            "worksheet_id" => self::$reportee['worksheet']->id,
             "show_opps" => true,
-            "id" => self::$reportee->id,
-            "name" => self::$reportee->first_name . ' ' . self::$reportee->last_name,
-            "user_id" => self::$reportee->id,
+            "id" => self::$reportee['user']->id,
+            "name" => self::$reportee['user']->first_name . ' ' . self::$reportee['user']->last_name,
+            "user_id" => self::$reportee['user']->id,
+
         );
 
     }
 
     public static function tearDownAfterClass()
     {
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
-        $userIds = SugarTestUserUtilities::getCreatedUserIds();
-        $GLOBALS['db']->query('DELETE FROM forecasts WHERE user_id IN (\'' . implode("', '", $userIds) . '\')');
-        SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
 
         parent::tearDown();
     }
 
+    //Override tearDown so we don't lose the current user
     public function tearDown()
     {
+
     }
 
+
+    /**
+     * This test asserts that we get back two entries.  The first for the manager and the second for the reportee.
+     * 
+     */
     public function testPassedInUserIsManager()
     {
-        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id);
-
-        $data = array(self::$managerData, self::$repData);
-        $this->assertEquals($data, $restReply['reply']);
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
+        $this->assertEquals(self::$manager['user']->id, $restReply['reply'][0]['user_id']);
+        $this->assertEquals(self::$reportee['user']->id, $restReply['reply'][1]['user_id']);
     }
 
     public function testPassedInUserIsNotManagerReturnsEmpty()
     {
-        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$reportee->id . '&timeperiod_id=' . self::$timeperiod->id);
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$reportee['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
         $this->assertEmpty($restReply['reply'], "rest reply is not empty");
     }
 
@@ -233,7 +151,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $_old_current_user = $current_user;
 
         // set the current user to the reportee
-        $current_user = self::$reportee;
+        $current_user = self::$reportee['user'];
 
         // run the test
         $restReply = $this->_restCall("ForecastManagerWorksheets?timeperiod_id=" . self::$timeperiod->id);
@@ -245,27 +163,33 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
     /**
      * @bug 54619
+     * @group 54619
      */
     public function testAdjustedNumbersShouldBeSameAsNonAdjustedColumns()
     {
         $rep_worksheet = BeanFactory::getBean('Worksheet', self::$repData['worksheet_id']);
         $rep_worksheet->deleted = 1;
         $rep_worksheet->save();
+        $GLOBALS['db']->commit();
 
         $localRepData = self::$repData;
 
-        $localRepData['best_adjusted'] = $localRepData['best_case'];
-        $localRepData['likely_adjusted'] = $localRepData['likely_case'];
-        $localRepData['worst_adjusted'] = $localRepData['worst_case'];
-        $localRepData['forecast'] = 0;
+        $localRepData['best_adjusted'] = SugarTestForecastUtilities::formatTestNumber($localRepData['best_case']);
+        $localRepData['likely_adjusted'] = SugarTestForecastUtilities::formatTestNumber($localRepData['likely_case']);
+        $localRepData['worst_adjusted'] = SugarTestForecastUtilities::formatTestNumber($localRepData['worst_case']);
+        $localRepData['forecast'] = SugarTestForecastUtilities::formatTestNumber(0);
         $localRepData['worksheet_id'] = '';
 
-        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id);
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
 
-        $this->assertEquals($localRepData, $restReply['reply'][1], "Best/Likely (Adjusted) numbers by default should be the same as best/likely numbers");
+        $this->assertEquals($localRepData['best_adjusted'], $restReply['reply'][1]['best_adjusted'], "best_adjusted numbers should be the same");
+        $this->assertEquals($localRepData['likely_adjusted'], $restReply['reply'][1]['likely_adjusted'], "likely_adjusted numbers should be the same");
+        $this->assertEquals($localRepData['worst_adjusted'], $restReply['reply'][1]['worst_adjusted'], "worst_adjusted numbers should be the same");
+        $this->assertEquals($localRepData['forecast'], $restReply['reply'][1]['forecast'], "forecast numbers should be the same");
 
         $rep_worksheet->deleted = 0;
         $rep_worksheet->save();
+        $GLOBALS['db']->commit();
     }
 
     /**
@@ -275,11 +199,11 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
     {
         // temp reportee
         $tmp = SugarTestUserUtilities::createAnonymousUser();
-        $tmp->reports_to_id = self::$manager->id;
+        $tmp->reports_to_id = self::$manager['user']->id;
         $tmp->deleted = 1;
         $tmp->save();
 
-        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id);
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
 
         // we should only have one row returned
         $this->assertEquals(2, count($restReply['reply']), "deleted user's data should not be listed in worksheet table");
@@ -294,7 +218,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $rep_forecast->deleted = 1;
         $rep_forecast->save();
 
-        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id);
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
 
         $this->assertSame(0, $restReply['reply'][1]['amount']);
 
@@ -362,9 +286,113 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             ),
         );
 
-        $this->assertEquals($expected, $restReply['reply']);
+        $this->assertEquals($expected[0]['amount'], $restReply['reply'][0]['amount']);
+        $this->assertEquals($expected[0]['quota'], $restReply['reply'][0]['quota']);
+        $this->assertEquals($expected[0]['best_case'], $restReply['reply'][0]['best_case']);
+        $this->assertEquals($expected[0]['likely_case'], $restReply['reply'][0]['likely_case']);
+        $this->assertEquals($expected[0]['worst_case'], $restReply['reply'][0]['worst_case']);
+        $this->assertEquals($expected[0]['best_adjusted'], $restReply['reply'][0]['best_adjusted']);
+        $this->assertEquals($expected[0]['likely_adjusted'], $restReply['reply'][0]['likely_adjusted']);
+        $this->assertEquals($expected[0]['worst_adjusted'], $restReply['reply'][0]['worst_adjusted']);
+
+        $this->assertEquals($expected[1]['amount'], $restReply['reply'][1]['amount']);
+        $this->assertEquals($expected[1]['quota'], $restReply['reply'][1]['quota']);
+        $this->assertEquals($expected[1]['best_case'], $restReply['reply'][1]['best_case']);
+        $this->assertEquals($expected[1]['likely_case'], $restReply['reply'][1]['likely_case']);
+        $this->assertEquals($expected[1]['worst_case'], $restReply['reply'][1]['worst_case']);
+        $this->assertEquals($expected[1]['best_adjusted'], $restReply['reply'][1]['best_adjusted']);
+        $this->assertEquals($expected[1]['likely_adjusted'], $restReply['reply'][1]['likely_adjusted']);
+        $this->assertEquals($expected[1]['worst_adjusted'], $restReply['reply'][1]['worst_adjusted']);
 
         $current_user = $_current_user;
+    }
+
+    public function testManagerReporteeManagerReturnesProperValues()
+    {
+        // create extra reps
+        $rep1 = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$reportee['user']->id)));
+        $rep2 = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$reportee['user']->id)));
+
+        // create a rollup forecast for the new manager
+        $tmpForecast = SugarTestForecastUtilities::createManagerRollupForecast(self::$reportee, $rep1, $rep2);
+
+        // create a worksheet for the new managers user
+        $tmpWorksheet = SugarTestWorksheetUtilities::createWorksheet();
+        $tmpWorksheet->related_id = self::$reportee['user']->id;
+        $tmpWorksheet->user_id = self::$reportee['user']->reports_to_id;
+        $tmpWorksheet->forecast_type = "Rollup";
+        $tmpWorksheet->related_forecast_type = "Direct";
+        $tmpWorksheet->timeperiod_id = self::$timeperiod->id;
+        $tmpWorksheet->best_case = $tmpForecast->best_case+100;
+        $tmpWorksheet->likely_case = $tmpForecast->likely_case+100;
+        $tmpWorksheet->worst_case = $tmpForecast->worst_case-100;
+        $tmpWorksheet->forecast = 1;
+        $tmpWorksheet->save();
+
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
+
+        $expected = array(
+            "amount" => self::$reportee['opportunities_total'] + $rep1['opportunities_total'] + $rep2['opportunities_total'],
+            "best_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->best_case),
+            "best_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->best_case),
+            "forecast" => intval($tmpWorksheet->forecast),
+            "forecast_id" => $tmpForecast->id,
+            "id" => self::$reportee["user"]->id,
+            "likely_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->likely_case),
+            "likely_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->likely_case),
+            "name" => self::$reportee["user"]->first_name . " " . self::$reportee["user"]->last_name,
+            "quota" => SugarTestForecastUtilities::formatTestNumber(self::$reportee['quota']->amount),
+            "quota_id" => self::$reportee['quota']->id,
+            "show_opps" => false,
+            "user_id" => self::$reportee["user"]->id,
+            "worksheet_id" => $tmpWorksheet->id,
+            "worst_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->worst_case),
+            "worst_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->worst_case),
+            "timeperiod_id" => self::$timeperiod->id
+        );
+
+        $this->assertEquals($expected["amount"], $restReply['reply'][1]["amount"]);
+        $this->assertEquals($expected["best_adjusted"], $restReply['reply'][1]["best_adjusted"]);
+        $this->assertEquals($expected["best_case"], $restReply['reply'][1]["best_case"]);
+        $this->assertEquals($expected["forecast"], $restReply['reply'][1]["forecast"]);
+        $this->assertEquals($expected["forecast_id"], $restReply['reply'][1]["forecast_id"]);
+        $this->assertEquals($expected["id"], $restReply['reply'][1]["id"]);
+        $this->assertEquals($expected["likely_adjusted"], $restReply['reply'][1]["likely_adjusted"]);
+        $this->assertEquals($expected["likely_case"], $restReply['reply'][1]["likely_case"]);
+        $this->assertEquals($expected["name"], $restReply['reply'][1]["name"]);
+        $this->assertEquals($expected["quota"], $restReply['reply'][1]["quota"]);
+        $this->assertEquals($expected["quota_id"], $restReply['reply'][1]["quota_id"]);
+        $this->assertEquals($expected["show_opps"], $restReply['reply'][1]["show_opps"]);
+        $this->assertEquals($expected["user_id"], $restReply['reply'][1]["user_id"]);
+        $this->assertEquals($expected["worksheet_id"], $restReply['reply'][1]["worksheet_id"]);
+        $this->assertEquals($expected["worst_adjusted"], $restReply['reply'][1]["worst_adjusted"]);
+        $this->assertEquals($expected["worst_case"], $restReply['reply'][1]["worst_case"]);
+        $this->assertEquals($expected["timeperiod_id"], $restReply['reply'][1]["timeperiod_id"]);
+    }
+
+
+    /**
+     * This test is to see that the data returned for the name field is set correctly when locale name format changes
+     *
+     * @group testGetLocaleFormattedName
+     */
+    public function testGetLocaleFormattedName()
+    {
+        global $locale, $current_language;
+        $defaultPreference = $this->_user->getPreference('default_locale_name_format');
+        $this->_user->setPreference('default_locale_name_format', 'l, f', 0, 'global');
+        $this->_user->savePreferencesToDB();
+        $this->_user->reloadPreferences();
+
+        $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
+        $current_module_strings = return_module_language($current_language, 'Forecasts');
+        $expectedName = string_format($current_module_strings['LBL_MY_OPPORTUNITIES'],
+                                      array($locale->getLocaleFormattedName(self::$manager['user']->first_name, self::$manager['user']->last_name))
+                        );
+        $this->assertEquals($expectedName, $restReply['reply'][0]['name']);
+        $this->_user->setPreference('default_locale_name_format', $defaultPreference, 0, 'global');
+        $this->_user->savePreferencesToDB();
+        $this->_user->reloadPreferences();
     }
 }
 

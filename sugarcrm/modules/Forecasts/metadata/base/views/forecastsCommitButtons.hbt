@@ -1,0 +1,8 @@
+<div id="forecastsCommitButtons">
+    {{#if showCommitButton}}
+        <a id="save_draft" class="btn" >{{str "LBL_SAVE_DRAFT" "Forecasts"}}</a>
+        <a class="btn btn-primary disabled" id="commit_forecast">
+        <i class="icon-upload icon-md"></i> {{str "LBL_QC_COMMIT_BUTTON" "Forecasts"}}</a>
+    {{/if}}
+</div>
+<div style="clear:both"></div>

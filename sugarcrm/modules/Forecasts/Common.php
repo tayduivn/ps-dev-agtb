@@ -165,7 +165,7 @@ class Common {
         $query = "SELECT a.timeperiod_id, b.name, b.start_date, b.end_date, a.user_id, a.cascade_hierarchy"
             . " FROM forecast_schedule a, timeperiods b"
             . " WHERE a.timeperiod_id = b.id"
-            . " AND a.forecast_start_date <= $nowdate "
+            . " AND b.start_date <= $nowdate "
             . " AND b.end_date >= $nowdate "
             . " AND a.deleted = 0"
             . " AND b.deleted = 0"
@@ -283,5 +283,28 @@ class Common {
         {
             $this->my_direct_downline[]= $row['id'];
         }
+    }
+
+    /**
+     * Get the passes in users reportee's who have a forecast for the passed in time period
+     *
+     * @param string $user_id           A User Id
+     * @param string $timeperiod_id     The Time period you want to check for
+     * @return array
+     */
+    public function getReporteesWithForecasts($user_id, $timeperiod_id) {
+
+        $return = array();
+        $query = "SELECT distinct users.user_name FROM users, forecasts
+                WHERE forecasts.timeperiod_id = '" . $timeperiod_id . "' AND forecasts.deleted = 0
+                AND users.id = forecasts.user_id AND (users.reports_to_id = '" . $user_id . "')";
+
+        $result = $this->db->query($query,true," Error fetching user's reporting hierarchy: ");
+        while (($row  =  $this->db->fetchByAssoc($result)) != null)
+        {
+            $return[] = $row['user_name'];
+        }
+
+        return $return;
     }
 }

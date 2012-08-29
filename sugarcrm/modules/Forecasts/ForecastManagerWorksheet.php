@@ -169,14 +169,14 @@ class ForecastManagerWorksheet extends SugarBean
 	 */
 	 protected function recalcQuotas()
 	 {
-
 	 	//don't recalc if we are editing the manager row
-	 	if($this->args["user_id"] != $this->args["current_user"]){
+	 	if($this->args["user_id"] != $this->args["current_user"])
+	 	{
 			//Recalc Manager direct
 			$this->recalcUserQuota($this->args["current_user"]);
-
+			
 			//Recalc reportee direct
-			$this->recalcUserQuota($this->args["user_id"]);
+			$this->recalcUserQuota($this->args["user_id"]);	
 	 	}
 	 }
 
@@ -194,13 +194,14 @@ class ForecastManagerWorksheet extends SugarBean
 	 	if($newTotal < 0){
 	 		$newTotal = 0;
 	 	}
-
+	 	
 	 	//save Manager quota
-	 	if(isset($managerQuota["id"])){
-			$quota = BeanFactory::getBean('Quotas', $managerQuota['id']);
-			$quota->amount = $newTotal;
-			$quota->save();
-	 	}
+		$quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
+		$quota->user_id = $userId;
+		$quota->timeperiod_id = $this->args["timeperiod_id"];
+		$quota->quota_type = "Direct";
+		$quota->amount = $newTotal;
+		$quota->save();		
 	  }
 
 
