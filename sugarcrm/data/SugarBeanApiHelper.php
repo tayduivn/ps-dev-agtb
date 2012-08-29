@@ -106,8 +106,11 @@ class SugarBeanApiHelper
         }
 
         // get favorites
-                // mark if its a favorite
-        $data['_favorite'] = $this->getFavorite($bean->module_dir, $bean->id);
+        // mark if its a favorite
+        
+        if ( empty($fieldList) || !in_array('_favorite',$fieldList) ) {
+            $data['_favorite'] = $this->getFavorite($bean->module_dir, $bean->id);
+        }
 
         return $data;
     } 
