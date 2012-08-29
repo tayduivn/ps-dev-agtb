@@ -33,6 +33,8 @@ class RestTestMetadata extends RestTestBase {
     
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
+
+        $this->assertTrue(isset($restReply['reply']['currencies']),'Currencies are missing.');
     }
 
     public function testFullMetadaNoAuth() {
