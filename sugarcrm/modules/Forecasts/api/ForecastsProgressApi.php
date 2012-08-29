@@ -218,25 +218,24 @@ class ForecastsProgressApi extends ModuleApi
    		$amountSum = 0;
 
         //set user ids and timeperiods
-        $where = "( users.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
-        $where .= " OR opportunities.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
-        $where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
-
-        // no deleted opportunities
-        $where .= " AND opportunities.deleted = 0";
+        $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
+        $query .= " ON o.assigned_user_id = u.id";
+        $query .= " WHERE o.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
+        $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
+        $query .= " OR o.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
 
         //pre requirements, include only closed won opportunities
-        if(count($sales_stage_won)) {
-           $where .= " AND opportunities.sales_stage in ( '";
-           $where .= join("','", $sales_stage_won) . "')";
+        if(!empty($sales_stage_won))
+        {
+           $query .= " AND o.sales_stage in ( '";
+           $query .= join("','", $sales_stage_won) . "')";
         }
 
-        //build and execute query
-   		$query  = $this->opportunity->create_list_query(NULL, $where);
-   		$result = $GLOBALS['db']->query($query);
+        $result = $GLOBALS['db']->query($query);
 
-   		while ( $row = $GLOBALS['db']->fetchByAssoc($result) ) {
-   			$amountSum += $row["amount"];
+   		while ($row = $GLOBALS['db']->fetchByAssoc($result))
+        {
+   			$amountSum = $row["amount"];
    		}
 
    		return $amountSum;

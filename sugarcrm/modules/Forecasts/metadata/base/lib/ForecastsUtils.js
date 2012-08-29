@@ -12,6 +12,14 @@
          * @return {Object}
          */
         createHistoryLog: function(oldestModel, newestModel) {
+            if(_.isEmpty(oldestModel)) {
+                oldestModel = new Backbone.Model({
+                    best_case : 0,
+                    likely_case: 0,
+                    date_entered: ''
+
+                })
+            }
             var best_difference = newestModel.get('best_case') - oldestModel.get('best_case');
             var best_changed = best_difference != 0;
             var best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : '');
@@ -60,23 +68,30 @@
             var hb = Handlebars.compile("{{str_format key module args}}");
             var text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
 
-            var oldestModel_date = App.date.parse(oldestModel.get('date_entered'));
-            var previous_date = App.date.parse(newestModel.get('date_entered'));
+            // Check for first time run -- no date_entered for oldestModel
+            var oldestDateEntered = oldestModel.get('date_entered');
 
-            var yearDiff = oldestModel_date.getYear() - previous_date.getYear();
-            var monthsDiff = oldestModel_date.getMonth() - previous_date.getMonth();
-
+            // This will always have a value
+            var newestModelDate = App.date.parse(newestModel.get('date_entered'));
             var text2 = '';
 
-            if(yearDiff == 0 && monthsDiff < 2)
-            {
-                hb = Handlebars.compile("{{str_format key module args}}");
-                args = [previous_date.toString()];
-                text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
+            if(!_.isEmpty(oldestDateEntered)) {
+                var oldestModelDate = App.date.parse(oldestDateEntered);
+
+                var yearDiff = oldestModelDate.getYear() - newestModelDate.getYear();
+                var monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
+
+                if(yearDiff == 0 && monthsDiff < 2)
+                {
+                    args = [newestModelDate.toString()];
+                    text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
+                } else {
+                    args = [monthsDiff, newestModelDate.toString()];
+                    text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
+                }
             } else {
-                hb = Handlebars.compile("{{str_format key module args}}");
-                args = [monthsDiff, previous_date.toString()];
-                text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
+                args = [newestModelDate.toString()];
+                text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
             }
 
             // need to tell Handelbars not to escape the string when it renders it, since there might be
