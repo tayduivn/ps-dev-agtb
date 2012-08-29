@@ -52,7 +52,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the included values based on forecast value along with expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 1, status : 'Active', expected_amount : 20, expected_best_case : 20, expected_likely_case : 10});
+            var expectedModel = new Backbone.Model({include_expected : 1, status : 'Active', expected_amount : 20, expected_best_case : 20});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -63,7 +63,6 @@ describe("The forecasts worksheet totals calculation test", function(){
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(120);
-                            expect(updatedTotals.likely_case).toEqual(110);
                             expect(updatedTotals.amount).toEqual(120);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                         }
@@ -78,7 +77,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the included values based on forecast value without expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, expected_likely_case : 10});
+            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -89,7 +88,6 @@ describe("The forecasts worksheet totals calculation test", function(){
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(100);
-                            expect(updatedTotals.likely_case).toEqual(100);
                             expect(updatedTotals.amount).toEqual(100);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                         }
@@ -104,7 +102,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should default the included values to 0 when the amounts are null", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 1, status : 'Active', expected_amount : null, expected_best_case : null, expected_likely_case : null});
+            var expectedModel = new Backbone.Model({include_expected : 1, status : 'Active', expected_amount : null, expected_best_case : null});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -115,7 +113,6 @@ describe("The forecasts worksheet totals calculation test", function(){
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(100);
-                            expect(updatedTotals.likely_case).toEqual(100);
                             expect(updatedTotals.amount).toEqual(100);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                         }
@@ -135,7 +132,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the closed_opp_count and closed_amount values", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, expected_likely_case : 10});
+            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -146,7 +143,6 @@ describe("The forecasts worksheet totals calculation test", function(){
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(100);
-                            expect(updatedTotals.likely_case).toEqual(100);
                             expect(updatedTotals.amount).toEqual(100);
                             expect(updatedTotals.included_opp_count).toEqual(1);
                             expect(updatedTotals.won_count).toEqual(1);
@@ -171,7 +167,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the correct values for custom sales stages", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, expected_likely_case : 10});
+            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -182,7 +178,6 @@ describe("The forecasts worksheet totals calculation test", function(){
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(100);
-                            expect(updatedTotals.likely_case).toEqual(100);
                             expect(updatedTotals.amount).toEqual(100);
                             expect(updatedTotals.won_count).toEqual(1);
                             expect(updatedTotals.won_amount).toEqual(100);
@@ -207,7 +202,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the correct values for multiple custom sales stages", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, expected_likely_case : 10});
+            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -218,7 +213,6 @@ describe("The forecasts worksheet totals calculation test", function(){
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(100);
-                            expect(updatedTotals.likely_case).toEqual(100);
                             expect(updatedTotals.amount).toEqual(100);
                             expect(updatedTotals.won_count).toEqual(2);
                             expect(updatedTotals.won_amount).toEqual(200);

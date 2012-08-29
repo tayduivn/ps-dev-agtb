@@ -94,7 +94,7 @@
      * @param totals model that was updated
      */
     recalculateRepTotals: function (totals) {
-        this.likelyTotal = totals.likely_case;
+        this.likelyTotal = totals.amount;
         this.bestTotal = totals.best_case;
         this.model.set({
             closed_amount : totals.won_amount,
