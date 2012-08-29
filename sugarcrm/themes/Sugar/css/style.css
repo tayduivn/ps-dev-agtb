@@ -1431,6 +1431,34 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     
 }
 
+#footer #help {
+    float: right;
+    margin-right: 25px;
+    border-right: 1px solid #CCC;
+    height: 31px;
+}
+
+#footer #help a {
+    color: #444;
+    text-decoration: none;
+    font-size: 12px;
+    float: left;
+    padding: 0px 10px 0px;
+ }
+
+#footer #help a span {
+    float: left;
+}
+
+#footer #help a span.icon {
+    height: 24px;
+    margin: 5px 4px 4px 0px;
+}
+
+#footer #help a span.title {
+    padding-top: 8px;
+}
+
 #footer #partner a {
 	float: left;
 }
@@ -1442,7 +1470,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 #footer #partner {
     float:right;
-    margin-right:25px;
      border-right: 1px solid #CCCCCC;
      height: 31px;
 }
