@@ -49,22 +49,24 @@ class ForecastWorksheet extends SugarBean {
     function save($check_notify = false)
     {
         //Update the Opportunities bean
-        $opp = new Opportunity();
-        $opp->retrieve($this->id);
+        $opp = BeanFactory::getBean('Opportunities', $this->id);
         $opp->forecast = ($this->forecast) ? 1 : 0;
         $opp->probability = $this->probability;
+        $opp->best_case = $this->best_case;
+        $opp->likely_case = $this->likely_case;
         $opp->sales_stage = $this->sales_stage;
         $opp->commit_stage = $this->commit_stage;
         $opp->save();
 
         //Update the Worksheet bean
-		$worksheet  = new Worksheet();
-		$worksheet->retrieve($this->worksheet_id);
+        
+		$worksheet  = BeanFactory::getBean('Worksheet', $this->worksheet_id);
 		$worksheet->timeperiod_id = $opp->timeperiod_id;
 		$worksheet->user_id = $opp->assigned_user_id;
 		$worksheet->forecast = ($this->forecast) ? 1 : 0;
         $worksheet->best_case = $this->best_case;
         $worksheet->likely_case = $this->likely_case;
+        $worksheet->probability = $this->probability;
         $worksheet->forecast_type = "Direct";
         $worksheet->related_id = $this->id;
         $worksheet->save();
