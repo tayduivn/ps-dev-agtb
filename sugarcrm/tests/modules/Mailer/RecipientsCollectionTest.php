@@ -23,7 +23,7 @@ require_once('modules/Mailer/RecipientsCollection.php');
 
 class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	public function testAddRecipients_useAddTo_PassInAnEmailIdentity_NoInvalidRecipientsReturned() {
+	/*public function testAddRecipients_useAddTo_PassInAnEmailIdentity_NoInvalidRecipientsReturned() {
 		$recipientsCollection = new RecipientsCollection();
 		$recipient = new EmailIdentity('foo@bar.com', 'Foo Bar');
 
@@ -83,5 +83,5 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
 		$allRecipients = $recipientsCollection->getAll();
 		$actual = count($allRecipients['to']) + count($allRecipients['cc']) + count($allRecipients['bcc']);
 		self::assertEquals($expected, $actual, "No recipients should remain");
-	}
+	}*/
 }

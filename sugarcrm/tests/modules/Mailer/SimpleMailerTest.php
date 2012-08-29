@@ -23,7 +23,7 @@ require_once('modules/Mailer/SimpleMailer.php');
 
 class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	public function testReset_LoadDefaultConfigsReplacesTheExistingConfigsWithTheDefaults_SubjectIsNull() {
+	/*public function testReset_LoadDefaultConfigsReplacesTheExistingConfigsWithTheDefaults_SubjectIsNull() {
 		$mailer = new SimpleMailer();
 
 		$initialConfigs = array(
@@ -73,5 +73,5 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function testSend() {
 		//@todo test the various code paths of send()
-	}
+	}*/
 }
