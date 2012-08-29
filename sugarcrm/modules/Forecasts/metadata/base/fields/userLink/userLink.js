@@ -19,6 +19,11 @@
      */
     popoverTitleName: '',
 
+    /**
+     * Template to use wen updating the likelyCase on the committed bar
+     */
+    popoverTemplate : _.template('<article><%= text %><br><date><%= text2 %></date></article>'),
+
     _render:function() {
         var self = this;
         if(this.name == 'name') {
@@ -54,7 +59,8 @@
             timePeriod : this.model.get('timeperiod_id'), //need timeperiod in the manager model,
             userId : this.uid,
             dateModified : commitDate,
-            template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content" id="popover-content-' + this.uid + '"><p></p></div></div></div>'
+            template: '<div class="popover"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content" id="popover-content-' + this.uid + '"><p></p></div></div></div>',
+            popoverTemplate: this.popoverTemplate
         });
         return this;
     },
@@ -115,7 +121,6 @@
                         newestModel = {},
                         oldestModel = {},
                         len = data.length,
-                        outputHTML = "<article>",
                         outputLog = {};
 
                     if(len == 1) {
@@ -145,9 +150,8 @@
                     }
 
                     outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                    outputHTML += outputLog.text + "<br><date>" + outputLog.text2 + "</date></article>";
 
-                    $('[id="popover-content-' + userId + '"]').html(outputHTML);
+                    $('[id="popover-content-' + userId + '"]').html(this.options.popoverTemplate(outputLog));
                 }
             },
             { context : this }
