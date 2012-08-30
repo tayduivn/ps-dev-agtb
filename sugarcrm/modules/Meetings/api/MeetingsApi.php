@@ -54,31 +54,21 @@ class MeetingsApi extends UnifiedSearchApi {
         $options = $this->parseSearchOptions($api,$args);
         $options['moduleList'] = $options['moduleFilter'] = array('Meetings');
 
-        // determine the correct serach engine, don't pass any configs and fallback to the default search engine if the determiend one is down
-        $searchEngine = SugarSearchEngineFactory::getInstance($this->determineSugarSearchEngine($api, $args, $options), array(), false);
-        if ( $searchEngine instanceOf SugarSearchEngine) {
-            $options['custom_where'] = "meetings.date_start >= NOW()";
-            $orderBy = 'date_start ASC, id DESC';
-            $orderByData['date_start'] = false;
-            $orderByData['id'] = false;
-            $options['orderByArray'] = $orderByData;
-            $options['orderBy'] = $orderBy;
-            $options['resortResults'] = true;
-            $recordSet = $this->globalSearchSpot($api,$args,$searchEngine,$options);
-            $sortByDateModified = true;
-        } else {
-            // add an option for filtering out meetings that have already started
-            $options['filter']['fieldname'] = 'date_start';
-            $options['filter']['type'] = 'range';
-            $options['filter']['range']['from'] = date('c');
-            $options['filter']['range']['to'] = date('c',strtotime('+6 months'));
-            $options['filter']['range']['include_lower'] = true;
-            $options['filter']['range']['include_upper'] = true;
-            $options['sort'][] = array('date_start' => array('order' => 'asc')); 
+        /**
+         * TODO: Add FTS to this, currently our implementation does not support date range searches
+         */
 
-            $recordSet = $this->globalSearchFullText($api,$args,$searchEngine,$options);
-            $sortByDateModified = false;
-        }
+        $searchEngine = SugarSearchEngineFactory::getInstance('SugarSearchEngine', array(), false);
+
+        $options['custom_where'] = "meetings.date_start >= NOW()";
+        $orderBy = 'date_start ASC, id DESC';
+        $orderByData['date_start'] = false;
+        $orderByData['id'] = false;
+        $options['orderByArray'] = $orderByData;
+        $options['orderBy'] = $orderBy;
+        $options['resortResults'] = true;
+        $recordSet = $this->globalSearchSpot($api,$args,$searchEngine,$options);
+        $sortByDateModified = true;
 
         return $recordSet;
 

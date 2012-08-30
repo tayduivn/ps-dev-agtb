@@ -31,57 +31,64 @@ class MeetingsApiTest extends RestTestBase
     public function setUp()
     {
         parent::setUp();
-        for($x = 1; $x < 31; $x++)
-        {
-			$meeting = new Meeting();
-			$meeting->id = uniqid();
-	        $meeting->name = "Test Meeting {$x}";
-	        $meeting->save();
-	        $meeting->date_start = date("Y-m-d", strtotime("+{$x} days"));
-	        $meeting->date_end  = date("Y-m-d", strtotime("+{$x} days"));
-			$this->meeting[] = $meeting;        	
-        }
     }
     
     public function tearDown()
     {
     	parent::tearDown();
-        foreach($this->meeting AS $meeting)
-        {
-            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
-        }
+
     }
 
 	public function testModuleSearch()
 	{
+        $meetings = array();
+        for($x = 1; $x < 31; $x++)
+        {
+            $meeting = new Meeting();
+            $meeting->name = "Test Meeting {$x}";
+            $meeting->save();
+            $meeting->date_start = date("Y-m-d H:i:s", strtotime("+{$x} days"));
+            $meeting->date_end  = date("Y-m-d H:i:s", strtotime("+{$x} days"));
+            $meeting->assigned_user_id = $this->_user->id;
+            $meeting->team_set_id = 1;
+            $meeting->team_id = 1;
+            $meeting->save();
+            $meetings[] = $meeting;            
+        } 
         // set the FTS engine as down and make sure the config removes FTS
         searchEngineDown();
         $this->config_file_override = '';
         if(file_exists('config_override.php'))
-            $this->config_file_override = file_get_contents('config_override.php');
+            $config_file_override = file_get_contents('config_override.php');
         else
-            $this->config_file_override= '<?php' . "\r\n";
-        $new_line= '$sugar_config[\'full_text_engine\'] = true;';
-        file_put_contents('config_override.php', $this->config_file_override . "\r\n" . $new_line);
+            $config_file_override= '<?php' . "\r\n";
+
+        $new_line = '$sugar_config[\'full_text_engine\'] = true;';
+        file_put_contents('config_override.php', $config_file_override . "\r\n" . $new_line);
 
         // verify we get 30 meetings
-        
+        $restReply = $this->_restCall("Meetings?max_num=30");
+
+        $this->assertEquals(30, count($restReply['reply']['records']), "Did not get 30 meetings");
+
         // change a date to the past
+        $meetings[5]->date_start = date('Y-m-d H:i:s', strtotime("-50 days"));
+        $meetings[5]->save();        
+        $restReply = $this->_restCall("Meetings?max_num=30");
         // verify we get 29 meetings
-        
+        $this->assertEquals(29, count($restReply['reply']['records']), "Did not get 29 Meetings");
 
         // change the date back
-        // 
+        $meetings[5]->date_start = date("Y-m-d H:i:s", strtotime("+5 days"));
+        $meetings[5]->save();
+
         // restore FTS and config override
         restoreSearchEngine();
-        file_put_contents('config_override.php', $this->config_file_override);
+        file_put_contents('config_override.php', $config_file_override);
+        foreach($meetings AS $meeting)
+        {
+            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
+        }
 	}
-
-	public function testModuleSearchFTS()
-	{
-        // verify 30 meetings
-        // change date to past
-        // verify 29
-        // change date back
-	}
+ 
 }

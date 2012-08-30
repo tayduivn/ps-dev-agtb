@@ -269,10 +269,13 @@ class UnifiedSearchApi extends SugarApi {
             return 'SugarSearchEngine';
         }
 
-
-
+        $fts = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         //everything is groovy for FTS, get the FTS Engine Name from the conig
-        return SugarSearchEngineFactory::getFTSEngineNameFromConfig();
+        if(!empty($fts))
+        {
+            return $fts;
+        }
+        return 'SugarSearchEngine';
     }
     /**
      * This function is used to hand off the global search to the FTS Search Emgine
@@ -379,7 +382,25 @@ class UnifiedSearchApi extends SugarApi {
             $searchOptions['limitPerModule'] = $limit;
         }
 
+        if(isset($options['custom_select']))
+        {
+            $searchOptions['custom_select'] = $options['custom_select'];
+        }
+
+        if(isset($options['custom_from']))
+        {
+            $searchOptions['custom_from'] = $options['custom_from'];
+        }
+
+
+        if(isset($options['custom_where']))
+        {
+            $searchOptions['custom_where'] = $options['custom_where'];
+        }
+
+
         $results = $searchEngine->search($options['query'],$offset, $limit, $searchOptions);
+
         $returnedRecords = array();
         foreach ( $results as $module => $moduleResults ) {
             if ( !is_array($moduleResults['data']) ) {
