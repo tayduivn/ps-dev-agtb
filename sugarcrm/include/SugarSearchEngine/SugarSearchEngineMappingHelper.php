@@ -68,6 +68,11 @@ class SugarSearchEngineMappingHelper
                 'decimal' => 'double',
             ),
             */
+           'dbType' => array(
+                'datetime'  =>  array(
+                                    'type'  => 'date',
+                                ),
+            )
         ),
     );
 
@@ -167,7 +172,7 @@ class SugarSearchEngineMappingHelper
 
         if (empty($searchEngineType))
         {
-            $searchEngineType = 'string'; // default
+            $searchEngineType = array('type'=> 'string'); // default
         }
 
         return $searchEngineType;
