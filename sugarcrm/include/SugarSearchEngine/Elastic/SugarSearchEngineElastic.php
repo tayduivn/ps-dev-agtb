@@ -124,13 +124,23 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         foreach($searchFields as $fieldName => $fieldDef)
         {
             //All fields have already been formatted to db values at this point so no further processing necessary
-            if( !empty($bean->$fieldName) )
+            if( !empty($bean->$fieldName))
             {
                 // 1. elasticsearch does not handle multiple types in a query very well
                 // so let's use only strings so it won't be indexed as other types
                 // 2. for some reason, bean fields are encoded, decode them first
-                $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
+                if(!isset($fieldDef['dbType']) || $fieldDef['dbType'] != 'datetime')
+                {
+                    $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
+                }
+                else
+                {
+                    // dates have to be in ISO-8601 without the : in the TZ
+                    $keyValues[$fieldName] = date('Y-m-d', strtotime($bean->$fieldName)) . 'T' . date('H:i:s', strtotime($bean->$fieldName)) . date('O', strtotime($bean->$fieldName));
+                }
+                
             }
+
         }
 
         //Always add our module
