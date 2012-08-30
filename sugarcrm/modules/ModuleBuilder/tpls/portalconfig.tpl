@@ -115,7 +115,6 @@
 
 <script language='javascript'>
     $('.chzn-select').chosen({allow_single_deselect: true});
-    addToValidate(0, "logoURL", "portal_logo_url", false, {/literal}"{$mod.LBL_PORTAL_LOGO_URL}"{literal});
     addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
     addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
     addToValidate(0, "maxSearchQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal}); 
