@@ -52,7 +52,7 @@ class TimePeriod extends SugarBean {
     var $time_period_type = 'Annually';
 	var $object_name = "TimePeriod";
 	var $user_preferences;
-
+    var $is_leaf;
 	var $encodeFields = Array("name");
 
 	// This is used to retrieve related fields from form posts.
@@ -413,6 +413,19 @@ class TimePeriod extends SugarBean {
         }
 
         return BeanFactory::getBean('TimePeriod', $nextID);
+    }
+
+    /**
+     * subtracts the end from the start date to return the date length in days
+     *
+     * @return mixed
+     */
+    public function getLengthInDays() {
+        $timedate = TimeDate::getInstance();
+        $startDate = $timedate->fromUserDate($this->start_date);
+        $endDate = $timedate->fromUserDate($this->end_date);
+        $diff = $startDate->diff($endDate);
+        return $diff->days;
     }
 }
 
