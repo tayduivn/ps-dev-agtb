@@ -110,6 +110,8 @@ $mod_strings = return_module_language($current_language,"Reports");
 	$result = $report->db->query($sql);
 	while($row = $report->db->fetchByAssoc($result))
 	{
+		//resets time limit to 30 seconds for each iteration to avoid timeout
+		set_time_limit(30);
 		$focus->$relationship_attr_name->add($row['primaryid']);
 	}
 }
