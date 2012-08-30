@@ -14,7 +14,7 @@
      */
     app.error.handleNeedLoginError = function(error) {
         backToLogin(true);
-        app.alert.show("needs_login_error", {level: "error", messages: "The username/password combination provided is incorrect, please try again.", title:"Invalid Credentials", autoClose: true});
+        app.alert.show("needs_login_error", {level: "error", messages: "LBL_PORTAL_INVALID_CREDS", title:"LBL_PORTAL_INVALID_CREDS_TITLE", autoClose: true});
     };
 
     /**
@@ -22,7 +22,7 @@
      */
     app.error.handleInvalidGrantError = function(error) {
         backToLogin(true);
-        app.alert.show("invalid_grant_error", {level: "error", messages: "Your token is invalid or has expired. Please login again.", title:"Token Expired", autoClose: true});
+        app.alert.show("invalid_grant_error", {level: "error", messages: "LBL_PORTAL_INVALID_GRANT", title:"LBL_PORTAL_INVALID_GRANT_TITLE", autoClose: true});
     };
 
     /**
@@ -30,14 +30,14 @@
      */
     app.error.handleInvalidClientError = function(error) {
         backToLogin(true);
-        app.alert.show("invalid_client_error", {level: "error", messages: "Client authentication failed.", title:"Invalid Client", autoClose: true});
+        app.alert.show("invalid_client_error", {level: "error", messages: "LBL_PORTAL_AUTH_FAILED", title:"LBL_PORTAL_AUTH_FAILED_TITLE", autoClose: true});
     };
     /**
      * Invalid request handler. 
      */
     app.error.handleInvalidRequestError = function(error) {
         backToLogin(true);
-        app.alert.show("invalid_request_error", {level: "error", messages: "The request made is invalid or malformed. Please contact technical support.", title:"Invalid Request", autoClose: true});
+        app.alert.show("invalid_request_error", {level: "error", messages: "LBL_PORTAL_INVALID_REQUEST", title:"LBL_PORTAL_INVALID_REQUEST_TITLE", autoClose: true});
     };
 
     /**
@@ -45,7 +45,7 @@
      */
     app.error.handleTimeoutError = function(error) {
         backToLogin(true);
-        app.alert.show("timeout_error", {level: "error", messages: "The request timed out.", title:"Request timeout", autoClose: true});
+        app.alert.show("timeout_error", {level: "error", messages: "LBL_PORTAL_REQUEST_TIMEOUT", title:"LBL_PORTAL_REQUEST_TIMEOUT_TITLE", autoClose: true});
     };
 
     /**
@@ -53,14 +53,14 @@
      */
     app.error.handleUnauthorizedError = function(error) {
         backToLogin(true);
-        app.alert.show("unauthorized_request_error", {level: "error", messages: "We're sorry, but it appears you are unauthorized to access this resource.", title:"HTTP Error: 401 Unauthorized", autoClose: true});
+        app.alert.show("unauthorized_request_error", {level: "error", messages: "LBL_PORTAL_UNAUTHORIZED", title:"LBL_PORTAL_UNAUTHORIZED_TITLE", autoClose: true});
     };
 
     /**
      * 403 Forbidden error handler. 
      */
     app.error.handleForbiddenError = function(error) {
-        app.alert.show("forbidden_request_error", {level: "error", messages: "Resource not available.", title:"HTTP Error: 403 Forbidden", autoClose: true});
+        app.alert.show("forbidden_request_error", {level: "error", messages: "LBL_PORTAL_RESOURCE_UNAVAILABLE", title:"LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE", autoClose: true});
     };
     
     /**
@@ -80,7 +80,7 @@
      */
     app.error.handleMethodNotAllowedError = function(error) {
         backToLogin(true);
-        app.alert.show("not_allowed_error", {level: "error", messages: "HTTP method not allowed for this resource. Please contact technical support.", title:"HTTP Error: 405 Method Not Allowed", autoClose: true});
+        app.alert.show("not_allowed_error", {level: "error", messages: "LBL_PORTAL_METHOD_NOT_ALLOWED", title:"LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE", autoClose: true});
     };
 
     /**
@@ -90,16 +90,13 @@
         backToLogin(true);
         // TODO: For finer grained control we could sniff the {error: <code>} in the response text (JSON) for one of:
         // missing_parameter, invalid_parameter, request_failure
-        app.alert.show("precondtion_failure_error", {level: "error", messages: "Request failure, or, missing/invalid parameter. Please contact technical support", title:"HTTP Error: 412", autoClose: true});
+        app.alert.show("precondtion_failure_error", {level: "error", messages: "LBL_PORTAL_PRECONDITION_MISSING", title:"LBL_PORTAL_PRECONDITION_MISSING_TITLE", autoClose: true});
     };
        
     /**
      * 500 Internal server error handler. 
      */
     app.error.handleServerError = function(error) {
-        if(!Backbone.History.started) {
-            app.router.start();
-        } 
         app.controller.loadView({
             layout: "error",
             errorType: "500",

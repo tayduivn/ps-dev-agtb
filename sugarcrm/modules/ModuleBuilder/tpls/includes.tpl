@@ -52,13 +52,13 @@
 <script type="text/javascript" src='{sugar_getjspath file ='modules/ModuleBuilder/javascript/JSTransaction.js'}' ></script>
 <script type="text/javascript" src='{sugar_getjspath file ='include/javascript/tiny_mce/tiny_mce.js'}' ></script>
 
-
+{* //BEGIN SUGARCRM flav=ent ONLY *}
 <script src='sidecar/minified/sidecar.min.js'></script>
 <script language="javascript">
     jQuery.noConflict();
 </script>
 <script src='include/javascript/sugarAuthStore.js'></script>
-<script src='portal2/lib/twitterbootstrap/js/bootstrap-colorpicker.js'></script>
-
+<script src='styleguide/assets/js/bootstrap-colorpicker.js'></script>
+{* //END SUGARCRM flav=ent ONLY *}
 
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file="modules/ModuleBuilder/tpls/MB.css"}" />

@@ -468,58 +468,6 @@ class RestTestPortalSecurity extends RestTestPortalBase {
 
     }
 
-    public function testPortalSecurityNoAccount() {
-        for ( $i = 0 ; $i < 10 ; $i++ ) {
-            $contact = new Contact();
-            $contact->first_name = "UNIT".($i+1);
-            $contact->last_name = create_guid();
-            $contact->title = sprintf("%08d",($i+1));
-
-            if ( $i == 5 ) {
-                // This guy is our guy
-                $contact->portal_active = true;
-                $contact->portal_name = "unittestportal";
-                $contact->portal_password = User::getPasswordHash("unittest");
-                
-                $this->portalGuy = $contact;
-            }
-            $this->contacts[$i] = $contact;
-
-            $contact->save();
-        }
-
-
-        // Negative test: Try and fetch a Contact you shouldn't be able to see
-        $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
-        $this->assertEquals('not_found',$restReply['reply']['error']);
-
-        // Positive test: Fetch a Contact that you should be able to see
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
-        $this->assertEquals($this->portalGuy->id,$restReply['reply']['id']);
-
-        // Positive test: Should be able to change the name of our Contact
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id,json_encode(array('last_name'=>'UnitTestMyGuy')),'PUT');
-        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
-        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
-        $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
-
-        // Negative test: Should not be able to create a new Contact
-        $restReply = $this->_restCall("Contacts/",json_encode(array('last_name'=>'UnitTestNew','first_name'=>'NewGuy')),'POST');
-        $this->assertEquals('not_authorized',$restReply['reply']['error']);
-
-        // Negative test: Should not be able to create a new Case
-        $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','description'=>'UNIT TEST SHOULD FAIL')),'POST');
-        $this->assertEquals('not_authorized',$restReply['reply']['error']);
-        
-        // Fetch contacts, make sure we can only see the correct one.
-        $restReply = $this->_restCall("Contacts");
-
-        foreach ( $restReply['reply']['records'] as $record ) {
-            $this->assertEquals($this->portalGuy->id,$record['id']);
-        }
-
-    }
-
     public function testPortalSecurityChangeAccount() {
         // Build three accounts, we'll associate to two of them.
         for ( $i = 0 ; $i < 3 ; $i++ ) {
@@ -602,4 +550,159 @@ class RestTestPortalSecurity extends RestTestPortalBase {
         $this->assertEquals('not_found',$restReply['reply']['error']);
     }
 
+    public function testPortalSecurityNoAccount() {
+        // Build three accounts, we'll associate to two of them.
+        for ( $i = 0 ; $i < 3 ; $i++ ) {
+            $account = new Account();
+            $account->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $account->billing_address_postalcode = sprintf("%08d",($i+1));
+            $account->save();
+            $this->accounts[] = $account;
+        }
+        for ( $i = 0 ; $i < 3 ; $i++ ) {
+            $contact = new Contact();
+            $contact->first_name = "UNIT".($i+1);
+            $contact->last_name = create_guid();
+            $contact->title = sprintf("%08d",($i+1));
+            $this->contacts[$i] = $contact;
+
+            if ( $i == 2 ) {
+                // This guy is our guy
+                $contact->portal_active = true;
+                $contact->portal_name = "unittestportal";
+                $contact->portal_password = User::getPasswordHash("unittest");
+                
+                $this->portalGuy = $contact;
+            }
+            $contact->save();
+        }
+
+        // How about some cases?
+        for ( $i = 0 ; $i < 3 ; $i++ ) {
+            $acase = new aCase();
+            $acase->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $acase->work_log = "The portal should never see this.";
+            $acase->description = "The portal can see this.";
+            //BEGIN SUGARCRM flav=ent ONLY
+            if ( $i != 2 ) {
+                $acase->portal_viewable = true;
+            }
+            //END SUGARCRM flav=ent ONLY
+            $acase->save();
+            $this->cases[] = $acase;
+
+            $acase->load_relationship('accounts');
+            $accountNum = $i;
+            $acase->_accountNum = $accountNum;
+            $acase->accounts->add(array($this->accounts[$accountNum]));
+
+            // All cases have bugs
+            $bug = new Bug();
+            $bug->name = "UNIT TEST ".($i+1)." - ".create_guid();
+            $bug->work_log = "The portal should never see this.";
+            $bug->description = "The portal can see this.";
+            
+            //BEGIN SUGARCRM flav=ent ONLY
+            if ( $acase->portal_viewable == true ) {
+                $bug->portal_viewable = true;
+            }
+            //END SUGARCRM flav=ent ONLY
+            
+            $bug->save();
+            $bug->_accountNum = $accountNum;
+            $this->bugs[] = $bug;
+            
+            $bug->load_relationship('cases');
+            $bug->cases->add(array($acase));
+
+            $bug->load_relationship('notes');
+            // All Bugs have two notes, one portal visible, one not
+            for ( $ii = 0 ; $ii < 2 ; $ii++ ) {
+                $note = new Note();
+                $note->name = "UNIT TEST ".($i+1)." - ".($ii+1);
+                $note->description = "SOME UNIT TEST STUFF";
+                //BEGIN SUGARCRM flav=ent ONLY
+                if ( $ii == 1 && $acase->portal_viewable == true && $bug->portal_viewable == true) {
+                    $note->portal_flag = true;
+                }
+                //END SUGARCRM flav=ent ONLY
+                $note->save();
+                $this->notes[] = $note;
+
+                $bug->notes->add(array($note));
+            }
+        }
+        // Clean up any hanging related records
+        SugarRelationship::resaveRelatedBeans();
+
+
+        // Negative test: Try and fetch an account we never linked
+        $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+        
+        // Negative test: Try and fetch a contact we never linked
+        $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+
+        // Positive test: Make sure we can access this contact
+        $restReply = $this->_restCall('Contacts/'.$this->portalGuy->id);
+        $this->assertEquals($this->portalGuy->id,$restReply['reply']['id']);
+
+        // Positive test: Make sure we can only see this contact in the contact list
+        $restReply = $this->_restCall('Contacts/');
+        foreach ( $restReply['reply']['records'] as $record ) {
+            $this->assertEquals($this->portalGuy->id,$record['id']);
+        }
+
+        // Negative test: Should not be able to create a new Contact
+        $restReply = $this->_restCall("Contacts/",json_encode(array('last_name'=>'UnitTestNew','first_name'=>'NewGuy')),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+
+        // Negative test: Should not be able to create a new Case
+        $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','description'=>'UNIT TEST SHOULD FAIL')),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+        
+        // Fetch contacts, make sure we can only see the correct one.
+        $restReply = $this->_restCall("Contacts");
+
+        foreach ( $restReply['reply']['records'] as $record ) {
+            $this->assertEquals($this->portalGuy->id,$record['id']);
+        }
+
+        // Positive test: Make sure we can fetch a bug that is visible
+        $restReply = $this->_restCall('Bugs/'.$this->bugs[1]->id);
+        $this->assertEquals($this->bugs[1]->id,$restReply['reply']['id']);
+
+        // BEGIN SUGARCRM flav=ent ONLY
+        // Negative test: Try and fetch a non-visible bug
+        $restReply = $this->_restCall("Bugs/".$this->bugs[2]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+        // END SUGARCRM flav=ent ONLY
+
+        // Positive test: Make sure we can fetch a note that is related to a visible bug
+        $restReply = $this->_restCall('Notes/'.$this->notes[1]->id);
+        $this->assertEquals($this->notes[1]->id,$restReply['reply']['id']);
+        
+        // BEGIN SUGARCRM flav=ent ONLY
+        // Negative test: Try and fetch a non-visible note
+        $restReply = $this->_restCall("Notes/".$this->notes[0]->id);
+        $this->assertEquals('not_found',$restReply['reply']['error']);
+        // END SUGARCRM flav=ent ONLY
+        
+        // Positive test: Make sure we can create a new note
+        $restReply = $this->_restCall('Notes/',json_encode(array('name'=>'UNIT TEST POSTED','description'=>'This was posted by a unit test.','parent_type'=>'Bugs','parent_id'=>$this->bugs[1]->id,'portal_flag'=>true)),'POST');
+        $this->assertTrue(!empty($restReply['reply']['id']));
+
+        // Add it to the list of beans so we can properly delete it.
+        $this->notes[] = BeanFactory::getBean('Notes',$restReply['reply']['id']);
+
+        // Negative test: Should not be able to create a new Opportunity
+        $restReply = $this->_restCall("Opportunities/",json_encode(array('name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00')),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+
+        // Negative test: Should not be able to create a new Case
+        $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','account_id'=>'','portal_viewable'=>1)),'POST');
+        $this->assertEquals('not_authorized',$restReply['reply']['error']);
+
+    }
 }

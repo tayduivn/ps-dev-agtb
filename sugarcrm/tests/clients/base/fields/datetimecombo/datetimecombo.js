@@ -1,5 +1,4 @@
 describe("sugarfields", function() {
-
     var app, field;
 
     beforeEach(function() {
@@ -14,21 +13,27 @@ describe("sugarfields", function() {
         field = null;
     });
 
-    describe("datetime", function() {
-        it("should format the value", function() {
-            var unformatedValue, expectedValue;
-            unformatedValue = new Date(2012, 3, 9, 9, 50, 58);
+    describe("datetimecombo", function() {
+        it("should format the date time combo", function() {
+            var myUser = SUGAR.App.user.getUser();
+            myUser.set('datepref','m/d/Y');
+            myUser.set('timepref','H:i');
+
+            var jsDate = new Date('2012-04-09T09:50:58Z');
+            unformatedValue = jsDate.toISOString();
+
             expectedValue =
             {
-                dateTime: unformatedValue,
-                date: '2012-04-09',
-                time: '10:00:58',
+                date: '04/09/2012',
+                time: '10:00',
                 hours: '10',
                 minutes: '00',
                 seconds: '58',
                 amPm: 'am'
             };
-            expect(field.format(unformatedValue)).toEqual(expectedValue);
+            var outdata = field.format(unformatedValue);
+            delete outdata.dateTime;
+            expect(outdata).toEqual(expectedValue);
         });
     });
 });

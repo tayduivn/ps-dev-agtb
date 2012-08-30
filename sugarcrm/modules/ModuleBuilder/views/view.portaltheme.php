@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 //FILE SUGARCRM flav=ent ONLY
 require_once('modules/ModuleBuilder/MB/AjaxCompose.php');
+require_once("include/SugarTheme/SidecarTheme.php");
 
 class ViewPortalTheme extends SugarView
 {
@@ -46,7 +47,7 @@ class ViewPortalTheme extends SugarView
     }
 
 	// DO NOT REMOVE - overrides parent ViewEdit preDisplay() which attempts to load a bean for a non-existent module
-	function preDisplay() 
+	function preDisplay()
 	{
 	}
 
@@ -62,6 +63,11 @@ class ViewPortalTheme extends SugarView
         $smarty->assign('mod', $GLOBALS['mod_strings']);
         $smarty->assign("token", session_id());
         $smarty->assign("siteURL", $GLOBALS['sugar_config']['site_url']);
+
+
+        $theme = new SidecarTheme();
+        $smarty->assign("css_url", $theme->getCSSURL());
+
         $ajax = new AjaxCompose();
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=portaltheme")');

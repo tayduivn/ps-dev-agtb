@@ -387,7 +387,10 @@ $dictionary['KBDocument'] = array('table' => 'kbdocuments',
     'vname' => 'LBL_KEYWORDS',
     'type' => 'relate',
     'reportable'=>false,
-    'source'=>'non-db'
+    'source'=>'non-db',
+    // Bug 55154 - Keywords field throwing errors when added to layouts
+    // Remove keywords from studio editor since it is not a valid studio field
+    'studio' => false,
   ),
 //END fields used for contract documents subpanel.
 

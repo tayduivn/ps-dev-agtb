@@ -53,8 +53,7 @@ if(!$upload_ok) {
     exit();
 }
 if(file_exists($file_name) && is_file($file_name)) {
-    $returnArray['path']=substr($file_name, 9); // strip upload prefix
-    $returnArray['url']= 'cache/images/'.$upload->get_stored_file_name();
+    $returnArray['path'] = $returnArray['url']= 'cache/images/'.rawurlencode($upload->get_stored_file_name());
     if(!verify_uploaded_image($file_name, $returnArray['forQuotes'] == 'quotes')) {
         $returnArray['data']='other';
         $returnArray['path'] = '';

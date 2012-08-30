@@ -211,10 +211,11 @@ class AdministrationController extends SugarController
                  $result = $searchEngine->getServerStatus();
                  if( !$result['valid'] )
                      $ftsConnectionValid = FALSE;
-             }
 
-             $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port, 'valid' => $ftsConnectionValid));
-             $this->cfg->handleOverride();
+                 // bug 54274 -- only bother with an override if we have data to place there, empty string breaks Sugar On-Demand!
+                 $this->cfg->config['full_text_engine'] = array($type => array('host' => $host, 'port' => $port, 'valid' => $ftsConnectionValid));
+                 $this->cfg->handleOverride();
+             }
 
              if(!$ftsConnectionValid)
                  echo $GLOBALS['mod_strings']['LBL_FTS_CONNECTION_INVALID'];
