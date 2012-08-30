@@ -1,9 +1,13 @@
 <div class="modal-body">
 {{#each meta.panels}}
-    <h2>{{str label "Forecasts"}}</h2>
+    {{str label "Forecasts"}}
+    <ol>
     {{#each fields}}
-        <label for="{{name}}">{{str label "Forecasts"}}</label>
-        {{field ../../this ../../model}}
+        <li>
+            <p>{{str label "Forecasts"}}</p>
+            <p>{{field ../../this ../../model}}<p>
+        </li>
     {{/each}}
+    </ol>
 {{/each}}
 </div>

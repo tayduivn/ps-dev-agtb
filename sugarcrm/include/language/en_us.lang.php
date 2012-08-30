@@ -4345,4 +4345,10 @@ $app_strings ['documentation'] = array (
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
 );
+
+$app_list_strings['FORECASTS_CONFIG_CATEGORY_OPTIONS_DOM'] = array(
+    'binary' => 'Two Categories',
+    'show_buckets' => 'Three Categories',
+    'show_n_buckets' => 'N Categories',
+);
 ?>
