@@ -25,7 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS',
+            'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC',
             'fields' => array(
                 array(
                     'name' => 'fiscalStartDate',
