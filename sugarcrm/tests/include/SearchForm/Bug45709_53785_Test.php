@@ -55,18 +55,21 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->task = SugarTestTaskUtilities::createTask();
     	$this->task->contact_id = $this->contact->id;
     	$this->task->save();
-    	
-    	$this->team = SugarTestTeamUtilities::createAnonymousTeam();
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->team = SugarTestTeamUtilities::createAnonymousTeam();
     	$this->team->name = 'Test';
     	$this->team->name_2 = 'Team';
     	$this->team->save();
+        //END SUGARCRM flav=pro ONLY
     }
 
     public function tearDown()
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestTaskUtilities::removeAllCreatedTasks();
+        //BEGIN SUGARCRM flav=pro ONLY
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
+        //END SUGARCRM flav=pro ONLY
         SugarTestHelper::tearDown();
     }
 
