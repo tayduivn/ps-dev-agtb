@@ -42,6 +42,7 @@ $mod_strings = array (
   'LNK_NEW_TIMEPERIOD' => 'Create Time Period',
   'LNK_TIMEPERIOD_LIST' => 'View Time Periods',
   'LBL_TP_IS_FISCAL_YEAR' => 'Is Fiscal  Year?',
+  'LBL_TP_IS_LEAF' => 'Is Leaf?',
   'LBL_PARENT_ID' =>  'Parent Id',
   'LBL_CREATED_BY' => 'Created by',
   'LBL_DATE_ENTERED' => 'Date Entered',
