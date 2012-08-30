@@ -655,10 +655,9 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
 	array (
 	  'name' => 'version',
 	  'vname' => 'LBL_WK_VERSION',
-	  'type'=>'varchar',
-  	  'len' => 10,
-	  'default' => 'Committed',
-	  'comment' => 'Worksheet version - Committed or Draft.'
+	  'type'=>'int',
+	  'default' => 1,
+	  'comment' => 'Worksheet version - draft = 0'
 	),
  ),
  'indices' => array (
