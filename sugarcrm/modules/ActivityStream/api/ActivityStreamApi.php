@@ -71,7 +71,7 @@ class ActivityStreamApi extends ListApi {
         $activities = $seed->getActivities($targetModule, $targetId, $options); 
         
         if($activities !== false) {
-            $nextOffset = count($activities) < $options['limit'] ? 'end' : $options['offset'] + count($activities);
+            $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
             return array('next_offset'=>$nextOffset,'records'=>$activities);
         }
         else {
@@ -97,4 +97,13 @@ class ActivityStreamApi extends ListApi {
             return $seed->addPost($targetModule, $targetId, $value);
         }
     } 
+    
+    protected function parseArguments($api, $args, $seed) {
+        // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities')
+        $options = parent::parseArguments($api, $args, $seed);
+        if(isset($args['filter']) && in_array($args['filter'], array('favorites', 'myactivities'))) {
+            $options['filter'] = $args['filter'];
+        }
+        return $options;
+    }
 }
