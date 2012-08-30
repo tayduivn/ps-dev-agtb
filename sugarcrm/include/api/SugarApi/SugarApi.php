@@ -52,6 +52,9 @@ abstract class SugarApi {
             if ( ! in_array('date_modified',$fieldList ) ) {
                 $fieldList[] = 'date_modified';
             }
+            if ( ! in_array('id',$fieldList ) ) {
+                $fieldList[] = 'id';
+            }
         } else {
             $fieldList = array();
         }
@@ -137,7 +140,9 @@ abstract class SugarApi {
         $id = $bean->id;
 
         if(isset($args['my_favorite']))
+        {
             $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
+        }
 
         $bean->retrieve($id);
 

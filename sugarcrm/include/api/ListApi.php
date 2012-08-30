@@ -263,7 +263,14 @@ class ListApi extends SugarApi {
         
         $response = array();
         $response["next_offset"] = $nextOffset;
-        $response["records"] = array_values($records);
+        $response['args'] = $args;
+        $response['records'] = array();
+        // Format the records to match every other record result out there
+        foreach ( $records as $row ) {
+            $rowBean = clone $seed;
+            $rowBean->populateFromRow($row);
+            $response['records'][] = $this->formatBean($api,$args,$rowBean);
+        }
 
         return $response;
     }

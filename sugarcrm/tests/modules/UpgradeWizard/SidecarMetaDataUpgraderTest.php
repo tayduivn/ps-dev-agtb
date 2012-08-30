@@ -119,7 +119,8 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     
     // Added for Bug 55568 - new OOTB metadata was not included in upgrade
     public function testUpgraderUsedNewViewDefs() {
-        $filename = 'custom/working/modules/Cases/metadata/portal/views/edit.php';
+        // Bug 55936 - Fixed hardcoded path for testing to pick up metadata changes
+        $filename = 'custom/working/modules/Cases/clients/portal/views/edit/edit.php';
         $exists = file_exists($filename);
         $this->assertTrue($exists, 'Cases portal edit metadata did not convert');
         
