@@ -84,8 +84,12 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         SugarTestHelper::setUp('app_list_strings');
 
         self::$manager = SugarTestForecastUtilities::createForecastUser();
-        self::$manager2 = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager['user']->id)));
-
+        //set up another manager, and assign him to the first manager manually so his data is generated
+        //correctly.
+        self::$manager2 = SugarTestForecastUtilities::createForecastUser();
+		self::$manager2["user"]->reports_to_id = self::$manager['user']->id;
+		self::$manager2["user"]->save();
+		
         self::$reportee = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager['user']->id)));
         self::$reportee2 = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager2['user']->id)));
 
@@ -156,7 +160,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $this->_user = self::$manager['user'];
         $this->_oldUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $this->_user;
-        $GLOBALS['log']->fatal("Setup");
     }
     
     public static function tearDownAfterClass()
@@ -403,24 +406,31 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "worst_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->worst_case),
             "timeperiod_id" => self::$timeperiod->id
         );
-
-        $this->assertEquals($expected["amount"], $restReply['reply'][1]["amount"]);
-        $this->assertEquals($expected["best_adjusted"], $restReply['reply'][1]["best_adjusted"]);
-        $this->assertEquals($expected["best_case"], $restReply['reply'][1]["best_case"]);
-        $this->assertEquals($expected["forecast"], $restReply['reply'][1]["forecast"]);
-        $this->assertEquals($expected["forecast_id"], $restReply['reply'][1]["forecast_id"]);
-        $this->assertEquals($expected["id"], $restReply['reply'][1]["id"]);
-        $this->assertEquals($expected["likely_adjusted"], $restReply['reply'][1]["likely_adjusted"]);
-        $this->assertEquals($expected["likely_case"], $restReply['reply'][1]["likely_case"]);
-        $this->assertEquals($expected["name"], $restReply['reply'][1]["name"]);
-        $this->assertEquals($expected["quota"], $restReply['reply'][1]["quota"]);
-        $this->assertEquals($expected["quota_id"], $restReply['reply'][1]["quota_id"]);
-        $this->assertEquals($expected["show_opps"], $restReply['reply'][1]["show_opps"]);
-        $this->assertEquals($expected["user_id"], $restReply['reply'][1]["user_id"]);
-        $this->assertEquals($expected["worksheet_id"], $restReply['reply'][1]["worksheet_id"]);
-        $this->assertEquals($expected["worst_adjusted"], $restReply['reply'][1]["worst_adjusted"]);
-        $this->assertEquals($expected["worst_case"], $restReply['reply'][1]["worst_case"]);
-        $this->assertEquals($expected["timeperiod_id"], $restReply['reply'][1]["timeperiod_id"]);
+        
+		foreach($restReply['reply'] as $record)
+		{
+			if($record["user_id"] == self::$reportee["user"]->id)
+			{
+		        $this->assertEquals($expected["amount"], $record["amount"]);
+		        $this->assertEquals($expected["best_adjusted"], $record["best_adjusted"]);
+		        $this->assertEquals($expected["best_case"], $record["best_case"]);
+		        $this->assertEquals($expected["forecast"], $record["forecast"]);
+		        $this->assertEquals($expected["forecast_id"], $record["forecast_id"]);
+		        $this->assertEquals($expected["id"], $record["id"]);
+		        $this->assertEquals($expected["likely_adjusted"], $record["likely_adjusted"]);
+		        $this->assertEquals($expected["likely_case"], $record["likely_case"]);
+		        $this->assertEquals($expected["name"], $record["name"]);
+		        $this->assertEquals($expected["quota"], $record["quota"]);
+		        $this->assertEquals($expected["quota_id"], $record["quota_id"]);
+		        $this->assertEquals($expected["show_opps"], $record["show_opps"]);
+		        $this->assertEquals($expected["user_id"], $record["user_id"]);
+		        $this->assertEquals($expected["worksheet_id"], $record["worksheet_id"]);
+		        $this->assertEquals($expected["worst_adjusted"], $record["worst_adjusted"]);
+		        $this->assertEquals($expected["worst_case"], $record["worst_case"]);
+		        $this->assertEquals($expected["timeperiod_id"], $record["timeperiod_id"]);
+		        break;
+			}
+		}
     }
 
 
@@ -497,10 +507,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
      */
      public function testWorksheetDraftVisibility()
      {       
-        
-        
-     	$GLOBALS['log']->fatal("Original: " . self::$managerData2["best_adjusted"]);
-     	self::$managerData2["best_adjusted"] = self::$managerData2["best_adjusted"] + 100;
+        self::$managerData2["best_adjusted"] = self::$managerData2["best_adjusted"] + 100;
      	
      	$postData = array("amount" => self::$managerData2["amount"],
                              "quota" => self::$managerData2["quota"],
@@ -525,6 +532,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         // set the current user to manager2
         $this->_user = self::$manager2['user'];
         $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
         
 		//save draft version for manager2
 		$response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerData2["user_id"], json_encode($postData), "PUT");
@@ -532,16 +540,10 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 		// reset current user to manager1
         $this->_user = self::$manager['user'];
         $GLOBALS['current_user'] = $this->_user;
-        
-		$GLOBALS['log']->fatal($GLOBALS['current_user']->id);
-		$GLOBALS['log']->fatal("Manager2: " . self::$manager2['user']->id);
-		$GLOBALS['log']->fatal("Manager:  " . self::$manager['user']->id);
+        $this->authToken = "";
 	
 		//Check the table as a manager1 to see if the draft version is hidden 
-		$response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$managerData2["user_id"] . '&timeperiod_id=' . self::$timeperiod->id);
-		
-		$GLOBALS['log']->fatal($postData);
-		$GLOBALS['log']->fatal($response["reply"]);
+		$response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager2['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
 		$this->assertEquals(self::$managerData2["best_adjusted"] - 100, $response["reply"][0]["best_adjusted"], "Draft version was returned");
      }
 }

@@ -382,8 +382,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 		{
 			$reportees_query .= "and w.version = 1";
 		}
-		$GLOBALS['log']->fatal("In api user:    " . $this->user_id);
-		$GLOBALS['log']->fatal("In api current: " . $current_user->id);
+		
         $result = $GLOBALS['db']->query($reportees_query);
         $data = array();
 	
