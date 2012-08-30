@@ -1,5 +1,6 @@
 ({
     events: {
+        'click #todo-pills li a': 'pillSwitcher',
         'click #todo-container': 'persistMenu',
         'click #todo': 'handleEscKey',
         'click #todo-add': 'todoSubmit',
@@ -18,16 +19,18 @@
             self.collection = app.data.createBeanCollection("Tasks");
             self.collection.fetch({myItems: true, success: function(collection) {
 
-                collection.modelList = {};
-                collection.modelList['today'] = [];
-                collection.modelList['overdue'] = [];
-                collection.modelList['upcoming'] = [];
+                collection.modelList = {
+                    today: [],
+                    overdue: [],
+                    upcoming: []
+                };
 
                 for( var modelIndex in collection.models ) {
                     var result = self.getTaskType(collection.models[modelIndex].attributes.date_due);
-                    collection.models[modelIndex].attributes.task_type = result;
                     collection.modelList[result].push(collection.models[modelIndex]);
                 }
+                self.overduePillActive = true;
+                self.render();
             }});
 
             self.bindDataChange();
@@ -51,7 +54,7 @@
             }
         });
     },
-    showDatePicker: function(e) {
+    showDatePicker: function() {
         $("#todo-date").datepicker({
             dateFormat: "yy-mm-dd"
         });
@@ -60,48 +63,93 @@
             e.stopPropagation();
         });
     },
+    checkActivePill: function() {
+        if( $("#todo-pill-overdue").hasClass("active") ) {
+            this.overduePillActive = true;
+            this.todayPillActive = false;
+            this.upcomingPillActive = false;
+        }
+        else if( $("#todo-pill-today").hasClass("active") ) {
+            this.overduePillActive = false;
+            this.todayPillActive = true;
+            this.upcomingPillActive = false;
+        }
+        else {
+            this.overduePillActive = false;
+            this.todayPillActive = false;
+            this.upcomingPillActive = true;
+        }
+    },
+    pillSwitcher: function(e) {
+        var clickedIndex = $("#todo-pills li").index($(e.target).parent()[0]);
+
+        $("#todo-pills li.active").removeClass("active");
+        $(".tab-pane.active").removeClass("active");
+        $(e.target).parent().addClass("active");
+        $($(".tab-pane")[clickedIndex]).addClass("active");
+
+    },
+    getModelInfo: function(e) {
+        var clickedEl = $(e.target).parents(".todo-item-container")[0],
+            modelIndex = ($(".tab-pane.active").children()).index(clickedEl),
+            parentID = $(".tab-pane.active").attr("id"),
+            record;
+
+        // hipsters use switch-cases, true story
+        switch(parentID) {
+            case "pane1":
+                record = this.collection.modelList['overdue'];
+                break;
+            case "pane2":
+                record = this.collection.modelList['today'];
+                break;
+            case "pane3":
+                record = this.collection.modelList['upcoming'];
+                break;
+        }
+
+        return {index: modelIndex, modList: record};
+    },
     removeTodo: function(e) {
         var self = this,
-            clickedEl = $(e.target).parents(".todo-list-item")[0],
-            modelIndex = $(".todo-list-item").index(clickedEl);
+            modelInfo = this.getModelInfo(e),
+            modelIndex = modelInfo.index,
+            record = modelInfo.modList;
 
-        this.model = this.collection.models[modelIndex];
-        this.model.destroy({ success: function(model) {
-            var record = self.collection.modelList[self.getTaskType(model.attributes.date_due)],
-                modelIDs = _.pluck(record, 'id');
-
-            record.splice(_.indexOf(modelIDs, model.id), 1);
+        this.model = this.collection.get(record[modelIndex].id);
+        this.model.destroy({ success: function() {
+            record.splice(modelIndex, 1);
 
             self.open = true;
-            self._render();
+            self.checkActivePill();
+            self.render();
         }});
     },
     changeStatus: function(e) {
-        var clickedEl = $(e.target).parents(".todo-list-item")[0],
-            modelIndex = $(".todo-list-item").index(clickedEl),
+        var modelInfo = this.getModelInfo(e),
+            modelIndex = modelInfo.index,
+            record = modelInfo.modList,
             taskStatusListStrings = app.lang.getAppListStrings('task_status_dom');
 
-        // get the current model
-        this.model = this.collection.models[modelIndex];
-        var record = this.collection.modelList[this.getTaskType(this.model.attributes.date_due)],
-            recordIndex = ( _.indexOf(_.pluck(record, 'id'), this.model.id) );
+        this.model = this.collection.get(record[modelIndex].id);
 
         if( this.model.attributes.status == taskStatusListStrings['Completed'] ) {
             this.model.set({
                 "status": taskStatusListStrings['Not Started']
             });
-            record[recordIndex].attributes.status = taskStatusListStrings['Not Started'];
+            record[modelIndex].attributes.status = taskStatusListStrings['Not Started'];
         }
         else {
             this.model.set({
                 "status": taskStatusListStrings['Completed']
             });
-            record[recordIndex].attributes.status = taskStatusListStrings['Completed'];
+            record[modelIndex].attributes.status = taskStatusListStrings['Completed'];
         }
 
         this.model.save();
         this.open = true;
-        this._render();
+        this.checkActivePill();
+        this.render();
     },
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
@@ -114,12 +162,9 @@
         app.view.View.prototype._render.call(this);
     },
     getTaskType: function(todoDate) {
-        var todayBegin = new Date(),
-            todayEnd   = new Date(),
-            todoStamp = app.date.parse(todoDate).getTime();
-
-        todayBegin = todayBegin.setHours(0,0,0,0);
-        todayEnd = todayEnd.setHours(23,59,59,999);
+        var todayBegin = new Date().setHours(0,0,0,0),
+            todayEnd   = new Date().setHours(23,59,59,999),
+            todoStamp  = app.date.parse(todoDate).getTime();
 
         // If the task falls in today's range
         if( todoStamp >= todayBegin && todoStamp <= todayEnd ) {
@@ -136,9 +181,19 @@
         var subject = $("#todo-subject").val(),
             date = $("#todo-date").val();
 
-        if( subject == "" || !(app.date.parse(date, app.date.guessFormat(date))) ) {
-            console.log("invalid input data");
-            return false;
+        if( subject == "" ) {
+            // apply input error class
+            $("#todo-subject").parent().addClass("control-group error");
+            $("#todo-subject").one("keyup", function(e) {
+                $(e.target).parent().removeClass("control-group error");
+            });
+        }
+        else if( !(app.date.parse(date, app.date.guessFormat(date))) ) {
+            // apply input error class
+            $("#todo-date").parent().addClass("control-group error");
+            $("#todo-date").one("click", function(e) {
+                $(e.target).parent().removeClass("control-group error");
+            });
         }
         else {
             var datetime = date + " 00:00:00";
@@ -155,7 +210,8 @@
             $("#todo-subject").val("");
             $("#todo-date").val("");
             this.open = true;
-            this._render();
+            this.checkActivePill();
+            this.render();
         }
     },
     todoSubmit: function(e) {
@@ -181,7 +237,7 @@
         var self = this;
         if (this.collection) {
             this.collection.on("reset", function() {
-                self._render();
+                self.render();
             }, this);
         }
     }
