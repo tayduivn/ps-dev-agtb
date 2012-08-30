@@ -13,7 +13,7 @@
 * @license http://www.gnu.org/copyleft/lesser.html GNU Lesser General Public License
 */
 
-require 'PHPUnit/Framework.php';
+//require 'PHPUnit/Framework.php';
 
 $INCLUDE_DIR = "../";
 
@@ -146,7 +146,7 @@ class phpmailerTest extends PHPUnit_Framework_TestCase {
         $ReportBody .= "---------------------" . $eol;
         $ReportBody .= "Unit Test Information" . $eol;
         $ReportBody .= "---------------------" . $eol;
-        $ReportBody .= "phpmailer version: " . PHPMailer::VERSION . $eol;
+        $ReportBody .= "phpmailer version: " . $this->Mail->Version . $eol;
         $ReportBody .= "Content Type: " . $this->Mail->ContentType . $eol;
         
         if(strlen($this->Mail->Host) > 0)
@@ -607,9 +607,9 @@ class phpmailerTest extends PHPUnit_Framework_TestCase {
 	*/
 	function test_Encodings() {
 	    $this->Mail->Charset = 'iso-8859-1';
-	    $this->assertEquals('=A1Hola!_Se=F1or!', $this->Mail->EncodeQ('¡Hola! Señor!', 'text'), 'Q Encoding (text) failed');
-	    $this->assertEquals('=A1Hola!_Se=F1or!', $this->Mail->EncodeQ('¡Hola! Señor!', 'comment'), 'Q Encoding (comment) failed');
-	    $this->assertEquals('=A1Hola!_Se=F1or!', $this->Mail->EncodeQ('¡Hola! Señor!', 'phrase'), 'Q Encoding (phrase) failed');
+	    $this->assertEquals('=A1Hola!_Se=F1or!', $this->Mail->EncodeQ('ï¿½Hola! Seï¿½or!', 'text'), 'Q Encoding (text) failed');
+	    $this->assertEquals('=A1Hola!_Se=F1or!', $this->Mail->EncodeQ('ï¿½Hola! Seï¿½or!', 'comment'), 'Q Encoding (comment) failed');
+	    $this->assertEquals('=A1Hola!_Se=F1or!', $this->Mail->EncodeQ('ï¿½Hola! Seï¿½or!', 'phrase'), 'Q Encoding (phrase) failed');
 	}
 	
 	/**
@@ -637,7 +637,7 @@ class phpmailerTest extends PHPUnit_Framework_TestCase {
 	    $this->Mail->CreateHeader();
 	    $this->assertFalse($this->Mail->set('x', 'y'), 'Invalid property set succeeded');
 	    $this->assertTrue($this->Mail->set('Timeout', 11), 'Valid property set failed');
-	    $this->Mail->getFile(__FILE__);
+//	    $this->Mail->getFile(__FILE__);
 	}
 }  
  
