@@ -50,27 +50,39 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
     ),
     'panels' => array(
         array(
+            'name' => 'panel_head',
             'label' => 'LBL_PANEL_1',
-            'columns'=>2,
-             'labels'=>false,
-              'labelsOnTop'=>true,
-             'placeholders'=>true,
+            'columns' => 2,
+            'labels' => false,
+            'labelsOnTop' => false,
+            'placeholders' => true,
             'fields' => array(
-                array('name'=>'name', 'css'=>'big', 'span'=>12, 'label'=>' '),
-                '',
+                array('fields' => array( array('name' => 'img', 'span' => 2, 'label' => '')), 'noedit' => true, 'span' => 2),
+                array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => ' ', 'placeholder' => 'LBL_NAME'),
+            )
+        ),
+        array(
+            'name' => 'panel_body',
+            'label' => 'LBL_PANEL_2',
+            'columns' => 2,
+            'labels' => false,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
                 'assigned_user_name',
                 'billing_address_street',
-                array('name'=>'industry', 'css'=>'minor'),
-                array('fields'=>array('billing_address_city','billing_address_state', 'billing_address_postalcode')),
+                array('name' => 'industry', 'css' => 'minor'),
+                array('fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')),
                 'website',
                 'billing_address_country',
                 'phone_office',
                 'email1'
-
             ),
         ),
         array(
-            'fields'=>array(
+            'name' => 'panel_hidden',
+            'hide' => true,
+            'fields' => array(
                 //'linkedin',
                 //'facebook',
                 'twitter',
