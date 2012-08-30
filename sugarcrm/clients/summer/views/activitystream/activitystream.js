@@ -1,13 +1,17 @@
 ({
-    events: {
+    events:{
         'click .reply': 'showAddComment',
         'click .postReply': 'addComment',
         'click .post': 'showAddPost',
         'click .addPost': 'addPost',
-        'click .more': 'showAllComments'
+        'click .more': 'showAllComments',
+        'click .filterAll': 'showAllActivities',
+        'click .filterMyActivities': 'showMyActivities', 
+        'click .filterFavorites': 'showFavoritesActivities'        
     },
 
     initialize: function(options) {
+    	this.opts = { params: {}};
         app.view.View.prototype.initialize.call(this, options);
 
         _.bindAll(this);
@@ -60,10 +64,10 @@
             myPostModule = this.module,
             myPostUrl = 'ActivityStream';
 
-        if (myPostModule !== "" && myPostModule !== "ActivityStream") {
-            myPostUrl += '/' + myPostModule;
-            if (myPostId !== '') {
-                myPostUrl += '/' + myPostId;
+        if(myPostModule !== "ActivityStream") {
+            myPostUrl += '/'+myPostModule;
+            if(myPostId !== undefined) {
+                myPostUrl += '/'+myPostId;
             }
         }
 
@@ -72,6 +76,21 @@
         }});
     },
 
+    showAllActivities: function(event) {
+        this.opts.params.filter = 'all'; 
+        this.collection.fetch(this.opts);
+    },
+    
+    showMyActivities: function(event) {
+        this.opts.params.filter = 'myactivities';
+        this.collection.fetch(this.opts);
+    },
+    
+    showFavoritesActivities: function(event) {
+        this.opts.params.filter = 'favorites';  
+        this.collection.fetch(this.opts);
+    }, 
+    
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
             var comments = model.get("comments");

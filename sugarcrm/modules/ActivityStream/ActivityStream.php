@@ -96,7 +96,7 @@ class ActivityStream extends SugarBean {
      * @return array
      */
     public function getActivities($targetModule, $targetId, $options = array()) {
-        global $dictionary, $current_language;
+        global $dictionary, $current_language, $current_user;
         $tableName = $dictionary['ActivityStream']['table']; 
         $fieldDefs = $dictionary['ActivityStream']['fields'];        
         
@@ -109,27 +109,36 @@ class ActivityStream extends SugarBean {
         // Convert to int for security
         $start = isset($options['offset']) ? (int) $options['offset'] : 0;
         $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
-        $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1;        
+        $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1; 
+        $filter = isset($options['filter']) ? $options['filter'] : 'all';       
         $activities = array();
-              
-        $where = '';
+
+        $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name';
+        $from = 'activity_stream a, users u';
+        $where = 'a.created_by = u.id';
+        $limit = ''; 
+               
         if(!empty($targetModule)) {
-            $where .= "target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
+            $where .= " AND a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
-                $where .= " AND target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
+                $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
             }
         }
         
-        if(!empty($where)) {
-            $where = ' AND '.$where;
+        if($filter == 'myactivities') {
+            $where .= " AND a.created_by = '".$current_user->id."'";
         }
-        
-        $limit = '';
+        else if($filter == 'favorites') {
+            $from .= ", sugarfavorites f";
+            $where .= " AND a.target_module = f.module AND a.target_id = f.record_id AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
+        }
         
         if($numActivities > 0) {
-            $limit = ' LIMIT '.$start. ', '.$numActivities;
+            $limit = ' LIMIT '.$start. ', '.$numActivities; 
         }
-        $sql = "SELECT a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, users.first_name, users.last_name FROM activity_stream a, users where a.created_by = users.id ".$where. " ORDER BY a.date_created DESC ".$limit;
+        
+        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
+        $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
         
         if(!empty($result)) {
@@ -140,12 +149,18 @@ class ActivityStream extends SugarBean {
                 $row['target_name'] = '';
                 if(!empty($row['target_id'])) {
                     $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
-                    $row['target_name'] = $bean->name;
+                    if(!empty($bean->name)) {
+                        $row['target_name'] = $bean->name;
+                    }
                 }
                 else if(!empty($row['target_module'])) {
-                    $bean = BeanFactory::getBean($row['target_module']);                    
-                    $mod_strings = return_module_language($current_language, $bean->module_dir);
-                    $row['target_name'] = $mod_strings['LBL_MODULE_NAME'];
+                    $bean = BeanFactory::getBean($row['target_module']);   
+                    if(!empty($bean->module_dir)) {              
+                        $mod_strings = return_module_language($current_language, $bean->module_dir);
+                        if(!empty($mod_strings['LBL_MODULE_NAME'])) {
+                            $row['target_name'] = $mod_strings['LBL_MODULE_NAME'];
+                        }
+                    }
                 }
                 $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
                 unset($row['first_name']);
@@ -160,7 +175,7 @@ class ActivityStream extends SugarBean {
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];                
-                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,users.first_name, users.last_name FROM activity_comments c, users WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = users.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
                     
                     if(!empty($result)) {

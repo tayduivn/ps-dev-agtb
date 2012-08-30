@@ -1,5 +1,20 @@
 <div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
-  <h4>Activity</h4>       
+  <h4>Activity</h4>  
+  {{#if opts.params.filter}}
+  <input class="filterAll" type="checkbox" {{#notEq opts.params.filter "all"}} {{else}}checked="checked" disabled="disabled"{{/notEq}}/> All
+  <input class="filterMyActivities" type="checkbox" {{#notEq opts.params.filter "myactivities"}} {{else}}checked="checked" disabled="disabled"{{/notEq}}/> My Activities
+  {{#if opts.params.id}}
+  {{else}}
+  <input class="filterFavorites" type="checkbox" {{#notEq opts.params.filter "favorites"}} {{else}}checked="checked" disabled="disabled"{{/notEq}}/> My Favorites      
+  {{/if}} 
+  {{else}} 
+  <input class="filterAll" type="checkbox" checked="checked" disabled="disabled"/> All
+  <input class="filterMyActivities" type="checkbox"/> My Activities
+  {{#if opts.params.id}}
+  {{else}}
+  <input class="filterFavorites" type="checkbox"/> My Favorites         
+  {{/if}} 
+  {{/if}}   
   <div class="actions">
       <a data-toggle="modal" href="#post" class="post btn btn-mini reply"><i class="icon-plus"></i></a>
   </div>
