@@ -212,8 +212,11 @@ class SugarFieldDatetime extends SugarFieldBase {
 
         $date = $timedate->fromUserType($bean->$fieldName,$properties['type']);
         if ( $date == null ) {
-            // Could not parse date...
-            return;
+            // Could not parse date... try DB format
+            $date = $timedate->fromDbType($bean->$fieldName,$properties['type']);
+            if ( $date == null ) {
+                return;
+            }
         }
 
         if ( $properties['type'] == 'date' ) {

@@ -11,9 +11,8 @@
     },
 
     unformat:function(value) {
-        var myUser = this.app.user.getUser();
-        var jsDate = this.app.utils.date.parse(value,myUser.get('datepref')+' '+myUser.get('timepref'));
-        var output = this.app.utils.date.format(value,'Y-m-dTH:i:s');
+        var jsDate = this.app.date.parse(value,this.app.user.get('datepref')+' '+this.app.user.get('timepref'));
+        var output = this.app.date.format(value,'Y-m-dTH:i:s');
 
         return output;
     },
@@ -28,16 +27,16 @@
             return '';
         }
         var jsDate = new Date(splitValue[1]+' '+splitValue[2]);
-        var myUser = this.app.user.getUser();
-        jsDate = this.app.utils.date.roundTime(jsDate);
+        var myUser = this.app.user;
+        jsDate = this.app.date.roundTime(jsDate);
         var output = {
-            dateTime: jsDate,
-            date: this.app.utils.date.format(jsDate, myUser.get('datepref')),
-            time: this.app.utils.date.format(jsDate, myUser.get('timepref')),
-            hours: this.app.utils.date.format(jsDate, 'H'),
-            minutes: this.app.utils.date.format(jsDate, 'i'),
-            seconds: this.app.utils.date.format(jsDate, 's'),
-            amPm: this.app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+            dateTime: this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref')),
+            date: this.app.date.format(jsDate, myUser.get('datepref')),
+            time: this.app.date.format(jsDate, myUser.get('timepref')),
+            hours: this.app.date.format(jsDate, 'H'),
+            minutes: this.app.date.format(jsDate, 'i'),
+            seconds: this.app.date.format(jsDate, 's'),
+            amPm: this.app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
         return output
     },

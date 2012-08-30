@@ -11,8 +11,8 @@
     },
 
     unformat:function(value) {
-        var myUser = this.app.user.getUser();
-        var jsDate = this.app.utils.date.parse(value,myUser.get('datepref')+' '+myUser.get('timepref'));
+        var myUser = this.app.user;
+        var jsDate = this.app.date.parse(value,myUser.get('datepref')+' '+myUser.get('timepref'));
         var output = jsDate.toISOString();
         return output;
     },
@@ -20,16 +20,16 @@
     format:function(value) {
         // Let the javascript handle the timezone conversion, now everything will display in the browser's time
         var jsDate = new Date(value);
-        var myUser = this.app.user.getUser();
-        jsDate = this.app.utils.date.roundTime(jsDate);
+        var myUser = this.app.user;
+        jsDate = this.app.date.roundTime(jsDate);
         var output = {
-            dateTime: jsDate,
-            date: this.app.utils.date.format(jsDate, myUser.get('datepref')),
-            time: this.app.utils.date.format(jsDate, myUser.get('timepref')),
-            hours: this.app.utils.date.format(jsDate, 'H'),
-            minutes: this.app.utils.date.format(jsDate, 'i'),
-            seconds: this.app.utils.date.format(jsDate, 's'),
-            amPm: this.app.utils.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+            dateTime: this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref')),
+            date: this.app.date.format(jsDate, myUser.get('datepref')),
+            time: this.app.date.format(jsDate, myUser.get('timepref')),
+            hours: this.app.date.format(jsDate, 'H'),
+            minutes: this.app.date.format(jsDate, 'i'),
+            seconds: this.app.date.format(jsDate, 's'),
+            amPm: this.app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
         return output
     },
