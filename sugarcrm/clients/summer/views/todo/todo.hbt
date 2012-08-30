@@ -12,13 +12,13 @@
             </ul>
             <div class="todo-header">
                 <div class="input-prepend">
-                    <span class="add-on"><i class="icon-edit"></i></span><input class="span2" id="todo-subject" type="text" placeholder="What needs to be done?">
+                    <span class="add-on"><i class="icon-edit"></i></span><input class="span2" id="todo-subject" type="text" placeholder="What needs to be done?" tabindex="1">
                     <div id="todo-add-container" class="input-append">
-                        <button class="btn btn-primary" id="todo-add" type="button">{{str "LBL_ADD"}}</button>
+                        <button class="btn btn-primary" id="todo-add" type="button" tabindex="3">{{str "LBL_ADD"}}</button>
                     </div>
                 </div>
                 <div id="todo-date-container" class="input-prepend">
-                    <span class="add-on"><i class="icon-calendar"></i></span><input class="span2" id="todo-date" type="text" placeholder="By when?">
+                    <span class="add-on"><i class="icon-calendar"></i></span><input class="span2" id="todo-date" type="text" placeholder="By when?" tabindex="2">
                 </div>
             </div>
             <div class="tab-content">
