@@ -13,7 +13,7 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
-
+    
     /**
      * Initialize the View
      *
@@ -35,6 +35,7 @@
 
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
+        this._collection.isDirty = false;
     	
     	//Setup total subview
     	var TotalModel = Backbone.Model.extend({
@@ -90,7 +91,7 @@
         }
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
-        this._collection.fetch();
+        this.safeFetch();
     },
 
     bindDataChange: function() {
@@ -120,7 +121,7 @@
             }, this);
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
-            	var renderAll = false;
+            	/*var renderAll = false;
             	$.each(this.context.forecasts.worksheetmanager.models, function(index, element){
             		if(element.hasChanged("quota"))
             		{
@@ -131,12 +132,60 @@
             		this.context.forecasts.worksheetmanager.url = this.createURL();
             		this.context.forecasts.worksheetmanager.fetch();
             	}
-            	else{            		
+            	else{*/            		
             		this.totalView.render();
+            	//}
+            	
+            }, this);
+            this.context.forecasts.on("change:reloadWorksheetFlag", function(){
+            	
+            	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
+            		var model = this.context.forecasts.worksheetmanager;
+            		model.url = this.createURL();
+            		this.safeFetch();
+            		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
             	
             }, this);
         }
+    },
+    
+    /**
+     * This function checks to see if the worksheet is dirty, and gives the user the option
+     * of saving their work before the sheet is fetched.
+     */
+    safeFetch: function(updateFcn){
+    	var collection = this._collection; 
+    	var self = this;
+    	if(collection.isDirty){
+    		//unsaved changes, ask if you want to save.
+    		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
+    			_.each(collection.models, function(model, index){
+					var isDirty = model.get("isDirty");
+					if(typeof(isDirty) == "boolean" && isDirty ){
+        				model.set({draft: 1}, {silent:true});
+        				model.save();
+        				model.set({isDirty: false}, {silent:true});
+        			}  
+				});
+    			collection.isDirty = false;
+				$.when(!collection.isDirty).then(function(){
+	    			self.context.forecasts.set({reloadCommitButton: true});
+	    			collection.fetch();
+    		});
+			
+		}
+    		else{
+    			//ignore, fetch still
+    			collection.isDirty = false;
+    			self.context.forecasts.set({reloadCommitButton: true});
+    			collection.fetch();
+    		}
+    	}
+    	else{
+    		//no changes, fetch like normal.
+    		collection.fetch();	
+    	}    	
     },
 
     /**
@@ -165,6 +214,7 @@
         }
         $("#view-sales-rep").hide();
         $("#view-manager").show();
+        this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         app.view.View.prototype._renderHtml.call(this, ctx, options);
         
         // parse metadata into columnDefs
@@ -306,7 +356,7 @@
             return false;
         }
         model.url = this.createURL();
-        model.fetch();
+        this.safeFetch();
     },
 
     /**
@@ -321,7 +371,7 @@
         	return false;
         }
         model.url = this.createURL();
-        model.fetch();
+        this.safeFetch();
     },
 
     createURL:function() {

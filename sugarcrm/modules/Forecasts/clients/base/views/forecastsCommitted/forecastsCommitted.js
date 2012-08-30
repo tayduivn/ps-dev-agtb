@@ -183,7 +183,9 @@
         // INVESTIGATE: Should this be retrieved from the model, instead of directly?
         app.api.call("read", app.api.buildURL("Forecasts", "timeperiod"), '', {success: function(results) {
             this.field.def.options = results;
-            this.field.render();
+            if(!this.field.disposed) {
+                this.field.render();
+            }
         }}, {field: field, view: this});
 
         field.def.value = app.defaultSelections.timeperiod_id.id;

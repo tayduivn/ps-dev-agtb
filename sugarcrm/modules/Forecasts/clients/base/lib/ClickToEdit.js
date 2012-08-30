@@ -75,11 +75,12 @@
                                 value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
                             }
                         }
-                                                                                          
+                                                                                    
                         var values = {};
                         values[settings.field.name] = value;
                         values["timeperiod_id"] = settings.field.context.forecasts.get("selectedTimePeriod").id;
             			values["current_user"] = app.user.get('id');
+            			values["isDirty"] = true;
 
                         //If there is an id, add it to the URL
                         if(settings.field.model.isNew())
@@ -88,9 +89,11 @@
                         } else {
                             settings.field.model.url = settings.view.url + "/" + settings.field.model.get('id');
                         }
-
-                        settings.field.model.save(values, {wait:true});
-                        	
+                        
+                        settings.field.model.set(values);
+                        
+                        //settings.field.context.forecasts.set({commitButtonEnabled: true});
+                        
                         
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
