@@ -99,7 +99,7 @@
         this.model.set({
             closed_amount : totals.won_amount,
             opportunities : totals.total_opp_count - totals.lost_count - totals.won_count,
-            revenue : totals.amount
+            revenue : totals.amount - totals.won_amount - totals.lost_amount
         });
         this.recalculateModel();
     },
@@ -112,7 +112,7 @@
         this.likelyTotal = totals.likely_adjusted;
         this.bestTotal = totals.best_adjusted;
         this.model.set({
-            revenue : totals.amount,
+            revenue : totals.amount - this.model.get('closed_amount'),
             quota_amount : totals.quota
         });
         this.recalculateModel();
@@ -178,7 +178,7 @@
     calculatePipelineSize: function (likelyTotal, revenue, closed) {
         var ps = 0;
         if ( likelyTotal > 0 ) {
-            ps = (revenue + closed) /  likelyTotal;
+            ps = (revenue + closed) /  (likelyTotal);
 
             // Round to 1 decimal place
             ps = Math.round( ps * 10 )/10;

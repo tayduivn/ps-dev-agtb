@@ -408,10 +408,14 @@
 
             if(won)
             {
-                wonAmount += amount;
+                if(included == true || included == 1) {
+                    wonAmount += amount;
+                }
                 wonCount++;
             } else if(lost) {
-                lostAmount += amount;
+                if(included == true || included == 1) {
+                    lostAmount += amount;
+                }
                 lostCount++;
             }
 
