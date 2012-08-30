@@ -65,7 +65,7 @@ class ForecastWorksheet extends SugarBean {
 		$worksheet->user_id = $opp->assigned_user_id;
 		$worksheet->forecast = ($this->forecast) ? 1 : 0;
         $worksheet->best_case = $this->best_case;
-        $worksheet->likely_case = $this->likely_case;
+        $worksheet->likely_case = $this->amount;
         $worksheet->probability = $this->probability;
         $worksheet->forecast_type = "Direct";
         $worksheet->related_id = $this->id;

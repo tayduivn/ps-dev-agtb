@@ -34,13 +34,13 @@ class ForecastsFiltersApi extends ModuleApi {
         $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
-            'timeframes' => array(
+            'timeperiod' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','timeframes'),
+                'path' => array('Forecasts','timeperiod'),
                 'pathVars' => array('',''),
-                'method' => 'timeframes',
-                'shortHelp' => 'forecast timeframes',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#timeframes',
+                'method' => 'timeperiod',
+                'shortHelp' => 'forecast timeperiod',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#timeperiod',
             ),
             'reportees' => array(
                 'reqType' => 'GET',
@@ -54,7 +54,7 @@ class ForecastsFiltersApi extends ModuleApi {
         return $parentApi;
     }
 
-    public function timeframes($api, $args) {
+    public function timeperiod($api, $args) {
         return TimePeriod::get_not_fiscal_timeperiods_dom();
     }
 

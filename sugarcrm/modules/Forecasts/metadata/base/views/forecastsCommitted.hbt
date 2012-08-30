@@ -1,12 +1,12 @@
 <div class="topline thumbnail">
     <div class="title">
         <div class="control-group datefilter">
-            <label for="date_filter" class="control-label">{{str "LBL_TIMEFRAMES" "Forecasts"}}</label>
+            {{#with timeperiod}}
+            <label for="date_filter" class="control-label">{{str label "Forecasts"}}</label>
             <div class="controls">
-                {{#with timeframes}}
-                    {{field ../this ../model}}
-                {{/with}}
+                {{field ../this ../model}}
             </div>
+            {{/with}}
         </div>
     </div>
     <div class="datapoint1">

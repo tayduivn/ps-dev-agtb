@@ -53,7 +53,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty()
     {
-        return array(array('likely_case'), array('best_case'), array('worst_case'));
+        return array(array('best_case'), array('worst_case'));
     }
 
     /**
@@ -110,7 +110,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->amount = "5000.00";
         $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
         $opportunity->best_case = "1000.00";
-        $opportunity->likely_case = "750.00";
         $opportunity->worst_case = "600.00";
         $opportunity->save();
         $this->assertEquals(
@@ -132,7 +131,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->amount = "5000.00";
         $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
         $opportunity->best_case = "1000.00";
-        $opportunity->likely_case = "750.00";
         $opportunity->worst_case = "600.00";
         $opportunity->save();
 

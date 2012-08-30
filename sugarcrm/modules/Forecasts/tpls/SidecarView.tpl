@@ -13,7 +13,6 @@
             <div class="row-fluid">
                 <div class="span8">
                     <div class="view-forecastsCommitButtons"></div>
-                    <div class="view-forecastsTimeframes"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-forecastsFilter"></div>
                     <div>
@@ -82,14 +81,12 @@
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
     <th>{{formatNumber includedAmount}}</th>
     <th>{{formatNumber includedBest}}</th>
-    <th>{{formatNumber includedLikely}}</th>
 </script>
 
 <script id="overall_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
     <th>{{formatNumber overallAmount}}</th>
     <th>{{formatNumber overallBest}}</th>
-    <th>{{formatNumber overallLikely}}</th>
 </script>
 
 <script id="overall_manager_template" type="text/x-handlebars-template">

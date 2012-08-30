@@ -656,13 +656,13 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetSummaryColumns()
     {
         $rb = new ReportBuilder('Opportunities');
-        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('amount');
         $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
 
         $expected = array(
             array(
-                'name' => 'likely_case',
-                'label' => 'Likely case',
+                'name' => 'amount',
+                'label' => 'Opportunity Amount:',
                 'field_type' => 'currency',
                 'table_key' => 'self',
             ),
@@ -706,7 +706,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRemoveSummaryColumnReturnsTrue()
     {
         $rb = new ReportBuilder('Opportunities');
-        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('amount');
         $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
 
         $summary = array(
@@ -727,13 +727,13 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     public function testRemoveSummaryColumnDoesntExist()
     {
         $rb = new ReportBuilder('Opportunities');
-        $rb->addSummaryColumn('likely_case');
+        $rb->addSummaryColumn('amount');
         $rb->addSummaryColumn('best_case', null, null, array('group_function' => 'sum'));
 
         $expected = array(
             array(
-                'name' => 'likely_case',
-                'label' => 'Likely case',
+                'name' => 'amount',
+                'label' => 'Opportunity Amount:',
                 'field_type' => 'currency',
                 'table_key' => 'self',
             )
