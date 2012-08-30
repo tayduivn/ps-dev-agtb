@@ -19,16 +19,16 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Mailer/Headers.php');
+require_once('modules/Mailer/EmailHeaders.php');
 
-class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
+class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	/**
 	 * @group mailer
 	 */
 	public function testSetPriority_PassInInteger_PriorityIsUpdated() {
 		$expected = 5;
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->setPriority($expected);
 		$actual = $headers->getPriority();
 		self::assertEquals($expected, $actual, "The priority should have changed to {$expected}");
@@ -39,7 +39,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testSetPriority_PassInString_PriorityIsNotUpdated() {
 		$invalidPriority = "5";
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$expected = $headers->getPriority();
 		$headers->setPriority($invalidPriority);
 		$actual = $headers->getPriority();
@@ -51,7 +51,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testSetRequestConfirmation_PassInBoolean_RequestConfirmationIsUpdated() {
 		$expected = true;
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->setRequestConfirmation($expected);
 		$actual = $headers->getRequestConfirmation();
 		self::assertTrue($actual, "The request confirmation flag should have changed to true");
@@ -62,7 +62,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testSetRequestConfirmation_PassInInteger_RequestConfirmationIsNotUpdated() {
 		$invalidRequestConfirmation = 1;
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->setRequestConfirmation($invalidRequestConfirmation);
 		$actual = $headers->getRequestConfirmation();
 		self::assertFalse($actual, "The request confirmation flag should have remained false");
@@ -73,7 +73,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testSetSubject_PassInString_SubjectIsUpdated() {
 		$expected = "this is a subject";
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->setSubject($expected);
 		$actual = $headers->getSubject();
 		self::assertEquals($expected, $actual, "The subject should have changed to {$expected}");
@@ -84,7 +84,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testSetSubject_PassInInteger_SubjectIsNotUpdated() {
 		$invalidSubject = 1;
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->setSubject($invalidSubject);
 		$actual = $headers->getSubject();
 		self::assertNull($actual, "The subject should have remained null");
@@ -96,7 +96,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	public function testAddCustomHeader_PassInStrings_CustomHeaderIsAdded() {
 		$key = "X-CUSTOM-HEADER";
 		$expected = "custom header value";
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->addCustomHeader($key, $expected);
 		$actual = $headers->getCustomHeader($key);
 		self::assertEquals($expected, $actual, "The custom header should have been added");
@@ -106,7 +106,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	 * @group mailer
 	 */
 	public function testAddCustomHeader_UpdateExistingCustomHeader() {
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 
 		// first set the custom header to something
 		$key = "X-CUSTOM-HEADER";
@@ -125,7 +125,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	 * @group mailer
 	 */
 	public function testAddCustomHeader_PassInValidKeyAndInvalidValue_CustomHeaderIsNotUpdated() {
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 
 		// first set the custom header to something valid
 		$key = "X-CUSTOM-HEADER";
@@ -141,8 +141,8 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Didn't bother testing for the condition where Headers::buildFromArray is given a non-array as a
-	 * parameter because the failure will become apparent at the time of packaging the headers back
+	 * Didn't bother testing for the condition where EmailHeaders::buildFromArray is given a non-array as
+	 * a parameter because the failure will become apparent at the time of packaging the headers back
 	 * into an array. For example, packaging the From header will fail because a From header is required.
 	 * It makes more sense to raise this exception at the time of packaging because it is perfectly
 	 * valid to build headers from an array without the From header and then set the From header
@@ -154,19 +154,19 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 		$from = new EmailIdentity("foo@bar.com");
 		$customHeaderKey = "X-CUSTOM-HEADER";
 		$expected = array(
-			Headers::From    => $from,
-			Headers::Subject => "this is a subject",
+			EmailHeaders::From    => $from,
+			EmailHeaders::Subject => "this is a subject",
 			$customHeaderKey => "custom header value",
 		);
 
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->buildFromArray($expected);
 
 		$actual = $headers->getFrom();
-		self::assertEquals($expected[Headers::From]->getEmail(), $actual->getEmail(), "The from should be " . $expected[Headers::From]->getEmail());
+		self::assertEquals($expected[EmailHeaders::From]->getEmail(), $actual->getEmail(), "The from should be " . $expected[EmailHeaders::From]->getEmail());
 
 		$actual = $headers->getSubject();
-		self::assertEquals($expected[Headers::Subject], $actual, "The subject should be {$expected[Headers::Subject]}");
+		self::assertEquals($expected[EmailHeaders::Subject], $actual, "The subject should be {$expected[EmailHeaders::Subject]}");
 
 		$actual = $headers->getCustomHeader($customHeaderKey);
 		self::assertEquals($expected[$customHeaderKey], $actual, "The custom header should be {$expected[$customHeaderKey]}");
@@ -183,17 +183,17 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 		$from = new EmailIdentity("foo@bar.com");
 		$customHeaderKey = "X-CUSTOM-HEADER";
 		$expected = array(
-			Headers::From    => $from,
-			Headers::Subject => "this is a subject",
+			EmailHeaders::From    => $from,
+			EmailHeaders::Subject => "this is a subject",
 			$customHeaderKey => "custom header value",
 		);
 
-		$headers = new Headers();
+		$headers = new EmailHeaders();
 		$headers->buildFromArray($expected);
 		$actual = $headers->packageHeaders();
 
-		self::assertEquals($expected[Headers::From]->getEmail(), $actual[Headers::From][0], "The from should be " . $expected[Headers::From]->getEmail());
-		self::assertEquals($expected[Headers::Subject], $actual[Headers::Subject], "The subject should be {$expected[Headers::Subject]}");
+		self::assertEquals($expected[EmailHeaders::From]->getEmail(), $actual[EmailHeaders::From][0], "The from should be " . $expected[EmailHeaders::From]->getEmail());
+		self::assertEquals($expected[EmailHeaders::Subject], $actual[EmailHeaders::Subject], "The subject should be {$expected[EmailHeaders::Subject]}");
 		self::assertEquals($expected[$customHeaderKey], $actual[$customHeaderKey], "The custom header should be {$expected[$customHeaderKey]}");
 	}
 
@@ -204,7 +204,7 @@ class HeadersTest extends Sugar_PHPUnit_Framework_TestCase
 		$exceptionWasCaught = false;
 
 		try {
-			$headers = new Headers();
+			$headers = new EmailHeaders();
 			$actual = $headers->packageHeaders(); // hopefully nothing is actually returned
 		} catch (MailerException $me) {
 			$exceptionWasCaught = true;

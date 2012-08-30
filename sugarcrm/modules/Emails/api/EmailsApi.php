@@ -336,10 +336,10 @@ class EmailsApi extends ModuleApi
         $admin->retrieveSettings();
 
 	    $headers = array();
-	    $headers[Headers::From] = new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']);
+	    $headers[EmailHeaders::From] = new EmailIdentity($admin->settings['notify_fromaddress'], $admin->settings['notify_fromname']);
 
 	    if (isset($args["subject"])) {
-		    $headers[Headers::Subject] = $args["subject"];
+		    $headers[EmailHeaders::Subject] = $args["subject"];
 	    }
 
         $mailer = new SimpleMailer();

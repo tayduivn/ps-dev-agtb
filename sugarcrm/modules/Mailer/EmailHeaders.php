@@ -24,7 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'MailerException.php';
 require_once 'EmailIdentity.php';
 
-class Headers
+class EmailHeaders
 {
 	const MessageId                 = 'Message-ID';
 	const Priority                  = 'Priority';

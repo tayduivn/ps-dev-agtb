@@ -24,7 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'IMailer.php';
 require_once 'MailerException.php';
 require_once 'RecipientsCollection.php';
-require_once 'Headers.php';
+require_once 'EmailHeaders.php';
 
 abstract class BaseMailer implements IMailer
 {
@@ -72,16 +72,17 @@ abstract class BaseMailer implements IMailer
 		$this->configs[$config] = $value;
 	}
 
-	public function setHeaders(Headers $headers) {
+	public function setHeaders(EmailHeaders $headers) {
 		$this->headers = $headers;
 	}
 
 	public function constructHeaders($headers = array()) {
+		//@todo dependent on $this->headers being an EmailHeaders object; throw an exception if not?
 		$this->headers->buildFromArray($headers);
 	}
 
 	public function clearHeaders() {
-		$this->headers = new Headers();
+		$this->headers = new EmailHeaders();
 	}
 
 	public function clearRecipients($to = true, $cc = true, $bcc = true) {

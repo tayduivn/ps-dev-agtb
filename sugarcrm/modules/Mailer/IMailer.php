@@ -64,9 +64,9 @@ interface IMailer
 	public function setConfig($config, $value);
 
 	/**
-	 * @param Headers $headers
+	 * @param EmailHeaders $headers
 	 */
-	public function setHeaders(Headers $headers);
+	public function setHeaders(EmailHeaders $headers);
 
 	public function clearHeaders();
 

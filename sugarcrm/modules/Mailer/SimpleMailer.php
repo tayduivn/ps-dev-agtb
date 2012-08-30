@@ -121,27 +121,27 @@ class SimpleMailer extends BaseMailer
 
 		foreach ($headers as $key => $value) {
 			switch ($key) {
-				case Headers::From:
+				case EmailHeaders::From:
 					$mailer->From = $value[0];
 					$mailer->FromName = $value[1]; //@todo might not want to require this value
 					break;
-				case Headers::ReplyTo:
+				case EmailHeaders::ReplyTo:
 					//$mailer->ClearReplyTos(); // only necessary if the PHPMailer object can be re-used
 					$mailer->AddReplyTo($value[0], $value[1]); //@todo might not want to require the second value
 					break;
-				case Headers::Sender:
+				case EmailHeaders::Sender:
 					$mailer->Sender = $value;
 					break;
-				case Headers::MessageId:
+				case EmailHeaders::MessageId:
 					$mailer->MessageID = $value;
 					break;
-				case Headers::Priority:
+				case EmailHeaders::Priority:
 					$mailer->Priority = $value;
 					break;
-				case Headers::DispositionNotificationTo:
+				case EmailHeaders::DispositionNotificationTo:
 					$mailer->ConfirmReadingTo = $value;
 					break;
-				case Headers::Subject:
+				case EmailHeaders::Subject:
 					$mailer->Subject = $value;
 					break;
 				default:
