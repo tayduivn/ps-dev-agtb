@@ -25,10 +25,9 @@
                     upcoming: []
                 };
 
-                for( var modelIndex in collection.models ) {
-                    var result = self.getTaskType(collection.models[modelIndex].attributes.date_due);
-                    collection.modelList[result].push(collection.models[modelIndex]);
-                }
+                _.each(collection.models, function(model) {
+                    collection.modelList[self.getTaskType(model.attributes.date_due)].push(model);
+                });
                 self.overduePillActive = true;
                 self.render();
             }});
