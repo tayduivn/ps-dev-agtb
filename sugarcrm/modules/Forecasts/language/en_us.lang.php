@@ -302,7 +302,6 @@ $mod_strings = array (
 
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
-    'LBL_TIMEFRAMES' => 'Timeframes',
 
     // config panel strings
     'LBL_FORECASTS_CONFIG_FISCAL_START_DATE' => 'Select the start date of your fiscal time period:',
