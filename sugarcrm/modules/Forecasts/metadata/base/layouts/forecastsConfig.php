@@ -23,7 +23,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Forecasts']['base']['layout']['forecastsConfig'] = array(
-    'type' => 'simple',
     'components' => array(
         array(
             'view' => 'forecastsConfigTimeperiods',

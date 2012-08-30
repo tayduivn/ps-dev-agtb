@@ -38,21 +38,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="modal hide fade" id="forecastSubnavSettingsModal" style="display:block">
-                    <div class="modal-header">
-                        <a class="close" data-dismiss="modal">×</a>
-                        <h3>Admin</h3>
-                    </div>
-                    <div class="modal-body">
-                        <p>Body....................</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" class="btn">Cancel</a>
-                        <a href="#" class="btn btn-primary">Save</a>
-
-                    </div>
-                </div>
             </div>
         </div>
     </div>
