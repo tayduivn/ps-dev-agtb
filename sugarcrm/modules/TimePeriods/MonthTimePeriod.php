@@ -26,6 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('modules/TimePeriods/iTimePeriod.php');
 class MonthTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
@@ -34,7 +35,7 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
     public function MonthTimePeriod() {
         parent::TimePeriod();
 
-        $this->time_period_type = 'Monthly';
+        $this->time_period_type = 'Month';
     }
 
     /**
@@ -48,32 +49,26 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
     }
 
     /**
-     * subtracts the end from the start date to return the date length in days
-     *
-     * @return mixed
-     */
-    public function getLengthInDays() {
-        $diff = $this->end_date->diff($this->start_date);
-        return $diff->d;
-    }
-
-    /**
-     * creates a new AnnualTimePeriod to start to use
+     * creates a new MonthTimePeriod to start to use
      *
      * @param isFirstofQuarter Bool denotes month is first fiscal month of quarter, resulting in one more week
      *
-     * @return AnnualTimePeriod
+     * @return MonthTimePeriod
      */
     public function createNextTimePeriod($weekLength=NULL) {
         $nextPeriod = new MonthTimePeriod();
+        $timedate = TimeDate::getInstance();
+        $nextEndDate = $timedate->fromUserDate($this->end_date);
 
-        $nextPeriod->start_date = $this->end_date->modify('+1 day');
+        $nextStartDate = $nextEndDate->modify('+1 day');
         if(is_null($weekLength))
         {
-            $nextPeriod->end_date = $this->start_date->modify('+1 month');
+            $nextEndDate = $nextEndDate->modify('+1 month');
         } else {
-            $nextPeriod->end_date = $this->start_date->modify('+$weekLength week');
+            $nextEndDate = $nextEndDate->modify('+$weekLength week');
         }
+        $nextPeriod->start_date = $nextStartDate->format(timedate::get_db_date_format());
+        $nextPeriod->end_date = $nextEndDate->format(timedate::get_db_date_format());
 
         return $nextPeriod;
     }
@@ -102,5 +97,24 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
         $this->load_relationship('related_timeperiods');
 
         return $this->related_timeperiods;
+    }
+
+    /**
+     * build leaves for the timeperiod by creating the specified types of timeperiods
+     *
+     * @param string $timePeriodType
+     * @return mixed
+     */
+    public function buildLeaves($timePeriodType) {
+        if($this->hasLeaves()) {
+            return;
+        }
+
+        switch($timePeriodType) {
+            case "Weekly":
+                break;
+
+        }
+
     }
 }
