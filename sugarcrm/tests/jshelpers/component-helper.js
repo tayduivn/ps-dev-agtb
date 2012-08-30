@@ -6,6 +6,12 @@
         });
     };
 
+    test.loadModuleComponent = function(module, client, type, name) {
+        SugarTest.loadFile("../modules/" + module + "/metadata/" + client + "/" + type + "s/", name, "js", function(data) {
+            app.view.declareComponent(type, name, null, data, null, true);
+        });
+    };
+
     test.createField = function(client, name, type, viewName, fieldDef, module) {
         test.loadComponent(client, "field", type);
         var context = app.context.getContext();
@@ -41,6 +47,26 @@
     test.createLayout = function(client, module, layoutName, meta) {
         test.loadComponent(client, "layout", layoutName);
         var context = app.context.getContext();
+        return app.view.createLayout({
+            name : layoutName,
+            context : context,
+            module : module,
+            meta : meta
+        });
+    };
+
+    test.createModuleLayout = function(client, module, layoutName, meta) {
+        test.loadModuleComponent(module, client, "layout", layoutName);
+        var context = app.context.getContext(),
+            params = {
+                module: module,
+                modelId: 'eab15fea-a4b5-c63d-8365-50353a164161',
+                layout: layoutName
+            };
+
+        context.set(params);
+        context.prepare();
+
         return app.view.createLayout({
             name : layoutName,
             context : context,
