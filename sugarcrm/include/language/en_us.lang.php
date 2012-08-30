@@ -83,7 +83,6 @@ $app_list_strings = array (
     'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
-    'CampaignTrackers'=>'Campaign Trackers',
     'Documents'=>'Documents',
     'DocumentRevisions'=>'Document Revisions',
     //END SUGARCRM flav!=sales ONLY
