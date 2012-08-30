@@ -62,7 +62,7 @@ class SugarBeanApiHelper
                 // They want to skip this field
                 continue;
             }
-
+            
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             if ( $type == 'link' ) {
                 // There is a different API to fetch linked records, don't try to encode all of the related data.
@@ -139,7 +139,7 @@ class SugarBeanApiHelper
             $field = $sfh->getSugarField($type);
             
             if ( $field != null ) {
-                $field->save($bean, $submittedData, $fieldName, $properties);
+                $field->apiSave($bean, $submittedData, $fieldName, $properties);
             }
         }
 

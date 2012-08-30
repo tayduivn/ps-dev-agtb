@@ -52,6 +52,9 @@ abstract class SugarApi {
             if ( ! in_array('date_modified',$fieldList ) ) {
                 $fieldList[] = 'date_modified';
             }
+            if ( ! in_array('id',$fieldList ) ) {
+                $fieldList[] = 'id';
+            }
         } else {
             $fieldList = array();
         }
