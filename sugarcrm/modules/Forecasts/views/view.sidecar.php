@@ -67,19 +67,9 @@ class ForecastsViewSidecar extends SidecarView
         $returnInitData = array();
         $defaultSelections = array();
 
-        /***
-         * ME - INITIAL SELECTED USER DATA
-         */
-        $selectedUser = array(
-            "id" => $current_user->id,
-            "full_name" => $current_user->full_name,
-            "first_name" => $current_user->first_name,
-            "last_name" => $current_user->last_name,
-            "isManager" => User::isManager($current_user->id),
-            "showOpps" => false
-        );
-        $returnInitData["initData"]["selectedUser"] = $selectedUser;
-        $defaultSelections["selectedUser"] = $selectedUser;
+        $forecastsCurrentUserApi = new ForecastsCurrentUserApi();
+        $selectedUser = $forecastsCurrentUserApi->retrieveCurrentUser($forecastsCurrentUserApi,array());
+        $returnInitData["initData"]["selectedUser"] = $selectedUser["current_user"];
 
         $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
         // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
