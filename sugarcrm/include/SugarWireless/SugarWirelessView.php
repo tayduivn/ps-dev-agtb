@@ -95,11 +95,15 @@ class SugarWirelessView extends SugarView
         $module = new StudioModule($moduleName);
 
         // If we're missing a wireless view, we can create it easily from a template, sourced from SugarObjects
-        $metadataPath = 'include/SugarObjects/templates/' . $module->getType () . '/metadata/';
-        $filename =  $metadataPath . 'mobile/views/' . str_replace(array('wireless', 'view'), '', $view) . '.php';
+        $metadataPath = 'include/SugarObjects/templates/' . $module->getType () . '/clients/';
+        $filepath = str_replace(array('wireless', 'view'), '', $view);
+        $filename =  $metadataPath . 'mobile/views/' . $filepath . '/' . $filepath . '.php';
 
         // Last ditch effort here, using the old old system
         if (!file_exists($filename)) {
+            // Revert metadata path back to original base metadata style
+            $metadataPath = str_replace('/clients/', '/metadata/', $metadataPath);
+            
             // Special case wireless search
             if (preg_match('#wireless_(.+)_search#', $view)) {
                 $filename = $metadataPath . 'search.php';

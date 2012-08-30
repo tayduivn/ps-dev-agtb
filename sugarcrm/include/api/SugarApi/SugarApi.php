@@ -52,6 +52,9 @@ abstract class SugarApi {
             if ( ! in_array('date_modified',$fieldList ) ) {
                 $fieldList[] = 'date_modified';
             }
+            if ( ! in_array('id',$fieldList ) ) {
+                $fieldList[] = 'id';
+            }
         } else {
             $fieldList = array();
         }
@@ -136,6 +139,10 @@ abstract class SugarApi {
 
         $id = $bean->id;
 
+        if(isset($args['my_favorite'])) {
+            $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
+        }
+
         $bean->retrieve($id);
 
         /*
@@ -144,6 +151,42 @@ abstract class SugarApi {
          */
         return $id;
     }
+
+    /**
+     * Toggle Favorites
+     * @param type $module 
+     * @param type $id 
+     * @param type $favorite 
+     * @return bool
+     */
+
+    protected function toggleFavorites($module, $id, $favorite)
+    {
+        $favorite = (bool) $favorite;
+        // is currently favorite?
+        $current = SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
+        // already the same skip it
+        if($current == $favorite) {
+            return true;
+        }
+
+        if($favorite == true) {
+            $fav = new SugarFavorites();
+            $fav->id = SugarFavorites::generateGUID($module,$id);
+            $fav->new_with_id = true;
+            $fav->module = $module;
+            $fav->record_id = $id;
+            $fav->created_by = $GLOBALS['current_user']->id;
+            $fav->assigned_user_id = $GLOBALS['current_user']->id;
+            $fav->deleted = 0;
+            $fav->save();
+            return true;
+        }
+        $sf = new SugarFavorites();
+        $sf->markRecordDeletedInFavoritesByUser($id, $module, $GLOBALS['current_user']->id);
+        return true;
+    }
+
 
     /**
      * Verifies field level access for a bean and field for the logged in user

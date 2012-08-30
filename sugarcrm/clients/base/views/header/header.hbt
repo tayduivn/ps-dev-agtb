@@ -2,9 +2,9 @@
     <div class="navbar-inner">
         <div class="container-fluid">
             <div class="nav-collapse">
-                <ul class="nav" id="moduleList">
+                <ul class="nav" id="module_list">
                     <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
-                    {{#each moduleList}}
+                    {{#each module_list}}
                     <li class="{{this}}{{#eq this ../currentModule}} active{{/eq}}">
                         <a href="#{{this}}">{{str "LBL_MODULE_NAME" this}}</a>
                     </li>
