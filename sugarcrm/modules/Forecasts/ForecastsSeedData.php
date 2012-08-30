@@ -39,6 +39,7 @@ public static function populateSeedData($timeperiods)
 
     global $timedate, $current_user, $app_list_strings;
 
+    $user = new User();
     $comm = new Common();
     $commit_order=$comm->get_forecast_commit_order();
 
@@ -121,6 +122,28 @@ public static function populateSeedData($timeperiods)
                     $quota->created_by = $current_user->id;
 
     			$quota->save();
+
+                if(!$user->isManager($commit_type_array[0])) {
+                    $quotaRollup = new Quota();
+                    $quotaRollup->timeperiod_id=$timeperiod_id;
+                    $quotaRollup->user_id = $commit_type_array[0];
+                    $quotaRollup->quota_type='Rollup';
+                    $quota->currency_id=-99;
+                    $quotaRollup->amount = ($opp_summary_array['TOTAL_AMOUNT'] * $ratio[$key]) / 2;
+                    $quotaRollup->amount_base_currency = $quotaRollup->amount;
+                    $quotaRollup->committed=1;
+                    $quotaRollup->set_created_by = false;
+                    if ($commit_type_array[0] == 'seed_sarah_id' || $commit_type_array[0] == 'seed_will_id' || $commit_type_array[0] == 'seed_jim_id')
+                        $quotaRollup->created_by = 'seed_jim_id';
+                    else if ($commit_type_array[0] == 'seed_sally_id' || $commit_type_array[0] == 'seed_max_id')
+                        $quotaRollup->created_by = 'seed_sarah_id';
+                    else if ($commit_type_array[0] == 'seed_chris_id')
+                        $quotaRollup->created_by = 'seed_will_id';
+                     else
+                         $quotaRollup->created_by = $current_user->id;
+
+                    $quotaRollup->save();
+                }
     		} else {
     			//create where clause....
     			$where  = " users.deleted=0 ";
@@ -144,6 +167,7 @@ public static function populateSeedData($timeperiods)
     			$forecast->forecast_type='Rollup';
     			$forecast->date_committed = $timedate->to_display_date_time(date($timedate->get_db_date_time_format(), time()), true);
     			$forecast->save();
+
 
     			$quota = new Quota();
     			$quota->timeperiod_id=$timeperiod_id;
