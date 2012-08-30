@@ -29,7 +29,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
             'fields' => array(
                 array(
                     'name' => 'closed_lost_stage',
-                    'label' => 'LBL_FORECASTS_CLOSED_LOST_STAGE',
+                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE',
                     'type' => 'radioenum',
                     'options' => array(
                         'a' => 'sales stage a',
