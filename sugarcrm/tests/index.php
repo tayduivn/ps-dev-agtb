@@ -7,7 +7,17 @@
     <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
     <script type="text/javascript" src='../sidecar/lib/sugarapi/sugarapi.js'></script>
     <script type="text/javascript" src='../sidecar/minified/sidecar.min.js'></script>
-    <script type="text/javascript" src='../config.js'></script>
+
+<?php
+// For sugar7 the plan is to generate a /sugarcrm/config.js .. in the meantime fallback to sidecar config.js
+if (file_exists('../config.js')) {
+    echo '<script src="../config.js" type="text/javascript"></script>';
+} else {
+    echo '<script src="../sidecar/tests/config.js" type="text/javascript"></script>';
+}
+?>
+    <script type="text/javascript" src="../include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
+    <script type="text/javascript" src="../include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
 
     <!-- jasmine and sinon core files -->
     <script type="text/javascript" src='../sidecar/lib/sinon/sinon.js'></script>

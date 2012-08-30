@@ -74,7 +74,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $account = $accounts[$key];
 
         //Create new opportunities
-        $opp = new Opportunity();
+        $opp = BeanFactory::getBean('Opportunities');
         //BEGIN SUGARCRM flav=pro ONLY
         $opp->team_id = $account->team_id;
         $opp->team_set_id = $account->team_set_id;
@@ -132,7 +132,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->forecast = $opp->probability >= 70 ? 1 : 0;
             $product->date_entered = $timedate->asDb($timedate->getNow());
             $product->date_modified = $prod->date_entered;
-            $product->description = $prod->name;
+            $product->name = $prod->name;
             $product->expert_id = $user['id'];
             $product->save();
         }

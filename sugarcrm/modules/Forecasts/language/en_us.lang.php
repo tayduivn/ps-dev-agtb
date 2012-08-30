@@ -189,6 +189,11 @@ $mod_strings = array (
     'LBL_BEST_CASE_VALUE' => 'Best (Adjusted)',
     'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
     'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
+    'LBL_CURRENCY' => 'Currency',
+    'LBL_CURRENCY_RATE' => 'Currency Rate',
+    'LBL_BEST_CASE_BASE_CURRENCY' => 'Best (Adjusted) base currency',
+    'LBL_LIKELY_CASE_BASE_CURRENCY' => 'Likely (Adjusted) base currency',
+    'LBL_WORST_CASE_BASE_CURRENCY' => 'Worst (Adjusted) base currency',
     'LBL_QUOTA' => 'Quota',
 
     'LBL_FORECAST_FOR'=>'Forecast Worksheet for: ',
@@ -288,11 +293,14 @@ $mod_strings = array (
     'LBL_CANCEL' => 'Cancel',
     'LBL_ADMIN' => 'Admin',
 
-    'LBL_CHART_FORECAST_FOR' => 'Forecast for',
+    'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',
+    'LBL_FORECAST_TITLE' => 'Forecast: {0}',
 
     'LBL_CHART_INCLUDED' => 'Included',
     'LBL_CHART_NOT_INCLUDED' => 'Not Included',
     'LBL_CHART_ADJUSTED' => ' (Adjusted)',
 
-
+    'LBL_SAVE_DRAFT' => 'Save Draft',
+    'LBL_CHANGES_BY' => 'Changes by {0}',
+    'LBL_TIMEFRAMES' => 'Timeframes',
 );

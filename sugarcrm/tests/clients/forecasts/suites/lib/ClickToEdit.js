@@ -1,9 +1,11 @@
 describe("ClickToEdit", function(){
-    var field, view;
+    var field, view, editable, clickToEdit;
 
     beforeEach(function() {
         app = SugarTest.app;
-        SugarTest.loadFile("../../../../clients/forecasts/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+        editable = SugarTest.loadFile("../include/javascript/twitterbootstrap/js", "jquery.jeditable", "js", function(d) { return eval(d); });
+        clickToEdit = SugarTest.loadFile("../modules/forecasts/metadata/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+
         view = {
             $el: $('<div class="testview"></div>'),
             url: "/test"

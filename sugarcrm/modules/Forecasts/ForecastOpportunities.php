@@ -160,7 +160,7 @@ class ForecastOpportunities extends SugarBean {
         //$custom_join='';
 
         $query = "SELECT ";
-        $query .= " opportunities.id, opportunities.name , amount_usdollar as revenue,  ((amount_usdollar * probability)/100) as weighted_value, probability";
+        $query .= " opportunities.id, opportunities.name , opportunities.amount_usdollar as revenue,  ((opportunities.amount_usdollar * opportunities.probability)/100) as weighted_value, probability";
 
         if($custom_join){
             $query .= $custom_join['select'];
@@ -204,10 +204,10 @@ class ForecastOpportunities extends SugarBean {
     function get_opportunity_summary($currency_format=true) {
 
         $abc = array();
-        $amount_usdollar = $this->db->convert("amount_usdollar", "IFNULL", array(0));
-        $probability = $this->db->convert("probability", "IFNULL", array(0));
+        $amount_usdollar = $this->db->convert("opportunities.amount_usdollar", "IFNULL", array(0));
+        $probability = $this->db->convert("opportunities.probability", "IFNULL", array(0));
         $query1 = "SELECT count(*) as opportunitycount, sum(amount_usdollar) as total_amount,
-        	sum((amount_usdollar * probability)/100) as weightedvalue,
+        	sum((amount_usdollar * opportunities.probability)/100) as weightedvalue,
         	sum(".$this->db->convert("opportunities.best_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_best_case,
         	sum(".$this->db->convert("opportunities.likely_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_likely_case,
         	sum(".$this->db->convert("opportunities.worst_case","IFNULL", array("(($amount_usdollar * $probability)/100)")).") total_worst_case";

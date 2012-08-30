@@ -52,6 +52,7 @@ $mod_strings = array (
   'LBL_SELECT_TIME_PERIOD' => 'Select Time Period...',
   'LBL_AMOUNT' => 'Amount:',
   'LBL_CURRENCY' => 'Currency:',
+  'LBL_CURRENCY_RATE' => 'Currency Rate',
   'LBL_COMMIT' => 'Commit:',
   'LBL_SELECT_USER' => 'Select User...',
   

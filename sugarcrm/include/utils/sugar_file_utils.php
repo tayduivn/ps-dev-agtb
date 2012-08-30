@@ -180,8 +180,6 @@ function sugar_file_put_contents_atomic($filename, $data, $mode='wb', $use_inclu
     return false;
 }
 
-
-
 /**
  * sugar_file_get_contents
  *

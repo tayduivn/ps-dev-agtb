@@ -37,4 +37,3 @@ $searchdefs['Accounts'] = array(
 		),
 	),
 );
-?>

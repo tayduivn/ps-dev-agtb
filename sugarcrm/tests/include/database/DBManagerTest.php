@@ -67,6 +67,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_db->query('DELETE FROM testRecursive_');
         }
 
+        $this->created = array();
+
     }
 
     public function tearDown()
@@ -2069,6 +2071,124 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    public function testGetIndicesContainsPrimary()
+    {
+        $indices = $this->_db->get_indices('accounts');
+
+        // find if any are primary
+        $found = false;
+
+        foreach($indices as $index)
+        {
+            if($index['type'] == "primary") {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($found, 'Primary Key Not Found On Module');
+    }
+
+    /*
+     * testDBGuidGeneration
+     * Tests that the first 1000 DB generated GUIDs are unique
+     */
+    public function testDBGuidGeneration()
+    {
+
+		$guids = array();
+		$sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
+		for($i = 0; $i < 1000; $i++)
+		{
+			$newguid = $this->_db->getOne($sql);
+			$this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
+			$guids []= $newguid;
+		}
+	}
+
+    public function testAddPrimaryKey()
+    {
+        $tablename = 'testConstraints';
+        $fielddefs = array(
+                        'id' =>
+                            array (
+                            'name' => 'id',
+                            'required'=>true,
+                            'type' => 'id',
+                            ),
+                        'test' => array (
+                            'name' => 'test',
+                            'type' => 'longtext',
+                            ),
+                        );
+
+        $this->createTableParams($tablename, $fielddefs, array());
+        unset($this->created[$tablename]); // that table is required by testRemovePrimaryKey test
+
+        $sql = $this->_db->add_drop_constraint(
+            $tablename,
+            array(
+                'name'   => 'testConstraints_pk',
+                'type'   => 'primary',
+                'fields' => array('id'),
+                ),
+            false
+            );
+
+        $result = $this->_db->query($sql);
+
+        $indices = $this->_db->get_indices($tablename);
+
+        // find if any are primary
+        $found = false;
+
+        foreach($indices as $index)
+        {
+            if($index['type'] == "primary") {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($found, 'Primary Key Not Found On Table');
+    }
+
+    /**
+     * @depends testAddPrimaryKey
+     */
+    public function testRemovePrimaryKey()
+    {
+        $tablename = 'testConstraints';
+        $this->created[$tablename] = true;
+
+         $sql = $this->_db->add_drop_constraint(
+            $tablename,
+            array(
+                'name'   => 'testConstraints_pk',
+                'type'   => 'primary',
+                'fields' => array('id'),
+                ),
+            true
+            );
+
+        $result = $this->_db->query($sql);
+
+        $indices = $this->_db->get_indices($tablename);
+
+        // find if any are primary
+        $found = false;
+
+        foreach($indices as $index)
+        {
+            if($index['type'] == "primary") {
+                $found = true;
+                break;
+            }
+        }
+
+        $this->assertFalse($found, 'Primary Key Found On Table');
+    }
+
 
     private function addChildren($tableName, $parent, $number, $level, $stoplevel)
     {
@@ -2153,6 +2273,8 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
     {
+        $this->markTestIncomplete('Mark as incomplete for now');
+
         $idCurrent = $startId;
         $levels = $startDbLevel;
         $this->_db->preInstall();
@@ -2239,6 +2361,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRecursiveQueryMultiHierarchy()
     {
+        $this->markTestIncomplete('Mark as incomplete for now');
         $this->_db->preInstall();
 
         // Setup test data
@@ -2312,38 +2435,4 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
-
-    public function testGetIndicesContainsPrimary()
-    {
-        $indices = $this->_db->get_indices('accounts');
-
-        // find if any are primary
-        $found = false;
-
-        foreach($indices as $index)
-        {
-            if($index['type'] == "primary") {
-                $found = true;
-                break;
-            }
-        }
-
-        $this->assertTrue($found, 'Primary Key Not Found On Module');
-    }
-
-    /*
-     * testDBGuidGeneration
-     * Tests that the first 1000 DB generated GUIDs are unique
-     */
-    public function testDBGuidGeneration()
-    {
-		$guids = array();
-		$sql = "SELECT {$this->_db->getGuidSQL()} {$this->_db->getFromDummyTable()}";
-		for($i = 0; $i < 1000; $i++)
-		{
-			$newguid = $this->_db->getOne($sql);
-			$this->assertFalse(in_array($newguid, $guids), "'$newguid' already existed in the array of GUIDs!");
-			$guids []= $newguid;
-		}
-	}
 }

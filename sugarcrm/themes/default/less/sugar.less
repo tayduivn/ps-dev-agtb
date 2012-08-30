@@ -168,7 +168,7 @@ table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-chil
   .border-radius(0 0 4px 4px)
 }
 table th { white-space: nowrap;}
-table.datatable tbody td { white-space: nowrap; max-width: 100px; overflow-x: hidden;}
+table.datatable tbody td { white-space: nowrap; overflow-x: hidden;}
 table th, table td { position: relative;}
 
 table th { min-width: 20px; color: @tableHeader !important;}
@@ -1335,15 +1335,15 @@ table th:gt(3), table td:gt(3)  {
 
 }
 
-#folded {
-    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
-}
-
 /* CSS for forecasts subnav */
 #headerbar h1 {
     float:left;
     margin-right:5px;
     margin-left:12px;
+}
+
+#folded {
+    background-image: url("../../../../index.php?entryPoint=getImage&imageName=light_toast.png");
 }
 
 #overview {
@@ -1371,11 +1371,41 @@ table th:gt(3), table td:gt(3)  {
     border:1px solid #d0cfce;
     *border:0;
     border-top-color:#c1bfbe;
-
 }
 
+#forecastsCommitButtons {
+    float:right;
+    padding:15px 0px;
+}
 
-/* Forecast worksheets */
-#view-sales-rep input[type="text"], #view-manager input[type="text"]{
-    width: 100%;
+a#save_draft {
+    margin-right: 8px;
+}
+
+.label, .badge {
+    font-size:10.152px;
+    line-height:12px;
+    color:#000;
+    vertical-align:baseline;
+    white-space:nowrap;
+    background-color:#cdcccb;
+    height:12px;
+    display:inline-block;
+}
+.label {
+    padding:1px 4px 2px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+.badge {
+    padding:1px 9px 2px;
+    -webkit-border-radius:9px;
+    -moz-border-radius:9px;
+    border-radius:9px;
+}
+a.label:hover, a.badge:hover {
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
 }

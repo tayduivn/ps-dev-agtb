@@ -132,7 +132,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     //'function'=>array('vname'=>'getCurrencyType'),
     'type' => 'currency',
     //'disable_num_format' => true,
-    'dbType' => 'double',
+    'dbType' => 'currency',
     'comment' => 'Unconverted amount of the opportunity',
     'importable' => 'required',
     'duplicate_merge'=>'1',
@@ -142,13 +142,20 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     //'calculated' => true,
     //'formula' => 'rollupSum($products, "list_price")',
   ),
+  'currency_rate' =>
+  array (
+    'name' => 'currency_rate',
+    'vname' => 'LBL_CURRENCY_RATE',
+    'type' => 'double',
+    'required' => true,
+  ),
   'amount_usdollar' =>
   array (
     'name' => 'amount_usdollar',
     'vname' => 'LBL_AMOUNT_USDOLLAR',
     'type' => 'currency',
     'group'=>'amount',
-    'dbType' => 'double',
+    'dbType' => 'currency',
     'disable_num_format' => true,
     'duplicate_merge'=>'0',
     'audited'=>true,
@@ -245,7 +252,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'best_case',
     'vname' => 'LBL_BEST_CASE',
-    'dbType' => 'decimal',
+    'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
   ),
@@ -253,7 +260,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'likely_case',
     'vname' => 'LBL_LIKELY_CASE',
-    'dbType' => 'decimal',
+    'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
   ),
@@ -261,7 +268,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
   array (
     'name' => 'worst_case',
     'vname' => 'LBL_WORST_CASE',
-    'dbType' => 'decimal',
+    'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
   ),

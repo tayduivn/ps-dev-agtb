@@ -3,23 +3,40 @@
         <div class="span3"><a href="" class="logo"{{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat; "{{/if}}>SugarCRM</a></div>
         <div class="span9">
             <div class="btn-toolbar pull-right">
+                {{#if isAuthenticated}}
                 <div class="btn-group">
-                    <a title="Activity View Tour" class="btn" id="tour"><i class="icon-road"></i>
-                        Tour</a>
+                    <a title="{{str "LBL_TOUR"}}" class="btn" id="tour"><i class="icon-road"></i> {{str "LNK_TOUR"}}</a>
                 </div>
                 <div class="btn-group">
-                    <a id="print" class="btn"><i class="icon-print"></i> Print</a>
-                    <a id="top" class="btn"><i class="icon-arrow-up"></i> Top</a>
+                    <a id="print" class="btn"><i class="icon-print"></i> {{str "LBL_PRINT"}}</a>
+                    <a id="top" class="btn"><i class="icon-arrow-up"></i> {{str "LBL_TOP"}}</a>
                 </div>
+                {{/if}}
+                {{#unless isAuthenticated}}
+                <div class="btn-group dropdown" id="languageList">
+                        <a href="javascript:void(0)" title="{{str "LBL_LANGUAGE"}}" class="btn" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog"></i>
+                            {{str "LBL_LANGUAGE"}}</a>
+                        <ul class="dropdown-menu bottom-up">
+                            <li class="dropdown-caret right">
+                                <span class="caret-outer"></span>
+                                <span class="caret-inner"></span>
+                            </li>
+                            {{#each languageList}}
+                            <li><a data-lang-key="{{key}}" href="javascript:void(0)">{{#eq ../currentLang key}}<strong>{{value}}</strong>{{else}}{{value}}{{/eq}}</a></li>
+                            {{/each}}
+                        </ul>
+                </div>
+                {{/unless}}
             </div>
         </div>
     </div>
 </footer>
 
+
 <!-- Tour Guide -->
 <div class="modal hide" id="systemTour">
   <div class="modal-header">
-    <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+    <a class="close" data-dismiss="modal"><i class="icon-cog"></i></a>
     <h3>Tour the Portal</h3>
   </div>
   <div class="modal-body">
@@ -36,3 +53,6 @@
   <div id="tourAdd" class="tourSee"><span>Add item</span></div>
   </div>
 </div>
+<style>
+    .bottom-up {top: auto; bottom: 100%; }
+</style>

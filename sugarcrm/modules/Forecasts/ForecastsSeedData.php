@@ -37,8 +37,9 @@ public static function populateSeedData($timeperiods)
     require_once('modules/Forecasts/ForecastDirectReports.php');
     require_once('modules/Forecasts/Common.php');
 
-    global $timedate, $current_user;
+    global $timedate, $current_user, $app_list_strings;
 
+    $user = new User();
     $comm = new Common();
     $commit_order=$comm->get_forecast_commit_order();
 
@@ -65,6 +66,7 @@ public static function populateSeedData($timeperiods)
                 $fcst_schedule->expected_best_case = $opp_summary_array['WEIGHTEDVALUENUMBER'];
                 $fcst_schedule->expected_likely_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .8;
                 $fcst_schedule->expected_worst_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .5;
+                $fcst_schedule->expected_commit_stage = min(array_keys($app_list_strings['commit_stage_dom']));
                 $fcst_schedule->status='Active';
                 $fcst_schedule->save();
 
@@ -120,6 +122,28 @@ public static function populateSeedData($timeperiods)
                     $quota->created_by = $current_user->id;
 
     			$quota->save();
+
+                if(!$user->isManager($commit_type_array[0])) {
+                    $quotaRollup = new Quota();
+                    $quotaRollup->timeperiod_id=$timeperiod_id;
+                    $quotaRollup->user_id = $commit_type_array[0];
+                    $quotaRollup->quota_type='Rollup';
+                    $quota->currency_id=-99;
+                    $quotaRollup->amount = ($opp_summary_array['TOTAL_AMOUNT'] * $ratio[$key]) / 2;
+                    $quotaRollup->amount_base_currency = $quotaRollup->amount;
+                    $quotaRollup->committed=1;
+                    $quotaRollup->set_created_by = false;
+                    if ($commit_type_array[0] == 'seed_sarah_id' || $commit_type_array[0] == 'seed_will_id' || $commit_type_array[0] == 'seed_jim_id')
+                        $quotaRollup->created_by = 'seed_jim_id';
+                    else if ($commit_type_array[0] == 'seed_sally_id' || $commit_type_array[0] == 'seed_max_id')
+                        $quotaRollup->created_by = 'seed_sarah_id';
+                    else if ($commit_type_array[0] == 'seed_chris_id')
+                        $quotaRollup->created_by = 'seed_will_id';
+                     else
+                         $quotaRollup->created_by = $current_user->id;
+
+                    $quotaRollup->save();
+                }
     		} else {
     			//create where clause....
     			$where  = " users.deleted=0 ";
@@ -144,6 +168,7 @@ public static function populateSeedData($timeperiods)
     			$forecast->date_committed = $timedate->to_display_date_time(date($timedate->get_db_date_time_format(), time()), true);
     			$forecast->save();
 
+
     			$quota = new Quota();
     			$quota->timeperiod_id=$timeperiod_id;
     			$quota->user_id = $commit_type_array[0];
@@ -158,25 +183,35 @@ public static function populateSeedData($timeperiods)
     		}
     	}
     }
-    
-    self::setupForecastSettings();
 }
 
 /*
- * setup default forecast settings
- * they will be stored in the 'config' table
- * and will be retrieved through getPublicMetadata API call
+ * This function is used to setup default forecast settings which are stored in the config table under the base category.
+ *
  */
 public static function setupForecastSettings()
 {
     $forecastConfig = array(
-            'show_buckets' => 'false',
+            //show_buckets is used to indicate whether or not to show the bucket option for grouping opportunities
+            'show_buckets' => false,
+            //committed_probability is the value whereby a new opportunity created with a >= value is marked as included in the forecast
             'committed_probability' => 70,
-        );
-    $admin = new Administration();
+            //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
+            'sales_stage_won' => array('Closed Won'),
+            //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
+            'sales_stage_lost' => array('Closed Lost'),
+            //base_buckets_dom is used to reference the app_list_string entry to indicate the commit stage list to use
+            'buckets_dom' => 'commit_stage_dom'
+    );
+    $admin = BeanFactory::getBean('Administration');
     foreach ($forecastConfig as $name => $value)
     {
-        $admin->saveSetting('base', $name, $value);
+        if(is_array($value))
+        {
+            $admin->saveSetting('base', $name, json_encode($value));
+        } else {
+            $admin->saveSetting('base', $name, $value);
+        }
     }
 }
 
