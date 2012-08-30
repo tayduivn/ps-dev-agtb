@@ -1070,10 +1070,15 @@ EOHTML;
         //END SUGARCRM flav=sales || flav=pro ONLY
 
         // here we allocate the help link data
-        $url = 'javascript:void(window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.$GLOBALS['sugar_version'].'&edition='.$GLOBALS['sugar_flavor'].'&lang='.$GLOBALS['current_language'].'&help_module='.$GLOBALS['module'].'&help_action='.$GLOBALS['action'].'&key='.$GLOBALS['server_unique_key'].'\'))';
-        $label = translate('LBL_MODULE_NAME',$GLOBALS['module']). ' '.$app_strings['LNK_HELP'];
-        $ss->assign('HELP_LINK',SugarThemeRegistry::current()->getLink($url, $label, "id='help_link_two'",
-                                        'help-dashlet.png', 'class="icon"',null,null,'','left'));
+        $help_actions_blacklist = array('Login'); // we don't want to show a context help link here
+        if (!in_array($this->action,$help_actions_blacklist)) {
+            $url = 'javascript:void(window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.$GLOBALS['sugar_version'].'&edition='.$GLOBALS['sugar_flavor'].'&lang='.$GLOBALS['current_language'].
+                        '&help_module='.$this->module.'&help_action='.$this->action.'&key='.$GLOBALS['server_unique_key'].'\'))';
+            $label = (isset($GLOBALS['app_list_strings']['moduleList'][$this->module]) ?
+                        $GLOBALS['app_list_strings']['moduleList'][$this->module] : $this->module). ' '.$app_strings['LNK_HELP'];
+            $ss->assign('HELP_LINK',SugarThemeRegistry::current()->getLink($url, $label, "id='help_link_two'",
+                'help-dashlet.png', 'class="icon"',null,null,'','left'));
+        }
         // end
 
         //BEGIN SUGARCRM flav=pro ONLY
