@@ -54,8 +54,9 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
             'columns' => 1,
             'labels' => true,
             'labelsOnTop' => false,
-            'placeholders' => false,
+            'placeholders' => true                                                                                                                                  ,
             'fields' => array(
+                "img",
                 array(
                     'fields' => array(
                         array('span' => 12, 'name' => 'first_name', 'label' => ' ', 'css' => 'big'),

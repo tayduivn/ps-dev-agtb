@@ -80,12 +80,6 @@
                 comments[comments.length - 3]['_stophidden'] = true;
             }
         }, this);
-//        for (var i = 0; i < this.collection.models.length; i++) {
-//            if (this.collection.models[i].attributes.comments.length > 2) {
-//                this.collection.models[i].attributes.comments[0]['_starthidden'] = true;
-//                this.collection.models[i].attributes.comments[this.collection.models[i].attributes.comments.length - 3]['_stophidden'] = true;
-//            }
-//        }
 
         return app.view.View.prototype._renderHtml.call(this);
     },

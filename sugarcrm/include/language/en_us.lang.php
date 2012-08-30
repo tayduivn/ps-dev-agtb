@@ -2549,6 +2549,7 @@ $app_strings = array (
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
+    'LBL_IMAGE' => 'Image',
     'LBL_IMPORT_VCARD' => 'Import vCard:',
     'LBL_IMPORT_VCARD_BUTTON_KEY' => 'I',
     'LBL_IMPORT_VCARD_BUTTON_LABEL' => 'Import vCard',

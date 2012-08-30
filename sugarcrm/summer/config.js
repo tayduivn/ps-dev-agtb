@@ -192,9 +192,10 @@
          * Defaults to true otherwise set to false
          * @cfg {Boolean}
          */
-            syncConfig: true,
-            authStore:"sugarAuthStore",
-        loadCss: "url"
+        syncConfig: true,
+        authStore: "sugarAuthStore",
+        loadCss: "url",
+        themeName: "default"
     }, false);
 
 })(SUGAR.App);
