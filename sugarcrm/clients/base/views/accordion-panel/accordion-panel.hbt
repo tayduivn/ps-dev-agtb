@@ -1,26 +1,22 @@
-   <div class="container-fluid">
-     <div class="accordion" id="accordion2">
-      <div class="accordion-group">
-          <div class="accordion-heading">
-            <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse-{{cid}}">
-             {{cid}}
-            </a>
-          </div>
-          <div id="collapse-{{cid}}" class="accordion-body collapse" style="height: 0px; ">
+<div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse-{{cid}}">
+            {{moduleSingular}}
+        </a>
+    </div>
+    <div id="collapse-{{cid}}" class="accordion-body collapse" style="height: 0px; ">
 
-                <div class="accordion-inner">
-                    {{#each meta.panels}}
-                    {{#each fields}}
-                    <div class="row-fluid control-group">
-                        <div class="span2">{{str  this.label ../../this.model.module}}</div>
-                        <div class="span10 controls">
-                        {{field ../../this}}
-                        </div>
-                    </div>
-                    {{/each}}
-                    {{/each}}
-                </div>  </div>
-
-       </div>
-
-</div></div>
+        <div class="accordion-inner">
+            {{#each meta.panels}}
+            {{#each fields}}
+            <div class="row-fluid control-group">
+                <div class="span2">{{str  this.label ../../this.model.module}}</div>
+                <div class="span10 controls">
+                    {{field ../../this}}
+                </div>
+            </div>
+            {{/each}}
+            {{/each}}
+        </div>
+    </div>
+</div>
