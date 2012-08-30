@@ -139,8 +139,7 @@ abstract class SugarApi {
 
         $id = $bean->id;
 
-        if(isset($args['my_favorite']))
-        {
+        if(isset($args['my_favorite'])) {
             $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
         }
 
@@ -167,11 +166,11 @@ abstract class SugarApi {
         // is currently favorite?
         $current = SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
         // already the same skip it
-        if($current == $favorite)
+        if($current == $favorite) {
             return true;
+        }
 
-        if($favorite == true)
-        {
+        if($favorite == true) {
             $fav = new SugarFavorites();
             $fav->id = SugarFavorites::generateGUID($module,$id);
             $fav->new_with_id = true;

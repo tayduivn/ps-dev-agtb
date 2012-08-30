@@ -532,8 +532,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             // we only want JUST favorites if the option is 2
             // if the option is 1 that means we want all including favorites,
             // which in FTS is a normal search parameter
-            if(isset($options['favorites']) && $options['favorites'] == 2)
-            {
+            if(isset($options['favorites']) && $options['favorites'] == 2) {
                 $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
             }
 

@@ -125,8 +125,7 @@ class SugarSearchEngineElasticMapping
                 'index' => 'not_analyzed'
             );
         }
-        if (isset($properties['user_favorites']) == false)
-        {
+        if (isset($properties['user_favorites']) == false) {
             $properties['user_favorites'] = array(
                 'boost' => 1,
                 'type' => 'array',

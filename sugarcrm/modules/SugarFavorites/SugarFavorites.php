@@ -102,14 +102,11 @@ class SugarFavorites extends Basic
 	    else
 	        $where = " sugarfavorites.assigned_user_id = '{$user->id}' ";
 	    
-        if ( !empty($module) )
-        {
-            if ( is_array($module) )
-            {
+        if ( !empty($module) ) {
+            if ( is_array($module) ) {
                 $where .= " AND sugarfavorites.module IN ('" . implode("','",$module) . "')";
             }
-            else
-            {
+            else {
             	$where .= " AND sugarfavorites.module = '$module' ";
             }
         }
@@ -124,11 +121,14 @@ class SugarFavorites extends Basic
 		$where = '';
 		$orderBy = '';
 		$limit = -1;
-        if ( !empty($module) )
-            if ( is_array($module) )
+        if ( !empty($module) ) {
+            if ( is_array($module) ) {
                 $where .= " sugarfavorites.module IN ('" . implode("','",$module) . "')";
-            else
+            }
+            else {
                 $where .= " sugarfavorites.module = '$module' ";
+            }
+        }
         
         $where .= " AND sugarfavorites.record_id = '{$id}'";
 

@@ -42,13 +42,11 @@ class SugarSearchEngineQueueManager
          * Due to the inability to update a documents fields when the field type is array
          * we need to reindex the entire bean.
          */
-        if($bean instanceof SugarFavorites)
-        {
+        if($bean instanceof SugarFavorites) {
             $new_bean = BeanFactory::getBean($bean->module, $bean->record_id);
             $searchEngine->indexBean($new_bean, FALSE);
         }
-        else
-        {
+        else {
             $searchEngine->indexBean($bean, FALSE);
         }
     }
