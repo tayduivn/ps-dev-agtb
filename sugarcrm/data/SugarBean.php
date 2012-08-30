@@ -5009,7 +5009,11 @@ function save_relationship_changes($is_update, $exclude=array())
             if (!empty($listview_meta_file))
             {
                 require $listview_meta_file;
-                $listview_def = $listViewDefs[$this->module_name];
+                //Check if the list view definition exists for the module
+                if(isset($listViewDefs[$this->module_name]))
+                {
+                   $listview_def = $listViewDefs[$this->module_name];
+                }
             }
             $module_name = $this->module_name;
         }
