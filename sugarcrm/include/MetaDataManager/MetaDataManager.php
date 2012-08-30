@@ -510,14 +510,23 @@ class MetaDataManager {
             $filename = $m[3];
             $file = rtrim($dir, '/') . '/' . $filename . '.php';
             if (file_exists($file)) {
-                require_once $file;
+                // Changed from require_once to require so we can actually get 
+                // these on multiple requests for them
+                require $file;
 
                 // Only get the viewdefs if they exist for this platform and file
-                if (!empty($module) && isset($viewdefs[$module][$platform][$type][$filename]))
-                {
-                    $meta[$filename] = $viewdefs[$module][$platform][$type][$filename];
+                // Also handle search, since those defs are different
+                if (!empty($module)) {
+                    if (isset($searchdefs[$module])) {
+                        $meta[$filename] = $searchdefs[$module];
+                    } 
+                    else if (isset($viewdefs[$module][$platform][$type][$filename]))
+                    {
+                        $meta[$filename] = $viewdefs[$module][$platform][$type][$filename];
+                    }
                 }
-                else if (isset($viewdefs[$platform][$type][$filename])) {
+                else if (isset($viewdefs[$platform][$type][$filename])) 
+                {
                     $meta[$filename] = $viewdefs[$platform][$type][$filename];
                 }
             }
