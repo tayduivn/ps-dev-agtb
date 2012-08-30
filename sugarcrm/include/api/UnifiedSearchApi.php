@@ -143,7 +143,7 @@ class UnifiedSearchApi extends SugarApi {
         }
 
         // we want favorites info with records, so that we can flag a favorite out of a recordset
-        $options['favorites'] = 1;
+        $options['favorites'] = false;
         if ( !empty($args['favorites']) && $args['favorites'] == true ) {
             // Setting favorites to 1 includes favorites information,
             // setting it to 2 searches for favorite records.
