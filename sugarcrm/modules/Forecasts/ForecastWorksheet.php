@@ -51,6 +51,7 @@ class ForecastWorksheet extends SugarBean {
         //Update the Opportunities bean
         $opp = new Opportunity();
         $opp->retrieve($this->id);
+        $opp->amount = $this->amount;
         $opp->forecast = ($this->forecast) ? 1 : 0;
         $opp->probability = $this->probability;
         $opp->sales_stage = $this->sales_stage;
@@ -64,7 +65,7 @@ class ForecastWorksheet extends SugarBean {
 		$worksheet->user_id = $opp->assigned_user_id;
 		$worksheet->forecast = ($this->forecast) ? 1 : 0;
         $worksheet->best_case = $this->best_case;
-        $worksheet->likely_case = $this->likely_case;
+        $worksheet->likely_case = $this->amount;
         $worksheet->forecast_type = "Direct";
         $worksheet->related_id = $this->id;
         $worksheet->save();

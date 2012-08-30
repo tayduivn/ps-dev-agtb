@@ -58,9 +58,9 @@ function perform_save(&$focus){
     } else {
         $date_close_db = $timedate->to_db_date($focus->date_closed);
     }
-    // only do this if the date_closed changes
 
-    if($focus->fetched_row['date_closed'] != $date_close_db) {
+    // only do this if the date_closed changes or if no timeperiod_id is set
+    if(empty($focus->timeperiod_id) || (isset($focus->fetched_row['date_closed']) && $focus->fetched_row['date_closed'] != $date_close_db)) {
         $timeperiod = TimePeriod::retrieveFromDate($date_close_db);
 
         if($timeperiod instanceof TimePeriod && !empty($timeperiod->id)) {
@@ -72,9 +72,7 @@ function perform_save(&$focus){
     if(is_null($focus->best_case) || strval($focus->best_case) === "") {
         $focus->best_case = $focus->amount;
     }
-    if(is_null($focus->likely_case) || strval($focus->likely_case) === "") {
-        $focus->likely_case = $focus->amount;
-    }
+
     if(is_null($focus->worst_case) || strval($focus->worst_case) === "") {
         $focus->worst_case = $focus->amount;
     }
