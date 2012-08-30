@@ -35,9 +35,19 @@ class SugarSearchEngineQueueManager
      */
     function populateIndexQueue($bean, $event, $args)
     {
-        $GLOBALS['log']->debug("Adding the following bean to the populate queue- module: {$bean->object_name} , id: {$bean->id}");
+        $GLOBALS['log']->info("Adding the following bean to the populate queue- module: {$bean->object_name} , id: {$bean->id}");
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
         $searchEngine = SugarSearchEngineFactory::getInstance();
-        $searchEngine->indexBean($bean, TRUE);
+        /**
+         * Due to the inability to update a documents fields when the field type is array
+         * we need to reindex the entire bean.
+         */
+        if($bean instanceof SugarFavorites) {
+            $new_bean = BeanFactory::getBean($bean->module, $bean->record_id);
+            $searchEngine->indexBean($new_bean, FALSE);
+        }
+        else {
+            $searchEngine->indexBean($bean, FALSE);
+        }
     }
 }
