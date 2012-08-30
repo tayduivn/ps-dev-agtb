@@ -251,6 +251,7 @@ $mod_strings = array (
     'LBL_INCLUDED_TOTAL' => 'Included Total',
     'LBL_OVERALL_TOTAL' => 'Overall Total',
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
+    'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
