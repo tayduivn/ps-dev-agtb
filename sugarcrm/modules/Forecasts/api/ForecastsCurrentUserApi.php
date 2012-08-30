@@ -62,22 +62,22 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
     }
 
     /**
-        * Retrieves a "selecteUser" object for a given user id
-        *
-        * @param $api
-        * @param $args
-        * @return array
-        */
-       public function retrieveSelectedUser($api, $args) {
-           $uid = $args['userId'];
-           $user = BeanFactory::getBean('Users', $uid);
-           $data = array();
-           $data['id'] = $user->id;
-           $data['full_name'] = $user->full_name;
-           $data['first_name'] = $user->first_name;
-           $data['last_name'] = $user->last_name;
-           $data['isManager'] = User::isManager($user->id);
-           return $data;
-       }
-
+     * Retrieves a "selecteUser" object for a given user id
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function retrieveSelectedUser($api, $args) {
+        global $locale;
+        $uid = $args['userId'];
+        $user = BeanFactory::getBean('Users', $uid);
+        $data = array();
+        $data['id'] = $user->id;
+        $data['full_name'] = $locale->getLocaleFormattedName($user->first_name,$user->last_name);
+        $data['first_name'] = $user->first_name;
+        $data['last_name'] = $user->last_name;
+        $data['isManager'] = User::isManager($user->id);
+        return $data;
+    }
 }
