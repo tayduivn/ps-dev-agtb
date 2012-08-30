@@ -13,7 +13,6 @@
             <div class="row-fluid">
                 <div class="span8">
                     <div class="view-forecastsCommitButtons"></div>
-                    <div class="view-forecastsTimeframes"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-forecastsFilter"></div>
                     <div>
