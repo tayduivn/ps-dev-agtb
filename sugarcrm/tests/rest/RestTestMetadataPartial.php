@@ -26,7 +26,7 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestTestMetadataPartial extends RestTestBase {
     public function testMetadataGetHashes() {
-        $restReply = $this->_restCall('metadata?onlyHash=true');
+        $restReply = $this->_restCall('metadata?only_hash=true');
 
         $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module hash is missing.');
         $this->assertFalse(isset($restReply['reply']['modules']['Accounts']['fields']),'Account module has fields.');
@@ -34,20 +34,20 @@ class RestTestMetadataPartial extends RestTestBase {
     
     public function testMetadataPartialGetModules() {
         // Fetch just the hashes
-        $restReply = $this->_restCall('metadata?onlyHash=true&typeFilter=modules&moduleFilter=Accounts');
+        $restReply = $this->_restCall('metadata?only_hash=true&type_filter=modules&module_filter=Accounts');
         
         $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module only hash is missing.');
         
         // Call with the same set of hashes that we were sent
         $goodHashes = array('modules' => array('Accounts'=>$restReply['reply']['modules']['Accounts']['_hash']));
-        $restReply2 = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Accounts',json_encode($goodHashes));
+        $restReply2 = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts',json_encode($goodHashes));
         
         $this->assertFalse(isset($restReply2['reply']['modules']['Accounts']['fields']),'Account module fields were returned when the hashes matched.');
         
         // Mess up the hashes
         $badHashes = array('modules' => array('Accounts'=>'BAD HASH, NO SOUP FOR YOU'));
 
-        $restReply3 = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Accounts',json_encode($badHashes));
+        $restReply3 = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts',json_encode($badHashes));
         
         $this->assertTrue(isset($restReply3['reply']['modules']['Accounts']['fields']),'Account module fields were not returned when the hashes didn\'t match.');
         

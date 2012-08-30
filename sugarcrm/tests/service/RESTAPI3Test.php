@@ -403,8 +403,8 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
     public static function _wirelessGridModuleLayoutProvider()
     {
         return array(
-            array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/metadata/mobile/views/edit.php',),
-            array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/metadata/mobile/views/detail.php',),
+            array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',),
+            array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/clients/mobile/views/detail/detail.php',),
         );
                             
     }

@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -30,7 +31,7 @@ require_once 'include/MetaDataManager/MetaDataConverter.php';
 class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function testConvertWirelessListToLegacy() {
-        $file = 'modules/Bugs/metadata/mobile/views/list.php';
+        $file = 'modules/Bugs/clients/mobile/views/list/list.php';
         require $file;
         
         $this->assertInternalType('array', $viewdefs['Bugs']['mobile']['view']['list'], 'Expected view def structure not found');
@@ -41,18 +42,18 @@ class MetaDataConverterTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     public function testConvertWirelessDetailToLegacy() {
-        $file = 'modules/Bugs/metadata/mobile/views/detail.php';
+        $file = 'modules/Bugs/clients/mobile/views/detail/detail.php';
         require $file;
         
         $this->assertInternalType('array', $viewdefs['Bugs']['mobile']['view']['detail'], 'Expected view def structure not found');
         
         $converted = MetaDataConverter::toLegacy('detail', $viewdefs['Bugs']['mobile']['view']['detail']);
-        $this->assertNotEmpty($converted['panels'][0][0][0], 'First string field name is missing');
-        $this->assertEquals('bug_number', $converted['panels'][0][0][0], 'First field name is not as expected');
+        $this->assertNotEmpty($converted['panels'][0][0], 'First string field name is missing');
+        $this->assertEquals('bug_number', $converted['panels'][0][0], 'First field name is not as expected');
     }
     
     public function testNoConversionForNonConvertableViewType() {
-        $file = 'modules/Bugs/metadata/mobile/views/search.php';
+        $file = 'modules/Bugs/clients/mobile/views/search/search.php';
         require $file;
         
         $this->assertArrayHasKey('layout', $searchdefs['Bugs'], 'No layout found where layout was expected');

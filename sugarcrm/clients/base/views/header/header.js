@@ -7,7 +7,7 @@
  * @extends View.View
  */
     events: {
-        'click #moduleList li a': 'onModuleTabClicked',
+        'click #module_list li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
         'click .typeahead a': 'clearSearch',
         'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
@@ -54,7 +54,7 @@
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
         mlist = app.metadata.getModuleNames(true).join(','); // visible
-        params = {q: term, fields: 'name, id', moduleList: mlist, max_num: app.config.maxSearchQueryResult};
+        params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
 
         app.api.search(params, {
             success:function(data) {
@@ -91,7 +91,7 @@
         evt.preventDefault();
         evt.stopPropagation();
         var moduleHref = this.$(evt.currentTarget).attr('href');
-        this.$('#moduleList li').removeClass('active');
+        this.$('#module_list li').removeClass('active');
         this.$(evt.currentTarget).parent().addClass('active');
         app.router.navigate(moduleHref, {trigger: true});
     },
@@ -99,8 +99,8 @@
         var moduleHref, hashModule;
         moduleHref = evt.currentTarget.hash;
         hashModule = moduleHref.split('/')[0];
-        this.$('#moduleList li').removeClass('active');
-        this.$('#moduleList li a[href="'+hashModule+'"]').parent().addClass('active');
+        this.$('#module_list li').removeClass('active');
+        this.$('#module_list li a[href="'+hashModule+'"]').parent().addClass('active');
     },
     hide: function() {
         this.$el.hide();
@@ -121,7 +121,7 @@
         try {
             singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
             if(singularModules) {
-                _.each(self.moduleList, function(loadedModule) {
+                _.each(self.module_list, function(loadedModule) {
 
                     // Continue on Leads, Notes, or KBDocuments, but for all others:
                     // check access to create and push to list
@@ -142,7 +142,7 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.moduleList = app.metadata.getModuleNames(true);
+        this.module_list = app.metadata.getModuleNames(true);
     },
 
     /**
