@@ -27,7 +27,6 @@
 
             var defaultSelections = app.defaultSelections;
 
-
             // Set initial selected data on the context
             options.context.forecasts.set({
                 selectedTimePeriod : defaultSelections.timeperiod_id,
