@@ -33,12 +33,12 @@
     <table class='tabform' width='100%' cellpadding=4>
 
         <tr>
-            <td colspan='2'>{$mod.LBL_PORTAL_CONFIGURE}</td>
-        </tr>
-        <tr>
-            <td colspan='2' nowrap>
-            {$mod.LBL_PORTAL_ENABLE}:
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_CONFIGURE}:
+            </td>
+            <td colspan='1' nowrap>
                 <input type="checkbox" name="appStatus" {if $appStatus eq 'online'}checked{/if} class='portalField' id="appStatus" value="online"/>
+                {$mod.LBL_PORTAL_ENABLE}
             </td>
         </tr>
         <tr>
