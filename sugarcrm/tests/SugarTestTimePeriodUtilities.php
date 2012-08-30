@@ -90,6 +90,48 @@ class SugarTestTimePeriodUtilities
         return $timeperiod;
     }
 
+    public static function createAnnualTimePeriod (){
+
+        global $timedate;
+        $timedate = TimeDate::getInstance();
+        $now = $timedate->getNow();
+        $month = $timedate->getNow()->format('n');
+        if($month < 4)
+        {
+            $month = 1;
+        } else if ($month < 8) {
+            $month = 4;
+        } else if ($month < 11) {
+            $month = 7;
+        } else {
+            $month = 10;
+        }
+
+        $year = $timedate->getNow()->format('Y');
+        $time = mt_rand();
+        $name = 'SugarAnnualTimePeriod' . $time;
+        $timeperiod = new TimePeriod();
+        $start_date = $timedate->asDbDate($now->get_day_begin(1, $month, $year));
+        $end_date =  $timedate->asDbDate($now->get_day_end(30, $month-1, $year+1));
+
+        $timeperiod->start_date = $start_date;
+        $timeperiod->end_date = $end_date;
+        $timeperiod->name = $name;
+        $timeperiod->time_period_type = "Annually";
+        $timeperiod->is_fiscal_year = 0;
+        $timeperiod->is_leaf = 0;
+        $timeperiod->save();
+        self::$_createdTimePeriods[] = $timeperiod;
+        return $timeperiod;
+    }
+
+    public static function addTimePeriod($timeperiod=NULL) {
+        if(is_null($timeperiod)) {
+            return;
+        }
+        self::$_createdTimePeriods[] = $timeperiod;
+    }
+
     /**
      * @static
      * This is a static function to remove all created test TimePeriod instance
