@@ -53,7 +53,7 @@ function perform_save(&$focus){
     }
 
     //Set the timeperiod_id value
-    if ($timedate->check_matching_format($focus->date_closed, $timedate::DB_DATE_FORMAT)) {
+    if ($timedate->check_matching_format($focus->date_closed, TimeDate::DB_DATE_FORMAT)) {
         $date_close_db = $focus->date_closed;
     } else {
         $date_close_db = $timedate->to_db_date($focus->date_closed);
