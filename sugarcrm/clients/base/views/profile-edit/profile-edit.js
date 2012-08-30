@@ -13,6 +13,8 @@
         app.view.View.prototype.initialize.call(this, options);
         this.template = app.template.get("edit");
         this.fallbackFieldTemplate = "edit"; // will use edit sugar fields
+        this.context.off("subnav:save", null, this);
+        this.context.on("subnav:save", this.saveModel, this);
     },
     render: function() {
         var self = this, currentUserAttributes;

@@ -210,7 +210,7 @@
                 }
             }
         },
-        appListStrings: {
+        app_list_strings: {
             'countries_dom': {
                 'ABU DHABI': 'Abu Dhabi',
                 'ADEN': 'Aden',

@@ -79,7 +79,7 @@ $vardefs = array (
 			'audited' => true,
 			'comment' => 'The status of the issue',
 			'merge_filter' => 'enabled',
-			
+		    'unified_search' => true,	
 		),
 
 		'priority' => array (
@@ -91,7 +91,7 @@ $vardefs = array (
 			'audited' => true,
 			'comment' => 'An indication of the priorty of the issue',
 			'merge_filter' => 'enabled',
-			
+		    'unified_search' => true,	
 		),
 
 		'resolution' => array (
