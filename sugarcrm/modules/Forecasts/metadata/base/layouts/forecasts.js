@@ -27,6 +27,7 @@
 
             var defaultSelections = app.defaultSelections;
 
+
             // Set initial selected data on the context
             options.context.forecasts.set({
                 selectedTimePeriod : defaultSelections.timeperiod_id,
@@ -34,6 +35,22 @@
                 selectedGroupBy : defaultSelections.group_by,
                 selectedDataSet: defaultSelections.dataset,
                 selectedUser : defaultSelections.selectedUser,
+
+                /**
+                 * used across Forecasts to contain sales rep worksheet totals
+                 */
+                updatedTotals : {},
+
+                /**
+                 * used across Forecasts to contain manager worksheet totals
+                 */
+                updatedManagerTotals : {},
+
+                // todo: the following three booleans need to be refactored out and made into events, not flags/booleans
+                /**
+                 * boolean to use across components to enable commit button or not
+                 */
+                reloadCommitButton : false,
 
                 /**
                  * boolean to use across components to enable commit button or not
