@@ -35,7 +35,7 @@ class UnifiedSearchApi extends SugarApi {
             'moduleSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>'),
-                'pathVars' => array('moduleList'),
+                'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search records in this module',
                 'longHelp' => 'include/api/help/getListModule.html',
@@ -132,8 +132,8 @@ class UnifiedSearchApi extends SugarApi {
         $options['orderBy'] = $orderBy;
 
         $options['moduleList'] = array();
-        if ( !empty($args['moduleList']) ) {
-            $options['moduleList'] = explode(',',$args['moduleList']);
+        if ( !empty($args['module_list']) ) {
+            $options['moduleList'] = explode(',',$args['module_list']);
         }
         $options['primaryModule'] = 'Home';
         if ( !empty($args['primary_module']) ) {

@@ -36,17 +36,17 @@ class RestTestLabels extends RestTestBase {
     }
 
     public function testLabels() {
-        $restReply = $this->_restCall('metadata?typeFilter=modStrings,appStrings');
-        $this->assertNotEmpty($restReply['reply']['appStrings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
+        $restReply = $this->_restCall('metadata?type_filter=mod_strings,app_strings');
+        $this->assertNotEmpty($restReply['reply']['app_strings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
         
-        $this->assertNotEmpty($restReply['reply']['modStrings']['Contacts']['LBL_ACCOUNT_NAME']);
+        $this->assertNotEmpty($restReply['reply']['mod_strings']['Contacts']['LBL_ACCOUNT_NAME']);
     }
 
     public function testAppListLabels() {
-        $restReply = $this->_restCall('metadata?typeFilter=appListStrings');
+        $restReply = $this->_restCall('metadata?type_filter=app_list_strings');
         
-        $this->assertNotEmpty($restReply['reply']['appListStrings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
-        $this->assertNotEmpty($restReply['reply']['appListStrings']['available_language_dom'],"Could not find the list of available languages in appListStrings. (/metadata)");
+        $this->assertNotEmpty($restReply['reply']['app_list_strings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
+        $this->assertNotEmpty($restReply['reply']['app_list_strings']['available_language_dom'],"Could not find the list of available languages in appListStrings. (/metadata)");
 
     }
 
