@@ -103,11 +103,16 @@ class SugarFavorites extends Basic
 	        $where = " sugarfavorites.assigned_user_id = '{$user->id}' ";
 	    
         if ( !empty($module) )
+        {
             if ( is_array($module) )
+            {
                 $where .= " AND sugarfavorites.module IN ('" . implode("','",$module) . "')";
+            }
             else
-                $where .= " AND sugarfavorites.module = '$module' ";
-        
+            {
+            	$where .= " AND sugarfavorites.module = '$module' ";
+            }
+        }
         $focus = new SugarFavorites;
 		$response = $focus->get_list($orderBy,$where,0,$limit);
 	    
