@@ -1,5 +1,5 @@
 <header class="subhead">
-    <button href="javascript:void(0)" class="btn pull-right" name="refresh_button" style="margin-left: 10px">
+    <button href="javascript:void(0)" class="button pull-right" name="refresh_button" style="margin-left: 10px">
         <i class="icon-refresh"></i> Reset</button>
     <h1><small>Colors</small>
     </h1>
@@ -71,7 +71,7 @@
 <div class="row-fluid">
     <div class="btn-toolbar pull-right">
         <a href="javascript:void(0)" name="reset_button">Restore Default Theme</a>
-        <button href="javascript:void(0)" class="btn btn-primary" name="save_button" style="margin-left: 10px">
+        <button href="javascript:void(0)" class="button btn-primary" name="save_button" style="margin-left: 10px">
                 <i class="icon-upload"></i> Save & Deploy</button>
 
     </div>
@@ -87,7 +87,7 @@
       <p>Do you want to proceed?</p>
     </div>
     <div class="modal-footer">
-      <button href="javascript:void(0)" id="buttonYes" class="btn btn-danger">Yes</button>
-      <button href="javascript:void(0)" id="buttonNo" class="btn">No</button>
+      <button href="javascript:void(0)" id="buttonYes" class="button btn-danger">Yes</button>
+      <button href="javascript:void(0)" id="buttonNo" class="button">No</button>
     </div>
 </div>

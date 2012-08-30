@@ -43,12 +43,12 @@ class RestTestMetadataViewDefs extends RestTestBase {
     }
 
     public function testDefaultPortalLayoutMetaData() {
-        $restReply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Contacts&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
         $this->assertTrue(empty($restReply['reply']['modules']['Contacts']['layouts']), "Portal layouts are not empty");
     }
 
     public function testDefaultPortalViewMetaData() {
-        $restReply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertTrue(empty($restReply['reply']['modules']['Cases']['views']['ghostrider']), "Test file found unexpectedly");
     }
 
@@ -60,7 +60,7 @@ class RestTestMetadataViewDefs extends RestTestBase {
 
         sugar_file_put_contents($this->testMetaDataFiles['contacts'], "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');");
 
-        $restReply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Contacts&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
         $this->assertEquals('Banana Split',$restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
     }
 
@@ -72,17 +72,16 @@ class RestTestMetadataViewDefs extends RestTestBase {
 
         sugar_file_put_contents($this->testMetaDataFiles['cases'], "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');");
 
-        $restReply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Cases&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Full',$restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
     }
-    
     /**
-     * Test addresses a case related to the metadata location move that caused
-     * metadatamanager to not roll up to sugar objects properly
-     */
-    public function testMobileMetaDataRollsUp()
-    {
-        $reply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Contacts&platform=mobile');
-        $this->assertNotEmpty($reply['modules']['Contacts']['views']['list']['meta'], 'Contacts list view metadata was not fetched from SugarObjects');
-    }
+         * Test addresses a case related to the metadata location move that caused
+         * metadatamanager to not roll up to sugar objects properly
+         */
+        public function testMobileMetaDataRollsUp()
+        {
+            $reply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Contacts&platform=mobile');
+            $this->assertNotEmpty($reply['modules']['Contacts']['views']['list']['meta'], 'Contacts list view metadata was not fetched from SugarObjects');
+        }
 }

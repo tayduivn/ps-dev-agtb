@@ -452,9 +452,9 @@ class MetaDataManager {
                 $templateDirs[] = "{$modulePath}clients/$platform/$typePath/$dirname/";
             }
             $templates = $this->fetchTemplates($templateDirs);
-            if (!empty($module)){
+            if (!empty($module) && $type != "field"){
                 //custom views/layouts can only have one templates
-                $fileData['templates'] = reset($templates);
+                $fileData['template'] = reset($templates);
             }
             else
                 $fileData['templates'] = $templates;
