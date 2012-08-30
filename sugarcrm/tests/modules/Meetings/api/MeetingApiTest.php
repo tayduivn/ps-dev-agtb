@@ -47,8 +47,8 @@ class MeetingsApiTest extends RestTestBase
             $meeting = new Meeting();
             $meeting->name = "Test Meeting {$x}";
             $meeting->save();
-            $meeting->date_start = date("Y-m-d H:i:s", strtotime("+{$x} days"));
-            $meeting->date_end  = date("Y-m-d H:i:s", strtotime("+{$x} days"));
+            $meeting->date_start = gmdate("Y-m-d H:i:s", strtotime("+{$x} days"));
+            $meeting->date_end  = gmdate("Y-m-d H:i:s", strtotime("+{$x} days"));
             $meeting->assigned_user_id = $this->_user->id;
             $meeting->team_set_id = 1;
             $meeting->team_id = 1;
@@ -72,14 +72,14 @@ class MeetingsApiTest extends RestTestBase
         $this->assertEquals(30, count($restReply['reply']['records']), "Did not get 30 meetings");
 
         // change a date to the past
-        $meetings[5]->date_start = date('Y-m-d H:i:s', strtotime("-50 days"));
+        $meetings[5]->date_start = gmdate('Y-m-d H:i:s', strtotime("-50 days"));
         $meetings[5]->save();        
         $restReply = $this->_restCall("Meetings?max_num=30");
         // verify we get 29 meetings
         $this->assertEquals(29, count($restReply['reply']['records']), "Did not get 29 Meetings");
 
         // change the date back
-        $meetings[5]->date_start = date("Y-m-d H:i:s", strtotime("+5 days"));
+        $meetings[5]->date_start = gmdate("Y-m-d H:i:s", strtotime("+5 days"));
         $meetings[5]->save();
 
         // restore FTS and config override

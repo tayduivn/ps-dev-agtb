@@ -681,8 +681,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             }
 
             if(isset($options['sort'])) {
-                foreach($options['sort'] AS $sort)
-                {
+                foreach($options['sort'] AS $sort) {
                     $query->addSort($sort);
                 }
             }

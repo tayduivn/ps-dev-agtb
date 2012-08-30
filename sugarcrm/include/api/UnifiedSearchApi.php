@@ -258,15 +258,13 @@ class UnifiedSearchApi extends SugarApi {
         /*
          * Currently we cannot do an order by in FTS.  Thus any ordering must be done using the Spot Search
          */
-        if(isset($options['orderBySetByApi']) && $options['orderBySetByApi'] == true)
-        {
+        if(isset($options['orderBySetByApi']) && $options['orderBySetByApi'] == true) {
             return 'SugarSearchEngine';
         }
 
         $fts = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         //everything is groovy for FTS, get the FTS Engine Name from the conig
-        if(!empty($fts))
-        {
+        if(!empty($fts)) {
             return $fts;
         }
         return 'SugarSearchEngine';
@@ -376,19 +374,16 @@ class UnifiedSearchApi extends SugarApi {
             $searchOptions['limitPerModule'] = $limit;
         }
 
-        if(isset($options['custom_select']))
-        {
+        if(isset($options['custom_select'])) {
             $searchOptions['custom_select'] = $options['custom_select'];
         }
 
-        if(isset($options['custom_from']))
-        {
+        if(isset($options['custom_from'])) {
             $searchOptions['custom_from'] = $options['custom_from'];
         }
 
 
-        if(isset($options['custom_where']))
-        {
+        if(isset($options['custom_where'])) {
             $searchOptions['custom_where'] = $options['custom_where'];
         }
 
