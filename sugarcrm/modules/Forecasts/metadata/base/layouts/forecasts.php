@@ -54,7 +54,10 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             'view' => 'forecastsCommitButtons',
         ),
         array(
-            'layout' => 'forecastsConfig',
-        )
-    )
+            'layout' => array(
+                'type' => 'modal',
+                'showEvent' => 'modal:forecastsConfig:open',
+            ),
+        ),
+    ),
 );
