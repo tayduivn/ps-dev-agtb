@@ -519,12 +519,10 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $moduleFilter = $this->constructModuleLevelFilter($module);
             
             // if we want myitems add more to the module filter
-            if(isset($options['my_items']) && $options['my_items'] !== false)
-            {
+            if(isset($options['my_items']) && $options['my_items'] !== false) {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
-            if(isset($options['filter']) && $options['filter']['type'] == 'range')
-            {
+            if(isset($options['filter']) && $options['filter']['type'] == 'range') {
                 $moduleFilter = $this->constructRangeFilter($moduleFilter, $options['filter']);
             }
 
@@ -640,8 +638,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
             }
 
-            if( !is_admin($GLOBALS['current_user']) )
-            {
+            if( !is_admin($GLOBALS['current_user']) ) {
                 // main filter
                 $mainFilter = $this->constructMainFilter($finalTypes, $options);
 
@@ -651,6 +648,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             else
             {
                 $query = new Elastica_Query($queryObj);
+            }
+
+            if(isset($options['sort'])) {
+                foreach($options['sort'] AS $sort)
+                {
+                    $query->addSort($sort);
+                }
             }
 
             $query->setParam('from',$offset);

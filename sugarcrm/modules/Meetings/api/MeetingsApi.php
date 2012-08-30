@@ -70,8 +70,8 @@ class MeetingsApi extends UnifiedSearchApi {
             // add an option for filtering out meetings that have already started
             $options['filter']['fieldname'] = 'date_start';
             $options['filter']['type'] = 'range';
-            $options['filter']['range']['from'] = date('c');
-            $options['filter']['range']['to'] = date('c',strtotime('+6 months'));
+            $options['filter']['range']['from'] = date('Y-m-d');
+            $options['filter']['range']['to'] = date('Y-m-d',strtotime('+10 years'));
             $options['filter']['range']['include_lower'] = true;
             $options['filter']['range']['include_upper'] = true;
             $options['sort'][] = array('date_start' => array('order' => 'asc')); 
