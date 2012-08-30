@@ -536,7 +536,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     {
         $filter = new Elastica_Filter_Range($filter['fieldname'], $filter['range']);
         $moduleFilter->addFilter($filter);
-        $GLOBALS['log']->fatal("\r\n\r\n" . print_r($moduleFilter, true) . "\r\n\r\n");
         return $moduleFilter;
     }
 
