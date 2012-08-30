@@ -92,9 +92,9 @@
     showMoreLog : false,
 
     /**
-     * the timeframes field metadata that gets used at render time
+     * the timeperiod field metadata that gets used at render time
      */
-    timeframes: {},
+    timeperiod: {},
 
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog',
@@ -118,8 +118,8 @@
         this.showHistoryLog = false;
 
         _.each(this.meta.panels, function(panel) {
-            this.timeframes = _.find(panel.fields, function (item){
-                return _.isEqual(item.name, 'timeframes');
+            this.timeperiod = _.find(panel.fields, function (item){
+                return _.isEqual(item.name, 'timeperiod');
             });
         }, this);
     },
@@ -149,20 +149,20 @@
      * @protected
      */
     _renderField: function(field) {
-        if (field.name == "timeframes") {
-            field = this._setUpTimeframeField(field);
+        if (field.name == "timeperiod") {
+            field = this._setUpTimeperiodField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
     },
 
     /**
-     * Sets up the save event and handler for the dropdown fields in the timeframe view.
+     * Sets up the save event and handler for the dropdown fields in the timeperiod view.
      * @param field the commit_stage field
      * @return {*}
      * @private
      */
-    _setUpTimeframeField: function (field) {
-        var timeframes;
+    _setUpTimeperiodField: function (field) {
+        var timeperiod;
 
         field.events = _.extend({"change select": "_updateSelections"}, field.events);
         field.bindDomChange = function() {};
@@ -181,7 +181,7 @@
         };
 
         // INVESTIGATE: Should this be retrieved from the model, instead of directly?
-        app.api.call("read", app.api.buildURL("Forecasts", "timeframes"), '', {success: function(results) {
+        app.api.call("read", app.api.buildURL("Forecasts", "timeperiod"), '', {success: function(results) {
             this.field.def.options = results;
             this.field.render();
         }}, {field: field, view: this});

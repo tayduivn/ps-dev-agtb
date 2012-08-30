@@ -7,11 +7,11 @@ $viewdefs['Forecasts']['base']['view']['forecastsCommitted'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' =>
             array(
-                0 => array(
-                    'name' => 'timeframes',
-                    'label' => 'LBL_FORECAST_PERIOD',
+                array(
+                    'name' => 'timeperiod',
+                    'label' => 'LBL_TIMEPERIOD_NAME',
                     'type' => 'enum',
-                    'view' => 'forecastsTimeframes',
+                    'view' => 'forecastsTimeperiod',
                     // options are set dynamically in the view
                     'default' => true,
                     'enabled' => true,
