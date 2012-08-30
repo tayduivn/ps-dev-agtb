@@ -70,14 +70,6 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'clickToEdit' => true
                 ),
                 array(
-                    'name' => 'expected_likely_case',
-                    'label' => 'LBL_EXPECTED_LIKELY_CASE',
-                    'type' => 'currency',
-                    'default' => true,
-                    'enabled' => true,
-                    'clickToEdit' => true
-                ),
-                array(
                     'name' => 'expected_worst_case',
                     'label' => 'LBL_EXPECTED_WORST_CASE',
                     'type' => 'currency',

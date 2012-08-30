@@ -18,7 +18,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model", function() {
-            var totals = {amount: 235000, best_case: 199900, likely_case: 167000, won_amount: 95000, won_count: 3, lost_amount: 25000, lost_count: 3, included_opp_count: 5, total_opp_count: 13 };
+            var totals = {amount: 235000, best_case: 199900, won_amount: 95000, won_count: 3, lost_amount: 25000, lost_count: 3, included_opp_count: 5, total_opp_count: 13 };
 
             view.model = new Backbone.Model({amount: 0,
                                             closed_amount: 0,
@@ -46,17 +46,17 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_amount: 104900,
                                             closed_best_percent: 0.4752376188094047,
                                             closed_likely_above: false,
-                                            closed_likely_amount: 72000,
-                                            closed_likely_percent: 0.5688622754491018,
+                                            closed_likely_amount: 140000,
+                                            closed_likely_percent: 0.40425531914893614,
                                             opportunities: 7,
-                                            pipeline: 2,
+                                            pipeline: 1.4,
                                             quota_amount: 246000,
                                             quota_best_above: false,
                                             quota_best_amount: 46100,
                                             quota_best_percent: 0.8126016260162602,
                                             quota_likely_above: false,
-                                            quota_likely_amount: 79000,
-                                            quota_likely_percent: 0.6788617886178862,
+                                            quota_likely_amount: 11000,
+                                            quota_likely_percent: 0.9552845528455285,
                                             revenue: 235000});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);

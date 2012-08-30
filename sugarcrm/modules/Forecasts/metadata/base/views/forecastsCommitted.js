@@ -298,10 +298,6 @@
         if(!_.isUndefined(totals.quota)) {
             totals.quota = 0;
         }
-        // we don't care about this field
-        if(!_.isUndefined(totals.amount)) {
-            totals.amount = 0;
-        }
 
         if(!_.isEqual(self.totals, totals)) {
 
@@ -326,8 +322,8 @@
                 // sales rep view
                 best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
                 best.bestCase = App.utils.formatNumber(totals.best_case, 0, 0, ',', '.');
-                likely.likelyCaseCls = this.getColorArrow(totals.likely_case, previousCommit.get('likely_case'));
-                likely.likelyCase = App.utils.formatNumber(totals.likely_case, 0, 0, ',', '.');
+                likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
+                likely.likelyCase = App.utils.formatNumber(totals.amount, 0, 0, ',', '.');
             }
 
             self.bestCaseCls = best.bestCaseCls;
@@ -449,7 +445,7 @@
             forecastData.likely_case = self.totals.likely_adjusted;
         } else {
             forecastData.best_case = self.totals.best_case;
-            forecastData.likely_case = self.totals.likely_case;
+            forecastData.likely_case = self.totals.amount;
         }
         forecastData.timeperiod_id = self.timePeriodId;
         forecastData.forecast_type = self.forecastType;

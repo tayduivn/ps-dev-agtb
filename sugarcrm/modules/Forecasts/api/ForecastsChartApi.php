@@ -488,8 +488,8 @@ class ForecastsChartApi extends ChartApi
             default:
                 $this->managerAdjustedField = 'likely_adjusted';
                 $this->goalParetoLabel = 'Likely';
-                $rb->addSummaryColumn('likely_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
-                $rb->setChartColumn('likely_case');
+                $rb->addSummaryColumn('amount', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->setChartColumn('amount');
                 break;
 
         }

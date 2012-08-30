@@ -53,10 +53,7 @@ $viewdefs['Opportunities']['EditView'] = array(
     //BEGIN SUGARCRM flav=pro ONLY
     array(
         'best_case',
-        'likely_case',
-    ),
-    array(
-        'worst_case'
+        'worst_case',
     ),
     //END SUGARCRM flav=pro ONLY
 

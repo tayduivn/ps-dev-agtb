@@ -72,9 +72,7 @@ function perform_save(&$focus){
     if(is_null($focus->best_case) || strval($focus->best_case) === "") {
         $focus->best_case = $focus->amount;
     }
-    if(is_null($focus->likely_case) || strval($focus->likely_case) === "") {
-        $focus->likely_case = $focus->amount;
-    }
+
     if(is_null($focus->worst_case) || strval($focus->worst_case) === "") {
         $focus->worst_case = $focus->amount;
     }
