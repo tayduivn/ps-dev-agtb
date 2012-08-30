@@ -114,13 +114,16 @@ class RelateRecordApi extends ModuleApi {
      * @param $linkName string What is the name of the link field that you want to get the related fields for
      * @return array A list of the related fields pulled out of the $args array
      */
-    protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName) {
-        $relatedFields = $primaryBean->$linkName->getRelatedFields();
+    protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName, $seed = null) {
+        $relatedFields = $primaryBean->$linkName->getRelationshipFieldMapping($seed);
         $relatedData = array();
         if ( is_array($relatedFields) ) {
-            foreach ( $relatedFields as $fieldName => $fieldParams ) {
+            foreach ( $relatedFields as $rfName => $fieldName ) {
                 if ( isset($args[$fieldName]) ) {
-                    $relatedData[$fieldName] = $args[$fieldName];
+                    $relatedData[$rfName] = $args[$fieldName];
+                }
+                if ( isset($args[$rfName]) ) {
+                    $relatedData[$rfName] = $args[$rfName];
                 }
             }
         }
@@ -183,7 +186,7 @@ class RelateRecordApi extends ModuleApi {
 
         $id = $this->updateBean($relatedBean, $api, $args);
 
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
         //Clean up any hanging related records.
@@ -204,7 +207,7 @@ class RelateRecordApi extends ModuleApi {
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
 
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
         return $this->formatNearAndFarRecords($api,$args,$primaryBean);
@@ -224,7 +227,7 @@ class RelateRecordApi extends ModuleApi {
 
         $id = $this->updateBean($relatedBean, $api, $args);
 
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
         
         //Clean up any hanging related records.
