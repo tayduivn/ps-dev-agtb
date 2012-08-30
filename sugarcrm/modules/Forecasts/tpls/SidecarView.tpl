@@ -105,11 +105,11 @@
 
 <div class="content"></div>
 <script src='{$configFile}'></script>
-<script src='modules/Forecasts/metadata/base/helper/hbt-helpers.js'></script>
-<script src='modules/Forecasts/metadata/base/lib/ClickToEdit.js'></script>
-<script src='modules/Forecasts/metadata/base/lib/BucketGridEnum.js'></script>
-<script src='modules/Forecasts/metadata/base/lib/ForecastsUtils.js'></script>
-<script src='modules/Forecasts/metadata/base/views/alert-view.js'></script>
+<script src='modules/Forecasts/clients/base/helper/hbt-helpers.js'></script>
+<script src='modules/Forecasts/clients/base/lib/ClickToEdit.js'></script>
+<script src='modules/Forecasts/clients/base/lib/BucketGridEnum.js'></script>
+<script src='modules/Forecasts/clients/base/lib/ForecastsUtils.js'></script>
+<script src='modules/Forecasts/clients/base/views/alert-view/alert-view.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 <script src='include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'></script>
 <script src='include/javascript/twitterbootstrap/js/bootstrap-popover.js'></script>
