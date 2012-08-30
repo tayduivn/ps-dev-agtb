@@ -248,6 +248,7 @@ class SugarWidgetReportField extends SugarWidgetField
 		return 'primaryid';
 	}
 
+     // Bug: 44605
      // this comment is being added to trigger the upgrade package
         if ( ! empty($layout_def['group_function']) && $layout_def['group_function']=='count')
         {
