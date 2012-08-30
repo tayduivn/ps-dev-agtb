@@ -75,4 +75,13 @@ class RestTestMetadataViewDefs extends RestTestBase {
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Full',$restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
     }
+    /**
+         * Test addresses a case related to the metadata location move that caused
+         * metadatamanager to not roll up to sugar objects properly
+         */
+        public function testMobileMetaDataRollsUp()
+        {
+            $reply = $this->_restCall('metadata?typeFilter=modules&moduleFilter=Contacts&platform=mobile');
+            $this->assertNotEmpty($reply['modules']['Contacts']['views']['list']['meta'], 'Contacts list view metadata was not fetched from SugarObjects');
+        }
 }
