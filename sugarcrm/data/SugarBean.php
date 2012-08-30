@@ -2646,8 +2646,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         // TODO: add a vardef for my_favorite
         $this->my_favorite = false;
-        if(isset($row['my_favorite']) && !empty($row['my_favorite']))
-        {
+        if(isset($row['my_favorite']) && !empty($row['my_favorite'])) {
             $this->my_favorite = true;
         }
 

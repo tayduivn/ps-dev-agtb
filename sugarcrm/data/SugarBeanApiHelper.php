@@ -109,8 +109,7 @@ class SugarBeanApiHelper
         // mark if its a favorite
         
         if ( empty($fieldList) || !in_array('my_favorite',$fieldList) ) {
-            if(!isset($bean->my_favorite))
-            {
+            if(!isset($bean->my_favorite)) {
                 $bean->my_favorite = SugarFavorites::isUserFavorite($bean->module_dir, $bean->id, $GLOBALS['current_user']->id);
             }
             $data['my_favorite'] = $bean->my_favorite;
