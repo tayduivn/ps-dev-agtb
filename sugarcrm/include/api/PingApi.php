@@ -35,7 +35,7 @@ class PingApi extends SugarApi {
             'pingWithTime' => array(
                 'reqType' => 'GET',
                 'path' => array('ping', 'whattimeisit'),
-                'pathVars' => array('', 'subMethod'),
+                'pathVars' => array('', 'sub_method'),
                 'method' => 'ping',
                 'shortHelp' => 'An example API only responds with the current time in server format.',
                 'longHelp' => 'include/api/html/ping_whattimeisit_help.html',
@@ -61,7 +61,7 @@ class PingApi extends SugarApi {
                     'requestVars' => array(
                     ),
                     'extraVars' => array(
-                        'subMethod' => 'whattimeisit',
+                        'sub_method' => 'whattimeisit',
                     ),
                     'returnVars' => array(
                         'xsd:string',
@@ -75,7 +75,7 @@ class PingApi extends SugarApi {
     }
 
     public function ping($api, $args) {
-        if ( isset($args['subMethod']) && $args['subMethod'] == 'whattimeisit' ) {
+        if ( isset($args['sub_method']) && $args['sub_method'] == 'whattimeisit' ) {
             require_once('include/SugarDateTime.php');
             $dt = new SugarDateTime('now');
             return $dt->asDb();
