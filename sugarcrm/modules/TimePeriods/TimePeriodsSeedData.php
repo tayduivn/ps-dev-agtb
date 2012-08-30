@@ -52,7 +52,7 @@ public static function populateSeedData()
     $timeperiod1->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
     $timeperiod1->is_fiscal_year =0;
     $timeperiod1->is_leaf = 0;
-    $timeperiod1->time_period_type = "Annually";
+    $timeperiod1->time_period_type = "Annual";
     $fiscal_year_id=$timeperiod1->save();
     $current_timeperiod_id = $timeperiod1->save();
     $timeperiods[$current_timeperiod_id]=$timeperiod1;

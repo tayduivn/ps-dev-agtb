@@ -61,8 +61,9 @@ class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
 
         $nextStartDate = $nextStartDate->modify('+13 week');
         $nextEndDate = $nextEndDate->modify('+13 week');
-        $nextPeriod->start_date = $nextStartDate->format(timedate::get_db_date_format());
-        $nextPeriod->end_date = $nextEndDate->format(timedate::get_db_date_format());
+        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
+        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
+        $nextPeriod->save();
 
         return $nextPeriod;
     }

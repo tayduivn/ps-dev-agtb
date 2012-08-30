@@ -117,7 +117,7 @@ class SugarTestTimePeriodUtilities
         $timeperiod->start_date = $start_date;
         $timeperiod->end_date = $end_date;
         $timeperiod->name = $name;
-        $timeperiod->time_period_type = "Annually";
+        $timeperiod->time_period_type = "Annual";
         $timeperiod->is_fiscal_year = 0;
         $timeperiod->is_leaf = 0;
         $timeperiod->save();

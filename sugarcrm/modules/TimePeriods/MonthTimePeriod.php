@@ -67,8 +67,9 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
         } else {
             $nextEndDate = $nextEndDate->modify('+$weekLength week');
         }
-        $nextPeriod->start_date = $nextStartDate->format(timedate::get_db_date_format());
-        $nextPeriod->end_date = $nextEndDate->format(timedate::get_db_date_format());
+        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
+        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
+        $nextPeriod->save();
 
         return $nextPeriod;
     }

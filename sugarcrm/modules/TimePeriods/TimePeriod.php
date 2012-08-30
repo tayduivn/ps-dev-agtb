@@ -365,25 +365,26 @@ class TimePeriod extends SugarBean {
      * @return mixed
      */
     public function getNextTimePeriod() {
-        $db = DBManagerFactory::getInstance();
+        $timedate = TimeDate::getInstance();
 
-        $query = "select id from timeperiods where ";
-        $query .= " time_period_type = " . $db->quoted($this->time_period_type);
-        $query .= " AND deleted = 0" . $db->quoted($this->time_period_type);
+        $query = "select id, time_period_type from timeperiods where ";
+        $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0";
 
-        $queryDate = $this->end_date;
+        $queryDate = $timedate->fromUserDate($this->end_date);
         $queryDate = $queryDate->modify('+1 day');
-        $queryDate = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
 
         $query .= " AND start_date = {$queryDate}";
 
-        $nextID = $db->getOne($query);
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
 
-        if(empty($nextID)) {
-            return createNextTimePeriod();
+        if($row == null) {
+            return $this->createNextTimePeriod();
         }
 
-        return BeanFactory::getBean('TimePerion', $nextID);
+        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
 
     }
 
@@ -395,24 +396,26 @@ class TimePeriod extends SugarBean {
      */
     public function getPreviousTimePeriod() {
         $db = DBManagerFactory::getInstance();
+        $timedate = TimeDate::getInstance();
 
         $query = "select id from timeperiods where ";
-        $query .= " time_period_type = " . $db->quoted($this->time_period_type);
-        $query .= " AND deleted = 0" . $db->quoted($this->time_period_type);
+        $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0";
 
-        $queryDate = $this->start_date;
+        $queryDate = $timedate->fromUserDate($this->end_date);
         $queryDate = $queryDate->modify('-1 day');
-        $queryDate = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
 
         $query .= " AND end_date = {$queryDate}";
 
-        $nextID = $db->getOne($query);
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
 
-        if(empty($nextID)) {
-            return NULL;
+        if($row == null) {
+            return null;
         }
 
-        return BeanFactory::getBean('TimePeriod', $nextID);
+        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
     }
 
     /**

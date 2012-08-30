@@ -61,8 +61,9 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
 
         $nextStartDate = $nextStartDate->modify('+3 month');
         $nextEndDate = $nextEndDate->modify('+3 month');
-        $nextPeriod->start_date = $nextStartDate->format(timedate::get_db_date_format());
-        $nextPeriod->end_date = $nextEndDate->format(timedate::get_db_date_format());
+        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
+        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
+        $nextPeriod->save();
 
         return $nextPeriod;
     }

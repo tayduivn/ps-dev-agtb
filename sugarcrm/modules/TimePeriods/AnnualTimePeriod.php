@@ -36,6 +36,8 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         parent::TimePeriod();
 
         $this->time_period_type = 'Annual';
+        $this->is_fiscal_year = false;
+        $this->is_leaf = false;
     }
 
     /**
@@ -61,8 +63,10 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
         $nextStartDate = $nextStartDate->modify('+1 year');
         $nextEndDate = $nextEndDate->modify('+1 year');
-        $nextPeriod->start_date = $nextStartDate->format(timedate::get_db_date_format());
-        $nextPeriod->end_date = $nextEndDate->format(timedate::get_db_date_format());
+        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
+        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
+
+        $nextPeriod->save();
 
         return $nextPeriod;
     }
