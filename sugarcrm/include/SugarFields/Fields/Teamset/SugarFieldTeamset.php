@@ -625,6 +625,10 @@ class SugarFieldTeamset extends SugarFieldBase {
     public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties) {
         require_once('modules/Teams/TeamSetManager.php');
         $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);
+        if ( ! is_array($teamList) ) {
+            // No teams on this bean yet.
+            $teamList = array();
+        }
         foreach ( $teamList as $idx => $team ) {
             if ($team['id']==$bean->team_id) {
                 $teamList[$idx]['primary'] = true;
@@ -649,6 +653,9 @@ class SugarFieldTeamset extends SugarFieldBase {
     public function apiSave(SugarBean $bean, array $params, $fieldName, $properties) {
         // Find the primary team id, or the first one, if nothing is set to primary
         $teamList = $params[$fieldName];
+        if (!is_array($teamList)) {
+            $teamList = array();
+        }
         $teamIds = array();
         foreach ( $teamList as $idx => $team ) {
             if ( isset($team['primary']) && $team['primary'] == true ) {
