@@ -34,7 +34,7 @@ describe("The forecasts worksheet totals calculation test", function(){
         SugarTest.seedMetadata(true);
         SugarTest.seedApp();
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/forecasts/metadata/base/views", "forecastsWorksheet", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
         var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, forecast: 1,  best_case : 100, likely_case : 100 });
         var model2 = new Backbone.Model({amount: 100, sales_stage: 'Closed Lost', probability: 70, forecast: 0, best_case : 100, likely_case : 100 });
         var model3 = new Backbone.Model({amount: 100, sales_stage: 'Negotiating', probability: 70, forecast: 0,  best_case : 100, likely_case : 100 });

@@ -4,9 +4,9 @@ describe("The forecasts worksheet", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/metadata/base/views", "forecastsWorksheet", "js", function(d) { return eval(d); });
-        var cte = SugarTest.loadFile("../modules/Forecasts/metadata/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
-        var bge = SugarTest.loadFile("../modules/Forecasts/metadata/base/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
+        var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+        var bge = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "BucketGridEnum", "js", function(d) { return eval(d); });
     });
 
     describe("clickToEdit field", function() {
