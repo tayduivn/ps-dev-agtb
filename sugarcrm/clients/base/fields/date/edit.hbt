@@ -1,0 +1,7 @@
+<div class="row-fluid control-group">
+    <div class="span2">{{label}}</div>
+    <div class="span4">
+        <input type=text class=input-xlarge datepicker value={{value.date}}>
+        <p class="help-block"></p>
+    </div>
+</div>
