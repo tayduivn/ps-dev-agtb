@@ -50,9 +50,13 @@ public static function populateSeedData()
     $timeperiod1->name = "Year ".$year;
     $timeperiod1->start_date = $timedate->asDbDate($now->get_day_begin(1, 1, $year));
     $timeperiod1->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
-    $timeperiod1->is_fiscal_year =1;
+    $timeperiod1->is_fiscal_year =0;
+    $timeperiod1->is_leaf = 0;
+    $timeperiod1->time_period_type = "Annually";
     $fiscal_year_id=$timeperiod1->save();
-
+    $current_timeperiod_id = $timeperiod1->save();
+    $timeperiods[$current_timeperiod_id]=$timeperiod1;
+/*
     //create a time period record for the first quarter.
     $timeperiod2 = new TimePeriod();
     $timeperiod2->name = "Q1 ".$year;
@@ -135,6 +139,7 @@ public static function populateSeedData()
     $timeperiod10->parent_id=$fiscal_year_id;
     $current_timeperiod_id = $timeperiod10->save();
     $timeperiods[$current_timeperiod_id]=$timeperiod10;
+*/
     return $timeperiods;
 }
 
