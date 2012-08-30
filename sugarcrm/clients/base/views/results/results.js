@@ -68,7 +68,7 @@
             success:function(collection) {
                 cb(collection);
             },
-            moduleList: mlist,
+            module_list: mlist,
             error:function(error) {
                 cb(null); // lets callback know to dismiss the alert
             }
