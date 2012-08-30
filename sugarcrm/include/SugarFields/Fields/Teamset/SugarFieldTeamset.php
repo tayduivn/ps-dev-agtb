@@ -649,6 +649,9 @@ class SugarFieldTeamset extends SugarFieldBase {
     public function apiSave(SugarBean $bean, array $params, $fieldName, $properties) {
         // Find the primary team id, or the first one, if nothing is set to primary
         $teamList = $params[$fieldName];
+        if (!is_array($teamList)) {
+            $teamList = array();
+        }
         $teamIds = array();
         foreach ( $teamList as $idx => $team ) {
             if ( isset($team['primary']) && $team['primary'] == true ) {
