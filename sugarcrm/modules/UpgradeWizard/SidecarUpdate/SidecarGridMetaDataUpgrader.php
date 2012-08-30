@@ -96,7 +96,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             
             // If there are defs for this module, grab them
             if (in_array($this->module, $moduleList)) {
-                $newdefsFile = 'modules/' . $this->module . '/metadata/' . $client . '/views/' . $this->viewtype . '.php';
+                $newdefsFile = 'modules/' . $this->module . '/clients/' . $client . '/views/' . $this->viewtype . '/' . $this->viewtype . '.php';
                 if (file_exists($newdefsFile)) {
                     require $newdefsFile;
                     if (isset($viewdefs[$this->module][$client]['view'][$this->viewtype])) {
@@ -110,11 +110,11 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
                 require_once 'modules/ModuleBuilder/Module/StudioModuleFactory.php';
                 $sm = StudioModuleFactory::getStudioModule($this->module);
                 $moduleType = $sm->getType();
-                $newdefsFile = 'include/SugarObjects/templates/' . $moduleType . '/metadata/' . $client . '/views/' . $this->viewtype . '.php';
+                $newdefsFile = 'include/SugarObjects/templates/' . $moduleType . '/clients/' . $client . '/views/' . $this->viewtype . '/' . $this->viewtype . '.php';
                 if (file_exists($newdefsFile)) {
                     require $newdefsFile;
                 } else {
-                    $newdefsFile = 'include/SugarObjects/templates/basic/metadata/' . $client . '/views/' . $this->viewtype . '.php';
+                    $newdefsFile = 'include/SugarObjects/templates/basic/clients/' . $client . '/views/' . $this->viewtype . '/' . $this->viewtype . '.php';
                     if (file_exists($newdefsFile)) {
                         require $newdefsFile;
                     }
