@@ -62,7 +62,6 @@
             {
                 includedAmount : 0,
                 includedBest : 0,
-                includedLikely : 0,
                 includedCount : 0
             }
         );
@@ -72,7 +71,6 @@
             {
                 overallAmount : 0,
                 overallBest : 0,
-                overallLikely : 0
             }
         )
 
@@ -371,10 +369,8 @@
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
-        var includedLikely = 0;
         var overallAmount = 0;
         var overallBest = 0;
-        var overallLikely = 0;
         var includedCount = 0;
         var lostCount = 0;
         var lostAmount = 0;
@@ -385,7 +381,6 @@
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
-                'likely_case' : includedLikely,
                 'best_case' : includedBest,
                 'timeperiod_id' : self.timePeriod,
                 'lost_count' : lostCount,
@@ -409,7 +404,6 @@
             var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
             var amount = parseFloat(model.get('amount'));
             var included = model.get('forecast');
-            var likely = parseFloat(model.get('likely_case'));
             var best = parseFloat(model.get('best_case'));
 
             if(won)
@@ -423,13 +417,11 @@
 
             if(included == true || included == 1) {
                 includedAmount += amount;
-                includedLikely += likely;
                 includedBest += best;
                 includedCount++;
             }
 
             overallAmount += amount;
-            overallLikely += likely;
             overallBest += best;
         });
 
@@ -440,23 +432,19 @@
                if(model.get('status') == 'Active')
                {
                     var amount = model.get('expected_amount');
-                    var likely = model.get('expected_likely_case');
                     var best = model.get('expected_best_case');
 
                     //Check for null condition and, if so, set to 0
                     amount = amount != null ? parseFloat(amount) : 0;
-                    likely = likely != null ? parseFloat(likely) : 0;
                     best = best != null ? parseFloat(best) : 0;
 
                     if(model.get('include_expected') == 1)
                     {
                         includedAmount += amount;
-                        includedLikely += likely;
                         includedBest += best;
                     }
 
                     overallAmount += amount;
-                    overallLikely += likely;
                     overallBest += best;
                }
            });
@@ -465,7 +453,6 @@
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
-            includedLikely : includedLikely,
             includedCount : includedCount
         });
         self.includedModel.change();
@@ -473,12 +460,10 @@
         self.overallModel.set({
             overallAmount : overallAmount,
             overallBest : overallBest,
-            overallLikely : overallLikely
         });
         self.overallModel.change();
 
         var totals = {
-            'likely_case' : includedLikely,
             'best_case' : includedBest,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,

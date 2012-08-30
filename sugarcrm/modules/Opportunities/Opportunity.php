@@ -84,10 +84,8 @@ class Opportunity extends SugarBean
 	var $rel_quote_table = "quotes_opportunities";
 	var $best_case;
 	var $worst_case;
-	var $likely_case;
     var $best_case_base_currency;
     var $worst_case_base_currency;
-    var $likely_case_base_currency;
     var $timeperiod_id;
 	var $commit_stage;
 	var $forecast = -1;
@@ -281,7 +279,6 @@ class Opportunity extends SugarBean
 			if ( $currency->id != $this->currency_id || $currency->deleted == 1 ) {
 				$this->amount      = $this->amount_usdollar;
                 $this->best_case = $this->best_case_base_currency;
-                $this->likely_case = $this->likely_case_base_currency;
                 $this->worst_case = $this->worst_case_base_currency;
 				$this->currency_id = $currency->id;
 			}

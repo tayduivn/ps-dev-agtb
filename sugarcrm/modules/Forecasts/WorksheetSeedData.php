@@ -81,7 +81,7 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
 
                 if($opp->forecast == 1) {
                     $best += $opp->best_case;
-                    $likely += $opp->likely_case;
+                    $likely += $opp->amount;
                     $worst += $opp->worst_case;
 
                     //This is a sales rep's worksheet entry
@@ -92,7 +92,7 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
                     $worksheet->related_id = $opp->id;
                     $worksheet->related_forecast_type = '';  //Opportunities do not have a related_forecast_type set
                     $worksheet->best_case = $opp->best_case + 500;
-                    $worksheet->likely_case = $opp->likely_case + 500;
+                    $worksheet->likely_case = $opp->amount + 500;
                     $worksheet->worst_case = $opp->worst_case + 500;
                     $worksheet->save();
                     $created_ids[] = $worksheet->id;

@@ -92,9 +92,9 @@
     showMoreLog : false,
 
     /**
-     * the timeframes field metadata that gets used at render time
+     * the timeperiod field metadata that gets used at render time
      */
-    timeframes: {},
+    timeperiod: {},
 
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog',
@@ -118,8 +118,8 @@
         this.showHistoryLog = false;
 
         _.each(this.meta.panels, function(panel) {
-            this.timeframes = _.find(panel.fields, function (item){
-                return _.isEqual(item.name, 'timeframes');
+            this.timeperiod = _.find(panel.fields, function (item){
+                return _.isEqual(item.name, 'timeperiod');
             });
         }, this);
     },
@@ -149,20 +149,20 @@
      * @protected
      */
     _renderField: function(field) {
-        if (field.name == "timeframes") {
-            field = this._setUpTimeframeField(field);
+        if (field.name == "timeperiod") {
+            field = this._setUpTimeperiodField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
     },
 
     /**
-     * Sets up the save event and handler for the dropdown fields in the timeframe view.
+     * Sets up the save event and handler for the dropdown fields in the timeperiod view.
      * @param field the commit_stage field
      * @return {*}
      * @private
      */
-    _setUpTimeframeField: function (field) {
-        var timeframes;
+    _setUpTimeperiodField: function (field) {
+        var timeperiod;
 
         field.events = _.extend({"change select": "_updateSelections"}, field.events);
         field.bindDomChange = function() {};
@@ -181,7 +181,7 @@
         };
 
         // INVESTIGATE: Should this be retrieved from the model, instead of directly?
-        app.api.call("read", app.api.buildURL("Forecasts", "timeframes"), '', {success: function(results) {
+        app.api.call("read", app.api.buildURL("Forecasts", "timeperiod"), '', {success: function(results) {
             this.field.def.options = results;
             this.field.render();
         }}, {field: field, view: this});
@@ -298,10 +298,6 @@
         if(!_.isUndefined(totals.quota)) {
             totals.quota = 0;
         }
-        // we don't care about this field
-        if(!_.isUndefined(totals.amount)) {
-            totals.amount = 0;
-        }
 
         if(!_.isEqual(self.totals, totals)) {
 
@@ -326,8 +322,8 @@
                 // sales rep view
                 best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
                 best.bestCase = App.utils.formatNumber(totals.best_case, 0, 0, ',', '.');
-                likely.likelyCaseCls = this.getColorArrow(totals.likely_case, previousCommit.get('likely_case'));
-                likely.likelyCase = App.utils.formatNumber(totals.likely_case, 0, 0, ',', '.');
+                likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
+                likely.likelyCase = App.utils.formatNumber(totals.amount, 0, 0, ',', '.');
             }
 
             self.bestCaseCls = best.bestCaseCls;
@@ -449,7 +445,7 @@
             forecastData.likely_case = self.totals.likely_adjusted;
         } else {
             forecastData.best_case = self.totals.best_case;
-            forecastData.likely_case = self.totals.likely_case;
+            forecastData.likely_case = self.totals.amount;
         }
         forecastData.timeperiod_id = self.timePeriodId;
         forecastData.forecast_type = self.forecastType;
