@@ -31,17 +31,7 @@ class MeetingsApiFTSTest extends RestTestBase
     public function setUp()
     {
         parent::setUp();
-    }
-    
-    public function tearDown()
-    {
-    	parent::tearDown();
-
-    }
-
-	public function testModuleSearch()
-	{
-        $search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
+        $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
         $meetings = array();
         for($x = 1; $x < 31; $x++)
         {
@@ -54,32 +44,45 @@ class MeetingsApiFTSTest extends RestTestBase
             $meeting->team_set_id = 1;
             $meeting->team_id = 1;
             $meeting->save();
-            $search_engine->indexBean($meeting, FALSE);
-            $meetings[] = $meeting;            
-        } 
+            $this->search_engine->indexBean($meeting, FALSE);
+            $this->meetings[] = $meeting;            
+        }         
+    }
+    
+    public function tearDown()
+    {
+        // restore FTS and config override
+        foreach($this->meetings AS $meeting)
+        {
+            $this->search_engine->delete($meeting);
+            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
+        }
+        parent::tearDown();        
+    }
+
+	public function testModuleSearch()
+	{
+
         // verify we get 30 meetings
         $restReply = $this->_restCall("Meetings?max_num=30");
 
         $this->assertEquals(30, count($restReply['reply']['records']), "Did not get 30 meetings");
 
         // change a date to the past
-        $meetings[5]->date_start = gmdate('Y-m-d H:i:s', strtotime("-50 days"));
-        $meetings[5]->save();
-        $search_engine->indexBean($meetings[5], FALSE);
+        $this->meetings[5]->date_start = gmdate('Y-m-d H:i:s', strtotime("-50 days"));
+        $this->meetings[5]->save();
+        $this->search_engine->indexBean($this->meetings[5], FALSE);
+        
         $restReply = $this->_restCall("Meetings?max_num=30");
         // verify we get 29 meetings
         $this->assertEquals(29, count($restReply['reply']['records']), "Did not get 29 Meetings");
 
         // change the date back
-        $meetings[5]->date_start = gmdate("Y-m-d H:i:s", strtotime("+5 days"));
-        $meetings[5]->save();
+        $this->meetings[5]->date_start = gmdate("Y-m-d H:i:s", strtotime("+5 days"));
+        $this->meetings[5]->save();
+        $this->search_engine->indexBean($this->meetings[5], FALSE);
         
-        // restore FTS and config override
-        foreach($meetings AS $meeting)
-        {
-            $search_engine->delete($meeting);
-            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
-        }
+
 	}
  
 }

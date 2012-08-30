@@ -31,17 +31,7 @@ class MeetingsApiTest extends RestTestBase
     public function setUp()
     {
         parent::setUp();
-    }
-    
-    public function tearDown()
-    {
-    	parent::tearDown();
-
-    }
-
-	public function testModuleSearch()
-	{
-        $meetings = array();
+        $this->meetings = array();
         for($x = 1; $x < 31; $x++)
         {
             $meeting = new Meeting();
@@ -53,18 +43,39 @@ class MeetingsApiTest extends RestTestBase
             $meeting->team_set_id = 1;
             $meeting->team_id = 1;
             $meeting->save();
-            $meetings[] = $meeting;            
-        } 
+            $this->meetings[] = $meeting;            
+        }
         // set the FTS engine as down and make sure the config removes FTS
         searchEngineDown();
         $this->config_file_override = '';
-        if(file_exists('config_override.php'))
-            $config_file_override = file_get_contents('config_override.php');
-        else
-            $config_file_override= '<?php' . "\r\n";
+        if(file_exists('config_override.php')) {
+            $this->config_file_override = file_get_contents('config_override.php');
+        }
+        else {
+            $this->config_file_override= '<?php' . "\r\n";
+        }
 
         $new_line = '$sugar_config[\'full_text_engine\'] = true;';
-        file_put_contents('config_override.php', $config_file_override . "\r\n" . $new_line);
+        file_put_contents('config_override.php', $this->config_file_override . "\r\n" . $new_line);
+
+    }
+    
+    public function tearDown()
+    {
+        // restore FTS and config override
+        restoreSearchEngine();
+        file_put_contents('config_override.php', $this->config_file_override);
+        foreach($this->meetings AS $meeting)
+        {
+            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
+        }        
+    	parent::tearDown();
+
+    }
+
+	public function testModuleSearch()
+	{
+
 
         // verify we get 30 meetings
         $restReply = $this->_restCall("Meetings?max_num=30");
@@ -72,23 +83,17 @@ class MeetingsApiTest extends RestTestBase
         $this->assertEquals(30, count($restReply['reply']['records']), "Did not get 30 meetings");
 
         // change a date to the past
-        $meetings[5]->date_start = gmdate('Y-m-d H:i:s', strtotime("-50 days"));
-        $meetings[5]->save();        
+        $this->meetings[5]->date_start = gmdate('Y-m-d H:i:s', strtotime("-50 days"));
+        $this->meetings[5]->save();        
         $restReply = $this->_restCall("Meetings?max_num=30");
         // verify we get 29 meetings
         $this->assertEquals(29, count($restReply['reply']['records']), "Did not get 29 Meetings");
 
         // change the date back
-        $meetings[5]->date_start = gmdate("Y-m-d H:i:s", strtotime("+5 days"));
-        $meetings[5]->save();
+        $this->meetings[5]->date_start = gmdate("Y-m-d H:i:s", strtotime("+5 days"));
+        $this->meetings[5]->save();
 
-        // restore FTS and config override
-        restoreSearchEngine();
-        file_put_contents('config_override.php', $config_file_override);
-        foreach($meetings AS $meeting)
-        {
-            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$meeting->id}'");
-        }
+
 	}
  
 }
