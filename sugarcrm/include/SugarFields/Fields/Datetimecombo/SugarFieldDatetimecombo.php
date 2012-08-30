@@ -212,7 +212,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     {
         global $timedate;
 
-        $date = $timedate->fromDbDateTime($bean->$fieldName);
-        $data[$fieldName] = $timedate->asIsoDateTime($date);
+        $date = $timedate->fromDb($bean->$fieldName);
+        $data[$fieldName] = $timedate->asIso($date);
     }
 }
