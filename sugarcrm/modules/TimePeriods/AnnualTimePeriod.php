@@ -26,6 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+require_once('modules/TimePeriods/iTimePeriod.php');
 class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
@@ -34,7 +35,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     public function AnnualTimePeriod() {
         parent::TimePeriod();
 
-        $this->time_period_type = 'Annually';
+        $this->time_period_type = 'Annual';
     }
 
     /**
@@ -48,26 +49,20 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     }
 
     /**
-     * subtracts the end from the start date to return the date length in days
-     *
-     * @return mixed
-     */
-    public function getLengthInDays() {
-        $diff = $this->end_date->diff($this->start_date);
-        return $diff->d;
-    }
-
-    /**
      * creates a new AnnualTimePeriod to start to use
      *
      * @return AnnualTimePeriod
      */
     public function createNextTimePeriod() {
         $nextPeriod = new AnnualTimePeriod();
+        $timedate = TimeDate::getInstance();
+        $nextStartDate = $timedate->fromUserDate($this->start_date);
+        $nextEndDate = $timedate->fromUserDate($this->end_date);
 
-        $nextPeriod->start_date = $this->end_date->modify('+1 day');
-        $nextPeriod->end_date = $this->start_date->modify('+1 year');
-        $nextPeriod->end_date = $this->start_date->modify('-1 day');
+        $nextStartDate = $nextStartDate->modify('+1 year');
+        $nextEndDate = $nextEndDate->modify('+1 year');
+        $nextPeriod->start_date = $nextStartDate->format(timedate::get_db_date_format());
+        $nextPeriod->end_date = $nextEndDate->format(timedate::get_db_date_format());
 
         return $nextPeriod;
     }
@@ -104,7 +99,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
      * @param string $timePeriodType
      * @return mixed
      */
-    public function buildLeaves($timePeriodType="Quarterly") {
+    public function buildLeaves($timePeriodType) {
         if($this->hasLeaves()) {
             return;
         }
