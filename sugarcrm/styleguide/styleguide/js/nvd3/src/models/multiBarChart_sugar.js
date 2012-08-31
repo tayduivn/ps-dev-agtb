@@ -19,8 +19,8 @@ nv.models.multiBarChart = function() {
     , tooltips = true
     , tooltipBar = function(key, x, y, e, graph) {
         return '<p>Stage: <b>' + key + '</b></p>' +
-               '<p>Amount: <b>' +  parseInt(y) + 'K</b></p>' +
-               '<p>Percent: <b>' +  x + '</b></p>'
+               '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+               '<p>Percent: <b>' +  x + '%</b></p>'
       }
     , tooltipLine = function(key, x, y, e, graph) {
         return '<p>Likely: <b>' + parseInt(y) + 'K</b></p>'
