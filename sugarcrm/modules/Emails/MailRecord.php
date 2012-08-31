@@ -26,6 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // require_once 'include/OutboundEmail/OutboundEmail.php';
 require_once 'modules/Mailer/EmailIdentity.php';
+require_once 'modules/Mailer/MailerException.php';
 
 class MailRecord {
 
