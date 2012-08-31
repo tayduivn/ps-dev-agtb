@@ -33,11 +33,11 @@ describe("Convert Lead Layout", function(){
     describe("initialization", function() {
 
         it("should create convertModel", function() {
-            expect(_.isEmpty(convertLayout.convertModel)).toBeFalsy();
+            expect(_.isEmpty(convertLayout.context.convertModel)).toBeFalsy();
         });
 
         it("should save convertModel when lead:convert event has been triggered", function() {
-            var syncSpy = sinon.spy(convertLayout.convertModel, 'sync');
+            var syncSpy = sinon.spy(convertLayout.context.convertModel, 'sync');
             convertLayout.context.trigger('lead:convert');
 
             expect(syncSpy.calledOnce).toBeTruthy();
