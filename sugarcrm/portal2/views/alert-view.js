@@ -44,7 +44,9 @@
                         "<a class=\"close\" data-dismiss=\"alert\">x</a>{{#if title}}<strong>{{str title}}</strong>{{/if}}" +
                         "{{#each messages}}<p>{{str this}}</p>{{/each}}</div>",
                     loadingTemplate: "<div class=\"alert {{alertClass}}\">" +
-                        "<strong>{{str title}}</strong>&hellip;<a class=\"close\" data-dismiss=\"alert\">x</a></div>",
+                        "<strong>{{str title}}</strong>\n" +
+                        "<div class=\"loading\"><span class=\"l1\"></span><span class=\"l2\"></span><span class=\"l3\"></span></div>" +
+                        "<a class=\"close\" data-dismiss=\"alert\">x</a></div>",
                     initialize: function() {
                         this.render();
                     },

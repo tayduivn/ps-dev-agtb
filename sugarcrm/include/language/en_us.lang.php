@@ -83,7 +83,6 @@ $app_list_strings = array (
     'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
-    'CampaignTrackers'=>'Campaign Trackers',
     'Documents'=>'Documents',
     'DocumentRevisions'=>'Document Revisions',
     //END SUGARCRM flav!=sales ONLY
@@ -127,7 +126,10 @@ $app_list_strings = array (
     'Newsletters' => 'Newsletters',
     'SugarFeed'=>'Sugar Feed',
     'KBDocuments' => 'Knowledge Base',
-  'SugarFavorites'=>'Favorites',
+  	'SugarFavorites'=>'Favorites',
+//BEGIN SUGARCRM flav=pro ONLY
+	'PdfManager' => 'PDF Manager',
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=dce ONLY
 
     'DCEDataBases' => 'Databases',
@@ -186,6 +188,9 @@ $app_list_strings = array (
     //END SUGARCRM flav!=sales ONLY
     'SugarFollowing'=>'SugarFollowing',
     'Sync'=>'Sync',
+//BEGIN SUGARCRM flav=pro ONLY
+	'PdfManager' => 'PDF Manager',
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
     'ReportMaker' => ' SweetReport',
 //END SUGARCRM flav=ent ONLY
@@ -3377,6 +3382,10 @@ $app_strings = array (
     'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_PDF_VIEW' => 'Download PDF',
+    'LBL_PDF_EMAIL' => 'Email PDF',
+    //END SUGARCRM flav=pro ONLY
 
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
 
@@ -3428,6 +3437,25 @@ $app_strings = array (
     'LBL_PORTAL_SAVING' => 'Saving',
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
+
+    //for portal system tour
+    'LBL_PORTAL_TOUR_WELCOME_TITLE' => 'Welcome to Portal',
+    'LBL_PORTAL_TOUR_WATCH_VIDEO' => 'Watch: What\'s new in Portal',
+    'LBL_PORTAL_TOUR_FEATURES' => '<li><i class="icon-ok"></i>Feature 1</li><li><i class="icon-ok"></i>Feature 2</li><li><i class="icon-ok"></i>Feature 3</li><li><i class="icon-ok"></i>Feature 4</li>',
+    'LBL_PORTAL_TOUR_MORE_INFO' => '<p>And much more!</p><p>For a full list visit the What\'s New in Portal</p>',
+    'LBL_PORTAL_TOUR_TAKE_TOUR_LNK' => 'Take the tour',
+    'LBL_PORTAL_TOUR_SKIP_LNK' => 'Skip',
+    'LBL_PORTAL_TOUR_NEXT_LNK' => 'Next',
+    'LBL_PORTAL_TOUR_BACK_LNK' => 'Back',
+    'LBL_PORTAL_TOUR_DONE_LNK' => 'Done',
+    'LBL_PORTAL_TOUR_CASES_TITLE' => 'Cases',
+    'LBL_PORTAL_TOUR_CASES_BODY' => 'All your cases go here',
+    'LBL_PORTAL_TOUR_SEARCH_TITLE' => 'Search',
+    'LBL_PORTAL_TOUR_SEARCH_BODY' => 'Search keywords or case numbers',
+    'LBL_PORTAL_TOUR_QUICK_TITLE' => 'Quick Create',
+    'LBL_PORTAL_TOUR_QUICK_BODY' => 'You can perform all your quick actions here',
+    'LBL_PORTAL_TOUR_DONE_TITLE' => 'You\'re Done!',
+    'LBL_PORTAL_TOUR_DONE_BODY' => 'You can always retake the tour or read documentation for more information.',
 
     //for portal errors
     'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
@@ -4337,4 +4365,11 @@ $app_list_strings['sales_stage_dom']= array(
     'Closed Lost'=>'Lost',
 );
 }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+	$app_list_strings ['pdfmanager_yes_no_list'] = array (
+		'yes' => 'Yes' ,
+		'no' => 'No',
+	);
+    //END SUGARCRM flav=pro ONLY
 ?>

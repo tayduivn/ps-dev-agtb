@@ -136,7 +136,20 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
+        
+        //BEGIN SUGARCRM flav=pro ONLY
+        $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
+        $module_favorites_user = array();
+        
+        foreach($favorites AS $fav) {
+            // need to replace -'s for elastic search, same as team_set_ids
+            $module_favorites_user[] = str_replace('-', '', strval($fav->assigned_user_id));
+        }
 
+        
+        $keyValues['user_favorites'] = $module_favorites_user;
+        //END SUGARCRM flav=pro ONLY
+ 
         // to index owner
         $ownerField = $this->getOwnerField($bean);
         if ($ownerField)
@@ -149,6 +162,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         else
             return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
     }
+
 
     protected function indexSingleBean($bean)
     {
@@ -514,12 +528,44 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
+            //BEGIN SUGARCRM flav=pro ONLY
+            
+            // we only want JUST favorites if the option is 2
+            // if the option is 1 that means we want all including favorites,
+            // which in FTS is a normal search parameter
+            if(isset($options['favorites']) && $options['favorites'] == 2) {
+                $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
+            }
+
+            //END SUGARCRM flav=pro ONLY
+
             $mainFilter->addFilter($moduleFilter);
 
         }
 
         return $mainFilter;
     }
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    
+    /**
+     * Construct a favorites filter
+     * @param object $moduleFilter 
+     * @return object $moduleFilter
+     */
+
+    protected function constructMyFavoritesFilter($moduleFilter)
+    {
+        $ownerTermFilter = new Elastica_Filter_Term();
+        // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
+
+        $ownerTermFilter->setTerm('user_favorites', str_replace('-','',$GLOBALS['current_user']->id));
+
+        $moduleFilter->addFilter($ownerTermFilter);
+        return $moduleFilter;
+    }
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * Add a Owner Filter For MyItems to the current module
@@ -644,6 +690,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
                 $query->addFacet($typeFacet);
             }
+            
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
         }

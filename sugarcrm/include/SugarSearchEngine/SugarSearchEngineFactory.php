@@ -115,7 +115,6 @@ class SugarSearchEngineFactory
      */
     protected static function loadSearchEngineFromLocation($filePath, $config)
     {
-        $filePath = realpath($filePath);
         if( is_file($filePath) )
         {
             require_once($filePath);

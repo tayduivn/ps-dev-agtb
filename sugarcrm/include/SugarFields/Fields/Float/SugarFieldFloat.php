@@ -38,10 +38,10 @@ class SugarFieldFloat extends SugarFieldInt
         return format_number($rawField,$precision,$precision);
     }
 
-    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
-        $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
+    public function apiFormatField(&$data, $bean, $args, $fieldName, $properties){
+        $data[$fieldName] = (float)$bean->$fieldName;
     }
-    
+
     public function unformatField($formattedField, $vardef){
         if ( $formattedField === '' || $formattedField === NULL ) {
             return '';
