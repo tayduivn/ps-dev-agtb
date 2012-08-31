@@ -31,6 +31,21 @@ class SugarCurrency
 {
 
     /**
+     * get a currency object
+     *
+     * @access protected
+     * @param  string $currency_id Optional if empty, base currency is returned
+     * @return object   currency object
+     */
+    protected static function _getCurrency( $currency_id = null ) {
+        if(empty($currency_id))
+            $currency_id = '-99';
+        $currency = BeanFactory::getBean('Currencies');
+        $currency->retrieve($currency_id);
+        return $currency;
+    }
+
+    /**
      * convert a currency from one to another
      *
      * @access public
@@ -40,10 +55,8 @@ class SugarCurrency
      * @return float   converted amount
      */
     public static function convertAmount( $amount, $from_id, $to_id ) {
-        $currency1 = BeanFactory::getBean('Currencies');
-        $currency1->retrieve($from_id);
-        $currency2 = BeanFactory::getBean('Currencies');
-        $currency2->retrieve($to_id);
+        $currency1 = self::_getCurrency($from_id);
+        $currency2 = self::_getCurrency($to_id);
         // NOTE: we always calculate in maximum precision, which the database defines to 6
         // formatting to two decimals is done with formatting functions
         return round($amount * $currency1->conversion_rate / $currency2->conversion_rate, 6);
@@ -93,8 +106,7 @@ class SugarCurrency
         $number_grouping_separator = ',',
         $symbol_separator = ''
     ) {
-        $currency = BeanFactory::getBean('Currencies');
-        $currency->retrieve($currency_id);
+        $currency = self::_getCurrency($currency_id);
 
         return $currency->symbol . $symbol_separator . number_format($amount, $decimal_precision, $decimal_separator, $number_grouping_separator);
     }
@@ -130,9 +142,7 @@ class SugarCurrency
      */
     public static function getBaseCurrency( ) {
         // the base currency has a hard-coded currency_id of -99
-        $currency = BeanFactory::getBean('Currencies');
-        $currency->retrieve('-99');
-        return $currency;
+        return self::_getCurrency('-99');
     }
 
     /**
@@ -143,9 +153,7 @@ class SugarCurrency
      * @return object  currency object
      */
     public static function getCurrencyByID( $currency_id = null ) {
-        $currency = BeanFactory::getBean('Currencies');
-        $currency->retrieve($currency_id);
-        return $currency;
+        return self::_getCurrency($currency_id);
     }
 
     /**
@@ -156,7 +164,7 @@ class SugarCurrency
      * @return object  currency object
      */
     public static function getCurrencyByISO( $ISO ) {
-        $currency = BeanFactory::getBean('Currencies');
+        $currency = self::_getCurrency();
         $currency_id = $currency->retrieveIDByISO($ISO);
         $currency->retrieve($currency_id);
         return $currency;
@@ -170,15 +178,13 @@ class SugarCurrency
      * @return object  currency object
      */
     public static function getUserLocaleCurrency( $user = null ) {
-        $currency = BeanFactory::getBean('Currencies');
         if(empty($user))
         {
             global $current_user;
             $user = $current_user;
         }
         $currency_id = $user->getPreference('currency');
-        $currency->retrieve($currency_id);
-        return $currency;
+        return self::_getCurrency($currency_id);
     }
 
 
