@@ -1,8 +1,4 @@
 <?php
-namespace Mailer;
-use \PHPMailer;
-use \SMTP;
-
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
