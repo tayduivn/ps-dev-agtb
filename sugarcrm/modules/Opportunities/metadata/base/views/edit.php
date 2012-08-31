@@ -52,6 +52,8 @@ $viewdefs['Opportunities']['base']['view']['edit'] = array(
 		array(
 			'fields' => array (
 				'name',
+                'team_id',
+                'lead_source',
 			),
 		),
 	),

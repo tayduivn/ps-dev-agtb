@@ -1,10 +1,5 @@
 ({
     /**
-     * Parent model that holds all sub-models and logic for performing the convert action
-     */
-    convertModel: {},
-
-    /**
      * Initialize convert layout
      * @param options
      */
@@ -15,12 +10,11 @@
 
         //create parent convert model to hold all sub-models
         leadId = this.context.get('modelId');
-        this.convertModel = this.createConvertModel(leadId);
+        this.context.convertModel = this.createConvertModel(leadId);
 
         //build the layout
-        this.addTopView();
-        this.addSubComponents();
-        this.addBottomView();
+        this.addWizardTopView();
+        this.addWizardLayout();
 
         //listen for convert button click
         this.context.off("lead:convert", this.processConvert);
@@ -34,7 +28,7 @@
         var self = this;
 
         app.alert.show('save_edit_view', {level: 'info', title: 'Please Wait. Processing the conversion of the lead.'});
-        this.convertModel.save(null, {
+        this.context.convertModel.save(null, {
             success: function(data) {
                 app.alert.dismiss('save_edit_view');
                 self.app.navigate(self.context, self.model, 'detail');
@@ -47,7 +41,6 @@
     /**
      * Displays the results in the detail page.
      */
-
     displayResults: function(data) {
         var modules = data.attributes.modules;
         var message = [];
@@ -59,6 +52,7 @@
 
        app.alert.show('convert-results', {level:"info", title:'Lead Converted', messages:message, autoclose:false});
     },
+
     /**
      * Creates the parent model that holds all sub-models and logic for performing the convert action
      * @return {*} instance of a backbone model.
@@ -78,44 +72,9 @@
         return new convertModel();
     },
 
-    /**
-     * Add sub-views defined by the convert metadata to the layout
-     */
-    addSubComponents: function() {
-        var self = this;
 
-        _.each(this.meta, function(moduleMetadata, moduleName) {
-            var context, view;
-
-            var def = {
-                'view' : 'accordion-panel',
-                'context' : {'module' : moduleName}
-            };
-
-            //initialize child context for sub-model
-            context = self.context.getChildContext(def.context);
-            context.prepare();
-
-            //create and add view for sub-model
-            view = app.view.createView({
-                context: context,
-                name: def.view,
-                module: context.get("module"),
-                layout: self,
-                id: def.id
-            });
-            self.addComponent(view, def);
-
-            //add sub-model to the parent object for later saving
-            self.convertModel.addSubModel(moduleName, context.get('model'));
-        });
-    },
-
-    /**
-     * Add the convert-top view to the layout
-     */
-    addTopView: function() {
-        var def = {'view' : 'convert-top'};
+    addWizardTopView: function() {
+        var def = {'view' : 'convert-wizard-top'};
         this.addComponent(app.view.createView({
             context: this.context,
             name: def.view,
@@ -123,21 +82,18 @@
             layout: this,
             id: this.model.id
         }), def);
-
     },
 
     /**
-     * Add the convert-bottom view to the layout
+     * Add the convert-wizard sub-layout
      */
-    addBottomView: function() {
-        var def = {'view' : 'convert-bottom'};
-        this.addComponent(app.view.createView({
+    addWizardLayout: function() {
+        this.addComponent(app.view.createLayout({
             context: this.context,
-            name: def.view,
+            name: 'convert-wizard',
             module: this.context.get("module"),
-            layout: this,
-            id: this.model.id
-        }), def);
+            meta: this.meta
+        }));
     },
 
     /**
@@ -145,6 +101,7 @@
      */
     loadData: function() {
         var self = this;
+
         self.model.fetch({
             success: function() {
                 self.populateSubModelsFromLeadsData();
@@ -164,24 +121,14 @@
 
         //iterate over sub-models
         _.each(self.meta, function(moduleMetadata, moduleName) {
-            var moduleFieldNames = self.getFieldNames(moduleName);
-            var subModel = self.convertModel.get(moduleName);
+            var subModel = self.context.convertModel.get(moduleName);
 
-            //default field mapping: copy over data if the field name is the same
-            _.each(moduleFieldNames, function(moduleFieldName) {
-                if (leadModel.has(moduleFieldName)) {
-                    subModel.set(moduleFieldName, leadModel.get(moduleFieldName));
-                }
-            });
-
-            //additional field mapping: copy over data according to the metadata field mapping
-            _.each(moduleMetadata.additionalFieldMapping, function(sourceField, targetField) {
+            //field mappings: copy over data according to the metadata field mapping
+            _.each(moduleMetadata.fieldMapping, function(sourceField, targetField) {
                 if (leadModel.has(sourceField)) {
                     subModel.set(targetField, leadModel.get(sourceField));
                 }
             });
-
-            //todo: if moduleName == 'Opportunities' then opportunity.amount = unformat_number(lead.opportunity_amount)
         });
     }
 })

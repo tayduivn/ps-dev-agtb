@@ -1,5 +1,0 @@
- </div></div>
-    <div class="actions">
-        <a class="btn btn-primary" href="javascript:void(0)" name="save_button">Convert Lead</a>
-        <a class="btn" href="javascript:void(0)" name="cancel_button">Cancel</a>
-    </div>
