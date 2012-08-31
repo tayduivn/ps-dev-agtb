@@ -1,11 +1,11 @@
 <div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
   <h4>Activity</h4>  
   {{#if opts.params.filter}}
-  <input class="filterAll" type="checkbox" {{#notEq opts.params.filter "all"}} {{else}}checked="checked" disabled="disabled"{{/notEq}}/> All
-  <input class="filterMyActivities" type="checkbox" {{#notEq opts.params.filter "myactivities"}} {{else}}checked="checked" disabled="disabled"{{/notEq}}/> My Activities
+  <input class="filterAll" type="checkbox" {{#eq opts.params.filter "all"}}checked="checked" disabled="disabled"{{/eq}}/> All
+  <input class="filterMyActivities" type="checkbox" {{#eq opts.params.filter "myactivities"}}checked="checked" disabled="disabled"{{/eq}}/> My Activities
   {{#if opts.params.id}}
   {{else}}
-  <input class="filterFavorites" type="checkbox" {{#notEq opts.params.filter "favorites"}} {{else}}checked="checked" disabled="disabled"{{/notEq}}/> My Favorites      
+  <input class="filterFavorites" type="checkbox" {{#eq opts.params.filter "favorites"}}checked="checked" disabled="disabled"{{/eq}}/> My Favorites      
   {{/if}} 
   {{else}} 
   <input class="filterAll" type="checkbox" checked="checked" disabled="disabled"/> All
@@ -37,17 +37,29 @@
         </a>
         <p>
           <a href="#Users/{{attributes.created_by_id}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
-          {{#if attributes.activity_data.length}}          
+          {{#eq attributes.activity_type "updated"}}          
             {{#each attributes.activity_data}}
               <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
             {{/each}}
-          {{/if}} 
-          {{#if attributes.activity_data.value}}          
-              "{{attributes.activity_data.value}}"
-          {{/if}}  
-          {{#if attributes.target_name}}
-          on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
-          {{/if}}          
+              {{#if attributes.target_name}}
+              on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
+              {{/if}}             
+          {{/eq}} 
+          {{#eq attributes.activity_type "posted"}}          
+              "{{attributes.activity_data.value}}"           
+              {{#if attributes.target_name}}
+              on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
+              {{/if}} 
+          {{/eq}}  
+          {{#eq attributes.activity_type "created"}}          
+              <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
+          {{/eq}}            
+          {{#eq attributes.activity_type "related"}}          
+              <a href="#{{attributes.activity_data.relate_to}}/{{attributes.activity_data.relate_id}}">{{attributes.activity_data.relate_name}}</a>
+              {{#if attributes.target_name}}
+              to <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
+              {{/if}}           
+          {{/eq}}                     
           <br>
           <date class="date">Posted {{timeago attributes.date_created}}</date>
         </p>
