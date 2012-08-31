@@ -12,7 +12,7 @@ nv.models.funnelChart = function() {
     , controls = nv.models.legend()
     ;
 
-  var margin = {top: 30, right: 20, bottom: 20, left: 60}
+  var margin = {top: 20, right: 10, bottom: 10, left: 40}
     , width = null
     , height = null
     , color = nv.utils.defaultColor()
@@ -136,7 +136,7 @@ nv.models.funnelChart = function() {
 
       if (showLegend) 
       {
-        legend.width(availableWidth);
+        legend.width(availableWidth + margin.left);
 
         g.select('.nv-legendWrap')
             .datum(data)
@@ -151,7 +151,7 @@ nv.models.funnelChart = function() {
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate(0,' + (-margin.top) +')');
+            .attr('transform', 'translate(-10,' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title ) 
