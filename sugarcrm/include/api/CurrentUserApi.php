@@ -70,7 +70,7 @@ class CurrentUserApi extends SugarApi {
             $user_data['id'] = $_SESSION['contact_id'];
             
             // We need to ask the visibility system for the list of account ids
-            $visibility = new SupportPortalVisibility();
+            $visibility = new SupportPortalVisibility($contact);
             $user_data['account_ids'] = $visibility->getAccountIds();
 
             $user_data['full_name'] = $contact->full_name;
