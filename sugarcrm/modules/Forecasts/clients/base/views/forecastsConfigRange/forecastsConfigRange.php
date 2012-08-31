@@ -30,7 +30,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'likely',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_RANGE_LIKELY',
+                    'label' => 'LBL_FORECASTS_CONFIG_RANGE_LIKELY',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
@@ -38,7 +38,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'best',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_RANGE_BEST',
+                    'label' => 'LBL_FORECASTS_CONFIG_RANGE_BEST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
@@ -46,7 +46,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'worst',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_RANGE_WORST',
+                    'label' => 'LBL_FORECASTS_CONFIG_RANGE_WORST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',

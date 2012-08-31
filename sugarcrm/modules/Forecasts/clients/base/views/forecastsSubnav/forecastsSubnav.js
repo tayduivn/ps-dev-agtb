@@ -25,7 +25,7 @@
         app.view.View.prototype.initialize.call(this, options);
 
         // grab current app user model locally
-        var currentUser = app.user.getUser();
+        var currentUser = app.user;
 
         this.fullName = currentUser.get('full_name');
 
@@ -47,8 +47,13 @@
      * @param e Event object
      */
     handleForecastSettingsClick: function(e) {
-        e.preventDefault();
-        $('#' + this.modalTargetId).modal();
+        var params = {
+            module: "Forecasts",
+            layout: "forecastsConfig",
+            title: "Forecasts Setup"
+        };
+
+        this.layout.trigger("modal:forecastsConfig:open", params);
     },
 
     /***

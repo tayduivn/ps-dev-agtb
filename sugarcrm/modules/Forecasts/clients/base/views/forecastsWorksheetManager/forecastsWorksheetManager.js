@@ -115,27 +115,9 @@
                 function(context, category) {
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
-            this.context.forecasts.on("change:renderedForecastFilter", function(context, defaultValues) {
-                this.updateWorksheetBySelectedTimePeriod({id: defaultValues.timeperiod_id});
-                this.updateWorksheetBySelectedCategory({id: defaultValues.category});
-            }, this);
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
-            	/*var renderAll = false;
-            	$.each(this.context.forecasts.worksheetmanager.models, function(index, element){
-            		if(element.hasChanged("quota"))
-            		{
-            			renderAll = true;
-            		}
-            	});
-            	if(renderAll){
-            		this.context.forecasts.worksheetmanager.url = this.createURL();
-            		this.context.forecasts.worksheetmanager.fetch();
-            	}
-            	else{*/            		
-            		this.totalView.render();
-            	//}
-            	
+                this.totalView.render();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
             	

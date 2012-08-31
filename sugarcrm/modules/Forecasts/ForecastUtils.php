@@ -134,7 +134,7 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
         //assign the qota amount.
         $lv->ss->assign("QUOTA_VALUE", $seedForecastOpportunities->get_quota());
         global $listViewDefs;
-		include ('modules/Forecasts/metadata/OpportunityForecastlistviewdefs.php');
+		include ('modules/Forecasts/metadata/listviewdefs.php');
 		$lv->displayColumns = $listViewDefs['ForecastOpportunities'];
 
 		//disable some features.

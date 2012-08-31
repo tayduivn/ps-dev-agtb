@@ -1,0 +1,7 @@
+{{#if meta.buttons }}
+<div class="modal-footer">
+    {{#each meta.buttons}}
+    {{field ../this}}
+    {{/each}}
+</div>
+{{/if}}

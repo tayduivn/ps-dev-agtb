@@ -36,6 +36,22 @@
                 selectedUser : defaultSelections.selectedUser,
 
                 /**
+                 * used across Forecasts to contain sales rep worksheet totals
+                 */
+                updatedTotals : {},
+
+                /**
+                 * used across Forecasts to contain manager worksheet totals
+                 */
+                updatedManagerTotals : {},
+
+                // todo: the following three booleans need to be refactored out and made into events, not flags/booleans
+                /**
+                 * boolean to use across components to enable commit button or not
+                 */
+                reloadCommitButton : false,
+
+                /**
                  * boolean to use across components to enable commit button or not
                  */
                 commitButtonEnabled : false,

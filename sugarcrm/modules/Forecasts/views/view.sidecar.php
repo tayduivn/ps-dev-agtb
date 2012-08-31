@@ -67,17 +67,11 @@ class ForecastsViewSidecar extends SidecarView
         $returnInitData = array();
         $defaultSelections = array();
 
-        /***
-         * ME - INITIAL SELECTED USER DATA
-         */
-        $selectedUser = array(
-            "id" => $current_user->id,
-            "full_name" => $current_user->full_name,
-            "first_name" => $current_user->first_name,
-            "last_name" => $current_user->last_name,
-            "isManager" => User::isManager($current_user->id),
-            "showOpps" => false
-        );
+        require_once('modules/Forecasts/api/ForecastsCurrentUserApi.php');
+        $forecastsCurrentUserApi = new ForecastsCurrentUserApi();
+        $data = $forecastsCurrentUserApi->retrieveCurrentUser($forecastsCurrentUserApi,array());
+        $selectedUser = $data["current_user"];
+
         $returnInitData["initData"]["selectedUser"] = $selectedUser;
         $defaultSelections["selectedUser"] = $selectedUser;
 

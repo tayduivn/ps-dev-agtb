@@ -25,12 +25,12 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS',
+            'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC',
             'fields' => array(
                 array(
                     'name' => 'fiscalStartDate',
                     'type' => 'datetime',
-                    'label' => 'LBL_FORECASTS_FISCAL_START_DATE',
+                    'label' => 'LBL_FORECASTS_CONFIG_FISCAL_START_DATE',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
@@ -42,7 +42,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                         'annual' => 'Annual',
                         'quarter' => 'Quarter',
                     ),
-                    'label' => 'LBL_TIMEPERIOD',
+                    'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
@@ -54,7 +54,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                         'weekly' => 'Weekly',
                         'monthly' => 'Monthly',
                     ),
-                    'label' => 'LBL_LEAFPERIOD',
+                    'label' => 'LBL_FORECASTS_CONFIG_LEAFPERIOD',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
@@ -68,7 +68,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                         '3' => '3',
                         '4' => '4',
                     ),
-                    'label' => 'LBL_TIMEPERIODS_FORWARD',
+                    'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
@@ -82,7 +82,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                         '3' => '3',
                         '4' => '4',
                     ),
-                    'label' => 'LBL_TIMEPERIODS_BACK',
+                    'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
