@@ -72,6 +72,15 @@ abstract class SugarApi {
 
         return $data;
     }
+
+    protected function formatBeans(ServiceBase $api, $args, $beans)
+    {
+        $ret = array();
+        foreach($beans as $bean){
+            $ret[] = $this->formatBean($api, $args, $bean);
+        }
+        return $ret;
+    }
     /**
      * Recursively runs html entity decode for the reply
      * @param $data array The bean the API is returning
@@ -139,6 +148,12 @@ abstract class SugarApi {
 
         $id = $bean->id;
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(isset($args['my_favorite'])) {
+            $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
+        }
+        //END SUGARCRM flav=pro ONLY
+
         $bean->retrieve($id);
 
         /*
@@ -147,6 +162,47 @@ abstract class SugarApi {
          */
         return $id;
     }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+
+
+    /**
+     * Toggle Favorites
+     * @param type $module 
+     * @param type $id 
+     * @param type $favorite 
+     * @return bool
+     */
+
+    protected function toggleFavorites($module, $id, $favorite)
+    {
+        $favorite = (bool) $favorite;
+        // is currently favorite?
+        $current = SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
+        // already the same skip it
+        if($current == $favorite) {
+            return true;
+        }
+
+        if($favorite == true) {
+            $fav = new SugarFavorites();
+            $fav->id = SugarFavorites::generateGUID($module,$id);
+            $fav->new_with_id = true;
+            $fav->module = $module;
+            $fav->record_id = $id;
+            $fav->created_by = $GLOBALS['current_user']->id;
+            $fav->assigned_user_id = $GLOBALS['current_user']->id;
+            $fav->deleted = 0;
+            $fav->save();
+            return true;
+        }
+        $sf = new SugarFavorites();
+        $sf->markRecordDeletedInFavoritesByUser($id, $module, $GLOBALS['current_user']->id);
+        return true;
+    }
+
+    //END SUGARCRM flav=pro ONLY
+
 
     /**
      * Verifies field level access for a bean and field for the logged in user

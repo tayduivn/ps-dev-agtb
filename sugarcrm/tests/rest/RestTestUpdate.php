@@ -41,6 +41,9 @@ class RestTestUpdate extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM meetings_leads WHERE meeting_id = '{$this->meeting->id}'");
             $GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting->id}'");
         }
+        
+        $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
+
         parent::tearDown();
     }
 
@@ -65,6 +68,44 @@ class RestTestUpdate extends RestTestBase {
                             "Rest Reply and Bean Do Not Match.");
     }
 
+    public function testSetFavorite()
+    {
+        $this->account = new Account();
+        $this->account->name = "UNIT TEST - BEFORE";
+        $this->account->save();
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('my_favorite' => true)), "PUT");
+
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
+        
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
+    }
+
+    public function testRemoveFavorite()
+    {
+        $this->account = new Account();
+        $this->account->name = "UNIT TEST - BEFORE";
+        $this->account->save();
+
+        $fav = new SugarFavorites();
+        $fav->id = SugarFavorites::generateGUID('Accounts',$this->account->id);
+        $fav->new_with_id = true;
+        $fav->module = 'Accounts';
+        $fav->record_id = $this->account->id;
+        $fav->created_by = $GLOBALS['current_user']->id;
+        $fav->assigned_user_id = $GLOBALS['current_user']->id;
+        $fav->deleted = 0;
+        $fav->save();
+
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
+
+        $this->assertEquals($is_fav, true, "Didn't actually set the favorite");
+
+        $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('my_favorite' => false)), "PUT");
+        
+        $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
+        
+        $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
+    }
 
     public function testUpdateEmail()
     {
