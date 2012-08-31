@@ -209,7 +209,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $testFilters = array(
             'timeperiod_id' => array('$is' => $this->timeperiod_id),
             'assigned_user_link' => array('id' => array('$or' => array('$is' => $user_id, '$reports' => $user_id))),
-            'forecast' => array('$is' => 1) // TODO: fix for when buckets is enabled
+            //'forecast' => array('$is' => 1) // TODO: fix for when buckets is enabled
         );
 
         require_once('include/SugarParsers/Filter.php');
