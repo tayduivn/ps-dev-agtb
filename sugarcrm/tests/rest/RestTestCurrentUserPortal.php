@@ -144,27 +144,27 @@ class RestTestCurrentUserPortal extends RestTestBase {
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'fubar', 'old_password' => 'unittest')),
             'PUT');
-        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+        $this->assertEquals($reply['reply']['valid'], true);
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'newernew', 'old_password' => 'fubar')),
             'PUT');
-        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+        $this->assertEquals($reply['reply']['valid'], true);
         // Now use an incorrect old_password .. this should return valid:false
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'hello', 'old_password' => 'nope')),
             'PUT');
-        $this->assertEquals($reply['reply']['current_user']['valid'], false);
+        $this->assertEquals($reply['reply']['valid'], false);
     }
 
     public function testPasswordVerification() {
         $reply = $this->_restCall("me/password",
             json_encode(array('password_to_verify' => 'unittest')),
             'POST');
-        $this->assertEquals($reply['reply']['current_user']['valid'], true);
+        $this->assertEquals($reply['reply']['valid'], true);
         $reply = $this->_restCall("me/password",
             json_encode(array('password_to_verify' => 'noway')),
             'POST');
-        $this->assertEquals($reply['reply']['current_user']['valid'], false);
+        $this->assertEquals($reply['reply']['valid'], false);
     }
 
 }
