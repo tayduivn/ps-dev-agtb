@@ -52,7 +52,7 @@ function ExtAPILotusLiveGetCredentials() {
                  'ciPassword' => 'changeIt!',
                  'consumerKey' => '9399cf0ce6e4ca4d30d56a76b21da89',
                  'consumerSecret' => '7704b27829c5715445e14637415b67c1',
-                 'baseUrl' => 'https://apps.lotuslive.com/', //'https://collabserv.com/'
+                 'baseUrl' => 'https://apps.lotuslive.com/',
     );
 */
 }
@@ -80,7 +80,7 @@ class ExtAPILotusLiveCastIron extends OAuthPluginBase implements WebMeeting,WebD
 //    protected $baseURL = 'https://apps.stage.lotuslive.com/';
 //    protected $url = 'eval-cloud2.castiron.com/envq/Production/';
 // Production
-    protected $baseURL = 'https://apps.lotuslive.com/'; // 'https://collabserv.com/';
+    protected $baseURL = 'https://apps.lotuslive.com/';
     protected $url = 'provide.castiron.com/envq/Production/';
 
     public $hostURL;

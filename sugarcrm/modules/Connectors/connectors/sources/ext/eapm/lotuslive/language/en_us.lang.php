@@ -22,18 +22,17 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 $connector_strings = array (
-    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">Obtain a Key and Secret from IBM SmartCloud&copy; by registering your Sugar instance as a new application. The ability to register will be possible starting May 8, 2011.<br>
+    'LBL_LICENSING_INFO' => '<table border="0" cellspacing="1"><tr><td valign="top" width="35%" class="dataLabel">Obtain a Key and Secret from LotusLive&copy; by registering your Sugar instance as a new application. The ability to register will be possible starting May 8, 2011.<br>
 &nbsp;<br>
 Steps to register your instance:<br>
 &nbsp;<br>
 <ol>
-<li>Log in to your IBM SmartCloud account (you must be an administrator)</li>
-<li>Go to Administration -> Manage Organization</li>
-<li>Go to the "Integrated Third-Party Apps" link on the sidebar and enable SugarCRM for all users.</li>
-<li>Go to "Internal Apps" on the sidebar and "Register App"</li>
-<li>Name this app whatever you want (say "SugarCRM Production"), and be sure _NOT_ to check the OAuth 2.x checkbox at the bottom of the pop up window.</li>
-<li>After the app has been created, click on the little triangle thing to the right of the app name and select "Show Credentials" from the dropdown menu.</li>
-<li>Copy the credentials below.</li>
+<li>Log in to your LotusLive account (you must be a LotusLive administrator): <a href="https://www.lotuslive.com/" target="_new">https://www.lotuslive.com/</a></li>
+<li>Click Administration in the navigator bar at the top.</li>
+<li>Click Manage Company Apps.</li>
+<li>Click Register App.</li>
+<li>Enter a name and description for the application when prompted. The name and description of your application can be changed at any time by clicking the menu next to the application and selecting Edit properties.</li>
+<li>During registration, your application will be assigned an OAuth key and secret pair. Registered applications are displayed in Manage Custom Apps. To view the assigned key and secret, click the menu for the appropriate application and select Get Credentials.</li>
 </ol>
 </td></tr></table>',
     'oauth_consumer_key' => 'OAuth Consumer Key',
