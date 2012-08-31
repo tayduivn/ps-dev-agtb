@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -23,8 +23,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class MailerFactory
 {
-    public static $SimpleMailer = "SimpleMailer";
-    public static $SugarMailer  = "SugarMailer";
+	const SimpleMailer = "SimpleMailer";
+	const SugarMailer  = "SugarMailer";
 
 	/**
 	 * @param string $mailerType
@@ -32,20 +32,21 @@ class MailerFactory
 	 *      But for now just spell out the class you want for testing.
 	 * @return mixed
 	 */
-	public static function getMailer($type, User $user=null) {
-        $mailer=null;
-        switch($type) {
-            case self::$SimpleMailer: {
-                include_once 'SimpleMailer.php';
-                $mailer = new SimpleMailer();
-                break;
-            }
-            case self::$SugarMailer: {
-                include_once 'SugarMailer.php';
-                $mailer = new SugarMailer($user);
-                break;
-            }
-        }
+	public static function getMailer($mailerType, User $user = null) {
+		$mailer = null;
+
+		switch ($mailerType) {
+			case self::SimpleMailer:
+				include_once "{$mailerType}.php";
+				$mailer = new $mailerType();
+				break;
+			case self::SugarMailer:
+				include_once "{$mailerType}.php";
+				$mailer = new $mailerType($user);
+				break;
+			default:
+				break;
+		}
 
 		return $mailer;
 	}
