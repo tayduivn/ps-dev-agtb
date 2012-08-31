@@ -10,7 +10,7 @@ try {
     $variablesLess = file_get_contents( $root . 'variables.less' );
     $variables = getCustomThemeVars($variablesLess);
     $variables['baseUrl'] = '"../../assets"';
-//print_r($variables);
+
     //build bootstrap.css
     $less = new lessc('../less/clients/' . $client . '/config.less');
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
