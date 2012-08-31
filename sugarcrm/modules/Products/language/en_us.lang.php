@@ -87,6 +87,7 @@ $mod_strings = array (
   'NTC_REMOVE_CONFIRMATION' => 'Are you sure you want to remove this product relationship?',
   'ERR_DELETE_RECORD' => 'A record number must be specified to delete the product.',
   'LBL_CURRENCY' => 'Currency:',
+  'LBL_CURRENCY_ID' => 'Currency ID:',
   'LBL_ASSET_NUMBER' => 'Asset Number:',
   'LBL_SERIAL_NUMBER' => 'Serial Number:',
   'LBL_BOOK_VALUE' => 'Book Value:',
@@ -121,6 +122,8 @@ $mod_strings = array (
    'LBL_CONTACT' => 'Contact',
    'LBL_DISCOUNT_TOTAL' => 'Discount Total',   
    'LBL_DISCOUNT_AMOUNT' => 'Discount Amount',   
+   'LBL_EXT_PRICE' => 'Ext. Price',
+   
    'LBL_CURRENCY_SYMBOL_NAME' => 'Currency Symbol Name',
    //BEGIN SUGARCRM flav=pro ONLY
 	'LBL_PRODUCTS_SUBPANEL_TITLE' => 'Products',

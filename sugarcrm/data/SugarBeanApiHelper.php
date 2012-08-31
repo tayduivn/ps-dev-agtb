@@ -62,7 +62,7 @@ class SugarBeanApiHelper
                 // They want to skip this field
                 continue;
             }
-
+            
             $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
             if ( $type == 'link' ) {
                 // There is a different API to fetch linked records, don't try to encode all of the related data.
@@ -105,9 +105,19 @@ class SugarBeanApiHelper
                 $data['email'] = $emails;
         }
 
+        // get favorites
+        // mark if its a favorite
+        
+        if ( empty($fieldList) || !in_array('my_favorite',$fieldList) ) {
+            if(!isset($bean->my_favorite)) {
+                $bean->my_favorite = SugarFavorites::isUserFavorite($bean->module_dir, $bean->id, $GLOBALS['current_user']->id);
+            }
+            $data['my_favorite'] = $bean->my_favorite;
+        }
+
         return $data;
     } 
-
+    
     /**
      * This function 
      *
@@ -139,7 +149,7 @@ class SugarBeanApiHelper
             $field = $sfh->getSugarField($type);
             
             if ( $field != null ) {
-                $field->save($bean, $submittedData, $fieldName, $properties);
+                $field->apiSave($bean, $submittedData, $fieldName, $properties);
             }
         }
 

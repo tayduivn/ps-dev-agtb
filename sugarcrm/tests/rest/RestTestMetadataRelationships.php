@@ -26,7 +26,7 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestTestMetadataRelationships extends RestTestBase {
     public function testMetadataGetRelationships() {
-        $restReply = $this->_restCall('metadata?typeFilter=relationships');
+        $restReply = $this->_restCall('metadata?type_filter=relationships');
 
         $this->assertTrue(isset($restReply['reply']['relationships']['_hash']),'There is no relationship list');
         $this->assertTrue(isset($restReply['reply']['relationships']['opportunities_contacts']),'There is no opportunities contacts relationship');
@@ -35,7 +35,7 @@ class RestTestMetadataRelationships extends RestTestBase {
     public function testMetadataGetFilteredRelationships() {
         $moduleList = array('Accounts','Contacts','Cases');
 
-        $restReply = $this->_restCall('metadata?typeFilter=relationships&moduleFilter='.implode(',',$moduleList));
+        $restReply = $this->_restCall('metadata?type_filter=relationships&module_filter='.implode(',',$moduleList));
 
         $this->assertTrue(isset($restReply['reply']['relationships']['_hash']),'There is no relationship list');
         $this->assertTrue(isset($restReply['reply']['relationships']['opportunities_contacts']),'There is no opportunities contacts relationship');
