@@ -38,8 +38,9 @@ class SugarCurrency
      * @return object   currency object
      */
     protected static function _getCurrency( $currency_id = null ) {
-        if(empty($currency_id))
+        if(empty($currency_id)) {
             $currency_id = '-99';
+        }
         $currency = BeanFactory::getBean('Currencies');
         $currency->retrieve($currency_id);
         return $currency;
