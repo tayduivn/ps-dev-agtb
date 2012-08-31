@@ -251,7 +251,7 @@ class ForecastsChartApi extends ChartApi
         }
 
         if(isset($args['group_by'])) {
-            if($args['group_by'] == "forecast")
+            if($args['group_by'] == "forecast" && isset($dataArray['label'][0]))
             {
                 // fix the labels
                 $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? $forecast_strings['LBL_CHART_NOT_INCLUDED'] : $forecast_strings['LBL_CHART_INCLUDED'];

@@ -398,7 +398,8 @@
                 'won_amount' : wonAmount,
                 'included_opp_count' : includedCount,
                 'total_opp_count' : totalCount,
-                'amount' : includedAmount
+                'amount' : includedAmount,
+                'overall_amount' : overallAmount
             });
             return false;
         }
@@ -468,7 +469,7 @@
 
         self.overallModel.set({
             overallAmount : overallAmount,
-            overallBest : overallBest,
+            overallBest : overallBest
         });
         self.overallModel.change();
 
@@ -481,7 +482,8 @@
             'won_amount' : wonAmount,
             'included_opp_count' : includedCount,
             'total_opp_count' : self._collection.models.length,
-            'amount' : includedAmount
+            'amount' : includedAmount,
+            'overall_amount' : overallAmount
         };
 
         this.context.forecasts.set("updatedTotals", totals);
