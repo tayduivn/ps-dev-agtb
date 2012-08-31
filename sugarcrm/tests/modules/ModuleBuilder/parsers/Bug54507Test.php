@@ -30,7 +30,7 @@
 /**
  * Bug54507Test.php
  *
- * Tests available fields for portal list, edit and detail to make sure that 
+ * Tests available fields for portal list, edit and detail to make sure that
  * duplicate labels are not included for the Bugs module.
  */
 
@@ -38,44 +38,44 @@ require_once('modules/ModuleBuilder/parsers/ParserFactory.php');
 
 class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
     protected $editModule = 'Bugs';
-    
+
     public static function setUpBeforeClass()
     {
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
         require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_list_strings');
     }
-    
-    public static function tearDownAfterClass() 
+
+    public static function tearDownAfterClass()
     {
-        unset($GLOBALS['beanList'], $GLOBALS['beanFiles'], $GLOBALS['app_list_strings']);
+        SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
-    
+
     public function testBugsPortalEditAvailableFields()
     {
         $view = 'portaleditview';
         $parser = ParserFactory::getParser($view, $this->editModule, null, null, MB_PORTAL);
         $fielddefs = $parser->getFieldDefs();
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release'], $view);
         $this->assertTrue($test, 'fixed_in_release should be a valid available field in Bugs Portal Edit View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_name'], $view);
         $this->assertFalse($test, 'fixed_in_release_name should not be a valid available field in Bugs Portal Edit View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_link'], $view);
         $this->assertFalse($test, 'fixed_in_release_link should not be a valid available field in Bugs Portal Edit View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['found_in_release'], $view);
         $this->assertTrue($test, 'found_in_release should be a valid available field in Bugs Portal Edit View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['release_name'], $view);
         $this->assertFalse($test, 'release_name should not be a valid available field in Bugs Portal Edit View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['release_link'], $view);
         $this->assertFalse($test, 'release_link should not be a valid available field in Bugs Portal Edit View');
     }
@@ -85,22 +85,22 @@ class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
         $view = 'portaldetailview';
         $parser = ParserFactory::getParser($view, $this->editModule, null, null, MB_PORTAL);
         $fielddefs = $parser->getFieldDefs();
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release'], $view);
         $this->assertTrue($test, 'fixed_in_release should be a valid available field in Bugs Portal Detail View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_name'], $view);
         $this->assertFalse($test, 'fixed_in_release_name should not be a valid available field in Bugs Portal Detail View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_link'], $view);
         $this->assertFalse($test, 'fixed_in_release_link should not be a valid available field in Bugs Portal Detail View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['found_in_release'], $view);
         $this->assertTrue($test, 'found_in_release should be a valid available field in Bugs Portal Detail View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['release_name'], $view);
         $this->assertFalse($test, 'release_name should not be a valid available field in Bugs Portal Detail View');
-        
+
         $test = AbstractMetaDataParser::validField($fielddefs['release_link'], $view);
         $this->assertFalse($test, 'release_link should not be a valid available field in Bugs Portal Detail View');
     }
@@ -109,12 +109,12 @@ class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
     {
         $parser = ParserFactory::getParser(MB_PORTALLISTVIEW, $this->editModule, null, null, MB_PORTAL);
         $fielddefs = $parser->getFieldDefs();
-        
+
         $test = $parser->isValidField('fixed_in_release', $fielddefs['fixed_in_release']);
         $this->assertFalse($test, 'fixed_in_release should not be a valid available field in Bugs Portal List View');
-        
-        $test = $parser->isValidField('fixed_in_release_name', $fielddefs['fixed_in_release_name']);
-        $this->assertTrue($test, 'fixed_in_release_name should be a valid available field in Bugs Portal List View');
+
+        $test = $parser->isValidField('date_modified', $fielddefs['date_modified']);
+        $this->assertTrue($test, 'date_modified should be a valid available field in Bugs Portal List View');
 
         $test = $parser->isValidField('fixed_in_release_link', $fielddefs['fixed_in_release_link']);
         $this->assertFalse($test, 'fixed_in_release_link should not be a valid available field in Bugs Portal List View');
@@ -122,10 +122,10 @@ class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
         $test = $parser->isValidField('found_in_release', $fielddefs['found_in_release']);
         $this->assertFalse($test, 'found_in_release should not be a valid available field in Bugs Portal List View');
 
-        $test = $parser->isValidField('release_name', $fielddefs['release_name']);
-        $this->assertTrue($test, 'release_name should be a valid available field in Bugs Portal List View');
+        $test = $parser->isValidField('system_id', $fielddefs['system_id']);
+        $this->assertTrue($test, 'system_id should be a valid available field in Bugs Portal List View');
 
         $test = $parser->isValidField('release_link', $fielddefs['release_link']);
         $this->assertFalse($test, 'release_link should not be a valid available field in Bugs Portal List View');
-    }    
+    }
 }

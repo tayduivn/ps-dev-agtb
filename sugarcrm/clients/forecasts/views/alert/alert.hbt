@@ -1,3 +1,0 @@
-<div class="alert alert-{{type}}">
-    <strong>{{#each messages}}{{this}}{{/each}}</strong>
-</div>

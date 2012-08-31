@@ -58,7 +58,7 @@
     jQuery.noConflict();
 </script>
 <script src='include/javascript/sugarAuthStore.js'></script>
-<script src='portal2/lib/twitterbootstrap/js/bootstrap-colorpicker.js'></script>
+<script src='styleguide/assets/js/bootstrap-colorpicker.js'></script>
 
 
 <link rel="stylesheet" type="text/css" href="{sugar_getjspath file="modules/ModuleBuilder/tpls/MB.css"}" />

@@ -75,6 +75,11 @@
         options = {
             success: function() {
                 app.alert.dismiss('save_profile_edit_view');
+
+                var langKey = self.model.get('preferred_language');
+                if (langKey)
+                    app.lang.setLanguage(langKey);
+
                 app.router.navigate('profile', {trigger: true});
             },
             error: function(error) {

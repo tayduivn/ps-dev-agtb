@@ -588,13 +588,6 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 		}
 	}
 
-	global $current_user;
-	if(is_admin($current_user)){
-		if (!isset($_POST[$prefix.'portal_active'])) $focus->portal_active = '0';
-		//if no password is set set account to inactive for portal
-		if(empty($_POST[$prefix.'portal_name']))$focus->portal_active = '0';
-
-	}
 
 	///////////////////////////////////////////////////////////////////////////////
 	////	INBOUND EMAIL HANDLING
@@ -624,7 +617,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
 
 	$GLOBALS['log']->debug("Saved record with id of ".$return_id);
 
-    if (!empty($_POST['is_ajax_call']) && $_POST['is_ajax_call'] == '1') {
+    if ($redirect && !empty($_POST['is_ajax_call']) && $_POST['is_ajax_call'] == '1') {
         $json = getJSONobj();
         echo $json->encode(array('status' => 'success',
                                  'get' => ''));
@@ -649,7 +642,7 @@ function handleSave($prefix, $redirect=true, $useRequired=false){
         return null;
     }
 
-	if(isset($_POST['popup']) && $_POST['popup'] == 'true') {
+	if($redirect && isset($_POST['popup']) && $_POST['popup'] == 'true') {
 		$get = '&module=';
 		if(!empty($_POST['return_module'])) $get .= $_POST['return_module'];
 		else $get .= 'Contacts';

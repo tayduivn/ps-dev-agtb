@@ -77,6 +77,11 @@ class RelateApi extends ListApi {
             $listQueryParts['where'] = $linkQueryParts['where'] . $listQueryParts['where'];
         }
 
+        if(!empty($args['remote_id']))
+        {
+            $listQueryParts['where'] .= " AND {$linkSeed->table_name}.id='{$args['remote_id']}'";
+        }
+
         return $this->performQuery($api, $args, $linkSeed, $listQueryParts, $options['limit'], $options['offset']);
     }
 }

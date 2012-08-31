@@ -1,15 +1,12 @@
    {{#each meta.panels}}
     <div class="card2">
-        <div class="modelNotLoaded">
-            {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
-        </div>
-        <div class="modelLoaded hide">
+        {{#if ../model.isNotEmpty}}
         {{#each fields}}
             {{#notEq name "name"}}
             <div class="row-fluid">
-                <div class="span2">{{str  this.label ../../../this.model.module}}</div>
-                <div class="span4" name="{{this.name}}">
-                {{field ../../../this}}
+                <div class="span2">{{str  this.label ../../../../this.model.module}}</div>
+                <div class="span10" name="{{this.name}}">
+                {{field ../../../../this}}
                 </div>
                 </div>
             {{/notEq}}
@@ -20,6 +17,8 @@
                       <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
                   </div>
                 </span>
-        </div>
+        {{else}}
+        {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
+        {{/if}}
     </div>
     {{/each}}

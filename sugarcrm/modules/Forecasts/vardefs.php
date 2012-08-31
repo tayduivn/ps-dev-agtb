@@ -86,7 +86,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'wk_likely_case',
     'vname' => 'LB_FS_LIKELY_CASE',
-    'type' => 'id',
+    'type' => 'currency',
 	'source'=>'non-db',
   ),
   //used to store worksheet values.
@@ -94,7 +94,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'wk_worst_case',
     'vname' => 'LB_FS_WORST_CASE',
-    'type' => 'int',
+    'type' => 'currency',
 	'source'=>'non-db',
     ) ,
    //used to store worksheet values.
@@ -102,7 +102,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'wk_best_case',
     'vname' => 'LB_FS_BEST_CASE',
-    'type' => 'int',
+    'type' => 'currency',
 	'source'=>'non-db',
     ),
   'next_step' =>
@@ -131,7 +131,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
 	'source'=>'non-db',
   ),
   //represent's a value committed by forecast user.
@@ -139,7 +139,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
     'source'=>'non-db',
   ),
   //represent's a value committed by forecast user.
@@ -147,7 +147,7 @@ $dictionary['ForecastOpportunities'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
     'source'=>'non-db',
   ),
 
@@ -212,7 +212,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'best_case',
     'vname' => 'LB_BEST_CASE_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
 	'source'=>'non-db',
   ),
   //represent's a value committed by forecast user.
@@ -220,7 +220,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'likely_case',
     'vname' => 'LB_LIKELY_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
     'source'=>'non-db',
   ),
   //represent's a value committed by forecast user.
@@ -228,7 +228,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'worst_case',
     'vname' => 'LB_WORST_CASE_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
     'source'=>'non-db',
   ),
   //used to store worksheet values.
@@ -236,7 +236,7 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'wk_likely_case',
     'vname' => 'LB_FS_LIKELY_CASE',
-    'type' => 'id',
+    'type' => 'currency',
 	'source'=>'non-db',
   ),
   //used to store worksheet values.
@@ -244,15 +244,15 @@ $dictionary['ForecastDirectReports'] = array( 'table'=>'does_not_exist',
   array (
     'name' => 'wk_worst_case',
     'vname' => 'LB_FS_WORST_CASE',
-    'type' => 'int',
+    'type' => 'currency',
 	'source'=>'non-db',
     ) ,
    //used to store worksheet values.
   'wk_best_case' =>
   array (
-    'name' => 'wk_worst_case',
+    'name' => 'wk_best_case',
     'vname' => 'LB_FS_BEST_CASE',
-    'type' => 'int',
+    'type' => 'currency',
 	'source'=>'non-db',
     ) ,
   'ref_timeperiod_id' =>
@@ -342,11 +342,25 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
     'type' => 'int',
     'comment' => 'Weighted amount of all opportunities represented by this forecast',
   ),
-  'best_case' =>
+   'currency_id' =>
+   array (
+       'name' => 'currency_id',
+       'vname' => 'LBL_CURRENCY',
+       'type' => 'id',
+       'required' => true,
+   ),
+   'currency_rate' =>
+   array (
+       'name' => 'currency_rate',
+       'vname' => 'LBL_CURRENCY_RATE',
+       'type' => 'double',
+       'required' => true,
+   ),
+   'best_case' =>
   array (
     'name' => 'best_case',
     'vname' => 'LBL_FORECAST_OPP_BEST_CASE',
-    'type' => 'long',
+    'type' => 'currency',
     'comment' => 'Best case forecast amount',
   ),
   //renamed commit_value to likely_case
@@ -354,14 +368,14 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
   array (
     'name' => 'likely_case',
     'vname' => 'LBL_FORECAST_OPP_COMMIT',
-    'type' => 'long',
+    'type' => 'currency',
     'comment' => 'Likely case forecast amount',
   ),
   'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LBL_FORECAST_OPP_WORST',
-    'type' => 'long',
+    'type' => 'currency',
     'comment' => 'Worst case likely amount',
   ),
 'user_id' =>
@@ -482,7 +496,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
 ),
  'indices' => array (
        array('name' =>'forecastspk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id')),
+       array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id', 'date_modified')),
        )
 );
 
@@ -543,25 +557,39 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'reportable' => false,
   	'comment' => 'Direct or rollup, or null if related_id is an Opportunity',
   ),
-  'best_case' =>
+    'currency_id' =>
+    array (
+        'name' => 'currency_id',
+        'vname' => 'LBL_CURRENCY',
+        'type' => 'id',
+        'required' => true,
+    ),
+    'currency_rate' =>
+    array (
+        'name' => 'currency_rate',
+        'vname' => 'LBL_CURRENCY_RATE',
+        'type' => 'double',
+        'required' => true,
+    ),
+    'best_case' =>
   array (
     'name' => 'best_case',
     'vname' => 'LBL_BEST_CASE_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
     'comment' => 'Best case worksheet amount',
   ),
   'likely_case' =>
   array (
     'name' => 'likely_case',
     'vname' => 'LBL_LIKELY_CASE_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
     'comment' => 'Likely case worksheet amount',
   ),
   'worst_case' =>
   array (
     'name' => 'worst_case',
     'vname' => 'LBL_WORST_CASE_VALUE',
-    'type' => 'long',
+    'type' => 'currency',
     'comment' => 'Worst case worksheet amount',
   ),
   'date_modified' =>
@@ -596,10 +624,47 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'default' => '-1',
     'comment' => 'Boolean indicating whether or not record should be included in forecast'
   ),
+  'commit_stage' =>
+  array (
+    'name' => 'commit_stage',
+    'vname' => 'LBL_COMMIT_STAGE',
+    'type' => 'enum',
+    'options' => 'commit_stage_dom',
+    'len' => '20',
+    'comment' => 'Worksheet Placeholder for the forecast commit category: Include, Likely, Omit etc.',
+  ),
+  'op_probability' =>
+  array (
+    'name' => 'op_probability',
+    'vname' => 'LBL_PROBABILITY',
+    'type' => 'int',
+    'dbType' => 'double',
+    'comment' => 'Worksheet Placeholder for the probability of closure',
+    'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
+  ),
+  'quota' =>
+	array (
+	  'name' => 'quota',
+	  'vname' => 'LBL_AMOUNT',
+	  'type' => 'currency',
+	  'reportable' => true,
+	  'importable' => 'required',
+	  'comment' => 'Worksheet placeholder for quota amount'
+	),
+  'version' =>
+	array (
+	  'name' => 'version',
+	  'vname' => 'LBL_WK_VERSION',
+	  'type'=>'varchar',
+  	  'len' => 10,
+	  'default' => 'Committed',
+	  'comment' => 'Worksheet version - Committed or Draft.'
+	),
  ),
  'indices' => array (
        array('name' =>'worksheetpk', 'type' =>'primary', 'fields'=>array('id')),
-       array('name' =>'idx_worksheet_rel_id_del', 'type' =>'index', 'fields'=>array('related_id', 'deleted')),
+       array('name' =>'idx_worksheet_user_id', 'type' =>'index', 'fields'=>array('user_id')),
+       array('name' =>'idx_worksheet_rel_id_del', 'type' =>'index', 'fields'=>array('related_id', 'user_id', 'deleted', 'version')),
  )
 
 );

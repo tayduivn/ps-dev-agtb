@@ -191,13 +191,13 @@ $layout_defs['Opportunities'] = array(
 
         //BEGIN SUGARCRM flav=ent ONLY
 
-        'product_lines' => array(
+        'products' => array(
             'order' => 50,
             'module' => 'Products',
             'sort_order' => 'asc',
             'sort_by' => 'best_case',
-            'subpanel_name' => 'ForOpportunities',
-            'get_subpanel_data' => 'product_lines',
+            'subpanel_name' => 'default',
+            'get_subpanel_data' => 'products',
             'add_subpanel_data' => 'product_id',
             'title_key' => 'LBL_PRODUCT_LINES_SUBPANEL_TITLE',
             'top_buttons' => array(

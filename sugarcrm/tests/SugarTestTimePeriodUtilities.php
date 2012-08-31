@@ -84,6 +84,7 @@ class SugarTestTimePeriodUtilities
         $timeperiod->start_date = $start_date;
         $timeperiod->end_date = $end_date;
         $timeperiod->name = $name;
+        $timeperiod->is_fiscal_year = 0;
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;

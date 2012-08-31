@@ -61,9 +61,9 @@ class Individual implements IChartAndWorksheet {
             $return['date_closed'] = $row['opportunities_date_closed'];
             $return['probability'] = $row['opportunities_probability'];
             $return['sales_stage'] = $row['opportunities_sales_stage'];
-            $return['best_case'] = intval($row['opportunities_best_case']) == 0 ? $row['amount'] : $row['opportunities_best_case'];
-            $return['likely_case'] = intval($row['opportunities_likely_case']) == 0 ? $row['amount'] : $row['opportunities_likely_case'];
-            $return['worst_case'] = intval($row['opportunities_worst_case']) == 0 ? $row['amount'] : $row['opportunities_worst_case'];
+            $return['best_case'] = intval($row['opportunities_best_case']) == 0 ? $return['amount'] : $row['opportunities_best_case'];
+            $return['likely_case'] = intval($row['opportunities_likely_case']) == 0 ? $return['amount'] : $row['opportunities_likely_case'];
+            $return['worst_case'] = intval($row['opportunities_worst_case']) == 0 ? $return['amount'] : $row['opportunities_worst_case'];
             $return['assigned_user_id'] = $row['l1_id'];
 
             $opps[] = $return;

@@ -81,25 +81,15 @@ class ForecastsViewSidecar extends SidecarView
         $returnInitData["initData"]["selectedUser"] = $selectedUser;
         $defaultSelections["selectedUser"] = $selectedUser;
 
-        /***
-         * FILTERS
-         */
-        $forecastsFiltersApi = new ForecastsFiltersApi();
-        // get $api to pass in for params
-        $filterApi = $forecastsFiltersApi->registerApiRest();
-
-        // call Forecasts/filters endpoint
-
-        $timeframes = $forecastsFiltersApi->timeframes($filterApi, array());
-
-        // add filter defaults
-        $defaultTimePeriodId = $timeframes["timeperiod_id"]["default"];
-        $defaultSelections["timeperiod_id"]["id"] = $defaultTimePeriodId;
-        $defaultSelections["timeperiod_id"]["label"] = $timeframes["timeperiod_id"]["options"][$defaultTimePeriodId];
+        $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
+        // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
+        $id = TimePeriod::getCurrentId();
+        $defaultSelections["timeperiod_id"]["id"] = $id;
+        $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
 
         // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         $defaultSelections["category"] = array("70");
-        $defaultSelections["group_by"] = 'sales_stage';
+        $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
 
         // push in defaultSelections
@@ -117,7 +107,7 @@ class ForecastsViewSidecar extends SidecarView
         $sidecarConfig = array(
             'appId' => 'SugarCRM',
             'env' => 'dev',
-            'platform' => 'forecasts',
+            'platform' => 'base',
             'additionalComponents' => array(
                 'alert' => array(
                     'target' => '#alert'

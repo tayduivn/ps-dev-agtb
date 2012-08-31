@@ -346,14 +346,19 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
-  //BEGIN SUGARCRM flav=pro ONLY
   'commit_stage_dom' =>
   array (
     '100' => 'Include',
     '70' => 'Likely',
     '50' => 'Omit',
   ),
-  //END SUGARCRM flav=pro ONLY
+  'commit_stage_expanded_dom' =>
+  array (
+    '100' => 'Commit',
+    '80' => 'Stretch',
+    '60' => 'Risk',
+    '50' => 'Omit'
+  ),
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',
@@ -1895,6 +1900,11 @@ $app_list_strings = array (
 );
 
 $app_strings = array (
+  'LBL_TOUR_NEXT' => 'Next',
+  'LBL_TOUR_SKIP' => 'Skip',
+  'LBL_TOUR_BACK' => 'Back',
+  'LBL_TOUR_CLOSE' => 'Close',
+  'LBL_TOUR_TAKE_TOUR' => 'Take the tour',
   'LBL_MY_AREA_LINKS' => 'My area links: ' /*for 508 compliance fix*/,
   'LBL_GETTINGAIR' => 'Getting Air' /*for 508 compliance fix*/,
   'LBL_WELCOMEBAR' => 'Welcome' /*for 508 compliance fix*/,
@@ -3452,6 +3462,12 @@ $app_strings = array (
     'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
 
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
+    'LBL_TOUR' => 'Activity View Tour',
+    'LNK_TOUR' => 'Tour',
+    'LBL_TOP' => 'Top',
+    'LBL_LANGUAGE' => 'Language',
+    'LBL_PREFERRED_LANGUAGE' => 'Preferred Language:',
+    'LBL_LOADING_LANGUAGE' => 'Loading language pack',
 
     //for portal
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
@@ -3475,8 +3491,6 @@ $app_strings = array (
     'LBL_PORTAL_SAVING' => 'Saving',
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
-
-    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -4342,4 +4356,12 @@ $app_list_strings ['emailTemplates_type_list_no_workflow'] = array (
     'campaign' => 'Campaign' ,
     'email' => 'Email',
   );
+$app_strings ['documentation'] = array (
+    'LBL_DOCS' => 'Documentation',
+    'ULT' => '02_Sugar_Ultimate',
+	'ENT' => '02_Sugar_Enterprise',
+	'CORP' => '03_Sugar_Corporate',
+	'PRO' => '04_Sugar_Professional',
+	'COM' => '05_Sugar_Community_Edition'
+);
 ?>

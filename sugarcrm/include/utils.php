@@ -127,7 +127,7 @@ function make_sugar_config(&$sugar_config)
     'default_theme' => empty($default_theme) ? 'Sugar5' : $default_theme,
     //END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav!=com ONLY
-    'default_theme' => empty($default_theme) ? 'RacerX' : $default_theme,
+    'default_theme' => empty($default_theme) ? 'Sugar' : $default_theme,
     //END SUGARCRM flav!=com ONLY
     'default_time_format' => empty($defaultTimeFormat) ? 'h:ia' : $defaultTimeFormat,
 	'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
@@ -453,8 +453,6 @@ function get_sugar_config_defaults() {
 	    'lockoutexpirationlogin' => '',
 		),
     	'use_sprites' => function_exists('imagecreatetruecolor'),
-        //'forecast_opportunity_buckets' => false,
-    	'forecast_committed_probability' => 70,
 	//END SUGARCRM flav=pro ONLY
 		'use_real_names' => true,
 
