@@ -50,6 +50,18 @@ $viewdefs['base']['layout']['detail'] = array(
                                         'link' => 'notes',
                                     ),
                                 ),
+                                1 => array(
+                                    'view' => 'subdetail',
+                                    'context' => array(
+                                        'link' => 'contacts',
+                                    ),
+                                ),
+                                2 => array(
+                                    'view' => 'subdetail',
+                                    'context' => array(
+                                        'link' => 'accounts',
+                                    ),
+                                ),
                             ),
                         ),
                     ),

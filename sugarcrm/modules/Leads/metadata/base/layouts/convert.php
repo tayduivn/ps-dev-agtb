@@ -3,7 +3,6 @@
 $viewdefs['Leads']['base']['layout']['convert'] = array(
     'Contacts' => array(
         'required' => true,
-        'leadRelationship' => 'contact_leads',
         // fields with the same name will be mapped automatically
         // additional fields to map are defined here
         'additionalFieldMapping' => array(
@@ -12,7 +11,7 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
     ),
     'Accounts' =>array(
         'required' => true,
-        'leadRelationship' => 'account_leads',
+        'contactRelateField' => "account_name",
         'additionalFieldMapping' => array(
             //account field => lead field
             'name' => 'account_name',
@@ -30,7 +29,6 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
     ),
     'Opportunities' => array(
         'required' => true,
-        'leadRelationship' => 'opportunity_leads',
         'additionalFieldMapping' => array(
             //opportunity field => lead field
             'name' => 'opportunity_name',

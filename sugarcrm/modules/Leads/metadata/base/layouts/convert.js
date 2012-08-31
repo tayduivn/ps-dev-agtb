@@ -23,10 +23,42 @@
         this.addBottomView();
 
         //listen for convert button click
-        this.context.off("lead:convert", this.convertModel.save);
-        this.context.on("lead:convert", this.convertModel.save, this.convertModel);
+        this.context.off("lead:convert", this.processConvert);
+        this.context.on("lead:convert", this.processConvert, this);
     },
 
+    /**
+     * Save the convert model and process the responses
+     */
+    processConvert: function() {
+        var self = this;
+
+        app.alert.show('save_edit_view', {level: 'info', title: 'Please Wait. Processing the conversion of the lead.'});
+        this.convertModel.save(null, {
+            success: function(data) {
+                app.alert.dismiss('save_edit_view');
+                self.app.navigate(self.context, self.model, 'detail');
+                self.displayResults(data);
+            }
+        });
+
+    },
+
+    /**
+     * Displays the results in the detail page.
+     */
+
+    displayResults: function(data) {
+        var modules = data.attributes.modules;
+        var message = [];
+        _.each(modules, function(module) {
+          var link = (app.router.buildRoute(module.module_name, module.id, 'detail'));
+
+          message.push(module.module_name + ": <a href='#" + link + "'>" + module.name + "</a>");
+        });
+
+       app.alert.show('convert-results', {level:"info", title:'Lead Converted', messages:message, autoclose:false});
+    },
     /**
      * Creates the parent model that holds all sub-models and logic for performing the convert action
      * @return {*} instance of a backbone model.

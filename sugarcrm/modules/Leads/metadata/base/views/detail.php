@@ -41,6 +41,17 @@ $viewdefs['Leads']['base']['view']['detail'] = array(
                 'click' => 'function(e){this.app.navigate(this.context, this.model, "edit", {trigger:true} );}'
             ),
         ),
+        array(
+            'name'    => 'convert_button',
+            'type'    => 'button',
+            'icon'    => 'icon-eye-open',
+            'label'   => 'ConvertLead',
+            'value'   => 'convert',
+            'route'   => array (
+            'action'=> 'convert'
+        ),
+            'primary' => true,
+        ),
     ),
     'panels' => array(
         array(
