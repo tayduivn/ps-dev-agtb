@@ -23,24 +23,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class MailerFactory
 {
+    public static $SimpleMailer = "SimpleMailer";
+    public static $SugarMailer  = "SugarMailer";
+
 	/**
-	 * @param string $class
+	 * @param string $mailerType
 	 *      This could become a different object that can be used to determine which class to instantiate.
 	 *      But for now just spell out the class you want for testing.
 	 * @return mixed
 	 */
-	public static function getMailer($class = 'SimpleMailer') {
-		switch ($class) {
-			case 'SugarMailer':
-				include_once 'SugarMailer.php';
-				break;
-			case 'SimpleMailer':
-			default:
-				include_once 'SimpleMailer.php';
-				break;
-		}
-
-		$mailer = new $class();
+	public static function getMailer($type, User $user=null) {
+        $mailer=null;
+        switch($type) {
+            case self::$SimpleMailer: {
+                include_once 'SimpleMailer.php';
+                $mailer = new SimpleMailer();
+                break;
+            }
+            case self::$SugarMailer: {
+                include_once 'SugarMailer.php';
+                $mailer = new SugarMailer($user);
+                break;
+            }
+        }
 
 		return $mailer;
 	}
