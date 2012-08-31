@@ -72,6 +72,15 @@ abstract class SugarApi {
 
         return $data;
     }
+
+    protected function formatBeans(ServiceBase $api, $args, $beans)
+    {
+        $ret = array();
+        foreach($beans as $bean){
+            $ret[] = $this->formatBean($api, $args, $bean);
+        }
+        return $ret;
+    }
     /**
      * Recursively runs html entity decode for the reply
      * @param $data array The bean the API is returning
