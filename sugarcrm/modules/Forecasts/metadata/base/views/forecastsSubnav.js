@@ -25,7 +25,7 @@
         app.view.View.prototype.initialize.call(this, options);
 
         // grab current app user model locally
-        var currentUser = app.user.getUser();
+        var currentUser = app.user;
 
         this.fullName = currentUser.get('full_name');
 
