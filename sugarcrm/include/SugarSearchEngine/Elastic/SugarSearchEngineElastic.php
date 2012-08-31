@@ -137,6 +137,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
         
+        //BEGIN SUGARCRM flav=pro ONLY
         $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
         $module_favorites_user = array();
         
@@ -147,7 +148,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         
         $keyValues['user_favorites'] = $module_favorites_user;
-
+        //END SUGARCRM flav=pro ONLY
  
         // to index owner
         $ownerField = $this->getOwnerField($bean);
@@ -527,7 +528,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
-
+            //BEGIN SUGARCRM flav=pro ONLY
+            
             // we only want JUST favorites if the option is 2
             // if the option is 1 that means we want all including favorites,
             // which in FTS is a normal search parameter
@@ -535,12 +537,23 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
             }
 
+            //END SUGARCRM flav=pro ONLY
+
             $mainFilter->addFilter($moduleFilter);
 
         }
 
         return $mainFilter;
     }
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    
+    /**
+     * Construct a favorites filter
+     * @param object $moduleFilter 
+     * @return object $moduleFilter
+     */
 
     protected function constructMyFavoritesFilter($moduleFilter)
     {
@@ -552,6 +565,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $moduleFilter->addFilter($ownerTermFilter);
         return $moduleFilter;
     }
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * Add a Owner Filter For MyItems to the current module
