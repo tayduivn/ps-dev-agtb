@@ -1662,9 +1662,9 @@ class SugarBean
         $this->preprocess_fields_on_save();
 
         // create activity if enabled
-        if ($this->isActivityEnabled() && $isUpdate) {
+        if ($this->isActivityEnabled()) {
             $activity = new ActivityStream();
-            $activity->addActivity($this, ActivityStream::ACTIVITY_TYPE_UPDATE);
+            $isUpdate ? $activity->addUpdate($this) : $activity->addCreate($this);
         }
                 
         //construct the SQL to create the audit record if auditing is enabled.

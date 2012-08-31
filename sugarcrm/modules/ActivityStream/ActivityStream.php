@@ -38,8 +38,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class ActivityStream extends SugarBean {
     // activity types
     const ACTIVITY_TYPE_CREATE = 'created';
+    const ACTIVITY_TYPE_RELATE = 'related';
     const ACTIVITY_TYPE_UPDATE = 'updated';   
-    const ACTIVITY_TYPE_DELETE = 'deleted'; 
     const ACTIVITY_TYPE_POST = 'posted';
     
 
@@ -149,8 +149,8 @@ class ActivityStream extends SugarBean {
                 $row['target_name'] = '';
                 if(!empty($row['target_id'])) {
                     $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
-                    if(!empty($bean->name)) {
-                        $row['target_name'] = $bean->name;
+                    if(!empty($bean)) {
+                        $row['target_name'] = $bean->get_summary_text();
                     }
                 }
                 else if(!empty($row['target_module'])) {
@@ -229,31 +229,21 @@ class ActivityStream extends SugarBean {
      * @return bool query result or false
      *
      */
-    public function addActivity($bean, $activityType) {
+    public function addUpdate($bean) {
         global $dictionary, $current_language;
         $fieldDefs = $dictionary['ActivityStream']['fields'];
         $tableName = $dictionary['ActivityStream']['table'];
         $values = array();
         
-        switch ($activityType) {
-            case ActivityStream::ACTIVITY_TYPE_CREATE:
-            case ActivityStream::ACTIVITY_TYPE_DELETE:
-                $values[] = $this->getActivityValues($bean, $activityType);          
-                break;
-            case ActivityStream::ACTIVITY_TYPE_UPDATE:
-                $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
-                $dataChanges = array_values($dataChanges);
-                $fieldDefs = $bean->getFieldDefinitions();
-                $mod_strings = return_module_language($current_language, $bean->module_dir);                
-                foreach($dataChanges as &$dataChange) {
-                    $fieldName = get_label($fieldDefs[$dataChange['field_name']]['vname'], $mod_strings);
-                    $dataChange['field_name'] = str_replace(":","",$fieldName);
-                }
-                $values[] = $this->getActivityValues($bean, $activityType, $dataChanges);
-                break;
-            default:
-                return false;
+        $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
+        $dataChanges = array_values($dataChanges);
+        $fieldDefs = $bean->getFieldDefinitions();
+        $mod_strings = return_module_language($current_language, $bean->module_dir);                
+        foreach($dataChanges as &$dataChange) {
+            $fieldName = get_label($fieldDefs[$dataChange['field_name']]['vname'], $mod_strings);
+            $dataChange['field_name'] = str_replace(":","",$fieldName);
         }
+        $values[] = $this->getActivityValues($bean, self::ACTIVITY_TYPE_UPDATE, $dataChanges);
    
         if(!empty($values)) {
             $valueStrings = array();
@@ -332,6 +322,60 @@ class ActivityStream extends SugarBean {
         $sql .= "(".implode(",", array_keys($values)).") ";
         $sql .= "VALUES(".implode(",", $values).")"; 
         return $this->db->query($sql);  
+    }   
+
+    /**
+     * Creates a new relationship activity record.
+     *
+     * @param SugarBean $lhs
+     * @param SugarBean $rhs
+     * @return bool query result or false
+     */
+    public function addRelate($lhs, $rhs) {
+        global $current_user, $dictionary;
+        $fieldDefs = $dictionary['ActivityStream']['fields'];
+        $tableName = $dictionary['ActivityStream']['table'];
+    
+        $values = array();
+        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
+        $values['target_module']= $this->db->massageValue($lhs->module_dir, $fieldDefs['target_module']);
+        $values['target_id']= $this->db->massageValue($lhs->id, $fieldDefs['target_id']);
+        $activityData = json_encode(array('relate_to'=>$rhs->module_dir, 'relate_id'=>$rhs->id, 'relate_name'=>$rhs->get_summary_text()));
+        $values['activity_data']= $this->db->massageValue($activityData, $fieldDefs['activity_data']);
+        $values['activity_type']= $this->db->massageValue(self::ACTIVITY_TYPE_RELATE, $fieldDefs['activity_type']);
+        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
+        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
+    
+        $sql = "INSERT INTO ".$tableName;
+        $sql .= "(".implode(",", array_keys($values)).") ";
+        $sql .= "VALUES(".implode(",", $values).")";
+        return $this->db->query($sql);
+    }  
+
+    /**
+     * Creates a new record activity.
+     *
+     * @param SugarBean $bean 
+     * @return bool query result or false
+     */
+    public function addCreate($bean) {
+        global $current_user, $dictionary;
+        $fieldDefs = $dictionary['ActivityStream']['fields'];
+        $tableName = $dictionary['ActivityStream']['table'];
+    
+        $values = array();
+        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
+        $values['target_module']= $this->db->massageValue($bean->module_dir, $fieldDefs['target_module']);
+        $values['target_id']= $this->db->massageValue($bean->id, $fieldDefs['target_id']);
+        $values['activity_data']= "''";
+        $values['activity_type']= $this->db->massageValue(self::ACTIVITY_TYPE_CREATE, $fieldDefs['activity_type']);
+        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
+        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
+    
+        $sql = "INSERT INTO ".$tableName;
+        $sql .= "(".implode(",", array_keys($values)).") ";
+        $sql .= "VALUES(".implode(",", $values).")";
+        return $this->db->query($sql);
     }    
 }
 
