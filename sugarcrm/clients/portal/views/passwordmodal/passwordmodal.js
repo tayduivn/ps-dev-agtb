@@ -150,7 +150,7 @@
         });
     },
     checkUpdatePassWorked: function(data) {
-        if(!data || !data.current_user || !data.current_user.valid) {
+        if(!data || !data.valid) {
             return false;
             app.logger.error("Failed to update password. "); 
         } 
