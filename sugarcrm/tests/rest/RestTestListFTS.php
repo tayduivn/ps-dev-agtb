@@ -87,12 +87,29 @@ class RestTestListFTS extends RestTestBase {
             $account->team_id = 1;
             $account->team_set_id = 1;
             $account->save();
-            $this->search_engine->indexBean($account, FALSE);
+            
             $this->accounts[] = $account;
+            //BEGIN SUGARCRM flav=pro ONLY
+            if ( $i > 33 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Accounts',$account->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Accounts';
+                $fav->record_id = $account->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }            
+            //END SUGARCRM flav=pro ONLY
+            
+            $this->search_engine->indexBean($account, FALSE);
         }
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
+
         $this->assertEquals(30,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
@@ -107,6 +124,14 @@ class RestTestListFTS extends RestTestBase {
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->accounts[17]->name,$firstRecord['name'],"The search failed for record: ".$this->accounts[17]->name);
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Test Favorites
+        $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
+
+        $this->assertEquals(6,count($restReply['reply']['records']));        
+
+        //END SUGARCRM flav=pro ONLY
+
     }
 
     public function testGlobalSearch() {
@@ -117,8 +142,23 @@ class RestTestListFTS extends RestTestBase {
             $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
             $account->assigned_user_id = $GLOBALS['current_user']->id;
             $account->save();
-            $this->search_engine->indexBean($account, false);
             $this->accounts[] = $account;
+            //BEGIN SUGARCRM flav=pro ONLY
+           if ( $i > 33 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Accounts',$account->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Accounts';
+                $fav->record_id = $account->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            } 
+            //END SUGARCRM flav=pro ONLY
+            $this->search_engine->indexBean($account, false);
+
         }
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
@@ -127,8 +167,22 @@ class RestTestListFTS extends RestTestBase {
             $contact->last_name = "TEST ".create_guid();
             $contact->assigned_user_id = $GLOBALS['current_user']->id;
             $contact->save();
-            $this->search_engine->indexBean($contact, false);
             $this->contacts[] = $contact;
+            //BEGIN SUGARCRM flav=pro ONLY
+            if ( $i > 33 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Contacts',$contact->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Contacts';
+                $fav->record_id = $contact->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+            //END SUGARCRM flav=pro ONLY
+            $this->search_engine->indexBean($contact, false);                          
         }
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
@@ -136,8 +190,22 @@ class RestTestListFTS extends RestTestBase {
             $opportunity->name = "UNIT ".count($this->opps)." TEST ".create_guid();
             $opportunity->assigned_user_id = $GLOBALS['current_user']->id;
             $opportunity->save();
-            $this->search_engine->indexBean($opportunity, false);
             $this->opps[] = $opportunity;
+            //BEGIN SUGARCRM flav=pro ONLY
+            if ( $i > 33 ) {
+                // Favorite the last six
+                $fav = new SugarFavorites();
+                $fav->id = SugarFavorites::generateGUID('Opportunities',$contact->id);
+                $fav->new_with_id = true;
+                $fav->module = 'Opportunities';
+                $fav->record_id = $opportunity->id;
+                $fav->created_by = $GLOBALS['current_user']->id;
+                $fav->assigned_user_id = $GLOBALS['current_user']->id;
+                $fav->deleted = 0;
+                $fav->save();
+            }
+            //END SUGARCRM flav=pro ONLY
+            $this->search_engine->indexBean($opportunity, false);            
         }
 
         // Test searching for a lot of records
@@ -158,7 +226,19 @@ class RestTestListFTS extends RestTestBase {
         $this->assertEquals($this->opps[17]->name,$firstRecord['name'],"The search failed for record: ".$this->opps[17]->name);
         // Get a list, no searching
         $restReply = $this->_restCall("search?max_num=10");
+
         $this->assertEquals(10,count($restReply['reply']['records']));
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // my favorites
+        $restReply = $this->_restCall("search?favorites=1&max_num=10");
+
+        foreach($restReply['reply']['records'] AS $record)
+        {
+            $this->assertEquals('true', (bool)$record['my_favorite'], "Did not return a favorite");
+        }
+
+        //END SUGARCRM flav=pro ONLY
         
     }
 

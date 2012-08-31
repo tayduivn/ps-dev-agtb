@@ -35,7 +35,7 @@ class UnifiedSearchApi extends SugarApi {
             'moduleSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>'),
-                'pathVars' => array('moduleList'),
+                'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search records in this module',
                 'longHelp' => 'include/api/help/getListModule.html',
@@ -132,8 +132,8 @@ class UnifiedSearchApi extends SugarApi {
         $options['orderBy'] = $orderBy;
 
         $options['moduleList'] = array();
-        if ( !empty($args['moduleList']) ) {
-            $options['moduleList'] = explode(',',$args['moduleList']);
+        if ( !empty($args['module_list']) ) {
+            $options['moduleList'] = explode(',',$args['module_list']);
         }
         $options['primaryModule'] = 'Home';
         if ( !empty($args['primary_module']) ) {
@@ -141,6 +141,8 @@ class UnifiedSearchApi extends SugarApi {
         } else if ( isset($options['moduleList'][0]) ) {
             $options['primaryModule'] = $options['moduleList'][0];
         }
+
+        // we want favorites info with records, so that we can flag a favorite out of a recordset
         $options['favorites'] = false;
         if ( !empty($args['favorites']) && $args['favorites'] == true ) {
             // Setting favorites to 1 includes favorites information,
@@ -228,16 +230,8 @@ class UnifiedSearchApi extends SugarApi {
             How to determine which Elastic Search
             1 - Not Portal
             2 - All Modules are full_text_search = true
-            3 - not my favorites
             4 - not order by
         */
-
-        // favorites
-        
-        if($options['favorites'] !== false)
-        {
-            return 'SugarSearchEngine';
-        }
 
         // portal
         

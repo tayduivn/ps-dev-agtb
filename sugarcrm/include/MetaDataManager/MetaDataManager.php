@@ -77,121 +77,34 @@ class MetaDataManager {
         // Return data
         $data = array();
 
-        // These are module specific locations to look for metadata
-        $locations = array(MB_BASEMETADATALOCATION, MB_CUSTOMMETADATALOCATION);
-
         // The metadata filenames that we will be getting
-        $filenames = array();
+        $data = array();
 
         // Module metadata directories for fetching controllers and templates
         $moduledirs = array();
 
         // Start with SugarObjects :: basic
-        $basic = 'include/SugarObjects/templates/basic/metadata/' . $this->platforms[0] . '/' . $viewdefType . 's/';
+        $basic = 'include/SugarObjects/templates/basic/clients/' . $this->platforms[0] . '/' . $viewdefType . 's/';
         if (is_dir($basic)) {
-            $files = glob($basic . '*.php');
-            foreach ($files as $fullpath) {
-                $filenames[basename($fullpath, '.php')] = $fullpath;
+            $result = $this->getSugarClientFiles($viewdefType, 'include/SugarObjects/templates/basic/', "<module_name>");
+            foreach ($result as $name => $fileArray) {
+                $data[$name] = $fileArray;
             }
         }
 
         // Now get the SugarObjects :: $moduleType files
         $moduleType = MetaDataFiles::getSugarObjectFileDir($moduleName, $this->platforms[0], $viewdefType);
         if (is_dir($moduleType)) {
-            $files = glob($moduleType . '*.php');
-            foreach ($files as $fullpath) {
-                $filenames[basename($fullpath, '.php')] = $fullpath;
+            $result = $this->getSugarClientFiles($viewdefType, $moduleType, "<module_name>");
+            foreach ($result as $name => $fileArray) {
+                $data[$name] = $fileArray;
             }
         }
 
         // Now handle the module locations
-        foreach ($locations as $location) {
-            $dir = MetaDataFiles::getModuleFileDir($moduleName, $location, $this->platforms[0], $viewdefType);
-
-            // Handle getting the metadata files
-            if (is_dir($dir)) {
-                $files = glob($dir . '*.php');
-                foreach ($files as $fullpath) {
-                    $filenames[basename($fullpath, '.php')] = $fullpath;
-                }
-
-                // Now set the moduledirs array for templates and controllers
-                $moduledirs[$location] = $dir;
-            }
-        }
-
-
-        // This is an array of metadata files already read so we don't clobber stuff
-        $fetched = array();
-
-        // Loop the filenames array and grab our metadata
-        foreach ($filenames as $type => $filename) {
-            // If we've already gotten this one, let it ride
-            if (isset($fetched[$type])) {
-                continue;
-            }
-
-            // If the file doesn't exist, move on
-            // No, this should never happen, but making sure always makes sense
-            if (!file_exists($filename)) {
-                continue;
-            }
-
-            // Require rather than require once since we need the data as is
-            require $filename;
-
-            // Set that we've fetched it
-            $fetched[$type] = true;
-
-            // Search is not fully converted to sidecar so handle it differently
-            // TODO: figure out how to standardize metadata at a higher level
-            //       so that these kinds of conditionals don't need to exist
-            if ($type == 'search') {
-                if (isset($searchdefs['<module_name>']) || isset($searchdefs['<_module_name>']) || isset($searchdefs['<MODULE_NAME>'])) {
-                    $searchdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $searchdefs);
-                }
-
-                if (isset($searchdefs[$moduleName])) {
-                    $data[$type]['meta'] = $searchdefs[$moduleName];
-                }
-
-            } else {
-                if (isset($viewdefs['<module_name>']) || isset($viewdefs['<_module_name>']) || isset($viewdefs['<MODULE_NAME>'])) {
-                    $viewdefs = MetaDataFiles::getModuleMetaDataDefsWithReplacements($moduleName, $viewdefs);
-                }
-
-                // Data in that file should look like: $viewdefs['Cases']['portal']['layout']['detail'] = array(...);
-                if ( isset($viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type]) ) {
-                    $data[$type]['meta'] = $viewdefs[$moduleName][$this->platforms[0]][$viewdefType][$type];
-                }
-            }
-
-            foreach ($moduledirs as $dir) {
-                // Templates and controllers can go here
-
-                // if we are trying to get fields, look to see if a folder exist for the type
-                if($viewdefType == "field") {
-                    $dir .= $type;
-                }
-
-                $templates = $this->fetchTemplates(array($dir));
-                $controllers = $this->fetchTemplates(array($dir), ".js");
-
-                // we need to handle fields differently since we want all the templates back in an array
-                if($viewdefType == "field") {
-                    $data[$type]['templates'] = $templates;
-                } else {
-                    //Next add a custom template if it exists
-                    if (!empty($templates[$type])) {
-                        $data[$type]['template'] = $templates[$type];
-                    }
-                }
-
-                //Finally check if a custom controller exists for this view for this module
-                if (!empty($controllers[$type])) {
-                    $data[$type]['controller'] = $controllers[$type];
-                }
-            }
+        $result = $this->getSugarClientFiles($viewdefType, "modules/{$moduleName}/", $moduleName);
+        foreach ($result as $name => $fileArray) {
+            $data[$name] = $fileArray;
         }
 
         return $data;
@@ -477,10 +390,10 @@ class MetaDataManager {
      * @param bool $full Whether to return full paths or dirnames only
      * @return array
      */
-    public function getSugarClientFileDirs($path, $full = false) {
+    public function getSugarClientFileDirs($path, $full = false, $modulePath = "") {
         $dirs = array();
         foreach ( $this->platforms as $platform ) {
-            $basedir  = "clients/{$platform}/{$path}/";
+            $basedir  = "{$modulePath}clients/{$platform}/{$path}/";
             $custdir  = "custom/$basedir";
             $basedirs = glob($basedir."*", GLOB_ONLYDIR);
             $custdirs = is_dir($custdir) ? glob($custdir . "*", GLOB_ONLYDIR) : array();
@@ -502,13 +415,13 @@ class MetaDataManager {
      * @param string $type The type of files to get
      * @return array
      */
-    public function getSugarClientFiles($type)
+    public function getSugarClientFiles($type, $modulePath = "", $module="")
     {
         $result = array();
 
         $typePath = $type . 's';
 
-        $allSugarFiles = $this->getSugarClientFileDirs($typePath);
+        $allSugarFiles = $this->getSugarClientFileDirs($typePath, false, $modulePath);
 
         foreach ( $allSugarFiles as $dirname) {
             // reset $fileData
@@ -517,10 +430,10 @@ class MetaDataManager {
             // Add in meta checking here as well
             $meta = array();
             foreach ( $this->platforms as $platform ) {
-                $dir = "clients/$platform/$typePath/$dirname/";
+                $dir = "{$modulePath}clients/$platform/$typePath/$dirname/";
                 $controller = $dir . "$dirname.js";
                 if (empty($meta)) {
-                    $meta = $this->fetchMetadataFromDirs(array($dir));
+                    $meta = $this->fetchMetadataFromDirs(array($dir), $module);
                 }
                 if ( file_exists('custom/'.$controller) ) {
                     $controller = 'custom/'.$controller;
@@ -536,9 +449,16 @@ class MetaDataManager {
             $backwardsPlatforms = array_reverse($this->platforms);
             $templateDirs = array();
             foreach ( $backwardsPlatforms as $platform ) {
-                $templateDirs[] = "clients/$platform/$typePath/$dirname/";
+                $templateDirs[] = "{$modulePath}clients/$platform/$typePath/$dirname/";
             }
-            $fileData['templates'] = $this->fetchTemplates($templateDirs);
+            $templates = $this->fetchTemplates($templateDirs);
+            if (!empty($module) && $type != "field"){
+                //custom views/layouts can only have one templates
+                $fileData['template'] = reset($templates);
+            }
+            else
+                $fileData['templates'] = $templates;
+
             if ($meta) {
                $fileData['meta'] = array_shift($meta); // Get the first member
             }
@@ -564,12 +484,12 @@ class MetaDataManager {
      * @param array $dirs The directories to read
      * @return array
      */
-    protected function fetchMetadataFromDirs($dirs) {
+    protected function fetchMetadataFromDirs($dirs, $module="") {
         $return = array();
         foreach ($dirs as $dir) {
             $dir = rtrim($dir, '/') . '/';
             $cust = "custom/$dir";
-            $return = array_merge($return, $this->fetchMetadataFromDir($dir), $this->fetchMetadataFromDir($cust));
+            $return = array_merge($return, $this->fetchMetadataFromDir($dir, $module), $this->fetchMetadataFromDir($cust, $module));
         }
         return $return;
     }
@@ -580,21 +500,33 @@ class MetaDataManager {
      * @param string $dir
      * @return array
      */
-    protected function fetchMetadataFromDir($dir) {
+    protected function fetchMetadataFromDir($dir, $module = "") {
         $meta = array();
         if (is_dir($dir)) {
             // Get the client, type amd name for this particular directory
-            preg_match("#clients/(.*)/(.*)/(.*)/#", $dir, $m);
+            preg_match("#clients/([^/]*)/([^/]*)/([^/]*)/#", $dir, $m);
             $platform = $m[1];
             $type = substr_replace($m[2], '', -1); // Pluck the 's' from the type
             $filename = $m[3];
             $file = rtrim($dir, '/') . '/' . $filename . '.php';
-
             if (file_exists($file)) {
-                require_once $file;
+                // Changed from require_once to require so we can actually get 
+                // these on multiple requests for them
+                require $file;
 
                 // Only get the viewdefs if they exist for this platform and file
-                if (isset($viewdefs[$platform][$type][$filename])) {
+                // Also handle search, since those defs are different
+                if (!empty($module)) {
+                    if (isset($searchdefs[$module])) {
+                        $meta[$filename] = $searchdefs[$module];
+                    } 
+                    else if (isset($viewdefs[$module][$platform][$type][$filename]))
+                    {
+                        $meta[$filename] = $viewdefs[$module][$platform][$type][$filename];
+                    }
+                }
+                else if (isset($viewdefs[$platform][$type][$filename])) 
+                {
                     $meta[$filename] = $viewdefs[$platform][$type][$filename];
                 }
             }
@@ -695,8 +627,8 @@ class MetaDataManager {
         if ( $platform == 'portal' ) {
             // Apparently this list is not stored anywhere, the module builder just uses a very
             // complicated setup to do this glob
-            $defaultPortalViewsPath = 'modules/*/metadata/portal/views/*.php';
-            $defaultPortalLayoutsPath = 'modules/*/metadata/portal/layouts/*.php';
+            $defaultPortalViewsPath = 'modules/*/clients/portal/views/*/*.php';
+            $defaultPortalLayoutsPath = 'modules/*/clients/portal/layouts/*/*.php';
             $customPortalViewsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalViewsPath;
             $customPortalLayoutsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalLayoutsPath;
 
@@ -718,15 +650,13 @@ class MetaDataManager {
 
             $portalModules = array();
             foreach ( $portalFiles as $file ) {
-                $fileParts = explode('/',$file);
-                if ( $fileParts[0] == 'custom' ) {
-                    // 0 => custom, 1 => modules, 2 => Accounts, 3 => metadata, 4 => portal, 5 => views, 6 => edit.php
-                    $module = $fileParts[2];
-                } else {
-                    // 0 => modules, 1 => Accounts, 2 => metadata, 3 => portal, 4 => views, 5 => edit.php
-                    $module = $fileParts[1];
+                // Grab the module name from the file path
+                preg_match('#modules/(.+)/clients#', $file, $fileParts);
+                
+                // And set it only if we haven't already
+                if (!empty($fileParts[1]) && empty($portalModules[$fileParts[1]])) {
+                    $portalModules[$fileParts[1]] = $fileParts[1];
                 }
-                $portalModules[$module] = $module;
             }
             $moduleList = array_keys($portalModules);
         } else if ( $platform == 'mobile' ) {
