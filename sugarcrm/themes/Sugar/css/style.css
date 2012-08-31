@@ -1431,9 +1431,14 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     
 }
 
-#footer #help {
+#footer #buffer {
     float: right;
     margin-right: 25px;
+    height: 31px;
+}
+
+#footer #help {
+    float: right;
     border-right: 1px solid #CCC;
     height: 31px;
 }
@@ -1446,16 +1451,15 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     padding: 0px 10px 0px;
  }
 
-#footer #help a span {
-    float: left;
-}
 
-#footer #help a span.icon {
+#footer #help a .icon {
+    float: left;
     height: 24px;
     margin: 5px 4px 4px 0px;
 }
 
 #footer #help a span.title {
+    float: left;
     padding-top: 8px;
 }
 

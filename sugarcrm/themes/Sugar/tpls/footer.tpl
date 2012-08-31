@@ -46,7 +46,10 @@
     <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" title="{$STATISTICS}" border="0"/>
     {/if}
     <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
+    <div id="buffer"></div>
+    {if $HELP_LINK}
     <div id="help" class="help">{$HELP_LINK}</div>
+    {/if}
     <div id="partner">
         <div id="integrations" style="min-width: 20px;">
             {foreach from=$DYNAMICDCACTIONS item=action}
