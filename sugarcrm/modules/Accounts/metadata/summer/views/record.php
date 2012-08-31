@@ -57,7 +57,8 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
-                array('fields' => array( array('name' => 'img', 'span' => 2, 'label' => '')), 'noedit' => true, 'span' => 2),
+                array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
+//                array('fields' => array( array('name' => 'img')), 'noedit' => true, 'span' => 2, 'label' => ''),
                 array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => ' ', 'placeholder' => 'LBL_NAME'),
             )
         ),

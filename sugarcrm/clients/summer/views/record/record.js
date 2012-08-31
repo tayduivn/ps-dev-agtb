@@ -146,13 +146,17 @@
             target = field.$el.parent().find(".record-edit-link");
         }
 
+
+        console.log(target, target.parent().parent());
         // Set Editing mode to on.
         this.editMode = true;
 
         switch (field.type) {
+            case "img":
+                break;
             default:
                 this.toggleField(field, target);
-                target.parent().find("input").focus().val(target.parent().find("input").val());
+                target.parent().parent().find("input").focus().val(target.parent().find("input").val());
         }
     },
 
