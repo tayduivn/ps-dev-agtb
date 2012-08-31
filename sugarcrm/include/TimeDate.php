@@ -895,6 +895,8 @@ class TimeDate
                 $date = SugarDateTime::createFromFormat('Y-m-d\TH:i:s',substr($inputDate,0,19),self::$gmtTimezone);
                 $date->adjustByIsoOffset(substr($inputDate,19));
                 
+                $this->tzUser($date,$user);
+
                 return $date;
             } else {
                 // This time doesn't have an attached offset, convert it according to the user's date and time
