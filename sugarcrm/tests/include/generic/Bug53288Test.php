@@ -75,7 +75,7 @@ class Bug53288Test extends Sugar_PHPUnit_Framework_TestCase
         $_REQUEST['prospect_id'] = $this->_oProspect->id;
         $_REQUEST['return_type'] = 'addtoprospectlist';
         require_once('include/generic/Save2.php');
-        $res = $GLOBALS['db']->query('SELECT * FROM prospect_lists_prospects WHERE prospect_list_id="' . $this->_oProspectList->id . '" AND related_id="' . $this->_oProspect->id . '"');
+        $res = $GLOBALS['db']->query("SELECT * FROM prospect_lists_prospects WHERE prospect_list_id='{$this->_oProspectList->id}' AND related_id='{$this->_oProspect->id}'");
         $row = $GLOBALS['db']->fetchByAssoc($res);
         $this->assertInternalType('array', $row);
     }
