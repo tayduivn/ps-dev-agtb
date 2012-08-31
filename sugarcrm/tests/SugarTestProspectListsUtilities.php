@@ -36,9 +36,10 @@ class SugarTestProspectListsUtilities
     public static function removeProspectLists($prospect_list_id)
     {
         if (is_array($prospect_list_id)) {
-            $GLOBALS['db']->query('DELETE FROM prospect_lists WHERE id IN ("' . implode(',', $prospect_list_id) . '")');
+            $prospect_list_id = implode("','", $prospect_list_id);
+            $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id IN ('{$prospect_list_id}')");
         } else {
-            $GLOBALS['db']->query('DELETE FROM prospect_lists WHERE id = "' . $prospect_list_id . '"');
+            $GLOBALS['db']->query("DELETE FROM prospect_lists WHERE id = '{$prospect_list_id}'");
         }
     }
 
@@ -49,7 +50,7 @@ class SugarTestProspectListsUtilities
      */
     public static function removeProspectsListToProspectRelation($prospect_list_id, $prospect_id)
     {
-        $GLOBALS['db']->query('DELETE FROM prospect_lists_prospects WHERE prospect_list_id="' . $prospect_list_id . '" AND related_id="' . $prospect_id . '"');
+        $GLOBALS['db']->query("DELETE FROM prospect_lists_prospects WHERE prospect_list_id='{$prospect_list_id}' AND related_id='{$prospect_id}'");
     }
 
 }
