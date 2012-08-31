@@ -1,5 +1,5 @@
 ({
-    extends:'BaseeditmodalView',
+    extendsFrom:'BaseeditmodalView',
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "edit";

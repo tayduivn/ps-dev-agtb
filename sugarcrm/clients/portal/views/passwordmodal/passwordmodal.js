@@ -1,5 +1,5 @@
 ({
-    extends:'BaseeditmodalView',
+    extendsFrom:'BaseeditmodalView',
     initialize: function(options) {
         var self = this;
         this.options.meta = this._meta.meta;
@@ -105,7 +105,7 @@
         return !isError;
     },
     saveButton: function() {
-    var self = this, contactModel = this.context.get('contactModel');
+        var self = this, contactModel = this.context.get('contactModel');
         if(self.verify(contactModel)) {
             self.saveModel(contactModel);
         } else {
