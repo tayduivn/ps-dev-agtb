@@ -75,6 +75,7 @@ function add_prospects_to_prospect_list($parent_id,$child_id)
 function save_from_report($report_id,$parent_id, $module_name, $relationship_attr_name) {
 	global $beanFiles;
 	global $beanList;
+	global $sugar_config;
 
 	$GLOBALS['log']->debug("Save2: Linking with report output");
 	$GLOBALS['log']->debug("Save2:Report ID=".$report_id);
@@ -108,6 +109,8 @@ $mod_strings = return_module_language($current_language,"Reports");
 	$sql = $report->query_list[0];
 	$GLOBALS['log']->debug("Save2:Report Query=".$sql);
 	$result = $report->db->query($sql);
+	//To avoid timeout, sets time limit to system import_max_execution_time, 3600 secs is the default if system value is not set
+	set_time_limit(empty($sugar_config['import_max_execution_time']) ? 3600 : $sugar_config['import_max_execution_time']);
 	while($row = $report->db->fetchByAssoc($result))
 	{
 		$focus->$relationship_attr_name->add($row['primaryid']);
