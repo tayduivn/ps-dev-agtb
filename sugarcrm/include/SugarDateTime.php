@@ -685,9 +685,7 @@ class SugarDateTime extends DateTime
             $calcOffset = $plusMinus*(substr($isoOffset,1,2)*3600)+(substr($isoOffset,3,2)*60);
             
         }
-        $newTimestamp = $this->getTimestamp()-$calcOffset;
-        $this->setTimestamp($newTimestamp);
-        return $this;
+        return $this->modify((-$calcOffset)." seconds");
     }
 
 }
