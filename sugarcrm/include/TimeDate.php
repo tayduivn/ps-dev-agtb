@@ -92,6 +92,7 @@ class TimeDate
 
        	'i' => '%M',
        	's' => '%S',
+        '\T' => 'T',
 
     );
 
