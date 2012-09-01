@@ -66,7 +66,6 @@
 
                 animation1[ref] = (motion == 'pos' ? '-=' : '+=') + distance;
                 animation2[ref] = (motion == 'pos' ? '+=' : '-=') + distance;
-                var rtl = rtl == "undefined" ? false : rtl;
                 if(ref2 != "undefined") {
                     if(!rtl) {
                         if(direction == "up right" || direction == "down left")   {
