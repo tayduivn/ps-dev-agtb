@@ -424,7 +424,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'name' => 'campaign_link',
         'type' => 'link',
         'relationship' => 'opportunities_campaign',
-        'vname' => 'LBL_CAMPAIGNS',
+        'vname' => 'LBL_CAMPAIGN_LINK',
         'link_type' => 'one',
         'module' => 'Campaigns',
         'bean_name' => 'Campaign',

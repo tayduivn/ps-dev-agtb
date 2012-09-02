@@ -110,5 +110,7 @@ $mod_strings = array (
     'LBL_PARENT_NAME' => 'Project Name',
     'LBL_LIST_PROJECT_NAME' => 'Projects',
 	'LBL_EDITLAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+        'LBL_RESOURCE_ID' => 'Resource ID',
+
 );
 ?>

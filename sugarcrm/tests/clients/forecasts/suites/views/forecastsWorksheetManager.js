@@ -4,8 +4,8 @@ describe("The forecasts manager worksheet", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/forecasts/metadata/base/views", "forecastsWorksheetManager", "js", function(d) { return eval(d); });
-        var cte = SugarTest.loadFile("../modules/forecasts/metadata/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheetManager", "forecastsWorksheetManager", "js", function(d) { return eval(d); });
+        var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
     });
 
     describe("clickToEdit field", function() {

@@ -211,7 +211,6 @@ $mod_strings = array (
 	'LNK_QUOTE_REPORTS' => 'View Quote Reports',
 	//END SUGARCRM flav=pro ONLY
 	'LBL_ASSIGNED_TO_NAME'=>'Assigned to:',
-	'PDF_FORMAT'=>'PDF Format:',
 	'LBL_ASSIGNED_TO_ID'=>'Assigned User:',
 	'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_DOCUMENTS_SUBPANEL_TITLE' => 'Documents',

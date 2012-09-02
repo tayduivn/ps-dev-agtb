@@ -136,7 +136,20 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
+        
+        //BEGIN SUGARCRM flav=pro ONLY
+        $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
+        $module_favorites_user = array();
+        
+        foreach($favorites AS $fav) {
+            // need to replace -'s for elastic search, same as team_set_ids
+            $module_favorites_user[] = str_replace('-', '', strval($fav->assigned_user_id));
+        }
 
+        
+        $keyValues['user_favorites'] = $module_favorites_user;
+        //END SUGARCRM flav=pro ONLY
+ 
         // to index owner
         $ownerField = $this->getOwnerField($bean);
         if ($ownerField)
@@ -149,6 +162,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         else
             return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
     }
+
 
     protected function indexSingleBean($bean)
     {
@@ -421,22 +435,15 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     */
     protected function constructTeamFilter()
     {
-        $teamFilter = new Elastica_Filter_Or();
-
         $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
 
         //TODO: Determine why term filters aren't working with the hyphen present.
         //Term filters dont' work for terms with '-' present so we need to clean
         $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
 
-        foreach ($teamIDS as $teamID)
-        {
-            $termFilter = new Elastica_Filter_Term();
-            $termFilter->setTerm('team_set_id',$teamID);
-            $teamFilter->addFilter($termFilter);
-        }
+        $termFilter = new Elastica_Filter_Terms('team_set_id', $teamIDS);
 
-        return $teamFilter;
+        return $termFilter;
     }
 
     protected function getTypeTermFilter($module)
@@ -509,16 +516,67 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $moduleFilter;
     }
 
-    protected function constructMainFilter($finalTypes)
+    protected function constructMainFilter($finalTypes, $options)
     {
         $mainFilter = new Elastica_Filter_Or();
         foreach ($finalTypes as $module)
         {
             $moduleFilter = $this->constructModuleLevelFilter($module);
+            
+            // if we want myitems add more to the module filter
+            if(isset($options['my_items']) && $options['my_items'] !== false)
+            {
+                $moduleFilter = $this->myItemsSearch($moduleFilter);
+            }
+            //BEGIN SUGARCRM flav=pro ONLY
+            
+            // we only want JUST favorites if the option is 2
+            // if the option is 1 that means we want all including favorites,
+            // which in FTS is a normal search parameter
+            if(isset($options['favorites']) && $options['favorites'] == 2) {
+                $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
+            }
+
+            //END SUGARCRM flav=pro ONLY
+
             $mainFilter->addFilter($moduleFilter);
+
         }
 
         return $mainFilter;
+    }
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    
+    /**
+     * Construct a favorites filter
+     * @param object $moduleFilter 
+     * @return object $moduleFilter
+     */
+
+    protected function constructMyFavoritesFilter($moduleFilter)
+    {
+        $ownerTermFilter = new Elastica_Filter_Term();
+        // same bug as team set id, looking into a fix in elastic search to allow -'s without tokenizing
+
+        $ownerTermFilter->setTerm('user_favorites', str_replace('-','',$GLOBALS['current_user']->id));
+
+        $moduleFilter->addFilter($ownerTermFilter);
+        return $moduleFilter;
+    }
+    //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Add a Owner Filter For MyItems to the current module
+     * @param object $moduleFilter
+     * @return object
+     */
+    public function myItemsSearch($moduleFilter)
+    {
+        $ownerTermFilter = $this->getOwnerTermFilter();
+        $moduleFilter->addFilter($ownerTermFilter);
+        return $moduleFilter;
     }
 
     /**
@@ -545,25 +603,32 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $results = null;
         try
         {
-            $qString = html_entity_decode($queryString, ENT_QUOTES);
-            $queryObj = new Elastica_Query_QueryString($qString);
-            $queryObj->setAnalyzeWildcard(true);
-            $queryObj->setAutoGeneratePhraseQueries(false);
-            if( !empty($options['append_wildcard']) ) {
-                // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
-                $queryObj->setRewrite('top_terms_5');
-
-                // bug_54567: whitespace analyzer is only used for query that searches email address now
-                // it makes whitespace the divider for the query keyword
-                if (preg_match('/@/', $qString)) {
-                    $queryObj->setAnalyzer('whitespace');
-                }
+            // trying to match everything, make a MatchAll query
+            if($queryString == '*')
+            {
+                $queryObj = new Elastica_Query_MatchAll();
             }
+            else
+            {
+                $qString = html_entity_decode($queryString, ENT_QUOTES);
+                $queryObj = new Elastica_Query_QueryString($qString);
+                $queryObj->setAnalyzeWildcard(true);
+                $queryObj->setAutoGeneratePhraseQueries(false);
+                if( !empty($options['append_wildcard']) ) {
+                    // see https://github.com/elasticsearch/elasticsearch/issues/1186 for details
+                    $queryObj->setRewrite('top_terms_5');
 
-            // set query string fields
-            $fields = $this->getSearchFields($options);
-            $queryObj->setFields($fields);
+                    // bug_54567: whitespace analyzer is only used for query that searches email address now
+                    // it makes whitespace the divider for the query keyword
+                    if (preg_match('/@/', $qString)) {
+                        $queryObj->setAnalyzer('whitespace');
+                    }
+                }
 
+                // set query string fields
+                $fields = $this->getSearchFields($options);
+                $queryObj->setFields($fields);
+            }
             $s = new Elastica_Search($this->_client);
             //Only search across our index.
             $index = new Elastica_Index($this->_client, $this->_indexName);
@@ -597,7 +662,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if( !is_admin($GLOBALS['current_user']) )
             {
                 // main filter
-                $mainFilter = $this->constructMainFilter($finalTypes);
+                $mainFilter = $this->constructMainFilter($finalTypes, $options);
 
                 $query = new Elastica_Query($queryObj);
                 $query->setFilter($mainFilter);
@@ -625,10 +690,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
                 $query->addFacet($typeFacet);
             }
-
+            
             $esResultSet = $s->search($query, $limit);
             $results = new SugarSeachEngineElasticResultSet($esResultSet);
-
         }
         catch(Exception $e)
         {
@@ -648,7 +712,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     protected function cleanTeamSetID($teamSetID)
     {
-        return str_replace("-", "", $teamSetID);
+        return str_replace("-", "", strtolower($teamSetID));
     }
 
     protected function loader($className)

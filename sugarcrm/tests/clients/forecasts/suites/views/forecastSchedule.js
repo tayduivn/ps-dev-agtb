@@ -152,7 +152,7 @@ describe("The expected opportunities view tests", function(){
             _hash: "af8d404a4f9961ad14409e92b755a0e6"
         };
         dm.reset();
-        view = SugarTest.loadFile("../modules/Forecasts/metadata/base/views", "forecastSchedule", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastSchedule", "forecastSchedule", "js", function(d) { return eval(d); });
     });
 
     afterEach(function() {
