@@ -40,6 +40,9 @@ require_once("data/Relationships/RelationshipFactory.php");
  */
 class Link2 {
 
+    /**
+     * @var SugarRelationship relationship
+     */
     protected $relationship; //relationship object this link is tied to.
     protected $focus;  //SugarBean this link uses as the context for its calls.
     protected $def;  //Field def for this link
@@ -163,6 +166,7 @@ class Link2 {
      *  </li>
      * <li><b>limit:</b> The maximum number of rows</li>
      * <li><b>offset:</b> Offset to pass to the database query when loading.</li>
+     * <li><b>order_by:</b> field to order the result set by</li>
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
      */
     public function query($params){
@@ -379,6 +383,7 @@ class Link2 {
      *  </li>
      * <li><b>limit:</b> The maximum number of beans to load.</li>
      * <li><b>offset:</b> Offset to pass to the database query when loading.</li>
+     * <li><b>order_by:</b> field to order the result set by</li>
      * <li><b>deleted:</b> If deleted is set to 1, only deleted records related to the current record will be returned.</li></ul>
      * @return array of SugarBeans related through this link.
      */
@@ -413,6 +418,27 @@ class Link2 {
                 $this->tempBeans = array();
             }
 
+            //If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
+            //fields in the related module
+            $seed = BeanFactory::getBean($rel_module);
+            $relationshipFields = $this->getRelationshipFieldMapping($seed);
+            if (!empty($this->def['rel_fields']))
+            {
+                //Find the field in the related module that maps to this
+                foreach($this->def['rel_fields'] as $rfName => $rfDef)
+                {
+                    //This is pretty badly designed, but there is no mapping stored for fields in the relationship table
+                    //to the fields to be populated in the related record.
+                    foreach($seed->field_defs as $f => $d)
+                    {
+                        if (!empty($d['relationship_fields'][$rfName])){
+                            $relationshipFields[$rfName] = $d['relationship_fields'][$rfName];
+                            break;
+                        }
+                    }
+                }
+            }
+
             //now load from the rows
             foreach ($rows as $id => $vals)
             {
@@ -423,6 +449,13 @@ class Link2 {
                         $result[$id] = $tmpBean;
                 } else {
                     $result[$id] = $this->beans[$id];
+                }
+                //Populate any relationship fields
+                foreach($relationshipFields as $rfName => $field) {
+                    if (!empty($vals[$rfName]))
+                    {
+                        $result[$id]->$field = $vals[$rfName];
+                    }
                 }
             }
 
@@ -441,6 +474,33 @@ class Link2 {
         }
 
         return $result;
+    }
+
+    /***
+     * If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
+     * fields in the module vardefs
+     */
+    public function getRelationshipFieldMapping(SugarBean $seed = null){
+        if ($seed == null)
+            $seed = $this->focus;
+        $relationshipFields = array();
+        if (!empty($this->def['rel_fields']))
+        {
+            //Find the field in the related module that maps to this
+            foreach($this->def['rel_fields'] as $rfName => $rfDef)
+            {
+                //This is pretty badly designed, but there is no mapping stored for fields in the relationship table
+                //to the fields to be populated in the related record.
+                foreach($seed->field_defs as $f => $d)
+                {
+                    if (!empty($d['relationship_fields'][$rfName])){
+                        $relationshipFields[$rfName] = $d['relationship_fields'][$rfName];
+                        break;
+                    }
+                }
+            }
+        }
+        return $relationshipFields;
     }
 
     /**
@@ -474,6 +534,15 @@ class Link2 {
                 if (!($key instanceof SugarBean)) {
                     $GLOBALS['log']->error("Unable to load related bean by id");
                     return false;
+                }
+            }
+
+            //If there are any relationship fields set on the related object, we should try to use them
+            //$addition_values should override what we find in the record though
+            $relationshipFields = $this->getRelationshipFieldMapping($key);
+            foreach($relationshipFields as $rfName => $field) {
+                if (!empty($key->$field) && !isset($additional_values[$rfName])){
+                    $additional_values[$rfName] = $key->$field;
                 }
             }
 

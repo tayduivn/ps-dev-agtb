@@ -27,8 +27,8 @@ describe("Bug 55880", function() {
     describe("Expected opportunities fields", function (){
         beforeEach(function() {
             app = SugarTest.app;
-            view = SugarTest.loadFile("../modules/Forecasts/metadata/base/views", "forecastSchedule", "js", function(d) { return eval(d); });
-            var cte = SugarTest.loadFile("../modules/Forecasts/metadata/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
+            view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastSchedule", "forecastSchedule", "js", function(d) { return eval(d); });
+            var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
             _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
             _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
             _renderFieldSpy = sinon.spy(view, "_renderField");

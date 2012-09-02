@@ -63,8 +63,6 @@ class QuotesViewDetail extends ViewDetail
 		$this->ss->assign('CURRENCY_SYMBOL', $currency->symbol);
 		$this->ss->assign('CURRENCY', $currency->iso4217);
 		$this->ss->assign('CURRENCY_ID', $currency->id);
-		require_once('modules/Quotes/Layouts.php');
-		$this->ss->assign('LAYOUT_OPTIONS', get_select_options_with_id(get_layouts(), ''));
  		
  		if(!(strpos($_SERVER['HTTP_USER_AGENT'],'Mozilla/5') === false)) {
 			$this->ss->assign('PDFMETHOD', 'POST');

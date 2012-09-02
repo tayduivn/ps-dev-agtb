@@ -38,13 +38,14 @@ class SugarPortalModule{
 		$this->name = $moduleNames[strtolower($module)];
 		$this->module = $module;
 		
-		$path = 'modules/'.$this->module.'/metadata/portal/views/';
+		$path = 'modules/'.$this->module.'/clients/portal/views/';
         $views = self::getViewFiles();
 		foreach($views as $file => $def) {
-			if(file_exists($path . $file)){
-				$this->views[$file] = $def;
-			}
-		}		
+            $dirname = $path . basename($file, '.php') . '/';
+            if (is_dir($dirname) && file_exists($dirname . $file)) {
+                $this->views[$file] = $def;
+            }
+		}
 	}
 	
 

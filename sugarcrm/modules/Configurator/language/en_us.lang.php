@@ -240,7 +240,7 @@ $mod_strings = array (
     'UPGRADE_TEST_MSG'=> 'Test Upgrade',
     'ERROR_MESSAGE_MSG'=> 'DCE Client Errors',
 //END SUGARCRM flav=dce ONLY
-    'LBL_PDFMODULE_NAME' => 'PDF Settings',
+    'LBL_PDFMODULE_NAME' => 'Report PDF Template',
     'SUGARPDF_BASIC_SETTINGS' => 'Document Properties',
     'SUGARPDF_ADVANCED_SETTINGS' => 'Advanced Settings',
     'SUGARPDF_LOGO_SETTINGS' => 'Images',
@@ -260,11 +260,11 @@ $mod_strings = array (
     'PDF_HEADER_LOGO_WIDTH' => 'Quotes Image Width',
     'PDF_HEADER_LOGO_WIDTH_INFO' => 'Change the scale of the uploaded image that appears in Quotes PDF Documents. (TCPDF only)',
 
-    'PDF_SMALL_HEADER_LOGO' => 'For Reports PDF Documents',
-    'PDF_SMALL_HEADER_LOGO_INFO' => 'This image appears in the default Header in Reports PDF Documents.<br> This image also appears in the top left-hand corner of the Sugar application.',
+    'PDF_SMALL_HEADER_LOGO' => 'Current Image',
+    'PDF_SMALL_HEADER_LOGO_INFO' => 'This image appears in the Header of the PDF document pages.',
 
-    'PDF_NEW_SMALL_HEADER_LOGO' => 'Select New Image for Reports',
-    'PDF_NEW_SMALL_HEADER_LOGO_INFO' => 'The file format can be either .jpg or .png. (Only .jpg for EZPDF)<BR>The recommended size is 212x40 px.',
+    'PDF_NEW_SMALL_HEADER_LOGO' => 'Select New Image',
+    'PDF_NEW_SMALL_HEADER_LOGO_INFO' => 'Select an image to replace the current image. The file format can be either .jpg or .png. (Only .jpg for EZPDF.) The recommended size is 212x40 px.',
 
     'PDF_SMALL_HEADER_LOGO_WIDTH' => 'Reports Image Width',
     'PDF_SMALL_HEADER_LOGO_WIDTH_INFO' => 'Change the scale of the uploaded image that appears in Reports PDF Documents. (TCPDF only)',
