@@ -229,4 +229,25 @@ class SugarFieldDatetime extends SugarFieldBase {
         }
     }
 
+    /**
+     * @see SugarFieldBase::apiSave
+     */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties) {
+        global $timedate;
+
+        $inputDate = $params[$field];
+
+        if ( $properties['type'] == 'date' ) {
+            // It's just a date, not a datetime
+            $date = $timedate->fromIsoDate($inputDate);
+        } else if ( $properties['type'] == 'time' ) {
+            $date = $timedate->fromIsoTime($inputDate);
+        } else {
+            $date = $timedate->fromIso($inputDate);
+        }
+
+        $bean->$field = $timedate->asDbType($date,$properties['type']);
+    }
+
+
 }
