@@ -123,15 +123,8 @@ class Bug52361p2Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testContactSubPanel()
     {
-        if(!file_exists('modules/Contacts/metadata/subpaneldefs.php'))
-        {
-            $this->markTestSkipped('Can\'t find subpanel definitions');
-        }
-        include_once 'modules/Contacts/metadata/subpaneldefs.php';
-        if(!isset($layout_defs['Contacts']['subpanel_setup']['products']))
-        {
-            $this->markTestSkipped('Can\'t find subpanel definitions for products');
-        }
+        $layout_defs = array();
+        include('modules/Contacts/metadata/subpaneldefs.php');
         $sum_products = 0;
         foreach($this->_quote->get_product_bundles() as $bundle)
         {
@@ -157,15 +150,8 @@ class Bug52361p2Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAccountSubPanel()
     {
-        if(!file_exists('modules/Accounts/metadata/subpaneldefs.php'))
-        {
-            $this->markTestSkipped('Can\'t find subpanel definitions');
-        }
-        include_once 'modules/Accounts/metadata/subpaneldefs.php';
-        if(!isset($layout_defs['Accounts']['subpanel_setup']['products']))
-        {
-            $this->markTestSkipped('Can\'t find subpanel definitions for account');
-        }
+        $layout_defs = array();
+        include('modules/Accounts/metadata/subpaneldefs.php');
         $sum_products = 0;
         foreach($this->_quote->get_product_bundles() as $bundle)
         {
