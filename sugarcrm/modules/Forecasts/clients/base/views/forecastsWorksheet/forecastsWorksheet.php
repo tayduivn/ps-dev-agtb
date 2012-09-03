@@ -63,7 +63,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'amount',
                     'label' => 'LBL_LIKELY_CASE',
-                    'type' => 'int',
+                    'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
@@ -72,7 +72,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 array(
                     'name' => 'best_case',
                     'label' => 'LBL_BEST_CASE',
-                    'type' => 'int',
+                    'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
