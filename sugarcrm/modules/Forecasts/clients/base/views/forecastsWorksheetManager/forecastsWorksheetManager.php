@@ -7,7 +7,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' =>
             array(
-               
+
                 array(
                     'name' => 'name',
                     'type' => 'userLink',
@@ -37,7 +37,24 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'enabled' => true,
                     'clickToEdit' => true,
                 ),
-                
+
+                array(
+                    'name' => 'likely_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_LIKELY_CASE',
+                    'default' => true,
+                    'enabled' => true,
+                ),
+
+                array(
+                    'name' => 'likely_adjusted',
+                    'type' => 'currency',
+                    'label' => 'LBL_LIKELY_CASE_VALUE',
+                    'default' => true,
+                    'enabled' => true,
+                    'clickToEdit' => true
+                ),
+
                 array(
                     'name' => 'best_case',
                     'type' => 'currency',
@@ -50,22 +67,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'name' => 'best_adjusted',
                     'type' => 'currency',
                     'label' => 'LBL_BEST_CASE_VALUE',
-                    'default' => true,
-                    'enabled' => true,
-                    'clickToEdit' => true
-                ),
-
-                array(
-                    'name' => 'likely_case',
-                    'type' => 'currency',
-                    'label' => 'LBL_LIKELY_CASE',
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
-                    'name' => 'likely_adjusted',
-                    'type' => 'currency',
-                    'label' => 'LBL_LIKELY_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true
