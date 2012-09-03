@@ -10,13 +10,13 @@
         </div>
     </div>
     <div class="datapoint1">
-        {{str "LBL_BEST_CASE" "Forecasts"}}<br>
-        <h2 id="best">{{bestCase}}&nbsp;<span class="icon-sm committed_arrow{{bestCaseCls}}"></span></h2>
+        {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
+        <h2 id="likely">{{likelyCase}}&nbsp;<span class="icon-sm committed_arrow{{likelyCaseCls}}"></span></h2>
     </div>
     <div class="divider"></div>
     <div class="datapoint2">
-        {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
-        <h2 id="likely">{{likelyCase}}&nbsp;<span class="icon-sm committed_arrow{{likelyCaseCls}}"></span></h2>
+        {{str "LBL_BEST_CASE" "Forecasts"}}<br>
+        <h2 id="best">{{bestCase}}&nbsp;<span class="icon-sm committed_arrow{{bestCaseCls}}"></span></h2>
     </div>
     <hr>
 {{#if previousText.length}}
@@ -25,11 +25,11 @@
     <strong>{{previousText}}</strong> {{previousDateEntered}}
     </div>
     <div class="datapoint1">
-    {{previousBestCase}}
+    {{previousLikelyCase}}
     </div>
     <div class="divider"></div>
     <div class="datapoint2">
-    {{previousLikelyCase}}
+    {{previousBestCase}}
     </div>
     <div class="toggle">
         <i id="show_hide_history_log" class="icon-chevron-down"></i>
