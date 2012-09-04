@@ -30,29 +30,7 @@ require_once 'modules/Mailer/MailerException.php';
 
 class MailRecord {
 
-    var $current_user;
-
-
-    static private $email_fields = array(
-        "assigned_user_id",
-        "modified_user_id",
-        "intent",
-        "type",     /* draft or out */
-        "status",   /* draft or sent */
-
-        "name",     /* Subject */
-        "date_sent",
-        "from_addr_name",
-        "to_addrs_names",
-        "cc_addrs_names",
-        "bcc_addrs_names",
-        "reply_to_addr",
-        "description_html",
-        "description",
-        "parent_type",   /* "Contacts, Opportunities ..."  */
-        "parent_id",
-    );
-
+    public  $emailBean;
     static private $statuses = array (
         "draft",    // draft
         "ready",    // ready to be sent
@@ -60,6 +38,7 @@ class MailRecord {
         "sent",     // final status
     );
 
+    var $current_user;
 
     /* MailRecord Properties */
     public  $toAddresses;
@@ -146,7 +125,12 @@ class MailRecord {
 
 
     private function toEmailBean($status) {
-        $email = new Email();
+        if (is_object($this->emailBean)) {
+            $email = $this->emailBean;
+        } else {
+            $email = new Email();
+        }
+
         $email->email2init();
 
         $ie = new InboundEmail();
@@ -205,9 +189,9 @@ class MailRecord {
             if (!empty($rec['display']))
                 $s .= trim($rec['display'])." ";
             $s .= '<'.$rec['email'].'>';
-            if ($j+1<count($sendto)) $s .= ',';
+            if ($j+1<count($sendto)) $s .= ', ';
         }
-        $sendto_addresses = htmlspecialchars($s);
+        $sendto_addresses = $s;
 
         $s = "";
         for ($j=0; $j<count($sendcc); $j++) {
@@ -217,7 +201,7 @@ class MailRecord {
             $s .= '<'.$rec['email'].'>';
             if ($j+1<count($sendcc)) $s .= ',';
         }
-        $sendcc_addresses = htmlspecialchars($s);
+        $sendcc_addresses = $s;
 
         $s = "";
         for ($j=0; $j<count($sendbcc); $j++) {
@@ -227,7 +211,7 @@ class MailRecord {
             $s .= '<'.$rec['email'].'>';
             if ($j+1<count($sendbcc)) $s .= ',';
         }
-        $sendbcc_addresses= htmlspecialchars($s);
+        $sendbcc_addresses= $s;
 
         $attachments=null;
         if (is_array($this->attachments) && ($numAttachments = count($this->attachments)) > 0) {
@@ -322,6 +306,7 @@ class MailRecord {
         $edata=null;
         $sendResult = false;
         try {
+            ob_start();
             $sendResult = $email->email2Send($request);
             $edata = ob_get_contents();
             ob_end_clean();

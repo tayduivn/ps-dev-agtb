@@ -241,6 +241,7 @@ class EmailsApi extends ModuleApi
     protected function handleMail($api, $args) {
         global $current_user;
 
+        ob_start();
         $mailRecord = new MailRecord($current_user);
 
         $mailRecord->toAddresses  = $args["to_addresses"];

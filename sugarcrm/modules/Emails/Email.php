@@ -941,7 +941,7 @@ class Email extends SugarBean {
 			} // if
 		} // if
 		return true;
-	} // end email2send
+	} // end email2Send
 
 	/**
 	 * Generates a config-specified separated name and addresses to be used in compose email screen for
