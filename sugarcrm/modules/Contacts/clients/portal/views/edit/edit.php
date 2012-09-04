@@ -120,6 +120,17 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                         ),
                     ),
                     array(
+                        'name' => 'password',
+                        'type' => 'url',
+                        'label' => 'LBL_CONTACT_EDIT_PASSWORD',
+                        'class' => 'password',
+                        'view' => 'detail',
+                        'displayParams' =>
+                        array(
+                            'colspan' => 2,
+                        ),
+                    ),
+                    array(
                         'name' => 'phone_work',
                         'type' => 'text',
                         'displayParams' =>
