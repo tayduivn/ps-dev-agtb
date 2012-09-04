@@ -1,7 +1,6 @@
 ({
     extendsFrom:'BaseeditmodalView',
     initialize: function(options) {
-        var self = this;
         this.options.meta = this._meta.meta;
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "edit";
@@ -18,7 +17,6 @@
         this.bindDataChange();
     },
     _render: function() {
-        var self = this;
         this.saveButtonWasClicked = false;
         app.view.View.prototype._render.call(this);
         this.events = _.extend(this.events, {
