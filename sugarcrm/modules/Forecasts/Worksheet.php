@@ -33,7 +33,7 @@ class Worksheet extends SugarBean {
     var $related_id;
     var $related_forecast_type;
     var $currency_id;
-    var $currency_rate;
+    var $base_rate;
     var $best_case;
     var $likely_case;
     var $worst_case;
@@ -72,7 +72,7 @@ class Worksheet extends SugarBean {
         } else {
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
         }
-        $this->currency_rate = $currency->conversion_rate;
+        $this->base_rate = $currency->conversion_rate;
         
         parent::save($check_notify);
     }
