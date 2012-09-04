@@ -122,8 +122,8 @@
      * @protected
      */
     _renderHtml : function(ctx, options) {
-        this._setForecastColumn(this.meta.panels[0].fields);
         this.editableWorksheet = this.isMyWorksheet();
+        this._setForecastColumn(this.meta.panels[0].fields);
         app.view.View.prototype._renderHtml.call(this, ctx, options);
     },
 
