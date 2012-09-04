@@ -8,7 +8,11 @@
             <fieldset>
                 {{#each meta.panels}}
                 {{#each fields}}
+                <div class="row-fluid control-group">
+                <div>
                 {{str this.label ../../this.model.module}}: {{field ../../this ../../context.attributes.createModel}}
+                </div>
+                </div>
                 {{/each}}
                 {{/each}}
             </fieldset>
