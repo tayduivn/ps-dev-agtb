@@ -74,4 +74,4 @@
             }
         }
     });
-})(SUGAR.App);
+})(SUGAR.App)
