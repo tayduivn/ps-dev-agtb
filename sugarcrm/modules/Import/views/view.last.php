@@ -285,8 +285,9 @@ EOJAVASCRIPT;
         $prospect_id='';
         if(!empty($query)){
             $res=$GLOBALS['db']->query($query);
-            if($row = $GLOBALS['db']->fetchByAssoc($res)){
-                $prospect_id=$row['id'];
+            while($row = $GLOBALS['db']->fetchByAssoc($res))
+            {
+                $prospect_id[]=$row['id'];
             }
         }
         $popup_request_data = array(
@@ -307,7 +308,7 @@ EOJAVASCRIPT;
                 'child_id'=>'id',
                 'link_attribute'=>'prospects',
                 'link_type'=>'default',	 //polymorphic or default
-                'prospect_id'=>$prospect_id,
+                'prospect_ids'=>$prospect_id,
             )
         );
 
