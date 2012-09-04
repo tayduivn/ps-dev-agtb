@@ -102,16 +102,46 @@ class SugarFavorites extends Basic
 	    else
 	        $where = " sugarfavorites.assigned_user_id = '{$user->id}' ";
 	    
-        if ( !empty($module) )
-            if ( is_array($module) )
+        if ( !empty($module) ) {
+            if ( is_array($module) ) {
                 $where .= " AND sugarfavorites.module IN ('" . implode("','",$module) . "')";
-            else
-                $where .= " AND sugarfavorites.module = '$module' ";
-        
+            }
+            else {
+            	$where .= " AND sugarfavorites.module = '$module' ";
+            }
+        }
         $focus = new SugarFavorites;
 		$response = $focus->get_list($orderBy,$where,0,$limit);
 	    
 	    return $response['list'];
+	}
+
+	public static function getFavoritesByModuleByRecord($module, $id)
+	{
+		$where = '';
+		$orderBy = '';
+		$limit = -1;
+        if ( !empty($module) ) {
+            if ( is_array($module) ) {
+                $where .= " sugarfavorites.module IN ('" . implode("','",$module) . "')";
+            }
+            else {
+                $where .= " sugarfavorites.module = '$module' ";
+            }
+        }
+        
+        $where .= " AND sugarfavorites.record_id = '{$id}'";
+
+        $focus = new SugarFavorites;
+		$response = $focus->get_list($orderBy,$where,0,$limit);
+
+	    return $response['list'];		
+	}
+
+	public function markRecordDeletedInFavoritesByUser($record_id, $module, $assigned_user_id)
+	{
+		$query = "UPDATE {$this->table_name} set deleted=1 , module = '{$module}', date_modified = '$date_modified', modified_user_id = NOW() where record_id='{$record_id}' AND assigned_user_id = '{$assigned_user_id}'";
+        $this->db->query($query, true, "Error marking favorites deleted: ");
 	}
 
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")

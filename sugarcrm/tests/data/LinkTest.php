@@ -185,8 +185,6 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetBeansWithParameters(){
 
-        $this->markTestIncomplete("Disabling test while getting help from dev on fix");
-
         $module = "Accounts";
         require('include/modules.php');
 
@@ -283,7 +281,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
             )
         );
         $this->assertEquals(1, sizeof($result));
-        $this->assertEquals($contract2, $result[0]);
+        $this->assertEquals($contract2->id, $result[0]->id);
 
         //Test offset/pagination on One2MBean
         $allIds = array_keys($account->contracts->getBeans());
@@ -291,5 +289,100 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
         $result = $account->contracts->getBeans(array("limit" => 1, "offset" => 1));
         $this->assertEquals(1, sizeof($result));
         $this->assertArrayHasKey($allIds[1], $result);
+    }
+
+    public function testGetBeansWithOrderBy(){
+        $module = "Accounts";
+        require('include/modules.php');
+
+        $account = BeanFactory::newBean($module);
+        $account->name = "LinkTestAccount";
+        $account->save();
+        $this->createdBeans[] = $account;
+
+        $bug = BeanFactory::newBean("Bugs");
+        $bug->name = "LinkTestBug";
+        $bug->description = "z";
+        $bug->save();
+        $this->createdBeans[] = $bug;
+
+        $bug2 = BeanFactory::newBean("Bugs");
+        $bug2->name = "LinkTestBug1";
+        $bug->description = "x";
+        $bug2->save();
+        $this->createdBeans[] = $bug2;
+
+        $bug3 = BeanFactory::newBean("Bugs");
+        $bug3->name = "LinkTestBug3";
+        $bug3->source = "external";
+        $bug->description = "x";
+        $bug3->save();
+        $this->createdBeans[] = $bug3;
+
+        $accountsLink = new Link2("bugs", $account);
+        $accountsLink->add($bug);
+        $accountsLink->add($bug2);
+        $accountsLink->add($bug3);
+
+        $result = $accountsLink->getBeans(array(
+            "order_by" => "name"
+        ));
+        $expected = array(
+            $bug->id => $bug,
+            $bug2->id => $bug2,
+            $bug3->id => $bug3,
+        );
+
+        $this->assertEquals($expected, $result);
+
+        //test order DESC and ASC
+        $result = $accountsLink->getBeans(array(
+            "order_by" => "description"
+        ));
+        $expected = array(
+            $bug3->id => $bug3,
+            $bug2->id => $bug2,
+            $bug->id => $bug,
+        );
+
+        $this->assertEquals($expected, $result);
+
+        $result = $accountsLink->getBeans(array(
+            "order_by" => "description DESC"
+        ));
+        $expected = array(
+            $bug->id => $bug,
+            $bug2->id => $bug2,
+            $bug3->id => $bug3,
+        );
+
+        $this->assertEquals($expected, $result);
+
+    }
+
+    public function testLink2WithRelationshipFields()
+    {
+        require('include/modules.php');
+
+        $opp = BeanFactory::newBean("Opportunities");
+        $opp->name = "A test Opp";
+        $opp->save();
+        $this->createdBeans[] = $opp;
+
+        $contact = BeanFactory::newBean("Contacts");
+        $contact->last_name = "Another test Contact";
+        $contact->save();
+        $this->createdBeans[] = $contact;
+
+        $opp->load_relationship("contacts");
+        $opp->contacts->add($contact, array(
+            "contact_role" => "Observer"
+        ));
+
+        $this->assertEmpty($contact->opportunity_role);
+
+        $result = array_values($opp->contacts->getBeans());
+        $this->assertEquals($contact->id, $result[0]->id);
+        $this->assertEquals("Observer", $result[0]->opportunity_role);
     }
 }

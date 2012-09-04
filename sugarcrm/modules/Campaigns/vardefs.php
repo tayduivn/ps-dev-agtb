@@ -33,7 +33,6 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'studio' => array('editview' => false),
 			'len' => '11',
 			'auto_increment' => true,
-			'reportable' => false,
 			'comment' => 'The internal ID of the tracker used in a campaign; no longer used as of 4.2 (see campaign_trkrs)'
 			),
 		'tracker_count' => array (
@@ -42,7 +41,6 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'type' => 'int',
 			'len' => '11',
 			'default' => '0',
-			'reportable' => false,
 			'comment' => 'The number of accesses made to the tracker URL; no longer used as of 4.2 (see campaign_trkrs)'
 		),
 		'name' => array (
@@ -63,7 +61,6 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'type' => 'varchar',
 			'len' => '255',
 			'default' => 'http://',
-			'reportable' => false,
 			'comment' => 'The URL referenced in the tracker URL; no longer used as of 4.2 (see campaign_trkrs)'
 		),
 		'description'=>array('name'=>'description','type'=>'none', 'comment'=>'inhertied but not used', 'source'=>'non-db'),
@@ -72,7 +69,6 @@ $dictionary['Campaign'] = array ('audited'=>true,
 			'vname' => 'LBL_TRACKER_TEXT',
 			'type' => 'varchar',
 			'len' => '255',
-			'reportable' => false,
 			'comment' => 'The text that appears in the tracker URL; no longer used as of 4.2 (see campaign_trkrs)'
 		),
 

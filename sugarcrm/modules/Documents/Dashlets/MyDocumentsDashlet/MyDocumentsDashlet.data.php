@@ -48,7 +48,7 @@ $dashletData['MyDocumentsDashlet']['searchFields'] = array('date_entered'    => 
 
 
 $dashletData['MyDocumentsDashlet']['columns'] =  array('document_name' => array('width'   => '40', 
-                                                                      'label'   => 'LBL_NAME',
+                                                                      'label'   => 'LBL_DOCUMENT_NAME',
                                                                       'link'    => true,
                                                                       'default' => true),
                                                       'category_id' => array('width' => '8',

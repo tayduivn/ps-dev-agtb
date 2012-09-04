@@ -4781,3 +4781,18 @@ function repairUpgradeHistoryTable()
     }
 
 }
+
+//BEGIN SUGARCRM flav=pro ONLY
+/**
+ * addPdfManagerTemplate
+ *
+ * This method adds default PDF Template in PDF Manager
+ */  
+function addPdfManagerTemplate() {
+    logThis('Begin addPdfManagerTemplate');
+  
+    include 'install/seed_data/PdfManager_SeedData.php';
+    
+    logThis('End addPdfManagerTemplate');
+}
+//END SUGARCRM flav=pro ONLY

@@ -495,7 +495,6 @@ $report_include_modules['Contracts']='Contract';
 
 //BEGIN SUGARCRM flav!=sales ONLY
 $report_include_modules['Trackers']         = 'Tracker';
-$report_include_modules['CampaignTrackers']         = 'CampaignTracker';
 
 //END SUGARCRM flav!=sales ONLY
 
@@ -587,6 +586,13 @@ $objectList['TrackerSessions'] =  'tracker_sessions';
 $objectList['TrackerPerfs'] =  'tracker_perf';
 $objectList['TrackerQueries'] =  'tracker_queries';
 $objectList['TeamNotices'] =  'TeamNotices';
+//END SUGARCRM flav=pro ONLY
+
+//BEGIN SUGARCRM flav=pro ONLY
+$beanList['PdfManager']     = 'PdfManager';
+$beanFiles['PdfManager']     = 'modules/PdfManager/PdfManager.php';
+$modInvisList[] = 'PdfManager';
+$adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
 
 if (file_exists('include/modules_override.php'))

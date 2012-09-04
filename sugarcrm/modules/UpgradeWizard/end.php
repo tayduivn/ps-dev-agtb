@@ -162,6 +162,12 @@ if($ce_to_pro_ent)
     	$GLOBALS['db']->full_text_indexing_setup();
     }
 }
+
+// we need to add templates when either conversion from CE to Pro+, or upgrade of Pro+ flavors
+// this needs to be outside of if($ce_to_pro_ent) because it does not cover second case where $ce_to_pro_ent is 'SugarPro'
+logThis("Starting to add pdf template", $path);
+addPdfManagerTemplate();
+logThis("Finished adding pdf template", $path);
 //END SUGARCRM flav=pro ONLY
 
 logThis(" Start Rebuilding the config file again", $path);
