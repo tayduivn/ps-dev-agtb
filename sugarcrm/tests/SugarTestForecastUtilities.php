@@ -237,7 +237,7 @@ class SugarTestForecastUtilities
                 $worksheet = SugarTestWorksheetUtilities::createWorksheet();
                 $worksheet->user_id = (empty($user->reports_to_id)) ? $user->id : $user->reports_to_id;
                 $worksheet->related_id = $user->id;
-                $worksheet->forecast_type = (empty($user->reports_to_id)) ? "Direct" : "Rollup";
+                $worksheet->forecast_type = "Rollup";
                 $worksheet->timeperiod_id = $config['timeperiod_id'];
                 $worksheet->best_case = $forecast_best_total + 100;
                 $worksheet->likely_case = $forecast_likely_total + 100;

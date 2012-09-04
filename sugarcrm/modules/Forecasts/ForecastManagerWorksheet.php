@@ -20,6 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/Users/User.php');
+
 class ForecastManagerWorksheet extends SugarBean
 {
 	var $args;
@@ -33,6 +35,7 @@ class ForecastManagerWorksheet extends SugarBean
     var $module_dir = 'Forecasts';
     var $table_name = 'forecasts';
     var $disable_custom_fields = true;
+    var $isManager = false;
 
     function __construct() {
         parent::__construct();
@@ -42,10 +45,24 @@ class ForecastManagerWorksheet extends SugarBean
     {
     	$version = 1;
     	$worksheetID = null;
+    	$relatedType = null;
+    	$this->isManager = User::isManager($this->args["user_id"]);
+    	
     	if(isset($this->args["draft"]) && $this->args["draft"] == 1){
 			$version = 0;
 		}
+		
+		if(($this->args["user_id"] == $GLOBALS["current_user"]->id) || !$this->isManager)
+		{
+			$relatedType = "Direct";
+		}
+		else if($this->isManager)
+		{
+			$relatedType = "Rollup";
+		}
+		
 		$worksheetID = $this->getWorksheetID($version);
+		$isManager = User::isManager($this->args["current_user"]);
 		
     	//skip this because nothing in the click to edit makes the worksheet modify the forecasts.
     	//leaving this here just in case we need it in the future.
@@ -82,14 +99,14 @@ class ForecastManagerWorksheet extends SugarBean
 		}
 		
 		//save worksheet
-        $worksheet = BeanFactory::getBean('Worksheet', $worksheetID);
+        $worksheet = BeanFactory::getBean("Worksheet", $worksheetID);
 		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
 		$worksheet->user_id = $this->args["current_user"];
 		$worksheet->forecast = ($this->args["forecast"]) ? 1 : 0;
         $worksheet->best_case = $this->args["best_adjusted"];
         $worksheet->likely_case = $this->args["likely_adjusted"];
-        $worksheet->forecast_type = ($this->args["user_id"] == $GLOBALS['current_user']->id) ? "Direct" : "Rollup";
-        $worksheet->related_forecast_type = $worksheet->forecast_type;
+        $worksheet->forecast_type = "Rollup";
+        $worksheet->related_forecast_type = $relatedType;
         $worksheet->worst_case = (isset($this->args["worst_adjusted"])) ? $this->args["worst_adjusted"] : 0;
         $worksheet->related_id = $this->args["user_id"];
         $worksheet->quota = $this->args["quota"];
