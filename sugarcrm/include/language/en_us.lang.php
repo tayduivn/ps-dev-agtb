@@ -3437,6 +3437,25 @@ $app_strings = array (
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
 
+    //for portal system tour
+    'LBL_PORTAL_TOUR_WELCOME_TITLE' => 'Welcome to Portal',
+    'LBL_PORTAL_TOUR_WATCH_VIDEO' => 'Watch: What\'s new in Portal',
+    'LBL_PORTAL_TOUR_FEATURES' => '<li><i class="icon-ok"></i>Feature 1</li><li><i class="icon-ok"></i>Feature 2</li><li><i class="icon-ok"></i>Feature 3</li><li><i class="icon-ok"></i>Feature 4</li>',
+    'LBL_PORTAL_TOUR_MORE_INFO' => '<p>And much more!</p><p>For a full list visit the What\'s New in Portal</p>',
+    'LBL_PORTAL_TOUR_TAKE_TOUR_LNK' => 'Take the tour',
+    'LBL_PORTAL_TOUR_SKIP_LNK' => 'Skip',
+    'LBL_PORTAL_TOUR_NEXT_LNK' => 'Next',
+    'LBL_PORTAL_TOUR_BACK_LNK' => 'Back',
+    'LBL_PORTAL_TOUR_DONE_LNK' => 'Done',
+    'LBL_PORTAL_TOUR_CASES_TITLE' => 'Cases',
+    'LBL_PORTAL_TOUR_CASES_BODY' => 'All your cases go here',
+    'LBL_PORTAL_TOUR_SEARCH_TITLE' => 'Search',
+    'LBL_PORTAL_TOUR_SEARCH_BODY' => 'Search keywords or case numbers',
+    'LBL_PORTAL_TOUR_QUICK_TITLE' => 'Quick Create',
+    'LBL_PORTAL_TOUR_QUICK_BODY' => 'You can perform all your quick actions here',
+    'LBL_PORTAL_TOUR_DONE_TITLE' => 'You\'re Done!',
+    'LBL_PORTAL_TOUR_DONE_BODY' => 'You can always retake the tour or read documentation for more information.',
+
     //for portal errors
     'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
     'LBL_PORTAL_INVALID_CREDS_TITLE' => 'Invalid Credentials',

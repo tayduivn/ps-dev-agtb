@@ -105,6 +105,9 @@ class SugarBeanApiHelper
                 $data['email'] = $emails;
         }
 
+
+        //BEGIN SUGARCRM flav=pro ONLY
+
         // get favorites
         // mark if its a favorite
         
@@ -114,6 +117,9 @@ class SugarBeanApiHelper
             }
             $data['my_favorite'] = $bean->my_favorite;
         }
+
+        //END SUGARCRM flav=pro ONLY
+
 
         return $data;
     } 
