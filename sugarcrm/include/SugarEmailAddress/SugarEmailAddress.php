@@ -633,7 +633,7 @@ class SugarEmailAddress extends SugarBean {
                 }
                 else
                 {
-                    $data = array();
+                    $data = $a;
                 }
 
                 $upd_q = 'UPDATE ' . $this->table_name . ' ' . 
