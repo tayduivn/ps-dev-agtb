@@ -193,7 +193,7 @@
             	
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		this.context.forecasts.worksheet.url = this.createURL();
-            		this.context.forecasts.worksheetr.fetch();
+            		this.context.forecasts.worksheet.fetch();
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
             	
