@@ -10,21 +10,23 @@
                 $(".datepicker").datepicker({
                     showOn: "button",
                     buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
-                    buttonImageOnly: true,
-                    dateFormat: usersDateFormatPreference
+                    buttonImageOnly: true
                 });
             }
         });
     },
 
     unformat:function(value) {
-        var jsDate = this.app.date.parse(value,this.app.user.get('datepref')+' '+this.app.user.get('timepref'));
-        var output = jsDate.toISOString();
-        return output;
+        var jsDate, myUser = this.app.user;
+        jsDate = this.app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
+        return this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref'));
     },
 
     format:function(value) {
-        var jsDate, output, myUser = this.app.user, usersDateFormatPreference, usersTimeFormatPreference;
+        var jsDate, output, 
+            usersDateFormatPreference, usersTimeFormatPreference, myUser;
+
+        myUser = this.app.user;
         usersDateFormatPreference = app.user.get('datepref');
         usersTimeFormatPreference = app.user.get('timepref');
 
