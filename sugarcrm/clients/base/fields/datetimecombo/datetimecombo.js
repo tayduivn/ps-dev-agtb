@@ -11,23 +11,34 @@
     },
 
     unformat:function(value) {
-        return value
+        var jsDate = this.app.date.parse(value,this.app.user.get('datepref')+' '+this.app.user.get('timepref'));
+        var output = this.app.date.format(value,'Y-m-dTH:i:s');
+
+        return output;
     },
 
     format:function(value) {
-        var jsDate = this.app.date.parse(value);
+        // The API has gone to the trouble of getting the date in the user's timezone, so we should
+        // display it using the timezone that the API sent it to us.
+        // This should split the date/time into date, time and offset, if we don't pass the offset in the Date class assumes it to be local time.
+        var splitValue = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\.*\d*([Z+-].*)$/.exec(value);
+        if ( splitValue == null ) {
+            // Could not figure this string out.
+            return '';
+        }
+        var jsDate = new Date(splitValue[1]+' '+splitValue[2]);
+        var myUser = this.app.user;
         jsDate = this.app.date.roundTime(jsDate);
-        value = {
-            dateTime: value,
-            //TODO Account for user prefs
-            date: this.app.date.format(jsDate, 'Y-m-d'),
-            time: this.app.date.format(jsDate, 'h:i:s'),
+        var output = {
+            dateTime: this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref')),
+            date: this.app.date.format(jsDate, myUser.get('datepref')),
+            time: this.app.date.format(jsDate, myUser.get('timepref')),
             hours: this.app.date.format(jsDate, 'H'),
             minutes: this.app.date.format(jsDate, 'i'),
             seconds: this.app.date.format(jsDate, 's'),
             amPm: this.app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
-        return value
+        return output
     },
 
     timeOptions:{  //TODO set this via a call to userPrefs in a overloaded initalize

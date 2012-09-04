@@ -33,7 +33,7 @@
 {if $property.type == "image"}
 {if $count is not odd}</tr>{/if}
 <tr>
-    <td scope="row" width="20%">{$property.label}:<span class="error" id="resized_{$name}_img" style="display:none"> {$MOD.LBL_IMG_RESIZED}</span>{sugar_help text=$property.info_label} </td>
+    <td scope="row" width="20%">{$property.label}:<span class="error" id="resized_{$name}_img" style="display:none"> {$MOD.LBL_IMG_RESIZED}</span>{if $property.info_label != ""}{sugar_help text=$property.info_label}{/if} </td>
     <td colspan="3">
         <img src='{$property.path}' id='{$name}_img' style='margin-bottom: 10px;'>
         <input type='hidden' id='{$name}' name='{$name}' value='{$property.value}'>
@@ -54,7 +54,7 @@
     {if $count is odd}
     <tr>
     {/if}
-        <td scope="row" width="20%">{$property.label}:{if isset($property.required) && $property.required == true} <span class="required">*</span>{/if}{sugar_help text=$property.info_label} </td>
+        <td scope="row" width="20%">{$property.label}:{if isset($property.required) && $property.required == true} <span class="required">*</span>{/if}{if $property.info_label != ""}{sugar_help text=$property.info_label}{/if} </td>
         <td  width="30%">
             {if isset($property.custom)}
                 {$property.custom}

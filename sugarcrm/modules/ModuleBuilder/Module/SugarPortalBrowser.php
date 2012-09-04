@@ -80,7 +80,7 @@ class SugarPortalBrowser
      */
     function isPortalModule($module) {
         // Create the path to search
-        $path = "modules/$module/metadata/portal/views/";
+        $path = "modules/$module/clients/portal/views/";
 
         // Handle it
         // Bug 55003 - Notes showing as a portal module because it has non 
@@ -88,7 +88,8 @@ class SugarPortalBrowser
         $views = SugarPortalModule::getViewFiles();
         $viewFiles = array_keys($views);
         foreach ($viewFiles as $file) {
-            if (file_exists($path . $file)) {
+            $dirname = $path . basename($file, '.php') . '/';
+            if (is_dir($dirname) && file_exists($dirname . $file)) {
                 return true;
             }
         }

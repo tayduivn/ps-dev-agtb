@@ -32,7 +32,8 @@ class RestTestMetadata extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
     
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
-        $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['currencies']),'Currencies are missing.');
     }
 
     public function testFullMetadaNoAuth() {
@@ -40,7 +41,7 @@ class RestTestMetadata extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['config']), 'Portal Configs are missing.');
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
-        $this->assertTrue(isset($restReply['reply']['viewTemplates']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
     }
 
     public function testMetadataLanguage() {
@@ -56,12 +57,12 @@ EOQ;
         file_put_contents($fileLoc, $langContent);
         // No current user
         $restReply = $this->_restCall('metadata/public?lang=ua_UA&app_name=superAwesome&platform=portal');
-        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+        $this->assertEquals($restReply['reply']['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // Current user is logged in & submit language
         $restReply = $this->_restCall('metadata?lang=ua_UA&app_name=superAwesome&platform=portal');
 
-        $this->assertEquals($restReply['reply']['appStrings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
+        $this->assertEquals($restReply['reply']['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
 
         // TODO add test for user pref when that field gets added
 

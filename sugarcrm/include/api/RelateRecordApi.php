@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
-require_once('include/api/RelateApi.php');
+
 class RelateRecordApi extends ModuleApi {
     public function registerApiRest() {
         return array(
@@ -107,20 +107,23 @@ class RelateRecordApi extends ModuleApi {
     }
 
     /**
-     * This function is here temporarily until the Link2 class properly handles these for the non-subpanel requests
+     * This function is used to popluate an fields on the relationship from the request
      * @param $api ServiceBase The API class of the request, used in cases where the API changes how security is applied
      * @param $args array The arguments array passed in from the API
      * @param $primaryBean SugarBean The near side of the link
      * @param $linkName string What is the name of the link field that you want to get the related fields for
      * @return array A list of the related fields pulled out of the $args array
      */
-    protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName) {
-        $relatedFields = $primaryBean->$linkName->getRelatedFields();
+    protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName, $seed = null) {
+        $relatedFields = $primaryBean->$linkName->getRelationshipFieldMapping($seed);
         $relatedData = array();
         if ( is_array($relatedFields) ) {
-            foreach ( $relatedFields as $fieldName => $fieldParams ) {
+            foreach ( $relatedFields as $rfName => $fieldName ) {
                 if ( isset($args[$fieldName]) ) {
-                    $relatedData[$fieldName] = $args[$fieldName];
+                    $relatedData[$rfName] = $args[$fieldName];
+                }
+                if ( isset($args[$rfName]) ) {
+                    $relatedData[$rfName] = $args[$rfName];
                 }
             }
         }
@@ -139,32 +142,37 @@ class RelateRecordApi extends ModuleApi {
      * @param $relatedData array The data for the related fields (such as the contact_role in opportunities_contacts relationship)
      * @return array Two elements, 'record' which is the formatted version of $primaryBean, and 'related_record' which is the formatted version of $relatedBean
      */
-    protected function formatNearAndFarRecords(ServiceBase $api, $args, SugarBean $primaryBean, SugarBean $relatedBean, $linkName, $relatedData = array()) {
+    protected function formatNearAndFarRecords(ServiceBase $api, $args, SugarBean $primaryBean, $relatedArray = array()) {
         $recordArray = $this->formatBean($api, $args, $primaryBean);
-        //$relatedArray = $this->formatBean($api, $args, $relatedBean);
+        if (empty($relatedArray))
+            $relatedArray = $this->getRelatedRecord($api, $args);
 
-        // need to use the same as getRealtedRecord, so just call it
-        $relatedArray = $this->getRelatedRecord($api, $args);
-        return array('record'=>$recordArray,
-                     'related_record'=>$relatedArray);
+        return array(
+            'record'=>$recordArray,
+            'related_record'=>$relatedArray
+        );
     }
 
 
     function getRelatedRecord($api, $args) {
-        // due to deficiencies in Link2 for the time being we need to use the listRelated from RelateApi and return the specific record
-        // Basically it gets all related records with the related record fields populated and then returns the specific record we want
-        // TODO: Fix this when Link2 has a method to get populated fields
-        $relateApi = new RelateApi;
-        $data = $relateApi->listRelated($api, $args);
-        if(empty($data['records']))
-        {
-            throw new SugarApiExceptionNotFound('Could not find record: '.$args['remote_id']);
+        $primaryBean = $this->loadBean($api, $args);
+        
+        list($linkName, $relatedBean) = $this->checkRelatedSecurity($api, $args, $primaryBean, 'view','view');
+
+        $related = array_values($primaryBean->$linkName->getBeans(array(
+            'where' => array(
+                'lhs_field' => 'id',
+                'operator' => '=',
+                'rhs_value' => $args['remote_id'],
+            )
+        )));
+        if ( empty($related[0]->id) ) {
+            // Retrieve failed, probably doesn't have permissions
+            throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
-        else
-        {
-            // its always the first record
-            return reset($data['records']);
-        }
+
+        return $this->formatBean($api, $args, $related[0]);
+        
     }
 
     function createRelatedRecord($api, $args) {
@@ -178,20 +186,14 @@ class RelateRecordApi extends ModuleApi {
 
         $id = $this->updateBean($relatedBean, $api, $args);
 
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
-
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
 
-        // Reload the related record so that it has all the latest data similar to what we do in the create and update
-        $relatedBean->retrieve($id);
-        if ( empty($relatedBean->id) ) {
-            // Retrieve failed, probably doesn't have permissions
-            throw new SugarApiExceptionNotFound('Could not find the related bean');
-        }
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
+        $args['remote_id'] = $relatedBean->id;
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }
 
     function createRelatedLink($api, $args) {
@@ -204,12 +206,11 @@ class RelateRecordApi extends ModuleApi {
             // Retrieve failed, probably doesn't have permissions
             throw new SugarApiExceptionNotFound('Could not find the related bean');
         }
-        
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
 
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
 
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }
 
 
@@ -226,14 +227,13 @@ class RelateRecordApi extends ModuleApi {
 
         $id = $this->updateBean($relatedBean, $api, $args);
 
-        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName);
-        
+        $relatedData = $this->getRelatedFields($api, $args, $primaryBean, $linkName, $relatedBean);
         $primaryBean->$linkName->add(array($relatedBean),$relatedData);
         
         //Clean up any hanging related records.
         SugarRelationship::resaveRelatedBeans();
 
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName,$relatedData);
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean);
     }
 
     function deleteRelatedLink($api, $args) {
@@ -249,7 +249,8 @@ class RelateRecordApi extends ModuleApi {
 
         $primaryBean->$linkName->delete($primaryBean->id,$relatedBean);
 
-        return $this->formatNearAndFarRecords($api,$args,$primaryBean,$relatedBean,$linkName);
+        //Because the relationship is now deleted, we need to pass the $relatedBean data into formatNearAndFarRecords
+        return $this->formatNearAndFarRecords($api,$args,$primaryBean, $this->formatBean($api, $args, $relatedBean));
     }
 
 

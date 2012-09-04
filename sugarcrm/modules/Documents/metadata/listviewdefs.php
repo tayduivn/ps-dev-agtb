@@ -33,7 +33,7 @@ $listViewDefs['Documents'] = array(
   'DOCUMENT_NAME' => 
   array (
     'width' => '20%',
-    'label' => 'LBL_NAME',
+    'label' => 'LBL_DOCUMENT_NAME',
     'link' => true,
     'default' => true,
     'bold' => true,
