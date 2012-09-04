@@ -131,7 +131,7 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
     if(!empty($_REQUEST['prospect_list_id']) and !empty($_REQUEST['prospect_list_id'])){
         add_prospects_to_prospect_list(
             $_REQUEST['prospect_list_id'],
-            $_REQUEST['prospect_id']
+            $_REQUEST['prospect_ids']
         );
     }
 	$refreshsubpanel=false;
