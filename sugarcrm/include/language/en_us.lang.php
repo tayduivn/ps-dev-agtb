@@ -3506,8 +3506,11 @@ $app_strings = array (
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
     'LBL_PORTAL_OFFLINE' =>'Sorry the application is not available at this time. Please contact the site administrator.',
-
-
+    'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
+    'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
+    'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
