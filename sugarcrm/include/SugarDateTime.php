@@ -677,6 +677,7 @@ class SugarDateTime extends DateTime
         if ( $isoOffset == 'Z' || $isoOffset == '-0000' || $isoOffset == '+0000' ) {
             // It's GMT, so that's... 0 seconds from GMT.
             $calcOffset = 0;
+            return $this;
         } else {
             // This will turn into (int)-1 or +1, useful for multiplying out the seconds
             $plusMinus = (int)(substr($isoOffset,0,1)."1");
@@ -684,9 +685,7 @@ class SugarDateTime extends DateTime
             $calcOffset = $plusMinus*(substr($isoOffset,1,2)*3600)+(substr($isoOffset,3,2)*60);
             
         }
-        $newTimestamp = $this->getTimestamp()-$calcOffset;
-        $this->setTimestamp($newTimestamp);
-        return $this;
+        return $this->modify((-$calcOffset)." seconds");
     }
 
 }

@@ -157,13 +157,14 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
      */
     function getPortalACLRole()
     {
+        global $mod_strings;
         $allowedModules = array('Bugs', 'Cases', 'Notes', 'KBDocuments', 'Contacts');
         $allowedActions = array('edit', 'admin', 'access', 'list', 'view');
         $role = new ACLRole();
         $role->retrieve_by_string_fields(array('name' => 'Customer Self-Service Portal Role'));
         if (empty($role->id)) {
             $role->name = "Customer Self-Service Portal Role";
-            $role->description = "Customer Self-Service Portal Role";
+            $role->description = $mod_strings['LBL_PORTAL_ROLE_DESC'];
             $role->save();
             $roleActions = $role->getRoleActions($role->id);
             foreach ($roleActions as $moduleName => $actions) {
