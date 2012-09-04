@@ -67,26 +67,34 @@
             this.overduePillActive = true;
             this.todayPillActive = false;
             this.upcomingPillActive = false;
+            this.allPillActive = false;
         }
         else if( $("#todo-pill-today").hasClass("active") ) {
             this.overduePillActive = false;
             this.todayPillActive = true;
             this.upcomingPillActive = false;
+            this.allPillActive = false;
+        }
+        else if( $("#todo-pill-upcoming").hasClass("active") ) {
+            this.overduePillActive = false;
+            this.todayPillActive = false;
+            this.upcomingPillActive = true;
+            this.allPillActive = false;
         }
         else {
             this.overduePillActive = false;
             this.todayPillActive = false;
-            this.upcomingPillActive = true;
+            this.upcomingPillActive = false;
+            this.allPillActive = true;
         }
     },
     pillSwitcher: function(e) {
-        var clickedIndex = $("#todo-pills li").index($(e.target).parent()[0]);
+        var clickedIndex = $("#todo-pills li").index($(e.target).closest("[id^='todo-pill']")[0]);
 
         $("#todo-pills li.active").removeClass("active");
         $(".tab-pane.active").removeClass("active");
-        $(e.target).parent().addClass("active");
+        $(e.target).closest("[id^='todo-pill']").addClass("active");
         $($(".tab-pane")[clickedIndex]).addClass("active");
-
     },
     getModelInfo: function(e) {
         var clickedEl = $(e.target).parents(".todo-item-container")[0],
@@ -104,6 +112,11 @@
                 break;
             case "pane3":
                 record = this.collection.modelList['upcoming'];
+                break;
+            case "pane4":
+                var taskType = this.getTaskType(this.collection.models[modelIndex].attributes.date_due);
+                record = this.collection.modelList[taskType];
+                modelIndex = _.indexOf(_.pluck(record, 'id'), this.collection.models[modelIndex].id);
                 break;
         }
 

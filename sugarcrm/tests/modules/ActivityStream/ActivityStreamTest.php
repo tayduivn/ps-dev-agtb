@@ -32,17 +32,24 @@ require_once 'modules/ActivityStream/vardefs.php';
 
 class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
     private $account;
+    private $contact;
     
     public function setUp() {
         global $dictionary;
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();  
         $this->account = SugarTestAccountUtilities::createAccount();  
         $this->account->module_name = 'Accounts';
+        $this->account->img = '';
+        $this->account->linkedin = ''; 
+        $this->account->facebook = ''; 
+        $this->account->twitter = '';
+        $this->account->googleplus = '';                              
+        $this->contact = SugarTestContactUtilities::createContact();
         if(!isset($dictionary['ActivityComments'])) {
             $dictionary['ActivityComments'] =
             array ( 'table' => 'activity_comments',
                     'fields' => array (
-                            'comment_id'=> array('name' =>'comment_id', 'type' =>'id', 'len'=>'36','required'=>true),
+                            'id'=> array('name' =>'id', 'type' =>'id', 'len'=>'36','required'=>true),
                             'activity_id'=>array('name' =>'activity_id', 'type' =>'id', 'len'=>'36','required'=>true),
                             'date_created'=>array('name' =>'date_created','type' => 'datetime'),
                             'created_by'=>array('name' =>'created_by','type' => 'varchar','len' => 36),
@@ -54,6 +61,7 @@ class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
 
     public function tearDown() {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestContactUtilities::removeAllCreatedContacts();
         unset( $GLOBALS['current_user']);
         if(!empty($this->account)) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '".$this->account->id."'");
@@ -77,14 +85,16 @@ class ActivityStreamTest extends Sugar_PHPUnit_Framework_TestCase {
         $result = $GLOBALS['db']->query($sql);
         $this->account->fetched_row = $GLOBALS['db']->fetchByAssoc($result);
         $activity = new ActivityStream();
-        $result = $activity->addActivity($this->account, ActivityStream::ACTIVITY_TYPE_UPDATE);
+        $result = $activity->addUpdate($this->account);
         $this->assertEquals(true, $result);   
         $result = $activity->addPost('Accounts', $this->account->id, 'this is a test');
         $this->assertEquals(true, $result);
+        $result = $activity->addCreate($this->account, $this->contact);
+        $this->assertEquals(true, $result);        
         $activities = $activity->getActivities('Accounts', $this->account->id);
-        $this->assertGreaterThanOrEqual(2, count($activities));
+        $this->assertGreaterThanOrEqual(3, count($activities));
         $activity->loadFromRow($activities[0]);
-        $result = $activity->addComment($activity->activity_id, 'this is a test');
+        $result = $activity->addComment($activity->id, 'this is a test');
         $this->assertEquals(true, $result);      
     } 
 }
