@@ -42,6 +42,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_DATE_CLOSED',
                     'default' => true,
                     'enabled' => true,
+                    'type' => 'date',
+                    'view' => 'default',					
                 ),
 
                 array(
