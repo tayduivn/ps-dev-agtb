@@ -358,6 +358,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 						   "w.forecast_type, " .
 						   "w.related_id, " .
 						   "w.version, " .
+                           "w.currency_id, " .
+                           "w.base_rate, " .
 						   "w.quota " .
 						   "from users u " .
 						   "inner join users u2 " .
@@ -394,6 +396,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
             $data[$row['user_name']]['forecast'] = $row['forecast'];
             $data[$row['user_name']]['version'] = $row['version'];
+            $data[$row['user_name']]['currency_id'] = $row['currency_id'];
+            $data[$row['user_name']]['base_rate'] = $row['base_rate'];
             if($row['version'] == 0)
             {
             	$data[$row['user_name']]['quota'] = $row['quota'];	

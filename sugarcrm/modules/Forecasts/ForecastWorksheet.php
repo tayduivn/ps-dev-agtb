@@ -24,6 +24,8 @@ class ForecastWorksheet extends SugarBean {
 
     var $id;
     var $worksheet_id;
+    var $currency_id;
+    var $base_rate;
     var $name;
     var $forecast;
     var $best_case;
@@ -69,6 +71,8 @@ class ForecastWorksheet extends SugarBean {
         $worksheet->probability = $this->probability;
         $worksheet->forecast_type = "Direct";
         $worksheet->related_id = $this->id;
+        $worksheet->currency_id = $this->currency_id;
+        $worksheet->base_rate = $this->base_rate;
         $worksheet->save();
     }
     
