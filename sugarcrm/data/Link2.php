@@ -419,6 +419,7 @@ class Link2 {
 
             //If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
             //fields in the related module
+            $relationshipFields = array();
             $seed = BeanFactory::getBean($rel_module);
             if($seed !== FALSE)
             {
