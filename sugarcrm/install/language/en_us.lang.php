@@ -625,7 +625,7 @@ Click on the link below to reset your password:
 
 $contact_user_link_guid',
         'name' => 'Forgot Password email',
-        ),
+        ),        
 );
 
 ?>

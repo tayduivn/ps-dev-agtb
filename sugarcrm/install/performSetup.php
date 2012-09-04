@@ -555,6 +555,12 @@ createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
 	////    INSTALL PASSWORD TEMPLATES
     include('install/seed_data/Advanced_Password_SeedData.php');
 
+//BEGIN SUGARCRM flav=pro ONLY
+	///////////////////////////////////////////////////////////////////////////////
+	////    INSTALL PDF TEMPLATES
+    include('install/seed_data/PdfManager_SeedData.php');    
+//END SUGARCRM flav=pro ONLY
+
 ///////////////////////////////////////////////////////////////////////////////
 ////    SETUP DONE
 installLog("Installation has completed *********");

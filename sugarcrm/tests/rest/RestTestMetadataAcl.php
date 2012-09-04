@@ -41,7 +41,7 @@ class RestTestMetadataAcl extends RestTestBase {
     }
 
     public function testMetadataAclBasic() {
-        $restReply = $this->_restCall('metadata?typeFilter=acl');
+        $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
@@ -66,7 +66,7 @@ class RestTestMetadataAcl extends RestTestBase {
         
         // Need to re-login so it fetches a new set of ACL's
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-        $restReply = $this->_restCall('metadata?typeFilter=acl');
+        $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
@@ -80,7 +80,7 @@ class RestTestMetadataAcl extends RestTestBase {
 
         // Need to re-login so it fetches a new set of ACL's
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-        $restReply = $this->_restCall('metadata?typeFilter=acl');
+        $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
@@ -113,7 +113,7 @@ class RestTestMetadataAcl extends RestTestBase {
 
         // Need to re-login so it fetches a new set of ACL's
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-        $restReply = $this->_restCall('metadata?typeFilter=acl');
+        $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['acl']['Cases']['_hash']),'Cases module is missing.');

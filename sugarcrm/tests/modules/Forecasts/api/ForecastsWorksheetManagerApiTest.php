@@ -411,14 +411,14 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 		{
 			if($record["user_id"] == self::$reportee["user"]->id)
 			{
-		        $this->assertEquals($expected["amount"], $record["amount"]);
-		        $this->assertEquals($expected["best_adjusted"], $record["best_adjusted"]);
-		        $this->assertEquals($expected["best_case"], $record["best_case"]);
-		        $this->assertEquals($expected["forecast"], $record["forecast"]);
-		        $this->assertEquals($expected["forecast_id"], $record["forecast_id"]);
-		        $this->assertEquals($expected["id"], $record["id"]);
-		        $this->assertEquals($expected["likely_adjusted"], $record["likely_adjusted"]);
-		        $this->assertEquals($expected["likely_case"], $record["likely_case"]);
+		        $this->assertEquals($expected["amount"], $record["amount"], 'Failed retrieving correct amount value');
+		        $this->assertEquals($expected["best_adjusted"], $record["best_adjusted"], 'Failed retrieving correct best_adjusted value');
+		        $this->assertEquals($expected["best_case"], $record["best_case"], 'Failed retrieving correct best_case value');
+		        $this->assertEquals($expected["forecast"], $record["forecast"], 'Failed retrieving correct forecast value');
+		        $this->assertEquals($expected["forecast_id"], $record["forecast_id"], 'Failed retrieving correct forecast_id value');
+		        $this->assertEquals($expected["id"], $record["id"], 'Failed retrieving correct id value');
+		        $this->assertEquals($expected["likely_adjusted"], $record["likely_adjusted"], 'Failed retrieving correct likely_adjusted value');
+		        $this->assertEquals($expected["likely_case"], $record["likely_case"], 'Failed retrieving correct likely_case value');
 		        $this->assertEquals($expected["name"], $record["name"]);
 		        $this->assertEquals($expected["quota"], $record["quota"]);
 		        $this->assertEquals($expected["quota_id"], $record["quota_id"]);
