@@ -88,139 +88,7 @@ class ActivityStream extends SugarBean {
         return $this->db->query($sql,true);         
     }
     
-    /**
-     * Returns an array of activities for a bean
-     * @param string $targetModule module name
-     * @param string $targetId bean id
-     * @param array $options offset, limit, num_comments ( 0: no comments; -1:all comments)
-     * @return array
-     */
-    public function getActivities($targetModule, $targetId, $options = array()) {
-        global $dictionary, $current_language, $current_user;
-        $tableName = $dictionary['ActivityStream']['table']; 
-        $fieldDefs = $dictionary['ActivityStream']['fields'];        
-        
-        // This combination is not supportable
-        if(empty($targetModule) && !empty($targetId)) {
-            $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
-            return false;
-        }
-        
-        // Convert to int for security
-        $start = isset($options['offset']) ? (int) $options['offset'] : 0;
-        $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
-        $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1; 
-        $filter = isset($options['filter']) ? $options['filter'] : 'all';       
-        $activities = array();
 
-        $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name';
-        $from = 'activity_stream a, users u';
-        $where = 'a.created_by = u.id';
-        $limit = ''; 
-               
-        if(!empty($targetModule)) {
-            $where .= " AND a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
-            if(!empty($targetId)) {
-                $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
-            }
-        }
-        
-        if($filter == 'myactivities') {
-            $where .= " AND a.created_by = '".$current_user->id."'";
-        }
-        else if($filter == 'favorites') {
-            $from .= ", sugarfavorites f";
-            $where .= " AND a.target_module = f.module AND a.target_id = f.record_id AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
-        }
-        
-        if($numActivities > 0) {
-            $limit = ' LIMIT '.$start. ', '.$numActivities; 
-        }
-        
-        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
-        $GLOBALS['log']->debug("Activity query: $sql");
-        $result = $GLOBALS['db']->query($sql);
-        
-        if(!empty($result)) {
-            $activityIds = array();
-            
-            while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
-                $row['activity_data'] = json_decode(html_entity_decode($row['activity_data']), true);
-                $row['target_name'] = '';
-                if(!empty($row['target_id'])) {
-                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
-                    if(!empty($bean)) {
-                        $row['target_name'] = $bean->get_summary_text();
-                    }
-                }
-                else if(!empty($row['target_module'])) {
-                    $bean = BeanFactory::getBean($row['target_module']);   
-                    if(!empty($bean->module_dir)) {              
-                        $mod_strings = return_module_language($current_language, $bean->module_dir);
-                        if(!empty($mod_strings['LBL_MODULE_NAME'])) {
-                            $row['target_name'] = $mod_strings['LBL_MODULE_NAME'];
-                        }
-                    }
-                }
-                $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
-                unset($row['first_name']);
-                unset($row['last_name']);
-                
-                $activities[] = $row;
-                $activityIds[] = $row['id'];
-            }
-            
-            if(!empty($activityIds)) {
-                $comments = array();
-                if($numComments != 0) {
-                    $fieldDefs = $dictionary['ActivityComments']['fields'];
-                    $tableName = $dictionary['ActivityComments']['table'];                
-                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
-                    $result = $GLOBALS['db']->query($sql);
-                    
-                    if(!empty($result)) {
-                        while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
-                            $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
-                            unset($row['first_name']);
-                            unset($row['last_name']);
-                            $comments[$row['activity_id']][] = $row;
-                        }
-                    }
-                }
-                foreach($activities as &$activity) {
-                    $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array(); 
-                }
-            }
-        }
-        
-        return $activities;    
-    } 
-
-    /**
-     * Returns an array of values for a new activity record. Called by self::addActivity
-     * @param SugarBean $bean
-     * @param string $activityType 
-     * @param array $activityData
-     * @return array
-     * @see ActivityStream::addActivity()
-     */
-    protected function getActivityValues($bean, $activityType, $activityData = array()) {
-        global $current_user, $dictionary;
-        $fieldDefs = $dictionary['ActivityStream']['fields'];
-                
-        $activityValues = array();
-        $activityValues['id'] = $GLOBALS['db']->massageValue(create_guid(), $fieldDefs['id']);
-        $activityValues['target_id']= $GLOBALS['db']->massageValue($bean->id, $fieldDefs['target_id']);
-        $activityValues['target_module']= $GLOBALS['db']->massageValue($bean->module_name, $fieldDefs['target_module']);
-        $activityData = json_encode($activityData);
-        $activityValues['activity_type'] = $this->db->massageValue($activityType, $fieldDefs['activity_type']);
-        $activityValues['activity_data'] = $this->db->massageValue($activityData, $fieldDefs['activity_data']);  
-        $activityValues['date_created'] = $GLOBALS['db']->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-        $activityValues['created_by'] = $GLOBALS['db']->massageValue($current_user->id, $fieldDefs['created_by']); 
-
-        return $activityValues;
-    }
-    
     /**
      * Creates new activity. For update, it may create multiple activity records, one for each changed field
      *
@@ -230,45 +98,19 @@ class ActivityStream extends SugarBean {
      *
      */
     public function addUpdate($bean) {
-        global $dictionary, $current_language;
-        $fieldDefs = $dictionary['ActivityStream']['fields'];
-        $tableName = $dictionary['ActivityStream']['table'];
-        $values = array();
+        global $current_language;
         
         $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
         $dataChanges = array_values($dataChanges);
         $fieldDefs = $bean->getFieldDefinitions();
-        $mod_strings = return_module_language($current_language, $bean->module_dir);                
+        $mod_strings = return_module_language($current_language, $bean->module_dir);
+                        
         foreach($dataChanges as &$dataChange) {
             $fieldName = get_label($fieldDefs[$dataChange['field_name']]['vname'], $mod_strings);
             $dataChange['field_name'] = str_replace(":","",$fieldName);
         }
-        $values[] = $this->getActivityValues($bean, self::ACTIVITY_TYPE_UPDATE, $dataChanges);
-   
-        if(!empty($values)) {
-            $valueStrings = array();
-            $fieldNames = array();
-            
-            foreach($values as $value) {
-                if(empty($fieldNames)) {
-                    $fieldNames = array_keys($value);
-                }
-                $valueStrings[] = "(".implode(",", $value).")";
-            }
-            
-            $valueString = '';
-             
-            if(!empty($valueStrings)) {
-                $valueString = implode(",", $valueStrings);
-            }
-            
-            if(!empty($valueString)) {
-                $sql = "INSERT INTO ".$tableName." (".implode(",", $fieldNames).") VALUES ".$valueString;
-                return $GLOBALS['db']->query($sql,true);
-            }
-        }
-
-        return false;
+        
+        return $this->addActivity($bean, self::ACTIVITY_TYPE_UPDATE, $dataChanges);
     } 
 
     /**
@@ -281,15 +123,14 @@ class ActivityStream extends SugarBean {
      * @return bool query result or false
      *
      */
-    public function addPost($targetModule, $targetId, $postBody) {
-        global $current_user, $dictionary;
-        
+    public function addPost($targetModule, $targetId, $postBody) {        
         // This combination is not supportable
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is empty for activity post.");
             return false;
         }
 
+        $bean = null;
         // Make sure targetModule and targetId are valid
         if(!empty($targetModule)) {
             $bean = BeanFactory::getBean($targetModule);
@@ -305,23 +146,8 @@ class ActivityStream extends SugarBean {
             }
         }
         
-        $fieldDefs = $dictionary['ActivityStream']['fields'];   
-        $tableName = $dictionary['ActivityStream']['table'];      
-
-        $values = array();
-        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
-        $values['target_module']= $this->db->massageValue($targetModule, $fieldDefs['target_module']);
-        $values['target_id']= $this->db->massageValue($targetId, $fieldDefs['target_id']);
-        $activityData = json_encode(array('value'=>$postBody));
-        $values['activity_data']= $this->db->massageValue($activityData, $fieldDefs['activity_data']);
-        $values['activity_type']= $this->db->massageValue(self::ACTIVITY_TYPE_POST, $fieldDefs['activity_type']);
-        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']); 
-        
-        $sql = "INSERT INTO ".$tableName;
-        $sql .= "(".implode(",", array_keys($values)).") ";
-        $sql .= "VALUES(".implode(",", $values).")"; 
-        return $this->db->query($sql);  
+        $activityData = array('value'=>$postBody);
+        return $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
     }   
 
     /**
@@ -332,24 +158,8 @@ class ActivityStream extends SugarBean {
      * @return bool query result or false
      */
     public function addRelate($lhs, $rhs) {
-        global $current_user, $dictionary;
-        $fieldDefs = $dictionary['ActivityStream']['fields'];
-        $tableName = $dictionary['ActivityStream']['table'];
-    
-        $values = array();
-        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
-        $values['target_module']= $this->db->massageValue($lhs->module_dir, $fieldDefs['target_module']);
-        $values['target_id']= $this->db->massageValue($lhs->id, $fieldDefs['target_id']);
-        $activityData = json_encode(array('relate_to'=>$rhs->module_dir, 'relate_id'=>$rhs->id, 'relate_name'=>$rhs->get_summary_text()));
-        $values['activity_data']= $this->db->massageValue($activityData, $fieldDefs['activity_data']);
-        $values['activity_type']= $this->db->massageValue(self::ACTIVITY_TYPE_RELATE, $fieldDefs['activity_type']);
-        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
-    
-        $sql = "INSERT INTO ".$tableName;
-        $sql .= "(".implode(",", array_keys($values)).") ";
-        $sql .= "VALUES(".implode(",", $values).")";
-        return $this->db->query($sql);
+        $activityData = array('relate_to'=>$rhs->module_dir, 'relate_id'=>$rhs->id, 'relate_name'=>$rhs->get_summary_text());
+        return $this->addActivity($lhs, self::ACTIVITY_TYPE_RELATE, $activityData);
     }  
 
     /**
@@ -359,23 +169,143 @@ class ActivityStream extends SugarBean {
      * @return bool query result or false
      */
     public function addCreate($bean) {
+        $activityData = array();
+        return $this->addActivity($bean, self::ACTIVITY_TYPE_CREATE, $activityData);
+    }  
+
+    /**
+     * Creates a new activity record.
+     * @param SugarBean $bean
+     * @param string $activityType
+     * @param array $activityData
+     * @return bool query result
+     */
+    protected function addActivity($bean, $activityType, $activityData = array()) {
         global $current_user, $dictionary;
         $fieldDefs = $dictionary['ActivityStream']['fields'];
+    
+        $activityValues = array();
+        $activityValues['id'] = $GLOBALS['db']->massageValue(create_guid(), $fieldDefs['id']);
+        $activityValues['target_id']= $GLOBALS['db']->massageValue($bean->id, $fieldDefs['target_id']);
+        $activityValues['target_module']= $GLOBALS['db']->massageValue($bean->module_name, $fieldDefs['target_module']);
+        $activityData = json_encode($activityData);
+        $activityValues['activity_type'] = $this->db->massageValue($activityType, $fieldDefs['activity_type']);
+        $activityValues['activity_data'] = $this->db->massageValue($activityData, $fieldDefs['activity_data']);
+        $activityValues['date_created'] = $GLOBALS['db']->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
+        $activityValues['created_by'] = $GLOBALS['db']->massageValue($current_user->id, $fieldDefs['created_by']);
+    
+        $sql = "INSERT INTO ".$this->getTableName();
+        $sql .= "(".implode(",", array_keys($activityValues)).") ";
+        $sql .= "VALUES(".implode(",", $activityValues).")";
+        return $GLOBALS['db']->query($sql);
+    }
+    
+    /**
+     * Returns an array of activities for a bean
+     * @param string $targetModule module name
+     * @param string $targetId bean id
+     * @param array $options offset, limit, num_comments ( 0: no comments; -1:all comments)
+     * @return array
+     */
+    public function getActivities($targetModule, $targetId, $options = array()) {
+        global $dictionary, $current_language, $current_user;
         $tableName = $dictionary['ActivityStream']['table'];
+        $fieldDefs = $dictionary['ActivityStream']['fields'];
     
-        $values = array();
-        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
-        $values['target_module']= $this->db->massageValue($bean->module_dir, $fieldDefs['target_module']);
-        $values['target_id']= $this->db->massageValue($bean->id, $fieldDefs['target_id']);
-        $values['activity_data']= "''";
-        $values['activity_type']= $this->db->massageValue(self::ACTIVITY_TYPE_CREATE, $fieldDefs['activity_type']);
-        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
+        // This combination is not supportable
+        if(empty($targetModule) && !empty($targetId)) {
+            $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
+            return false;
+        }
     
-        $sql = "INSERT INTO ".$tableName;
-        $sql .= "(".implode(",", array_keys($values)).") ";
-        $sql .= "VALUES(".implode(",", $values).")";
-        return $this->db->query($sql);
+        // Convert to int for security
+        $start = isset($options['offset']) ? (int) $options['offset'] : 0;
+        $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
+        $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1;
+        $filter = isset($options['filter']) ? $options['filter'] : 'all';
+        $activities = array();
+    
+        $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name';
+        $from = 'activity_stream a, users u';
+        $where = 'a.created_by = u.id';
+        $limit = '';
+    
+        if(!empty($targetModule)) {
+            $where .= " AND a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
+            if(!empty($targetId)) {
+                $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
+            }
+        }
+    
+        if($filter == 'myactivities') {
+            $where .= " AND a.created_by = '".$current_user->id."'";
+        }
+        else if($filter == 'favorites') {
+            $from .= ", sugarfavorites f";
+            $where .= " AND a.target_module = f.module AND a.target_id = f.record_id AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
+        }
+    
+        if($numActivities > 0) {
+            $limit = ' LIMIT '.$start. ', '.$numActivities;
+        }
+    
+        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
+        $GLOBALS['log']->debug("Activity query: $sql");
+        $result = $GLOBALS['db']->query($sql);
+    
+        if(!empty($result)) {
+            $activityIds = array();
+    
+            while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                $row['activity_data'] = json_decode(html_entity_decode($row['activity_data']), true);
+                $row['target_name'] = '';
+                if(!empty($row['target_id'])) {
+                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
+                    if(!empty($bean)) {
+                        $row['target_name'] = $bean->get_summary_text();
+                    }
+                }
+                else if(!empty($row['target_module'])) {
+                    $bean = BeanFactory::getBean($row['target_module']);
+                    if(!empty($bean->module_dir)) {
+                        $mod_strings = return_module_language($current_language, $bean->module_dir);
+                        if(!empty($mod_strings['LBL_MODULE_NAME'])) {
+                            $row['target_name'] = $mod_strings['LBL_MODULE_NAME'];
+                        }
+                    }
+                }
+                $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                unset($row['first_name']);
+                unset($row['last_name']);
+    
+                $activities[] = $row;
+                $activityIds[] = $row['id'];
+            }
+    
+            if(!empty($activityIds)) {
+                $comments = array();
+                if($numComments != 0) {
+                    $fieldDefs = $dictionary['ActivityComments']['fields'];
+                    $tableName = $dictionary['ActivityComments']['table'];
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $result = $GLOBALS['db']->query($sql);
+    
+                    if(!empty($result)) {
+                        while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                            $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                            unset($row['first_name']);
+                            unset($row['last_name']);
+                            $comments[$row['activity_id']][] = $row;
+                        }
+                    }
+                }
+                foreach($activities as &$activity) {
+                    $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array();
+                }
+            }
+        }
+    
+        return $activities;
     }    
 }
 
