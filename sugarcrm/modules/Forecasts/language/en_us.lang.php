@@ -339,9 +339,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipline formula will be:',
 
     // general config
-    // TODO: this
-
-
-
+    'LBL_FORECASTS_CONFIG_GENERAL' => 'General Forecasts Configuration',
+    'LBL_FORECASTS_CONFIG_SHOW_PRINT_BUTTON' => 'Display the "Print" button',
 
 );
