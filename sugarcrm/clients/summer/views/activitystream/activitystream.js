@@ -2,7 +2,6 @@
     events:{
         'click .reply': 'showAddComment',
         'click .postReply': 'addComment',
-        'click .post': 'showAddPost',
         'click .addPost': 'addPost',
         'click .more': 'showAllComments',
         'click .filterAll': 'showAllActivities',
@@ -50,10 +49,6 @@
         this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function() {
             self.collection.fetch(self.opts)
         }});
-    },
-
-    showAddPost: function() {
-        this.$(".activitystream-post").show();
     },
 
     addPost: function() {

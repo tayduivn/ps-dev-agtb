@@ -1,5 +1,12 @@
 <div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
   <h4>Activity</h4>  
+  <div class="activitystream-post">
+    <p>
+      <input type="text" value="" class="span12 sayit" placeholder="Type your post">
+      <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
+      <input type="submit" class="btn btn-primary addPost">
+    </p>
+  </div>
   {{#if opts.params.filter}}
   <input class="filterAll" type="checkbox" {{#eq opts.params.filter "all"}}checked="checked" disabled="disabled"{{/eq}}/> All
   <input class="filterMyActivities" type="checkbox" {{#eq opts.params.filter "myactivities"}}checked="checked" disabled="disabled"{{/eq}}/> My Activities
@@ -16,19 +23,11 @@
   {{/if}} 
   {{/if}}   
   <div class="actions">
-      <a data-toggle="modal" href="#post" class="post btn btn-mini reply"><i class="icon-plus"></i></a>
   </div>
   <form class="form-search hide" action="">
     <input value="" class="span4" placeholder="Refine activity ...">
   </form> 
   <ul class="nav nav-tabs results">
-     <div style="display:none;" class="activitystream-post">
-        <p>
-       <input type="text" value="" class="span10 sayit" placeholder="Type your post">
-       <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
-       <input type="submit" class="btn btn-primary addPost">
-       </p>
-     </div>  
     {{#if collection.models.length}}
       {{#each collection.models}}
       <li style="" data-id="{{attributes.id}}">
