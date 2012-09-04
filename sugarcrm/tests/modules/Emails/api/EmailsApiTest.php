@@ -33,6 +33,8 @@ class EmailsApiTest extends RestTestBase {
 
     public function setUp()
     {
+        $this->email_config_setup();
+
         $message = "<br>This is a <span style='color:red'>Test</span> email";
 
         $this->input = array(
@@ -88,9 +90,14 @@ class EmailsApiTest extends RestTestBase {
         $this->input["status"] = "draft";
 
         $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
-        $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
-
         $reply = $post_response['reply'];
+
+        $http_status = $post_response['info']['http_code'];
+        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+
         $success = (int) $reply['SUCCESS'];
         $this->assertEquals(1,$success, "Not Successful");
 
@@ -203,6 +210,55 @@ class EmailsApiTest extends RestTestBase {
                 $email_address = $address["email"];
                 $sql = "DELETE FROM email_addresses WHERE email_address = '$email_address'";
                 $GLOBALS['db']->query($sql);
+            }
+        }
+    }
+
+
+    private function email_config_setup() {
+        $r1 = $GLOBALS['db']->query('SELECT config.value FROM config WHERE name=\'fromaddress\'');
+        $r2 = $GLOBALS['db']->query('SELECT config.value FROM config WHERE name=\'fromname\'');
+        $a1 = $GLOBALS['db']->fetchByAssoc($r1);
+        if (empty($a1)) {
+            $a1="test@phpunit.org";
+            $sql = "INSERT into config VALUES('notify', 'fromaddress', '$a1')";
+            $GLOBALS['db']->query($sql);
+        }
+        $a2 = $GLOBALS['db']->fetchByAssoc($r2);
+        if (empty($a2)) {
+            $a2="Unit Test";
+            $sql = "INSERT into config VALUES('notify', 'fromname', '$a2')";
+            $GLOBALS['db']->query($sql);
+        }
+
+
+        $q = "SELECT id FROM outbound_email WHERE type = 'system'";
+        $r = $GLOBALS['db']->query($q);
+        $a = $GLOBALS['db']->fetchByAssoc($r);
+
+        $oe = new OutboundEmail();
+        if(empty($a)) {
+            $oe->id = '';
+            $oe->name = 'system';
+            $oe->type = 'system';
+            $oe->user_id = '1';
+            $oe->mail_sendtype = 'SMTP';
+            $oe->mail_smtptype = 'other';
+            $oe->mail_smtpserver = 'localhost';
+            $oe->mail_smtpport = 25;
+            $oe->mail_smtpuser = '';
+            $oe->mail_smtppass = '';
+            $oe->mail_smtpauth_req = 1;
+            $oe->mail_smtpssl = 0;
+            $oe->save();
+        }
+        else {
+            $oe->retrieve($a['id']);
+            if(empty($oe->mail_smtpserver)) {
+                $oe->mail_sendtype = 'SMTP';
+                $oe->mail_smtptype = 'other';
+                $oe->mail_smtpserver = 'localhost';
+                $oe->save();
             }
         }
     }

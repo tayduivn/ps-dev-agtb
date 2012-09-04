@@ -153,6 +153,9 @@ class MailRecord {
         $ie->email = $email;
 
         $fromAccount = $email->et->getFromAccountsArray($ie);
+        if (!is_array($fromAccount) || count($fromAccount) == 0) {
+            throw new MailerException("System Email Configuration Not Found or Not Complete");
+        }
 
         $sendto = array();
         if (is_array($this->toAddresses)) {
@@ -251,6 +254,7 @@ class MailRecord {
         }
 
         $request = array(
+            'fromAccount'       => $fromAccount[0]['value'],
 
             'sendSubject'       => $this->subject,
             'sendTo'            => $sendto_addresses,
@@ -273,10 +277,6 @@ class MailRecord {
         }
         else {
             $request['sendDescription']  = '';
-        }
-
-        if (count($fromAccount) > 0) {
-            $request['fromAccount']  = $fromAccount[0]['value'];
         }
 
         if (!empty($attachments)) {
