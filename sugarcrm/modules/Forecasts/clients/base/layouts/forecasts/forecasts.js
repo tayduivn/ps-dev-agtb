@@ -116,18 +116,18 @@
         initializeAllModels: function() {
             var self = this,
                 componentsMetadata = this.componentsMeta,
+                module = app.viewModule.toLowerCase(),
                 models = {};
+
+            // creates the context.forecasts topmost model
+            models[module] = app.data.createBean(module);
+
+            // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
                 var name,
                     modelMetadata = component.model,
                     context = component.contextCollection,
                     collectionMetadata = component.collection;
-                var module = app.viewModule.toLowerCase();
-
-                if (!models[module]) {
-                    var topModel = app.data.createBean(module);
-                    models[module] = topModel;
-                }
 
                 if (modelMetadata) {
                     name = modelMetadata.name.toLowerCase();

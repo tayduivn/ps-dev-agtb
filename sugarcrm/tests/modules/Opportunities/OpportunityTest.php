@@ -97,7 +97,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /*
-     * Test that the currency_rate field is populated with rate
+     * Test that the base_rate field is populated with rate
      * of currency_id
      *
      */
@@ -113,7 +113,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->worst_case = "600.00";
         $opportunity->save();
         $this->assertEquals(
-            sprintf('%.6f',$opportunity->currency_rate),
+            sprintf('%.6f',$opportunity->base_rate),
             sprintf('%.6f',$currency->conversion_rate)
         );
     }
@@ -135,7 +135,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->save();
 
         $this->assertEquals(
-            sprintf('%.6f',$opportunity->currency_rate),
+            sprintf('%.6f',$opportunity->base_rate),
             sprintf('%.6f',$currency->conversion_rate)
         );
     }
