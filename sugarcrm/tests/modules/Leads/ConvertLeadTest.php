@@ -27,7 +27,7 @@ require_once 'modules/Leads/views/view.convertlead.php';
 require_once 'tests/SugarTestViewConvertLeadUtilities.php';
 
 
-class ConvertLeadTests extends Sugar_PHPUnit_Framework_TestCase
+class ConvertLeadTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
@@ -238,6 +238,9 @@ class ConvertLeadTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
+    /**
+     * @outputBuffering enabled
+     */
     public function testConversionAndMoveActivities() {
         global $sugar_config;
 
@@ -312,6 +315,9 @@ class ConvertLeadTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
+    /**
+     * @outputBuffering enabled
+     */
     public function testConversionAndCopyActivities() {
         global $sugar_config;
 
@@ -398,6 +404,9 @@ class ConvertLeadTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestLeadUtilities::removeAllCreatedLeads();
     }
 
+    /**
+     * @outputBuffering enabled
+     */
     public function testConversionAndDoNothing() {
         global $sugar_config;
 

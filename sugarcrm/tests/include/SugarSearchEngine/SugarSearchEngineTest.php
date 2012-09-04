@@ -84,6 +84,6 @@ class SugarSearchEngineTestStub extends SugarSearchEngineAbstractBase
 
     public function createIndex($recreate = false) {}
 
-    public function createIndexDocument(SugarBean $bean, $searchFields = null){}
+    public function createIndexDocument($bean, $searchFields = null){}
 
 }
