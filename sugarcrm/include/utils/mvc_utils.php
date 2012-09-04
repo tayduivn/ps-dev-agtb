@@ -133,6 +133,9 @@ function ajaxBannedModules(){
         'DynamicFields',
         'EditCustomFields',
         'EmailTemplates',
+//BEGIN SUGARCRM flav=pro ONLY
+		'PdfManager',
+//END SUGARCRM flav=pro ONLY
         'Users',
         'Currencies',
         'Trackers',

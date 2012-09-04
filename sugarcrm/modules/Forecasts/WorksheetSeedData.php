@@ -76,43 +76,45 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
 
             foreach($opps as $opp_id)
             {
-                $opp = new Opportunity();
-                $opp->retrieve($opp_id);
+                /* @var $opp Opportunity */
+                $opp = BeanFactory::getBean('Opportunities', $opp_id);
 
-                $best += $opp->best_case;
-                $likely += $opp->likely_case;
-                $worst += $opp->worst_case;
+                if($opp->forecast == 1) {
+                    $best += $opp->best_case;
+                    $likely += $opp->amount;
+                    $worst += $opp->worst_case;
 
-                //This is a sales rep's worksheet entry
-                $worksheet = new Worksheet();
-                $worksheet->user_id = $user_id;
-                $worksheet->timeperiod_id = $timeperiod_id;
-                $worksheet->forecast_type = 'Direct';
-                $worksheet->related_id = $opp->id;
-                $worksheet->related_forecast_type = '';  //Opportunities do not have a related_forecast_type set
-                $worksheet->best_case = $opp->best_case + 500;
-                $worksheet->likely_case = $opp->likely_case + 500;
-                $worksheet->worst_case = $opp->worst_case + 500;
-                $worksheet->save();
-                $created_ids[] = $worksheet->id;
-
-                //BEGIN SUGARCRM flav=ent ONLY
-                $products = $opp->getProducts();
-                foreach($products as $prod)
-                {
+                    //This is a sales rep's worksheet entry
                     $worksheet = new Worksheet();
                     $worksheet->user_id = $user_id;
                     $worksheet->timeperiod_id = $timeperiod_id;
                     $worksheet->forecast_type = 'Direct';
-                    $worksheet->related_id = $prod->id;
-                    $worksheet->related_forecast_type = 'Product';   //Set this to 'Product' to indicate a product line
-                    $worksheet->best_case = $prod->best_case + 500;
-                    $worksheet->likely_case = $prod->likely_case + 500;
-                    $worksheet->worst_case = $prod->worst_case + 500;
+                    $worksheet->related_id = $opp->id;
+                    $worksheet->related_forecast_type = '';  //Opportunities do not have a related_forecast_type set
+                    $worksheet->best_case = $opp->best_case + 500;
+                    $worksheet->likely_case = $opp->amount + 500;
+                    $worksheet->worst_case = $opp->worst_case + 500;
                     $worksheet->save();
                     $created_ids[] = $worksheet->id;
+
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    $products = $opp->getProducts();
+                    foreach($products as $prod)
+                    {
+                        $worksheet = new Worksheet();
+                        $worksheet->user_id = $user_id;
+                        $worksheet->timeperiod_id = $timeperiod_id;
+                        $worksheet->forecast_type = 'Direct';
+                        $worksheet->related_id = $prod->id;
+                        $worksheet->related_forecast_type = 'Product';   //Set this to 'Product' to indicate a product line
+                        $worksheet->best_case = $prod->best_case + 500;
+                        $worksheet->likely_case = $prod->likely_case + 500;
+                        $worksheet->worst_case = $prod->worst_case + 500;
+                        $worksheet->save();
+                        $created_ids[] = $worksheet->id;
+                    }
+                    //END SUGARCRM flav=ent ONLY
                 }
-                //END SUGARCRM flav=ent ONLY
             }
 
             //this is the direct worksheet for the manager

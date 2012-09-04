@@ -204,5 +204,33 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         }
         return $date->asDb();
     }
+
+    /**
+     * @see SugarFieldBase::apiFormatField
+     */
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
+    {
+        global $timedate;
+
+        $date = $timedate->fromDb($bean->$fieldName);
+        if ( $date == null ) {
+            // The bean's date is not in db format, let's try user format
+            $date = $timedate->fromUser($bean->$fieldName);
+            if ( $date == null ) {
+                // Can't parse this date..
+                return;
+            }
+        }
+        $data[$fieldName] = $timedate->asIso($date);
+    }
+
+    /**
+     * @see SugarFieldBase::apiSave
+     */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties) {
+        global $timedate;
+
+        $date = $timedate->fromIso($params[$field]);
+        $bean->$field = $date->asDb();
+    }
 }
-?>

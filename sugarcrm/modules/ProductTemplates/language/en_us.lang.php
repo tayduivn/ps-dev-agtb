@@ -112,6 +112,9 @@ $mod_strings = array (
   'LBL_EXPORT_CURRENCY'=> 'Currency',
   'LBL_EXPORT_CURRENCY_ID'=> 'Currency ID',
   'LBL_EXPORT_COST_PRICE'=> 'Cost Price',
+  'LBL_PRODUCT_CATEGORIES' => 'Product Categories',
+  'LBL_MANUFACTURERS' => 'Manufacturers',
+  'LBL_PRODUCT_TYPES' => 'Product Types',
 
 );
 

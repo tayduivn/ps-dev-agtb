@@ -1,0 +1,13 @@
+<div class="modal-body">
+{{#each meta.panels}}
+    {{str label "Forecasts"}}
+    <ol>
+    {{#each fields}}
+        <li>
+            <p>{{str label "Forecasts"}}</p>
+            <p>{{field ../../this ../../model}}<p>
+        </li>
+    {{/each}}
+    </ol>
+{{/each}}
+</div>

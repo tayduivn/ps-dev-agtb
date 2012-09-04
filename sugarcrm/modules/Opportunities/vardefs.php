@@ -256,14 +256,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'type' => 'currency',
     'len' => '26,6',
   ),
-  'likely_case' =>
-  array (
-    'name' => 'likely_case',
-    'vname' => 'LBL_LIKELY_CASE',
-    'dbType' => 'currency',
-    'type' => 'currency',
-    'len' => '26,6',
-  ),
   'worst_case' =>
   array (
     'name' => 'worst_case',
@@ -432,7 +424,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'name' => 'campaign_link',
         'type' => 'link',
         'relationship' => 'opportunities_campaign',
-        'vname' => 'LBL_CAMPAIGNS',
+        'vname' => 'LBL_CAMPAIGN_LINK',
         'link_type' => 'one',
         'module' => 'Campaigns',
         'bean_name' => 'Campaign',

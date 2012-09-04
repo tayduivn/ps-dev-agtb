@@ -350,11 +350,11 @@ class MetaDataFiles
 
 		// Construct filename
         if (!empty($client)) {
-            $viewPath = $client . '/' . self::$viewsPath;
+            $viewPath = 'clients/' . $client . '/' . self::$viewsPath . $names[$view] . '/';
         } else {
-            $viewPath = '';
+            $viewPath = 'metadata/';
         }
-		return $paths[$type] . 'modules/' . $module . '/metadata/' . $viewPath . $names[$view] . '.php' ;
+		return $paths[$type] . 'modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
     }
 
     /**
@@ -383,18 +383,18 @@ class MetaDataFiles
 
         // Get final filename path part
         if (!empty($client)) {
-            $viewPath = $client . '/' . self::$viewsPath;
+            $viewPath = 'clients/' . $client . '/' . self::$viewsPath . $names[$view] . '/';
         } else {
-            $viewPath = '';
+            $viewPath = 'metadata/';
         }
 
         switch ($type) {
             case MB_HISTORYMETADATALOCATION:
-                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/metadata/' . $viewPath . $names[$view] . '.php';
+                return self::$paths[MB_WORKINGMETADATALOCATION] . 'modulebuilder/packages/' . $packageName . '/modules/' . $module . '/' . $viewPath . $names[$view] . '.php';
             default:
                 // get the module again, all so we can call this method statically without relying on the module stored in the class variables
                 $mb = new ModuleBuilder();
-                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/metadata/' . $viewPath . $names[$view] . '.php';
+                return $mb->getPackageModule($packageName, $module)->getModuleDir() . '/' . $viewPath . $names[$view] . '.php';
         }
     }
 
@@ -410,12 +410,18 @@ class MetaDataFiles
      * @return null|string Null if the request is invalid, path if it is good
      */
     public static function getModuleFileName($module, $deftype, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW) {
-        $filedir = self::getModuleFileDir($module, $path, $client, $component);
+        $filedir = self::getModuleFileDir($module, $path);
         if ($filedir === null) {
             return null;
         }
+        
+        if ($client) {
+            $metadataPath = 'clients/' . $client . '/' . $component . 's/' . $deftype . '/';
+        } else {
+            $metadataPath = 'metadata/';
+        }
 
-        $filename = $filedir . $deftype . '.php';
+        $filename = $filedir . $metadataPath . $deftype . '.php';
         return $filename;
     }
 
@@ -444,17 +450,14 @@ class MetaDataFiles
      * @param string $component Layout or view
      * @return null|string Null if the request is invalid, path if it is good
      */
-    public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION, $client = '', $component = self::COMPONENTVIEW) {
+    public static function getModuleFileDir($module, $path = MB_BASEMETADATALOCATION) {
         // Simple validation of path
         if (!isset(self::$paths[$path])) {
             return null;
         }
 
         // Now get to building
-        $dirname = self::$paths[$path] . 'modules/' . $module . '/metadata/';
-        if (!empty($client)) {
-            $dirname .= $client . '/' . $component . 's/';
-        }
+        $dirname = self::$paths[$path] . 'modules/' . $module . '/';
         return $dirname;
     }
 
@@ -471,9 +474,11 @@ class MetaDataFiles
         require_once 'modules/ModuleBuilder/Module/StudioModule.php' ;
         $sm = new StudioModule($module);
 
-        $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/metadata/';
+        $dirname = 'include/SugarObjects/templates/' . $sm->getType() . '/';
         if (!empty($client)) {
-            $dirname .= $client . '/' . $component . 's/';
+            $dirname .= 'clients/' . $client . '/' . $component . 's/';
+        } else {
+            $dirname .= 'metadata/';
         }
 
         return $dirname;

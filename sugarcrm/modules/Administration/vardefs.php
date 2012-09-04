@@ -44,8 +44,16 @@ $dictionary['Administration'] = array('table' => 'config', 'comment' => 'System 
     'type' => 'text',
     'comment' => 'The value given to the setting'
   ),
+  'platform' =>
+  array (
+    'name' => 'platform',
+    'vname' => 'LBL_LIST_PLATFORM',
+    'type' => 'varchar',
+    'len' => '32',
+    'comment' => 'Which platform to send this back with vai the api'
+  ),
 
-), 'indices'=>array( array('name'=>'idx_config_cat', 'type'=>'index',  'fields'=>array('category')),)
+), 'indices'=>array( array('name'=>'idx_config_cat', 'type'=>'index',  'fields'=>array('category')), array('name'=>'idx_config_platform', 'type'=>'index',  'fields'=>array('platform')))
                             );
 
 $dictionary['UpgradeHistory'] = array(

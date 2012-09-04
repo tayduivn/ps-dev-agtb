@@ -96,7 +96,11 @@ class SugarFieldBase {
      * @param array     $properties
      */
     public function apiFormatField(&$data, $bean, $args, $fieldName, $properties) {
-        $data[$fieldName] = $this->formatField($bean->$fieldName, $properties);
+        if (isset($bean->$fieldName)) {
+            $data[$fieldName] = $bean->$fieldName;
+        } else {
+            $data[$fieldName] = '';
+        }
     }
 
     //BEGIN SUGARCRM flav=pro || flav=sales ONLY
@@ -485,6 +489,8 @@ class SugarFieldBase {
      * This should be called when the bean is saved. The bean itself will be passed by reference
      * @param SugarBean bean - the bean performing the save
      * @param array params - an array of paramester relevant to the save, most likely will be $_REQUEST
+     * @param string $field - The name of the field to save (the vardef name, not the form element name)
+     * @param array $properties - Any properties for this field
      */
     public function save($bean, $params, $field, $properties, $prefix = '') {
          if ( isset($params[$prefix.$field]) ) {
@@ -496,6 +502,18 @@ class SugarFieldBase {
          	 }
          }
      }
+
+	/**
+     * This should be called when the bean is saved from the API. Most fields can just use default, which calls the field's individual ->save() function instead.
+     * @param SugarBean $bean - the bean performing the save
+     * @param array $params - an array of paramester relevant to the save, which will be an array passed up to the API
+     * @param string $field - The name of the field to save (the vardef name, not the form element name)
+     * @param array $properties - Any properties for this field
+     */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties) {
+        return $this->save($bean, $params, $field, $properties);
+    }
+
 
      /**
       * Check if the field is allowed to be trimmed

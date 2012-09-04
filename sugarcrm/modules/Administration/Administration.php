@@ -174,8 +174,17 @@ class Administration extends SugarBean {
         $this->retrieveSettings(false, true);
     }
 
-    function saveSetting($category, $key, $value) {
-        $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}'");
+    /**
+     * @param string $category      Category for the config value
+     * @param string $key           Key for the config value
+     * @param string $value         Value of the config param
+     * @param string $platform      Which platform this belongs to (API use only, If platform is empty it will not be returned in the API calls)
+     * @return int                  Number of records Returned
+     */
+    public function saveSetting($category, $key, $value, $platform = '') {
+        // platform is always lower case
+        $platform = strtolower($platform);
+        $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
         $row = $this->db->fetchByAssoc($result);
         $row_count = $row['the_count'];
 
@@ -183,17 +192,46 @@ class Administration extends SugarBean {
             $value = $this->encrpyt_before_save($value);
 
         if( $row_count == 0){
-            $result = $this->db->query("INSERT INTO config (value, category, name) VALUES ('$value','$category', '$key')");
+            $result = $this->db->query("INSERT INTO config (value, category, name, platform) VALUES ('$value','$category', '$key', '$platform')");
         }
         else{
-            $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}'");
+            $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
         }
         sugar_cache_clear('admin_settings_cache');
         return $this->db->getAffectedRowCount($result);
+    }
+
+    /**
+     * Return the config for a specific module.
+     *
+     * @param string $module        The module we are wanting to get the config for
+     * @param string $platform      The platform we want to get the data back for
+     * @return array
+     */
+    public function getConfigForModule($module, $platform = 'base') {
+        // platform is always lower case
+        $platform = strtolower($platform);
+        $sql = "SELECT name, value FROM config WHERE category = '{$module}'";
+        if($platform != "base") {
+            // if the platform is not base, we need to order it so the platform we are looking for overrides any base values
+            $sql .= "and platform in ('base', '{$platform}') ORDER BY CASE WHEN platform='base' THEN 0
+                        WHEN platform='{$platform}' THEN 1 ELSE 2 END ASC";
+        } else {
+            $sql .= " and platform = '{$platform}'";
+        }
+
+        $result = $this->db->query($sql);
+
+        $moduleConfig = array();
+        while($row = $this->db->fetchByAssoc($result)) {
+            $moduleConfig[$row['name']] = $row['value'];
+        }
+
+        return $moduleConfig;
     }
 
     function get_config_prefix($str) {
         return Array(substr($str, 0, strpos($str, "_")), substr($str, strpos($str, "_")+1));
     }
 }
-?>
+

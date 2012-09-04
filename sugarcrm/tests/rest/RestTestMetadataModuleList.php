@@ -40,12 +40,12 @@ class RestTestMetadataModuleList extends RestTestBase {
     }
 
     public function testMetadataGetModuleListPortal() {
-        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
-        $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
         $enabledPortal = array('Cases','Leads');
-        $restModules = $restReply['reply']['moduleList'];
+        $restModules = $restReply['reply']['module_list'];
 
         unset($restModules['_hash']);
         foreach ( $enabledPortal as $module ) {
@@ -57,12 +57,12 @@ class RestTestMetadataModuleList extends RestTestBase {
         $newModuleList = array('Home','Accounts','Contacts','Opportunities','Bugs','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
         $tabs = new TabController();
         $tabs->set_system_tabs($newModuleList);
-        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
-        $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
         $enabledPortal = array('Cases','Leads', 'Bugs');
-        $restModules = $restReply['reply']['moduleList'];
+        $restModules = $restReply['reply']['module_list'];
 
         unset($restModules['_hash']);
         foreach ( $enabledPortal as $module ) {
@@ -79,14 +79,14 @@ class RestTestMetadataModuleList extends RestTestBase {
             sugar_mkdir($dir, null, true);
         }
         sugar_file_put_contents($this->oppTestPath, "<?php\n\$viewdefs['Opportunities'] = array();");
-        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
-        $this->assertTrue(in_array('Opportunities',$restReply['reply']['moduleList']),'The new Opportunities module did not appear in the portal list');
+        $this->assertTrue(in_array('Opportunities',$restReply['reply']['module_list']),'The new Opportunities module did not appear in the portal list');
         
     }
     
     public function testMetadataGetModuleListMobile() {
-        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=mobile');
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
 
         foreach ( array ( '','custom/') as $prefix) {
             if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
@@ -98,8 +98,8 @@ class RestTestMetadataModuleList extends RestTestBase {
         $enabledMobile = array_keys($wireless_module_registry);
 
 
-        $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no mobile module list');
-        $restModules = $restReply['reply']['moduleList'];
+        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list');
+        $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list.');
@@ -114,9 +114,9 @@ class RestTestMetadataModuleList extends RestTestBase {
         
         $enabledMobile = array('Accounts','Contacts','Opportunities');
 
-        $restReply = $this->_restCall('metadata?typeFilter=moduleList&platform=mobile');
-        $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no mobile module list on the second pass');
-        $restModules = $restReply['reply']['moduleList'];
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
+        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list on the second pass');
+        $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
         foreach ( $enabledMobile as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
@@ -127,10 +127,10 @@ class RestTestMetadataModuleList extends RestTestBase {
     }
 
     public function testMetadataGetModuleListBase() {
-        $restReply = $this->_restCall('metadata?typeFilter=moduleList');
+        $restReply = $this->_restCall('metadata?type_filter=module_list');
 
-        $this->assertTrue(isset($restReply['reply']['moduleList']['_hash']),'There is no base module list');
-        $restModules = $restReply['reply']['moduleList'];
+        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no base module list');
+        $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
         require_once("modules/MySettings/TabController.php");
         $tc = new TabController();
@@ -144,9 +144,9 @@ class RestTestMetadataModuleList extends RestTestBase {
     }
 
     public function testMetadataGetFullModuleListBase() {
-        $restReply = $this->_restCall('metadata?typeFilter=fullModuleList');
-        $fullRestModules = $restReply['reply']['fullModuleList'];
-        $this->assertTrue(isset($restReply['reply']['fullModuleList']['_hash']),'There is no base module list');
+        $restReply = $this->_restCall('metadata?type_filter=full_module_list');
+        $fullRestModules = $restReply['reply']['full_module_list'];
+        $this->assertTrue(isset($restReply['reply']['full_module_list']['_hash']),'There is no base module list');
         $tc = new TabController();
         $enabledModules = $tc->get_user_tabs($this->_user);
         $enabledBase = array_keys($enabledModules);
