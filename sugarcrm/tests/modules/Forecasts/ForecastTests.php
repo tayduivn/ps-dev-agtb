@@ -40,7 +40,7 @@ class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /*
-     * Test that the currency_rate field is populated with rate
+     * Test that the base_rate field is populated with rate
      * of currency_id
      *
      */
@@ -51,7 +51,7 @@ class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
         $forecast->currency_id = $currency->id;
         $forecast->save();
         $this->assertEquals(
-            sprintf('%.6f',$forecast->currency_rate),
+            sprintf('%.6f',$forecast->base_rate),
             sprintf('%.6f',$currency->conversion_rate)
         );
     }
