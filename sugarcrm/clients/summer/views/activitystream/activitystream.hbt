@@ -1,14 +1,6 @@
 <link rel="stylesheet" href="../clients/summer/views/activitystream/activitystream.css" xmlns="http://www.w3.org/1999/html">
 <div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
-  <h4>Activity</h4>  
-  <div class="activitystream-post">
-    <p>
-      <input type="text" value="" class="span12 sayit" placeholder="Type your post" dropzone="copy">
-      <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
-      <input type="submit" class="btn btn-primary addPost">
-    </p>
-  </div>
-  <ul class="nav nav-pills">
+  <ul id="activitystream-pills" class="nav nav-pills">
     {{#if opts.params.filter}}
         <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>All</span></a></li>
         <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Activities</span></a></li>
@@ -25,6 +17,14 @@
         {{/if}}
     {{/if}}
   </ul>
+  <h4 id="activitystream-header">Activity</h4>
+  <div class="activitystream-post">
+    <p>
+      <input type="text" value="" class="span12 sayit" placeholder="Type your post" dropzone="copy">
+      <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
+      <input type="submit" class="btn btn-primary addPost">
+    </p>
+  </div>
   <div class="actions">
   </div>
   <form class="form-search hide" action="">
