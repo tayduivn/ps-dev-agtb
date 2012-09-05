@@ -1,10 +1,8 @@
 ({
     // datetimecombo
     _render:function(value) {
-        var self = this, usersDateFormatPreference;
-        usersDateFormatPreference = app.user.get('datepref');
-        app.view.Field.prototype._render.call(this);//call proto render
-
+        var self = this;
+        app.view.Field.prototype._render.call(self);
         $(function() {
             if(self.view.name === 'edit') {
                 $(".datepicker").datepicker({
@@ -17,35 +15,42 @@
     },
 
     unformat:function(value) {
-        var jsDate, myUser = this.app.user;
-        jsDate = this.app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
-        return this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref'));
+        var jsDate, 
+            myUser = app.user;
+
+        jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
+        return jsDate.toISOString();
     },
 
     format:function(value) {
         var jsDate, output, 
-            usersDateFormatPreference, usersTimeFormatPreference, myUser;
+            usersDateFormatPreference, usersTimeFormatPreference, 
+            myUser = app.user;
 
-        myUser = this.app.user;
-        usersDateFormatPreference = app.user.get('datepref');
-        usersTimeFormatPreference = app.user.get('timepref');
+        usersDateFormatPreference = myUser.get('datepref');
+        usersTimeFormatPreference = myUser.get('timepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
         if(!value && this.def.display_default) {
-            value = app.date.parseDisplayDefault(this.def.display_default);
+            value  = app.date.parseDisplayDefault(this.def.display_default);
+            // Preset the model with display default in case user doesn't change anything
+            this.model.set(this.name, new Date(value.slice(0, value.length-2)).toISOString()); 
+        } else {
+            // In case ISO 8601 get it back to js native date which date.format understands
+            jsDate = new Date(value);
+            value  = app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference);
         }
-
-        jsDate = this.app.date.parse(value);
-        jsDate = this.app.date.roundTime(jsDate);
+        jsDate = app.date.parse(value);
+        jsDate = app.date.roundTime(jsDate);
         
         value = {
-            dateTime: this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref')),
-            date: this.app.date.format(jsDate, usersDateFormatPreference),
-            time: this.app.date.format(jsDate, usersTimeFormatPreference),
-            hours: this.app.date.format(jsDate, 'H'),
-            minutes: this.app.date.format(jsDate, 'i'),
-            seconds: this.app.date.format(jsDate, 's'),
-            amPm: this.app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+            dateTime: app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference),
+            date: app.date.format(jsDate, usersDateFormatPreference),
+            time: app.date.format(jsDate, usersTimeFormatPreference),
+            hours: app.date.format(jsDate, 'H'),
+            minutes: app.date.format(jsDate, 'i'),
+            seconds: app.date.format(jsDate, 's'),
+            amPm: app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
         return value;
     },
@@ -108,7 +113,6 @@
         minute.on('change', function(ev) {
             model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
-
         amPm.on('change', function(ev) {
             model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
