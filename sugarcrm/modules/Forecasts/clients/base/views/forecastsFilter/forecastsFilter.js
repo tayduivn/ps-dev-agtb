@@ -55,7 +55,7 @@
         if (field.name == 'category') {
             field.def.options = app.config.show_buckets?'commit_stage_dom':'forecasts_filters_category';
 //            field.value = "70"; // INVESTIGATE: this should work to set the value of the select field, but it is getting reset somewhere in sidecar processing
-            field.def.value = "70"; // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+            field.def.value = app.config.show_buckets ? '100' : '1'; // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
             field.def.multi = app.config.show_buckets;
             field = this._setUpCategoryField(field);
         }
@@ -107,19 +107,19 @@
             if(this.def.multi) { // if it's a multiselect we need to add or drop the correct values from the filter model
                 if (_.has(input, "selected")) {
                     id = input.selected;
-                    if (!_.has(selectedCategory, id)) {
-                        selectedCategory.push(id);
+                    if (!_.contains(selectedCategory, id)) {
+                        selectedCategory = _.union(selectedCategory, id);
                     }
                 } else if(_.has(input, "deselected")) {
                     id = input.deselected;
-                    if (_.has(selectedCategory, id)) {
+                    if (_.contains(selectedCategory, id)) {
                         selectedCategory = _.without(selectedCategory, id);
                     }
                 }
             } else {  // not multi, just set the selected filter
                 selectedCategory = new Array(input.selected);
             }
-            this.view.context.forecasts.set('selectedCategory', selectedCategory);
+            this.context.forecasts.set('selectedCategory', selectedCategory);
         };
 
         return field;
