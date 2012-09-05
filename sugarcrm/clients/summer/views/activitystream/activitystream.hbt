@@ -2,7 +2,7 @@
   <h4>Activity</h4>  
   <div class="activitystream-post">
     <p>
-      <input type="text" value="" class="span12 sayit" placeholder="Type your post">
+      <input type="text" value="" class="span12 sayit" placeholder="Type your post" dropzone="copy">
       <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
       <input type="submit" class="btn btn-primary addPost">
     </p>
@@ -93,7 +93,7 @@
          {{/if}}
          <ul>
           <div class="control-group form-horizontal activitystream-comment hide">
-            <input type="text" value="" class="sayit" placeholder="Add your comment">
+            <input type="text" value="" class="sayit" placeholder="Add your comment" dropzone="copy">
             <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
           </div>
          </ul>
