@@ -22,12 +22,10 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once "modules/ProductTemplates/Formulas.php";
+
 class Bug44515WithoutCustomTest extends Sugar_PHPUnit_Framework_TestCase
 {
-   
-    /**
-     * @group Bug44515
-     */
     public function setUp()
     {
         
@@ -38,10 +36,12 @@ class Bug44515WithoutCustomTest extends Sugar_PHPUnit_Framework_TestCase
     {
     }
 
+    /**
+     * @group 44515
+     */
     public function testLoadCustomFormulas()
     {
-      require_once "modules/ProductTemplates/Formulas.php";
-
+      refresh_price_formulas();
       // At this point I expect to have only the 5 standard formulas
       $expectedIndexes = 5;
       $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));

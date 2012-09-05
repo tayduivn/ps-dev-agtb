@@ -22,17 +22,15 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once "modules/ProductTemplates/Formulas.php";
+
 class Bug44515Test extends Sugar_PHPUnit_Framework_TestCase
 {
-   
-    /**
-     * @group Bug44515
-     */
     var $customDir = "custom/modules/ProductTemplates/formulas";
 
     public function setUp()
     {
-        
+
         if (!is_dir($this->customDir))
           mkdir($this->customDir, 0700, TRUE); // Creating nested directories at a glance
 
@@ -43,17 +41,18 @@ class Bug44515Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        unset($GLOBALS['price_formulas']['Customformula1']);
-        unset($GLOBALS['price_formulas']['Customformula2']);
         unlink($this->customDir . "/customformula1.php");
         unlink($this->customDir . "/customformula2.php");
         rmdir($this->customDir);
+        refresh_price_formulas();
     }
 
+    /**
+     * @group 44515
+     */
     public function testLoadCustomFormulas()
     {
-      require_once "modules/ProductTemplates/Formulas.php";
-
+      refresh_price_formulas();
       // At this point I expect to have 7 formulas (5 standard and 2 custom).
       $expectedIndexes = 7;
       $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
