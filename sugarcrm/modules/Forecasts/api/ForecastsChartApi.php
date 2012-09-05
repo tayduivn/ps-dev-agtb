@@ -600,9 +600,8 @@ class ForecastsChartApi extends ChartApi
         }
 
         // fix the labels
-        array_walk($new_values, function(&$item, $key) {
-            $item['label'] = $key;
-        });
+        // use create_function call to create the function for PHP 5.2.x support
+        array_walk($new_values, create_function('&$item, $key', '$item[\'label\'] = $key;'));
 
         $dataArray['values'] = array_values($new_values);
         return $dataArray;

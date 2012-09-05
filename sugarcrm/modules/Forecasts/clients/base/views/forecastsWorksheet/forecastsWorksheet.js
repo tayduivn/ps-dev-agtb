@@ -70,7 +70,7 @@
         self.overallModel = new Backbone.Model(
             {
                 overallAmount : 0,
-                overallBest : 0,
+                overallBest : 0
             }
         )
 
