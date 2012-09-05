@@ -241,9 +241,4 @@ class MockSugarForecasting_Manager extends SugarForecasting_Manager
     {
         parent::loadManagerAmounts();
     }
-
-    public function makeSureAdjustedNumberIsNotEmpty()
-    {
-        parent::makeSureAdjustedNumberIsNotEmpty();
-    }
 }

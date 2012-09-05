@@ -24,11 +24,6 @@ require_once('include/api/ModuleApi.php');
 
 class ForecastsWorksheetApi extends ModuleApi {
 
-    public function __construct()
-    {
-
-    }
-
     public function registerApiRest()
     {
         //Extend with test method

@@ -13,6 +13,11 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
      */
     protected $dataArray = array();
 
+    /**
+     * Default Data Array To Start With
+     *
+     * @var array
+     */
     protected $defaultData = array("amount" => 0,
                               "quota" => 0,
                               "quota_id" => '',
@@ -30,10 +35,14 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
                               "id" => ""
                             );
 
-    protected $user_id;
 
+    /**
+     * Class Constructor
+     * @param array $args       Service Arguments
+     */
     public function __construct($args)
     {
+        // set the isManager Flag just incase we need it
         $this->isManager = true;
 
         parent::__construct($args);
@@ -43,6 +52,8 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
     }
 
     /**
+     * Run all the tasks we need to process get the data back
+     *
      * @return array|string
      */
     public function process()
@@ -58,16 +69,25 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         $this->loadForecastValues();
         $this->loadWorksheetAdjustedValues();
         $this->loadManagerAmounts();
-        $this->makeSureAdjustedNumberIsNotEmpty();
 
         return array_values($this->dataArray);
     }
 
+    /**
+     * Return the data array
+     *
+     * @return array
+     */
     public function getDataArray()
     {
         return $this->dataArray;
     }
 
+    /**
+     * Load the Users for the passed in user in the $arguments
+     *
+     * @throws SugarForecasting_Exception
+     */
     protected function loadUsers()
     {
         global $current_user, $mod_strings, $locale;
@@ -116,6 +136,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         $this->dataArray = $data;
     }
 
+    /**
+     * Load the base amounts for the users in the dataArray
+     */
     protected function loadUsersAmount()
     {
         $amounts = $this->getUserAmounts();
@@ -123,6 +146,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         $this->dataArray = array_replace_recursive($this->dataArray, $amounts);
     }
 
+    /**
+     * Load the Quota's for the users in the dataArray
+     */
     protected function loadUsersQuota()
     {
         //getting quotas from quotas table
@@ -145,14 +171,10 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         }
 
         $this->dataArray = array_replace_recursive($this->dataArray, $data);
-
-
     }
 
     /**
      * Get the Worksheet Adjusted Values
-     *
-     * @return array
      */
     public function loadWorksheetAdjustedValues()
     {
@@ -219,8 +241,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
      * This function returns the best, likely and worst case values from the forecasts table for the manager
      * associated with the user_id class variable.  It is a helper function used by the manager worksheet api
      * to return forecast related information.
-     *
-     * @return array Array of entries with deltas best_case, likely_case, worst_case, id, date_modified and forecast_id
      */
     protected function loadForecastValues()
     {
@@ -284,8 +304,14 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
 
             while($row=$db->fetchByAssoc($result)) {
                 $data[$user_name]['best_case'] = $row['best_case'];
+                // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
+                $data[$user_name]['best_adjusted'] = $row['best_case'];
                 $data[$user_name]['likely_case'] = $row['likely_case'];
+                // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
+                $data[$user_name]['likely_adjusted'] = $row['likely_case'];
                 $data[$user_name]['worst_case'] = $row['worst_case'];
+                // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
+                $data[$user_name]['worst_adjusted'] = $row['worst_case'];
                 $data[$user_name]['forecast_id'] = $row['id'];
                 $data[$user_name]['date_modified'] = $row['date_modified'];
             }
@@ -294,12 +320,16 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         $this->dataArray = array_replace_recursive($this->dataArray, $data);
     }
 
+    /**
+     * If any of the users are managers, we need their amount fields to be equal to their committed amount + the committed
+     * amounts for the people who report to them.
+     */
     protected function loadManagerAmounts()
     {
         foreach($this->dataArray as $rep => $val) {
             if(empty($val['forecast_id'])) {
                 $this->dataArray[$rep]['amount'] = 0;
-            } else if($val['user_id'] != $this->user_id && $val['show_opps'] == false) {
+            } else if($val['user_id'] != $this->getArg('user_id') && $val['show_opps'] == false) {
                 // this is for a a manager only row
                 // we need to get their total amount including sales reps.
                 // first get the reportees that have a forecast submitted for this time period
@@ -314,15 +344,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
                     }
                 }
             }
-        }
-    }
-
-    protected function makeSureAdjustedNumberIsNotEmpty()
-    {
-        foreach($this->dataArray as $rep => $val) {
-            $this->dataArray[$rep]['best_adjusted'] = empty($val['best_adjusted']) ? $val['best_case'] : $val['best_adjusted'];
-            $this->dataArray[$rep]['likely_adjusted'] = empty($val['likely_adjusted']) ? $val['likely_case'] : $val['likely_adjusted'];
-            $this->dataArray[$rep]['worst_adjusted'] = empty($val['worst_adjusted']) ? $val['worst_case'] : $val['worst_adjusted'];
         }
     }
 
