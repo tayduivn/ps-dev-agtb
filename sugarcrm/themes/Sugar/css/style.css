@@ -6543,7 +6543,11 @@ ul.clickMenu {
     *zoom:1;
 }
 ul.clickMenu form, div.action_buttons form, div.action_buttons input {float:left;}
-.actionsContainer div.action_buttons input {float:none;} /** bug 55940 - prevent wrapping of action buttons in button mode **/
+
+/** bug 55940 - prevent wrapping of action buttons in button mode in the detail view header **/
+.actionsContainer div.action_buttons input {
+    float:none;
+}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
