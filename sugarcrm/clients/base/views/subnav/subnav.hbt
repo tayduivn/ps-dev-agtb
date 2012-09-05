@@ -3,7 +3,7 @@
 <h1>{{subnavModel.attributes.title}}</h1>
 </div>
 <div class="btn-toolbar pull-right">
-<div class="btn-group">
+<div>
 {{#each subnavModel.attributes.meta.buttons}}
 {{field ../this}}
 {{/each}}
