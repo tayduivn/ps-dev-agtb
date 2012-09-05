@@ -22,6 +22,32 @@
     },
 
     /**
+     * Render and fix the subnav to the top
+     * @private
+     */
+    _render: function() {
+        var headerHeight, next, newMarginTop;
+
+        this.app.view.View.prototype._render.call(this);
+
+        if (this.$el.css('position') !== 'fixed') {
+            headerHeight = $('#header .navbar').height();
+
+            //place subnav below the header
+            this.$el.css({
+                position: 'fixed',
+                width: '100%',
+                top: headerHeight
+            });
+
+            //push down the view below by the subnav height
+            next = this.$el.next();
+            newMarginTop = parseInt(next.css('margin-top'), 10) + this.$el.height();
+            next.css('margin-top', newMarginTop + 'px');
+        }
+    },
+
+    /**
      * Handle click on the save button
      */
     save: function() {
