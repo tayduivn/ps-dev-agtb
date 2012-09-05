@@ -1,4 +1,5 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,38 +22,20 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
-class ForecastScheduleTests extends Sugar_PHPUnit_Framework_TestCase
-{
-    public function setUp()
-    {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
-    }
-
-    public function tearDown()
-    {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
-        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
-    }
-
-    /*
-     * Test that the base_rate field is populated with rate
-     * of currency_id
-     *
-     */
-    public function testScheduleSaveRate() {
-        $time_period = SugarTestTimePeriodUtilities::createTimePeriod();
-        $schedule = SugarTestForecastScheduleUtilities::createForecastSchedule($time_period, $GLOBALS['current_user']);
-        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
-        $schedule->currency_id = $currency->id;
-        $schedule->save();
-        $this->assertEquals(
-            sprintf('%.6f',$schedule->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
-        );
-    }
-}
+$viewdefs['Forecasts']['base']['view']['forecastsConfigGeneral'] = array(
+    'panels' => array(
+        array(
+            'label' => 'LBL_FORECASTS_CONFIG_GENERAL',
+            'fields' => array(
+                array(
+                    'name' => 'show_print_button',
+                    'type' => 'bool',
+                    'label' => 'LBL_FORECASTS_CONFIG_SHOW_PRINT_BUTTON',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit',
+                ),
+            ),
+        ),
+    ),
+);

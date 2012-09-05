@@ -115,19 +115,20 @@ class RelateRecordApi extends ModuleApi {
      * @return array A list of the related fields pulled out of the $args array
      */
     protected function getRelatedFields(ServiceBase $api, $args, SugarBean $primaryBean, $linkName, $seed = null) {
-        $relatedFields = $primaryBean->$linkName->getRelationshipFieldMapping($seed);
         $relatedData = array();
-        if ( is_array($relatedFields) ) {
-            foreach ( $relatedFields as $rfName => $fieldName ) {
-                if ( isset($args[$fieldName]) ) {
-                    $relatedData[$rfName] = $args[$fieldName];
-                }
-                if ( isset($args[$rfName]) ) {
-                    $relatedData[$rfName] = $args[$rfName];
+        if ($seed instanceof SugarBean) {
+            $relatedFields = $primaryBean->$linkName->getRelationshipFieldMapping($seed);
+            if ( is_array($relatedFields) ) {
+                foreach ( $relatedFields as $rfName => $fieldName ) {
+                    if ( isset($args[$fieldName]) ) {
+                        $relatedData[$rfName] = $args[$fieldName];
+                    }
+                    if ( isset($args[$rfName]) ) {
+                        $relatedData[$rfName] = $args[$rfName];
+                    }
                 }
             }
         }
-
         
         return $relatedData;
     }
