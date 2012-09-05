@@ -39,8 +39,7 @@
             this.model.on("change", function() {
                 if (this.context.get('subnavModel')) {
                     this.context.get('subnavModel').set({
-                        'title': this.model.get('name'),
-                        'meta': this.meta
+                        'title': this.model.get('name')
                     });
                     this.model.isNotEmpty = true;
                     this.render();
