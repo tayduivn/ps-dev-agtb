@@ -237,6 +237,11 @@ class SugarFieldDatetime extends SugarFieldBase {
 
         $inputDate = $params[$field];
 
+        if ( empty($inputDate) ) {
+            $bean->$field = '';
+            return;
+        }
+
         if ( $properties['type'] == 'date' ) {
             // It's just a date, not a datetime
             $date = $timedate->fromIsoDate($inputDate);
@@ -245,6 +250,12 @@ class SugarFieldDatetime extends SugarFieldBase {
         } else {
             $date = $timedate->fromIso($inputDate);
         }
+
+        if ( $date === null ) {
+            require_once('include/api/SugarApi/SugarApiException.php');
+            throw new SugarApiExceptionInvalidParameter("Did not recognize $field as a date/time, it looked like {$params[$field]}");
+        }
+
 
         $bean->$field = $timedate->asDbType($date,$properties['type']);
     }
