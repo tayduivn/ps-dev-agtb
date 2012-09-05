@@ -7,21 +7,23 @@
       <input type="submit" class="btn btn-primary addPost">
     </p>
   </div>
-  {{#if opts.params.filter}}
-  <input class="filterAll" type="checkbox" {{#eq opts.params.filter "all"}}checked="checked" disabled="disabled"{{/eq}}/> All
-  <input class="filterMyActivities" type="checkbox" {{#eq opts.params.filter "myactivities"}}checked="checked" disabled="disabled"{{/eq}}/> My Activities
-  {{#if opts.params.id}}
-  {{else}}
-  <input class="filterFavorites" type="checkbox" {{#eq opts.params.filter "favorites"}}checked="checked" disabled="disabled"{{/eq}}/> My Favorites      
-  {{/if}} 
-  {{else}} 
-  <input class="filterAll" type="checkbox" checked="checked" disabled="disabled"/> All
-  <input class="filterMyActivities" type="checkbox"/> My Activities
-  {{#if opts.params.id}}
-  {{else}}
-  <input class="filterFavorites" type="checkbox"/> My Favorites         
-  {{/if}} 
-  {{/if}}   
+  <ul class="nav nav-pills">
+    {{#if opts.params.filter}}
+        <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>All</span></a></li>
+        <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Activities</span></a></li>
+        {{#if opts.params.id}}
+        {{else}}
+            <li class="filterFavorites{{#eq opts.params.filter "favorites"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Favorites</span></a></li>
+        {{/if}}
+    {{else}}
+        <li class="filterAll active"><a href="#" onclick="javascript: return false;"><span>All</span></a></li>
+        <li class="filterMyActivities"><a href="#" onclick="javascript: return false;"><span>My Activities</span></a></li>
+        {{#if opts.params.id}}
+        {{else}}
+            <li class="filterFavorites"><a href="#" onclick="javascript: return false;"><span>My Favorites</span></a></li>
+        {{/if}}
+    {{/if}}
+  </ul>
   <div class="actions">
   </div>
   <form class="form-search hide" action="">
