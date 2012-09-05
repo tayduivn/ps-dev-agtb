@@ -29,10 +29,22 @@
 require_once('tests/rest/RestTestBase.php');
 
 class EmailsApiTest extends RestTestBase {
+    var $current_user;
     var $input;
+
+    var $user_cache_directory;
+    var $uploaded_image_file_path;
+
+    var $image_file_id;
+    var $image_file_name;
 
     public function setUp()
     {
+        global $current_user;
+        parent::setUp();
+
+        $this->current_user = $current_user;
+
         $this->email_config_setup();
 
         $message = "<br>This is a <span style='color:red'>Test</span> email";
@@ -51,9 +63,8 @@ class EmailsApiTest extends RestTestBase {
 
             "bcc_addresses"	=> 	null,
 
-            "attachments"	=> 	array(
-                array("name" => "rodgers.tiff",  "id" => "5beb1fad-9aa4-c3ed-b7f8-50363d5e3a2b"),
-            ),
+            "attachments"	=> 	null,
+
             "documents"		=>	array(
                 array("name" => "schedule.pdf",  "id" => "123456789012345678901234567890123456"),
             ),
@@ -76,12 +87,33 @@ class EmailsApiTest extends RestTestBase {
 
         );
 
+        $email=new Email();
+        $this->user_cache_directory = "{$email->cachePath}/{$current_user->id}";
 
-        parent::setUp();
+        //printf("MKDIR  '%s'\n",$this->user_cache_directory);
+        mkdir($this->user_cache_directory, 0777, true);
+
+        $this->image_file_name = "packers.tiff";
+        $this->image_file_id = create_guid();
+
+        $fromImageFile = "tests/modules/Emails/data/".$this->image_file_name;
+        $this->uploaded_image_file_path = "{$this->user_cache_directory}/{$this->image_file_id}";
+
+        //printf("UploadedImageFilePath: '%s'\n",$this->uploaded_image_file_path);
+        copy($fromImageFile, $this->uploaded_image_file_path);
     }
 
     public function tearDown()
     {
+        if (file_exists($this->uploaded_image_file_path)) {
+            $res=unlink($this->uploaded_image_file_path);
+            //printf("UNLINK  '%s '(RES=%d)\n",$this->uploaded_image_file_path, $res);
+        }
+        if (file_exists($this->user_cache_directory)) {
+            $res=rmdir($this->user_cache_directory);
+            //printf("RMDIR  '%s '(RES=%d)\n",$this->user_cache_directory, $res);
+        }
+
         parent::tearDown();
     }
 
@@ -113,12 +145,44 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
-    public function testCreate_Ready_Success() {
+    public function testCreate_Draft_WithAttachment_Success() {
+        $this->input["status"] = "draft";
 
-        $this->markTestSkipped("Not real sure how to actually test successful sending");
+         $this->input["attachments"] = array(
+            array("name" => $this->image_file_name,
+                "id"   => $this->image_file_id
+            )
+        );
+
+        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $reply = $post_response['reply'];
+
+        $http_status = $post_response['info']['http_code'];
+        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+
+        $success = (int) $reply['SUCCESS'];
+        $this->assertEquals(1,$success, "Not Successful");
+
+        $email = $reply['EMAIL'];
+        // print_r($email);
+
+        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
+        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
+        $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
+        $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
+
+        $this->deleteEmails($email['id']);
+    }
+
+
+    public function testCreate_Ready_Success() {
+        $this->markTestSkipped("Not real sure how to test actually sending of the mail"); /********************************/
 
         $this->input["status"] = "ready";
-        $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"tim.tj.wolf@gmail.com") );
+        $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"twolf@sugarcrm.com") );
         $this->input["cc_addresses"] = null;
         $this->input["bcc_addresses"] = null;
 
@@ -142,10 +206,43 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
+
+    public function testCreate_Ready_WithAttachment_Success() {
+        $this->markTestSkipped("Not real sure how to test actually sending of the mail"); /********************************/
+
+        $this->input["attachments"] = array(
+            array("name" => $this->image_file_name,
+                  "id"   => $this->image_file_id
+            )
+        );
+
+        $this->input["status"] = "ready";
+        $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"twolf@sugarcrm.com") );
+        $this->input["cc_addresses"] = null;
+        $this->input["bcc_addresses"] = null;
+
+        // printf("Current User = '%s' : '%s'\n\n",$this->current_user->id,  $this->current_user->name);
+
+        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
+
+        $reply = $post_response['reply'];
+        $success = (int) $reply['SUCCESS'];
+        $this->assertEquals(1,$success, "Not Successful");
+
+        $email = $reply['EMAIL'];
+        // print_r($email);
+
+        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
+        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
+        $this->assertEquals("out", $email['type'], "Email Type Incorrect");
+        $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
+
+        $this->deleteEmails($email['id']);
+    }
+
+
     public function testCreate_Ready_EmailSendFailed() {
-
-        $this->markTestSkipped("Not real sure how to actually test sending to bad email address");
-
         $this->input["status"] = "ready";
         $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"bogus_email_unit_test@webtribune.com") );
         $this->input["cc_addresses"] = null;
