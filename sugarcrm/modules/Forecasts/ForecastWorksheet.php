@@ -23,13 +23,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class ForecastWorksheet extends SugarBean {
 
     var $id;
-    var $worksheet_id;
+    var $args;
     var $name;
     var $forecast;
     var $best_case;
     var $likely_case;
     var $worst_case;
     var $sales_stage;
+    var $assigned_user_id;    
     var $object_name = 'ForecastWorksheet';
     var $module_dir = 'Forecasts';
     var $table_name = 'opportunities';
@@ -48,35 +49,70 @@ class ForecastWorksheet extends SugarBean {
      */
     function save($check_notify = false)
     {
-        //Update the Opportunities bean
-        $opp = BeanFactory::getBean('Opportunities', $this->id);
-        $opp->forecast = ($this->forecast) ? 1 : 0;
-        $opp->probability = $this->probability;
-        $opp->best_case = $this->best_case;
-        $opp->likely_case = $this->likely_case;
-        $opp->sales_stage = $this->sales_stage;
-        $opp->commit_stage = $this->commit_stage;
-        $opp->save();
-
+    	$version = 1;
+    	
+    	if(isset($this->args["draft"]) && $this->args["draft"] == 1){
+			$version = 0;
+		}
+		
+		$worksheetID = $this->getWorksheetID($version);
+    	
+    	if($version != 0)
+    	{
+	        //Update the Opportunities bean
+	        $opp = BeanFactory::getBean('Opportunities', $this->id);
+	        $opp->forecast = ($this->forecast) ? 1 : 0;
+	        $opp->probability = $this->probability;
+	        $opp->best_case = $this->best_case;
+	        $opp->sales_stage = $this->sales_stage;
+	        $opp->commit_stage = $this->commit_stage;
+	        $opp->save();
+    	}
+    	 
         //Update the Worksheet bean
-        
-		$worksheet  = BeanFactory::getBean('Worksheet', $this->worksheet_id);
-		$worksheet->timeperiod_id = $opp->timeperiod_id;
-		$worksheet->user_id = $opp->assigned_user_id;
+		$worksheet  = BeanFactory::getBean('Worksheet', $worksheetID);
+		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
+		$worksheet->user_id = $this->assigned_user_id;
 		$worksheet->forecast = ($this->forecast) ? 1 : 0;
         $worksheet->best_case = $this->best_case;
         $worksheet->likely_case = $this->amount;
-        $worksheet->probability = $this->probability;
+        $worksheet->op_probability = $this->probability;
         $worksheet->forecast_type = "Direct";
+        $worksheet->related_forecast_type = "Product";
         $worksheet->related_id = $this->id;
+        $worksheet->version = $version;
         $worksheet->save();
     }
     
     /**
-     * Sets Worksheet ID so that we can grab it from the DB and update it.
+     * Sets Worksheet args so that we save the supporting tables.
+     * @param array $args Arguments passed to save method through PUT
      */
-	function setWorksheetId($worksheetId){
-		$this->worksheet_id = $worksheetId;
+	public function setWorksheetArgs($args)
+	{
+		$this->args = $args;
+	}
+	
+	/**
+	 * Finds the id of the correct version row to update
+	 * 
+	 * @param int version
+	 * @return uuid ID of row, null if not found.
+	 */
+	protected function getWorksheetID($version)
+	{
+		$id = null;
+		$sql = "select id from worksheet " .
+				"where timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
+					"and user_id = '" . $this->args["current_user"] . "' " .
+					"and version = '" . $version . "' " .
+					"and related_id = '" . $this->args["id"] . "'";
+		
+		$result = $GLOBALS['db']->query($sql);
+		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null){
+			$id = $row['id'];
+		}
+		return $id;
 	}
 }
 

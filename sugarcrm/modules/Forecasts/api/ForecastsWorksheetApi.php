@@ -65,55 +65,91 @@ class ForecastsWorksheetApi extends ModuleApi {
         if (!$seed->ACLAccess('list') ) {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
-
-        require_once('modules/Reports/Report.php');
-        require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
-
-        global $app_list_strings,$current_language, $current_user;
-
-        $app_list_strings = return_app_list_strings_language($current_language);
-
-        $mgr = new ChartAndWorksheetManager();
-        $report_defs = $mgr->getWorksheetDefinition('individual', 'opportunities');
-
-        $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+		global $app_list_strings,$current_language, $current_user;
+		
+		$timeperiod_id =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
-
-        $testFilters = array(
-            'timeperiod_id' => array('$is' => $timeperiod_id),
-            'assigned_user_link' => array('id' => $user_id),
-        );
-
-        require_once('include/SugarParsers/Filter.php');
-        require_once("include/SugarParsers/Converter/Report.php");
-        require_once("include/SugarCharts/ReportBuilder.php");
-
-        // create the a report builder instance
-        $rb = new ReportBuilder("Opportunities");
-        // load the default report into the report builder
-        $rb->setDefaultReport($report_defs[2]);
-
-        // parse any filters from above
-        $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report($rb);
-        $reportFilters = $filter->convert($converter);
-        // add the filter to the report builder
-
-        $rb->addFilter($reportFilters);
-
-        // create the json for the reporting engine to use
-        $chart_contents = $rb->toJson();
-        $report = new Report($chart_contents);
-        $returnData = $mgr->getWorksheetGridData('individual', $report);
-       	
-       	$index = 0;
-       	foreach($returnData as $data)
+		
+        $sql = "select o.id, " .
+        	          "o.amount, " .
+        	          "o.date_closed, " .
+        	          "o.probability, " .
+        	          "o.commit_stage, " .
+        	          "o.sales_stage, " .
+        	          "o.timeperiod_id, " .
+        	          "o.currency_id, " .
+        	          "o.name, " .
+        	          "o.best_case, " .
+        	          "o.worst_case, " .
+        	          "o.forecast, " .
+        	          "o.assigned_user_id, " .
+        	          "w.id worksheet_id, " .
+        	          "w.user_id w_user_id, " .
+        	          "w.forecast w_forecast, " .
+        	          "w.best_case w_best_case, " .
+        	          "w.likely_case w_likely_case, " .
+        	          "w.worst_case w_worst_case, " .
+        	          "w.forecast_type w_forecast_type, " .
+        	          "w.related_id w_related_id, " .
+        	          "w.version w_version, " .
+        	          "w.commit_stage w_commit_stage, " .
+        	          "w.op_probability w_probability, " .
+        	          "w.currency_id w_currency_id " .
+        	          "from opportunities o " .
+        	          "left join worksheet w " .
+        	          	"on o.id = w.related_id ";
+        if($user_id == $current_user->id)
         {
-        	$returnData[$index]["worksheet_id"] = $this->getRelatedWorksheetID($data["id"]);
-        	$index++;	
-        }  
-       
+        	$sql .=    	"and w.date_modified = (select max(date_modified) from worksheet w2 " .
+        	          							"where w2.user_id = o.assigned_user_id and related_id = o.id " .
+        	          								"and timeperiod_id = '6149bc2a-4693-b984-956d-504379b32dc6') ";
+        }
+        else
+        {
+        	$sql .= 	"and w.version = 1 ";
+        }
+        	          
+		$sql .=		  "where o.timeperiod_id = '" . $timeperiod_id . "' " .
+        	          	"and o.assigned_user_id = '" . $user_id ."'";
+        
+        $result = $GLOBALS['db']->query($sql);
+
+        $returnData = array();
+
+        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+        {
+            $data = "";
+            $data->id = $row["id"];
+            $data->date_closed = $row["date_closed"];
+            $data->sales_stage = $row["sales_stage"];
+            $data->assigned_user_id = $row["assigned_user_id"];
+            $data->amount = $row["amount"];
+            $data->worksheet_id = "";
+            $data->name = $row["name"];
+            
+            if(isset($row["worksheet_id"]))
+            {
+            	$data->worksheet_id = $row["worksheet_id"];
+            	$data->forecast = $row["w_forecast"];
+            	$data->best_case = $row["w_best_case"];
+            	$data->worst_case = $row["w_worst_case"];
+            	$data->likely_case = $row["w_likely_case"];
+            	$data->commit_stage = $row["w_commit_stage"];
+            	$data->probability = $row["w_probability"];
+            	$data->version = $row["w_version"];
+            }
+            else
+            {
+            	$data->forecast = $row["forecast"];
+            	$data->best_case = $row["best_case"];
+            	$data->worst_case = $row["worst_case"];
+            	$data->commit_stage = $row["commit_stage"];
+            	$data->probability = $row["probability"];
+            }
+            $returnData[] = $data;
+            
+        }             
+            	       
         return $returnData;
     }
 
@@ -156,7 +192,7 @@ class ForecastsWorksheetApi extends ModuleApi {
                $field->save($seed, $args, $fieldName, $properties);
             }
         }
-		$seed->setWorksheetId($args['worksheet_id']);
+		$seed->setWorksheetArgs($args);
         $seed->save();
         return $seed->id;
     }

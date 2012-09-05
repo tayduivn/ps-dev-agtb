@@ -97,6 +97,7 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
                     $worksheet->best_case = $opp->best_case + 500;
                     $worksheet->likely_case = $opp->amount + 500;
                     $worksheet->worst_case = $opp->worst_case + 500;
+                    $worksheet->op_probability = $opp->probability;
                     $worksheet->save();
                     $created_ids[] = $worksheet->id;
 
