@@ -40,7 +40,7 @@ class ForecastScheduleTests extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /*
-     * Test that the currency_rate field is populated with rate
+     * Test that the base_rate field is populated with rate
      * of currency_id
      *
      */
@@ -51,7 +51,7 @@ class ForecastScheduleTests extends Sugar_PHPUnit_Framework_TestCase
         $schedule->currency_id = $currency->id;
         $schedule->save();
         $this->assertEquals(
-            sprintf('%.6f',$schedule->currency_rate),
+            sprintf('%.6f',$schedule->base_rate),
             sprintf('%.6f',$currency->conversion_rate)
         );
     }

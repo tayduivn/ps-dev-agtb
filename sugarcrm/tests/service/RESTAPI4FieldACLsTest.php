@@ -106,8 +106,8 @@ class RESTAPI4FieldACLsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function _wirelessGridProvider() {
         return array(
-            array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/metadata/mobile/views/edit.php',),
-            array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/metadata/mobile/views/detail.php',),
+            array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',),
+            array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/clients/mobile/views/detail/detail.php',),
         );
     }
     
@@ -119,7 +119,7 @@ class RESTAPI4FieldACLsTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function _wirelessListProvider() {
         return array(
-            array('module' => 'Cases', 'metadatafile' => 'modules/Cases/metadata/mobile/views/list.php',),
+            array('module' => 'Cases', 'metadatafile' => 'modules/Cases/clients/mobile/views/list/list.php',),
         );
     }
 }

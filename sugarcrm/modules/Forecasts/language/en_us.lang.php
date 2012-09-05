@@ -233,10 +233,10 @@ $mod_strings = array (
     'LBL_UP' => 'up',
     'LBL_DOWN' => 'down',
     'LBL_PREVIOUS_COMMIT' => 'Latest Commit: {{likely_case}}',
-    'LBL_COMMITTED_HISTORY_BOTH_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely {3} {4} to {5}',
-    'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast best {0} {1} to {2} and likely stayed the same',
-    'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast best stayed the same and likely {0} {1} to {2}',
-    'LBL_COMMITTED_HISTORY_NONE_CHANGED' => 'Updated forecast best and likely stayed the same',
+    'LBL_COMMITTED_HISTORY_BOTH_CHANGED' => 'Updated forecast likely {3} {4} to {5} and best {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast likely stayed the same and best {0} {1} to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast likely {0} {1} to {2} and best stayed the same',
+    'LBL_COMMITTED_HISTORY_NONE_CHANGED' => 'Updated forecast likely and best stayed the same',
     'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
     'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
 
@@ -251,6 +251,7 @@ $mod_strings = array (
     'LBL_INCLUDED_TOTAL' => 'Included Total',
     'LBL_OVERALL_TOTAL' => 'Overall Total',
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
+    'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
@@ -302,4 +303,43 @@ $mod_strings = array (
 
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
+
+    // config panels strings
+    // splash screens
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the forecasting setup. We\'ll guide you through step by step in setting up x,y and z so you\'ll be on your way in no time. Click next to get started.',
+    'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'You can also do manual setup by clicking ',
+    'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
+    'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
+
+    // timeperiod config
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
+    'LBL_FORECASTS_CONFIG_FISCAL_START_DATE' => 'Select the start date of your fiscal time period:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
+    'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:',
+
+    // category config
+    'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
+    'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS' => 'Select the way you would like to categorize opportunities.',
+    'LBL_FORECASTS_CONFIG_SHOW_2_CATEGORIES' => 'Two Categories: This option gives a user the ability to be included or omitted from a forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_3_CATEGORIES' => 'Three Categories: This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be omitted from the forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_N_CATEGORIES' => 'N Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
+
+    // range config
+    'LBL_FORECASTS_CONFIG_RANGE' => 'Forecast Range',
+    'LBL_FORECASTS_CONFIG_RANGE_LIKELY' => 'Likely',
+    'LBL_FORECASTS_CONFIG_RANGE_BEST' => 'Best',
+    'LBL_FORECASTS_CONFIG_RANGE_WORST' => 'Worst',
+
+    // variables config
+    'LBL_FORECASTS_CONFIG_VARIABLES' => 'Variables',
+    'LBL_FORECASTS_CONFIG_VARIABLES_DESC' => 'The formulas for the Metrics Table rely on the sales stage for opportunities that need to be excluded from the pipleline, i.e., opportunities that are closed and lost.',
+    'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE' => 'Please select the Sales Stage that represent closed and lost opportunities:',
+    'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipline formula will be:',
+
+    // general config
+    'LBL_FORECASTS_CONFIG_GENERAL' => 'General Forecasts Configuration',
+    'LBL_FORECASTS_CONFIG_SHOW_PRINT_BUTTON' => 'Display the "Print" button',
+
 );

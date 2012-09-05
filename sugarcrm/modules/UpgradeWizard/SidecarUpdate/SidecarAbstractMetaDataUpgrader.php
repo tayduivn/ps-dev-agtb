@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 // Get the meta data files handler for the new setup
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
 
@@ -107,11 +108,13 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @var array
      */
     protected $variableMap = array(
+        //BEGIN SUGARCRM flav=ent ONLY
         'portal'   => array(
             'list'   => 'viewdefs',
             'edit'   => 'viewdefs',
             'detail' => 'viewdefs',
         ),
+        //END SUGARCRM flav=ent ONLY
         'wireless' => array(
             'list'   => 'listViewDefs',
             'edit'   => 'viewdefs',
@@ -125,13 +128,15 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @var array
      */
     protected $views = array(
+        //BEGIN SUGARCRM flav=ent ONLY
         'portaledit'     => MB_PORTALEDITVIEW,
         'portaldetail'   => MB_PORTALDETAILVIEW,
+        'portallist'     => MB_PORTALLISTVIEW,
+        'portalsearch'   => MB_PORTALSEARCHVIEW,
+        //END SUGARCRM flav=ent ONLY
         'wirelessedit'   => MB_WIRELESSEDITVIEW,
         'wirelessdetail' => MB_WIRELESSDETAILVIEW,
-        'portallist'     => MB_PORTALLISTVIEW,
         'wirelesslist'   => MB_WIRELESSLISTVIEW,
-        'portalsearch'   => MB_PORTALSEARCHVIEW,
         'wirelesssearch' => MB_WIRELESSBASICSEARCH,
     );
     
@@ -142,10 +147,12 @@ abstract class SidecarAbstractMetaDataUpgrader
      * @var array
      */
     protected $vardefIndexes = array(
+        //BEGIN SUGARCRM flav=ent ONLY
         'portaledit'     => 'editview',
         'portaldetail'   => 'detailview',
-        'wirelessedit'   => 'EditView',
         'portallist'     => 'listview',
+        //END SUGARCRM flav=ent ONLY
+        'wirelessedit'   => 'EditView',
         'wirelesslist'   => '',
         'wirelessdetail' => 'DetailView',
     );

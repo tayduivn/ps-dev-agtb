@@ -64,6 +64,46 @@ class ForecastsCurrentUserApiTest extends RestTestBase
     }
 
     /**
+     * This test is to make sure Forecasts/me endpoint returns an isManager property
+     */
+    public function testCheckForecastSpecificIsManager()
+    {
+        $restReply = $this->_restCall("Forecasts/me");
+        $currentUser = $restReply['reply']['current_user'];
+        $this->assertArrayHasKey('isManager', $currentUser, "Forecasts/me did not return isManager");
+    }
+
+    /**
+     * This test is to make sure Forecasts/me endpoint returns an showOpps property
+     */
+    public function testCheckForecastSpecificShowOpps()
+    {
+        $restReply = $this->_restCall("Forecasts/me");
+        $currentUser = $restReply['reply']['current_user'];
+        $this->assertArrayHasKey('showOpps', $currentUser, "Forecasts/me did not return showOpps");
+    }
+
+    /**
+     * This test is to make sure Forecasts/me endpoint returns an first_name property
+     */
+    public function testCheckForecastSpecificFirstName()
+    {
+        $restReply = $this->_restCall("Forecasts/me");
+        $currentUser = $restReply['reply']['current_user'];
+        $this->assertArrayHasKey('first_name', $currentUser, "Forecasts/me did not return first_name");
+    }
+
+    /**
+     * This test is to make sure Forecasts/me endpoint returns an last_name property
+     */
+    public function testCheckForecastSpecificLastName()
+    {
+        $restReply = $this->_restCall("Forecasts/me");
+        $currentUser = $restReply['reply']['current_user'];
+        $this->assertArrayHasKey('last_name', $currentUser, "Forecasts/me did not return last_name");
+    }
+
+    /**
      * This test is to see that the data returned for the name field is set correctly when locale name format changes
      *
      * @group testGetLocaleFormattedName

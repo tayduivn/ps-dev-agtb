@@ -142,9 +142,9 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     //'calculated' => true,
     //'formula' => 'rollupSum($products, "list_price")',
   ),
-  'currency_rate' =>
+  'base_rate' =>
   array (
-    'name' => 'currency_rate',
+    'name' => 'base_rate',
     'vname' => 'LBL_CURRENCY_RATE',
     'type' => 'double',
     'required' => true,
@@ -424,7 +424,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'name' => 'campaign_link',
         'type' => 'link',
         'relationship' => 'opportunities_campaign',
-        'vname' => 'LBL_CAMPAIGNS',
+        'vname' => 'LBL_CAMPAIGN_LINK',
         'link_type' => 'one',
         'module' => 'Campaigns',
         'bean_name' => 'Campaign',

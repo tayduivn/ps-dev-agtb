@@ -13,7 +13,6 @@
             <div class="row-fluid">
                 <div class="span8">
                     <div class="view-forecastsCommitButtons"></div>
-                    <div class="view-forecastsTimeframes"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-forecastsFilter"></div>
                     <div>
@@ -36,21 +35,6 @@
                         <div class="block" id="guages">
                             <div class="view-forecastsProgress"></div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="modal hide fade" id="forecastSubnavSettingsModal" style="display:block">
-                    <div class="modal-header">
-                        <a class="close" data-dismiss="modal">×</a>
-                        <h3>Admin</h3>
-                    </div>
-                    <div class="modal-body">
-                        <p>Body....................</p>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#" class="btn">Cancel</a>
-                        <a href="#" class="btn btn-primary">Save</a>
-
                     </div>
                 </div>
             </div>
@@ -105,11 +89,11 @@
 
 <div class="content"></div>
 <script src='{$configFile}'></script>
-<script src='modules/Forecasts/metadata/base/helper/hbt-helpers.js'></script>
-<script src='modules/Forecasts/metadata/base/lib/ClickToEdit.js'></script>
-<script src='modules/Forecasts/metadata/base/lib/BucketGridEnum.js'></script>
-<script src='modules/Forecasts/metadata/base/lib/ForecastsUtils.js'></script>
-<script src='modules/Forecasts/metadata/base/views/alert-view.js'></script>
+<script src='modules/Forecasts/clients/base/helper/hbt-helpers.js'></script>
+<script src='modules/Forecasts/clients/base/lib/ClickToEdit.js'></script>
+<script src='modules/Forecasts/clients/base/lib/BucketGridEnum.js'></script>
+<script src='modules/Forecasts/clients/base/lib/ForecastsUtils.js'></script>
+<script src='modules/Forecasts/clients/base/views/alert-view/alert-view.js'></script>
 <script src='modules/Forecasts/tpls/SidecarView.js'></script>
 <script src='include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'></script>
 <script src='include/javascript/twitterbootstrap/js/bootstrap-popover.js'></script>

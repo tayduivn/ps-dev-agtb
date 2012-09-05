@@ -33,14 +33,14 @@ require_once('include/Sugarpdf/sugarpdf_config.php');
 $SugarpdfSettings = array(
     "sugarpdf_pdf_title"=>array(
         "label"=>$mod_strings["PDF_TITLE"],
-        "info_label"=>$mod_strings["PDF_TITLE_INFO"],
+        "info_label"=> "",
         "value"=>PDF_TITLE,
         "class"=>"basic",
         "type"=>"text",
     ),
     "sugarpdf_pdf_subject"=>array(
         "label"=>$mod_strings["PDF_SUBJECT"],
-        "info_label"=>$mod_strings["PDF_SUBJECT_INFO"],
+        "info_label"=> "",
         "value"=>PDF_SUBJECT,
         "class"=>"basic",
         "type"=>"text",
@@ -55,7 +55,7 @@ $SugarpdfSettings = array(
     ),*/
     "sugarpdf_pdf_author"=>array(
         "label"=>$mod_strings["PDF_AUTHOR"],
-        "info_label"=>$mod_strings["PDF_AUTHOR_INFO"],
+        "info_label"=> "",
         "value"=>PDF_AUTHOR,
         "class"=>"basic",
         "type"=>"text",
@@ -84,21 +84,6 @@ $SugarpdfSettings = array(
         "type"=>"text",
     ),
     */
-    "sugarpdf_pdf_header_logo"=>array(
-        "label"=>$mod_strings["PDF_HEADER_LOGO"],
-        "info_label"=>$mod_strings["PDF_HEADER_LOGO_INFO"],
-        "value"=>PDF_HEADER_LOGO,
-        "path"=>K_PATH_CUSTOM_IMAGES.PDF_HEADER_LOGO,
-        "class"=>"logo",
-        "type"=>"image",
-    ),
-    "new_header_logo"=>array(
-        "label"=>$mod_strings["PDF_NEW_HEADER_LOGO"],
-        "info_label"=>$mod_strings["PDF_NEW_HEADER_LOGO_INFO"],
-        "value"=>"",
-        "class"=>"logo",
-        "type"=>"file",
-    ),
     /*
     "sugarpdf_pdf_header_logo_width"=>array(
         "label"=>$mod_strings["PDF_HEADER_LOGO_WIDTH"],
@@ -260,10 +245,6 @@ $SugarpdfSettings = array(
 
 // Use the OOB directory for images if there is no image in the custom directory
 $small_logo = $SugarpdfSettings['sugarpdf_pdf_small_header_logo']['path'];
-$logo = $SugarpdfSettings['sugarpdf_pdf_header_logo']['path'];
-if (@getimagesize($logo) === FALSE) {
-    $SugarpdfSettings['sugarpdf_pdf_header_logo']['path'] = K_PATH_IMAGES.$SugarpdfSettings['sugarpdf_pdf_header_logo']['value'];
-}
 if (@getimagesize($small_logo) === FALSE) {
     $SugarpdfSettings['sugarpdf_pdf_small_header_logo']['path'] = K_PATH_IMAGES.$SugarpdfSettings['sugarpdf_pdf_small_header_logo']['value'];
 }

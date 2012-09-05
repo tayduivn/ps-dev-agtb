@@ -329,23 +329,35 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_lhs'];
             $targetKey = $this->def['join_key_rhs'];
             $relatedSeed = BeanFactory::getBean($this->getRHSModule());
-            if (!empty($params['where']))
-                $whereTable = (empty($params['right_join_table_alias']) ? $relatedSeed->table_name : $params['right_join_table_alias']);
+            $whereTable = "";
+            if (empty($params['right_join_table_alias'])){
+                if ($relatedSeed !== false){
+                    $whereTable = $relatedSeed->table_name;
+                }
+            } else {
+                $whereTable = $params['right_join_table_alias'];
+            }
         }
         else
         {
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
             $relatedSeed = BeanFactory::getBean($this->getLHSModule());
-            if (!empty($params['where']))
-                $whereTable = (empty($params['left_join_table_alias']) ? $relatedSeed->table_name : $params['left_join_table_alias']);
+            $whereTable = "";
+            if (empty($params['left_join_table_alias'])){
+                if ($relatedSeed !== false){
+                    $whereTable = $relatedSeed->table_name;
+                }
+            } else {
+                $whereTable = $params['left_join_table_alias'];
+            }
         }
         $rel_table = $this->getRelationshipTable();
 
         $where = "$rel_table.$knownKey = '{$link->getFocus()->id}'" . $this->getRoleWhere();
 
         //Add any optional where clause
-        if (!empty($params['where'])){
+        if (!empty($params['where']) && !empty($whereTable)){
             $add_where = is_string($params['where']) ? $params['where'] : "$whereTable." . $this->getOptionalWhereClause($params['where']);
             if (!empty($add_where))
                 $where .= " AND $rel_table.$targetKey=$whereTable.id AND $add_where";
@@ -354,18 +366,24 @@ class M2MRelationship extends SugarRelationship
         $deleted = !empty($params['deleted']) ? 1 : 0;
         $from = $rel_table;
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!empty($params['enforce_teams']))
+        if (!empty($params['enforce_teams']) && $relatedSeed !== false)
         {
             if ($rel_table != $relatedSeed->table_name)
                 $from .= ", $relatedSeed->table_name";
             $relatedSeed->add_team_security_where_clause($from);
         }
         //END SUGARCRM flav=pro ONLY
-        if (!empty($params['where']))
-            $from .= ", $whereTable";
+        if ((!empty($params['where']) || !empty($params['orderby'])) && !empty($whereTable))
+            $from .= " LEFT JOIN $whereTable on $rel_table.$targetKey=$whereTable.id";
+
+        $select = "$targetKey id";
+        foreach($this->getAdditionalFields() as $field=>$def){
+            $select .= ", $rel_table.$field";
+        }
 
         if (empty($params['return_as_array'])) {
-            $query = "SELECT $targetKey id FROM $from WHERE $where AND $rel_table.deleted=$deleted";
+            $orderby = (!empty($params['orderby']) && !empty($whereTable)) ? " ORDER BY $whereTable.{$params['orderby']}": "";
+            $query = "SELECT $select FROM $from WHERE $where AND $rel_table.deleted=$deleted $orderby";
             //Limit is not compatible with return_as_array
             if (!empty($params['limit']) && $params['limit'] > 0) {
                 $offset = isset($params['offset']) ? $params['offset'] : 0;
@@ -376,7 +394,7 @@ class M2MRelationship extends SugarRelationship
         else
         {
             return array(
-                'select' => "SELECT $targetKey id",
+                'select' => "SELECT $select",
                 'from' => "FROM $from",
                 'where' => "WHERE $where AND $rel_table.deleted=$deleted",
             );
@@ -560,6 +578,10 @@ class M2MRelationship extends SugarRelationship
     {
         if (!empty($this->def['fields']))
             return $this->def['fields'];
+        return $this->getStandardFields();
+    }
+
+    protected function getStandardFields(){
         $fields = array(
             "id" => array('name' => 'id'),
             'date_modified' => array('name' => 'date_modified'),
@@ -575,6 +597,19 @@ class M2MRelationship extends SugarRelationship
         $fields['deleted'] = array('name' => 'deleted');
 
         return $fields;
+    }
+
+    protected function getAdditionalFields(){
+        $ret = array();
+        if (!empty($this->def['fields']))
+        {
+            $standardFields = $this->getStandardFields();
+            foreach($this->def['fields'] as $def){
+                if (!isset($standardFields[$def['name']]))
+                    $ret[$def['name']] = $def;
+            }
+        }
+        return $ret;
     }
 
 }

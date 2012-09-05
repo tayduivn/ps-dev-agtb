@@ -1,0 +1,2 @@
+        <input type="text" name="{{name}}" value="{{value}}" class="input-large">
+        <p class="help-block"></p>

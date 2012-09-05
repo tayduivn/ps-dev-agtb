@@ -53,12 +53,17 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
      * @return array
      */
     public function retrieveCurrentUser($api, $args) {
+        global $current_user;
 
         $data = parent::retrieveCurrentUser($api, $args);
-        global $current_user;
-        $data['current_user']['isManager'] = User::isManager($current_user->id);
-        return $data;
 
+        // Add Forecasts-specific items to returned data
+        $data['current_user']['isManager'] = User::isManager($current_user->id);
+        $data['current_user']['showOpps'] = false;
+        $data['current_user']['first_name'] = $current_user->first_name;
+        $data['current_user']['last_name'] = $current_user->last_name;
+
+        return $data;
     }
 
     /**

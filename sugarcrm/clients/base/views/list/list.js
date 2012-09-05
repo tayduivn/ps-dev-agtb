@@ -44,7 +44,7 @@
      * @param {Object} event jquery event object
      */
     setOrderBy: function(event) {
-        var orderMap, collection, fieldName, nOrder, options,
+        var orderMap, collection, fieldName, nOrder, options, eventTarget, orderBy
             self = this;
         //set on this obj and not the prototype
         self.orderBy = self.orderBy || {};
@@ -57,31 +57,42 @@
 
         //TODO probably need to check if we can sort this field from metadata
         collection = self.collection;
-        fieldName = self.$(event.target).data('fieldname');
+        eventTarget = self.$(event.target);
+        fieldName = eventTarget.data('fieldname');
+
+        // first check if alternate orderby is set for column
+        orderBy = eventTarget.data('orderby');
+        // if no alternate orderby, use the field name
+        if (!orderBy) {
+            orderBy = eventTarget.data('fieldname');
+        }
 
         if (!collection.orderBy) {
             collection.orderBy = {
                 field: "",
-                direction: ""
+                direction: "",
+                columnName: ""
             };
         }
 
         nOrder = "desc";
 
         // if same field just flip
-        if (fieldName === collection.orderBy.field) {
+        if (orderBy === collection.orderBy.field) {
             if (collection.orderBy.direction === "desc") {
                 nOrder = "asc";
             }
             collection.orderBy.direction = nOrder;
         } else {
-            collection.orderBy.field = fieldName;
+            collection.orderBy.field = orderBy;
             collection.orderBy.direction = "desc";
         }
+        collection.orderBy.columnName = fieldName;
 
         // set it on the view
-        self.orderBy.field = fieldName;
+        self.orderBy.field = orderBy;
         self.orderBy.direction = orderMap[collection.orderBy.direction];
+        self.orderBy.columnName = fieldName;
 
         // Treat as a "sorted search" if the filter is toggled open
         options = self.filterOpened ? self.getSearchOptions() : {};
