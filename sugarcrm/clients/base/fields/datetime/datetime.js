@@ -32,6 +32,7 @@
         } else {
             // In case ISO 8601 get it back to js native date which date.format understands
             jsDate = new Date(value);
+            value  = app.date.format(jsDate, usersDateFormatPreference);
         }
         jsDate = app.date.parse(value);
         return app.date.format(jsDate, usersDateFormatPreference);

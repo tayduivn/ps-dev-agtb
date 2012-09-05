@@ -15,33 +15,16 @@ describe("sugarfields", function() {
 
     describe("datetimecombo", function() {
         it("should format the date time combo", function() {
-            var myUser = SUGAR.App.user, expectedValue, dtprefs, jsDate, stub;
-
+            var myUser = SUGAR.App.user, expectedValue, jsDate, unformatedValue;
             myUser.set('datepref','m/d/Y');
             myUser.set('timepref','H:i');
-
             jsDate = new Date('2012-04-09T09:50:58Z');
             unformatedValue = jsDate.toISOString();
-            dtprefs = {
-                datepref: "m/d/Y",
-                timepref: "H:i"
-            };
-            stub = sinon.stub(app.user, 'getUser', function(key) {
-                return new Backbone.Model(dtprefs);
-            });
-            //unformatedValue = new Date(2012, 3, 9, 9, 50, 58);
-            expectedValue =
-            {
-                dateTime: unformatedValue,
-                date: "04/09/2012",
-                time: "10:00",
-                hours: '10',
-                minutes: '00',
-                seconds: '58',
-                amPm: 'am'
-            };
-            expect(field.format(unformatedValue)).toEqual(expectedValue);
-            stub.restore();
+            expect(field.format(unformatedValue).date).toEqual('04/09/2012');
+            expect(field.format(unformatedValue).dateTime).toEqual('04/09/2012 03:00');
+            // we round to nearest 15 minutes so 2:50 is 3:00 in this case
+            expect(field.format(unformatedValue).time).toEqual('03:00');
+            expect(field.format(unformatedValue).seconds).toEqual('00');
         });
     });
 });

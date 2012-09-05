@@ -16,18 +16,11 @@ describe("sugarfields", function() {
 
     describe("datetime", function() {
         it("should format the value", function() {
-            var unformatedValue, expectedValue, dtprefs;
-            dtprefs = {
-                datepref: "m/d/Y",
-                timepref: "H:i"
-            };
-            var stub = sinon.stub(app.user, 'getUser', function(key) {
-                return new Backbone.Model(dtprefs);
-            });
-            unformatedValue = new Date(2012, 3, 9, 9, 50, 58);
-            expectedValue = "04/09/2012";
-            expect(field.format(unformatedValue)).toEqual(expectedValue);
-            stub.restore();
+            var myUser = SUGAR.App.user, jsDate, unformatedValue;
+            myUser.set('datepref','m/d/Y');
+            jsDate = new Date("March 13, 2012")
+            unformatedValue = jsDate.toISOString();
+            expect(field.format(unformatedValue)).toEqual('03/13/2012');
         });
     });
 });
