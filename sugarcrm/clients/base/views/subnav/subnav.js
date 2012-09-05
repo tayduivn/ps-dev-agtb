@@ -1,22 +1,48 @@
 ({
     events: {
-        'click [name=save_button]': 'saveModel'
+        'click [name=save_button]': 'save',
+        'click [name=cancel_button]': 'cancel',
+        'click [name=edit_button]': 'edit'
     },
+
     /**
-     * Listens to the app:view:change event and show or hide the subnav
+     * Initialize the view and prepare the model with default button metadata
+     * for the current layout.
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.context.set('subnavModel', new Backbone.Model());
-        this.subnavModel = this.context.get('subnavModel');
+
+        this.subnavModel = new Backbone.Model();
+        this.subnavModel.set({
+            meta: {
+                buttons: this.meta.buttons[this.context.get('layout')]
+            }
+        });
+        this.context.set('subnavModel', this.subnavModel);
     },
-    saveModel: function() {
+
+    /**
+     * Handle click on the save button
+     */
+    save: function() {
         this.context.trigger("subnav:save");
     },
 
+    /**
+     * Handle click on the cancel button
+     */
+    cancel: function() {
+        this.app.navigate(this.context, this.model, 'detail');
+    },
+
+    /**
+     * Handle click on the edit button
+     */
+    edit: function() {
+        this.app.navigate(this.context, this.model, "edit", {trigger:true});
+    },
+
     bindDataChange: function() {
-        if (this.subnavModel) {
-            this.subnavModel.on("change", this.render, this);
-        }
+        this.subnavModel.on("change", this.render, this);
     }
 })
