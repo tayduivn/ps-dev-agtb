@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="../clients/summer/views/activitystream/activitystream.css" xmlns="http://www.w3.org/1999/html">
 <div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
   <h4>Activity</h4>  
   <div class="activitystream-post">

@@ -93,7 +93,7 @@
     },
 
     expandNewPost: function(event) {
-        this.$(event.currentTarget).attr("placeholder", "Drop a file to attach it to the comment.");
+        this.$(event.currentTarget).attr("placeholder", "Drop a file to attach it to the comment.").addClass("dragdrop");
         return false;
     },
 
@@ -104,7 +104,7 @@
     shrinkNewPost: function(event) {
         event.stopPropagation();
         event.preventDefault();
-        this.$(event.currentTarget).attr("placeholder", "Type your post")
+        this.$(event.currentTarget).attr("placeholder", "Type your post").removeClass("dragdrop")
         return false;
     },
 
@@ -130,7 +130,7 @@
                     var container = $("<div></div>");
                     container.append("<input name='attachment_name[]' value='"+file.name+"' type='hidden' />");
                     container.append("<input name='attachment_data[]' value='"+e.target.result+"' type='hidden' />");
-                    $('<i class="icon-remove-circle"></i>').on('click', function(e) {
+                    $('<a class="close">&times;</a>').on('click', function(e) {
                         $(this).parent().remove();
                     }).appendTo(container);
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
