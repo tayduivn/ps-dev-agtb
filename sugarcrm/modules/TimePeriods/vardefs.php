@@ -141,9 +141,15 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
 	'timeperiod_forecast_schedules' => array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Forecasts', 'rhs_table'=> 'forecast_schedule', 'rhs_key' => 'timeperiod_id',
 							  'relationship_type'=>'one-to-many'),
-	'related_timeperiods' => array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
-							  'rhs_module'=> 'TimePeriods', 'rhs_table'=> 'timeperiods', 'rhs_key' => 'parent_id',
-							  'relationship_type'=>'one-to-many')
+	'related_timeperiods' => array(
+        'lhs_module'=> 'TimePeriods',
+        'lhs_table'=> 'timeperiods',
+        'lhs_key' => 'id',
+		'rhs_module'=> 'TimePeriods',
+		'rhs_table'=> 'timeperiods',
+        'rhs_key' => 'parent_id',
+		'relationship_type'=>'one-to-many'
+    )
 
 
   )

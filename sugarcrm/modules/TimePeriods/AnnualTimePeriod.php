@@ -107,20 +107,65 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         if($this->hasLeaves()) {
             return;
         }
+        $timedate = TimeDate::getInstance();
+        $leafStartDate = $timedate->fromUserDate($this->start_date);
 
+        $n = 0;
+
+        $this->load_relationship('related_timeperiods');
+        //valid time periods to be leaves of this period
         switch($timePeriodType) {
-            case "Quarterly":
+            //set up the first leaf
+            case "Quarter":
+                $n = 4;
+                $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
+                $leafPeriod->start_date = $this->start_date;
+                $leafEndDate = $leafStartDate->modify("+3 month");
+                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $this->related_timeperiods->add($leafPeriod->id);
                 break;
-            case "Quarterly544":
+            case "Quarter544":
+                $n = 4;
+                $leafPeriod = BeanFactory::newBean("QuarterTimePeriods544");
+                $leafPeriod->start_date = $this->start_date;
+                $leafEndDate = $leafStartDate->modify("+13 week");
+                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $this->related_timeperiods->add($leafPeriod->id);
                 break;
-            case "Quarterly445":
+            case "Quarter445":
+                $n = 4;
+                $leafPeriod = BeanFactory::newBean("QuarterTimePeriods445");
+                $leafPeriod->start_date = $this->start_date;
+                $leafEndDate = $leafStartDate->modify("+13 week");
+                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $this->related_timeperiods->add($leafPeriod->id);
                 break;
-            case "Monthly":
+            case "Month":
+                $n = 12;
+                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
+                $leafPeriod->start_date = $this->start_date;
+                $leafEndDate = $leafStartDate->modify("+1 month");
+                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $this->related_timeperiods->add($leafPeriod->id);
                 break;
-            case "Weekly":
+            case "Week":
+                $n = 52;
+                $leafPeriod = BeanFactory::newBean("WeekTimePeriods");
+                $leafPeriod->start_date = $this->start_date;
+                $leafEndDate = $leafStartDate->modify("+1 week");
+                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $this->related_timeperiods->add($leafPeriod->id);
                 break;
 
         }
+
+        //loop the count to create the next n leaves to fill out the relationship
+        for($i = 1; $i < $n; $i++) {
+            $leafPeriod = $leafPeriod->createNextTimePeriod();
+            $this->related_timeperiods->add($leafPeriod->id);
+        }
+
+        $this->save();
 
     }
 }
