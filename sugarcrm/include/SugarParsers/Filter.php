@@ -180,7 +180,7 @@ class SugarParsers_Filter
             /**
              * Handle if we have a control variable followed by a string which is not a variable
              */
-            if ($klass::isControlVariable() && is_string($value)) {
+            if (call_user_func(array($klass, 'isControlVariable')) && is_string($value)) {
                 $variable = (isset($this->filters[$value])) ? $value : '$is';
                 $_cvKlass = $this->filters[$variable]['class'];
                 $cvKlass = new $_cvKlass();
@@ -214,7 +214,7 @@ class SugarParsers_Filter
             }
 
             /* @var $klass SugarParsers_Filter_AbstractFilter */
-            if ($valueHasVariables === false || $klass::isControlVariable()) {
+            if ($valueHasVariables === false || call_user_func(array($klass, 'isControlVariable'))) {
                 /* @var $filter SugarParsers_Filter_AbstractFilter */
                 $filter = new $klass();
                 $filter->filter($value);
