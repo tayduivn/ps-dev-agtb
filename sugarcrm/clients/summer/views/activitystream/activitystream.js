@@ -134,6 +134,9 @@
                         $(this).parent().remove();
                     }).appendTo(container);
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
+                    if(file.type.indexOf("image/") !== -1) {
+                        container.append("<img style='display:block;' src='" + e.target.result + "' />");
+                    }
                     $(event.currentTarget).after(container);
                 }
             })(file);
