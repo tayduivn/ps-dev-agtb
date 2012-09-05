@@ -42,12 +42,9 @@ class Bug53288Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
         $this->_oProspect = SugarTestProspectUtilities::createProspect();
         $this->createProspectList();
     }
@@ -57,21 +54,15 @@ class Bug53288Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProspectListsUtilities::removeProspectsListToProspectRelation($this->_oProspectList->id, $this->_oProspect->id);
         SugarTestProspectUtilities::removeAllCreatedProspects();
         SugarTestProspectListsUtilities::removeProspectLists($this->_oProspectList->id);
-        unset($_REQUEST['return_type']);
-        unset($_REQUEST['prospect_list_id']);
-        unset($_REQUEST['prospect_id']);
-
-        unset($GLOBALS['current_user']);
-        unset($GLOBALS['beanList']);
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['app_list_strings']);
         $_REQUEST = array();
+        SugarTestHelper::tearDown();
     }
 
     public function testAddProspectsToProspectList()
     {
         $_REQUEST['prospect_list_id'] = $this->_oProspectList->id;
         $_REQUEST['prospect_id'] = $this->_oProspect->id;
+        $_REQUEST['prospect_ids'] = array($this->_oProspect->id);
         $_REQUEST['return_type'] = 'addtoprospectlist';
         require_once('include/generic/Save2.php');
         $res = $GLOBALS['db']->query('SELECT * FROM prospect_lists_prospects WHERE prospect_list_id="' . $this->_oProspectList->id . '" AND related_id="' . $this->_oProspect->id . '"');
