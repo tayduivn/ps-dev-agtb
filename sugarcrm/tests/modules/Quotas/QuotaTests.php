@@ -39,7 +39,7 @@ class QuotaTests extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /*
-     * Test that the currency_rate field is populated with rate
+     * Test that the base_rate field is populated with rate
      * of currency_id
      *
      */
@@ -50,7 +50,7 @@ class QuotaTests extends Sugar_PHPUnit_Framework_TestCase
         $quota->currency_id = $currency->id;
         $quota->save();
         $this->assertEquals(
-            sprintf('%.6f',$quota->currency_rate),
+            sprintf('%.6f',$quota->base_rate),
             sprintf('%.6f',$currency->conversion_rate)
         );
     }

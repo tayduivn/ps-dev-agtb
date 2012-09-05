@@ -53,7 +53,7 @@ class Forecast extends SugarBean
 	var $currency;
 	var $currencysymbol;
 	var $currency_id;
-    var $currency_rate;
+    var $base_rate;
 
 	var $table_name = "forecasts";
 
@@ -85,7 +85,7 @@ class Forecast extends SugarBean
 			$this->currency->retrieve('-99');
 		}
 		$this->currencysymbol = $this->currency->symbol;
-        $this->currency_rate = $this->currency->conversion_rate;
+        $this->base_rate = $this->currency->conversion_rate;
 	}
 
 
@@ -289,7 +289,7 @@ class Forecast extends SugarBean
         } else {
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
         }
-        $this->currency_rate = $currency->conversion_rate;
+        $this->base_rate = $currency->conversion_rate;
 
         parent::save();
     }

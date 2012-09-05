@@ -46,6 +46,7 @@ public static function populateSeedData()
 
 require_once('modules/Forecasts/Common.php');
 require_once('modules/TimePeriods/TimePeriod.php');
+require_once('modules/Users/User.php');
 
 $comm = new Common();
 $comm->get_all_users();
@@ -63,10 +64,12 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
     foreach($comm->all_users as $user_id => $reports_to)
     {
         $opps = self::getRelatedOpportunities($user_id, $timeperiod_id);
-
+        $comm->current_user = $user_id;
+		$isManager = User::isManager($user_id);
+		
         if(!empty($opps))
         {
-            $comm->current_user = $user_id;
+            
             $comm->my_managers = array();
             $comm->get_my_managers();
 
@@ -118,21 +121,24 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
             }
 
             //this is the direct worksheet for the manager
-            $worksheet = new Worksheet();
-            $worksheet->user_id = $user_id;
-            $worksheet->timeperiod_id = $timeperiod_id;
-            $worksheet->forecast_type = 'Direct';
-            $worksheet->related_id = $user_id;
-            $worksheet->related_forecast_type = 'Direct';
-            $worksheet->best_case = $best;
-            $worksheet->likely_case = $likely;
-            $worksheet->worst_case = $worst;
-            $worksheet->save();
-            $created_ids[] = $worksheet->id;
+            if($isManager)
+            {
+	            $worksheet = new Worksheet();
+	            $worksheet->user_id = $user_id;
+	            $worksheet->timeperiod_id = $timeperiod_id;
+	            $worksheet->forecast_type = 'Rollup';
+	            $worksheet->related_id = $user_id;
+	            $worksheet->related_forecast_type = 'Direct';
+	            $worksheet->best_case = $best;
+	            $worksheet->likely_case = $likely;
+	            $worksheet->worst_case = $worst;
+	            $worksheet->save();
+	            $created_ids[] = $worksheet->id;
+            }
 
             //This is the rollup worksheet for the manager
             $increment = 500;
-
+			
             foreach($comm->my_managers as $manager_id)
             {
                 $worksheet = new Worksheet();
@@ -140,7 +146,7 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
                 $worksheet->timeperiod_id = $timeperiod_id;
                 $worksheet->forecast_type = 'Rollup';
                 $worksheet->related_id = $user_id;
-                $worksheet->related_forecast_type = 'Direct';
+                $worksheet->related_forecast_type = ($isManager)? 'Rollup':'Direct';
                 $worksheet->best_case = $best + $increment;
                 $worksheet->likely_case = $likely + $increment;
                 $worksheet->worst_case = $worst + $increment;

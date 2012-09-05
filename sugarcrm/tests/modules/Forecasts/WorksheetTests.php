@@ -39,7 +39,7 @@ class WorksheetTests extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /*
-     * Test that the currency_rate field is populated with rate
+     * Test that the base_rate field is populated with rate
      * of currency_id
      *
      */
@@ -49,7 +49,7 @@ class WorksheetTests extends Sugar_PHPUnit_Framework_TestCase
         $worksheet->currency_id = $currency->id;
         $worksheet->save();
         $this->assertEquals(
-            sprintf('%.6f',$worksheet->currency_rate),
+            sprintf('%.6f',$worksheet->base_rate),
             sprintf('%.6f',$currency->conversion_rate)
         );
     }

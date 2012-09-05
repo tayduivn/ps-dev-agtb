@@ -64,9 +64,9 @@ $dictionary['Quote'] = array('table' => 'quotes','audited'=>true, 'unified_searc
     'do_report'=>false,
     'reportable'=>false,
   ),
-  'currency_rate' =>
+  'base_rate' =>
   array (
-    'name' => 'currency_rate',
+    'name' => 'base_rate',
     'vname' => 'LBL_CURRENCY_RATE',
     'type' => 'double',
     'required' => true,
