@@ -230,6 +230,11 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
     public function apiSave(SugarBean $bean, array $params, $field, $properties) {
         global $timedate;
 
+        if ( empty($params[$field]) ) {
+            $bean->$field = '';
+            return;
+        }
+
         $date = $timedate->fromIso($params[$field]);
         if ( $date === null ) {
             require_once('include/api/SugarApi/SugarApiException.php');
