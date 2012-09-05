@@ -1,0 +1,142 @@
+
+.todo-header {
+    padding:0 26px;
+}
+
+.todo-date-info {
+    clear: both;
+}
+.todo-due-date {
+    color: @blueLight;
+    line-height:.9em;
+}
+.todo-finished {
+    color: @green;
+}
+
+#todo-add {
+    float: none;
+    margin-left: -4px;
+}
+
+#todo-container {
+    width: 340px;
+    height: 217px;
+    overflow: auto;
+    padding: 12px 0;
+}
+
+#todo-container .tab-content {
+    overflow: hidden;
+}
+
+#todo-date-container {
+    display: none;
+}
+#todo-add-container {
+    display: inline-block;
+    position:absolute;
+}
+
+#todo-list-widget.open .tabbable {
+    display:inline-block;
+}
+
+#todo-pills {
+    margin-left: 14px;
+    margin-bottom: 12px;
+}
+
+#todo-pills > li {
+    margin-left: 5px;
+}
+
+#todo-pills li > a {
+    outline: none;
+}
+
+.todo-list-item {
+    display: inline-block;
+    list-style: none;
+    padding: 0 12px;
+    width: 100%;
+}
+
+.todo-list-item div {
+    float: left;
+}
+
+.todo-checkbox-container {
+    width: 20px;
+}
+
+.todo-description-container {
+    width: 200px;
+}
+
+.todo-item-finished {
+    text-decoration: line-through;
+}
+
+.todo-remove {
+    width:20px;
+    height:20px;
+    text-align:center;
+    cursor: pointer;
+    position:absolute;
+    right:12px;
+}
+
+.todo-list-item .todo-remove {
+    display:none;
+}
+
+.todo-list-item:hover .todo-remove {
+    display:inline-block;
+}
+
+.todo-remove .icon-trash {
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+}
+
+.todo-remove:hover .icon-trash {
+    background:#888888;
+    color:#ffffff;
+}
+
+.todo-item-container {
+    width: 100%;
+    list-style: none;
+    margin: 0;
+}
+
+.no-todos {
+    margin-left: 30px;
+}
+
+.todo-badge {
+    background-color: @blueLight;
+    border-bottom: 1px solid @blue;
+    font-weight: bold;
+    font-size: 10px;
+    color: @white;
+    padding: 0 3px 2px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    -webkit-box-shadow: 0 1px 0 rgba(37, 37, 37, .77);
+    -moz-box-shadow: 0 1px 0 rgba(37, 37, 37, .77);
+    box-shadow: 0 1px 0 rgba(37, 37, 37, .77);
+}
+
+#overdue-badge {
+    background-color: @red;
+    border-bottom: 1px solid #B41F20;
+}
+
+#overdue-badge.todo-badge.empty, .todo-badge.empty {
+    background-color: #818181;
+    border-bottom: 1px solid #616161;
+}
