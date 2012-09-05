@@ -18,7 +18,6 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.model = new Backbone.Model({
-                    amount : 0,
                     opportunities : 0,
                     revenue : 0,
                     closed_amount : 0,
@@ -81,6 +80,7 @@
             });
             //Rep totals model has changed
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
+                debugger;
                 if(!self.shouldRollup) {
                     self.recalculateRepTotals(totals);
                 }
@@ -99,7 +99,7 @@
         this.model.set({
             closed_amount : totals.won_amount,
             opportunities : totals.total_opp_count - totals.lost_count - totals.won_count,
-            revenue : totals.amount - totals.won_amount - totals.lost_amount
+            revenue : totals.overall_amount - totals.lost_amount - totals.won_amount
         });
         this.recalculateModel();
     },
@@ -112,7 +112,6 @@
         this.likelyTotal = totals.likely_adjusted;
         this.bestTotal = totals.best_adjusted;
         this.model.set({
-            revenue : totals.amount - this.model.get('closed_amount'),
             quota_amount : totals.quota
         });
         this.recalculateModel();
@@ -121,18 +120,18 @@
     recalculateModel: function () {
         this.model.set({
             closed_likely_amount : this.getAbsDifference(this.likelyTotal, this.model.get('closed_amount')),
-            closed_likely_percent : this.getPercent(this.model.get('closed_amount'), this.likelyTotal),
-            closed_likely_above : this.checkIsAbove(this.model.get('closed_amount'), this.likelyTotal ),
+            closed_likely_percent : this.getPercent(this.likelyTotal, this.model.get('closed_amount')),
+            closed_likely_above : this.checkIsAbove(this.likelyTotal, this.model.get('closed_amount')),
             closed_best_amount : this.getAbsDifference(this.bestTotal, this.model.get('closed_amount')),
-            closed_best_percent : this.getPercent(this.model.get('closed_amount'), this.bestTotal),
-            closed_best_above : this.checkIsAbove(this.model.get('closed_amount'), this.bestTotal),
+            closed_best_percent : this.getPercent(this.bestTotal, this.model.get('closed_amount')),
+            closed_best_above : this.checkIsAbove(this.bestTotal, this.model.get('closed_amount')),
             quota_likely_amount : this.getAbsDifference(this.likelyTotal, this.model.get('quota_amount')),
             quota_likely_percent : this.getPercent(this.likelyTotal, this.model.get('quota_amount')),
             quota_likely_above : this.checkIsAbove(this.likelyTotal, this.model.get('quota_amount')),
             quota_best_amount : this.getAbsDifference(this.bestTotal, this.model.get('quota_amount')),
             quota_best_percent : this.getPercent(this.bestTotal, this.model.get('quota_amount')),
             quota_best_above : this.checkIsAbove(this.bestTotal, this.model.get('quota_amount')),
-            pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'), this.model.get('closed_amount'))
+            pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'))
         });
     },
 
@@ -175,10 +174,10 @@
      * @param closed
      * @return {Number}
      */
-    calculatePipelineSize: function (likelyTotal, revenue, closed) {
+    calculatePipelineSize: function (likelyTotal, revenue) {
         var ps = 0;
         if ( likelyTotal > 0 ) {
-            ps = (revenue + closed) /  (likelyTotal);
+            ps = revenue /  likelyTotal;
 
             // Round to 1 decimal place
             ps = Math.round( ps * 10 )/10;
@@ -193,7 +192,7 @@
      * @return {Boolean}
      */
     isManagerView: function () {
-        return this.selectedUser.isManager === true && this.selectedUser.showOpps === false;
+        return this.selectedUser.isManager === true && (this.selectedUser.showOpps == undefined || this.selectedUser.showOpps === false);
     },
 
 
@@ -239,7 +238,8 @@
                 if(self.shouldRollup) {
                     self.model.set({
                         opportunities : data.opportunities,
-                        closed_amount : data.closed_amount
+                        closed_amount : data.closed_amount,
+                        revenue : data.pipeline_revenue
                     });
                 } else {
                     self.model.set({
