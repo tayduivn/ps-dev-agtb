@@ -1,4 +1,3 @@
-<link rel="stylesheet" href="../clients/summer/views/activitystream/activitystream.css" xmlns="http://www.w3.org/1999/html">
 <div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
   <ul id="activitystream-pills" class="nav nav-pills">
     {{#if opts.params.filter}}
