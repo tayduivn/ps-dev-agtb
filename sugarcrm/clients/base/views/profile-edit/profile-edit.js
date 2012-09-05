@@ -98,6 +98,10 @@
             },
             fieldsToValidate: self.getFields(this.model.module)
         };
+
+        // So we don't overwrite password
+        self.model.unset('portal_password', {silent: true});
+        self.model.unset('portal_password1', {silent: true});
         self.model.save(null, options);
     }
 
