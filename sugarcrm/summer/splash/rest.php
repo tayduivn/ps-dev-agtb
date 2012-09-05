@@ -50,7 +50,6 @@ $app->get('/rest/users/callback', function() use ($app, $box)
     }
     $_SESSION['gauth_data'] = $data;
     $app->response()->header('Location', '../../index.php');
-END;
 }
 );
 
