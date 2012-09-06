@@ -253,19 +253,11 @@ function construct_where(&$query_obj, $table='',$module=null) {
 
 	         array_push($cond_arr,$email1_condition);
 		}
-		elseif ($condition['name']=='account_name') {
-			
-			if ($module == "Contacts") {
-				$account_name = " {$table}id in ( SELECT  lnk.contact_id AS id FROM accounts ac, " .
-			         "accounts_contacts lnk WHERE ac.id = lnk.account_id " .
-			         "AND ac.deleted = 0 AND lnk.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
+		elseif ( $condition['name']=='account_name' && $module == "Contacts") {
+			$account_name = " {$table}id in ( SELECT  lnk.contact_id AS id FROM accounts ac, " .
+		         	"accounts_contacts lnk WHERE ac.id = lnk.account_id " .
+		         	"AND ac.deleted = 0 AND lnk.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
 		        array_push($cond_arr,$account_name);
-			}
-			elseif ($module == "Leads") {
-				$account_name = " {$table}account_id in ( SELECT id FROM accounts ac " .
-			         "WHERE ac.deleted = 0 AND ac.name LIKE '%{$condition['value']}%' )";
-				array_push($cond_arr,$account_name);
-			}
 		}
 		else {
 			if($condition['op'] == 'contains') {

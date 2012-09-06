@@ -76,7 +76,7 @@
 
 <script id="overall_manager_template" type="text/x-handlebars-template">
     <tr>
-        <td>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</td>
+        <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
         <td>{{formatNumber amount}}</td>
         <td>{{formatNumber quota}}</td>
         <td>{{formatNumber best_case}}</td>
