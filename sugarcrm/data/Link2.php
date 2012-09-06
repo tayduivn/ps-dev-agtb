@@ -419,20 +419,24 @@ class Link2 {
 
             //If there are any relationship fields, we need to figure out the mapping from the relationship fields to the
             //fields in the related module
+            $relationshipFields = array();
             $seed = BeanFactory::getBean($rel_module);
-            $relationshipFields = $this->getRelationshipFieldMapping($seed);
-            if (!empty($this->def['rel_fields']))
+            if($seed !== FALSE)
             {
-                //Find the field in the related module that maps to this
-                foreach($this->def['rel_fields'] as $rfName => $rfDef)
+                $relationshipFields = $this->getRelationshipFieldMapping($seed);
+                if (!empty($this->def['rel_fields']))
                 {
-                    //This is pretty badly designed, but there is no mapping stored for fields in the relationship table
-                    //to the fields to be populated in the related record.
-                    foreach($seed->field_defs as $f => $d)
+                    //Find the field in the related module that maps to this
+                    foreach($this->def['rel_fields'] as $rfName => $rfDef)
                     {
-                        if (!empty($d['relationship_fields'][$rfName])){
-                            $relationshipFields[$rfName] = $d['relationship_fields'][$rfName];
-                            break;
+                        //This is pretty badly designed, but there is no mapping stored for fields in the relationship table
+                        //to the fields to be populated in the related record.
+                        foreach($seed->field_defs as $f => $d)
+                        {
+                            if (!empty($d['relationship_fields'][$rfName])){
+                                $relationshipFields[$rfName] = $d['relationship_fields'][$rfName];
+                                break;
+                            }
                         }
                     }
                 }

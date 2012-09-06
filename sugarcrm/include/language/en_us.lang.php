@@ -3437,25 +3437,6 @@ $app_strings = array (
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
 
-    //for portal system tour
-    'LBL_PORTAL_TOUR_WELCOME_TITLE' => 'Welcome to Portal',
-    'LBL_PORTAL_TOUR_WATCH_VIDEO' => 'Watch: What\'s new in Portal',
-    'LBL_PORTAL_TOUR_FEATURES' => '<li><i class="icon-ok"></i>Feature 1</li><li><i class="icon-ok"></i>Feature 2</li><li><i class="icon-ok"></i>Feature 3</li><li><i class="icon-ok"></i>Feature 4</li>',
-    'LBL_PORTAL_TOUR_MORE_INFO' => '<p>And much more!</p><p>For a full list visit the What\'s New in Portal</p>',
-    'LBL_PORTAL_TOUR_TAKE_TOUR_LNK' => 'Take the tour',
-    'LBL_PORTAL_TOUR_SKIP_LNK' => 'Skip',
-    'LBL_PORTAL_TOUR_NEXT_LNK' => 'Next',
-    'LBL_PORTAL_TOUR_BACK_LNK' => 'Back',
-    'LBL_PORTAL_TOUR_DONE_LNK' => 'Done',
-    'LBL_PORTAL_TOUR_CASES_TITLE' => 'Cases',
-    'LBL_PORTAL_TOUR_CASES_BODY' => 'All your cases go here',
-    'LBL_PORTAL_TOUR_SEARCH_TITLE' => 'Search',
-    'LBL_PORTAL_TOUR_SEARCH_BODY' => 'Search keywords or case numbers',
-    'LBL_PORTAL_TOUR_QUICK_TITLE' => 'Quick Create',
-    'LBL_PORTAL_TOUR_QUICK_BODY' => 'You can perform all your quick actions here',
-    'LBL_PORTAL_TOUR_DONE_TITLE' => 'You\'re Done!',
-    'LBL_PORTAL_TOUR_DONE_BODY' => 'You can always retake the tour or read documentation for more information.',
-
     //for portal errors
     'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
     'LBL_PORTAL_INVALID_CREDS_TITLE' => 'Invalid Credentials',
@@ -3479,8 +3460,11 @@ $app_strings = array (
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
     'LBL_PORTAL_OFFLINE' =>'Sorry the application is not available at this time. Please contact the site administrator.',
-
-
+    'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
+    'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
+    'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -3492,15 +3476,14 @@ $app_strings = array (
     'ERR_HTTP_500_TYPE' => '500',
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
     'ERR_HTTP_500_TEXT' => 'There was an error on the server. Please contact technical support.',
-
-    'ERR_RENDER_FAILED_TITLE' => 'View render failed',
+    'ERR_RENDER_FAILED_TITLE' => 'View Render Failed',
     'ERR_RENDER_FAILED_MSG' => 'Failed to render a view',
-    'ERR_RENDER_FIELD_FAILED_TITLE' => 'Render field failed',
-    'ERR_RENDER_FIELD_FAILED_MSG' => 'Failed to render the field: ',
-    'ERR_NO_ACCESS_TITLE' => 'No access',
-    'ERR_NO_ACCESS_MSG' => 'You not have access to this view',
+    'ERR_RENDER_FIELD_FAILED_TITLE' => 'Field Render Failed',
+    'ERR_RENDER_FIELD_FAILED_MSG' => 'Unable to render the {0} field.',
+    'ERR_NO_VIEW_ACCESS_TITLE' => 'Access Denied',
+    'ERR_NO_VIEW_ACCESS_MSG' => 'Contact your Support Administrator to get access to this view for {0} module.',
     'ERR_LAYOUT_RENDER_TITLE' => 'Layout render failed',
-    'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact the support',
+    'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact support.',
     'ERR_INTERNAL_ERR_MSG' => 'Internal error',
     'ERR_GENERIC_TITLE' => 'Error',
     'ERR_CONTACT_TECH_SUPPORT' => 'Please contact technical support.',

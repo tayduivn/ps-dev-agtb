@@ -24,7 +24,6 @@
         return false;
     },
     openNoteModal: function() {
-        this.$('#noteModal').modal('show');
         // triggers an event to show the modal
         this.layout.trigger("app:view:activity:editmodal");
         this.$('li.open').removeClass('open');
