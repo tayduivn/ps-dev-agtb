@@ -49,7 +49,11 @@
           {{#eq attributes.activity_type "posted"}}          
               "{{{attributes.activity_data.value}}}"           
               {{#if attributes.target_name}}
-              on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
+                  {{#if attributes.target_id}}
+                  on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
+                  {{else}}
+                  on <a href="#{{attributes.target_module}}">{{attributes.target_name}}</a>
+                  {{/if}}
               {{/if}} 
           {{/eq}}  
           {{#eq attributes.activity_type "created"}}          
