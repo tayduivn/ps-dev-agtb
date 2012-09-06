@@ -125,6 +125,16 @@ class ForecastsChartApi extends ChartApi
             $args['group_by'] = "forecast";
         }
 
+        if($this->isManager) {
+            require_once('include/SugarForecasting/Chart/Manager.php');
+
+            $args['user_id'] = $user_id;
+            $args['timeperiod_id'] = $timeperiod_id;
+            $mgr_chart = new SugarForecasting_Chart_Manager($args);
+
+            return $mgr_chart->process();
+        }
+
         if (isset($args['category']) && $args['category'] == "Committed") {
             $filters['forecast'] = array('$is' => 1);
         }

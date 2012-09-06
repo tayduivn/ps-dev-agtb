@@ -73,12 +73,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
      */
     protected function loadUsers()
     {
-        global $current_user, $mod_strings, $locale;
+        global $current_user, $current_language, $locale;
 
-        if(empty($mod_strings)) {
-            global $current_language;
-            $mod_strings = return_module_language($current_language, "Forecasts");
-        }
+        $mod_strings = return_module_language($current_language, "Forecasts");
 
         $args = $this->getArgs();
 
