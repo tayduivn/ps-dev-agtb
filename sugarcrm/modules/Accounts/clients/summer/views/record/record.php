@@ -58,7 +58,6 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
-//                array('fields' => array( array('name' => 'img')), 'noedit' => true, 'span' => 2, 'label' => ''),
                 array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => ' ', 'placeholder' => 'LBL_NAME'),
             )
         ),
@@ -72,8 +71,11 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
             'fields' => array(
                 'assigned_user_name',
                 'billing_address_street',
-                array('name' => 'industry', 'css' => 'minor'),
-                array('fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')),
+                'industry',
+                array(
+                    'name' => 'fieldset_address',
+                    'type' => 'fieldset',
+                    'fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')),
                 'website',
                 'billing_address_country',
                 'phone_office',

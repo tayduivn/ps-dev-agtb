@@ -30,10 +30,9 @@
                                         </span>
                                     {{/if}}
                                 {{/each}}
-                                {{log ../../this}}
-                                {{#unless ../../noedit}}
-                                    <span class="record-edit-link-wrapper" data-name="{{../this.name}}">
-                                        <a class="record-edit-link icon-pencil" data-type="{{../this.type}}" data-name="{{../this.name}}"></a>
+                                {{#unless noedit}}
+                                    <span class="record-edit-link-wrapper" data-name="{{../name}}">
+                                        <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
                                     </span>
                                 {{/unless}}
                             </div>

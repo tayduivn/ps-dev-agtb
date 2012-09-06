@@ -33,51 +33,54 @@
     },
 
     render: function() {
-        var panels = this.meta.panels,
-            totalFieldCount = 0;
-        for (var i in panels) {
-            var columns = (panels[i].columns) || 1;
-            var count = 0;
-            var panelFieldCount = 0;
-            var rows = [];
-            var row = [];
-            for (var j in panels[i].fields) {
-                if (_.isUndefined(panels[i].labels)) panels[i].labels = true;
+        var totalFieldCount = 0;
+
+        _.each(this.meta.panels, function(panel) {
+            var columns = (panel.columns) || 1,
+                count = 0,
+                rows = [],
+                row = [];
+
+            _.each(panel.fields, function(field) {
+                var cell = {};
+
+                if (_.isUndefined(panel.labels)) panel.labels = true;
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
-                maxSpan = (panels[i].labels) ? 8 : 12;
-                if (_.isUndefined(panels[i].fields[j].span))panels[i].fields[j].span = Math.floor(maxSpan / columns);
+                maxSpan = (panel.labels) ? 8 : 12;
+                if (_.isUndefined(field.span)) field.span = Math.floor(maxSpan / columns);
                 //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
-                if (_.isUndefined(panels[i].fields[j].labelSpan))panels[i].fields[j].labelSpan = Math.floor(4 / columns);
-                var fields = {};
-                fields.fields = (panels[i].fields[j].fields) ? panels[i].fields[j].fields : [panels[i].fields[j]];
-                _.each(fields.fields, function(field, index) {
+                if (_.isUndefined(field.labelSpan)) field.labelSpan = Math.floor(4 / columns);
+
+                // Setup our grid 'compartment' array
+                cell.fields = (field.type == "fieldset") ? field.fields : [field];
+                cell.name = field.name;
+                cell.span = field.span;
+                cell.label = field.label;
+                cell.labelSpan = field.labelSpan;
+                cell.noedit = field.noedit;
+
+                _.each(cell.fields, function(field) {
                     if (field.name) {
-                        fields.fields[index].index = totalFieldCount;
-                        panelFieldCount++;
+                        field.index = totalFieldCount;
                         totalFieldCount++;
                     }
-                    if (panels[i].placeholders)fields.fields[index].placeholder = field.label
+                    if (panel.placeholders) field.placeholder = field.label;
                 });
-                fields.label = fields.fields[0].label;
-                fields.span = panels[i].fields[j].span;
-                fields.labelSpan = panels[i].fields[j].labelSpan
-                row.push(fields);
+
+                row.push(cell);
+
                 if (count % columns == columns - 1) {
                     rows.push(row);
                     row = [];
                 }
-                count++;
-            }
-            if (i == 0) {
-                this.fieldsToDisplay = panelFieldCount;
-            }
-            rows.push(row);
-            row = [];
-            panels[i].grid = rows;
-        }
 
-        this.meta.panels = panels;
-        app.view.views.DetailView.prototype.render.call(this);
+                count++;
+            }, this);
+
+            panel.grid = rows;
+        }, this);
+
+        app.view.View.prototype.render.call(this);
 
         // Check if this is a new record, if it is, enable the edit view
         if (this.context.has("create") && this.model.isNew) {
@@ -125,8 +128,14 @@
 
     // Handler functions
     toggleEdit: function() {
-        console.log("Toggle Edit", this.editAllMode);
         _.each(this.fields, function(field) {
+
+            // Exclude image picker,
+            // This is just a stop gap solution.
+            if (field.type == "img") {
+                return;
+            }
+
             field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
             field.render();
         }, this);
@@ -135,7 +144,8 @@
     },
 
     handleEdit: function(e, field) {
-        var target;
+        var target,
+            fields;
 
         // This would be the default code path unless tabbed.
         if (!field) {
@@ -146,13 +156,17 @@
             target = field.$el.parent().find(".record-edit-link");
         }
 
-
-        console.log(target, target.parent().parent());
         // Set Editing mode to on.
         this.editMode = true;
 
         switch (field.type) {
             case "img":
+                break;
+            case "fieldset":
+                // If it is a field set, we need all the fields to switch to edit mode.
+                console.log("FIELD SET", field);
+                fields = field.fields();
+                target.parent().parent().find("input").focus().val(target.parent().find("input").val());
                 break;
             default:
                 this.toggleField(field, target);
@@ -165,7 +179,7 @@
 
         this.editMode = false;
         this.model.save({}, {
-            success: function(model) {
+            success: function() {
                 if (self.context.get("create") === true) {
                     app.navigate(self.context, self.model);
                 } else {

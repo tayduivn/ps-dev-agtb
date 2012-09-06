@@ -41,35 +41,35 @@ class ActivityStreamApi extends ListApi {
                 'path' => array('ActivityStream'),
                 'pathVars' => array(''),
                 'method' => 'getActivities',
-                ),                
+                ),
             'postAll' => array(
                 'reqType' => 'POST',
-                'path' => array('ActivityStream'), 
+                'path' => array('ActivityStream'),
                 'pathVars' => array(''),
                 'method' => 'handlePost',
-            ), 
+            ),
             'postModule' => array(
                 'reqType' => 'POST',
                 'path' => array('ActivityStream', '<module>'),
                 'pathVars' => array('','module'),
                 'method' => 'handlePost',
-            ), 
+            ),
             'postBean' => array(
                 'reqType' => 'POST',
                 'path' => array('ActivityStream', '<module>','?'),
                 'pathVars' => array('','module','id'),
                 'method' => 'handlePost',
-            ),                                                                                                        
+            ),
         );
     }
 
     public function getActivities($api, $args) {
         $seed = BeanFactory::getBean('ActivityStream');
         $targetModule = !empty($args['module']) ? $args['module'] : '';
-        $targetId = !empty($args['id']) ? $args['id'] : '';                
-        $options = $this->parseArguments($api, $args, $seed);        
-        $activities = $seed->getActivities($targetModule, $targetId, $options); 
-        
+        $targetId = !empty($args['id']) ? $args['id'] : '';
+        $options = $this->parseArguments($api, $args, $seed);
+        $activities = $seed->getActivities($targetModule, $targetId, $options);
+
         if($activities !== false) {
             $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
             return array('next_offset'=>$nextOffset,'records'=>$activities);
@@ -78,26 +78,56 @@ class ActivityStreamApi extends ListApi {
             return false;
         }
     }
-    
+
     public function handlePost($api, $args) {
         $seed = BeanFactory::getBean('ActivityStream');
-        $targetModule = isset($args['module']) ? $args['module'] : '';     
+        $targetModule = isset($args['module']) ? $args['module'] : '';
         $targetId = isset($args['id']) ? $args['id'] : '';
-        $value = isset($args['value']) ? $args['value'] : '';
-        
+        $value = isset($args['value']['text']) ? $args['value']['text'] : '';
+        $attachments = isset($args['value']['attachments']) ? $args['value']['attachments'] : array();
+        $post_id = false;
+
         if($targetModule == "ActivityStream") {
             // Make sure we have a valid activity id
             if(empty($targetId) || !$seed->retrieve($targetId, true, false)) {
                 return false;
             }
-            
-            return $seed->addComment($value);
+
+            $post_id = $seed->addComment($value);
+            $parent_type = 'ActivityComments';
         }
         else {
-            return $seed->addPost($targetModule, $targetId, $value);
+            $post_id = $seed->addPost($targetModule, $targetId, $value);
+            $parent_type = 'ActivityStream';
         }
-    } 
-    
+
+        // If creating the post was successful, add the attachments.
+        if($post_id) {
+            require_once('include/upload_file.php');
+            if(!in_array("upload", stream_get_wrappers())) {
+                stream_wrapper_register("upload", "UploadStream");
+            }
+            foreach($attachments as $attachment) {
+                $arr = preg_split("/[:;,]/", $attachment['data']);
+                // Using BeanFactory returns an stdClass, not a note.
+                $attachment_seed = new Note();
+                $attachment_seed->parent_id = $post_id;
+                $attachment_seed->parent_type = $parent_type;
+                $attachment_seed->filename = $attachment['name'];
+                $attachment_seed->file_mime_type = $arr[1];
+                $attachment_seed->safeAttachmentName();
+                $attachment_seed->save();
+                if(!file_put_contents("upload://".$attachment_seed->id, base64_decode($arr[3]))) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+
+        return $post_id;
+    }
+
     protected function parseArguments($api, $args, $seed) {
         // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities')
         $options = parent::parseArguments($api, $args, $seed);
