@@ -147,12 +147,6 @@
     //Call initForecast with the session id as token
     var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
 
-    // should already be logged in to sugar, don't need to log in to sidecar.
-    // TODO: we will need to remove this when we get the OAuth stuff working...
-    App.api.isAuthenticated = function() {
-        return true;
-    };
-
     App.api.debug = App.config.debugSugarApi;
 </script>
 {/literal}
