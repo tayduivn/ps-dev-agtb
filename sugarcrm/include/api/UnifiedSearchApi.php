@@ -281,7 +281,14 @@ class UnifiedSearchApi extends SugarApi {
         $options['append_wildcard'] = 1;
         if(empty($options['moduleList']))
         {
-            $options['moduleList'] = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+            require_once('modules/ACL/ACLController.php');
+            $moduleList = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+            // filter based on User Access if Blank
+            $ACL = new ACLController();
+            // moduleList is passed by reference
+            $ACL->filterModuleList($moduleList);
+
+            $options['moduleList'] = $moduleList;
         }
         $options['moduleFilter'] = $options['moduleList'];
 
@@ -358,6 +365,22 @@ class UnifiedSearchApi extends SugarApi {
             $multiModule = true;
         }
         
+        if(empty($options['moduleList']))
+        {
+            require_once('modules/ACL/ACLController.php');
+            $usa = new UnifiedSearchAdvanced();
+            $moduleList = $usa->getUnifiedSearchModules();
+            
+            // get the module names [array keys]
+            $moduleList = array_keys($moduleList);
+            // filter based on User Access if Blank
+            $ACL = new ACLController();
+            // moduleList is passed by reference
+            $ACL->filterModuleList($moduleList);
+
+            $options['moduleList'] = $moduleList;
+        }
+
         $offset = $options['offset'];
         // One for luck.
         // Well, actually it's so that we know that there are additional results
