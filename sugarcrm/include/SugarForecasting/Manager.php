@@ -7,13 +7,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
 {
 
     /**
-     * Where we store the data we want to use
-     *
-     * @var array
-     */
-    protected $dataArray = array();
-
-    /**
      * Default Data Array To Start With
      *
      * @var array
@@ -71,16 +64,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         $this->loadManagerAmounts();
 
         return array_values($this->dataArray);
-    }
-
-    /**
-     * Return the data array
-     *
-     * @return array
-     */
-    public function getDataArray()
-    {
-        return $this->dataArray;
     }
 
     /**

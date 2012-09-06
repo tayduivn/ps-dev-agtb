@@ -1,6 +1,8 @@
 <?php
 
-abstract class SugarForecasting_AbstractForecast
+require_once('include/SugarForecasting/ForecastInterface.php');
+
+abstract class SugarForecasting_AbstractForecast implements SugarForecasting_ForecastInterface
 {
     /**
      * @var array Rest Arguments
@@ -15,9 +17,11 @@ abstract class SugarForecasting_AbstractForecast
     protected $isManager = false;
 
     /**
-     * @var SugarForecasting_Data_AbstractData
+     * Where we store the data we want to use
+     *
+     * @var array
      */
-    protected $dataClass;
+    protected $dataArray = array();
 
     /**
      * Class Constructor
@@ -74,6 +78,16 @@ abstract class SugarForecasting_AbstractForecast
         $this->args[$key] = $value;
 
         return $this;
+    }
+
+    /**
+     * Return the data array
+     *
+     * @return array
+     */
+    public function getDataArray()
+    {
+        return $this->dataArray;
     }
 
     /**
