@@ -643,7 +643,7 @@ class SugarSpot
                 }
                 $result = $seed->db->limitQuery($main_query, $offset, $limit + 1);
             }
-
+            
             $data = array();
             $count = 0;
             while($count < $limit && ($row = $seed->db->fetchByAssoc($result)))
@@ -666,6 +666,7 @@ class SugarSpot
                     $count++;
                 }
             }
+
 
             $nextOffset = -1;
             $prevOffset = -1;

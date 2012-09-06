@@ -377,10 +377,9 @@ class UnifiedSearchApi extends SugarApi {
             $ACL = new ACLController();
             // moduleList is passed by reference
             $ACL->filterModuleList($moduleList);
-
-            $options['moduleList'] = $moduleList;
+            $searchOptions['modules'] = $options['moduleList'] = $moduleList;
         }
-
+        
         $offset = $options['offset'];
         // One for luck.
         // Well, actually it's so that we know that there are additional results
@@ -397,6 +396,7 @@ class UnifiedSearchApi extends SugarApi {
         }
 
         $results = $searchEngine->search($options['query'],$offset, $limit, $searchOptions);
+
         $returnedRecords = array();
         foreach ( $results as $module => $moduleResults ) {
             if ( !is_array($moduleResults['data']) ) {
