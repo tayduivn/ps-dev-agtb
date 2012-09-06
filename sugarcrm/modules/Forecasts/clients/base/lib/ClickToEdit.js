@@ -8,23 +8,19 @@
     };
     
     /**
-     * Checks to see if the entered value of the field matches its datatype
+     * Checks to see if the entered value of the field matches its data type
      */
-    app.view.ClickToEditField.prototype._checkDatatype = function(field, value){
-    	var matchVal = null;
-    	
+    app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
+        debugger;
     	switch(field.type){
-    	case "int":
-    	case "currency":
-    	case "numeric":
-    	case "float":
-    		matchVal = value.match(/[^\.\d+-]/);
-    	default:
+            case "int":
+            case "currency":
+            case "numeric":
+            case "float":
+                return /^([+|-])?[\.\d\,]+?([\%])?$/.test(value);
+    	    default:
+                return true;
     	}
-    	if(matchVal !== null){
-    		return false;
-    	}
-    	return true;
     };
 
     app.view.ClickToEditField.prototype.render = function() {
@@ -69,10 +65,12 @@
                     }
                     try{
                         var orig = settings.field.holder;
-                        // if it's an int, and the user entered a +/- percentage, calculate it
+                        // if the user entered a +/- percentage, re-calculate the value based on the percentage
                         if(_.include(settings.numberTypes, settings.field.type)) {
-                            if(value.match(/^[+-][0-1]?[0-9]?[0-9]%$/)) {
-                                value = eval(orig + value[0] + "(" + value.substring(1,value.length-1) / 100 + "*" + orig +")");
+                            var parts = value.match(/^([+-])([\d\.]+?)\%$/);
+                            if(parts)
+                            {
+                                value = eval(orig + parts[1] + "(" + parts[2] / 100 + "*" + orig +")");
                             }
                         }
                                                                                     
