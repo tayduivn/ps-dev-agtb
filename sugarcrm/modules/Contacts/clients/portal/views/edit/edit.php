@@ -49,6 +49,7 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                     'click' => 'function(){ window.history.back(); }',
                 ),
                 'primary' => false,
+                'css_class' => 'btn-invisible btn-link',
             ),
         ),
     'templateMeta' =>

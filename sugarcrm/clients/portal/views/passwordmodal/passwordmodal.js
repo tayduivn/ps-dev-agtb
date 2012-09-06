@@ -177,14 +177,16 @@
                         "label": "Save",
                         "value": "save",
                         "class": "save-profile",
-                        "primary": true
+                        "primary": true,
+                        "css_class": "pull-right",
                     },
                     {
                         "name": "cancel_button",
                         "type": "button",
                         "label": "Cancel",
                         "value": "cancel",
-                        "primary": false
+                        "primary": false,
+                        "css_class": "btn-invisible btn-link",
                     }
                 ],
                 "panels": [

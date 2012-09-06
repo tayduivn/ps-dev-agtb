@@ -48,6 +48,7 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
                     'click' => 'function(){ window.history.back(); }',
                 ),
                 'primary' => false,
+                'css_class' => 'btn-invisible btn-link',
             ),
         ),
         'templateMeta' =>

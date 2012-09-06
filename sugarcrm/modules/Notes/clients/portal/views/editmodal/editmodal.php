@@ -27,6 +27,7 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'value' => 'cancel',
             'primary' => false,
+            'css_class' => 'btn-invisible btn-link',
         ), 
         array(
             'name' => 'save_button',
