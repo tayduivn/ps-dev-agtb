@@ -136,6 +136,8 @@
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
                     if(file.type.indexOf("image/") !== -1) {
                         container.append("<img style='display:block;' src='" + e.target.result + "' />");
+                    } else {
+                        container.append("<div>No preview available</div>");
                     }
                     $(event.currentTarget).after(container);
                 }
