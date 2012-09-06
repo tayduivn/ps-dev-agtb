@@ -18,7 +18,8 @@
         var jsDate, 
             usersDateFormatPreference = app.user.get('datepref');
         jsDate = app.date.parse(value, usersDateFormatPreference);
-        return jsDate.toISOString();
+        return app.date.format(jsDate, usersDateFormatPreference);
+        
     },
 
     format:function(value) {
@@ -28,11 +29,7 @@
         // If there is a default 'string' value like "yesterday", format it as a date
         if(!value && this.def.display_default) {
             value = app.date.parseDisplayDefault(this.def.display_default);
-            this.model.set(this.name, new Date(value).toISOString()); 
-        } else {
-            // In case ISO 8601 get it back to js native date which date.format understands
-            jsDate = new Date(value);
-            value  = app.date.format(jsDate, usersDateFormatPreference);
+            this.model.set(this.name, app.date.format(jsDate, usersDateFormatPreference));
         }
         jsDate = app.date.parse(value);
         return app.date.format(jsDate, usersDateFormatPreference);
