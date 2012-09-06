@@ -1,1 +1,1 @@
-<a href="http://{{value}}">{{value}}</a>
+        <a {{#if def.class}}class="{{def.class}}"{{/if}} href="{{#if value}}{{value}}{{else}}javascript:void(0){{/if}}">{{#if value}}{{value}}{{/if}}</a>

@@ -23,6 +23,9 @@ $viewdefs['base']['layout']['profileedit'] = array(
                                 0 => array(
                                     'view' => 'profile-edit',
                                 ),
+                                1 => array(
+                                    'view' => 'passwordmodal',
+                                ),
                             ),
                         ),
                     ),

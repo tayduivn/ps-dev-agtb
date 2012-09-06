@@ -224,10 +224,13 @@ $mod_strings = array (
     'LBL_OPPORTUNITIES' => 'Opportunities',
 
 	//BEGIN SUGARCRM flav=pro ONLY
+    'LBL_PASSWORD_CHANGE_FORM_TITLE' => 'Password Change',
+    'LBL_OLD_PORTAL_PASSWORD' => 'Old Portal Password',  
 	'LBL_PORTAL_PASSWORD' => 'Portal Password',
 	'LBL_CONFIRM_PORTAL_PASSWORD' => 'Confirm Portal Password',
     'LBL_LANG_PREF_TOOLTIP' => 'The Support Portal user interface is rendered in the language selected here',
-    //END SUGARCRM flav=pro ONLY
+    'LBL_CONTACT_EDIT_PASSWORD' => 'Password',
+	//END SUGARCRM flav=pro ONLY
 	'LBL_CHECKOUT_DATE'=>'Checkout Date',
     //BEGIN SUGARCRM flav=dce ONLY
     'LBL_CONTACT_DCEINST_FORM_TITLE' => 'Contact-Instance:',
