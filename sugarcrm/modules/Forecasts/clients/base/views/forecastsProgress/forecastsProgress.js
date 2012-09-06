@@ -80,7 +80,6 @@
             });
             //Rep totals model has changed
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
-                debugger;
                 if(!self.shouldRollup) {
                     self.recalculateRepTotals(totals);
                 }
