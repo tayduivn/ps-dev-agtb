@@ -68,10 +68,10 @@ class SugarSearchEngineMappingHelper
                 'decimal' => 'double',
             ),
             */
-           'dbType' => array(
-                'datetime'  =>  array(
-                                    'type'  => 'date',
-                                ),
+           'type' => array(
+                'datetimecombo'  =>  array(
+                                      'type'  => 'date',
+                                    ),
             )
         ),
     );
