@@ -176,7 +176,8 @@
     getTaskType: function(todoDate) {
         var todayBegin = new Date().setHours(0,0,0,0),
             todayEnd   = new Date().setHours(23,59,59,999),
-            todoStamp  = app.date.parse(todoDate).getTime();
+            splitValue = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\.*\d*([Z+-].*)$/.exec(todoDate),
+            todoStamp  = app.date.parse(splitValue[1] + " " + splitValue[2]).getTime();
 
         // If the task falls in today's range
         if( todoStamp >= todayBegin && todoStamp <= todayEnd ) {
@@ -208,7 +209,7 @@
             });
         }
         else {
-            var datetime = date + " 00:00:00";
+            var datetime = date + "T00:00:00+0000";
 
             this.model = app.data.createBean("Tasks", {
                 "name": subject,
@@ -230,8 +231,8 @@
         if( e.target.id == "todo-subject" || e.target.id == "todo-date" ) {
 
             // show the date-picker input field
-            if( $("#todo-date-container").css("display") == "none" ) {
-                $("#todo-date-container").css("display", "inline-block");
+            if( !(this.$("#todo-date-container").is(":visible")) ) {
+                this.$("#todo-date-container").css("display", "inline-block");
             }
 
             // if enter was pressed
