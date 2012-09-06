@@ -4,7 +4,7 @@ describe("sugarfields", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        field = SugarTest.createField("base","datetime", "datetime", "detail");
+        field = SugarTest.createField("base","date", "date", "detail");
     });
 
     afterEach(function() {
@@ -14,7 +14,7 @@ describe("sugarfields", function() {
         field = null;
     });
 
-    describe("datetime", function() {
+    describe("date", function() {
         it("should format the value", function() {
             var myUser = SUGAR.App.user, jsDate, unformatedValue;
             myUser.set('datepref','m/d/Y');
