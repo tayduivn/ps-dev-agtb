@@ -83,7 +83,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
                 $data['forecast'] = $row["w_forecast"];
                 $data['best_case'] = $row["w_best_case"];
                 $data['worst_case'] = $row["w_worst_case"];
-                $data['likely_case'] = $row["w_likely_case"];
+                $data['amount'] = $row["w_likely_case"];
                 $data['commit_stage'] = $row["w_commit_stage"];
                 $data['probability'] = $row["w_probability"];
                 $data['version'] = $row["w_version"];
