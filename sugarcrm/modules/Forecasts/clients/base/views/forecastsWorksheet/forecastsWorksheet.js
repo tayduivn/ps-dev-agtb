@@ -190,15 +190,56 @@
                 this.calculateTotals();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-            	
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
-            		this.context.forecasts.worksheet.url = this.createURL();
-            		this.context.forecasts.worksheet.fetch();
+            		var model = this.context.forecasts.worksheet;
+            		model.url = this.createURL();
+            		this.safeFetch();
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
-            	
             }, this);
+            var worksheet = this;
+            $(window).bind("beforeunload",function(){
+            	worksheet.safeFetch();
+            });
         }
+    },
+    
+    /**
+     * This function checks to see if the worksheet is dirty, and gives the user the option
+     * of saving their work before the sheet is fetched.
+     */
+    safeFetch: function(){
+    	var collection = this._collection; 
+    	var self = this;
+    	if(collection.isDirty){
+    		//unsaved changes, ask if you want to save.
+    		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
+    			_.each(collection.models, function(model, index){
+					var isDirty = model.get("isDirty");
+					if(typeof(isDirty) == "boolean" && isDirty ){
+        				model.set({draft: 1}, {silent:true});
+        				model.save();
+        				model.set({isDirty: false}, {silent:true});
+        			}  
+				});
+    			collection.isDirty = false;
+				$.when(!collection.isDirty).then(function(){
+	    			self.context.forecasts.set({reloadCommitButton: true});
+	    			collection.fetch();
+    		});
+			
+		}
+    		else{
+    			//ignore, fetch still
+    			collection.isDirty = false;
+    			self.context.forecasts.set({reloadCommitButton: true});
+    			collection.fetch();
+    		}
+    	}
+    	else{
+    		//no changes, fetch like normal.
+    		collection.fetch();	
+    	}    	
     },
 
     _setForecastColumn: function(fields) {
@@ -500,7 +541,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this._collection.fetch();
+        this.safeFetch();
     },
 
     /**
@@ -564,7 +605,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this._collection.fetch();
+        this.safeFetch();
     },
 
     /**
