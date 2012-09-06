@@ -236,7 +236,7 @@ class SugarFieldDatetimecombo extends SugarFieldBase {
         }
 
         $date = $timedate->fromIso($params[$field]);
-        if ( $date === null ) {
+        if ( !$date ) {
             require_once('include/api/SugarApi/SugarApiException.php');
             throw new SugarApiExceptionInvalidParameter("Did not recognize $field as a date/time, it looked like {$params[$field]}");
         }
