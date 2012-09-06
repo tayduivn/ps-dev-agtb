@@ -37,7 +37,7 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                 'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
                 'class' => 'save-profile',
-                'primary' => true,
+                'css_class' => 'btn-primary',
             ),
             array(
                 'name' => 'cancel_button',
@@ -48,7 +48,6 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                 array(
                     'click' => 'function(){ window.history.back(); }',
                 ),
-                'primary' => false,
                 'css_class' => 'btn-invisible btn-link',
             ),
         ),

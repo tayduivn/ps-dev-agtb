@@ -26,7 +26,6 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
             'type' => 'button',
             'label' => 'LBL_CANCEL_BUTTON_LABEL',
             'value' => 'cancel',
-            'primary' => false,
             'css_class' => 'btn-invisible btn-link',
         ), 
         array(
@@ -34,7 +33,7 @@ $viewdefs['Notes']['portal']['view']['editmodal'] = array(
             'type' => 'button',
             'label' => 'LBL_SAVE_BUTTON_LABEL',
             'value' => 'save',
-            'primary' => true,
+            'css_class' => 'btn-primary',
         ),
     ),
     'panels' => array(

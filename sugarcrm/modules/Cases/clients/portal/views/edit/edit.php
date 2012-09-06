@@ -36,7 +36,7 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
                 'type' => 'button',
                 'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
-                'primary' => true,
+                'css_class' => 'btn-primary',
             ),
             array(
                 'name' => 'cancel_button',
@@ -47,7 +47,6 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
                 array(
                     'click' => 'function(){ window.history.back(); }',
                 ),
-                'primary' => false,
                 'css_class' => 'btn-invisible btn-link',
             ),
         ),
