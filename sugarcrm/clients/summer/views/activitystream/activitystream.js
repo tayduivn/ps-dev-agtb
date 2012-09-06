@@ -5,7 +5,7 @@
         'click .addPost': 'addPost',
         'click .more': 'showAllComments',
         'click .filterAll': 'showAllActivities',
-        'click .filterMyActivities': 'showMyActivities', 
+        'click .filterMyActivities': 'showMyActivities',
         'click .filterFavorites': 'showFavoritesActivities',
         'dragenter .sayit': 'expandNewPost',
         'dragover .sayit': 'dragoverNewPost',
@@ -50,9 +50,23 @@
         var self = this,
             myPost = this.$(event.currentTarget).closest('li'),
             myPostContents = myPost.find('input.sayit')[0].value,
-            myPostId = this.$(event.currentTarget).data('id');
+            myPostId = this.$(event.currentTarget).data('id'),
+            attachments = [];
 
-        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function() {
+        this.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
+            var id = $(el).attr('id');
+            attachments.push({
+                "name": $('#' + id + '_name', el).val(),
+                "data": $('#' + id + '_data', el).val()
+            });
+        });
+
+        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {
+            'value': {
+                'text': myPostContents,
+                'attachments': attachments
+            }
+        }, {success: function() {
             self.collection.fetch(self.opts)
         }});
     },
@@ -63,7 +77,17 @@
             myPostContents = myPost.find('input.sayit')[0].value,
             myPostId = this.context.get("modelId"),
             myPostModule = this.module,
-            myPostUrl = 'ActivityStream';
+            myPostUrl = 'ActivityStream',
+            attachments = [];
+
+        console.log(myPost);
+        myPost.find('.activitystream-pending-attachment').each(function(index, el) {
+            var id = $(el).attr('id');
+            attachments.push({
+                "name": $('#' + id + '_name', el).val(),
+                "data": $('#' + id + '_data', el).val()
+            });
+        });
 
         if(myPostModule !== "ActivityStream") {
             myPostUrl += '/'+myPostModule;
@@ -72,23 +96,28 @@
             }
         }
 
-        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function() {
+        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {
+            'value': {
+                'text': myPostContents,
+                'attachments': attachments
+            }
+        }, {success: function() {
             self.collection.fetch(self.opts)
         }});
     },
 
     showAllActivities: function(event) {
-        this.opts.params.filter = 'all'; 
+        this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
     },
-    
+
     showMyActivities: function(event) {
         this.opts.params.filter = 'myactivities';
         this.collection.fetch(this.opts);
     },
-    
+
     showFavoritesActivities: function(event) {
-        this.opts.params.filter = 'favorites';  
+        this.opts.params.filter = 'favorites';
         this.collection.fetch(this.opts);
     },
 
@@ -126,10 +155,10 @@
                         size /= 1024;
                     }
                     size = Math.round(size);
-
-                    var container = $("<div></div>");
-                    container.append("<input name='attachment_name[]' value='"+file.name+"' type='hidden' />");
-                    container.append("<input name='attachment_data[]' value='"+e.target.result+"' type='hidden' />");
+                    var unique = _.uniqueId("activitystream_attachment");
+                    var container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
+                    container.append("<input value='"+file.name+"' id='" + unique + "_name' type='hidden' />");
+                    container.append("<input value='"+e.target.result+"' id='" + unique + "_data' type='hidden' />");
                     $('<a class="close">&times;</a>').on('click', function(e) {
                         $(this).parent().remove();
                     }).appendTo(container);
@@ -146,7 +175,7 @@
             fileReader.readAsDataURL(file);
         });
     },
-    
+
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
             var comments = model.get("comments");

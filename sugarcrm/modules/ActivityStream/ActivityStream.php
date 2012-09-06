@@ -31,7 +31,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /**
  * "Activity Stream" prototype using mysql.
  * It doesn't support 'related' activities yet.
- * 
+ *
  * @author hqi
  *
  */
@@ -39,32 +39,32 @@ class ActivityStream extends SugarBean {
     // activity types
     const ACTIVITY_TYPE_CREATE = 'created';
     const ACTIVITY_TYPE_RELATE = 'related';
-    const ACTIVITY_TYPE_UPDATE = 'updated';   
+    const ACTIVITY_TYPE_UPDATE = 'updated';
     const ACTIVITY_TYPE_POST = 'posted';
-    
+
 
     // common vars for sugar bean
     public $table_name = 'activity_stream';
     public $object_name = 'ActivityStream';
     public $module_dir = 'ActivityStream';
     public $new_schema = true;
-    
+
     // db fields
     public $id;
     public $target_id;
     public $target_module;
-    public $activity_type;    
+    public $activity_type;
     public $activity_data;
     public $created_by;
     public $date_created;
-        
+
     /**
      * Constructor
      */
     public function ActivityStream() {
-        parent::SugarBean();       
+        parent::SugarBean();
     }
-    
+
     /**
      * Creates a new comment for this activity
      * @param string $text comment text
@@ -72,23 +72,23 @@ class ActivityStream extends SugarBean {
      */
     public function addComment($text) {
         global $current_user, $dictionary;
-        $fieldDefs = $dictionary['ActivityComments']['fields'];   
-        $tableName = $dictionary['ActivityComments']['table'];      
+        $fieldDefs = $dictionary['ActivityComments']['fields'];
+        $tableName = $dictionary['ActivityComments']['table'];
 
         $values = array();
         $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
         $values['activity_id']= $this->db->massageValue($this->id, $fieldDefs['activity_id']);
-        $text = strip_tags($text);    
+        $text = strip_tags($text);
         $values['value']= $this->db->massageValue($this->parseUrls($text), $fieldDefs['value']);
         $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']); 
-        
+        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
+
         $sql = "INSERT INTO ".$tableName;
         $sql .= "(".implode(",", array_keys($values)).") ";
-        $sql .= "VALUES(".implode(",", $values).")"; 
-        return $this->db->query($sql,true);         
+        $sql .= "VALUES(".implode(",", $values).")";
+        return $this->db->query($sql,true) ? $values['id'] : false;
     }
-    
+
 
     /**
      * Creates new activity. For update, it may create multiple activity records, one for each changed field
@@ -100,31 +100,31 @@ class ActivityStream extends SugarBean {
      */
     public function addUpdate($bean) {
         global $current_language;
-        
+
         $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
         $dataChanges = array_values($dataChanges);
         $fieldDefs = $bean->getFieldDefinitions();
         $mod_strings = return_module_language($current_language, $bean->module_dir);
-                        
+
         foreach($dataChanges as &$dataChange) {
             $fieldName = get_label($fieldDefs[$dataChange['field_name']]['vname'], $mod_strings);
             $dataChange['field_name'] = str_replace(":","",$fieldName);
         }
-        
+
         return $this->addActivity($bean, self::ACTIVITY_TYPE_UPDATE, $dataChanges);
-    } 
+    }
 
     /**
-     * Creates new post. 
+     * Creates new post.
      *
-     * @param string $post_body 
+     * @param string $post_body
      * @param string $targetModule module name
      * @param string $targetId bean id
      * @param string $text posted text
      * @return bool query result or false
      *
      */
-    public function addPost($targetModule, $targetId, $text) {        
+    public function addPost($targetModule, $targetId, $text) {
         // This combination is not supportable
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is empty for activity post.");
@@ -135,22 +135,22 @@ class ActivityStream extends SugarBean {
         // Make sure targetModule and targetId are valid
         if(!empty($targetModule)) {
             $bean = BeanFactory::getBean($targetModule);
-            
+
             if(empty($bean)) {
                 $GLOBALS['log']->debug("target_module is invalid for activity post.");
                 return false;
             }
-            
+
             if(!empty($targetId) && !$bean->retrieve($targetId)) {
                 $GLOBALS['log']->debug("target_id is invalid for activity post.");
                 return false;
             }
         }
-        
+
         $text = strip_tags($text);
         $activityData = array('value'=>$this->parseUrls($text));
         return $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
-    }   
+    }
 
     /**
      * Creates a new relationship activity record.
@@ -162,18 +162,18 @@ class ActivityStream extends SugarBean {
     public function addRelate($lhs, $rhs) {
         $activityData = array('relate_to'=>$rhs->module_dir, 'relate_id'=>$rhs->id, 'relate_name'=>$rhs->get_summary_text());
         return $this->addActivity($lhs, self::ACTIVITY_TYPE_RELATE, $activityData);
-    }  
+    }
 
     /**
      * Creates a new record activity.
      *
-     * @param SugarBean $bean 
+     * @param SugarBean $bean
      * @return bool query result or false
      */
     public function addCreate($bean) {
         $activityData = array();
         return $this->addActivity($bean, self::ACTIVITY_TYPE_CREATE, $activityData);
-    }  
+    }
 
     /**
      * Creates a new activity record.
@@ -185,7 +185,9 @@ class ActivityStream extends SugarBean {
     protected function addActivity($bean, $activityType, $activityData = array()) {
         global $current_user, $dictionary;
         $fieldDefs = $dictionary['ActivityStream']['fields'];
-    
+
+        // TODO: Replace this with $bean->save().
+
         $activityValues = array();
         $activityValues['id'] = $GLOBALS['db']->massageValue(create_guid(), $fieldDefs['id']);
         $activityValues['target_id']= $GLOBALS['db']->massageValue($bean->id, $fieldDefs['target_id']);
@@ -195,13 +197,13 @@ class ActivityStream extends SugarBean {
         $activityValues['activity_data'] = $this->db->massageValue($activityData, $fieldDefs['activity_data']);
         $activityValues['date_created'] = $GLOBALS['db']->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
         $activityValues['created_by'] = $GLOBALS['db']->massageValue($current_user->id, $fieldDefs['created_by']);
-    
+
         $sql = "INSERT INTO ".$this->getTableName();
         $sql .= "(".implode(",", array_keys($activityValues)).") ";
         $sql .= "VALUES(".implode(",", $activityValues).")";
-        return $GLOBALS['db']->query($sql);
+        return $GLOBALS['db']->query($sql) ? $activityValues['id'] : false;
     }
-    
+
     /**
      * Converts youtube and image urls to html tags.
      * @param string $text
@@ -210,34 +212,46 @@ class ActivityStream extends SugarBean {
     protected function parseUrls($text) {
         // youtube videos
         $text = preg_replace('~
-                https?://         
-                (?:[0-9A-Z-]+\.)? 
-                (?:               
-                youtu\.be/      
-                | youtube\.com    
-                \S*             
-                [^\w\-\s]       
-                )               
-                ([\w\-]{11})    
-                (?=[^\w\-]|$)    
-                (?!               
-                [?=&+%\w]*     
-                (?:        
-                [\'"][^<>]*>  
-                | </a>      
-                )       
-                )           
-                [?=&+%\w-]*   
+                https?://
+                (?:[0-9A-Z-]+\.)?
+                (?:
+                youtu\.be/
+                | youtube\.com
+                \S*
+                [^\w\-\s]
+                )
+                ([\w\-]{11})
+                (?=[^\w\-]|$)
+                (?!
+                [?=&+%\w]*
+                (?:
+                [\'"][^<>]*>
+                | </a>
+                )
+                )
+                [?=&+%\w-]*
                 ~ix',
                 '<br/><iframe width="420" height="315" src="http://www.youtube.com/embed/$1?autoplay=1&cc_load_policy=1" frameborder="0" allowfullscreen></iframe><br/>',
                 $text);
         // images
         $text = preg_replace('#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i', '<br/><img src="$1.$2" alt="$1.$2" /><br/>', $text);
         // other links
-        $text = preg_replace('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', '$1<a href="$2">$2</a>', $text);        
-        return $text;  
-    }   
-    
+        $text = preg_replace('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', '$1<a href="$2">$2</a>', $text);
+        return $text;
+    }
+
+    /**
+     * Gets a Note bean for an attachment.
+     * @param string $parent_id Bean ID for the post.
+     * @return Note
+     */
+    function getNoteBeanForAttachment($parent_id) {
+        $attach = new Note();
+        $attach->parent_id = $parent_id;
+        $attach->parent_type = 'ActivityStream';
+        return $attach;
+    }
+
     /**
      * Returns an array of activities for a bean
      * @param string $targetModule module name
@@ -249,32 +263,32 @@ class ActivityStream extends SugarBean {
         global $dictionary, $current_language, $current_user;
         $tableName = $dictionary['ActivityStream']['table'];
         $fieldDefs = $dictionary['ActivityStream']['fields'];
-    
+
         // This combination is not supportable
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
             return false;
         }
-    
+
         // Convert to int for security
         $start = isset($options['offset']) ? (int) $options['offset'] : 0;
         $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
         $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1;
         $filter = isset($options['filter']) ? $options['filter'] : 'all';
         $activities = array();
-    
+
         $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name';
         $from = 'activity_stream a, users u';
         $where = 'a.created_by = u.id';
         $limit = '';
-    
+
         if(!empty($targetModule)) {
             $where .= " AND a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
                 $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
             }
         }
-    
+
         if($filter == 'myactivities') {
             $where .= " AND a.created_by = '".$current_user->id."'";
         }
@@ -282,18 +296,18 @@ class ActivityStream extends SugarBean {
             $from .= ", sugarfavorites f";
             $where .= " AND a.target_module = f.module AND a.target_id = f.record_id AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
         }
-    
+
         if($numActivities > 0) {
             $limit = ' LIMIT '.$start. ', '.$numActivities;
         }
-    
+
         $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
         $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
-    
+
         if(!empty($result)) {
             $activityIds = array();
-    
+
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
                 $row['target_name'] = '';
@@ -315,11 +329,11 @@ class ActivityStream extends SugarBean {
                 $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
                 unset($row['first_name']);
                 unset($row['last_name']);
-    
+
                 $activities[] = $row;
                 $activityIds[] = $row['id'];
             }
-    
+
             if(!empty($activityIds)) {
                 $comments = array();
                 if($numComments != 0) {
@@ -327,7 +341,7 @@ class ActivityStream extends SugarBean {
                     $tableName = $dictionary['ActivityComments']['table'];
                     $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
-    
+
                     if(!empty($result)) {
                         while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                             $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
@@ -343,9 +357,9 @@ class ActivityStream extends SugarBean {
                 }
             }
         }
-    
+
         return $activities;
-    }    
+    }
 }
 
 ?>
