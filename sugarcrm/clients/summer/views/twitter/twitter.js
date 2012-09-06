@@ -18,7 +18,7 @@
             this.model.get('full_name').replace(" ", "");
 
         $.ajax({
-            url: "http://twitter.com/statuses/user_timeline/" + twitter + ".json?count=6&callback=?",
+            url: "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + twitter + "&count=6&callback=?",
             dataType: "jsonp",
             context: this,
             success: function(data) {

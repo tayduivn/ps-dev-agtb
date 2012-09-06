@@ -2,12 +2,15 @@
     events:{
         'click .reply': 'showAddComment',
         'click .postReply': 'addComment',
-        'click .post': 'showAddPost',
         'click .addPost': 'addPost',
         'click .more': 'showAllComments',
         'click .filterAll': 'showAllActivities',
         'click .filterMyActivities': 'showMyActivities', 
-        'click .filterFavorites': 'showFavoritesActivities'        
+        'click .filterFavorites': 'showFavoritesActivities',
+        'dragenter .sayit': 'expandNewPost',
+        'dragover .sayit': 'dragoverNewPost',
+        'dragleave .sayit': 'shrinkNewPost',
+        'drop .sayit': 'dropAttachment',
     },
 
     initialize: function(options) {
@@ -27,6 +30,8 @@
             this.collection = app.data.createBeanCollection("ActivityStream");
             this.collection.fetch(this.opts);
         }
+        // Expose the dataTransfer object for drag and drop file uploads.
+        jQuery.event.props.push('dataTransfer');
     },
 
     showAllComments: function(event) {
@@ -50,10 +55,6 @@
         this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function() {
             self.collection.fetch(self.opts)
         }});
-    },
-
-    showAddPost: function() {
-        this.$(".activitystream-post").show();
     },
 
     addPost: function() {
@@ -89,7 +90,62 @@
     showFavoritesActivities: function(event) {
         this.opts.params.filter = 'favorites';  
         this.collection.fetch(this.opts);
-    }, 
+    },
+
+    expandNewPost: function(event) {
+        this.$(event.currentTarget).attr("placeholder", "Drop a file to attach it to the comment.").addClass("dragdrop");
+        return false;
+    },
+
+    dragoverNewPost: function(event) {
+        return false;
+    },
+
+    shrinkNewPost: function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        this.$(event.currentTarget).attr("placeholder", "Type your post").removeClass("dragdrop")
+        return false;
+    },
+
+    dropAttachment: function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        this.shrinkNewPost(event);
+        $.each(event.dataTransfer.files, function(i, file) {
+            var fileReader = new FileReader();
+
+            // Set up the callback for the FileReader.
+            fileReader.onload = (function(file) {
+                return function(e) {
+                    var sizes = ['B', 'KB', 'MB', 'GB'];
+                    var size_index = 0;
+                    var size = file.size;
+                    while(size > 1024 && size_index < sizes.length - 1) {
+                        size_index++;
+                        size /= 1024;
+                    }
+                    size = Math.round(size);
+
+                    var container = $("<div></div>");
+                    container.append("<input name='attachment_name[]' value='"+file.name+"' type='hidden' />");
+                    container.append("<input name='attachment_data[]' value='"+e.target.result+"' type='hidden' />");
+                    $('<a class="close">&times;</a>').on('click', function(e) {
+                        $(this).parent().remove();
+                    }).appendTo(container);
+                    container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
+                    if(file.type.indexOf("image/") !== -1) {
+                        container.append("<img style='display:block;' src='" + e.target.result + "' />");
+                    } else {
+                        container.append("<div>No preview available</div>");
+                    }
+                    $(event.currentTarget).after(container);
+                }
+            })(file);
+
+            fileReader.readAsDataURL(file);
+        });
+    },
     
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {

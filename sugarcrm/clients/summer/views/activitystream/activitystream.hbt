@@ -1,34 +1,35 @@
 <div class="block filtered tabbable tabs-left clearfix" id="moduleActivity">
-  <h4>Activity</h4>  
-  {{#if opts.params.filter}}
-  <input class="filterAll" type="checkbox" {{#eq opts.params.filter "all"}}checked="checked" disabled="disabled"{{/eq}}/> All
-  <input class="filterMyActivities" type="checkbox" {{#eq opts.params.filter "myactivities"}}checked="checked" disabled="disabled"{{/eq}}/> My Activities
-  {{#if opts.params.id}}
-  {{else}}
-  <input class="filterFavorites" type="checkbox" {{#eq opts.params.filter "favorites"}}checked="checked" disabled="disabled"{{/eq}}/> My Favorites      
-  {{/if}} 
-  {{else}} 
-  <input class="filterAll" type="checkbox" checked="checked" disabled="disabled"/> All
-  <input class="filterMyActivities" type="checkbox"/> My Activities
-  {{#if opts.params.id}}
-  {{else}}
-  <input class="filterFavorites" type="checkbox"/> My Favorites         
-  {{/if}} 
-  {{/if}}   
+  <ul id="activitystream-pills" class="nav nav-pills">
+    {{#if opts.params.filter}}
+        <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>All</span></a></li>
+        <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Activities</span></a></li>
+        {{#if opts.params.id}}
+        {{else}}
+            <li class="filterFavorites{{#eq opts.params.filter "favorites"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Favorites</span></a></li>
+        {{/if}}
+    {{else}}
+        <li class="filterAll active"><a href="#" onclick="javascript: return false;"><span>All</span></a></li>
+        <li class="filterMyActivities"><a href="#" onclick="javascript: return false;"><span>My Activities</span></a></li>
+        {{#if opts.params.id}}
+        {{else}}
+            <li class="filterFavorites"><a href="#" onclick="javascript: return false;"><span>My Favorites</span></a></li>
+        {{/if}}
+    {{/if}}
+  </ul>
+  <h4 id="activitystream-header">Activity</h4>
+  <div class="activitystream-post">
+    <p>
+      <input type="text" value="" class="span12 sayit" placeholder="Type your post" dropzone="copy">
+      <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
+      <input type="submit" class="btn btn-primary addPost">
+    </p>
+  </div>
   <div class="actions">
-      <a data-toggle="modal" href="#post" class="post btn btn-mini reply"><i class="icon-plus"></i></a>
   </div>
   <form class="form-search hide" action="">
     <input value="" class="span4" placeholder="Refine activity ...">
   </form> 
   <ul class="nav nav-tabs results">
-     <div style="display:none;" class="activitystream-post">
-        <p>
-       <input type="text" value="" class="span10 sayit" placeholder="Type your post">
-       <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
-       <input type="submit" class="btn btn-primary addPost">
-       </p>
-     </div>  
     {{#if collection.models.length}}
       {{#each collection.models}}
       <li style="" data-id="{{attributes.id}}">
@@ -46,7 +47,7 @@
               {{/if}}             
           {{/eq}} 
           {{#eq attributes.activity_type "posted"}}          
-              "{{attributes.activity_data.value}}"           
+              "{{{attributes.activity_data.value}}}"           
               {{#if attributes.target_name}}
               on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
               {{/if}} 
@@ -79,7 +80,7 @@
                     <img src="img.jpg" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
-                    <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{this.value}}<br>
+                    <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{{this.value}}}<br>
                     <date class="date">Commented {{timeago this.date_created}}</date>
                   </p>
                 </li>
@@ -94,7 +95,7 @@
          {{/if}}
          <ul>
           <div class="control-group form-horizontal activitystream-comment hide">
-            <input type="text" value="" class="sayit" placeholder="Add your comment">
+            <input type="text" value="" class="sayit" placeholder="Add your comment" dropzone="copy">
             <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
           </div>
          </ul>
