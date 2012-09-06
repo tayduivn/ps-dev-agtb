@@ -15,7 +15,7 @@ describe("sugarfields", function() {
 
     describe("datetimecombo", function() {
         it("should format the date time combo", function() {
-            var myUser = SUGAR.App.user.getUser();
+            var myUser = SUGAR.App.user;
             myUser.set('datepref','m/d/Y');
             myUser.set('timepref','H:i');
 
