@@ -32,7 +32,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * Constructor
      */
-    public function AnnualTimePeriod() {
+    public function __construct() {
         parent::TimePeriod();
 
         $this->time_period_type = 'Annual';

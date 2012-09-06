@@ -32,7 +32,7 @@ class WeekTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * Constructor
      */
-    public function WeekTimePeriod() {
+    public function __construct() {
         parent::TimePeriod();
 
         $this->time_period_type = 'Week';

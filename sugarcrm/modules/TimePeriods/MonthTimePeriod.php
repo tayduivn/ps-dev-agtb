@@ -32,7 +32,7 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * Constructor
      */
-    public function MonthTimePeriod() {
+    public function __construct() {
         parent::TimePeriod();
 
         $this->time_period_type = 'Month';

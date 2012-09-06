@@ -32,7 +32,7 @@ class QuarterTimePeriod544 extends TimePeriod implements iTimePeriod {
     /**
      * Constructor
      */
-    public function QuarterTimePeriod544() {
+    public function __construct() {
         parent::TimePeriod();
 
         $this->time_period_type = 'Quarter544';
