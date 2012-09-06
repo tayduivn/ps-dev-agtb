@@ -83,12 +83,9 @@ class ForecastWorksheet extends SugarBean {
         $worksheet->forecast_type = "Direct";
         $worksheet->related_forecast_type = "Product";
         $worksheet->related_id = $this->id;
-<<<<<<< HEAD
         $worksheet->currency_id = $this->currency_id;
         $worksheet->base_rate = $this->base_rate;
-=======
         $worksheet->version = $version;
->>>>>>> upstream/nutmeg
         $worksheet->save();
     }
     
