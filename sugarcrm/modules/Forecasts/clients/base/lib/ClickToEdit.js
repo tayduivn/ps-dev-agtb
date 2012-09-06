@@ -11,7 +11,6 @@
      * Checks to see if the entered value of the field matches its data type
      */
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
-        debugger;
     	switch(field.type){
             case "int":
             case "currency":
@@ -70,6 +69,8 @@
                             var parts = value.match(/^([+-])([\d\.]+?)\%$/);
                             if(parts)
                             {
+                                //Unformat the original number before we attempt to apply calculations
+                                orig = SUGAR.App.utils.unformatNumberString(orig, SUGAR.App.user.get('number_grouping_separator'), SUGAR.App.user.get('decimal_separator'), false);
                                 value = eval(orig + parts[1] + "(" + parts[2] / 100 + "*" + orig +")");
                             }
                         }
