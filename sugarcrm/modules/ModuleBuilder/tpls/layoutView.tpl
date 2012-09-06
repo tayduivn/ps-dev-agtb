@@ -141,22 +141,22 @@
         <span id="le_paneltype_{$idCount}" style="float:left;">
         &nbsp;&nbsp;{sugar_translate label="LBL_TABDEF_TYPE" module="ModuleBuilder"}&nbsp;{sugar_help text=$mod.LBL_TABDEF_TYPE_OPTION_HELP}:
         {if $idCounter == 1}
-        {assign var="firstpanelid" value=$panelid}
-        {assign var="firstpanelidcount" value=$idCount}
+            {assign var="firstpanelid" value=$panelid}
+            {assign var="firstpanelidcount" value=$idCount}
+        {/if}
         <select id="le_paneltype_select_{$idCount}" onchange="document.forms.prepareForSave.tabDefs_{$panelid}_newTab.value=this.value; showHideBox(this.value, {$idCount}, '{$panelid}', '{$firstpanelid}', {$firstpanelidcount});"
                 title="{sugar_translate label="LBL_TABDEF_TYPE_HELP" module="ModuleBuilder"}">
           <option value="0" {if $tabDefs[$panel_upper].newTab == false}selected="selected"{/if}>{sugar_translate label="LBL_TABDEF_TYPE_OPTION_PANEL" module="ModuleBuilder"}</option>
           {if $disable_tabs != true}
           <option value="1" {if $tabDefs[$panel_upper].newTab == true}selected="selected"{/if}>{sugar_translate label="LBL_TABDEF_TYPE_OPTION_TAB" module="ModuleBuilder"}</option>
           {/if}
-      </select>
+        </select>
         </span>
         <span id="le_panelcollapse_{$idCount}" style="float:right;{if isset($tabDefs[$panel_upper].newTab) && $tabDefs[$panel_upper].newTab == true}display:none;{/if}">
         &nbsp;{sugar_translate label="LBL_TABDEF_COLLAPSE" module="ModuleBuilder"}?
         <input type="checkbox" title="{sugar_translate label="LBL_TABDEF_COLLAPSE_HELP" module="ModuleBuilder"}" {if $tabDefs[$panel_upper].panelDefault == "collapsed"}checked="checked"{/if}
           onclick="{literal}if(this.checked) { document.forms.prepareForSave.tabDefs_{/literal}{$panelid}{literal}_panelDefault.value='collapsed'; } else { document.forms.prepareForSave.tabDefs_{/literal}{$panelid}{literal}_panelDefault.value='expanded';}{/literal}" />
         </span>
-        {/if}
         {counter name='idCount' assign='idCount' print=false}
 
         {foreach from=$panel item='row' key='rid'}
