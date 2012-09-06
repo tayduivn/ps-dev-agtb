@@ -111,7 +111,7 @@ class SugarSearchEngineElasticMapping
                 // field type is required when setting mapping
                 if (empty($tmpArray['type']))
                 {
-                    $tmpArray['type'] = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
+                    $tmpArray = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
                 }
 
                 $properties[$fieldName] = $tmpArray;
