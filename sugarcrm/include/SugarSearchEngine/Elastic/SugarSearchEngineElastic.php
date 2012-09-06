@@ -128,7 +128,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 // 1. elasticsearch does not handle multiple types in a query very well
                 // so let's use only strings so it won't be indexed as other types
                 // 2. for some reason, bean fields are encoded, decode them first
-                if(!isset($fieldDef['dbType']) || $fieldDef['dbType'] != 'datetime') {
+                // We are handling date range search for Meetings which is type datetimecombo
+                if(!isset($fieldDef['type']) || $fieldDef['type'] != 'datetimecombo') {
                     $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
                 }
                 else {
@@ -695,7 +696,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $query = new Elastica_Query($queryObj);
             }
 
-            if(isset($options['sort'])) {
+            if(isset($options['sort']) && is_array($options['sort'])) {
                 foreach($options['sort'] AS $sort) {
                     $query->addSort($sort);
                 }
