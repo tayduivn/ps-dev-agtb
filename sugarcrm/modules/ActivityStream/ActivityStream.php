@@ -76,7 +76,8 @@ class ActivityStream extends SugarBean {
         $tableName = $dictionary['ActivityComments']['table'];
 
         $values = array();
-        $values['id'] = $this->db->massageValue(create_guid(), $fieldDefs['id']);
+        $id = create_guid();
+        $values['id'] = $this->db->massageValue($id, $fieldDefs['id']);
         $values['activity_id']= $this->db->massageValue($this->id, $fieldDefs['activity_id']);
         $text = strip_tags($text);
         $values['value']= $this->db->massageValue($this->parseUrls($text), $fieldDefs['value']);
@@ -86,7 +87,7 @@ class ActivityStream extends SugarBean {
         $sql = "INSERT INTO ".$tableName;
         $sql .= "(".implode(",", array_keys($values)).") ";
         $sql .= "VALUES(".implode(",", $values).")";
-        return $this->db->query($sql,true) ? $values['id'] : false;
+        return $this->db->query($sql,true) ? $id : false;
     }
 
 
@@ -189,7 +190,8 @@ class ActivityStream extends SugarBean {
         // TODO: Replace this with $bean->save().
 
         $activityValues = array();
-        $activityValues['id'] = $GLOBALS['db']->massageValue(create_guid(), $fieldDefs['id']);
+        $id = create_guid();
+        $activityValues['id'] = $GLOBALS['db']->massageValue($id, $fieldDefs['id']);
         $activityValues['target_id']= $GLOBALS['db']->massageValue($bean->id, $fieldDefs['target_id']);
         $activityValues['target_module']= $GLOBALS['db']->massageValue($bean->module_name, $fieldDefs['target_module']);
         $activityData = json_encode($activityData);
@@ -201,7 +203,7 @@ class ActivityStream extends SugarBean {
         $sql = "INSERT INTO ".$this->getTableName();
         $sql .= "(".implode(",", array_keys($activityValues)).") ";
         $sql .= "VALUES(".implode(",", $activityValues).")";
-        return $GLOBALS['db']->query($sql) ? $activityValues['id'] : false;
+        return $GLOBALS['db']->query($sql) ? $id : false;
     }
 
     /**
