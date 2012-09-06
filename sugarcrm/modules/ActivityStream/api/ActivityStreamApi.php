@@ -94,9 +94,11 @@ class ActivityStreamApi extends ListApi {
             }
 
             $post_id = $seed->addComment($value);
+            $parent_type = 'ActivityStream';
         }
         else {
             $post_id = $seed->addPost($targetModule, $targetId, $value);
+            $parent_type = 'ActivityComments';
         }
 
         // If creating the post was successful, add the attachments.
@@ -110,7 +112,7 @@ class ActivityStreamApi extends ListApi {
                 // Using BeanFactory returns an stdClass, not a note.
                 $attachment_seed = new Note();
                 $attachment_seed->parent_id = $post_id;
-                $attachment_seed->parent_type = 'ActivityStream';
+                $attachment_seed->parent_type = $parent_type;
                 $attachment_seed->filename = $attachment['name'];
                 $attachment_seed->file_mime_type = $arr[1];
                 $attachment_seed->safeAttachmentName();
