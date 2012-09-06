@@ -94,11 +94,11 @@ class ActivityStreamApi extends ListApi {
             }
 
             $post_id = $seed->addComment($value);
-            $parent_type = 'ActivityStream';
+            $parent_type = 'ActivityComments';
         }
         else {
             $post_id = $seed->addPost($targetModule, $targetId, $value);
-            $parent_type = 'ActivityComments';
+            $parent_type = 'ActivityStream';
         }
 
         // If creating the post was successful, add the attachments.
