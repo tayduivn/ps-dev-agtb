@@ -1,0 +1,10 @@
+<div class="container-fluid">
+    <form>
+        {{getFieldValue context "message"}}
+    </form>
+</div>
+<div class="modal-footer">
+    {{#each meta.buttons}}
+    {{field ../this}}
+    {{/each}}
+</div>
