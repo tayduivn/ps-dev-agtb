@@ -134,7 +134,8 @@ class ForecastsProgressApi extends ModuleApi
         //get data
 		$progressData = array(
             "closed_amount"     => $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->sales_stage_won),
-            "opportunities"     => $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->sales_stage_won, $this->sales_stage_lost)
+            "opportunities"     => $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->sales_stage_won, $this->sales_stage_lost),
+            "pipeline_revenue"  => $this->getPipelineRevenue($this->user_id, $this->timeperiod_id, $this->sales_stage_won, $this->sales_stage_lost)
 		);
 
 		return $progressData;
@@ -163,7 +164,8 @@ class ForecastsProgressApi extends ModuleApi
      *
      * @param null $user_id
      * @param null $timeperiod_id
-     * @param bool $should_rollup
+     * @param $excluded_sales_stages_won sales stages won to not include from settings
+     * @param $excluded_sales_stages_lost sales stages lost to not include from settings
      * @return mixed
      */
     protected function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL, $excluded_sales_stages_won, $excluded_sales_stages_lost  )
@@ -210,6 +212,7 @@ class ForecastsProgressApi extends ModuleApi
      *
    	 * @param null $user_id
    	 * @param null $timeperiod_id
+     * @param $excluded_sales_stages_won sales stages won to not include from settings
    	 *
    	 * @return int
    	 */
@@ -239,5 +242,53 @@ class ForecastsProgressApi extends ModuleApi
    		}
 
    		return $amountSum;
+   	}
+
+    /**
+     * retrieves the amount of opportunities less the closed won/lost stages
+     *
+   	 * @param null $user_id
+   	 * @param null $timeperiod_id
+     * @param $excluded_sales_stages_won sales stages won to not include from settings
+     * @param $excluded_sales_stages_lost sales stages lost to not include from settings
+   	 *
+   	 * @return int
+   	 */
+   	public function getPipelineRevenue( $user_id = NULL, $timeperiod_id = NULL, $excluded_sales_stages_won, $excluded_sales_stages_lost )
+   	{
+   		$amountSum = 0;
+
+        //set user ids and timeperiods
+        $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
+        $query .= " ON o.assigned_user_id = u.id";
+        $query .= " WHERE o.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
+        $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
+        $query .= " OR o.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
+
+
+        //per requirements, exclude the sales stages won
+        if(count($excluded_sales_stages_won)) {
+           foreach($excluded_sales_stages_won as $exclusion)
+           {
+               $query .= " AND o.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
+           }
+        }
+
+        //per the requirements, exclude the sales stages for closed lost
+        if(count($excluded_sales_stages_lost)) {
+           foreach($excluded_sales_stages_lost as $exclusion)
+           {
+               $query .= " AND o.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
+           }
+        }
+
+       $result = $GLOBALS['db']->query($query);
+
+        while ($row = $GLOBALS['db']->fetchByAssoc($result))
+       {
+            $amountSum = $row["amount"];
+        }
+
+        return $amountSum;
    	}
 }
