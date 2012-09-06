@@ -707,10 +707,10 @@ class Email extends SugarBean {
 					$docRev = new DocumentRevision();
 					$doc->retrieve($docId);
 					$docRev->retrieve($doc->document_revision_id);
+                    $filename = $docRev->filename;
+                    $fileLocation = "upload://{$docRev->id}";
 
-                    if ($docRev->id == $docId) {  // document found
-                        $filename = $docRev->filename;
-                        $fileLocation = "upload://{$docRev->id}";
+                    if (file_exists($fileLocation)) {  // document found
                         $mime_type = $docRev->file_mime_type;
                         $mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
 

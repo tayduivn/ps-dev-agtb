@@ -31,12 +31,22 @@ require_once('tests/rest/RestTestBase.php');
 class EmailsApiTest extends RestTestBase {
     var $current_user;
     var $input;
+    var $document;
+    var $documentRevision;
 
     var $user_cache_directory;
     var $uploaded_image_file_path;
 
     var $image_file_id;
     var $image_file_name;
+
+    var $document_upload_directory;
+    var $uploaded_document_file_path;
+    var $renamed_document_file_path;
+
+    var $document_file_id;
+    var $document_file_name;
+
 
     public function setUp()
     {
@@ -65,9 +75,7 @@ class EmailsApiTest extends RestTestBase {
 
             "attachments"	=> 	null,
 
-            "documents"		=>	array(
-                array("name" => "schedule.pdf",  "id" => "123456789012345678901234567890123456"),
-            ),
+            "documents"		=>	null,
 
             "subject"  		=>	"This is a Test Email",
 
@@ -87,6 +95,7 @@ class EmailsApiTest extends RestTestBase {
 
         );
 
+        /*---- Create an Uploaded Image File ----------------------------------*/
         $email=new Email();
         $this->user_cache_directory = "{$email->cachePath}/{$current_user->id}";
 
@@ -101,7 +110,38 @@ class EmailsApiTest extends RestTestBase {
 
         //printf("UploadedImageFilePath: '%s'\n",$this->uploaded_image_file_path);
         copy($fromImageFile, $this->uploaded_image_file_path);
-    }
+
+        /*---- Create an Uploaded Sugar Document File ----------------------------------*/
+        $this->document_upload_directory = "upload";
+        $this->document_file_name = "unit_test_document.pdf";
+
+        $_FILES['filename_file'] = 'xxx';
+        $this->document = new Document();
+        $this->document->id = create_guid();
+        $this->document->new_with_id = true;
+
+        /*---- Create the upload file in the upload directory ----*/
+        $fromDocumentFile = "tests/modules/Emails/data/".$this->document_file_name;
+        $this->uploaded_document_file_path = "{$this->document_upload_directory}/{$this->document->id}";
+        copy($fromDocumentFile, $this->uploaded_document_file_path);
+
+
+        $this->document->revision = '38';
+        $this->document->filename = $this->document_file_name;
+        $this->document->document_name = 'EmailsAPI Unit Test Document';
+        $this->document->assigned_user_id = $current_user->id;
+        $this->document->file_ext = 'pdf';
+        $this->document->file_mime_type = "application/pdf";
+        $this->document->doc_type = "Sugar";
+        $this->document->doc_id  = "";
+        $this->document->doc_url = "";
+        $this->document->save();
+
+        $this->document->retrieve($this->document->id);
+
+        $this->renamed_document_file_path = "{$this->document_upload_directory}/{$this->document->document_revision_id}";
+        $this->document_file_id = $this->document->id;
+     }
 
     public function tearDown()
     {
@@ -114,7 +154,56 @@ class EmailsApiTest extends RestTestBase {
             //printf("RMDIR  '%s '(RES=%d)\n",$this->user_cache_directory, $res);
         }
 
+        if (file_exists($this->uploaded_document_file_path)) {
+            $res=unlink($this->uploaded_document_file_path);
+            //printf("UNLINK Uploaded Document File: '%s '(RES=%d)\n",$this->uploaded_document_file_path, $res);
+        }
+
+        if (file_exists($this->renamed_document_file_path)) {
+            $res=unlink($this->renamed_document_file_path);
+            //printf("UNLINK Renamed Document File: '%s '(RES=%d)\n",$this->renamed_document_file_path, $res);
+        }
+
+        $sql = "DELETE FROM documents WHERE id = '{$this->document->id}'";
+        $GLOBALS['db']->query($sql);
+        $sql = "DELETE FROM document_revisions WHERE id = '{$this->document->document_revision_id}'";
+        $GLOBALS['db']->query($sql);
+
         parent::tearDown();
+    }
+
+
+
+    public function testCreate_Draft_WithSugarDocumentAttached_Success() {
+        $this->input["status"] = "draft";
+
+        $this->input["documents"] = array(
+            array("name" => $this->document_file_name,
+                  "id"   => $this->document_file_id
+            )
+        );
+
+        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $reply = $post_response['reply'];
+        // print_r($reply);
+
+        $http_status = $post_response['info']['http_code'];
+        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+
+        $success = (int) $reply['SUCCESS'];
+        $this->assertEquals(1,$success, "Not Successful");
+
+        $email = $reply['EMAIL'];
+
+        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
+        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
+        $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
+        $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
+
+        $this->deleteEmails($email['id']);
     }
 
 
@@ -179,7 +268,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     public function testCreate_Ready_Success() {
-        $this->markTestSkipped("Not real sure how to test actually sending of the mail"); /********************************/
+        $this->markTestSkipped("Not real sure how to test actually sending of the mail");
 
         $this->input["status"] = "ready";
         $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"twolf@sugarcrm.com") );
@@ -208,7 +297,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     public function testCreate_Ready_WithAttachment_Success() {
-        $this->markTestSkipped("Not real sure how to test actually sending of the mail"); /********************************/
+        $this->markTestSkipped("Not real sure how to test actually sending of the mail");
 
         $this->input["attachments"] = array(
             array("name" => $this->image_file_name,
@@ -242,20 +331,42 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
-    public function testCreate_Ready_EmailSendFailed() {
+    public function testCreate_Ready_WithSugarDocumentAttached_Success() {
+        $this->markTestSkipped("Not real sure how to test actually sending of the mail");
+
+        $this->input["documents"] = array(
+            array("name" => $this->document_file_name,
+                  "id"   => $this->document_file_id
+            ),
+        );
+
         $this->input["status"] = "ready";
-        $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"bogus_email_unit_test@webtribune.com") );
+        $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"twolf@sugarcrm.com") );
         $this->input["cc_addresses"] = null;
         $this->input["bcc_addresses"] = null;
 
         $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
-        $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
-
         $reply = $post_response['reply'];
-        $success = (int) $reply['SUCCESS'];
-        $this->assertEquals(0, $success, "Expected Mail Send to Fail");
-    }
+        // print_r($reply);
 
+        $http_status = $post_response['info']['http_code'];
+        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+
+        $success = (int) $reply['SUCCESS'];
+        $this->assertEquals(1,$success, "Not Successful");
+
+        $email = $reply['EMAIL'];
+
+        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
+        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
+        $this->assertEquals("out", $email['type'], "Email Type Incorrect");
+        $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
+
+        $this->deleteEmails($email['id']);
+    }
 
     public function testCreate_InvalidStatus() {
         $this->input["status"] = "bogus";
@@ -267,6 +378,7 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("request_failure", $post_response['reply']['error'], "Expected Request Failure Response");
         $this->assertEquals("Invalid Status", $post_response['reply']['error_description'], "Expected Request Failure Response");
     }
+
 
     /**
      *
