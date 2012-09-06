@@ -329,21 +329,35 @@ class M2MRelationship extends SugarRelationship
             $knownKey = $this->def['join_key_lhs'];
             $targetKey = $this->def['join_key_rhs'];
             $relatedSeed = BeanFactory::getBean($this->getRHSModule());
-            $whereTable = (empty($params['right_join_table_alias']) ? $relatedSeed->table_name : $params['right_join_table_alias']);
+            $whereTable = "";
+            if (empty($params['right_join_table_alias'])){
+                if ($relatedSeed !== false){
+                    $whereTable = $relatedSeed->table_name;
+                }
+            } else {
+                $whereTable = $params['right_join_table_alias'];
+            }
         }
         else
         {
             $knownKey = $this->def['join_key_rhs'];
             $targetKey = $this->def['join_key_lhs'];
             $relatedSeed = BeanFactory::getBean($this->getLHSModule());
-            $whereTable = (empty($params['left_join_table_alias']) ? $relatedSeed->table_name : $params['left_join_table_alias']);
+            $whereTable = "";
+            if (empty($params['left_join_table_alias'])){
+                if ($relatedSeed !== false){
+                    $whereTable = $relatedSeed->table_name;
+                }
+            } else {
+                $whereTable = $params['left_join_table_alias'];
+            }
         }
         $rel_table = $this->getRelationshipTable();
 
         $where = "$rel_table.$knownKey = '{$link->getFocus()->id}'" . $this->getRoleWhere();
 
         //Add any optional where clause
-        if (!empty($params['where'])){
+        if (!empty($params['where']) && !empty($whereTable)){
             $add_where = is_string($params['where']) ? $params['where'] : "$whereTable." . $this->getOptionalWhereClause($params['where']);
             if (!empty($add_where))
                 $where .= " AND $rel_table.$targetKey=$whereTable.id AND $add_where";
@@ -352,14 +366,14 @@ class M2MRelationship extends SugarRelationship
         $deleted = !empty($params['deleted']) ? 1 : 0;
         $from = $rel_table;
         //BEGIN SUGARCRM flav=pro ONLY
-        if (!empty($params['enforce_teams']))
+        if (!empty($params['enforce_teams']) && $relatedSeed !== false)
         {
             if ($rel_table != $relatedSeed->table_name)
                 $from .= ", $relatedSeed->table_name";
             $relatedSeed->add_team_security_where_clause($from);
         }
         //END SUGARCRM flav=pro ONLY
-        if (!empty($params['where']) || !empty($params['orderby']))
+        if ((!empty($params['where']) || !empty($params['orderby'])) && !empty($whereTable))
             $from .= " LEFT JOIN $whereTable on $rel_table.$targetKey=$whereTable.id";
 
         $select = "$targetKey id";
@@ -368,7 +382,7 @@ class M2MRelationship extends SugarRelationship
         }
 
         if (empty($params['return_as_array'])) {
-            $orderby = !empty($params['orderby']) ? " ORDER BY $whereTable.{$params['orderby']}": "";
+            $orderby = (!empty($params['orderby']) && !empty($whereTable)) ? " ORDER BY $whereTable.{$params['orderby']}": "";
             $query = "SELECT $select FROM $from WHERE $where AND $rel_table.deleted=$deleted $orderby";
             //Limit is not compatible with return_as_array
             if (!empty($params['limit']) && $params['limit'] > 0) {
