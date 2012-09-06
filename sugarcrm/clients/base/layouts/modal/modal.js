@@ -4,12 +4,24 @@
  * @precondition layout metadata must contain a modal layout among the components.
  * array(
  *      'layout' => 'modal',
- *      'showEvent' => [event name] //corresponding trigger name
+ *      'showEvent' => [event name] //corresponding trigger name (a single string or array of strings)
  *      ),
  * @trigger [event name] Create popup modal window and draws specified type of layout
- *      @params module - String Module name (i.e. Accounts, Contacts, etc)
- *      @params layout - Sugar Layout
- *      @params callback - function(model) - called by trigger "modal:callback" with correponded model
+ *      @params options - [Object] {
+ *              module - [String] Module name (i.e. Accounts, Contacts, etc) (optional)
+ *              link - [String] related module name (optional)
+ *              modelId - [String] model ID (optional)
+ *                  or
+ *              context - [Object] configured context attributes
+ *                        i.e. { module:..., link:..., modelId:... }
+ *
+ *              layout - [String] for single layout component (optional)
+ *                  or
+ *              components - [Array] list of either views or layouts (optional for single layout)
+ *                           i.e. [ {view: ... } , {layout: ...}, ...]
+ *      }
+ *
+ *      @params callback - [function(model)] - called by trigger "modal:callback" with correponded model
  *
  * @trigger "modal:callback" Executes binded callback function with the updated model as parameter
  *      @params model - object Backbone model that relates to the current job
@@ -23,73 +35,108 @@
  *     this.view.layout.trigger([event name], ...)
  */
 ({
+    components: [
+        { 'view' : 'modal-header' }
+    ],
     initialize: function(options) {
-        var self = this,
+        var parent = this,
             showEvent = options.meta.showEvent;
         options.meta = {
-            'components': [
-                { 'view' : 'modal-header' },
-                { 'view' : 'modal-footer' }
-            ]
+            'components': this.components
         };
         app.view.Layout.prototype.initialize.call(this, options);
         if(_.isArray(showEvent)) {
+            //Bind the multiple event handler names
             _.each(showEvent, function(evt, index) {
                 if(index == 0) {
-                    self.showEvent = evt;
+                    parent.showEvent = evt;
                 } else {
                     options.layout.on(evt, function(params, callback){
-                        self.open(params, callback);
-                    }, self);
+                        parent.open(params, callback);
+                    }, parent);
                 }
             });
         } else {
-            self.showEvent = showEvent;
+            parent.showEvent = showEvent;
         }
-        options.layout.on(self.showEvent, function(params, callback) {
-            var module = params.module || '',
-                layout = params.layout,
-                span = params.span || '',
-                modelId = params.modelId || '',
+        options.layout.on(this.showEvent, function(params, callback) {
+            var span = params.span || '',
+                buttons = params.buttons || [],
+                message = params.message || '',
+                components = (params.components || []),
                 title = params.title + '';
-            //if container defined
-            if(_.isUndefined(layout))
-                return;
-            self.context.set("title", title);
 
-            //if previous popup-body exists, remove it.
-            var popup = self.getPopupComponent();
-            if(popup) {
-                popup.$el.remove();
-                self.removeComponent(self.mId);
-            } else {
-                self.mId = self._components.length;
+            if(params.layout) components.push(_.pick(params, 'layout'));
+            params.context = _.extend(params.context || {}, _.pick(params, 'module', 'link', 'modelId'));
+
+            if(message && components.length == 0) {
+                components.push({view: 'modal-confirm'});
+                params.context.message = message;
             }
-            self.show(span);
-            //set default parameters and initialize context
-            var context = app.context.getContext();
-            context.set({
-                name: layout,
-                layout:layout,
-                module: module,
-                modelId: modelId
-            }).prepare();
+            //stops for empty component elements
+            if(components.length == 0) return;
 
-            self.addComponent(app.view.createLayout({
-                name: layout,
-                module: module,
-                context: context
-            }), { 'layout' : layout });
-            self.getPopupComponent().off("modal:callback");
-            self.getPopupComponent().on("modal:callback", function(model) {
+
+            //set title and buttons for modal-header
+            parent.context.set({
+                "title": title,
+                "buttons": buttons
+            });
+
+            //if previous modal-body exists, remove it.
+            if(parent._initComponentSize) {
+                for(var i = 0; i < parent._components.length; i++) {
+                    //TODO: Replace it after removeComponent removes DOM elements
+                    parent._components[parent._components.length - 1].$el.remove();
+                    parent.removeComponent(parent._components.length - 1);
+                }
+            } else {
+                parent._initComponentSize = parent._components.length;
+            }
+            _.each(components, function(def) {
+                def = _.extend(def, {bodyComponent: true});
+                var context = parent.context,
+                    module = parent.context.get('module');
+
+                if(params.context) {
+                    //TODO: Replace it with one line "getChildContext" after the function supports modelID issue
+                    if(params.context.link) {
+                        context = parent.context.getChildContext(params.context);
+                    } else {
+                        context = app.context.getContext(params.context);
+                        context.parent = parent.context;
+                    }
+                    context.prepare();
+                    module = context.get("module");
+                }
+                if (def.view) {
+                    parent.addComponent(app.view.createView({
+                        context: context,
+                        name: def.view,
+                        module: module,
+                        layout: this
+                    }), def);
+                }
+                else if(def.layout) {
+                    parent.addComponent(app.view.createLayout({
+                        name: def.layout,
+                        module: module,
+                        context: context
+                    }), def);
+                }
+            });
+
+            parent.context.off("modal:callback");
+            parent.context.on("modal:callback", function(model) {
                 callback(model);
-                self.hide();
+                parent.hide();
             },this);
-            self.getPopupComponent().off("modal:close");
-            self.getPopupComponent().on("modal:close", self.hide,this);
+            parent.context.off("modal:close");
+            parent.context.on("modal:close", parent.hide, parent);
 
-            self.loadData();
-            self.render();
+            parent.show(span);
+            parent.loadData();
+            parent.render();
         }, this);
 
         //For global handler
@@ -98,8 +145,8 @@
             options.layout.trigger(showEvent, params, callback);
         }, this);
     },
-    getPopupComponent: function() {
-        return _.isNumber(this.mId) ? this._components[this.mId] : null;
+    getBodyComponents: function() {
+        return _.rest(this._components, this._initComponentSize);
     },
     _placeComponent: function(comp, def) {
         if(this.$('.modal:first').length == 0) {
@@ -107,19 +154,21 @@
             this.$el.append(
                 $('<div>', {'class': 'row-fluid'}).append(
                     $('<div>', {'class' : 'modal hide'}).append(
-                        $('<div>', {'class' : 'modal-header'}),
-                        $('<div>', {'class' : 'modal-body'}).css('overflow-y', 'auto'),
-                        $('<div>', {'class' : 'modal-footer'})
+                        this.$body
                     )
                 ),
                 $("<div>", {'class': 'modal-backdrop hide'})
             );
         }
 
-        if(def.view) {
-            this.$('.' + def.view + ':first').replaceWith(comp.el);
+        if(def.bodyComponent) {
+            if(_.isUndefined(this.$body)) {
+                this.$body = $('<div>', {'class' : 'modal-body'}).css('overflow-y', 'auto');
+                this.$('.modal:first').append(this.$body);
+            }
+            this.$body.append(comp.el);
         } else {
-            this.$('.modal-body:first').append(comp.el);
+            this.$('.modal:first').append(comp.el);
         }
     },
     open: function(params, callback) {
@@ -150,14 +199,14 @@
             });
         } else {
             modal_container.css({
-                'margin-top' : '0',
-                'margin-bottom' : '0',
-                'top' : '5%',
+                'margin-top' : '',
+                'margin-bottom' : '',
+                'top' : '',
                 'max-height' : 'none'
             });
 
             modal_container.children(".modal-body").css({
-                'padding': '',
+                'padding': '0',
                 'max-height' : maxHeight
             });
         }
