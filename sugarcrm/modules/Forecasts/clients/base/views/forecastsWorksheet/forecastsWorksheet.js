@@ -552,10 +552,27 @@
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
         if (app.config.show_buckets) { // buckets
-             // TODO:  this.
+             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+             $.fn.dataTableExt.afnFiltering.push (
+                    function(oSettings, aData, iDataIndex)
+                    {
+                        var val = aData[0];
+                        var jVal = $(val);
+
+                        var returnVal = null;
+
+                        var selectVal = jVal.find("select").attr("value");
+
+                        if(typeof(selectVal) != "undefined" && _.contains(params, selectVal)){
+                            returnVal = selectVal;
+                        }
+
+                        return returnVal;
+                    }
+                );
         } else {  // not buckets
             // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(_.first(params) == "70") {
+            if(_.first(params) == "1") {//committed
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
@@ -572,13 +589,9 @@
                         }
                         //initial load still has html here, or it is a dropdown.
                         else{
-                            var selectVal = jVal.find("select").attr("value");
                             var checkboxVal = jVal.find("input").attr("checked");
 
-                            if(typeof(selectVal) != "undefined" && selectVal == 100){
-                                returnVal = selectVal;
-                            }
-                            else if(typeof(checkboxVal) != "undefined"){
+                            if(typeof(checkboxVal) != "undefined"){
                                 returnVal = 1;
                             }
                         }
@@ -587,6 +600,7 @@
                     }
                 );
             } else {
+                //pipeline
                 //Remove the filters
                 $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
             }
