@@ -33,7 +33,26 @@ require_once('tests/rest/RestTestPortalBase.php');
  * to edit that attachment. 
  */
 class RestTestBug55655 extends RestTestPortalBase
-{ 
+{
+    protected $_testfile1 = 'Bug55655-01.txt';
+    protected $_testfile2 = 'Bug55655-02.txt';
+    
+    public function setUp()
+    {
+        parent::setUp();
+        
+        // Create two sample text files for uploading
+        sugar_file_put_contents($this->_testfile1, create_guid());
+        sugar_file_put_contents($this->_testfile2, create_guid());
+    }
+    
+    public function tearDown()
+    {
+        unlink($this->_testfile1);
+        unlink($this->_testfile2);
+        parent::tearDown();
+    }
+    
     public function testAddingNoteAttachmentToBugAsSupportPortal()
     {
         $bugReply = $this->_restCall(
@@ -61,7 +80,7 @@ class RestTestBug55655 extends RestTestPortalBase
         $this->noteId = $bugNoteReply['reply']['related_record']['id'];
                 
         // Create the attachment
-        $post = array('filename' => '@CORPLICENSE.txt');
+        $post = array('filename' => '@' . $this->_testfile1);
         $restReply = $this->_restCall('Notes/' . $this->noteId . '/file/filename', $post);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
         $this->assertNotEmpty($restReply['reply']['filename']['name'], 'File name returned empty');
@@ -73,8 +92,7 @@ class RestTestBug55655 extends RestTestPortalBase
         $this->assertEquals($restReply['reply']['filename']['name'], $fetch['reply']['filename']);
         
         // Now edit this attachment
-        $filename = 'CELICENSE.txt';
-        $params = array('filename' => $filename, 'type' => 'text/plain');
+        $params = array('filename' => $this->_testfile2, 'type' => 'text/plain');
         $restReply = $this->_restCallFilePut('Notes/' . $this->noteId . '/file/filename', $params);
         // This should fail like a savage
         $this->assertArrayHasKey('error', $restReply['reply'], 'There is no error reply in the response');
@@ -85,6 +103,6 @@ class RestTestBug55655 extends RestTestPortalBase
         $this->assertNotEmpty($fetch['reply']['id'], 'Note id not returned');
         $this->assertEquals($this->noteId, $fetch['reply']['id'], 'Known note id and fetched note id do not match');
         $this->assertArrayHasKey('filename', $fetch['reply'], 'Filename field was not returned in Note fetch');
-        $this->assertEquals($fetch['reply']['filename'], 'CORPLICENSE.txt', 'Filename was changed when it should not have been');
+        $this->assertEquals($fetch['reply']['filename'], $this->_testfile1, 'Filename was changed when it should not have been');
     }
 }
