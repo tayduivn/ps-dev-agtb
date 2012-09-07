@@ -127,7 +127,7 @@ function make_sugar_config(&$sugar_config)
     'default_theme' => empty($default_theme) ? 'Sugar5' : $default_theme,
     //END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav!=com ONLY
-    'default_theme' => empty($default_theme) ? 'RacerX' : $default_theme,
+    'default_theme' => empty($default_theme) ? 'Sugar' : $default_theme,
     //END SUGARCRM flav!=com ONLY
     'default_time_format' => empty($defaultTimeFormat) ? 'h:ia' : $defaultTimeFormat,
 	'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
@@ -5314,5 +5314,27 @@ function getReportNameTranslation($reportName) {
 	}
 
 	return $title;
+}
+
+
+/**
+ * Remove vars marked senstitive from array
+ * @param array $defs
+ * @param SugarBean|array $data
+ * @return mixed $data without sensitive fields
+ */
+function clean_sensitive_data($defs, $data)
+{
+    foreach($defs as $field => $def) {
+        if(!empty($def['sensitive'])) {
+            if(is_array($data)) {
+                $data[$field] = '';
+            }
+            if($data instanceof SugarBean) {
+                $data->$field = '';
+            }
+        }
+    }
+    return $data;
 }
 

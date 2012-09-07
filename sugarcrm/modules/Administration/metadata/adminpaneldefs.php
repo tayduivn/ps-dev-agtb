@@ -33,11 +33,15 @@ $admin_option_defs['Users']['teams_management']= array('Teams','LBL_MANAGE_TEAMS
 $admin_option_defs['Administration']['password_management']= array('Password','LBL_MANAGE_PASSWORD_TITLE','LBL_MANAGE_PASSWORD','./index.php?module=Administration&action=PasswordManager');
 //END SUGARCRM flav!=sales ONLY
 $admin_group_header[]= array('LBL_USERS_TITLE','',false,$admin_option_defs, 'LBL_USERS_DESC');
+$license_management = false;
+    if (!isset($GLOBALS['sugar_config']['hide_admin_licensing']) || !$GLOBALS['sugar_config']['hide_admin_licensing']) {
+        $license_management = array('License','LBL_MANAGE_LICENSE_TITLE','LBL_MANAGE_LICENSE','./index.php?module=Administration&action=LicenseSettings');
+    }
 
 //BEGIN SUGARCRM flav=dce ONLY
 //DCE.
 $admin_option_defs=array();
-$admin_option_defs['dce']['license_management']= array('License','LBL_MANAGE_LICENSE_TITLE','LBL_MANAGE_LICENSE','./index.php?module=Administration&action=LicenseSettings');
+$admin_option_defs['dce']['license_management']= $license_management;
 $admin_option_defs['dce']['dce_settings']= array('dce_Settings','LBL_DCE_SETTINGS_TITLE','LBL_DCE_SETTINGS','./index.php?module=Configurator&action=DCESettings');
 $admin_group_header[]= array('LBL_DCE_TITLE','',false,$admin_option_defs, 'LBL_DCE_DESC');
 //END SUGARCRM flav=dce ONLY
@@ -48,7 +52,7 @@ $admin_option_defs=array();
 $license_key = 'no_key';
 
 //BEGIN SUGARCRM flav=pro || dep=od ONLY
-$admin_option_defs['Administration']['license_management']= array('License','LBL_MANAGE_LICENSE_TITLE','LBL_MANAGE_LICENSE','./index.php?module=Administration&action=LicenseSettings');
+$admin_option_defs['Administration']['license_management']= $license_management;
 $focus = new Administration();
 $focus->retrieveSettings();
 $license_key = $focus->settings['license_key'];
@@ -139,7 +143,7 @@ $admin_option_defs['Administration']['scheduler'] = array('Schedulers','LBL_SUGA
 $admin_option_defs['Administration']['feed_settings']=array('icon_SugarFeed','LBL_SUGARFEED_SETTINGS','LBL_SUGARFEED_SETTINGS_DESC','./index.php?module=SugarFeed&action=AdminSettings');
 
 //BEGIN SUGARCRM flav=pro ONLY
-$admin_option_defs['Administration']['sugarpdf']= array('icon_AdminPDF','LBL_SUGARPDF_SETTINGS','LBL_SUGARPDF_SETTINGS_DESC','./index.php?module=Configurator&action=SugarpdfSettings');
+$admin_option_defs['Administration']['pdfmanager']= array('icon_PdfManager','LBL_PDFMANAGER_SETTINGS','LBL_PDFMANAGER_SETTINGS_DESC','./index.php?module=PdfManager&action=index');
 //END SUGARCRM flav=pro ONLY
 
 //BEGIN SUGARCRM flav=ent && flav!=dce ONLY
@@ -155,7 +159,7 @@ $admin_option_defs['Administration']['enable_wireless_modules']=array('icon_Admi
 //BEGIN SUGARCRM flav=sales ONLY
 $admin_option_defs=array();
 $admin_option_defs['Administration']['configphp_settings']= array('Administration','LBL_CONFIGURE_SETTINGS_TITLE','LBL_CONFIGURE_SETTINGS','./index.php?module=Configurator&action=EditView');
-$admin_option_defs['Administration']['license_management']= array('License','LBL_MANAGE_LICENSE_TITLE','LBL_MANAGE_LICENSE','./index.php?module=Administration&action=LicenseSettings');
+$admin_option_defs['Administration']['license_management']= $license_management;
 $admin_option_defs['Administration']['mass_Email_config']= array('EmailMan','LBL_MASS_EMAIL_CONFIG_TITLE','LBL_MASS_EMAIL_CONFIG_DESC','./index.php?module=EmailMan&action=config');
 $admin_option_defs['Administration']['diagnostic']= array('Diagnostic','LBL_DIAGNOSTIC_TITLE','LBL_DIAGNOSTIC_DESC','./index.php?module=Administration&action=Diagnostic');
 $admin_option_defs['Administration']['currencies_management']= array('Currencies','LBL_MANAGE_CURRENCIES','LBL_CURRENCY','./index.php?module=Currencies&action=index');

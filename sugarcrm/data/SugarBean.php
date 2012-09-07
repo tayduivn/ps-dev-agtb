@@ -224,6 +224,7 @@ class SugarBean
     var $disable_custom_fields = false;
     var $number_formatting_done = false;
     var $process_field_encrypted=false;
+    var $my_favorite;
     /*
     * The default ACL type
     */
@@ -286,7 +287,12 @@ class SugarBean
      * @var array
      */
     protected $loaded_relationships = array();
-
+	
+	/**
+     * set to true if dependent fields updated
+     */
+    protected $is_updated_dependent_fields = false;
+	
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -1689,7 +1695,7 @@ class SugarBean
     {
         // This is ignored when coming via a webservice as it's only needed for display and not just raw data.
         // It results in a huge performance gain when pulling multiple records via webservices.
-        if(!isset($GLOBALS['service_object'])) {
+        if(!isset($GLOBALS['service_object']) && !$this->is_updated_dependent_fields) {
             require_once("include/Expressions/DependencyManager.php");
             $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
             foreach($deps as $dep)
@@ -2515,6 +2521,21 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         //END SUGARCRM flav=pro ONLY
 
+
+
+
+        //BEGIN SUGARCRM flav=pro ONLY
+
+        // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
+        // TODO: add global vardef for my_favorite field
+        // We should only add Favorites if we know what module we are using and if we have a user. 
+
+        if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isFavoritesEnabled()) {
+            $query_select .= ', sf.id AS my_favorite';
+            $query_from .= " LEFT JOIN sugarfavorites AS sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+        }
+        //END SUGARCRM flav=pro ONLY
+        
         $query = "SELECT $query_select FROM $query_from ";
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
@@ -2563,7 +2584,8 @@ function save_relationship_changes($is_update, $exclude=array())
         {
             $this->custom_fields->fill_relationships();
         }
-
+		
+		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
         $this->fill_in_relationship_fields();
         //make a copy of fields in the relationship_fields array. These field values will be used to
@@ -2628,6 +2650,12 @@ function save_relationship_changes($is_update, $exclude=array())
                 $this->$field = $nullvalue;
             }
         }
+        // TODO: add a vardef for my_favorite
+        $this->my_favorite = false;
+        if(isset($row['my_favorite']) && !empty($row['my_favorite'])) {
+            $this->my_favorite = true;
+        }
+
     }
 
 
@@ -3140,7 +3168,11 @@ function save_relationship_changes($is_update, $exclude=array())
                 $query_array = $subquery['query_array'];
                 $select_position=strpos($query_array['select'],"SELECT");
                 $distinct_position=strpos($query_array['select'],"DISTINCT");
-                if ($select_position !== false && $distinct_position!= false)
+                if (!empty($subquery['params']['distinct']) && !empty($subpanel_def->table_name))
+                {
+                    $query_rows = "( SELECT count(DISTINCT ". $subpanel_def->table_name . ".id)".  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
+                }
+                elseif ($select_position !== false && $distinct_position!= false)
                 {
                     $query_rows = "( ".substr_replace($query_array['select'],"SELECT count(",$select_position,6). ")" .  $subquery['from_min'].$query_array['join']. $subquery['where'].' )';
                 }
@@ -4976,7 +5008,51 @@ function save_relationship_changes($is_update, $exclude=array())
     function list_view_parse_additional_sections(&$list_form)
     {
     }
-
+	//BEGIN SUGARCRM flav=pro ONLY
+	/*
+     * fix bug #54042: ListView calculates all field dependencies
+     *
+     * return listDef for bean
+     */
+    function updateDependentFieldForListView($listview_def_main = '')
+    {
+        static $listview_def = '';
+        static $module_name = '';
+        // for subpanels
+        if (!empty($listview_def_main))
+        {
+            $listview_def = $listview_def_main;
+        } elseif (empty($listview_def) || $module_name != $this->module_name)
+        {
+            $view = new SugarView();
+            $view->type = 'list';
+            $view->module = $this->module_name;
+            $listview_meta_file = $view->getMetaDataFile();
+            if (!empty($listview_meta_file))
+            {
+                require $listview_meta_file;
+                if (isset($listViewDefs[$this->module_name]))
+                {
+                    $listview_def = $listViewDefs[$this->module_name];
+                } else if (isset($listViewDefs[$this->object_name])) {
+                    $listview_def = $listViewDefs[$this->object_name];
+                }
+            }
+            $module_name = $this->module_name;
+        }
+        
+        if (!empty($listview_def))
+        {
+            $temp_field_defs = $this->field_defs;
+            $this->field_defs = array_intersect_ukey($this->field_defs, $listview_def, 'strcasecmp');
+            $this->updateDependentField();
+            $this->field_defs = array_merge($temp_field_defs, $this->field_defs);
+        } else {
+            $this->updateDependentField();
+        }
+		$this->is_updated_dependent_fields = true;
+    }
+	//END SUGARCRM flav=pro ONLY
     /**
      * Assigns all of the values into the template for the list view
      */
@@ -5125,6 +5201,7 @@ function save_relationship_changes($is_update, $exclude=array())
         $row = $this->convertRow($row);
         $this->fetched_row = $row;
         $this->fromArray($row);
+		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
         return $this;
     }

@@ -520,6 +520,13 @@ if($ce_to_pro_ent) {
     }
 }
 
+//BEGIN SUGARCRM flav=pro ONLY
+// we need to add templates when either conversion from CE to Pro+, or upgrade of Pro+ flavors from older versions
+// this needs to be outside of if($ce_to_pro_ent) because it does not cover second case where $ce_to_pro_ent is 'SugarPro'
+logThis("Starting to add pdf template", $path);
+addPdfManagerTemplate();
+logThis("Finished adding pdf template", $path);
+//END SUGARCRM flav=pro ONLY
 
 /*
 //BEGIN SUGARCRM flav=int ONLY
@@ -564,6 +571,16 @@ if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules
 if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 {
 	upgradeDisplayedTabsAndSubpanels($origVersion);
+}
+
+if ($origVersion < '650')
+{
+    // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
+    $db->query("UPDATE email_templates SET type = 'workflow' WHERE
+        coalesce(" . $db->convert("base_module", "length") . ",0) > 0
+        AND
+        coalesce(" . $db->convert("type", "length") . ",0) = 0
+    ");
 }
 
 //Unlink files that have been removed

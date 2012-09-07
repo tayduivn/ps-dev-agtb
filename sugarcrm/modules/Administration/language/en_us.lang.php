@@ -343,6 +343,7 @@ $mod_strings = array (
     'LBL_LICENSE_VALIDATION_KEY'           => 'Validation Key',
     'LBL_LICENSE_VALIDATION'           => 'License Validation',
     'LBL_LICENSE'               => 'License',
+    'LBL_LICENSE_UNAUTHORIZED_ACCESS'               => 'Unauthorized access to license settings.',
     'LBL_LIST_FIRST_CONNECT_DATE' => 'First Connect Date',
     'LBL_LIST_LAST_CONNECT_DATE' => 'Last Connect Date',
     'LBL_LIST_NUM_SYNCS' => 'Num. of Syncs',
@@ -1229,6 +1230,10 @@ $mod_strings = array (
     'LBL_FTS_CONN_SUCCESS' => 'The connection was successfully made. You will need to perform a system index for full-text searching to work for the enabled modules and module fields.',
 	'LBL_FTS_CONN_SUCCESS_SHORT' => 'A system index operation has been scheduled to run within the next several minutes.',
     'LBL_FTS_CONN_FAILURE_SHORT' => 'Unable to schedule an index operation.',
+//BEGIN SUGARCRM flav=pro ONLY
+    'LBL_PDFMANAGER_SETTINGS' => 'PDF Manager',
+    'LBL_PDFMANAGER_SETTINGS_DESC' => 'Manage templates for generated PDF files',
+//END SUGARCRM flav=pro ONLY
     'LBL_FTS_PAGE_DESC' => 'To enable full text searching:<br>
 1) Select the search engine that will be used<br>
 2) Enter the host and port of the search engine<br>

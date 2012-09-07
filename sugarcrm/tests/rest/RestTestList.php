@@ -35,10 +35,23 @@ class RestTestList extends RestTestBase {
         $this->cases = array();
         $this->bugs = array();
         $this->files = array();
+        // set the FTS engine as down and make sure the config removes FTS
+        searchEngineDown();
+        $this->config_file_override = '';
+        if(file_exists('config_override.php'))
+            $this->config_file_override = file_get_contents('config_override.php');
+        else
+            $this->config_file_override= '<?php' . "\r\n";
+        $new_line= '$sugar_config[\'full_text_engine\'] = true;';
+        file_put_contents('config_override.php', $this->config_file_override . "\r\n" . $new_line);
     }
-    
+
     public function tearDown()
     {
+        // restore FTS and config override
+        restoreSearchEngine();
+        file_put_contents('config_override.php', $this->config_file_override);
+
         $accountIds = array();
         foreach ( $this->accounts as $account ) {
             $accountIds[] = $account->id;

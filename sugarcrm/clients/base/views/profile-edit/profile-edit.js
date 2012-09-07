@@ -6,13 +6,16 @@
  */
 ({
     events: {
-        'click [name=save_button]': 'saveModel' // bottom save button
+        'click [name=save_button]': 'saveModel', // bottom save button
+        'click a.password': 'changePassword' 
     },
     initialize: function(options) {
         this.options.meta = app.metadata.getView('Contacts', 'edit');
         app.view.View.prototype.initialize.call(this, options);
         this.template = app.template.get("edit");
         this.fallbackFieldTemplate = "edit"; // will use edit sugar fields
+        this.context.off("subnav:save", null, this);
+        this.context.on("subnav:save", this.saveModel, this);
     },
     render: function() {
         var self = this, currentUserAttributes;
@@ -23,6 +26,7 @@
                 if(data) {
                     self.setModelAndContext(data);
                     app.view.View.prototype.render.call(self);
+                    self.$('a.password').text(app.lang.get('LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT'))
                     self.renderSubnav(data);
                 } 
             });
@@ -69,6 +73,12 @@
             'module': 'Contacts'
         });
     },
+    changePassword: function() {
+        // triggers an event to show the modal
+        this.layout.trigger("app:view:password:editmodal", this);
+        return false;
+    },
+    
     saveModel: function() {
         var self = this, options;
         app.alert.show('save_profile_edit_view', {level:'process', title:app.lang.getAppString('LBL_PORTAL_SAVING')});
@@ -88,6 +98,10 @@
             },
             fieldsToValidate: self.getFields(this.model.module)
         };
+
+        // So we don't overwrite password
+        self.model.unset('portal_password', {silent: true});
+        self.model.unset('portal_password1', {silent: true});
         self.model.save(null, options);
     }
 

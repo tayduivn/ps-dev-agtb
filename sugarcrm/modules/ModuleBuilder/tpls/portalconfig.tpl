@@ -33,17 +33,17 @@
     <table class='tabform' width='100%' cellpadding=4>
 
         <tr>
-            <td colspan='2'>{$mod.LBL_PORTAL_CONFIGURE}</td>
-        </tr>
-        <tr>
-            <td colspan='2' nowrap>
-            {$mod.LBL_PORTAL_ENABLE}:
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_CONFIGURE}:
+            </td>
+            <td colspan='1' nowrap>
                 <input type="checkbox" name="appStatus" {if $appStatus eq 'online'}checked{/if} class='portalField' id="appStatus" value="online"/>
+                {$mod.LBL_PORTAL_ENABLE}
             </td>
         </tr>
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_LOGO_URL}:
+                {$mod.LBL_PORTAL_LOGO_URL}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_URL}
             </td>
             <td colspan='1' nowrap>
                 <input class='portalProperty portalField' id='logoURL' name='logoURL' value='{$logoURL}' size=60>
@@ -65,17 +65,9 @@
                 <input class='portalProperty portalField' id='fieldsToDisplay' name='fieldsToDisplay' value='{$fieldsToDisplay}' size=4>
             </td>
         </tr>
-        <tr>                            
-            <td colspan='1' nowrap>     
-                {$mod.LBL_PORTAL_SEARCH_RESULT_NUMBER}:<span class="required">*</span>
-            </td>                       
-            <td colspan='1' nowrap>                                 
-                <input class='portalProperty portalField' id='maxSearchQueryResult' name='maxSearchQueryResult' value='{$maxSearchQueryResult}' size=4>
-            </td>                       
-        </tr>
         <tr>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:<span class="required">*</span>
+                {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:
             </td>
             <td colspan='1' nowrap>
                 <select data-placeholder="{$mod.LBL_USER_SELECT}" class="chzn-select portalProperty portalField" id='defaultUser' name='defaultUser' >
@@ -117,7 +109,6 @@
     $('.chzn-select').chosen({allow_single_deselect: true});
     addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
     addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
-    addToValidate(0, "maxSearchQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal}); 
     $('#gobutton').click(function(event){
         var field;
         var fields = $('.portalField');

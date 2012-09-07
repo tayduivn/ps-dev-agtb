@@ -160,9 +160,10 @@ AH.registerForm = function(f, formEl) {
 			AH.VARIABLE_MAP[f][el.id] = el;
             AH.updateListeners(el.id, f, el);
         }
-		else if ( el != null && el.value && el.type=="hidden")
+		else if ( el != null && el.value && el.type=="hidden"){
 			AH.VARIABLE_MAP[f][el.name] = el;
-            AH.updateListeners(el.name, f, el);
+			AH.updateListeners(el.name, f, el);
+		}
 	}
 }
 

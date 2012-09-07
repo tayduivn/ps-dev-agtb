@@ -111,12 +111,27 @@ class SugarSearchEngineElasticMapping
                 // field type is required when setting mapping
                 if (empty($tmpArray['type']))
                 {
-                    $tmpArray['type'] = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
+                    $tmpArray = SugarSearchEngineMappingHelper::getTypeFromSugarType('Elastic', $fieldDef);
                 }
 
                 $properties[$fieldName] = $tmpArray;
             }
         }
+        if (isset($properties['doc_owner']) == false)
+        {
+            $properties['doc_owner'] = array(
+                'boost' => 1,
+                'type' => 'string',
+                'index' => 'not_analyzed'
+            );
+        }
+        if (isset($properties['user_favorites']) == false) {
+            $properties['user_favorites'] = array(
+                'boost' => 1,
+                'type' => 'array',
+                'index' => 'not_analyzed'
+            );
+        }        
         return $properties;
     }
 

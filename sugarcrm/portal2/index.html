@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
+        <title>Customer Self-Service Portal - Powered by SugarCRM.</title>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
         <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
 
@@ -14,9 +15,10 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="./lib/twitterbootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        
+        <link href="./assets/loading.css" rel="stylesheet" type="text/css">
 
     </head>
     <body>
@@ -32,8 +34,11 @@
                 <div id="content">
                     <div class="alert-top">
                         <div class="alert alert-process">
-                            <strong>Loading</strong>&#8230;
-                            <img style="float:right" src="lib/twitterbootstrap/img/throbber.gif">
+                            <strong>Loading</strong>
+                            <div class="loading">
+                                <span class="l1"></span><span class="l2"></span><span class="l3"></span>
+                            </div>
+                            <a class="close" data-dismiss="alert">x</a>
                         </div>
                     </div>
                 </div>

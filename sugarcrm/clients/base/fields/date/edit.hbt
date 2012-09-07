@@ -1,0 +1,2 @@
+        <input type="text" class="datepicker" value="{{value}}">
+        <p class="help-block"></p>

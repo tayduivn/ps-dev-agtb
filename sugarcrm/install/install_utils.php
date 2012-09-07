@@ -880,6 +880,7 @@ function handlePortalConfig()
 
     $portalConfig = array(
         'appId' => 'SupportPortal',
+        'appStatus' => 'offline',
         'env' => 'dev',
         'platform' => 'portal',
         'additionalComponents' => array(
@@ -896,7 +897,9 @@ function handlePortalConfig()
         'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
         'siteUrl' => $sugar_config['site_url'],
         'unsecureRoutes' => array('signup', 'error'),
-        'clientID' => 'support_portal'
+        'loadCss' => 'url',
+        'clientID' => 'support_portal',
+        'maxSearchQueryResult'=>'5'
     );
     $configString = json_encode($portalConfig);
     $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';

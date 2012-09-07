@@ -127,19 +127,18 @@ class SugarChart {
 		$this->data_set = $dataSet;
 	}
 
-	function setProperties($title, $subtitle, $type, $legend='on', $labels='value', $print='on', $thousands=false, $label_name='', $value_name=''){
-		$this->chart_properties['title'] = $title;
-		$this->chart_properties['subtitle'] = $subtitle;
-		$this->chart_properties['type'] = $type;
-		$this->chart_properties['legend'] = $legend;
-		$this->chart_properties['labels'] = $labels;
-		$this->chart_properties['label_name'] = $label_name;
-		$this->chart_properties['value_name'] = $value_name;
-		$this->chart_properties['thousands'] = $thousands;
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->chart_properties['print'] = $print;
-		//END SUGARCRM flav=pro ONLY
-	}
+    function setProperties($title, $subtitle, $type, $legend='on', $labels='value', $print='on', $thousands = false)
+    {
+        $this->chart_properties['title'] = $title;
+        $this->chart_properties['subtitle'] = $subtitle;
+        $this->chart_properties['type'] = $type;
+        $this->chart_properties['legend'] = $legend;
+        $this->chart_properties['labels'] = $labels;
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->chart_properties['print'] = $print;
+        //END SUGARCRM flav=pro ONLY
+        $this->chart_properties['thousands'] = $thousands;
+    }
 
 	function setDisplayProperty($property, $value){
 		$this->chart_properties[$property] = $value;
@@ -186,7 +185,6 @@ class SugarChart {
 
 		// grab the property and value from the chart_properties variable
 		foreach ($this->chart_properties as $key => $value){
-		    if(is_array($value)) continue;
 			$properties .= $this->tab("<$key>$value</$key>",2);
 		}
 
@@ -808,7 +806,7 @@ class SugarChart {
 		return $templateFile;
 	}
 
-
+ 	        
 	function getDashletScript($id,$xmlFile="") {
 
 	$xmlFile = (!$xmlFile) ? $sugar_config['tmp_dir']. $current_user->id . '_' . $this->id . '.xml' : $xmlFile;
