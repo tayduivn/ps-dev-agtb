@@ -23,7 +23,6 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
-require_once('modules/SugarFavorites/SugarFavorites.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 class MeetingsApiFTSTest extends RestTestBase
