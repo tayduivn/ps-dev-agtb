@@ -260,11 +260,7 @@ class ReportsExportApiTest extends RestTestBase
 
     }
 
-    /**
-     * Testing related fields in the report
-     * @group 51423
-     */
-    public function testReportsRelatedField()
+    public function testReportExportApi()
     {
  
         
