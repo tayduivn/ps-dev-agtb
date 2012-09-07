@@ -70,11 +70,26 @@ class ForecastsWorksheetApi extends ModuleApi {
 		
 		$args['timeperiod_id'] =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
-		
-        require_once('include/SugarForecasting/Individual.php');
-        $forecast_individual = new SugarForecasting_Individual($args);
-            	       
-        return $forecast_individual->process();
+
+        // base file and class name
+        $file = 'include/SugarForecasting/Individual.php';
+        $klass = 'SugarForecasting_Individual';
+
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
+
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if($include_file != $file) {
+            $klass = "Custom_" . $klass;
+        }
+
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
     }
 
     /**

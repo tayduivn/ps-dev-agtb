@@ -1,6 +1,33 @@
 <?php
+/**
+ * LICENSE: The contents of this file are subject to the SugarCRM Professional
+ * End User License Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/EULA.  By installing or using this file, You have
+ * unconditionally agreed to the terms and conditions of the License, and You
+ * may not use this file except in compliance with the License.  Under the
+ * terms of the license, You shall not, among other things: 1) sublicense,
+ * resell, rent, lease, redistribute, assign or otherwise transfer Your
+ * rights to the Software, and 2) use the Software for timesharing or service
+ * bureau purposes such as hosting the Software for commercial gain and/or for
+ * the benefit of a third party.  Use of the Software may be subject to
+ * applicable fees and any use of the Software without first paying applicable
+ * fees is strictly prohibited.  You do not have the right to remove SugarCRM
+ * copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
+ */
 
-abstract class SugarForecasting_Chart_AbstractChart
+require_once('include/SugarForecasting/Chart/ChartInterface.php');
+abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_Chart_ChartInterface
 {
     /**
      * Which data set are we working with?
@@ -28,6 +55,11 @@ abstract class SugarForecasting_Chart_AbstractChart
      */
     protected $dataArray = array();
 
+    /**
+     * The default properties that are passed back for the Chart
+     *
+     * @var array
+     */
     protected $defaultPropertiesArray = array(
         'gauge_target_list' => 'Array',
         'title' => NULL,
@@ -56,6 +88,11 @@ abstract class SugarForecasting_Chart_AbstractChart
         'value_name' => '',
     );
 
+    /**
+     * Default Colors
+     *
+     * @var array
+     */
     protected $defaultColorsArray = array(
         0 => '#8c2b2b',
         1 => '#468c2b',
@@ -87,6 +124,11 @@ abstract class SugarForecasting_Chart_AbstractChart
         27 => '#005fcc',
     );
 
+    /**
+     * What the default chart value array looks like
+     *
+     * @var array
+     */
     protected $defaultValueArray = array(
         'label' => '',
         'gvalue' => 0,
@@ -167,24 +209,5 @@ abstract class SugarForecasting_Chart_AbstractChart
     public function getDataArray()
     {
         return $this->dataArray;
-    }
-
-    /**
-     * Method for sorting the dataArray before we return it so that the tallest bar is always first and the
-     * lowest bar is always last.
-     *
-     * @param array $a          The left side of the compare
-     * @param array $b          The right side of the compare
-     * @return int
-     */
-    protected function sortChartColumns($a, $b)
-    {
-        if (intval($a['gvalue']) > intval($b['gvalue'])) {
-            return -1;
-        } else if (intval($a['gvalue']) < intval($b['gvalue'])) {
-            return 1;
-        } else {
-            return 0;
-        }
     }
 }

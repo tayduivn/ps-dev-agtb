@@ -49,25 +49,6 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         return $parentApi;
     }
 
-    /**
-     * This method returns the result for a sales rep view/manager's opportunities view
-     *
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function worksheetManager($api, $args)
-    {
-        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-
-        require_once('include/SugarForecasting/Manager.php');
-        $forecast_manager = new SugarForecasting_Manager($args);
-
-        return $forecast_manager->process();
-
-    }
-
-
     public function forecastManagerWorksheet($api, $args) {
         // Load up a seed bean
         require_once('modules/Forecasts/ForecastManagerWorksheet.php');
@@ -77,7 +58,27 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
 
-        return $this->worksheetManager($api, $args);
+        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+
+        // base file and class name
+        $file = 'include/SugarForecasting/Individual.php';
+        $klass = 'SugarForecasting_Individual';
+
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
+
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if($include_file != $file) {
+            $klass = "Custom_" . $klass;
+        }
+
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
     }
 
 

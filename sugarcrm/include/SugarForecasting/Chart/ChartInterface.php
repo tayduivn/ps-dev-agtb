@@ -26,5 +26,12 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-class SugarForecasting_Exception extends Exception
-{}
+interface SugarForecasting_Chart_ChartInterface
+{
+    /**
+     * This is used to run all the commands that are need to get a chart back out of the system
+     *
+     * @return string|array
+     */
+    public function process();
+}
