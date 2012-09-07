@@ -51,7 +51,9 @@
 
 		<script language="javascript">
 			var syncResult, view, layout, html;
-			var App = SUGAR.App.init({
+            //Reset the local storage to prevent random failures
+            SUGAR.App.cache.cutAll();
+            var App = SUGAR.App.init({
                 el: "#sidecar",
                 callback: function(app){
                     app.start();
