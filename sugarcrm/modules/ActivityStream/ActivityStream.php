@@ -279,7 +279,7 @@ class ActivityStream extends SugarBean {
         $filter = isset($options['filter']) ? $options['filter'] : 'all';
         $activities = array();
     
-        $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name';
+        $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name, u.picture as created_by_picture';
         $from = 'activity_stream a, users u';
         $where = 'a.created_by = u.id';
         $limit = '';
@@ -343,7 +343,7 @@ class ActivityStream extends SugarBean {
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];
-                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
     
                     if(!empty($result)) {
