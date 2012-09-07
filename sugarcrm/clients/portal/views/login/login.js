@@ -34,7 +34,8 @@
         if (!this._isSupportedBrowser()) {
             app.alert.show('unsupported_browser', {
                 level:'warning',
-                title:new Handlebars.SafeString(app.lang.getAppString('WARN_BROWSER_VERSION_WARNING'))
+                title: '',
+                messages: new Handlebars.SafeString(app.lang.getAppString('WARN_BROWSER_VERSION_WARNING'))
             });
         }
         return this;
