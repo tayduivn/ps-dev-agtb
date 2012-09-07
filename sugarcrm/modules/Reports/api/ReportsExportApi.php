@@ -61,18 +61,25 @@ class ReportsExportApi extends SugarApi {
         $filename = sugar_cache_retrieve($args['record'] . '-' . $GLOBALS['current_user']->id);
 
 
-        if(empty($filename))
-        {
+        if(empty($filename)) {
             $saved_report = $this->loadBean($api, $args, 'view');
 
             $method = 'export' . ucwords($args['export_type']);
 
-            $filename = $this->$method($saved_report);            
+            if(!method_exists($this, $method)) {
+                throw new SugarApiExceptionNoMethod('Export Type Does Not Exists');
+            }
+
+            $filename = $this->$method($saved_report);
+
         }
 
 
         $dl = new DownloadFile();
         $contents = $dl->getFileByFilename($filename);
+        if(empty($contents)) {
+            throw new SugarApiException('File contents empty.');
+        }
         return array('file_contents' => base64_encode($contents));
     }
 

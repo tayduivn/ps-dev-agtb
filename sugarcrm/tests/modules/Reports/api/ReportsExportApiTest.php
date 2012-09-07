@@ -130,36 +130,9 @@ class ReportsExportApiTest extends RestTestBase
         $this->_account_2->parent_id = $this->_account_1->id;
         $this->_account_2->team_id = 1;
         $this->_account_2->save();
-    }
 
-    public function tearDown()
-    {
-        $this->_req['action'] = 'DeleteField';
-        $this->_req['name'] = 'relate_contacts_c';
-        $_REQUEST = $this->_req;
-        $_POST = $this->_req;
-        $mb = new ModuleBuilderController();
-        $mb->action_DeleteField();
 
-        $this->_account_1->mark_deleted($this->_account_1->id);
-        $this->_account_2->mark_deleted($this->_account_2->id);
-        $this->_contact_1->mark_deleted($this->_contact_1->id);
-        $this->_contact_2->mark_deleted($this->_contact_2->id);
-        $this->_report->deleted = 1;
-        $this->_report->save();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarCache::$isCacheReset = $this->origin_isCacheReset;
-        parent::tearDown();
-
-    }
-
-    /**
-     * Testing related fields in the report
-     * @group 51423
-     */
-    public function testReportsRelatedField()
-    {
-        /**
+       /**
          * Report defs for generating the report
          */
         $rep_defs =array (
@@ -260,6 +233,37 @@ class ReportsExportApiTest extends RestTestBase
         $this->_report->report_name = "UNIT TEST REPORT - " . create_guid();
         $this->_report->new_with_id = true;
         $this->_report->run_query();
+        
+    }
+
+    public function tearDown()
+    {
+        $this->_req['action'] = 'DeleteField';
+        $this->_req['name'] = 'relate_contacts_c';
+        $_REQUEST = $this->_req;
+        $_POST = $this->_req;
+        $mb = new ModuleBuilderController();
+        $mb->action_DeleteField();
+
+        $this->_account_1->mark_deleted($this->_account_1->id);
+        $this->_account_2->mark_deleted($this->_account_2->id);
+        $this->_contact_1->mark_deleted($this->_contact_1->id);
+        $this->_contact_2->mark_deleted($this->_contact_2->id);
+        $this->_report->deleted = 1;
+        $this->_report->save($this->_report->report_name);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarCache::$isCacheReset = $this->origin_isCacheReset;
+        parent::tearDown();
+
+    }
+
+    /**
+     * Testing related fields in the report
+     * @group 51423
+     */
+    public function testReportsRelatedField()
+    {
+ 
         
         // have to set a request variable for the assigned_user_id so the report will save
         $_REQUEST['assigned_user_id'] = $this->_user->id;

@@ -335,8 +335,7 @@ class DownloadFile {
         if(!file_exists($file))
         {
             // handle exception elsewhere
-            throw new Exception('File information could not be retrieved for this record', 'FILE_DOWNLOAD_INCORRECT_DEF_TYPE');
-            return;
+            throw new Exception('File could not be retrieved', 'FILE_DOWNLOAD_INCORRECT_DEF_TYPE');
         }
         
         return file_get_contents($file);
