@@ -34,10 +34,10 @@
       {{#each collection.models}}
       <li style="" data-id="{{attributes.id}}">
         <a href="" class="pull-left avatar avatar42">
-          <img src="img.jpg" class="avatar" alt="{{this.created_by_name}}">
+          <img src="{{#if attributes.created_by_picture}}../index.php?entryPoint=download&id={{attributes.created_by_picture}}&type=SugarFieldImage&isTempFile=1{{else}}../clients/summer/fields/img/profile.png{{/if}}" class="avatar" alt="{{this.created_by_name}}">
         </a>
         <p>
-          <a href="#Users/{{attributes.created_by_id}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
+          <a href="#Users/{{attributes.created_by}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
           {{#eq attributes.activity_type "updated"}}          
             {{#each attributes.activity_data}}
               <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
@@ -81,7 +81,7 @@
                 {{/if}}
                 <li style="">
                   <a href="" class="pull-left">
-                    <img src="img.jpg" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{#if this.created_by_picture}}"../index.php?entryPoint=download&id={{this.created_by_picture}}&type=SugarFieldImage&isTempFile=1{{else}}../clients/summer/fields/img/profile.png{{/if}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{{this.value}}}<br>
