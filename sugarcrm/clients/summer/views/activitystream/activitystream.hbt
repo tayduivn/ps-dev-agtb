@@ -34,7 +34,7 @@
       {{#each collection.models}}
       <li style="" data-id="{{attributes.id}}">
         <a href="" class="pull-left avatar avatar42">
-          <img src="{{#if attributes.created_by_picture}}../rest/v10/Users/{{attributes.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/fields/img/profile.png{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+          <img src="{{#if attributes.created_by_picture}}../rest/v10/Users/{{attributes.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
         </a>
         <p>
           <a href="#Users/{{attributes.created_by}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
@@ -81,7 +81,7 @@
                 {{/if}}
                 <li style="">
                   <a href="" class="pull-left">
-                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/fields/img/profile.png{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{{this.value}}}<br>
