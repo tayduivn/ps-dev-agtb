@@ -61,12 +61,7 @@
             });
         });
 
-        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {
-            'value': {
-                'text': myPostContents,
-                'attachments': attachments
-            }
-        }, {success: function(post_id) {
+        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function(post_id) {
             self.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
                 var id = $(el).attr('id');
                 var seed = self.app.data.createBean('Notes', {
@@ -113,10 +108,7 @@
             }
         }
 
-        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': {
-                'text': myPostContents
-            }
-        }, {success: function(post_id) {
+        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function(post_id) {
             myPost.find('.activitystream-pending-attachment').each(function(index, el) {
                 var id = $(el).attr('id');
                 var seed = self.app.data.createBean('Notes', {

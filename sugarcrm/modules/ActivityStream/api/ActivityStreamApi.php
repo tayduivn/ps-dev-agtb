@@ -83,9 +83,7 @@ class ActivityStreamApi extends ListApi {
         $seed = BeanFactory::getBean('ActivityStream');
         $targetModule = isset($args['module']) ? $args['module'] : '';
         $targetId = isset($args['id']) ? $args['id'] : '';
-        $value = isset($args['value']['text']) ? $args['value']['text'] : '';
-        $attachments = isset($args['value']['attachments']) ? $args['value']['attachments'] : array();
-        $post_id = false;
+        $value = isset($args['value']) ? $args['value'] : '';
 
         if($targetModule == "ActivityStream") {
             // Make sure we have a valid activity id
@@ -93,39 +91,11 @@ class ActivityStreamApi extends ListApi {
                 return false;
             }
 
-            $post_id = $seed->addComment($value);
-            $parent_type = 'ActivityComments';
+            return $seed->addComment($value);
         }
         else {
-            $post_id = $seed->addPost($targetModule, $targetId, $value);
-            $parent_type = 'ActivityStream';
+            return $seed->addPost($targetModule, $targetId, $value);
         }
-
-        // If creating the post was successful, add the attachments.
-        if($post_id) {
-            require_once('include/upload_file.php');
-            if(!in_array("upload", stream_get_wrappers())) {
-                stream_wrapper_register("upload", "UploadStream");
-            }
-            foreach($attachments as $attachment) {
-                $arr = preg_split("/[:;,]/", $attachment['data']);
-                // Using BeanFactory returns an stdClass, not a note.
-                $attachment_seed = new Note();
-                $attachment_seed->parent_id = $post_id;
-                $attachment_seed->parent_type = $parent_type;
-                $attachment_seed->filename = $attachment['name'];
-                $attachment_seed->file_mime_type = $arr[1];
-                $attachment_seed->safeAttachmentName();
-                $attachment_seed->save();
-                if(!file_put_contents("upload://".$attachment_seed->id, base64_decode($arr[3]))) {
-                    return false;
-                }
-            }
-        } else {
-            return false;
-        }
-
-        return $post_id;
     }
 
     protected function parseArguments($api, $args, $seed) {
