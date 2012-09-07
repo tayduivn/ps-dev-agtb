@@ -10,7 +10,7 @@
         'dragenter .sayit': 'expandNewPost',
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
-        'drop .sayit': 'dropAttachment',
+        'drop .sayit': 'dropAttachment'
     },
 
     initialize: function(options) {
@@ -70,7 +70,7 @@
                 var id = $(el).attr('id');
                 var seed = self.app.data.createBean('Notes', {
                     'parent_id': post_id,
-                    'parent_type': 'ActivityStream'
+                    'parent_type': 'ActivityComments'
                 });
                 seed.save({}, {
                     success: function(model) {
@@ -222,6 +222,18 @@
                 comments[0]['_starthidden'] = true;
                 comments[comments.length - 3]['_stophidden'] = true;
             }
+            _.each(comments, function(comment) {
+                _.each(comment.notes, function(note) {
+                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                });
+            });
+
+            _.each(model.get("notes"), function(note) {
+                note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                note.image = (note.file_mime_type.indexOf("image") !== -1);
+            });
+
         }, this);
 
         return app.view.View.prototype._renderHtml.call(this);
