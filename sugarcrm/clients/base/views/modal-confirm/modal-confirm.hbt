@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <form>
-        {{getFieldValue context "message"}}
+        {{message}}
     </form>
 </div>
 <div class="modal-footer">

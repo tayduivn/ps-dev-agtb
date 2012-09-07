@@ -15,6 +15,26 @@ describe("Base.Layout.Modal", function() {
                 }
             });
         }
+
+        if (!app.view.views.ModalHeaderView)
+        {
+            $.ajax("../clients/base/views/modal-header/modal-header.js", {
+                async : false,
+                success : function(o) {
+                    app.view.declareComponent("view", "modal-header", null, o, null, true);
+                }
+            });
+        }
+
+        if (!app.view.views.ModalConfirmView)
+        {
+            $.ajax("../clients/base/views/modal-confirm/modal-confirm.js", {
+                async : false,
+                success : function(o) {
+                    app.view.declareComponent("view", "modal-confirm", null, o, null, true);
+                }
+            });
+        }
     });
 
     afterEach(function() {
@@ -124,7 +144,7 @@ describe("Base.Layout.Modal", function() {
         var comp = {},
             def = {};
         layout._placeComponent(comp, def);
-
+console.log(layout);
         //Add one layout component
         calledCaller.call(layout, {
             components: [ {layout: 'popup-list'} ],
@@ -147,43 +167,6 @@ describe("Base.Layout.Modal", function() {
             return (component.options.name == 'popup-list');
         })).toBeFalsy();
         expect(layout._components.length).toEqual(layout._initComponentSize + 2);
-    });
-
-    it("should create modal-body container with simple parameters", function(){
-        var definedTriggerName = 'app:layout:modal:open',
-            calledEventName = '',
-            calledCaller = null,
-            options = {
-                'meta' : {
-                    'showEvent' : definedTriggerName
-                },
-                'context' : context,
-                'layout' : {
-                    on: function(event, caller) {
-                        calledEventName = event;
-                        calledCaller = caller;
-                    }
-                }
-            },
-            calledModule = 'Accounts',
-            calledModelId = '123-123-222';
-        var layout = new ModalLayout(options);
-        var comp = {},
-            def = {};
-        layout._placeComponent(comp, def);
-
-        calledCaller.call(layout, {
-            layout: 'popup-list',
-            module: calledModule
-        });
-        expect(layout._components[layout._initComponentSize].module).toEqual(calledModule);
-
-        calledCaller.call(layout, {
-            layout: 'popup-list',
-            module: calledModule,
-            modelId: calledModelId
-        });
-        expect(layout._components[layout._initComponentSize].context.get("modelId")).toEqual(calledModelId);
     });
 
     it("should create a simple modal dialog", function(){
@@ -212,8 +195,8 @@ describe("Base.Layout.Modal", function() {
             message: message
         });
 
-        expect(layout.context.get("title")).toEqual(title);
-        expect(_.first(layout.getBodyComponents()).context.get("message")).toEqual(message);
+        expect(layout.getComponent("modal-header").title).toEqual(title);
+        expect(_.first(layout.getBodyComponents()).message).toEqual(message);
         expect(_.first(layout.getBodyComponents()).name).toEqual("modal-confirm");
     });
 
