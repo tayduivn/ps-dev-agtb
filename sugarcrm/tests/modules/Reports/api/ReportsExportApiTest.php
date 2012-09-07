@@ -251,6 +251,7 @@ class ReportsExportApiTest extends RestTestBase
         $this->_contact_2->mark_deleted($this->_contact_2->id);
         $this->_report->deleted = 1;
         $this->_report->saved_report->deleted = 1;
+        $_REQUEST['assigned_user_id'] = $this->_user->id;
         $this->_report->save($this->_report->report_name);
         $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name='{$this->_report->report_name}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
