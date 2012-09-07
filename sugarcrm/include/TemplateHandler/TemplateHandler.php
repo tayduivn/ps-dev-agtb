@@ -391,8 +391,19 @@ class TemplateHandler {
                 if ($view == "ConvertLead")
                 {
                     $field['name'] = $module . $field['name'];
-					if (!empty($field['id_name']))
-					   $field['id_name'] = $field['name'] . "_" . $field['id_name'];
+                    if (isset($field['module']) && isset($field['id_name']) && substr($field['id_name'], -4) == "_ida") {
+                        $lc_module = strtolower($field['module']);
+                        $ida_suffix = "_".$lc_module.$lc_module."_ida";
+                        if (preg_match('/'.$ida_suffix.'$/', $field['id_name']) > 0) {
+                            $field['id_name'] = $module . $field['id_name'];
+                        }
+                        else
+                            $field['id_name'] = $field['name'] . "_" . $field['id_name'];
+                    }
+                    else {
+                        if (!empty($field['id_name']))
+                            $field['id_name'] = $field['name'] . "_" . $field['id_name'];
+                    }
                 }
 				$name = $qsd->form_name . '_' . $field['name'];
 
@@ -410,13 +421,16 @@ class TemplateHandler {
                             $sqs_objects[$name] = $qsd->loadQSObject('Teams', 'Team', $field['name'], $field['name'], $field['id_name']);
                             //END SUGARCRM flav=pro ONLY
                         } else if($matches[0] == 'Users'){
-                            if($field['name'] == 'reports_to_name')
+                            if($field['name'] == 'reports_to_name'){
                                 $sqs_objects[$name] = $qsd->getQSUser('reports_to_name','reports_to_id');
-                            else {
-                                if($view == "ConvertLead" || $field['name'] == 'created_by_name' || $field['name'] == 'modified_by_name')
-								    $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
-								else
-								    $sqs_objects[$name] = $qsd->getQSUser();
+                             // Bug #52994 : QuickSearch for a 1-M User relationship changes assigned to user
+                            }elseif($field['name'] == 'assigned_user_name'){
+                                 $sqs_objects[$name] = $qsd->getQSUser('assigned_user_name','assigned_user_id');
+                             }
+                             else
+                             {
+                                 $sqs_objects[$name] = $qsd->getQSUser($field['name'], $field['id_name']);
+
 							}
                         //BEGIN SUGARCRM flav!=sales ONLY
                         } else if($matches[0] == 'Campaigns') {
