@@ -1,6 +1,7 @@
 <?php
 
-abstract class SugarForecasting_Chart_AbstractChart
+require_once('include/SugarForecasting/Chart/ChartInterface.php');
+abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_Chart_ChartInterface
 {
     /**
      * Which data set are we working with?

@@ -59,16 +59,32 @@ class ForecastsChartApi extends ChartApi
         $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
         $args['group_by'] = !isset($args['group_by']) ? "forecast" : $args['group_by'];
 
+
+        // default to the Individual Code
+        $file = 'include/SugarForecasting/Chart/Individual.php';
+        $klass = 'SugarForecasting_Chart_Individual';
+
+        // test to see if we need to display the manager
         if((isset($args['display_manager']) && $args['display_manager'] == 'true')) {
-            require_once('include/SugarForecasting/Chart/Manager.php');
-
-            $mgr_chart = new SugarForecasting_Chart_Manager($args);
-            return $mgr_chart->process();
-        } else {
-            require_once('include/SugarForecasting/Chart/Individual.php');
-
-            $rep_chart = new SugarForecasting_Chart_Individual($args);
-            return $rep_chart->process();
+            // we have a manager view, pull in the manager classes
+            $file = 'include/SugarForecasting/Chart/Manager.php';
+            $klass = 'SugarForecasting_Chart_Manager';
         }
+
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
+
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if($include_file != $file) {
+            $klass = "Custom_" . $klass;
+        }
+
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
+
+        /* @var $obj SugarForecasting_Chart_AbstractChart */
+        $obj = new $klass($args);
+        return $obj->process();
     }
 }
