@@ -20,8 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+//BEGIN SUGARCRM flav=pro ONLY
+
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+
+//END SUGARCRM flav=pro ONLY
+
 /*
  * @api
  */
@@ -58,12 +63,14 @@ class ServerInfoApi extends SugarApi {
         }else{
             $data['version'] = '1.0';
         }
+
+        //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         if(!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine')
         {
             $data['fts'] = array(
                                     'enabled'       =>  true,
-                                    'type'          =>  SugarSearchEngineFactory::getFTSEngineNameFromConfig(),
+                                    'type'          =>  $fts_enabled,
                                 );
         }
         else
@@ -72,6 +79,8 @@ class ServerInfoApi extends SugarApi {
                                     'enabled'   =>  false,
                                 );
         }
+        //END SUGARCRM flav=pro ONLY
+
         /*
          * Always return dates in ISO-8601
          */
