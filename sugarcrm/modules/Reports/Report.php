@@ -1307,7 +1307,7 @@ return str_replace(' > ','_',
                         $table_name = $this->full_bean_list['self']->table_name;
                     }
                 }
-                $select_piece = 'COUNT(DISTINCT ' . $table_name . '.id) ' . $table_name . '__count';
+                $select_piece = "COUNT($table_name.id) {$table_name}__allcount, COUNT(DISTINCT  $table_name.id) {$table_name}__count ";
                 $got_count = 1;
             }
             else {
@@ -2127,7 +2127,7 @@ return str_replace(' > ','_',
                 $params['currency_id'] = $locale->getPrecedentPreference('currency');
                 $params['convert'] = true;
                 $params['currency_symbol'] = $locale->getPrecedentPreference('default_currency_symbol');
-                
+
                 // Pre-process the value to be converted if it is in different currency than US Dollar (-99)
                 // Because conversion_rates change and the amount_usdollar column isn't updated accordingly
                 if (strpos($display_column['name'], '_usdoll') !== false && $display_column['type'] == 'currency') {
@@ -2147,7 +2147,7 @@ return str_replace(' > ','_',
 						$display = $currency->convertToDollar($fields[$amount]);
 					}
                 }
-                
+
                 // Call the conversion to prefered currency
                 $display = currency_format_number($display, $params);
 
@@ -2212,7 +2212,7 @@ return str_replace(' > ','_',
         $count_exists = false;
         foreach ($db_row as $count_column => $count_value)
         {
-            if (substr($count_column, -7) == "__count" || $count_column == 'count') {
+            if (substr($count_column, -10) == "__allcount" || $count_column == 'count') {
                 $count *= max($count_value, 1);
                 $count_exists = true;
             }
@@ -2240,7 +2240,7 @@ return str_replace(' > ','_',
             $row['group_column_is_invisible'] = $this->group_column_is_invisible;
         }
 
-        
+
         // fix for bug47120
          // RTA - check each column for access, and blank value if no access
          $col_module = $this->report_def['module'];
