@@ -6893,7 +6893,9 @@ ul#globalLinksSubnav, ul#quickCreateULSubnav,
 	left: auto;
 	padding: 10px 0px;
 	border: 1px solid #999;
-	width: auto;
+    /*Bug#54711: in IE9, all list menu in Admin are pushed to left side and not visible.*/
+    width: 100%;
+    /*width: auto;*/
     min-width: 150px;
 }
 
