@@ -10,7 +10,7 @@
                 {{#each fields}}
                 <div class="row-fluid control-group">
                 <label class="span2">{{str this.label ../../this.model.module}}</label>
-                <div class="span10">{{field ../../this ../../context.attributes.createModel}}</div>>
+                <div class="span10">{{field ../../this ../../context.attributes.createModel}}</div>
                 </div>
                 {{/each}}
                 {{/each}}
