@@ -1347,7 +1347,16 @@ return str_replace(' > ','_',
                 }
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
             }
-
+            // Bug 40573: addon field for "day" "select" field
+            if(isset($display_column['column_function']) && $display_column['column_function'] == 'day')
+            {
+                $addon_dispay_column = $display_column;
+                $addon_dispay_column['column_function'] = 'dayreal';
+                $addon_select_piece = $this->layout_manager->widgetQuery($addon_dispay_column);
+                if (!$this->select_already_defined($addon_select_piece, $field_list_name)) {
+                    array_push($this->$field_list_name, $addon_select_piece);
+                }
+            }
             if (!$this->select_already_defined($select_piece, $field_list_name)) {
                 array_push($this->$field_list_name, $select_piece);
             }
@@ -2088,10 +2097,10 @@ return str_replace(' > ','_',
                     }
                     $display_column['fields'][$field_name] = $display;
                 } else {
-                    if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
-                        $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
-                    }
-                    $display = $this->layout_manager->widgetDisplay($display_column);
+                        if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
+                            $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
+                        }
+                        $display = $this->layout_manager->widgetDisplay($display_column);
                 }
 
             } else {
