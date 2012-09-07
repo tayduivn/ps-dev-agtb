@@ -66,7 +66,34 @@
                 'text': myPostContents,
                 'attachments': attachments
             }
-        }, {success: function() {
+        }, {success: function(post_id) {
+            self.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
+                var id = $(el).attr('id');
+                var seed = self.app.data.createBean('Notes', {
+                    'parent_id': post_id,
+                    'parent_type': 'ActivityStream'
+                });
+                seed.save({}, {
+                    success: function(model) {
+                        var data = new FormData();
+                        data.append("filename", App.drag_drop[id]);
+
+                        var url = App.api.buildURL("Notes/" + model.get("id") + "/file/filename");
+                        url += "?oauth_token="+App.api.getOAuthToken();
+
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            data: data,
+                            processData: false,
+                            contentType: false,
+                            success: function() {
+                                delete App.drag_drop[id];
+                            }
+                        });
+                    }
+                });
+            });
             self.collection.fetch(self.opts)
         }});
     },
@@ -77,17 +104,7 @@
             myPostContents = myPost.find('input.sayit')[0].value,
             myPostId = this.context.get("modelId"),
             myPostModule = this.module,
-            myPostUrl = 'ActivityStream',
-            attachments = [];
-
-        console.log(myPost);
-        myPost.find('.activitystream-pending-attachment').each(function(index, el) {
-            var id = $(el).attr('id');
-            attachments.push({
-                "name": $('#' + id + '_name', el).val(),
-                "data": $('#' + id + '_data', el).val()
-            });
-        });
+            myPostUrl = 'ActivityStream';
 
         if(myPostModule !== "ActivityStream") {
             myPostUrl += '/'+myPostModule;
@@ -96,12 +113,37 @@
             }
         }
 
-        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {
-            'value': {
-                'text': myPostContents,
-                'attachments': attachments
+        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': {
+                'text': myPostContents
             }
-        }, {success: function() {
+        }, {success: function(post_id) {
+            myPost.find('.activitystream-pending-attachment').each(function(index, el) {
+                var id = $(el).attr('id');
+                var seed = self.app.data.createBean('Notes', {
+                    'parent_id': post_id,
+                    'parent_type': 'ActivityStream'
+                });
+                seed.save({}, {
+                    success: function(model) {
+                        var data = new FormData();
+                        data.append("filename", App.drag_drop[id]);
+
+                        var url = App.api.buildURL("Notes/" + model.get("id") + "/file/filename");
+                        url += "?oauth_token="+App.api.getOAuthToken();
+
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            data: data,
+                            processData: false,
+                            contentType: false,
+                            success: function() {
+                                delete App.drag_drop[id];
+                            }
+                        });
+                    }
+                });
+            });
             self.collection.fetch(self.opts)
         }});
     },
@@ -156,11 +198,12 @@
                     }
                     size = Math.round(size);
                     var unique = _.uniqueId("activitystream_attachment");
+                    App.drag_drop = App.drag_drop || {};
+                    App.drag_drop[unique] = file;
                     var container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
-                    container.append("<input value='"+file.name+"' id='" + unique + "_name' type='hidden' />");
-                    container.append("<input value='"+e.target.result+"' id='" + unique + "_data' type='hidden' />");
                     $('<a class="close">&times;</a>').on('click', function(e) {
                         $(this).parent().remove();
+                        delete App.drag_drop[container.attr("id")];
                     }).appendTo(container);
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
                     if(file.type.indexOf("image/") !== -1) {
