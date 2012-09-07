@@ -611,5 +611,74 @@ class SugarFieldTeamset extends SugarFieldBase {
         }
         return true;
     }
+
+    // Here are the functions used by the REST API
+    /**
+     * This function will pull out the various teams in this teamset and return them in a collection
+     * 
+     * @param array     $data
+     * @param SugarBean $bean
+     * @param array     $args
+     * @param string    $fieldName
+     * @param array     $properties
+     */
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties) {
+        require_once('modules/Teams/TeamSetManager.php');
+        $teamList = TeamSetManager::getUnformattedTeamsFromSet($bean->team_set_id);
+        if ( ! is_array($teamList) ) {
+            // No teams on this bean yet.
+            $teamList = array();
+        }
+        foreach ( $teamList as $idx => $team ) {
+            if ($team['id']==$bean->team_id) {
+                $teamList[$idx]['primary'] = true;
+            } else {
+                $teamList[$idx]['primary'] = false;
+            }
+        }
+        $data[$fieldName] = $teamList;
+
+        // These are just confusing to people on the other side of the API
+        unset($data['team_set_id']);
+        unset($data['team_id']);
+    }
+
+	/**
+     * This function handles turning the API's version of a teamset into what we actually store
+     * @param SugarBean $bean - the bean performing the save
+     * @param array $params - an array of paramester relevant to the save, which will be an array passed up to the API
+     * @param string $fieldName - The name of the field to save (the vardef name, not the form element name)
+     * @param array $properties - Any properties for this field
+     */
+    public function apiSave(SugarBean $bean, array $params, $fieldName, $properties) {
+        // Find the primary team id, or the first one, if nothing is set to primary
+        $teamList = $params[$fieldName];
+        if (!is_array($teamList)) {
+            $teamList = array();
+        }
+        $teamIds = array();
+        foreach ( $teamList as $idx => $team ) {
+            if ( isset($team['primary']) && $team['primary'] == true ) {
+                $primaryTeamId = $team['id'];
+            }
+            $teamIds[] = $team['id'];
+        }
+        if ( count($teamIds) == 0 ) {
+            // There are no teams being set, set the defaults and move on
+            $bean->setDefaultTeam();
+            return;
+        }
+        if ( !isset($primaryTeamId) ) {
+            // They didn't specify a primary team, so I'm just going to set it to the first one
+            $primaryTeamId = $teamIds[0];
+        }
+        $bean->team_id = $primaryTeamId;
+        
+        $bean->load_relationship('teams');
+        $method = 'replace';
+        $bean->teams->replace($teamIds, array(), false);
+    }
+
+    
 }
 ?>

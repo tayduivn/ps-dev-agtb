@@ -302,7 +302,7 @@ function draw_chart(& $reporter, $chart_type, $is_dashlet=false, $id='', $report
 
 		$sugarChart->setData($chart_rows);
 
-        $sugarChart->setProperties($chartTitle, '', $chartType, 'on', 'value', 'on', $do_thousands, $reporter->label_name, $reporter->value_name);
+        $sugarChart->setProperties($chartTitle, '', $chartType, 'on', 'value', 'on', $do_thousands);
 
 		$xmlFile = get_cache_file_name($reporter);
 

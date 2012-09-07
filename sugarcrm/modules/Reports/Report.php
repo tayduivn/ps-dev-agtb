@@ -100,8 +100,6 @@ class Report
     var $chart_type = 'vBarF';
     var $table_name = 'saved_reports';
     var $chart_description = '';
-    var $label_name = '';
-    var $value_name = '';
     var $chart_group_position = array();
     var $chart_numerical_position = 0;
     var $group_header;
@@ -195,13 +193,6 @@ class Report
         if (!empty($this->report_def['chart_description'])) {
             $this->chart_description = $this->report_def['chart_description'];
         }
-        if (!empty($this->report_def['label_name'])) {
-            $this->label_name = $this->report_def['label_name'];
-        }
-        if (!empty($this->report_def['value_name'])) {
-            $this->value_name = $this->report_def['value_name'];
-        }
-
 
         //Upgrade the pre-5.1 reports that had a summary column field that wasn't in the group by or an aggregate field.
         if (!empty ($this->report_def['summary_columns'])) {
@@ -1356,7 +1347,16 @@ return str_replace(' > ','_',
                 }
                 $select_piece = $this->layout_manager->widgetQuery($display_column);
             }
-
+            // Bug 40573: addon field for "day" "select" field
+            if(isset($display_column['column_function']) && $display_column['column_function'] == 'day')
+            {
+                $addon_dispay_column = $display_column;
+                $addon_dispay_column['column_function'] = 'dayreal';
+                $addon_select_piece = $this->layout_manager->widgetQuery($addon_dispay_column);
+                if (!$this->select_already_defined($addon_select_piece, $field_list_name)) {
+                    array_push($this->$field_list_name, $addon_select_piece);
+                }
+            }
             if (!$this->select_already_defined($select_piece, $field_list_name)) {
                 array_push($this->$field_list_name, $select_piece);
             }
@@ -2097,10 +2097,10 @@ return str_replace(' > ','_',
                     }
                     $display_column['fields'][$field_name] = $display;
                 } else {
-                    if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
-                        $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
-                    }
-                    $display = $this->layout_manager->widgetDisplay($display_column);
+                        if (!empty($field_name) && isset($display_column['fields'][$field_name])) {
+                            $display_column['fields'][$field_name] = $this->db->fromConvert($display_column['fields'][$field_name], $display_column['type']);
+                        }
+                        $display = $this->layout_manager->widgetDisplay($display_column);
                 }
 
             } else {

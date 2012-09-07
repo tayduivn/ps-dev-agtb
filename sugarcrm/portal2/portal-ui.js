@@ -45,7 +45,7 @@
 
         __superFieldRender__.call(this);
 
-        this.$("input:visible[placeholder!='']").placeholder();
+        this.$("input:visible[placeholder]").placeholder();
     };
 
 

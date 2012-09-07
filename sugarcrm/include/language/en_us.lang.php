@@ -83,7 +83,6 @@ $app_list_strings = array (
     'ProjectTask'=>'Project Tasks',
     'Campaigns'=>'Campaigns',
     'CampaignLog'=>'Campaign Log',
-    'CampaignTrackers'=>'Campaign Trackers',
     'Documents'=>'Documents',
     'DocumentRevisions'=>'Document Revisions',
     //END SUGARCRM flav!=sales ONLY
@@ -127,7 +126,10 @@ $app_list_strings = array (
     'Newsletters' => 'Newsletters',
     'SugarFeed'=>'Sugar Feed',
     'KBDocuments' => 'Knowledge Base',
-  'SugarFavorites'=>'Favorites',
+  	'SugarFavorites'=>'Favorites',
+//BEGIN SUGARCRM flav=pro ONLY
+	'PdfManager' => 'PDF Manager',
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=dce ONLY
 
     'DCEDataBases' => 'Databases',
@@ -186,6 +188,9 @@ $app_list_strings = array (
     //END SUGARCRM flav!=sales ONLY
     'SugarFollowing'=>'SugarFollowing',
     'Sync'=>'Sync',
+//BEGIN SUGARCRM flav=pro ONLY
+	'PdfManager' => 'PDF Manager',
+//END SUGARCRM flav=pro ONLY
 //BEGIN SUGARCRM flav=ent ONLY
     'ReportMaker' => ' SweetReport',
 //END SUGARCRM flav=ent ONLY
@@ -3376,6 +3381,10 @@ $app_strings = array (
     'LBL_KEYBOARD_SHORTCUTS_HELP' => '<p><strong>Form Functionality - Alt+</strong><br/> I = ed<b>I</b>t (detailview)<br/> U = d<b>U</b>plicate (detailview)<br/> D = <b>D</b>elete (detailview)<br/> A = s<b>A</b>ve (editview)<br/> L = cance<b>L</b> (editview) <br/><br/></p><p><strong>Search and Navigation  - Alt+</strong><br/> 7 = first input on Edit form<br/> 8 = Advanced Search link<br/> 9 = First Search Form input<br/> 0 = Unified search input<br></p>' ,
 
     'ERR_CONNECTOR_NOT_ARRAY' => 'connector array in {0} been defined incorrectly or is empty and could not be used.',
+    //BEGIN SUGARCRM flav=pro ONLY
+    'LBL_PDF_VIEW' => 'Download PDF',
+    'LBL_PDF_EMAIL' => 'Email PDF',
+    //END SUGARCRM flav=pro ONLY
 
     'ERR_SUHOSIN' => 'Upload stream is blocked by Suhosin, please add &quot;upload&quot; to suhosin.executor.include.whitelist (See sugarcrm.log for more information)',
 
@@ -3451,8 +3460,11 @@ $app_strings = array (
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
     'LBL_PORTAL_OFFLINE' =>'Sorry the application is not available at this time. Please contact the site administrator.',
-
-
+    'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
+    'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
+    'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -3464,15 +3476,14 @@ $app_strings = array (
     'ERR_HTTP_500_TYPE' => '500',
     'ERR_HTTP_500_TITLE' => 'HTTP: 500 Internal Server Error',
     'ERR_HTTP_500_TEXT' => 'There was an error on the server. Please contact technical support.',
-
-    'ERR_RENDER_FAILED_TITLE' => 'View render failed',
+    'ERR_RENDER_FAILED_TITLE' => 'View Render Failed',
     'ERR_RENDER_FAILED_MSG' => 'Failed to render a view',
-    'ERR_RENDER_FIELD_FAILED_TITLE' => 'Render field failed',
-    'ERR_RENDER_FIELD_FAILED_MSG' => 'Failed to render the field: ',
-    'ERR_NO_ACCESS_TITLE' => 'No access',
-    'ERR_NO_ACCESS_MSG' => 'You not have access to this view',
+    'ERR_RENDER_FIELD_FAILED_TITLE' => 'Field Render Failed',
+    'ERR_RENDER_FIELD_FAILED_MSG' => 'Unable to render the {0} field.',
+    'ERR_NO_VIEW_ACCESS_TITLE' => 'Access Denied',
+    'ERR_NO_VIEW_ACCESS_MSG' => 'Contact your Support Administrator to get access to this view for {0} module.',
     'ERR_LAYOUT_RENDER_TITLE' => 'Layout render failed',
-    'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact the support',
+    'ERR_LAYOUT_RENDER_MSG' => 'Oops! We are not able to render anything. Please try again later or contact support.',
     'ERR_INTERNAL_ERR_MSG' => 'Internal error',
     'ERR_GENERIC_TITLE' => 'Error',
     'ERR_CONTACT_TECH_SUPPORT' => 'Please contact technical support.',
@@ -4325,4 +4336,10 @@ $app_strings ['documentation'] = array (
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
 );
+    //BEGIN SUGARCRM flav=pro ONLY
+	$app_list_strings ['pdfmanager_yes_no_list'] = array (
+		'yes' => 'Yes' ,
+		'no' => 'No',
+	);
+    //END SUGARCRM flav=pro ONLY
 ?>

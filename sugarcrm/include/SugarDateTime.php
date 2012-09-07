@@ -665,4 +665,27 @@ class SugarDateTime extends DateTime
         return $this;
     }
 
+    /**
+     * Takes this date time and shuffles it back by the requested offset.
+     * This is a 5.2 compatibility chunk, strptime()'s handling of the ISO
+     *   is unpredictable enough that this is more reliable
+     * @param string $isoOffset
+     * @return SugarDateTime
+     */
+    public function adjustByIsoOffset($isoOffset)
+    {
+        if ( $isoOffset == 'Z' || $isoOffset == '-0000' || $isoOffset == '+0000' ) {
+            // It's GMT, so that's... 0 seconds from GMT.
+            $calcOffset = 0;
+            return $this;
+        } else {
+            // This will turn into (int)-1 or +1, useful for multiplying out the seconds
+            $plusMinus = (int)(substr($isoOffset,0,1)."1");
+            
+            $calcOffset = $plusMinus*(substr($isoOffset,1,2)*3600)+(substr($isoOffset,3,2)*60);
+            
+        }
+        return $this->modify((-$calcOffset)." seconds");
+    }
+
 }

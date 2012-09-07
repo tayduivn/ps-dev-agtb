@@ -919,4 +919,74 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($start, $daterage[0]->format(TimeDate::DB_DATETIME_FORMAT), 'Start date is wrong');
         $this->assertEquals($end, $daterage[1]->format(TimeDate::DB_DATETIME_FORMAT), 'End date is wrong');
 	}
+
+	public function isoDateTimeTestSet()
+	{
+	    return array(
+    		// with offset
+    		array("input" => '2012-12-12T10:35:15-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '2012-12-12T09:35:15-0800', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
+    		array("input" => '2012-12-12T17:35:15-0000', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
+    		array("input" => '2012-12-12T17:35:15+0000', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
+    		array("input" => '2012-12-12T17:35:15Z',     "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
+    		array("input" => '2012-12-12T19:35:15+0200', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
+            // with offset in permissible but "strange" formats
+    		array("input" => '2012-12-12T10:35:15.1234-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515.5678-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T10:35:15-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '2012-12-12T103515-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+            // without offset
+    		array("input" => '2012-12-12T10:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '2012-12-12T09:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
+    		array("input" => '2012-12-12T17:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
+    		array("input" => '2012-12-12T19:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
+            // without offset in permissible but "strange" formats
+    		array("input" => '2012-12-12T10:35:15.1234', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515.1234', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T10:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '2012-12-12T103515', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+        );
+	}
+
+    /**
+     * @dataProvider isoDateTimeTestSet
+     */
+    public function testFromIso($input, $dbdate, $tz)
+    {
+        $this->_setPrefs('d/m/Y', 'h:i:sA', $tz);
+        
+        $timeDate = new TimeDate();
+
+        $dateTime = $timeDate->fromIso($input);
+        $this->assertEquals($dbdate,$timeDate->asDb($dateTime));
+    }
+
+	public function isoDateTimeReverseTestSet()
+	{
+	    return array(
+    		array("output" => '2012-12-12T10:35:15-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("output" => '2012-12-12T09:35:15-0800', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
+    		array("output" => '2012-12-12T17:35:15+0000', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
+    		array("output" => '2012-12-12T19:35:15+0200', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
+        );
+	}
+
+    /**
+     * @dataProvider isoDateTimeReverseTestSet
+     */
+
+    public function testAsIso($output, $dbdate, $tz)
+    {
+        $this->_setPrefs('d/m/Y', 'h:i:sA', $tz);
+        
+        $timeDate = new TimeDate();
+
+        $dateTime = $timeDate->fromDb($dbdate);
+        $outTime = $timeDate->asIso($dateTime);
+        $this->assertEquals($output,$outTime);
+        $this->assertEquals($dbdate,$timeDate->asDb($dateTime));
+    }
+            
 }

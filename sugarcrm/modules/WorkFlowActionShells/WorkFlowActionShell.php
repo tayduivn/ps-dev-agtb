@@ -550,7 +550,8 @@ function copy($parent_id){
 				
 				$workflow_object = new WorkFlow();
 				$workflow_object->retrieve($row['id']);
-				$workflow_object->cascade_delete($workflow_object, false);
+				$workflow_object->check_controller = false;
+                $workflow_object->mark_deleted($row['id']);
 
 			// end if delete is true
 			} else {

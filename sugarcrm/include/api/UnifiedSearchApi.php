@@ -35,7 +35,7 @@ class UnifiedSearchApi extends SugarApi {
             'moduleSearch' => array(
                 'reqType' => 'GET',
                 'path' => array('<module>'),
-                'pathVars' => array('moduleList'),
+                'pathVars' => array('module_list'),
                 'method' => 'globalSearch',
                 'shortHelp' => 'Search records in this module',
                 'longHelp' => 'include/api/help/getListModule.html',
@@ -132,8 +132,8 @@ class UnifiedSearchApi extends SugarApi {
         $options['orderBy'] = $orderBy;
 
         $options['moduleList'] = array();
-        if ( !empty($args['moduleList']) ) {
-            $options['moduleList'] = explode(',',$args['moduleList']);
+        if ( !empty($args['module_list']) ) {
+            $options['moduleList'] = explode(',',$args['module_list']);
         }
         $options['primaryModule'] = 'Home';
         if ( !empty($args['primary_module']) ) {
@@ -141,6 +141,8 @@ class UnifiedSearchApi extends SugarApi {
         } else if ( isset($options['moduleList'][0]) ) {
             $options['primaryModule'] = $options['moduleList'][0];
         }
+
+        // we want favorites info with records, so that we can flag a favorite out of a recordset
         $options['favorites'] = false;
         if ( !empty($args['favorites']) && $args['favorites'] == true ) {
             // Setting favorites to 1 includes favorites information,
@@ -228,16 +230,8 @@ class UnifiedSearchApi extends SugarApi {
             How to determine which Elastic Search
             1 - Not Portal
             2 - All Modules are full_text_search = true
-            3 - not my favorites
             4 - not order by
         */
-
-        // favorites
-        
-        if($options['favorites'] !== false)
-        {
-            return 'SugarSearchEngine';
-        }
 
         // portal
         
@@ -264,15 +258,16 @@ class UnifiedSearchApi extends SugarApi {
         /*
          * Currently we cannot do an order by in FTS.  Thus any ordering must be done using the Spot Search
          */
-        if(isset($options['orderBySetByApi']) && $options['orderBySetByApi'] == true)
-        {
+        if(isset($options['orderBySetByApi']) && $options['orderBySetByApi'] == true) {
             return 'SugarSearchEngine';
         }
 
-
-
+        $fts = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         //everything is groovy for FTS, get the FTS Engine Name from the conig
-        return SugarSearchEngineFactory::getFTSEngineNameFromConfig();
+        if(!empty($fts)) {
+            return $fts;
+        }
+        return 'SugarSearchEngine';
     }
     /**
      * This function is used to hand off the global search to the FTS Search Emgine
@@ -287,7 +282,14 @@ class UnifiedSearchApi extends SugarApi {
         $options['append_wildcard'] = 1;
         if(empty($options['moduleList']))
         {
-            $options['moduleList'] = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+            require_once('modules/ACL/ACLController.php');
+            $moduleList = SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules();
+            // filter based on User Access if Blank
+            $ACL = new ACLController();
+            // moduleList is passed by reference
+            $ACL->filterModuleList($moduleList);
+
+            $options['moduleList'] = $moduleList;
         }
         $options['moduleFilter'] = $options['moduleList'];
 
@@ -364,6 +366,21 @@ class UnifiedSearchApi extends SugarApi {
             $multiModule = true;
         }
         
+        if(empty($options['moduleList']))
+        {
+            require_once('modules/ACL/ACLController.php');
+            $usa = new UnifiedSearchAdvanced();
+            $moduleList = $usa->getUnifiedSearchModules();
+            
+            // get the module names [array keys]
+            $moduleList = array_keys($moduleList);
+            // filter based on User Access if Blank
+            $ACL = new ACLController();
+            // moduleList is passed by reference
+            $ACL->filterModuleList($moduleList);
+            $searchOptions['modules'] = $options['moduleList'] = $moduleList;
+        }
+        
         $offset = $options['offset'];
         // One for luck.
         // Well, actually it's so that we know that there are additional results
@@ -379,7 +396,22 @@ class UnifiedSearchApi extends SugarApi {
             $searchOptions['limitPerModule'] = $limit;
         }
 
+        if(isset($options['custom_select'])) {
+            $searchOptions['custom_select'] = $options['custom_select'];
+        }
+
+        if(isset($options['custom_from'])) {
+            $searchOptions['custom_from'] = $options['custom_from'];
+        }
+
+
+        if(isset($options['custom_where'])) {
+            $searchOptions['custom_where'] = $options['custom_where'];
+        }
+
+
         $results = $searchEngine->search($options['query'],$offset, $limit, $searchOptions);
+
         $returnedRecords = array();
         foreach ( $results as $module => $moduleResults ) {
             if ( !is_array($moduleResults['data']) ) {

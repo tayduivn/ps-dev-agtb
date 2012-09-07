@@ -2,9 +2,9 @@
     <div class="navbar-inner">
         <div class="container-fluid">
             <div class="nav-collapse">
-                <ul class="nav" id="moduleList">
+                <ul class="nav" id="module_list">
                     <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
-                    {{#each moduleList}}
+                    {{#each module_list}}
                     <li class="{{this}}{{#eq this ../currentModule}} active{{/eq}}">
                         <a href="#{{this}}">{{str "LBL_MODULE_NAME" this}}</a>
                     </li>
@@ -37,7 +37,7 @@
                             <label class="control-label hide" for="appendedInput">{{str "LBL_SEARCH"}}</label>
                             <div class="controls">
                                 <div class="input-append">
-                                    <input type="text" class="search-query span3" placeholder="{{str "LBL_SEARCH"}}" data-items="10"><span class="add-on"><i class="icon-search"></i></span>
+                                    <input type="text" class="search-query span3" placeholder="{{str "LBL_SEARCH"}}" data-items="10"><div class="btn btn-inverse"><i class="icon icon-search"></i></div>
                                 </div>
                             </div>
                         </div>
