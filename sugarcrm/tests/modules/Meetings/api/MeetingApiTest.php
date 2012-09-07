@@ -23,7 +23,6 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
 class MeetingsApiTest extends RestTestBase
 {
