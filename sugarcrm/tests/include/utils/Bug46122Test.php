@@ -25,7 +25,7 @@
 require_once('include/utils/LogicHook.php');
 require_once('include/MVC/View/SugarView.php');
 
-class Bu46122Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug46122Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $hasCustomModulesLogicHookFile = false;
     var $hasCustomContactLogicHookFile = false;

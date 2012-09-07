@@ -24,7 +24,7 @@
 require_once 'include/SugarQueue/SugarJobQueue.php';
 require_once 'modules/Schedulers/Scheduler.php';
 
-class SchedulersTest extends Sugar_PHPUnit_Framework_TestCase
+class SchedulerTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	static protected $old_timedate;
 

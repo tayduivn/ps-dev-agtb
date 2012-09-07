@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class Bug59010Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug50910Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $emailAddress;
 
