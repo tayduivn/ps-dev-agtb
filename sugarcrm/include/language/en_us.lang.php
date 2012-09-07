@@ -3437,6 +3437,8 @@ $app_strings = array (
     'LBL_PORTAL_SAVING' => 'Saving',
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
+    'LBL_PORTAL_WRONG_AMPM' => 'Incorrect AM or PM Value Selected', 
+    'LBL_PORTAL_WRONG_AMPM_MSG' => 'The am/pm selected is not allowed given current hour value selection.', 
 
     //for portal system tour
     'LBL_PORTAL_TOUR_WELCOME_TITLE' => 'Welcome to Portal',

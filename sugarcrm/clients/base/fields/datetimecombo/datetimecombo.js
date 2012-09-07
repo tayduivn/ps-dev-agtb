@@ -51,6 +51,11 @@
             seconds: app.date.format(jsDate, 's'),
             amPm: app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
+
+        //0am must be shown as 12am
+        if(typeof value.amPm != "undefined" && value.amPm == 'am' && value.hours == 0)
+            value.hours = 12;
+        
         return value;
     },
 
@@ -113,6 +118,24 @@
             model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
         amPm.on('change', function(ev) {
+            var isWrongAmPm = false;
+            //am only be allowed 0-12; pm 12-23
+            if(parseInt(hour.val(), 10) >= 13 && amPm.val()==='am') {
+                amPm.val('pm');
+                isWrongAmPm = true;
+            }
+            else if(parseInt(hour.val(), 10) < 12 && amPm.val()==='pm') {
+                amPm.val('am');
+                isWrongAmPm = true;
+            }
+            if(isWrongAmPm) {
+                app.alert.show('wrong_ampm', {
+                    level: 'warning',
+                    title: app.lang.get('LBL_PORTAL_WRONG_AMPM'),
+                    messages: app.lang.get('LBL_PORTAL_WRONG_AMPM_MSG'),
+                    autoClose: true});
+            }
+
             model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
     }
