@@ -1446,7 +1446,11 @@ function repair_workflow(){
              $controller->delete_adjust_order($this->base_module);
          }
 
-		//mark deleted the workflow object if delete_workflow_on_cascade is set to true
+         $remove_query = "	DELETE FROM workflow_schedules
+                            WHERE workflow_schedules.workflow_id = '".$id."'";
+         $this->db->query($remove_query,true," Error removing scheduled processes: ");
+
+        //mark deleted the workflow object if delete_workflow_on_cascade is set to true
         if($this->delete_workflow_on_cascade)
         {
 		    parent::mark_deleted($id);
