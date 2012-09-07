@@ -2296,6 +2296,4 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 		$this->assertEquals($nrchildren, $childcount, "Number of found descendants does not match expectations");
 		$this->_db->disconnect(); // XXX TODO Fix the problem that requires these forced closes to clean up for MySQL
     }
-
-
 }

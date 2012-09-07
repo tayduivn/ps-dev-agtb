@@ -126,5 +126,4 @@ class RestTestPortalCreate extends RestTestBase
         $relatesAccounts = $this->bug->get_linked_beans('accounts', 'Account');
         $this->assertEquals($relatesAccounts[0]->id, $this->account->id);
     }
-
 }
