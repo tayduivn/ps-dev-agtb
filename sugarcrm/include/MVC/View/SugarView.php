@@ -1069,6 +1069,18 @@ EOHTML;
         }
         //END SUGARCRM flav=sales || flav=pro ONLY
 
+        // here we allocate the help link data
+        $help_actions_blacklist = array('Login'); // we don't want to show a context help link here
+        if (!in_array($this->action,$help_actions_blacklist)) {
+            $url = 'javascript:void(window.open(\'index.php?module=Administration&action=SupportPortal&view=documentation&version='.$GLOBALS['sugar_version'].'&edition='.$GLOBALS['sugar_flavor'].'&lang='.$GLOBALS['current_language'].
+                        '&help_module='.$this->module.'&help_action='.$this->action.'&key='.$GLOBALS['server_unique_key'].'\'))';
+            $label = (isset($GLOBALS['app_list_strings']['moduleList'][$this->module]) ?
+                        $GLOBALS['app_list_strings']['moduleList'][$this->module] : $this->module). ' '.$app_strings['LNK_HELP'];
+            $ss->assign('HELP_LINK',SugarThemeRegistry::current()->getLink($url, $label, "id='help_link_two'",
+                'help-dashlet.png', 'class="icon"',null,null,'','left'));
+        }
+        // end
+
         //BEGIN SUGARCRM flav=pro ONLY
         if (!empty($GLOBALS['sugar_config']['disabled_feedback_widget']))
             $ss->assign('DISABLE_FEEDBACK_WIDGET', TRUE);
@@ -1412,10 +1424,14 @@ EOHTML;
         if(!empty($paramString)){
                $theTitle .= "<h2> $paramString </h2>\n";
            }
-		$theTitle .= "<span class='utils'>";
-		$createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
-        $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
-		$theTitle .= <<<EOHTML
+
+
+        // bug 56131 - restore conditional so that link doesn't appear where it shouldn't
+        if($show_help) {
+            $theTitle .= "<span class='utils'>";
+            $createImageURL = SugarThemeRegistry::current()->getImageURL('create-record.gif');
+            $url = ajaxLink("index.php?module=$module&action=EditView&return_module=$module&return_action=DetailView");
+            $theTitle .= <<<EOHTML
 &nbsp;
 <a id="create_image" href="{$url}" class="utilsLink">
 <img src='{$createImageURL}' alt='{$GLOBALS['app_strings']['LNK_CREATE']}'></a>
@@ -1423,8 +1439,10 @@ EOHTML;
 {$GLOBALS['app_strings']['LNK_CREATE']}
 </a>
 EOHTML;
+            $theTitle .= "</span>";
+        }
 
-        $theTitle .= "</span><div class='clear'></div></div>\n";
+        $theTitle .= "<div class='clear'></div></div>\n";
         return $theTitle;
     }
 

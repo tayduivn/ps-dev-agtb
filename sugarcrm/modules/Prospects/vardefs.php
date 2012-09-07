@@ -226,9 +226,8 @@ VardefManager::createVardef('Prospects','Prospect', array('default', 'assignable
 'person'));
 
 //BEGIN SUGARCRM flav!=com ONLY
-if(isset($dictionary['Prospect']['fields']['picture'])) {
-   unset($dictionary['Prospect']['fields']['picture']);
+if (isset($GLOBALS['dictionary']['Prospect']['fields']['picture']))
+{
+   unset($GLOBALS['dictionary']['Prospect']['fields']['picture']);
 }
 //END SUGARCRM flav!=com ONLY
-
-?>
