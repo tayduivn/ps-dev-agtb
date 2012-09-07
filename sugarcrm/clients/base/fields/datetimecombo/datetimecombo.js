@@ -1,44 +1,58 @@
 ({
+    // datetimecombo
     _render:function(value) {
-        app.view.Field.prototype._render.call(this);//call proto render
+        var self = this;
+        app.view.Field.prototype._render.call(self);
         $(function() {
-            $(".datepicker").datepicker({
-                showOn: "button",
-                buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
-                buttonImageOnly: true
-            });
+            if(self.view.name === 'edit') {
+                $(".datepicker").datepicker({
+                    showOn: "button",
+                    buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
+                    buttonImageOnly: true
+                });
+            }
         });
     },
 
     unformat:function(value) {
-        var jsDate = this.app.date.parse(value,this.app.user.get('datepref')+' '+this.app.user.get('timepref'));
-        var output = this.app.date.format(value,'Y-m-dTH:i:s');
+        var jsDate, 
+            myUser = app.user;
 
-        return output;
+        jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
+        return jsDate.toISOString();
     },
 
     format:function(value) {
-        // The API has gone to the trouble of getting the date in the user's timezone, so we should
-        // display it using the timezone that the API sent it to us.
-        // This should split the date/time into date, time and offset, if we don't pass the offset in the Date class assumes it to be local time.
-        var splitValue = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2})\.*\d*([Z+-].*)$/.exec(value);
-        if ( splitValue == null ) {
-            // Could not figure this string out.
-            return '';
+        var jsDate, output, 
+            usersDateFormatPreference, usersTimeFormatPreference, 
+            myUser = app.user;
+
+        usersDateFormatPreference = myUser.get('datepref');
+        usersTimeFormatPreference = myUser.get('timepref');
+
+        // If there is a default 'string' value like "yesterday", format it as a date
+        if(!value && this.def.display_default) {
+            value  = app.date.parseDisplayDefault(this.def.display_default);
+            // Preset the model with display default in case user doesn't change anything
+            this.model.set(this.name, new Date(value.slice(0, value.length-2)).toISOString()); 
+        } else {
+            // In case ISO 8601 get it back to js native date which date.format understands
+            jsDate = new Date(value);
+            value  = app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference);
         }
-        var jsDate = new Date(splitValue[1]+' '+splitValue[2]);
-        var myUser = this.app.user;
-        jsDate = this.app.date.roundTime(jsDate);
-        var output = {
-            dateTime: this.app.date.format(jsDate, myUser.get('datepref'))+' '+this.app.date.format(jsDate, myUser.get('timepref')),
-            date: this.app.date.format(jsDate, myUser.get('datepref')),
-            time: this.app.date.format(jsDate, myUser.get('timepref')),
-            hours: this.app.date.format(jsDate, 'H'),
-            minutes: this.app.date.format(jsDate, 'i'),
-            seconds: this.app.date.format(jsDate, 's'),
-            amPm: this.app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+        jsDate = app.date.parse(value);
+        jsDate = app.date.roundTime(jsDate);
+        
+        value = {
+            dateTime: app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference),
+            date: app.date.format(jsDate, usersDateFormatPreference),
+            time: app.date.format(jsDate, usersTimeFormatPreference),
+            hours: app.date.format(jsDate, 'H'),
+            minutes: app.date.format(jsDate, 'i'),
+            seconds: app.date.format(jsDate, 's'),
+            amPm: app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
         };
-        return output
+        return value;
     },
 
     timeOptions:{  //TODO set this via a call to userPrefs in a overloaded initalize
@@ -81,23 +95,26 @@
         ]
     },
     bindDomChange: function() {
-        var self = this;
-        var date = this.$('input');
-        var model = this.model;
-        var fieldName = this.name;
+        $('select').css({'width': 50});
+        var self  = this, date, model, fieldName, hour, minute, amPm;
+        date      = this.$('input');
+        model     = this.model;
+        fieldName = this.name;
+        hour      = this.$('.date_time_hours');
+        minute    = this.$('.date_time_minutes');
+        amPm      = this.$('.date_time_ampm');
 
-        var hour = this.$('.date_time_hours');
-        var minute = this.$('.date_time_minutes');
-
-        //TODO add AM PM support depending on user prefs
         date.on('change', function(ev) {
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
         hour.on('change', function(ev) {
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
         minute.on('change', function(ev) {
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00'));
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
+        });
+        amPm.on('change', function(ev) {
+            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
         });
     }
 })

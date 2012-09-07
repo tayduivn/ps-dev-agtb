@@ -124,19 +124,30 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         foreach($searchFields as $fieldName => $fieldDef)
         {
             //All fields have already been formatted to db values at this point so no further processing necessary
-            if( !empty($bean->$fieldName) )
-            {
+            if( !empty($bean->$fieldName)) {
                 // 1. elasticsearch does not handle multiple types in a query very well
                 // so let's use only strings so it won't be indexed as other types
                 // 2. for some reason, bean fields are encoded, decode them first
-                $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
+                // We are handling date range search for Meetings which is type datetimecombo
+                if(!isset($fieldDef['type']) || $fieldDef['type'] != 'datetimecombo') {
+                    $keyValues[$fieldName] = strval(html_entity_decode($bean->$fieldName,ENT_QUOTES));
+                }
+                else {
+                    // dates have to be in ISO-8601 without the : in the TZ
+                    global $timedate;
+                    $date = $timedate->fromDb($bean->$fieldName);
+                    $keyValues[$fieldName] = $timedate->asIso($date);
+                }
+                
             }
+
         }
 
         //Always add our module
         $keyValues['module'] = $bean->module_dir;
         $keyValues['team_set_id'] = str_replace("-", "",$bean->team_set_id);
         
+        //BEGIN SUGARCRM flav=pro ONLY
         $favorites = SugarFavorites::getFavoritesByModuleByRecord($bean->module_dir, $bean->id);
         $module_favorites_user = array();
         
@@ -147,7 +158,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
 
         
         $keyValues['user_favorites'] = $module_favorites_user;
-
+        //END SUGARCRM flav=pro ONLY
  
         // to index owner
         $ownerField = $this->getOwnerField($bean);
@@ -523,11 +534,14 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $moduleFilter = $this->constructModuleLevelFilter($module);
             
             // if we want myitems add more to the module filter
-            if(isset($options['my_items']) && $options['my_items'] !== false)
-            {
+            if(isset($options['my_items']) && $options['my_items'] !== false) {
                 $moduleFilter = $this->myItemsSearch($moduleFilter);
             }
-
+            if(isset($options['filter']) && $options['filter']['type'] == 'range') {
+                $moduleFilter = $this->constructRangeFilter($moduleFilter, $options['filter']);
+            }
+            //BEGIN SUGARCRM flav=pro ONLY
+            
             // we only want JUST favorites if the option is 2
             // if the option is 1 that means we want all including favorites,
             // which in FTS is a normal search parameter
@@ -535,12 +549,23 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
             }
 
+            //END SUGARCRM flav=pro ONLY
+
             $mainFilter->addFilter($moduleFilter);
 
         }
 
         return $mainFilter;
     }
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    
+    /**
+     * Construct a favorites filter
+     * @param object $moduleFilter 
+     * @return object $moduleFilter
+     */
 
     protected function constructMyFavoritesFilter($moduleFilter)
     {
@@ -550,6 +575,20 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $ownerTermFilter->setTerm('user_favorites', str_replace('-','',$GLOBALS['current_user']->id));
 
         $moduleFilter->addFilter($ownerTermFilter);
+        return $moduleFilter;
+    }
+    //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Construct a Range Filter to
+     * @param object $moduleFilter 
+     * @param array $filter 
+     * @return object $moduleFilter
+     */
+    protected function constructRangeFilter($moduleFilter, $filter)
+    {
+        $filter = new Elastica_Filter_Range($filter['fieldname'], $filter['range']);
+        $moduleFilter->addFilter($filter);
         return $moduleFilter;
     }
 
@@ -645,8 +684,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
             }
 
-            if( !is_admin($GLOBALS['current_user']) )
-            {
+            if( !is_admin($GLOBALS['current_user']) ) {
                 // main filter
                 $mainFilter = $this->constructMainFilter($finalTypes, $options);
 
@@ -657,6 +695,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             {
                 $query = new Elastica_Query($queryObj);
             }
+
+            if(isset($options['sort']) && is_array($options['sort'])) {
+                foreach($options['sort'] AS $sort) {
+                    $query->addSort($sort);
+                }
+            }
+
             $query->setParam('from',$offset);
 
             // set query highlight

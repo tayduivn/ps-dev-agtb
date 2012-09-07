@@ -72,6 +72,15 @@ abstract class SugarApi {
 
         return $data;
     }
+
+    protected function formatBeans(ServiceBase $api, $args, $beans)
+    {
+        $ret = array();
+        foreach($beans as $bean){
+            $ret[] = $this->formatBean($api, $args, $bean);
+        }
+        return $ret;
+    }
     /**
      * Recursively runs html entity decode for the reply
      * @param $data array The bean the API is returning
@@ -139,9 +148,11 @@ abstract class SugarApi {
 
         $id = $bean->id;
 
+        //BEGIN SUGARCRM flav=pro ONLY
         if(isset($args['my_favorite'])) {
             $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
         }
+        //END SUGARCRM flav=pro ONLY
 
         $bean->retrieve($id);
 
@@ -151,6 +162,9 @@ abstract class SugarApi {
          */
         return $id;
     }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+
 
     /**
      * Toggle Favorites
@@ -186,6 +200,8 @@ abstract class SugarApi {
         $sf->markRecordDeletedInFavoritesByUser($id, $module, $GLOBALS['current_user']->id);
         return true;
     }
+
+    //END SUGARCRM flav=pro ONLY
 
 
     /**

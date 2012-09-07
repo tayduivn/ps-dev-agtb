@@ -92,6 +92,7 @@ class TimeDate
 
        	'i' => '%M',
        	's' => '%S',
+        '\T' => 'T',
 
     );
 
@@ -888,20 +889,32 @@ class TimeDate
     public function fromIso($inputDate, User $user = null)
     {
         try {
-            // The ISO-8601 format will have at least 20 chars if it has an offset attached
-            if ( strlen($inputDate) > 19 ) {
+            // We need to strip off milliseconds so that javascript ISO dates are accepted
+            // Since we're already running this through a regex we might as well cover all of the bases
+            $matched = preg_match(
+                '/(\d{4})\-?(\d{2})\-?(\d{2})T(\d{2}):?(\d{2}):?(\d{2})\.?\d*([Z+-]?)(\d{0,2}):?(\d{0,2})/i',
+                $inputDate, $inputSplit);
+            if ( !$matched ) {
+                // We didn't match the regex, this is in some other format
+                return null;
+            }
+            $formattedDate = "{$inputSplit[1]}-{$inputSplit[2]}-{$inputSplit[3]} {$inputSplit[4]}:{$inputSplit[5]}:{$inputSplit[6]}";
+            if ( !empty($inputSplit[7]) ) {
                 // This has the attached offset, when 5.3 comes around we can stop messing with manually
                 // tweaking the offset manually and just throw an "O" on the end of the format string.
-                $date = SugarDateTime::createFromFormat('Y-m-d\TH:i:s',substr($inputDate,0,19),self::$gmtTimezone);
-                $date->adjustByIsoOffset(substr($inputDate,19));
+                $date = SugarDateTime::createFromFormat('Y-m-d H:i:s',$formattedDate,self::$gmtTimezone);
+                $date->adjustByIsoOffset("{$inputSplit[7]}{$inputSplit[8]}{$inputSplit[9]}");
                 
+                $this->tzUser($date,$user);
+
                 return $date;
             } else {
                 // This time doesn't have an attached offset, convert it according to the user's date and time
-                return SugarDateTime::createFromFormat('Y-m-d\TH:i:s',$inputDate,$this->_getUserTZ($user));
+                return SugarDateTime::createFromFormat('Y-m-d H:i:s',$formattedDate,$this->_getUserTZ($user));
             }
         } catch (Exception $e) {
             $GLOBALS['log']->error("fromIsoTime: Conversion of $inputDate from ISO Time failed. {$e->getMessage()}");
+            return null;
         }
 
     }

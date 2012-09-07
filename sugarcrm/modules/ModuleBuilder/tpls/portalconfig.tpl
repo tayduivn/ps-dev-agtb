@@ -65,14 +65,6 @@
                 <input class='portalProperty portalField' id='fieldsToDisplay' name='fieldsToDisplay' value='{$fieldsToDisplay}' size=4>
             </td>
         </tr>
-        <tr>                            
-            <td colspan='1' nowrap>     
-                {$mod.LBL_PORTAL_SEARCH_RESULT_NUMBER}:<span class="required">*</span>
-            </td>                       
-            <td colspan='1' nowrap>                                 
-                <input class='portalProperty portalField' id='maxSearchQueryResult' name='maxSearchQueryResult' value='{$maxSearchQueryResult}' size=4>
-            </td>                       
-        </tr>
         <tr>
             <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_DEFAULT_ASSIGN_USER}:
@@ -117,7 +109,6 @@
     $('.chzn-select').chosen({allow_single_deselect: true});
     addToValidate(0, "maxQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal});
     addToValidate(0, "fieldsToDisplay", "int", true,{/literal}"{$mod.LBL_PORTAL_DETAIL_NUMBER}"{literal});
-    addToValidate(0, "maxSearchQueryResult", "int", true,{/literal}"{$mod.LBL_PORTAL_LIST_NUMBER}"{literal}); 
     $('#gobutton').click(function(event){
         var field;
         var fields = $('.portalField');

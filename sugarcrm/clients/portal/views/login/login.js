@@ -52,7 +52,7 @@
             });
         }
     },
-    submitOnEnter: function(e) {
+    submitOnEnter: function(event) {
         if (event.which == 13 || event.keyCode == 13) {
             this.$('input,select').blur();
             this.login();

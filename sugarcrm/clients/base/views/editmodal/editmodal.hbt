@@ -1,4 +1,4 @@
-<div class="modal hide" id="noteModal">
+<div class="modal hide">
     <div class="modal-header">
         <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
         <h3>{{str "LBL_NEW_FORM_TITLE" module}}</h3>
@@ -8,7 +8,10 @@
             <fieldset>
                 {{#each meta.panels}}
                 {{#each fields}}
-                {{str this.label ../../this.model.module}}: {{field ../../this ../../context.attributes.createModel}}
+                <div class="row-fluid control-group">
+                <label class="span2">{{str this.label ../../this.model.module}}</label>
+                <div class="span10">{{field ../../this ../../context.attributes.createModel}}</div>
+                </div>
                 {{/each}}
                 {{/each}}
             </fieldset>
