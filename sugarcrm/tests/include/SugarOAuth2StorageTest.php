@@ -59,6 +59,9 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $admin->retrieveSettings(false, true);
         sugar_cache_clear('admin_settings_cache');
 
+        // We need to disable the cache headers, otherwise the session_start() complains=
+        session_cache_limiter('');
+        
     }
 
     public function tearDown()
