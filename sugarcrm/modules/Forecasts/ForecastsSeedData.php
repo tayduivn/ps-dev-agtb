@@ -192,25 +192,54 @@ public static function populateSeedData($timeperiods)
 public static function setupForecastSettings()
 {
     $forecastConfig = array(
-            //show_buckets is used to indicate whether or not to show the bucket option for grouping opportunities
-            'show_buckets' => 0,
-            //committed_probability is the value whereby a new opportunity created with a >= value is marked as included in the forecast
-            'committed_probability' => 70,
-            //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
-            'sales_stage_won' => array('Closed Won'),
-            //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
-            'sales_stage_lost' => array('Closed Lost'),
-            //base_buckets_dom is used to reference the app_list_string entry to indicate the commit stage list to use
-            'buckets_dom' => 'commit_stage_dom'
+        // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
+        'is_setup' => true,
+        // the start month of the fiscal period over which forecasting can take place.
+        'fiscal_period_start_month' => '01',
+        // the corresponding day of the month with which to start the fiscal period.
+        'fiscal_period_start_day' => '01',
+        // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
+        'timeperiod_interval' => 'yearly',
+        // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_leaf_options_dom
+        'timeperiod_leaf_interval' => 'monthly',
+        // number of timeperiods forward from the current that are displayed
+        'timeperiods_shown_forward' => 4,
+        // number of timeperiods in the past from the current that are displayed
+        'timeperiods_shown_backward' => 4,
+        // used to indicate the available option for grouping opportunities
+        'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_n_buckets'
+        // used to reference the app_list_string entry to indicate the commit stage list to use
+        'buckets_dom' => 'commit_stage_dom', // options:  commit_stage_dom, commit_stage_extended_dom
+        // the defined ranges the different buckets opportunites will fall in by default based on their probability
+        'category_ranges' => array('committed' => array('min'=>'70','max'=>'100')),
+        //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
+        'sales_stage_won' => array('Closed Won'),
+        //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
+        'sales_stage_lost' => array('Closed Lost'),
+        // whether or not to show the likely column in the forecasts worksheets
+        'show_worksheet_likely' => true,
+        // whether or not to show the best column in the forecasts worksheets
+        'show_worksheet_best' => true,
+        // whether or not to show the worst column in the forecasts worksheets
+        'show_worksheet_worst' => false,
+        // whether or not to show the likely total in the forecasts projected view
+        'show_projected_likely' => true,
+        // whether or not to show the best total in the forecasts projected view
+        'show_projected_best' => true,
+        // whether or not to show the worst total in the forecasts projected view
+        'show_projected_worst' => false,
+        // whether or not to show the print button on the forecasts module
+        'show_print_button' => true,
     );
+
     $admin = BeanFactory::getBean('Administration');
     foreach ($forecastConfig as $name => $value)
     {
         if(is_array($value))
         {
-            $admin->saveSetting('base', $name, json_encode($value));
+            $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
         } else {
-            $admin->saveSetting('base', $name, $value);
+            $admin->saveSetting('Forecasts', $name, $value, 'base');
         }
     }
 }

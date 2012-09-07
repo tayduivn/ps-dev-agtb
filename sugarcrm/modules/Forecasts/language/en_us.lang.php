@@ -307,6 +307,7 @@ $mod_strings = array (
 
     // config panels strings
     // splash screens
+    'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Configuration',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the forecasting setup. We\'ll guide you through step by step in setting up x,y and z so you\'ll be on your way in no time. Click next to get started.',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'You can also do manual setup by clicking ',
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
@@ -314,7 +315,8 @@ $mod_strings = array (
 
     // timeperiod config
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
-    'LBL_FORECASTS_CONFIG_FISCAL_START_DATE' => 'Select the start date of your fiscal time period:',
+    'LBL_FORECASTS_CONFIG_FISCAL_START_MONTH' => 'Select the month that is the start of your fiscal time period:',
+    'LBL_FORECASTS_CONFIG_FISCAL_START_DAY' => 'Select the day of the month on which to start your fiscal time period:',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
     'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
@@ -328,16 +330,21 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_SHOW_N_CATEGORIES' => 'N Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
 
     // range config
-    'LBL_FORECASTS_CONFIG_RANGE' => 'Forecast Range',
-    'LBL_FORECASTS_CONFIG_RANGE_LIKELY' => 'Likely',
-    'LBL_FORECASTS_CONFIG_RANGE_BEST' => 'Best',
-    'LBL_FORECASTS_CONFIG_RANGE_WORST' => 'Worst',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Show these ranges on the worksheets',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Likely',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Best',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Worst',
+    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE' => 'Show projected ranges in the totals',
+    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY' => 'Likely',
+    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST' => 'Best',
+    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_WORST' => 'Worst',
 
     // variables config
     'LBL_FORECASTS_CONFIG_VARIABLES' => 'Variables',
     'LBL_FORECASTS_CONFIG_VARIABLES_DESC' => 'The formulas for the Metrics Table rely on the sales stage for opportunities that need to be excluded from the pipleline, i.e., opportunities that are closed and lost.',
     'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE' => 'Please select the Sales Stage that represent closed and lost opportunities:',
-    'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipline formula will be:',
+    'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE' => 'Please select the Sales Stage that represent closed and won opportunities:',
+    'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipeline formula will be:',
 
     // general config
     'LBL_FORECASTS_CONFIG_GENERAL' => 'General Forecasts Configuration',

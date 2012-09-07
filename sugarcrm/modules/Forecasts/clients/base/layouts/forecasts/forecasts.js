@@ -106,6 +106,18 @@
                 }
 
             });
+
+            // Fetch the config model
+            if(self.context.forecasts.config) {
+                try {
+                    self.context.forecasts.config.fetch();
+                } catch (e) {
+                    app.alert.show("forecastsConfigError", {
+                        messages : e.message,
+                        level:"error"
+                    })
+                }
+            }
         },
 
         /**
@@ -121,6 +133,11 @@
 
             // creates the context.forecasts topmost model
             models[module] = app.data.createBean(module);
+
+            // creates the config model as a special case
+            self.namespace(models, module);
+            models[module]["config"] = self.createModel({name:"config"}, "Forecasts");
+            models[module]["config"].url = app.config.serverUrl + '/' + app.viewModule + '/config';
 
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {

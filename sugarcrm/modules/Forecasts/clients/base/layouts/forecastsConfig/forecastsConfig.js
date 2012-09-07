@@ -1,5 +1,3 @@
-<?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,40 +20,26 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
-    'panels' => array(
-        array(
-            'label' => 'LBL_FORECASTS_CONFIG_VARIABLES',
-            'fields' => array(
-                array(
-                    'name' => 'sales_stage_lost',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE',
-                    'type' => 'radioenum',
-                    'options' => array(
-                        'a' => 'sales stage a',
-                        'b' => 'sales stage b',
-                        'c' => 'sales stage c',
-                        'd' => 'sales stage d',
-                    ),
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'edit',
-                ),
-                array(
-                    'name' => 'sales_stage_won',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE',
-                    'type' => 'radioenum',
-                    'options' => array(
-                        'a' => 'sales stage a',
-                        'b' => 'sales stage b',
-                        'c' => 'sales stage c',
-                        'd' => 'sales stage d',
-                    ),
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'edit',
-                ),
-            ),
-        ),
-    ),
-);
+
+(function (app) {
+
+    app.view.layouts.ForecastsConfigLayout = app.view.Layout.extend({
+
+        initialize: function (options) {
+            var Model = Backbone.Model.extend({
+                    url: app.api.buildURL("Forecasts", "config"),
+                    sync: function(method, model, options) {
+                        var url = _.isFunction(model.url) ? model.url() : model.url;
+                        return app.api.call(method, url, model, options);
+                    }
+                });
+
+            options.context.model = new Model();
+            options.context.model.fetch();
+
+            app.view.Layout.prototype.initialize.call(this, options);
+        }
+
+    });
+
+})(SUGAR.App)

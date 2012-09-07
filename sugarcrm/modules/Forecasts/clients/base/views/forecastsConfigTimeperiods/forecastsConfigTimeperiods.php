@@ -28,15 +28,25 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
             'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC',
             'fields' => array(
                 array(
-                    'name' => 'fiscalStartDate',
-                    'type' => 'datetime',
-                    'label' => 'LBL_FORECASTS_CONFIG_FISCAL_START_DATE',
+                    'name' => 'fiscal_period_start_month',
+                    'type' => 'enum',
+                    'label' => 'LBL_FORECASTS_CONFIG_FISCAL_START_MONTH',
+                    'options' => '',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'timeperiod',
+                    'name' => 'fiscal_period_start_day',
+                    'type' => 'enum',
+                    'label' => 'LBL_FORECASTS_CONFIG_FISCAL_START_DAY',
+                    'options' => '',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit'
+                ),
+                array(
+                    'name' => 'timeperiod_interval',
                     'type' => 'enum',
                     'options' => array(
                         'annual' => 'Annual',
@@ -48,7 +58,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'leafperiod',
+                    'name' => 'timeperiod_leaf_interval',
                     'type' => 'enum',
                     'options' => array(
                         'weekly' => 'Weekly',
@@ -60,7 +70,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'timeperiodsForward',
+                    'name' => 'timeperiods_shown_forward',
                     'type' => 'enum',
                     'options' => array(
                         '1' => '1',
@@ -74,7 +84,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'timeperiodsBack',
+                    'name' => 'timeperiods_shown_backward',
                     'type' => 'enum',
                     'options' => array(
                         '1' => '1',
