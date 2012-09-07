@@ -107,7 +107,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         {
         	$sql .=    	"and w.date_modified = (select max(date_modified) from worksheet w2 " .
         	          							"where w2.user_id = o.assigned_user_id and related_id = o.id " .
-        	          								"and timeperiod_id = '6149bc2a-4693-b984-956d-504379b32dc6') ";
+        	          								"and timeperiod_id = '" . $timeperiod_id . "') ";
         }
         else
         {
@@ -116,7 +116,7 @@ class ForecastsWorksheetApi extends ModuleApi {
         	          
 		$sql .=		  "where o.timeperiod_id = '" . $timeperiod_id . "' " .
         	          	"and o.assigned_user_id = '" . $user_id ."'";
-        
+       
         $result = $GLOBALS['db']->query($sql);
 
         $returnData = array();
