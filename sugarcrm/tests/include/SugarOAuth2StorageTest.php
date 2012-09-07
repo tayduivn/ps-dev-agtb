@@ -37,6 +37,28 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         SugarTestHelper::setUp('app_list_strings');
         
         parent::setUp();
+
+        $admin = new Administration();
+
+        if(!isset($admin->settings['license_num_portal_users'])) {
+            $admin->settings['license_num_portal_users'] = 50;
+            $admin->saveSetting('license', 'num_portal_users', '50');
+        }
+
+
+        $admin->retrieveSettings('system');
+        if(!isset($admin->settings['system_session_timeout'])) {
+           $session_timeout = abs(ini_get('session.gc_maxlifetime'));
+           $admin->saveSetting('system', 'session_timeout', $session_timeout);
+        }
+
+        $admin->retrieveSettings('license');
+        $admin->settings['license_enforce_portal_user_limit'] = '1';
+        $admin->saveSetting('license', 'enforce_portal_user_limit', '1');
+
+        $admin->retrieveSettings(false, true);
+        sugar_cache_clear('admin_settings_cache');
+
     }
 
     public function tearDown()
@@ -44,7 +66,10 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         // Reset the portal login license to previous numbers, if we have it
         if ( isset($this->previousPortalLicense) ) {
             $GLOBALS['db']->query("UPDATE config SET value = '".$this->previousPortalLicense."' WHERE name = 'num_portal_users'");
+            sugar_cache_clear('admin_settings_cache');
         }
+
+        $GLOBALS['db']->query("DELETE FROM session_active");
 
         SugarTestHelper::tearDown();
 
@@ -87,6 +112,15 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         $storage = new SugarOAuth2Storage();
 
         $GLOBALS['db']->query("UPDATE config SET value = '1' WHERE name = 'num_portal_users'");
+        $admin = new Administration();
+
+        if(!isset($admin->settings['license_num_portal_users'])) {
+           $admin->settings['license_num_portal_users'] = 1;
+           $admin->saveSetting('license', 'num_portal_users', '1');
+        }
+
+        sugar_cache_clear('admin_settings_cache');
+        $admin->retrieveSettings(false, true);
         sugar_cache_clear('admin_settings_cache');
         
         // While we can be clever about this, for a unit test we're just going to act dumb, clear out all portal sessions to make sure
@@ -102,12 +136,12 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         // Second login is borderline, but we let them pass because we are nice.
         $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
-        $storage->setAccessToken('unittestportal2','support_portal',$contact1->id,time()+30,NULL);
+        $storage->setAccessToken('unittestportal2','support_portal',$contact2->id,time()+30,NULL);
 
         try {
             // Third login is time to fail
             $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal3','unittestportal3');
-            $storage->setAccessToken('unittestportal3','support_portal',$contact1->id,time()+30,NULL);
+            $storage->setAccessToken('unittestportal3','support_portal',$contact3->id,time()+30,NULL);
 
             
             $errorLabel = 'no_error';
