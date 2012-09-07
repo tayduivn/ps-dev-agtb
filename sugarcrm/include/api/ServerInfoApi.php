@@ -53,16 +53,11 @@ class ServerInfoApi extends SugarApi {
     public function getServerInfo($api, $args)
     {
         global $sugar_flavor;
+        global $sugar_version;
 
         $data['flavor'] = $sugar_flavor;
-
-        $admin  = new Administration();
-        $admin->retrieveSettings('info');
-        if(isset($admin->settings['info_sugar_version'])){
-            $data['version'] = $admin->settings['info_sugar_version'];
-        }else{
-            $data['version'] = '1.0';
-        }
+        $data['version'] = $sugar_version;
+        
 
         //BEGIN SUGARCRM flav=pro ONLY
         $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
