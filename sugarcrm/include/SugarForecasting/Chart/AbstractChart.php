@@ -29,6 +29,11 @@ abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_
      */
     protected $dataArray = array();
 
+    /**
+     * The default properties that are passed back for the Chart
+     *
+     * @var array
+     */
     protected $defaultPropertiesArray = array(
         'gauge_target_list' => 'Array',
         'title' => NULL,
@@ -57,6 +62,11 @@ abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_
         'value_name' => '',
     );
 
+    /**
+     * Default Colors
+     *
+     * @var array
+     */
     protected $defaultColorsArray = array(
         0 => '#8c2b2b',
         1 => '#468c2b',
@@ -88,6 +98,11 @@ abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_
         27 => '#005fcc',
     );
 
+    /**
+     * What the default chart value array looks like
+     *
+     * @var array
+     */
     protected $defaultValueArray = array(
         'label' => '',
         'gvalue' => 0,
@@ -168,24 +183,5 @@ abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_
     public function getDataArray()
     {
         return $this->dataArray;
-    }
-
-    /**
-     * Method for sorting the dataArray before we return it so that the tallest bar is always first and the
-     * lowest bar is always last.
-     *
-     * @param array $a          The left side of the compare
-     * @param array $b          The right side of the compare
-     * @return int
-     */
-    protected function sortChartColumns($a, $b)
-    {
-        if (intval($a['gvalue']) > intval($b['gvalue'])) {
-            return -1;
-        } else if (intval($a['gvalue']) < intval($b['gvalue'])) {
-            return 1;
-        } else {
-            return 0;
-        }
     }
 }

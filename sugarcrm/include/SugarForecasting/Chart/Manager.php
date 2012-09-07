@@ -104,7 +104,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             'properties' => array(
                 '0' => $properties
             ),
-            'colors' => $this->defaultColorsArray,
+            'color' => $this->defaultColorsArray,
             'label' => array($forecast_strings['LBL_CHART_INCLUDED']),
             'values' => $values,
         );

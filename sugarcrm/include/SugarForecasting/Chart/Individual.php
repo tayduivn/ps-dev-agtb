@@ -151,17 +151,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             // figure out where we need to put this in the array
             $month_value_key = date('m-Y', strtotime($data['date_closed']));
 
-            // figoure out where this needs to be put in the values array
+            // figure out where this needs to be put in the values array
             $value_key = 0;
+            // TODO support more fields.
             switch($this->group_by) {
-                case 'forecast':
-                    $label_name = $opp_strings['LBL_FORECAST'];
-                    if($this->category == "committed") {
-                        $value_key = 0;
-                    } else if($data['forecast'] == 1) {
-                        $value_key = 1;
-                    }
-                    break;
                 case 'sales_stage':
                     $label_name = $opp_strings['LBL_SALES_STAGE'];
                     $value_key = array_search($data['sales_stage'], $this->group_by_labels);
@@ -169,6 +162,16 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                 case 'probability':
                     $label_name = $opp_strings['LBL_PROBABILITY'];
                     $value_key = array_search($data['probability'] . '%', $this->group_by_labels);
+                    break;
+                case 'forecast':
+                    // break left out should fall though to the default
+                default:
+                    $label_name = $opp_strings['LBL_FORECAST'];
+                    if($this->category == "committed") {
+                        $value_key = 0;
+                    } else if($data['forecast'] == 1) {
+                        $value_key = 1;
+                    }
                     break;
             }
 
@@ -178,14 +181,17 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                 $dataset_key = "amount";
             }
 
+            // put the values in to their proper locations and add to any that are already there
             $this->values[$month_value_key]['values'][$value_key] += number_format($data[$dataset_key], 2, '.', '');
             $this->values[$month_value_key]['gvalue'] += number_format($data[$dataset_key], 2, '.', '');
 
         }
 
+        // get the quota for the current user
         $quota = $this->getUserQuota();
 
         $goal_value_total = 0;
+        // final adjust of the data. this sets the labels and the total values for the goal markers
         foreach($this->values as $key => $value) {
             $goal_value_total += $value['gvalue'];
             $this->values[$key]['goalmarkervalue'][0] = number_format($quota, 2, '.', '');
@@ -195,6 +201,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
             $this->values[$key]['gvaluelabel'] = SugarCurrency::formatAmountUserLocale($value['gvalue'], $currency_id);
 
+            // set the labels to be correct
             foreach($value['values'] as $val_key => $val) {
                 $this->values[$key]['valuelabels'][$val_key] = SugarCurrency::formatAmountUserLocale($val, $currency_id);
             }
@@ -215,18 +222,18 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                 break;
         }
 
-        // fix the properties
+        // set the properties for the return array
         $properties = $this->defaultPropertiesArray;
         $properties['goal_marker_label'][1] = $label;
         $properties['value_name'] = $label;
         $properties['label_name'] = $label_name;
 
-        // create the chart array
+        // create the chart data as the display engine expects it
         $chart = array(
             'properties' => array(
                 '0' => $properties
             ),
-            'colors' => $this->defaultColorsArray,
+            'color' => $this->defaultColorsArray,
             'label' => array_values($this->group_by_labels),
             'values' => array_values($this->values),
         );
@@ -250,8 +257,8 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
 
     /**
-     * Find the months for a given timeperiod and turn them into values arrays that can be used by the charting engine
-     *
+     * Find the months for a given timeperiod and turn them into values arrays that can be used by the charting
+     * display engine
      */
     protected function convertTimeperiodToChartValues()
     {
@@ -264,16 +271,13 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $end = strtotime($timeperiod->end_date);
 
         $num_of_items = count($this->group_by_labels);
-        $empty_array = array(
-            'label' => '',
-            'gvalue' => '',
-            'gvaluelabel' => '',
-            'values' => array_pad(array(), $num_of_items, 0),
-            'valuelabels' => array_pad(array(), $num_of_items, "0"),
-            'links' => array_pad(array(), $num_of_items, ""),
-            'goalmarkervalue' => array(0, 0),
-            'goalmarkervaluelabel' => array("0", "0")
-        );
+
+        $empty_array = $this->defaultValueArray;
+        $empty_array['values'] = array_pad(array(), $num_of_items, 0);
+        $empty_array['valuelabels'] = array_pad(array(), $num_of_items, "0");
+        $empty_array['links'] = array_pad(array(), $num_of_items, "");
+        $empty_array['goalmarkervalue'] = array(0, 0);
+        $empty_array['goalmarkervaluelabel'] = array("0", "0");
 
         while ($start < $end) {
             $val = $empty_array;
