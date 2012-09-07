@@ -129,6 +129,10 @@
             	}
             	
             }, this);
+            var worksheet = this;
+            $(window).bind("beforeunload",function(){
+            	worksheet.safeFetch();
+            });
         }
     },
     
@@ -136,7 +140,7 @@
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
      */
-    safeFetch: function(updateFcn){
+    safeFetch: function(){
     	var collection = this._collection; 
     	var self = this;
     	if(collection.isDirty){

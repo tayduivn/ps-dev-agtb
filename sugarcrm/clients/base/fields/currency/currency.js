@@ -16,6 +16,11 @@
             // use transaction currency, use base if not found
             currency_id = this.model.attributes.currency_id || '-99';
         }
+        //If we don't have numbers only, unformat number value before formatting it again
+        if(/[^\d]/.test(value))
+        {
+            value = this.unformat(value);
+        }
         return app.currency.formatAmountLocale(value, currency_id);
     }
 })

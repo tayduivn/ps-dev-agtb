@@ -62,23 +62,24 @@ describe("The Forecasts Progress Calculations display", function() {
             view.model.set("quota_amount", 65000);
 
             view.recalculateRepTotals(totals);
-            var expectedModel = new Backbone.Model({closed_amount: 60000,
-                                            closed_best_above: true,
-                                            closed_best_amount: 6000,
-                                            closed_best_percent: 1.1,
-                                            closed_likely_above: false,
-                                            closed_likely_amount: 0,
-                                            closed_likely_percent: 1.00,
-                                            opportunities: 2,
-                                            pipeline: 1,
+            //build model to mimic js calculation expectations
+            var expectedModel = new Backbone.Model({closed_amount: totals.won_amount,
+                                            closed_best_above: totals.best_case > totals.won_amount,
+                                            closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
+                                            closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_likely_above: totals.amount > totals.won_amount,
+                                            closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
+                                            closed_likely_percent: totals.amount/totals.won_amount,
+                                            opportunities: totals.total_opp_count - totals.won_count - totals.lost_count,
+                                            pipeline: Math.round(((totals.overall_amount - totals.won_amount - totals.lost_amount)/totals.amount)*10)/10 ,
                                             quota_amount: 65000,
-                                            quota_best_above: true,
-                                            quota_best_amount: 1000,
-                                            quota_best_percent: 1.0153846153846153,
-                                            quota_likely_above: false,
-                                            quota_likely_amount: 5000,
-                                            quota_likely_percent: 0.9230769230769231,
-                                            revenue: 60000});
+                                            quota_best_above: totals.best_case > 65000,
+                                            quota_best_amount: Math.abs(totals.best_case-65000),
+                                            quota_best_percent:totals.best_case/65000,
+                                            quota_likely_above: totals.amount > 65000,
+                                            quota_likely_amount: Math.abs(totals.amount-65000),
+                                            quota_likely_percent: totals.amount/65000,
+                                            revenue: totals.overall_amount - totals.won_amount - totals.lost_amount});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
         });
@@ -89,23 +90,24 @@ describe("The Forecasts Progress Calculations display", function() {
             view.model.set("quota_amount", 65000);
 
             view.recalculateRepTotals(totals);
-            var expectedModel = new Backbone.Model({closed_amount: 60000,
-                                            closed_best_above: false,
-                                            closed_best_amount: 22000,
-                                            closed_best_percent: 0.6333333333333333,
-                                            closed_likely_above: false,
-                                            closed_likely_amount: 25000,
-                                            closed_likely_percent:0.5833333333333334,
-                                            opportunities: 2,
-                                            pipeline: 1.7,
+            //build model to mimic js calculation expectations
+            var expectedModel = new Backbone.Model({closed_amount: totals.won_amount,
+                                            closed_best_above: totals.best_case > totals.won_amount,
+                                            closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
+                                            closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_likely_above: totals.amount > totals.won_amount,
+                                            closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
+                                            closed_likely_percent: totals.amount/totals.won_amount,
+                                            opportunities: totals.total_opp_count - totals.won_count - totals.lost_count,
+                                            pipeline: Math.round(((totals.overall_amount - totals.won_amount - totals.lost_amount)/totals.amount)*10)/10 ,
                                             quota_amount: 65000,
-                                            quota_best_above: false,
-                                            quota_best_amount: 27000,
-                                            quota_best_percent:0.5846153846153846,
-                                            quota_likely_above: false,
-                                            quota_likely_amount: 30000,
-                                            quota_likely_percent:0.5384615384615384,
-                                            revenue: 60000});
+                                            quota_best_above: totals.best_case > 65000,
+                                            quota_best_amount: Math.abs(totals.best_case-65000),
+                                            quota_best_percent:totals.best_case/65000,
+                                            quota_likely_above: totals.amount > 65000,
+                                            quota_likely_amount: Math.abs(totals.amount-65000),
+                                            quota_likely_percent: totals.amount/65000,
+                                            revenue: totals.overall_amount - totals.won_amount - totals.lost_amount});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
         });
@@ -116,23 +118,24 @@ describe("The Forecasts Progress Calculations display", function() {
             view.model.set("quota_amount", 65000);
 
             view.recalculateRepTotals(totals);
-            var expectedModel = new Backbone.Model({closed_amount: 60000,
-                                            closed_best_above: true,
-                                            closed_best_amount: 69000,
-                                            closed_best_percent: 2.15,
-                                            closed_likely_above: true,
-                                            closed_likely_amount: 60000,
-                                            closed_likely_percent: 2.00,
-                                            opportunities: 2,
-                                            pipeline: 0.5,
+            //build model to mimic js calculation expectations
+            var expectedModel = new Backbone.Model({closed_amount: totals.won_amount,
+                                            closed_best_above: totals.best_case > totals.won_amount,
+                                            closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
+                                            closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_likely_above: totals.amount > totals.won_amount,
+                                            closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
+                                            closed_likely_percent: totals.amount/totals.won_amount,
+                                            opportunities: totals.total_opp_count - totals.won_count - totals.lost_count,
+                                            pipeline: Math.round(((totals.overall_amount - totals.won_amount - totals.lost_amount)/totals.amount)*10)/10 ,
                                             quota_amount: 65000,
-                                            quota_best_above: true,
-                                            quota_best_amount: 64000,
-                                            quota_best_percent: 1.9846153846153847,
-                                            quota_likely_above: true,
-                                            quota_likely_amount: 55000,
-                                            quota_likely_percent: 1.8461538461538463,
-                                            revenue: 60000});
+                                            quota_best_above: totals.best_case > 65000,
+                                            quota_best_amount: Math.abs(totals.best_case-65000),
+                                            quota_best_percent:totals.best_case/65000,
+                                            quota_likely_above: totals.amount > 65000,
+                                            quota_likely_amount: Math.abs(totals.amount-65000),
+                                            quota_likely_percent: totals.amount/65000,
+                                            revenue: totals.overall_amount - totals.won_amount - totals.lost_amount});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
         });
@@ -143,23 +146,24 @@ describe("The Forecasts Progress Calculations display", function() {
             view.model.set("quota_amount", 65000);
 
             view.recalculateRepTotals(totals);
-            var expectedModel = new Backbone.Model({closed_amount: 60000,
-                                            closed_best_above: true,
-                                            closed_best_amount: 75000,
-                                            closed_best_percent: 2.25,
-                                            closed_likely_above: true,
-                                            closed_likely_amount: 62000,
-                                            closed_likely_percent: 2.033333333333333,
-                                            opportunities: 2,
-                                            pipeline:0.5,
+            //build model to mimic js calculation expectations
+            var expectedModel = new Backbone.Model({closed_amount: totals.won_amount,
+                                            closed_best_above: totals.best_case > totals.won_amount,
+                                            closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
+                                            closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_likely_above: totals.amount > totals.won_amount,
+                                            closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
+                                            closed_likely_percent: totals.amount/totals.won_amount,
+                                            opportunities: totals.total_opp_count - totals.won_count - totals.lost_count,
+                                            pipeline: Math.round(((totals.overall_amount - totals.won_amount - totals.lost_amount)/totals.amount)*10)/10 ,
                                             quota_amount: 65000,
-                                            quota_best_above: true,
-                                            quota_best_amount: 70000,
-                                            quota_best_percent: 2.076923076923077,
-                                            quota_likely_above: true,
-                                            quota_likely_amount: 57000,
-                                            quota_likely_percent: 1.876923076923077,
-                                            revenue: 60000});
+                                            quota_best_above: totals.best_case > 65000,
+                                            quota_best_amount: Math.abs(totals.best_case-65000),
+                                            quota_best_percent:totals.best_case/65000,
+                                            quota_likely_above: totals.amount > 65000,
+                                            quota_likely_amount: Math.abs(totals.amount-65000),
+                                            quota_likely_percent: totals.amount/65000,
+                                            revenue: totals.overall_amount - totals.won_amount - totals.lost_amount});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
         });
@@ -170,23 +174,24 @@ describe("The Forecasts Progress Calculations display", function() {
             view.model.set("quota_amount", 65000);
 
             view.recalculateRepTotals(totals);
-            var expectedModel = new Backbone.Model({closed_amount: 60000,
-                                            closed_best_above: true,
-                                            closed_best_amount: 138000,
-                                            closed_best_percent: 3.30,
-                                            closed_likely_above: true,
-                                            closed_likely_amount: 122000,
-                                            closed_likely_percent: 3.033333333333333,
-                                            opportunities: 2,
-                                            pipeline:0.3,
+            //build model to mimic js calculation expectations
+            var expectedModel = new Backbone.Model({closed_amount: totals.won_amount,
+                                            closed_best_above: totals.best_case > totals.won_amount,
+                                            closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
+                                            closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_likely_above: totals.amount > totals.won_amount,
+                                            closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
+                                            closed_likely_percent: totals.amount/totals.won_amount,
+                                            opportunities: totals.total_opp_count - totals.won_count - totals.lost_count,
+                                            pipeline: Math.round(((totals.overall_amount - totals.won_amount - totals.lost_amount)/totals.amount)*10)/10 ,
                                             quota_amount: 65000,
-                                            quota_best_above: true,
-                                            quota_best_amount: 133000,
-                                            quota_best_percent: 3.046153846153846,
-                                            quota_likely_above: true,
-                                            quota_likely_amount: 117000,
-                                            quota_likely_percent: 2.80,
-                                            revenue: 60000});
+                                            quota_best_above: totals.best_case > 65000,
+                                            quota_best_amount: Math.abs(totals.best_case-65000),
+                                            quota_best_percent:totals.best_case/65000,
+                                            quota_likely_above: totals.amount > 65000,
+                                            quota_likely_amount: Math.abs(totals.amount-65000),
+                                            quota_likely_percent: totals.amount/65000,
+                                            revenue: totals.overall_amount - totals.won_amount - totals.lost_amount});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
         });
@@ -215,23 +220,24 @@ describe("The Forecasts Progress Calculations display", function() {
 
             view.updateProgress();
             app.api.call.mostRecentCall.args[4].success({quota_amount: 65000});
-            var expectedModel = new Backbone.Model({closed_amount: 60000,
-                                            closed_best_above: true,
-                                            closed_best_amount: 6000,
-                                            closed_best_percent: 1.1,
-                                            closed_likely_above: false,
-                                            closed_likely_amount: 0,
-                                            closed_likely_percent: 1,
-                                            opportunities: 2,
-                                            pipeline: 1,
+            //build model to mimic js calculation expectations
+            var expectedModel = new Backbone.Model({closed_amount: view.model.get('closed_amount'),
+                                            closed_best_above: view.bestTotal > view.model.get('closed_amount'),
+                                            closed_best_amount: Math.abs(view.bestTotal-view.model.get('closed_amount')),
+                                            closed_best_percent: view.bestTotal/view.model.get('closed_amount'),
+                                            closed_likely_above: view.likelyTotal > view.model.get('closed_amount'),
+                                            closed_likely_amount: Math.abs(view.likelyTotal-view.model.get('closed_amount')),
+                                            closed_likely_percent: view.likelyTotal/view.model.get('closed_amount'),
+                                            opportunities: view.model.get('opportunities'),
+                                            pipeline: Math.round((view.model.get('revenue')/view.likelyTotal)*10)/10 ,
                                             quota_amount: 65000,
-                                            quota_best_above: true,
-                                            quota_best_amount: 1000,
-                                            quota_best_percent: 1.0153846153846153,
-                                            quota_likely_above: false,
-                                            quota_likely_amount: 5000,
-                                            quota_likely_percent: 0.9230769230769231,
-                                            revenue: 60000});
+                                            quota_best_above: view.bestTotal > 65000,
+                                            quota_best_amount: Math.abs(view.bestTotal-65000),
+                                            quota_best_percent:view.bestTotal/65000,
+                                            quota_likely_above: view.likelyTotal > 65000,
+                                            quota_likely_amount: Math.abs(view.likelyTotal-65000),
+                                            quota_likely_percent: view.likelyTotal/65000,
+                                            revenue: view.model.get('revenue')});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
         });
@@ -273,22 +279,23 @@ describe("The Forecasts Progress Calculations display", function() {
             });
 
             view.recalculateManagerTotals(totals);
+            //build model to mimic js calculation expectations
             var expectedModel = new Backbone.Model({closed_amount: 123000,
-                                            closed_best_above: true,
-                                            closed_best_amount: 61800,
-                                            closed_best_percent: 1.5,
-                                            closed_likely_above: true,
-                                            closed_likely_amount: 44900,
-                                            closed_likely_percent: 1.37,
+                                            closed_best_above: totals.best_adjusted > 123000,
+                                            closed_best_amount: Math.abs(totals.best_adjusted-123000),
+                                            closed_best_percent: totals.best_adjusted/123000,
+                                            closed_likely_above: totals.likely_adjusted > 123000,
+                                            closed_likely_amount: Math.abs(totals.likely_adjusted-123000),
+                                            closed_likely_percent: totals.likely_adjusted/123000,
                                             opportunities: 14,
-                                            pipeline: 1.1,
-                                            quota_amount: 223000,
-                                            quota_best_above: false,
-                                            quota_best_amount: 38200,
-                                            quota_best_percent:0.83,
-                                            quota_likely_above: false,
-                                            quota_likely_amount: 55100,
-                                            quota_likely_percent: 0.75,
+                                            pipeline: Math.round((195000/totals.likely_adjusted)*10)/10 ,
+                                            quota_amount: totals.quota,
+                                            quota_best_above: totals.best_adjusted > totals.quota,
+                                            quota_best_amount: Math.abs(totals.best_adjusted-totals.quota),
+                                            quota_best_percent:totals.best_adjusted/totals.quota,
+                                            quota_likely_above: totals.likely_adjusted > totals.quota,
+                                            quota_likely_amount: Math.abs(totals.likely_adjusted-totals.quota),
+                                            quota_likely_percent: totals.likely_adjusted/totals.quota,
                                             revenue: 195000});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
@@ -319,22 +326,23 @@ describe("The Forecasts Progress Calculations display", function() {
             view.updateProgress();
             app.api.call.mostRecentCall.args[4].success({closed_amount: 123000, opportunities: 14, pipeline_revenue: 195000});
 
+            //build model to mimic js calculation expectations
             var expectedModel = new Backbone.Model({closed_amount: 123000,
-                                            closed_best_above: true,
-                                            closed_best_amount: 61800,
-                                            closed_best_percent: 1.5,
-                                            closed_likely_above: true,
-                                            closed_likely_amount: 44900,
-                                            closed_likely_percent: 1.37,
+                                            closed_best_above: view.bestTotal > 123000,
+                                            closed_best_amount: Math.abs(view.bestTotal-123000),
+                                            closed_best_percent: view.bestTotal/123000,
+                                            closed_likely_above: view.likelyTotal > 123000,
+                                            closed_likely_amount: Math.abs(view.likelyTotal-123000),
+                                            closed_likely_percent: view.likelyTotal/123000,
                                             opportunities: 14,
-                                            pipeline: 1.1,
-                                            quota_amount: 223000,
-                                            quota_best_above: false,
-                                            quota_best_amount: 38200,
-                                            quota_best_percent:0.83,
-                                            quota_likely_above: false,
-                                            quota_likely_amount: 55100,
-                                            quota_likely_percent: 0.75,
+                                            pipeline: Math.round((195000/view.likelyTotal)*10)/10 ,
+                                            quota_amount: view.model.get('quota_amount'),
+                                            quota_best_above: view.bestTotal > view.model.get('quota_amount'),
+                                            quota_best_amount: Math.abs(view.bestTotal-view.model.get('quota_amount')),
+                                            quota_best_percent:view.bestTotal/view.model.get('quota_amount'),
+                                            quota_likely_above: view.likelyTotal > view.model.get('quota_amount'),
+                                            quota_likely_amount: Math.abs(view.likelyTotal-view.model.get('quota_amount')),
+                                            quota_likely_percent: view.likelyTotal/view.model.get('quota_amount'),
                                             revenue: 195000});
 
             expect(view.model.attributes).toEqual(expectedModel.attributes);
