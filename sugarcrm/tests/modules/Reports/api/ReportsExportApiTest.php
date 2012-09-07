@@ -250,7 +250,9 @@ class ReportsExportApiTest extends RestTestBase
         $this->_contact_1->mark_deleted($this->_contact_1->id);
         $this->_contact_2->mark_deleted($this->_contact_2->id);
         $this->_report->deleted = 1;
+        $this->_report->saved_report->deleted = 1;
         $this->_report->save($this->_report->report_name);
+        $GLOBALS['db']->query("DELETE FROM saved_reports WHERE name='{$this->_report->report_name}'");
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarCache::$isCacheReset = $this->origin_isCacheReset;
         parent::tearDown();
@@ -271,7 +273,7 @@ class ReportsExportApiTest extends RestTestBase
         $this->_report->save($this->_report->report_name);
         $report_id = $this->_report->saved_report->id;
         // call the Rest
-        $restReply = $this->_restCall("Reports/{$report_id}/pdf",
+        $restReply = $this->_restCall("Reports/{$report_id}/pdf?assigned_user_id={$this->_user->id}",
                                     json_encode(array()),
                                     'GET');
         $this->assertTrue(!empty($restReply['reply']['file_contents']), 'no file received');
