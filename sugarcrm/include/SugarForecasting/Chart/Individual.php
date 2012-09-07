@@ -5,14 +5,40 @@ require_once('include/SugarForecasting/Chart/AbstractChart.php');
 require_once('include/SugarForecasting/Individual.php');
 class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractChart
 {
+    /**
+     * Default Group By
+     *
+     * @var string
+     */
     protected $group_by = "forecast";
 
-    protected $category = "committed";
+    /**
+     * Default Category, 1 = include in forecast, 0 = include everything
+     *
+     *
+     * @var string
+     */
+    protected $category = 1;
 
+    /**
+     * The labels to be used in the legend and how to parse the data
+     *
+     * @var array
+     */
     protected $group_by_labels = array();
 
+    /**
+     * The value array that we build out and pass back
+     *
+     * @var array
+     */
     protected $values = array();
 
+    /**
+     * Constructor
+     *
+     * @param array $args
+     */
     public function __construct($args)
     {
         if (isset($args['category'])) {
@@ -33,7 +59,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $this->getIndividualData();
         $this->parseCategory();
         $this->parseGroupBy();
-        $this->convertTimeperiodInValues();
+        $this->convertTimeperiodToChartValues();
         return $this->formatDataForChart();
     }
 
@@ -46,6 +72,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $this->dataArray = $rep_obj->process();
     }
 
+    /**
+     * Parse any data out that doesn't match the category filter
+     * TODO: need to support buckets, currently it doesn't
+     */
     protected function parseCategory()
     {
         if (empty($this->category)) {
@@ -62,35 +92,40 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         reset($this->dataArray);
     }
 
+    /**
+     * Parse out the data that we are grouping by to find the labels that we need for the chart data
+     *
+     * Currently this only supports the following fields, forecasts, sales_stage and probability
+     *
+     * TODO: add support for fields to be set via a config or admin setting
+     */
     protected function parseGroupBy()
     {
         global $current_language;
 
         // get the language strings for the modules that we need
         $forecast_strings = return_module_language($current_language, 'Forecasts');
-        if ($this->group_by == "forecast") {
-            // here we only have a potential for two
-
-            if (empty($this->category)) {
-                $this->group_by_labels[] = $forecast_strings['LBL_CHART_NOT_INCLUDED'];
-            }
-            $this->group_by_labels[] = $forecast_strings['LBL_CHART_INCLUDED'];
-        }
-
         if ($this->group_by == "sales_stage") {
             foreach ($this->dataArray as $data) {
                 $this->group_by_labels[] = $data['sales_stage'];
             }
 
             $this->group_by_labels = array_unique($this->group_by_labels);
-        }
-
-        if ($this->group_by == "probability") {
+        } else if ($this->group_by == "probability") {
             foreach ($this->dataArray as $data) {
                 $this->group_by_labels[] = $data['probability'] . "%";
             }
             $this->group_by_labels = array_unique($this->group_by_labels);
             ksort($this->group_by_labels);
+        } else {
+            // default to forecast, just on the off chance it's not set
+            $this->group_by = "forecast";
+            // here we only have a potential for two
+
+            if (empty($this->category)) {
+                $this->group_by_labels[] = $forecast_strings['LBL_CHART_NOT_INCLUDED'];
+            }
+            $this->group_by_labels[] = $forecast_strings['LBL_CHART_INCLUDED'];
         }
 
         $this->group_by_labels = array_values($this->group_by_labels);
@@ -199,6 +234,11 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         return $chart;
     }
 
+    /**
+     * Return the quota for the current user and time period
+     *
+     * @return mixed
+     */
     protected function getUserQuota()
     {
         /* @var $quota_bean Quota */
@@ -210,9 +250,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
 
 
     /**
-     * Get the months for the current time period
+     * Find the months for a given timeperiod and turn them into values arrays that can be used by the charting engine
+     *
      */
-    protected function convertTimeperiodInValues()
+    protected function convertTimeperiodToChartValues()
     {
         /* @var $timeperiod TimePeriod */
         $timeperiod = BeanFactory::getBean('TimePeriods', $this->getArg('timeperiod_id'));
