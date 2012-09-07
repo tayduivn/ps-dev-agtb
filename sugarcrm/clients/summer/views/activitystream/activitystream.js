@@ -15,6 +15,7 @@
 
     initialize: function(options) {
     	this.opts = { params: {}};
+    	this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
 
         _.bindAll(this);
@@ -30,6 +31,9 @@
             this.collection = app.data.createBeanCollection("ActivityStream");
             this.collection.fetch(this.opts);
         }
+        
+    	this.collection['oauth_token'] = App.api.getOAuthToken();
+
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
