@@ -12,8 +12,8 @@ $viewdefs['base']['view']['modal-confirm'] = array(
         array(
             'name' => 'close_button',
             'type' => 'button',
-            'css_class' => 'btn-invisible',
-            'label' => 'LNK_CLOSE',
+            'css_class' => 'btn-invisible btn-link',
+            'label' => 'LBL_EMAIL_CANCEL',
             'primary' => false,
         ),
     ),

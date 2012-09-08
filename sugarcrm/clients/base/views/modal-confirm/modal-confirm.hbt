@@ -1,6 +1,6 @@
 <div class="container-fluid">
     <form>
-        {{message}}
+        {{str message module}}
     </form>
 </div>
 <div class="modal-footer">
