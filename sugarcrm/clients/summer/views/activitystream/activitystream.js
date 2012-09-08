@@ -31,7 +31,7 @@
             this.collection = app.data.createBeanCollection("ActivityStream");
             this.collection.fetch(this.opts);
         }
-        
+
     	this.collection['oauth_token'] = App.api.getOAuthToken();
 
         // Expose the dataTransfer object for drag and drop file uploads.
@@ -88,12 +88,13 @@
                             contentType: false,
                             success: function() {
                                 delete App.drag_drop[id];
+                                self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts)
+            self.collection.fetch(self.opts);
         }});
     },
 
@@ -135,12 +136,13 @@
                             contentType: false,
                             success: function() {
                                 delete App.drag_drop[id];
+                                self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts)
+            self.collection.fetch(self.opts);
         }});
     },
 
