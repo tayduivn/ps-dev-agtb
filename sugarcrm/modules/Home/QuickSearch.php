@@ -229,7 +229,9 @@ class quicksearchQuery
             }
         }
 
-        $whereClause = sprintf('(%s)', implode(" {$args['group']} ", $conditionArray));
+        $whereClause = !empty($conditionArray)
+            ? sprintf('(%s)', implode(" {$args['group']} ", $conditionArray))
+            : '';
         if(!empty($this->extra_where)) {
             $whereClause .= " AND ({$this->extra_where})";
         }
