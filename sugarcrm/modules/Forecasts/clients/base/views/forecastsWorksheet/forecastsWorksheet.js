@@ -186,9 +186,6 @@
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.forecastschedule.on("change", function() {
-                this.calculateTotals();
-            }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		var model = this.context.forecasts.worksheet;
@@ -248,15 +245,16 @@
 
         _.each(fields, function(field) {
             if (field.name == "forecast") {
-                field.enabled = !app.config.show_buckets;
+                field.enabled = (app.config.show_buckets == 0);
                 forecastField = field;
             } else if (field.name == "commit_stage") {
-                field.enabled = app.config.show_buckets;
+                field.enabled = (app.config.show_buckets != 0);
                 field.view = self.isEditableWorksheet ? 'edit' : 'default';
                 commitStageField = field;
             }
         });
-        return app.config.show_buckets?forecastField:commitStageField;
+
+        return (app.config.show_buckets == 1) ? forecastField : commitStageField;
     },
 
     /**
@@ -311,6 +309,9 @@
             });
         }
 
+        //Remove all events that may be associated with forecastschedule view
+        this.context.forecasts.forecastschedule.off();
+        this.context.forecasts.forecastschedule.on("change", function() { this.calculateTotals(); }, this);
         //Create the view for expected opportunities
         var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
         var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
@@ -551,7 +552,7 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
-        if (app.config.show_buckets) { // buckets
+        if (app.config.show_buckets == 1) { // buckets
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)

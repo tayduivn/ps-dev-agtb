@@ -61,8 +61,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
 
         // base file and class name
-        $file = 'include/SugarForecasting/Individual.php';
-        $klass = 'SugarForecasting_Individual';
+        $file = 'include/SugarForecasting/Manager.php';
+        $klass = 'SugarForecasting_Manager';
 
         // check for a custom file exists
         $include_file = get_custom_file_if_exists($file);

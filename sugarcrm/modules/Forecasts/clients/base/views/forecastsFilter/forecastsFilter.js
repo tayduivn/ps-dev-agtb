@@ -53,10 +53,11 @@
      */
     _renderField: function(field) {
         if (field.name == 'category') {
-            field.def.options = app.config.show_buckets?'commit_stage_dom':'forecasts_filters_category';
+            var showBuckets = app.config.show_buckets == 1;
+            field.def.options = showBuckets ? 'commit_stage_dom' : 'forecasts_filters_category';
 //            field.value = "70"; // INVESTIGATE: this should work to set the value of the select field, but it is getting reset somewhere in sidecar processing
-            field.def.value = app.config.show_buckets ? '100' : '1'; // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            field.def.multi = app.config.show_buckets;
+            field.def.value = showBuckets ? '100' : '1'; // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+            field.def.multi = showBuckets;
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);

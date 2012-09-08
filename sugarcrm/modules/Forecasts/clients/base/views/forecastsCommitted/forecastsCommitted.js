@@ -162,7 +162,6 @@
      * @private
      */
     _setUpTimeperiodField: function (field) {
-        var timeperiod;
 
         field.events = _.extend({"change select": "_updateSelections"}, field.events);
         field.bindDomChange = function() {};
@@ -175,9 +174,9 @@
          */
         field._updateSelections = function(event, input) {
             var label = this.$el.find('option:[value='+input.selected+']').text();
-            var id = this.$el.find('option:[value='+input.selected+']').val();
-            this.def.value = id;
-            this.view.context.forecasts.set('selectedTimePeriod', {"id": id, "label": label});
+            //Set the default selection so that when render is called on the view it will use the newly selected value
+            app.defaultSelections.timeperiod_id.id = input.selected;
+            this.view.context.forecasts.set('selectedTimePeriod', {"id": input.selected, "label": label});
         };
 
         // INVESTIGATE: Should this be retrieved from the model, instead of directly?
@@ -189,7 +188,6 @@
         }}, {field: field, view: this});
 
         field.def.value = app.defaultSelections.timeperiod_id.id;
-
         return field;
     },
 

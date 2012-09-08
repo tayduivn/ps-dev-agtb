@@ -51,7 +51,7 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         $forecastConfig = array (
-            'show_buckets' => false,
+            'show_buckets' => 0,
             'committed_probability' => 70,
             'sales_stage_won' => array('Closed Won'),
             'sales_stage_lost' => array('Closed Lost')
