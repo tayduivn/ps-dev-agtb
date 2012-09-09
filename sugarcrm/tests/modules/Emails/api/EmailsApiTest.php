@@ -31,6 +31,9 @@ require_once('tests/rest/RestTestBase.php');
 class EmailsApiTest extends RestTestBase {
     var $current_user;
     var $input;
+
+    var $email_id;
+
     var $document;
     var $documentRevision;
 
@@ -47,6 +50,9 @@ class EmailsApiTest extends RestTestBase {
     var $document_file_id;
     var $document_file_name;
 
+    var $teams;
+    var $team_id;
+    var $team_name;
 
     public function setUp()
     {
@@ -54,8 +60,34 @@ class EmailsApiTest extends RestTestBase {
         parent::setUp();
 
         $this->current_user = $current_user;
-
+        unset($this->email_id);
         $this->email_config_setup();
+
+        $this->teams=array();
+        $this->team_id   = "unit_test_team_id_";
+        $this->team_name = "unit_test_team_name_";
+
+        $sql = "DELETE FROM teams WHERE name like 'Sugar%'";
+        $GLOBALS['db']->query($sql);
+
+        $sql = "DELETE FROM teams WHERE name like '{$this->team_name}%'";
+        $GLOBALS['db']->query($sql);
+
+        $sql = "DELETE FROM team_sets";
+        $GLOBALS['db']->query($sql);
+
+        $sql = "DELETE FROM team_sets_teams";
+        $GLOBALS['db']->query($sql);
+
+        for ($i=0; $i<3; $i++) {
+            $id = $this->team_id . $i;
+            $name = $this->team_name . $i;
+            $description =  "Description for " . $name;
+            $sql = "INSERT INTO teams VALUES('$id','$name','',NULL,'2012-08-15 18:00:00','2012-08-15 18:00:00','$current_user->id','$current_user->id',0,'$description',0)";
+            $result = $GLOBALS['db']->query($sql);
+            $this->teams[] = $id;
+        }
+        //print_r($this->teams);
 
         $message = "<br>This is a <span style='color:red'>Test</span> email";
 
@@ -88,11 +120,7 @@ class EmailsApiTest extends RestTestBase {
                 "id"	=> "102181a2-5c05-b879-8e68-502279a8c401"
             ),
 
-            "teams"			=>	array(
-                "primary"	=> "West",
-                "other"		=> array("1", "East")
-            ),
-
+            "teams"			=>	null,
         );
 
         /*---- Create an Uploaded Image File ----------------------------------*/
@@ -145,6 +173,23 @@ class EmailsApiTest extends RestTestBase {
 
     public function tearDown()
     {
+        $sql = "DELETE FROM teams WHERE name like 'Sugar%'";
+        $GLOBALS['db']->query($sql);
+
+        $sql = "DELETE FROM teams WHERE name like '{$this->team_name}%'";
+        $GLOBALS['db']->query($sql);
+
+        $sql = "DELETE FROM team_sets";
+        $GLOBALS['db']->query($sql);
+
+        $sql = "DELETE FROM team_sets_teams";
+        $GLOBALS['db']->query($sql);
+
+        if (isset($this->email_id)) {
+            $this->deleteEmails($this->email_id);
+            unset($this->email_id);
+        }
+
         if (file_exists($this->uploaded_image_file_path)) {
             $res=unlink($this->uploaded_image_file_path);
             //printf("UNLINK  '%s '(RES=%d)\n",$this->uploaded_image_file_path, $res);
@@ -174,39 +219,6 @@ class EmailsApiTest extends RestTestBase {
 
 
 
-    public function testCreate_Draft_WithSugarDocumentAttached_Success() {
-        $this->input["status"] = "draft";
-
-        $this->input["documents"] = array(
-            array("name" => $this->document_file_name,
-                  "id"   => $this->document_file_id
-            )
-        );
-
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
-        $reply = $post_response['reply'];
-        // print_r($reply);
-
-        $http_status = $post_response['info']['http_code'];
-        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
-        if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
-        }
-
-        $success = (int) $reply['SUCCESS'];
-        $this->assertEquals(1,$success, "Not Successful");
-
-        $email = $reply['EMAIL'];
-
-        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
-        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
-        $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
-        $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
-
-        $this->deleteEmails($email['id']);
-    }
-
-
     public function testCreate_Draft_Success() {
         $this->input["status"] = "draft";
 
@@ -217,6 +229,9 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
         }
 
         $success = (int) $reply['SUCCESS'];
@@ -229,8 +244,6 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
         $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
         $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
-
-        $this->deleteEmails($email['id']);
     }
 
 
@@ -251,6 +264,9 @@ class EmailsApiTest extends RestTestBase {
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
         }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
+        }
 
         $success = (int) $reply['SUCCESS'];
         $this->assertEquals(1,$success, "Not Successful");
@@ -262,9 +278,78 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
         $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
         $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
-
-        $this->deleteEmails($email['id']);
     }
+
+
+    public function testCreate_Draft_WithMultipleTeams_Success() {
+
+        $this->input["status"] = "draft";
+
+        $this->input["teams"] = array(
+            "primary"	=> $this->teams[0],
+            "other"		=> array($this->teams[1], $this->teams[2])
+        );
+
+        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $reply = $post_response['reply'];
+        // print_r($reply);
+
+        $http_status = $post_response['info']['http_code'];
+        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
+        }
+
+        $success = (int) $reply['SUCCESS'];
+        $this->assertEquals(1,$success, "Not Successful");
+
+        $email = $reply['EMAIL'];
+
+        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
+        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
+        $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
+        $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
+
+        $this->assertTrue($this->check_team_sets(), "Expected Team Sets Not Created");
+    }
+
+
+    public function testCreate_Draft_WithSugarDocumentAttached_Success() {
+        $this->input["status"] = "draft";
+
+        $this->input["documents"] = array(
+            array("name" => $this->document_file_name,
+                "id"   => $this->document_file_id
+            )
+        );
+
+        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $reply = $post_response['reply'];
+        // print_r($reply);
+
+        $http_status = $post_response['info']['http_code'];
+        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
+        }
+
+        $success = (int) $reply['SUCCESS'];
+        $this->assertEquals(1,$success, "Not Successful");
+
+        $email = $reply['EMAIL'];
+
+        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
+        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
+        $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
+        $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
+    }
+
 
 
     public function testCreate_Ready_Success() {
@@ -275,9 +360,14 @@ class EmailsApiTest extends RestTestBase {
         $this->input["cc_addresses"] = null;
         $this->input["bcc_addresses"] = null;
 
-
         $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
         $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
+        }
 
         $reply = $post_response['reply'];
         $success = (int) $reply['SUCCESS'];
@@ -290,10 +380,7 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
         $this->assertEquals("out", $email['type'], "Email Type Incorrect");
         $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
-
-        $this->deleteEmails($email['id']);
     }
-
 
 
     public function testCreate_Ready_WithAttachment_Success() {
@@ -314,6 +401,12 @@ class EmailsApiTest extends RestTestBase {
 
         $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
         $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
+        }
 
         $reply = $post_response['reply'];
         $success = (int) $reply['SUCCESS'];
@@ -326,8 +419,6 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
         $this->assertEquals("out", $email['type'], "Email Type Incorrect");
         $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
-
-        $this->deleteEmails($email['id']);
     }
 
 
@@ -354,6 +445,9 @@ class EmailsApiTest extends RestTestBase {
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
         }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
+        }
 
         $success = (int) $reply['SUCCESS'];
         $this->assertEquals(1,$success, "Not Successful");
@@ -364,8 +458,6 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
         $this->assertEquals("out", $email['type'], "Email Type Incorrect");
         $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
-
-        $this->deleteEmails($email['id']);
     }
 
     public function testCreate_InvalidStatus() {
@@ -385,11 +477,48 @@ class EmailsApiTest extends RestTestBase {
      * Private Helper Methods
      *
      */
+    private function check_team_sets() {
+        $ids = array();
+        $team_set_ids = array();
+        $save_team_set_id=null;
+
+        $result = $GLOBALS['db']->query("SELECT id, team_set_id FROM team_sets_teams WHERE team_id like '{$this->team_id}%'");
+        while($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            $id = $row['id'];
+            $team_set_id = $row['team_set_id'];
+            $ids[$id] = true;
+            $team_set_ids[$team_set_id] = true;
+            $save_team_set_id = $team_set_id;
+        }
+
+        //print_r($ids);
+        //printf("COUNT IDS: %d\n",count($ids)); // SHOULD BE THREE
+        //print_r($team_set_ids);
+        //printf("COUNT TEAM SET IDS: %d\n",count($team_set_ids)); // SHOULD BE ONE
+
+        if (count($ids) != 3)
+            return false;   // should be exactly three
+        if (count($team_set_ids) != 1)
+            return false;   // should be exactly one
+
+        $count=0;
+        $sql = "SELECT id FROM team_sets WHERE id = '$save_team_set_id'";
+        $result = $GLOBALS['db']->query($sql);
+        if ($result) {
+            while($row = $GLOBALS['db']->fetchByAssoc($result)) {
+                $count++;
+            }
+        }
+
+        //printf("COUNT TEAM SETS: %d\n",$count);
+
+        if ($count != 1)
+            return false;   // should be exactly one
+
+        return true;
+    }
 
     private function deleteEmails($email_id) {
-        $sql = "DELETE FROM emails WHERE id = '{$email_id}'";
-        // echo $sql;
-        $GLOBALS['db']->query($sql);
 
         $sql = "DELETE FROM emails_text WHERE email_id = '{$email_id}'";
         $GLOBALS['db']->query($sql);
