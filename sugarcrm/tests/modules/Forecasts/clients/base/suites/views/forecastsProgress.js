@@ -63,7 +63,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 1", function() {
-            var totals = {amount: 60000, worst_case: 57000, best_case: 66000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
+            var totals = {amount: 60000, worst_case: 35000, best_case: 66000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -97,7 +97,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 2", function() {
-            var totals = {amount: 35000, worst_case: 29000, best_case: 38000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 1, total_opp_count: 4 };
+            var totals = {amount: 35000, worst_case: 25000, best_case: 38000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 1, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -131,7 +131,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 3", function() {
-            var totals = {amount: 120000, worst_case: 110000,  best_case: 129000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 3, total_opp_count: 4 };
+            var totals = {amount: 120000, worst_case: 84000,  best_case: 129000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 3, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -165,7 +165,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 4", function() {
-            var totals = {amount: 122000, worst_case: 110000, best_case: 135000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
+            var totals = {amount: 122000, worst_case: 90000, best_case: 135000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -199,7 +199,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 5", function() {
-            var totals = {amount: 182000, worst_case: 165000, best_case: 198000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
+            var totals = {amount: 182000, worst_case: 139000, best_case: 198000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -248,7 +248,7 @@ describe("The Forecasts Progress Calculations display", function() {
             spyOn(app.api, 'call');
             view.likelyTotal = 60000;
             view.bestTotal = 66000;
-            view.worstTotal = 57000,
+            view.worstTotal = 35000,
             view.model.set({
                 closed_amount: 60000,
                 opportunities: 2,
@@ -319,7 +319,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model", function() {
-            var totals = {amount: 202000, worst_case: 157000, worst_adjusted: 154000, best_case: 190500, likely_case: 173900, likely_adjusted: 167900, best_adjusted: 184800,quota: 223000 };
+            var totals = {amount: 202000, worst_case: 152000, worst_adjusted: 160500, best_case: 190500, likely_case: 173900, likely_adjusted: 167900, best_adjusted: 184800,quota: 223000 };
 
             view.model.set({
                 closed_amount: 123000,
@@ -373,7 +373,7 @@ describe("The Forecasts Progress Calculations display", function() {
             spyOn(app.api, 'call');
             view.likelyTotal = 167900;
             view.bestTotal = 184800;
-            view.worstTotal = 154000;
+            view.worstTotal = 160500;
 
             view.model.set({
                 quota_amount: 223000
