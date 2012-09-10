@@ -58,7 +58,7 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
-                array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => ' ', 'placeholder' => 'LBL_NAME'),
+                array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
             )
         ),
         array(
@@ -75,7 +75,9 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
                 array(
                     'name' => 'fieldset_address',
                     'type' => 'fieldset',
-                    'fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')),
+                    'label' => 'Billing Address',
+                    'fields' => array('billing_address_city', 'billing_address_state', 'billing_address_postalcode')
+                ),
                 'website',
                 'billing_address_country',
                 'phone_office',
@@ -91,7 +93,6 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
                 'twitter',
                 //'googleplus'
             )
-
         )
     ),
 );

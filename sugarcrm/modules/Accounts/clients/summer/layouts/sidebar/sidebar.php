@@ -2,7 +2,6 @@
 require_once('clients/summer/SideBarLayout.php');
 $layout = new SideBarLayout();
 
-$layout->push('main', array('view'=>'imagesearch'));
 $layout->push('main', array('view'=>'crunchbase'));
 $layout->push('main', array('view'=>'news'));
 $layout->push('main', array('view'=>'twitter'));

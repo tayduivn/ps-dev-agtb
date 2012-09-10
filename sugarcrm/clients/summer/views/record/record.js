@@ -42,8 +42,6 @@
                 row = [];
 
             _.each(panel.fields, function(field) {
-                var cell = {};
-
                 if (_.isUndefined(panel.labels)) panel.labels = true;
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 maxSpan = (panel.labels) ? 8 : 12;
@@ -51,23 +49,9 @@
                 //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
                 if (_.isUndefined(field.labelSpan)) field.labelSpan = Math.floor(4 / columns);
 
-                // Setup our grid 'compartment' array
-                cell.fields = (field.type == "fieldset") ? field.fields : [field];
-                cell.name = field.name;
-                cell.span = field.span;
-                cell.label = field.label;
-                cell.labelSpan = field.labelSpan;
-                cell.noedit = field.noedit;
-
-                _.each(cell.fields, function(field) {
-                    if (field.name) {
-                        field.index = totalFieldCount;
-                        totalFieldCount++;
-                    }
-                    if (panel.placeholders) field.placeholder = field.label;
-                });
-
-                row.push(cell);
+                totalFieldCount++;
+                field.index = totalFieldCount;
+                row.push(field);
 
                 if (count % columns == columns - 1) {
                     rows.push(row);
@@ -145,15 +129,17 @@
 
     handleEdit: function(e, field) {
         var target,
-            fields;
+            cell;
 
-        // This would be the default code path unless tabbed.
+        // This would be the default code path unless tabbed. Only e event object
+        // should be supplied by the click event.
         if (!field) {
             target = this.$(e.target);
-            targetData = target.data();
-            field = this.getField(targetData.name);
-        } else {
-            target = field.$el.parent().find(".record-edit-link");
+            cell = target.parents(".record-cell");
+            cellData = cell.data();
+            field = this.getField(cellData.name);
+        } else { // This is the tab field code path
+            cell = field.$el.parent().find(".record-cell");
         }
 
         // Set Editing mode to on.
@@ -165,12 +151,12 @@
             case "fieldset":
                 // If it is a field set, we need all the fields to switch to edit mode.
                 console.log("FIELD SET", field);
-                fields = field.fields();
-                target.parent().parent().find("input").focus().val(target.parent().find("input").val());
+                this.toggleCell(field, cell);
+                cell.find("input").focus().val(cell.find("input").val());
                 break;
             default:
-                this.toggleField(field, target);
-                target.parent().parent().find("input").focus().val(target.parent().find("input").val());
+                this.toggleCell(field, cell);
+                cell.find("input").focus().val(cell.find("input").val());
         }
     },
 
@@ -192,7 +178,7 @@
         this.render();
     },
 
-    handleCancel: function(e) {
+    handleCancel: function() {
         this.editMode = false;
 
         if (!_.isEmpty(this.previousModelState)) {
@@ -200,47 +186,91 @@
         }
     },
 
-    toggleField: function(field, target) {
-        $(target).closest('.record-row').toggleClass('edit-mode');
+    /**
+     * Handles the toggling of fields within itself. Also binds change and focus
+     * listeners.
+     * @param field {View.Field} Field or fieldset
+     * @param cell {jQuery Node} Current target cell
+     */
+    toggleCell: function(field, cell) {
+        var fields = field.fields || [field];
+
+        if (field.options.viewName != "edit") {
+            cell.on("focusout.record", {field: field, cell: cell}, this.fieldClose);
+        }
+
+        _.each(fields, function(field) {
+            this.toggleField(field, cell);
+        }, this);
+    },
+
+    /**
+     * Switches each individual field between detail and edit modes
+     * @param field {View.Field} Field that needs to be toggled
+     * @param cell {jQuery Node} Cell that field belongs in
+     */
+    toggleField: function(field, cell) {
+        cell.toggleClass('edit-mode');
 
         field.options.viewName = (!field.options.viewName || field.options.viewName == "detail")
             ? "edit" : field.options.viewName = "detail";
 
+        console.log("TOGGLE FIELD", field, field.name, field.options.viewName);
         field.render();
 
         if (field.options.viewName == "edit") {
-            field.$el.on("blur", "input", {field: field, target: target}, this.fieldClose);
-            field.$el.on("change", "input", {field: field, target: target}, this.fieldClose);
-            field.$el.on("keydown", "input", {field: field, target: target}, this.handleKeyDown);
+            field.$el.on("change.record", "input", {field: field, cell: cell}, this.fieldClose);
+            field.$el.on("keydown.record", "input", {field: field, cell: cell}, this.handleKeyDown);
         }
     },
 
     fieldClose: function(e) {
-        var target = e.data.target,
-            field = e.data.field;
+        var self = this;
 
-        if (field.options.viewName == "detail") {
-            return;
-        }
+        console.log("fieldClose()", e);
 
-        this.toggleField(field, target);
+        setTimeout(function() {
+            var currParent = self.$(document.activeElement).parents(".record-cell"),
+                targetParent = self.$(e.target).parents(".record-cell"),
+                cell = e.data.cell,
+                field = e.data.field;
 
-        field.$el.off("blur", "input", this.fieldClose);
-        field.$el.off("change", "input", this.fieldClose);
-        field.$el.off("keydown", "input", this.handleKeyDown);
+            // Check the parent cell
+            console.log("field close", currParent.data("name"), targetParent.data("name"));
+
+            if (field.options.viewName == "detail") {
+                return;
+            } else if (currParent.data("name") == targetParent.data("name")) {
+                console.log("Don't close, in same cell");
+                return;
+            }
+
+            console.log("Close it");
+
+            if (targetParent.data("type") == "fieldset") {
+                self.toggleCell(field, cell);
+            } else {
+                self.toggleField(field, cell);
+            }
+
+            cell.off("focusout.record", "input", self.fieldClose);
+            field.$el.off("change.record", "input", self.fieldClose);
+            field.$el.off("keydown.record", "input", self.handleKeyDown);
+        }, 10);
     },
 
     handleKeyDown: function(e) {
         var next,
-            target = e.data.target,
+            cell = e.data.cell,
             field = e.data.field,
             index = field.$el.parent().data("index");
 
-        if (e.which == 9) {
+        if (e.which == 9) { // If tab
             next = this.getNextField(index);
+            console.log("tabbed", next);
             this.handleEdit(null, next);
         } else if (e.which == 27) {
-            this.fieldClose(e, field, target);
+            this.fieldClose(e, field, cell);
         }
     }
 })
