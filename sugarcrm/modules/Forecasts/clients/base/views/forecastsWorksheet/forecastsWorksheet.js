@@ -132,10 +132,21 @@
      */
     _renderField: function(field) {
 
+        if(field.name == "commit_stage")
+        {
+            //Set the field.def.optoins value based on app.config.buckets_dom (if set)
+            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            if(this.isEditableWorksheet)
+            {
+               field = this._setUpCommitStage(field);
+            }
+        }
+
+        /*
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             field = this._setUpCommitStage(field);
         }
-
+        */
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -248,7 +259,7 @@
                 field.enabled = (app.config.show_buckets == 0);
                 forecastField = field;
             } else if (field.name == "commit_stage") {
-                field.enabled = (app.config.show_buckets != 0);
+                field.enabled = (app.config.show_buckets == 1);
                 field.view = self.isEditableWorksheet ? 'edit' : 'default';
                 commitStageField = field;
             }
@@ -552,20 +563,33 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
+        var self = this;
+
         if (app.config.show_buckets == 1) { // buckets
+
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
-                        var val = aData[0];
-                        var jVal = $(val);
-
+                        var editable = self.isMyWorksheet();
                         var returnVal = null;
+                        //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
+                        var selectVal = editable ? $(aData[0]).find("select").attr("value") : $(aData[0]).text().trim();
 
-                        var selectVal = jVal.find("select").attr("value");
-
-                        if(typeof(selectVal) != "undefined" && _.contains(params, selectVal)){
+                        if(editable && (typeof(selectVal) != "undefined" && _.contains(params, selectVal)))
+                        {
                             returnVal = selectVal;
+                        } else if(!editable) {
+                            //Get the array for the bucket stages
+                            var buckets_dom = app.lang.getAppListStrings(app.config.buckets_dom || 'commit_stage_dom');
+                            _.each(params, function(filter)
+                            {
+                                if(buckets_dom[filter] == selectVal)
+                                {
+                                   returnVal = selectVal;
+                                   return;
+                                }
+                            });
                         }
 
                         return returnVal;
