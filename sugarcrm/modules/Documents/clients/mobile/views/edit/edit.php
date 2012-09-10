@@ -38,12 +38,13 @@ $viewdefs['Documents']['mobile']['view']['edit'] = array(
         array (
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
-                array (
-                    'name' => 'document_name',
-                    'label' => 'LBL_DOC_NAME',
-                ),
+                'document_name',
+                'category_id',
+                'subcategory_id',
+                'status_id',
                 'active_date',
                 'exp_date',
+                'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
                 //END SUGARCRM flav=pro ONLY

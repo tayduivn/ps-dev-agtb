@@ -41,6 +41,13 @@ $viewdefs['Opportunities']['mobile']['view']['list'] = array(
                     'enabled' => true
                 ),
                 array(
+                    'name' => 'account_name',
+                    'width' => '10',
+                    'label' => 'LBL_LIST_ACCOUNT_NAME',
+                    'default' => true,
+                    'enabled' => true
+                ),
+                array(
                     'name' => 'sales_stage',
                     'width' => '10',
                     'label' => 'LBL_LIST_SALES_STAGE',

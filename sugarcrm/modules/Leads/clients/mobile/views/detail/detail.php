@@ -38,15 +38,7 @@ $viewdefs['Leads']['mobile']['view']['detail'] = array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
-                array(
-                    'name' => 'first_name',
-                    'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="25" maxlength="25" type="text" value="{$fields.first_name.value}">',
-                    'displayParams' => array('wireless_edit_only' => true,),
-                ),
-                array(
-                    'name' => 'last_name',
-                    'displayParams' => array('wireless_edit_only' => true,),
-                ),
+                'full_name',
                 'title',
                 'account_name',
                 'phone_work',
