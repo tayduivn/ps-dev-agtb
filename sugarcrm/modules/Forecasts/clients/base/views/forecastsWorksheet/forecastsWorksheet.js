@@ -264,7 +264,8 @@
      */
     _render: function() {
         var self = this;
-
+        var enableCommit = false;
+        
         if(!this.showMe()){
         	return false;
         }
@@ -321,7 +322,20 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-
+        
+        //see if anything in the model is a draft version
+        _.each(this._collection.models, function(model, index){
+        	if(model.get("version") == 0){
+        		enableCommit = true;
+        	}
+        });
+        if(enableCommit){
+        	self.context.forecasts.set({commitButtonEnabled: true});
+        }
+        else{
+        	self.context.forecasts.set({commitButtonEnabled: false});
+        }
+        
         this.calculateTotals();
         this.createSubViews();
         this.includedView.render();
