@@ -3,10 +3,7 @@ describe("Base.Field.Base", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        field = SugarTest.createField("base","button", "base", "list");
         app.view.Field.prototype._renderHtml = function() {};
-        field._loadTemplate = function() {  this.template = function(){ return '<a href="javascript:void(0);"></a>'}; };
-
     });
 
     afterEach(function() {
@@ -20,14 +17,18 @@ describe("Base.Field.Base", function() {
     });
 
     it('should bind custom event handlers', function() {
-        field.def = {
+        var def = {
             'events' : {
                 'click' : 'function() { this.callback = "stuff excuted"; }',
                 'blur' : 'function() { this.callback = "blur excuted"; }'
             }
         };
+
+        field = SugarTest.createField("base","button", "base", "list", def);
+        field._loadTemplate = function() { this.template = function(){ return '<a href="javascript:void(0);"></a>'}; };
         field.render();
         field._renderHtml();
+
         expect(field.callback).toBeUndefined();
         field.$("a[href]").trigger('click');
         expect(field.callback).toBe("stuff excuted");

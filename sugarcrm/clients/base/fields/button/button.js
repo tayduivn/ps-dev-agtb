@@ -8,7 +8,7 @@
             _.each(this.def.events, function(function_code, evtType) {
                 _customEvents[evtType + " .btn"] =  function_code;
             });
-            self.delegateEvents(_customEvents);
+            this.events = _.extend(this.events || {}, _customEvents);
         }
     },
     _render:function(){
