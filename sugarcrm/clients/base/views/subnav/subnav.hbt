@@ -1,4 +1,4 @@
-<div class="subnav">
+<div class="subnav subnav-fixed">
 <div class="btn-toolbar pull-left">
 <h1>{{subnavModel.attributes.title}}</h1>
 </div>

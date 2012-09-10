@@ -15,36 +15,25 @@
         this.subnavModel = new Backbone.Model();
         this.subnavModel.set({
             meta: {
-                buttons: this.meta.buttons[this.context.get('layout')]
+                buttons: this.meta.buttons
             }
         });
         this.context.set('subnavModel', this.subnavModel);
     },
 
     /**
-     * Render and fix the subnav to the top
+     * Render and push down the view below
      * @private
      */
     _render: function() {
-        var headerHeight, next, newMarginTop;
+        var next, newMarginTop;
 
         this.app.view.View.prototype._render.call(this);
 
-        if (this.$el.css('position') !== 'fixed') {
-            headerHeight = $('#header .navbar').height();
-
-            //place subnav below the header
-            this.$el.css({
-                position: 'fixed',
-                width: '100%',
-                top: headerHeight
-            });
-
-            //push down the view below by the subnav height
-            next = this.$el.next();
-            newMarginTop = parseInt(next.css('margin-top'), 10) + this.$el.height();
-            next.css('margin-top', newMarginTop + 'px');
-        }
+        //push down the view below by the subnav height
+        next = this.$el.next();
+        newMarginTop = parseInt(next.css('margin-top'), 10) + this.$el.find('.subnav').height();
+        next.css('margin-top', newMarginTop + 'px');
     },
 
     /**
@@ -58,7 +47,7 @@
      * Handle click on the cancel button
      */
     cancel: function() {
-        this.app.navigate(this.context, this.model, 'detail');
+        window.history.back();
     },
 
     /**
@@ -68,7 +57,10 @@
         this.app.navigate(this.context, this.model, "edit", {trigger:true});
     },
 
+    /**
+     * Only re-render the view. Do not push down the view below.
+     */
     bindDataChange: function() {
-        this.subnavModel.on("change", this.render, this);
+        this.subnavModel.on("change", this.app.view.View.prototype._render, this);
     }
 })

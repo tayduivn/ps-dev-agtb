@@ -28,32 +28,22 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['base']['view']['subnav'] = array(
+$viewdefs['base']['view']['subnavedit'] = array(
+    'type' =>'subnav',
     'buttons' => array(
-        'detail' => array(
-            array(
-                'name'    => 'edit_button',
-                'type'    => 'button',
-                'label'   => 'LBL_EDIT_BUTTON_LABEL',
-                'value'   => 'edit',
-                'css_class' => 'btn-primary',
-            ),
+        array(
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'value'   => 'cancel',
+            'css_class' => 'btn-invisible btn-link',
         ),
-        'edit' => array(
-            array(
-                'name'    => 'cancel_button',
-                'type'    => 'button',
-                'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-                'value'   => 'cancel',
-                'css_class' => 'btn-invisible btn-link',
-            ),
-            array(
-                'name'    => 'save_button',
-                'type'    => 'button',
-                'label'   => 'LBL_SAVE_BUTTON_LABEL',
-                'value'   => 'save',
-                'css_class' => 'btn-primary',
-            ),
+        array(
+            'name'    => 'save_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'value'   => 'save',
+            'css_class' => 'btn-primary',
         ),
     ),
 );
