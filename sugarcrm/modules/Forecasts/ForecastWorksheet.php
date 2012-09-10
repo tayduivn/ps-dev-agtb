@@ -106,10 +106,11 @@ class ForecastWorksheet extends SugarBean {
 	 */
 	protected function getWorksheetID($version)
 	{
+        global $current_user;
 		$id = null;
 		$sql = "select id from worksheet " .
 				"where timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
-					"and user_id = '" . $this->args["current_user"] . "' " .
+					"and user_id = '" . $current_user->id . "' " .
 					"and version = '" . $version . "' " .
 					"and related_id = '" . $this->args["id"] . "'";
 		

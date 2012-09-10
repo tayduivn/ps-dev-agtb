@@ -102,6 +102,11 @@ class SugarTestForecastUtilities
         return self::$timeperiod;
     }
 
+    public static function setTimePeriod($timeperiod)
+    {
+        self::$timeperiod = $timeperiod;
+    }
+
     /**
      * This method will create a new user with opportunities with a variable number of items based on an array passed in
      */

@@ -79,10 +79,10 @@
         <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
         <td>{{formatNumber amount}}</td>
         <td>{{formatNumber quota}}</td>
-        <td>{{formatNumber best_case}}</td>
-        <td>{{formatNumber best_adjusted}}</td>
         <td>{{formatNumber likely_case}}</td>
         <td>{{formatNumber likely_adjusted}}</td>
+        <td>{{formatNumber best_case}}</td>
+        <td>{{formatNumber best_adjusted}}</td>
     </tr>
 </script>
 {/literal}

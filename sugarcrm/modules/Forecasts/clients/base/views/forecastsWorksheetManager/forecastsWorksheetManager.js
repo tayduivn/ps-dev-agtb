@@ -198,6 +198,7 @@
      */
     _renderHtml:function (ctx, options) {
         var self = this;
+        var enableCommit = false;
         
         if(!this.showMe()){
         	return false;
@@ -253,6 +254,20 @@
                 }
             });
         }
+        
+        //see if anything in the model is a draft version
+        _.each(this._collection.models, function(model, index){
+        	if(model.get("version") == 0){
+        		enableCommit = true;
+        	}
+        });
+        if(enableCommit){
+        	self.context.forecasts.set({commitButtonEnabled: true});
+        }
+        else{
+        	self.context.forecasts.set({commitButtonEnabled: false});
+        }
+        
         this.calculateTotals();
         this.totalView.render();
     },
@@ -342,7 +357,7 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        if (app.config.show_buckets) {
+        if (app.config.show_buckets == 1) {
             // TODO: this.
         } else {
             this.category = _.first(params);
