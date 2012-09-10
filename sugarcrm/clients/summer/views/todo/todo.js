@@ -1,12 +1,12 @@
 ({
     events: {
-        'click #todo-pills li a': 'pillSwitcher',
-        'click #todo-container': 'persistMenu',
-        'click #todo': 'handleEscKey',
-        'click #todo-add': 'todoSubmit',
-        'keyup #todo-subject':'todoSubmit',
-        'keyup #todo-date':'todoSubmit',
-        'focus #todo-date': 'showDatePicker',
+        'click .todo-pills': 'pillSwitcher',
+        'click .todo-container': 'persistMenu',
+        'click .todo': 'handleEscKey',
+        'click .todo-add': 'todoSubmit',
+        'keyup .todo-subject':'todoSubmit',
+        'keyup .todo-date':'todoSubmit',
+        'focus .todo-date': 'showDatePicker',
         'click .todo-status': 'changeStatus',
         'click .todo-remove': 'removeTodo'
     },
@@ -45,16 +45,16 @@
     handleEscKey: function() {
         $(document).keyup(function(event) {
             // check if the menu is active
-            if( $("#todo-list-widget").hasClass("btn-group dropup open") ) {
+            if( $(".todo-list-widget").hasClass("open") ) {
                 // If esc was pressed
                 if( event.keyCode == 27 ) {
-                    $("#todo-list-widget").attr("class", "btn-group dropup");
+                    $(".todo-list-widget").removeClass("open");
                 }
             }
         });
     },
     showDatePicker: function() {
-        $("#todo-date").datepicker({
+        this.$(".todo-date").datepicker({
             dateFormat: "yy-mm-dd"
         });
         $("#ui-datepicker-div").css("z-index", 1032);
@@ -62,47 +62,50 @@
             e.stopPropagation();
         });
     },
-    checkActivePill: function() {
-        if( $("#todo-pill-overdue").hasClass("active") ) {
-            this.overduePillActive = true;
-            this.todayPillActive = false;
-            this.upcomingPillActive = false;
-            this.allPillActive = false;
-        }
-        else if( $("#todo-pill-today").hasClass("active") ) {
-            this.overduePillActive = false;
-            this.todayPillActive = true;
-            this.upcomingPillActive = false;
-            this.allPillActive = false;
-        }
-        else if( $("#todo-pill-upcoming").hasClass("active") ) {
-            this.overduePillActive = false;
-            this.todayPillActive = false;
-            this.upcomingPillActive = true;
-            this.allPillActive = false;
-        }
-        else {
-            this.overduePillActive = false;
-            this.todayPillActive = false;
-            this.upcomingPillActive = false;
-            this.allPillActive = true;
-        }
-    },
     pillSwitcher: function(e) {
-        var clickedIndex = $("#todo-pills li").index($(e.target).closest("[id^='todo-pill']")[0]);
+        var clickedEl = this.$(e.target);
+        var clickedIndex = this.$(".todo-pills").index(clickedEl.closest(".todo-pills"));
 
-        $("#todo-pills li.active").removeClass("active");
-        $(".tab-pane.active").removeClass("active");
-        $(e.target).closest("[id^='todo-pill']").addClass("active");
-        $($(".tab-pane")[clickedIndex]).addClass("active");
+        this.$(".todo-pills.active").removeClass("active");
+        this.$(".tab-pane.active").removeClass("active");
+        clickedEl.closest(".todo-pills").addClass("active");
+        this.$(this.$(".tab-pane")[clickedIndex]).addClass("active");
+
+        // this is "state-machine information" that will later get fed into render
+        switch(clickedIndex) {
+            case 0:
+                this.overduePillActive = true;
+                this.todayPillActive = false;
+                this.upcomingPillActive = false;
+                this.allPillActive = false;
+                break;
+            case 1:
+                this.overduePillActive = false;
+                this.todayPillActive = true;
+                this.upcomingPillActive = false;
+                this.allPillActive = false;
+                break;
+            case 2:
+                this.overduePillActive = false;
+                this.todayPillActive = false;
+                this.upcomingPillActive = true;
+                this.allPillActive = false;
+                break;
+            case 3:
+                this.overduePillActive = false;
+                this.todayPillActive = false;
+                this.upcomingPillActive = false;
+                this.allPillActive = true;
+                break;
+        }
+
     },
     getModelInfo: function(e) {
-        var clickedEl = $(e.target).parents(".todo-item-container")[0],
-            modelIndex = ($(".tab-pane.active").children()).index(clickedEl),
-            parentID = $(".tab-pane.active").attr("id"),
+        var clickedEl = this.$(e.target).parents(".todo-item-container")[0],
+            modelIndex = (this.$(".tab-pane.active").children()).index(clickedEl),
+            parentID = this.$(".tab-pane.active").attr("id"),
             record;
 
-        // hipsters use switch-cases, true story
         switch(parentID) {
             case "pane1":
                 record = this.collection.modelList['overdue'];
@@ -133,7 +136,6 @@
             record.splice(modelIndex, 1);
 
             self.open = true;
-            self.checkActivePill();
             self.render();
         }});
     },
@@ -160,7 +162,6 @@
 
         this.model.save();
         this.open = true;
-        this.checkActivePill();
         this.render();
     },
     _renderHtml: function() {
@@ -191,28 +192,29 @@
         }
     },
     validateTodo: function(e) {
-        var subject = $("#todo-subject").val(),
-            date = $("#todo-date").val();
+        var subject = this.$(".todo-subject"),
+            date = this.$(".todo-date"),
+            target = this.$(e.target);
 
-        if( subject == "" ) {
+        if( subject.val() == "" ) {
             // apply input error class
-            $("#todo-subject").parent().addClass("control-group error");
-            $("#todo-subject").one("keyup", function(e) {
-                $(e.target).parent().removeClass("control-group error");
+            subject.parent().addClass("control-group error");
+            subject.one("keyup", function() {
+                target.parent().removeClass("control-group error");
             });
         }
-        else if( !(app.date.parse(date, app.date.guessFormat(date))) ) {
+        else if( !(app.date.parse(date.val(), app.date.guessFormat(date.val()))) ) {
             // apply input error class
-            $("#todo-date").parent().addClass("control-group error");
-            $("#todo-date").one("click", function(e) {
-                $(e.target).parent().removeClass("control-group error");
+            date.parent().addClass("control-group error");
+            date.one("click", function() {
+                target.parent().removeClass("control-group error");
             });
         }
         else {
-            var datetime = date + "T00:00:00+0000";
+            var datetime = date.val() + "T00:00:00+0000";
 
             this.model = app.data.createBean("Tasks", {
-                "name": subject,
+                "name": subject.val(),
                 "assigned_user_id": app.user.get("id"),
                 "date_due": datetime
             });
@@ -220,21 +222,21 @@
             this.model.save();
             this.collection.modelList[this.getTaskType(datetime)].push(this.model);
 
-            $("#todo-subject").val("");
-            $("#todo-date").val("");
+            subject.val("");
+            date.val("");
             this.open = true;
-            this.checkActivePill();
             this.render();
         }
     },
     todoSubmit: function(e) {
-        if( e.target.id == "todo-subject" || e.target.id == "todo-date" ) {
+        var target = this.$(e.target),
+            dateInput = this.$(".todo-date-container");
 
+        if( target.hasClass("todo-subject") || target.hasClass("todo-date") ) {
             // show the date-picker input field
-            if( !(this.$("#todo-date-container").is(":visible")) ) {
-                this.$("#todo-date-container").css("display", "inline-block");
+            if( !(dateInput.is(":visible")) ) {
+                dateInput.css("display", "inline-block");
             }
-
             // if enter was pressed
             if( e.keyCode == 13 ) {
                 // validate
