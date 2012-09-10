@@ -10,7 +10,8 @@
         'dragenter .sayit': 'expandNewPost',
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
-        'drop .sayit': 'dropAttachment'
+        'drop .sayit': 'dropAttachment',
+        'dragstart .activitystream-attachment': 'saveAttachment'
     },
 
     initialize: function(options) {
@@ -215,6 +216,37 @@
 
             fileReader.readAsDataURL(file);
         });
+    },
+
+    saveAttachment: function(event) {
+        // The following is only true for Chrome.
+        if(event.dataTransfer && event.dataTransfer.constructor == Clipboard &&
+            event.dataTransfer.setData('DownloadURL', 'http://www.sugarcrm.com')) {
+            var el = $(event.currentTarget),
+                mime = el.data("mime"),
+                name = el.data("filename"),
+                file = el.data("url"),
+                origin = document.location.origin,
+                path = [];
+
+            path = _.initial(document.location.pathname.split('/'));
+            path = path.concat(file.split('/'));
+
+            // Resolve .. and . in paths. Chrome doesn't do it for us.
+            for(var i = 0; i < path.length; i++) {
+                if(".." == path[i+1]) {
+                    delete path[i+1];
+                    delete path[i];
+                    i--;
+                }
+                if("." == path[i]) {
+                    delete path[i];
+                    i--;
+                }
+            }
+            path = _.compact(path);
+            event.dataTransfer.setData("DownloadURL", mime+":"+name+":"+origin+"/"+path.join('/'));
+        }
     },
 
     _renderHtml: function() {
