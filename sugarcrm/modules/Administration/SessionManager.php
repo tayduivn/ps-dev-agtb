@@ -176,8 +176,9 @@ class SessionManager extends SugarBean {
         $admin = new Administration();
         $admin->retrieveSettings('system');
 
-        $session_timeout = abs($admin->settings['system_session_timeout']);
-        if(!isset($session_timeout)){
+        if(isset($admin->settings['system_session_timeout'])){
+            $session_timeout = abs($admin->settings['system_session_timeout']);
+        } else {
             $session_timeout = abs(ini_get('session.gc_maxlifetime'));
         }
         $GLOBALS['log']->debug("System Session Timeout: ".$session_timeout);

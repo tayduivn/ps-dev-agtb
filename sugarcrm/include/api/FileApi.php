@@ -194,8 +194,13 @@ class FileApi extends SugarApi {
         $bean = $this->loadBean($api, $args);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        // Handle ACL
-        $this->verifyFieldAccess($bean, $field, 'edit');
+        // Handle ACL - if there is no current field data, it is a CREATE
+        // This addresses an issue where the portal user has create but not edit 
+        // rights for particular modules. The perspective here is that even if
+        // a record exists, if there is no attachment, you are CREATING the 
+        // attachment instead of EDITING the parent record. -rgonzalez
+        $accessType = empty($bean->$field) ? 'create' : 'edit';
+        $this->verifyFieldAccess($bean, $field, $accessType);
         //END SUGARCRM flav=pro ONLY
 
         // Get the defs for this field

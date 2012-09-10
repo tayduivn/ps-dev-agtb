@@ -60,6 +60,21 @@ class RestTestPortalBase extends RestTestBase {
         $this->bugs = array();
         $this->notes = array();
         $this->kbdocs = array();
+        
+        // Create the portal contact
+        $this->contact = BeanFactory::newBean('Contacts');
+        $this->contact->id = "UNIT-TEST-portalContact";
+        $this->contact->new_with_id = true;
+        $this->contact->first_name = "Little";
+        $this->contact->last_name = "Unittest";
+        $this->contact->description = "Little Unittest";
+        $this->contact->portal_name = "unittestportal";
+        $this->contact->portal_active = '1';
+        $this->contact->portal_password = User::getPasswordHash("unittest");
+        $this->contact->save();
+        
+        // Adding it to the contacts array makes sure it gets deleted when done
+        $this->contacts[] = $this->contact;
     }
     public function tearDown()
     {

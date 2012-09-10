@@ -23,7 +23,7 @@
 
             level     = options.level ? options.level : 'info';
             title     = options.title ? options.title : null;
-            msg       = (_.isString(options.messages)) ? [options.messages] : options.messages;
+            msg       = (_.isArray(options.messages)) ? options.messages : [options.messages] ;
             autoClose = options.autoClose ? options.autoClose : false;
 
             // "process" is the loading indicator .. I didn't name it ;=)

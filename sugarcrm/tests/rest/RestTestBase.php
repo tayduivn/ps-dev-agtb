@@ -124,4 +124,99 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
+    
+    /**
+     * Use for FileApi call tests using a PUT method. This varies enough from 
+     * the _restCall method to warrant it's own setup. It is also added to the
+     * base class because more than one unit test is using it now.
+     * 
+     * @param string $urlPart The endpoint to hit in the api
+     * @param array  $args Arguments to pass to this call (filename and type)
+     * @param bool   $passInQueryString Whether to add the filename to the querystring
+     * @return array
+     */
+    protected function _restCallFilePut($urlPart, $args, $passInQueryString = true) {
+        // Set this to capture our own errors, which is needed in case of non-200
+        // response codes from the file_get_contents call
+        PHPUnit_Framework_Error_Warning::$enabled = FALSE;
+        
+        // Auth check early to prevent work when not needed
+        if ( empty($this->authToken) ) {
+            $this->_restLogin();
+        }
+        
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v10/';
+        $filename = basename($args['filename']);
+        $url = $urlBase . $urlPart;
+        if ($passInQueryString) {
+            $conn = strpos('?', $url) === false ? '?' : '&';
+            $url .= $conn . 'filename=' . urlencode($filename);
+        }
+
+        $filedata = file_get_contents($args['filename']);
+
+        $auth = "oauth_token: $this->authToken\r\n";
+        $options = array(
+            'http' => array(
+                'method' => 'PUT',
+                'header' => "{$auth}Content-Type: $args[type]\r\nfilename: $filename\r\n",
+                'content' => $filedata,
+            ),
+        );
+
+        $context = stream_context_create($options);
+        
+        // Because non-200 HTTP responses causes PHP warnings and because PHPUnit
+        // throws exceptions for those warnings, we use both error suppression
+        // and turning off PHPUnit error warnings to allow the script to continue
+        // to run when encountering a "error". 
+        $response = @file_get_contents($url, false, $context);
+        if (empty($response) && !empty($http_response_header)) {
+            // There was a response that was NOT a 200. These are mapped to API
+            // exception codes where possible
+            $responses = array(
+                400 => array('label' => 'unknown_exception', 'description' => "An unknown exception happened."),
+                401 => array('label' => 'need_login', 'description' => "The user needs to be logged in to perform this action"),
+                403 => array('label' => 'not_authorized', 'description' => "This action is not authorized for the current user."),
+                404 => array('label' => 'no_method_or_not_found', 'description' => "Could not find a method or handler for this path."),
+                412 => array('label' => 'missing_or_invalid_parameter', 'description' => "A required parameter for this request is missing or invalid."),
+                413 => array('label' => 'request_too_large', 'description' => "The request is too large to process."),
+                500 => array('label' => 'fatal_error', 'description' => "A fatal error happened."),
+            );
+            
+            // Set a reasonable default response code
+            $code = 400;
+            
+            // See if we can get the actual HTTP response code
+            foreach ($http_response_header as $header) {
+                if (substr($header, 0, 5) == 'HTTP/') {
+                    preg_match('#HTTP/\d\.\d\s+(\d+)\s+.*#', $header, $m);
+                    if (isset($m[1])) {
+                        $code = intval($m[1]);
+                        break;
+                    }
+                }
+            }
+            
+            // Fallback to the default if we got something we didn't expect
+            if (!isset($responses[$code])) {
+                $code = 400;
+            }
+            
+            // Mock an exception response from the API
+            $reply = array('error' => $responses[$code]['label'], 'error_description' => $responses[$code]['description']);
+        } else {
+            $reply = json_decode($response, true);
+        }
+        
+        // Set back the error handler setting
+        PHPUnit_Framework_Error_Warning::$enabled = TRUE;
+
+        return array('info' => array(), 'reply' => $reply, 'replyRaw' => $response, 'error' => null);
+    }
+    
+    public function testNothing()
+    {
+
+    }
 }
