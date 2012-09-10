@@ -240,6 +240,7 @@ class ReportsExportApiTest extends RestTestBase
     {
         $this->_req['action'] = 'DeleteField';
         $this->_req['name'] = 'relate_contacts_c';
+        $this->_req['assigned_user_id'] = $this->_user->id;
         $_REQUEST = $this->_req;
         $_POST = $this->_req;
         $mb = new ModuleBuilderController();
@@ -259,11 +260,7 @@ class ReportsExportApiTest extends RestTestBase
 
     }
 
-    /**
-     * Testing related fields in the report
-     * @group 51423
-     */
-    public function testReportsRelatedField()
+    public function testReportExportApi()
     {
  
         
