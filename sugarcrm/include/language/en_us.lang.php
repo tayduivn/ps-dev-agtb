@@ -1898,7 +1898,7 @@ $app_list_strings = array (
         'donothing' => 'Do Nothing'
   ),
     'forecasts_filters_category' => array(
-        '70' => 'Committed',
+        '1' => 'Committed',
         '0' => 'Pipeline',
     ),
     'forecasts_chart_options_group' => array(

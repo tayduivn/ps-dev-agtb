@@ -27,27 +27,39 @@ require_once 'include/api/SugarApi/ApiHelper.php';
 
 class ApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp()
+    {
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('app_list_strings');
+    }
+
+    public function tearDown()
+    {
+        SugarTestHelper::tearDown();
+    }
+
     public function testFindBaseHelper()
     {
         $api = new RestService();
 
-        $bugsBean = BeanFactory::newBean('Accounts');
+        $accountsBean = BeanFactory::newBean('Accounts');
 
-        $helper = ApiHelper::getHelper($api,$bugsBean);
+        $helper = ApiHelper::getHelper($api,$accountsBean);
 
         $this->assertEquals('SugarBeanApiHelper',get_class($helper));
     }
 
-//BEGIN SUGARCRM flav=pro ONLY
     public function testFindModuleHelper()
     {
         $api = new RestService();
 
-        $kbBean = BeanFactory::newBean('KBDocuments');
+        $bugsBean = BeanFactory::newBean('Bugs');
 
-        $helper = ApiHelper::getHelper($api,$kbBean);
+        $helper = ApiHelper::getHelper($api,$bugsBean);
 
-        $this->assertEquals('KBDocumentsApiHelper',get_class($helper));
+        $this->assertEquals('BugsApiHelper',get_class($helper));
     }
-//END SUGARCRM flav=pro ONLY
 }

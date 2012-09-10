@@ -83,8 +83,15 @@
      * @param commitButtonEnabled boolean value for the changed commitButtonEnabled from the context
      */
     commitButtonStateChangeHandler: function(context, commitButtonEnabled){
-        this.commitButtonEnabled = commitButtonEnabled;
-        this._render();
+    	var commitbtn =  this.$el.find('#commit_forecast');
+    	if(commitButtonEnabled){
+    		commitbtn.removeClass("disabled");
+    	}
+    	else{
+    		commitbtn.addClass("disabled");
+    	}
+    	//this.commitButtonEnabled = commitButtonEnabled;
+        //this._render();
     },
 
     /**

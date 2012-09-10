@@ -124,4 +124,8 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
+
+    public function testNothing()
+    {
+    }
 }
