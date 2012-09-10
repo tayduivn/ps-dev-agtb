@@ -19,8 +19,8 @@ describe("Base.Field.Button", function() {
     it('should bind custom event handlers', function() {
         var def = {
             'events' : {
-                'click' : 'function() { this.callback = "stuff excuted"; }',
-                'blur' : 'function() { this.callback = "blur excuted"; }'
+                'click .btn' : 'function() { this.callback = "stuff excuted"; }',
+                'blur .btn' : 'function() { this.callback = "blur excuted"; }'
             }
         };
 
