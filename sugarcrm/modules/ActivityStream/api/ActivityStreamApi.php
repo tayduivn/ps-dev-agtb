@@ -41,35 +41,35 @@ class ActivityStreamApi extends ListApi {
                 'path' => array('ActivityStream'),
                 'pathVars' => array(''),
                 'method' => 'getActivities',
-                ),                
+                ),
             'postAll' => array(
                 'reqType' => 'POST',
-                'path' => array('ActivityStream'), 
+                'path' => array('ActivityStream'),
                 'pathVars' => array(''),
                 'method' => 'handlePost',
-            ), 
+            ),
             'postModule' => array(
                 'reqType' => 'POST',
                 'path' => array('ActivityStream', '<module>'),
                 'pathVars' => array('','module'),
                 'method' => 'handlePost',
-            ), 
+            ),
             'postBean' => array(
                 'reqType' => 'POST',
                 'path' => array('ActivityStream', '<module>','?'),
                 'pathVars' => array('','module','id'),
                 'method' => 'handlePost',
-            ),                                                                                                        
+            ),
         );
     }
 
     public function getActivities($api, $args) {
         $seed = BeanFactory::getBean('ActivityStream');
         $targetModule = !empty($args['module']) ? $args['module'] : '';
-        $targetId = !empty($args['id']) ? $args['id'] : '';                
-        $options = $this->parseArguments($api, $args, $seed);        
-        $activities = $seed->getActivities($targetModule, $targetId, $options); 
-        
+        $targetId = !empty($args['id']) ? $args['id'] : '';
+        $options = $this->parseArguments($api, $args, $seed);
+        $activities = $seed->getActivities($targetModule, $targetId, $options);
+
         if($activities !== false) {
             $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
             return array('next_offset'=>$nextOffset,'records'=>$activities);
@@ -78,26 +78,26 @@ class ActivityStreamApi extends ListApi {
             return false;
         }
     }
-    
+
     public function handlePost($api, $args) {
         $seed = BeanFactory::getBean('ActivityStream');
-        $targetModule = isset($args['module']) ? $args['module'] : '';     
+        $targetModule = isset($args['module']) ? $args['module'] : '';
         $targetId = isset($args['id']) ? $args['id'] : '';
         $value = isset($args['value']) ? $args['value'] : '';
-        
+
         if($targetModule == "ActivityStream") {
             // Make sure we have a valid activity id
             if(empty($targetId) || !$seed->retrieve($targetId, true, false)) {
                 return false;
             }
-            
+
             return $seed->addComment($value);
         }
         else {
             return $seed->addPost($targetModule, $targetId, $value);
         }
-    } 
-    
+    }
+
     protected function parseArguments($api, $args, $seed) {
         // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities')
         $options = parent::parseArguments($api, $args, $seed);

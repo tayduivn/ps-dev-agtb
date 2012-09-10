@@ -5,16 +5,17 @@
         'click .addPost': 'addPost',
         'click .more': 'showAllComments',
         'click .filterAll': 'showAllActivities',
-        'click .filterMyActivities': 'showMyActivities', 
+        'click .filterMyActivities': 'showMyActivities',
         'click .filterFavorites': 'showFavoritesActivities',
         'dragenter .sayit': 'expandNewPost',
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
-        'drop .sayit': 'dropAttachment',
+        'drop .sayit': 'dropAttachment'
     },
 
     initialize: function(options) {
     	this.opts = { params: {}};
+    	this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
 
         _.bindAll(this);
@@ -30,6 +31,9 @@
             this.collection = app.data.createBeanCollection("ActivityStream");
             this.collection.fetch(this.opts);
         }
+
+    	this.collection['oauth_token'] = App.api.getOAuthToken();
+
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
@@ -50,10 +54,47 @@
         var self = this,
             myPost = this.$(event.currentTarget).closest('li'),
             myPostContents = myPost.find('input.sayit')[0].value,
-            myPostId = this.$(event.currentTarget).data('id');
+            myPostId = this.$(event.currentTarget).data('id'),
+            attachments = [];
 
-        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function() {
-            self.collection.fetch(self.opts)
+        this.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
+            var id = $(el).attr('id');
+            attachments.push({
+                "name": $('#' + id + '_name', el).val(),
+                "data": $('#' + id + '_data', el).val()
+            });
+        });
+
+        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function(post_id) {
+            self.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
+                var id = $(el).attr('id');
+                var seed = self.app.data.createBean('Notes', {
+                    'parent_id': post_id,
+                    'parent_type': 'ActivityComments'
+                });
+                seed.save({}, {
+                    success: function(model) {
+                        var data = new FormData();
+                        data.append("filename", App.drag_drop[id]);
+
+                        var url = App.api.buildURL("Notes/" + model.get("id") + "/file/filename");
+                        url += "?oauth_token="+App.api.getOAuthToken();
+
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            data: data,
+                            processData: false,
+                            contentType: false,
+                            success: function() {
+                                delete App.drag_drop[id];
+                                self.collection.fetch(self.opts);
+                            }
+                        });
+                    }
+                });
+            });
+            self.collection.fetch(self.opts);
         }});
     },
 
@@ -72,23 +113,51 @@
             }
         }
 
-        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function() {
-            self.collection.fetch(self.opts)
+        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function(post_id) {
+            myPost.find('.activitystream-pending-attachment').each(function(index, el) {
+                var id = $(el).attr('id');
+                var seed = self.app.data.createBean('Notes', {
+                    'parent_id': post_id,
+                    'parent_type': 'ActivityStream'
+                });
+                seed.save({}, {
+                    success: function(model) {
+                        var data = new FormData();
+                        data.append("filename", App.drag_drop[id]);
+
+                        var url = App.api.buildURL("Notes/" + model.get("id") + "/file/filename");
+                        url += "?oauth_token="+App.api.getOAuthToken();
+
+                        $.ajax({
+                            url: url,
+                            type: "POST",
+                            data: data,
+                            processData: false,
+                            contentType: false,
+                            success: function() {
+                                delete App.drag_drop[id];
+                                self.collection.fetch(self.opts);
+                            }
+                        });
+                    }
+                });
+            });
+            self.collection.fetch(self.opts);
         }});
     },
 
     showAllActivities: function(event) {
-        this.opts.params.filter = 'all'; 
+        this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
     },
-    
+
     showMyActivities: function(event) {
         this.opts.params.filter = 'myactivities';
         this.collection.fetch(this.opts);
     },
-    
+
     showFavoritesActivities: function(event) {
-        this.opts.params.filter = 'favorites';  
+        this.opts.params.filter = 'favorites';
         this.collection.fetch(this.opts);
     },
 
@@ -126,12 +195,13 @@
                         size /= 1024;
                     }
                     size = Math.round(size);
-
-                    var container = $("<div></div>");
-                    container.append("<input name='attachment_name[]' value='"+file.name+"' type='hidden' />");
-                    container.append("<input name='attachment_data[]' value='"+e.target.result+"' type='hidden' />");
+                    var unique = _.uniqueId("activitystream_attachment");
+                    App.drag_drop = App.drag_drop || {};
+                    App.drag_drop[unique] = file;
+                    var container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
                     $('<a class="close">&times;</a>').on('click', function(e) {
                         $(this).parent().remove();
+                        delete App.drag_drop[container.attr("id")];
                     }).appendTo(container);
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
                     if(file.type.indexOf("image/") !== -1) {
@@ -146,7 +216,7 @@
             fileReader.readAsDataURL(file);
         });
     },
-    
+
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
             var comments = model.get("comments");
@@ -154,6 +224,18 @@
                 comments[0]['_starthidden'] = true;
                 comments[comments.length - 3]['_stophidden'] = true;
             }
+            _.each(comments, function(comment) {
+                _.each(comment.notes, function(note) {
+                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                });
+            });
+
+            _.each(model.get("notes"), function(note) {
+                note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                note.image = (note.file_mime_type.indexOf("image") !== -1);
+            });
+
         }, this);
 
         return app.view.View.prototype._renderHtml.call(this);

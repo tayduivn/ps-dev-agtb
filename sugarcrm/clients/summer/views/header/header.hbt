@@ -17,8 +17,8 @@
                 </ul>
                 <ul class="nav pull-right" id="userList">
                     <li class="divider-vertical"></li>
-                    <li class="dropdown" id="userActions">
-                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{fullName}} <b class="caret"></b></a>
+                    <li class="dropdown" id="userActions">                
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><img src="{{pictureUrl}}" class="avatar"/> {{fullName}} <b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li class="profile"><a href="#profile">{{str "LBL_PROFILE"}}</a></li>
                             <li class="divider"></li>
