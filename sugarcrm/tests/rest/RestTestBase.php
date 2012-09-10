@@ -73,7 +73,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
     protected function _restCall($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
