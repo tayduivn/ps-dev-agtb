@@ -261,6 +261,8 @@
         var best_adjusted = 0;
         var likely_case = 0;
         var likely_adjusted = 0;
+        var worst_adjusted = 0;
+        var worst_case = 0;
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
@@ -270,7 +272,9 @@
                 'best_case' : best_case,
                 'best_adjusted' : best_adjusted,
                 'likely_case' : likely_case,
-                'likely_adjusted' : likely_adjusted
+                'likely_adjusted' : likely_adjusted,
+                'worst_adjusted' : worst_adjusted,
+                'worst_case' : worst_case
             });
             return false;
         }
@@ -284,6 +288,8 @@
            best_adjusted 	+= parseFloat(model.get('best_adjusted'));
            likely_case 		+= parseFloat(model.get('likely_case'));
            likely_adjusted 	+= parseFloat(model.get('likely_adjusted'));
+           worst_case       += parseFloat(model.get('worst_case'));
+           worst_adjusted 	+= parseFloat(model.get('worst_adjusted'));
                 
         });
 
@@ -293,7 +299,9 @@
             best_case : best_case,
             best_adjusted : best_adjusted,
             likely_case : likely_case,
-            likely_adjusted : likely_adjusted
+            likely_adjusted : likely_adjusted,
+            worst_case : worst_case,
+            worst_adjusted : worst_adjusted
         });
         
         //in case this is needed later..
@@ -303,7 +311,9 @@
             'best_case' : best_case,
             'best_adjusted' : best_adjusted,
             'likely_case' : likely_case,
-            'likely_adjusted' : likely_adjusted
+            'likely_adjusted' : likely_adjusted,
+            'worst_case' : worst_case,
+            'worst_adjusted' : worst_adjusted
         };
 
         this.context.forecasts.set("updatedManagerTotals", totals);
