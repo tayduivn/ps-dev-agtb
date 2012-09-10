@@ -84,7 +84,7 @@ class ForecastsViewSidecar extends SidecarView
         // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         $admin = new Administration();
         $admin->retrieveSettings('base', true);
-        $show_buckets = $admin->settings['base_show_buckets'];
+        $show_buckets = ($admin->settings['base_show_buckets'] == 0) ? false : true;
         $defaultSelections["category"] = $show_buckets ? array("100") : array("1");
         $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
@@ -142,6 +142,7 @@ echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></sc
 <script src='sidecar/src/app.js'></script>
 <script src='sidecar/src/utils/utils.js'></script>
 <script src='sidecar/src/utils/date.js'></script>
+<script src='sidecar/src/utils/currency.js'></script>
 <script src='sidecar/src/core/cache.js'></script>
 <script src='sidecar/src/core/events.js'></script>
 <script src='sidecar/src/core/error.js'></script>

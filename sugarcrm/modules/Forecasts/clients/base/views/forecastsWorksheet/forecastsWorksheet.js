@@ -132,10 +132,21 @@
      */
     _renderField: function(field) {
 
+        if(field.name == "commit_stage")
+        {
+            //Set the field.def.optoins value based on app.config.buckets_dom (if set)
+            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            if(this.isEditableWorksheet)
+            {
+               field = this._setUpCommitStage(field);
+            }
+        }
+
+        /*
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             field = this._setUpCommitStage(field);
         }
-
+        */
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -185,9 +196,6 @@
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
-            }, this);
-            this.context.forecasts.forecastschedule.on("change", function() {
-                this.calculateTotals();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
@@ -248,15 +256,16 @@
 
         _.each(fields, function(field) {
             if (field.name == "forecast") {
-                field.enabled = !app.config.show_buckets;
+                field.enabled = (app.config.show_buckets == 0);
                 forecastField = field;
             } else if (field.name == "commit_stage") {
-                field.enabled = app.config.show_buckets;
+                field.enabled = (app.config.show_buckets == 1);
                 field.view = self.isEditableWorksheet ? 'edit' : 'default';
                 commitStageField = field;
             }
         });
-        return app.config.show_buckets?forecastField:commitStageField;
+
+        return (app.config.show_buckets == 1) ? forecastField : commitStageField;
     },
 
     /**
@@ -264,7 +273,8 @@
      */
     _render: function() {
         var self = this;
-
+        var enableCommit = false;
+        
         if(!this.showMe()){
         	return false;
         }
@@ -311,6 +321,9 @@
             });
         }
 
+        //Remove all events that may be associated with forecastschedule view
+        this.context.forecasts.forecastschedule.off();
+        this.context.forecasts.forecastschedule.on("change", function() { this.calculateTotals(); }, this);
         //Create the view for expected opportunities
         var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
         var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
@@ -321,7 +334,20 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-
+        
+        //see if anything in the model is a draft version
+        _.each(this._collection.models, function(model, index){
+        	if(model.get("version") == 0){
+        		enableCommit = true;
+        	}
+        });
+        if(enableCommit){
+        	self.context.forecasts.set({commitButtonEnabled: true});
+        }
+        else{
+        	self.context.forecasts.set({commitButtonEnabled: false});
+        }
+        
         this.calculateTotals();
         this.createSubViews();
         this.includedView.render();
@@ -559,20 +585,33 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
-        if (app.config.show_buckets) { // buckets
+        var self = this;
+
+        if (app.config.show_buckets == 1) { // buckets
+
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
-                        var val = aData[0];
-                        var jVal = $(val);
-
+                        var editable = self.isMyWorksheet();
                         var returnVal = null;
+                        //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
+                        var selectVal = editable ? $(aData[0]).find("select").attr("value") : $(aData[0]).text().trim();
 
-                        var selectVal = jVal.find("select").attr("value");
-
-                        if(typeof(selectVal) != "undefined" && _.contains(params, selectVal)){
+                        if(editable && (typeof(selectVal) != "undefined" && _.contains(params, selectVal)))
+                        {
                             returnVal = selectVal;
+                        } else if(!editable) {
+                            //Get the array for the bucket stages
+                            var buckets_dom = app.lang.getAppListStrings(app.config.buckets_dom || 'commit_stage_dom');
+                            _.each(params, function(filter)
+                            {
+                                if(buckets_dom[filter] == selectVal)
+                                {
+                                   returnVal = selectVal;
+                                   return;
+                                }
+                            });
                         }
 
                         return returnVal;
