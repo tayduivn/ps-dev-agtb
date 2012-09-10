@@ -334,13 +334,6 @@
             $('h2#best').html(this.bestTemplate(best));
             $('h2#likely').html(this.likelyTemplate(likely));
 
-            var commitButtonEnabled = self.context.forecasts.get('commitButtonEnabled');
-            if((!_.isEmpty(self.bestCaseCls) || !_.isEmpty(self.likelyCaseCls)) && commitButtonEnabled == false) {
-                // it's different so we should enable the commit button
-                self.context.forecasts.set({commitButtonEnabled : true});
-            } else if(_.isEmpty(self.bestCaseCls) && _.isEmpty(self.likelyCaseCls) && commitButtonEnabled == true) {
-                self.context.forecasts.set({commitButtonEnabled : false});
-            }
         }
 
         self.totals = totals;
