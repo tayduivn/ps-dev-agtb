@@ -39,6 +39,7 @@ $viewdefs['Notes']['mobile']['view']['detail'] = array(
             'label' => 'LBL_PANEL_1',
             'fields' => array(
                 'name',
+                'parent_name',
                 'date_modified',
                 'filename',
             )
