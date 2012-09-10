@@ -28,7 +28,7 @@ $dictionary['Document'] = array('table' => 'documents',
         'document_name' =>
         array(
             'name' => 'document_name',
-            'vname' => 'LBL_NAME',
+            'vname' => 'LBL_DOCUMENT_NAME',
             'type' => 'varchar',
             'len' => '255',
             'required' => true,
@@ -136,7 +136,7 @@ $dictionary['Document'] = array('table' => 'documents',
         'status_id' =>
         array(
             'name' => 'status_id',
-            'vname' => 'LBL_DOC_STATUS',
+            'vname' => 'LBL_DOC_STATUS_ID',
             'type' => 'enum',
             'len' => 100,
             'options' => 'document_status_dom',
@@ -155,7 +155,7 @@ $dictionary['Document'] = array('table' => 'documents',
         'document_revision_id' =>
         array(
             'name' => 'document_revision_id',
-            'vname' => 'LBL_LATEST_REVISION',
+            'vname' => 'LBL_DOCUMENT_REVISION_ID',
             'type' => 'varchar',
             'len' => '36',
             'reportable' => false,

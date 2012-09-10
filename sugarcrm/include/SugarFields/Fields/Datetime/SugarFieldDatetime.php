@@ -202,4 +202,52 @@ class SugarFieldDatetime extends SugarFieldBase {
 
         return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView');
     }
+
+    /**
+     * @see SugarFieldBase::apiFormatField
+     */
+    public function apiFormatField(array &$data, SugarBean $bean, array $args, $fieldName, $properties)
+    {
+        global $timedate;
+
+        $date = $timedate->fromUserType($bean->$fieldName,$properties['type']);
+        if ( $date == null ) {
+            // Could not parse date... try DB format
+            $date = $timedate->fromDbType($bean->$fieldName,$properties['type']);
+            if ( $date == null ) {
+                return;
+            }
+        }
+
+        if ( $properties['type'] == 'date' ) {
+            // It's just a date, not a datetime
+            $data[$fieldName] = $timedate->asIsoDate($date);
+        } else if ( $properties['type'] == 'time' ) {
+            $data[$fieldName] = $timedate->asIsoTime($date);
+        } else {
+            $data[$fieldName] = $timedate->asIso($date);
+        }
+    }
+
+    /**
+     * @see SugarFieldBase::apiSave
+     */
+    public function apiSave(SugarBean $bean, array $params, $field, $properties) {
+        global $timedate;
+
+        $inputDate = $params[$field];
+
+        if ( $properties['type'] == 'date' ) {
+            // It's just a date, not a datetime
+            $date = $timedate->fromIsoDate($inputDate);
+        } else if ( $properties['type'] == 'time' ) {
+            $date = $timedate->fromIsoTime($inputDate);
+        } else {
+            $date = $timedate->fromIso($inputDate);
+        }
+
+        $bean->$field = $timedate->asDbType($date,$properties['type']);
+    }
+
+
 }

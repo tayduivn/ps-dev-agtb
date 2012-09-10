@@ -235,7 +235,8 @@ class One2MBeanRelationship extends One2MRelationship
 
             if (empty($params['return_as_array'])) {
                 //Limit is not compatible with return_as_array
-                $query = "SELECT id FROM $from $where";
+                $orderby = !empty($params['orderby']) ? "ORDER BY $rhsTable.{$params['orderby']}": "";
+                $query = "SELECT id FROM $from $where $orderby";
                 if (!empty($params['limit']) && $params['limit'] > 0) {
                     $offset = isset($params['offset']) ? $params['offset'] : 0;
                     $query = DBManagerFactory::getInstance()->limitQuery($query, $offset, $params['limit'], false, "", false);

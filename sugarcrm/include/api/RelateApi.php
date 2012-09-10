@@ -65,23 +65,40 @@ class RelateApi extends ListApi {
 
         $options = $this->parseArguments($api, $args, $linkSeed);
 
-        $linkQueryParts = $record->$linkName->getSubpanelQuery(array('return_as_array'=>true));
+        $linkParams = array(
+            'where' => !empty($options['where']) ? $options['where'] : "",
+            'deleted' => !empty($options['deleted']) ? $options['deleted'] : false,
+            'order_by' => !empty($options['orderBy']) ? $options['orderBy'] : "",
+        );
 
-        $listQueryParts = $linkSeed->create_new_list_query($options['orderBy'], $options['where'], $options['userFields'], $options['params'], $options['deleted'], '', true, null, false, false);
-        
-        $listQueryParts['from'] .= $linkQueryParts['join'];
+        $offset = !empty($options['offset']) ? $options['offset'] : 0;
+        $limit = !empty($options['limit']) ? $options['limit'] : $this->defaultLimit;
 
-        // we need the linkQuery where to get the id from the parent record so we return the right records
-        if(!empty($linkQueryParts['where'])) {
-            $listQueryParts['where'] = str_ireplace('where', ' AND ', $listQueryParts['where']);
-            $listQueryParts['where'] = $linkQueryParts['where'] . $listQueryParts['where'];
+        // If we want the last page, here is the magic to get there.
+        if($offset === 'end'){
+            $result = $record->$linkName->query($linkParams);
+            $totalCount = sizeof($result['rows']);
+            if ($totalCount > 0)
+                $offset = (floor(($totalCount -1) / $limit)) * $limit;
         }
 
-        if(!empty($args['remote_id']))
-        {
-            $listQueryParts['where'] .= " AND {$linkSeed->table_name}.id='{$args['remote_id']}'";
+        $linkParams['offset'] = $offset;
+        //Add one to the limit so we can figure out if there are more pages
+        $linkParams['limit'] = $limit + 1;
+
+        $relatedBeans = $record->$linkName->getBeans($linkParams);
+        $count = sizeof($relatedBeans);
+        if ( $count > $limit ) {
+            $nextOffset = $offset + $limit;
+            //Remove the last entry to keep the result set the correct page size
+            array_pop($relatedBeans);
+        } else {
+            $nextOffset = -1;
         }
 
-        return $this->performQuery($api, $args, $linkSeed, $listQueryParts, $options['limit'], $options['offset']);
+        $response = array();
+        $response["next_offset"] = $nextOffset;
+        $response["records"] = $this->formatBeans($api, $args, $relatedBeans);
+        return $response;
     }
 }

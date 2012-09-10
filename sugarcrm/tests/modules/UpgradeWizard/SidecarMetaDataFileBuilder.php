@@ -39,25 +39,25 @@ class SidecarMetaDataFileBuilder {
             'module'      => 'Accounts', 'view' => 'edit', 'type' => 'mobile', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessedit.php',
             'legacypath'  => 'custom/history/modules/Accounts/metadata/wireless.editviewdefs.php_1341122961', 
-            'sidecarpath' => 'custom/history/modules/Accounts/metadata/mobile/views/edit.php_1341122961',
+            'sidecarpath' => 'custom/history/modules/Accounts/clients/mobile/views/edit/edit.php_1341122961',
         ),
         array(
             'module'      => 'Accounts', 'view' => 'detail', 'type' => 'mobile', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Accountswirelessdetail.php',
             'legacypath'  => 'custom/working/modules/Accounts/metadata/wireless.detailviewdefs.php', 
-            'sidecarpath' => 'custom/working/modules/Accounts/metadata/mobile/views/detail.php',
+            'sidecarpath' => 'custom/working/modules/Accounts/clients/mobile/views/detail/detail.php',
         ),
         array(
             'module'      => 'Bugs', 'view' => 'list', 'type' => 'mobile', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugswirelesslist.php',
             'legacypath'  => 'custom/modules/Bugs/metadata/wireless.listviewdefs.php', 
-            'sidecarpath' => 'custom/modules/Bugs/metadata/mobile/views/list.php',
+            'sidecarpath' => 'custom/modules/Bugs/clients/mobile/views/list/list.php',
         ),
         array(
             'module'      => 'Bugs', 'view' => 'search', 'type' => 'mobile', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugswirelesssearch.php',
             'legacypath'  => 'custom/working/modules/Bugs/metadata/wireless.searchdefs.php', 
-            'sidecarpath' => 'custom/working/modules/Bugs/metadata/mobile/views/search.php',
+            'sidecarpath' => 'custom/working/modules/Bugs/clients/mobile/views/search/search.php',
         ),
         //END SUGARCRM flav=pro || flav=sales ONLY
         //BEGIN SUGARCRM flav=ent ONLY
@@ -65,25 +65,25 @@ class SidecarMetaDataFileBuilder {
             'module'      => 'Cases', 'view' => 'edit', 'type' => 'portal', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Casesportaledit.php',
             'legacypath'  => 'custom/working/portal/modules/Cases/metadata/editviewdefs.php', 
-            'sidecarpath' => 'custom/working/modules/Cases/metadata/portal/views/edit.php',
+            'sidecarpath' => 'custom/working/modules/Cases/clients/portal/views/edit/edit.php',
         ),
         array(
             'module'      => 'Cases', 'view' => 'detail', 'type' => 'portal', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Casesportaldetail.php',
             'legacypath'  => 'custom/portal/modules/Cases/metadata/detailviewdefs.php_1341122961', 
-            'sidecarpath' => 'custom/history/modules/Cases/metadata/portal/views/detail.php_1341122961',
+            'sidecarpath' => 'custom/history/modules/Cases/clients/portal/views/detail/detail.php_1341122961',
         ),
         array(
             'module'      => 'Bugs', 'view' => 'list', 'type' => 'portal', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugsportallist.php',
             'legacypath'  => 'custom/portal/modules/Bugs/metadata/listviewdefs.php', 
-            'sidecarpath' => 'custom/modules/Bugs/metadata/portal/views/list.php',
+            'sidecarpath' => 'custom/modules/Bugs/clients/portal/views/list/list.php',
         ),
         array(
             'module'      => 'Bugs', 'view' => 'search', 'type' => 'portal', 
             'testpath'    => 'tests/modules/UpgradeWizard/metadata/Bugsportalsearch.php',
             'legacypath'  => 'custom/portal/modules/Bugs/metadata/searchformdefs.php', 
-            'sidecarpath' => 'custom/modules/Bugs/metadata/portal/views/search.php',
+            'sidecarpath' => 'custom/modules/Bugs/clients/portal/views/search/search.php',
         ),
         //END SUGARCRM flav=ent ONLY
     );
