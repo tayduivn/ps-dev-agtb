@@ -69,7 +69,7 @@
           <div class="activitystream-attachments">
             <ul class="thumbnails">
             {{#each attributes.notes}}
-              <li class="span4">
+              <li class="span4 activitystream-attachment" data-url="{{{this.url}}}" data-mime="{{{this.file_mime_type}}}" data-filename="{{{this.filename}}}">
                 {{#if this.image}}
                 <a href="#attachment-{{this.id}}" data-toggle="modal">
                 <img src="{{this.url}}" alt="{{this.filename}}" />
@@ -116,7 +116,7 @@
                         <div class="activitystream-attachments">
                           <ul class="thumbnails">
                           {{#each this.notes}}
-                            <li class="span4">
+                            <li class="span4 activitystream-attachment">
                               {{#if this.image}}
                               <a href="#attachment-{{this.id}}" data-toggle="modal">
                               <img src="{{this.url}}" alt="{{this.filename}}" />
