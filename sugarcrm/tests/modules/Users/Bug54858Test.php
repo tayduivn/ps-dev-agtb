@@ -35,7 +35,7 @@ class Bug54858Test extends Sugar_PHPUnit_Framework_TestCase
         $this->user->email1 = $email = 'test'.uniqid().'@test.com';
         $this->user->save();
         $GLOBALS['current_user'] = $this->user;
-        $this->vcal_url =  "{$GLOBALS['sugar_config']['site_url']}/vcal_server.php/type=vfb&source=outlook&email={$email}";
+        $this->vcal_url =  "{$GLOBALS['sugar_config']['site_url']}/vcal_server.php/type=vfb&source=outlook&email=" . urlencode($email);
 
     }
 
@@ -55,7 +55,7 @@ class Bug54858Test extends Sugar_PHPUnit_Framework_TestCase
 
 	protected function callVcal($key)
 	{
-       $ch = curl_init($this->vcal_url."&key=$key");
+       $ch = curl_init($this->vcal_url."&key=" . urlencode($key));
        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
 	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
        $return = curl_exec($ch);
