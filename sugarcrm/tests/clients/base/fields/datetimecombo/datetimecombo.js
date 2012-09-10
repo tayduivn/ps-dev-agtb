@@ -26,5 +26,13 @@ describe("datetimecombo field", function() {
             expect(field.format(unformatedValue).time).toEqual('03:00');
             expect(field.format(unformatedValue).seconds).toEqual('00');
         });
+        it("should convert 00am to 12am", function() {
+            var myUser = SUGAR.App.user, jsDate, unformatedValue;
+            myUser.set('datepref','m/d/Y');
+            myUser.set('timepref','H:i');
+            jsDate = new Date("September 12, 1970 00:00:00")
+            unformatedValue = jsDate.toISOString();
+            expect(field.format(unformatedValue).hours).toEqual(12);
+        });
     });
 });
