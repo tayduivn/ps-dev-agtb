@@ -26,6 +26,7 @@ describe("Forecasts Utils", function(){
     beforeEach(function() {
         app = SugarTest.app;
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
+        SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
         hbt_heleper = SugarTest.loadFile("../modules/Forecasts/clients/base/helper","hbt-helpers", "js", function(d) { return eval(d); });
     });
 

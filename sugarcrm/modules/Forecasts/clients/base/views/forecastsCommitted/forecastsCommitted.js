@@ -315,15 +315,15 @@
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                 // management view
                 best.bestCaseCls = this.getColorArrow(totals.best_adjusted, previousCommit.get('best_case'));
-                best.bestCase = App.utils.formatNumber(totals.best_adjusted, 0, 0, ',', '.');
+                best.bestCase = app.currency.formatAmountLocale(totals.best_adjusted);
                 likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
-                likely.likelyCase = App.utils.formatNumber(totals.likely_adjusted, 0, 0, ',', '.');
+                likely.likelyCase = app.currency.formatAmountLocale(totals.likely_adjusted);
             } else {
                 // sales rep view
                 best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
-                best.bestCase = App.utils.formatNumber(totals.best_case, 0, 0, ',', '.');
+                best.bestCase = app.currency.formatAmountLocale(totals.best_case);
                 likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
-                likely.likelyCase = App.utils.formatNumber(totals.amount, 0, 0, ',', '.');
+                likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
             }
 
             self.bestCaseCls = best.bestCaseCls;
@@ -383,14 +383,14 @@
                 previousModel = model;
                 var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
                 self.previousText = hb({'likely_case' : previousModel.get('date_entered')});
-                self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
-                self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
+                self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
+                self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
             } else {
                 if(count == 1)
                 {
                     self.previousText = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                    self.previousLikelyCase = App.utils.formatNumber(previousModel.get('likely_case'), 0, 0, ',', '.');
-                    self.previousBestCase = App.utils.formatNumber(previousModel.get('best_case'), 0, 0, ',', '.');
+                    self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
+                    self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
                     var dateEntered = App.date.parse(model.get('date_entered'));
                     // TODO: user preferences are not working for formatting dates, hard code for now
                     self.previousDateEntered = App.date.format(dateEntered, 'Y-m-d \\at g:i a');
