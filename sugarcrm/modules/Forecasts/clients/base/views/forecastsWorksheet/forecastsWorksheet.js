@@ -37,9 +37,9 @@
 		//If there is an id, add it to the URL
         if(model.isNew())
         {
-            model.url = self.url;
+        	model.url = app.api.buildURL('ForecastWorksheets', 'create');
         } else {
-            model.url = self.url + "/" + model.get('id');
+        	model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":model.get('id')});
         }
         
         model.set(values);
