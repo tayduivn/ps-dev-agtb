@@ -77,4 +77,36 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals('Portal', $results['AdministrationTest']);
     }
+
+    public function testCacheExist()
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+
+        $results = $admin->getConfigForModule('Forecasts', 'base');
+
+        $this->assertNotEmpty(sugar_cache_retrieve("ModuleConfig-Forecasts"));
+    }
+
+    public function testCacheSameAsReturn()
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+
+        $results = $admin->getConfigForModule('Forecasts', 'base');
+
+        $this->assertSame($results, sugar_cache_retrieve("ModuleConfig-Forecasts"));
+    }
+
+    public function testCacheClearedAfterSave()
+    {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+
+        $results = $admin->getConfigForModule('Forecasts', 'base');
+
+        $admin->saveSetting("Forecasts", "AdministrationTest", "testCacheClearedAfterSave", "base");
+
+        $this->assertEmpty(sugar_cache_retrieve("ModuleConfig-Forecasts"));
+    }
 }
