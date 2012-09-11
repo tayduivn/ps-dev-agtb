@@ -90,7 +90,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
         }
 
         $sql .= "where o.timeperiod_id = '" . $this->getArg('timeperiod_id') . "' " .
-            "and o.assigned_user_id = '" . $this->getArg('user_id') . "'";
+            "and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
+            "and o.deleted = 0";
 
         $result = $db->query($sql);
 
