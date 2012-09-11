@@ -28,7 +28,7 @@
     },
 
     format:function(value) {
-        var jsDate, 
+        var jsDate, parts,
             usersDateFormatPreference = app.user.get('datepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
@@ -37,8 +37,11 @@
             jsDate = new Date(value);
             this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
         } else {
-            // In case ISO 8601 get it back to js native date which date.format understands
-            jsDate = new Date(value);
+            // Bug 56249 .. Date constructor doesn't reliably handle yyyy-mm-dd
+            // e.g. new Date("2011-10-10" ) // in my version of chrome browser returns
+            // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
+            parts = value.match(/(\d+)/g);
+            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
             value  = app.date.format(jsDate, usersDateFormatPreference);
         }
 

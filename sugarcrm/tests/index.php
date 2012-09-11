@@ -60,6 +60,8 @@ if (file_exists('../config.js')) {
 ?>
     <!-- End test files -->
     <script type="text/javascript">
+        //Reset the local storage to prevent random failures
+        SUGAR.App.cache.cutAll();
         SUGAR.App.config.syncConfig = false;
         (function () {
             var jasmineEnv = jasmine.getEnv();
