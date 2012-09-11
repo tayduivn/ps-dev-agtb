@@ -1,6 +1,8 @@
 ({
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.collection = app.data.createBeanCollection(this.model.module);
+        this.collection.fetch({limit: 999999});
         this.guid = _.uniqueId("treemap");
     },
 
@@ -8,8 +10,6 @@
         var self = this;
 
         this.$el.show();
-
-        app.view.View.prototype._render.call(this);
 
         var layoutData = {guid: this.guid, title: this.options['title']};
 
@@ -19,14 +19,11 @@
 
         app.view.View.prototype._render.call(this);
 
-        $('.chartSelector').val(this.options['url']);
-        var url = App.api.buildURL("CustomReport/OpportunityByUserStage?oauth_token="+App.api.getOAuthToken());
-
+        // Set up variables for d3 treemap.
         var margin = {top: 20, right: 0, bottom: 0, left: 0},
             // TODO: Fix the following
             width = parseInt($("#"+this.guid).width()),
             height = 400,
-            formatNumber = d3.format(",d"),
             transitioning;
 
         var x = d3.scale.linear()
@@ -44,6 +41,7 @@
                 return a.value - b.value;
             }).round(false);
 
+        // Actually create the DOM elements.
         var svg = d3.select("#"+self.guid).append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.bottom + margin.top)
@@ -65,9 +63,60 @@
             .attr("y", 6 - margin.top)
             .attr("dy", '.75em');
 
-        d3.json(url, function(root) {
+        // Once the data is fetched, process it, then render it.
+        this.collection.on("reset", function() {
+            var day_ms = 1000*60*60*24;
+            var today = new Date();
+            today.setUTCHours(0,0,0,0);
+            var d1 = new Date(today.getTime() + 31*day_ms);
+            var data;
+            if(self.collection) {
+                var data = self.collection.filter(function(model) {
+                    // Filter for 30 days from now.
+                    var d2 = new Date(model.get("date_closed") || "1970-01-01");
+                    return (d2-d1)/day_ms <= 30;
+                });
+                data = _.groupBy(data, function(m) {
+                    return m.get("assigned_user_name");
+                });
+
+                _.each(data, function(value, key, list) {
+                    list[key] = _.groupBy(value, function(m) {
+                        return m.get("sales_stage");
+                    });
+                });
+            }
+
+            // Massage the values to what we want.
+            // TODO: Make this more efficient.
+            var root = {
+                name: "Opportunities",
+                children: []
+            };
+            _.each(data, function(value1, key1) {
+                var child = [];
+                _.each(value1, function(value2, key2) {
+                    _.each(value2, function(record) {
+                        record.className = 'stage_'+record.get("sales_stage").toLowerCase().replace(' ', '');
+                        record.value = parseInt(record.get("amount_usdollar"));
+                        record.name = record.get("name");
+                    });
+                    child.push({
+                        name: key2,
+                        className: 'stage_'+key2.toLowerCase().replace(' ', ''),
+                        children: value2
+                    });
+                });
+
+                root.children.push({
+                    name: key1,
+                    children: child
+                });
+            });
+
             var nodes = [];
 
+            // Initialize the root node.
             function initialize(root) {
                 root.x = root.y = 0;
                 root.dx = width;
@@ -183,10 +232,10 @@
                     .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
                     .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
                     .attr("class", function(d) {
-                        if(d3.select(this).classed(d.class)) {
+                        if(d3.select(this).classed(d.className)) {
                             return d3.select(this).attr('class');
                         }
-                        return d3.select(this).attr('class') + " " + d.class;
+                        return d3.select(this).attr('class') + " " + d.className;
                     });
             }
 
