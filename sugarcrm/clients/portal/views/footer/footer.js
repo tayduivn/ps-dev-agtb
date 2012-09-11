@@ -7,7 +7,7 @@
     },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
-        app.events.on("app:sync:complete", this.systemTour, this);
+//        app.events.on("app:sync:complete", this.systemTour, this);
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
@@ -37,7 +37,7 @@
         //set up bouncing arrows
         var arrows=new Array();
         arrows[0] = {
-            target: "#moduleList li.Cases",
+            target: "#module_list li.Cases",
             placement: "bottom"
         };
         arrows[1] = {
@@ -55,8 +55,9 @@
             placement: "top"
         };
 
+        var numArrows = arrows.length;
 
-        for(var i=0; i<arrows.length; i++) {
+        for(var i=0; i<numArrows; i++) {
 
 
 
@@ -106,7 +107,7 @@
                     },
                     leftOffset: arrows[i].leftOffset ? arrows[i].leftOffset : 0,
                     topOffset: arrows[i].topOffset ? arrows[i].topOffset : 0,
-                    hideOnBlur: false
+                    hideOnBlur: true
 
                 });
             });
@@ -121,10 +122,10 @@
         this.$('#systemTour').modal({"backdrop":"static"});
         this.$('#systemTour').modal('show');
         $('div.modal-backdrop').css('opacity',0.2);
-
         //wire up buttons in modal
         this.$("#systemTour .screen .done").click(function() {
             $('#systemTour').modal('hide');
+            $(arrows[numArrows-1].target).popoverext('hide');
         });
 
         this.$("#systemTour .screen .next").each(function(index){
@@ -174,6 +175,7 @@
             $(this).click(function() {
                 $('#systemTour '+screenId).toggleClass("hide");
                 $('#systemTour '+lastScreenId).toggleClass("hide");
+                $(arrows[numArrows-1].target).popoverext('show');
                 centerModal()
             });
 

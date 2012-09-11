@@ -41,20 +41,7 @@
         <h3>{{str "LBL_PORTAL_TOUR_WELCOME_TITLE"}}</h3>
       </div>
       <div class="modal-body">
-		<div style="float: left;">
-			<div class="well" style="float: left; width: 250px; margin-right: 10px;">
-                <object class="movieBox" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" height="141" id="single1" name="single1" width="250">
-                    <param name="autostart" value="0">
-                    <param name="movie" value="http://d2owqhhe2x3j50.cloudfront.net/media.sugarcrm.com/player.swf" />
-                    <param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" />
-                    <param name="wmode" value="transparent" />
-                    <param name="flashvars" value="file=media.sugarcrm.com/sugar65demos/whatsnewin65_RC3.mp4&amp;streamer=rtmp://s1j4a097o1arx2.cloudfront.net/cfx/st&amp;provider=rtmp&amp;image=../include/images/tour/FirstFrame.png&amp;autostart=false" />
-                    <embed autostart="false" allowfullscreen="true" allowscriptaccess="always" bgcolor="transparent" class="movieBox" flashvars="file=media.sugarcrm.com/sugar65demos/whatsnewin65_RC3.mp4&amp;streamer=rtmp://s1j4a097o1arx2.cloudfront.net/cfx/st&amp;provider=rtmp&amp;image=../include/images/tour/FirstFrame.png&amp;autostart=false" height="141" id="single2" name="single2" src="http://d2owqhhe2x3j50.cloudfront.net/media.sugarcrm.com/player.swf" width="250" wmode="transparent">
-                    </embed>
-                </object>
-                <div class="caption">{{str "LBL_PORTAL_TOUR_WATCH_VIDEO"}}</div>
-			</div>
-			<div style="float: left; width: 230px;" >
+
 			    <ul class="features">
 
                     <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_1"}}</li>
@@ -68,10 +55,10 @@
                 <p>
                 {{str "LBL_PORTAL_TOUR_MORE_INFO_2"}}
                 </p>
-			</div>
-		</div>
+
+
       </div>
-      		<div class="clearfix"></div>
+
 
 
           <div class="modal-footer">
