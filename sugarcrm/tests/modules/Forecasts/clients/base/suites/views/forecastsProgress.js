@@ -43,12 +43,18 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_likely_above: false,
                                             closed_likely_amount: 0,
                                             closed_likely_percent: 0,
+                                            closed_worst_above: false,
+                                            closed_worst_amount: 0,
+                                            closed_worst_percent: 0,
                                             opportunities: "0",
                                             pipeline: 0,
                                             quota_amount: 0,
                                             quota_best_above: false,
                                             quota_best_amount: 0,
                                             quota_best_percent: 0,
+                                            quota_worst_above: false,
+                                            quota_worst_amount: 0,
+                                            quota_worst_percent: 0,
                                             quota_likely_above: false,
                                             quota_likely_amount: 0,
                                             quota_likely_percent: 0,
@@ -57,7 +63,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 1", function() {
-            var totals = {amount: 60000, best_case: 66000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
+            var totals = {amount: 60000, worst_case: 35000, best_case: 66000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -67,6 +73,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: totals.best_case > totals.won_amount,
                                             closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
                                             closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_worst_above: totals.worst_case > totals.won_amount,
+                                            closed_worst_amount: Math.abs(totals.worst_case-totals.won_amount),
+                                            closed_worst_percent: totals.worst_case/totals.won_amount,
                                             closed_likely_above: totals.amount > totals.won_amount,
                                             closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
                                             closed_likely_percent: totals.amount/totals.won_amount,
@@ -76,6 +85,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: totals.best_case > 65000,
                                             quota_best_amount: Math.abs(totals.best_case-65000),
                                             quota_best_percent:totals.best_case/65000,
+                                            quota_worst_above: totals.worst_case > 65000,
+                                            quota_worst_amount: Math.abs(totals.worst_case-65000),
+                                            quota_worst_percent:totals.worst_case/65000,
                                             quota_likely_above: totals.amount > 65000,
                                             quota_likely_amount: Math.abs(totals.amount-65000),
                                             quota_likely_percent: totals.amount/65000,
@@ -85,7 +97,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 2", function() {
-            var totals = {amount: 35000, best_case: 38000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 1, total_opp_count: 4 };
+            var totals = {amount: 35000, worst_case: 25000, best_case: 38000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 1, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -95,6 +107,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: totals.best_case > totals.won_amount,
                                             closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
                                             closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_worst_above: totals.worst_case > totals.won_amount,
+                                            closed_worst_amount: Math.abs(totals.worst_case-totals.won_amount),
+                                            closed_worst_percent: totals.worst_case/totals.won_amount,
                                             closed_likely_above: totals.amount > totals.won_amount,
                                             closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
                                             closed_likely_percent: totals.amount/totals.won_amount,
@@ -104,6 +119,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: totals.best_case > 65000,
                                             quota_best_amount: Math.abs(totals.best_case-65000),
                                             quota_best_percent:totals.best_case/65000,
+                                            quota_worst_above: totals.worst_case > 65000,
+                                            quota_worst_amount: Math.abs(totals.worst_case-65000),
+                                            quota_worst_percent:totals.worst_case/65000,
                                             quota_likely_above: totals.amount > 65000,
                                             quota_likely_amount: Math.abs(totals.amount-65000),
                                             quota_likely_percent: totals.amount/65000,
@@ -113,7 +131,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 3", function() {
-            var totals = {amount: 120000, best_case: 129000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 3, total_opp_count: 4 };
+            var totals = {amount: 120000, worst_case: 84000,  best_case: 129000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 3, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -123,6 +141,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: totals.best_case > totals.won_amount,
                                             closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
                                             closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_worst_above: totals.worst_case > totals.won_amount,
+                                            closed_worst_amount: Math.abs(totals.worst_case-totals.won_amount),
+                                            closed_worst_percent: totals.worst_case/totals.won_amount,
                                             closed_likely_above: totals.amount > totals.won_amount,
                                             closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
                                             closed_likely_percent: totals.amount/totals.won_amount,
@@ -132,6 +153,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: totals.best_case > 65000,
                                             quota_best_amount: Math.abs(totals.best_case-65000),
                                             quota_best_percent:totals.best_case/65000,
+                                            quota_worst_above: totals.worst_case > 65000,
+                                            quota_worst_amount: Math.abs(totals.worst_case-65000),
+                                            quota_worst_percent:totals.worst_case/65000,
                                             quota_likely_above: totals.amount > 65000,
                                             quota_likely_amount: Math.abs(totals.amount-65000),
                                             quota_likely_percent: totals.amount/65000,
@@ -141,7 +165,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 4", function() {
-            var totals = {amount: 122000, best_case: 135000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
+            var totals = {amount: 122000, worst_case: 90000, best_case: 135000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -151,6 +175,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: totals.best_case > totals.won_amount,
                                             closed_best_amount: Math.abs(totals.best_case-totals.won_amount),
                                             closed_best_percent: totals.best_case/totals.won_amount,
+                                            closed_worst_above: totals.worst_case > totals.won_amount,
+                                            closed_worst_amount: Math.abs(totals.worst_case-totals.won_amount),
+                                            closed_worst_percent: totals.worst_case/totals.won_amount,
                                             closed_likely_above: totals.amount > totals.won_amount,
                                             closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
                                             closed_likely_percent: totals.amount/totals.won_amount,
@@ -160,6 +187,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: totals.best_case > 65000,
                                             quota_best_amount: Math.abs(totals.best_case-65000),
                                             quota_best_percent:totals.best_case/65000,
+                                            quota_worst_above: totals.worst_case > 65000,
+                                            quota_worst_amount: Math.abs(totals.worst_case-65000),
+                                            quota_worst_percent:totals.worst_case/65000,
                                             quota_likely_above: totals.amount > 65000,
                                             quota_likely_amount: Math.abs(totals.amount-65000),
                                             quota_likely_percent: totals.amount/65000,
@@ -169,7 +199,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model based on rep test case 5", function() {
-            var totals = {amount: 182000, best_case: 198000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
+            var totals = {amount: 182000, worst_case: 139000, best_case: 198000, overall_amount: 182000,won_amount: 60000, won_count: 1, lost_amount: 62000, lost_count: 1, included_opp_count: 2, total_opp_count: 4 };
             // reset base quota amount for rep
             view.model.set("quota_amount", 65000);
 
@@ -182,12 +212,18 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_likely_above: totals.amount > totals.won_amount,
                                             closed_likely_amount: Math.abs(totals.amount-totals.won_amount),
                                             closed_likely_percent: totals.amount/totals.won_amount,
+                                            closed_worst_above: totals.worst_case > totals.won_amount,
+                                            closed_worst_amount: Math.abs(totals.worst_case-totals.won_amount),
+                                            closed_worst_percent: totals.worst_case/totals.won_amount,
                                             opportunities: totals.total_opp_count - totals.won_count - totals.lost_count,
                                             pipeline: Math.round(((totals.overall_amount - totals.won_amount - totals.lost_amount)/totals.amount)*10)/10 ,
                                             quota_amount: 65000,
                                             quota_best_above: totals.best_case > 65000,
                                             quota_best_amount: Math.abs(totals.best_case-65000),
                                             quota_best_percent:totals.best_case/65000,
+                                            quota_worst_above: totals.worst_case > 65000,
+                                            quota_worst_amount: Math.abs(totals.worst_case-65000),
+                                            quota_worst_percent:totals.worst_case/65000,
                                             quota_likely_above: totals.amount > 65000,
                                             quota_likely_amount: Math.abs(totals.amount-65000),
                                             quota_likely_percent: totals.amount/65000,
@@ -212,6 +248,7 @@ describe("The Forecasts Progress Calculations display", function() {
             spyOn(app.api, 'call');
             view.likelyTotal = 60000;
             view.bestTotal = 66000;
+            view.worstTotal = 35000,
             view.model.set({
                 closed_amount: 60000,
                 opportunities: 2,
@@ -225,6 +262,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: view.bestTotal > view.model.get('closed_amount'),
                                             closed_best_amount: Math.abs(view.bestTotal-view.model.get('closed_amount')),
                                             closed_best_percent: view.bestTotal/view.model.get('closed_amount'),
+                                            closed_worst_above: view.worstTotal > view.model.get('closed_amount'),
+                                            closed_worst_amount: Math.abs(view.worstTotal-view.model.get('closed_amount')),
+                                            closed_worst_percent: view.worstTotal/view.model.get('closed_amount'),
                                             closed_likely_above: view.likelyTotal > view.model.get('closed_amount'),
                                             closed_likely_amount: Math.abs(view.likelyTotal-view.model.get('closed_amount')),
                                             closed_likely_percent: view.likelyTotal/view.model.get('closed_amount'),
@@ -234,6 +274,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: view.bestTotal > 65000,
                                             quota_best_amount: Math.abs(view.bestTotal-65000),
                                             quota_best_percent:view.bestTotal/65000,
+                                            quota_worst_above: view.worstTotal > 65000,
+                                            quota_worst_amount: Math.abs(view.worstTotal-65000),
+                                            quota_worst_percent:view.worstTotal/65000,
                                             quota_likely_above: view.likelyTotal > 65000,
                                             quota_likely_amount: Math.abs(view.likelyTotal-65000),
                                             quota_likely_percent: view.likelyTotal/65000,
@@ -254,6 +297,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: false,
                                             closed_best_amount: 0,
                                             closed_best_percent: 0,
+                                            closed_worst_above: false,
+                                            closed_worst_amount: 0,
+                                            closed_worst_percent: 0,
                                             closed_likely_above: false,
                                             closed_likely_amount: 0,
                                             closed_likely_percent: 0,
@@ -263,6 +309,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: false,
                                             quota_best_amount: 0,
                                             quota_best_percent: 0,
+                                            quota_worst_above: false,
+                                            quota_worst_amount: 0,
+                                            quota_worst_percent: 0,
                                             quota_likely_above: false,
                                             quota_likely_amount: 0,
                                             quota_likely_percent: 0,
@@ -270,7 +319,7 @@ describe("The Forecasts Progress Calculations display", function() {
         });
 
         it("should calculate the model based on a change to the totals model", function() {
-            var totals = {amount: 202000, best_case: 190500, likely_case: 173900, likely_adjusted: 167900, best_adjusted: 184800,quota: 223000 };
+            var totals = {amount: 202000, worst_case: 152000, worst_adjusted: 160500, best_case: 190500, likely_case: 173900, likely_adjusted: 167900, best_adjusted: 184800,quota: 223000 };
 
             view.model.set({
                 closed_amount: 123000,
@@ -284,6 +333,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: totals.best_adjusted > 123000,
                                             closed_best_amount: Math.abs(totals.best_adjusted-123000),
                                             closed_best_percent: totals.best_adjusted/123000,
+                                            closed_worst_above: totals.worst_adjusted > 123000,
+                                            closed_worst_amount: Math.abs(totals.worst_adjusted-123000),
+                                            closed_worst_percent: totals.worst_adjusted/123000,
                                             closed_likely_above: totals.likely_adjusted > 123000,
                                             closed_likely_amount: Math.abs(totals.likely_adjusted-123000),
                                             closed_likely_percent: totals.likely_adjusted/123000,
@@ -293,6 +345,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: totals.best_adjusted > totals.quota,
                                             quota_best_amount: Math.abs(totals.best_adjusted-totals.quota),
                                             quota_best_percent:totals.best_adjusted/totals.quota,
+                                            quota_worst_above: totals.worst_adjusted > totals.quota,
+                                            quota_worst_amount: Math.abs(totals.worst_adjusted-totals.quota),
+                                            quota_worst_percent:totals.worst_adjusted/totals.quota,
                                             quota_likely_above: totals.likely_adjusted > totals.quota,
                                             quota_likely_amount: Math.abs(totals.likely_adjusted-totals.quota),
                                             quota_likely_percent: totals.likely_adjusted/totals.quota,
@@ -318,6 +373,7 @@ describe("The Forecasts Progress Calculations display", function() {
             spyOn(app.api, 'call');
             view.likelyTotal = 167900;
             view.bestTotal = 184800;
+            view.worstTotal = 160500;
 
             view.model.set({
                 quota_amount: 223000
@@ -331,6 +387,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             closed_best_above: view.bestTotal > 123000,
                                             closed_best_amount: Math.abs(view.bestTotal-123000),
                                             closed_best_percent: view.bestTotal/123000,
+                                            closed_worst_above: view.worstTotal > 123000,
+                                            closed_worst_amount: Math.abs(view.worstTotal-123000),
+                                            closed_worst_percent: view.worstTotal/123000,
                                             closed_likely_above: view.likelyTotal > 123000,
                                             closed_likely_amount: Math.abs(view.likelyTotal-123000),
                                             closed_likely_percent: view.likelyTotal/123000,
@@ -340,6 +399,9 @@ describe("The Forecasts Progress Calculations display", function() {
                                             quota_best_above: view.bestTotal > view.model.get('quota_amount'),
                                             quota_best_amount: Math.abs(view.bestTotal-view.model.get('quota_amount')),
                                             quota_best_percent:view.bestTotal/view.model.get('quota_amount'),
+                                            quota_worst_above: view.worstTotal > view.model.get('quota_amount'),
+                                            quota_worst_amount: Math.abs(view.worstTotal-view.model.get('quota_amount')),
+                                            quota_worst_percent:view.worstTotal/view.model.get('quota_amount'),
                                             quota_likely_above: view.likelyTotal > view.model.get('quota_amount'),
                                             quota_likely_amount: Math.abs(view.likelyTotal-view.model.get('quota_amount')),
                                             quota_likely_percent: view.likelyTotal/view.model.get('quota_amount'),
