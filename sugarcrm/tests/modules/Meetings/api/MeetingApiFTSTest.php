@@ -31,6 +31,7 @@ class MeetingsApiFTSTest extends RestTestBase
     public function setUp()
     {
         parent::setUp();
+        $this->search_engine_name = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
         $meetings = array();
         for($x = 1; $x < 31; $x++)
@@ -62,8 +63,9 @@ class MeetingsApiFTSTest extends RestTestBase
 
 	public function testModuleSearch()
 	{
-
-        $this->markTestIncomplete('Marking this skipped. Until we can figure out why its breaking');
+        if($this->search_engine_name != 'Elastic') {
+            $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
+        }
 
 
         // verify we get 30 meetings
