@@ -43,6 +43,10 @@ class MeetingsApiTest extends RestTestBase
             $meeting->save();
             $this->meetings[] = $meeting;            
         }
+
+        $GLOBALS['db']->commit();
+
+
         // set the FTS engine as down and make sure the config removes FTS
         searchEngineDown();
         $this->config_file_override = '';
@@ -83,7 +87,11 @@ class MeetingsApiTest extends RestTestBase
 
         // change a date to the past
         $this->meetings[5]->date_start = gmdate('Y-m-d H:i:s', strtotime("-50 days"));
-        $this->meetings[5]->save();        
+        $this->meetings[5]->save();
+
+        $GLOBALS['db']->commit();
+
+
         $restReply = $this->_restCall("Meetings?max_num=30");
         // verify we get 29 meetings
         $this->assertEquals(29, count($restReply['reply']['records']), "Did not get 29 Meetings");
@@ -91,6 +99,8 @@ class MeetingsApiTest extends RestTestBase
         // change the date back
         $this->meetings[5]->date_start = gmdate("Y-m-d H:i:s", strtotime("+5 days"));
         $this->meetings[5]->save();
+
+        $GLOBALS['db']->commit();
 
 
 	}

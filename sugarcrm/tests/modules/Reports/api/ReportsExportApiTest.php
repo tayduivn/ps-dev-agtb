@@ -27,7 +27,6 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Reports/Report.php');
 require_once('tests/rest/RestTestBase.php');
 
 class ReportsExportApiTest extends RestTestBase
@@ -37,15 +36,8 @@ class ReportsExportApiTest extends RestTestBase
     {
         parent::setUp();
 
-        $this->reportDefs = <<<DEFS
-{"display_columns":[{"name":"account_type","label":"<s>Type</s>","table_key":"self"}],"module":"Accounts",
-"group_defs":[{"name":"account_type","label":"<s>Type</s>","table_key":"self","type":"enum"}],
-"summary_columns":[{"name":"count","label":"<s>ZZZ</s>","field_type":"","group_function":"count","table_key":"self"},
-{"name":"account_type","label":"<s>Type</s>","table_key":"self"}],"report_name":"<s>test</s>","chart_type":"hBarF","do_round":1,
-"chart_description":"<s>chart</s>","numerical_chart_column":"self:count","numerical_chart_column_type":"","assigned_user_id":"1",
-"report_type":"summary","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"<s>Accounts</s>"}},
-"filters_def":{"Filter_1":{"operator":"AND"}}}
-DEFS;
+        $this->reportDefs = '{"display_columns":[{"name":"name","label":"Name","table_key":"self"}],"module":"Accounts","group_defs":[],"summary_columns":[],"report_name":"test report 2","do_round":1,"numerical_chart_column":"","numerical_chart_column_type":"","assigned_user_id":"1","report_type":"tabular","full_table_list":{"self":{"value":"Accounts","module":"Accounts","label":"Accounts"}},"filters_def":{"Filter_1":{"operator":"AND"}},"chart_type":"none"}';
+
         $beanList = array();
         $beanFiles = array();
         require('include/modules.php');
@@ -66,8 +58,11 @@ DEFS;
     public function testReportExportApi()
     {
         $rep = new SavedReport();
-        $rep->save_report(-1, $GLOBALS['current_user']->id, "<s>".to_html("<s>TEST</s>")."</s>", "Accounts","summary",$this->reportDefs, 0, 1);
-        $id = $rep->id;           
+        $rep->save_report(-1, $GLOBALS['current_user']->id, "Test Account Report", "Accounts","tabular",$this->reportDefs, 0, 1);
+        
+        $GLOBALS['db']->commit();
+
+        $id = $rep->id;
         // call the Rest
         $restReply = $this->_restCall("Reports/{$id}/pdf",
                                     json_encode(array()),
