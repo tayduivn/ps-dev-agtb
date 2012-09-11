@@ -132,11 +132,6 @@
             self.render();
         }, this);
 
-        //For global handler
-        options.context.off("modal:open", null, this);
-        options.context.on("modal:open", function(params, callback) {
-            options.layout.trigger(showEvent, params, callback);
-        }, this);
     },
     getBodyComponents: function() {
         return _.rest(this._components, this._initComponentSize);
