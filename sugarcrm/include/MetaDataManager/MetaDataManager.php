@@ -627,40 +627,12 @@ class MetaDataManager {
      */
     public function getModuleList($platform = 'base') {
         if ( $platform == 'portal' ) {
-            // Apparently this list is not stored anywhere, the module builder just uses a very
-            // complicated setup to do this glob
-            $defaultPortalViewsPath = 'modules/*/clients/portal/views/*/*.php';
-            $defaultPortalLayoutsPath = 'modules/*/clients/portal/layouts/*/*.php';
-            $customPortalViewsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalViewsPath;
-            $customPortalLayoutsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalLayoutsPath;
-
-            $portalFiles = glob($defaultPortalViewsPath);
-            $portalLayouts = glob($defaultPortalLayoutsPath);
-            if (is_array($portalLayouts)) {
-                $portalFiles = array_merge($portalFiles, $portalLayouts);
-            }
-
-            $customPortalViews = glob($customPortalViewsPath);
-            if (is_array($customPortalViews)) {
-                $portalFiles = array_merge($portalFiles, $customPortalViews);
-            }
-
-            $customPortalLayouts = glob($customPortalLayoutsPath);
-            if (is_array($customPortalLayouts)) {
-                $portalFiles = array_merge($portalFiles, $customPortalLayouts);
-            }
-
-            $portalModules = array();
-            foreach ( $portalFiles as $file ) {
-                // Grab the module name from the file path
-                preg_match('#modules/(.+)/clients#', $file, $fileParts);
-                
-                // And set it only if we haven't already
-                if (!empty($fileParts[1]) && empty($portalModules[$fileParts[1]])) {
-                    $portalModules[$fileParts[1]] = $fileParts[1];
-                }
-            }
-            $moduleList = array_keys($portalModules);
+            // Use SugarPortalBrowser to get the portal modules that would appear
+            // in Studio
+            require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+            $pb = new SugarPortalBrowser();
+            $pb->loadModules();
+            $moduleList = array_keys($pb->modules);
         } else if ( $platform == 'mobile' ) {
             // replicate the essential part of the behavior of the private loadMapping() method in SugarController
             foreach ( array ( '','custom/') as $prefix) {
