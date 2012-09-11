@@ -50,6 +50,7 @@ class SimpleMailer extends BaseMailer
     public function send() {
         try {
             $mailer = new PHPMailer(true); // use PHPMailer with exceptions
+
             $this->transferConfigurations($mailer);
             $this->connectToHost($mailer);
             $this->transferHeaders($mailer);
@@ -57,12 +58,11 @@ class SimpleMailer extends BaseMailer
             $this->transferBody($mailer);
             $this->transferAttachments($mailer);
 
-            if (!$mailer->IsError()) {
+            try {
                 $mailer->Send();
-            }
-
-            if ($mailer->IsError()) {
-                throw new MailerException($mailer->ErrorInfo);
+            } catch (Exception $e) {
+                // eat the phpmailerException but use it's message to provide context for the failure
+                throw new MailerException("Failed to send the email: " . $e->getMessage());
             }
         } catch (MailerException $me) {
             //@todo consider using status codes and grouping them based on the error level that should be used
