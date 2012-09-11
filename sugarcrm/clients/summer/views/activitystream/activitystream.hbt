@@ -95,6 +95,11 @@
           <date class="date">Posted {{timeago attributes.date_created}}</date>
         </p>
         <div class="actions hide">
+          {{#eq collection.user_id attributes.created_by}}
+          {{#eq attributes.activity_type "posted"}}
+          <a data-toggle="modal" data-module="ActivityStream" data-id="{{attributes.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
+          {{/eq}}
+          {{/eq}}        
           <a data-toggle="modal" href="#reply" class="comment btn btn-mini reply"><i class="icon-comment"></i></a>
         </div>
         <ul>
@@ -142,6 +147,11 @@
 
                     <date class="date">Commented {{timeago this.date_created}}</date>
                   </p>
+                  {{#eq ../collection.user_id this.created_by}}
+                    <div class="actions hide">
+                      <a data-toggle="modal" data-module="ActivityComments" data-id="{{this.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
+                    </div>  
+                  {{/eq}}                  
                 </li>
                 {{#if this._stophidden}}
                     </div>
