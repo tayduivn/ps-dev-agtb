@@ -68,7 +68,12 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
     public function __construct($args)
     {
         if (isset($args['category'])) {
-            $this->category = strtolower($args['category']);
+            $cat = "";
+            if(is_array($args['category'])) {
+                $this->category = strtolower(array_shift($args['category']));
+            } else {
+                $this->category = strtolower($args['category']);
+            }
         }
         if (isset($args['group_by']) && !empty($args['group_by'])) {
             $this->group_by = strtolower($args['group_by']);
