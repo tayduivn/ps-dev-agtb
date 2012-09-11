@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -23,38 +23,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class EmailIdentity
 {
-	protected $email;
-	protected $name;
+    protected $email;
+    protected $name;
 
-	public function __construct($email, $name = null) {
-		$this->setEmail($email);
-		$this->setName($name);
-	}
+    public function __construct($email, $name = null) {
+        $this->setEmail($email);
+        $this->setName($name);
+    }
 
-	public function setEmail($email) {
-		//@todo validate this email address
-		if (!is_string($email)) {
-			throw new MailerException("Invalid email address");
-		}
+    public function setEmail($email) {
+        //@todo validate this email address
+        if (!is_string($email)) {
+            throw new MailerException("Invalid email address");
+        }
 
-		$this->email = trim($email);
-	}
+        $this->email = trim($email);
+    }
 
-	public function getEmail() {
-		return $this->email;
-	}
+    public function getEmail() {
+        return $this->email;
+    }
 
-	public function setName($name) {
-		$this->name = trim($name);
-	}
+    public function setName($name) {
+        $this->name = trim($name);
+    }
 
-	public function getName() {
-		return $this->name;
-	}
+    public function getName() {
+        return $this->name;
+    }
 
-	public function decode() {
-		// add back in html characters (apostrophe ' and ampersand &) to email addresses
-		// this was causing email bounces in names like "O'Reilly@example.com" being sent over as "O&#039;Reilly@example.com"
-		$this->email = htmlspecialchars_decode($this->email, ENT_QUOTES);
-	}
+    public function decode() {
+        // add back in html characters (apostrophe ' and ampersand &) to email addresses
+        // this was causing email bounces in names like "O'Reilly@example.com" being sent over as "O&#039;Reilly@example.com"
+        $this->email = htmlspecialchars_decode($this->email, ENT_QUOTES);
+    }
 }

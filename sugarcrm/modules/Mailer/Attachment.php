@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -23,60 +23,60 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class Attachment
 {
-	protected $path;
-	protected $name;
-	protected $encoding;
-	protected $mimeType;
+    protected $path;
+    protected $name;
+    protected $encoding;
+    protected $mimeType;
 
-	public function __construct($path, $name = null, $encoding = IMailer::EncodingBase64, $mimeType = 'application/octet-stream') {
-		$this->setPath($path);
-		$this->setName($name);
-		$this->setEncoding($encoding);
-		$this->setMimeType($mimeType);
-	}
+    public function __construct($path, $name = null, $encoding = IMailer::EncodingBase64, $mimeType = 'application/octet-stream') {
+        $this->setPath($path);
+        $this->setName($name);
+        $this->setEncoding($encoding);
+        $this->setMimeType($mimeType);
+    }
 
-	public function setPath($path) {
-		$this->path = $path;
-	}
+    public function setPath($path) {
+        $this->path = $path;
+    }
 
-	public function getPath() {
-		return $this->path;
-	}
+    public function getPath() {
+        return $this->path;
+    }
 
-	public function setName($name) {
-		if (!is_string($name) || $name == '') {
-			$name = basename($this->path);
-		}
+    public function setName($name) {
+        if (!is_string($name) || $name == '') {
+            $name = basename($this->path);
+        }
 
-		$this->name = trim($name);
-	}
+        $this->name = trim($name);
+    }
 
-	public function getName() {
-		return $this->name;
-	}
+    public function getName() {
+        return $this->name;
+    }
 
-	public function setEncoding($encoding = IMailer::EncodingBase64) {
-		$this->encoding = $encoding;
-	}
+    public function setEncoding($encoding = IMailer::EncodingBase64) {
+        $this->encoding = $encoding;
+    }
 
-	public function getEncoding() {
-		return $this->encoding;
-	}
+    public function getEncoding() {
+        return $this->encoding;
+    }
 
-	public function setMimeType($mimeType = 'application/octet-stream') {
-		$this->mimeType = $mimeType;
-	}
+    public function setMimeType($mimeType = 'application/octet-stream') {
+        $this->mimeType = $mimeType;
+    }
 
-	public function getMimeType() {
-		return $this->getMimeType();
-	}
+    public function getMimeType() {
+        return $this->getMimeType();
+    }
 
-	public function getAsArray() {
-		return array(
-			'path'     => $this->getPath(),
-			'name'     => $this->getName(),
-			'encoding' => $this->getEncoding(),
-			'mimetype' => $this->getMimeType(),
-		);
-	}
+    public function getAsArray() {
+        return array(
+            'path'     => $this->getPath(),
+            'name'     => $this->getName(),
+            'encoding' => $this->getEncoding(),
+            'mimetype' => $this->getMimeType(),
+        );
+    }
 }

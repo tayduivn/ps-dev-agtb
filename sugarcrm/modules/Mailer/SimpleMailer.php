@@ -105,12 +105,12 @@ class SimpleMailer extends BaseMailer
             $mailer->SmtpConnect();
         } catch (Exception $e) {
             //@todo need to tell the class what error messages to use, so the following is for reference only
-//			global $app_strings;
-//			if(isset($this->oe) && $this->oe->type == "system") {
-//				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
-//			} else {
-//				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
-//			}
+//            global $app_strings;
+//            if(isset($this->oe) && $this->oe->type == "system") {
+//                $this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
+//            } else {
+//                $this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
+//            }
             throw new MailerException("Failed to connect to the remote server");
         }
     }
