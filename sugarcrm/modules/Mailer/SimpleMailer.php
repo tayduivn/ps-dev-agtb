@@ -42,8 +42,6 @@ class SimpleMailer extends BaseMailer
 			'smtp.authenticate' => false,
 			'smtp.username'     => '',
 			'smtp.password'     => '',
-			'smtp.timeout'      => 10,
-			'smtp.persist'      => false,
 		);
 
 		$this->mergeConfigs($defaults);
@@ -51,7 +49,7 @@ class SimpleMailer extends BaseMailer
 
 	public function send() {
 		try {
-			$mailer = new PHPMailer();
+			$mailer = new PHPMailer(true); // use PHPMailer with exceptions
 			$this->transferConfigurations($mailer);
 			$this->connectToHost($mailer);
 			$this->transferHeaders($mailer);
@@ -79,8 +77,13 @@ class SimpleMailer extends BaseMailer
 	}
 
 	private function transferConfigurations(PHPMailer &$mailer) {
+        // explicitly set the language even though PHPMailer will do it on its own
+        if (!$mailer->SetLanguage()) {
+            //@todo do we really care if it fails since english will be used anyway?
+            throw new MailerException("Failed to load the language file");
+        }
+
 		// transfer the basic configurations
-		$mailer->SetLanguage(); // explicitly set the language even though PHPMailer will do it on its own
 		$mailer->Mailer   = self::Protocol;
 		$mailer->Hostname = $this->configs['hostname'];
 		$mailer->CharSet  = $this->configs['charset'];
@@ -88,23 +91,20 @@ class SimpleMailer extends BaseMailer
 		$mailer->WordWrap = $this->configs['wordwrap'];
 
 		// transfer the smtp configurations
-		$mailer->Host          = $this->configs['smtp.host'];
-		$mailer->Port          = $this->configs['smtp.port'];
-		$mailer->SMTPSecure    = $this->configs['smtp.secure'];
-		$mailer->SMTPAuth      = $this->configs['smtp.authenticate'];
-		$mailer->Username      = $this->configs['smtp.username'];
-		$mailer->Password      = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
-		$mailer->Timeout       = $this->configs['smtp.timeout'];
-		$mailer->SMTPKeepAlive = $this->configs['smtp.persist'];
+		$mailer->Host       = $this->configs['smtp.host'];
+		$mailer->Port       = $this->configs['smtp.port'];
+		$mailer->SMTPSecure = $this->configs['smtp.secure'];
+		$mailer->SMTPAuth   = $this->configs['smtp.authenticate'];
+		$mailer->Username   = $this->configs['smtp.username'];
+		$mailer->Password   = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
 	}
 
 	private function connectToHost(PHPMailer &$mailer) {
-		//@todo may need to reuse the SMTP object in the event that there is a valid use case for
-		// keeping the SMTP connection alive
-		$mailer->smtp = new SMTP();
-
-		if (!$mailer->SmtpConnect()) {
-			//@todo need to tell the class what error messages to use, so the following is for reference only
+		try {
+            $mailer->smtp = new SMTP();
+            $mailer->SmtpConnect();
+        } catch (Exception $e) {
+            //@todo need to tell the class what error messages to use, so the following is for reference only
 //			global $app_strings;
 //			if(isset($this->oe) && $this->oe->type == "system") {
 //				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
@@ -127,7 +127,14 @@ class SimpleMailer extends BaseMailer
 					break;
 				case EmailHeaders::ReplyTo:
 					//$mailer->ClearReplyTos(); // only necessary if the PHPMailer object can be re-used
-					$mailer->AddReplyTo($value[0], $value[1]); //@todo might not want to require the second value
+                    try {
+                        if ($mailer->AddReplyTo($value[0], $value[1])) { //@todo might not want to require the second value
+                            // doesn't matter what the message is since we're going to eat phpmailerExceptions
+                            throw new phpmailerException();
+                        }
+                    } catch (Exception $e) {
+                        throw new MailerException("Failed to add the Reply-To header");
+                    }
 					break;
 				case EmailHeaders::Sender:
 					$mailer->Sender = $value;
@@ -161,17 +168,35 @@ class SimpleMailer extends BaseMailer
 		//@todo should you be able to initiate a send without any To recipients?
 		foreach ($to as $recipient) {
 			$recipient->decode();
-			$mailer->AddAddress($recipient->getEmail(), $recipient->getName());
+
+            try {
+                $mailer->AddAddress($recipient->getEmail(), $recipient->getName());
+            } catch (Exception $e) {
+                // eat the exception for now as we'll send to as many valid recipients as possible
+                //throw new MailerException("Failed to add the recipient known by " . $recipient->getEmail());
+            }
 		}
 
 		foreach ($cc as $recipient) {
 			$recipient->decode();
-			$mailer->AddCC($recipient->getEmail(), $recipient->getName());
+
+            try {
+                $mailer->AddCC($recipient->getEmail(), $recipient->getName());
+            } catch (Exception $e) {
+                // eat the exception for now as we'll send to as many valid recipients as possible
+                //throw new MailerException("Failed to add the CC recipient known by " . $recipient->getEmail());
+            }
 		}
 
 		foreach ($bcc as $recipient) {
 			$recipient->decode();
-			$mailer->AddBCC($recipient->getEmail(), $recipient->getName());
+
+            try {
+                $mailer->AddBCC($recipient->getEmail(), $recipient->getName());
+            } catch (Exception $e) {
+                // eat the exception for now as we'll send to as many valid recipients as possible
+                //throw new MailerException("Failed to add the BCC recipient known by " . $recipient->getEmail());
+            }
 		}
 	}
 
