@@ -1,7 +1,9 @@
 <?php
-$opportunity_result = $GLOBALS['db']->query('SELECT assigned_user_id, name, id, amount_usdollar as value, sales_stage FROM opportunities');
 
-$user_result = $GLOBALS['db']->query('SELECT assigned_user_id as id, users.first_name, users.last_name FROM opportunities JOIN users ON users.id = opportunities.assigned_user_id GROUP BY assigned_user_id');
+$where_clause = " WHERE opportunities.date_closed IS NOT NULL AND opportunities.date_closed <= DATE_ADD(CURDATE(), INTERVAL 30 DAY)";
+$opportunity_result = $GLOBALS['db']->query('SELECT assigned_user_id, name, id, amount_usdollar as value, sales_stage FROM opportunities'.$where_clause);
+
+$user_result = $GLOBALS['db']->query('SELECT assigned_user_id as id, users.first_name, users.last_name FROM opportunities JOIN users ON users.id = opportunities.assigned_user_id'.$where_clause." GROUP BY assigned_user_id");
 
 // TODO: Un-hardcode this by doing a query like the following:
 // SELECT sales_stage FROM opportunities GROUP BY sales_stage
