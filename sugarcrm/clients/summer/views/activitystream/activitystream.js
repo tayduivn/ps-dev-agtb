@@ -10,12 +10,12 @@
         'dragenter .sayit': 'expandNewPost',
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
-        'drop .sayit': 'dropAttachment'
+        'drop .sayit': 'dropAttachment',
+        'click .deleteRecord': 'deleteRecord',
     },
 
     initialize: function(options) {
-    	this.opts = { params: {}};
-    	this.collection = {};
+        this.opts = {params: {}};       
         app.view.View.prototype.initialize.call(this, options);
 
         _.bindAll(this);
@@ -31,9 +31,7 @@
             this.collection = app.data.createBeanCollection("ActivityStream");
             this.collection.fetch(this.opts);
         }
-
-    	this.collection['oauth_token'] = App.api.getOAuthToken();
-
+        
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
@@ -146,6 +144,16 @@
         }});
     },
 
+    deleteRecord: function(event) {
+        var self = this,
+        recordId = this.$(event.currentTarget).data('id'),
+        recordModule = this.$(event.currentTarget).data('module'),
+        myPostUrl = 'ActivityStream/'+recordModule+'/'+recordId;
+        this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
+            self.collection.fetch(self.opts)
+        }});
+    },
+    
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
@@ -237,7 +245,10 @@
             });
 
         }, this);
-
+        
+        // There maybe better way to make the following data available in hbt 
+        this.collection['oauth_token'] = App.api.getOAuthToken();
+        this.collection['user_id'] = app.user.get('id');         
         return app.view.View.prototype._renderHtml.call(this);
     },
 

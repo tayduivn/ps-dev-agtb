@@ -57,7 +57,8 @@ class ActivityStream extends SugarBean {
     public $activity_data;
     public $created_by;
     public $date_created;
-
+    public $deleted;
+    
     /**
      * Constructor
      */
@@ -90,7 +91,18 @@ class ActivityStream extends SugarBean {
         return $this->db->query($sql,true) ? $id : false;
     }
 
-
+    /**
+     * Deletes a comment made by current user
+     * @param string $commentId
+     * @return bool query restult
+     */
+    public function deleteComment($commentId) {
+        global $current_user, $dictionary;
+        $tableName = $dictionary['ActivityComments']['table'];
+        $sql = "UPDATE ".$tableName." SET deleted = 1 WHERE id = '".$commentId."' AND created_by = '".$current_user->id."'";
+        return $this->db->query($sql,true);
+    }
+    
     /**
      * Creates new activity. For update, it may create multiple activity records, one for each changed field
      *
@@ -153,6 +165,18 @@ class ActivityStream extends SugarBean {
         return $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
     }
 
+    /**
+     * Deletes a post made by current user
+     * @param string $postId
+     * @return bool query restult
+     */
+    public function deletePost($postId) {
+        global $current_user;
+        $sql = "UPDATE ".$this->getTableName()." SET deleted = 1 WHERE id = '".$postId."' AND created_by = '".$current_user->id."' AND activity_type = '".self::ACTIVITY_TYPE_POST."'";
+        // Should we also delete comments or attachments for this post???
+        return $this->db->query($sql,true);
+    }
+        
     /**
      * Creates a new relationship activity record.
      *
@@ -243,18 +267,6 @@ class ActivityStream extends SugarBean {
     }
 
     /**
-     * Gets a Note bean for an attachment.
-     * @param string $parent_id Bean ID for the post.
-     * @return Note
-     */
-    function getNoteBeanForAttachment($parent_id) {
-        $attach = new Note();
-        $attach->parent_id = $parent_id;
-        $attach->parent_type = 'ActivityStream';
-        return $attach;
-    }
-
-    /**
      * Returns an array of activities for a bean
      * @param string $targetModule module name
      * @param string $targetId bean id
@@ -281,7 +293,7 @@ class ActivityStream extends SugarBean {
     
         $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name, u.picture as created_by_picture';
         $from = 'activity_stream a, users u';
-        $where = 'a.created_by = u.id';
+        $where = 'a.created_by = u.id AND a.deleted = 0';
         $limit = '';
     
         if(!empty($targetModule)) {
@@ -343,7 +355,7 @@ class ActivityStream extends SugarBean {
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];
-                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.deleted = 0 AND c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
     
                     if(!empty($result)) {
@@ -366,10 +378,7 @@ class ActivityStream extends SugarBean {
                                 
                 foreach($activities as &$activity) {
                     $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array();
-                    foreach($activity['comments'] as &$comment) {
-                        $GLOBALS['log']->fatal(print_r($commentNotes,true));
-                        $GLOBALS['log']->fatal(print_r($comment,true));
-                        
+                    foreach($activity['comments'] as &$comment) {                        
                         $comment['notes'] = isset($commentNotes[$comment['id']]) ? $commentNotes[$comment['id']] : array();
                     }
                     $activity['notes'] = isset($activityNotes[$activity['id']]) ? $activityNotes[$activity['id']] : array();

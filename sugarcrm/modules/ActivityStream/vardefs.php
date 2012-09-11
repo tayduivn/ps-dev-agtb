@@ -37,7 +37,8 @@ $dictionary['ActivityStream'] =
                       'date_created'=>array('name' =>'date_created','type' => 'datetime'),
                       'created_by'=>array('name' =>'created_by','type' => 'varchar','len' => 36),
                       'activity_type'=>array('name' =>'activity_type','type' => 'varchar','len' => 100),                        				
-                	  'activity_data'=>array('name' =>'activity_data','type' => 'text')
+                      'activity_data'=>array('name' =>'activity_data','type' => 'text'),
+                      'deleted'=>array ('name' => 'deleted','type' => 'bool','default' => '0'),                        
                 ),
                 'indices' => array (
                       //name will be re-constructed adding idx_ and table name as the prefix like 'idx_accounts_'

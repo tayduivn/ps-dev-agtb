@@ -36,6 +36,7 @@ array ( 'table' => 'activity_comments',
               'date_created'=>array('name' =>'date_created','type' => 'datetime'),
               'created_by'=>array('name' =>'created_by','type' => 'varchar','len' => 36),				
               'value'=>array('name' =>'value','type' => 'text'),
+              'deleted'=>array ('name' => 'deleted','type' => 'bool','default' => '0'),
             ),
             'indices' => array (
                   //name will be re-constructed adding idx_ and table name as the prefix like 'idx_accounts_'
