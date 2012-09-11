@@ -32,12 +32,33 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * Constructor
      */
-    public function __construct() {
-        parent::TimePeriod();
+    public function __construct($start_date = null, $fiscal_period = false) {
+        parent::__construct();
+        $timedate = TimeDate::getInstance();
 
+        //set defaults
         $this->time_period_type = 'Annual';
-        $this->is_fiscal_year = false;
+        $this->is_fiscal_year = $fiscal_period;
         $this->is_leaf = false;
+
+        //check start_date, put it to now if it's not passed in
+        if(is_null($start_date)) {
+            $start_date = $timedate->getNow()->asDbDate();
+        }
+
+        $start_date = $timedate->fromDbDate($start_date);
+
+        //set the start/end date
+        $this->start_date = $timedate->asUserDate($start_date);
+        if($this->is_fiscal_year) {
+            $endDate = $start_date->modify('+52 week');
+            $endDate = $endDate->modify('-1 day');
+            $this->end_date = $timedate->asUserDate($endDate);
+        } else {
+            $endDate = $start_date->modify('+1 year');
+            $endDate = $endDate->modify('-1 day');
+            $this->end_date = $timedate->asUserDate($endDate);
+        }
     }
 
     /**

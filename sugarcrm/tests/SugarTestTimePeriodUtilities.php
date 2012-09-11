@@ -94,7 +94,7 @@ class SugarTestTimePeriodUtilities
 
         global $timedate;
         $timedate = TimeDate::getInstance();
-        $now = $timedate->getNow();
+        $start_date = $timedate->getNow();
         $month = $timedate->getNow()->format('n');
         if($month < 4)
         {
@@ -107,15 +107,13 @@ class SugarTestTimePeriodUtilities
             $month = 10;
         }
 
+
         $year = $timedate->getNow()->format('Y');
         $time = mt_rand();
         $name = 'SugarAnnualTimePeriod' . $time;
-        $timeperiod = new TimePeriod();
-        $start_date = $timedate->asDbDate($now->get_day_begin(1, $month, $year));
-        $end_date =  $timedate->asDbDate($now->get_day_end(30, $month-1, $year+1));
+        $start_date->setDate($year, $month, 1);
+        $timeperiod = new AnnualTimePeriod($start_date->asDbDate());
 
-        $timeperiod->start_date = $start_date;
-        $timeperiod->end_date = $end_date;
         $timeperiod->name = $name;
         $timeperiod->time_period_type = "Annual";
         $timeperiod->is_fiscal_year = 0;
