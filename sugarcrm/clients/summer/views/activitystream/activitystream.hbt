@@ -112,7 +112,7 @@
                 {{/if}}
                 <li style="">
                   <a href="" class="pull-left">
-                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{../../collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{{this.value}}}<br>
