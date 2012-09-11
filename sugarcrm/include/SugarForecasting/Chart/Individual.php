@@ -171,6 +171,9 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $forecast_strings = return_module_language($current_language, 'Forecasts');
         $opp_strings = return_module_language($current_language, 'Opportunities');
 
+        // default the label name to empty to prevent a notice from fireing
+        $label_name = "";
+
         // load up the data into the chart
         foreach ($this->dataArray as $data) {
 
