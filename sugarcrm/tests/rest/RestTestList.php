@@ -131,7 +131,6 @@ class RestTestList extends RestTestBase {
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
-
         $this->assertEquals(30,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
@@ -418,7 +417,7 @@ class RestTestList extends RestTestBase {
                                  'Second record is not lower than the first, ascending order failed.');
 
         // Test Favorites
-        $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10");
+        $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10&fields=name");
         $this->assertEquals(18,count($restReply['reply']['records']));
 
         // Test My Items
