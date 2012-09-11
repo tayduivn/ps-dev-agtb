@@ -2,12 +2,13 @@
     // date
     _render: function(value) {
         var self = this;
-        
         // Although the server serves up iso date string with Z and all .. for date types going back it wants this
         self.serverDateFormat = 'Y-m-d';
         app.view.Field.prototype._render.call(this);//call proto render
+        var viewName = self.view.meta && self.view.meta.type ? self.view.meta.type : self.view.name;
         $(function() {
-            if(self.view.name === 'edit') {
+            if(self.options.def.view === 'edit' || self.options.viewName === 'edit' ||
+                viewName === 'edit') {
                 $(".datepicker").datepicker({
                     showOn: "button",
                     buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",

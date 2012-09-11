@@ -1,25 +1,25 @@
 {{#if isAuthenticated}}
-    <div class="btn-group dropup {{#if open}}open{{/if}}" id="todo-list-widget">
-        <button title="Todo List" class="btn dropdown-toggle" data-toggle="dropdown" id="todo">
+    <div class="btn-group todo-list-widget dropup {{#if open}}open{{/if}}">
+        <button title="Todo List" class="btn dropdown-toggle todo" data-toggle="dropdown">
             <i class="icon-list-alt"></i> Todo</button>
 
-        <div id="todo-container" class="tabbable dropdown-menu">
-            <ul id="todo-pills" class="nav nav-pills">
+        <div class="tabbable dropdown-menu todo-container">
+            <ul class="nav nav-pills todo-pillbox">
                 <!--localize these-->
-                <li id="todo-pill-overdue" class="{{#if overduePillActive}}active{{/if}}"><a href="#pane1" data-toggle="tab" onclick="javascript:return false;"><span id="overdue-badge" class="badge todo-badge{{#eq this.collection.modelList.overdue.length 0}} empty{{/eq}}">{{this.collection.modelList.overdue.length}}</span><span class="todo-pill-text"> Overdue</span></a></li>
-                <li id="todo-pill-today" class="{{#if todayPillActive}}active{{/if}}"><a href="#pane2" data-toggle="tab" onclick="javascript:return false;"><span id="today-badge" class="badge todo-badge{{#eq this.collection.modelList.today.length 0}} empty{{/eq}}">{{this.collection.modelList.today.length}}</span><span class="todo-pill-text"> {{str "LBL_EMAIL_DATE_TODAY"}}</span></a></li>
-                <li id="todo-pill-upcoming" class="{{#if upcomingPillActive}}active{{/if}}"><a href="#pane3" data-toggle="tab" onclick="javascript:return false;"><span id="upcoming-badge" class="badge todo-badge{{#eq this.collection.modelList.upcoming.length 0}} empty{{/eq}}">{{this.collection.modelList.upcoming.length}}</span><span class="todo-pill-text"> Upcoming</span></a></li>
-                <li id="todo-pill-all" class="{{#if allPillActive}}active{{/if}}"><a href="#pane4" data-toggle="tab" onclick="javascript:return false;"><span id="all-badge" class="badge todo-badge{{#eq this.collection.models.length 0}} empty{{/eq}}">{{this.collection.models.length}}</span><span class="todo-pill-text"> All</span></a></li>
+                <li class="todo-pills {{#if overduePillActive}}active{{/if}}"><a href="#pane1" data-toggle="tab" onclick="javascript:return false;"><span class="badge todo-badge overdue-badge {{#eq this.collection.modelList.overdue.length 0}} empty{{/eq}}">{{this.collection.modelList.overdue.length}}</span><span class="todo-pill-text"> Overdue</span></a></li>
+                <li class="todo-pills {{#if todayPillActive}}active{{/if}}"><a href="#pane2" data-toggle="tab" onclick="javascript:return false;"><span class="badge todo-badge{{#eq this.collection.modelList.today.length 0}} empty{{/eq}}">{{this.collection.modelList.today.length}}</span><span class="todo-pill-text"> {{str "LBL_EMAIL_DATE_TODAY"}}</span></a></li>
+                <li class="todo-pills {{#if upcomingPillActive}}active{{/if}}"><a href="#pane3" data-toggle="tab" onclick="javascript:return false;"><span class="badge todo-badge{{#eq this.collection.modelList.upcoming.length 0}} empty{{/eq}}">{{this.collection.modelList.upcoming.length}}</span><span class="todo-pill-text"> Upcoming</span></a></li>
+                <li class="todo-pills {{#if allPillActive}}active{{/if}}"><a href="#pane4" data-toggle="tab" onclick="javascript:return false;"><span class="badge todo-badge{{#eq this.collection.models.length 0}} empty{{/eq}}">{{this.collection.models.length}}</span><span class="todo-pill-text"> All</span></a></li>
             </ul>
             <div class="todo-header">
                 <div class="input-prepend">
-                    <span class="add-on"><i class="icon-edit"></i></span><input class="span3" id="todo-subject" type="text" placeholder="What needs to be done?" tabindex="1">
-                    <div id="todo-add-container" class="input-append">
-                        <button class="btn btn-primary" id="todo-add" type="button" tabindex="3">{{str "LBL_ADD"}}</button>
+                    <span class="add-on"><i class="icon-edit"></i></span><input class="span3 todo-subject" type="text" placeholder="What needs to be done?" tabindex="1">
+                    <div class="input-append todo-add-container">
+                        <button class="btn btn-primary todo-add" type="button" tabindex="3">{{str "LBL_ADD"}}</button>
                     </div>
                 </div>
-                <div id="todo-date-container" class="input-prepend">
-                    <span class="add-on"><i class="icon-calendar"></i></span><input class="span3" id="todo-date" type="text" placeholder="By when?" tabindex="2">
+                <div class="input-prepend todo-date-container">
+                    <span class="add-on"><i class="icon-calendar"></i></span><input class="span3 todo-date" type="text" placeholder="By when?" tabindex="2">
                 </div>
             </div>
             <div class="tab-content">

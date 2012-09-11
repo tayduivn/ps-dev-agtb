@@ -19,56 +19,87 @@
   <h4 id="activitystream-header">Activity</h4>
   <div class="activitystream-post">
     <p>
-      <input type="text" value="" class="span12 sayit" placeholder="Type your post" dropzone="copy">
-      <a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a>
-      <input type="submit" class="btn btn-primary addPost">
+      <input type="text" value="" class="span12 sayit" placeholder="Type your post" dropzone="copy"><input type="submit" class="btn btn-primary addPost">
     </p>
   </div>
   <div class="actions">
   </div>
   <form class="form-search hide" action="">
     <input value="" class="span4" placeholder="Refine activity ...">
-  </form> 
+  </form>
   <ul class="nav nav-tabs results">
     {{#if collection.models.length}}
       {{#each collection.models}}
       <li style="" data-id="{{attributes.id}}">
         <a href="" class="pull-left avatar avatar42">
-          <img src="{{#if attributes.created_by_picture}}../index.php?entryPoint=download&id={{attributes.created_by_picture}}&type=SugarFieldImage&isTempFile=1{{else}}../clients/summer/fields/img/profile.png{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+          <img src="{{#if attributes.created_by_picture}}../rest/v10/Users/{{attributes.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
         </a>
         <p>
           <a href="#Users/{{attributes.created_by}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
-          {{#eq attributes.activity_type "updated"}}          
+          {{#eq attributes.activity_type "updated"}}
             {{#each attributes.activity_data}}
               <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
             {{/each}}
               {{#if attributes.target_name}}
-              on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
-              {{/if}}             
-          {{/eq}} 
-          {{#eq attributes.activity_type "posted"}}          
-              "{{{attributes.activity_data.value}}}"           
+              on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
+              {{/if}}
+          {{/eq}}
+          {{#eq attributes.activity_type "posted"}}
+              "{{{attributes.activity_data.value}}}"
               {{#if attributes.target_name}}
                   {{#if attributes.target_id}}
                   on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
                   {{else}}
                   on <a href="#{{attributes.target_module}}">{{attributes.target_name}}</a>
                   {{/if}}
-              {{/if}} 
-          {{/eq}}  
-          {{#eq attributes.activity_type "created"}}          
-              <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
-          {{/eq}}            
-          {{#eq attributes.activity_type "related"}}          
+              {{/if}}
+          {{/eq}}
+          {{#eq attributes.activity_type "created"}}
+              <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
+          {{/eq}}
+          {{#eq attributes.activity_type "related"}}
               <a href="#{{attributes.activity_data.relate_to}}/{{attributes.activity_data.relate_id}}">{{attributes.activity_data.relate_name}}</a>
               {{#if attributes.target_name}}
-              to <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>  
-              {{/if}}           
-          {{/eq}}                     
+              to <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
+              {{/if}}
+          {{/eq}}
           <br>
+          {{#if attributes.notes}}
+          <strong>Attachments:</strong><br />
+          <div class="activitystream-attachments">
+            <ul class="thumbnails">
+            {{#each attributes.notes}}
+              <li class="span4 activitystream-attachment" data-url="{{{this.url}}}" data-mime="{{{this.file_mime_type}}}" data-filename="{{{this.filename}}}">
+                {{#if this.image}}
+                <a href="#attachment-{{this.id}}" data-toggle="modal">
+                <img src="{{this.url}}" alt="{{this.filename}}" />
+                <div class="modal" style="display:none" id="attachment-{{this.id}}">
+                  <div class="modal-header">
+                    <a class="close" data-dismiss="modal">×</a>
+                    <h3>{{this.filename}}</h3>
+                  </div>
+                  <div class="modal-body">
+                     <a href="{{this.url}}"><img src="{{this.url}}" alt="{{this.filename}}" /></a>
+                  </div>
+                </div>
+                {{else}}
+                <a href="{{this.url}}">
+                Download {{this.filename}}
+                {{/if}}
+              </a>
+              </li>
+            {{/each}}
+            </ul>
+          </div>
+          {{/if}}
           <date class="date">Posted {{timeago attributes.date_created}}</date>
         </p>
         <div class="actions hide">
+          {{#eq collection.user_id attributes.created_by}}
+          {{#eq attributes.activity_type "posted"}}
+          <a data-toggle="modal" data-module="ActivityStream" data-id="{{attributes.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
+          {{/eq}}
+          {{/eq}}        
           <a data-toggle="modal" href="#reply" class="comment btn btn-mini reply"><i class="icon-comment"></i></a>
         </div>
         <ul>
@@ -81,12 +112,46 @@
                 {{/if}}
                 <li style="">
                   <a href="" class="pull-left">
-                    <img src="{{#if this.created_by_picture}}"../index.php?entryPoint=download&id={{this.created_by_picture}}&type=SugarFieldImage&isTempFile=1{{else}}../clients/summer/fields/img/profile.png{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{{this.value}}}<br>
+                      {{#if this.notes}}
+                        <strong>Attachments:</strong><br />
+                        <div class="activitystream-attachments">
+                          <ul class="thumbnails">
+                          {{#each this.notes}}
+                            <li class="span4 activitystream-attachment">
+                              {{#if this.image}}
+                              <a href="#attachment-{{this.id}}" data-toggle="modal">
+                              <img src="{{this.url}}" alt="{{this.filename}}" />
+                              <div class="modal" style="display:none" id="attachment-{{this.id}}">
+                                <div class="modal-header">
+                                  <a class="close" data-dismiss="modal">×</a>
+                                  <h3>{{this.filename}}</h3>
+                                </div>
+                                <div class="modal-body">
+                                   <a href="{{this.url}}"><img src="{{this.url}}" alt="{{this.filename}}" /></a>
+                                </div>
+                              </div>
+                              {{else}}
+                              <a href="{{this.url}}">
+                              Download {{this.filename}}
+                              {{/if}}
+                            </a>
+                            </li>
+                          {{/each}}
+                          </ul>
+                        </div>
+                      {{/if}}
+
                     <date class="date">Commented {{timeago this.date_created}}</date>
                   </p>
+                  {{#eq ../collection.user_id this.created_by}}
+                    <div class="actions hide">
+                      <a data-toggle="modal" data-module="ActivityComments" data-id="{{this.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
+                    </div>  
+                  {{/eq}}                  
                 </li>
                 {{#if this._stophidden}}
                     </div>

@@ -11,10 +11,13 @@
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
         'drop .sayit': 'dropAttachment',
+        'dragstart .activitystream-attachment': 'saveAttachment',
+        'click .deleteRecord': 'deleteRecord',
     },
 
     initialize: function(options) {
     	this.opts = { params: {}};
+    	this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
 
         _.bindAll(this);
@@ -30,6 +33,11 @@
             this.collection = app.data.createBeanCollection("ActivityStream");
             this.collection.fetch(this.opts);
         }
+
+        // There maybe better way to make the following data available in hbt 
+        this.collection['oauth_token'] = App.api.getOAuthToken();
+        this.collection['user_id'] = app.user.get('id'); 
+
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
@@ -66,7 +74,7 @@
                 var id = $(el).attr('id');
                 var seed = self.app.data.createBean('Notes', {
                     'parent_id': post_id,
-                    'parent_type': 'ActivityStream'
+                    'parent_type': 'ActivityComments'
                 });
                 seed.save({}, {
                     success: function(model) {
@@ -84,12 +92,13 @@
                             contentType: false,
                             success: function() {
                                 delete App.drag_drop[id];
+                                self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts)
+            self.collection.fetch(self.opts);
         }});
     },
 
@@ -131,15 +140,26 @@
                             contentType: false,
                             success: function() {
                                 delete App.drag_drop[id];
+                                self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts)
+            self.collection.fetch(self.opts);
         }});
     },
 
+    deleteRecord: function(event) {
+        var self = this,
+        recordId = this.$(event.currentTarget).data('id'),
+        recordModule = this.$(event.currentTarget).data('module'),
+        myPostUrl = 'ActivityStream/'+recordModule+'/'+recordId;
+        this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
+            self.collection.fetch(self.opts)
+        }});
+    },
+    
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
@@ -211,6 +231,37 @@
         });
     },
 
+    saveAttachment: function(event) {
+        // The following is only true for Chrome.
+        if(event.dataTransfer && event.dataTransfer.constructor == Clipboard &&
+            event.dataTransfer.setData('DownloadURL', 'http://www.sugarcrm.com')) {
+            var el = $(event.currentTarget),
+                mime = el.data("mime"),
+                name = el.data("filename"),
+                file = el.data("url"),
+                origin = document.location.origin,
+                path = [];
+
+            path = _.initial(document.location.pathname.split('/'));
+            path = path.concat(file.split('/'));
+
+            // Resolve .. and . in paths. Chrome doesn't do it for us.
+            for(var i = 0; i < path.length; i++) {
+                if(".." == path[i+1]) {
+                    delete path[i+1];
+                    delete path[i];
+                    i--;
+                }
+                if("." == path[i]) {
+                    delete path[i];
+                    i--;
+                }
+            }
+            path = _.compact(path);
+            event.dataTransfer.setData("DownloadURL", mime+":"+name+":"+origin+"/"+path.join('/'));
+        }
+    },
+
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
             var comments = model.get("comments");
@@ -218,8 +269,20 @@
                 comments[0]['_starthidden'] = true;
                 comments[comments.length - 3]['_stophidden'] = true;
             }
-        }, this);
+            _.each(comments, function(comment) {
+                _.each(comment.notes, function(note) {
+                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                });
+            });
 
+            _.each(model.get("notes"), function(note) {
+                note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                note.image = (note.file_mime_type.indexOf("image") !== -1);
+            });
+
+        }, this);
+        
         return app.view.View.prototype._renderHtml.call(this);
     },
 

@@ -28,6 +28,8 @@ require_once('include/oauth2-php/lib/IOAuth2RefreshTokens.php');
 require_once('modules/Administration/SessionManager.php');
 //END SUGARCRM flav=pro ONLY
 
+require_once('include/api/SugarApi/SugarApiException.php');
+
 /**
  * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to
  * store and retrieve data.
@@ -75,8 +77,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 
         // Find the Portal API user
         // FIXME: What to do if they have more than one portal user?
-        $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1'));
-
+        $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1','status'=>'Active'));
+        
         if ($portalApiUser != null) {
             $this->portalApiUser = $portalApiUser;
             return $this->portalApiUser;
@@ -437,6 +439,14 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 $contact = null;
             }
             if ( !empty($contact) ) {
+                //BEGIN SUGARCRM flav=pro ONLY
+                $sessionManager = new SessionManager();
+                if(!$sessionManager->canAddSession()){
+                    //not able to add another session right now
+                    $GLOBALS['log']->error("Unable to add new session");
+                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions',0,'too_many_concurrent_connections');
+                }
+                //END SUGARCRM flav=pro ONLY
                 $this->contactBean = $contact;
                 return array('user_id'=>$contact->id);
             } else {

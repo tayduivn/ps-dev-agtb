@@ -60,6 +60,12 @@ class ActivityStreamApi extends ListApi {
                 'pathVars' => array('','module','id'),
                 'method' => 'handlePost',
             ),
+            'deleteRecord' => array(
+                    'reqType' => 'DELETE',
+                    'path' => array('ActivityStream','?','?'),
+                    'pathVars' => array('','module', 'id'),
+                    'method' => 'deleteRecord',
+            ),                                
         );
     }
 
@@ -98,6 +104,18 @@ class ActivityStreamApi extends ListApi {
         }
     }
 
+    public function deleteRecord($api, $args) {
+        $module = isset($args['module']) ? $args['module'] : '';
+        $id = isset($args['id']) ? $args['id'] : '';
+        
+        if(!in_array($module, array('ActivityStream', 'ActivityComments')) || empty($id)) {
+            return false;
+        }
+        
+        $seed = BeanFactory::getBean('ActivityStream');
+        return $module == 'ActivityStream' ? $seed->deletePost($id) : $seed->deleteComment($id);
+    }
+    
     protected function parseArguments($api, $args, $seed) {
         // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities')
         $options = parent::parseArguments($api, $args, $seed);

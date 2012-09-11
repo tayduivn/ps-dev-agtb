@@ -1,11 +1,13 @@
 ({
     fields: null,
-    getPlaceholder : function(){
-        var ret = "";
-        var self = this;
-        if (!this.fields){
+
+    getPlaceholder: function() {
+        var ret = "",
+            self = this;
+
+        if (!this.fields) {
             this.fields = [];
-            _.each(this.def.fields, function(fieldDef){
+            _.each(this.def.fields, function(fieldDef) {
                 var field = app.view.createField({
                     def: fieldDef,
                     view: self.view,
@@ -15,6 +17,13 @@
                 ret += field.getPlaceholder();
             });
         }
-        return new Handlebars.SafeString(ret);
+
+        return new Handlebars.SafeString(app.view.Field.prototype.getPlaceholder.call(this) + ret);
+    },
+
+    render: function() {
+        _.each(this.fields, function(field) {
+            field.render();
+        }, this);
     }
 })

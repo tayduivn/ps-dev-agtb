@@ -13,23 +13,21 @@
             {{#each grid}}
                 <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
                     {{#each this}}
-                        <span class='record-row'>
+                        <span>
                             {{#unless ../../this.labelsOnTop}}
                                 {{#if ../../../this.labels}}
                                     <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
                                 {{/if}}
                             {{/unless}}
-                            <div class="span{{this.span}}">
+                            <div class="span{{this.span}} record-cell" data-type="{{type}}" data-name="{{name}}">
                                 {{#if ../../this.labelsOnTop}}
                                 <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
                                 {{/if}}
-                                {{#each fields}}
-                                    {{#if name}}
-                                        <span class='normal{{#if ../this.css}} {{../this.css}}{{/if}}'>
-                                            {{field ../../../../../../this}}
-                                        </span>
-                                    {{/if}}
-                                {{/each}}
+                                {{#if name}}
+                                    <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}">
+                                        {{field ../../../../../this}}
+                                    </span>
+                                {{/if}}
                                 {{#unless noedit}}
                                     <span class="record-edit-link-wrapper" data-name="{{../name}}">
                                         <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
