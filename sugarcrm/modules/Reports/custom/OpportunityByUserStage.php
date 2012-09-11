@@ -7,15 +7,18 @@ $user_result = $GLOBALS['db']->query('SELECT assigned_user_id as id, users.first
 // SELECT sales_stage FROM opportunities GROUP BY sales_stage
 $stages = array('Prospecting', 'Closed Lost', 'Closed Won', 'Qualification');
 $temp = array();
-$data = array('name' => "Opportunities", 'children' => array());
+$data = array('name' => "Opportunities", 'children' => array(), 'class' => 'root');
 
 while($row = $GLOBALS['db']->fetchByAssoc($user_result)) {
-    $temp[$row['id']] = array('name' => $row['first_name'].' '.$row['last_name'],
+    $temp[$row['id']] = array(
+        'name' => $row['first_name'].' '.$row['last_name'],
+        'class' => "user_".$row['id'],
         'children' => array()
     );
     foreach($stages as $stage) {
         $temp[$row['id']]['children'][$stage] = array(
             'name' => $stage,
+            'class' => 'stage_'.str_replace(' ', '', strtolower($stage)),
             'children' => array()
         );
     }
@@ -23,6 +26,7 @@ while($row = $GLOBALS['db']->fetchByAssoc($user_result)) {
 
 while($row = $GLOBALS['db']->fetchByAssoc($opportunity_result)){
     $row['value'] = (int)$row['value'];
+    $row['class'] = 'stage_'.str_replace(' ', '', strtolower($row['sales_stage']));
     $temp[$row['assigned_user_id']]['children'][$row['sales_stage']]['children'][] = $row;
 }
 
