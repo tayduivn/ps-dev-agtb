@@ -1,10 +1,10 @@
-(function(app) {
+(function (app) {
 
     /**
      * Overrides View::_renderHtml() to enable bootstrap widgets after the element has been added to the DOM
      */
     var __superViewRender__ = app.view.View.prototype._renderHtml;
-    app.view.View.prototype._renderHtml = function() {
+    app.view.View.prototype._renderHtml = function () {
 
         __superViewRender__.call(this);
 
@@ -12,23 +12,23 @@
         if ($(window).width() > 768) {
             // specifically place tooltips to bottom
             this.$('.navbar, .nav, .subnav, .thumbnail').tooltip({
-                selector: "[rel=tooltip]",
-                placement: "bottom"
+                selector:"[rel=tooltip]",
+                placement:"bottom"
             });
             this.$('body').tooltip({
-                selector: "[rel=tooltip]"
+                selector:"[rel=tooltip]"
             });
         }
         //popover
         this.$("[rel=popover]").popover();
-        this.$("[rel=popoverTop]").popover({placement: "top"});
+        this.$("[rel=popoverTop]").popover({placement:"top"});
 
         if ($.fn.timeago)
             $("span.relativetime").timeago({
-                logger: SUGAR.App.logger,
-                date: SUGAR.App.utils.date,
-                lang: SUGAR.App.lang,
-                template: SUGAR.App.template
+                logger:SUGAR.App.logger,
+                date:SUGAR.App.date,
+                lang:SUGAR.App.lang,
+                template:SUGAR.App.template
             });
 
     };
@@ -39,7 +39,7 @@
      * manually remove elements automatically created by the widget.
      */
     var __superViewInit__ = app.view.View.prototype.initialize;
-    app.view.View.prototype.initialize = function(options) {
+    app.view.View.prototype.initialize = function (options) {
         __superViewInit__.call(this, options);
         $('.popover, .tooltip').remove();
     };

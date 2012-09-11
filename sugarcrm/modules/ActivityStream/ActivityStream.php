@@ -89,6 +89,7 @@ class ActivityStream extends SugarBean {
         $sql .= "(".implode(",", array_keys($values)).") ";
         $sql .= "VALUES(".implode(",", $values).")";
         return $this->db->query($sql,true) ? $id : false;
+
     }
 
     /**
@@ -227,6 +228,7 @@ class ActivityStream extends SugarBean {
         $sql = "INSERT INTO ".$this->getTableName();
         $sql .= "(".implode(",", array_keys($activityValues)).") ";
         $sql .= "VALUES(".implode(",", $activityValues).")";
+        $this->updateLastActivityDate($bean, $activityValues['date_created']);
         return $GLOBALS['db']->query($sql) ? $id : false;
     }
 
@@ -386,6 +388,7 @@ class ActivityStream extends SugarBean {
             }
         }
     
+
         return $activities;
     } 
 
@@ -409,7 +412,17 @@ class ActivityStream extends SugarBean {
             }
         }
         return $notes;                   
+    
     }
+
+    /**
+     * @param $bean
+     * @param $date
+     */
+    protected function updateLastActivityDate($bean, $date){
+        if($bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date=" . $date .  " WHERE id= '{$bean->id}''");
+    }
+
 }
 
 ?>

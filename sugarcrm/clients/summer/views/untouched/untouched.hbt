@@ -1,0 +1,8 @@
+<div class="block">
+  <h4>Untouched records closing this month</h4>
+  {{#each collection.models}}
+    <article class='row-fluid'>
+       <a href='#{{../this.module}}/{{this.attributes.id}}'>{{this.attributes.name}}</a><date class="date">{{timeago this.attributes.last_activity_date "LBL_LAST_TOUCHED"}}</date>
+    </article>
+  {{/each}}
+</div>

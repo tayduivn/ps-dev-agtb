@@ -3401,6 +3401,7 @@ $app_strings = array (
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
+    'LBL_LAST_TOUCHED' => 'Last touched {{relativetime}} on {{date}} at {{time}}',
     'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',

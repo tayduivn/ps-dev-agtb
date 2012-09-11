@@ -20,7 +20,7 @@
  ********************************************************************************/
 $config = array();
 $config['license']['search'] = array('contents of this file are subject to', 'SugarCRM" logo. If the display of the logo');
-$config['excludeFileTypes'] = array('.png'=>1, '.gif'=> 1, '.jpg'=>1, '.swf'=>1, 'README'=>1, '.eot' => 1, 'phar'=>1);
+$config['excludeFileTypes'] = array('.ttf'=>1, '.eot'=>1, '.svg'=>1, 'svgz'=>1, 'woff'=>1,'.png'=>1, '.gif'=> 1, '.jpg'=>1, '.swf'=>1, 'README'=>1, 'phar'=>1);
 $config['excludeFiles'] = array('sugarportal/jscalendar/lang/calendar-hr.js'=>1);
 $config['skipBuilds'] = array('spotactions'=>1, 'richtext'=>1, 'sugarmdle'=>1, 'following'=>1,'inlineedit'=>1, 'notifications'=>1,'sugarsurvey'=>1, 'int'=>1,'internal'=>1 );
 $config['skipDirs'] = array('.AppleDouble'=>1,'Bitrock'=>1,'webpi'=>1, 'rome'=>1, 'scripts'=>1, 'aps'=>1, 'translations'=>1 );

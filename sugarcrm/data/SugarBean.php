@@ -1568,6 +1568,10 @@ class SugarBean
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
 			$this->date_modified = $GLOBALS['timedate']->nowDb();
+
+            if(!empty($this->field_defs['last_activity_date'])){
+                $this->last_activity_date = $this->date_modified;
+            }
 		}
 
         $this->_checkOptimisticLocking($action, $isUpdate);
@@ -1582,6 +1586,7 @@ class SugarBean
                 $this->modified_user_id = $current_user->id;
                 $this->modified_by_name = $current_user->user_name;
             }
+
         }
         if ($this->deleted != 1)
             $this->deleted = 0;

@@ -92,7 +92,7 @@
             </ul>
           </div>
           {{/if}}
-          <date class="date">Posted {{timeago attributes.date_created}}</date>
+          <date class="date">{{timeago attributes.date_created}}</date>
         </p>
         <div class="actions hide">
           {{#eq collection.user_id attributes.created_by}}
