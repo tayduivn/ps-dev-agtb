@@ -73,6 +73,7 @@ class SugarSearchEngineMetadataHelperTest extends Sugar_PHPUnit_Framework_TestCa
         {
             unlink($this->_cacheFile);
         }
+        SugarTestHelper::tearDown();
     }
 
     public function testGetFtsSearchFields()
