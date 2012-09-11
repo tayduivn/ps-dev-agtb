@@ -21,9 +21,21 @@ describe("datetimecombo field", function() {
             jsDate = new Date('2012-04-09T09:50:58Z');
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue).date).toEqual('04/09/2012');
-            expect(field.format(unformatedValue).dateTime).toEqual('04/09/2012 03:00');
-            // we round to nearest 15 minutes so 2:50 is 3:00 in this case
-            expect(field.format(unformatedValue).time).toEqual('03:00');
+            var month = jsDate.getMonth() + 1 + '';
+            month = month.length === 1 ? '0' + month : month;
+            var day   = jsDate.getDate() + '';
+            day   = day.length === 1 ? '0' + day : day;
+            var year  = jsDate.getFullYear() + '';
+
+            // we round to nearest 15 minutes so if user's locale produces something like
+            // 2:50, than that will be rounded up to 3:00; our test has :50 minutes so we add 1
+            var hours = jsDate.getHours() + 1 + '';
+            hours = hours.length === 1 ? '0' + hours : hours;
+
+            expect(field.format(unformatedValue).dateTime).toEqual(
+                month +'/'+ day +'/'+ year +' '+ hours +':'+'00');
+                
+            expect(field.format(unformatedValue).time).toEqual(hours + ':00');
             expect(field.format(unformatedValue).seconds).toEqual('00');
         });
         it("should convert 00am to 12am", function() {
@@ -32,7 +44,7 @@ describe("datetimecombo field", function() {
             myUser.set('timepref','H:i');
             jsDate = new Date("September 12, 1970 00:00:00")
             unformatedValue = jsDate.toISOString();
-            expect(field.format(unformatedValue).hours).toEqual(12);
+            expect(field.format(unformatedValue).hours).toEqual('12');
         });
     });
 });
