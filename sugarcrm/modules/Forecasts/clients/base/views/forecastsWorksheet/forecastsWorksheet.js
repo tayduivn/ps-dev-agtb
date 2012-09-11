@@ -481,29 +481,39 @@
 
             var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
             var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
+            // entered amount
             var amount = parseFloat(model.get('amount'));
+            // base rate
+            var base_rate = parseFloat(model.get('base_rate'));
+            // calculated base amount
+            var amount_base = amount * base_rate;
             var included = model.get('forecast');
             var best = parseFloat(model.get('best_case'));
             var worst = parseFloat(model.get('worst_case'));
+            // calculated base amount
+            var best_base = best * base_rate;
+            var worst_base = worst * base_rate;
 
+            // all totals are in base rate
             if(won)
             {
-                wonAmount += amount;
+                wonAmount += amount_base;
                 wonCount++;
             } else if(lost) {
-                lostAmount += amount;
+                lostAmount += amount_base;
                 lostCount++;
             }
 
             if(included == true || included == 1) {
-                includedAmount += amount;
-                includedBest += best;
-                includedWorst += worst;
+                includedAmount += amount_base;
+                includedBest += best_base;
+                includedWorst += worst_base;
                 includedCount++;
             }
 
-            overallAmount += amount;
-            overallBest += best;
+            overallAmount += amount_base;
+            overallBest += best_base;
+
         });
 
         //Now see if we need to add the expected opportunity amounts
@@ -516,27 +526,35 @@
                     var best = model.get('expected_best_case');
                     var worst = model.get('expected_worst_case');
 
-                    //Check for null condition and, if so, set to 0
-                    amount = amount != null ? parseFloat(amount) : 0;
-                    best = best != null ? parseFloat(best) : 0;
+                   var base_rate = parseFloat(model.get('base_rate'));
+                   var amount_base = amount * base_rate;
+                   var best_base = best * base_rate;
+                   var worst_base = worst * base_rate;
+
+                   //Check for null condition and, if so, set to 0
+                   amount_base = amount_base != null ? amount_base : 0;
+                   best_base = best_base != null ? best_base : 0;
 
                     if(model.get('include_expected') == 1)
                     {
-                        includedAmount += amount;
-                        includedBest += best;
-                        includedWorst += worst;
+                        includedAmount += amount_base;
+                        includedBest += best_base;
+                        includedWorst += worst_base;
                     }
 
-                    overallAmount += amount;
-                    overallBest += best;
+                    overallAmount += amount_base;
+                    overallBest += best_base;
+
                }
            });
         }
 
+        /*
         includedAmount = app.currency.formatAmountLocale(includedAmount);
         includedBest = app.currency.formatAmountLocale(includedBest);
         overallAmount = app.currency.formatAmountLocale(overallAmount);
         overallBest = app.currency.formatAmountLocale(overallBest);
+        */
 
         self.includedModel.set({
             includedAmount : includedAmount,
