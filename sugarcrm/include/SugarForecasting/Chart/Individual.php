@@ -215,9 +215,12 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                 $dataset_key = "amount";
             }
 
+            // Bug 56330: if the dataset_key doesn't exist default to 0
+            $dataset_value = (isset($data[$dataset_key])) ? $data[$dataset_key] : 0;
+
             // put the values in to their proper locations and add to any that are already there
-            $this->values[$month_value_key]['values'][$value_key] += number_format($data[$dataset_key], 2, '.', '');
-            $this->values[$month_value_key]['gvalue'] += number_format($data[$dataset_key], 2, '.', '');
+            $this->values[$month_value_key]['values'][$value_key] += number_format($dataset_value, 2, '.', '');
+            $this->values[$month_value_key]['gvalue'] += number_format($dataset_value, 2, '.', '');
 
         }
 
