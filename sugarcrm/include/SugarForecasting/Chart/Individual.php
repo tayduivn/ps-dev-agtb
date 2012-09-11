@@ -68,7 +68,12 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
     public function __construct($args)
     {
         if (isset($args['category'])) {
-            $this->category = strtolower($args['category']);
+            $cat = "";
+            if(is_array($args['category'])) {
+                $this->category = strtolower(array_shift($args['category']));
+            } else {
+                $this->category = strtolower($args['category']);
+            }
         }
         if (isset($args['group_by']) && !empty($args['group_by'])) {
             $this->group_by = strtolower($args['group_by']);
@@ -170,6 +175,9 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         // get the language strings for the modules that we need
         $forecast_strings = return_module_language($current_language, 'Forecasts');
         $opp_strings = return_module_language($current_language, 'Opportunities');
+
+        // default the label name to empty to prevent a notice from fireing
+        $label_name = "";
 
         // load up the data into the chart
         foreach ($this->dataArray as $data) {

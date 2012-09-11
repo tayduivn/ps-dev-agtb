@@ -27,12 +27,22 @@
      */
     toggleIncludeInForecast:function(model)
     {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() {
-        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
-        	this.render(); 
-        }, this)});
+    	var self = this;
+        
+        var values = {};
+        values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
+		values["current_user"] = app.user.get('id');
+		values["isDirty"] = true;
+		
+		//If there is an id, add it to the URL
+        if(model.isNew())
+        {
+        	model.url = app.api.buildURL('ForecastWorksheets', 'create');
+        } else {
+        	model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":model.get('id')});
+        }
+        
+        model.set(values);
     },
 
     /**
@@ -295,8 +305,22 @@
         _.each(fields, function(field, key){
             var name = field.name;
             var fieldDef = { "sName": name, "aTargets": [ key ] };
-            if(typeof(field.type) != "undefined" && field.type == "bool"){
-            	fieldDef["sSortDataType"] = "dom-checkbox";
+            if(typeof(field.type) != "undefined")
+            {
+                switch(field.type)
+                {
+                    case "bool":
+                        fieldDef["sSortDataType"] = "dom-checkbox";
+                        break;
+
+                    case "int":
+                    case "currency":
+                    case "decimal":
+                    case "float":
+                    case "numeric":
+                        fieldDef["sSortDataType"] = "dom-number";
+                        break;
+                }
             }
             columnDefs.push(fieldDef);
             columnKeys[name] = key;
@@ -445,6 +469,7 @@
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
+        var includedWorst = 0;
         var overallAmount = 0;
         var overallBest = 0;
         var includedCount = 0;
@@ -458,6 +483,7 @@
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
                 'best_case' : includedBest,
+                'worst_case' : includedWorst,
                 'timeperiod_id' : self.timePeriod,
                 'lost_count' : lostCount,
                 'lost_amount' : lostAmount,
@@ -482,6 +508,7 @@
             var amount = parseFloat(model.get('amount'));
             var included = model.get('forecast');
             var best = parseFloat(model.get('best_case'));
+            var worst = parseFloat(model.get('worst_case'));
 
             if(won)
             {
@@ -495,6 +522,7 @@
             if(included == true || included == 1) {
                 includedAmount += amount;
                 includedBest += best;
+                includedWorst += worst;
                 includedCount++;
             }
 
@@ -505,11 +533,12 @@
         //Now see if we need to add the expected opportunity amounts
         if(this.context.forecasts.forecastschedule.models)
         {
-           _.each(this.context.forecasts.forecastschedule.models, function(model) {
+            _.each(this.context.forecasts.forecastschedule.models, function(model) {
                if(model.get('status') == 'Active')
                {
                     var amount = model.get('expected_amount');
                     var best = model.get('expected_best_case');
+                    var worst = model.get('expected_worst_case');
 
                     //Check for null condition and, if so, set to 0
                     amount = amount != null ? parseFloat(amount) : 0;
@@ -519,6 +548,7 @@
                     {
                         includedAmount += amount;
                         includedBest += best;
+                        includedWorst += worst;
                     }
 
                     overallAmount += amount;
@@ -530,7 +560,8 @@
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
-            includedCount : includedCount
+            includedCount : includedCount,
+            includedWorst : includedWorst
         });
         self.includedModel.change();
 
@@ -542,6 +573,7 @@
 
         var totals = {
             'best_case' : includedBest,
+            'worst_case' : includedWorst,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,
             'lost_amount' : lostAmount,
