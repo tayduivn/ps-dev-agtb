@@ -14,44 +14,44 @@
     color: @green;
 }
 
-#todo-add {
+.todo-add {
     float: none;
     margin-left: -4px;
 }
 
-#todo-container {
+.todo-container {
     width: 340px;
     height: 217px;
     overflow: auto;
     padding: 12px 0;
 }
 
-#todo-container .tab-content {
+.todo-container .tab-content {
     overflow: hidden;
 }
 
-#todo-date-container {
+.todo-date-container {
     display: none;
 }
-#todo-add-container {
+.todo-add-container {
     display: inline-block;
     position:absolute;
 }
 
-#todo-list-widget.open .tabbable {
+.todo-list-widget.open .tabbable {
     display:inline-block;
 }
 
-#todo-pills {
+.todo-pillbox {
     margin-left: 14px;
     margin-bottom: 12px;
 }
 
-#todo-pills > li {
+.todo-pillbox > li {
     margin-left: 5px;
 }
 
-#todo-pills li > a {
+.todo-pillbox li > a {
     outline: none;
 }
 
@@ -116,6 +116,15 @@
     margin-left: 30px;
 }
 
+.todo-pillbox.header span {
+    display: inline;
+}
+
+.todo-pillbox.header span.todo-badge {
+    position: relative;
+    top: -1px;
+}
+
 .todo-badge {
     background-color: @blueLight;
     border-bottom: 1px solid @blue;
@@ -131,12 +140,12 @@
     box-shadow: 0 1px 0 rgba(37, 37, 37, .77);
 }
 
-#overdue-badge {
+.overdue-badge {
     background-color: @red;
     border-bottom: 1px solid #B41F20;
 }
 
-#overdue-badge.todo-badge.empty, .todo-badge.empty {
+.overdue-badge.todo-badge.empty, .todo-badge.empty {
     background-color: #818181;
     border-bottom: 1px solid #616161;
 }

@@ -178,6 +178,12 @@
             <p>jsTree is a javascript based, cross browser tree component.</p>
           </label>
         </div>
+          <div class="span3">
+              <label>
+                  <h3><a href="./widgets.html#slider">Slider</a></h3>
+                  <p>jQuery range picker</p>
+              </label>
+          </div>
       </div> <!-- /row -->
       <div class="alert alert-info"><strong>Heads up!</strong> All javascript plugins require the latest version of jQuery.</div>
     </section>
@@ -2622,6 +2628,127 @@ var aDataSet = [
           </div>
       </section>
 
+      <!-- Slider
+     ================================================== -->
+      <section id="slider">
+          <div class="page-header">
+              <h1>Slider <small>jquery.nouislider.js</small></h1>
+          </div>
+          <div class="row">
+              <div class="span3 columns">
+                  <h3>About noUiSlider</h3>
+                  <p>noUiSlider is a little jQuery plugin that makes really cool (double) range sliders. Every slider can have two handles to select a range, a fixed minimum or maximum can be set to select a limit, or two handles can be used, to simply pick some points. </p>
+                  <a href="js/jquery.nouislider.js" target="_blank" class="btn">Download file</a>
+              </div>
+              <div class="span9 columns">
+                  <h2>Example</h2>
+
+
+                  <div class="well">
+
+                      <div id="sliderExample" class="noUiSlider"></div>
+                  </div>
+
+                  <hr>
+
+                  <h2>Using noUiSlider</h2>
+                  <p>Initiating a basic slider:</p>
+<pre class="prettyprint linenums">
+  $('#sliderExample').noUiSlider('init');
+</pre>
+                  <h3>Options</h3>
+
+
+                  <table class="table table-bordered table-striped">
+                      <tbody><tr>
+                          <th>Name</th>
+                          <th>Used in functions</th>
+                          <th>Parameter type</th>
+                          <th>Possible parameter values</th>
+                          <th>Description</th>
+                      </tr>
+                      <tr>
+                          <td>knobs</td>
+                          <td>init</td>
+                          <td>[INT]</td>
+                          <td>1, 2</td>
+                          <td>Specifies the number of knobs.</td>
+                      </tr>
+                      <tr>
+                          <td>connect</td>
+                          <td>init</td>
+                          <td>[MIXED]</td>
+                          <td>"upper", "lower", false, true</td>
+                          <td>Whether to connect the middle bar to the knobs.</td>
+                      </tr>
+                      <tr>
+                          <td>scale</td>
+                          <td>init, move, value</td>
+                          <td>[ARRAY]</td>
+                          <td>An array containing two values. Both values can be positive or negative, but the first value must be lower than the second.</td>
+                          <td>The values represented by the slider knobs.</td>
+                      </tr>
+                      <tr>
+                          <td>start</td>
+                          <td>init</td>
+                          <td>[ARRAY]</td>
+                          <td>An array containing two values, relative to the values given in {scale}.</td>
+                          <td>The starting positions for the knobs, mapped to {scale}.</td>
+                      </tr>
+                      <tr>
+                          <td>to</td>
+                          <td>move</td>
+                          <td>[INT]</td>
+                          <td>Any value, relative to {scale}. The value will be corrected to fit within the edges of the slider. The upper knob will not be place below and lower knob, and vice versa.</td>
+                          <td>The position to move a knob to.
+                          </td></tr><tr>
+                          <td>knob</td>
+                          <td>move</td>
+                          <td>[MIXED]</td>
+                          <td>0,1,"lower","upper"</td>
+                          <td>The knob to move.</td>
+                      </tr>
+                      <tr>
+                          <td>change</td>
+                          <td>init</td>
+                          <td>[FUNCTION]</td>
+                          <td>A <pre class="prettyprint"><span class="kwd">function</span><span class="pun">(){...}</span></pre> declaration, or a reference to a function object: <pre class="prettyprint"><span class="kwd">var</span><span class="pln"> doSomething </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">function</span><span class="pun">(){...}</span></pre></td>
+                          <td>The function to be called on every change.
+                          </td></tr><tr>
+                          <td>end</td>
+                          <td>init</td>
+                          <td>[FUNCTION]</td>
+                          <td>Same as above ^</td>
+                          <td>The function when a knob is no longer being changed.</td>
+                      </tr>
+                      <tr>
+                          <td>step</td>
+                          <td>init</td>
+                          <td>[INT]</td>
+                          <td>Any value smaller than the difference between {start[0]} and {start[1]}. If you pick a value too big or too small relative to your {scale} setting, this option might not make sense.</td>
+                          <td>Whether, and at what intervals, the slider should snap to a new position. Adheres to {scale}</td>
+                      </tr>
+                      <tr>
+                          <td>save</td>
+                          <td>move, value</td>
+                          <td>[BOOLEAN]</td>
+                          <td>true, false</td>
+                          <td>Whether a scale give to a function should become the default for the slider it is called on.</td>
+                      </tr>
+                      </tbody></table>
+
+                  <h3>Markup</h3>
+
+
+<pre class="prettyprint linenums">
+    &lt;div id="sliderExample" class="noUiSlider"&gt;&lt;/div&gt;
+</pre>
+
+
+
+              </div>
+          </div>
+      </section>
 
     </div>
     
@@ -2634,7 +2761,9 @@ var aDataSet = [
     <script src="js/chosen.jquery.min.js"></script>
     <script src="js/jquery.jstree.js"></script>
     <script src="js/jquery.dataTables.js"></script>
-    <script src="js/styleguide.js"></script>
+    <script src="js/jquery.nouislider.min.js"></script>
+
+  <script src="js/styleguide.js"></script>
     <script src="js/application.js"></script>
 
   	<script>
@@ -2859,6 +2988,52 @@ var aDataSet = [
           });
 
 
+          $(function(){
+              var start = new Array(0,100);
+              var segments = 11;
+              var init = function(){
+
+
+
+                  $("#sliderExample").empty().noUiSlider( 'init', {
+
+                      start: start,
+                      change:
+                              function(){
+
+                                  var values = $(this).noUiSlider( 'value' );
+
+                                  $(this).find('.noUi-lowerHandle .infoBox .tooltip-inner').text(values[0]+"%");
+                                  $(this).find('.noUi-upperHandle .infoBox .tooltip-inner').text(values[1]+"%");
+
+                              }
+
+                  })
+                          .append(function(){
+                              var html = "";
+                              var w = $(this).width();
+                              var segmentWidth = w/(segments-1);
+                              var acum = 0;
+                              for(i=0;i<segments;i++) {
+                                  acum = (segmentWidth * i)-2;
+                                  html += "<div class='ticks' style='left:"+acum+"px'></div>";
+                              }
+                              return html;
+
+                          })
+                          .find('.noUi-handle div').each(function(index){
+
+                              $(this).append('<div class="tooltip fade top in infoBox"><div class="tooltip-arrow"></div><div class="tooltip-inner">'+start[index]+'%'+'</div></div>');
+
+                          });
+
+              };
+
+              init.call();
+
+
+
+          });
 
           function fnFormatDetails( oTable, nTr )
           {
