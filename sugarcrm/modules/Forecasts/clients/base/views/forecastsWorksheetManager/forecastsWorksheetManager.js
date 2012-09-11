@@ -313,15 +313,6 @@
                 
         });
 
-        /*
-        amount = app.currency.formatAmountLocale(amount);
-        quota = app.currency.formatAmountLocale(quota);
-        best_case = app.currency.formatAmountLocale(best_case);
-        best_adjusted = app.currency.formatAmountLocale(best_adjusted);
-        likely_case = app.currency.formatAmountLocale(likely_case);
-        likely_adjusted = app.currency.formatAmountLocale(likely_adjusted);
-        */
-
         self.totalModel.set({
             amount : amount,
             quota : quota,

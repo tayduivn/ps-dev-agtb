@@ -573,13 +573,6 @@
            });
         }
 
-        /*
-        includedAmount = app.currency.formatAmountLocale(includedAmount);
-        includedBest = app.currency.formatAmountLocale(includedBest);
-        overallAmount = app.currency.formatAmountLocale(overallAmount);
-        overallBest = app.currency.formatAmountLocale(overallBest);
-        */
-
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
