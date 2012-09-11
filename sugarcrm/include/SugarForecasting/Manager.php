@@ -49,6 +49,8 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
                               "forecast" => 0,
                               "forecast_id" => '',
                               "worksheet_id" => '',
+                              "currency_id" => '',
+                              "base_rate" => 0,
                               "show_opps" => false,
                               "timeperiod_id" => "",
                               "id" => ""
@@ -197,7 +199,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
 						   "w.forecast_type, " .
 						   "w.related_id, " .
 						   "w.version, " .
-						   "w.quota " .
+						   "w.quota, " .
+                           "w.currency_id, " .
+                           "w.base_rate " .
 						   "from users u " .
 						   "inner join users u2 " .
 						   		"on u.id = u2.reports_to_id " .
@@ -231,6 +235,8 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
             $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
             $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
             $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
+            $data[$row['user_name']]['currency_id'] = $row['currency_id'];
+            $data[$row['user_name']]['base_rate'] = $row['base_rate'];
             $data[$row['user_name']]['forecast'] = $row['forecast'];
             $data[$row['user_name']]['version'] = $row['version'];
             if($row['version'] == 0)
@@ -300,7 +306,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
             $forecast_type = (User::isManager($id) && $id != $args['user_id']) ? 'ROLLUP' : 'DIRECT';
-            $forecast_query = "SELECT id, best_case, likely_case, worst_case, date_modified
+            $forecast_query = "SELECT id, best_case, likely_case, worst_case, date_modified, currency_id, base_rate
                                 FROM forecasts
                                 WHERE timeperiod_id = '" . $args['timeperiod_id'] . "'
                                     AND forecast_type = '" . $forecast_type . "'
@@ -320,6 +326,8 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
                 $data[$user_name]['worst_adjusted'] = $row['worst_case'];
                 $data[$user_name]['forecast_id'] = $row['id'];
                 $data[$user_name]['date_modified'] = $row['date_modified'];
+                $data[$user_name]['currency_id'] = $row['currency_id'];
+                $data[$user_name]['base_rate'] = $row['base_rate'];
             }
         }
 
