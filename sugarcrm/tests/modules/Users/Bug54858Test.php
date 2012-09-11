@@ -36,7 +36,7 @@ class Bug54858Test extends Sugar_PHPUnit_Framework_TestCase
         $this->user->save();
         $GLOBALS['current_user'] = $this->user;
         $this->vcal_url =  "{$GLOBALS['sugar_config']['site_url']}/vcal_server.php/type=vfb&source=outlook&email=" . urlencode($email);
-
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()
