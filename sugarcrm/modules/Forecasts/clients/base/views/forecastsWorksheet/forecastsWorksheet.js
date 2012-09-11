@@ -27,12 +27,22 @@
      */
     toggleIncludeInForecast:function(model)
     {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() {
-        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
-        	this.render(); 
-        }, this)});
+    	var self = this;
+        
+        var values = {};
+        values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
+		values["current_user"] = app.user.get('id');
+		values["isDirty"] = true;
+		
+		//If there is an id, add it to the URL
+        if(model.isNew())
+        {
+            model.url = self.url;
+        } else {
+            model.url = self.url + "/" + model.get('id');
+        }
+        
+        model.set(values);
     },
 
     /**
