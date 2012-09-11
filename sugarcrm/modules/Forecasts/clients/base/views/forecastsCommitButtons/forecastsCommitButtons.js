@@ -143,7 +143,6 @@
     		});
     		savebtn.addClass("disabled");
     		this.context.forecasts.set({commitButtonEnabled: true});
-    		this.context.forecasts.set({reloadWorksheetFlag: true});
     	}
     	
     },
