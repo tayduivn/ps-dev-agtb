@@ -1,4 +1,10 @@
 <div class="block">
   <h4>Leaderboard</h4>
-  <div id="{{guid}}"></div>
+  <div id="{{guid}}"><svg></svg></div>
 </div>
+<link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/nv.d3.css">
+<link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/sugar_colors.css">
+<script src="../styleguide/styleguide/js/nvd3/lib/d3.v2.js"></script>
+<script src="../styleguide/styleguide/js/nvd3/nv.d3.min.js"></script>
+<script src="../styleguide/styleguide/js/nvd3/src/models/pie.js"></script>
+<script src="../styleguide/styleguide/js/nvd3/src/models/pieChart.js"></script>

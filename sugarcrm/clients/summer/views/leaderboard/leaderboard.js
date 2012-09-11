@@ -11,48 +11,37 @@
 
         this.$el.show();
 
-        app.view.View.prototype._render.call(this);
-
         var layoutData = {guid: this.guid, title: this.options['title']};
 
-        if (typeof(this.options['urls']) != 'undefined') {
-            layoutData['urls'] = this.options['urls'];
-        }
-
         app.view.View.prototype._render.call(this);
 
-        $('.chartSelector').val(this.options['url']);
-
         App.api.call('GET', '../rest/v10/CustomReport/OpportunityLeaderboard', null, {success: function(o) {
-            var results = [];
+            var results = [{
+                key: "Opportunity Leaderboard",
+                values: []
+            }];
             for (i = 0; i < o.length; i++) {
-                results[results.length] = [o[i]['user_name'], parseInt(o[i]['amount'])];
+                results[0].values.push({
+                    label: o[i]['user_name'],
+                    value: parseInt(o[i]['amount'])
+                });
             }
 
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'User');
-            data.addColumn('number', 'Amount');
-            data.addRows(results);
+            $("#" + self.guid + " svg").css("width", $("#" + self.guid).width());
+            $("#" + self.guid + " svg").css("min-height", "300px");
+            nv.addGraph(function() {
+                var chart = nv.models.pieChart()
+                  .x(function(d) { console.log(d); return d.label })
+                  .y(function(d) { return d.value })
+                  .showLabels(true);
 
-            var options = {
-                colorAxis: {
-                    minValue: 0,
-                    colors: ['gray', '#4D90FE']}
-            };
+                d3.select("#" + self.guid + " svg")
+                  .datum(results)
+                  .transition().duration(1200)
+                  .call(chart);
 
-            console.log(self.guid);
-            var chart = new google.visualization.PieChart(document.getElementById(self.guid));
-            chart.draw(data, options);
+                return chart;
+            });
         }});
-    },
-
-    getData: function() {
-        var url = this.options['url'];
-        $.ajax({
-            url: url,
-            dataType: "json",
-            success: this.render,
-            context: this
-        });
     }
 })
