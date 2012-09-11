@@ -244,17 +244,18 @@ class SimpleMailer extends BaseMailer
      * @throws MailerException
      */
     private function transferAttachments(PHPMailer &$mailer) {
-        //$mailer->ClearAttachments(); // only necessary if the PHPMailer object can be re-used
+        $mailer->ClearAttachments();
 
         foreach ($this->attachments as $attachment) {
             if ($attachment instanceof Attachment) {
-                if (!$mailer->AddAttachment(
-                    $attachment->getPath(),
-                    $attachment->getName(),
-                    $attachment->getEncoding(),
-                    $attachment->getMimeType())
-                ) {
-                    throw new MailerException("Invalid attachment");
+                try {
+                    $mailer->AddAttachment(
+                        $attachment->getPath(),
+                        $attachment->getName(),
+                        $attachment->getEncoding(),
+                        $attachment->getMimeType());
+                } catch (Exception $e) {
+                    throw new MailerException("Failed to add the attachment at " . $attachment->getPath());
                 }
             } elseif ($attachment instanceof EmbeddedImage) {
                 if (!$mailer->AddEmbeddedImage(
@@ -264,7 +265,7 @@ class SimpleMailer extends BaseMailer
                     $attachment->getEncoding(),
                     $attachment->getMimeType())
                 ) {
-                    throw new MailerException("Invalid image");
+                    throw new MailerException("Failed to embed the image at " . $attachment->getPath());
                 }
             } else {
                 throw new MailerException("Invalid file");
