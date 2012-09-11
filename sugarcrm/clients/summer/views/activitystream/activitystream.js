@@ -11,11 +11,12 @@
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
         'drop .sayit': 'dropAttachment',
-        'click .deleteRecord': 'deleteRecord',
+        'dragstart .activitystream-attachment': 'saveAttachment'
     },
 
     initialize: function(options) {
-        this.opts = {params: {}};       
+    	this.opts = { params: {}};
+    	this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
 
         _.bindAll(this);
@@ -31,7 +32,9 @@
             this.collection = app.data.createBeanCollection("ActivityStream");
             this.collection.fetch(this.opts);
         }
-        
+
+    	this.collection['oauth_token'] = App.api.getOAuthToken();
+
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
@@ -144,16 +147,6 @@
         }});
     },
 
-    deleteRecord: function(event) {
-        var self = this,
-        recordId = this.$(event.currentTarget).data('id'),
-        recordModule = this.$(event.currentTarget).data('module'),
-        myPostUrl = 'ActivityStream/'+recordModule+'/'+recordId;
-        this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
-            self.collection.fetch(self.opts)
-        }});
-    },
-    
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
@@ -225,6 +218,37 @@
         });
     },
 
+    saveAttachment: function(event) {
+        // The following is only true for Chrome.
+        if(event.dataTransfer && event.dataTransfer.constructor == Clipboard &&
+            event.dataTransfer.setData('DownloadURL', 'http://www.sugarcrm.com')) {
+            var el = $(event.currentTarget),
+                mime = el.data("mime"),
+                name = el.data("filename"),
+                file = el.data("url"),
+                origin = document.location.origin,
+                path = [];
+
+            path = _.initial(document.location.pathname.split('/'));
+            path = path.concat(file.split('/'));
+
+            // Resolve .. and . in paths. Chrome doesn't do it for us.
+            for(var i = 0; i < path.length; i++) {
+                if(".." == path[i+1]) {
+                    delete path[i+1];
+                    delete path[i];
+                    i--;
+                }
+                if("." == path[i]) {
+                    delete path[i];
+                    i--;
+                }
+            }
+            path = _.compact(path);
+            event.dataTransfer.setData("DownloadURL", mime+":"+name+":"+origin+"/"+path.join('/'));
+        }
+    },
+
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
             var comments = model.get("comments");
@@ -245,10 +269,7 @@
             });
 
         }, this);
-        
-        // There maybe better way to make the following data available in hbt 
-        this.collection['oauth_token'] = App.api.getOAuthToken();
-        this.collection['user_id'] = app.user.get('id');         
+
         return app.view.View.prototype._renderHtml.call(this);
     },
 
