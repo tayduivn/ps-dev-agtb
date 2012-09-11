@@ -14,6 +14,7 @@
         });
     },
 
+    foo
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
