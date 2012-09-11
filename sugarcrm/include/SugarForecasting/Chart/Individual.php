@@ -188,6 +188,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             // figure out where this needs to be put in the values array
             $value_key = 0;
             // TODO support more fields.
+            // TODO Support bucket Mode.
             switch($this->group_by) {
                 case 'sales_stage':
                     $label_name = $opp_strings['LBL_SALES_STAGE'];
@@ -201,7 +202,8 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                     // break left out should fall though to the default
                 default:
                     $label_name = $opp_strings['LBL_FORECAST'];
-                    if($this->category == "committed") {
+                    // if this is not empty it means we are only showing committed
+                    if(!empty($this->category)) {
                         $value_key = 0;
                     } else if($data['forecast'] == 1) {
                         $value_key = 1;
