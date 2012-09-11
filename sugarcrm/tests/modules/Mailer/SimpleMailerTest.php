@@ -130,6 +130,27 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @group mailer
+     */
+    public function testClearRecipients_ClearToAndBccButNotCc() {
+        $mockMailer = self::getMock(
+            "SimpleMailer",
+            array("clearRecipientsTo", "clearRecipientsCc", "clearRecipientsBcc")
+        );
+
+        $mockMailer->expects(self::once())
+            ->method("clearRecipientsTo");
+
+        $mockMailer->expects(self::never())
+            ->method("clearRecipientsCc");
+
+        $mockMailer->expects(self::once())
+            ->method("clearRecipientsBcc");
+
+        $mockMailer->clearRecipients(true, false, true);
+    }
+
 //	public function testSend() {
 //		//@todo test the various code paths of send()
 //	}
