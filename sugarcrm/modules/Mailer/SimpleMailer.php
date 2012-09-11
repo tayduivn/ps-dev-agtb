@@ -122,19 +122,30 @@ class SimpleMailer extends BaseMailer
         foreach ($headers as $key => $value) {
             switch ($key) {
                 case EmailHeaders::From:
-                    $mailer->From     = $value[0];
-                    $mailer->FromName = $value[1]; //@todo might not want to require this value
+                    try {
+                        if (!$mailer->SetFrom($value[0], $value[1])) { //@todo might not want to require the second value
+                            // doesn't matter what the message is since we're going to eat phpmailerExceptions
+                            throw new phpmailerException();
+                        }
+                    } catch (Exception $e) {
+                        throw new MailerException("Failed to add the From header");
+                    }
+
                     break;
                 case EmailHeaders::ReplyTo:
-                    //$mailer->ClearReplyTos(); // only necessary if the PHPMailer object can be re-used
+                    // only allow PHPMailer to automatically set the Reply-To if this header isn't provided
+                    // so clear PHPMailer's Reply-To array if this header is provided
+                    $mailer->ClearReplyTos();
+
                     try {
-                        if ($mailer->AddReplyTo($value[0], $value[1])) { //@todo might not want to require the second value
+                        if (!$mailer->AddReplyTo($value[0], $value[1])) { //@todo might not want to require the second value
                             // doesn't matter what the message is since we're going to eat phpmailerExceptions
                             throw new phpmailerException();
                         }
                     } catch (Exception $e) {
                         throw new MailerException("Failed to add the Reply-To header");
                     }
+
                     break;
                 case EmailHeaders::Sender:
                     $mailer->Sender = $value;
@@ -213,7 +224,7 @@ class SimpleMailer extends BaseMailer
 
         if ($hasHtml) {
             $mailer->IsHTML(true);
-            $mailer->Encoding = self::EncodingBase64; // so that embedded images are encoding properly
+            $mailer->Encoding = self::EncodingBase64; // so that embedded images are encoded properly
             $mailer->Body     = $this->htmlBody;
         }
 
