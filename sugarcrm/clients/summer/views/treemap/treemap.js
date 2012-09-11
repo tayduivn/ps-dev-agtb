@@ -100,15 +100,20 @@
             }
 
             function display(d) {
-                console.log("Called display on ");
                 grandparent.datum(d.parent).on("click", transition).select("text").text(name(d));
                 var g1 = svg.insert("g", ".grandparent").datum(d).attr("class", "depth");
 
                 var g = g1.selectAll("g").data(d.children).enter().append("g");
 
+                // Transition for nodes with children.
                 g.filter(function(d) {
                     return d.children;
                 }).classed("children", true).on("click", transition);
+
+                // Navigate for nodes without children (leaves).
+                g.filter(function(d) {
+                    return !(d.children);
+                }).on("click", navigate);
 
                 var child_rects = g.selectAll(".child").data(function(d) {
                     return d.children || [d];
@@ -122,6 +127,13 @@
                 var label = g.append("text").attr("dy", ".75em").text(function(d) {
                     return d.name;
                 }).call(text);
+
+                function navigate(d) {
+                    var model = self.app.data.createBean(self.module);
+                    model.set("id", d.id);
+                    model.fetch();
+                    self.app.navigate(self.context, model);
+                }
 
                 function transition(d) {
                     if (transitioning || !d) return;
