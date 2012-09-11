@@ -82,9 +82,9 @@ class ForecastsViewSidecar extends SidecarView
         $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
 
         // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        $admin = new Administration();
-        $admin->retrieveSettings('base', true);
-        $show_buckets = ($admin->settings['base_show_buckets'] == 0) ? false : true;
+        $admin = BeanFactory::getBean("Administration");
+        $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
+        $show_buckets = ($forecastsSettings['forecast_categories'] == 'show_binary') ? false : true;
         $defaultSelections["category"] = $show_buckets ? array("100") : array("1");
         $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
