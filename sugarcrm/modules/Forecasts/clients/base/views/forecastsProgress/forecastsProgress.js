@@ -34,6 +34,13 @@
                     quota_best_amount : 0,
                     quota_best_percent : 0,
                     quota_best_above : 0,
+                    closed_worst_amount : 0,
+                    closed_worst_percent : 0,
+                    closed_worst_above : 0,
+                    quota_worst_amount : 0,
+                    quota_worst_percent : 0,
+                    quota_worst_above : 0,
+
                     pipeline : 0
                 });
 
@@ -42,6 +49,7 @@
         this.selectedTimePeriod = this.context.forecasts.get("selectedTimePeriod");
         this.likelyTotal = 0;
         this.bestTotal = 0;
+        this.worstTotal = 0;
         this.updateProgress();
     },
 
@@ -95,6 +103,7 @@
     recalculateRepTotals: function (totals) {
         this.likelyTotal = totals.amount;
         this.bestTotal = totals.best_case;
+        this.worstTotal = totals.worst_case;
         this.model.set({
             closed_amount : totals.won_amount,
             opportunities : totals.total_opp_count - totals.lost_count - totals.won_count,
@@ -110,6 +119,7 @@
     recalculateManagerTotals: function (totals) {
         this.likelyTotal = totals.likely_adjusted;
         this.bestTotal = totals.best_adjusted;
+        this.worstTotal = totals.worst_adjusted;
         this.model.set({
             quota_amount : totals.quota
         });
@@ -124,12 +134,18 @@
             closed_best_amount : this.getAbsDifference(this.bestTotal, this.model.get('closed_amount')),
             closed_best_percent : this.getPercent(this.bestTotal, this.model.get('closed_amount')),
             closed_best_above : this.checkIsAbove(this.bestTotal, this.model.get('closed_amount')),
+            closed_worst_amount : this.getAbsDifference(this.worstTotal, this.model.get('closed_amount')),
+            closed_worst_percent : this.getPercent(this.worstTotal, this.model.get('closed_amount')),
+            closed_worst_above : this.checkIsAbove(this.worstTotal, this.model.get('closed_amount')),
             quota_likely_amount : this.getAbsDifference(this.likelyTotal, this.model.get('quota_amount')),
             quota_likely_percent : this.getPercent(this.likelyTotal, this.model.get('quota_amount')),
             quota_likely_above : this.checkIsAbove(this.likelyTotal, this.model.get('quota_amount')),
             quota_best_amount : this.getAbsDifference(this.bestTotal, this.model.get('quota_amount')),
             quota_best_percent : this.getPercent(this.bestTotal, this.model.get('quota_amount')),
             quota_best_above : this.checkIsAbove(this.bestTotal, this.model.get('quota_amount')),
+            quota_worst_amount : this.getAbsDifference(this.worstTotal, this.model.get('quota_amount')),
+            quota_worst_percent : this.getPercent(this.worstTotal, this.model.get('quota_amount')),
+            quota_worst_above : this.checkIsAbove(this.worstTotal, this.model.get('quota_amount')),
             pipeline : this.calculatePipelineSize(this.likelyTotal, this.model.get('revenue'))
         });
     },
