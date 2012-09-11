@@ -65,6 +65,7 @@ class RestTestBug54528 extends RestTestBase {
 
         // relate
         $this->contact->accounts->add($account->id);
+        $GLOBALS['db']->commit();
     }
     
     public function tearDown()
@@ -93,6 +94,7 @@ class RestTestBug54528 extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '{$this->apiuser->id}'");            
         }
         parent::tearDown();
+        
     }
 
     public function testCreate() {

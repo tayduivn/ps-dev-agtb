@@ -59,6 +59,9 @@ class ReportsExportApiTest extends RestTestBase
     {
         $rep = new SavedReport();
         $rep->save_report(-1, $GLOBALS['current_user']->id, "Test Account Report", "Accounts","tabular",$this->reportDefs, 0, 1);
+        
+        $GLOBALS['db']->commit();
+
         $id = $rep->id;
         // call the Rest
         $restReply = $this->_restCall("Reports/{$id}/pdf",

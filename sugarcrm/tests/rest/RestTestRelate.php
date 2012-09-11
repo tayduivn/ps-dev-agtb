@@ -129,6 +129,8 @@ class RestTestRelate extends RestTestBase {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
+        
+        $GLOBALS['db']->commit();
 
         // Test normal fetch
         $restReply = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/opportunities");

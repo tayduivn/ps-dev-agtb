@@ -99,6 +99,7 @@ class RestTestList extends RestTestBase {
         foreach($this->files AS $file) {
             unlink($file);
         }
+        $GLOBALS['db']->commit();
     }
 
     public function testModuleSearch() {
@@ -128,6 +129,7 @@ class RestTestList extends RestTestBase {
                 $fav->save();
             }
         }
+        $GLOBALS['db']->commit();
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
@@ -201,7 +203,7 @@ class RestTestList extends RestTestBase {
         $bug->description = $bug->name;
         $bug->save();
         $this->bugs[] = $bug;
-        
+        $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Bugs?q=" . rawurlencode("UNIT TEST"));
         $tmp = array_keys($restReply['reply']['records']);
         $this->assertTrue(!empty($restReply['reply']['records'][$tmp[0]]['description']), "Description not filled out");
@@ -235,7 +237,7 @@ class RestTestList extends RestTestBase {
                 $fav->save();
             }
         }
-
+        $GLOBALS['db']->commit();
         // Test searching for a lot of records
         $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&max_num=30");
 
@@ -383,7 +385,8 @@ class RestTestList extends RestTestBase {
             }
         }
 
-
+        $GLOBALS['db']->commit();
+        
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
 

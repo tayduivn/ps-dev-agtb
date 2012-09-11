@@ -34,6 +34,8 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
+        // call a commit for transactional dbs
+        $GLOBALS['db']->commit();
 
     }
 
@@ -42,6 +44,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE 'UNIT%'");
+        $GLOBALS['db']->commit();
     }
 
     protected function _restLogin($username = '', $password = '')
