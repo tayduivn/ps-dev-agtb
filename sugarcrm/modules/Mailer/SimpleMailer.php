@@ -101,7 +101,6 @@ class SimpleMailer extends BaseMailer
 
     private function connectToHost(PHPMailer &$mailer) {
         try {
-            $mailer->smtp = new SMTP();
             $mailer->SmtpConnect();
         } catch (Exception $e) {
             //@todo need to tell the class what error messages to use, so the following is for reference only
