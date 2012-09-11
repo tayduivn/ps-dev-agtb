@@ -305,8 +305,22 @@
         _.each(fields, function(field, key){
             var name = field.name;
             var fieldDef = { "sName": name, "aTargets": [ key ] };
-            if(typeof(field.type) != "undefined" && field.type == "bool"){
-            	fieldDef["sSortDataType"] = "dom-checkbox";
+            if(typeof(field.type) != "undefined")
+            {
+                switch(field.type)
+                {
+                    case "bool":
+                        fieldDef["sSortDataType"] = "dom-checkbox";
+                        break;
+
+                    case "int":
+                    case "currency":
+                    case "decimal":
+                    case "float":
+                    case "numeric":
+                        fieldDef["sSortDataType"] = "dom-number";
+                        break;
+                }
             }
             columnDefs.push(fieldDef);
             columnKeys[name] = key;
