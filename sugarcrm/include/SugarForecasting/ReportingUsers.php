@@ -51,7 +51,7 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
 
         $args = $this->getArgs();
 
-        $id = $args['userId'];
+        $id = $args['user_id'];
 
         // Boolean do we want to return a Parent link with the result set
         $returnParent = false;
