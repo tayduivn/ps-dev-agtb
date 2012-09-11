@@ -1607,8 +1607,13 @@
 			var module_name = CAL.get("current_module").value;
 			
 			if(CAL.view == 'shared'){
-				user_name = cell.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("user_name");
-				user_id = cell.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("user_id");
+				// Pick the div that contains 2 custom attributes we
+				// use for storing values in case of 'shared' view
+				parentWithUserValues = $('div[user_id][user_name]'); 
+				// Pull out the values
+				user_name = parentWithUserValues.attr('user_name');
+				user_id = parentWithUserValues.attr('user_id');
+				
 				CAL.GR_update_user(user_id);
 			}else{
 				user_id = CAL.current_user_id;
