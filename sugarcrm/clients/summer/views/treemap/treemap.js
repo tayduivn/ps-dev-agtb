@@ -12,11 +12,6 @@
         this.$el.show();
 
         var layoutData = {guid: this.guid, title: this.options['title']};
-
-        if (typeof(this.options['urls']) != 'undefined') {
-            layoutData['urls'] = this.options['urls'];
-        }
-
         app.view.View.prototype._render.call(this);
 
         // Set up variables for d3 treemap.
