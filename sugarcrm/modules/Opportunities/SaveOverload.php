@@ -40,12 +40,7 @@ function perform_save(&$focus){
         $admin = BeanFactory::getBean('Administration');
         $admin->retrieveSettings('base');
         $commit_stage_dom = isset($admin->settings['base_buckets_dom']) ? $admin->settings['base_buckets_dom'] : 'commit_stage_dom';
-
-        $GLOBALS['log']->fatal($commit_stage_dom);
-
         $commit_stage_arr = $app_list_strings[$commit_stage_dom];
-
-        $GLOBALS['log']->fatal(var_export($commit_stage_arr, true));
 
         ksort($commit_stage_arr);
         //the keys of this array are upper limit of probability for each stage

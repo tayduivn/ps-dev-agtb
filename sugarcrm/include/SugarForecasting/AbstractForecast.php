@@ -27,95 +27,9 @@
  */
 
 require_once('include/SugarForecasting/ForecastInterface.php');
-
-abstract class SugarForecasting_AbstractForecast implements SugarForecasting_ForecastInterface
+require_once('include/SugarForecasting/AbstractForecastArgs.php');
+abstract class SugarForecasting_AbstractForecast extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastInterface
 {
-    /**
-     * @var array Rest Arguments
-     */
-    protected $args;
-
-    /**
-     * Are we a manager
-     *
-     * @var bool
-     */
-    protected $isManager = false;
-
-    /**
-     * Where we store the data we want to use
-     *
-     * @var array
-     */
-    protected $dataArray = array();
-
-    /**
-     * Class Constructor
-     * @param array $args       Service Arguments
-     */
-    public function __construct($args)
-    {
-        $this->setArgs($args);
-    }
-
-    /**
-     * Set the arguments
-     *
-     * @param array $args
-     * @return SugarForecasting_AbstractForecast
-     */
-    public function setArgs($args)
-    {
-        $this->args = $args;
-
-        return $this;
-    }
-
-    /**
-     * Return the arguments array
-     *
-     * @return array
-     */
-    public function getArgs()
-    {
-        return $this->args;
-    }
-
-    /**
-     * Get a specific Arg Value, If it doesn't exist return Empty
-     *
-     * @param $key
-     * @return string
-     */
-    public function getArg($key)
-    {
-        return isset($this->args[$key]) ? $this->args[$key] : "";
-    }
-
-    /**
-     * Set an Arg to track
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return SugarForecasting_AbstractForecast
-     */
-    public function setArg($key, $value)
-    {
-        $this->args[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Return the data array
-     *
-     * @return array
-     */
-    public function getDataArray()
-    {
-        return $this->dataArray;
-    }
-
     /**
      * Get the months for the current time period
      *

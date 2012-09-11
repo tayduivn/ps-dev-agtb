@@ -80,6 +80,7 @@ class ForecastWorksheet extends SugarBean {
         $worksheet->best_case = $this->best_case;
         $worksheet->likely_case = $this->amount;
         $worksheet->op_probability = $this->probability;
+        $worksheet->commit_stage = $this->commit_stage;
         $worksheet->forecast_type = "Direct";
         $worksheet->related_forecast_type = "Product";
         $worksheet->related_id = $this->id;

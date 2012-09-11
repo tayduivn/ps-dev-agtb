@@ -150,12 +150,14 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     	self::$repData["ops"][0]->probability = self::$repData["ops"][0]->probability + 10;
         $returnBest = '';
         $returnProb = '';
+        $returnCommitStage = '';
         
     	$postData = array("amount" => self::$repData["ops"][0]->amount,
                              "best_case" => self::$repData["op_worksheets"][0]->best_case,
                              "likely_case" => self::$repData["op_worksheets"][0]->likely_case,                            
                              "forecast" => self::$repData["forecast"],
                              "probability" => self::$repData["ops"][0]->probability,
+                             "commit_stage" => self::$repData["ops"][0]->commit_stage,
                              "id" => self::$repData["ops"][0]->id,
                              "worksheet_id" => self::$repData["op_worksheets"][0]->id,
                              "timeperiod_id" => self::$timeperiod->id,
@@ -175,15 +177,18 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 			{
 				$returnBest = $record["best_case"];
 				$returnProb = $record["probability"];
-				break;
+                $returnCommitStage = $record["commit_stage"];
 			}
 		}
 		
 		//check to see if the data to the Opportunity table was saved
 		$this->assertEquals($returnProb, self::$repData["ops"][0]->probability, "Opportunity data was not saved.");
 				
-		//check to see if the data to the Worksheet table was saved
-		$this->assertEquals($returnBest, self::$repData["op_worksheets"][0]->best_case, "Worksheet data was not saved.");
+		//check to see if the best_case in the Worksheet table was saved
+		$this->assertEquals($returnBest, self::$repData["op_worksheets"][0]->best_case, "Worksheet best_case was not saved.");
+
+        //check to see if the commit_stage in worksheet table was saved
+        $this->assertEquals($returnCommitStage, self::$repData["op_worksheets"][0]->commit_stage, "Worksheet commit_stage was not saved.");
 				
     }
     
