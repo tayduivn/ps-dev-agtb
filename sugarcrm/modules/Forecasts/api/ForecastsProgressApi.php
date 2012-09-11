@@ -60,10 +60,6 @@ class ForecastsProgressApi extends ModuleApi
      */
     protected $sales_stage_won = Array();
 
-	public function __construct()
-	{
-	}
-
     /**
      * Rest Api Registration Method
      *
@@ -103,17 +99,28 @@ class ForecastsProgressApi extends ModuleApi
      */
 	public function progressRep( $api, $args )
 	{
-        //load defaults and settings
-        $this->loadArgs($args);
-        //get the quota data for user
-        $quota = new Quota();
-        $quotaData = $quota->getRollupQuota($this->timeperiod_id, $this->user_id);
+        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
+        $args['timeperiod_id'] = isset( $args["timeperiod_id"]) ? $args["timeperiod_id"] : TimePeriod::getCurrentId();
 
-		$progressData = array(
-            "quota_amount"      => isset($quotaData["amount"]) ? $quotaData["amount"] : 0
-		);
+        // base file and class name
+        $file = 'include/SugarForecasting/Progress/Individual.php';
+        $klass = 'SugarForecasting_Progress_Individual';
 
-		return $progressData;
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
+
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if($include_file != $file) {
+            $klass = "Custom_" . $klass;
+        }
+
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
 	}
 
     /**
@@ -125,170 +132,26 @@ class ForecastsProgressApi extends ModuleApi
      */
 	public function progressManager( $api, $args )
 	{
-        //load defaults and settings
-        $this->loadArgs($args);
+        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
+        $args['timeperiod_id'] = isset( $args["timeperiod_id"]) ? $args["timeperiod_id"] : TimePeriod::getCurrentId();
+        // base file and class name
+        $file = 'include/SugarForecasting/Progress/Manager.php';
+        $klass = 'SugarForecasting_Progress_Manager';
 
-        //create opportunity to use to build queries
-        $this->opportunity = new Opportunity();
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
 
-        //get data
-		$progressData = array(
-            "closed_amount"     => $this->getClosedAmount($this->user_id, $this->timeperiod_id, $this->sales_stage_won),
-            "opportunities"     => $this->getPipelineOpportunityCount($this->user_id, $this->timeperiod_id, $this->sales_stage_won, $this->sales_stage_lost),
-            "pipeline_revenue"  => $this->getPipelineRevenue($this->user_id, $this->timeperiod_id, $this->sales_stage_won, $this->sales_stage_lost)
-		);
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if($include_file != $file) {
+            $klass = "Custom_" . $klass;
+        }
 
-		return $progressData;
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
 	}
-
-    /**
-     * get settings and load default arguments in the case that they aren't passed into the api endpoint
-     *
-     * @param $args
-     */
-    public function loadArgs($args) {
-        $admin = new Administration();
-        $admin->retrieveSettings();
-
-        //check for timeperiod and userid from args passed in, default them if they weren't passed in
-        $this->user_id = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
-        $this->timeperiod_id = isset( $args["timeperiod_id"]) ? $args["timeperiod_id"] : TimePeriod::getCurrentId();
-
-        // decode and json decode the settings from teh administration to set the sales stages for closed won and closed lost
-        $this->sales_stage_won = json_decode(html_entity_decode($admin->settings["base_sales_stage_won"]));
-        $this->sales_stage_lost = json_decode(html_entity_decode($admin->settings["base_sales_stage_lost"]));
-    }
-
-    /**
-     * retreives the number of opportunities set to be used in this forecast period, excludes only the closed stages
-     *
-     * @param null $user_id
-     * @param null $timeperiod_id
-     * @param $excluded_sales_stages_won sales stages won to not include from settings
-     * @param $excluded_sales_stages_lost sales stages lost to not include from settings
-     * @return mixed
-     */
-    protected function getPipelineOpportunityCount( $user_id = NULL, $timeperiod_id = NULL, $excluded_sales_stages_won, $excluded_sales_stages_lost  )
-   	{
-        //set user ids and timeperiods
-        $where = "( users.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
-        $where .= " OR opportunities.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
-   		$where .= " AND opportunities.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
-
-
-        //per requirements, exclude the sales stages won
-        if(count($excluded_sales_stages_won)) {
-           foreach($excluded_sales_stages_won as $exclusion)
-           {
-               $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
-           }
-        }
-
-        //per the requirements, exclude the sales stages for closed lost
-        if(count($excluded_sales_stages_lost)) {
-           foreach($excluded_sales_stages_lost as $exclusion)
-           {
-               $where .= " AND opportunities.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
-           }
-        }
-
-        // no deleted opportunities
-        $where .= " AND opportunities.deleted = 0";
-
-        //build the query
-   		$query = $this->opportunity->create_list_query(NULL, $where);
-   		$query = $this->opportunity->create_list_count_query($query);
-
-   		$result = $GLOBALS['db']->query($query);
-   		$row = $GLOBALS['db']->fetchByAssoc($result);
-   		$opportunitiesCount = $row['c'];
-
-   		return $opportunitiesCount;
-   	}
-
-
-    /**
-     * retrieves the amount of closed won opportunities
-     *
-   	 * @param null $user_id
-   	 * @param null $timeperiod_id
-     * @param $excluded_sales_stages_won sales stages won to not include from settings
-   	 *
-   	 * @return int
-   	 */
-   	public function getClosedAmount( $user_id = NULL, $timeperiod_id = NULL, $sales_stage_won=array() )
-   	{
-   		$amountSum = 0;
-
-        //set user ids and timeperiods
-        $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
-        $query .= " ON o.assigned_user_id = u.id";
-        $query .= " WHERE o.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
-        $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
-        $query .= " OR o.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
-
-        //pre requirements, include only closed won opportunities
-        if(!empty($sales_stage_won))
-        {
-           $query .= " AND o.sales_stage in ( '";
-           $query .= join("','", $sales_stage_won) . "')";
-        }
-
-        $result = $GLOBALS['db']->query($query);
-
-   		while ($row = $GLOBALS['db']->fetchByAssoc($result))
-        {
-   			$amountSum = $row["amount"];
-   		}
-
-   		return $amountSum;
-   	}
-
-    /**
-     * retrieves the amount of opportunities less the closed won/lost stages
-     *
-   	 * @param null $user_id
-   	 * @param null $timeperiod_id
-     * @param $excluded_sales_stages_won sales stages won to not include from settings
-     * @param $excluded_sales_stages_lost sales stages lost to not include from settings
-   	 *
-   	 * @return int
-   	 */
-   	public function getPipelineRevenue( $user_id = NULL, $timeperiod_id = NULL, $excluded_sales_stages_won, $excluded_sales_stages_lost )
-   	{
-   		$amountSum = 0;
-
-        //set user ids and timeperiods
-        $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
-        $query .= " ON o.assigned_user_id = u.id";
-        $query .= " WHERE o.timeperiod_id = " . $GLOBALS['db']->quoted($timeperiod_id);
-        $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $GLOBALS['db']->quoted($user_id);
-        $query .= " OR o.assigned_user_id = " . $GLOBALS['db']->quoted($user_id) . ")";
-
-
-        //per requirements, exclude the sales stages won
-        if(count($excluded_sales_stages_won)) {
-           foreach($excluded_sales_stages_won as $exclusion)
-           {
-               $query .= " AND o.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
-           }
-        }
-
-        //per the requirements, exclude the sales stages for closed lost
-        if(count($excluded_sales_stages_lost)) {
-           foreach($excluded_sales_stages_lost as $exclusion)
-           {
-               $query .= " AND o.sales_stage != " . $GLOBALS['db']->quoted($exclusion);
-           }
-        }
-
-       $result = $GLOBALS['db']->query($query);
-
-        while ($row = $GLOBALS['db']->fetchByAssoc($result))
-       {
-            $amountSum = $row["amount"];
-        }
-
-        return $amountSum;
-   	}
 }
