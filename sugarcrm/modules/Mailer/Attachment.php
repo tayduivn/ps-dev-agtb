@@ -21,6 +21,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'IMailer.php';
+
 class Attachment
 {
     protected $path;
@@ -68,7 +70,7 @@ class Attachment
     }
 
     public function getMimeType() {
-        return $this->getMimeType();
+        return $this->mimeType;
     }
 
     public function getAsArray() {

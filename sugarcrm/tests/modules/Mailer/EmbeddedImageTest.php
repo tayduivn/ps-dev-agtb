@@ -1,6 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -21,31 +19,32 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'Attachment.php';
+require_once('modules/Mailer/EmbeddedImage.php');
 
-class EmbeddedImage extends Attachment
+class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $cid;
-
-    public function __construct($path, $cid, $name = null, $encoding = IMailer::EncodingBase64, $mimeType = 'application/octet-stream') {
-        $this->setCid($cid);
-        parent::__construct($path, $name, $encoding, $mimeType);
-    }
-
-    public function setCid($cid) {
-        $this->cid = $cid;
-    }
-
-    public function getCid() {
-        return $this->cid;
-    }
-
-    public function getAsArray() {
-        return array_merge(
-            parent::getAsArray(),
-            array(
-                 'cid' => $this->getCid()
-            )
+    /**
+     * @group mailer
+     */
+    public function testGetAsArray() {
+        $expected      = array(
+            'path' => "path/to/somewhere",
+            'cid'  => "1234",
+            'name' => "abcd",
         );
+        $embeddedImage = new EmbeddedImage($expected['path'], $expected['cid'], $expected['name']);
+        $actual        = $embeddedImage->getAsArray();
+
+        $key = "path";
+        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
+        self::assertEquals($expected['path'], $actual['path'], "The paths don't match");
+
+        $key = "cid";
+        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
+        self::assertEquals($expected['cid'], $actual['cid'], "The CIDs don't match");
+
+        $key = "name";
+        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
+        self::assertEquals($expected['name'], $actual['name'], "The names don't match");
     }
 }
