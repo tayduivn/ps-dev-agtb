@@ -69,7 +69,7 @@
           <div class="activitystream-attachments">
             <ul class="thumbnails">
             {{#each attributes.notes}}
-              <li class="span4">
+              <li class="span4 activitystream-attachment" data-url="{{{this.url}}}" data-mime="{{{this.file_mime_type}}}" data-filename="{{{this.filename}}}">
                 {{#if this.image}}
                 <a href="#attachment-{{this.id}}" data-toggle="modal">
                 <img src="{{this.url}}" alt="{{this.filename}}" />
@@ -89,17 +89,12 @@
               </a>
               </li>
             {{/each}}
-            </ul> 
+            </ul>
           </div>
           {{/if}}
           <date class="date">Posted {{timeago attributes.date_created}}</date>
         </p>
         <div class="actions hide">
-          {{#eq collection.user_id attributes.created_by}}
-          {{#eq attributes.activity_type "posted"}}
-          <a data-toggle="modal" data-module="ActivityStream" data-id="{{attributes.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
-          {{/eq}}
-          {{/eq}}
           <a data-toggle="modal" href="#reply" class="comment btn btn-mini reply"><i class="icon-comment"></i></a>
         </div>
         <ul>
@@ -112,7 +107,7 @@
                 {{/if}}
                 <li style="">
                   <a href="" class="pull-left">
-                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{../collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{{this.value}}}<br>
@@ -121,7 +116,7 @@
                         <div class="activitystream-attachments">
                           <ul class="thumbnails">
                           {{#each this.notes}}
-                            <li class="span4">
+                            <li class="span4 activitystream-attachment">
                               {{#if this.image}}
                               <a href="#attachment-{{this.id}}" data-toggle="modal">
                               <img src="{{this.url}}" alt="{{this.filename}}" />
@@ -147,12 +142,6 @@
 
                     <date class="date">Commented {{timeago this.date_created}}</date>
                   </p>
-                  {{#eq ../collection.user_id this.created_by}}
-                    <div class="actions hide">
-                      <a data-toggle="modal" data-module="ActivityComments" data-id="{{this.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
-                    </div>  
-                  {{/eq}}
-                                
                 </li>
                 {{#if this._stophidden}}
                     </div>
