@@ -100,7 +100,6 @@ class ReportsExportApi extends SugarApi {
             $reporter = new Report(html_entity_decode($report->content), '', '');
             $reporter->layout_manager->setAttribute("no_sort",1);
             //Translate pdf to correct language
-            $module_for_lang = $reporter->module;
             $mod_strings = return_module_language($current_language, 'Reports');
 
             //Generate actual pdf
