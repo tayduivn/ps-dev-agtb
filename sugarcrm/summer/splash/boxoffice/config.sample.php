@@ -6,6 +6,6 @@ $config = array(
           "user" => "root",
           "password" => "root",
      ),
-    "top_url" => "http://localhost:8888/Mango/build/rome/builds/ent/sugarcrm/",
+    "top_url" => "http://<host>:<port>/<web_root>/",
     "google_key" => "AIzaSyCEKeg7I_f7QpD1IIEFhlLPXJfLSEo7If8",
 );

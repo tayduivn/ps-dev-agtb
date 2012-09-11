@@ -5,6 +5,6 @@ RewriteEngine On
 # absolute physical path to the directory that contains this htaccess file.
 #
 # RewriteBase /
-RewriteBase /Mango/build/rome/builds/ent/sugarcrm/summer/splash/
+RewriteBase /<web_root>/summer/splash/
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^rest rest.php [L]
