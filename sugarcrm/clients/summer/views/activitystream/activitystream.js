@@ -11,7 +11,8 @@
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
         'drop .sayit': 'dropAttachment',
-        'dragstart .activitystream-attachment': 'saveAttachment'
+        'dragstart .activitystream-attachment': 'saveAttachment',
+        'click .deleteRecord': 'deleteRecord',
     },
 
     initialize: function(options) {
@@ -33,7 +34,9 @@
             this.collection.fetch(this.opts);
         }
 
-    	this.collection['oauth_token'] = App.api.getOAuthToken();
+        // There maybe better way to make the following data available in hbt 
+        this.collection['oauth_token'] = App.api.getOAuthToken();
+        this.collection['user_id'] = app.user.get('id'); 
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
@@ -147,6 +150,16 @@
         }});
     },
 
+    deleteRecord: function(event) {
+        var self = this,
+        recordId = this.$(event.currentTarget).data('id'),
+        recordModule = this.$(event.currentTarget).data('module'),
+        myPostUrl = 'ActivityStream/'+recordModule+'/'+recordId;
+        this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
+            self.collection.fetch(self.opts)
+        }});
+    },
+    
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
@@ -269,7 +282,7 @@
             });
 
         }, this);
-
+        
         return app.view.View.prototype._renderHtml.call(this);
     },
 
