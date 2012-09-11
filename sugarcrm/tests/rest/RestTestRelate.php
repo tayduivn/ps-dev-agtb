@@ -60,7 +60,7 @@ class RestTestRelate extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}'");
+        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
         
         parent::tearDown();
