@@ -1,6 +1,6 @@
 <div class="block">
   <h4>Treemap</h4>
-  <div id="{{guid}}"></div>
+  <div id="{{guid}}" class="opportunities-treemap"></div>
 </div>
-
+<!-- TODO: Remove this once d3's native. -->
 <script src="../styleguide/styleguide/js/nvd3/lib/d3.v2.js"></script>

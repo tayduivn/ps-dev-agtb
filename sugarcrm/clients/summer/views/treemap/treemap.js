@@ -100,8 +100,8 @@
             }
 
             function display(d) {
+                console.log("Called display on ");
                 grandparent.datum(d.parent).on("click", transition).select("text").text(name(d));
-                console.log(grandparent, d, grandparent.datum(d.parent).on("click", transition).select("text"));
                 var g1 = svg.insert("g", ".grandparent").datum(d).attr("class", "depth");
 
                 var g = g1.selectAll("g").data(d.children).enter().append("g");
@@ -110,16 +110,16 @@
                     return d.children;
                 }).classed("children", true).on("click", transition);
 
-                g.selectAll(".child").data(function(d) {
+                var child_rects = g.selectAll(".child").data(function(d) {
                     return d.children || [d];
                 }).enter().append("rect").attr("class", "child").call(rect);
 
-                g.append("rect").attr("class", "parent").call(rect)
+                var parent_rect = g.append("rect").attr("class", "parent").call(rect)
                     .append("text").text(function(d) {
                         return d.name;
                     });
 
-                g.append("text").attr("dy", ".75em").text(function(d) {
+                var label = g.append("text").attr("dy", ".75em").text(function(d) {
                     return d.name;
                 }).call(text);
 
@@ -152,8 +152,8 @@
 
                     // Remove the old node when the transition is finished.
                     t1.remove().each("end", function() {
-                    svg.style("shape-rendering", "crispEdges");
-                    transitioning = false;
+                        svg.style("shape-rendering", "crispEdges");
+                        transitioning = false;
                     });
                 }
 
@@ -169,7 +169,13 @@
                 rect.attr("x", function(d) { return x(d.x); })
                     .attr("y", function(d) { return y(d.y); })
                     .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
-                    .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); });
+                    .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
+                    .attr("class", function(d) {
+                        if(d3.select(this).classed(d.class)) {
+                            return d3.select(this).attr('class');
+                        }
+                        return d3.select(this).attr('class') + " " + d.class;
+                    });
             }
 
             function name(d) {
