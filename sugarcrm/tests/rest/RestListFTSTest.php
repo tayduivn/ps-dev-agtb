@@ -26,7 +26,7 @@ require_once('tests/rest/RestTestBase.php');
 require_once('modules/SugarFavorites/SugarFavorites.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
-class RestTestListFTS extends RestTestBase {
+class RestListFTSTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();

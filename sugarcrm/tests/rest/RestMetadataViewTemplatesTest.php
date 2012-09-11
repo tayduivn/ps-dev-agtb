@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataViewTemplates extends RestTestBase {
+class RestMetadataViewTemplatesTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();

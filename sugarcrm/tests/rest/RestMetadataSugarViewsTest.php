@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataSugarViews extends RestTestBase {
+class RestMetadataSugarViewsTest extends RestTestBase {
     public function setUp()
     {
         //Create an anonymous user for login purposes/
