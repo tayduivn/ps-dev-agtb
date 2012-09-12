@@ -99,12 +99,17 @@
         });
 
         this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function(post_id) {
-            self.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
+            var pending_attachments = self.$(event.currentTarget).siblings('.activitystream-pending-attachment');
+            pending_attachments.each(function(index, el) {
                 var id = $(el).attr('id');
                 var seed = self.app.data.createBean('Notes', {
                     'parent_id': post_id,
                     'parent_type': 'ActivityComments'
                 });
+                var postSave = _.after(pending_attachments.length, function() {
+                    self.collection.fetch(self.opts);
+                });
+
                 seed.save({}, {
                     success: function(model) {
                         var data = new FormData();
@@ -121,7 +126,7 @@
                             contentType: false,
                             success: function() {
                                 delete App.drag_drop[id];
-                                self.collection.fetch(self.opts);
+                                postSave();
                             }
                         });
                     }
