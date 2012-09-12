@@ -100,6 +100,7 @@ class CurrentUserApi extends SugarApi {
             $user_data['id'] = $current_user->id;
             $user_data['full_name'] = $current_user->full_name;
             $user_data['user_name'] = $current_user->user_name;
+            $user_data['picture'] = $current_user->picture;
             if(isset($current_user->preferred_language))
             {
                 $user_data['preferred_language'] = $current_user->preferred_language;

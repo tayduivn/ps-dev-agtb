@@ -30,7 +30,7 @@
   <ul class="nav nav-tabs results">
     {{#if collection.models.length}}
       {{#each collection.models}}
-      <li style="" data-id="{{attributes.id}}">
+      <li style="" data-id="{{attributes.id}}" class="{{#eq collection.user_id attributes.created_by}}{{#eq attributes.activity_type "posted"}}hasDeleteButton{{/eq}}{{/eq}}">
         <a href="" class="pull-left avatar avatar42">
           <img src="{{#if attributes.created_by_picture}}../rest/v10/Users/{{attributes.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
         </a>
@@ -93,14 +93,17 @@
           </div>
           {{/if}}
           <date class="date">{{timeago attributes.date_created}}</date>
+          {{#if attributes.comments.length}}
+          {{else}}
+          <a href="" class="comment reply">Comment</a>
+          {{/if}}
         </p>
         <div class="actions hide">
           {{#eq collection.user_id attributes.created_by}}
           {{#eq attributes.activity_type "posted"}}
-          <a data-toggle="modal" data-module="ActivityStream" data-id="{{attributes.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
+          <a data-toggle="modal" data-module="ActivityStream" data-id="{{attributes.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord hide"><i class="icon-remove"></i></a>
           {{/eq}}
           {{/eq}}        
-          <a data-toggle="modal" href="#reply" class="comment btn btn-mini reply"><i class="icon-comment"></i></a>
         </div>
         <ul>
         </ul>
@@ -110,9 +113,9 @@
                 {{#if this._starthidden}}
                     <div class="extend hide">
                 {{/if}}
-                <li style="">
+                <li style="" class="{{#eq ../collection.user_id this.created_by}}hasDeleteButton{{/eq}}">
                   <a href="" class="pull-left">
-                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{../../collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a>: {{{this.value}}}<br>
@@ -149,7 +152,7 @@
                   </p>
                   {{#eq ../collection.user_id this.created_by}}
                     <div class="actions hide">
-                      <a data-toggle="modal" data-module="ActivityComments" data-id="{{this.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord"><i class="icon-remove"></i></a>
+                      <a data-toggle="modal" data-module="ActivityComments" data-id="{{this.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord hide"><i class="icon-remove"></i></a>
                     </div>  
                   {{/eq}}                  
                 </li>
@@ -160,14 +163,33 @@
                     </li>
                 {{/if}}
             {{/each}}
+             <li>
+                <div class="control-group form-horizontal activitystream-comment">
+                <a href="" class="pull-left">
+                    <img src="{{../../collection.picture_url}}" class="avatar" alt="{{../../collection.full_name}}">
+                </a>
+                <p>
+                <input type="text" value="" class="sayit" placeholder="Add your comment" dropzone="copy">
+                <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
+                </p>
+                </div>
+             </li>                
          </ul>
-         {{/if}}
-         <ul>
-          <div class="control-group form-horizontal activitystream-comment hide">
-            <input type="text" value="" class="sayit" placeholder="Add your comment" dropzone="copy">
-            <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
-          </div>
+         {{else}}         
+         <ul class="activitystream-comment hide">
+             <li style="">
+              <div class="control-group form-horizontal">
+                <a href="" class="pull-left">
+                    <img src="{{../../collection.picture_url}}" class="avatar" alt="{{../../collection.full_name}}">
+                </a>
+                <p>
+                <input type="text" value="" class="sayit" placeholder="Add your comment" dropzone="copy">
+                <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
+                </p>
+              </div>
+             </li>          
          </ul>
+         {{/if}}    
       </li>
       {{/each}}
     {{else}}
