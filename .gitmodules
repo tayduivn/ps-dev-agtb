@@ -4,3 +4,6 @@
 [submodule "sugarcrm/styleguide"]
 	path = sugarcrm/styleguide
 	url = git@github.com:sugarcrm/styleguide.git
+[submodule "sugarcrm/summer/splash/boxoffice"]
+	path = sugarcrm/summer/splash/boxoffice
+	url = /Users/smalyshev/boxOffice/
