@@ -57,7 +57,6 @@
         app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         options.params = this.opts.params;
         options.params.offset = this.collection.next_offset;
-        options.params.limit = "";// use default
         // Indicates records will be added to those already loaded in to view
         options.add = true;
             
@@ -126,8 +125,14 @@
                         });
                     }
                 });
-            });          
-            self.collection.fetch(self.opts);
+            });
+            // If we are 'showing more'
+            options = {};
+            options.params = self.opts.params;
+            // max_num is hard coded to 20 somewhere
+            options.params.limit = self.collection.models.length;
+            options.params.offset = 0;            
+            self.collection.fetch(options);
         }});
     },
 
@@ -174,8 +179,8 @@
                         });
                     }
                 });
-            });            
-            self.collection.fetch(self.opts);            
+            });
+            self.collection.fetch(self.opts);
         }});
     },
 
@@ -198,7 +203,7 @@
             self.collection.fetch(self.opts)
         }});
     },
-    
+
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
@@ -326,14 +331,6 @@
 
         }, this);
 
-        
-        // Sets correct offset and limit for future fetch if we are 'showing more'
-        this.opts.params.offset = 0;
-        if(this.collection.models.length > 0) {
-            this.opts.params.limit = this.collection.models.length;
-            this.opts.params.max_num = this.collection.models.length;        	
-        }
-        
         return app.view.View.prototype._renderHtml.call(this);
     },
 
