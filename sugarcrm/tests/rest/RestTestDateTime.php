@@ -65,7 +65,9 @@ class RestTestDateTime extends RestTestBase {
         $this->opp->team_id = '1';
         $this->opp->team_set_id = '1';
         $this->opp->save();
-
+        
+        $GLOBALS['db']->commit();
+        
         $restReply = $this->_restCall("Opportunities/{$this->opp->id}");
         $this->assertEquals('2012-11-10',$restReply['reply']['date_closed']);
 
@@ -91,7 +93,9 @@ class RestTestDateTime extends RestTestBase {
         $this->meeting->team_id = '1';
         $this->meeting->team_set_id = '1';
         $this->meeting->save();
-
+        
+        $GLOBALS['db']->commit();
+        
         $GLOBALS['current_user']->setPreference('timezone','America/Boise');
         $GLOBALS['current_user']->savePreferencesToDB();
 
@@ -198,7 +202,9 @@ class RestTestDateTime extends RestTestBase {
         $this->meeting->team_id = '1';
         $this->meeting->team_set_id = '1';
         $this->meeting->save();
-
+        
+        $GLOBALS['db']->commit();
+        
         $GLOBALS['current_user']->setPreference('timezone','America/Boise');
         $GLOBALS['current_user']->savePreferencesToDB();
 
@@ -222,7 +228,9 @@ class RestTestDateTime extends RestTestBase {
         $this->meeting->team_id = '1';
         $this->meeting->team_set_id = '1';
         $this->meeting->save();
-
+        
+        $GLOBALS['db']->commit();
+        
         $GLOBALS['current_user']->setPreference('timezone','America/Boise');
         $GLOBALS['current_user']->savePreferencesToDB();
 

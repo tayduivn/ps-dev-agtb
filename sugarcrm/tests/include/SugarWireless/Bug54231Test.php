@@ -45,7 +45,8 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	{
 		global $current_user, $beanFiles, $beanList;
         require('include/modules.php');
-		$current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('current_user');
 		
 		$this->_beanFiles = $GLOBALS['beanFiles'];
 		$GLOBALS['beanFiles'] = array(
@@ -74,7 +75,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
 	public function tearDown()
 	{
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
 		$GLOBALS['beanFiles'] = $this->_beanFiles;
 		$GLOBALS['beanList'] = $this->_beanList;
 		$GLOBALS['app_list_strings']['moduleList'] = $this->_app_list_strings_moduleList;
