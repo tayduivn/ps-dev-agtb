@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -76,7 +77,9 @@ class RestListFTSTest extends RestTestBase {
         foreach($this->files AS $file) {
             unlink($file);
         }
-        $GLOBALS['db']->commit();
+
+        parent::tearDown();
+
     }
 
     /**
