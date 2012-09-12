@@ -1,7 +1,5 @@
 <?php
-require_once('modules/Trackers/BreadCrumbStack.php');
-require_once('summer/splash/boxoffice/BoxOffice.php');
-require_once('summer/splash/boxoffice/lib/BoxOfficeMail/BoxOfficeMail.php');
+require_once 'summer/splash/lib/BoxOfficeMail/BoxOfficeMail.php';
 require_once 'Zend/Http/Client.php';
 
 class BoxOfficeClient
@@ -36,9 +34,8 @@ class BoxOfficeClient
         if (empty($session_id)) session_start();
 
         // FIXME: should be moved to REST API
-        include('boxoffice/config.php');
+        include __DIR__.'/config.php';
         $this->config = $config;
-        $this->box = new BoxOffice($config['dbconfig']);
         // FIXME
         $this->loginUrl = $config['top_url']."summer/splash/";
 
@@ -57,13 +54,34 @@ class BoxOfficeClient
         if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
     }
 
+   /**
+    * Call BoxOffice and return JSON-decoded result
+    * @param string $method
+    * @param string $url
+    * @param array $params
+    * @return mixed false on error, data on success
+    */
+    protected function callBox($method, $url, $params = array())
+    {
+        $req = new Zend_Http_Client($this->config['box_url'].$url);
+        $req->setMethod($method);
+        if(!empty($params)) {
+            $req->setParameterPost($params);
+        }
+        $res = $req->request();
+        if(!$res->isSuccessful()) {
+        	return false;
+        }
+        return json_decode($res, true);
+    }
+
     /**
      * Retrieve user's session data
      */
     protected function getSessionData()
     {
         if(empty($_SESSION['boxoffice']) && !empty($this->session)) {
-        	$_SESSION['boxoffice'] = $this->box->getConfig($this->session);
+        	$_SESSION['boxoffice'] = $this->callBox("GET", "rest/sessions/{$this->session}");
         }
         if(!empty($_SESSION['boxoffice'])) {
             $this->session_data = $_SESSION['boxoffice'];
@@ -92,9 +110,9 @@ class BoxOfficeClient
     function authenticateUser($email, $password, $remoteID = null)
     {
         if(empty($password)) {
-            $this->user = $this->box->authenticateRemoteUser($email, $remoteID);
+            $this->user = $this->callBox("POST", "rest/users/login", array("email" => $email, "remote" => 1, "rid" => $remoteID));
         } else {
-            $this->user = $this->box->authenticateUser($email, $password);
+            $this->user = $this->callBox("POST", "rest/users/login", array("email" => $email, "password" => $password));
         }
         if ($this->user) {
             $_SESSION['logged_in_user'] = $this->user;
@@ -114,7 +132,10 @@ class BoxOfficeClient
         if(empty($this->user['id'])) {
             $this->noLogin();
         }
-        $instances = $this->box->getUserInstances($this->user['id']);
+        $instances =  $this->callBox("GET", "rest/users/{$this->user['id']}/instances");
+        if(empty($instances)) {
+            return false;
+        }
         $filteredList = array();
         foreach ($instances as $instance) {
         	$filteredList[$instance['id']] = array('id' => $instance['id'], 'name' => $instance['name'], 'owner' => array('name' => $instance['first_name'] . ' ' . $instance['last_name'], 'email' => $instance['email']));
@@ -134,7 +155,7 @@ class BoxOfficeClient
         if(empty($this->user['id'])) {
             return;
         }
-        $this->box->setUserTokens($this->user['id'], $token, $refreshToken, $expires);
+        $this->callBox("POST", "rest/users/{$this->user['id']}/tokens", array("token" => $token, "refresh_token" => $refreshToken, "expires" => $expires));
         // refresh data
         unset($_SESSION['boxoffice']);
         $this->getSessionData();
@@ -151,15 +172,16 @@ class BoxOfficeClient
         if (empty($this->user['id'])) {
             $this->noLogin();
         }
-        $instances = $this->box->getUserInstances($this->user['id'], $instance_id);
+        $instances =  $this->callBox("GET", "rest/users/{$this->user['id']}/instances", array("instance" => $instance_id));
         if (empty($instances)) throw new Exception('User Does Not Have Access To This Instance');
         $this->instance = $instances[0];
         if($this->instance['status'] == 'Pending') {
             return false;
         }
-        $this->session = $this->box->selectInstance($this->user['id'], $this->user['email'], $this->instance['id']);
+        $this->session =  $this->callBox("POST", "rest/users/{$this->user['id']}/instances/{$this->instance['id']}",
+            array("email" => $this->user['email']));
         if($this->session) {
-            $_SESSION['boxoffice'] = $this->box->getConfig($this->session);
+            $_SESSION['boxoffice'] = $this->callBox("GET", "rest/sessions/{$this->session}");
         }
         return $this->session;
     }
@@ -175,7 +197,7 @@ class BoxOfficeClient
             $this->noLogin();
         }
         $flavor = strtolower($this->instance['flavor']);
-        include('summer/splash/configs/' . $flavor . '.config.php');
+        include(__DIR__.'/configs/' . $flavor . '.config.php');
         foreach ($this->instance['config'] as $k => $v) {
             $sugar_config[$k] = $v;
         }
@@ -287,8 +309,8 @@ class BoxOfficeClient
         if (empty($this->instance)) {
             $this->noLogin();
         }
-        if (1 || empty($_SESSION['moduleList'])) {
-            $_SESSION['moduleList'] = $this->box->getUserModules($this->instance['id'], $this->user['id']);
+        if (empty($_SESSION['moduleList'])) {
+            $_SESSION['moduleList'] = $this->callBox("GET", "rest/sessions/{$this->getToken()}/modules");
         }
 
         return $_SESSION['moduleList'];
@@ -302,8 +324,8 @@ class BoxOfficeClient
      * @return bool
      */
     public function registerUser($email, $password, $data){
-        $user = $this->box->registerUser($email, $password, $data);
-        $guid = $this->box->generateConfirmation($email);
+        $user =  $this->callBox("POST", "rest/users", array("email" => $email, "password" => $password, "data" => json_encode($data)));
+        $guid =  $this->callBox("POST", "rest/users/confirmation", array("email" => $email));
         BoxOfficeMail::sendTemplate($email, 'activateuser', array('user'=>$user, 'guid'=>$guid, 'config' => $this->config));
         return true;
     }
@@ -315,7 +337,7 @@ class BoxOfficeClient
      */
     public function createRemoteUser($email, $data)
     {
-        $user = $this->box->registerUser($email, "", $data, 'Active');
+        $user = $this->callBox("POST", "rest/users", array("email" => $email, "status" => 'Active', "data" => json_encode($data)));
         return true;
     }
 
@@ -327,7 +349,11 @@ class BoxOfficeClient
      */
     public function getUser($email, $throwException=true)
     {
-        return $this->box->getUser($email, $throwException);
+        $user = $this->callBox("GET", "rest/users", array("email" => $email));
+        if(empty($user) && $throwException) {
+            throw new Exception("User not found");
+        }
+        return $user;
     }
 
     /**
@@ -338,7 +364,7 @@ class BoxOfficeClient
      */
     public function activateUser($email, $guid)
     {
-        return $this->box->activateUser($email, $guid, $_SERVER['REMOTE_ADDR']);
+        return $this->callBox("POST", "rest/users/activate", array("email" => $email, "hash" => $guid, "ip" => $_SERVER['REMOTE_ADDR']));
     }
 
     /**
@@ -348,9 +374,9 @@ class BoxOfficeClient
      */
     public function resendActivation($email)
     {
-        $user = $this->box->getUser($email, true);
+        $user = $this->getUser($email, true);
         if($user['status'] == 'Pending Confirmation'){
-            $guid = $this->box->generateConfirmation($email);
+            $guid = $this->callBox("POST", "rest/users/confirmation", array("email" => $email));
             BoxOfficeMail::sendTemplate($email, 'activateuser', array('user'=>$user, 'guid'=>$guid));
             return true;
         }
@@ -363,8 +389,8 @@ class BoxOfficeClient
      * @return boolean
      */
     public function requestPasswordReset($email){
-        $user = $this->box->getUser($email, true);
-        $guid = $this->box->generateConfirmation($email, 'Reset Password');
+        $user = $this->getUser($email, true);
+        $guid = $this->callBox("POST", "rest/users/confirmation", array("email" => $email, "type" => 'Reset Password'));
         BoxOfficeMail::sendTemplate($email, 'activateuser', array('user'=>$user, 'guid'=>$guid));
         return true;
     }
@@ -386,7 +412,7 @@ class BoxOfficeClient
         if(empty($this->user) || empty($this->instance) || empty($this->session)) {
             return;
         }
-        $this->box->deleteSessionById($this->getToken());
+        $this->callBox("DELETE", "rest/sessions/{$this->getToken()}");
     }
 
     /**
@@ -423,7 +449,7 @@ class BoxOfficeClient
      */
     public function getUsersInstances()
     {
-        return $this->box->getUsersInstances($this->getToken());
+        return $this->callBox("GET", "rest/sessions/{$this->getToken()}/instances");
     }
 
     /**
@@ -432,7 +458,7 @@ class BoxOfficeClient
      */
     public function invite($email)
     {
-        if($this->box->inviteUser($this->getToken(), $email)) {
+        if($this->callBox("POST", "rest/sessions/{$this->getToken()}/invite", array("email" => $email))) {
             BoxOfficeMail::sendTemplate($email, 'inviteuser', array(
                 'user' => $this->user,
                 'instance' => $this->instance,
@@ -467,7 +493,7 @@ class BoxOfficeClient
             return false;
         }
         $this->user['oauth_token'] = $data['access_token'];
-        $this->box->setUserTokens($this->user['id'], $data['access_token'], null, $data['expires_in']);
+        $this->callBox("POST", "rest/sessions/{$this->getToken()}/token", array("token" => $data['access_token'], "expires" => $data['expires_in']));
         return true;
     }
 
