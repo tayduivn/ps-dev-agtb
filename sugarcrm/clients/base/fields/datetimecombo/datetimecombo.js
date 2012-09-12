@@ -17,16 +17,13 @@
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
-        jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
-        if(jsDate && typeof jsDate.toISOString === 'function') {
-            return jsDate.toISOString();
-        } else {
-            debugger
-            app.logger.error("Issue converting date to iso string; no toISOString available for date created for value: "+value);
-            return value;
-        }
+        return jsDate.toISOString();
     },
 
+    format:function(value) {
+        var jsDate, output, 
+            usersDateFormatPreference, usersTimeFormatPreference, 
+            myUser = app.user;
         usersDateFormatPreference = myUser.get('datepref');
         usersTimeFormatPreference = myUser.get('timepref');
 
