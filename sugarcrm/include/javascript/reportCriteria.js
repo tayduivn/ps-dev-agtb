@@ -703,11 +703,9 @@ function addFilterInputDate(row,filter) {
 
 	if ( typeof (filter.input_name0) != 'undefined' && filter.input_name0.length > 0) {
 		if (isRuntimeFilter(filter)) {
-			filter.input_name0 = to_display_date(filter.input_name0);
+            new_input.value = to_display_date(filter.input_name0);
 		} 
  	}
-
-	new_input.value=filter.input_name0;
 	new_input.name="text_input";
 	new_input.size="30";
 	new_input.maxsize="255";
@@ -802,10 +800,8 @@ function addFilterInputDatetimecombo(row, filter) {
 		new_input.type="text";
 	
 		if ( typeof (filter.input_name0) != 'undefined' && filter.input_name0.length > 0) {
-			filter.input_name0 = to_display_date(filter.input_name0);
+            new_input.value = to_display_date(filter.input_name0);
 	 	}
-	
-		new_input.value=filter.input_name0;
 		new_input.name="text_input1";
 		new_input.size="13";
 		new_input.maxsize="255";
@@ -1009,9 +1005,8 @@ function addFilterInputDateBetween(row,filter) {
 	}
 	
 	if (isRuntimeFilter(filter)) {
-		filter.input_name0 = to_display_date(filter.input_name0);
+        new_input.value = to_display_date(filter.input_name0);
 	}
-	new_input.value=filter.input_name0;
 	new_input.name="text_input";
 	new_input.size="12";
 	new_input.maxsize="255";
@@ -1052,9 +1047,8 @@ function addFilterInputDateBetween(row,filter) {
 		filter.input_name1 = '';
 	}
 	if (isRuntimeFilter(filter)) {
-		filter.input_name1 = to_display_date(filter.input_name1);
+        new_input.value = to_display_date(filter.input_name1);
 	}
-	new_input.value=filter.input_name1;
 	new_input.name="text_input";
 	new_input.size="12";
 	new_input.maxsize="255";
@@ -1091,9 +1085,8 @@ function addFilterInputDatetimesBetween(row,filter) {
 		if (typeof(filter.input_name0) == 'undefined') {
 			filter.input_name0 = '';
 		}
-		
-		filter.input_name0 = to_display_date(filter.input_name0);
-		new_input.value=filter.input_name0;
+
+        new_input.value = to_display_date(filter.input_name0);
 		new_input.name="text_input";
 		new_input.size="12";
 		new_input.maxsize="255";
