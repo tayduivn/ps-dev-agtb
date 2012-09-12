@@ -129,6 +129,7 @@
             // If we are 'showing more'
             options = {};
             options.params = self.opts.params;
+            // max_num is hard coded to 20 somewhere
             options.params.limit = self.collection.models.length;
             options.params.offset = 0;            
             self.collection.fetch(options);
