@@ -15,12 +15,20 @@
                 <div class="input-prepend">
                     <span class="add-on"><i class="icon-edit"></i></span><input class="span3 todo-subject" type="text" placeholder="What needs to be done?" tabindex="1">
                     <div class="input-append todo-add-container">
-                        <button class="btn btn-primary todo-add" type="button" tabindex="3">{{str "LBL_ADD"}}</button>
+                        <button class="btn btn-primary todo-add" type="button" tabindex="4">{{str "LBL_ADD"}}</button>
                     </div>
                 </div>
                 <div class="input-prepend todo-date-container">
                     <span class="add-on"><i class="icon-calendar"></i></span><input class="span3 todo-date" type="text" placeholder="By when?" tabindex="2">
                 </div>
+                {{#eq currLayout "record"}}
+                    <div class="todo-related-container">
+                        <label class="checkbox">
+                            <input class="todo-related" type="checkbox" tabindex="3" />
+                            Relate to current record
+                        </label>
+                    </div>
+                {{/eq}}
             </div>
             <div class="tab-content">
                 <div id="pane1" class="tab-pane {{#if overduePillActive}}active{{/if}}">

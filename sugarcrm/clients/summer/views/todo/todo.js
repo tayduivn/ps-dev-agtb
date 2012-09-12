@@ -1,6 +1,6 @@
 ({
     events: {
-        'click .todo-pills': 'pillSwitcher',
+        'click .todo-pills': function(e) { this.pillSwitcher(e, this) },
         'click .todo-container': 'persistMenu',
         'click .todo': 'handleEscKey',
         'click .todo-add': 'todoSubmit',
@@ -36,6 +36,54 @@
         });
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
+        app.events.on("app:view:change", function(layout, obj) {
+            if( layout == "record" ) {
+                    this.modelID = obj.modelId;
+            }
+            this.currLayout = layout;
+            this.currModule = obj.module;
+            this.open = false;
+            self.render();
+        }, this);
+
+        app.events.on("app:view:todo-list:refresh", function(model, action) {
+            console.log("boo");
+            console.log(model);
+            console.log(action);
+            var taskType = self.getTaskType(model.attributes.date_due),
+                givenModel = model;
+
+            if( self.collection ) {
+                switch(action) {
+                    case "create":
+                        self.collection.add(givenModel);
+                        self.collection.modelList[taskType].push(givenModel);
+                        break;
+                    case "update_status":
+                        var record = self.collection.modelList[taskType];
+
+                        self.model = self.collection.get(givenModel.id);
+                        self.model.attributes.status = givenModel.attributes.status;
+                        var listModel = _.find(record, function(param) {
+                            return (givenModel.id == param.id);
+                        });
+                        listModel.attributes.status = givenModel.attributes.status;
+                        break;
+                    case "delete":
+                        var record = self.collection.modelList[taskType],
+                            listModel = _.find(record, function(param) {
+                                return (givenModel.id == param.id);
+                            }),
+                            listModelIndex = _.indexOf(record, listModel);
+
+                        self.collection.remove(givenModel, {silent: true});
+                        record.splice(listModelIndex, 1);
+                        break;
+                }
+                self.open = false;
+                self.render();
+            }
+        });
     },
     persistMenu: function(e) {
         // This will prevent the dropup menu from closing
@@ -43,6 +91,7 @@
         e.stopPropagation();
     },
     handleEscKey: function() {
+        // todo: change this horribly inefficient code later
         $(document).keyup(function(event) {
             // check if the menu is active
             if( $(".todo-list-widget").hasClass("open") ) {
@@ -62,43 +111,42 @@
             e.stopPropagation();
         });
     },
-    pillSwitcher: function(e) {
-        var clickedEl = this.$(e.target);
-        var clickedIndex = this.$(".todo-pills").index(clickedEl.closest(".todo-pills"));
+    pillSwitcher: function(e, context) {
+        var clickedEl = context.$(e.target);
+        var clickedIndex = context.$(".todo-pills").index(clickedEl.closest(".todo-pills"));
 
-        this.$(".todo-pills.active").removeClass("active");
-        this.$(".tab-pane.active").removeClass("active");
+        context.$(".todo-pills.active").removeClass("active");
+        context.$(".tab-pane.active").removeClass("active");
         clickedEl.closest(".todo-pills").addClass("active");
-        this.$(this.$(".tab-pane")[clickedIndex]).addClass("active");
+        context.$(context.$(".tab-pane")[clickedIndex]).addClass("active");
 
         // this is "state-machine information" that will later get fed into render
         switch(clickedIndex) {
             case 0:
-                this.overduePillActive = true;
-                this.todayPillActive = false;
-                this.upcomingPillActive = false;
-                this.allPillActive = false;
+                context.overduePillActive = true;
+                context.todayPillActive = false;
+                context.upcomingPillActive = false;
+                context.allPillActive = false;
                 break;
             case 1:
-                this.overduePillActive = false;
-                this.todayPillActive = true;
-                this.upcomingPillActive = false;
-                this.allPillActive = false;
+                context.overduePillActive = false;
+                context.todayPillActive = true;
+                context.upcomingPillActive = false;
+                context.allPillActive = false;
                 break;
             case 2:
-                this.overduePillActive = false;
-                this.todayPillActive = false;
-                this.upcomingPillActive = true;
-                this.allPillActive = false;
+                context.overduePillActive = false;
+                context.todayPillActive = false;
+                context.upcomingPillActive = true;
+                context.allPillActive = false;
                 break;
             case 3:
-                this.overduePillActive = false;
-                this.todayPillActive = false;
-                this.upcomingPillActive = false;
-                this.allPillActive = true;
+                context.overduePillActive = false;
+                context.todayPillActive = false;
+                context.upcomingPillActive = false;
+                context.allPillActive = true;
                 break;
         }
-
     },
     getModelInfo: function(e) {
         var clickedEl = this.$(e.target).parents(".todo-item-container")[0],
@@ -137,6 +185,9 @@
 
             self.open = true;
             self.render();
+            if( self.model.attributes.parent_id ) {
+                app.events.trigger("app:view:todo:refresh", self.model, "delete");
+            }
         }});
     },
     changeStatus: function(e) {
@@ -163,6 +214,11 @@
         this.model.save();
         this.open = true;
         this.render();
+
+        // call trigger only if we're updating a related record
+        if( this.model.attributes.parent_id ) {
+            app.events.trigger("app:view:todo:refresh", this.model, "update_status");
+        }
     },
     _renderHtml: function() {
         this.isAuthenticated = app.api.isAuthenticated();
@@ -218,9 +274,21 @@
                 "assigned_user_id": app.user.get("id"),
                 "date_due": datetime
             });
+
+            if( this.$(".todo-related").is(":checked") ) {
+                this.model.set({"parent_id": this.modelID});
+                this.model.set({"parent_type": this.currModule});
+            }
+
             this.collection.add(this.model);
             this.model.save();
             this.collection.modelList[this.getTaskType(datetime)].push(this.model);
+
+            // only trigger a refresh if the user wants to relate the to-do
+            // to the current record
+            if( this.model.attributes.parent_id ) {
+                app.events.trigger("app:view:todo:refresh", this.model, "create");
+            }
 
             subject.val("");
             date.val("");
@@ -250,7 +318,7 @@
     },
     bindDataChange: function() {
         var self = this;
-        if (this.collection) {
+        if( this.collection ) {
             this.collection.on("reset", function() {
                 self.render();
             }, this);

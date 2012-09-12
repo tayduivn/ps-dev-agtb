@@ -5,6 +5,7 @@ $layout = new SideBarLayout();
 //$layout->push('main', array('view'=>'imagesearch'));
 $layout->push('main', array('view'=>'twitter'));
 $layout->push('main', array('view'=>'maps'));
+$layout->push('main', array('view'=>'todo-list'));
 $layout->push('main', array('layout'=>'sublist','context'=>array('link'=>'opportunities')));
 
 //$layout->push('main', array('view'=>'attachments'));
