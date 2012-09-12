@@ -89,9 +89,9 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
         $nextStartDate = $nextEndDate->modify('+1 day');
         if($this->is_fiscal)
         {
-            $nextEndDate = $nextEndDate->modify('+1 month');
-        } else {
             $nextEndDate = $nextEndDate->modify('+$week_length week');
+        } else {
+            $nextEndDate = $nextEndDate->modify('+1 month');
         }
         $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
         $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);

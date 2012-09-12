@@ -42,7 +42,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
         //set defaults
         $this->time_period_type = 'Annual';
-        $this->is_fiscal_year = $fiscal_period;
+        $this->is_fiscal = $fiscal_period;
         $this->is_leaf = false;
 
         $this->setStartDate($start_date);
@@ -126,41 +126,25 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
             case "Quarter":
                 $n = 4;
                 $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
-                $leafPeriod->start_date = $this->start_date;
-                $leafEndDate = $leafStartDate->modify("+3 month");
-                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $leafPeriod->setStartDate($this->start_date);
                 $this->related_timeperiods->add($leafPeriod->id);
                 break;
             case "Quarter544":
                 $n = 4;
                 $leafPeriod = BeanFactory::newBean("QuarterTimePeriods544");
-                $leafPeriod->start_date = $this->start_date;
-                $leafEndDate = $leafStartDate->modify("+13 week");
-                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $leafPeriod->setStartDate($this->start_date);
                 $this->related_timeperiods->add($leafPeriod->id);
                 break;
             case "Quarter445":
                 $n = 4;
                 $leafPeriod = BeanFactory::newBean("QuarterTimePeriods445");
-                $leafPeriod->start_date = $this->start_date;
-                $leafEndDate = $leafStartDate->modify("+13 week");
-                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $leafPeriod->setStartDate($this->start_date);
                 $this->related_timeperiods->add($leafPeriod->id);
                 break;
             case "Month":
                 $n = 12;
                 $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
-                $leafPeriod->start_date = $this->start_date;
-                $leafEndDate = $leafStartDate->modify("+1 month");
-                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
-                $this->related_timeperiods->add($leafPeriod->id);
-                break;
-            case "Week":
-                $n = 52;
-                $leafPeriod = BeanFactory::newBean("WeekTimePeriods");
-                $leafPeriod->start_date = $this->start_date;
-                $leafEndDate = $leafStartDate->modify("+1 week");
-                $leafPeriod->end_date = $timedate->asUserDate($leafEndDate);
+                $leafPeriod->is_fiscal = $this->is_fiscal;
                 $this->related_timeperiods->add($leafPeriod->id);
                 break;
 
@@ -168,7 +152,12 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
         //loop the count to create the next n leaves to fill out the relationship
         for($i = 1; $i < $n; $i++) {
-            $leafPeriod = $leafPeriod->createNextTimePeriod();
+            if($timePeriodType == "Month" && ((i+1) % 3 == 0)) {
+                // leaf is monthly and need to even out the fiscal numbering
+                $leafPeriod = $leafPeriod->createNextTimePeriod(5);
+            } else {
+                $leafPeriod = $leafPeriod->createNextTimePeriod();
+            }
             $this->related_timeperiods->add($leafPeriod->id);
         }
 
