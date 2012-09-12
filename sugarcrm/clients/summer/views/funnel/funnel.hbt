@@ -1,0 +1,4 @@
+<div class="block">
+  <h4>Opportunities closing this month</h4>
+  <div id="{{guid}}" class="opportunities-funnel"><svg></svg></div>
+</div>
