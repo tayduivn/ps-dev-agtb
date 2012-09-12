@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -26,6 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 /**
  * SugarTestTimePeriodUtilities.php
@@ -112,7 +112,7 @@ class SugarTestTimePeriodUtilities
         $time = mt_rand();
         $name = 'SugarAnnualTimePeriod' . $time;
         $start_date->setDate($year, $month, 1);
-        $timeperiod = new AnnualTimePeriod($start_date->asDbDate());
+        $timeperiod = new AnnualTimePeriod($timedate->asUserDate($start_date));
 
         $timeperiod->name = $name;
         $timeperiod->time_period_type = "Annual";

@@ -26,46 +26,48 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 require_once('modules/TimePeriods/iTimePeriod.php');
 class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
-     * Constructor
-     */
-    public function __construct() {
-        parent::TimePeriod();
-
-        $this->time_period_type = 'Quarter';
-    }
-
-    /**
-     * Saves the Annual TimePeriod
+     * constructor override
      *
-     * @param bool $check_notify
-     * @return mixed
+     * @param null $start_date date string to set the start date of the annual time period
      */
-    public function save($check_notify=false) {
-        return parent::save($check_notify);
-    }
-
-    /**
-     * creates a new QuarterTimePeriod to start to use
-     *
-     * @return QuarterTimePeriod
-     */
-    public function createNextTimePeriod() {
-        $nextPeriod = new QuarterTimePeriod();
+    public function __construct($start_date = null) {
+        parent::__construct();
         $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromUserDate($this->start_date);
-        $nextEndDate = $timedate->fromUserDate($this->end_date);
 
-        $nextStartDate = $nextStartDate->modify('+3 month');
-        $nextEndDate = $nextEndDate->modify('+3 month');
-        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
-        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
-        $nextPeriod->save();
+        //set defaults
+        $this->time_period_type = 'Quarter';
+        $this->is_fiscal_year = false;
+        $this->is_leaf = false;
 
-        return $nextPeriod;
+        $this->setStartDate($start_date);
+    }
+
+    /**
+     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
+     * The end date is adjusted as well to hold to the contract of this being an quarter time period
+     *
+     * @param null $startDate  db format date string to set the start date of the quarter time period
+     */
+    public function setStartDate($start_date = null) {
+        $timedate = TimeDate::getInstance();
+
+        //check start_date, put it to now if it's not passed in
+        if(is_null($start_date)) {
+            $start_date = $timedate->asUserDate($timedate->getNow());
+        }
+
+        $end_date = $timedate->fromUserDate($start_date);
+
+        //set the start/end date
+        $this->start_date = $start_date;
+        $end_date = $end_date->modify('+3 month');
+        $end_date = $end_date->modify('-1 day');
+        $this->end_date = $timedate->asUserDate($end_date);
     }
 
     /**

@@ -149,6 +149,21 @@ class TimePeriod extends SugarBean {
 		return $query;
 	}
 
+    /**
+     * creates a new AnnualTimePeriod to start to use
+     *
+     * @return AnnualTimePeriod
+     */
+    public function createNextTimePeriod() {
+        $timedate = TimeDate::getInstance();
+        $nextStartDate = $timedate->fromUserDate($this->end_date);
+        $nextStartDate = $nextStartDate->modify('+1 day');
+        $nextPeriod = new AnnualTimePeriod($timedate->asUserDate($nextStartDate));
+        $nextPeriod->save();
+
+        return $nextPeriod;
+    }
+
 
 	//Fiscal year domain is stored in the timeperiods table, and not statically defined like the rest of the
 	//domains, This method builds the domain array.

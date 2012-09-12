@@ -26,6 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+
 /*********************************************************************************
 
  * Description: TODO:  To be written.
@@ -41,6 +42,8 @@
         public function getNextTimePeriod();
 
         public function getPreviousTimePeriod();
+
+        public function setStartDate($start_date=null);
 
         public function createNextTimePeriod();
 

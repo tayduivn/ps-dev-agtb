@@ -26,6 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 require_once('modules/TimePeriods/iTimePeriod.php');
 class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
 
@@ -36,6 +37,29 @@ class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
         parent::TimePeriod();
 
         $this->time_period_type = 'Quarter445';
+    }
+
+    /**
+     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
+     * The end date is adjusted as well to hold to the contract of this being an quarter time period
+     *
+     * @param null $startDate  db format date string to set the start date of the quarter time period
+     */
+    public function setStartDate($start_date = null) {
+        $timedate = TimeDate::getInstance();
+        //check start_date, put it to now if it's not passed in
+        if(is_null($start_date)) {
+            $start_date = $timedate->getNow()->asDbDate();
+        }
+
+        $start_date = $timedate->fromDbDate($start_date);
+
+        //set the start/end date
+        $this->start_date = $timedate->asUserDate($start_date);
+
+        $endDate = $start_date->modify('+13 week');
+        $endDate = $endDate->modify('-1 day');
+        $this->end_date = $timedate->asUserDate($endDate);
     }
 
     /**

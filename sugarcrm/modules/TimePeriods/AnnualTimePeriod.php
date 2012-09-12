@@ -26,11 +26,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 require_once('modules/TimePeriods/iTimePeriod.php');
 class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
-     * Constructor
+     * constructor override
+     *
+     * @param null $start_date date string to set the start date of the annual time period
+     * @param bool $fiscal_period flag to determine if the timeperiod is meant to be a fiscal or calendar based period
      */
     public function __construct($start_date = null, $fiscal_period = false) {
         parent::__construct();
@@ -41,55 +45,37 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         $this->is_fiscal_year = $fiscal_period;
         $this->is_leaf = false;
 
+        $this->setStartDate($start_date);
+    }
+
+    /**
+     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
+     * The end date is adjusted as well to hold to the contract of this being an annual time period
+     *
+     * @param null $startDate  db format date string to set the start date of the annual time period
+     */
+    public function setStartDate($start_date = null) {
+        $timedate = TimeDate::getInstance();
+
         //check start_date, put it to now if it's not passed in
         if(is_null($start_date)) {
-            $start_date = $timedate->getNow()->asDbDate();
+            $start_date = $timedate->asUserDate($timedate->getNow());
         }
 
-        $start_date = $timedate->fromDbDate($start_date);
+        $end_date = $timedate->fromUserDate($start_date);
 
         //set the start/end date
-        $this->start_date = $timedate->asUserDate($start_date);
+        $this->start_date = $start_date;
         if($this->is_fiscal_year) {
-            $endDate = $start_date->modify('+52 week');
-            $endDate = $endDate->modify('-1 day');
-            $this->end_date = $timedate->asUserDate($endDate);
+
+            $end_date = $end_date->modify('+52 week');
+            $end_date = $end_date->modify('-1 day');
+            $this->end_date = $timedate->asUserDate($end_date);
         } else {
-            $endDate = $start_date->modify('+1 year');
-            $endDate = $endDate->modify('-1 day');
-            $this->end_date = $timedate->asUserDate($endDate);
+            $end_date = $end_date->modify('+1 year');
+            $end_date = $end_date->modify('-1 day');
+            $this->end_date = $timedate->asUserDate($end_date);
         }
-    }
-
-    /**
-     * Saves the Annual TimePeriod
-     *
-     * @param bool $check_notify
-     * @return mixed
-     */
-    public function save($check_notify=false) {
-        return parent::save($check_notify);
-    }
-
-    /**
-     * creates a new AnnualTimePeriod to start to use
-     *
-     * @return AnnualTimePeriod
-     */
-    public function createNextTimePeriod() {
-        $nextPeriod = new AnnualTimePeriod();
-        $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromUserDate($this->start_date);
-        $nextEndDate = $timedate->fromUserDate($this->end_date);
-
-        $nextStartDate = $nextStartDate->modify('+1 year');
-        $nextEndDate = $nextEndDate->modify('+1 year');
-        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
-        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
-
-        $nextPeriod->save();
-
-        return $nextPeriod;
     }
 
     /**

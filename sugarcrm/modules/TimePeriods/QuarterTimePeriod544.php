@@ -26,26 +26,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 require_once('modules/TimePeriods/iTimePeriod.php');
 class QuarterTimePeriod544 extends TimePeriod implements iTimePeriod {
 
-    /**
-     * Constructor
-     */
-    public function __construct() {
-        parent::TimePeriod();
 
+    /**
+     * constructor override
+     *
+     * @param null $start_date date string to set the start date of the annual time period
+     */
+    public function __construct($start_date = null) {
+        parent::__construct();
+        $timedate = TimeDate::getInstance();
+
+        //set defaults
         $this->time_period_type = 'Quarter544';
+        $this->is_fiscal_year = false;
+        $this->is_leaf = false;
+
+        $this->setStartDate($start_date);
     }
 
     /**
-     * Saves the Annual TimePeriod
+     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
+     * The end date is adjusted as well to hold to the contract of this being an quarter time period
      *
-     * @param bool $check_notify
-     * @return mixed
+     * @param null $startDate  db format date string to set the start date of the quarter time period
      */
-    public function save($check_notify=false) {
-        return parent::save($check_notify);
+    public function setStartDate($start_date = null) {
+        $timedate = TimeDate::getInstance();
+        //check start_date, put it to now if it's not passed in
+        if(is_null($start_date)) {
+            $start_date = $timedate->getNow()->asDbDate();
+        }
+
+        $start_date = $timedate->fromDbDate($start_date);
+
+        //set the start/end date
+        $this->start_date = $timedate->asUserDate($start_date);
+
+        $endDate = $start_date->modify('+13 week');
+        $endDate = $endDate->modify('-1 day');
+        $this->end_date = $timedate->asUserDate($endDate);
     }
 
     /**
@@ -54,15 +77,8 @@ class QuarterTimePeriod544 extends TimePeriod implements iTimePeriod {
      * @return QuarterTimePeriod544
      */
     public function createNextTimePeriod() {
-        $nextPeriod = new QuarterTimePeriod544();
         $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromUserDate($this->start_date);
-        $nextEndDate = $timedate->fromUserDate($this->end_date);
-
-        $nextStartDate = $nextStartDate->modify('+13 week');
-        $nextEndDate = $nextEndDate->modify('+13 week');
-        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
-        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
+        $nextPeriod = new QuarterTimePeriod544($timedate->to_db_date($this->start_date));
         $nextPeriod->save();
 
         return $nextPeriod;
