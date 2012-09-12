@@ -14,7 +14,8 @@
         'dragstart .activitystream-attachment': 'saveAttachment',
         'click .deleteRecord': 'deleteRecord',
         'mouseenter .hasDeleteButton': 'showDeleteButton',
-        'mouseleave .hasDeleteButton': 'hideDeleteButton'        
+        'mouseleave .hasDeleteButton': 'hideDeleteButton',
+        'click [name=show_more_button]': 'showMoreRecords'        
     },
 
     initialize: function(options) {
@@ -51,6 +52,23 @@
         jQuery.event.props.push('dataTransfer');
     },
 
+    showMoreRecords: function(event) {
+        var self = this, options = {};
+        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        options.params = this.opts.params;
+        options.params.offset = this.collection.next_offset;
+        // Indicates records will be added to those already loaded in to view
+        options.add = true;
+            
+        options.success = function() {
+            app.alert.dismiss('show_more_records');
+            self.layout.trigger("list:paginate:success");
+            self.render();
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        this.collection.paginate(options);
+    },
+    
     showAllComments: function(event) {
         event.preventDefault();
         this.$(event.currentTarget).closest('li').hide();
