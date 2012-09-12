@@ -68,6 +68,7 @@ class Bug46740Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        SugarTestHelper::setUp('moduleList');
         global $sugar_config;
         global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
@@ -98,6 +99,7 @@ FILE;
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unlink($this->file);
+        SugarTestHelper::tearDown();
     }
 
     /**

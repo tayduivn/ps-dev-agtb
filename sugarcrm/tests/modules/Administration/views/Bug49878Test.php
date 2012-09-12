@@ -33,6 +33,7 @@ class Bug49878Test extends Sugar_PHPUnit_Framework_OutputTestCase
     */
     public function testCheckEnabledModules()
     {
+        SugarTestHelper::setUp('moduleList');
         $testModuleName = "\"TestName\"";
         $_REQUEST['enabled_modules'] = htmlentities("[\"Accounts\", " . $testModuleName . "]");
         
