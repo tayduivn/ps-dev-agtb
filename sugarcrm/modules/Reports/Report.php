@@ -1001,14 +1001,19 @@ class Report
                 $this->selected_loaded_custom_links[$kk] = $params;
             }
         }
-        if (!empty($layout_def['name']) && ($layout_def['name'] == 'weighted_amount' || $layout_def['name'] == 'weighted_sum')) {
-            $field_def['type'] = 'currency';
-        }
 
-        // Bug 32799
-        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also
-        if (strtolower($layout_def['name']) == 'document_name') {
-        	$field_def['type'] = 'name';
+        if (!empty($layout_def['name']))
+        {
+	        if ($layout_def['name'] == 'weighted_amount' || $layout_def['name'] == 'weighted_sum')
+	        {
+	            $field_def['type'] = 'currency';
+	        }
+	
+	        // In case of DOCUMENTS table must set 'document_name' field type of to 'name' manually, because _load_all_fields() function sets field type to 'name' only if the field name is 'name' also
+	        if (strtolower($layout_def['name']) == 'document_name')
+	        {
+	            $field_def['type'] = 'name';
+	        }
         }
 
         $layout_def['type'] = $field_def['type'];
