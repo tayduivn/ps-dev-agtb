@@ -25,7 +25,10 @@
 
 require_once('tests/rest/RestTestPortalBase.php');
 
-class RestTestBug54864 extends RestTestPortalBase {
+class RestBug54864Test extends RestTestPortalBase {
+    /**
+     * @group rest
+     */
     public function testMeEndpoint() {
         // Build three accounts, we'll associate to two of them.
         for ( $i = 0 ; $i < 3 ; $i++ ) {

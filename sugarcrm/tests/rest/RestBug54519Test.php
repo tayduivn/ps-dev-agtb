@@ -24,48 +24,45 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestCurrentUser extends RestTestBase {
+class RestBug54519Test extends RestTestBase {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
     public function tearDown()
     {
+        if ( isset($this->account_id) ) {
+            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account_id}'");
+            $GLOBALS['db']->commit();
+        }
         parent::tearDown();
     }
 
-    public function testRetrieve() {
-        $restReply = $this->_restCall("me");
-        $this->assertNotEmpty($restReply['reply']['current_user']['id']);
-    }
+    /**
+     * @group rest
+     */
+    public function testCreate()
+    {
+        $restReply = $this->_restCall("Accounts/",
+                                      json_encode(array('name'=>'UNIT TEST - AFTER &nbsp;')),
+                                      'POST');
 
-    public function testUpdate() {
-        $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
-        $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
-    }
+        $this->assertTrue(isset($restReply['reply']['id']),
+                          "An account was not created (or if it was, the ID was not returned)");
 
-    public function testPasswordUpdate() {
-        $reply = $this->_restCall("me/password",
-            json_encode(array('new_password' => 'W0nkY123', 'old_password' => $GLOBALS['current_user']->user_name)),
-            'PUT');
-        $this->assertEquals($reply['reply']['valid'], true);
-        $reply = $this->_restCall("me/password",
-            json_encode(array('new_password' => 'Y3s1tWorks', 'old_password' => 'W0nkY123')),
-            'PUT');
-        $this->assertEquals($reply['reply']['valid'], true);
 
-        // Incorrect old password returns valid:false
-        $reply = $this->_restCall("me/password",
-            json_encode(array('new_password' => 'Y@ky1234', 'old_password' => 'justwrong!')),
-            'PUT');
-        $this->assertEquals($reply['reply']['valid'], false);
-    }
+        $this->account_id = $restReply['reply']['id'];
         
-    public function testPasswordVerification() {
-        $reply = $this->_restCall("me/password",
-            json_encode(array('password_to_verify' => $GLOBALS['current_user']->user_name)),
-            'POST');
-        $this->assertEquals($reply['reply']['valid'], true);
-        $reply = $this->_restCall("me/password",
-            json_encode(array('password_to_verify' => 'noway')),
-            'POST');
-        $this->assertEquals($reply['reply']['valid'], false);
+        $account = new Account();
+        $account->retrieve($this->account_id);
+        $restReply = $this->_restCall("Accounts/".$this->account_id,
+                                      json_encode(array()),
+                                      'GET');
+        $this->assertEquals("UNIT TEST - AFTER  ",
+            $restReply['reply']['name'],
+                            "Did not return the account name.");
     }
-    
+
 }

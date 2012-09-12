@@ -27,60 +27,46 @@
  ********************************************************************************/
 
 
-
-
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestClearCache extends RestTestBase {
+class RestBug55141Test extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
-        $this->files = array();
+        // delete all files from cache/api/metadata if it exists
+        $metadata_cache_dir = sugar_cached("cache/api/metadata");
+        if(is_dir($metadata_cache_dir))
+        {
+            if ($handle = opendir($metadata_cache_dir)) {
+                while (false !== ($cache_file = readdir($handle))) {
+                    if ($cache_file != "." && $cache_file != "..") {
+                        $unlink_file = sugar_cached("api/metadata/{$cache_file}");
+                        unlink($unlink_file);
+                    }
+                }
+                closedir($handle);
+            }            
+        }
     }
     
     public function tearDown()
     {
-        foreach($this->files AS $file) {
-            unlink($file);
-        }
     }
 
+    /**
+     * @group rest
+     */
     public function testCache() {
-        if(!is_dir('custom/include/api')) {
-            mkdir('custom/include/api',0,true);
-        }
-        $file = 'custom/include/api/PongApi.php';
-        $file_contents = <<<EOQ
-<?php
-class PongApi extends SugarApi {
-    public function registerApiRest() {
-        return array(
-            'pong' => array(
-                'reqType' => 'GET',
-                'path' => array('ping'),
-                'pathVars' => array(''),
-                'method' => 'pong',
-                'shortHelp' => 'An example API only responds with ping',
-                'longHelp' => 'include/api/html/ping_base_help.html',
-            ),
-            );
-    }
-    public function pong() {
-        return 'ping';
-    }
-}
-EOQ;
-        
-        $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
-        file_put_contents($file, $file_contents);
-        // verify ping
-        
-        // verify pong isn't there
-        $replyPong = $this->_restCall('ping');
-        $this->assertNotEquals('ping', $replyPong['reply']);
+        // create metadata cache
+        $metadata = $this->_restCall('metadata');
 
-        // run repair and rebuild
+        // get hash
+        $hash = $metadata['reply']['_hash'];
+
+        // verify hash file exists
+        $this->assertTrue(file_exists('cache/api/metadata/' . $hash), "Didn't really clear the cache");
+
+        // run repair and rebuild and verify the cache file is gone
         $old_user = $GLOBALS['current_user'];
         $user = new User();
         $GLOBALS['current_user'] = $user->getSystemUser();
@@ -90,11 +76,8 @@ EOQ;
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
-        $this->assertTrue(!file_exists('cache/include/api/SugarApi/ServiceDictionary.rest.php'), "Didn't really clear the cache");
+        // verify it no longer does
+        $this->assertTrue(!file_exists('cache/api/metadata/' . $hash), "Didn't really clear the cache");
 
-
-        // verify pong is there now
-        $replyPong = $this->_restCall('ping');
-        $this->assertEquals('ping', $replyPong['reply']);
     }
 }

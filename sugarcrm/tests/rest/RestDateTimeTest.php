@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestDateTime extends RestTestBase {
+class RestDateTimeTest extends RestTestBase {
     public function tearDown()
     {
         if (isset($this->account->id)) {
@@ -47,6 +47,9 @@ class RestTestDateTime extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testRestDate()
     {
         $this->account = new Account();
@@ -81,6 +84,9 @@ class RestTestDateTime extends RestTestBase {
         $this->assertEquals('2012-10-11',$row['date_closed']);
     }
 
+    /**
+     * @group rest
+     */
     public function testRestDateTime()
     {
         $this->meeting = new Meeting();
@@ -190,6 +196,9 @@ class RestTestDateTime extends RestTestBase {
         
     }
 
+    /**
+     * @group rest
+     */
     public function testRestInvalidDateTime()
     {
         $this->meeting = new Meeting();
@@ -216,6 +225,9 @@ class RestTestDateTime extends RestTestBase {
     }
 
 
+    /**
+     * @group rest
+     */
     public function testRestBlankDateTime()
     {
         $this->meeting = new Meeting();

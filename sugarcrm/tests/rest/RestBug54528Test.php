@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestBug54528 extends RestTestBase {
+class RestBug54528Test extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -97,6 +97,9 @@ class RestTestBug54528 extends RestTestBase {
         
     }
 
+    /**
+     * @group rest
+     */
     public function testCreate() {
 
         // we need to be an admin to get at the relationship data

@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestFile extends RestTestBase {
+class RestFileTest extends RestTestBase {
     protected $_note;
     protected $_note_id;
     protected $_contact;
@@ -62,6 +62,9 @@ class RestTestFile extends RestTestBase {
         $GLOBALS['db']->commit();
     }
 
+    /**
+     * @group rest
+     */
     public function testGetList() {
         $restReply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/');
         $this->assertNotEmpty($restReply['reply'], 'Reply was empty');
@@ -72,6 +75,9 @@ class RestTestFile extends RestTestBase {
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Missing response data for Notes');
     }
 
+    /**
+     * @group rest
+     */
     public function testPostUploadImageToContact() {
         $post = array('picture' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
@@ -85,6 +91,9 @@ class RestTestFile extends RestTestBase {
         $this->assertEquals($reply['reply']['picture']['name'], $fetch['reply']['picture'], 'Contact picture field and picture file name do not match');
     }
 
+    /**
+     * @group rest
+     */
     public function testPostUploadImageToContactWithHTMLJSONResponse() {
         $post = array('picture' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture?format=sugar-html-json', $post);
@@ -99,6 +108,9 @@ class RestTestFile extends RestTestBase {
         $this->assertEquals('image/png', $decoded['picture']['content-type'], 'Content Type value incorrect');
     }
 
+    /**
+     * @group rest
+     */
     public function testPutUploadImageToContact() {
         $filename = 'include/images/badge_256.png';
         $opts = array(CURLOPT_INFILESIZE => filesize($filename), CURLOPT_INFILE => fopen($filename, 'r'));
@@ -114,11 +126,17 @@ class RestTestFile extends RestTestBase {
         $this->assertEquals($reply['reply']['picture']['name'], $fetch['reply']['picture'], 'Contact picture field and picture file name do not match');
     }
 
+    /**
+     * @group rest
+     */
     public function testDeleteImageFromContact() {
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', '', 'DELETE');
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing fields');
     }
 
+    /**
+     * @group rest
+     */
     public function testPostUploadFileToNote() {
         $post = array('filename' => '@CORPLICENSE.txt');
         $restReply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $post);
@@ -132,6 +150,9 @@ class RestTestFile extends RestTestBase {
         $this->assertEquals($restReply['reply']['filename']['name'], $fetch['reply']['filename']);
     }
 
+    /**
+     * @group rest
+     */
     public function testPutUploadFileToNote() {
         $filename = 'CELICENSE.txt';
         $params = array('filename' => $filename, 'type' => 'text/plain');
@@ -146,11 +167,17 @@ class RestTestFile extends RestTestBase {
         $this->assertEquals($restReply['reply']['filename']['name'], $fetch['reply']['filename']);
     }
 
+    /**
+     * @group rest
+     */
     public function testDeleteFileFromNote() {
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'DELETE');
         $this->assertArrayHasKey('filename', $reply['reply'], 'Reply is missing fields');
     }
     
+    /**
+     * @group rest
+     */
     public function testSimulateFileTooLarge() {
         // Send an empty POST request to the file endpoint leaving the request headers in place
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
@@ -163,6 +190,9 @@ class RestTestFile extends RestTestBase {
         $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
     }
     
+    /**
+     * @group rest
+     */
     public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest() {
         // Send an empty GET and POST request to make sure we get a needs login error
         $reply = $this->_restCallNoAuthHeader('Notes');

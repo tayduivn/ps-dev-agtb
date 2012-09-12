@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestCurrentUserPortal extends RestTestBase {
+class RestCurrentUserPortalTest extends RestTestBase {
     public function setUp()
     {
         global $db;
@@ -126,6 +126,9 @@ class RestTestCurrentUserPortal extends RestTestBase {
     }
     
 
+    /**
+     * @group rest
+     */
     public function testRetrieve() {
         $restReply = $this->_restCall("me");
         $this->assertNotEmpty($restReply['reply']['current_user']['id']);
@@ -134,11 +137,17 @@ class RestTestCurrentUserPortal extends RestTestBase {
         $this->assertEquals('support_portal',$restReply['reply']['current_user']['type']);
     }
 
+    /**
+     * @group rest
+     */
     public function testUpdate() {
         $restReply = $this->_restCall("me", json_encode(array('first_name' => 'UNIT TEST - AFTER')), "PUT");
         $this->assertNotEquals(stripos($restReply['reply']['current_user']['full_name'], 'UNIT TEST - AFTER'), false);
     }
 
+    /**
+     * @group rest
+     */
     public function testPasswordUpdate() {
         $this->_restLogin();
         // Change password twice to be sure working as expected
@@ -157,6 +166,9 @@ class RestTestCurrentUserPortal extends RestTestBase {
         $this->assertEquals($reply['reply']['valid'], false);
     }
 
+    /**
+     * @group rest
+     */
     public function testPasswordVerification() {
         $reply = $this->_restCall("me/password",
             json_encode(array('password_to_verify' => 'unittest')),

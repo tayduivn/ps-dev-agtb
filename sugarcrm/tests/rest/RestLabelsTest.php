@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestBug54519 extends RestTestBase {
+class RestLabelsTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -32,33 +32,28 @@ class RestTestBug54519 extends RestTestBase {
     
     public function tearDown()
     {
-        if ( isset($this->account_id) ) {
-            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account_id}'");
-            $GLOBALS['db']->commit();
-        }
         parent::tearDown();
     }
 
-    public function testCreate() {
-        $restReply = $this->_restCall("Accounts/",
-                                      json_encode(array('name'=>'UNIT TEST - AFTER &nbsp;')),
-                                      'POST');
-
-        $this->assertTrue(isset($restReply['reply']['id']),
-                          "An account was not created (or if it was, the ID was not returned)");
-
-
-        $this->account_id = $restReply['reply']['id'];
+    /**
+     * @group rest
+     */
+    public function testLabels() {
+        $restReply = $this->_restCall('metadata?type_filter=mod_strings,app_strings');
+        $this->assertNotEmpty($restReply['reply']['app_strings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
         
-        $account = new Account();
-        $account->retrieve($this->account_id);
-        $restReply = $this->_restCall("Accounts/".$this->account_id,
-                                      json_encode(array()),
-                                      'GET');
-        $this->assertEquals("UNIT TEST - AFTER  ",
-            $restReply['reply']['name'],
-                            "Did not return the account name.");
+        $this->assertNotEmpty($restReply['reply']['mod_strings']['Contacts']['LBL_ACCOUNT_NAME']);
+    }
+
+    /**
+     * @group rest
+     */
+    public function testAppListLabels() {
+        $restReply = $this->_restCall('metadata?type_filter=app_list_strings');
+        
+        $this->assertNotEmpty($restReply['reply']['app_list_strings']['checkbox_dom'],"Could not find the label for the checkbox dropdown, these don't look like app_list_strings to me (/metadata)");
+        $this->assertNotEmpty($restReply['reply']['app_list_strings']['available_language_dom'],"Could not find the list of available languages in appListStrings. (/metadata)");
+
     }
 
 }

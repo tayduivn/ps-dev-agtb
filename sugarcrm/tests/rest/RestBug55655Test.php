@@ -32,7 +32,7 @@ require_once('tests/rest/RestTestPortalBase.php');
  * being able to add an attachment to an existing note but not being able
  * to edit that attachment. 
  */
-class RestTestBug55655 extends RestTestPortalBase
+class RestBug55655Test extends RestTestPortalBase
 {
     protected $_testfile1 = 'Bug55655-01.txt';
     protected $_testfile2 = 'Bug55655-02.txt';
@@ -53,6 +53,9 @@ class RestTestBug55655 extends RestTestPortalBase
         parent::tearDown();
     }
     
+    /**
+     * @group rest
+     */
     public function testAddingNoteAttachmentToBugAsSupportPortal()
     {
         $bugReply = $this->_restCall(

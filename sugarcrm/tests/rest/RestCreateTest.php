@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestCreate extends RestTestBase {
+class RestCreateTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -40,6 +40,9 @@ class RestTestCreate extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testCreate() {
         $restReply = $this->_restCall("Accounts/",
                                       json_encode(array('name'=>'UNIT TEST - AFTER', 'my_favorite' => true)),
