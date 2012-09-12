@@ -12,6 +12,7 @@ nv.models.legend = function() {
     , color = nv.utils.defaultColor()
     , align = true
     , dispatch = d3.dispatch('legendClick', 'legendDblclick', 'legendMouseover', 'legendMouseout')
+    , useClass = false
     ;
 
   //============================================================
@@ -51,9 +52,16 @@ nv.models.legend = function() {
             dispatch.legendDblclick(d,i);
           });
       seriesEnter.append('circle')
-          .style('fill', function(d,i) { return d.color || color(d,i)})
-          .style('stroke', function(d,i) { return d.color || color(d, i) })
-          .style('stroke-width', 2)
+          .attr('class', function(d,i) { 
+            return this.getAttribute('class') || (
+              useClass 
+                ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
+                : '' ); 
+            }
+          )
+          .attr('fill', function(d,i) { return color(d,i) })
+          .attr('stroke', function(d,i) { return color(d,i) })
+          .attr('stroke-width', 2)
           .attr('r', 5);
       seriesEnter.append('text')
           .text(getKey)
@@ -183,10 +191,16 @@ nv.models.legend = function() {
 
   chart.color = function(_) {
     if (!arguments.length) return color;
-    color = nv.utils.getColor(_);
+    color = _;
     return chart;
   };
 
+  chart.useClass = function(_) {
+    if (!arguments.length) return useClass;
+    useClass = _;
+    return chart;
+  };
+  
   chart.align = function(_) {
     if (!arguments.length) return align;
     align = _;

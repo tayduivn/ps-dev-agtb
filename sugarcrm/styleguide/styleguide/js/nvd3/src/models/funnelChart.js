@@ -6,21 +6,17 @@ nv.models.funnelChart = function() {
   //------------------------------------------------------------
 
   var funnel = nv.models.funnel()
-    //, xAxis = nv.models.axis()
     , yAxis = nv.models.axis()
     , legend = nv.models.legend()
-    , controls = nv.models.legend()
     ;
 
-  var margin = {top: 20, right: 10, bottom: 10, left: 40}
+  var margin = {top: 30, right: 20, bottom: 20, left: 60}
     , width = null
     , height = null
     , color = nv.utils.defaultColor()
-    , showControls = false
     , showLegend = true
     , showTitle = false
     , reduceXTicks = false // if false a tick will show for every data point
-    , rotateLabels = 0
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
         return '<p>Stage: <b>' + key + '</b></p>' +
@@ -33,16 +29,6 @@ nv.models.funnelChart = function() {
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
     ;
 
-  funnel
-    .stacked(true)
-    ;
-  // xAxis
-  //   .orient('bottom')
-  //   .tickPadding(5)
-  //   .highlightZero(false)
-  //   .showMaxMin(false)
-  //   .tickFormat(function(d) { return d })
-  //   ;
   yAxis
     .orient('left')
     .tickFormat(d3.format(',.1f'))
@@ -56,11 +42,10 @@ nv.models.funnelChart = function() {
   //------------------------------------------------------------
 
   var showTooltip = function(e, offsetElement, properties) {
-    var left = e.pos[0] + ( offsetElement.offsetLeft || 0 ),
-        top = e.pos[1] + ( offsetElement.offsetTop || 0),
+    var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
+        top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0),
         x = (e.point.y * 100 / properties.total).toFixed(1)
         y = ( yAxis ).tickFormat()( funnel.y()(e.point, e.pointIndex) ),
-
         content = tooltip(e.series.key, x, y, e, chart);
 
     nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
@@ -115,15 +100,12 @@ nv.models.funnelChart = function() {
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-multiBarWithLegend').data([data]);
-      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarWithLegend').append('g');
+      var wrap = container.selectAll('g.nv-wrap.nv-funnelWithLegend').data([data]);
+      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-funnelWithLegend').append('g');
       var g = wrap.select('g');
 
-      // gEnter.append('g').attr('class', 'nv-x nv-axis');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
-      gEnter.append('g').attr('class', 'nv-barsWrap');
-      gEnter.append('g').attr('class', 'nv-legendWrap');
-      gEnter.append('g').attr('class', 'nv-controlsWrap');
+      gEnter.append('g').attr('class', 'nv-funnelWrap');
 
       //------------------------------------------------------------
 
@@ -136,7 +118,9 @@ nv.models.funnelChart = function() {
 
       if (showLegend) 
       {
-        legend.width(availableWidth + margin.left);
+        gEnter.append('g').attr('class', 'nv-legendWrap');
+
+        legend.width(availableWidth);
 
         g.select('.nv-legendWrap')
             .datum(data)
@@ -151,7 +135,7 @@ nv.models.funnelChart = function() {
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate(-10,' + (-margin.top) +')');
+            .attr('transform', 'translate(0,' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title ) 
@@ -205,7 +189,7 @@ nv.models.funnelChart = function() {
         }).filter(function(d,i) { return !data[i].disabled }));
 
 
-      var funnelWrap = g.select('.nv-barsWrap')
+      var funnelWrap = g.select('.nv-funnelWrap')
           .datum(data.filter(function(d) { return !d.disabled }))
 
       d3.transition(funnelWrap).call(funnel);
@@ -286,35 +270,15 @@ nv.models.funnelChart = function() {
         selection.transition().call(chart);
       });
 
-      controls.dispatch.on('legendClick', function(d,i) {
-        if (!d.disabled) return;
-        controlsData = controlsData.map(function(s) {
-          s.disabled = true;
-          return s;
-        });
-        d.disabled = false;
-
-        switch (d.key) {
-          case 'Grouped':
-            funnel.stacked(false);
-            break;
-          case 'Stacked':
-            funnel.stacked(true);
-            break;
-        }
-
-        selection.transition().call(chart);
-      });
-
       dispatch.on('tooltipShow', function(e) { 
         if (tooltips) showTooltip(e, that.parentNode, properties) 
       });
 
       //============================================================
 
-
-      chart.update = function() { selection.transition().call(chart) };
-      chart.container = this; 
+      //TODO: decide if this makes sense to add into all the models for ease of updating (updating without needing the selection)
+      chart.update = function() { selection.transition().call(chart); };
+      chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
 
     });
 
@@ -326,7 +290,7 @@ nv.models.funnelChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  funnel.dispatch.on('elementMouseover.tooltip2', function(e) {
+  funnel.dispatch.on('elementMouseover.tooltip', function(e) {
     e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
     dispatch.tooltipShow(e);
   });
@@ -334,6 +298,7 @@ nv.models.funnelChart = function() {
   funnel.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
+
   dispatch.on('tooltipHide', function() {
     if (tooltips) nv.tooltip.cleanup();
   });
@@ -347,12 +312,11 @@ nv.models.funnelChart = function() {
 
   // expose chart's sub-components
   chart.dispatch = dispatch;
-  chart.funnel = funnel;
   chart.legend = legend;
-  // chart.xAxis = xAxis;
+  chart.funnel = funnel;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'stacked', 'delay');
+  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay');
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;
@@ -379,12 +343,6 @@ nv.models.funnelChart = function() {
     return chart;
   };
 
-  chart.showControls = function(_) {
-    if (!arguments.length) return showControls;
-    showControls = _;
-    return chart;
-  };
-
   chart.showLegend = function(_) {
     if (!arguments.length) return showLegend;
     showLegend = _;
@@ -396,18 +354,6 @@ nv.models.funnelChart = function() {
     showTitle = _;
     return chart;
   };
-
-  chart.reduceXTicks= function(_) {
-    if (!arguments.length) return reduceXTicks;
-    reduceXTicks = _;
-    return chart;
-  };
-
-  chart.rotateLabels = function(_) {
-    if (!arguments.length) return rotateLabels;
-    rotateLabels = _;
-    return chart;
-  }
 
   chart.tooltip = function(_) {
     if (!arguments.length) return tooltip;
