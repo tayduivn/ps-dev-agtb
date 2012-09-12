@@ -1,4 +1,4 @@
-describe("sugarfields", function() {
+describe("Url field", function() {
 
     var app, field;
 
