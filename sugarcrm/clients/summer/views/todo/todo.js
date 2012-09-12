@@ -88,16 +88,21 @@
         e.stopPropagation();
     },
     handleEscKey: function() {
-        // todo: change this horribly inefficient code later
-        $(document).keyup(function(event) {
-            // check if the menu is active
-            if( $(".todo-list-widget").hasClass("open") ) {
+        if( !(this.$(".todo-list-widget").is(".open")) ) {
+            // attach namespaced keyup event listener
+            $(document).on("keyup.escape", function() {
                 // If esc was pressed
                 if( event.keyCode == 27 ) {
                     $(".todo-list-widget").removeClass("open");
+                    // remove event listener
+                    $(document).off("keyup.escape");
                 }
-            }
-        });
+            });
+        }
+        else {
+            // remove event listener
+            $(document).off("keyup.escape");
+        }
     },
     showDatePicker: function() {
         this.$(".todo-date").datepicker({
