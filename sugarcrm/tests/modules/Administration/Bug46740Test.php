@@ -68,6 +68,7 @@ class Bug46740Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        SugarTestHelper::setUp('moduleList');
         global $sugar_config;
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('current_user');
@@ -98,6 +99,7 @@ FILE;
     {
         SugarTestHelper::tearDown();
         unlink($this->file);
+        SugarTestHelper::tearDown();
     }
 
     /**

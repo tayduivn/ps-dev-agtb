@@ -26,7 +26,7 @@ require_once('tests/rest/RestTestBase.php');
 require_once('include/api/SugarApi/SugarApi.php');
 require_once('include/api/ThemeApi.php');
 
-class RestTestTheme extends RestTestBase
+class RestThemeTest extends RestTestBase
 {
 
     private $platformTest = 'platform_TEST_123456789';
@@ -47,6 +47,9 @@ class RestTestTheme extends RestTestBase
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testPreviewCSS()
     {
         $args1 = array(
@@ -78,6 +81,9 @@ class RestTestTheme extends RestTestBase
         $this->assertNotEquals($restReply1, $restReply2);
     }
 
+    /**
+     * @group rest
+     */
     public function testGetCustomThemeVars()
     {
         // TEST= GET theme
@@ -85,20 +91,23 @@ class RestTestTheme extends RestTestBase
 
         // TEST we get a hash of variables
         $this->assertEquals($restReply['reply']['hex'], array(
-            0 => array('name' => 'primary', 'value' => '#E61718'),
-            1 => array('name' => 'secondary', 'value' => '#000000'),
-            2 => array('name' => 'primaryBtn', 'value' => '#177EE5'),
+            0 => array('name' => 'BorderColor', 'value' => '#E61718'),
+            1 => array('name' => 'NavigationBar', 'value' => '#000000'),
+            2 => array('name' => 'PrimaryButton', 'value' => '#177EE5'),
         ));
     }
 
+    /**
+     * @group rest
+     */
     public function testUpdateCustomTheme()
     {
         $args = array(
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
-            'primary' => '#75c1d1',
-            'secondary' => '#192c47',
-            'primaryBtn' => '#f5b30a',
+            'BorderColor' => '#75c1d1',
+            'NavigationBar' => '#192c47',
+            'PrimaryButton' => '#f5b30a',
         );
 
         // Fake the user is an admin
@@ -112,17 +121,17 @@ class RestTestTheme extends RestTestBase
         $this->_user->save();
         $GLOBALS['db']->commit();
         // TEST the boostrap.css file has been created
-        $this->assertEquals(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
+        $this->assertTrue(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), "Created bootstrap file does not exist");
 
         // TEST the boostrap.css file is not empty
-        $this->assertNotEmpty(file_get_contents('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'));
+        $this->assertTrue(filesize('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css') > 0, "Created file has no contents");
         $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
 
         // TEST we have updated the variables in variables.less
         $variables = $thisTheme->getThemeVariables();
-        $this->assertEquals($args['primary'], $variables['primary']);
-        $this->assertEquals($args['secondary'], $variables['secondary']);
-        $this->assertEquals($args['primaryBtn'], $variables['primaryBtn']);
+        $this->assertEquals($args['BorderColor'], $variables['BorderColor']);
+        $this->assertEquals($args['NavigationBar'], $variables['NavigationBar']);
+        $this->assertEquals($args['PrimaryButton'], $variables['PrimaryButton']);
 
         // TEST if a config var has been added in the DB
         $query = $GLOBALS['db']->query("SELECT value FROM config WHERE category = '" . $args['platform'] . "' AND name = 'css'");
@@ -133,6 +142,9 @@ class RestTestTheme extends RestTestBase
             '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"');
     }
 
+    /**
+     * @group rest
+     */
     public function testResetDefaultTheme()
     {
 

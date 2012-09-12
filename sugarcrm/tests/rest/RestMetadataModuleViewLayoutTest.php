@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataModuleViewLayout extends RestTestBase {
+class RestMetadataModuleViewLayoutTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -40,22 +40,28 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
                     unlink($filename);
                 }
             } else {
-                file_put_contents($filename,$filecontents);
+                sugar_file_put_contents($filename,$filecontents);
             }
         }
 
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataSugarFields() {
         $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['views']),'No views for the cases module');
     }
     
+    /**
+     * @group rest
+     */
     public function testMetadataModuleLayout() {
-        $filesToCheck = array('modules/Cases/metadata/portal/layouts/edit.php',
-                              'custom/modules/Cases/metadata/portal/layouts/edit.php',
+        $filesToCheck = array('modules/Cases/clients/portal/layouts/edit/edit.php',
+                              'custom/modules/Cases/clients/portal/layouts/edit/edit.php',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -66,8 +72,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('modules/Cases/metadata/portal/layouts',
-                            'custom/modules/Cases/metadata/portal/layouts',
+        $dirsToMake = array('modules/Cases/clients/portal/layouts/edit',
+                            'custom/modules/Cases/clients/portal/layouts/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -77,38 +83,45 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         }
         
         // Make sure we get it when we ask for portal
-        file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n");
+        sugar_file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n");
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['unit_test'],"Didn't get the portal layout");
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the portal layout");
 
         // Make sure we get the custom file
-        file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n");
+        sugar_file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n");
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['unit_test'],"Didn't get the custom portal layout");
+        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the custom portal layout");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['unit_test'],"Didn't get the portal layout");
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the portal layout");
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataSubPanels()
     {
         $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');   
     }
 
-
+    /**
+     * @group rest
+     */
     public function testMetadataFTS()
     {
         $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']),'No ftsEnabled for the cases module');   
     }
 
-
+    /**
+     * @group rest
+     */
     public function testMetadataModuleViews() {
-        $filesToCheck = array('modules/Cases/metadata/portal/views/edit.php',
-                              'custom/modules/Cases/metadata/portal/views/edit.php',
+        $filesToCheck = array('modules/Cases/clients/portal/views/edit/edit.php',
+                              'custom/modules/Cases/clients/portal/views/edit/edit.php',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -119,8 +132,8 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('modules/Cases/metadata/portal/views',
-                            'custom/modules/Cases/metadata/portal/views',
+        $dirsToMake = array('modules/Cases/clients/portal/views/edit',
+                            'custom/modules/Cases/clients/portal/views/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -130,18 +143,18 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         }
         
         // Make sure we get it when we ask for portal
-        file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Standard Dir');\n");
+        sugar_file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Standard Dir');\n");
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['unit_test'],"Didn't get the portal view");
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the portal view");
 
         // Make sure we get the custom file
-        file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Custom Dir');\n");
+        sugar_file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Custom Dir');\n");
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['unit_test'],"Didn't get the custom portal view");
+        $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the custom portal view");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
-        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['unit_test'],"Didn't get the portal view");
+        $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the portal view");
     }
 }

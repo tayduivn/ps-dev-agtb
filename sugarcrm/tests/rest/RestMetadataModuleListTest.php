@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataModuleList extends RestTestBase {
+class RestMetadataModuleListTest extends RestTestBase {
     //BEGIN SUGARCRM flav=ent ONLY
     public $oppTestPath ='modules/Opportunities/clients/portal/views/list/list.php';
     //END SUGARCRM flav=ent ONLY    
@@ -63,6 +63,9 @@ class RestTestMetadataModuleList extends RestTestBase {
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group rest
+     */
     public function testMetadataGetModuleListPortal() {
         // Setup the tab controller here and get the default tabs for setting and resetting
         require_once('modules/MySettings/TabController.php');
@@ -122,6 +125,9 @@ class RestTestMetadataModuleList extends RestTestBase {
     //END SUGARCRM flav=ent ONLY
     
     //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group rest
+     */
     public function testMetadataGetModuleListMobile() {
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
 
@@ -164,6 +170,9 @@ class RestTestMetadataModuleList extends RestTestBase {
     }
     //END SUGARCRM flav=pro ONLY
 
+    /**
+     * @group rest
+     */
     public function testMetadataGetModuleListBase() {
         $restReply = $this->_restCall('metadata?type_filter=module_list');
 
@@ -181,6 +190,9 @@ class RestTestMetadataModuleList extends RestTestBase {
         
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataGetFullModuleListBase() {
         $restReply = $this->_restCall('metadata?type_filter=full_module_list');
         $fullRestModules = $restReply['reply']['full_module_list'];

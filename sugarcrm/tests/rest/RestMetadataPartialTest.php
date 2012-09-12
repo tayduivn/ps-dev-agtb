@@ -24,7 +24,10 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataPartial extends RestTestBase {
+class RestMetadataPartialTest extends RestTestBase {
+    /**
+     * @group rest
+     */
     public function testMetadataGetHashes() {
         $restReply = $this->_restCall('metadata?only_hash=true');
 
@@ -32,6 +35,9 @@ class RestTestMetadataPartial extends RestTestBase {
         $this->assertFalse(isset($restReply['reply']['modules']['Accounts']['fields']),'Account module has fields.');
     }
     
+    /**
+     * @group rest
+     */
     public function testMetadataPartialGetModules() {
         // Fetch just the hashes
         $restReply = $this->_restCall('metadata?only_hash=true&type_filter=modules&module_filter=Accounts');
