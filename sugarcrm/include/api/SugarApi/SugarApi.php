@@ -148,6 +148,7 @@ abstract class SugarApi {
 
         $id = $bean->id;
 
+
         //BEGIN SUGARCRM flav=pro ONLY
         if(isset($args['my_favorite'])) {
             $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
@@ -177,12 +178,19 @@ abstract class SugarApi {
     protected function toggleFavorites($module, $id, $favorite)
     {
         $favorite = (bool) $favorite;
-        // is currently favorite?
-        $current = SugarFavorites::isUserFavorite($module, $id, $GLOBALS['current_user']->id);
-        // already the same skip it
-        if($current == $favorite) {
+        // check to see if we already have a favorite
+        $favorite_id = SugarFavorites::generateGUID($module, $record, $user_id);
+        $sf = new SugarFavorites();
+        $sf->retrieve($favorite_id, true, false);
+        $already_favorited = (empty($sf->id)) ? false : true;
+
+        if($already_favorited) {
+            // if it is a favorite deleted should be 0
+            $sf->deleted = ($favorite) ? 0 : 1;
+            $sf->save();
             return true;
         }
+
 
         if($favorite == true) {
             $fav = new SugarFavorites();
@@ -196,9 +204,8 @@ abstract class SugarApi {
             $fav->save();
             return true;
         }
-        $sf = new SugarFavorites();
-        $sf->markRecordDeletedInFavoritesByUser($id, $module, $GLOBALS['current_user']->id);
-        return true;
+
+        
     }
 
     //END SUGARCRM flav=pro ONLY
