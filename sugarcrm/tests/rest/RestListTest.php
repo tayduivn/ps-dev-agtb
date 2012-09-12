@@ -25,7 +25,7 @@
 require_once('tests/rest/RestTestBase.php');
 require_once('modules/SugarFavorites/SugarFavorites.php');
 
-class RestTestList extends RestTestBase {
+class RestListTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -94,14 +94,17 @@ class RestTestList extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
+        parent::tearDown();
         foreach($this->files AS $file) {
             unlink($file);
         }
         $GLOBALS['db']->commit();
     }
 
+    /**
+     * @group rest
+     */
     public function testModuleSearch() {
         // Make sure there is at least one page of accounts
         for ( $i = 0 ; $i < 40 ; $i++ ) {
@@ -196,6 +199,9 @@ class RestTestList extends RestTestBase {
 
     }
 
+    /**
+     * @group rest
+     */
     public function testBugSearch() {
         $bug = new Bug();
         $bug->name = "UNIT TEST " . count($this->bugs) . " - " . create_guid();
@@ -208,6 +214,9 @@ class RestTestList extends RestTestBase {
         $this->assertTrue(!empty($restReply['reply']['records'][$tmp[0]]['description']), "Description not filled out");
     }
 
+    /**
+     * @group rest
+     */
     public function testCaseSearch() {
         // Cases searches not only by fields in the module, but by the related account_name so it caused some extra problems so it gets some extra tests.
         // Make sure there is at least one page of cases
@@ -304,6 +313,9 @@ class RestTestList extends RestTestBase {
     }
 
 
+    /**
+     * @group rest
+     */
     public function testGlobalSearch() {
         // Make sure there is at least one page of accounts
         for ( $i = 0 ; $i < 40 ; $i++ ) {
@@ -334,7 +346,7 @@ class RestTestList extends RestTestBase {
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $contact = new Contact();
-            $contact->first_name = "UNIT ".count($this->contacts);
+            $contact->first_name = "UNIT";
             $contact->last_name = "TEST ".create_guid();
             if ( $i > 15 && $i < 26 ) {
                 $contact->assigned_user_id = $GLOBALS['current_user']->id;
@@ -360,7 +372,7 @@ class RestTestList extends RestTestBase {
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $opportunity = new Opportunity();
-            $opportunity->name = "UNIT ".count($this->opps)." TEST ".create_guid();
+            $opportunity->name = "UNIT TEST ".create_guid();
             
             if ( $i > 15 && $i < 26 ) {
                 $opportunity->assigned_user_id = $GLOBALS['current_user']->id;
@@ -388,7 +400,6 @@ class RestTestList extends RestTestBase {
         
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
-
         $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
