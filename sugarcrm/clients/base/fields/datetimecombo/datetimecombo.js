@@ -13,8 +13,6 @@
             }
         });
     },
-
-    foo
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
@@ -53,13 +51,10 @@
                     parts[4] = (parseInt(parts[4], 10) + 12) + '';
                 }
                 dt = new Date(parts[1]+'-'+parts[2]+'-'+parts[3]+' '+parts[4]+':'+parts[5]);
-            } else if(!value) {
-                return value;
             } else {
                 app.logger.error("Failed to parse datetime.");
                 return; // can't parse datetime
             }
-
             // Preset the model with display default in case user doesn't change anything
             this.model.set(this.name, dt.toISOString()); 
         } else if(!value) {
