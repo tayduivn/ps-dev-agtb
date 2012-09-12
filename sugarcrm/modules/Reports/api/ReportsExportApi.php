@@ -97,11 +97,14 @@ class ReportsExportApi extends SugarApi {
         if($report->id != null)
         {
             //Translate pdf to correct language
+            $reporter = new Report(html_entity_decode($report->content), '', '');
+            $reporter->layout_manager->setAttribute("no_sort",1);
+            //Translate pdf to correct language
             $mod_strings = return_module_language($current_language, 'Reports');
 
             //Generate actual pdf
-            // TODO: Add caching here
-            $report_filename = template_handle_pdf($report, false);
+            $report_filename = template_handle_pdf($reporter, false);
+
             sugar_cache_put($report->id . '-' . $GLOBALS['current_user']->id, $report_filename, $this->cacheLength * 60);
         }
         return $report_filename;

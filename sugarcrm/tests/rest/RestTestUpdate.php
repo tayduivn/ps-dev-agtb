@@ -52,6 +52,9 @@ class RestTestUpdate extends RestTestBase {
         $this->account = new Account();
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
+
+        $GLOBALS['db']->commit();
+
         $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('name' => 'UNIT TEST - AFTER')), "PUT");
 
         $this->assertEquals($this->account->id, $restReply['reply']['id'], "The returned account id was not the same.");
@@ -73,6 +76,10 @@ class RestTestUpdate extends RestTestBase {
         $this->account = new Account();
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
+
+        $GLOBALS['db']->commit();
+
+
         $restReply = $this->_restCall("Accounts/{$this->account->id}", json_encode(array('my_favorite' => true)), "PUT");
 
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
@@ -86,6 +93,8 @@ class RestTestUpdate extends RestTestBase {
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
 
+        $GLOBALS['db']->commit();
+
         $fav = new SugarFavorites();
         $fav->id = SugarFavorites::generateGUID('Accounts',$this->account->id);
         $fav->new_with_id = true;
@@ -95,6 +104,8 @@ class RestTestUpdate extends RestTestBase {
         $fav->assigned_user_id = $GLOBALS['current_user']->id;
         $fav->deleted = 0;
         $fav->save();
+
+        $GLOBALS['db']->commit();
 
         $is_fav = SugarFavorites::isUserFavorite('Accounts', $this->account->id, $this->_user->id);
 
@@ -112,6 +123,10 @@ class RestTestUpdate extends RestTestBase {
         $this->contact = new Contact();
         $this->contact->first_name = "UNIT TEST - BEFORE";
         $this->contact->save();
+
+        $GLOBALS['db']->commit();
+
+
         $emails = array(
                         array(
                             'email_address'=>'test@test.com',
@@ -161,6 +176,8 @@ class RestTestUpdate extends RestTestBase {
         $this->meeting->parent_type = 'Accounts';
         $this->meeting->status = 'Not Held';
         $this->meeting->save();
+
+        $GLOBALS['db']->commit();
         
         // Change the meeting status and check for parent_name
         $reply = $this->_restCall("Meetings/{$this->meeting->id}", json_encode(array('status' => 'Held')), 'PUT');
