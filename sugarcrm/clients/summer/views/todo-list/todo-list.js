@@ -11,10 +11,6 @@
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        console.log("-----------");
-        console.log("todo-list init");
-        console.log(options);
-        console.log(this);
         var self = this;
 
         app.events.on("app:view:change", function(layout, obj) {
@@ -28,7 +24,6 @@
                                     model.attributes.parent_type == self.module &&
                                     model.attributes.assigned_user_id == app.user.get("id"));
                         });
-                        console.log(self.collection.models);
 
                         self.populateModelList(self.collection);
                         self.overduePillActive = true;
@@ -39,9 +34,6 @@
         }, this);
 
         app.events.on("app:view:todo:refresh", function(model, action) {
-            console.log("baa");
-            console.log(model);
-            console.log(action);
             var taskType = self.app.view.views.TodoView.prototype.getTaskType(model.attributes.date_due),
                 givenModel = model;
 
@@ -111,7 +103,6 @@
             modelInfo = this.getModelInfo(e),
             modelIndex = modelInfo.index,
             record = modelInfo.modList;
-        console.log(modelInfo);
 
         this.model = this.collection.get(record[modelIndex].id);
         this.model.destroy({ success: function() {

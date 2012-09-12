@@ -47,9 +47,6 @@
         }, this);
 
         app.events.on("app:view:todo-list:refresh", function(model, action) {
-            console.log("boo");
-            console.log(model);
-            console.log(action);
             var taskType = self.getTaskType(model.attributes.date_due),
                 givenModel = model;
 
