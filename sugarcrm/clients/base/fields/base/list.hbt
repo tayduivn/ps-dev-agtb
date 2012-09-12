@@ -1,1 +1,1 @@
-{{#if def.link}}<a href="#{{buildRoute context model def.route.action def.route.options}}">{{value}}</a>{{else}}{{value}}{{/if}}
+{{#if def.link}}<a href="{{#if def.events}}javascript:void(0);{{else}}#{{buildRoute context model def.route.action def.route.options}}{{/if}}">{{value}}</a>{{else}}{{value}}{{/if}}

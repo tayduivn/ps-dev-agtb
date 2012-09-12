@@ -15,6 +15,26 @@ describe("Base.Layout.Modal", function() {
                 }
             });
         }
+
+        if (!app.view.views.ModalHeaderView)
+        {
+            $.ajax("../clients/base/views/modal-header/modal-header.js", {
+                async : false,
+                success : function(o) {
+                    app.view.declareComponent("view", "modal-header", null, o, null, true);
+                }
+            });
+        }
+
+        if (!app.view.views.ModalConfirmView)
+        {
+            $.ajax("../clients/base/views/modal-confirm/modal-confirm.js", {
+                async : false,
+                success : function(o) {
+                    app.view.declareComponent("view", "modal-confirm", null, o, null, true);
+                }
+            });
+        }
     });
 
     afterEach(function() {
@@ -93,11 +113,11 @@ describe("Base.Layout.Modal", function() {
         var layout = new ModalLayout(options);
         expect(layout.$(".modal").length).toEqual(1);
         expect(layout.$(".modal-backdrop").length).toEqual(1);
-        expect(layout.$(".modal-body").length).toEqual(1);
+        expect(layout.$(".modal-body").length).toEqual(0);
         var comp = {
             el: 'foo container'
         }
-        layout._placeComponent(comp, { layout: 'popup-list'});
+        layout._placeComponent(comp, { layout: 'popup-list', bodyComponent: true});
         expect(layout.$(".modal-body").length).toEqual(1);
         expect(layout.$(".modal-body").html()).toEqual('foo container');
     });
@@ -124,16 +144,60 @@ describe("Base.Layout.Modal", function() {
         var comp = {},
             def = {};
         layout._placeComponent(comp, def);
-        expect(layout.getPopupComponent()).toBe(null);
-
+console.log(layout);
+        //Add one layout component
         calledCaller.call(layout, {
-            module: calledModule,
-            layout: 'popup-list'
+            components: [ {layout: 'popup-list'} ],
+            context: { module: calledModule }
         });
-        expect(layout.getPopupComponent().module).toEqual(calledModule);
-        expect(_.has(layout.getPopupComponent()._callbacks, 'modal:callback')).toBe(true);
-        expect(_.has(layout.getPopupComponent()._callbacks, 'modal:close')).toBe(true);
-        expect(_.has(layout.getPopupComponent()._callbacks, 'modal:undefined')).toBe(false);
+
+        expect(layout._components.length).toEqual(layout._initComponentSize + 1);
+        expect(layout._components[layout._initComponentSize].module).toEqual(calledModule);
+        expect(_.has(layout.context._callbacks, 'modal:callback')).toBe(true);
+        expect(_.has(layout.context._callbacks, 'modal:close')).toBe(true);
+        expect(_.has(layout.context._callbacks, 'modal:undefined')).toBe(false);
+
+        //Add two components
+        calledCaller.call(layout, {
+            components: [ {layout: 'test-list'}, {view: 'test'} ],
+            context: { module: calledModule }
+        });
+        //it should clean out the previous components and append only new components
+        expect(_.find(layout._components, function(component) {
+            return (component.options.name == 'popup-list');
+        })).toBeFalsy();
+        expect(layout._components.length).toEqual(layout._initComponentSize + 2);
+    });
+
+    it("should create a simple modal dialog", function(){
+        var definedTriggerName = 'app:layout:modal:open',
+            calledEventName = '',
+            calledCaller = null,
+            options = {
+                'meta' : {
+                    'showEvent' : definedTriggerName
+                },
+                'context' : context,
+                'layout' : {
+                    on: function(event, caller) {
+                        calledEventName = event;
+                        calledCaller = caller;
+                    }
+                }
+            },
+            message = 'blahblah',
+            title = 'poo title';
+        var layout = new ModalLayout(options);
+        var comp = {},
+            def = {};
+        calledCaller.call(layout, {
+            title: title,
+            message: message
+        });
+
+        expect(layout.getComponent("modal-header").title).toEqual(title);
+        expect(_.first(layout.getBodyComponents()).message).toEqual(message);
+        expect(_.first(layout.getBodyComponents()).name).toEqual("modal-confirm");
     });
 
     it("should adjust the modal span size", function() {
