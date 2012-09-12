@@ -40,6 +40,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
 
     public function setUp()
     {
+        parent::setUp();
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
@@ -75,6 +76,7 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         }
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        parent::tearDown();
     }
     /**
      * @group rest
