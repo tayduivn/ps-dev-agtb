@@ -26,7 +26,7 @@ require_once('tests/rest/RestTestBase.php');
 require_once('modules/SugarFavorites/SugarFavorites.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
-class RestTestListFTS extends RestTestBase {
+class RestListFTSTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -79,6 +79,9 @@ class RestTestListFTS extends RestTestBase {
         $GLOBALS['db']->commit();
     }
 
+    /**
+     * @group rest
+     */
     public function testModuleSearch() {
         if($this->search_engine_name != 'Elastic') {
             $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
@@ -140,7 +143,10 @@ class RestTestListFTS extends RestTestBase {
         //END SUGARCRM flav=pro ONLY
 
     }
-
+    
+    /**
+     * @group rest
+     */
     public function testGlobalSearch() {
         if($this->search_engine_name != 'Elastic') {
             $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');

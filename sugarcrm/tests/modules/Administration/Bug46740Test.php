@@ -70,8 +70,8 @@ class Bug46740Test extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::setUp('moduleList');
         global $sugar_config;
-        global $current_user;
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('current_user');
         $this->language = $sugar_config['default_language'];
 
         // create custom localization file
@@ -97,7 +97,7 @@ FILE;
      */
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
         unlink($this->file);
         SugarTestHelper::tearDown();
     }

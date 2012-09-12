@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataSugarLayouts extends RestTestBase {
+class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     protected $_testPaths = array(
         'wiggle' => 'clients/base/layouts/wiggle/wiggle.php',
         'woggle' => 'custom/clients/base/layouts/woggle/woggle.php',
@@ -43,7 +43,6 @@ class RestTestMetadataSugarLayouts extends RestTestBase {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
 
         foreach ($this->_testPaths as $file) {
             preg_match('#clients/(.*)/layouts/#', $file, $m);
@@ -77,44 +76,56 @@ class RestTestMetadataSugarLayouts extends RestTestBase {
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
-
+    /**
+     * @group rest
+     */
     public function testBaseLayoutRequestAll() {
-        $reply = $this->_restCall('metadata');
+        $reply = $this->_restCall('metadata/public');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testBaseLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?type_filter=layouts');
+        $reply = $this->_restCall('metadata/public?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testPortalLayoutRequestAll() {
-        $reply = $this->_restCall('metadata?platform=portal');
+        $reply = $this->_restCall('metadata/public?platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('bizzle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testPortalLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?type_filter=layouts&platform=portal');
+        $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('bozzle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testMobileLayoutRequestAll() {
-        $reply = $this->_restCall('metadata?platform=mobile');
+        $reply = $this->_restCall('metadata/public?platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('pozzle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testMobileLayoutRequestLayoutsOnly() {
-        $reply = $this->_restCall('metadata?type_filter=layouts&platform=mobile');
+        $reply = $this->_restCall('metadata/public?type_filter=layouts&platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertEmpty($reply['reply']['layouts']['dizzle'], 'Incorrectly picked up metadata that should not have been read');
