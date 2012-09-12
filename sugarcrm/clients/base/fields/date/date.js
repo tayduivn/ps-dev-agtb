@@ -34,7 +34,8 @@
         // If there is a default 'string' value like "yesterday", format it as a date
         if(!value && this.def.display_default) {
             value = app.date.parseDisplayDefault(this.def.display_default);
-            jsDate = new Date(value);
+            parts = value.match(/(\d+)/g);
+            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
             this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
         } else {
             // Bug 56249 .. Date constructor doesn't reliably handle yyyy-mm-dd
