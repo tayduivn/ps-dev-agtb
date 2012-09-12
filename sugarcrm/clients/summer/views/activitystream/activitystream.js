@@ -203,7 +203,7 @@
             self.collection.fetch(self.opts)
         }});
     },
-    
+
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
@@ -315,18 +315,22 @@
             }
             _.each(comments, function(comment) {
                 _.each(comment.notes, function(note) {
-                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
-                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                    if(note.file_mime_type) {
+                        note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                        note.image = (note.file_mime_type.indexOf("image") !== -1);
+                    }
                 });
             });
 
             _.each(model.get("notes"), function(note) {
-                note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
-                note.image = (note.file_mime_type.indexOf("image") !== -1);
+                if(note.file_mime_type) {
+                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                }
             });
 
         }, this);
-        
+
         return app.view.View.prototype._renderHtml.call(this);
     },
 
