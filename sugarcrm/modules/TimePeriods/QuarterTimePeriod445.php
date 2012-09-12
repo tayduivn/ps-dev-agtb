@@ -31,12 +31,20 @@ require_once('modules/TimePeriods/iTimePeriod.php');
 class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
 
     /**
-     * Constructor
+     * constructor override
+     *
+     * @param null $start_date date string to set the start date of the quarter time period
      */
-    public function __construct() {
-        parent::TimePeriod();
+    public function __construct($start_date = null) {
+        parent::__construct();
+        $timedate = TimeDate::getInstance();
 
+        //set defaults
         $this->time_period_type = 'Quarter445';
+        $this->is_fiscal = true;
+        $this->is_leaf = false;
+
+        $this->setStartDate($start_date);
     }
 
     /**

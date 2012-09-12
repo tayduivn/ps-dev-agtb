@@ -29,12 +29,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/TimePeriods/iTimePeriod.php');
 class QuarterTimePeriod544 extends TimePeriod implements iTimePeriod {
-
-
     /**
      * constructor override
      *
-     * @param null $start_date date string to set the start date of the annual time period
+     * @param null $start_date date string to set the start date of the quarter time period
      */
     public function __construct($start_date = null) {
         parent::__construct();
@@ -42,7 +40,7 @@ class QuarterTimePeriod544 extends TimePeriod implements iTimePeriod {
 
         //set defaults
         $this->time_period_type = 'Quarter544';
-        $this->is_fiscal_year = false;
+        $this->is_fiscal = true;
         $this->is_leaf = false;
 
         $this->setStartDate($start_date);

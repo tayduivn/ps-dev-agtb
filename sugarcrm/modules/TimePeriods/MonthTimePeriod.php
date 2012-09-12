@@ -32,7 +32,9 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * constructor override
      *
-     * @param null $start_date date string to set the start date of the annual time period
+     * @param null $start_date date string to set the start date of the month time period
+     * @param bool $is_fiscal flag to determine if the month should follow a fiscal pattern vs calendar
+     * @param int $week_count to be used in conjunction with is_fiscal, if fiscal month, then this is how many weeks to include
      */
     public function __construct($start_date = null, $is_fiscal = false, $week_count = 4) {
         parent::__construct();
@@ -77,7 +79,7 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * creates a new MonthTimePeriod to start to use
      *
-     * @param isFirstofQuarter Bool denotes month is first fiscal month of quarter, resulting in one more week
+     * @param int $week_length denotes how many weeks should be included in month for a fiscal month
      *
      * @return MonthTimePeriod
      */

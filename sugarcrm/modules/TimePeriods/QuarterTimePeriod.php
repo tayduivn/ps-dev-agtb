@@ -33,7 +33,7 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * constructor override
      *
-     * @param null $start_date date string to set the start date of the annual time period
+     * @param null $start_date date string to set the start date of the quarter time period
      */
     public function __construct($start_date = null) {
         parent::__construct();
@@ -41,7 +41,7 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
 
         //set defaults
         $this->time_period_type = 'Quarter';
-        $this->is_fiscal_year = false;
+        $this->is_fiscal = false;
         $this->is_leaf = false;
 
         $this->setStartDate($start_date);
