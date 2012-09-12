@@ -26,10 +26,10 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-interface SugarForecasting_Progress_ProgressInterface
+interface SugarForecasting_ForecastProcessInterface
 {
     /**
-     * This is used to run all the commands that are need to get a chart back out of the system
+     * This is used to run all the commands that are need to get a forecast back out of the system
      *
      * @return string|array
      */

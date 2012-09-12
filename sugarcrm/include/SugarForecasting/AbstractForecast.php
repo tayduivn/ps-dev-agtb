@@ -26,9 +26,9 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/SugarForecasting/ForecastInterface.php');
+require_once('include/SugarForecasting/ForecastProcessInterface.php');
 require_once('include/SugarForecasting/AbstractForecastArgs.php');
-abstract class SugarForecasting_AbstractForecast extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastInterface
+abstract class SugarForecasting_AbstractForecast extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastProcessInterface
 {
     /**
      * Get the months for the current time period
