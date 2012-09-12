@@ -32,6 +32,11 @@ class RestThemeTest extends RestTestBase
     private $platformTest = 'platform_TEST_123456789';
     private $themeTest = 'theme_TEST_123456789';
 
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM config WHERE category = '" . $this->platformTest . "' AND name = 'css'");

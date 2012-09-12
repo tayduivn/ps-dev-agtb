@@ -33,6 +33,11 @@ class RestMetadataViewDefsTest extends RestTestBase {
         //END SUGARCRM flav=ent ONLY
     );
 
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
     public function tearDown()
     {
         foreach($this->testMetaDataFiles as $file ) {

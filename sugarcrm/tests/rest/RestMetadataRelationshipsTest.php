@@ -24,7 +24,17 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class ResMetadataRelationshipsTest extends RestTestBase {
+class RestMetadataRelationshipsTest extends RestTestBase {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
+    
     /**
      * @group rest
      */

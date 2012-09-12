@@ -27,6 +27,16 @@
 require_once('tests/rest/RestTestPortalBase.php');
 
 class RestPortalSecurityTest extends RestTestPortalBase {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
+    
     /**
      * @group rest
      */

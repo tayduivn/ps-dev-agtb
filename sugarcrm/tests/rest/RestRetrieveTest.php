@@ -25,6 +25,11 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestRetrieveTest extends RestTestBase {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
     public function tearDown()
     {
         if ( isset($this->account_id) ) {

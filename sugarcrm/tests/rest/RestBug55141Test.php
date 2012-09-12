@@ -51,6 +51,7 @@ class RestBug55141Test extends RestTestBase {
     
     public function tearDown()
     {
+        parent::tearDown();
     }
 
     /**

@@ -43,6 +43,7 @@ class RestClearCacheTest extends RestTestBase {
         foreach($this->files AS $file) {
             unlink($file);
         }
+        parent::tearDown();
     }
 
     /**

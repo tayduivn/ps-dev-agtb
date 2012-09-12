@@ -25,6 +25,16 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestMetadataPartialTest extends RestTestBase {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
+    public function tearDown()
+    {
+        parent::tearDown();
+    }
+    
     /**
      * @group rest
      */

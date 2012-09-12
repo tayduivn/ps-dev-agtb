@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -45,7 +46,6 @@ class RestCurrentUserPortalTest extends RestTestBase {
         // A little bit destructive, but necessary.
         $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
         $this->accounts = array();
         $this->contacts = array();
 

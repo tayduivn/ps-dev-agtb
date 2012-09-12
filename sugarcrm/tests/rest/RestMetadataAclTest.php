@@ -25,6 +25,11 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestMetadataAclTest extends RestTestBase {
+    public function setUp()
+    {
+        parent::setUp();
+    }
+    
     public function tearDown()
     {
         global $db;
