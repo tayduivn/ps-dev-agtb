@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestRetrieve extends RestTestBase {
+class RestRetrieveTest extends RestTestBase {
     public function tearDown()
     {
         if ( isset($this->account_id) ) {
@@ -34,6 +34,9 @@ class RestTestRetrieve extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testRetrieve() {
         $this->account = new Account();
         $this->account->name = "UNIT TEST - BEFORE";
@@ -46,6 +49,9 @@ class RestTestRetrieve extends RestTestBase {
 
     }
 
+    /**
+     * @group rest
+     */
     // test that the reply is html decoded Story Id: 30925015 Url: https://www.pivotaltracker.com/story/show/30925015
     public function testRetrieveHTMLEntity() {
         $this->account = new Account();

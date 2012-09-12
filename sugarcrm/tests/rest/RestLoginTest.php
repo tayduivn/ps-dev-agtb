@@ -23,7 +23,7 @@
  ********************************************************************************/
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestLogin extends RestTestBase
+class RestLoginTest extends RestTestBase
 {
     public function setUp()
     {
@@ -49,6 +49,9 @@ class RestTestLogin extends RestTestBase
         }
     }
 
+    /**
+     * @group rest
+     */
     public function testRestLoginUser()
     {
         $args = array(
@@ -70,6 +73,9 @@ class RestTestLogin extends RestTestBase
         $this->assertEquals('pong',$replyPing['reply']);
     }
 
+    /**
+     * @group rest
+     */
     public function testRestLoginUserAutocreateKey()
     {
         $GLOBALS['db']->query("DELETE FROM oauth_keys WHERE c_key = 'sugar'");
@@ -94,6 +100,9 @@ class RestTestLogin extends RestTestBase
     }
 
 
+    /**
+     * @group rest
+     */
     public function testRestLoginCustomIdUser()
     {
         // Create a unit test login ID
@@ -127,6 +136,9 @@ class RestTestLogin extends RestTestBase
         $this->assertEquals('pong',$replyPing['reply']);
     }
 
+    /**
+     * @group rest
+     */
     public function testRestLoginRefresh()
     {
         $args = array(
@@ -173,6 +185,9 @@ class RestTestLogin extends RestTestBase
         $this->assertEquals('pong',$replyPing['reply']);
     }
 
+    /**
+     * @group rest
+     */
     public function testRestLoginSupportPortal()
     {
         // Create a portal API user
@@ -246,6 +261,9 @@ class RestTestLogin extends RestTestBase
                                                           
     }
 
+    /**
+     * @group rest
+     */
     function testLoginFromRegularSession() {
         // Kill the session
         session_regenerate_id();
@@ -276,6 +294,9 @@ class RestTestLogin extends RestTestBase
         
     }
 
+    /**
+     * @group rest
+     */
     function testBadLogin() {
         $args = array(
             'grant_type' => 'password',

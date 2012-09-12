@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestUpdate extends RestTestBase {
+class RestUpdateTest extends RestTestBase {
     public function tearDown()
     {
         if (isset($this->account->id)) {
@@ -47,6 +47,9 @@ class RestTestUpdate extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testUpdate()
     {
         $this->account = new Account();
@@ -71,6 +74,9 @@ class RestTestUpdate extends RestTestBase {
                             "Rest Reply and Bean Do Not Match.");
     }
 
+    /**
+     * @group rest
+     */
     public function testSetFavorite()
     {
         $this->account = new Account();
@@ -87,6 +93,9 @@ class RestTestUpdate extends RestTestBase {
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }
 
+    /**
+     * @group rest
+     */
     public function testRemoveFavorite()
     {
         $this->account = new Account();
@@ -118,6 +127,9 @@ class RestTestUpdate extends RestTestBase {
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }
 
+    /**
+     * @group rest
+     */
     public function testUpdateEmail()
     {
         $this->contact = new Contact();
@@ -163,6 +175,9 @@ class RestTestUpdate extends RestTestBase {
                             "Rest Reply and Bean Do Not Match.");
     }
     
+    /**
+     * @group rest
+     */
     public function testHasParentNameAfterSave() {
         // Build an account
         $this->account = new Account();

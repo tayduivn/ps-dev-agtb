@@ -24,58 +24,30 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestRegisterLead extends RestTestBase
-{
+class RestServerInfoTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
     }
-
+    
     public function tearDown()
     {
-        if (isset($this->lead_id)) {
-            $GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead_id}'");
-        }
         parent::tearDown();
     }
 
-    public function testCreate()
-    {
-        $leadProps = array(
-            'first_name' => 'UNIT TEST FIRST',
-            'last_name' => 'UNIT TEST LAST',
-            'email' => array(
-                array(
-                    'email_address' => 'UT@test.com'
-                ))
-        );
-        $restReply = $this->_restCall("Leads/register",
-            json_encode($leadProps),
-            'POST');
+    /**
+     * @group rest
+     */
+    public function testServerInfo() {
+        // Test Server Fetch
+        $restReply = $this->_restCall("ServerInfo");
 
-        $this->assertTrue(isset($restReply['reply']['id']),
-            "Lead was not created (or if it was, the ID was not returned)");
-        $this->lead_id = $restReply['reply']['id'];
-
-        $this->assertTrue(isset($restReply['reply']['email']), "A email was not set.");
-
-
-        $nlead = new Lead();
-        $nlead->id = $restReply['reply']['id'];
-        $nlead->retrieve();
-        $this->assertEquals($restReply['reply']['first_name'],
-            $nlead->first_name,
-            "Rest Reply and Bean Do Not Match.");
-    }
-
-    public function testCreateEmpty()
-    {
-        $leadProps = array(
-        );
-        $restReply = $this->_restCall("Leads/register",
-            json_encode($leadProps),
-            'POST');
-        $this->assertEquals($restReply['info']['http_code'], 412);
+        $this->assertTrue(isset($restReply['reply']['flavor']), "No Flavor Set");
+        $this->assertTrue(isset($restReply['reply']['version']), "No Version Set");
+        $this->assertTrue(is_array($restReply['reply']['fts']), "No FTS Info Set");
+        $this->assertTrue(isset($restReply['reply']['gmt_time']), "No GMT Time Set");
+        $this->assertTrue(isset($restReply['reply']['server_time']), "No Server Time Set");
     }
 
 }
+

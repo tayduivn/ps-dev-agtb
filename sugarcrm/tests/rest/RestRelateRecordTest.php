@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestRelateRecord extends RestTestBase {
+class RestRelateRecordTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -66,6 +66,9 @@ class RestTestRelateRecord extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testFetchRelatedRecord() {
         global $db;
 
@@ -122,6 +125,9 @@ class RestTestRelateRecord extends RestTestBase {
 
     }
 
+    /**
+     * @group rest
+     */
     public function testSameNumberOfRecords() {
         global $db;
         $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
@@ -238,6 +244,9 @@ class RestTestRelateRecord extends RestTestBase {
 
     }
 
+    /**
+     * @group rest
+     */
     public function testCreateRelatedRecord() {
         global $db;
 
@@ -275,6 +284,9 @@ class RestTestRelateRecord extends RestTestBase {
         $this->assertEquals('Primary Decision Maker',$row['contact_role'],"Did not set the related contact's role");
     }
 
+    /**
+     * @group rest
+     */
     public function testUpdateRelatedLink() {
         global $db;
 
@@ -332,6 +344,9 @@ class RestTestRelateRecord extends RestTestBase {
         
     }
 
+    /**
+     * @group rest
+     */
     public function testCreateRelatedLink() {
         global $db;
 
@@ -380,6 +395,9 @@ class RestTestRelateRecord extends RestTestBase {
         
     }
 
+    /**
+     * @group rest
+     */
     public function testDeleteRelatedLink() {
         global $db;
 

@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestRelate extends RestTestBase {
+class RestRelateTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -66,6 +66,9 @@ class RestTestRelate extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testRelateList() {
         $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
         // The first element is blank, ignore it

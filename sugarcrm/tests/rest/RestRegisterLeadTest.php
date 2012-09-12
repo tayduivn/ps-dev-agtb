@@ -24,41 +24,64 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestList extends RestTestBase {
+class RestRegisterLeadTest extends RestTestBase
+{
     public function setUp()
     {
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $GLOBALS['db']->commit();
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
-
-        $this->accounts = array();
+        parent::setUp();
     }
-    
+
     public function tearDown()
     {
-        foreach ( $this->accounts as $account ) {
-            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$account->id}'");
+        if (isset($this->lead_id)) {
+            $GLOBALS['db']->query("DELETE FROM leads WHERE id = '{$this->lead_id}'");
         }
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        $GLOBALS['db']->commit();
+        parent::tearDown();
     }
 
-    public function testList() {
-        // Make sure there is at least one page of accounts
-        for ( $i = 0 ; $i < 40 ; $i++ ) {
-            $account = new Account();
-            $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
-            $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
-            $account->save();
-            $this->accounts[] = $account;
-        }
-        $GLOBALS['db']->commit();
-        $restReply = $this->_restCall("Accounts?fields=");
-        $this->assertNotEquals($restReply['replyRaw'],"ERROR: No access to view field:  in module: Accounts");
+    /**
+     * @group rest
+     */
+    public function testCreate()
+    {
+        $leadProps = array(
+            'first_name' => 'UNIT TEST FIRST',
+            'last_name' => 'UNIT TEST LAST',
+            'email' => array(
+                array(
+                    'email_address' => 'UT@test.com'
+                ))
+        );
+        $restReply = $this->_restCall("Leads/register",
+            json_encode($leadProps),
+            'POST');
+
+        $this->assertTrue(isset($restReply['reply']['id']),
+            "Lead was not created (or if it was, the ID was not returned)");
+        $this->lead_id = $restReply['reply']['id'];
+
+        $this->assertTrue(isset($restReply['reply']['email']), "A email was not set.");
+
+
+        $nlead = new Lead();
+        $nlead->id = $restReply['reply']['id'];
+        $nlead->retrieve();
+        $this->assertEquals($restReply['reply']['first_name'],
+            $nlead->first_name,
+            "Rest Reply and Bean Do Not Match.");
+    }
+
+    /**
+     * @group rest
+     */
+    public function testCreateEmpty()
+    {
+        $leadProps = array(
+        );
+        $restReply = $this->_restCall("Leads/register",
+            json_encode($leadProps),
+            'POST');
+        $this->assertEquals($restReply['info']['http_code'], 412);
     }
 
 }
-

@@ -24,26 +24,39 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestServerInfo extends RestTestBase {
+class BugEmptyFieldsListTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
+
+        $this->accounts = array();
     }
     
     public function tearDown()
     {
+        foreach ( $this->accounts as $account ) {
+            $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$account->id}'");
+        }
+        
         parent::tearDown();
     }
 
-    public function testServerInfo() {
-        // Test Server Fetch
-        $restReply = $this->_restCall("ServerInfo");
-
-        $this->assertTrue(isset($restReply['reply']['flavor']), "No Flavor Set");
-        $this->assertTrue(isset($restReply['reply']['version']), "No Version Set");
-        $this->assertTrue(is_array($restReply['reply']['fts']), "No FTS Info Set");
-        $this->assertTrue(isset($restReply['reply']['gmt_time']), "No GMT Time Set");
-        $this->assertTrue(isset($restReply['reply']['server_time']), "No Server Time Set");
+    /**
+     * @group rest
+     */
+    public function testList() {
+        // Make sure there is at least one page of accounts
+        for ( $i = 0 ; $i < 40 ; $i++ ) {
+            $account = new Account();
+            $account->name = "UNIT TEST ".count($this->accounts)." - ".create_guid();
+            $account->billing_address_postalcode = sprintf("%08d",count($this->accounts));
+            $account->save();
+            $this->accounts[] = $account;
+        }
+        $GLOBALS['db']->commit();
+        $restReply = $this->_restCall("Accounts?fields=");
+        $this->assertNotEquals($restReply['replyRaw'],"ERROR: No access to view field:  in module: Accounts");
     }
 
 }
