@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataAcl extends RestTestBase {
+class RestMetadataAclTest extends RestTestBase {
     public function tearDown()
     {
         global $db;
@@ -40,6 +40,9 @@ class RestTestMetadataAcl extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataAclBasic() {
         $restReply = $this->_restCall('metadata?type_filter=acl');
 
@@ -48,6 +51,9 @@ class RestTestMetadataAcl extends RestTestBase {
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group rest
+     */
     public function testMetadataAclField() {
 
         //Disable access to the website field.
@@ -91,6 +97,9 @@ class RestTestMetadataAcl extends RestTestBase {
     }
     //END SUGARCRM flav=pro ONLY
  
+    /**
+     * @group rest
+     */
     public function testMetadataAclModule() {
 
         //Disable access to the website field.

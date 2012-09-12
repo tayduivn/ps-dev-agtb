@@ -26,7 +26,7 @@ require_once('tests/rest/RestTestBase.php');
 require_once('include/api/SugarApi/SugarApi.php');
 require_once('include/api/ThemeApi.php');
 
-class RestTestTheme extends RestTestBase
+class RestThemeTest extends RestTestBase
 {
 
     private $platformTest = 'platform_TEST_123456789';
@@ -47,6 +47,9 @@ class RestTestTheme extends RestTestBase
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testPreviewCSS()
     {
         $args1 = array(
@@ -78,6 +81,9 @@ class RestTestTheme extends RestTestBase
         $this->assertNotEquals($restReply1, $restReply2);
     }
 
+    /**
+     * @group rest
+     */
     public function testGetCustomThemeVars()
     {
         // TEST= GET theme
@@ -91,6 +97,9 @@ class RestTestTheme extends RestTestBase
         ));
     }
 
+    /**
+     * @group rest
+     */
     public function testUpdateCustomTheme()
     {
         $args = array(
@@ -133,6 +142,9 @@ class RestTestTheme extends RestTestBase
             '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"');
     }
 
+    /**
+     * @group rest
+     */
     public function testResetDefaultTheme()
     {
 

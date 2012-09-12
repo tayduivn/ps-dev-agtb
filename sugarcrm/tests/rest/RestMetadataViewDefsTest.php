@@ -25,7 +25,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataViewDefs extends RestTestBase {
+class RestMetadataViewDefsTest extends RestTestBase {
     public $testMetaDataFiles = array(
         //BEGIN SUGARCRM flav=ent ONLY
         'contacts' => 'custom/modules/Contacts/clients/portal/layouts/banana/banana.php',
@@ -50,6 +50,9 @@ class RestTestMetadataViewDefs extends RestTestBase {
     }
     
     //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group rest
+     */
     public function testDefaultPortalLayoutMetaData() {
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
         // Hash should always be set
@@ -60,11 +63,17 @@ class RestTestMetadataViewDefs extends RestTestBase {
         $this->assertTrue(empty($restReply['reply']['modules']['Contacts']['layouts']), "Portal layouts are not empty");
     }
 
+    /**
+     * @group rest
+     */
     public function testDefaultPortalViewMetaData() {
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertTrue(empty($restReply['reply']['modules']['Cases']['views']['ghostrider']), "Test file found unexpectedly");
     }
 
+    /**
+     * @group rest
+     */
     public function testAdditionalPortalLayoutMetaData() {
         $dir = dirname($this->testMetaDataFiles['contacts']);
         if (!is_dir($dir)) {
@@ -77,6 +86,9 @@ class RestTestMetadataViewDefs extends RestTestBase {
         $this->assertEquals('Banana Split',$restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
     }
 
+    /**
+     * @group rest
+     */
     public function testAdditionalPortalViewMetaData() {
         $dir = dirname($this->testMetaDataFiles['cases']);
         if (!is_dir($dir)) {
@@ -93,6 +105,8 @@ class RestTestMetadataViewDefs extends RestTestBase {
     /**
      * Test addresses a case related to the metadata location move that caused
      * metadatamanager to not roll up to sugar objects properly
+     * 
+     * @group rest
      */
     public function testMobileMetaDataRollsUp()
     {

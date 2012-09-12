@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataModuleViewLayout extends RestTestBase {
+class RestMetadataModuleViewLayoutTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -47,12 +47,18 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataSugarFields() {
         $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['views']),'No views for the cases module');
     }
     
+    /**
+     * @group rest
+     */
     public function testMetadataModuleLayout() {
         $filesToCheck = array('modules/Cases/clients/portal/layouts/edit/edit.php',
                               'custom/modules/Cases/clients/portal/layouts/edit/edit.php',
@@ -92,20 +98,27 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the portal layout");
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataSubPanels()
     {
         $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');   
     }
 
-
+    /**
+     * @group rest
+     */
     public function testMetadataFTS()
     {
         $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']),'No ftsEnabled for the cases module');   
     }
 
-
+    /**
+     * @group rest
+     */
     public function testMetadataModuleViews() {
         $filesToCheck = array('modules/Cases/clients/portal/views/edit/edit.php',
                               'custom/modules/Cases/clients/portal/views/edit/edit.php',

@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataSugarFields extends RestTestBase {
+class RestMetadataSugarFieldsTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -46,12 +46,18 @@ class RestTestMetadataSugarFields extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataSugarFields() {
         $restReply = $this->_restCall('metadata?type_filter=fields');
 
         $this->assertTrue(isset($restReply['reply']['fields']['_hash']),'SugarField hash is missing.');
     }
     
+    /**
+     * @group rest
+     */
     public function testMetadataSugarFieldsController() {
         $filesToCheck = array(
             //BEGIN SUGARCRM flav=pro ONLY
@@ -146,6 +152,9 @@ class RestTestMetadataSugarFields extends RestTestBase {
         //END SUGARCRM flav=ent ONLY
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataSugarFieldsTemplates() {
         $filesToCheck = array(
             //BEGIN SUGARCRM flav=pro ONLY
