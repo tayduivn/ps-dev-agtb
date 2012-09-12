@@ -166,9 +166,7 @@ nv.models.gaugeChart = function() {
       gauge
         .width(availableWidth)
         .height(availableHeight)
-        //.color(data.map(function(d,i) {
-          //return d.color || color[i % color.length];
-        //});
+      ;
 
       var gaugeWrap = g.select('.nv-gaugeWrap')
           .datum(chartData);

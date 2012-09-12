@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>Funnel Chart</title>
+  <title>Horizontal Bar Chart</title>
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
   <style>
@@ -37,9 +37,9 @@
 </head>
 <body>
 
-  <div id="chart1">
-    <svg></svg>
-  </div>
+<div id="chart1">
+  <svg></svg>
+</div>
 
 <script src="../js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../js/nvd3/nv.d3.min.js"></script>
@@ -54,10 +54,17 @@
     var chart = nv.models.multiBarHorizontalChart()
         .x(function(d) { return d.label })
         .y(function(d) { return d.value })
-        .margin({top: 30, right: 20, bottom: 50, left: 175})
+        .margin({top: 30, right: 20, bottom: 50, left: 150})
         .showValues(true)
+        .showTitle(true)
         .tooltips(true)
-        .showControls(false);
+        .showControls(false)
+        //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: opportunities_data.data.length} )
+        //.colorData( 'class' )
+        .colorData( 'default' )
+        .colorFill( 'gradient' )
+        //.colorFill( 'default' )
+      ;
 
     chart.yAxis
         .tickFormat(d3.format(',.2f'));

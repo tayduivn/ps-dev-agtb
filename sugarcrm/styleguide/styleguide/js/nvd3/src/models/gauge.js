@@ -1,5 +1,5 @@
 nv.models.gauge = function() {
-
+  /* original inspiration for this chart type is at http://bl.ocks.org/3202712 */
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------

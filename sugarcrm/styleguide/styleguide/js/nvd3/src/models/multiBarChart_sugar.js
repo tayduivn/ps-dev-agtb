@@ -5,17 +5,17 @@ nv.models.multiBarChart = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 20, right: 10, bottom: 40, left: 40}
+  var margin = {top: 30, right: 20, bottom: 50, left: 60}
     , width = null
     , height = null
     , getX = function(d) { return d.x }
     , getY = function(d) { return d.y }
     , color = nv.utils.defaultColor()
-    , showControls = false
+    , showControls = true
     , showLegend = true
     , reduceXTicks = false // if false a tick will show for every data point
     , reduceYTicks = false // if false a tick will show for every data point
-    , rotateLabels = 0
+    , rotateLabels = -15
     , tooltips = true
     , tooltipBar = function(key, x, y, e, graph) {
         return '<p>Stage: <b>' + key + '</b></p>' +
