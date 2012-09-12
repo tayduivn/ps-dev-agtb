@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -25,7 +26,10 @@
 
 require_once('tests/rest/RestTestPortalBase.php');
 
-class RestTestPortalSecurity extends RestTestPortalBase {
+class RestPortalSecurityTest extends RestTestPortalBase {
+    /**
+     * @group rest
+     */
     public function testPortalSecurity() {
         $cts = array_keys($GLOBALS['app_list_strings']['opportunity_relationship_type_dom']);
         // The first element is blank, ignore it
@@ -469,6 +473,9 @@ class RestTestPortalSecurity extends RestTestPortalBase {
 
     }
 
+    /**
+     * @group rest
+     */
     public function testPortalSecurityChangeAccount() {
         // Build three accounts, we'll associate to two of them.
         for ( $i = 0 ; $i < 3 ; $i++ ) {
@@ -553,6 +560,9 @@ class RestTestPortalSecurity extends RestTestPortalBase {
         $this->assertEquals('not_found',$restReply['reply']['error']);
     }
 
+    /**
+     * @group rest
+     */
     public function testPortalSecurityNoAccount() {
         // Build three accounts, we'll associate to two of them.
         for ( $i = 0 ; $i < 3 ; $i++ ) {

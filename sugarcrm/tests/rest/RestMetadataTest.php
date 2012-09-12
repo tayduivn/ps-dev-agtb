@@ -24,7 +24,10 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadata extends RestTestBase {
+class RestMetadataTest extends RestTestBase {
+    /**
+     * @group rest
+     */
     public function testFullMetadata() {
         $restReply = $this->_restCall('metadata');
 
@@ -35,6 +38,10 @@ class RestTestMetadata extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
     }
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group rest
+     */
     public function testFullMetadaNoAuth() {
         $restReply = $this->_restCall('metadata/public?app_name=superAwesome&platform=portal');
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
@@ -42,7 +49,10 @@ class RestTestMetadata extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
     }
-
+    
+    /**
+     * @group rest
+     */
     public function testMetadataLanguage() {
         $langContent = <<<EOQ
         <?php
@@ -72,5 +82,5 @@ EOQ;
                 unlink($file);
         }
     }
-
+    //END SUGARCRM flav=ent ONLY
 }

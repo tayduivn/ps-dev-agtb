@@ -24,7 +24,10 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestMetadataRelationships extends RestTestBase {
+class ResMetadataRelationshipsTest extends RestTestBase {
+    /**
+     * @group rest
+     */
     public function testMetadataGetRelationships() {
         $restReply = $this->_restCall('metadata?type_filter=relationships');
 
@@ -32,6 +35,9 @@ class RestTestMetadataRelationships extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['relationships']['opportunities_contacts']),'There is no opportunities contacts relationship');
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataGetFilteredRelationships() {
         $moduleList = array('Accounts','Contacts','Cases');
 

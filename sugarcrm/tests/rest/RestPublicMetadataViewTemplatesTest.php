@@ -24,7 +24,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestPublicMetadataViewTemplates extends RestTestBase {
+class RestPublicMetadataViewTemplatesTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
@@ -47,17 +47,26 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testMetadataViewTemplates() {
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates');
 
         $this->assertTrue(isset($restReply['reply']['view_templates']['_hash']),'ViewTemplate hash is missing.');
     }
     
+    /**
+     * @group rest
+     */
     public function testMetadataViewTemplatesHbt() {
-        $filesToCheck = array('clients/portal/views/edit/edit.hbt',
-                              'clients/base/views/edit/edit.hbt',
-                              'custom/clients/portal/views/edit/edit.hbt',
-                              'custom/clients/base/views/edit/edit.hbt',
+        $filesToCheck = array(
+            //BEGIN SUGARCRM flav=ent ONLY
+            'clients/portal/views/edit/edit.hbt',
+            'custom/clients/portal/views/edit/edit.hbt',
+            //END SUGARCRM flav=ent ONLY
+            'clients/base/views/edit/edit.hbt',
+            'custom/clients/base/views/edit/edit.hbt',
         );
         
         foreach ( $filesToCheck as $filename ) {
@@ -68,10 +77,13 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('clients/portal/views/edit',
-                            'clients/base/views/edit',
-                            'custom/clients/portal/views/edit',
-                            'custom/clients/base/views/edit',
+        $dirsToMake = array(
+            //BEGIN SUGARCRM flav=ent ONLY
+            'clients/portal/views/edit',
+            'custom/clients/portal/views/edit',
+            //END SUGARCRM flav=ent ONLY
+            'clients/base/views/edit',
+            'custom/clients/base/views/edit',
         );
 
         foreach ($dirsToMake as $dir ) {
@@ -80,6 +92,7 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
             }
         }
         
+        //BEGIN SUGARCRM flav=ent ONLY
         // Make sure we get it when we ask for portal
         file_put_contents($filesToCheck[0],'PORTAL CODE');
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
@@ -90,13 +103,13 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
         file_put_contents($filesToCheck[1],'BASE CODE');
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't get portal code when base code was there.");
-
+        //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't get base code when it was the direct option");
 
-
+        //BEGIN SUGARCRM flav=ent ONLY
         // Delete the portal template and make sure it falls back to base
         unlink($filesToCheck[0]);
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
@@ -107,7 +120,8 @@ class RestTestPublicMetadataViewTemplates extends RestTestBase {
         file_put_contents($filesToCheck[2],'CUSTOM PORTAL CODE');
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't use the custom portal code.");
-
+        //END SUGARCRM flav=ent ONLY
+        
         // Make sure custom base code works
         file_put_contents($filesToCheck[3],'CUSTOM BASE CODE');
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates');

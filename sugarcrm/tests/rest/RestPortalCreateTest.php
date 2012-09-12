@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,7 +25,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class RestTestPortalCreate extends RestTestBase
+class RestPortalCreateTest extends RestTestBase
 {
     public function setUp()
     {
@@ -86,6 +87,9 @@ class RestTestPortalCreate extends RestTestBase
         parent::tearDown();
     }
 
+    /**
+     * @group rest
+     */
     public function testCreate()
     {
         // we need to be an admin to get at the relationship data
