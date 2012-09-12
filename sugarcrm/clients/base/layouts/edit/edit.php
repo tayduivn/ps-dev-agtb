@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 /**
  * Created by JetBrains PhpStorm.
  * User: dwheeler
@@ -7,7 +6,6 @@
  * Time: 4:51 PM
  * To change this template use File | Settings | File Templates.
  */
-=======
 $viewdefs['base']['layout']['edit'] = array(
     'type' => 'simple',
     'components' =>
@@ -39,4 +37,3 @@ $viewdefs['base']['layout']['edit'] = array(
         ),
     ),
 );
->>>>>>> 3bf7542... seperates popup containers from modal layout widget
