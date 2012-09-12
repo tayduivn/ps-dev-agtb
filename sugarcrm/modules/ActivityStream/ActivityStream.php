@@ -264,7 +264,7 @@ class ActivityStream extends SugarBean {
         // images
         $text = preg_replace('#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i', '<br/><img src="$1.$2" alt="$1.$2" /><br/>', $text);
         // other links
-        $text = preg_replace('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', '$1<a href="$2">$2</a>', $text);
+        $text = trim(preg_replace('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', '$1<a href="$2">$2</a>', ' '.$text));
         return $text;
     }
 
