@@ -29,9 +29,12 @@
 require_once('tests/rest/RestTestBase.php');
 
 class EmailsApiTest extends RestTestBase {
+    var $skip_mail_send=true;
+
     var $current_user;
     var $input;
 
+    var $account;
     var $email_id;
 
     var $document;
@@ -115,13 +118,11 @@ class EmailsApiTest extends RestTestBase {
 
             "text_body" 	=>	"Hello There World!",
 
-            "related"		=>	array(
-                "type"	=> "Opportunities",
-                "id"	=> "102181a2-5c05-b879-8e68-502279a8c401"
-            ),
+            "related"		=>	null,
 
             "teams"			=>	null,
         );
+
 
         /*---- Create an Uploaded Image File ----------------------------------*/
         $email=new Email();
@@ -173,6 +174,10 @@ class EmailsApiTest extends RestTestBase {
 
     public function tearDown()
     {
+        // $sql = "DELETE FROM users WHERE first_name = 'SugarUser'";
+        // $sql = "DELETE FROM users WHERE id = '{$this->current_user->id}'";
+        //$GLOBALS['db']->query($sql);
+
         $sql = "DELETE FROM teams WHERE name like 'Sugar%'";
         $GLOBALS['db']->query($sql);
 
@@ -247,6 +252,39 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
+    public function testCreate_Draft_WithRelationship_Success() {
+        $this->input["status"] = "draft";
+
+        $this->input["related"] = array(
+            "type"	=> "Accounts",
+            "id"	=> 0
+        );
+
+        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $reply = $post_response['reply'];
+
+        $http_status = $post_response['info']['http_code'];
+        $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
+        if (isset($reply['error'])) {
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+        }
+        if (isset($reply['EMAIL']['id'])) {
+            $this->email_id = $reply['EMAIL']['id'];
+        }
+
+        $success = (int) $reply['SUCCESS'];
+        $this->assertEquals(1,$success, "Not Successful");
+
+        $email = $reply['EMAIL'];
+        //print_r($email);
+
+        $this->assertEquals(36, strlen($email['id']), "Email ID Invalid");
+        $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
+        $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
+        $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
+    }
+
+
     public function testCreate_Draft_WithAttachment_Success() {
         $this->input["status"] = "draft";
 
@@ -281,7 +319,8 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
-    public function testCreate_Draft_WithMultipleTeams_Success() {
+
+     public function testCreate_Draft_WithMultipleTeams_Success() {
 
         $this->input["status"] = "draft";
 
@@ -313,6 +352,8 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
         $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
 
+        //print_r($reply);
+
         $this->assertTrue($this->check_team_sets(), "Expected Team Sets Not Created");
     }
 
@@ -322,7 +363,7 @@ class EmailsApiTest extends RestTestBase {
 
         $this->input["documents"] = array(
             array("name" => $this->document_file_name,
-                "id"   => $this->document_file_id
+                  "id"   => $this->document_file_id
             )
         );
 
@@ -351,9 +392,13 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
-
+    /**
+     * @group send
+     */
     public function testCreate_Ready_Success() {
-        $this->markTestSkipped("Not real sure how to test actually sending of the mail");
+        if ($this->skip_mail_send) {
+            $this->markTestSkipped("Not real sure how to test actually sending of the mail");
+        }
 
         $this->input["status"] = "ready";
         $this->input["to_addresses"] = array( array("name"=>"Unit Test",  "email"=>"twolf@sugarcrm.com") );
@@ -370,6 +415,8 @@ class EmailsApiTest extends RestTestBase {
         }
 
         $reply = $post_response['reply'];
+        // print_r($reply);
+
         $success = (int) $reply['SUCCESS'];
         $this->assertEquals(1,$success, "Not Successful");
 
@@ -383,8 +430,13 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
+    /**
+     * @group send
+     */
     public function testCreate_Ready_WithAttachment_Success() {
-        $this->markTestSkipped("Not real sure how to test actually sending of the mail");
+        if ($this->skip_mail_send) {
+            $this->markTestSkipped("Not real sure how to test actually sending of the mail");
+        }
 
         $this->input["attachments"] = array(
             array("name" => $this->image_file_name,
@@ -422,8 +474,13 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
+    /**
+     * @group send
+     */
     public function testCreate_Ready_WithSugarDocumentAttached_Success() {
-        $this->markTestSkipped("Not real sure how to test actually sending of the mail");
+        if ($this->skip_mail_send) {
+            $this->markTestSkipped("Not real sure how to test actually sending of the mail");
+        }
 
         $this->input["documents"] = array(
             array("name" => $this->document_file_name,
@@ -460,6 +517,7 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
     }
 
+
     public function testCreate_InvalidStatus() {
         $this->input["status"] = "bogus";
 
@@ -482,7 +540,8 @@ class EmailsApiTest extends RestTestBase {
         $team_set_ids = array();
         $save_team_set_id=null;
 
-        $result = $GLOBALS['db']->query("SELECT id, team_set_id FROM team_sets_teams WHERE team_id like '{$this->team_id}%'");
+        $sql1 = "SELECT team_id, id, team_set_id FROM team_sets_teams WHERE team_id like '{$this->team_id}%'";
+        $result = $GLOBALS['db']->query($sql1);
         while($row = $GLOBALS['db']->fetchByAssoc($result)) {
             $id = $row['id'];
             $team_set_id = $row['team_set_id'];
@@ -491,27 +550,30 @@ class EmailsApiTest extends RestTestBase {
             $save_team_set_id = $team_set_id;
         }
 
-        //print_r($ids);
-        //printf("COUNT IDS: %d\n",count($ids)); // SHOULD BE THREE
-        //print_r($team_set_ids);
-        //printf("COUNT TEAM SET IDS: %d\n",count($team_set_ids)); // SHOULD BE ONE
-
-        if (count($ids) != 3)
-            return false;   // should be exactly three
-        if (count($team_set_ids) != 1)
-            return false;   // should be exactly one
-
         $count=0;
-        $sql = "SELECT id FROM team_sets WHERE id = '$save_team_set_id'";
-        $result = $GLOBALS['db']->query($sql);
+        $sql2 = "SELECT id FROM team_sets WHERE id = '$save_team_set_id'";
+        $result = $GLOBALS['db']->query($sql2);
         if ($result) {
             while($row = $GLOBALS['db']->fetchByAssoc($result)) {
                 $count++;
             }
         }
 
-        //printf("COUNT TEAM SETS: %d\n",$count);
+        /**
+        printf("SQL1: %s\n",$sql1);
+        print_r($ids);
+        printf("COUNT IDS: %d\n",count($ids)); // SHOULD BE THREE
+        print_r($team_set_ids);
+        printf("COUNT TEAM SET IDS: %d\n",count($team_set_ids)); // SHOULD BE ONE
 
+        printf("SQL2: %s\n",$sql2);
+        printf("COUNT TEAM SETS: %d\n",$count);
+        **/
+
+        if (count($ids) != 3)
+            return false;   // should be exactly three
+        if (count($team_set_ids) != 1)
+            return false;   // should be exactly one
         if ($count != 1)
             return false;   // should be exactly one
 

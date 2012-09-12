@@ -542,8 +542,6 @@ class Email extends SugarBean {
 				$this->parent_type = "";
 		} // if
 
-
-        $mail->Subject = $this->name;
         $mail = $this->handleBody($mail);
         $mail->Subject = $this->name;
         $this->description_html = from_html($this->description_html);
@@ -710,7 +708,11 @@ class Email extends SugarBean {
                     $filename = $docRev->filename;
                     $fileLocation = "upload://{$docRev->id}";
 
-                    if (file_exists($fileLocation)) {  // document found
+                    if (empty($docRev->id)) {
+                        throw new Exception("Revision Id Not Found");
+                    }
+
+                    if (!empty($docRev->id) && file_exists($fileLocation)) {  // document found
                         $mime_type = $docRev->file_mime_type;
                         $mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
 
