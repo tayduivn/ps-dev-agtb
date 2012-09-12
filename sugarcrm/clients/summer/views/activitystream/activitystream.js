@@ -15,7 +15,7 @@
         'click .deleteRecord': 'deleteRecord',
         'mouseenter .hasDeleteButton': 'showDeleteButton',
         'mouseleave .hasDeleteButton': 'hideDeleteButton',
-        'click [name=show_more_button]': 'showMoreRecords'        
+        'click [name=show_more_button]': 'showMoreRecords'
     },
 
     initialize: function(options) {
@@ -37,16 +37,16 @@
             this.collection.fetch(this.opts);
         }
 
-        // There maybe better way to make the following data available in hbt 
+        // There maybe better way to make the following data available in hbt
         this.collection['oauth_token'] = App.api.getOAuthToken();
-        this.collection['user_id'] = app.user.get('id'); 
-        this.collection['full_name'] = app.user.get('full_name');         
+        this.collection['user_id'] = app.user.get('id');
+        this.collection['full_name'] = app.user.get('full_name');
         var picture = app.user.get('picture');
         this.collection['picture_url'] = (picture) ? app.api.buildFileURL({
             module: 'Users',
             id: app.user.get('id'),
             field: 'picture'
-        }) : "../clients/summer/views/imagesearch/anonymous.jpg"; 
+        }) : "../clients/summer/views/imagesearch/anonymous.jpg";
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
@@ -60,7 +60,7 @@
         options.params.limit = "";// use default
         // Indicates records will be added to those already loaded in to view
         options.add = true;
-            
+
         options.success = function() {
             app.alert.dismiss('show_more_records');
             self.layout.trigger("list:paginate:success");
@@ -69,7 +69,7 @@
         };
         this.collection.paginate(options);
     },
-    
+
     showAllComments: function(event) {
         event.preventDefault();
         this.$(event.currentTarget).closest('li').hide();
@@ -78,7 +78,7 @@
     },
 
     showAddComment: function(event) {
-        event.preventDefault();    	
+        event.preventDefault();
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').show();
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
@@ -120,13 +120,13 @@
                             processData: false,
                             contentType: false,
                             success: function() {
-                                delete App.drag_drop[id];                              
+                                delete App.drag_drop[id];
                                 self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
-            });           
+            });
             self.collection.fetch(options);
         }});
     },
@@ -151,7 +151,8 @@
                 var id = $(el).attr('id');
                 var seed = self.app.data.createBean('Notes', {
                     'parent_id': post_id,
-                    'parent_type': 'ActivityStream'
+                    'parent_type': 'ActivityStream',
+                    'team_id': 1
                 });
                 seed.save({}, {
                     success: function(model) {
@@ -180,15 +181,15 @@
     },
 
     showDeleteButton: function(event) {
-        event.preventDefault();    	
+        event.preventDefault();
         this.$(event.currentTarget).closest('li').find('.deleteRecord').css('display', 'block');
     },
 
     hideDeleteButton: function(event) {
-        event.preventDefault();    	
+        event.preventDefault();
         this.$(event.currentTarget).closest('li').find('.deleteRecord').hide();
     },
-    
+
     deleteRecord: function(event) {
         var self = this,
         recordId = this.$(event.currentTarget).data('id'),
@@ -330,9 +331,9 @@
         this.opts.params.offset = 0;
         if(this.collection.models.length > 0) {
             this.opts.params.limit = this.collection.models.length;
-            this.opts.params.max_num = this.collection.models.length;        	
+            this.opts.params.max_num = this.collection.models.length;
         }
-        
+
         return app.view.View.prototype._renderHtml.call(this);
     },
 
