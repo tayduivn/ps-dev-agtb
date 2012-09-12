@@ -145,14 +145,16 @@
             // apply input error class
             subject.parent().addClass("control-group error");
             subject.one("keyup", function() {
-                target.parent().removeClass("control-group error");
+                console.log("lol");
+                console.log(subject.parent());
+                subject.parent().removeClass("control-group error");
             });
         }
         else if( !(app.date.parse(date.val(), app.date.guessFormat(date.val()))) ) {
             // apply input error class
             date.parent().addClass("control-group error");
             date.one("click", function() {
-                target.parent().removeClass("control-group error");
+                date.parent().removeClass("control-group error");
             });
         }
         else {
