@@ -176,7 +176,9 @@ class EmailsApiTest extends RestTestBase {
     {
         // $sql = "DELETE FROM users WHERE first_name = 'SugarUser'";
         // $sql = "DELETE FROM users WHERE id = '{$this->current_user->id}'";
-        //$GLOBALS['db']->query($sql);
+        // $GLOBALS['db']->query($sql);
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS['current_user']);
 
         $sql = "DELETE FROM teams WHERE name like 'Sugar%'";
         $GLOBALS['db']->query($sql);

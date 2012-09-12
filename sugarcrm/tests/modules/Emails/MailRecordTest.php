@@ -110,7 +110,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
             'sendDescription' => '<div>Hello World!</div>',
             'setEditor' => '1',
             'attachments' => '5beb1fad-9aa4-c3ed-b7f8-50363d5e3a2brodgers.tiff',
-            'documents' => '123456789012345678901234567890123456schedule.pdf',
+            'documents' => '123456789012345678901234567890123456',
             'parent_type' => 'Opportunities',
             'parent_id' => '102181a2-5c05-b879-8e68-502279a8c401',
             'primaryteam' => 'West',
@@ -128,6 +128,8 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mailRecord->emailBean = $mockEmailBean;
         $result = $mailRecord->saveAsDraft();
+        unset($result['EMAIL']);
+        print_r($result);
 
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
