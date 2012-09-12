@@ -48,13 +48,17 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
-
+    /**
+     * @group rest
+     */
     public function testMetadataSugarViews() {
         $restReply = $this->_restCall('metadata?type_filter=views');
 
         $this->assertTrue(isset($restReply['reply']['views']['_hash']),'SugarView hash is missing.');
     }
-    
+    /**
+     * @group rest
+     */
     public function testMetadataSugarViewsController() {
         $filesToCheck = array('clients/mobile/views/address/address.js',
                               'clients/portal/views/address/address.js',
@@ -120,7 +124,9 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['views']['address']['controller'],"Didn't use the custom portal code.");
 
     }
-
+    /**
+     * @group rest
+     */
     public function testMetadataSugarViewsTemplates() {
         $filesToCheck = array(
             'clients/mobile/views/address/editView.hbt',

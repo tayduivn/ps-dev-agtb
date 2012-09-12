@@ -79,6 +79,9 @@ class RestListFTSTest extends RestTestBase {
         $GLOBALS['db']->commit();
     }
 
+    /**
+     * @group rest
+     */
     public function testModuleSearch() {
         if($this->search_engine_name != 'Elastic') {
             $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
@@ -140,7 +143,10 @@ class RestListFTSTest extends RestTestBase {
         //END SUGARCRM flav=pro ONLY
 
     }
-
+    
+    /**
+     * @group rest
+     */
     public function testGlobalSearch() {
         if($this->search_engine_name != 'Elastic') {
             $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
