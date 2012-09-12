@@ -112,6 +112,17 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src="../styleguide/assets/js/bootstrap-alert.js"></script>
     <script src="summer-ui.js"></script>
 
+    <!-- D3 Graphing -->
+    <script src="../styleguide/styleguide/js/nvd3/lib/d3.v2.js"></script>
+    <script src="../styleguide/styleguide/js/nvd3/nv.d3.min.js"></script>
+    <script src="../styleguide/styleguide/js/nvd3/src/models/pie.js"></script>
+    <script src="../styleguide/styleguide/js/nvd3/src/models/pieChart.js"></script>
+    <script src="../styleguide/styleguide/js/nvd3/src/models/funnel.js"></script>
+    <script src="../styleguide/styleguide/js/nvd3/src/models/funnelChart.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/nv.d3.css">
+    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/sugar_colors.css">
+
 </head>
 <body>
 <div>
