@@ -9,6 +9,7 @@
     _render: function() {
         this.app.view.Field.prototype._render.call(this);
 
+        this._getHtmlEditableField().attr('name', this.name);
         if (this._isEditView()) {
             this._renderEdit();
         } else {
@@ -69,7 +70,7 @@
      * @private
      */
     _setupIframeOnLoadEvent: function() {
-        this._getTextarea().attr('onload', 'SUGAR.App.trigger("' + this._getEventString('ready') +'");');
+        this._getHtmlEditableField().attr('onload', 'SUGAR.App.trigger("' + this._getEventString('ready') +'");');
     },
 
     /**
@@ -84,13 +85,13 @@
     },
 
     /**
-     * Is this an edit view?
+     * Is this an edit view?  If the field contains a textarea, it will assume that it's in an edit view.
      *
      * @return {Boolean}
      * @private
      */
     _isEditView: function() {
-        return (this.view.name === 'edit');
+        return (this._getHtmlEditableField().prop('tagName') === 'TEXTAREA');
     },
 
     /**
@@ -100,7 +101,7 @@
      * @private
      */
     _getWysiHtml5Editor: function() {
-        var $textarea = this._getTextarea();
+        var $textarea = this._getHtmlEditableField();
         if ($textarea.data('wysihtml5') === undefined) {
             $textarea.wysihtml5(); //initialize wysihtml5 editor
         }
@@ -108,12 +109,12 @@
     },
 
     /**
-     * Finds textarea html element in the field template
+     * Finds textarea or iframe html element in the field template
      *
      * @return {textarea}
      * @private
      */
-    _getTextarea: function() {
+    _getHtmlEditableField: function() {
         return this.$el.find(this.fieldSelector);
     },
 
@@ -146,7 +147,7 @@
      * @private
      */
     _setTextareaContent: function(content) {
-        this._getTextarea()
+        this._getHtmlEditableField()
             .contents().find('body')
             .html(content);
     }
