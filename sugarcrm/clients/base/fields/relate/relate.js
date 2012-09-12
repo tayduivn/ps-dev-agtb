@@ -6,9 +6,9 @@
      * Initializes field and binds all function calls to this
      * @param {Object} options
      */
-    initialize: function(options) {
+    initialize: function(opts) {
         _.bindAll(this);
-        this.app.view.Field.prototype.initialize.call(this, options);
+        this.app.view.Field.prototype.initialize.call(this, opts);
         this.optionsTemplateC = this.app.template.getField(this.type, "options");
     },
     /**
@@ -54,7 +54,7 @@
             params: {basicSearch:event.target.value},  // TODO update this to filtering API
             success: function(data) {
                 if (data.models.length > 0) {
-                    self.options = data.models;
+                    self.selectOptions = data.models;
                     var options = self.optionsTemplateC(self);
                     self.$('select').html(options);
                     self.$('select').trigger("liszt:updated");

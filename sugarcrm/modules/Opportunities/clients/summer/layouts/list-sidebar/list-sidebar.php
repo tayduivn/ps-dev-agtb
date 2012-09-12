@@ -5,6 +5,7 @@ $layout = new SideBarLayout();
 //$layout->push('top', array('view'=>'subnav'));`
 
 $layout->push('main',array('view'=>'treemap'));
+$layout->push('main',array('view'=>'funnel'));
 $layout->push('main',array('view'=>'untouched'));
 $layout->push('main',array('view'=>'leaderboard'));
 $layout->push('main',array('view'=>'activitystream'));

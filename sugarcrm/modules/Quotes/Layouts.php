@@ -38,19 +38,12 @@ global $layouts;
 $layouts = array();
 
 if (file_exists('custom/modules/Quotes/sugarpdf/sugarpdf.standard.php')) {
-   $layouts['Standard'] = 'custom/modules/Quotes/sugarpdf/sugarpdf.standard.php';
-}
-// if the custom files don't exist load the out of box files
-elseif(file_exists('modules/Quotes/sugarpdf/sugarpdf.standard.php')){
-   $layouts['Standard'] = 'modules/Quotes/sugarpdf/sugarpdf.standard.php';
+    $layouts['Standard'] = 'custom/modules/Quotes/sugarpdf/sugarpdf.standard.php';
 }
 if (file_exists('custom/modules/Quotes/sugarpdf/sugarpdf.invoice.php')) {
-   $layouts['Invoice'] = 'custom/modules/Quotes/sugarpdf/sugarpdf.invoice.php';
+	$layouts['Invoice'] = 'custom/modules/Quotes/sugarpdf/sugarpdf.invoice.php';
 }
-// if the custom files don't exist load the out of box files
-elseif(file_exists('modules/Quotes/sugarpdf/sugarpdf.invoice.php')) {
-   $layouts['Invoice'] = 'modules/Quotes/sugarpdf/sugarpdf.invoice.php';
-}
+
 /**
  * a kind of silly getter...
  * @returns array layout array

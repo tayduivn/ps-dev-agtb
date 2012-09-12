@@ -119,14 +119,20 @@
                             processData: false,
                             contentType: false,
                             success: function() {
-                                delete App.drag_drop[id];
+                                delete App.drag_drop[id];                              
                                 self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts);
+            // If we are 'showing more'
+            options = {};
+            options.params = self.opts.params;
+            // max_num is hard coded to 20 somewhere
+            options.params.limit = self.collection.models.length;
+            options.params.offset = 0;            
+            self.collection.fetch(options);
         }});
     },
 
@@ -197,7 +203,7 @@
             self.collection.fetch(self.opts)
         }});
     },
-    
+
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.collection.fetch(this.opts);
@@ -309,18 +315,22 @@
             }
             _.each(comments, function(comment) {
                 _.each(comment.notes, function(note) {
-                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
-                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                    if(note.file_mime_type) {
+                        note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                        note.image = (note.file_mime_type.indexOf("image") !== -1);
+                    }
                 });
             });
 
             _.each(model.get("notes"), function(note) {
-                note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
-                note.image = (note.file_mime_type.indexOf("image") !== -1);
+                if(note.file_mime_type) {
+                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                }
             });
 
         }, this);
-        
+
         return app.view.View.prototype._renderHtml.call(this);
     },
 

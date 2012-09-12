@@ -42,12 +42,22 @@
                 row = [];
 
             _.each(panel.fields, function(field) {
-                if (_.isUndefined(panel.labels)) panel.labels = true;
+                var maxSpan;
+
+                if (_.isUndefined(panel.labels)) {
+                    panel.labels = true;
+                }
                 //8 for span because we are using a 2/3 ratio between field span and label span with a max of 12
                 maxSpan = (panel.labels) ? 8 : 12;
-                if (_.isUndefined(field.span)) field.span = Math.floor(maxSpan / columns);
+
+                if (_.isUndefined(field.span)) {
+                    field.span = Math.floor(maxSpan / columns);
+                }
+
                 //4 for label span because we are using a 1/3 ratio between field span and label span with a max of 12
-                if (_.isUndefined(field.labelSpan)) field.labelSpan = Math.floor(4 / columns);
+                if (_.isUndefined(field.labelSpan)) {
+                    field.labelSpan = Math.floor(4 / columns);
+                }
 
                 totalFieldCount++;
                 field.index = totalFieldCount;
@@ -103,10 +113,11 @@
     },
 
     getNextField: function(index) {
+        console.log("Grabbing next field", index);
         var nextIndex = index + 1,
             nextField = this.$(".index" + nextIndex),
             fieldName = nextField.data("fieldname");
-
+        console.log("Nextfield", nextField, fieldName);
         return (fieldName) ? this.getField(fieldName) : false;
     },
 
@@ -131,6 +142,8 @@
         var target,
             cell;
 
+        console.log("Handling edit(): ", e, field);
+
         // This would be the default code path unless tabbed. Only e event object
         // should be supplied by the click event.
         if (!field) {
@@ -150,11 +163,11 @@
                 break;
             case "fieldset":
                 // If it is a field set, we need all the fields to switch to edit mode.
-                console.log("FIELD SET", field);
                 this.toggleCell(field, cell);
-                cell.find("input").focus().val(cell.find("input").val());
+                cell.first("input").focus().val(cell.first("input").val());
                 break;
             default:
+                console.log("input focusin", cell.find("input"), cell);
                 this.toggleCell(field, cell);
                 cell.find("input").focus().val(cell.find("input").val());
         }
@@ -192,15 +205,18 @@
      * @param field {View.Field} Field or fieldset
      * @param cell {jQuery Node} Current target cell
      */
-    toggleCell: function(field, cell) {
+    toggleCell: function(field, cell, close) {
         var fields = field.fields || [field];
 
         if (field.options.viewName != "edit") {
-            cell.on("focusout.record", {field: field, cell: cell}, this.fieldClose);
+//            cell.on("focusout.record", {field: field, cell: cell}, this.fieldClose);
+
+            $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, this.fieldClose);
+            console.log("binding mousedown.record" + field.name);
         }
 
         _.each(fields, function(field) {
-            this.toggleField(field, cell);
+            this.toggleField(field, cell, close);
         }, this);
     },
 
@@ -208,55 +224,50 @@
      * Switches each individual field between detail and edit modes
      * @param field {View.Field} Field that needs to be toggled
      * @param cell {jQuery Node} Cell that field belongs in
+     * @param close {Boolean} Force into detail mode
      */
-    toggleField: function(field, cell) {
+    toggleField: function(field, cell, close) {
         cell.toggleClass('edit-mode');
 
-        field.options.viewName = (!field.options.viewName || field.options.viewName == "detail")
+        field.options.viewName = ((!field.options.viewName || field.options.viewName == "detail") && !close)
             ? "edit" : field.options.viewName = "detail";
 
-        console.log("TOGGLE FIELD", field, field.name, field.options.viewName);
         field.render();
 
         if (field.options.viewName == "edit") {
             field.$el.on("change.record", "input", {field: field, cell: cell}, this.fieldClose);
             field.$el.on("keydown.record", "input", {field: field, cell: cell}, this.handleKeyDown);
+        } else if (close) {
+            $(document).off("mousedown.record" + field.name);
+//            cell.off("focusout.record");
+            field.$el.off("change.record");
+            field.$el.off("keydown.record");
         }
     },
 
     fieldClose: function(e) {
-        var self = this;
+        var self = this,
+            cell = e.data.cell,
+            field = e.data.field;
 
-        console.log("fieldClose()", e);
+        if (field.options.viewName == "detail") {
+            return;
+        }
 
-        setTimeout(function() {
-            var currParent = self.$(document.activeElement).parents(".record-cell"),
-                targetParent = self.$(e.target).parents(".record-cell"),
-                cell = e.data.cell,
-                field = e.data.field;
+        if (e.type == "mousedown") {
+            var currFieldParent = $(cell),
+                targetParent = self.$(e.target).parents(".record-cell");
 
-            // Check the parent cell
-            console.log("field close", currParent.data("name"), targetParent.data("name"));
-
-            if (field.options.viewName == "detail") {
-                return;
-            } else if (currParent.data("name") == targetParent.data("name")) {
-                console.log("Don't close, in same cell");
+            if (currFieldParent[0] == targetParent[0]) {
                 return;
             }
+        }
+        if (currFieldParent.data("type") == "fieldset") {
+            self.toggleCell(field, cell, true);
+        } else {
+            self.toggleField(field, cell, true);
+        }
 
-            console.log("Close it");
-
-            if (targetParent.data("type") == "fieldset") {
-                self.toggleCell(field, cell);
-            } else {
-                self.toggleField(field, cell);
-            }
-
-            cell.off("focusout.record", "input", self.fieldClose);
-            field.$el.off("change.record", "input", self.fieldClose);
-            field.$el.off("keydown.record", "input", self.handleKeyDown);
-        }, 10);
     },
 
     handleKeyDown: function(e) {
@@ -267,7 +278,8 @@
 
         if (e.which == 9) { // If tab
             next = this.getNextField(index);
-            console.log("tabbed", next);
+            console.log("tabbed", next, cell);
+            this.toggleField(field, cell, true);
             this.handleEdit(null, next);
         } else if (e.which == 27) {
             this.fieldClose(e, field, cell);
