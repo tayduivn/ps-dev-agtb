@@ -319,6 +319,7 @@
                     case "float":
                     case "numeric":
                         fieldDef["sSortDataType"] = "dom-number";
+                        fieldDef["sType"] = "numeric";
                         break;
                 }
             }
