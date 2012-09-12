@@ -292,6 +292,17 @@ class SugarBean
      * set to true if dependent fields updated
      */
     protected $is_updated_dependent_fields = false;
+
+    /**
+     * This method has been moved into the __construct() method to follow php standards
+     *
+     * @see __construct()
+     * @deprecated
+     */
+    function SugarBean()
+    {
+        self::__construct();
+    }
 	
     /**
      * Constructor for the bean, it performs following tasks:
@@ -303,7 +314,7 @@ class SugarBean
      * All implementing classes  must call this constructor using the parent::SugarBean() class.
      *
      */
-    function SugarBean()
+    public function __construct()
     {
         global  $dictionary, $current_user;
         static $loaded_defs = array();
