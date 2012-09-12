@@ -5,7 +5,7 @@
     format: function(value) {
         var currency_id, base_rate;
         // do we convert to base currency?
-        if(this.convertToBase) {
+        if(this.def.convertToBase) {
             // base currency id is -99
             currency_id = '-99';
             // get rate to convert this amount to base
