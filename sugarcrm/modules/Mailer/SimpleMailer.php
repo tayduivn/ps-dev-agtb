@@ -49,7 +49,7 @@ class SimpleMailer extends BaseMailer
 
     public function send() {
         try {
-            $mailer = new PHPMailer(true); // use PHPMailer with exceptions
+            $mailer = $this->generateMailer();
 
             $this->transferConfigurations($mailer);
             $this->connectToHost($mailer);
@@ -76,7 +76,11 @@ class SimpleMailer extends BaseMailer
         return true;
     }
 
-    private function transferConfigurations(PHPMailer &$mailer) {
+    protected function generateMailer() {
+        return new PHPMailer(true); // use PHPMailer with exceptions
+    }
+
+    protected function transferConfigurations(PHPMailer &$mailer) {
         // explicitly set the language even though PHPMailer will do it on its own
         if (!$mailer->SetLanguage()) {
             //@todo do we really care if it fails since english will be used anyway?
@@ -99,23 +103,22 @@ class SimpleMailer extends BaseMailer
         $mailer->Password   = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
     }
 
-    private function connectToHost(PHPMailer &$mailer) {
+    protected function connectToHost(PHPMailer &$mailer) {
         try {
-            $mailer->smtp = new SMTP();
             $mailer->SmtpConnect();
         } catch (Exception $e) {
             //@todo need to tell the class what error messages to use, so the following is for reference only
-//			global $app_strings;
-//			if(isset($this->oe) && $this->oe->type == "system") {
-//				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
-//			} else {
-//				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
-//			}
+//            global $app_strings;
+//            if(isset($this->oe) && $this->oe->type == "system") {
+//                $this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
+//            } else {
+//                $this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
+//            }
             throw new MailerException("Failed to connect to the remote server");
         }
     }
 
-    private function transferHeaders(PHPMailer &$mailer) {
+    protected function transferHeaders(PHPMailer &$mailer) {
         // packageHeaders() will throw an exception if errors occur and that exception will be caught by send()
         $headers = $this->headers->packageHeaders();
 
@@ -170,7 +173,7 @@ class SimpleMailer extends BaseMailer
         }
     }
 
-    private function transferRecipients(PHPMailer &$mailer) {
+    protected function transferRecipients(PHPMailer &$mailer) {
         //$mailer->ClearAllRecipients(); // only necessary if the PHPMailer object can be re-used
         $to  = $this->recipients->getTo();
         $cc  = $this->recipients->getCc();
@@ -243,7 +246,7 @@ class SimpleMailer extends BaseMailer
      *
      * @throws MailerException
      */
-    private function transferAttachments(PHPMailer &$mailer) {
+    protected function transferAttachments(PHPMailer &$mailer) {
         $mailer->ClearAttachments();
 
         foreach ($this->attachments as $attachment) {

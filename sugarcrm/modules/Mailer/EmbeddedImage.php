@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -21,29 +21,31 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'Attachment.php';
+
 class EmbeddedImage extends Attachment
 {
-	private $cid;
+    private $cid;
 
-	public function __construct($path, $cid, $name = null, $encoding = IMailer::EncodingBase64, $mimeType = 'application/octet-stream') {
-		$this->setCid($cid);
-		parent::__construct($path, $name, $encoding, $mimeType);
-	}
+    public function __construct($path, $cid, $name = null, $encoding = IMailer::EncodingBase64, $mimeType = 'application/octet-stream') {
+        $this->setCid($cid);
+        parent::__construct($path, $name, $encoding, $mimeType);
+    }
 
-	public function setCid($cid) {
-		$this->cid = $cid;
-	}
+    public function setCid($cid) {
+        $this->cid = $cid;
+    }
 
-	public function getCid() {
-		return $this->cid;
-	}
+    public function getCid() {
+        return $this->cid;
+    }
 
-	public function getAsArray() {
-		return array_merge(
-			parent::getAsArray(),
-			array(
-				'cid' => $this->getCid()
-			)
-		);
-	}
+    public function getAsArray() {
+        return array_merge(
+            parent::getAsArray(),
+            array(
+                 'cid' => $this->getCid()
+            )
+        );
+    }
 }

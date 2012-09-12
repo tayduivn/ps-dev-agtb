@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -25,102 +25,102 @@ require_once 'EmailIdentity.php';
 
 interface IMailer
 {
-	const Encoding8Bit   = '8bit';
-	const Encoding7Bit   = '7bit';
-	const EncodingBinary = 'binary';
-	const EncodingBase64 = 'base64';
-	const EncodingQP     = 'quoted-printable';
+    const Encoding8Bit   = '8bit';
+    const Encoding7Bit   = '7bit';
+    const EncodingBinary = 'binary';
+    const EncodingBase64 = 'base64';
+    const EncodingQP     = 'quoted-printable';
 
-	public function __construct();
+    public function __construct();
 
-	public function reset();
+    public function reset();
 
-	/**
-	 * Initialize or replace the configurations with the defaults for this sending strategy.
-	 */
-	public function loadDefaultConfigs();
+    /**
+     * Initialize or replace the configurations with the defaults for this sending strategy.
+     */
+    public function loadDefaultConfigs();
 
-	/**
-	 * Use this method to replace the default configurations. This will replace the previous configurations;
-	 * it will not merge the configurations.
-	 *
-	 * @param array $configs
-	 */
-	public function setConfigs($configs);
+    /**
+     * Use this method to replace the default configurations. This will replace the previous configurations;
+     * it will not merge the configurations.
+     *
+     * @param array $configs
+     */
+    public function setConfigs($configs);
 
-	/**
-	 * Merge the passed in configurations with the existing configurations.
-	 *
-	 * @param array $configs
-	 */
-	public function mergeConfigs($configs);
+    /**
+     * Merge the passed in configurations with the existing configurations.
+     *
+     * @param array $configs
+     */
+    public function mergeConfigs($configs);
 
-	/**
-	 * Replace a specific configuration.
-	 *
-	 * @param string $config
-	 * @param mixed  $value
-	 */
-	public function setConfig($config, $value);
+    /**
+     * Replace a specific configuration.
+     *
+     * @param string $config
+     * @param mixed  $value
+     */
+    public function setConfig($config, $value);
 
-	/**
-	 * @param EmailHeaders $headers
-	 */
-	public function setHeaders(EmailHeaders $headers);
+    /**
+     * @param EmailHeaders $headers
+     */
+    public function setHeaders(EmailHeaders $headers);
 
-	public function clearHeaders();
+    public function clearHeaders();
 
-	/**
-	 * Clear the recipient lists for each parameter that is true. By default, clear all recipients.
-	 *
-	 * @param bool $to
-	 * @param bool $cc
-	 * @param bool $bcc
-	 */
-	public function clearRecipients($to = true, $cc = true, $bcc = true);
+    /**
+     * Clear the recipient lists for each parameter that is true. By default, clear all recipients.
+     *
+     * @param bool $to
+     * @param bool $cc
+     * @param bool $bcc
+     */
+    public function clearRecipients($to = true, $cc = true, $bcc = true);
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsTo($recipients = array());
+    /**
+     * @param array $recipients     Array of EmailIdentity objects.
+     * @return array    Array of invalid recipients
+     */
+    public function addRecipientsTo($recipients = array());
 
-	public function clearRecipientsTo();
+    public function clearRecipientsTo();
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsCc($recipients = array());
+    /**
+     * @param array $recipients     Array of EmailIdentity objects.
+     * @return array    Array of invalid recipients
+     */
+    public function addRecipientsCc($recipients = array());
 
-	public function clearRecipientsCc();
+    public function clearRecipientsCc();
 
-	/**
-	 * @param array $recipients     Array of EmailIdentity objects.
-	 * @return array    Array of invalid recipients
-	 */
-	public function addRecipientsBcc($recipients = array());
+    /**
+     * @param array $recipients     Array of EmailIdentity objects.
+     * @return array    Array of invalid recipients
+     */
+    public function addRecipientsBcc($recipients = array());
 
-	public function clearRecipientsBcc();
+    public function clearRecipientsBcc();
 
-	/**
-	 * @param string $textBody
-	 */
-	public function setTextBody($textBody);
+    /**
+     * @param string $textBody
+     */
+    public function setTextBody($textBody);
 
-	/**
-	 * @param string $htmlBody
-	 */
-	public function setHtmlBody($htmlBody);
+    /**
+     * @param string $htmlBody
+     */
+    public function setHtmlBody($htmlBody);
 
-	public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
+    public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
 
-	public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
+    public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
 
-	public function clearAttachments();
+    public function clearAttachments();
 
-	/**
-	 * @return boolean  true=success
-	 */
-	public function send();
+    /**
+     * @return boolean  true=success
+     */
+    public function send();
 }

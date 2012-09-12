@@ -1,6 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -21,40 +19,32 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class EmailIdentity
+require_once('modules/Mailer/EmbeddedImage.php');
+
+class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $email;
-    protected $name;
+    /**
+     * @group mailer
+     */
+    public function testGetAsArray() {
+        $expected      = array(
+            'path' => "path/to/somewhere",
+            'cid'  => "1234",
+            'name' => "abcd",
+        );
+        $embeddedImage = new EmbeddedImage($expected['path'], $expected['cid'], $expected['name']);
+        $actual        = $embeddedImage->getAsArray();
 
-    public function __construct($email, $name = null) {
-        $this->setEmail($email);
-        $this->setName($name);
-    }
+        $key = "path";
+        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
+        self::assertEquals($expected['path'], $actual['path'], "The paths don't match");
 
-    public function setEmail($email) {
-        //@todo validate this email address
-        if (!is_string($email)) {
-            throw new MailerException("Invalid email address");
-        }
+        $key = "cid";
+        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
+        self::assertEquals($expected['cid'], $actual['cid'], "The CIDs don't match");
 
-        $this->email = trim($email);
-    }
-
-    public function getEmail() {
-        return $this->email;
-    }
-
-    public function setName($name) {
-        $this->name = trim($name);
-    }
-
-    public function getName() {
-        return $this->name;
-    }
-
-    public function decode() {
-        // add back in html characters (apostrophe ' and ampersand &) to email addresses
-        // this was causing email bounces in names like "O'Reilly@example.com" being sent over as "O&#039;Reilly@example.com"
-        $this->email = htmlspecialchars_decode($this->email, ENT_QUOTES);
+        $key = "name";
+        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
+        self::assertEquals($expected['name'], $actual['name'], "The names don't match");
     }
 }

@@ -23,31 +23,31 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class MailerFactory
 {
-	const SimpleMailer = "SimpleMailer";
-	const SugarMailer  = "SugarMailer";
+    const SimpleMailer = "SimpleMailer";
+    const SugarMailer  = "SugarMailer";
 
-	/**
-	 * @param string $mailerType
-	 *      This could become a different object that can be used to determine which class to instantiate.
-	 *      But for now just spell out the class you want for testing.
-	 * @return mixed
-	 */
-	public static function getMailer($mailerType, User $user = null) {
-		$mailer = null;
+    /**
+     * @param string $mailerType
+     *      This could become a different object that can be used to determine which class to instantiate.
+     *      But for now just spell out the class you want for testing.
+     * @return mixed
+     */
+    public static function getMailer($mailerType, User $user = null) {
+        $mailer = null;
 
-		switch ($mailerType) {
-			case self::SimpleMailer:
-				include_once "{$mailerType}.php";
-				$mailer = new $mailerType();
-				break;
-			case self::SugarMailer:
-				include_once "{$mailerType}.php";
-				$mailer = new $mailerType($user);
-				break;
-			default:
-				break;
-		}
+        switch ($mailerType) {
+            case self::SimpleMailer:
+                include_once "{$mailerType}.php";
+                $mailer = new $mailerType();
+                break;
+            case self::SugarMailer:
+                include_once "{$mailerType}.php";
+                $mailer = new $mailerType($user);
+                break;
+            default:
+                break;
+        }
 
-		return $mailer;
-	}
+        return $mailer;
+    }
 }
