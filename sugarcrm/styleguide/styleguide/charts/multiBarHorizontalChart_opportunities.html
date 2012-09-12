@@ -42,9 +42,12 @@
 </div>
 
 <script src="../js/nvd3/lib/d3.v2.min.js"></script>
+
 <script src="../js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/src/utils.js"></script>
 <script src="../js/nvd3/src/models/legend.js"></script>
+
+<script src="../js/nvd3/src/models/multiBarHorizontal_sugar.js"></script>
 <script src="../js/nvd3/src/models/multiBarHorizontalChart_sugar.js"></script>
 
 <script src="../js/nvd3/data/opportunities.js"></script>
@@ -62,8 +65,8 @@
         //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: opportunities_data.data.length} )
         //.colorData( 'class' )
         .colorData( 'default' )
-        .colorFill( 'gradient' )
-        //.colorFill( 'default' )
+        //.colorFill( 'gradient' )
+        .colorFill( 'default' )
       ;
 
     chart.yAxis

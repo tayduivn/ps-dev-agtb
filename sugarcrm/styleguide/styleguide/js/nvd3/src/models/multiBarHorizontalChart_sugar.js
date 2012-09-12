@@ -5,7 +5,6 @@ nv.models.multiBarHorizontalChart = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-
   var margin = {top: 30, right: 20, bottom: 50, left: 60}
     , width = null
     , height = null
@@ -52,12 +51,6 @@ nv.models.multiBarHorizontalChart = function() {
     nv.tooltip.show([left, top], content, e.value < 0 ? 'e' : 'w', null, offsetElement);
   };
 
-  //TODO: let user select default
-  var controlsData = [
-    { key: 'Grouped' },
-    { key: 'Stacked', disabled: true },
-  ];
-
   //============================================================
 
 
@@ -100,12 +93,11 @@ nv.models.multiBarHorizontalChart = function() {
 
       var wrap = container.selectAll('g.nv-wrap.nv-multiBarHorizontalChart').data([data]);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-multiBarHorizontalChart').append('g');
+      var g = wrap.select('g');
 
       gEnter.append('g').attr('class', 'nv-x nv-axis');
       gEnter.append('g').attr('class', 'nv-y nv-axis');
       gEnter.append('g').attr('class', 'nv-barsWrap');
-
-      var g = wrap.select('g');
 
       //------------------------------------------------------------
 
@@ -171,17 +163,16 @@ nv.models.multiBarHorizontalChart = function() {
       }
 
       //------------------------------------------------------------
+      // Controls
 
-
-      //------------------------------------------------------------
-
-      multibar
-        .width(availableWidth)
-        .height(availableHeight)
-
-      if (showControls) {
-
+      if (showControls) 
+      {
         gEnter.append('g').attr('class', 'nv-controlsWrap');
+
+        var controlsData = [
+          { key: 'Grouped', disabled: multibar.stacked() },
+          { key: 'Stacked', disabled: !multibar.stacked() }
+        ];
 
         controls.width(180).color(['#444', '#444', '#444']);
 
@@ -191,9 +182,17 @@ nv.models.multiBarHorizontalChart = function() {
             .call(controls);
       }
 
+      //------------------------------------------------------------
 
       g.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+
+      //------------------------------------------------------------
+      // Main Chart Component(s)
+
+      multibar
+        .width(availableWidth)
+        .height(availableHeight)
 
       var barsWrap = g.select('.nv-barsWrap')
           .datum(data.filter(function(d) { return !d.disabled }))
@@ -201,6 +200,8 @@ nv.models.multiBarHorizontalChart = function() {
 
       d3.transition(barsWrap).call(multibar);
 
+      //------------------------------------------------------------
+      // Setup Axes
 
       xAxis
         .ticks( availableHeight / 24 )
@@ -256,7 +257,7 @@ nv.models.multiBarHorizontalChart = function() {
         selection.transition().call(chart);
       });
 
-      controls.dispatch.on('legendClick', function(d,i) { 
+      controls.dispatch.on('legendClick', function(d,i) {
         if (!d.disabled) return;
         controlsData = controlsData.map(function(s) {
           s.disabled = true;
@@ -288,6 +289,8 @@ nv.models.multiBarHorizontalChart = function() {
       });
       if (tooltips) dispatch.on('tooltipHide', nv.tooltip.cleanup);
 
+      //============================================================
+
 
       //TODO: decide if this makes sense to add into all the models for ease of updating (updating without needing the selection)
       chart.update = function() { selection.transition().call(chart) };
@@ -297,6 +300,14 @@ nv.models.multiBarHorizontalChart = function() {
 
     return chart;
   }
+
+
+  //============================================================
+  // Event Handling/Dispatching (out of chart's scope)
+  //------------------------------------------------------------
+
+  //============================================================
+
 
   //============================================================
   // Expose Public Variables
@@ -309,7 +320,7 @@ nv.models.multiBarHorizontalChart = function() {
   chart.xAxis = xAxis;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, multibar, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'showValues', 'valueFormat', 'color', 'gradient', 'useClass', 'stacked');
+  d3.rebind(chart, multibar, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'stacked', 'delay', 'showValues', 'valueFormat', 'color', 'gradient', 'useClass');
 
   chart.colorData = function(_) {
     if (arguments[0] === 'graduated')

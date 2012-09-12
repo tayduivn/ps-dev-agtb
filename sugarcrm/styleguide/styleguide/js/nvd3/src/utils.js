@@ -62,6 +62,52 @@ nv.utils.defaultColor = function()
 }
 
 //gradient color
+nv.utils.colorLinearGradient = function (d, i, o, c, defs) {
+  var id = 'rg_gradient_'+i
+    , grad = defs.select('#'+id);
+  if ( !grad.empty() ){
+    //grad.attr('r',r);
+  }
+  else
+  {
+    nv.utils.createLinearGradient( id, o, defs, [
+      { 'offset': '0%','stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 },
+      { 'offset': '50%', 'stop-color': d3.rgb(c).brighter().toString(), 'stop-opacity': 1 },
+      { 'offset': '100%','stop-color': d3.rgb(c).darker().toString(),  'stop-opacity': 1 }
+    ]);
+  }
+  return 'url(#'+ id +')';
+}
+
+// defs:definition container
+// id:dynamic id for arc
+// radius:outer edge of gradient
+// stops: an array of attribute objects
+nv.utils.createLinearGradient = function (id,orientation,defs,stops)
+{
+  var x2 = orientation === 'horizontal' ? '0%' : '100%'
+    , y2 = orientation === 'horizontal' ? '100%' : '0%'
+    , grad
+    = defs.append('linearGradient')
+        .attr('id', id)
+        .attr('x1', '0%')
+        .attr('y1', '0%')
+        .attr('x2', x2 )
+        .attr('y2', y2 )
+        //.attr('gradientUnits', 'userSpaceOnUse')
+        .attr('spreadMethod', 'pad');
+
+  for (var i=0;i<stops.length;i++)
+  {
+    var attrs = stops[i]
+      , stop = grad.append('stop')
+    for (var a in attrs)
+    {
+      if ( attrs.hasOwnProperty(a) ) stop.attr( a, attrs[a] );
+    }
+  }
+}
+
 nv.utils.colorRadialGradient = function (d, i, r, s, c, defs) {
   var id = 'rg_gradient_'+i
     , grad = defs.select('#'+id);
@@ -78,9 +124,6 @@ nv.utils.colorRadialGradient = function (d, i, r, s, c, defs) {
   return 'url(#'+ id +')';
 }
 
-// defs:definition container
-// id:dynamic id for arc
-// stops: an array of attribute objects
 nv.utils.createRadialGradient = function (id,radius,defs,stops)
 {
   var grad

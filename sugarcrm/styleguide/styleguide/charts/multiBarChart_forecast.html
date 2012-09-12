@@ -57,14 +57,13 @@
 </div>
 
 <script src="../js/jquery-1.7.2.min.js"></script>
-<script src="../js/nvd3/lib/d3.v2.js"></script>
-<script src="../js/nvd3/nv.d3.min.js"></script>
-
-<script src="../js/nvd3/src/utils.js"></script>
-<script src="../js/nvd3/src/models/legend.js"></script>
-
 <script src="../js/underscore-min.js"></script>
 <script src="../js/backbone-min.js"></script>
+<script src="../js/nvd3/lib/d3.v2.min.js"></script>
+
+<script src="../js/nvd3/nv.d3.min.js"></script>
+<script src="../js/nvd3/src/utils.js"></script>
+<script src="../js/nvd3/src/models/legend.js"></script>
 
 <script src="../js/nvd3/src/models/multiBar_sugar.js"></script>
 <script src="../js/nvd3/src/models/multiBarChart_sugar.js"></script>
@@ -90,7 +89,7 @@
         function(model) 
         {
           d3.select(self.el)
-            .datum( model.models.map( function(d,i){return d.attributes} ) )
+            .datum( model.models.map( function(d,i){return d.attributes} )[0] )
             .transition().duration(500).call(self.chart);
         }
       );
@@ -98,11 +97,22 @@
 
     render: function() {
       this.$el.empty();
+      
+      var chartData = this.collection.models.map( function(d,i){return d.attributes} )[0];
 
-      this.chart = nv.models.multiBarChart();
+      this.chart = nv.models.multiBarChart()
+            .showTitle(true)
+            .tooltips(true)
+            .showControls(false)
+            //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
+            //.colorData( 'class' )
+            .colorData( 'default' )
+            //.colorFill( 'gradient' )
+            .colorFill( 'default' )
+        ;
 
       d3.select(this.el)
-        .datum( this.collection.models.map( function(d,i){return d.attributes} ) )
+        .datum( chartData )
         .transition().duration(500).call(this.chart);
 
       nv.utils.windowResize(this.chart.update);

@@ -486,7 +486,9 @@
           //var chart = nv.models.multiBarChart();
           //override default barClick function
           var chart = nv.models.multiBarChart()
-              .margin({top: 10, right: 10, bottom: 20, left: 40})
+              .margin({top: 10, right: 10, bottom: 30, left: 40})
+              .showControls(false)
+              .showTitle(true)
               .barClick( function(data,e,selection) {
                   //if only one bar series is disabled
                   // console.log(data);
@@ -521,6 +523,7 @@
               .y(function(d) { return d.value })
               .margin({top: 10, right: 10, bottom: 20, left: 90})
               .showValues(true)
+              .showTitle(true)
               .tooltips(true)
               .showControls(false);
 
