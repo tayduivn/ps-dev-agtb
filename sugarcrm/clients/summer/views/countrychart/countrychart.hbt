@@ -9,3 +9,8 @@
     {{/if}}
   <div id="{{guid}}"></div>
 </div>
+<style>
+    .block path {
+        stroke: #fff;
+    }
+</style>

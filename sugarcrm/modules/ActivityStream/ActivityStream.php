@@ -264,7 +264,7 @@ class ActivityStream extends SugarBean {
         // images
         $text = preg_replace('#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i', '<br/><img src="$1.$2" alt="$1.$2" /><br/>', $text);
         // other links
-        $text = preg_replace('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', '$1<a href="$2">$2</a>', $text);
+        $text = trim(preg_replace('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', '$1<a href="$2">$2</a>', ' '.$text));
         return $text;
     }
 
@@ -328,7 +328,7 @@ class ActivityStream extends SugarBean {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
                 $row['target_name'] = '';
                 if(!empty($row['target_id'])) {
-                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
+                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id'], array('disable_row_level_security'=>true));
                     if(!empty($bean)) {
                         $row['target_name'] = $bean->get_summary_text();
                     }

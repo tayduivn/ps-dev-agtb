@@ -442,7 +442,42 @@ class BoxOfficeClient
         return false;
     }
 
-    public function oauthGet($url)
+    /**
+     * Regenerate user's oauth token using refresh token
+     * @return boolean
+     */
+    protected function refreshToken()
+    {
+        if(empty($this->user['refresh_token'])) {
+            return false;
+        }
+        $req = new Zend_Http_Client("https://accounts.google.com/o/oauth2/token");
+        $req->setMethod("POST");
+        $req->setParameterPost("client_id", $this->getSetting("google_client_id"));
+        $req->setParameterPost("client_secret", $this->getSetting("google_client_secret"));
+        $req->setParameterPost("grant_type", "refresh_token");
+        $req->setParameterPost("refresh_token", $this->user['refresh_token']);
+        $req->setParameterPost("client_secret", $this->getSetting("google_client_secret"));
+        $res = $req->request();
+        if(!$res->isSuccessful()) {
+            return false;
+        }
+        $data = json_decode($res->getBody(), true);
+        if(empty($data) || empty($data['access_token'])) {
+            return false;
+        }
+        $this->user['oauth_token'] = $data['access_token'];
+        $this->box->setUserTokens($this->user['id'], $data['access_token'], null, $data['expires_in']);
+        return true;
+    }
+
+    /**
+     * Get data from resource using user's oauth2 token
+     * @param string $url URL to get
+     * @param bool $retry If token is bad, should we try to refresh?
+     * @return string|false
+     */
+    public function oauthGet($url, $retry = true)
     {
         if(empty($this->user) || empty($this->user['oauth_token'])) {
             return false;
@@ -455,7 +490,13 @@ class BoxOfficeClient
         if($res->isSuccessful()) {
             return $res->getBody();
         } else {
-
+            if($res->getStatus() == 401 && $retry) {
+                // try reauthorizing
+                if($this->refreshToken()) {
+                    // if reauthorized, try again but no retries this time
+                    return $this->oauthGet($url, false);
+                }
+            }
         }
         return false;
     }

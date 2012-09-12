@@ -22,36 +22,29 @@
         $('.chartSelector').val(this.options['url']);
 
         App.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {success: function(o) {
-            var results = [];
+            var results = {};
+            var values = [];
             for (i = 0; i < o.length; i++) {
-                results[results.length] = [o[i]['country'], parseInt(o[i]['amount'])];
+                var country = o[i]['country'];
+                if("USA" == country) country = "United States of America";
+                results[country] = parseInt(o[i]['amount']);
+                values.push(parseInt(o[i]['amount']));
             }
-            console.log(results);
 
-            var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Country');
-            data.addColumn('number', 'Amount');
-            data.addRows(results);
-
-            var options = {
-                colorAxis: {
-                    minValue: 0,
-                    colors: ['gray', '#4D90FE']}
-            };
-
-            console.log(self.guid);
-            var chart = new google.visualization.GeoChart(document.getElementById(self.guid));
-            chart.draw(data, options);
+            var color = d3.scale.linear().domain([0, _.max(values)]).range(["gray", "blue"]);
+            var xy = d3.geo.equirectangular().scale($('#'+self.guid).width()).translate([$('#'+self.guid).width()/2, 150]);
+            var svg = d3.select("#"+self.guid).append("svg").attr("style", "height: 250px;");
+            var path = d3.geo.path().projection(xy);
+            d3.json("../clients/summer/views/countrychart/world-countries.json", function(collection) {
+                var g = svg.selectAll("path")
+                  .data(collection.features)
+                .enter().append("g");
+                g.append("path")
+                  .attr("d", function(d) { return path(d); })
+                  .style("fill", function(d) {
+                    return color(results[d.properties.name] || 0);
+                  }).attr("title", function(d) { return d.properties.name; });
+            });
         }});
-    },
-
-    getData: function() {
-        var url = this.options['url'];
-        $.ajax({
-            url: url,
-            dataType: "json",
-            success: this.render,
-            context: this
-        });
     }
 })

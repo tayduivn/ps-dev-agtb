@@ -13,6 +13,9 @@
         'drop .sayit': 'dropAttachment',
         'dragstart .activitystream-attachment': 'saveAttachment',
         'click .deleteRecord': 'deleteRecord',
+        'mouseenter .hasDeleteButton': 'showDeleteButton',
+        'mouseleave .hasDeleteButton': 'hideDeleteButton',
+        'click [name=show_more_button]': 'showMoreRecords'        
     },
 
     initialize: function(options) {
@@ -37,11 +40,35 @@
         // There maybe better way to make the following data available in hbt 
         this.collection['oauth_token'] = App.api.getOAuthToken();
         this.collection['user_id'] = app.user.get('id'); 
+        this.collection['full_name'] = app.user.get('full_name');         
+        var picture = app.user.get('picture');
+        this.collection['picture_url'] = (picture) ? app.api.buildFileURL({
+            module: 'Users',
+            id: app.user.get('id'),
+            field: 'picture'
+        }) : "../clients/summer/views/imagesearch/anonymous.jpg"; 
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
 
+    showMoreRecords: function(event) {
+        var self = this, options = {};
+        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+        options.params = this.opts.params;
+        options.params.offset = this.collection.next_offset;
+        // Indicates records will be added to those already loaded in to view
+        options.add = true;
+            
+        options.success = function() {
+            app.alert.dismiss('show_more_records');
+            self.layout.trigger("list:paginate:success");
+            self.render();
+            window.scrollTo(0, document.body.scrollHeight);
+        };
+        this.collection.paginate(options);
+    },
+    
     showAllComments: function(event) {
         event.preventDefault();
         this.$(event.currentTarget).closest('li').hide();
@@ -50,6 +77,7 @@
     },
 
     showAddComment: function(event) {
+        event.preventDefault();    	
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').show();
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
@@ -91,14 +119,20 @@
                             processData: false,
                             contentType: false,
                             success: function() {
-                                delete App.drag_drop[id];
+                                delete App.drag_drop[id];                              
                                 self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts);
+            // If we are 'showing more'
+            options = {};
+            options.params = self.opts.params;
+            // max_num is hard coded to 20 somewhere
+            options.params.limit = self.collection.models.length;
+            options.params.offset = 0;            
+            self.collection.fetch(options);
         }});
     },
 
@@ -150,6 +184,16 @@
         }});
     },
 
+    showDeleteButton: function(event) {
+        event.preventDefault();    	
+        this.$(event.currentTarget).closest('li').find('.deleteRecord').css('display', 'block');
+    },
+
+    hideDeleteButton: function(event) {
+        event.preventDefault();    	
+        this.$(event.currentTarget).closest('li').find('.deleteRecord').hide();
+    },
+    
     deleteRecord: function(event) {
         var self = this,
         recordId = this.$(event.currentTarget).data('id'),
