@@ -227,7 +227,7 @@ class SimpleMailer extends BaseMailer
 
         if ($hasHtml) {
             $mailer->IsHTML(true);
-            $mailer->Encoding = self::EncodingBase64; // so that embedded images are encoded properly
+            $mailer->Encoding = Encoding::Base64; // so that embedded images are encoded properly
             $mailer->Body     = $this->htmlBody;
         }
 

@@ -21,16 +21,11 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'Encoding.php';
 require_once 'EmailIdentity.php';
 
 interface IMailer
 {
-    const Encoding8Bit   = '8bit';
-    const Encoding7Bit   = '7bit';
-    const EncodingBinary = 'binary';
-    const EncodingBase64 = 'base64';
-    const EncodingQP     = 'quoted-printable';
-
     public function __construct();
 
     public function reset();
@@ -113,9 +108,9 @@ interface IMailer
      */
     public function setHtmlBody($htmlBody);
 
-    public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
+    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream');
 
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream');
+    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream');
 
     public function clearAttachments();
 

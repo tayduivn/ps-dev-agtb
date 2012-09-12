@@ -53,7 +53,7 @@ abstract class BaseMailer implements IMailer
         $defaults = array(
             'hostname' => '',
             'charset'  => 'utf-8',
-            'encoding' => self::EncodingQP, // default to quoted-printable for plain/text
+            'encoding' => Encoding::QuotedPrintable, // default to quoted-printable for plain/text
             'wordwrap' => 996,
         );
 
@@ -139,11 +139,11 @@ abstract class BaseMailer implements IMailer
         $this->htmlBody = $htmlBody;
     }
 
-    public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
+    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
         $this->attachments[] = new Attachment($path, $name, $encoding, $mimeType);
     }
 
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
+    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
         $this->attachments[] = new EmbeddedImage($path, $cid, $name, $encoding, $mimeType);
     }
 
