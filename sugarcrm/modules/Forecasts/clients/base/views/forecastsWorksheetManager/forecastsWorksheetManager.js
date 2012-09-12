@@ -183,6 +183,10 @@
      * @protected
      */
     _renderField: function(field) {
+        // worksheet currency fields are converted to base
+        if(field.type == 'currency') {
+            field.convertToBase = true;
+        }
         app.view.View.prototype._renderField.call(this, field);
         if (field.viewName !="edit" && field.def.clickToEdit === true && _.isEqual(this.selectedUser.id, app.user.get('id'))) {
             field = new app.view.ClickToEditField(field, this);
@@ -297,14 +301,15 @@
 
         _.each(self._collection.models, function (model) {
 
-           amount 			+= parseFloat(model.get('amount'));
-           quota 			+= parseFloat(model.get('quota'));
-           best_case 		+= parseFloat(model.get('best_case'));
-           best_adjusted 	+= parseFloat(model.get('best_adjusted'));
-           likely_case 		+= parseFloat(model.get('likely_case'));
-           likely_adjusted 	+= parseFloat(model.get('likely_adjusted'));
-           worst_case       += parseFloat(model.get('worst_case'));
-           worst_adjusted 	+= parseFloat(model.get('worst_adjusted'));
+           var base_rate = parseFloat(model.get('base_rate'));
+           amount 			+= parseFloat(model.get('amount')) * base_rate;
+           quota 			+= parseFloat(model.get('quota')) * base_rate;
+           best_case 		+= parseFloat(model.get('best_case')) * base_rate;
+           best_adjusted 	+= parseFloat(model.get('best_adjusted')) * base_rate;
+           likely_case 		+= parseFloat(model.get('likely_case')) * base_rate;
+           likely_adjusted 	+= parseFloat(model.get('likely_adjusted')) * base_rate;
+           worst_case       += parseFloat(model.get('worst_case')) * base_rate;
+           worst_adjusted 	+= parseFloat(model.get('worst_adjusted')) * base_rate;
                 
         });
 

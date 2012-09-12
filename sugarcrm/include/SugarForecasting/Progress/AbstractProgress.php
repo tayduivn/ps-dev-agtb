@@ -19,9 +19,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/SugarForecasting/Progress/ProgressInterface.php');
+require_once('include/SugarForecasting/ForecastProcessInterface.php');
 require_once('include/SugarForecasting/AbstractForecastArgs.php');
-abstract class SugarForecasting_Progress_AbstractProgress extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_Progress_ProgressInterface
+abstract class SugarForecasting_Progress_AbstractProgress extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastProcessInterface
 {
     /**
      * Class Constructor

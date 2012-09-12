@@ -352,7 +352,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
    'base_rate' =>
    array (
        'name' => 'base_rate',
-       'vname' => 'LBL_CURRENCY_RATE',
+       'vname' => 'LBL_BASE_RATE',
        'type' => 'double',
        'required' => true,
    ),
@@ -567,7 +567,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'base_rate' =>
     array (
         'name' => 'base_rate',
-        'vname' => 'LBL_CURRENCY_RATE',
+        'vname' => 'LBL_BASE_RATE',
         'type' => 'double',
         'required' => true,
     ),
@@ -738,6 +738,18 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'type' => 'currency',
         'source' => 'non-db',
     ),
+    array(
+        'name' => 'currency_id',
+        'vname' => 'LBL_CURRENCY_ID',
+        'type' => 'id',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'base_rate',
+        'vname' => 'LBL_BASE_RATE',
+        'type' => 'double',
+        'source' => 'non-db',
+    ),
 ),
 );
 
@@ -821,6 +833,18 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
         'name' => 'worst_case_adjusted',
         'vname' => 'LBL_WORST_CASE_ADJUSTED',
         'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'currency_id',
+        'vname' => 'LBL_CURRENCY_ID',
+        'type' => 'id',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'base_rate',
+        'vname' => 'LBL_BASE_RATE',
+        'type' => 'double',
         'source' => 'non-db',
     ),
 ),

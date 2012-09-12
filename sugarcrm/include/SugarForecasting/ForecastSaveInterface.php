@@ -26,12 +26,12 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-interface SugarForecasting_Chart_ChartInterface
+interface SugarForecasting_ForecastSaveInterface
 {
     /**
-     * This is used to run all the commands that are need to get a chart back out of the system
+     * This is used when you want to have a class utilize a save method() for the Forecasting API
      *
-     * @return string|array
+     * @return mixed
      */
-    public function process();
+    public function save();
 }
