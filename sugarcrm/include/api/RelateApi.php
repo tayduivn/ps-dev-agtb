@@ -68,7 +68,7 @@ class RelateApi extends ListApi {
         $linkParams = array(
             'where' => !empty($options['where']) ? $options['where'] : "",
             'deleted' => !empty($options['deleted']) ? $options['deleted'] : false,
-            'order_by' => !empty($options['orderBy']) ? $options['orderBy'] : "",
+            'orderby' => !empty($options['orderBy']) ? $options['orderBy'] : "",
         );
 
         $offset = !empty($options['offset']) ? $options['offset'] : 0;
