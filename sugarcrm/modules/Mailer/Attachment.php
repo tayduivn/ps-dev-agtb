@@ -29,6 +29,7 @@ require_once 'Encoding.php'; // needs the valid encodings defined in Encoding
  */
 class Attachment
 {
+    // protected members
     protected $path;        // Path to the file being attached.
     protected $name;        // Name of the file to be used to identify the attachment.
     protected $encoding;    // The encoding used on the file. Should be one of the valid encodings from Encoding.

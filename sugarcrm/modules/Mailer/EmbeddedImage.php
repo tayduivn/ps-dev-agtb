@@ -31,6 +31,7 @@ require_once 'Attachment.php'; // requires Attachment in order to extend it
  */
 class EmbeddedImage extends Attachment
 {
+    // private members
     private $cid;   // The Content-ID used to reference the image in the message.
 
     /**
