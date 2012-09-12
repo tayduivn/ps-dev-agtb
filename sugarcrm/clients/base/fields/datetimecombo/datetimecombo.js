@@ -26,6 +26,9 @@
         var jsDate, output, 
             usersDateFormatPreference, usersTimeFormatPreference, 
             myUser = app.user;
+        jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
+        return jsDate.toISOString();
+    },
 
         usersDateFormatPreference = myUser.get('datepref');
         usersTimeFormatPreference = myUser.get('timepref');
