@@ -30,22 +30,48 @@ require_once('modules/TimePeriods/iTimePeriod.php');
 class MonthTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
-     * Constructor
+     * constructor override
+     *
+     * @param null $start_date date string to set the start date of the annual time period
      */
-    public function __construct() {
-        parent::TimePeriod();
+    public function __construct($start_date = null, $is_fiscal = false, $week_count = 4) {
+        parent::__construct();
+        $timedate = TimeDate::getInstance();
 
+        //set defaults
         $this->time_period_type = 'Month';
+        $this->is_fiscal = $is_fiscal;
+        $this->is_leaf = false;
+
+        $this->setStartDate($start_date, $week_count);
     }
 
     /**
-     * Saves the Annual TimePeriod
+     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
+     * The end date is adjusted as well to hold to the contract of this being an quarter time period
      *
-     * @param bool $check_notify
-     * @return mixed
+     * @param null $startDate  db format date string to set the start date of the quarter time period
      */
-    public function save($check_notify=false) {
-        return parent::save($check_notify);
+    public function setStartDate($start_date = null, $week_count = 4) {
+        $timedate = TimeDate::getInstance();
+        //check start_date, put it to now if it's not passed in
+        if(is_null($start_date)) {
+            $start_date = $timedate->getNow()->asDbDate();
+        }
+
+        $start_date = $timedate->fromDbDate($start_date);
+
+        //set the start/end date
+        $this->start_date = $timedate->asUserDate($start_date);
+
+        if($this->is_fiscal) {
+            $endDate = $start_date->modify('+$week_count month');
+            $endDate = $endDate->modify('-1 day');
+        } else {
+            $endDate = $start_date->modify('+1 month');
+            $endDate = $endDate->modify('-1 day');
+        }
+        $this->end_date = $timedate->asUserDate($endDate);
     }
 
     /**
@@ -55,17 +81,17 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
      *
      * @return MonthTimePeriod
      */
-    public function createNextTimePeriod($weekLength=NULL) {
+    public function createNextTimePeriod($week_length=4) {
         $nextPeriod = new MonthTimePeriod();
         $timedate = TimeDate::getInstance();
         $nextEndDate = $timedate->fromUserDate($this->end_date);
 
         $nextStartDate = $nextEndDate->modify('+1 day');
-        if(is_null($weekLength))
+        if($this->is_fiscal)
         {
             $nextEndDate = $nextEndDate->modify('+1 month');
         } else {
-            $nextEndDate = $nextEndDate->modify('+$weekLength week');
+            $nextEndDate = $nextEndDate->modify('+$week_length week');
         }
         $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
         $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
