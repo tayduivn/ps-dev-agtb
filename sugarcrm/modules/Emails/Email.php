@@ -542,6 +542,8 @@ class Email extends SugarBean {
 				$this->parent_type = "";
 		} // if
 
+
+
         $mail = $this->handleBody($mail);
         $mail->Subject = $this->name;
         $this->description_html = from_html($this->description_html);

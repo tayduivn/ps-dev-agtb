@@ -253,13 +253,15 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
     }
 
-
+    /**
+     * @group emails_related
+     */
     public function testCreate_Draft_WithRelationship_Success() {
         $this->input["status"] = "draft";
 
         $this->input["related"] = array(
             "type"	=> "Accounts",
-            "id"	=> 0
+            "id"	=> "1234567890"
         );
 
         $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
@@ -272,6 +274,9 @@ class EmailsApiTest extends RestTestBase {
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
+            // $emailObject = new Email();
+            // $emailObject->retrieve($this->email_id);
+            // var_dump($emailObject);
         }
 
         $success = (int) $reply['SUCCESS'];
@@ -284,9 +289,15 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals($this->input["subject"], $email['name'], "Email Subject Incorrect");
         $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
         $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
+
+        $this->assertEquals($this->input["related"]["type"], $email['parent_type'], "Invalid Relationship - Parent Type");
+        $this->assertEquals($this->input["related"]["id"],   $email['parent_id'],   "Invalid Relationship - Parent ID");
     }
 
 
+    /**
+     * @group emails_attachment
+     */
     public function testCreate_Draft_WithAttachment_Success() {
         $this->input["status"] = "draft";
 
@@ -321,7 +332,9 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
-
+    /**
+     * @group emails_multiple_teams
+     */
      public function testCreate_Draft_WithMultipleTeams_Success() {
 
         $this->input["status"] = "draft";
@@ -344,6 +357,8 @@ class EmailsApiTest extends RestTestBase {
             $this->email_id = $reply['EMAIL']['id'];
         }
 
+        //print_r($reply);
+
         $success = (int) $reply['SUCCESS'];
         $this->assertEquals(1,$success, "Not Successful");
 
@@ -354,12 +369,14 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
         $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
 
-        //print_r($reply);
-
         $this->assertTrue($this->check_team_sets(), "Expected Team Sets Not Created");
+        $this->assertEquals($this->teams[0],$email['team_id'],"Unexpected Email Team ID");
+        $this->assertEquals($this->get_team_set_id(),$email['team_set_id'],"Unexpected Email Team Set ID");
     }
 
-
+    /**
+     * @group emails_document
+     */
     public function testCreate_Draft_WithSugarDocumentAttached_Success() {
         $this->input["status"] = "draft";
 
@@ -561,7 +578,8 @@ class EmailsApiTest extends RestTestBase {
             }
         }
 
-        /**
+        /*
+        printf("save_team_set_id: %s\n",$save_team_set_id);
         printf("SQL1: %s\n",$sql1);
         print_r($ids);
         printf("COUNT IDS: %d\n",count($ids)); // SHOULD BE THREE
@@ -570,7 +588,7 @@ class EmailsApiTest extends RestTestBase {
 
         printf("SQL2: %s\n",$sql2);
         printf("COUNT TEAM SETS: %d\n",$count);
-        **/
+        */
 
         if (count($ids) != 3)
             return false;   // should be exactly three
@@ -581,6 +599,17 @@ class EmailsApiTest extends RestTestBase {
 
         return true;
     }
+
+
+    private function get_team_set_id() {
+        $sql1 = "SELECT team_id, id, team_set_id FROM team_sets_teams WHERE team_id like '{$this->team_id}%' LIMIT 1";
+        $result = $GLOBALS['db']->query($sql1);
+        if ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            return $row['team_set_id'];
+        }
+        return '';
+    }
+
 
     private function deleteEmails($email_id) {
 
