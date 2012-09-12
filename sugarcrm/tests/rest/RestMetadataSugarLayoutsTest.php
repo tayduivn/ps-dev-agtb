@@ -77,42 +77,54 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
-
+    /**
+     * @group rest
+     */
     public function testBaseLayoutRequestAll() {
         $reply = $this->_restCall('metadata');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('wiggle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testBaseLayoutRequestLayoutsOnly() {
         $reply = $this->_restCall('metadata?type_filter=layouts');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('woggle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testPortalLayoutRequestAll() {
         $reply = $this->_restCall('metadata?platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('bizzle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testPortalLayoutRequestLayoutsOnly() {
         $reply = $this->_restCall('metadata?type_filter=layouts&platform=portal');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('bozzle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testMobileLayoutRequestAll() {
         $reply = $this->_restCall('metadata?platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');
         $this->assertTrue(isset($reply['reply']['layouts']['_hash']), 'Layout hash is missing.');
         $this->assertArrayHasKey('pozzle', $reply['reply']['layouts'], 'Test result not found');
     }
-
+    /**
+     * @group rest
+     */
     public function testMobileLayoutRequestLayoutsOnly() {
         $reply = $this->_restCall('metadata?type_filter=layouts&platform=mobile');
         $this->assertNotEmpty($reply['reply']['layouts'], 'Layouts return data is missing');

@@ -31,7 +31,9 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
 
         $this->oldFiles = array();
     }
-    
+    /**
+     * @group rest
+     */    
     public function tearDown()
     {
         foreach ( $this->oldFiles as $filename => $filecontents ) {
@@ -46,13 +48,17 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
 
         parent::tearDown();
     }
-
+    /**
+     * @group rest
+     */
     public function testMetadataViewTemplates() {
         $restReply = $this->_restCall('metadata?type_filter=view_templates');
 
         $this->assertTrue(isset($restReply['reply']['view_templates']['_hash']),'ViewTemplate hash is missing.');
     }
-    
+    /**
+     * @group rest
+     */    
     public function testMetadataViewTemplatesHbt() {
         $filesToCheck = array('clients/portal/views/edit/edit.hbt',
                               'clients/base/views/edit/edit.hbt',
