@@ -28,6 +28,24 @@ require_once('modules/Emails/MailRecord.php');
 
 class EmailsApi extends ModuleApi
 {
+    public static $fields = array (
+
+        "to_addresses"      => null,
+        "cc_addresses"      => null,
+        "bcc_addresses"     => null,
+
+        "attachments"       => null,
+        "documents"         => null,
+        "teams"             => null,
+        "related"           => null,
+
+        "subject"           => null,
+        "html_body"         => null,
+        "text_body"         => null,
+
+        "status"            => "",
+    );
+
     public function __construct() {}
 
     public function registerApiRest() {
@@ -154,7 +172,6 @@ class EmailsApi extends ModuleApi
      * @return array
      */
     public function createMail($api, $args) {
-        global $current_user;
 
         $result = $this->handleMail($api, $args);
 
@@ -241,7 +258,14 @@ class EmailsApi extends ModuleApi
     protected function handleMail($api, $args) {
         global $current_user;
 
+        foreach(self::$fields AS $k => $v) {
+            if (!isset($args[$k])) {
+                $args[$k] = $v;
+            }
+        }
+
         ob_start();
+
         $mailRecord = new MailRecord($current_user);
 
         $mailRecord->toAddresses  = $args["to_addresses"];
