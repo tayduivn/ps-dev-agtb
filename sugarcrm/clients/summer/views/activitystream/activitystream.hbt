@@ -196,6 +196,9 @@
       <em>No recent activity found.</em>
     {{/if}}
   </ul>
+  {{#notEq collection.next_offset "-1"}}
+    <a href="javascript:void(0)" name="show_more_button" class="loading wide ">Show More</a>
+  {{/notEq}}
 </div>
 
 
