@@ -14,20 +14,62 @@ class BoxOffice
 
     const FREE_LIFETIME = 7776000; // 90 days
 
-    function __construct($dbconfig)
+    protected $error;
+    protected $status = 200;
+
+    public function __construct($dbconfig)
     {
         $this->dbh = new PDO('mysql:host=' . $dbconfig['host'] . ';dbname=' . $dbconfig['name'], $dbconfig['user'], $dbconfig['password']);
+    }
+
+    /**
+     * Set error message
+     * @param string $msg
+     * @param int $status
+     */
+    protected function setError($msg, $status = 403)
+    {
+        $this->error = $msg;
+        $this->status = $status;
+    }
+
+    /**
+     * Is current request OK?
+     * @return boolean
+     */
+    public function isOk()
+    {
+        return $this->status == 200;
+    }
+
+    /**
+     * Get current status
+     * @return number
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Get current error message
+     */
+    public function getError()
+    {
+        return $this->getError();
     }
 
     /**
      * Returns a user based on email and password
      * @param $email
      * @param $password
+     * @api
      * @return array
      */
-    function authenticateUser($email, $password)
+    public function authenticateUser($email, $password)
     {
-        if(empty($password)) {
+        if(empty($password) || empty($email)) {
+            $this->setError("Invalid login data provided");
             return false;
         }
         $now = gmdate('Y-m-d');
@@ -38,7 +80,7 @@ class BoxOffice
         $user = $sth->fetch(PDO::FETCH_ASSOC);
         $sql = 'INSERT INTO logins (date_created, email, status) VALUES (:date_created, :email, :status)';
         $sth = $this->dbh->prepare($sql);
-        if(!crypt($password, $user['hash']) === $user['hash']) {
+        if(empty($user['hash']) || crypt($password, $user['hash']) !== $user['hash']) {
             $user = false;
         }
         if (empty($user)) {
@@ -47,6 +89,7 @@ class BoxOffice
             $sth->bindParam(':email', $email, PDO::PARAM_STR);
             $sth->bindParam(':status', $status, PDO::PARAM_STR);
             $sth->execute();
+            $this->setError("User not found", 404);
             return false;
         }
         $status = 'Login Success';
@@ -59,12 +102,13 @@ class BoxOffice
     }
 
     /**
-     * Returns a user based on email and password
+     * Returns a user based on email and remote id
      * @param $email
      * @param $password
+     * @api
      * @return array
      */
-    function authenticateRemoteUser($email, $remote_id)
+    public function authenticateRemoteUser($email, $remote_id)
     {
     	$now = gmdate('Y-m-d H:i:s');
     	$sql = 'SELECT * FROM users WHERE email = :email AND remote_id = :rid AND deleted=0';
@@ -92,13 +136,19 @@ class BoxOffice
      * Logs the fact that a user switched instances and create new session
      * @param $user_id
      * @param $email
+     * @api
      * @param $instance_id
      */
-    function selectInstance($user_id, $email, $instance_id)
+    public function selectInstance($user_id, $email, $instance_id)
     {
         $inst = $this->getInstanceById($instance_id);
-        if(empty($inst) || $inst['status'] == 'Pending' || empty($inst['config']['dbconfig'])) {
-            return null;
+        if(empty($inst)) {
+            $this->setError("Instance does not exist", 404);
+            return false;
+        }
+        if($inst['status'] == 'Pending' || empty($inst['config']['dbconfig'])) {
+            $this->setError("Instance is not ready");
+            return false;
         }
         $sql = 'INSERT INTO logins (date_created, email, status, user_id, instance_id) VALUES (:date_created, :email, :status, :user_id, :instance_id)';
         $sth = $this->dbh->prepare($sql);
@@ -123,6 +173,7 @@ class BoxOffice
     /**
      * Get session config
      * CLIENT API
+     * @api
      * @param string $session
      * @return array|false
      */
@@ -132,6 +183,7 @@ class BoxOffice
         $sth->execute(array(":id" => $session));
         $sess = $sth->fetch(PDO::FETCH_ASSOC);
         if(empty($sess) || empty($sess['user_id']) || empty($sess['instance_id'])) {
+            $this->setError("Session ID not found", 404);
             return false;
         }
         $sth = $this->dbh->prepare('UPDATE sessions SET login_time=:now WHERE id=:id');
@@ -145,6 +197,7 @@ class BoxOffice
     /**
      * Get all users on the same instance as my session and all my instances
      * CLIENT API
+     * @api
      * @param string $session
      */
     public function getUsersInstances($session)
@@ -153,6 +206,7 @@ class BoxOffice
         $sth->execute(array(":id" => $session));
         $sess = $sth->fetch(PDO::FETCH_ASSOC);
         if(empty($sess) || empty($sess['user_id']) || empty($sess['instance_id'])) {
+            $this->setError("Session ID not found", 404);
         	return false;
         }
 
@@ -162,6 +216,10 @@ class BoxOffice
           WHERE sessions.id=:id');
         $sth->execute(array(":id" => $session));
         $users = $sth->fetchAll(PDO::FETCH_ASSOC);
+        if(empty($users)) {
+            $this->setError("No users", 404);
+            return false;
+        }
         foreach($users as $k => $data) {
             // drop hashes
             unset($users[$k]['hash']);
@@ -183,6 +241,7 @@ class BoxOffice
     /**
      * Invite the user into the instance
      * CLIENT API
+     * @api
      * @param string $session
      * @param string $email
      * @return boolean
@@ -193,6 +252,7 @@ class BoxOffice
         $sth->execute(array(":id" => $session));
         $sess = $sth->fetch(PDO::FETCH_ASSOC);
         if(empty($sess) || empty($sess['user_id']) || empty($sess['instance_id'])) {
+            $this->setError("Session ID not found", 404);
         	return false;
         }
 
@@ -207,6 +267,7 @@ class BoxOffice
 
     /**
      * Delete session by user/instance
+     * @api
      * @param string $user
      * @param string $instance
      */
@@ -214,6 +275,7 @@ class BoxOffice
     {
         $sth = $this->dbh->prepare("DELETE FROM sessions WHERE user_id=:user AND instance_id=:instance");
         $sth->execute(array(":user" => $user, ":instance" => $instance));
+        return true;
     }
 
     /**
@@ -225,6 +287,7 @@ class BoxOffice
     {
         $sth = $this->dbh->prepare("DELETE FROM sessions WHERE id=:id");
         $sth->execute(array(":id" => $session));
+        return true;
     }
 
     /**
@@ -232,7 +295,7 @@ class BoxOffice
      * @param int $id
      * @return array
      */
-    public function getUserById($id)
+    protected function getUserById($id)
     {
         $sql = 'SELECT * FROM users WHERE id = :id AND deleted=0';
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -250,14 +313,15 @@ class BoxOffice
      * @param int $id
      * @return array
      */
-    public function getInstanceById($id)
+    protected function getInstanceById($id)
     {
         $sql = 'SELECT * FROM instances WHERE id = :id AND deleted=0 AND date_start <= :date AND date_end >= :date';
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
         $sth->execute(array(":id" => $id, ":date" => gmdate('Y-m-d H:i:s')));
         $inst = $sth->fetch(PDO::FETCH_ASSOC);
         if (empty($inst)) {
-            return null;
+            $this->setError("Instance not found", 404);
+            return false;
         }
         if(!empty($inst['config'])) {
             $inst['config'] = json_decode($inst['config'], true);
@@ -268,11 +332,12 @@ class BoxOffice
 
     /**
      * returns a given user based on email address
+     * @api
      * @param $email
      * @param bool $throwException
      * @return array
      */
-    function getUser($email, $throwException = true)
+    public function getUser($email, $thowException = true)
     {
         $sql = 'SELECT * FROM users WHERE email = :email AND deleted=0';
         $sth = $this->dbh->prepare($sql, array(PDO::ATTR_CURSOR => PDO::CURSOR_FWDONLY));
@@ -280,8 +345,11 @@ class BoxOffice
         $sth->execute();
         $user = $sth->fetchAll(PDO::FETCH_ASSOC);
         if (empty($user)) {
-            if ($throwException) throw new Exception('User does not exist');
-            else return null;
+            if($thowException) {
+                throw new Exception("User does not exist");
+            }
+            $this->setError("User does not exist", 404);
+            return false;
         }
         unset($user[0]['hash']);
         return $user[0];
@@ -289,10 +357,11 @@ class BoxOffice
 
     /**
      * Returns a list of instances related to a given user
+     * @api
      * @param null $user_id
      * @return array
      */
-    function getUserInstances($user_id, $instance_id = null)
+    public function getUserInstances($user_id, $instance_id = null)
     {
         $this->addInvites($user_id);
 
@@ -320,16 +389,29 @@ class BoxOffice
 
     /**
      * Returns a list of modules for a given user based on their instance
+     * CLIENT API
+     * @api
      * @param $instance_id
      * @param null $user_id
      * @return array
      */
-    function getUserModules($instance_id, $user_id)
+    public function getUserModules($session)
     {
         $today = gmdate('Y-m-d H:i:s');
         $modules = array();
+        $sth = $sql->dbh->prepare("SELECT * FROM session WHERE id=:id");
+        $sth->execute(array("id" => $session));
+        $res = $sth->fetch(PDO::FETCH_ASSOC);
+        if(empty($res)) {
+            $this->setError("Session ID not found", 404);
+            return false;
+        }
+        $user_id = $res['user_id'];
+        $instance_id = $res['instance_id'];
         $instances = $this->getUserInstances($user_id, $instance_id);
-        if (empty($instances)) return array();
+        if (empty($instances)) {
+            return array();
+        }
         $instance = $instances[0];
         $sql = 'SELECT * FROM modules
         INNER JOIN modules_instances mi ON modules.id = mi.module_id AND mi.instance_id = :instance_id AND mi.date_start <= :date AND mi.date_end >= :date AND mi.deleted = 0
@@ -341,6 +423,10 @@ class BoxOffice
         $sth->bindParam(':date', $today, PDO::PARAM_STR);
         $sth->execute();
         $results = $sth->fetchAll(PDO::FETCH_ASSOC);
+        if(empty($results)) {
+            $this->setError("Data not found!", 404);
+            return false;
+        }
         foreach ($results as $result) {
             $modules[$result['name']] = $result;
         }
@@ -372,13 +458,14 @@ class BoxOffice
 
     /**
      * Registers a new User if the email address already exists it will throw an exception
+     * @api
      * @param string $email
      * @param string $hash
      * @param array $data
      * @param string $status
      * @throws Exception
      */
-    function registerUser($email, $password, $data, $status = 'Pending Confirmation')
+    public function registerUser($email, $password, $data, $status = 'Pending Confirmation')
     {
         if (!$this->getUser($email, false)) {
             $now = gmdate('Y-m-d H:i:s');
@@ -408,18 +495,20 @@ class BoxOffice
                 $this->createUserInstance($user);
             }
         } else {
-            throw new Exception('User Already Exists');
+            $this->setError('User Already Exists', 403);
+            return false;
         }
-
+        return true;
     }
 
     /**
      * sends a confirmation email to the given user
+     * @api
      * @param int $user_id
      * @param string $type
      * @param int $hoursTillExpires
      */
-    function generateConfirmation($email, $type = 'Activate User', $hoursTillExpires = 24)
+    public function generateConfirmation($email, $type = 'Activate User', $hoursTillExpires = 24)
     {
         $user = $this->getUser($email);
         $guid = generate_guid();
@@ -448,11 +537,12 @@ class BoxOffice
 
     /**
      * Activates a given user based on their email and confirmation hash
+     * @api
      * @param $email
      * @param $hash
      * @param $ip_address
      */
-    function activateUser($email, $hash, $ip_address)
+    public function activateUser($email, $hash, $ip_address)
     {
         $now = gmdate('Y-m-d H:i:s');
 
@@ -482,6 +572,7 @@ class BoxOffice
 
             return true;
         }
+        $this->setError("Confirmation not found", 404);
         return false;
     }
 
@@ -507,6 +598,7 @@ class BoxOffice
 
     /**
      * Set oauth tokens
+     * @api
      * @param int $user_id
      * @param string $token
      * @param string $refresh
@@ -530,18 +622,19 @@ class BoxOffice
             ":id" => $user_id
             ));
         }
+        return true;
     }
 
     /**
      * Create personal instance for given user
      * @param array $user
      */
-    public function createUserInstance($user)
+    protected function createUserInstance($user)
     {
         $sth = $this->dbh->prepare("SELECT * FROM instances WHERE owner_id = :id");
         $sth->execute(array(":id" => $user['id']));
         if($sth->fetch(PDO::FETCH_ASSOC)) {
-            return; // already have one
+            return true; // already have one
         }
         $sth = $this->dbh->prepare("INSERT INTO
             instances(owner_id, date_created, date_modified, name, company, date_start, date_end, flavor, status)
@@ -563,6 +656,7 @@ class BoxOffice
 //            ":instance" => $newinst,
             ":now" => gmdate('Y-m-d H:i:s')
         ));
+        return true;
     }
 }
 

@@ -6,123 +6,177 @@ $app = new Slim();
 $app->config(array('debug' => true));
 error_reporting(E_ALL);
 $box = new BoxOffice($dbconfig);
+
+/**
+ * Generic wrapper to return box results
+ */
+$responder = function() use($app, $box) {
+    $app->response()->header('Content-Type', 'application/json;charset=utf-8');
+    if($box->isOk()) {
+    	if(empty($app->data)) {
+    		$app->halt(500, "Unexpected empty data");
+    	}
+    	if($app->data === true) {
+    	    $app->data = array("success" => true);
+    	}
+    	echo json_encode($app->data);
+    } else {
+    	$app->response()->status($box->getStatus());
+    	echo json_encode(array("error" => $box->getError()));
+    }
+};
+
+/**
+ * Access check for restricted API entries
+ */
+$access_check = function() use($app, $box) {
+    // TODO: here will be the actual access control
+    $give_access = true;
+    if(!$give_access) {
+        $app->halt(403);
+    }
+};
+
+$app->error(function (Exception $e) use ($app) {
+    $app->halt(500, $e->getMessage());
+});
+
 /**
  * function for authenticating users
  */
-$app->post('/rest/users/authenticate', function() use (&$app, &$box)
+$app->post('/rest/users/login', $access_check, function() use ($app, $box)
 {
-    $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $password = $app->request()->params('password');
-    $email = $app->request()->params('email');
-    $ip_address = $app->request()->params('ip');
-    if ($data = $box->activateUser($email, $password, $ip_address)) {
-        switch ($data['user']['status']) {
-            case 'Pending Confirmation':
-                echo json_encode(array("error" => "Your account needs to be activated. Please check your email for the activation code. <div><a href='#' onclick='login.resendActivation(" . json_encode($email) . ")'>Resend Activation Code</a></div>"));
-                break;
-            case 'Active':
-                echo json_encode($data);
-                break;
-            default:
-                echo json_encode(array("error" => "Your account needs to be activated. Please contact support."));
-        }
-
-    } else {
-        echo json_encode(array("error" => "Please check your email and password."));
-    }
-});
+   $remote = $app->request()->params('remote');
+   if($remote) {
+       $app->data = $box->authenticateRemoteUser($app->request()->params('email'), $app->request()->params('rid'));
+   } else {
+       $app->data = $box->authenticateUser($app->request()->params('email'), $app->request()->params('password'));
+   }
+}, $responder);
 
 /**
- * sends a new authentication email to validate an email address
+ * Get user by email
  */
-$app->post('/rest/users/resendActivation', function() use (&$app, &$box)
+$app->get('/rest/users', $access_check, function() use ($app, $box)
 {
+    $app->data = $box->getUser($app->request()->params('email'));
+}, $responder);
 
-    $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
-    try {
-        $email = $app->request()->params('email');
-        if ($boc->resendActivation($email)) {
-            echo json_encode(array("info" => "An activation email was sent to " . $email));
-        } else {
-            echo json_encode(array("info" => "This account is already activated. Please try logging in again"));
-        }
-    } catch (Exception $e) {
-        echo json_encode(array("error" => "Please register for an account"));
-    }
-});
+/**
+ * Register new user
+ */
+$app->post('/rest/users', $access_check, function() use ($app, $box)
+{
+    $app->data = $box->registerUser(
+        $app->request()->params('email'),
+        $app->request()->params('password'),
+        json_decode($app->request()->params('data'), true),
+        $app->request()->params('status')
+    );
+}, $responder);
+
+/**
+ * Sends confirmation to the user
+ */
+$app->post('/rest/users/confirmation', $access_check, function() use ($app, $box)
+{
+    $app->data = $box->generateConfirmation(
+        $app->request()->params('email'),
+        $app->request()->params('type'),
+        $app->request()->params('expires')
+    );
+}, $responder);
+
+/**
+ * Activates the user
+ */
+$app->post('/rest/users/activate', $access_check, function() use ($app, $box)
+{
+    $app->data = $box->generateConfirmation(
+        $app->request()->params('email'),
+        $app->request()->params('hash'),
+        $app->request()->params('ip')
+    );
+}, $responder);
+
+/**
+ * Set users tokens
+ */
+$app->post('/rest/users/:id/tokens', $access_check, function($id) use ($app, $box)
+{
+    $app->data = $box->generateConfirmation(
+        $id,
+        $app->request()->params('token'),
+        $app->request()->params('refresh_token'),
+        $app->request()->params('expires')
+    );
+}, $responder);
+
+/**
+ * Get user instances
+ */
+$app->get('/rest/users/:id/instances', $access_check, function($id) use ($app, $box)
+{
+	$app->data = $box->getUserInstances($id, $app->request()->params('instance'));
+}, $responder);
+
+/**
+ * Delete user session by user ID
+ */
+$app->delete('/rest/users/:id/session', $access_check, function($id) use ($app, $box)
+{
+    $app->data = $box->deleteSession($id, $app->request()->params('instance'));
+}, $responder);
+
+/******* CLIENT API ***********/
+
+/**
+ * Get user's instances by session ID
+ */
+$app->get('/rest/sessions/:id/instances', function($id) use ($app, $box)
+{
+	$app->data = $box->getUsersInstances($id);
+}, $responder);
+
+/**
+ * Invite user to instance
+ */
+$app->post('/rest/sessions/:id/invite', function($id) use ($app, $box)
+{
+	$app->data = $box->getUsersInstances($app->request()->params('email'));
+}, $responder);
+
+/**
+ * Get modules accessible to user on this instance
+ */
+$app->get('/rest/sessions/:id/modules', function($id) use ($app, $box)
+{
+    $app->data = $box->getUserModules($id);
+}, $responder);
+
+/**
+ * Get config by session ID
+ */
+$app->get('/rest/sessions/:id', function($id) use ($app, $box)
+{
+    $app->data = $box->getConfig($id);
+}, $responder);
 
 /**
  * Selects a given instance and bootstraps it into the session
  */
-$app->get('/rest/instances/:id', function($id) use (&$app, &$box)
+$app->post('/rest/sessions/:id', function($id) use ($app, $box)
 {
-    $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
-    try {
-        $boc->selectInstance($id);
-        $boc->bootstrapInstance();
-        $config = $boc->getConfig();
-        echo json_encode(array('url' => $config['site_url'] . 'summer/index.php'));
-    } catch (Exception $e) {
-
-        echo json_encode(array("error" => "An error occurred please try again." . $e->getMessage()));
-    }
-});
+    $app->data = $box->selectInstance($app->request()->params('user'), $app->request()->params('email'), $id);
+}, $responder);
 
 /**
- * Registers or updates a given user
+ * Deletes user session
  */
-$app->post('/rest/users', function() use (&$app, &$box)
+$app->delete('/rest/sessions/:id', function($id) use ($app, $box)
 {
-    $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
-    $password = $app->request()->params('password');
-    $password2 = $app->request()->params('password2');
-    $email = $app->request()->params('email');
-    $first_name = $app->request()->params('first_name');
-    $last_name = $app->request()->params('last_name');
-    $company = $app->request()->params('company');
-    $last_name = $app->request()->params('last_name');
-    if (empty($first_name) || empty($last_name) || empty($password) || empty($password2) || empty($email)) {
-        $error = 'You are missing the following required field(s): ';
-        $missingFields = array();
-        if (empty($first_name)) $missingFields[] = 'First Name';
-        if (empty($last_name)) $missingFields[] = 'Last Name';
-        if (empty($password) || empty($password2)) $missingFields[] = 'Password';
-        if (empty($email)) $missingFields[] = 'Email Address';
-        $error .= implode($missingFields, ', ');
-        echo json_encode(array("error" => $error));
-    } else if ($password != $password2) {
-        echo json_encode(array("error" => "Password fields do not match"));
-    }
-    elseif (strlen($password) < 8) {
-        echo json_encode(array("error" => "Your password must be at least 8 characters long"));
-    }
-    elseif ($boc->getUser($email, false)) {
-        echo json_encode(array("error" => "This email address already exists. Please try resetting your password"));
-    } else {
-        $boc->registerUser($email, $password, $first_name, $last_name, $company);
-        echo json_encode(array("success" => "You are almost ready! You just need to activate your account! A welcome message with an activation code was just sent to " . $email));
-    }
+	$app->data = $box->deleteSessionById($id);
+}, $responder);
 
-});
-
-/**
- *
- */
-$app->post('/rest/users/resetpassword', function() use (&$app, &$box){
-    $app->response()->header('Content-Type', 'application/json;charset=utf-8');
-    $boc = BoxOfficeClient::getInstance();
-    $email = $app->request()->params('email');
-    try{
-        $boc->requestPasswordReset($email);
-        echo json_encode(array("info" => "A reset password email was sent to " . $email));
-
-    }catch(Exception $e){
-        echo json_encode(array("error" => "Please register for an account"));
-    }
-
-});
 $app->run();
 

@@ -6,5 +6,6 @@ RewriteEngine On
 #
 # RewriteBase /
 
+RewriteBase /sugar66sm/summer/splash/boxoffice/
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^ index.php [QSA,L]
+RewriteRule ^rest rest.php [L]
