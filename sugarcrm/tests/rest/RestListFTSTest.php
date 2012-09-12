@@ -77,7 +77,9 @@ class RestListFTSTest extends RestTestBase {
         foreach($this->files AS $file) {
             unlink($file);
         }
-        $GLOBALS['db']->commit();
+
+        parent::tearDown();
+
     }
 
     /**
