@@ -21,11 +21,10 @@
   <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 
   <style type="text/css">
-    #horiz1, #horiz2, #vert1, #vert2, #circ1, #circ2, #funnel1, #funnel2 {
+    #horiz1, #horiz2, #vert1, #vert2, #circ1, #guage, #funnel1, #funnel2 {
       height: 300px;
       min-width: 100px;
       min-height: 100px;
-      padding: 10px;
       border: 1px solid #ddd;
     /*
       Minimum height and width is a good idea to prevent negative SVG dimensions...
@@ -45,11 +44,30 @@
       opacity: .8;
       stroke: #444;
       stroke-width: 3;
-      //stroke-dasharray: '20, 5';
+      /*stroke-dasharray: '20, 5'; dashed lines must be defined in JS*/
     }
     .nv-title {
       margin: .2em .2em .2em .2em;
       font-size: 1.4em;
+    }
+
+    .nv-arc-group {
+      fill: steelblue;
+    }
+
+    .nv-pointer {
+      fill: #888888;
+      stroke: #ffffff;
+    }
+    
+    .nv-labels text {
+      font-weight: bold;
+      fill: #666;
+    }
+
+    .nv-odomText {
+      font-weight: bold;
+      fill: #000;
     }
   </style>
 </head>
@@ -105,10 +123,11 @@
       <p class="lead">Implementing standard and custom SVG charts for Sugar7 release using the <a href="http://d3js.org/">D3 library</a> and the <a href="http://nvd3.com/">NVD3 framework</a>.</p>
       <div class="subnav">
         <ul class="nav nav-pills">
-          <li><a href="#horiz-bar">Horizontal Bar</a></li>
-          <li><a href="#vert-bar">Vertical Bar</a></li>
-          <li><a href="#circular">Circular</a></li>
-          <li><a href="#custom">Funnel</a></li>
+          <li><a href="charting.html#horiz-bar">Horizontal Bar</a></li>
+          <li><a href="charting.html#vert-bar">Vertical Bar</a></li>
+          <li><a href="charting.html#circular">Circular</a></li>
+          <li><a href="charting.html#custom">Funnel</a></li>
+          <li><a href="chart_colors.html#custom">Colors</a></li>
         </ul>
       </div>
     </header>
@@ -326,120 +345,6 @@
       </div>
     </section>
 
-    <section id="colors">
-      <div class="page-header">
-        <h2>Color Styles <small>Standard D3 categorical color scales for charts.</small></h2>
-        <p>A description of the color scales is in <a href="https://github.com/mbostock/d3/wiki/Ordinal-Scales">D3 documentation</a>. New color scales can be generated using Cynthia Brewer's <a href="http://colorbrewer2.org/">ColorBrewer</a>.</p>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h3>Fill</h3>
-          <p>A series of alternating light and dark pastel colors.</p>
-          <div>
-<table class="table table-bordered table-striped">
-  <tr>
-    <td><div class="nv-fill00 swatch"></div></td><td><code>.nv-fill00 { fill:#1f77b4; stroke:#1f77b4; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill01 swatch"></div></td><td><code>.nv-fill01 { fill:#aec7e8; stroke:#aec7e8; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill02 swatch"></div></td><td><code>.nv-fill02 { fill:#ff7f0e; stroke:#ff7f0e; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill03 swatch"></div></td><td><code>.nv-fill03 { fill:#ffbb78; stroke:#ffbb78; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill04 swatch"></div></td><td><code>.nv-fill04 { fill:#2ca02c; stroke:#2ca02c; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill05 swatch"></div></td><td><code>.nv-fill05 { fill:#98df8a; stroke:#98df8a; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill06 swatch"></div></td><td><code>.nv-fill06 { fill:#d62728; stroke:#d62728; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill07 swatch"></div></td><td><code>.nv-fill07 { fill:#ff9896; stroke:#ff9896; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill08 swatch"></div></td><td><code>.nv-fill08 { fill:#9467bd; stroke:#9467bd; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill09 swatch"></div></td><td><code>.nv-fill09 { fill:#c5b0d5; stroke:#c5b0d5; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill10 swatch"></div></td><td><code>.nv-fill10 { fill:#8c564b; stroke:#8c564b; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill11 swatch"></div></td><td><code>.nv-fill11 { fill:#c49c94; stroke:#c49c94; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill12 swatch"></div></td><td><code>.nv-fill12 { fill:#e377c2; stroke:#e377c2; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill13 swatch"></div></td><td><code>.nv-fill13 { fill:#f7b6d2; stroke:#f7b6d2; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill14 swatch"></div></td><td><code>.nv-fill14 { fill:#7f7f7f; stroke:#7f7f7f; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill15 swatch"></div></td><td><code>.nv-fill15 { fill:#c7c7c7; stroke:#c7c7c7; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill16 swatch"></div></td><td><code>.nv-fill16 { fill:#bcbd22; stroke:#bcbd22; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill17 swatch"></div></td><td><code>.nv-fill17 { fill:#dbdb8d; stroke:#dbdb8d; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill18 swatch"></div></td><td><code>.nv-fill18 { fill:#17becf; stroke:#17becf; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-fill19 swatch"></div></td><td><code>.nv-fill19 { fill:#9edae5; stroke:#9edae5; }</code></td>
-  </tr>
-  
-</table>
-          </div>
-        </div>
-        <div class="span6">
-          <h3>Stroke</h3>
-          <p>Bolder colors used to color lines.</p>
-<table class="table table-bordered table-striped">
-  <tr>
-    <td><div class="nv-stroke0 swatch"></div></td><td><code>.nv-stroke0 { fill:#1f77b4; stroke:#1f77b4; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke1 swatch"></div></td><td><code>.nv-stroke1 { fill:#ff7f0e; stroke:#ff7f0e; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke2 swatch"></div></td><td><code>.nv-stroke2 { fill:#2ca02c; stroke:#2ca02c; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke3 swatch"></div></td><td><code>.nv-stroke3 { fill:#d62728; stroke:#d62728; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke4 swatch"></div></td><td><code>.nv-stroke4 { fill:#9467bd; stroke:#9467bd; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke5 swatch"></div></td><td><code>.nv-stroke5 { fill:#8c564b; stroke:#8c564b; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke6 swatch"></div></td><td><code>.nv-stroke6 { fill:#e377c2; stroke:#e377c2; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke7 swatch"></div></td><td><code>.nv-stroke7 { fill:#7f7f7f; stroke:#7f7f7f; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke8 swatch"></div></td><td><code>.nv-stroke8 { fill:#bcbd22; stroke:#bcbd22; }</code></td>
-  </tr>
-  <tr>
-    <td><div class="nv-stroke9 swatch"></div></td><td><code>.nv-stroke9 { fill:#17becf; stroke:#17becf; }</code></td>
-  </tr>
-</table>
-        </div>
-      </div>
-    </section>
-
     <section id="horiz-bar">
       <div class="page-header">
         <h2>Horizontal Bar <small>used for comparing many values in a single series</small></h2>
@@ -501,16 +406,16 @@
           <h3>All Opportunities by Lead Source</h3>
           <p>Example pie chart.</p>
           <div>
-<div id="circ1">
+<div id="pie">
   <svg></svg>
 </div>
           </div>
         </div>
         <div class="span6">
-          <h3>My Closed Won Opportunities</h3>
-          <p>Example guage chart.</p>
+          <h3>Closed Won Opportunities</h3>
+          <p>Example guage chart. <a href="charts/guageChart.html">Full Screen</a></p>
           <div>
-<div id="circ2">
+<div id="guage">
   <svg></svg>
 </div>
           </div>
@@ -558,36 +463,40 @@
   <!-- new D3 charting library files -->
   <script src="js/nvd3/lib/d3.v2.js"></script>
   <script src="js/nvd3/nv.d3.min.js"></script>
+  <script src="js/nvd3/src/utils.js"></script>
 
-  <script src="js/nvd3/src/models/multiBar.js"></script>
+  <script src="js/nvd3/src/models/multiBar_sugar.js"></script>
   <script src="js/nvd3/src/models/multiBarChart_sugar.js"></script>
   <script src="js/nvd3/src/models/multiBarHorizontalChart_sugar.js"></script>
   <script src="js/nvd3/src/models/funnel.js"></script>
   <script src="js/nvd3/src/models/funnelChart.js"></script>
+  <script src="js/nvd3/src/models/guage.js"></script>
+  <script src="js/nvd3/src/models/guageChart.js"></script>
 
   <script src="js/nvd3/data/forecasting_q1.js"></script>
   <script src="js/nvd3/data/forecasting_q2.js"></script>
   <script src="js/nvd3/data/opportunities.js"></script>
   <script src="js/nvd3/data/funnel_data.js"></script>
-
+  <script src="js/nvd3/data/guage_data.js"></script>
 
   <script>
-    //instantiate D3 chart using NVD3
+    //Vertical Bar Chart with Line
     nv.addGraph({
       generate: function() {
           //var chart = nv.models.multiBarChart();
           //override default barClick function
           var chart = nv.models.multiBarChart()
-                        .barClick( function(data,e,selection) {
-                            //if only one bar series is disabled
-                            // console.log(data);
-                            // console.log(e);
-                            // console.log(selection);
-                            d3.select('#vert2 svg')
-                              .datum(forecast_data_Q2)
-                              .transition().duration(500).call(chart);
-                          } 
-                        );
+              .margin({top: 10, right: 10, bottom: 20, left: 40})
+              .barClick( function(data,e,selection) {
+                  //if only one bar series is disabled
+                  // console.log(data);
+                  // console.log(e);
+                  // console.log(selection);
+                  d3.select('#vert2 svg')
+                    .datum(forecast_data_Q2)
+                    .transition().duration(500).call(chart);
+                } 
+              );
           //end override
           
           d3.select('#vert2 svg')
@@ -610,7 +519,7 @@
           var chart = nv.models.multiBarHorizontalChart()
               .x(function(d) { return d.label })
               .y(function(d) { return d.value })
-              .margin({top: 0, right: 0, bottom: 15, left: 90})
+              .margin({top: 10, right: 10, bottom: 20, left: 90})
               .showValues(true)
               .tooltips(true)
               .showControls(false);
@@ -635,23 +544,42 @@
 
     // Funnel Chart
     nv.addGraph(function() {
-        var chart = nv.models.funnelChart();
+      var chart = nv.models.funnelChart()
+          .showTitle(true);
 
-        // chart.xAxis
-        //     .tickFormat(d3.format(',f'));
+      chart.yAxis
+          .tickFormat(d3.format(',.1f'));
 
-        chart.yAxis
-            .tickFormat(d3.format(',.1f'));
+      d3.select('#funnel1 svg')
+          .datum(funnel_data)
+        .transition().duration(500)
+          .call(chart);
 
-        chart.showTitle(true);
+      nv.utils.windowResize(chart.update);
 
-        d3.select('#funnel1 svg')
-            .datum(funnel_data)
-          .transition().duration(500).call(chart);
+      return chart;
+    });
 
-        nv.utils.windowResize(chart.update);
+    // Guage Chart
+    nv.addGraph(function() {
+      var guage = nv.models.guageChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'default' )
+          .colorFill( 'gradient' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
 
-        return chart;
+      d3.select("#guage svg")
+          .datum(guage_data)
+        .transition().duration(500)
+          .call(guage);
+
+      //nv.utils.windowResize(guage.update);
+      return guage;
     });
   </script>
 </body>

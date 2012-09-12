@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Gauge Chart</title>
+  <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+  <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
+  <style>
+    #gauge {
+      height: 95%;
+      /*width: 700px;*/
+      min-width: 100px;
+      min-height: 100px;
+      border: 1px solid black;
+    /*
+      Minimum height and width is a good idea to prevent negative SVG dimensions...
+      For example width should be =< margin.left + margin.right + 1,
+      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+    */
+    }
+
+    .nv-title {
+      margin: .2em .2em .2em .2em;
+      font-size: 1.4em;
+    }
+
+    .nv-arc-group {
+      fill: steelblue;
+    }
+
+    .nv-pointer {
+      fill: #888888;
+      stroke: #ffffff;
+    }
+    
+    .nv-labels text {
+      font-weight: bold;
+      fill: #666;
+    }
+
+    .nv-odomText {
+      font-weight: bold;
+      fill: #000;
+    }
+  </style>
+</head>
+<body>
+
+<div id="gauge">
+  <svg></svg>
+</div>
+
+<script src="../js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../js/nvd3/nv.d3.min.js"></script>
+<script src="../js/nvd3/src/utils.js"></script>
+<script src="../js/nvd3/src/models/legend.js"></script>
+<script src="../js/nvd3/src/models/guage.js"></script>
+<script src="../js/nvd3/src/models/guageChart.js"></script>
+<script src="../js/nvd3/data/guage_data.js"></script>
+
+<script>
+  nv.addGraph(function() {
+    var width = nv.utils.windowSize().width,
+        height = nv.utils.windowSize().height;
+
+    var chart = nv.models.guageChart()
+        .x(function(d) { return d.key })
+        .y(function(d) { return d.y })
+        .showLabels(true)
+        .showTitle(true)
+        .colorData( 'default' )
+        //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: guage_data.data.length} )
+        //.colorFill( 'default' )
+        .colorData( 'class' )
+        .colorFill( 'gradient' )
+        //.width(width)
+        //.height(height)
+        .ringWidth(50)
+        .maxValue(9)
+        .transitionMs(4000);
+
+    d3.select("#gauge svg")
+        .datum(guage_data)
+      .transition().duration(1200)
+        //.attr('width', width)
+        //.attr('height', height)
+        .call(chart);
+
+    nv.utils.windowResize(function(){chart.update();});
+
+    //setInterval(function() { chart.setPointer(Math.random() * 10); }, 5 * 1000);
+
+    return chart;
+  });
+</script>
+</body>
+</html>
