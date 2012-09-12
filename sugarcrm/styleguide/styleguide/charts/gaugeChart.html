@@ -56,22 +56,22 @@
 <script src="../js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/src/utils.js"></script>
 <script src="../js/nvd3/src/models/legend.js"></script>
-<script src="../js/nvd3/src/models/guage.js"></script>
-<script src="../js/nvd3/src/models/guageChart.js"></script>
-<script src="../js/nvd3/data/guage_data.js"></script>
+<script src="../js/nvd3/src/models/gauge.js"></script>
+<script src="../js/nvd3/src/models/gaugeChart.js"></script>
+<script src="../js/nvd3/data/gauge_data.js"></script>
 
 <script>
   nv.addGraph(function() {
     var width = nv.utils.windowSize().width,
         height = nv.utils.windowSize().height;
 
-    var chart = nv.models.guageChart()
+    var chart = nv.models.gaugeChart()
         .x(function(d) { return d.key })
         .y(function(d) { return d.y })
         .showLabels(true)
         .showTitle(true)
         .colorData( 'default' )
-        //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: guage_data.data.length} )
+        //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data.data.length} )
         //.colorFill( 'default' )
         .colorData( 'class' )
         .colorFill( 'gradient' )
@@ -82,7 +82,7 @@
         .transitionMs(4000);
 
     d3.select("#gauge svg")
-        .datum(guage_data)
+        .datum(gauge_data)
       .transition().duration(1200)
         //.attr('width', width)
         //.attr('height', height)

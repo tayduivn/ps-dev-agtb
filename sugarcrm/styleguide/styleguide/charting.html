@@ -21,7 +21,7 @@
   <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 
   <style type="text/css">
-    #horiz1, #horiz2, #vert1, #vert2, #circ1, #guage, #funnel1, #funnel2 {
+    #horiz1, #horiz2, #vert1, #vert2, #circ1, #gauge, #funnel1, #funnel2 {
       height: 300px;
       min-width: 100px;
       min-height: 100px;
@@ -127,7 +127,7 @@
           <li><a href="charting.html#vert-bar">Vertical Bar</a></li>
           <li><a href="charting.html#circular">Circular</a></li>
           <li><a href="charting.html#custom">Funnel</a></li>
-          <li><a href="chart_colors.html#custom">Colors</a></li>
+          <li><a href="chart_colors.html">Colors</a></li>
         </ul>
       </div>
     </header>
@@ -413,9 +413,9 @@
         </div>
         <div class="span6">
           <h3>Closed Won Opportunities</h3>
-          <p>Example guage chart. <a href="charts/guageChart.html">Full Screen</a></p>
+          <p>Example gauge chart. <a href="charts/gaugeChart.html">Full Screen</a></p>
           <div>
-<div id="guage">
+<div id="gauge">
   <svg></svg>
 </div>
           </div>
@@ -439,7 +439,7 @@
         </div>
         <div class="span6">
           <h3>Pipeline By Sales Stage</h3>
-          <p>Example guage chart.</p>
+          <p>Example gauge chart.</p>
           <div>
 <div id="funnel2">
   <svg></svg>
@@ -470,14 +470,14 @@
   <script src="js/nvd3/src/models/multiBarHorizontalChart_sugar.js"></script>
   <script src="js/nvd3/src/models/funnel.js"></script>
   <script src="js/nvd3/src/models/funnelChart.js"></script>
-  <script src="js/nvd3/src/models/guage.js"></script>
-  <script src="js/nvd3/src/models/guageChart.js"></script>
+  <script src="js/nvd3/src/models/gauge.js"></script>
+  <script src="js/nvd3/src/models/gaugeChart.js"></script>
 
   <script src="js/nvd3/data/forecasting_q1.js"></script>
   <script src="js/nvd3/data/forecasting_q2.js"></script>
   <script src="js/nvd3/data/opportunities.js"></script>
   <script src="js/nvd3/data/funnel_data.js"></script>
-  <script src="js/nvd3/data/guage_data.js"></script>
+  <script src="js/nvd3/data/gauge_data.js"></script>
 
   <script>
     //Vertical Bar Chart with Line
@@ -560,9 +560,9 @@
       return chart;
     });
 
-    // Guage Chart
+    // Gauge Chart
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
@@ -573,13 +573,13 @@
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage svg")
-          .datum(guage_data)
+      d3.select("#gauge svg")
+          .datum(gauge_data)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      //nv.utils.windowResize(guage.update);
-      return guage;
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
     });
   </script>
 </body>

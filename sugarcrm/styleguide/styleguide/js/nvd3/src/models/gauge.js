@@ -1,4 +1,4 @@
-nv.models.guage = function() {
+nv.models.gauge = function() {
 
   //============================================================
   // Public Variables with Default Settings
@@ -76,8 +76,8 @@ nv.models.guage = function() {
         //------------------------------------------------------------
         // Setup containers and skeleton of chart
 
-        var wrap = container.selectAll('g.nv-wrap.nv-guage').data([data]);
-        var wrapEnter = wrap.enter().append('g').attr('class','nvd3 nv-wrap nv-guage');
+        var wrap = container.selectAll('g.nv-wrap.nv-gauge').data([data]);
+        var wrapEnter = wrap.enter().append('g').attr('class','nvd3 nv-wrap nv-gauge');
         var defsEnter = wrapEnter.append('defs');
         var gEnter = wrapEnter.append('g');
         var g = wrap.select('g');
@@ -88,7 +88,7 @@ nv.models.guage = function() {
         gEnter.append('g').attr('class', 'nv-odometer');
 
         wrap.attr('transform', 'translate('+ (margin.left/2 + margin.right/2 + prop(labelInset)) +','+ (margin.top + prop(labelInset)) +')');
-        //g.select('.nv-arc-guage').attr('transform', 'translate('+ availableWidth/2 +','+ availableHeight/2 +')');
+        //g.select('.nv-arc-gauge').attr('transform', 'translate('+ availableWidth/2 +','+ availableHeight/2 +')');
         
         //------------------------------------------------------------
 
@@ -101,7 +101,7 @@ nv.models.guage = function() {
         // g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
         //------------------------------------------------------------
-        // Guage arcs
+        // Gauge arcs
         var arc = d3.svg.arc()
           .innerRadius( prop(ringWidth) )
           .outerRadius( radius )
@@ -173,7 +173,7 @@ nv.models.guage = function() {
             });
 
         //------------------------------------------------------------
-        // Guage labels
+        // Gauge labels
         var lg = g.select('.nv-labels')
             .attr('transform', centerTx);
 
@@ -194,7 +194,7 @@ nv.models.guage = function() {
             .style('font-size', prop(0.6)+'em');
 
         //------------------------------------------------------------
-        // Guage pointer
+        // Gauge pointer
         var pointerData = [ 
               [ Math.round(prop(pointerWidth)/2),    0 ], 
               [ 0, -Math.round(prop(pointerHeadLength))],
@@ -215,7 +215,7 @@ nv.models.guage = function() {
             .attr('d', d3.svg.line().interpolate('monotone')/*function(d) { return pointerLine(d) +'Z';}*/ )
             .attr('transform', 'rotate('+ minAngle +')');
 
-        setGuagePointer(properties.value);
+        setGaugePointer(properties.value);
 
         //------------------------------------------------------------
         // Odometer readout
@@ -258,7 +258,7 @@ nv.models.guage = function() {
 
         //------------------------------------------------------------
         // private functions
-        function setGuagePointer(d) {
+        function setGaugePointer(d) {
           pointer.transition()
             .duration(transitionMs)
             .ease('elastic')
@@ -278,7 +278,7 @@ nv.models.guage = function() {
           return 'translate('+ radius +','+ radius +')';
         }
 
-        chart.setGuagePointer = setGuagePointer;
+        chart.setGaugePointer = setGaugePointer;
 
       }
 
@@ -368,7 +368,7 @@ nv.models.guage = function() {
     return chart;
   };
 
-  // GUAGE
+  // GAUGE
   chart.ringWidth = function(_) {
     if (!arguments.length) return ringWidth;
     ringWidth = _;
@@ -425,8 +425,8 @@ nv.models.guage = function() {
     return chart;
   };
   chart.setPointer = function(_) {
-    if (!arguments.length) return chart.setGuagePointer;
-    chart.setGuagePointer(_);
+    if (!arguments.length) return chart.setGaugePointer;
+    chart.setGaugePointer(_);
     return chart;
   };
   chart.isRendered = function(_) {

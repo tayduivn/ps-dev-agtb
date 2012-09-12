@@ -1,11 +1,11 @@
 
-nv.models.guageChart = function() {
+nv.models.gaugeChart = function() {
 
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var guage = nv.models.guage()
+  var gauge = nv.models.gauge()
     , legend = nv.models.legend()
     ;
 
@@ -35,7 +35,7 @@ nv.models.guageChart = function() {
   var showTooltip = function(e, offsetElement) {
     var left = e.pos[0] + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
         top = e.pos[1] + ( (offsetElement && offsetElement.offsetTop) || 0),
-        y = guage.valueFormat()((e.point.y1-e.point.y0)),
+        y = gauge.valueFormat()((e.point.y1-e.point.y0)),
         content = tooltip(e.point.key, y, e, chart);
 
     nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
@@ -81,11 +81,12 @@ nv.models.guageChart = function() {
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      var wrap = container.selectAll('g.nv-wrap.nv-guageChart').data([data]);
-      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-guageChart').append('g');
-      var g = wrap.select('g');
+      var wrap = container.selectAll('g.nv-wrap.nv-gaugeChart').data([data]);
+      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-gaugeChart').append('g');
 
-      gEnter.append('g').attr('class', 'nv-guageWrap');
+      gEnter.append('g').attr('class', 'nv-gaugeWrap');
+
+      var g = wrap.select('g');
 
       //------------------------------------------------------------
 
@@ -101,7 +102,7 @@ nv.models.guageChart = function() {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
         legend.width(availableWidth)
-          .key(guage.x());
+          .key(gauge.x());
 
         g.select('.nv-legendWrap')
             .datum(data)
@@ -162,19 +163,19 @@ nv.models.guageChart = function() {
       //------------------------------------------------------------
       // Main Chart Component(s)
 
-      guage
+      gauge
         .width(availableWidth)
         .height(availableHeight)
         //.color(data.map(function(d,i) {
           //return d.color || color[i % color.length];
         //});
 
-      var guageWrap = g.select('.nv-guageWrap')
+      var gaugeWrap = g.select('.nv-gaugeWrap')
           .datum(chartData);
 
-      d3.transition(guageWrap).call(guage);
+      d3.transition(gaugeWrap).call(gauge);
 
-      //guage.setPointer(properties.value);
+      //gauge.setPointer(properties.value);
 
       //------------------------------------------------------------
 
@@ -204,12 +205,12 @@ nv.models.guageChart = function() {
   // Event Handling/Dispatching (out of chart's scope)
   //------------------------------------------------------------
 
-  guage.dispatch.on('elementMouseover.tooltip', function(e) {
+  gauge.dispatch.on('elementMouseover.tooltip', function(e) {
     e.pos = [e.pos[0] +  margin.left, e.pos[1] + margin.top];
     dispatch.tooltipShow(e);
   });
 
-  guage.dispatch.on('elementMouseout.tooltip', function(e) {
+  gauge.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
 
@@ -227,9 +228,9 @@ nv.models.guageChart = function() {
   // expose chart's sub-components
   chart.dispatch = dispatch;
   chart.legend = legend;
-  chart.guage = guage;
+  chart.gauge = gauge;
 
-  d3.rebind(chart, guage, 'valueFormat', 'values', 'x', 'y', 'id', 'showLabels', 'setPointer', 'ringWidth', 'labelThreshold', 'maxValue', 'minValue', 'color', 'gradient', 'useClass', 'transitionMs');
+  d3.rebind(chart, gauge, 'valueFormat', 'values', 'x', 'y', 'id', 'showLabels', 'setPointer', 'ringWidth', 'labelThreshold', 'maxValue', 'minValue', 'color', 'gradient', 'useClass', 'transitionMs');
 
   chart.colorData = function(_) {
     if (arguments[0] === 'graduated')
@@ -251,7 +252,7 @@ nv.models.guageChart = function() {
     }
 
     legend.color(color);
-    guage.color(color);
+    gauge.color(color);
 
     return chart;
   };
@@ -266,7 +267,7 @@ nv.models.guageChart = function() {
       var fill = chart.color();
     }
 
-    guage.fill(fill);
+    gauge.fill(fill);
 
     return chart;
   };

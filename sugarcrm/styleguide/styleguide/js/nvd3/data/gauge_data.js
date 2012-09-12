@@ -1,7 +1,7 @@
 
-var guage_data = {
+var gauge_data = {
   'properties': {
-    'title': 'Closed Won Opportunities Guage',
+    'title': 'Closed Won Opportunities Gauge',
     'value': 3.5
   },
   'data': [

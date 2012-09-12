@@ -21,7 +21,7 @@
   <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 
   <style type="text/css">
-    #guage1, #guage2, #guage3, #guage4, #guage5, #guage6, #guage7, #guage8 {
+    #gauge1, #gauge2, #gauge3, #gauge4, #gauge5, #gauge6, #gauge7, #gauge8 {
       height: 300px;
       min-width: 100px;
       min-height: 100px;
@@ -128,7 +128,7 @@
           <li><a href="charting.html#vert-bar">Vertical Bar</a></li>
           <li><a href="charting.html#circular">Circular</a></li>
           <li><a href="charting.html#custom">Funnel</a></li>
-          <li><a href="chart_colors.html#custom">Colors</a></li>
+          <li><a href="chart_colors.html">Colors</a></li>
         </ul>
       </div>
     </header>
@@ -144,34 +144,34 @@
         <div class="span6">
           <h3>Standard Chart Colors</h3>
           <p>Using standard D3 chart colors is the default (Option 1 data).</p>
-<div id="guage1">
+<div id="gauge1">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
-  var guage = nv.models.guageChart()
+  var gauge = nv.models.gaugeChart()
       .colorData( 'default' )
       .colorFill( 'default' );
 
-  d3.select("#guage1 svg")
-    .datum(guage_data_1)
-    .call(guage);
+  d3.select("#gauge1 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
 </pre>
         </div> <!-- end col -->
 
         <div class="span6">
           <h3>Standad Chart Colors with Gradient Fill</h3>
           <p>It is possible to fill the chart shapes with a gradient using the active color palette.</p>
-<div id="guage2">
+<div id="gauge2">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
-  var guage = nv.models.guageChart()
+  var gauge = nv.models.gaugeChart()
         .colorData( 'default' )
         .colorFill( 'gradient' );
 
-  d3.select("#guage2 svg")
-    .datum(guage_data_1)
-    .call(guage);
+  d3.select("#gauge2 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
 </pre>
         </div> <!-- end col -->
         
@@ -183,34 +183,34 @@
         <div class="span6">
           <h3>Data-Defined Chart Colors</h3>
           <p>If colors are defined in the data, they are used instead of D3 colors (Option 2 data).</p>
-<div id="guage3">
+<div id="gauge3">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
-  var guage = nv.models.guageChart()
+  var gauge = nv.models.gaugeChart()
       .colorData( 'default' )
       .colorFill( 'default' );
 
-  d3.select("#guage3 svg")
-    .datum(guage_data_2)
-    .call(guage);
+  d3.select("#gauge3 svg")
+    .datum(gauge_data_2)
+    .call(gauge);
 </pre>
         </div> <!-- end col -->
 
         <div class="span6">
           <h3>Data-Defined Chart Colors with Gradient Fill</h3>
           <p>It is possible to fill the chart shapes with a gradient using a graduated color palette.</p>
-<div id="guage4">
+<div id="gauge4">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
-  var guage = nv.models.guageChart()
+  var gauge = nv.models.gaugeChart()
         .colorData( 'default' )
         .colorFill( 'gradient' );
 
-  d3.select("#guage4 svg")
-    .datum(guage_data_2)
-    .call(guage);
+  d3.select("#gauge4 svg")
+    .datum(gauge_data_2)
+    .call(gauge);
 </pre>
         </div> <!-- end col -->
         
@@ -221,34 +221,34 @@
         <div class="span6">
           <h3>Graduated Palette Chart Colors</h3>
           <p>It is also possible to use a graduated palette (any data option).</p>
-<div id="guage5">
+<div id="gauge5">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
-  var guage = nv.models.guageChart()
-      .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: guage_data.data.length} )
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data.data.length} )
       .colorFill( 'default' );
 
-  d3.select("#guage5 svg")
-    .datum(guage_data_1)
-    .call(guage);
+  d3.select("#gauge5 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
 </pre>
         </div> <!-- end col -->
 
         <div class="span6">
           <h3>Graduated Palette Chart Colors with Gradient Fill</h3>
           <p>It is possible to fill the chart shapes with a gradient using a graduated color palette.</p>
-<div id="guage6">
+<div id="gauge6">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
-  var guage = nv.models.guageChart()
-      .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: guage_data.data.length} )
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data.data.length} )
       .colorFill( 'gradient' );
 
-  d3.select("#guage6 svg")
-    .datum(guage_data_1)
-    .call(guage);
+  d3.select("#gauge6 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
 </pre>
         </div> <!-- end col -->
         
@@ -259,24 +259,24 @@
         <div class="span6">
           <h3>Data-Defined Chart Classes</h3>
           <p>Chart colors can be defined using classes (modifiable in themes).</p>
-<div id="guage7">
+<div id="gauge7">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
-  var guage = nv.models.guageChart()
+  var gauge = nv.models.gaugeChart()
       .colorData( 'class' )
       .colorFill( 'default' );
 
-  d3.select("#guage7 svg")
-    .datum(guage_data_3)
-    .call(guage);
+  d3.select("#gauge7 svg")
+    .datum(gauge_data_3)
+    .call(gauge);
 </pre>
         </div> <!-- end col -->
 
         <div class="span6">
           <h3>Data-Defined Chart Classes with Gradient Fill</h3>
           <p>It is possible to define gradient fills with CSS but requires use of SVG resource files that are not currently supported by theming.</p>
-<!-- <div id="guage8">
+<!-- <div id="gauge8">
   <svg></svg>
 </div> -->
 <pre class="prettyprint linenums">
@@ -301,9 +301,9 @@
           <h3>Option 1: Default Chart Data</h3>
           <p>A basic data definition for charts will use the standard D3 colors.</p>
 <pre class="prettyprint linenums">
-    var guage_data_1 = {
+    var gauge_data_1 = {
       'properties': {
-        'title': 'Closed Won Opportunities Guage',
+        'title': 'Closed Won Opportunities Gauge',
         'value': 4
       },
       'data': [
@@ -332,9 +332,9 @@
           <h3>Option 2: Data-Defined Colors</h3>
           <p>If colors are defined in the data, they are used instead of D3 colors.</p>
 <pre class="prettyprint linenums">
-    var guage_data_2 = {
+    var gauge_data_2 = {
       'properties': {
-        'title': 'Closed Won Opportunities Guage',
+        'title': 'Closed Won Opportunities Gauge',
         'value': 4
       },
       'data': [
@@ -367,9 +367,9 @@
           <h3>Option 3: Data-Defined Classes</h3>
           <p>If classes are defined in the data, they are used to set the style properties.</p>
 <pre class="prettyprint linenums">
-    var guage_data_3 = {
+    var gauge_data_3 = {
       'properties': {
-        'title': 'Closed Won Opportunities Guage',
+        'title': 'Closed Won Opportunities Gauge',
         'value': 4
       },
       'data': [
@@ -534,13 +534,13 @@
   <script src="js/nvd3/src/utils.js"></script>
 
   <script src="js/nvd3/src/models/legend.js"></script>
-  <script src="js/nvd3/src/models/guage.js"></script>
-  <script src="js/nvd3/src/models/guageChart.js"></script>
+  <script src="js/nvd3/src/models/gauge.js"></script>
+  <script src="js/nvd3/src/models/gaugeChart.js"></script>
 
   <script>
-    var guage_data_1 = {
+    var gauge_data_1 = {
       'properties': {
-        'title': 'Closed Won Opportunities Guage',
+        'title': 'Closed Won Opportunities Gauge',
         'value': 4
       },
       'data': [
@@ -563,9 +563,9 @@
       ]
     };
 
-    var guage_data_2 = {
+    var gauge_data_2 = {
       'properties': {
-        'title': 'Closed Won Opportunities Guage',
+        'title': 'Closed Won Opportunities Gauge',
         'value': 4
       },
       'data': [
@@ -592,9 +592,9 @@
       ]
     };
 
-    var guage_data_3 = {
+    var gauge_data_3 = {
       'properties': {
-        'title': 'Closed Won Opportunities Guage',
+        'title': 'Closed Won Opportunities Gauge',
         'value': 4
       },
       'data': [
@@ -623,9 +623,9 @@
   </script>
 
   <script>
-    // Guage Chart
+    // Gauge Chart
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
@@ -636,16 +636,16 @@
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage1 svg")
-          .datum(guage_data_1)
-          .call(guage);
+      d3.select("#gauge1 svg")
+          .datum(gauge_data_1)
+          .call(gauge);
 
-      //nv.utils.windowResize(guage.update);
-      return guage;
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
     });
 
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
@@ -656,17 +656,17 @@
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage2 svg")
-          .datum(guage_data_1)
+      d3.select("#gauge2 svg")
+          .datum(gauge_data_1)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      //nv.utils.windowResize(guage.update);
-      return guage;
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
     });
 
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
@@ -677,16 +677,16 @@
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage3 svg")
-          .datum(guage_data_2)
+      d3.select("#gauge3 svg")
+          .datum(gauge_data_2)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      return guage;
+      return gauge;
     });
 
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
@@ -697,58 +697,58 @@
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage4 svg")
-          .datum(guage_data_2)
+      d3.select("#gauge4 svg")
+          .datum(gauge_data_2)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      return guage;
+      return gauge;
     });
 
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
           .showTitle(true)
-          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: guage_data_1.data.length} )
+          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data_1.data.length} )
           .colorFill( 'default' )
           .ringWidth(50)
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage5 svg")
-          .datum(guage_data_1)
+      d3.select("#gauge5 svg")
+          .datum(gauge_data_1)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      return guage;
+      return gauge;
     });
 
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
           .showTitle(true)
-          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: guage_data_1.data.length} )
+          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data_1.data.length} )
           .colorFill( 'gradient' )
           .ringWidth(50)
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage6 svg")
-          .datum(guage_data_1)
+      d3.select("#gauge6 svg")
+          .datum(gauge_data_1)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      //nv.utils.windowResize(guage.update);
-      return guage;
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
     });
 
 
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
@@ -759,16 +759,16 @@
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage7 svg")
-          .datum(guage_data_3)
+      d3.select("#gauge7 svg")
+          .datum(gauge_data_3)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      return guage;
+      return gauge;
     });
 
     nv.addGraph(function() {
-      var guage = nv.models.guageChart()
+      var gauge = nv.models.gaugeChart()
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
@@ -779,13 +779,13 @@
           .maxValue(9)
           .transitionMs(4000);
 
-      d3.select("#guage8 svg")
-          .datum(guage_data_3)
+      d3.select("#gauge8 svg")
+          .datum(gauge_data_3)
         .transition().duration(500)
-          .call(guage);
+          .call(gauge);
 
-      //nv.utils.windowResize(guage.update);
-      return guage;
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
     });
   </script>
 </body>
