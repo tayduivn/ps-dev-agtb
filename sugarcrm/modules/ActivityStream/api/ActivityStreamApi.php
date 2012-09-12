@@ -122,6 +122,9 @@ class ActivityStreamApi extends ListApi {
         if(isset($args['filter']) && in_array($args['filter'], array('favorites', 'myactivities'))) {
             $options['filter'] = $args['filter'];
         }
+        if(isset($args['limit'])) {
+            $options['limit'] = $args['limit'];
+        }
         return $options;
     }
 }

@@ -119,14 +119,19 @@
                             processData: false,
                             contentType: false,
                             success: function() {
-                                delete App.drag_drop[id];
+                                delete App.drag_drop[id];                              
                                 self.collection.fetch(self.opts);
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts);
+            // If we are 'showing more'
+            options = {};
+            options.params = self.opts.params;
+            options.params.limit = self.collection.models.length;
+            options.params.offset = 0;            
+            self.collection.fetch(options);
         }});
     },
 
