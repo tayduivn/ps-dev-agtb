@@ -45,6 +45,7 @@ class TimePeriod extends SugarBean {
 	var $deleted;
 	var $fiscal_year;
 	var $is_fiscal_year;
+    var $is_fiscal;
 	//end time period stored fields.
 	var $table_name = "timeperiods";
 	var $fiscal_year_checked;
@@ -443,7 +444,7 @@ class TimePeriod extends SugarBean {
         $startDate = $timedate->fromUserDate($this->start_date);
         $endDate = $timedate->fromUserDate($this->end_date);
         $diff = $startDate->diff($endDate);
-        return $diff->days;
+        return $diff->days + 1;
     }
 }
 

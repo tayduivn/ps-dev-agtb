@@ -88,9 +88,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($timedate->fromUserDate($nextTimePeriod->end_date), $nextEndDate);
 
-        $dayLength = 364;
+        $dayLength = 365;
         if(($nextEndDate->year % 4) == 0) {
-            $dayLength = 365;
+            $dayLength = 366;
         }
 
         $this->assertEquals($dayLength, $nextTimePeriod->getLengthInDays());
@@ -123,9 +123,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($nextTimePeriod->start_date, $timedate->asUserDate($nextStartDate));
         $this->assertEquals($nextTimePeriod->end_date, $timedate->asUserDate($nextEndDate));
 
-        $dayLength = 364;
+        $dayLength = 365;
         if(($nextEndDate->year % 4) == 0) {
-            $dayLength = 365;
+            $dayLength = 366;
         }
 
         $this->assertEquals($dayLength, $nextTimePeriod->getLengthInDays());
