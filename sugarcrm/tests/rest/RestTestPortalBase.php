@@ -52,7 +52,6 @@ class RestTestPortalBase extends RestTestBase {
         // A little bit destructive, but necessary.
         $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
         $this->accounts = array();
         $this->contacts = array();
         $this->opps = array();
