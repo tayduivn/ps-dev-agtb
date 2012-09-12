@@ -23,55 +23,135 @@ require_once('modules/Mailer/SimpleMailer.php');
 
 class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-	/*public function testReset_LoadDefaultConfigsReplacesTheExistingConfigsWithTheDefaults_SubjectIsNull() {
-		$mailer = new SimpleMailer();
+    /**
+     * @group mailer
+     */
+    public function testLoadDefaultConfigs_SmtpPortAndCharsetAreBothReset_WordwrapAndSmtpAuthenticateAreBothInitialized() {
+        $mailer = new SimpleMailer();
 
-		$initialConfigs = array(
-			'protocol' => 'asdf', // some asinine value that could never possibly exist
-		);
-		$mailer->setConfigs($initialConfigs);
-		$configs = $mailer->getConfigs();
-		$expected = $initialConfigs['protocol'];
-		$actual = $configs['protocol'];
-		self::assertEquals($expected, $actual, "The protocols don't match");
+        // change the default configs in order to show that loadDefaultConfigs will reset them
+        // this effectively tests SimpleMailer::setConfig() as well
+        $mailer->setConfig("charset", "asdf"); // some asinine value that wouldn't actually be used
+        $mailer->setConfig("smtp.port", 9000); // should not match the default
 
-		$expected = "this is a subject";
-		$mailer->setSubject($expected);
-		$actual = $mailer->getSubject();
-		self::assertEquals($expected, $actual, "The subjects don't match");
+        // test that the charset has been changed from its default
+        $expected = "asdf";
+        $actual   = $mailer->getConfig("charset");
+        self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
 
-		$mailer->reset();
+        // test that the smtp.port has been changed from its default
+        $expected = 9000;
+        $actual   = $mailer->getConfig("smtp.port");
+        self::assertEquals($expected, $actual, "The smtp.port should have been reset to {$expected}");
 
-		$defaultConfigs = $mailer->getConfigs();
-		$expected = $initialConfigs['protocol'];
-		$actual = $defaultConfigs['protocol'];
-		self::assertNotEquals($expected, $actual, "The protocols shouldn't match");
+        $mailer->loadDefaultConfigs();
 
-		$actual = $mailer->getSubject();
-		self::assertNull($actual, "The subject isn't null");
-	}
+        // test that the charset has been returned to its default
+        $expected = "utf-8";
+        $actual   = $mailer->getConfig("charset");
+        self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
 
-	public function testMergeConfigs_NewConfigAddedToDefaultConfigs() {
-		$mailer = new SimpleMailer();
+        // test that the smtp.port has been returned its default
+        $expected = 25;
+        $actual   = $mailer->getConfig("smtp.port");
+        self::assertEquals($expected, $actual, "The smtp.port should have been reset to {$expected}");
 
-		$additionalConfigs = array(
-			'foo' => 'bar',
-		);
-		$mailer->mergeConfigs($additionalConfigs);
-		$configs = $mailer->getConfigs();
+        // test that the wordwrap has been initialized correctly
+        $expected = 996;
+        $actual   = $mailer->getConfig("wordwrap");
+        self::assertEquals($expected, $actual, "The wordwrap should have been initialized to {$expected}");
 
-		$expected = 'protocol';
-		self::assertArrayHasKey($expected, $configs, "The {$expected} key is missing");
+        // test that the smtp.authenticate has been initialized correctly
+        $actual = $mailer->getConfig("smtp.authenticate");
+        self::assertFalse($actual, "The smtp.authenticate should have been initialized to false");
+    }
 
-		$expected = 'foo';
-		self::assertArrayHasKey($expected, $configs, "The {$expected} key is missing");
+    /**
+     * @group mailer
+     */
+    public function testMergeConfigs_NewConfigAddedToDefaultConfigs() {
+        $mailer = new SimpleMailer();
 
-		$expected = 'bar';
-		$actual = $configs['foo'];
-		self::assertEquals($expected, $actual);
-	}
+        $additionalConfigs = array(
+            "foo" => "bar",
+        );
+        $mailer->mergeConfigs($additionalConfigs);
 
-	public function testSend() {
-		//@todo test the various code paths of send()
-	}*/
+        $expected = "utf-8";
+        $actual   = $mailer->getConfig("charset");
+        self::assertEquals($expected, $actual, "The charset should have been {$expected}");
+
+        $expected = "bar";
+        $actual   = $mailer->getConfig("foo");
+        self::assertEquals($expected, $actual, "The foo should have been {$expected}");
+    }
+
+    /**
+     * @group mailer
+     */
+    public function testMergeConfigs_OverwriteExistingConfig() {
+        $mailer = new SimpleMailer();
+
+        $expected          = "iso-8559-1";
+        $additionalConfigs = array(
+            "charset" => $expected,
+        );
+        $mailer->mergeConfigs($additionalConfigs);
+
+        $actual = $mailer->getConfig("charset");
+        self::assertEquals($expected, $actual, "The charset should have been {$expected}");
+    }
+
+    /**
+     * @group mailer
+     */
+    public function testSetConfigs_ReplaceDefaultConfigsWithNewConfigs() {
+        $mailer = new SimpleMailer();
+
+        $newConfigs = array(
+            "foo" => "bar",
+        );
+        $mailer->setConfigs($newConfigs);
+
+        $expected = "bar";
+        $actual   = $mailer->getConfig("foo");
+        self::assertEquals($expected, $actual, "The foo should have been {$expected}");
+
+        $exceptionWasCaught = false;
+
+        try {
+            $actual = $mailer->getConfig("charset"); // hopefully this default no longer exists
+        } catch (MailerException $me) {
+            $exceptionWasCaught = true;
+        }
+
+        if (!$exceptionWasCaught) {
+            self::fail("A MailerException should have been raised because charset is an invalid config");
+        }
+    }
+
+    /**
+     * @group mailer
+     */
+    public function testClearRecipients_ClearToAndBccButNotCc() {
+        $mockMailer = self::getMock(
+            "SimpleMailer",
+            array("clearRecipientsTo", "clearRecipientsCc", "clearRecipientsBcc")
+        );
+
+        $mockMailer->expects(self::once())
+            ->method("clearRecipientsTo");
+
+        $mockMailer->expects(self::never())
+            ->method("clearRecipientsCc");
+
+        $mockMailer->expects(self::once())
+            ->method("clearRecipientsBcc");
+
+        $mockMailer->clearRecipients(true, false, true);
+    }
+
+//	public function testSend() {
+//		//@todo test the various code paths of send()
+//	}
 }

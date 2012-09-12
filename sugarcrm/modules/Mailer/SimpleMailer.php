@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -27,212 +27,249 @@ require_once 'BaseMailer.php';
 
 class SimpleMailer extends BaseMailer
 {
-	const Protocol   = 'smtp';
-	const SecureNone = '';
-	const SecureSsl  = 'ssl';
-	const SecureTls  = 'tls';
+    const Protocol   = 'smtp';
+    const SecureNone = '';
+    const SecureSsl  = 'ssl';
+    const SecureTls  = 'tls';
 
-	public function loadDefaultConfigs() {
-		parent::loadDefaultConfigs();
+    public function loadDefaultConfigs() {
+        parent::loadDefaultConfigs();
 
-		$defaults = array(
-			'smtp.host'         => 'localhost',
-			'smtp.port'         => 25,
-			'smtp.secure'       => self::SecureNone,
-			'smtp.authenticate' => false,
-			'smtp.username'     => '',
-			'smtp.password'     => '',
-			'smtp.timeout'      => 10,
-			'smtp.persist'      => false,
-		);
+        $defaults = array(
+            'smtp.host'         => 'localhost',
+            'smtp.port'         => 25,
+            'smtp.secure'       => self::SecureNone,
+            'smtp.authenticate' => false,
+            'smtp.username'     => '',
+            'smtp.password'     => '',
+        );
 
-		$this->mergeConfigs($defaults);
-	}
+        $this->mergeConfigs($defaults);
+    }
 
-	public function send() {
-		try {
-			$mailer = new PHPMailer();
-			$this->transferConfigurations($mailer);
-			$this->connectToHost($mailer);
-			$this->transferHeaders($mailer);
-			$this->transferRecipients($mailer);
-			$this->transferBody($mailer);
-			$this->transferAttachments($mailer);
+    public function send() {
+        try {
+            $mailer = new PHPMailer(true); // use PHPMailer with exceptions
 
-			if (!$mailer->IsError()) {
-				$mailer->Send();
-			}
+            $this->transferConfigurations($mailer);
+            $this->connectToHost($mailer);
+            $this->transferHeaders($mailer);
+            $this->transferRecipients($mailer);
+            $this->transferBody($mailer);
+            $this->transferAttachments($mailer);
 
-			if ($mailer->IsError()) {
-				throw new MailerException($mailer->ErrorInfo);
-			}
-		} catch (MailerException $me) {
-			//@todo consider using status codes and grouping them based on the error level that should be used
-			// so that different error levels can be logged
-			// could also catch different Exception classes that extend MailerException and log at the level
-			// particular to that exception type
-			$me->log('error');
-			return false;
-		}
+            try {
+                $mailer->Send();
+            } catch (Exception $e) {
+                // eat the phpmailerException but use it's message to provide context for the failure
+                throw new MailerException("Failed to send the email: " . $e->getMessage());
+            }
+        } catch (MailerException $me) {
+            //@todo consider using status codes and grouping them based on the error level that should be used
+            // so that different error levels can be logged
+            // could also catch different Exception classes that extend MailerException and log at the level
+            // particular to that exception type
+            $me->log('error');
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private function transferConfigurations(PHPMailer &$mailer) {
-		// transfer the basic configurations
-		$mailer->SetLanguage(); // explicitly set the language even though PHPMailer will do it on its own
-		$mailer->Mailer   = self::Protocol;
-		$mailer->Hostname = $this->configs['hostname'];
-		$mailer->CharSet  = $this->configs['charset'];
-		$mailer->Encoding = $this->configs['encoding'];
-		$mailer->WordWrap = $this->configs['wordwrap'];
+    private function transferConfigurations(PHPMailer &$mailer) {
+        // explicitly set the language even though PHPMailer will do it on its own
+        if (!$mailer->SetLanguage()) {
+            //@todo do we really care if it fails since english will be used anyway?
+            throw new MailerException("Failed to load the language file");
+        }
 
-		// transfer the smtp configurations
-		$mailer->Host          = $this->configs['smtp.host'];
-		$mailer->Port          = $this->configs['smtp.port'];
-		$mailer->SMTPSecure    = $this->configs['smtp.secure'];
-		$mailer->SMTPAuth      = $this->configs['smtp.authenticate'];
-		$mailer->Username      = $this->configs['smtp.username'];
-		$mailer->Password      = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
-		$mailer->Timeout       = $this->configs['smtp.timeout'];
-		$mailer->SMTPKeepAlive = $this->configs['smtp.persist'];
-	}
+        // transfer the basic configurations
+        $mailer->Mailer   = self::Protocol;
+        $mailer->Hostname = $this->configs['hostname'];
+        $mailer->CharSet  = $this->configs['charset'];
+        $mailer->Encoding = $this->configs['encoding'];
+        $mailer->WordWrap = $this->configs['wordwrap'];
 
-	private function connectToHost(PHPMailer &$mailer) {
-		//@todo may need to reuse the SMTP object in the event that there is a valid use case for
-		// keeping the SMTP connection alive
-		$mailer->smtp = new SMTP();
+        // transfer the smtp configurations
+        $mailer->Host       = $this->configs['smtp.host'];
+        $mailer->Port       = $this->configs['smtp.port'];
+        $mailer->SMTPSecure = $this->configs['smtp.secure'];
+        $mailer->SMTPAuth   = $this->configs['smtp.authenticate'];
+        $mailer->Username   = $this->configs['smtp.username'];
+        $mailer->Password   = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
+    }
 
-		if (!$mailer->SmtpConnect()) {
-			//@todo need to tell the class what error messages to use, so the following is for reference only
+    private function connectToHost(PHPMailer &$mailer) {
+        try {
+            $mailer->smtp = new SMTP();
+            $mailer->SmtpConnect();
+        } catch (Exception $e) {
+            //@todo need to tell the class what error messages to use, so the following is for reference only
 //			global $app_strings;
 //			if(isset($this->oe) && $this->oe->type == "system") {
 //				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
 //			} else {
 //				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
 //			}
-			throw new MailerException("Failed to connect to the remote server");
-		}
-	}
+            throw new MailerException("Failed to connect to the remote server");
+        }
+    }
 
-	private function transferHeaders(PHPMailer &$mailer) {
-		// packageHeaders() will throw an exception if errors occur and that exception will be caught by send()
-		$headers = $this->headers->packageHeaders();
+    private function transferHeaders(PHPMailer &$mailer) {
+        // packageHeaders() will throw an exception if errors occur and that exception will be caught by send()
+        $headers = $this->headers->packageHeaders();
 
-		foreach ($headers as $key => $value) {
-			switch ($key) {
-				case EmailHeaders::From:
-					$mailer->From = $value[0];
-					$mailer->FromName = $value[1]; //@todo might not want to require this value
-					break;
-				case EmailHeaders::ReplyTo:
-					//$mailer->ClearReplyTos(); // only necessary if the PHPMailer object can be re-used
-					$mailer->AddReplyTo($value[0], $value[1]); //@todo might not want to require the second value
-					break;
-				case EmailHeaders::Sender:
-					$mailer->Sender = $value;
-					break;
-				case EmailHeaders::MessageId:
-					$mailer->MessageID = $value;
-					break;
-				case EmailHeaders::Priority:
-					$mailer->Priority = $value;
-					break;
-				case EmailHeaders::DispositionNotificationTo:
-					$mailer->ConfirmReadingTo = $value;
-					break;
-				case EmailHeaders::Subject:
-					$mailer->Subject = $value;
-					break;
-				default:
-					// it's not known, so it must be a custom header
-					$mailer->AddCustomHeader("{$key}:{$value}");
-					break;
-			}
-		}
-	}
+        foreach ($headers as $key => $value) {
+            switch ($key) {
+                case EmailHeaders::From:
+                    try {
+                        if (!$mailer->SetFrom($value[0], $value[1])) { //@todo might not want to require the second value
+                            // doesn't matter what the message is since we're going to eat phpmailerExceptions
+                            throw new phpmailerException();
+                        }
+                    } catch (Exception $e) {
+                        throw new MailerException("Failed to add the From header");
+                    }
 
-	private function transferRecipients(PHPMailer &$mailer) {
-		//$mailer->ClearAllRecipients(); // only necessary if the PHPMailer object can be re-used
-		$to = $this->recipients->getTo();
-		$cc = $this->recipients->getCc();
-		$bcc = $this->recipients->getBcc();
+                    break;
+                case EmailHeaders::ReplyTo:
+                    // only allow PHPMailer to automatically set the Reply-To if this header isn't provided
+                    // so clear PHPMailer's Reply-To array if this header is provided
+                    $mailer->ClearReplyTos();
 
-		//@todo should you be able to initiate a send without any To recipients?
-		foreach ($to as $recipient) {
-			$recipient->decode();
-			$mailer->AddAddress($recipient->getEmail(), $recipient->getName());
-		}
+                    try {
+                        if (!$mailer->AddReplyTo($value[0], $value[1])) { //@todo might not want to require the second value
+                            // doesn't matter what the message is since we're going to eat phpmailerExceptions
+                            throw new phpmailerException();
+                        }
+                    } catch (Exception $e) {
+                        throw new MailerException("Failed to add the Reply-To header");
+                    }
 
-		foreach ($cc as $recipient) {
-			$recipient->decode();
-			$mailer->AddCC($recipient->getEmail(), $recipient->getName());
-		}
+                    break;
+                case EmailHeaders::Sender:
+                    $mailer->Sender = $value;
+                    break;
+                case EmailHeaders::MessageId:
+                    $mailer->MessageID = $value;
+                    break;
+                case EmailHeaders::Priority:
+                    $mailer->Priority = $value;
+                    break;
+                case EmailHeaders::DispositionNotificationTo:
+                    $mailer->ConfirmReadingTo = $value;
+                    break;
+                case EmailHeaders::Subject:
+                    $mailer->Subject = $value;
+                    break;
+                default:
+                    // it's not known, so it must be a custom header
+                    $mailer->AddCustomHeader("{$key}:{$value}");
+                    break;
+            }
+        }
+    }
 
-		foreach ($bcc as $recipient) {
-			$recipient->decode();
-			$mailer->AddBCC($recipient->getEmail(), $recipient->getName());
-		}
-	}
+    private function transferRecipients(PHPMailer &$mailer) {
+        //$mailer->ClearAllRecipients(); // only necessary if the PHPMailer object can be re-used
+        $to  = $this->recipients->getTo();
+        $cc  = $this->recipients->getCc();
+        $bcc = $this->recipients->getBcc();
 
-	/**
-	 * @throws MailerException
-	 */
-	protected function transferBody(PHPMailer &$mailer) {
-		$hasText = $this->hasMessagePart($this->textBody);
-		$hasHtml = $this->hasMessagePart($this->htmlBody);
+        //@todo should you be able to initiate a send without any To recipients?
+        foreach ($to as $recipient) {
+            $recipient->decode();
 
-		if (!$hasText && !$hasHtml) {
-			throw new MailerException("No email body was provided");
-		}
+            try {
+                $mailer->AddAddress($recipient->getEmail(), $recipient->getName());
+            } catch (Exception $e) {
+                // eat the exception for now as we'll send to as many valid recipients as possible
+                //throw new MailerException("Failed to add the recipient known by " . $recipient->getEmail());
+            }
+        }
 
-		if ($hasHtml) {
-			$mailer->IsHTML(true);
-			$mailer->Encoding = self::EncodingBase64; // so that embedded images are encoding properly
-			$mailer->Body = $this->htmlBody;
-		}
+        foreach ($cc as $recipient) {
+            $recipient->decode();
 
-		if ($hasText && $hasHtml) {
-			$mailer->AltBody = $this->textBody;
-		} elseif ($hasText) {
-			$mailer->Body = $this->textBody;
-		} else {
-			// you should never actually send an email without a plain-text part, but we'll allow it (for now)
-			//throw new MailerException("No text body was provided");
-		}
-	}
+            try {
+                $mailer->AddCC($recipient->getEmail(), $recipient->getName());
+            } catch (Exception $e) {
+                // eat the exception for now as we'll send to as many valid recipients as possible
+                //throw new MailerException("Failed to add the CC recipient known by " . $recipient->getEmail());
+            }
+        }
 
-	/**
-	 * Transfers both file attachments and embedded images to PHPMailer.
-	 *
-	 * @throws MailerException
-	 */
-	private function transferAttachments(PHPMailer &$mailer) {
-		//$mailer->ClearAttachments(); // only necessary if the PHPMailer object can be re-used
+        foreach ($bcc as $recipient) {
+            $recipient->decode();
 
-		foreach ($this->attachments as $attachment) {
-			if ($attachment instanceof Attachment) {
-				if (!$mailer->AddAttachment(
-					$attachment->getPath(),
-					$attachment->getName(),
-					$attachment->getEncoding(),
-					$attachment->getMimeType())
-				) {
-					throw new MailerException("Invalid attachment");
-				}
-			} elseif ($attachment instanceof EmbeddedImage) {
-				if (!$mailer->AddEmbeddedImage(
-					$attachment->getPath(),
-					$attachment->getCid(),
-					$attachment->getName(),
-					$attachment->getEncoding(),
-					$attachment->getMimeType())
-				) {
-					throw new MailerException("Invalid image");
-				}
-			} else {
-				throw new MailerException("Invalid file");
-			}
-		}
-	}
+            try {
+                $mailer->AddBCC($recipient->getEmail(), $recipient->getName());
+            } catch (Exception $e) {
+                // eat the exception for now as we'll send to as many valid recipients as possible
+                //throw new MailerException("Failed to add the BCC recipient known by " . $recipient->getEmail());
+            }
+        }
+    }
+
+    /**
+     * @throws MailerException
+     */
+    protected function transferBody(PHPMailer &$mailer) {
+        $hasText = $this->hasMessagePart($this->textBody);
+        $hasHtml = $this->hasMessagePart($this->htmlBody);
+
+        if (!$hasText && !$hasHtml) {
+            throw new MailerException("No email body was provided");
+        }
+
+        if ($hasHtml) {
+            $mailer->IsHTML(true);
+            $mailer->Encoding = self::EncodingBase64; // so that embedded images are encoded properly
+            $mailer->Body     = $this->htmlBody;
+        }
+
+        if ($hasText && $hasHtml) {
+            $mailer->AltBody = $this->textBody;
+        } elseif ($hasText) {
+            $mailer->Body = $this->textBody;
+        } else {
+            // you should never actually send an email without a plain-text part, but we'll allow it (for now)
+            //throw new MailerException("No text body was provided");
+        }
+    }
+
+    /**
+     * Transfers both file attachments and embedded images to PHPMailer.
+     *
+     * @throws MailerException
+     */
+    private function transferAttachments(PHPMailer &$mailer) {
+        $mailer->ClearAttachments();
+
+        foreach ($this->attachments as $attachment) {
+            if ($attachment instanceof Attachment) {
+                try {
+                    $mailer->AddAttachment(
+                        $attachment->getPath(),
+                        $attachment->getName(),
+                        $attachment->getEncoding(),
+                        $attachment->getMimeType());
+                } catch (Exception $e) {
+                    throw new MailerException("Failed to add the attachment at " . $attachment->getPath());
+                }
+            } elseif ($attachment instanceof EmbeddedImage) {
+                if (!$mailer->AddEmbeddedImage(
+                    $attachment->getPath(),
+                    $attachment->getCid(),
+                    $attachment->getName(),
+                    $attachment->getEncoding(),
+                    $attachment->getMimeType())
+                ) {
+                    throw new MailerException("Failed to embed the image at " . $attachment->getPath());
+                }
+            } else {
+                throw new MailerException("Invalid file");
+            }
+        }
+    }
 }
