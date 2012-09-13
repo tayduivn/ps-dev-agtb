@@ -10,15 +10,16 @@ table th.nosort.select-all {
   	top: 0;
   }
 }
+table th:first-child.nosort {
+  min-width: 85px;
+  padding: 0 !important;
+}
+table td:first-child input {margin: 0 0 0 13px;}
 
 //centering checkbox in btn-group
 .select-all .btn-group > .btn:first-child {
-  padding-top: 7px;
+  padding-top: 10px;
   padding-bottom: 1px;
-}
-
-table.dataTable {
-  margin-top: 10px;
 }
 
 table tbody tr:last-child td:last-child, table tbody tr:last-child td:first-child, 
@@ -27,6 +28,8 @@ table tfoot tr:last-child td:last-child, table tfoot tr:last-child td:first-chil
 }
 table th { 
   white-space: nowrap;
+  border-right: 1px solid darken(@grayLighter,5%);
+  line-height: 22px !important;
 }
 table.datatable tbody td {
   white-space: nowrap; 
@@ -35,6 +38,8 @@ table.datatable tbody td {
 }
 table th, table td { 
   position: relative;
+  padding: 8px;
+  line-height: 26px !important;
 }
 
 table.datatable tr td .actions {
@@ -51,7 +56,9 @@ table th {
   color: @tableHeader !important;
 }
 table th .btn-group { 
-  margin: 0 0 0 -10px; 
+  position: absolute;
+  top: 7px;
+  left: 10px;
 }
 table th .btn input { 
  margin: -2px 0 0 0;
