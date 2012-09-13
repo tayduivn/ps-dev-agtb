@@ -31,6 +31,8 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    var $tp;
+
     public static function setUpBeforeClass() {
         $tp = SugarTestTimePeriodUtilities::createAnnualTimePeriod();
         parent::setUpBeforeClass();
@@ -120,6 +122,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $nextEndDate = $timedate->fromUserDate($baseTimePeriod->end_date);
         $nextEndDate = $nextEndDate->modify("+1 year");
 
+        //todo make expected on the left
         $this->assertEquals($nextTimePeriod->start_date, $timedate->asUserDate($nextStartDate));
         $this->assertEquals($nextTimePeriod->end_date, $timedate->asUserDate($nextEndDate));
 
@@ -130,5 +133,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($dayLength, $nextTimePeriod->getLengthInDays());
     }
+
+    //TODO: add tests to check inclusive/exclusivity of first day last day etc.
 
 }
