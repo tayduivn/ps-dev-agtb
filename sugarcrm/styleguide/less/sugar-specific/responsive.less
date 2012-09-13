@@ -1,5 +1,14 @@
 /* Responsive Docs
 -------------------------------------------------- */
+@media (max-width: 920px) {
+  #folded .tab-pane.active {
+  position: relative !important; 
+  }
+  .row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
+  overflow-y: auto !important;
+  margin: 0;
+  }
+}
 @media (max-width: 480px) {
 
   .span2 .block > *, footer, .nav-collapse .nav li, .thumbnav a b {
@@ -78,5 +87,12 @@
     right: auto;
     bottom: auto;
     left: auto;
+  }
+  .tab-content {
+    overflow: visible;
+  }
+  .row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
+  overflow-y: auto !important;
+  margin: 0;
   }
 }
