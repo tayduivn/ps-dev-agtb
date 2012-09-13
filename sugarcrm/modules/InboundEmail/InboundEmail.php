@@ -4135,6 +4135,9 @@ class InboundEmail extends SugarBean {
 
 			$email->message_id		= $this->compoundMessageId; // filled by importDupeCheck();
 
+            // save uid to have ability to remove message from imap/pop
+            $email->message_uid     = $uid;
+
 			$oldPrefix = $this->imagePrefix;
 			if(!$forDisplay) {
 				// Store CIDs in imported messages, convert on display

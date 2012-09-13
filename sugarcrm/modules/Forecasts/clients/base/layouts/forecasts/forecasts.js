@@ -238,7 +238,7 @@
 
             //add the components to the div
             if (comp.name) {
-                $(".view-"+comp.name).append(comp.$el);
+                this.$el.find(".view-"+comp.name).append(comp.$el);
             } else {
                 this.$el.append(comp.$el);
             }

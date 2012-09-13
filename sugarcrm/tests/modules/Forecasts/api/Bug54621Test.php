@@ -97,7 +97,6 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Here we call the mock Manager class.  Since the loadForecastValues is protected we override the function in our mock object.
-     * @outputBuffering disabled
      */
     public function testReturnsMostRecentForecast()
     {
