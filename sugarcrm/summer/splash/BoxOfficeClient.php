@@ -65,14 +65,32 @@ class BoxOfficeClient
     {
         $req = new Zend_Http_Client($this->config['box_url'].$url);
         $req->setMethod($method);
+        $req->setConfig(array("timeout" => 1000));
+//         $req->setCookie(array(
+//             'debug_stop'=>1,
+//             'debug_host'=>'127.0.0.1',
+//             'debug_port'=>10137,
+//             'start_debug'=>1,
+//             'send_debug_header'=>1,
+//             'no_remote'=>1,
+//             'send_sess_end'=>1,
+//             'debug_jit'=>1,
+//             'ZDEDebuggerPresent'=>'php,phtml,php3',
+//             'debug_session_id'=>1234567
+//         ));
         if(!empty($params)) {
-            $req->setParameterPost($params);
+            $req->setEncType(Zend_Http_Client::ENC_URLENCODED);
+            if($method == "POST") {
+                $req->setParameterPost($params);
+            } else {
+                $req->setParameterGet($params);
+            }
         }
         $res = $req->request();
         if(!$res->isSuccessful()) {
         	return false;
         }
-        return json_decode($res, true);
+        return json_decode($res->getBody(), true);
     }
 
     /**
