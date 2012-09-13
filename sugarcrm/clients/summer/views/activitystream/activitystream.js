@@ -15,10 +15,15 @@
         'click .deleteRecord': 'deleteRecord',
         'mouseenter .hasDeleteButton': 'showDeleteButton',
         'mouseleave .hasDeleteButton': 'hideDeleteButton',
-        'click [name=show_more_button]': 'showMoreRecords'
+        'click [name=show_more_button]': 'showMoreRecords',
+        'keyup .sayit': 'getEntities',
+        'blur .sayit': 'hideTypeahead',
+        'mouseover ul.typeahead li': 'switchActiveTypeahead',
+        'click ul.typeahead li': 'addTag'
     },
 
     initialize: function(options) {
+        var self = this;
     	this.opts = { params: {}};
     	this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
@@ -37,6 +42,18 @@
             this.collection.fetch(this.opts);
         }
 
+        var url = "../rest/v10/CustomReport/EntityList";
+        if(this.opts.params.module) {
+            url += "?module=" + this.opts.params.module;
+            if(this.opts.params.id) {
+                url += "&id=" + this.opts.params.id;
+            }
+        }
+
+        App.api.call('GET', url, null, {success: function(o) {
+            self.entityList = o;
+        }});
+
         // There maybe better way to make the following data available in hbt
         this.collection['oauth_token'] = App.api.getOAuthToken();
         this.collection['user_id'] = app.user.get('id');
@@ -50,7 +67,6 @@
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
-
     },
 
     showMoreRecords: function(event) {
@@ -140,7 +156,7 @@
     addPost: function() {
         var self = this,
             myPost = this.$(".activitystream-post"),
-            myPostContents = myPost.find('input.sayit')[0].value,
+            myPostContents = myPost.find('div.sayit')[0].innerHTML,
             myPostId = this.context.get("modelId"),
             myPostModule = this.module,
             myPostUrl = 'ActivityStream';
@@ -306,6 +322,102 @@
             path = _.compact(path);
             event.dataTransfer.setData("DownloadURL", mime+":"+name+":"+origin+"/"+path.join('/'));
         }
+    },
+
+    _getEntities: _.debounce(function(event) {
+        var el = this.$(event.currentTarget);
+        el.parent().find("ul.typeahead").remove();
+        var word = event.currentTarget.innerText;
+        if(word.indexOf("@") === 0) {
+            word = _.last(word.split('@'));
+        } else {
+            // Prevent email addresses from being caught, even though emails
+            // can have spaces in them according to the RFCs (3696/5322/6351).
+            word = _.last(word.split(' @'));
+        }
+        // Do initial list filtering.
+        var list = _.filter(this.entityList, function(entity) {
+            return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
+        });
+
+        // Rank the list.
+        list = (function(list, query) {
+            var begin = [], caseSensitive = [], caseInsensitive = [], item;
+            while(item = list.shift()) {
+                if(item.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+                    begin.push(item);
+                } else if(item.name.indexOf(query) !== -1) {
+                    caseSensitive.push(item);
+                } else {
+                    caseInsensitive.push(item);
+                }
+            }
+            return begin.concat(caseSensitive, caseInsensitive);
+        })(list, word);
+
+
+        var ul = $("<ul/>").addClass('typeahead dropdown-menu');
+        var blank_item = '<li><a href="#"></a></li>';
+        if(list.length) {
+            items = _.map(_.first(list, 8), function(item) {
+                var i = $(blank_item).data(item);
+                var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+                i.find('a').html(function() {
+                    return item.name.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                        return '<strong>' + match + '</strong>'
+                    });
+                });
+
+                return i[0];
+            });
+
+            items[0] = ($(items[0]).addClass('active'))[0];
+
+            var pos = $.extend({}, el.offset(), {
+                height: el[0].offsetHeight
+            });
+
+            ul.html(items).css({
+                top: pos.top - pos.height
+            }).appendTo(el.parent()).show();
+        }
+    }, 250),
+
+    getEntities: function(event) {
+        this._getEntities(event);
+    },
+
+    hideTypeahead: function(event) {
+        setTimeout(function() {
+            self.$("ul.typeahead").remove();
+        }, 150);
+    },
+
+    switchActiveTypeahead: function(event) {
+        this.$("ul.typeahead .active").removeClass('active');
+        this.$(event.currentTarget).addClass('active');
+    },
+
+    addTag: function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        var el = $(event.currentTarget);
+        var body = $(el.parents()[1]).find(".sayit")[0];
+        var lastIndex = body.innerHTML.lastIndexOf("@");
+        var data = $(event.currentTarget).data();
+
+        var tag = $("<span />").addClass("label").addClass("label-"+data.module).text(data.name);
+
+        body.innerHTML = body.innerHTML.substring(0, lastIndex) + " " + tag[0].outerHTML + "&nbsp;";
+        if(document.createRange) {
+            var range = document.createRange();
+            range.selectNodeContents(body);
+            range.collapse(false);
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        this.hideTypeahead();
     },
 
     _renderHtml: function() {
