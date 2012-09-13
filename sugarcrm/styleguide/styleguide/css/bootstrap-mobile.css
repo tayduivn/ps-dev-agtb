@@ -1455,8 +1455,9 @@ button.btn.btn-mini, input[type="submit"].btn.btn-mini {
 }
 .tabs-below > .nav-tabs > .active > a, .tabs-below > .nav-tabs > .active > a:hover { border-color:transparent #dddddd #dddddd #dddddd; }
 .tabs-left > .nav-tabs > li, .tabs-right > .nav-tabs > li { float:none; }
+#contentflex .tabs-right > .nav-tabs > li { float:none; }
+#contentflex .results { padding-left:20px; }
 .tabs-left > .nav-tabs > li > a, .tabs-right > .nav-tabs > li > a {
-  min-width:74px;
   margin-right:0;
   margin-bottom:3px;
 }
