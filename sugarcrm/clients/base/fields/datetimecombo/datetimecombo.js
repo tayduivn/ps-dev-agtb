@@ -16,11 +16,6 @@
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
-
-    format:function(value) {
-        var jsDate, output, 
-            usersDateFormatPreference, usersTimeFormatPreference, 
-            myUser = app.user;
         jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
         if(jsDate && typeof jsDate.toISOString === 'function') {
             return jsDate.toISOString();
@@ -32,30 +27,13 @@
 
     format:function(value) {
         var jsDate, output, usersDateFormatPreference, usersTimeFormatPreference, myUser = app.user, d, parts;
-
         usersDateFormatPreference = myUser.get('datepref');
         usersTimeFormatPreference = myUser.get('timepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
         if(!value && this.def.display_default) {
             value  = app.date.parseDisplayDefault(this.def.display_default);
-            // e.g. returns ["2012-09-11 2:15pm", "2012", "09", "11", "2", "15", "pm"]
-            parts = /^(\d{4})-(\d{2})-(\d{2})[ ]?(\d{1,2})?:(\d{2})?([A-z]{2})?$/.exec(value); 
-
-            // if 12:15am etc., convert to 00:15 
-            if(parts && parts[4] && parts[4]==='12' && parts[6] && parts[6]==='am') {
-                dt = new Date(parts[1]+'-'+parts[2]+'-'+parts[3]+' '+'00'+':'+parts[5]);
-            } else if(parts) {
-                // e.g. correct hour parts like 2pm to be 14
-                if(parts[6]==='pm' && parts[4] < 12) {
-                    parts[4] = (parseInt(parts[4], 10) + 12) + '';
-                }
-                dt = new Date(parts[1]+'-'+parts[2]+'-'+parts[3]+' '+parts[4]+':'+parts[5]);
-            } else {
-                app.logger.error("Failed to parse datetime.");
-                return; // can't parse datetime
-            }
-            // Preset the model with display default in case user doesn't change anything
+            dt = app.date.dateFromDisplayDefaultString(value);
             this.model.set(this.name, dt.toISOString()); 
         } else if(!value) {
             return value;
@@ -82,7 +60,7 @@
             d = new Date();
             d.setHours(12); 
             value.time = app.date.format(d, usersTimeFormatPreference);
-            this.model.set(this.name, this.unformat(value.dateTime + ' ' + value.hours + ':' + value.minutes + ':00' +':'+ value.amPm), {silent: true});
+            this.model.set(this.name, this.buildUnformatted(value.date, '00', value.minutes, value.amPm), {silent: true});
         }
         return value;
     },
@@ -137,18 +115,23 @@
         amPm      = this.$('.date_time_ampm');
 
         date.on('change', function(ev) {
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
+            model.set(fieldName, self.buildUnformatted(date.val(), hour.val(), minute.val(), amPm.val()));
         });
         hour.on('change', function(ev) {
+            // If no date (display default set to none), user may select hrs, minutes, etc., so defaults to now date in this case
+            date.val(self.setIfNoDate(date.val()));
             hr = self.patched12AmHour(amPm, hour);
-            model.set(fieldName, self.unformat(date.val() + ' ' + hr + ':' + minute.val() + ':00' +':'+ amPm.val()));
+            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()), {silent: true});
         });
         minute.on('change', function(ev) {
+            date.val(self.setIfNoDate(date.val()));
             hr = self.patched12AmHour(amPm, hour);
-            model.set(fieldName, self.unformat(date.val() + ' ' + hr + ':' + minute.val() + ':00' +':'+ amPm.val()), {silent: true});
+            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()), {silent: true});
         });
         amPm.on('change', function(ev) {
             var isWrongAmPm = false;
+
+            date.val(self.setIfNoDate(date.val()));
             //am only be allowed 0-12; pm 12-23
             if(parseInt(hour.val(), 10) >= 13 && amPm.val()==='am') {
                 amPm.val('pm');
@@ -165,10 +148,23 @@
                     messages: app.lang.get('LBL_PORTAL_WRONG_AMPM_MSG'),
                     autoClose: true});
             }
-
-            model.set(fieldName, self.unformat(date.val() + ' ' + hour.val() + ':' + minute.val() + ':00' +':'+ amPm.val()));
+            model.set(fieldName, self.buildUnformatted(date.val(), hour.val(), minute.val(), amPm.val()));
         });
     },
+    buildUnformatted: function(d, h, m, amPm) {
+        return this.unformat(d + ' ' + h + ':' + m + ':00' +':'+ amPm);
+    },
+    
+    // Checks if dateToCheck is falsy .. if so returns today date formatted by user's prefs
+    setIfNoDate: function(dateToCheck) {
+        var usersDateFormatPreference = app.user.get('datepref');
+        if(!dateToCheck) {
+            var d = new Date();
+            return app.date.format(d, usersDateFormatPreference);
+        } 
+        return dateToCheck;
+    },
+
     // If we have 00am we patch the displayed value to 12 am but we still want internally to represent as 00am
     patched12AmHour: function (amPm, hour) {
         // Patch 12am to 00am as we need it this way internally though we present 12am
