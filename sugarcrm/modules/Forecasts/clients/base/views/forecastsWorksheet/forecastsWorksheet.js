@@ -561,9 +561,6 @@
         };
 
         this.context.forecasts.set("updatedTotals", totals);
-
-        debugger;
-
     },
 
     /**
