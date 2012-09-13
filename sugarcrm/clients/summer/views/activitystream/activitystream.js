@@ -181,6 +181,7 @@
                 myPostContents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
             }
         }).html();
+        myPostContents = myPostContents.replace(/&nbsp;/gi,' ');
 
         this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function(post_id) {
             myPost.find('.activitystream-pending-attachment').each(function(index, el) {
@@ -455,7 +456,16 @@
 
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
+            var activity_data = model.get("activity_data");
             var comments = model.get("comments");
+            var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g)
+            if(activity_data && activity_data.value) {
+                activity_data.value = activity_data.value.replace(pattern, function(str, module, id, text) {
+                    return "<span class='label label-"+module+"'><a href='#"+module+'/'+id+"'>"+text+"</a></span>";
+                });
+                model.set("activity_data", activity_data);
+            }
+
             if (comments.length > 2) {
                 comments[0]['_starthidden'] = true;
                 comments[comments.length - 3]['_stophidden'] = true;
