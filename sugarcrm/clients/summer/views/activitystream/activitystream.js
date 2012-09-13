@@ -173,12 +173,12 @@
 
         $(myPostHTML).contents().each(function() {
             if(this.nodeName == "#text") {
-                stuffs += this.data;
+                myPostContents += this.data;
             } else if(this.nodeName == "SPAN") {
                 var el = $(this);
                 el.find('a').remove();
                 var data = el.data();
-                stuffs += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
+                myPostContents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
             }
         }).html();
 
