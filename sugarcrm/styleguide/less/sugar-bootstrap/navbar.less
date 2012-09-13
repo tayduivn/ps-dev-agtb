@@ -37,6 +37,10 @@
   }
 }
 
+.dropdown-menu strong {
+  padding: 15px 15px 10px;
+}
+
 .dropdown-toggle .mystuff {
     margin-left: -10px;
 }
@@ -47,14 +51,11 @@
 
 // Navbar search
 .navbar-search {
-  position: absolute !important;
-  left: 140px;
-  width: 40% !important;
   .search-query.filter, .chzn-container-multi .chzn-choices {
     color: @grayLighter;
     background: @NavigationBar;
     border: 1px solid #111;
-    .border-radius(20px);
+    .border-radius(2px);
     @shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0px rgba(255,255,255,.15);
     .box-shadow(@shadow);
 
