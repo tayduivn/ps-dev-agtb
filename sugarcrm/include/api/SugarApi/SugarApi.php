@@ -148,7 +148,6 @@ abstract class SugarApi {
 
         $id = $bean->id;
 
-
         //BEGIN SUGARCRM flav=pro ONLY
         if(isset($args['my_favorite'])) {
             $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
@@ -156,7 +155,6 @@ abstract class SugarApi {
         //END SUGARCRM flav=pro ONLY
 
         $bean->retrieve($id);
-
         /*
          * Even though the bean is refreshed above, return only the id
          * This allows loadBean to be run to handle formatting and ACL
@@ -175,35 +173,42 @@ abstract class SugarApi {
      * @return bool
      */
 
-    protected function toggleFavorites($module, $id, $favorite)
+    protected function toggleFavorites($module, $record, $favorite)
     {
-        $favorite = (bool) $favorite;
-        // check to see if we already have a favorite
-        $favorite_id = SugarFavorites::generateGUID($module, $record, $user_id);
-        $sf = new SugarFavorites();
-        $sf->retrieve($favorite_id, true, false);
-        $already_favorited = (empty($sf->id)) ? false : true;
+        if($favorite == "false" || $favorite == "0") {
+            $favorite = false;
+        }
 
-        if($already_favorited) {
-            // if it is a favorite deleted should be 0
-            $sf->deleted = ($favorite) ? 0 : 1;
-            $sf->save();
+        $favorite = (bool) $favorite;
+
+        $fav_id = SugarFavorites::generateGUID($module,$record);
+
+        $fav = new SugarFavorites();
+        
+        // get it even if its deleted
+        $fav->retrieve($fav_id, true, false);
+
+        // already exists
+        if(!empty($fav->id)) {
+            $deleted = ($favorite) ? 0 : 1;
+            $fav->toggleExistingFavorite($fav_id, $deleted);
             return true;
         }
 
-
-        if($favorite == true) {
+        if($favorite) {
             $fav = new SugarFavorites();
-            $fav->id = SugarFavorites::generateGUID($module,$id);
+            $fav->id = $fav_id;            
             $fav->new_with_id = true;
             $fav->module = $module;
-            $fav->record_id = $id;
+            $fav->record_id = $record;
             $fav->created_by = $GLOBALS['current_user']->id;
-            $fav->assigned_user_id = $GLOBALS['current_user']->id;
-            $fav->deleted = 0;
+            $fav->assigned_user_id = $GLOBALS['current_user']->id;    
+            $fave->deleted = 0;
             $fav->save();
             return true;
         }
+        
+        return true;
 
         
     }
