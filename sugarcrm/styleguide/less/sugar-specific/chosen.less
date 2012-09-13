@@ -8,10 +8,26 @@
     background-position: 0px 0px;
   }
 }
-
+.chzn-container-active .chzn-single-with-drop {
+  background: @grayLighter;
+  border: 1px solid @grayLight;
+}
+.chzn-search {
+  background: @grayLighter;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+}
 .chzn-container .chzn-drop.carettop {
   .caret-top(auto,auto,10px,9px);
   border: 1px solid @grayLight;
+}
+.chzn-container .chzn-results {
+  margin: 0;
+  padding: 0;
+}
+
+.chzn-container .chzn-results li {
+  line-height: 26px;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
 }
 
 #date_filter_chzn.chzn-container .chzn-drop.carettop {
