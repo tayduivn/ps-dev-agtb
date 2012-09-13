@@ -12,7 +12,8 @@ fi
 
 if [[ "$platform" == 'osx' ]]; then
 	cp .htaccess.sample .htaccess
-	cp boxoffice/config.sample.php boxoffice/config.php
+	cp boxoffice/.htaccess.sample boxoffice/.htaccess
+	cp config.sample.php config.php
 	cp configs/config.sample.php configs/config.php
 
 
@@ -23,12 +24,15 @@ if [[ "$platform" == 'osx' ]]; then
 	sed -i "" "s/\<web_root\>/$path/g" .htaccess
 	sed -i "" "s/\<host\>/$name/g" .htaccess
 	sed -i "" "s/\<port\>/$port/g" .htaccess
+	sed -i "" "s/\<web_root\>/$path/g" boxoffice/.htaccess
+	sed -i "" "s/\<host\>/$name/g" boxoffice/.htaccess
+	sed -i "" "s/\<port\>/$port/g" boxoffice/.htaccess
 	sed -i "" "s/<web_root>/$path/g" configs/config.php
 	sed -i "" "s/<host>/$name/g" configs/config.php
 	sed -i "" "s/<port>/$port/g" configs/config.php
-	sed -i "" "s/<host>/$name/g" boxoffice/config.php
-	sed -i "" "s/<port>/$port/g" boxoffice/config.php
-	sed -i "" "s/<web_root>/$path/g" boxoffice/config.php
+	sed -i "" "s/<host>/$name/g" config.php
+	sed -i "" "s/<port>/$port/g" config.php
+	sed -i "" "s/<web_root>/$path/g" config.php
 
 	echo "All done. Go forth and install the sweet, sweet goodness."
 else
