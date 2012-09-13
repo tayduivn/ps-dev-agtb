@@ -482,24 +482,27 @@
             var amount = parseFloat(model.get('amount'));
             var included = model.get('forecast');
             var best = parseFloat(model.get('best_case'));
+            var base_rate = parseFloat(model.get('base_rate'));
+            var amount_base = amount * base_rate;
+            var best_base = best * base_rate;
 
             if(won)
             {
-                wonAmount += amount;
+                wonAmount += amount_base;
                 wonCount++;
             } else if(lost) {
-                lostAmount += amount;
+                lostAmount += amount_base;
                 lostCount++;
             }
 
             if(included == true || included == 1) {
-                includedAmount += amount;
-                includedBest += best;
+                includedAmount += amount_base;
+                includedBest += best_base;
                 includedCount++;
             }
 
-            overallAmount += amount;
-            overallBest += best;
+            overallAmount += amount_base;
+            overallBest += best_base;
         });
 
         //Now see if we need to add the expected opportunity amounts
@@ -508,29 +511,28 @@
            _.each(this.context.forecasts.forecastschedule.models, function(model) {
                if(model.get('status') == 'Active')
                {
-                    var amount = model.get('expected_amount');
-                    var best = model.get('expected_best_case');
+                   var amount = model.get('expected_amount');
+                   var best = model.get('expected_best_case');
+                   var base_rate = parseFloat(model.get('base_rate'));
 
-                    //Check for null condition and, if so, set to 0
+                   //Check for null condition and, if so, set to 0
                     amount = amount != null ? parseFloat(amount) : 0;
                     best = best != null ? parseFloat(best) : 0;
 
-                    if(model.get('include_expected') == 1)
+                   var amount_base = amount * base_rate;
+                   var best_base = best * base_rate;
+
+                   if(model.get('include_expected') == 1)
                     {
-                        includedAmount += amount;
-                        includedBest += best;
+                        includedAmount += amount_base;
+                        includedBest += best_base;
                     }
 
-                    overallAmount += amount;
-                    overallBest += best;
+                    overallAmount += amount_base;
+                    overallBest += best_base;
                }
            });
         }
-
-        includedAmount = app.currency.formatAmountLocale(includedAmount);
-        includedBest = app.currency.formatAmountLocale(includedBest);
-        overallAmount = app.currency.formatAmountLocale(overallAmount);
-        overallBest = app.currency.formatAmountLocale(overallBest);
 
         self.includedModel.set({
             includedAmount : includedAmount,
@@ -559,6 +561,9 @@
         };
 
         this.context.forecasts.set("updatedTotals", totals);
+
+        debugger;
+
     },
 
     /**

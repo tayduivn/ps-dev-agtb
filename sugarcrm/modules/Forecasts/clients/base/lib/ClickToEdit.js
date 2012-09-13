@@ -13,7 +13,7 @@
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
         var ds = app.user.get('decimal_separator') || '.';
         var gs = app.user.get('number_grouping_separator') || ',';
-        var reg = new RegExp("^[\\+\\-]?(\\d+|\\d{1,3}(\\"+gs+"\\d{3})*)(\\"+ds+"\\d+)?\\%?$");
+        var reg = new RegExp("^[\\+\\-]?(\\d+|\\d{1,3}(\\"+gs+"\\d{3})*)?(\\"+ds+"\\d+)?\\%?$");
     	switch(field.type){
             case "int":
             case "numeric":
@@ -45,9 +45,7 @@
                 view: this.view,
                 numberTypes: this.numberTypes,
                 checkDatatype: this._checkDatatype,
-                onreset:function(settings, original){
-                    // TODO: reset value on cancel
-                },
+                onblur: 'submit',
                 onedit:function(settings, original){
                     // clear styling
                     $(this).css("background-color", "");
