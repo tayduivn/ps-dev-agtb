@@ -311,67 +311,6 @@ class SugarApplicationTest extends Sugar_PHPUnit_Framework_TestCase
         $this->_app->controller->action = 'save';
         $this->assertFalse($this->_app->checkHTTPReferer());
     }
-
-    /**
-     * @group Login
-     */
-    public function testGetAuthenticatedUrl_DefaultShouldBeSidecar()
-    {
-        $appReflection = new ReflectionClass("SugarApplication");
-        $method = $appReflection->getMethod('getAuthenticatedHomeUrl');
-        $method->setAccessible(true);
-
-        $url = $method->invoke($this->_app);
-
-        $this->assertContains("index.php?action=sidecar#Home", $url);
-    }
-
-    /**
-     * @group Login
-     */
-    public function testGetAuthenticatedUrl_AllowsDisablingOfSidecarWithUrlParameter()
-    {
-        $appReflection = new ReflectionClass("SugarApplication");
-        $method = $appReflection->getMethod('getAuthenticatedHomeUrl');
-        $method->setAccessible(true);
-        
-        $_GET['sidecar'] = '0';
-        
-        $url = $method->invoke($this->_app);
-
-        $this->assertContains("index.php?module=Home&action=index", $url);
-    }
-
-    /**
-     * @group Login
-     */
-    public function testGetUnauthenticatedUrl_DefaultShouldBeSidecar()
-    {
-        $appReflection = new ReflectionClass("SugarApplication");
-        $method = $appReflection->getMethod('getUnauthenticatedHomeUrl');
-        $method->setAccessible(true);
-
-        $url = $method->invoke($this->_app);
-
-        $this->assertContains("index.php?action=sidecar#Home", $url);
-    }
-
-
-    /**
-     * @group Login
-     */
-    public function testGetUnauthenticatedUrl_AllowsDisablingOfSidecarWithUrlParameter()
-    {
-        $appReflection = new ReflectionClass("SugarApplication");
-        $method = $appReflection->getMethod('getUnauthenticatedHomeUrl');
-        $method->setAccessible(true);
-
-        $_GET['sidecar'] = '0';
-
-        $url = $method->invoke($this->_app);
-
-        $this->assertContains("index.php?action=Login&module=Users", $url);
-    }
 }
 
 class SugarApplicationMock extends SugarApplication
