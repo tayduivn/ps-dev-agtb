@@ -232,13 +232,16 @@
          * @param {View.Layout/View.View} comp Component to add
          */
         _placeComponent: function(comp) {
+            var compName = comp.name || comp.meta.name,
+                divName = ".view-" + compName;
+
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");
             }
 
             //add the components to the div
-            if (comp.name) {
-                this.$el.find(".view-"+comp.name).append(comp.$el);
+            if (comp.name && this.$el.find(divName)[0]) {
+                this.$el.find(divName).append(comp.$el);
             } else {
                 this.$el.append(comp.$el);
             }
