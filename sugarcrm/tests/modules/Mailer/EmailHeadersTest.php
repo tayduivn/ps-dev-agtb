@@ -201,17 +201,9 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testPackageHeaders_NoFromHeaderCausesAMailerExceptionToBeThrown() {
-        $exceptionWasCaught = false;
+        $headers = new EmailHeaders();
 
-        try {
-            $headers = new EmailHeaders();
-            $actual  = $headers->packageHeaders(); // hopefully nothing is actually returned
-        } catch (MailerException $me) {
-            $exceptionWasCaught = true;
-        }
-
-        if (!$exceptionWasCaught) {
-            self::fail("A MailerException should have been raised because there is no from header");
-        }
+        self::setExpectedException("MailerException");
+        $actual = $headers->packageHeaders(); // hopefully nothing is actually returned
     }
 }
