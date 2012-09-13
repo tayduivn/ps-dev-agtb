@@ -412,16 +412,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         //'link_type' => 'one', bug# 31652 relationship is one to many from opportunities to contracts
         'source' => 'non-db',
     ),
-    'worksheet' =>
-     array(
-        'name' => 'worksheet',
-        'type' => 'link',
-        'vname' => 'LBL_WORKSHEET',
-        'relationship' => 'opportunities_worksheet',
-        'source' => 'non-db',
-     ),
-//END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=ent ONLY
   'products' =>
    array(
         'name' => 'products',
@@ -430,7 +420,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'relationship' => 'opportunities_products',
         'source' => 'non-db',
    ),
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=PRO ONLY
 ),
 		'indices' => array (
 			array(
@@ -500,12 +490,12 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav!=sales ONLY
 
-   //BEGIN SUGARCRM flav=ent ONLY
+   //BEGIN SUGARCRM flav=PRO ONLY
    'opportunities_products' =>
    array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
    'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'opportunity_id',
    'relationship_type'=>'one-to-many'),
-   //END SUGARCRM flav=ent ONLY
+   //END SUGARCRM flav=PRO ONLY
 )
 
 //This enables optimistic locking for Saves From EditView
