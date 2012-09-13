@@ -50,6 +50,7 @@
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
+
     },
 
     showMoreRecords: function(event) {
@@ -338,6 +339,11 @@
             this.opts.params.limit = this.collection.models.length;
             this.opts.params.max_num = this.collection.models.length;
         }
+
+        // Start the user focused in the activity stream input.
+        setTimeout(function() {
+            $(".activitystream-post .sayit").focus();
+        }, 300);
 
         return app.view.View.prototype._renderHtml.call(this);
     },
