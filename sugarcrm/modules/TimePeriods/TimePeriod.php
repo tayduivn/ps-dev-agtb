@@ -45,13 +45,15 @@ class TimePeriod extends SugarBean {
 	var $deleted;
 	var $fiscal_year;
 	var $is_fiscal_year;
+    var $is_fiscal;
 	//end time period stored fields.
 	var $table_name = "timeperiods";
 	var $fiscal_year_checked;
 	var $module_dir = 'TimePeriods';
+    var $time_period_type = 'Annually';
 	var $object_name = "TimePeriod";
 	var $user_preferences;
-
+    var $is_leaf;
 	var $encodeFields = Array("name");
 
 	// This is used to retrieve related fields from form posts.
@@ -60,15 +62,17 @@ class TimePeriod extends SugarBean {
 	
 	var $new_schema = true;
 
-	function TimePeriod() {
+	function __construct() {
 		parent::SugarBean();
 		$this->disable_row_level_security =true;
 	}
 
 	function save($check_notify = false){
 		//if (empty($this->id)) $this->parent_id = null;
-		
-		return parent::save($check_notify);		
+
+
+
+		return parent::save($check_notify);
 	}
 
 
@@ -145,6 +149,22 @@ class TimePeriod extends SugarBean {
 
 		return $query;
 	}
+
+    /**
+     * creates a new AnnualTimePeriod to start to use
+     *
+     * @return AnnualTimePeriod
+     */
+    public function createNextTimePeriod() {
+        $timedate = TimeDate::getInstance();
+        $nextStartDate = $timedate->fromUserDate($this->end_date);
+        $nextStartDate = $nextStartDate->modify('+1 day');
+        $nextPeriod = BeanFactory::newBean()
+        $nextPeriod = new AnnualTimePeriod($timedate->asUserDate($nextStartDate));
+        $nextPeriod->save();
+
+        return $nextPeriod;
+    }
 
 
 	//Fiscal year domain is stored in the timeperiods table, and not statically defined like the rest of the
@@ -354,6 +374,78 @@ class TimePeriod extends SugarBean {
             }
         }
         return $not_fiscal_timeperiods;
+    }
+
+    /**
+     * Takes the current time period and finds the next one that is in the db of the same type.  If none exists it returns null
+     *
+     * @return mixed
+     */
+    public function getNextTimePeriod() {
+        $timedate = TimeDate::getInstance();
+
+        $query = "select id, time_period_type from timeperiods where ";
+        $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0";
+
+        $queryDate = $timedate->fromUserDate($this->end_date);
+        $queryDate = $queryDate->modify('+1 day');
+        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
+
+        $query .= " AND start_date = {$queryDate}";
+
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row == null) {
+            return $this->createNextTimePeriod();
+        }
+
+        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
+
+    }
+
+
+    /**
+     * Grabs the time period previous of this one and returns it.  If none is found, it returns null
+     *
+     * @return null|SugarBean
+     */
+    public function getPreviousTimePeriod() {
+        $db = DBManagerFactory::getInstance();
+        $timedate = TimeDate::getInstance();
+
+        $query = "select id from timeperiods where ";
+        $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0";
+
+        $queryDate = $timedate->fromUserDate($this->end_date);
+        $queryDate = $queryDate->modify('-1 day');
+        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
+
+        $query .= " AND end_date = {$queryDate}";
+
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row == null) {
+            return null;
+        }
+
+        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
+    }
+
+    /**
+     * subtracts the end from the start date to return the date length in days
+     *
+     * @return mixed
+     */
+    public function getLengthInDays() {
+        $timedate = TimeDate::getInstance();
+        $startDate = $timedate->fromUserDate($this->start_date);
+        $endDate = $timedate->fromUserDate($this->end_date);
+        $diff = $startDate->diff($endDate);
+        return $diff->days + 1;
     }
 }
 

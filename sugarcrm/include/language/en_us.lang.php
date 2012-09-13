@@ -351,6 +351,15 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+    'time_period_dom' =>
+    array (
+      'Annually' => 'Annually',
+      'Quarterly' => 'Quarterly',
+      'Quarterly544' => 'Quarterly 5-4-4',
+      'Quarterly445' => 'Quarterly 4-4-5',
+      'Monthly' => 'Monthly',
+      'Weekly' => 'Weekly',
+    ),
   'commit_stage_dom' =>
   array (
     '100' => 'Include',

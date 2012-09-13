@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -26,6 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 /**
  * SugarTestTimePeriodUtilities.php
@@ -88,6 +88,46 @@ class SugarTestTimePeriodUtilities
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;
+    }
+
+    public static function createAnnualTimePeriod (){
+
+        global $timedate;
+        $timedate = TimeDate::getInstance();
+        $start_date = $timedate->getNow();
+        $month = $timedate->getNow()->format('n');
+        if($month < 4)
+        {
+            $month = 1;
+        } else if ($month < 8) {
+            $month = 4;
+        } else if ($month < 11) {
+            $month = 7;
+        } else {
+            $month = 10;
+        }
+
+
+        $year = $timedate->getNow()->format('Y');
+        $time = mt_rand();
+        $name = 'SugarAnnualTimePeriod' . $time;
+        $start_date->setDate($year, $month, 1);
+        $timeperiod = new AnnualTimePeriod($timedate->asUserDate($start_date));
+
+        $timeperiod->name = $name;
+        $timeperiod->time_period_type = "Annual";
+        $timeperiod->is_fiscal_year = 0;
+        $timeperiod->is_leaf = 0;
+        $timeperiod->save();
+        self::$_createdTimePeriods[] = $timeperiod;
+        return $timeperiod;
+    }
+
+    public static function addTimePeriod($timeperiod=NULL) {
+        if(is_null($timeperiod)) {
+            return;
+        }
+        self::$_createdTimePeriods[] = $timeperiod;
     }
 
     /**

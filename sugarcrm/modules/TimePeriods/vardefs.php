@@ -93,12 +93,37 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
     'type' => 'bool',
     'reportable'=>false,
   ),
- 'is_fiscal_year' =>
+ 'is_fiscal' =>
   array (
-    'name' => 'is_fiscal_year',
-    'vname' => 'LBL_TP_IS_FISCAL_YEAR',
+    'name' => 'is_fiscal',
+    'vname' => 'LBL_TP_IS_FISCAL',
     'type' => 'bool',
   ),
+    'is_fiscal_year' =>
+     array (
+       'name' => 'is_fiscal_year',
+       'vname' => 'LBL_TP_IS_FISCAL_YEAR',
+       'type' => 'bool',
+     ),
+   'is_leaf' =>
+     array (
+       'name' => 'is_leaf',
+       'vname' => 'LBL_TP_IS_LEAF',
+       'type' => 'bool',
+     ),
+    'time_period_type' =>
+    array (
+      'name' => 'time_period_type',
+      'vname' => 'LBL_TP_TYPE',
+      'type' => 'enum',
+      'options' => 'time_period_dom',
+      'len' => '255',
+      'audited'=>true,
+      'comment' => 'Time Period to be Forecast over',
+      'merge_filter' => 'enabled',
+      'importable' => 'required',
+      'required' => true,
+    ),
   'forecast_schedules' =>
   array (
   	'name' => 'forecast_schedules',
@@ -122,9 +147,15 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
 	'timeperiod_forecast_schedules' => array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
 							  'rhs_module'=> 'Forecasts', 'rhs_table'=> 'forecast_schedule', 'rhs_key' => 'timeperiod_id',
 							  'relationship_type'=>'one-to-many'),
-	'related_timeperiods' => array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
-							  'rhs_module'=> 'TimePeriods', 'rhs_table'=> 'timeperiods', 'rhs_key' => 'parent_id',
-							  'relationship_type'=>'one-to-many')
+	'related_timeperiods' => array(
+        'lhs_module'=> 'TimePeriods',
+        'lhs_table'=> 'timeperiods',
+        'lhs_key' => 'id',
+		'rhs_module'=> 'TimePeriods',
+		'rhs_table'=> 'timeperiods',
+        'rhs_key' => 'parent_id',
+		'relationship_type'=>'one-to-many'
+    )
 
 
   )
