@@ -78,7 +78,8 @@ class RestUpdateTest extends RestTestBase {
                             $account2->name,
                             "Rest Reply and Bean Do Not Match.");
     }
-
+    
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -97,7 +98,7 @@ class RestUpdateTest extends RestTestBase {
         
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }
-
+    
     /**
      * @group rest
      */
@@ -131,6 +132,7 @@ class RestUpdateTest extends RestTestBase {
         
         $this->assertEquals($is_fav, (bool) $restReply['reply']['my_favorite'], "The returned favorite was not the same.");
     }
+    //END SUGARCRM flav=pro ONLY
 
     /**
      * @group rest

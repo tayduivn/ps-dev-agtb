@@ -72,7 +72,7 @@ class RestPublicMetadataSugarFieldsTest extends RestTestBase {
             //END SUGARCRM flav=pro ONLY
             //BEGIN SUGARCRM flav=ent ONLY
             'custom/clients/portal/fields/address/address.js',
-            //BEGIN SUGARCRM flav=ent ONLY
+            //END SUGARCRM flav=ent ONLY
             'custom/clients/base/fields/address/address.js',
         );
         

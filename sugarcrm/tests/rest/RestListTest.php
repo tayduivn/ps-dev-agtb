@@ -23,7 +23,9 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
+//BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/SugarFavorites/SugarFavorites.php');
+//END SUGARCRM flav=pro ONLY
 
 class RestListTest extends RestTestBase {
     public function setUp()
@@ -93,7 +95,9 @@ class RestListTest extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
+        //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
+        //END SUGARCRM flav=pro ONLY
 
         parent::tearDown();
         foreach($this->files AS $file) {
@@ -119,6 +123,7 @@ class RestListTest extends RestTestBase {
             }
             $account->save();
             $this->accounts[] = $account;
+            //BEGIN SUGARCRM flav=pro ONLY
             if ( $i > 33 ) {
                 // Favorite the last six
                 $fav = new SugarFavorites();
@@ -131,6 +136,7 @@ class RestListTest extends RestTestBase {
                 $fav->deleted = 0;
                 $fav->save();
             }
+            //END SUGARCRM flav=pro ONLY
         }
         $GLOBALS['db']->commit();
 
@@ -165,11 +171,12 @@ class RestListTest extends RestTestBase {
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
                                  $restReply5['reply']['records'][$tmp[1]]['id'],
                                  'Second record is not lower than the first, ascending order failed.');
-
+        //BEGIN SUGARCRM flav=pro ONLY
         // Test Favorites
         $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
         $this->assertEquals(6,count($restReply['reply']['records']));
-
+        //END SUGARCRM flav=pro ONLY
+        
         // Test My Items
         $restReply = $this->_restCall("Accounts?my_items=1&max_num=20");
         $this->assertEquals(10,count($restReply['reply']['records']));
@@ -179,10 +186,11 @@ class RestListTest extends RestTestBase {
             $this->assertEquals($record['assigned_user_id'], $GLOBALS['current_user']->id, "A Record isn't assigned to me");
         }
 
+        //BEGIN SUGARCRM flav=pro ONLY
         // Test Favorites & My Items
         $restReply = $this->_restCall("Accounts?favorites=1&my_items=1&max_num=10");
         $this->assertEquals(2,count($restReply['reply']['records']));
-
+        //END SUGARCRM flav=pro ONLY
 
         // Get a list, no searching
         $restReply = $this->_restCall("Accounts?max_num=10");
@@ -232,6 +240,7 @@ class RestListTest extends RestTestBase {
             }
             $aCase->save();
             $this->cases[] = $aCase;
+            //BEGIN SUGARCRM flav=pro ONLY
             if ( $i > 33 ) {
                 // Favorite the last six
                 $fav = new SugarFavorites();
@@ -244,6 +253,7 @@ class RestListTest extends RestTestBase {
                 $fav->deleted = 0;
                 $fav->save();
             }
+            //END SUGARCRM flav=pro ONLY
         }
         $GLOBALS['db']->commit();
         // Test searching for a lot of records
@@ -330,6 +340,7 @@ class RestListTest extends RestTestBase {
             }
             $account->save();
             $this->accounts[] = $account;
+            //BEGIN SUGARCRM flav=pro ONLY
             if ( $i > 33 ) {
                 // Favorite the last six
                 $fav = new SugarFavorites();
@@ -342,6 +353,7 @@ class RestListTest extends RestTestBase {
                 $fav->deleted = 0;
                 $fav->save();
             }
+            //END SUGARCRM flav=pro ONLY
         }
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
@@ -356,6 +368,7 @@ class RestListTest extends RestTestBase {
             }
             $contact->save();
             $this->contacts[] = $contact;
+            //BEGIN SUGARCRM flav=pro ONLY
             if ( $i > 23 ) {
                 // Favorite the last six
                 $fav = new SugarFavorites();
@@ -368,6 +381,7 @@ class RestListTest extends RestTestBase {
                 $fav->deleted = 0;
                 $fav->save();
             }
+            //END SUGARCRM flav=pro ONLY
         }
 
         for ( $i = 0 ; $i < 30 ; $i++ ) {
@@ -382,6 +396,7 @@ class RestListTest extends RestTestBase {
             }
             $opportunity->save();
             $this->opps[] = $opportunity;
+            //BEGIN SUGARCRM flav=pro ONLY
             if ( $i > 23 ) {
                 // Favorite the last six
                 $fav = new SugarFavorites();
@@ -394,6 +409,7 @@ class RestListTest extends RestTestBase {
                 $fav->deleted = 0;
                 $fav->save();
             }
+            //END SUGARCRM flav=pro ONLY
         }
 
         $GLOBALS['db']->commit();
@@ -429,19 +445,21 @@ class RestListTest extends RestTestBase {
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
                                  $restReply5['reply']['records'][$tmp[1]]['id'],
                                  'Second record is not lower than the first, ascending order failed.');
-
+        //BEGIN SUGARCRM flav=pro ONLY
         // Test Favorites
         $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10&fields=name");
         $this->assertEquals(18,count($restReply['reply']['records']));
-
+        //END SUGARCRM flav=pro ONLY
+        
         // Test My Items
         $restReply = $this->_restCall("search?my_items=1&max_num=50&max_num_module=20");
         $this->assertEquals(30,count($restReply['reply']['records']));
-
+        
+        //BEGIN SUGARCRM flav=pro ONLY
         // Test Favorites & My Items
         $restReply = $this->_restCall("search?favorites=1&my_items=1&max_num=10");
         $this->assertEquals(6,count($restReply['reply']['records']));
-
+        //END SUGARCRM flav=pro ONLY
 
         // Get a list, no searching
         $restReply = $this->_restCall("search?max_num=10");
