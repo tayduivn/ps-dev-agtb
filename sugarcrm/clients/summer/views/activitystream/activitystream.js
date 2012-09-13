@@ -150,7 +150,7 @@
                     }
                 });
             });
-            self.collection.fetch(options);
+            self.collection.fetch(self.opts);
         }});
     },
 
