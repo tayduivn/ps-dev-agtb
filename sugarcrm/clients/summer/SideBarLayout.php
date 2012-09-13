@@ -19,9 +19,9 @@ class SideBarLayout
     );
 
 
-    function push($section, $comonent, $index = -1)
+    function push($section, $component, $index = -1)
     {
-        $this->containers[$section] = $this->insert($this->containers[$section], $comonent, $index);
+        $this->containers[$section] = $this->insert($this->containers[$section], $component, $index);
 
     }
 
@@ -71,7 +71,8 @@ class SideBarLayout
             $this->spans['main'] = 12;
 
         }
-        $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
+
+         $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
 
         return $this->layout;
     }
