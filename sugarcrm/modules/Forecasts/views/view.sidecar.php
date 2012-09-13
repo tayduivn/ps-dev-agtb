@@ -111,6 +111,8 @@ class ForecastsViewSidecar extends SidecarView
                 )
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+            'siteUrl' => $sugar_config['site_url'],
+            // loadCss => 'url',
             'unsecureRoutes' => array('login', 'error'),
             'clientID' => 'sugar',
             'authStore'  => 'sugarAuthStore',
