@@ -464,7 +464,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
       'vname' => 'LBL_QUOTE',
       'source'=>'non-db',
     ),
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
     'best_case' =>
     array (
         'name' => 'best_case',
@@ -519,7 +519,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'len' => '20',
     'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
   ),
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=pro ONLY
   'related_products' =>
   array (
   	'name' => 'related_products',
@@ -587,7 +587,7 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'source'=>'non-db',
     'comment' => 'Manufacturer Name'
   ),
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
 'assigned_user_id' =>
     array (
         'name' => 'assigned_user_id',
@@ -638,7 +638,7 @@ array (
     'type' => 'currency',
     'len' => '26,6',
 ),
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=pro ONLY
   'type_name' =>
   array (
       'name' => 'type_name',
