@@ -112,7 +112,7 @@ class SugarTestTimePeriodUtilities
         $time = mt_rand();
         $name = 'SugarAnnualTimePeriod' . $time;
         $start_date->setDate($year, $month, 1);
-        $timeperiod = new AnnualTimePeriod($timedate->asUserDate($start_date));
+        $timeperiod = new AnnualTimePeriod($timedate->asDbDate($start_date));
 
         $timeperiod->name = $name;
         $timeperiod->time_period_type = "Annual";

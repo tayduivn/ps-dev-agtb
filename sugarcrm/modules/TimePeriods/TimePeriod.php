@@ -159,8 +159,8 @@ class TimePeriod extends SugarBean {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromUserDate($this->end_date);
         $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = BeanFactory::newBean()
-        $nextPeriod = new AnnualTimePeriod($timedate->asUserDate($nextStartDate));
+        $nextPeriod = BeanFactory::newBean($this->time_period_type.'TimePeriods');
+        $nextPeriod->setStartDate($timedate->asUserDate($nextStartDate));
         $nextPeriod->save();
 
         return $nextPeriod;
@@ -388,7 +388,7 @@ class TimePeriod extends SugarBean {
         $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
         $query .= " AND deleted = 0";
 
-        $queryDate = $timedate->fromUserDate($this->end_date);
+        $queryDate = $timedate->fromDbDate($this->end_date);
         $queryDate = $queryDate->modify('+1 day');
         $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
 
@@ -419,7 +419,7 @@ class TimePeriod extends SugarBean {
         $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
         $query .= " AND deleted = 0";
 
-        $queryDate = $timedate->fromUserDate($this->end_date);
+        $queryDate = $timedate->fromDbDate($this->end_date);
         $queryDate = $queryDate->modify('-1 day');
         $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
 
@@ -442,8 +442,8 @@ class TimePeriod extends SugarBean {
      */
     public function getLengthInDays() {
         $timedate = TimeDate::getInstance();
-        $startDate = $timedate->fromUserDate($this->start_date);
-        $endDate = $timedate->fromUserDate($this->end_date);
+        $startDate = $timedate->fromDBDate($this->start_date);
+        $endDate = $timedate->fromDBDate($this->end_date);
         $diff = $startDate->diff($endDate);
         return $diff->days + 1;
     }

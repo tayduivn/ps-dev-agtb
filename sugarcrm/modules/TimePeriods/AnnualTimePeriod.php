@@ -59,10 +59,9 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
         //check start_date, put it to now if it's not passed in
         if(is_null($start_date)) {
-            $start_date = $timedate->asUserDate($timedate->getNow());
+            $start_date = $timedate->asDbDate($timedate->getNow());
         }
-        //TODO change to using db date, not user date for timezone issues
-        $end_date = $timedate->fromUserDate($start_date);
+        $end_date = $timedate->fromDbDate($start_date);
 
         //set the start/end date
         $this->start_date = $start_date;
@@ -70,11 +69,11 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
             $end_date = $end_date->modify('+52 week');
             $end_date = $end_date->modify('-1 day');
-            $this->end_date = $timedate->asUserDate($end_date);
+            $this->end_date = $timedate->asDbDate($end_date);
         } else {
             $end_date = $end_date->modify('+1 year');
             $end_date = $end_date->modify('-1 day');
-            $this->end_date = $timedate->asUserDate($end_date);
+            $this->end_date = $timedate->asDbDate($end_date);
         }
     }
 
@@ -111,9 +110,9 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
      */
     public function createNextTimePeriod() {
         $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromUserDate($this->end_date);
+        $nextStartDate = $timedate->fromDbDate($this->end_date);
         $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = new AnnualTimePeriod($timedate->asUserDate($nextStartDate));
+        $nextPeriod = new AnnualTimePeriod($timedate->asDbDate($nextStartDate));
         $nextPeriod->save();
 
         return $nextPeriod;
@@ -130,7 +129,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
             return;
         }
         $timedate = TimeDate::getInstance();
-        $leafStartDate = $timedate->fromUserDate($this->start_date);
+        $leafStartDate = $timedate->fromDbDate($this->start_date);
 
         $n = 0;
 
@@ -179,4 +178,21 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         $this->save();
 
     }
+
+    /**
+     * custom override of retrieve function to disable the date formatting and reset it again after the bean has been retrieved.
+     *
+     * @param string $id
+     * @param bool $encode
+     * @param bool $deleted
+     * @return null|SugarBean
+     */
+    function retrieve($id, $encode=false, $deleted=true){
+        global $disable_date_format;
+        $previous_disable_date_format = $disable_date_format;
+        $disable_date_format = 1;
+   		$ret = parent::retrieve($id, $encode, $deleted);
+        $disable_date_format = $previous_disable_date_format;
+   		return $ret;
+   	}
 }

@@ -31,10 +31,10 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    var $tp;
+    protected static $tp;
 
     public static function setUpBeforeClass() {
-        $tp = SugarTestTimePeriodUtilities::createAnnualTimePeriod();
+        self::$tp = SugarTestTimePeriodUtilities::createAnnualTimePeriod();
         parent::setUpBeforeClass();
     }
 
@@ -52,7 +52,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     public static function tearDownAfterClass() {
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        //SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
 
         parent::tearDownAfterClass();
     }
@@ -66,14 +66,8 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $timedate = TimeDate::getInstance();
         //get current timeperiod
-        $db = DBManagerFactory::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $baseTimePeriod = self::$tp;
 
-        //error_log(print_r($timeperiod,1));
-        $baseTimePeriod = BeanFactory::getBean('AnnualTimePeriods', $timeperiod);
-        //error_log(print_r($baseTimePeriod,1));
         $nextTimePeriod = $baseTimePeriod->createNextTimePeriod();
         $nextTimePeriod->name = "SugarTestCreatedNextAnnualTimePeriod";
         $nextTimePeriod->save();
@@ -81,14 +75,14 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $nextTimePeriod = BeanFactory::getBean('AnnualTimePeriods', $nextTimePeriod->id);
 
         //next timeperiod (1 year from today)
-        $nextStartDate = $timedate->fromUserDate($baseTimePeriod->start_date);
+        $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
         $nextStartDate = $nextStartDate->modify("+1 year");
-        $nextEndDate = $timedate->fromUserDate($baseTimePeriod->end_date);
+        $nextEndDate = $timedate->fromDBDate($baseTimePeriod->end_date);
         $nextEndDate = $nextEndDate->modify("+1 year");
 
-        $this->assertEquals($timedate->fromUserDate($nextTimePeriod->start_date), $nextStartDate);
+        $this->assertEquals($timedate->fromDBDate($nextTimePeriod->start_date), $nextStartDate);
 
-        $this->assertEquals($timedate->fromUserDate($nextTimePeriod->end_date), $nextEndDate);
+        $this->assertEquals($timedate->fromDBDate($nextTimePeriod->end_date), $nextEndDate);
 
         $dayLength = 365;
         if(($nextEndDate->year % 4) == 0) {
@@ -108,23 +102,19 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $timedate = TimeDate::getInstance();
         //get current timeperiod
-        $db = DBManagerFactory::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $baseTimePeriod = self::$tp;
 
-        $baseTimePeriod = BeanFactory::getBean('AnnualTimePeriods', $timeperiod);
         $nextTimePeriod = $baseTimePeriod->getNextTimePeriod();
 
         //next timeperiod (1 year from today)
-        $nextStartDate = $timedate->fromUserDate($baseTimePeriod->start_date);
+        $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
         $nextStartDate = $nextStartDate->modify("+1 year");
-        $nextEndDate = $timedate->fromUserDate($baseTimePeriod->end_date);
+        $nextEndDate = $timedate->fromDBDate($baseTimePeriod->end_date);
         $nextEndDate = $nextEndDate->modify("+1 year");
 
         //todo make expected on the left
-        $this->assertEquals($nextTimePeriod->start_date, $timedate->asUserDate($nextStartDate));
-        $this->assertEquals($nextTimePeriod->end_date, $timedate->asUserDate($nextEndDate));
+        $this->assertEquals($nextTimePeriod->start_date, $timedate->asDbDate($nextStartDate));
+        $this->assertEquals($nextTimePeriod->end_date, $timedate->asDbDate($nextEndDate));
 
         $dayLength = 365;
         if(($nextEndDate->year % 4) == 0) {
