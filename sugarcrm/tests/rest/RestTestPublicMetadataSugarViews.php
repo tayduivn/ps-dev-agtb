@@ -150,6 +150,8 @@ class RestTestPublicMetadataSugarViews extends RestTestBase {
                             'custom/clients/mobile/views/address',
                             'custom/clients/portal/views/address',
                             'custom/clients/base/views/address',
+                            'clients/mobile/views/address',
+                            
         );
 
         foreach ($dirsToMake as $dir ) {

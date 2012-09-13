@@ -44,8 +44,8 @@
      * @param {Object} event jquery event object
      */
     setOrderBy: function(event) {
-        var orderMap, collection, fieldName, nOrder, options, eventTarget, orderBy
-            self = this;
+        var orderMap, collection, fieldName, nOrder, options, eventTarget, orderBy;
+        var self = this;
         //set on this obj and not the prototype
         self.orderBy = self.orderBy || {};
 
