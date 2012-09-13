@@ -328,13 +328,18 @@
         var el = this.$(event.currentTarget);
         el.parent().find("ul.typeahead").remove();
         var word = event.currentTarget.innerText;
-        if(word.indexOf("@") === 0) {
+        if(word.indexOf("@") === -1) {
+            // If there's no @, don't do anything.
+            return;
+        } else if(word.indexOf("@") === 0) {
             word = _.last(word.split('@'));
         } else {
             // Prevent email addresses from being caught, even though emails
             // can have spaces in them according to the RFCs (3696/5322/6351).
             word = _.last(word.split(' @'));
         }
+
+
         // Do initial list filtering.
         var list = _.filter(this.entityList, function(entity) {
             return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
