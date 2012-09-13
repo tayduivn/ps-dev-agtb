@@ -24,6 +24,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once('include/SugarForecasting/Manager.php');
 require_once('modules/Forecasts/api/ForecastsWorksheetManagerApi.php');
 /**
  * Bug54621Test.php
@@ -95,15 +96,18 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Here we call the subclass of ForecastWorksheetManagerApi.  Since the getForecastValues is protected we
-     * override the function in our mock object.
-     *
+     * Here we call the mock Manager class.  Since the loadForecastValues is protected we override the function in our mock object.
+     * @outputBuffering disabled
      */
     public function testReturnsMostRecentForecast()
     {
         global $current_user;
-        $mock = new ForecastsWorksheetManagerApiMock();
-        $data = $mock->getForecastValuesOverride($current_user->id, $this->timeperiod->id);
+        $args = array();
+        $args['timeperiod_id'] = $this->timeperiod->id;
+        $args['user_id'] = $this->reportee->id;
+        $mock = new Bug54621MockSugarForecasting_Manager($args);
+        $mock->loadForecastValues();
+        $data = $mock->getDataArray();
 
         $found = false;
 
@@ -122,17 +126,36 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-/**
- * ForecastWorksheetManagerApiMock
- *
- * This is our mock class to override the ForecastsWorksheetManagerApi class
- */
-class ForecastsWorksheetManagerApiMock extends ForecastsWorksheetManagerApi
+
+class Bug54621MockSugarForecasting_Manager extends SugarForecasting_Manager
 {
-    public function getForecastValuesOverride($user_id, $timeperiod_id)
+    public function loadUsers()
     {
-         $this->user_id = $user_id;
-         $this->timeperiod_id = $timeperiod_id;
-         return $this->getForecastValues();
+        parent::loadUsers();
+    }
+
+    public function loadUsersAmount()
+    {
+        parent::loadUsersAmount();
+    }
+
+    public function loadUsersQuota()
+    {
+        parent::loadUsersQuota();
+    }
+
+    public function loadForecastValues()
+    {
+        parent::loadForecastValues();
+    }
+
+    public function loadWorksheetAdjustedValues()
+    {
+        parent::loadWorksheetAdjustedValues();
+    }
+
+    public function loadManagerAmounts()
+    {
+        parent::loadManagerAmounts();
     }
 }
