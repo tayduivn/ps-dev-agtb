@@ -389,6 +389,21 @@ class MetadataApi extends SugarApi {
                     unset($data[$chunk]);
                 }
             }
+            
+            // Relationships are special, they are a baseChunk but also need to pay attention to modules
+            if (!empty($moduleFilter) && isset($data['relationships']) ) {
+                // We only want some modules, but we want the relationships
+                foreach ($data['relationships'] as $relName => $relData ) {
+                    if ( $relName == '_hash' ) {
+                        continue;
+                    }
+                    if (!in_array($relData['rhs_module'],$moduleFilter)
+                        && !in_array($relData['lhs_module'],$moduleFilter)) {
+                        unset($data['relationships'][$relName]);
+                    }
+                    else { $data['relationships'][$relName]['checked'] = 1; }
+                }
+            }
 
             foreach ( $perModuleChunks as $chunk ) {
                 if (!in_array($chunk, $this->typeFilter)) {

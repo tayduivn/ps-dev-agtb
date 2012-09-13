@@ -32,17 +32,16 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestClearCacheTest extends RestTestBase {
+    protected $_customFile = 'custom/include/api/PongApi.php';
+    protected $_customDirMade = false;
+    
     public function setUp()
     {
         parent::setUp();
-        $this->files = array();
     }
     
     public function tearDown()
     {
-        foreach($this->files AS $file) {
-            unlink($file);
-        }
         parent::tearDown();
     }
 
@@ -50,10 +49,16 @@ class RestClearCacheTest extends RestTestBase {
      * @group rest
      */
     public function testCache() {
+        // This needs to be called before the custom dir is made
+        $replyPing = $this->_restCall('ping');
+        $this->assertEquals('pong',$replyPing['reply']);
+        
         if(!is_dir('custom/include/api')) {
-            mkdir('custom/include/api',0,true);
+            $this->_customDirMade = true;
+            mkdir('custom/include/api',0777,true);
         }
-        $file = 'custom/include/api/PongApi.php';
+        
+        // Preapre the custom file
         $file_contents = <<<EOQ
 <?php
 class PongApi extends SugarApi {
@@ -74,10 +79,7 @@ class PongApi extends SugarApi {
     }
 }
 EOQ;
-        
-        $replyPing = $this->_restCall('ping');
-        $this->assertEquals('pong',$replyPing['reply']);
-        file_put_contents($file, $file_contents);
+        file_put_contents($this->_customFile, $file_contents);
         // verify ping
         
         // verify pong isn't there
@@ -100,5 +102,32 @@ EOQ;
         // verify pong is there now
         $replyPong = $this->_restCall('ping');
         $this->assertEquals('ping', $replyPong['reply']);
+        
+        // Now undo it all and test again
+        // Clean up after ourselves
+        if (file_exists($this->_customFile)) {
+            $dirname = dirname($this->_customFile);
+            unlink($this->_customFile);
+            
+            if ($this->_customDirMade) {
+                $done = rmdir($dirname);
+            }
+        }
+        
+        // run repair and rebuild
+        $old_user = $GLOBALS['current_user'];
+        $user = new User();
+        $GLOBALS['current_user'] = $user->getSystemUser();
+
+        $_REQUEST['repair_silent']=1;
+        $rc = new RepairAndClear();
+        $rc->clearAdditionalCaches();
+        $GLOBALS['current_user'] = $old_user;
+        
+        $this->assertTrue(!file_exists('cache/include/api/SugarApi/ServiceDictionary.rest.php'), "Didn't really clear the cache the SECOND time");
+        
+        // verify pong isn't there
+        $replyPong = $this->_restCall('ping');
+        $this->assertEquals('pong', $replyPong['reply']);
     }
 }

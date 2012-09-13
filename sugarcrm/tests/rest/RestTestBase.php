@@ -152,7 +152,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             $this->_restLogin();
         }
         
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v10/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
         $filename = basename($args['filename']);
         $url = $urlBase . $urlPart;
         if ($passInQueryString) {

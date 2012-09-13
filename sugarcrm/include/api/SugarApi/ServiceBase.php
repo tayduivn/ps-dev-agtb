@@ -39,12 +39,12 @@ abstract class ServiceBase {
 
     protected function loadApiClass($route) {
         if ( ! file_exists($route['file']) ) {
-            throw SugarApiException('Missing API file.');
+            throw new SugarApiException('Missing API file.');
         }
         require_once($route['file']);
 
         if ( ! class_exists($route['className']) ) {
-            throw SugarApiException('Missing API class.');
+            throw new SugarApiException('Missing API class.');
         }
 
         $apiClassName = $route['className'];

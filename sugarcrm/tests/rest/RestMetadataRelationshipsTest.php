@@ -60,7 +60,10 @@ class RestMetadataRelationshipsTest extends RestTestBase {
             if ( $relName == '_hash' ) {
                 continue;
             }
-            $this->assertTrue((in_array($relData['lhs_module'],$moduleList)||in_array($relData['rhs_module'],$moduleList)));
+            $this->assertTrue(
+                (in_array($relData['lhs_module'],$moduleList)||in_array($relData['rhs_module'],$moduleList)),
+                "$relName does not have a LHS [$relData[lhs_module] or RHS module [$relData[rhs_module]] that is in (Accounts, Contacts or Cases)"
+            );
         }
     }
 

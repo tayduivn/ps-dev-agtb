@@ -29,10 +29,16 @@ class RestFileTest extends RestTestBase {
     protected $_note_id;
     protected $_contact;
     protected $_contact_id;
-
+    protected $_testfile1 = 'Bug55655-01.txt';
+    protected $_testfile2 = 'Bug55655-02.txt';
+    
     public function setUp()
     {
         parent::setUp();
+        
+        // Create two sample text files for uploading
+        sugar_file_put_contents($this->_testfile1, create_guid());
+        sugar_file_put_contents($this->_testfile2, create_guid());
 
         // Create a test contact and a test note
         $contact = new Contact();
@@ -53,6 +59,9 @@ class RestFileTest extends RestTestBase {
     
     public function tearDown()
     {
+        unlink($this->_testfile1);
+        unlink($this->_testfile2);
+        
         parent::tearDown();
 
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact_id}'");
@@ -138,7 +147,7 @@ class RestFileTest extends RestTestBase {
      * @group rest
      */
     public function testPostUploadFileToNote() {
-        $post = array('filename' => '@CORPLICENSE.txt');
+        $post = array('filename' => '@' . $this->_testfile1);
         $restReply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $post);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
         $this->assertNotEmpty($restReply['reply']['filename']['name'], 'File name returned empty');
@@ -154,9 +163,8 @@ class RestFileTest extends RestTestBase {
      * @group rest
      */
     public function testPutUploadFileToNote() {
-        $filename = 'CELICENSE.txt';
-        $params = array('filename' => $filename, 'type' => 'text/plain');
-        $restReply = $this->_restCallPut('Notes/' . $this->_note_id . '/file/filename', $params);
+        $params = array('filename' => $this->_testfile2, 'type' => 'text/plain');
+        $restReply = $this->_restCallFilePut('Notes/' . $this->_note_id . '/file/filename', $params);
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Reply is missing file name key');
         $this->assertNotEmpty($restReply['reply']['filename']['name'], 'File name returned empty');
 
@@ -203,41 +211,10 @@ class RestFileTest extends RestTestBase {
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
     }
-
-    protected function _restCallPut($urlPart, $args, $passInQueryString = true) {
-        // Auth check early to prevent work when not needed
-        if ( empty($this->authToken) ) {
-            $this->_restLogin();
-        }
-        
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v10/';
-        $filename = basename($args['filename']);
-        $url = $urlBase . $urlPart;
-        if ($passInQueryString) {
-            $conn = strpos('?', $url) === false ? '?' : '&';
-            $url .= $conn . 'filename=' . urlencode($filename);
-        }
-
-        $filedata = file_get_contents($args['filename']);
-
-        $auth = "oauth_token: $this->authToken\r\n";
-        $options = array(
-            'http' => array(
-                'method' => 'PUT',
-                'header' => "{$auth}Content-Type: $args[type]\r\nfilename: $filename\r\n",
-                'content' => $filedata,
-            ),
-        );
-
-        $context = stream_context_create($options);
-        $response = file_get_contents($url, false, $context);
-
-        return array('info' => array(), 'reply' => json_decode($response,true), 'replyRaw' => $response, 'error' => null);
-    }
     
     protected function _restCallNoAuthHeader($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v9/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
         $ch = curl_init($urlBase.$urlPart);
         if (!empty($postBody)) {
             if (empty($httpAction)) {
