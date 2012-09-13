@@ -27,22 +27,12 @@
      */
     toggleIncludeInForecast:function(model)
     {
-    	var self = this;
-        
-        var values = {};
-        values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
-		values["current_user"] = app.user.get('id');
-		values["isDirty"] = true;
-		
-		//If there is an id, add it to the URL
-        if(model.isNew())
-        {
-        	model.url = app.api.buildURL('ForecastWorksheets', 'create');
-        } else {
-        	model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":model.get('id')});
-        }
-        
-        model.set(values);
+        var self = this;
+        self._collection.url = self.url;
+        model.save(null, { success:_.bind(function() {
+        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
+        	this.render(); 
+        }, this)});
     },
 
     /**
@@ -305,23 +295,8 @@
         _.each(fields, function(field, key){
             var name = field.name;
             var fieldDef = { "sName": name, "aTargets": [ key ] };
-            if(typeof(field.type) != "undefined")
-            {
-                switch(field.type)
-                {
-                    case "bool":
-                        fieldDef["sSortDataType"] = "dom-checkbox";
-                        break;
-
-                    case "int":
-                    case "currency":
-                    case "decimal":
-                    case "float":
-                    case "numeric":
-                        fieldDef["sSortDataType"] = "dom-number";
-                        fieldDef["sType"] = "numeric";
-                        break;
-                }
+            if(typeof(field.type) != "undefined" && field.type == "bool"){
+            	fieldDef["sSortDataType"] = "dom-checkbox";
             }
             columnDefs.push(fieldDef);
             columnKeys[name] = key;
@@ -470,7 +445,6 @@
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
-        var includedWorst = 0;
         var overallAmount = 0;
         var overallBest = 0;
         var includedCount = 0;
@@ -484,7 +458,6 @@
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
                 'best_case' : includedBest,
-                'worst_case' : includedWorst,
                 'timeperiod_id' : self.timePeriod,
                 'lost_count' : lostCount,
                 'lost_amount' : lostAmount,
@@ -506,79 +479,63 @@
 
             var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
             var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
-            // entered amount
             var amount = parseFloat(model.get('amount'));
-            // base rate
-            var base_rate = parseFloat(model.get('base_rate'));
-            // calculated base amount
-            var amount_base = amount * base_rate;
             var included = model.get('forecast');
             var best = parseFloat(model.get('best_case'));
-            var worst = parseFloat(model.get('worst_case'));
-            // calculated base amount
-            var best_base = best * base_rate;
-            var worst_base = worst * base_rate;
 
-            // all totals are in base rate
             if(won)
             {
-                wonAmount += amount_base;
+                wonAmount += amount;
                 wonCount++;
             } else if(lost) {
-                lostAmount += amount_base;
+                lostAmount += amount;
                 lostCount++;
             }
 
             if(included == true || included == 1) {
-                includedAmount += amount_base;
-                includedBest += best_base;
-                includedWorst += worst_base;
+                includedAmount += amount;
+                includedBest += best;
                 includedCount++;
             }
 
-            overallAmount += amount_base;
-            overallBest += best_base;
-
+            overallAmount += amount;
+            overallBest += best;
         });
 
         //Now see if we need to add the expected opportunity amounts
         if(this.context.forecasts.forecastschedule.models)
         {
-            _.each(this.context.forecasts.forecastschedule.models, function(model) {
+           _.each(this.context.forecasts.forecastschedule.models, function(model) {
                if(model.get('status') == 'Active')
                {
                     var amount = model.get('expected_amount');
                     var best = model.get('expected_best_case');
-                    var worst = model.get('expected_worst_case');
 
-                   var base_rate = parseFloat(model.get('base_rate'));
-                   var amount_base = amount * base_rate;
-                   var best_base = best * base_rate;
-                   var worst_base = worst * base_rate;
-
-                   //Check for null condition and, if so, set to 0
-                   amount_base = amount_base != null ? amount_base : 0;
-                   best_base = best_base != null ? best_base : 0;
+                    //Check for null condition and, if so, set to 0
+                    amount = amount != null ? parseFloat(amount) : 0;
+                    best = best != null ? parseFloat(best) : 0;
 
                     if(model.get('include_expected') == 1)
                     {
-                        includedAmount += amount_base;
-                        includedBest += best_base;
-                        includedWorst += worst_base;
+                        includedAmount += amount;
+                        includedBest += best;
                     }
 
-                    overallAmount += amount_base;
-                    overallBest += best_base;
-
+                    overallAmount += amount;
+                    overallBest += best;
                }
            });
         }
 
+        includedAmount = app.currency.formatAmountLocale(includedAmount);
+        includedBest = app.currency.formatAmountLocale(includedBest);
+        overallAmount = app.currency.formatAmountLocale(overallAmount);
+        overallBest = app.currency.formatAmountLocale(overallBest);
+
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
-            includedCount : includedCount,
-            includedWorst : includedWorst
+            includedCount : includedCount
         });
         self.includedModel.change();
 
@@ -590,7 +547,6 @@
 
         var totals = {
             'best_case' : includedBest,
-            'worst_case' : includedWorst,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,
             'lost_amount' : lostAmount,
