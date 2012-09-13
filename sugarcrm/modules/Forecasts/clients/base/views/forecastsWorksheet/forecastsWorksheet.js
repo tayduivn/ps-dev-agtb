@@ -27,12 +27,22 @@
      */
     toggleIncludeInForecast:function(model)
     {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() {
-        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
-        	this.render(); 
-        }, this)});
+    	var self = this;
+        
+        var values = {};
+        values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
+		values["current_user"] = app.user.get('id');
+		values["isDirty"] = true;
+		
+		//If there is an id, add it to the URL
+        if(model.isNew())
+        {
+        	model.url = app.api.buildURL('ForecastWorksheets', 'create');
+        } else {
+        	model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":model.get('id')});
+        }
+        
+        model.set(values);
     },
 
     /**
@@ -132,10 +142,21 @@
      */
     _renderField: function(field) {
 
+        if(field.name == "commit_stage")
+        {
+            //Set the field.def.optoins value based on app.config.buckets_dom (if set)
+            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            if(this.isEditableWorksheet)
+            {
+               field = this._setUpCommitStage(field);
+            }
+        }
+
+        /*
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
             field = this._setUpCommitStage(field);
         }
-
+        */
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -186,19 +207,57 @@
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.forecastschedule.on("change", function() {
-                this.calculateTotals();
-            }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-            	
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
-            		this.context.forecasts.worksheet.url = this.createURL();
-            		this.context.forecasts.worksheet.fetch();
+            		var model = this.context.forecasts.worksheet;
+            		model.url = this.createURL();
+            		this.safeFetch();
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
-            	
             }, this);
+            var worksheet = this;
+            $(window).bind("beforeunload",function(){
+            	worksheet.safeFetch();
+            });
         }
+    },
+    
+    /**
+     * This function checks to see if the worksheet is dirty, and gives the user the option
+     * of saving their work before the sheet is fetched.
+     */
+    safeFetch: function(){
+    	var collection = this._collection; 
+    	var self = this;
+    	if(collection.isDirty){
+    		//unsaved changes, ask if you want to save.
+    		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
+    			_.each(collection.models, function(model, index){
+					var isDirty = model.get("isDirty");
+					if(typeof(isDirty) == "boolean" && isDirty ){
+        				model.set({draft: 1}, {silent:true});
+        				model.save();
+        				model.set({isDirty: false}, {silent:true});
+        			}  
+				});
+    			collection.isDirty = false;
+				$.when(!collection.isDirty).then(function(){
+	    			self.context.forecasts.set({reloadCommitButton: true});
+	    			collection.fetch();
+    		});
+			
+		}
+    		else{
+    			//ignore, fetch still
+    			collection.isDirty = false;
+    			self.context.forecasts.set({reloadCommitButton: true});
+    			collection.fetch();
+    		}
+    	}
+    	else{
+    		//no changes, fetch like normal.
+    		collection.fetch();	
+    	}    	
     },
 
     _setForecastColumn: function(fields) {
@@ -207,15 +266,16 @@
 
         _.each(fields, function(field) {
             if (field.name == "forecast") {
-                field.enabled = !app.config.show_buckets;
+                field.enabled = (app.config.show_buckets == 0);
                 forecastField = field;
             } else if (field.name == "commit_stage") {
-                field.enabled = app.config.show_buckets;
+                field.enabled = (app.config.show_buckets == 1);
                 field.view = self.isEditableWorksheet ? 'edit' : 'default';
                 commitStageField = field;
             }
         });
-        return app.config.show_buckets?forecastField:commitStageField;
+
+        return (app.config.show_buckets == 1) ? forecastField : commitStageField;
     },
 
     /**
@@ -223,7 +283,8 @@
      */
     _render: function() {
         var self = this;
-
+        var enableCommit = false;
+        
         if(!this.showMe()){
         	return false;
         }
@@ -244,8 +305,23 @@
         _.each(fields, function(field, key){
             var name = field.name;
             var fieldDef = { "sName": name, "aTargets": [ key ] };
-            if(typeof(field.type) != "undefined" && field.type == "bool"){
-            	fieldDef["sSortDataType"] = "dom-checkbox";
+            if(typeof(field.type) != "undefined")
+            {
+                switch(field.type)
+                {
+                    case "bool":
+                        fieldDef["sSortDataType"] = "dom-checkbox";
+                        break;
+
+                    case "int":
+                    case "currency":
+                    case "decimal":
+                    case "float":
+                    case "numeric":
+                        fieldDef["sSortDataType"] = "dom-number";
+                        fieldDef["sType"] = "numeric";
+                        break;
+                }
             }
             columnDefs.push(fieldDef);
             columnKeys[name] = key;
@@ -270,6 +346,9 @@
             });
         }
 
+        //Remove all events that may be associated with forecastschedule view
+        this.context.forecasts.forecastschedule.off();
+        this.context.forecasts.forecastschedule.on("change", function() { this.calculateTotals(); }, this);
         //Create the view for expected opportunities
         var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
         var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
@@ -280,7 +359,20 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-
+        
+        //see if anything in the model is a draft version
+        _.each(this._collection.models, function(model, index){
+        	if(model.get("version") == 0){
+        		enableCommit = true;
+        	}
+        });
+        if(enableCommit){
+        	self.context.forecasts.set({commitButtonEnabled: true});
+        }
+        else{
+        	self.context.forecasts.set({commitButtonEnabled: false});
+        }
+        
         this.calculateTotals();
         this.createSubViews();
         this.includedView.render();
@@ -378,6 +470,7 @@
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
+        var includedWorst = 0;
         var overallAmount = 0;
         var overallBest = 0;
         var includedCount = 0;
@@ -391,6 +484,7 @@
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
                 'best_case' : includedBest,
+                'worst_case' : includedWorst,
                 'timeperiod_id' : self.timePeriod,
                 'lost_count' : lostCount,
                 'lost_amount' : lostAmount,
@@ -412,50 +506,70 @@
 
             var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
             var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
+            // entered amount
             var amount = parseFloat(model.get('amount'));
+            // base rate
+            var base_rate = parseFloat(model.get('base_rate'));
+            // calculated base amount
+            var amount_base = amount * base_rate;
             var included = model.get('forecast');
             var best = parseFloat(model.get('best_case'));
+            var worst = parseFloat(model.get('worst_case'));
+            // calculated base amount
+            var best_base = best * base_rate;
+            var worst_base = worst * base_rate;
 
+            // all totals are in base rate
             if(won)
             {
-                wonAmount += amount;
+                wonAmount += amount_base;
                 wonCount++;
             } else if(lost) {
-                lostAmount += amount;
+                lostAmount += amount_base;
                 lostCount++;
             }
 
             if(included == true || included == 1) {
-                includedAmount += amount;
-                includedBest += best;
+                includedAmount += amount_base;
+                includedBest += best_base;
+                includedWorst += worst_base;
                 includedCount++;
             }
 
-            overallAmount += amount;
-            overallBest += best;
+            overallAmount += amount_base;
+            overallBest += best_base;
+
         });
 
         //Now see if we need to add the expected opportunity amounts
         if(this.context.forecasts.forecastschedule.models)
         {
-           _.each(this.context.forecasts.forecastschedule.models, function(model) {
+            _.each(this.context.forecasts.forecastschedule.models, function(model) {
                if(model.get('status') == 'Active')
                {
                     var amount = model.get('expected_amount');
                     var best = model.get('expected_best_case');
+                    var worst = model.get('expected_worst_case');
 
-                    //Check for null condition and, if so, set to 0
-                    amount = amount != null ? parseFloat(amount) : 0;
-                    best = best != null ? parseFloat(best) : 0;
+                   var base_rate = parseFloat(model.get('base_rate'));
+                   var amount_base = amount * base_rate;
+                   var best_base = best * base_rate;
+                   var worst_base = worst * base_rate;
+
+                   //Check for null condition and, if so, set to 0
+                   amount_base = amount_base != null ? amount_base : 0;
+                   best_base = best_base != null ? best_base : 0;
 
                     if(model.get('include_expected') == 1)
                     {
-                        includedAmount += amount;
-                        includedBest += best;
+                        includedAmount += amount_base;
+                        includedBest += best_base;
+                        includedWorst += worst_base;
                     }
 
-                    overallAmount += amount;
-                    overallBest += best;
+                    overallAmount += amount_base;
+                    overallBest += best_base;
+
                }
            });
         }
@@ -463,7 +577,8 @@
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
-            includedCount : includedCount
+            includedCount : includedCount,
+            includedWorst : includedWorst
         });
         self.includedModel.change();
 
@@ -475,6 +590,7 @@
 
         var totals = {
             'best_case' : includedBest,
+            'worst_case' : includedWorst,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,
             'lost_amount' : lostAmount,
@@ -500,7 +616,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this._collection.fetch();
+        this.safeFetch();
     },
 
     /**
@@ -510,11 +626,41 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
-        if (app.config.show_buckets) { // buckets
-             // TODO:  this.
+        var self = this;
+
+        if (app.config.show_buckets == 1) { // buckets
+
+             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+             $.fn.dataTableExt.afnFiltering.push (
+                    function(oSettings, aData, iDataIndex)
+                    {
+                        var editable = self.isMyWorksheet();
+                        var returnVal = null;
+                        //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
+                        var selectVal = editable ? $(aData[0]).find("select").attr("value") : $(aData[0]).text().trim();
+
+                        if(editable && (typeof(selectVal) != "undefined" && _.contains(params, selectVal)))
+                        {
+                            returnVal = selectVal;
+                        } else if(!editable) {
+                            //Get the array for the bucket stages
+                            var buckets_dom = app.lang.getAppListStrings(app.config.buckets_dom || 'commit_stage_dom');
+                            _.each(params, function(filter)
+                            {
+                                if(buckets_dom[filter] == selectVal)
+                                {
+                                   returnVal = selectVal;
+                                   return;
+                                }
+                            });
+                        }
+
+                        return returnVal;
+                    }
+                );
         } else {  // not buckets
             // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(_.first(params) == "70") {
+            if(_.first(params) == "1") {//committed
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
@@ -531,13 +677,9 @@
                         }
                         //initial load still has html here, or it is a dropdown.
                         else{
-                            var selectVal = jVal.find("select").attr("value");
                             var checkboxVal = jVal.find("input").attr("checked");
 
-                            if(typeof(selectVal) != "undefined" && selectVal == 100){
-                                returnVal = selectVal;
-                            }
-                            else if(typeof(checkboxVal) != "undefined"){
+                            if(typeof(checkboxVal) != "undefined"){
                                 returnVal = 1;
                             }
                         }
@@ -546,6 +688,7 @@
                     }
                 );
             } else {
+                //pipeline
                 //Remove the filters
                 $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
             }
@@ -564,7 +707,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this._collection.fetch();
+        this.safeFetch();
     },
 
     /**

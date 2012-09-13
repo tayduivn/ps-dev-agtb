@@ -449,7 +449,7 @@ class SugarSearchEngineFullIndexer implements RunnableSchedulerJob
                 $admin->saveSetting('info', 'fts_index_done', 1);
             }
 
-            $GLOBALS['log']->fatal("FTS Indexing completed with the following statistcis: " . var_export($stats, TRUE));
+            $GLOBALS['log']->fatal("FTS Indexing completed with the following statistics: " . var_export($stats, TRUE));
         }
 
         return TRUE;

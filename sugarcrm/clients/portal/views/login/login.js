@@ -27,6 +27,17 @@
         if (!SUGAR.App.api.isAuthenticated()) {
             $(".navbar").hide();
         }
+        /**
+         * Added browser version check for MSIE since we are dropping support
+         * for MSIE 8.0 for portal in Sugar 6.6  (Bug56031)
+         */
+        if (!this._isSupportedBrowser()) {
+            app.alert.show('unsupported_browser', {
+                level:'warning',
+                title: '',
+                messages: new Handlebars.SafeString(app.lang.getAppString('WARN_BROWSER_VERSION_WARNING'))
+            });
+        }
         return this;
     },
     login: function() {
@@ -52,7 +63,7 @@
             });
         }
     },
-    submitOnEnter: function(e) {
+    submitOnEnter: function(event) {
         if (event.which == 13 || event.keyCode == 13) {
             this.$('input,select').blur();
             this.login();
@@ -61,6 +72,26 @@
     signup : function() {
         app.router.navigate('#signup');
         app.router.start();
+    },
+    /**
+     * Taken from sugar_3. returns true if the users browser is recognized
+     * @return {Boolean}
+     * @private
+     */
+    _isSupportedBrowser:function () {
+        var supportedBrowsers = {
+            msie:{min:9, max:10},
+            safari:{min:500},
+            mozilla:{min:13},
+            chrome:{min:500}
+        };
+        for (var b in supportedBrowsers) {
+            if ($.browser[b]) {
+                var current = parseInt($.browser.version);
+                var supported = supportedBrowsers[b];
+                return current >= supported.min && (!supported.max || current <= supported.max);
+            }
+        }
     },
     _metadata : {
         _hash: '',

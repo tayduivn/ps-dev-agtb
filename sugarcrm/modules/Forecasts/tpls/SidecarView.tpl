@@ -64,25 +64,25 @@
 
 <script id="included_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
-    <th>{{formatNumber includedAmount}}</th>
-    <th>{{formatNumber includedBest}}</th>
+    <th>{{formatCurrency includedAmount "-99"}}</th>
+    <th>{{formatCurrency includedBest "-99"}}</th>
 </script>
 
 <script id="overall_template" type="text/x-handlebars-template">
     <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
-    <th>{{formatNumber overallAmount}}</th>
-    <th>{{formatNumber overallBest}}</th>
+    <th>{{formatCurrency overallAmount "-99"}}</th>
+    <th>{{formatCurrency overallBest "-99"}}</th>
 </script>
 
 <script id="overall_manager_template" type="text/x-handlebars-template">
     <tr>
-        <td>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</td>
-        <td>{{formatNumber amount}}</td>
-        <td>{{formatNumber quota}}</td>
-        <td>{{formatNumber best_case}}</td>
-        <td>{{formatNumber best_adjusted}}</td>
-        <td>{{formatNumber likely_case}}</td>
-        <td>{{formatNumber likely_adjusted}}</td>
+        <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
+        <td>{{formatCurrency amount "-99"}}</td>
+        <td>{{formatCurrency quota "-99"}}</td>
+        <td>{{formatCurrency likely_case "-99"}}</td>
+        <td>{{formatCurrency likely_adjusted "-99"}}</td>
+        <td>{{formatCurrency best_case "-99"}}</td>
+        <td>{{formatCurrency best_adjusted "-99"}}</td>
     </tr>
 </script>
 {/literal}
@@ -146,12 +146,6 @@
 
     //Call initForecast with the session id as token
     var App = SUGAR.App.forecasts.initForecast({/literal}'{$token}'{literal});
-
-    // should already be logged in to sugar, don't need to log in to sidecar.
-    // TODO: we will need to remove this when we get the OAuth stuff working...
-    App.api.isAuthenticated = function() {
-        return true;
-    };
 
     App.api.debug = App.config.debugSugarApi;
 </script>

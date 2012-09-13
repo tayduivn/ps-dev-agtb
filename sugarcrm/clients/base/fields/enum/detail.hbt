@@ -1,3 +1,7 @@
+{{#if this.def.isMultiSelect}}
+{{this.value}}
+{{else}}
 {{#eachOptions def.options}}
-{{#has this.key ../value}}{{value}}{{/has}}
+{{#has this.key ../value}}{{this.value}}{{/has}}
 {{/eachOptions}}
+{{/if}}
