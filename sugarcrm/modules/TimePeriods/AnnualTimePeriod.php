@@ -61,7 +61,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         if(is_null($start_date)) {
             $start_date = $timedate->asUserDate($timedate->getNow());
         }
-
+        //TODO change to using db date, not user date for timezone issues
         $end_date = $timedate->fromUserDate($start_date);
 
         //set the start/end date
@@ -102,6 +102,21 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         $this->load_relationship('related_timeperiods');
 
         return $this->related_timeperiods;
+    }
+
+    /**
+     * creates a new AnnualTimePeriod to start to use
+     *
+     * @return AnnualTimePeriod
+     */
+    public function createNextTimePeriod() {
+        $timedate = TimeDate::getInstance();
+        $nextStartDate = $timedate->fromUserDate($this->end_date);
+        $nextStartDate = $nextStartDate->modify('+1 day');
+        $nextPeriod = new AnnualTimePeriod($timedate->asUserDate($nextStartDate));
+        $nextPeriod->save();
+
+        return $nextPeriod;
     }
 
     /**

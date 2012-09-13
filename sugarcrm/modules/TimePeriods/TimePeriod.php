@@ -62,7 +62,7 @@ class TimePeriod extends SugarBean {
 	
 	var $new_schema = true;
 
-	function TimePeriod() {
+	function __construct() {
 		parent::SugarBean();
 		$this->disable_row_level_security =true;
 	}
@@ -159,6 +159,7 @@ class TimePeriod extends SugarBean {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromUserDate($this->end_date);
         $nextStartDate = $nextStartDate->modify('+1 day');
+        $nextPeriod = BeanFactory::newBean()
         $nextPeriod = new AnnualTimePeriod($timedate->asUserDate($nextStartDate));
         $nextPeriod->save();
 

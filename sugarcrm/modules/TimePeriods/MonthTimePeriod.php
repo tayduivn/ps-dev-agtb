@@ -139,7 +139,8 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
             return;
         }
 
-        switch($timePeriodType) {
+        switch($timePeriodType) {//todo exception for making further leaves
+
             case "Weekly":
                 break;
 
