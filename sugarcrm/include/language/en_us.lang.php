@@ -2879,6 +2879,7 @@ $app_strings = array (
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
     'LNK_HELP' => 'Help',
     'LNK_CREATE' => 'Create',
+    'LNK_CREATE_WHEN_EMPTY' => 'Create a record now.',
     'LNK_LIST_END' => 'End',
     'LNK_LIST_NEXT' => 'Next',
     'LNK_LIST_PREVIOUS' => 'Previous',

@@ -60,6 +60,7 @@ $mod_strings = array (
   'LBL_RELEASE' => 'Release:',
   'LNK_NEW_BUG' => 'Report Bug',
   'LNK_CREATE'  => 'Report Bug',
+  'LNK_CREATE_WHEN_EMPTY'    => 'Report a Bug now.',
   'LNK_BUG_LIST' => 'View Bugs',
   'LBL_SHOW_MORE' => 'Show More Bugs',
   'NTC_REMOVE_INVITEE' => 'Are you sure you want to remove this contact from the bug?',

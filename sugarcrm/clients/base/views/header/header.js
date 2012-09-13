@@ -29,7 +29,6 @@
         self.setCreateTasksList();
         self.setCurrentUserName();
         app.view.View.prototype._renderHtml.call(self);
-
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
         this.$('.search-query').searchahead({
@@ -58,7 +57,16 @@
 
         app.api.search(params, {
             success:function(data) {
-                data.module_list = app.metadata.getModuleNames(true);
+                // Bug56381: Fix-up the strings and hide KBs since Portal users can't create those kinds of records
+                data.module_list = [];
+                var module_list = app.metadata.getModuleNames(true);
+                _.each(module_list, function(loadedModule) {
+                    if(loadedModule !== "KBDocuments"){  // Hide KBDocuments from create menu from Portal user
+                        if(app.acl.hasAccess('create', loadedModule)) {
+                            data.module_list.push(loadedModule);
+                        }
+                    }
+                });
                 plugin.provide(data);
             },
             error:function(error) {

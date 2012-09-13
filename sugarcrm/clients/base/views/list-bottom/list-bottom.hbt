@@ -8,7 +8,17 @@
     {{/notEq}}
 {{else}}
     <div class="block-footer">
-        {{#if context._dataFetched}}{{str "LBL_LISTVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
+        {{#if context._dataFetched}}
+            {{#if context.attributes.isCreateEnabled}}
+                <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="{{str "LNK_CREATE" module}}">
+                    {{str "LBL_LISTVIEW_NO_RECORDS"}} {{str "LNK_CREATE_WHEN_EMPTY" module}}
+                </a>
+            {{else}}
+                {{str "LBL_LISTVIEW_NO_RECORDS"}}
+            {{/if}}
+        {{else}}
+            {{str "LBL_LOADING"}}
+        {{/if}}
     </div>
 {{/if}}
 <ul class="nav nav-pills actions">

@@ -78,6 +78,7 @@ $mod_strings = array (
 	'LNK_CASE_LIST'						=> 'View Cases',
     'LNK_NEW_CASE'						=> 'Create Case',
     'LNK_CREATE'                        => 'Create Case',
+    'LNK_CREATE_WHEN_EMPTY'             => 'Create a Case now.',
 	'NTC_REMOVE_FROM_BUG_CONFIRMATION'	=> 'Are you sure you want to remove this case from the bug?',
 	'NTC_REMOVE_INVITEE'				=> 'Are you sure you want to remove this contact from the case?',
 	'LBL_LIST_DATE_CREATED'			=> 'Date Created',
