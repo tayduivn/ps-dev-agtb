@@ -289,6 +289,13 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'reportable'=>false,
     'comment' => 'Currency of the product'
   ),
+  'base_rate' =>
+  array (
+    'name' => 'base_rate',
+    'vname' => 'LBL_CURRENCY_RATE',
+    'type' => 'double',
+    'required' => true,
+  ),
   'status' =>
   array (
     'name' => 'status',
@@ -482,6 +489,36 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
         'type' => 'currency',
         'len' => '26,6',
     ),
+    'date_closed' =>
+  array (
+    'name' => 'date_closed',
+    'vname' => 'LBL_DATE_CLOSED',
+    'type' => 'date',
+    'audited'=>true,
+    'comment' => 'Expected or actual date the oppportunity will close',
+	'importable' => 'required',
+    'required' => true,
+    'enable_range_search' => true,
+    'options' => 'date_range_search_dom',
+  ),
+   'date_closed_timestamp' =>
+  array (
+    'name' => 'date_closed_timestamp',
+    'vname' => 'LBL_DATE_CLOSED',
+    'type' => 'int',
+    'required' => true,
+    'enable_range_search' => true,
+    'studio' => false
+  ),
+  'commit_stage' =>
+  array (
+    'name' => 'commit_stage',
+    'vname' => 'LBL_COMMIT_STAGE',
+    'type' => 'enum',
+    'options' => 'commit_stage_dom',
+    'len' => '20',
+    'comment' => 'Forecast commit category: Include, Likely, Omit etc.',
+  ),
 //END SUGARCRM flav=ent ONLY
   'related_products' =>
   array (
@@ -551,14 +588,12 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'comment' => 'Manufacturer Name'
   ),
 //BEGIN SUGARCRM flav=ent ONLY
-'expert_id' =>
+'assigned_user_id' =>
     array (
-    'name' => 'expert_id',
-    'vname' => 'LBL_EXPERT_ID',
-    'type' => 'enum',
-    'function' => 'get_expert_array',
-    'dbType' => 'varchar',
-),
+        'name' => 'assigned_user_id',
+        'vname' => 'LBL_ASSIGNED_USER_ID',
+        'type' => 'id',
+    ),
 'opportunity_id' =>
 array (
   'name' => 'opportunity_id',
@@ -602,14 +637,6 @@ array (
     'dbType' => 'decimal',
     'type' => 'currency',
     'len' => '26,6',
-),
-'forecast' =>
-array (
-    'name' => 'forecast',
-    'vname' => 'LBL_FORECAST',
-    'type' => 'bool',
-    'default' => '-1',
-    'comment' => 'Boolean indicating whether or not record should be included in forecast'
 ),
 //END SUGARCRM flav=ent ONLY
   'type_name' =>
@@ -720,6 +747,7 @@ array (
 )
  , 'indices' => array (
        array('name' =>'idx_products', 'type'=>'index', 'fields'=>array('name','deleted')),
+       array('name' =>'idx_user_dateclosed_timestamp', 'type'=>'index', 'fields' => array('assigned_user_id', 'date_closed_timestamp'))
        )
 
 , 'relationships' => array (
@@ -748,8 +776,14 @@ array (
    array('lhs_module'=> 'Users', 'lhs_table'=> 'users', 'lhs_key' => 'id',
    'rhs_module'=> 'Products', 'rhs_table'=> 'products', 'rhs_key' => 'created_by',
    'relationship_type'=>'one-to-many')
-
+	
+	//BEGIN SUGARCRM flav=pro ONLY
+	,'products_worksheet' =>
+   array('lhs_module'=> 'Products', 'lhs_table'=> 'products', 'lhs_key' => 'id',
+   'rhs_module'=> 'Worksheet', 'rhs_table'=> 'worksheet', 'rhs_key' => 'related_id',
+   'relationship_type'=>'one-to-many'),
 	)
+	//END SUGARCRM flav=pro ONLY
 );
 
 VardefManager::createVardef('Products','Product', array('default',
