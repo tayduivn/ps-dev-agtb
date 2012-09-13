@@ -85,8 +85,8 @@
       var self = this;
 
       self.collection.bind(
-        'reset', 
-        function(model) 
+        'reset',
+        function(model)
         {
           d3.select(self.el)
             .datum( model.models.map( function(d,i){return d.attributes} )[0] )
@@ -97,7 +97,7 @@
 
     render: function() {
       this.$el.empty();
-      
+
       var chartData = this.collection.models.map( function(d,i){return d.attributes} )[0];
 
       this.chart = nv.models.multiBarChart()
@@ -107,8 +107,8 @@
             //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
             //.colorData( 'class' )
             .colorData( 'default' )
-            //.colorFill( 'gradient' )
-            .colorFill( 'default' )
+            .colorFill( 'gradient' )
+            //.colorFill( 'default' )
         ;
 
       d3.select(this.el)

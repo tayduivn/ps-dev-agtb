@@ -1,7 +1,6 @@
 var forecast_data_Q2 = {
   'properties': {
     'title': 'Forecasting for Q2 2012',
-    'key': 'Chart Data',
     'quota': 200,
     'labels': [
       {group: 1, l: "Mark Gibson"},
