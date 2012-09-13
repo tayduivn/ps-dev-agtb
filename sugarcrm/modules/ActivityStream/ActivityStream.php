@@ -89,7 +89,6 @@ class ActivityStream extends SugarBean {
         $sql .= "(".implode(",", array_keys($values)).") ";
         $sql .= "VALUES(".implode(",", $values).")";
         return $this->db->query($sql,true) ? $id : false;
-
     }
 
     /**
@@ -209,27 +208,15 @@ class ActivityStream extends SugarBean {
      * @return bool query result
      */
     protected function addActivity($bean, $activityType, $activityData = array()) {
-        global $current_user, $dictionary;
-        $fieldDefs = $dictionary['ActivityStream']['fields'];
-
-        // TODO: Replace this with $bean->save().
-
-        $activityValues = array();
-        $id = create_guid();
-        $activityValues['id'] = $GLOBALS['db']->massageValue($id, $fieldDefs['id']);
-        $activityValues['target_id']= $GLOBALS['db']->massageValue($bean->id, $fieldDefs['target_id']);
-        $activityValues['target_module']= $GLOBALS['db']->massageValue($bean->module_name, $fieldDefs['target_module']);
-        $activityData = json_encode($activityData);
-        $activityValues['activity_type'] = $this->db->massageValue($activityType, $fieldDefs['activity_type']);
-        $activityValues['activity_data'] = $this->db->massageValue($activityData, $fieldDefs['activity_data']);
-        $activityValues['date_created'] = $GLOBALS['db']->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-        $activityValues['created_by'] = $GLOBALS['db']->massageValue($current_user->id, $fieldDefs['created_by']);
-
-        $sql = "INSERT INTO ".$this->getTableName();
-        $sql .= "(".implode(",", array_keys($activityValues)).") ";
-        $sql .= "VALUES(".implode(",", $activityValues).")";
-        $this->updateLastActivityDate($bean, $activityValues['date_created']);
-        return $GLOBALS['db']->query($sql) ? $id : false;
+        global $current_user;
+        $this->target_id = $bean->id;
+        $this->target_module = $bean->module_name;
+        $this->activity_data = json_encode($activityData);
+        $this->activity_type = $activityType;
+        $this->date_created = TimeDate::getInstance()->nowDb();
+        $this->created_by = $current_user->id;
+        $this->updateLastActivityDate($bean, $this->date_created);
+        return $this->save();
     }
 
     /**
@@ -238,34 +225,23 @@ class ActivityStream extends SugarBean {
      * @return string
      */
     protected function parseUrls($text) {
+        // TODO: evaluate http://oembed.com/ service
         // youtube videos
-        $text = preg_replace('~
-                https?://
-                (?:[0-9A-Z-]+\.)?
-                (?:
-                youtu\.be/
-                | youtube\.com
-                \S*
-                [^\w\-\s]
-                )
-                ([\w\-]{11})
-                (?=[^\w\-]|$)
-                (?!
-                [?=&+%\w]*
-                (?:
-                [\'"][^<>]*>
-                | </a>
-                )
-                )
-                [?=&+%\w-]*
-                ~ix',
+        $text = preg_replace(
+                '~https?://(?:[0-9A-Z-]+\.)?(?:youtu\.be/| youtube\.com\S*[^\w\-\s])([\w\-]{11})(?=[^\w\-]|$)(?![?=&+%\w]*(?:[\'"][^<>]*>| </a>))[?=&+%\w-]*~ix',
                 '<br/><iframe width="420" height="315" src="http://www.youtube.com/embed/$1?autoplay=1&cc_load_policy=1" frameborder="0" allowfullscreen></iframe><br/>',
                 $text);
         // images
-        $text = preg_replace('#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i', '<br/><img src="$1.$2" alt="$1.$2" /><br/>', $text);
+        $text = preg_replace(
+                '#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i', 
+                '<br/><img src="$1.$2" alt="$1.$2" /><br/>', 
+                $text);
         // other links
-        $text = trim(preg_replace('#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', '$1<a href="$2">$2</a>', ' '.$text));
-        return $text;
+        $text = preg_replace(
+                '#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', 
+                '$1<a href="$2">$2</a>', 
+                ' '.$text);
+        return trim($text);
     }
 
     /**
@@ -357,7 +333,7 @@ class ActivityStream extends SugarBean {
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];
-                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.deleted = 0 AND c.activity_id in ('".implode("','",$activityIds)."') AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.deleted = 0 AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
     
                     if(!empty($result)) {
@@ -420,7 +396,7 @@ class ActivityStream extends SugarBean {
      * @param $date
      */
     protected function updateLastActivityDate($bean, $date){
-        if($bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date=" . $date .  " WHERE id= '{$bean->id}''");
+        if($bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date='" . $date .  "' WHERE id= '{$bean->id}'");
     }
 
 }
