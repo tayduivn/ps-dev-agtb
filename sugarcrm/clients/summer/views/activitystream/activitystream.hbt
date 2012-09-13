@@ -19,7 +19,8 @@
   <h4 id="activitystream-header">Activity</h4>
   <div class="activitystream-post">
     <p>
-      <input type="text" value="" class="span12 sayit" placeholder="Type your post" dropzone="copy"><input type="submit" class="btn btn-primary addPost">
+      <div contenteditable="true" class="span12 sayit" dropzone="copy" />
+      <input type="submit" class="btn btn-primary addPost" />
     </p>
   </div>
   <div class="actions">
@@ -103,7 +104,7 @@
           {{#eq attributes.activity_type "posted"}}
           <a data-toggle="modal" data-module="ActivityStream" data-id="{{attributes.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord hide"><i class="icon-remove"></i></a>
           {{/eq}}
-          {{/eq}}        
+          {{/eq}}
         </div>
         <ul>
         </ul>
@@ -153,8 +154,8 @@
                   {{#eq ../collection.user_id this.created_by}}
                     <div class="actions hide">
                       <a data-toggle="modal" data-module="ActivityComments" data-id="{{this.id}}" href="#deleteRecord" class="btn btn-mini deleteRecord hide"><i class="icon-remove"></i></a>
-                    </div>  
-                  {{/eq}}                  
+                    </div>
+                  {{/eq}}
                 </li>
                 {{#if this._stophidden}}
                     </div>
@@ -173,9 +174,9 @@
                 <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
                 </p>
                 </div>
-             </li>                
+             </li>
          </ul>
-         {{else}}         
+         {{else}}
          <ul class="activitystream-comment hide">
              <li style="">
               <div class="control-group form-horizontal">
@@ -187,9 +188,9 @@
                 <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
                 </p>
               </div>
-             </li>          
+             </li>
          </ul>
-         {{/if}}    
+         {{/if}}
       </li>
       {{/each}}
     {{else}}
