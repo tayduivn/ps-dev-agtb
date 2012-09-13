@@ -416,12 +416,14 @@ class SugarView
             $ss->assign("CURRENT_USER_ID", $current_user->id);
 
             // get the last viewed records
+            // run through XSS filter to avoid bug 56373
             $tracker = new Tracker();
             $history = $tracker->get_recently_viewed($current_user->id);
             foreach ( $history as $key => $row ) {
-                $history[$key]['item_summary_short'] = getTrackerSubstring($row['item_summary']);
+                $history[$key]['item_summary_short'] = remove_xss(getTrackerSubstring($row['item_summary']));
                 $history[$key]['image'] = SugarThemeRegistry::current()
-                    ->getImage($row['module_name'],'border="0" align="absmiddle"',null,null,'.gif',$row['item_summary']);
+                    ->getImage($row['module_name'],'border="0" align="absmiddle"',null,null,'.gif',remove_xss($row['item_summary']));
+                $history[$key]['item_summary'] = remove_xss($row['item_summary']);
             }
             $ss->assign("recentRecords",$history);
         }
