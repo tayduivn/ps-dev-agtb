@@ -157,17 +157,30 @@
     addPost: function() {
         var self = this,
             myPost = this.$(".activitystream-post"),
-            myPostContents = myPost.find('div.sayit')[0].innerHTML,
+            myPostHTML = myPost.find('div.sayit'),
+            myPostTags = myPost.find('div.sayit span'),
             myPostId = this.context.get("modelId"),
             myPostModule = this.module,
-            myPostUrl = 'ActivityStream';
+            myPostUrl = 'ActivityStream',
+            myPostContents = '';
 
         if(myPostModule !== "ActivityStream") {
             myPostUrl += '/'+myPostModule;
             if(myPostId !== undefined) {
-                myPostUrl += '/'+myPostId;
+                myPostUrl += '/'+myPostId
             }
         }
+
+        $(myPostHTML).contents().each(function() {
+            if(this.nodeName == "#text") {
+                stuffs += this.data;
+            } else if(this.nodeName == "SPAN") {
+                var el = $(this);
+                el.find('a').remove();
+                var data = el.data();
+                stuffs += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
+            }
+        }).html();
 
         this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function(post_id) {
             myPost.find('.activitystream-pending-attachment').each(function(index, el) {
@@ -413,7 +426,7 @@
         var data = $(event.currentTarget).data();
 
         var tag = $("<span />").addClass("label").addClass("label-"+data.module).html(data.name + '<a class="close">×</a>');
-
+        tag.attr("data-id", data.id).attr("data-module", data.module);
         body.innerHTML = body.innerHTML.substring(0, lastIndex) + " " + tag[0].outerHTML + "&nbsp;";
         if(document.createRange) {
             var range = document.createRange();
