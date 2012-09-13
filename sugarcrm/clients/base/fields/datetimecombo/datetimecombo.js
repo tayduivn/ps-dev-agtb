@@ -13,6 +13,8 @@
             }
         });
     },
+    lastHourSelected: null,
+    lastMinuteSelected: null,
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
@@ -59,6 +61,7 @@
             value.hours = '12';
             d = new Date();
             d.setHours(12); 
+            d.setMinutes(0); 
             value.time = app.date.format(d, usersTimeFormatPreference);
             this.model.set(this.name, this.buildUnformatted(value.date, '00', value.minutes, value.amPm), {silent: true});
         }
@@ -67,6 +70,7 @@
 
     timeOptions:{  //TODO set this via a call to userPrefs in a overloaded initalize
         hours:[
+            {key: "", value: ""},
             {key: "00", value: "00"},
             {key: "01", value: "01"},
             {key: "02", value: "02"},
@@ -90,10 +94,10 @@
             {key: "20", value: "20"},
             {key: "21", value: "21"},
             {key: "22", value: "22"},
-            {key: "23", value: "23"},
-            {key: "24", value: "24"}
+            {key: "23", value: "23"}
         ],
             minutes: [
+            {key: "", value: ""},
             {key: "00", value: "00"},
             {key: "15", value: "15"},
             {key: "30", value: "30"},
@@ -106,7 +110,7 @@
     },
     bindDomChange: function() {
         $('select').css({'width': 50});
-        var self  = this, date, model, fieldName, hour, minute, amPm, hr;
+        var self  = this, date, model, fieldName, hour, minute, amPm, hr, min;
         date      = this.$('input');
         model     = this.model;
         fieldName = this.name;
@@ -115,18 +119,36 @@
         amPm      = this.$('.date_time_ampm');
 
         date.on('change', function(ev) {
-            model.set(fieldName, self.buildUnformatted(date.val(), hour.val(), minute.val(), amPm.val()));
+            var timeObj;
+            // If user selects date but no hour/minutes selected yet, prepopulate with 12:00am
+            hr = self.patched12AmHour(amPm, hour);
+            timeObj = self.setIfNoTime(hr, minute.val());
+            model.set(fieldName, self.buildUnformatted(date.val(), timeObj.hour, timeObj.minutes, timeObj.amPm));
         });
         hour.on('change', function(ev) {
-            // If no date (display default set to none), user may select hrs, minutes, etc., so defaults to now date in this case
+            // If no date (display default set to none), user may select hrs, minutes, etc., so defaults to today's date 
             date.val(self.setIfNoDate(date.val()));
             hr = self.patched12AmHour(amPm, hour);
-            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()));
+            // if user attempts to select first "blank" option, set back to previous hour selected
+            hr = hr ? hr : self.lastHourSelected; 
+            self.lastHourSelected = hr;
+
+            // if selecting hour and no minutes yet put a default value to make it meaningful
+            min  = minute.val() ? minute.val() : '00'; 
+
+            // Force trigger since internally 00/12 are both represented as 00 so won't always trigger
+            model.set(fieldName, self.buildUnformatted(date.val(), hr, min, amPm.val()), {silent: true});
+            model.trigger('change:'+fieldName);
         });
         minute.on('change', function(ev) {
             date.val(self.setIfNoDate(date.val()));
+            // if selecting minutes and no hours yet put a default value to make it meaningful
+            hr = hour.val() ? hour.val() : '00';
             hr = self.patched12AmHour(amPm, hour);
-            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()));
+            min  = minute.val() ? minute.val() : self.lastMinuteSelected;
+            self.lastMinuteSelected = min;
+            model.set(fieldName, self.buildUnformatted(date.val(), hr, min, amPm.val()), {silent: true});
+            model.trigger('change:'+fieldName);
         });
         amPm.on('change', function(ev) {
             var isWrongAmPm = false;
@@ -155,6 +177,17 @@
         return this.unformat(d + ' ' + h + ':' + m + ':00' +':'+ amPm);
     },
     
+    // Checks if h and/or m are falsy, if so, sets to '00'
+    setIfNoTime: function(h, m) {
+        var o = {};
+        // Essentially, if we have no time parts, we're going to default to 12:00am
+        if(!h && !m) {
+            o.amPm = 'am';
+        }
+        o.hour = h ? h : '00'; // will downstream turn to 12am but internally needs to be 00 ;=)
+        o.minutes = m ? m : '00';
+        return o;
+    },
     // Checks if dateToCheck is falsy .. if so returns today date formatted by user's prefs
     setIfNoDate: function(dateToCheck) {
         var usersDateFormatPreference = app.user.get('datepref');
