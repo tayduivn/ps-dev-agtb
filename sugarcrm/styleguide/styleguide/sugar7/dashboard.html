@@ -27,12 +27,10 @@
     <div class="navbar-inner">
       <div class="container-fluid">
           <ul class="nav">
-              <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-              <li class="active"><a href="accounts.html">Accounts</a></li>
+              <li class="active"><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+              <li><a href="accounts.html">Accounts</a></li>
               <li><a href="contacts.html">Contacts</a></li>
-              <li><a href="opportunity.html">Opportunities</a></li>
-              <li><a href="forecast.html">Forecasts</a></li>
-              <li><a href="leads.html">Leads</a></li>
+              <li><a href="opportunities.html">Opportunities</a></li>
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
                 <ul class="dropdown-menu">
@@ -70,9 +68,9 @@
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
                 <ul class="dropdown-menu quick">
-                  <li><a href="create_account.html">Create Account</a></li>
-                  <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
-                  <li><a href="create.html">Create Opportunity</a></li>
+                  <li><a href="">item</a></li>
+                  <li><a href="">item</a></li>
+                  <li><a href="">item</a></li>
                 </ul>
               </li>              
             </ul>
@@ -106,7 +104,7 @@
   <div class="container-fluid" id="contentflex">
     <div class="row-fluid">
       <div class="span8" id="headerbar">
-        <h1>Accounts</h1>
+        <h1>My Dashboard</h1>
         <div class="btn-toolbar pull-right dropdown">
           <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
             <a href="#" data-toggle="dropdown" class="btn btn-invisible"><i class="icon-cog"></i></a>
@@ -131,7 +129,7 @@
                 <p>
                   <a href="profile_skhan.html">Sabra Khan</a> added <a href="#file1" data-toggle="tab">screenshot_766.png</a> file to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
-                  <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
+                  <date class="date"><i class="icon-plus-sign icon-added"></i> 1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                 </p>
                 <ul class="commented">
                   <li>
@@ -179,7 +177,7 @@
                 <p>
                   <a href="profile_skhan.html">Jim Atlas</a> added email to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
-                  <date class="date">about 1 minute ago on 3/12/2012 at 3:00 pm EST</date>
+                  <date class="date"><i class="icon-plus-sign icon-added"></i> about 1 minute ago on 3/12/2012 at 3:00 pm EST</date>
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
@@ -194,7 +192,7 @@
                 <p>
                   <a href="profile_skhan.html">Uriah Welcome</a> added <a href="detail_bug.html" data-toggle="tab">Page link is not redirecting</a> bug.
                   <br>
-                  <date class="date">1 hour ago on 3/12/2012 at 2:00 pm EST</date>
+                  <date class="date"><i class="icon-plus-sign icon-added"></i> 1 hour ago on 3/12/2012 at 2:00 pm EST</date>
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
@@ -207,9 +205,9 @@
                   <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  <a href="profile_skhan.html">Sabra Khan</a> updated phone, url, and email in the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <a href="profile_skhan.html">Sabra Khan</a> updated <a href="" rel="tooltip" data-title="From: this<br>To: that">phone</a>, <a href="" rel="tooltip" data-title="From: this<br>To: that">url</a>, and <a href="" rel="tooltip" data-title="From: this<br>To: that">email</a> in the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
-                  <date class="date">1 hour ago on 3/12/2012at 2:00 pm EST</date>
+                  <date class="date"><i class="icon-ok-sign icon-updated"></i> 1 hour ago on 3/12/2012at 2:00 pm EST</date>
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
@@ -222,9 +220,9 @@
                   <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  <a href="profile_skhan.html">Sabra Khan</a> added the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <a href="profile_skhan.html">Sabra Khan</a> updated <a href="" rel="tooltip" data-title="From: this<br>To: that">email</a> the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
-                  <date class="date">2 hours ago on 3/12/2012 at 1:00 pm EST</date>
+                  <date class="date"><i class="icon-ok-sign icon-updated"></i> 2 hours ago on 3/12/2012 at 1:00 pm EST</date>
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
@@ -485,19 +483,24 @@
       </div>
       <footer>
         <div class="row-fluid">
-          <div class="span6">
-            <a href="" class="logo">SugarCRM</a> 
-          </div>        
+          <div class="span6"><a href="" class="logo">SugarCRM</a></div>
           <div class="span6">
             <div class="btn-toolbar pull-right">
-              <div class="btn-group">
-                <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn"><i class="icon-road"></i> Tour</a>
-                <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn"><i class="icon-comment"></i> Feedback</a> 
-                <a data-toggle="modal" title="Support" href="#systemSupport" class="btn"><i class="icon-question-sign"></i> Support</a>
-              </div>
-              <div class="btn-group">
-                <a href="#" class="btn"><i class="icon-print"></i> Print</a> <a href="#" class="btn"><i class="icon-arrow-up"></i> Top</a>
-              </div>
+                <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+                <span class="dropdown dropup">
+                  <a href="#" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-calendar"></i> To Do <b class="caret"></b></a>
+                  <ul class="dropdown-menu">
+                    <li><strong>Item</strong></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Item</a></li>
+                    <li><a href="#">Item</a></li>
+                    <li><a href="#">Item</a></li>
+                    <li class="divider"></li>
+                    <li><a href="#">Item</a></li>
+                  </ul>
+                </span>
+                <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a> 
+                <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
             </div>
           </div>
         </div>
@@ -750,33 +753,14 @@
         </div>
       </div>
       <!-- dynamic generation -->
-      <div class="modal hide" id="noteModal">
+      <div class="modal span10 hide" id="createAccount">
         <div class="modal-header">
           <a class="close" data-dismiss="modal">×</a>
-          <h3>Add a Note</h3>
+          <h3>Add a Account</h3>
         </div>
         <div class="modal-body">
-          <form class="form-horizontal">
-            <fieldset>
-              <div class="control-group">
-                <label for="input01" class="control-label">Subject:</label>
-                <div class="controls">
-                  <input type="text" id="input01" class="input-xlarge">
-                </div>
-              </div>
-              <div class="control-group">
-                <label for="select01" class="control-label">Note:</label>
-                <div class="controls">
-                  <textarea class="input-xlarge"></textarea>
-                </div>
-              </div> 
-              <div class="control-group">
-                <label for="select01" class="control-label">Attachement:</label>
-                <div class="controls">
-                  <input type="file">
-                </div>
-              </div> 
-              <div class="hide">                          
+          <form class="form-horizontal row-fluid">
+            <fieldset class="span5">             
               <div class="control-group">
                 <label for="select01" class="control-label">Contact:</label>
                 <div class="controls">
@@ -789,23 +773,6 @@
                   <option value="pk">+ Create a user</option> 
                   
                 </select>  
-                </div>
-              </div>
-              <div class="control-group">
-                <label for="select01" class="control-label">Related to:</label>
-                <div class="controls">
-                  <select data-placeholder="Choose a module..." class="chzn-select" tabindex="2">
-                    <option value="pk" selected="selected">Account</option> 
-                    <option value="pk">Contact</option> 
-                    <option value="pk">Opportunity</option>                     
-                  </select>
-                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
-                    <option value="pk" selected="selected">Perkin Kleiners</option> 
-                    <option value="pk">Underwater Mining Inc.</option> 
-                    <option value="pk">Weyland</option> 
-                    <option value="pk">+ Create an account</option> 
-                    
-                  </select>
                 </div>
               </div>
               <div class="control-group">
@@ -833,35 +800,56 @@
                   </select>
                 </div>
                 </div>
-              </div>          
+            </fieldset>
+            <div class="span1"> </div>
+            <fieldset class="span5">             
+              <div class="control-group">
+                <label for="select01" class="control-label">Contact:</label>
+                <div class="controls">
+                
+                <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                  <option value="pk"></option>
+                  <option value="pk">Administrator</option> 
+                  <option value="pk">Majed Itani</option> 
+                  <option value="pk">Uriah Welcome</option>
+                  <option value="pk">+ Create a user</option> 
+                  
+                </select>  
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Assigned to:</label>
+                <div class="controls">
+                
+                  <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                    <option value="pk"></option>
+                    <option value="pk">Administrator</option> 
+                    <option value="pk">Majed Itani</option> 
+                    <option value="pk">Uriah Welcome</option> 
+                    <option value="pk">+ Create a user</option> 
+                  </select>  
+                  </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Teams:</label>
+                <div class="controls">
+                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2" multiple>
+                    <option value="pk">Global</option> 
+                    <option value="pk" selected="selected">East</option> 
+                    <option value="pk">West</option>
+                    <option value="pk">North</option>
+                    <option value="pk">South</option> 
+                  </select>
+                </div>
+                </div>
             </fieldset>
           </form>
         </div>
         <div class="modal-footer">
+          <button class="btn btn-link btn-invisible cancel" data-dismiss="modal">Cancel</button>
           <a href="index.html" data-loading-text="Saving..." class="btn loading btn-primary">
             Save
           </a>
-          <button class="btn cancel" data-dismiss="modal">Cancel</button>
-        </div>
-      </div>
-      <!-- dynamic generation -->
-      <div class="modal hide" id="oppModal">
-        <div class="modal-header">
-          <a class="close" data-dismiss="modal">×</a>
-          <h3>Add a Opportunity</h3>
-        </div>
-        <div class="modal-body">
-          <form class="form-horizontal">
-            <fieldset>
-          
-            </fieldset>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <a href="index.html" data-loading-text="Saving..." class="btn loading btn-primary">
-            Save
-          </a>
-          <button class="btn cancel" data-dismiss="modal">Cancel</button>
         </div>
       </div>
 
