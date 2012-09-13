@@ -26,7 +26,7 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
     ),
     'Accounts' =>array(
         'required' => true,
-        'contactRelateField' => "account_name",
+        'contactRelateField' => 'account_name',
         'fieldMapping' => array(
             //account field => lead field
             'name' => 'account_name',
