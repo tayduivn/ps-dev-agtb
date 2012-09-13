@@ -76,6 +76,7 @@ class RestTestListFTS extends RestTestBase {
         foreach($this->files AS $file) {
             unlink($file);
         }
+        $GLOBALS['db']->commit();
     }
 
     public function testModuleSearch() {
@@ -110,7 +111,9 @@ class RestTestListFTS extends RestTestBase {
             
             $this->search_engine->indexBean($account, FALSE);
         }
-
+        
+        $GLOBALS['db']->commit();
+        
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
 
@@ -215,6 +218,8 @@ class RestTestListFTS extends RestTestBase {
             $this->search_engine->indexBean($opportunity, false);            
         }
 
+        $GLOBALS['db']->commit();
+        
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
         

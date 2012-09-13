@@ -29,6 +29,7 @@
     	this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
 
+
         _.bindAll(this);
 
         // Check to see if we need to make a related activity stream.

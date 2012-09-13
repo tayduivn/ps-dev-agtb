@@ -63,6 +63,7 @@ class RestTestPortalCreate extends RestTestBase
 
         // relate
         $this->contact->accounts->add($account->id);
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()

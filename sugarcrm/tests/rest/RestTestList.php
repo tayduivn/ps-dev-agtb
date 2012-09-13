@@ -99,6 +99,7 @@ class RestTestList extends RestTestBase {
         foreach($this->files AS $file) {
             unlink($file);
         }
+        $GLOBALS['db']->commit();
     }
 
     public function testModuleSearch() {
@@ -128,10 +129,10 @@ class RestTestList extends RestTestBase {
                 $fav->save();
             }
         }
+        $GLOBALS['db']->commit();
 
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
-
         $this->assertEquals(30,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
 
         // Test Offset
@@ -201,7 +202,7 @@ class RestTestList extends RestTestBase {
         $bug->description = $bug->name;
         $bug->save();
         $this->bugs[] = $bug;
-        
+        $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Bugs?q=" . rawurlencode("UNIT TEST"));
         $tmp = array_keys($restReply['reply']['records']);
         $this->assertTrue(!empty($restReply['reply']['records'][$tmp[0]]['description']), "Description not filled out");
@@ -235,7 +236,7 @@ class RestTestList extends RestTestBase {
                 $fav->save();
             }
         }
-
+        $GLOBALS['db']->commit();
         // Test searching for a lot of records
         $restReply = $this->_restCall("Cases/?q=".rawurlencode("UNIT TEST")."&max_num=30");
 
@@ -383,7 +384,8 @@ class RestTestList extends RestTestBase {
             }
         }
 
-
+        $GLOBALS['db']->commit();
+        
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
 
@@ -418,7 +420,7 @@ class RestTestList extends RestTestBase {
                                  'Second record is not lower than the first, ascending order failed.');
 
         // Test Favorites
-        $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10");
+        $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10&fields=name");
         $this->assertEquals(18,count($restReply['reply']['records']));
 
         // Test My Items
