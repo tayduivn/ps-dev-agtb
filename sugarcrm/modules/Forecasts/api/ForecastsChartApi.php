@@ -220,7 +220,7 @@ class ForecastsChartApi extends ChartApi
             // apply the adjusted values to the chart data
             foreach($dataArray['values'] as $key => $value) {
                 // don't overwrite if we get 0's back for the one we are replacing.
-                if(isset($adjusted_values[$value['label']])) {
+                if(isset($adjusted_values[$value['label']]) && array_sum($value['values']) != 0) {
                     $adj_value = $adjusted_values[$value['label']][$this->managerAdjustedField];
 
                     // if we don't have a forecast for this person set the value to 0
@@ -251,7 +251,7 @@ class ForecastsChartApi extends ChartApi
         }
 
         if(isset($args['group_by'])) {
-            if($args['group_by'] == "forecast")
+            if($args['group_by'] == "forecast" && isset($dataArray['label'][0]))
             {
                 // fix the labels
                 $dataArray['label'][0] = ($dataArray['label'][0] == 0) ? $forecast_strings['LBL_CHART_NOT_INCLUDED'] : $forecast_strings['LBL_CHART_INCLUDED'];
@@ -488,8 +488,8 @@ class ForecastsChartApi extends ChartApi
             default:
                 $this->managerAdjustedField = 'likely_adjusted';
                 $this->goalParetoLabel = 'Likely';
-                $rb->addSummaryColumn('likely_case', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
-                $rb->setChartColumn('likely_case');
+                $rb->addSummaryColumn('amount', $rb->getDefaultModule(), null, array('group_function' => 'sum'));
+                $rb->setChartColumn('amount');
                 break;
 
         }

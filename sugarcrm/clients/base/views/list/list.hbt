@@ -5,7 +5,7 @@
                             {{#each fields}}
                             <th class="{{#isSortable ../../module this}}sorting{{#eq ../../../collection.orderBy.columnName name}}{{{../../../../orderBy.direction}}}{{/eq}} orderBy{{name}}{{/isSortable}}"
                                 role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                                {{str label ../../module}}
+                                {{field ../../this null "list-header"}}
                             </th>
                             {{/each}}
                         </tr>

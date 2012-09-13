@@ -94,26 +94,26 @@ class MetadataApi extends SugarApi {
         }
 
         // Default the type filter to everything
-        $this->typeFilter = array('modules','fullModuleList','fields','viewTemplates','labels','modStrings','appStrings','appListStrings','acl','moduleList', 'views', 'layouts','relationships');
-        if ( !empty($args['typeFilter']) ) {
+        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','acl','module_list', 'views', 'layouts','relationships');
+        if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
-            $types = explode(",", $args['typeFilter']);
+            $types = explode(",", $args['type_filter']);
             if ($types != false) {
                 $this->typeFilter = $types;
             }
         }
 
         $moduleFilter = array();
-        if (!empty($args['moduleFilter'])) {
+        if (!empty($args['module_filter'])) {
             // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
-            $modules = str_getcsv($args['moduleFilter'],',','');
+            $modules = str_getcsv($args['module_filter'],',','');
             if ( $modules != false ) {
                 $moduleFilter = $modules;
             }
         }
 
         $onlyHash = false;
-        if (!empty($args['onlyHash']) && ($args['onlyHash'] == 'true' || $args['onlyHash'] == '1')) {
+        if (!empty($args['only_hash']) && ($args['only_hash'] == 'true' || $args['only_hash'] == '1')) {
             $onlyHash = true;
         }
 
@@ -151,8 +151,8 @@ class MetadataApi extends SugarApi {
         if (empty($hash))
             generateETagHeader($data['_hash']);
 
-        $baseChunks = array('viewTemplates','fields','appStrings','appListStrings','moduleList', 'views', 'layouts', 'fullModuleList','relationships');
-        $perModuleChunks = array('modules','modStrings','acl');
+        $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships');
+        $perModuleChunks = array('modules','mod_strings','acl');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
@@ -176,7 +176,7 @@ class MetadataApi extends SugarApi {
             foreach($admin->settings AS $setting_name => $setting_value) {
                 if(stristr($setting_name, $prefix)) {
                     $key = str_replace($prefix, '', $setting_name);
-                    $configs[$key] = json_decode(html_entity_decode($setting_value));
+                    $configs[$key] = json_decode(html_entity_decode($setting_value)) ? json_decode(html_entity_decode($setting_value)) : $setting_value;
                 }
             }
         }
@@ -191,9 +191,9 @@ class MetadataApi extends SugarApi {
         // Default the type filter to everything available to the public, no module info at this time
         $this->typeFilter = array('fields','viewTemplates','appStrings','views', 'layouts', 'config', 'modules');
 
-        if ( !empty($args['typeFilter']) ) {
+        if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
-            $types = explode(",", $args['typeFilter']);
+            $types = explode(",", $args['type_filter']);
             if ($types != false) {
                 $this->typeFilter = $types;
             }
@@ -201,7 +201,7 @@ class MetadataApi extends SugarApi {
 
         $onlyHash = false;
 
-        if (!empty($args['onlyHash']) && ($args['onlyHash'] == 'true' || $args['onlyHash'] == '1')) {
+        if (!empty($args['only_hash']) && ($args['only_hash'] == 'true' || $args['only_hash'] == '1')) {
             $onlyHash = true;
         }
 
@@ -228,15 +228,15 @@ class MetadataApi extends SugarApi {
         $data['fields']  = $mm->getSugarClientFiles('field');
         $data['views']   = $mm->getSugarClientFiles('view');
         $data['layouts'] = $mm->getSugarLayouts();
-        $data['viewTemplates'] = $mm->getViewTemplates();
-        $data['appStrings'] = $mm->getAppStrings();
-        $data['appListStrings'] = $app_list_strings_public;
+        $data['view_templates'] = $mm->getViewTemplates();
+        $data['app_strings'] = $mm->getAppStrings();
+        $data['app_list_strings'] = $app_list_strings_public;
         $data['config'] = $configs;
         $data['modules'] = array(
             "Login" => array("fields" => array()));
         $data["_hash"] = md5(serialize($data));
 
-        $baseChunks = array('viewTemplates','fields','appStrings','views', 'layouts', 'config', 'modules');
+        $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
     }
@@ -256,37 +256,37 @@ class MetadataApi extends SugarApi {
         }
 
 
-        $data['moduleList'] = $mm->getModuleList($this->platforms[0]);
-        $data['fullModuleList'] = $data['moduleList'];
-        foreach($data['moduleList'] as $module) {
+        $data['module_list'] = $mm->getModuleList($this->platforms[0]);
+        $data['full_module_list'] = $data['module_list'];
+        foreach($data['module_list'] as $module) {
             $bean = BeanFactory::newBean($module);
             if (isset($data['modules'][$module]['fields'])) {
                 $fields = $data['modules'][$module]['fields'];
                 foreach($fields as $fieldName => $fieldDef) {
                     if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
-                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['fullModuleList'])) {
-                            $data['fullModuleList'][$fieldDef['module']] = $fieldDef['module'];
+                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
+                            $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
                         }
                     } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
                         $bean->load_relationship($fieldDef['name']);
                         $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                        $data['fullModuleList'][$otherSide] = $otherSide;
+                        $data['full_module_list'][$otherSide] = $otherSide;
                     }
                 }
             }
         }
 
         foreach($data['modules'] as $moduleName => $moduleDef) {
-            if (!array_key_exists($moduleName, $data['fullModuleList']) && array_key_exists($moduleName, $data['modules'])) {
+            if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
             }
         }
 
-        $data['modStrings'] = array();
+        $data['mod_strings'] = array();
         foreach ($data['modules'] as $modName => $moduleDef) {
             $modData = $mm->getModuleStrings($modName);
-            $data['modStrings'][$modName] = $modData;
-            $data['modStrings'][$modName]['_hash'] = md5(serialize($data['modStrings'][$modName]));
+            $data['mod_strings'][$modName] = $modData;
+            $data['mod_strings'][$modName]['_hash'] = md5(serialize($data['mod_strings'][$modName]));
         }
 
         $data['acl'] = array();
@@ -301,6 +301,27 @@ class MetadataApi extends SugarApi {
                 $data['acl'][$modName]['import'] = 'no';
                 $data['acl'][$modName]['export'] = 'no';
                 $data['acl'][$modName]['massupdate'] = 'no';
+            }
+        }
+
+        // populate available system currencies
+        $data['currencies'] = array();
+        require_once('modules/Currencies/ListCurrency.php');
+        $lcurrency = new ListCurrency();
+        $lcurrency->lookupCurrencies();
+        if(!empty($lcurrency->list))
+        {
+            foreach($lcurrency->list as $current)
+            {
+                $currency = array();
+                $currency['name'] = $current->name;
+                $currency['iso'] = $current->iso4217;
+                $currency['status'] = $current->status;
+                $currency['symbol'] = $current->symbol;
+                $currency['rate'] = $current->conversion_rate;
+                $currency['date_entered'] = $current->date_entered;
+                $currency['date_modified'] = $current->date_modified;
+                $data['currencies'][$current->id] = $currency;
             }
         }
 
@@ -323,9 +344,9 @@ class MetadataApi extends SugarApi {
         $tabs = $controller->get_tabs_system();
 
         if (isset($tabs[1])) {
-            foreach($data['moduleList'] as $moduleKey => $moduleName){
+            foreach($data['module_list'] as $moduleKey => $moduleName){
                 if (in_array($moduleName,$tabs[1])) {
-                    unset($data['moduleList'][$moduleKey]);
+                    unset($data['module_list'][$moduleKey]);
                 }
             }
         }
@@ -333,9 +354,9 @@ class MetadataApi extends SugarApi {
         $data['fields']  = $mm->getSugarClientFiles('field');
         $data['views']   = $mm->getSugarClientFiles('view');
         $data['layouts'] = $mm->getSugarClientFiles('layout');
-        $data['viewTemplates'] = $mm->getViewTemplates();
-        $data['appStrings'] = $mm->getAppStrings();
-        $data['appListStrings'] = $mm->getAppListStrings();
+        $data['view_templates'] = $mm->getViewTemplates();
+        $data['app_strings'] = $mm->getAppStrings();
+        $data['app_list_strings'] = $mm->getAppListStrings();
         $data['relationships'] = $mm->getRelationshipData();
         $hash = md5(serialize($data));
         $data["_hash"] = $hash;

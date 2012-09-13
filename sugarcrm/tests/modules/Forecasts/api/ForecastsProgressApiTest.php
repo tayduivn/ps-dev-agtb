@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -44,8 +45,10 @@ class ForecastsProgressApiTest extends RestTestBase
 
     public static function setupBeforeClass()
     {
-        global $app_list_strings;
-        $app_list_strings = return_app_list_strings_language('en_us');
+        parent::setUpBeforeClass();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         $forecastConfig = array (
             'show_buckets' => false,
@@ -62,21 +65,18 @@ class ForecastsProgressApiTest extends RestTestBase
 
     public function setUp()
     {
-        global $app_list_strings;
-        $app_list_strings = return_app_list_strings_language('en_us');
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
-
+        parent::setUp();
         //create manager and a sales rep to report to the manager
         self::$manager = SugarTestUserUtilities::createAnonymousUser();
+        self::$manager->is_admin = 1;
         self::$manager->save();
 
         self::$user = SugarTestUserUtilities::createAnonymousUser();
         self::$user->reports_to_id = self::$manager->id;
+        self::$user->is_admin = 1;
         self::$user->save();
 
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
-        $GLOBALS['current_user'] = self::$user;
         //give the rep a Quota
         self::$quota = SugarTestQuotaUtilities::createQuota(50000);
         self::$quota->user_id = self::$user->id;
@@ -126,7 +126,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->probability = '100';
         $opp->amount = '20000';
         $opp->best_case = '20000';
-        $opp->likely_case = '18000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Closed Won';
         $opp->timeperiod_id = self::$timeperiod->id;
@@ -137,7 +136,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->assigned_user_id = self::$user->id;
         $opp->probability = '80';
         $opp->best_case = '10000';
-        $opp->likely_case = '9000';
         $opp->worst_case = '7000';
         $opp->sales_stage = 'Negotiation/Review';
         $opp->timeperiod_id = self::$timeperiod->id;
@@ -149,7 +147,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->probability = '80';
         $opp->amount = '30000';
         $opp->best_case = '30000';
-        $opp->likely_case = '27000';
         $opp->worst_case = '23000';
         $opp->sales_stage = 'Closed Won';
         $opp->timeperiod_id = self::$timeperiod->id;
@@ -161,7 +158,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->probability = '100';
         $opp->amount = '20000';
         $opp->best_case = '20000';
-        $opp->likely_case = '18000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Closed Won';
         $opp->timeperiod_id = self::$timeperiod->id;
@@ -202,8 +198,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $repWorksheet->worst_case = 65000;
         $repWorksheet->forecast = 1;
         $repWorksheet->save();
-
-        parent::setUp();
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()
@@ -214,7 +209,11 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-        parent::tearDown();
+    }
+
+    public static function tearDownAfterClass()
+    {
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -236,12 +235,8 @@ class ForecastsProgressApiTest extends RestTestBase
      */
     public function testManagerProgress() {
         $url = 'Forecasts/progressManager?user_id=' . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id;
-
         $restResponse = $this->_restCall($url);
-
         $restReply = $restResponse['reply'];
-
-        //check quotas section
         $this->assertEquals(70000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
         $this->assertEquals(3, $restReply['opportunities'], "opportunity count did not match");
     }

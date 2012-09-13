@@ -73,7 +73,8 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($grid->client, 'Client was not set');
         $this->assertEquals(MB_WIRELESS, $grid->client, 'Client was not properly set');
     }
-
+    
+    //BEGIN SUGARCRM flav=ent ONLY
     public function testPortalLayoutDoesNotIncludeInvalidFields() {
         $list = new Bug54939TestListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
         $list->changeFieldType('resolution', 'iframe');
@@ -97,7 +98,8 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
         $available = $grid->isAvailableFieldName('work_log', $fields);
         $this->assertTrue($available, 'Work Log is showing as not available');
     }
-
+    //END SUGARCRM flav=ent ONLY
+    
     public function testMobileLayoutDoesIncludeInvalidPortalFields() {
         $list = new Bug54939TestListParser(MB_WIRELESSLISTVIEW, 'Cases', '', MB_WIRELESS);
         $list->changeFieldType('description', 'iframe');

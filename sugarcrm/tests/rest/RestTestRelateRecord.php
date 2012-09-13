@@ -98,7 +98,7 @@ class RestTestRelateRecord extends RestTestBase {
             foreach ( $contactNums as $contactNum ) {
                 $opp->load_relationship('contacts');
                 $contact_type = $cts[($contactNum%$ctsCount)];
-                $this->contacts[$contactNum]->contact_role = $contact_type;
+                $this->contacts[$contactNum]->opportunity_role = $contact_type;
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
@@ -108,7 +108,7 @@ class RestTestRelateRecord extends RestTestBase {
         
         $this->assertEquals($this->contacts[0]->id,$restReply['reply']['id'],"Did not fetch the related contact");
         $this->assertNotEmpty($restReply['reply']['opportunity_role'],"The role field on the Opportunity -> Contact relationship was not populated.");
-        $this->assertEquals($this->contacts[0]->contact_role, $restReply['reply']['opportunity_role'],"The role field on the Opportunity -> Contact relationship does not match the bean.");
+        $this->assertEquals($this->contacts[0]->opportunity_role, $restReply['reply']['opportunity_role'],"The role field on the Opportunity -> Contact relationship does not match the bean.");
 
         // Test fetch where the opp id is not there
         $restReply = $this->_restCall("Opportunities/UNIT_TEST_THIS_IS_NOT_A_REAL_ID/link/contacts/".$this->contacts[0]->id);
@@ -151,7 +151,7 @@ class RestTestRelateRecord extends RestTestBase {
             foreach ( $contactNums as $contactNum ) {
                 $opp->load_relationship('contacts');
                 $contact_type = $cts[($contactNum%$ctsCount)];
-                $this->contacts[$contactNum]->contact_role = $contact_type;
+                $this->contacts[$contactNum]->opportunity_role = $contact_type;
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
@@ -198,7 +198,7 @@ class RestTestRelateRecord extends RestTestBase {
             $this->contacts[] = $contact;
 
             $contact_type = $cts[($i%$ctsCount)];
-            $this->contacts[$i]->contact_role = $contact_type;
+            $this->contacts[$i]->opportunity_role = $contact_type;
         }
         for ( $i = 0 ; $i < 1 ; $i++ ) {
             $opp = new Opportunity();
@@ -212,7 +212,7 @@ class RestTestRelateRecord extends RestTestBase {
             $contactNums = array(0,1);
             $opp->load_relationship('contacts');
             foreach ( $contactNums as $contactNum ) {
-                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->contact_role));
+                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->opportunity_role));
             }
 
         }
@@ -285,7 +285,7 @@ class RestTestRelateRecord extends RestTestBase {
             $this->contacts[] = $contact;
 
             $contact_type = $cts[($i%$ctsCount)];
-            $this->contacts[$i]->contact_role = $contact_type;
+            $this->contacts[$i]->opportunity_role = $contact_type;
         }
         for ( $i = 0 ; $i < 1 ; $i++ ) {
             $opp = new Opportunity();
@@ -299,28 +299,26 @@ class RestTestRelateRecord extends RestTestBase {
             $contactNums = array(0,1);
             $opp->load_relationship('contacts');
             foreach ( $contactNums as $contactNum ) {
-                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->contact_role));
+                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->opportunity_role));
             }
 
         }
 
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
                                       json_encode(array(
-                                                      'contact_role'=>'Primary Decision Maker',
+                                                      'opportunity_role'=>'Primary Decision Maker',
                                                       'last_name'=>"Test O Chango",
                                       )),'PUT');
 
         $this->assertTrue(!empty($restReply['reply']['related_record']['date_entered']), "Date Entered was not set in the Update related record reply");
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['related_record']['id'],"Changed the related ID when it shouldn't have");
         $this->assertEquals("Test O Chango",$restReply['reply']['related_record']['last_name'],"Did not change the related contact");
-        // FIXME: Need to wait for this to be repaired in link2.php
-        // $this->assertEquals($this->contacts[1]->contact_role,$restReply['reply']['related_record']['contact_role'],"Did not fetch the related contact's role");
 
-        
         $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[1]->id."'");
         
         $row = $db->fetchByAssoc($ret);
         $this->assertEquals('Primary Decision Maker',$row['contact_role'],"Did not set the related contact's role");
+        $this->assertEquals('Primary Decision Maker',$restReply['reply']['related_record']['opportunity_role'],"Did not set the related contact's role");
         
     }
 
@@ -342,7 +340,7 @@ class RestTestRelateRecord extends RestTestBase {
             $this->contacts[] = $contact;
 
             $contact_type = $cts[($i%$ctsCount)];
-            $this->contacts[$i]->contact_role = $contact_type;
+            $this->contacts[$i]->opportunity_role = $contact_type;
         }
         for ( $i = 0 ; $i < 1 ; $i++ ) {
             $opp = new Opportunity();
@@ -354,20 +352,19 @@ class RestTestRelateRecord extends RestTestBase {
             $this->opps[] = $opp;
         }
 
-        $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
-                                      json_encode(array(
-                                                      'contact_role'=>$this->contacts[1]->contact_role,
-                                      )),'POST');
+        $restReply = $this->_restCall("Opportunities/" . $this->opps[0]->id . "/link/contacts/" . $this->contacts[1]->id,
+            json_encode(array(
+                'contact_role' => $this->contacts[1]->opportunity_role,
+            )), 'POST');
 
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['related_record']['id'],"Did not link the related contact");
-        // FIXME: Need to wait for this to be repaired in link2.php
-        // $this->assertEquals($this->contacts[1]->contact_role,$restReply['reply']['related_record']['contact_role'],"Did not fetch the related contact's role");
+        $this->assertEquals($this->contacts[1]->opportunity_role,$restReply['reply']['related_record']['opportunity_role'],"Did not fetch the related contact's role");
 
         
         $ret = $db->query("SELECT * FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND contact_id = '".$this->contacts[1]->id."'");
         
         $row = $db->fetchByAssoc($ret);
-        $this->assertEquals($this->contacts[1]->contact_role,$row['contact_role'],"Did not set the related contact's role");
+        $this->assertEquals($this->contacts[1]->opportunity_role,$row['contact_role'],"Did not set the related contact's role");
         
     }
 
@@ -389,7 +386,7 @@ class RestTestRelateRecord extends RestTestBase {
             $this->contacts[] = $contact;
 
             $contact_type = $cts[($i%$ctsCount)];
-            $this->contacts[$i]->contact_role = $contact_type;
+            $this->contacts[$i]->opportunity_role = $contact_type;
         }
         for ( $i = 0 ; $i < 1 ; $i++ ) {
             $opp = new Opportunity();
@@ -403,7 +400,7 @@ class RestTestRelateRecord extends RestTestBase {
             $contactNums = array(0,1);
             $opp->load_relationship('contacts');
             foreach ( $contactNums as $contactNum ) {
-                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->contact_role));
+                $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$this->contacts[$contactNum]->opportunity_role));
             }
 
         }

@@ -57,7 +57,7 @@ class Bug38100Test extends SOAPTestCase
     	require_once('modules/Reports/SavedReport.php');
     	//$savedReportId = $GLOBALS['db']->getOne("SELECT id FROM saved_reports WHERE deleted=0");
 
-        $results = $GLOBALS['db']->query("SELECT id FROM saved_reports WHERE deleted=0");
+        $results = $GLOBALS['db']->query("SELECT id FROM saved_reports WHERE deleted=0 AND content IS NOT NULL");
         while(($row = $GLOBALS['db']->fetchByAssoc($results)) != null)
         {
             $savedReportId = $row['id'];

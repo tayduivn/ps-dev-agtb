@@ -57,7 +57,7 @@ class ViewPortalConfig extends SugarView
 	function display() 
 	{
         $portalFields = array('appStatus'=>'offline', 'logoURL'=>
-        '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5', 'maxSearchQueryResult'=>'10', 'defaultUser'=>'');
+        '', 'maxQueryResult'=>'20', 'fieldsToDisplay'=>'5', 'maxSearchQueryResult'=>'5', 'defaultUser'=>'');
         $userList = get_user_array();
         $userList[''] = '';
         require_once("modules/MySettings/TabController.php");

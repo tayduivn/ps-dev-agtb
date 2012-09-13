@@ -15838,6 +15838,7 @@ $jit.Sunburst.Plot.NodeTypes.implement({
 	          ctx.arc(xpos, ypos, acum + .01, begin, end, false);
 	          ctx.arc(xpos, ypos, acum + dimi+4 + .01, end, begin, true);    
 	          ctx.fill();
+                  ctx.fillStyle = ctx.strokeStyle = colori;
 	          
 	          if(gradient && dimi) {
 	            var radialGradient = ctx.createRadialGradient(xpos, ypos, acum + config.sliceOffset,

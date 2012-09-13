@@ -260,6 +260,23 @@ echo $theProductName."&#8482; ".$mod_strings['LBL_AND']." Sugar&#8482; ".$mod_st
 <LI><?php echo $mod_strings['LBL_SOURCE_PHPJS']; ?> (<a href="http://phpjs.org/" target="_blank">http://phpjs.org/</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_PHPSQL']; ?> (<a href="http://code.google.com/p/php-sql-parser/" target="_blank">http://code.google.com/p/php-sql-parser/</a>)</LI>
 <LI><?php echo $mod_strings['LBL_SOURCE_HTMLPURIFIER']; ?> (<a href="http://htmlpurifier.org/" target="_blank">http://htmlpurifier.org/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_PHPEXCEL']; ?> (<a href="http://www.codeplex.com/PHPExcel" target="_blank">http://www.codeplex.com/PHPExcel</a>)</LI>
+//BEGIN SUGARCRM flav=PRO ONLY
+<LI><?php echo $mod_strings['LBL_SOURCE_JQUERY']; ?> (<a href="http://jquery.com/" target="_blank">http://jquery.com/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_PLACEHOLDER']; ?> (<a href="https://github.com/danielstocks/jQuery-Placeholder" target="_blank">https://github.com/danielstocks/jQuery-Placeholder</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_JQUERYUI']; ?> (<a href="https://github.com/jquery/jquery-ui" target="_blank">https://github.com/jquery/jquery-ui</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_LESSPHP']; ?> (<a href="http://leafo.net/lessphp/" target="_blank">http://leafo.net/lessphp/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_BACKBONE']; ?> (<a href="http://backbonejs.org/" target="_blank">http://backbonejs.org/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_CHOSEN']; ?> (<a href="http://harvesthq.github.com/chosen/" target="_blank">http://harvesthq.github.com/chosen/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_HANDLEBARS']; ?> (<a href="http://handlebarsjs.com/" target="_blank">http://handlebarsjs.com</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_JASMINE']; ?> (<a href="http://pivotal.github.com/jasmine/" target="_blank">http://pivotal.github.com/jasmine/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_JQUERY_IFRAME']; ?> (<a href="http://cmlenz.github.com/jquery-iframe-transport/" target="_blank">http://cmlenz.github.com/jquery-iframe-transport/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_SINON']; ?> (<a href="http://sinonjs.org/" target="_blank">http://sinonjs.org/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_STASH']; ?> (<a href="http://rezitech.github.com/stash/" target="_blank">http://rezitech.github.com/stash/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_BOOTSTRAP']; ?> (<a href="http://twitter.github.com/bootstrap/" target="_blank">http://twitter.github.com/bootstrap/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_ASYNC']; ?> (<a href="https://github.com/caolan/async/" target="_blank">https://github.com/caolan/async/</a>)</LI>
+<LI><?php echo $mod_strings['LBL_SOURCE_TIMEAGO']; ?> (<a href="https://github.com/rmm5t/jquery-timeago" target="_blank">https://github.com/rmm5t/jquery-timeago</a>)</LI>
+//END SUGARCRM flav=PRO ONLY
 </ul>
 
 //BEGIN SUGARCRM flav=PRO ONLY
