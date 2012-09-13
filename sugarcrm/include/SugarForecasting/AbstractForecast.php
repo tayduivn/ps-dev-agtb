@@ -31,6 +31,23 @@ require_once('include/SugarForecasting/AbstractForecastArgs.php');
 abstract class SugarForecasting_AbstractForecast extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastProcessInterface
 {
     /**
+     * Where we store the data we want to use
+     *
+     * @var array
+     */
+    protected $dataArray = array();
+
+    /**
+     * Return the data array
+     *
+     * @return array
+     */
+    public function getDataArray()
+    {
+        return $this->dataArray;
+    }
+
+    /**
      * Get the months for the current time period
      *
      * @param $timeperiod_id
