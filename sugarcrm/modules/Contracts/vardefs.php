@@ -121,7 +121,7 @@ $dictionary['Contract'] = array(
 
 		'account_id' => array (
 			'name' => 'account_id',
-			'vname' => 'LBL_ACCOUNT_NAME',
+			'vname' => 'LBL_ACCOUNT_ID',
 			'type' => 'id',
 			'audited' => true,
 			'reportable' => false,

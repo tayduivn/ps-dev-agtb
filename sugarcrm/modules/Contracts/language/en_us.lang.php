@@ -42,6 +42,7 @@ $mod_strings = array (
 	// vardef labels
 	'LBL_CONTRACT_NAME' => 'Contract Name:',
 	'LBL_REFERENCE_CODE' => 'Reference Code:',
+    'LBL_ACCOUNT_ID' => 'Account ID',
 	'LBL_ACCOUNT_NAME' => 'Account Name:',
 	'LBL_OPPORTUNITY' => 'Opportunity',
 	'LBL_START_DATE' => 'Start Date:',
