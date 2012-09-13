@@ -1,0 +1,11 @@
+<div class="subnav">
+    <div class="btn-toolbar pull-left">
+        <h1>Convert Lead: {{this.model.attributes.name}}</h1>
+    </div>
+    <div class="btn-toolbar pull-right">
+        <div class="btn-group">
+            <a class="btn" href="javascript:void(0)" name="cancel_button">Cancel</a>
+            <a class="btn btn-primary" href="javascript:void(0)" name="save_button">Convert Lead</a>
+        </div>
+    </div>
+</div>
