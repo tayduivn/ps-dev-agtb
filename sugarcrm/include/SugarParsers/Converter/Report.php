@@ -179,7 +179,7 @@ class SugarParsers_Converter_Report extends SugarParsers_Converter_AbstractConve
             $value = $value->getValue();
         }
 
-        if ($value instanceof SugarParsers_Filter_AbstractFilter && $value::isControlVariable()) {
+        if ($value instanceof SugarParsers_Filter_AbstractFilter && call_user_func(array($value,'isControlVariable'))) {        	
             if (!($value instanceOf SugarParsers_Filter_Not)) {
                 $this->controlStatement = $value->getOperator(true, $this->is_not);
             } else if ($value instanceof SugarParsers_Filter_Not) {
