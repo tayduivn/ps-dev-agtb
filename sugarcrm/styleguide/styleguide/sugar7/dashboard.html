@@ -26,35 +26,37 @@
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
-        <div class="row-fluid">
-          <div class="span7">
-            <ul class="nav">
-              <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>          
+          <ul class="nav">
+              <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+              <li class="active"><a href="accounts.html">Accounts</a></li>
+              <li><a href="contacts.html">Contacts</a></li>
+              <li><a href="opportunity.html">Opportunities</a></li>
+              <li><a href="forecast.html">Forecasts</a></li>
+              <li><a href="leads.html">Leads</a></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle mystuff" data-toggle="dropdown">Everything<b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                  <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Accounts</a></li>
-                  <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Contacts</a></li>
-                  <li id="gen22"><a href="index.php?module=Reports&amp;action=index" id="moduleTab_Reports">Opportunities</a></li>
+                  <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                  <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                  <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
                 </ul>
               </li>
             </ul>
-            <form class="navbar-search span12" action="">
-              <select data-placeholder="Add a filter..." class="search-query chzn-select filter" multiple tabindex="1">
-                  <option value="Favorites">Favorites</option>
-                  <option value="Activity">Activity</option>
-              </select>
-            </form>
-          </div>
-          <div class="span5">
             <ul class="nav pull-right">
               <li class="divider-vertical"></li>
               <li class="dropdown">
-                <a href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</a>
+                <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
+                <ul class="dropdown-menu">
+                  <li><a href="">System-wide maintenance &hellip;</a></li>
+                  <li class="divider"></li>
+                  <li><a href="">Upgrade to 7.0!</a></li>
+                  <li class="divider"></li>                       
+                  <li><a href="">Please take our survey.</a></li>
+                </ul>
               </li>
               <li class="divider-vertical"></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn avatar" class="avatar">skhan <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                   <li><a href="profile_skhan.html">Profile</a></li>
                   <li><a href="#">Password</a></li>
@@ -66,157 +68,174 @@
               </li>
               <li class="divider-vertical"></li>
               <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-white icon-md"></i> <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
                 <ul class="dropdown-menu quick">
-                  <li><a href="#">Create Account</a></li>
+                  <li><a href="create_account.html">Create Account</a></li>
                   <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
                   <li><a href="create.html">Create Opportunity</a></li>
-                  <li class="divider"></li>
-                  <li><a  data-toggle="modal" href="#taskModal">Add a task</a></li>
-                  <li><a href="#">Log Call</a></li>
-                  <li><a href="#">Schedule Meeting</a></li>
-                  <li><a href="#">Email</a></li>
                 </ul>
-              </li>
+              </li>              
             </ul>
+            <div id="searchForm">
+              <form class="navbar-search pull-right" action="">
+                <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+                <div class="advanced">
+                  <div class="btn-toolbar pull-right">
+                    <div class="btn-group">
+                      <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li class="title">Advanced Search:</li>
+                        <li class="divider"></li>
+                        <li><input type="checkbox"> Accounts</li>
+                        <li><input type="checkbox"> Cases</li>
+                        <li><input type="checkbox"> Opportunities</li>
+                        <li><input type="checkbox"> Reports</li>
+                      </ul>
+                      <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
           </div><!-- /.nav-collapse -->
         </div>
-      </div>
-    </div><!-- /navbar-inner -->
-  </div>
-  <div class="container-fluid" id="dashboard">
+      </div><!-- /navbar-inner -->
+    </div>
+  <div class="container-fluid" id="contentflex">
     <div class="row-fluid">
-      <div class="span7">
+      <div class="span8" id="headerbar">
+        <h1>Accounts</h1>
+        <div class="btn-toolbar pull-right dropdown">
+          <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
+            <a href="#" data-toggle="dropdown" class="btn btn-invisible"><i class="icon-cog"></i></a>
+            <ul class="dropdown-menu">
+              <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+              <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+              <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+            </ul>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span8">      
           <div class="block filtered tabbable tabs-left" id="moduleActivity">
-            <h4>Activity</h4>
-            <form class="form-search hide" action="">
-              <input value="" class="span4" placeholder="Refine activity ...">
-            </form> 
+            <form class="form-search" action="">
+              <input value="" class="wide tleft" placeholder="Search activity...">
+            </form>
             <ul class="nav nav-tabs results">
               <li>
-                <a href="" class="pull-left avatar avatar42">
+                <a href="" class="avatar avatar42 pull-left">
                   <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                  <a href="profile_skhan.html">Sabra Khan</a> added <a href="#file1" data-toggle="tab">screenshot_766.png</a> file to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
-                  <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
+                  <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                 </p>
-                <ul>
+                <ul class="commented">
                   <li>
-                      <a href="" class="pull-left">
-                        <img src="../img/avatar_sabra.jpg" class="avatar" alt="Skhan avatar">
+                    <a href="" class="pull-left avatar">
+                      <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
+                    </a>
+                    <p>
+                      <a href=" profile_skhan.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
+                      <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
+                    </p>
+                  </li>
+                  <div class="extend hide">
+                    <li>
+                      <a href="" class="pull-left avatar">
+                        <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                       </a>
                       <p>
-                        <a href="profile_skhan.html">Sabra Khan</a>: This is a solid flow chart for figuring out our goals<br>
-                        <date class="date">Commented 1 hour ago at 3:00 pm EST</date>
+                        <a href=" profile_skhan.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
+                        <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                       </p>
+                    </li>
+                    <li>
+                      <a href="" class="pull-left avatar">
+                        <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
+                      </a>
+                      <p>
+                        <a href=" profile_skhan.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
+                        <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
+                      </p>
+                    </li>
+                  </div>   
+                  <li>
+                    <a href="" class="more">2 more comments...</a>
                   </li>
                 </ul>
                 <div class="actions">
-                  <a data-toggle="modal" href="#reply" class="comment"><i class="icon-comment"></i></a>
-                  <a data-toggle="modal" href="#share" class="share"><i class="icon-share-alt"></i></a>
-                  <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview" data-original-title=""></i></a>
+                  <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>            
+                  <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                 </div>
               </li>
               <li>
-                <a href="#log1" data-toggle="tab"><span class="label label-log">Log</span></a>
+                <a href="" class="avatar avatar42 pull-left">
+                  <img src="../img/avatar_james.jpg" alt="Skhan avatar">
+                </a>
                 <p>
-                  <a href="profile_skhan.html">Sabra Khan</a> sent an email to <a href="contact_mark.html">Mark Edwin</a> titled <a href="">Let's do lunch</a>.
+                  <a href="profile_skhan.html">Jim Atlas</a> added email to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
-                  <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
+                  <date class="date">about 1 minute ago on 3/12/2012 at 3:00 pm EST</date>
                 </p>
-                <div class="actions hide">
-                  <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                  <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                </div>
-              </li>
-              <li>
-                <a href="#doc1" data-toggle="tab"><span class="label label-file">File</span></a>
-                <p>
-                  <a href="#doc1" data-toggle="tab">Sales-document33.doc</a> added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 6 hours ago at 9:00 am EST</date>
-                </p>
-                <div class="actions hide">
-                  <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                  <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                </div>
-              </li>
-              <li>
-                <a href="#note1" data-toggle="tab"><span class="label label-note">Note</span></a>
-                <p>
-                  <a href="#note1" data-toggle="tab">Note</a> added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 2 days ago at 3:30 pm EST</date>
-                </p>
-                <div class="actions hide">
-                  <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                  <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                </div>
-              </li>
-              <li>
-                <a href="#lead1" data-toggle="tab"><span class="label label-lead">Lead</span></a>
-                <p>
-                  <a href="index.html">Perkin Kleiners - 100 Seats</a> added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 3 days ago at 1:00 pm EST</date>
-                </p>
-                <div class="actions hide">
-                  <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                  <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                </div>
-              </li>
-              <li>
-                <a href="#contact1" data-toggle="tab"><span class="label label-contact">Contact</span></a>
-                <p>
-                  <a href="contact_mark.html">Mark Edwin</a>, CIO, added by <a href="profile_skhan.html">Sabra Khan</a>
-                  <br>
-                  <date class="date">Posted 3 days ago at 6:00 pm EST</date>
-                </p>
-                <div class="actions hide">
-                  <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                  <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
-                </div>
-              </li>   
-              <li>
-                <a href="#log2" data-toggle="tab"><span class="label label-log">Log</span></a>
-                <p>
-                  <a href="profile_skhan.html">Sabra Khan</a> made a planned outbound call to <a href="contact_mark.html">Mark Edwin</a> for 30 mins.
-                  <br>
-                  <date class="date">Posted 2 days ago at 1:20 pm EST</date>
-                </p>
+                <ul class="commented"></ul>
                 <div class="actions">
-                  <a data-toggle="modal" href="#reply" class="comment btn btn-mini"><i class="icon-comment"></i></a>
-                  <a href="" class="share btn btn-mini"><i class="icon-share-alt"></i></a>
+                  <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
+                  <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+                </div>
+              </li>
+              <li>
+                <a href="" class="avatar avatar42 pull-left">
+                  <img src="../img/avatar_uwelcome.jpg" alt="Skhan avatar">
+                </a>
+                <p>
+                  <a href="profile_skhan.html">Uriah Welcome</a> added <a href="detail_bug.html" data-toggle="tab">Page link is not redirecting</a> bug.
+                  <br>
+                  <date class="date">1 hour ago on 3/12/2012 at 2:00 pm EST</date>
+                </p>
+                <ul class="commented"></ul>
+                <div class="actions">
+                  <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
+                  <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+                </div>
+              </li>
+              <li>
+                <a href="" class="avatar avatar42 pull-left">
+                  <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
+                </a>
+                <p>
+                  <a href="profile_skhan.html">Sabra Khan</a> updated phone, url, and email in the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <br>
+                  <date class="date">1 hour ago on 3/12/2012at 2:00 pm EST</date>
+                </p>
+                <ul class="commented"></ul>
+                <div class="actions">
+                  <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
+                  <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+                </div>
+              </li>
+              <li>
+                <a href="" class="avatar avatar42 pull-left">
+                  <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
+                </a>
+                <p>
+                  <a href="profile_skhan.html">Sabra Khan</a> added the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <br>
+                  <date class="date">2 hours ago on 3/12/2012 at 1:00 pm EST</date>
+                </p>
+                <ul class="commented"></ul>
+                <div class="actions">
+                  <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
+                  <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                 </div>
               </li>
             </ul>
-            <div class="btn-toolbar pull-right">
-              <div class="btn-group">
-                <a class="btn btn-success" href="edit.html">Edit</a>
-                <a class="btn btn-success dropdown-toggle" data-toggle="dropdown" href="#">
-                  <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                  <li><a href="#">Edit</a></li>
-                  <li><a href="#">Duplicate</a></li>
-                  <li><a href="index.html">Delete</a></li>
-                  <li class="divider"></li>
-                  <li><a data-toggle="modal" href="#contactModal">Add Contact</a></li>
-                  <li><a data-toggle="modal" href="#noteModal">Add Note</a></li>
-                  <li><a data-toggle="modal" href="#oppModal">Add Opportunity</a></li>                                     
-                  <li><a data-toggle="modal" href="#taskModal">Add Task</a></li>          
-                  <li class="divider"></li>
-                  <li><a href="#">Compose Email</a></li>
-                  <li><a href="#">Log Call</a></li>
-                  <li><a href="#">Schedule Meeting</a></li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
-        <div class="span5 tab-content" id="folded">
+        <div class="span4 tab-content" id="folded">
           <div class="tab-pane active" id="overview">
             <div class="block" id="moduleTwitter">
               <h4>InsideView</h4>
@@ -669,7 +688,9 @@
                       <option value="pk"></option>
                       <option value="pk">Administrator</option> 
                       <option value="pk">Majed Itani</option> 
-                      <option value="pk">Uriah Welcome</option> 
+                      <option value="pk">Uriah Welcome</option>
+                      <option value="pk">+ Create a user</option> 
+                       
                     </select>  
                 </div>
                 <div class="control-group">
@@ -764,22 +785,26 @@
                   <option value="pk"></option>
                   <option value="pk">Administrator</option> 
                   <option value="pk">Majed Itani</option> 
-                  <option value="pk">Uriah Welcome</option> 
+                  <option value="pk">Uriah Welcome</option>
+                  <option value="pk">+ Create a user</option> 
+                  
                 </select>  
                 </div>
               </div>
               <div class="control-group">
                 <label for="select01" class="control-label">Related to:</label>
                 <div class="controls">
-                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
+                  <select data-placeholder="Choose a module..." class="chzn-select" tabindex="2">
                     <option value="pk" selected="selected">Account</option> 
                     <option value="pk">Contact</option> 
-                    <option value="pk">Opportunity</option> 
+                    <option value="pk">Opportunity</option>                     
                   </select>
                   <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2">
                     <option value="pk" selected="selected">Perkin Kleiners</option> 
                     <option value="pk">Underwater Mining Inc.</option> 
                     <option value="pk">Weyland</option> 
+                    <option value="pk">+ Create an account</option> 
+                    
                   </select>
                 </div>
               </div>
@@ -792,6 +817,7 @@
                     <option value="pk">Administrator</option> 
                     <option value="pk">Majed Itani</option> 
                     <option value="pk">Uriah Welcome</option> 
+                    <option value="pk">+ Create a user</option> 
                   </select>  
                   </div>
               </div>

@@ -78,17 +78,44 @@
     		$(this).parent().toggleClass('active');
     		return false;  
     })
+    
+    $('.comment').toggle( 
+      function (e) {
+  		  $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment" class="span10"> <input type="submit" class="btn btn-primary" value="Reply"></div></li>');
+  		  $(this).addClass('active');
+  		  return false; 
+	    },
+	    function (e) {
+  		  $(this).parent().parent().find('.acomment').remove();
+  		  $(this).removeClass('active');
+  		  return false; 
+	    }
+    ) 
 
     // toggle more hide
     $('.more').toggle(
       function (e) {
     		$(this).parent().prev('.extend').removeClass('hide');
-    		$(this).html('Less &nbsp;<i class="icon-chevron-up"></i>');
+    		$(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
     		return false;  
       },
       function (e) {
       		$(this).parent().prev('.extend').addClass('hide');
-      		$(this).html('More &nbsp;<i class="icon-chevron-down"></i>');
+      		$(this).html('More &nbsp;<i class="icon-caret-down"></i>');
+      		return false;  
+    })
+    // toggle more hide
+    $('.commented .more').toggle(
+      function (e) {
+        $(this).parent().parent().parent().find('.comment').remove();
+        $(this).parent().parent().find('.acomment').remove();
+    		$(this).parent().prev('.extend').removeClass('hide');
+    		$(this).html('<div class="control-group form-horizontal accoment"><input placeholder="Add your comment" class="span10"> <input type="submit" class="btn btn-primary" value="Reply"></div>');
+    		return false;  
+      },
+      function (e) {
+      		$(this).parent().prev('.extend').addClass('hide');
+      		$(this).html('2 more comments...');
       		return false;  
     })
 
@@ -96,12 +123,12 @@
     $('.drawer').toggle(
       function (e) {
     		$(this).next('.extend').removeClass('hide');
-    		$(this).find('.toggle').html('<i class="icon-chevron-up"></i>');
+    		$(this).find('.toggle').html('<i class="icon-caret-up"></i>');
     		return false;  
       },
       function (e) {
       		$(this).next('.extend').addClass('hide');
-      		$(this).find('.toggle').html('<i class="icon-chevron-down"></i>');
+      		$(this).find('.toggle').html('<i class="icon-caret-down"></i>');
       		return false;  
     })
 
@@ -131,19 +158,8 @@
     )
     
 })
-
-    $('.comment').toggle( 
-      function (e) {
-  		  $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment" class=""> <input type="submit" class="btn btn-primary" value="Reply"></div></li>');
-  		  $(this).addClass('active');
-  		  return false; 
-	    },
-	    function (e) {
-  		  $(this).parent().parent().find('.acomment').remove();
-  		  $(this).removeClass('active');
-  		  return false; 
-	    }
-    )
+    
+    
 
     $(".omnibar").toggle(
       function (e) {
