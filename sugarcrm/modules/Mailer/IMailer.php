@@ -216,6 +216,7 @@ interface IMailer
      * Performs the send of an email using the package that is being used to deliver email.
      *
      * @abstract
+     * @access public
      * @return boolean true=success
      */
     public function send();
