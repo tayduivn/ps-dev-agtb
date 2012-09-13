@@ -84,15 +84,6 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'reportable'=>false,
     'comment' => 'If product created via Quote, this is quote ID'
   ),
-  'opportunity_id' =>
-  array (
-    'name' => 'opportunity_id',
-    'type' => 'id',
-    'vname' => 'LBL_OPPORTUNITY_ID',
-    'required'=>false,
-    'reportable'=>false,
-    'comment' => 'If product created via Opportunity, this is quote ID'
-  ),
   'currency_symbol' =>
 	array (
 		'name' => 'currency_symbol',
