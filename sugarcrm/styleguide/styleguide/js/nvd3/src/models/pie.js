@@ -8,36 +8,50 @@ nv.models.pie = function() {
   var margin = {top: 0, right: 0, bottom: 0, left: 0}
     , width = 500
     , height = 500
-    , getValues = function(d) { return d.values }
+    , getValues = function(d) { return d }
     , getX = function(d) { return d.x }
     , getY = function(d) { return d.y }
     , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
     , color = nv.utils.defaultColor()
+    , fill = function (d,i) { return color(d,i); }
+    , gradient = function (d,i) { return color(d,i); }
+    , useClass = false
     , valueFormat = d3.format(',.2f')
     , showLabels = true
-    , donutLabelsOutside = false
-    , labelThreshold = .02 //if slice percentage is under this, don't show label
-    , donut = false
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
-    ;
+  ;
+
+  var donutLabelsOutside = false
+    , donut = false
+    , labelThreshold = .02 //if slice percentage is under this, don't show label
+  ;
 
   //============================================================
 
 
-  function chart(selection) {
-    selection.each(function(data) {
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          radius = Math.min(availableWidth, availableHeight) / 2,
-          container = d3.select(this);
+  function chart(selection)
+  {
+    selection.each(
 
+    function(data) {
+
+      var availableWidth = width - margin.left - margin.right
+        , availableHeight = height - margin.top - margin.bottom
+        , radius = Math.min(availableWidth, availableHeight) / 2
+        , container = d3.select(this)
+        , fillGradient = function(d,i) {
+            return nv.utils.colorRadialGradient( d, i, 0, 0, '35%', '35%', color(d,i), wrap.select('defs') );
+          }
+      ;
+
+      chart.gradient( fillGradient );
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
 
-      //var wrap = container.selectAll('.nv-wrap.nv-pie').data([data]);
-      var wrap = container.selectAll('.nv-wrap.nv-pie').data([getValues(data[0])]);
+      var wrap = container.selectAll('.nv-wrap.nv-pie').data([data]);
       var wrapEnter = wrap.enter().append('g').attr('class','nvd3 nv-wrap nv-pie nv-chart-' + id);
+      var defsEnter = wrapEnter.append('defs');
       var gEnter = wrapEnter.append('g');
       var g = wrap.select('g');
 
@@ -45,6 +59,8 @@ nv.models.pie = function() {
 
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
       g.select('.nv-pie').attr('transform', 'translate(' + availableWidth / 2 + ',' + availableHeight / 2 + ')');
+
+      //defsEnter.selectAll('radialgradient').each().attr('cx',availableWidth / 2);
 
       //------------------------------------------------------------
 
@@ -59,11 +75,10 @@ nv.models.pie = function() {
               });
           });
 
-
       var arc = d3.svg.arc()
                   .outerRadius((radius-(radius / 5)));
 
-      if (donut) arc.innerRadius(radius / 2);
+      if (donut) arc.innerRadius(radius / 2.5);
 
 
       // Setup the Pie chart and choose the data element
@@ -77,7 +92,15 @@ nv.models.pie = function() {
       slices.exit().remove();
 
       var ae = slices.enter().append('g')
-              .attr('class', 'nv-slice')
+              .attr('class', function(d,i) {
+                  return this.getAttribute('class') || (
+                    'nv-slice' + (
+                      useClass
+                        ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
+                        : ''
+                    )
+                  );
+              } )
               .on('mouseover', function(d,i){
                 d3.select(this).classed('hover', true);
                 dispatch.elementMouseover({
@@ -123,8 +146,8 @@ nv.models.pie = function() {
               });
 
         slices
-            .attr('fill', function(d,i) { return color(d, i); })
-            .attr('stroke', function(d,i) { return color(d, i); });
+            .attr('fill', function(d,i) { return fill(d, i); })
+            .attr('stroke', function(d,i) { return fill(d, i); });
 
         var paths = ae.append('path')
             .each(function(d) { this._current = d; });
@@ -228,12 +251,30 @@ nv.models.pie = function() {
 
   chart.dispatch = dispatch;
 
+  chart.color = function(_) {
+    if (!arguments.length) return color;
+    color = _;
+    return chart;
+  };
+  chart.fill = function(_) {
+    if (!arguments.length) return fill;
+    fill = _;
+    return chart;
+  };
+  chart.gradient = function(_) {
+    if (!arguments.length) return gradient;
+    gradient = _;
+    return chart;
+  };
+  chart.useClass = function(_) {
+    if (!arguments.length) return useClass;
+    useClass = _;
+    return chart;
+  };
+
   chart.margin = function(_) {
     if (!arguments.length) return margin;
-    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
-    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
-    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
-    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
+    margin = _;
     return chart;
   };
 
@@ -273,27 +314,9 @@ nv.models.pie = function() {
     return chart;
   };
 
-  chart.donutLabelsOutside = function(_) {
-    if (!arguments.length) return donutLabelsOutside;
-    donutLabelsOutside = _;
-    return chart;
-  };
-
-  chart.donut = function(_) {
-    if (!arguments.length) return donut;
-    donut = _;
-    return chart;
-  };
-
   chart.id = function(_) {
     if (!arguments.length) return id;
     id = _;
-    return chart;
-  };
-
-  chart.color = function(_) {
-    if (!arguments.length) return color;
-    color = nv.utils.getColor(_);
     return chart;
   };
 
@@ -309,8 +332,21 @@ nv.models.pie = function() {
     return chart;
   };
 
-  //============================================================
+  // PIE
 
+  chart.donutLabelsOutside = function(_) {
+    if (!arguments.length) return donutLabelsOutside;
+    donutLabelsOutside = _;
+    return chart;
+  };
+
+  chart.donut = function(_) {
+    if (!arguments.length) return donut;
+    donut = _;
+    return chart;
+  };
+
+  //============================================================
 
   return chart;
 }

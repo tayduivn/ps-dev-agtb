@@ -21,7 +21,7 @@
   <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 
   <style type="text/css">
-    #horiz1, #horiz2, #vert1, #vert2, #circ1, #gauge, #funnel1, #funnel2 {
+    .chart-container {
       height: 300px;
       min-width: 100px;
       min-height: 100px;
@@ -59,7 +59,7 @@
       fill: #888888;
       stroke: #ffffff;
     }
-    
+
     .nv-labels text {
       font-weight: bold;
       fill: #666;
@@ -126,7 +126,7 @@
           <li><a href="charting.html#horiz-bar">Horizontal Bar</a></li>
           <li><a href="charting.html#vert-bar">Vertical Bar</a></li>
           <li><a href="charting.html#circular">Circular</a></li>
-          <li><a href="charting.html#custom">Funnel</a></li>
+          <li><a href="charting.html#custom">Custom</a></li>
           <li><a href="chart_colors.html">Colors</a></li>
         </ul>
       </div>
@@ -137,7 +137,7 @@
       <div class="page-header">
         <h2>Chart Implementation <small>Patterns for inserting and configuring charts.</small></h2>
       </div>
-      
+
       <div class="row">
 
         <div class="span7">
@@ -162,7 +162,7 @@
                     d3.select('#chart1 svg')
                       .datum(forecast_data_Q2)
                       .transition().duration(500).call(chart);
-                  } 
+                  }
                 );
 </pre>
 
@@ -185,13 +185,13 @@
     nv.addGraph({
       generate: function() {
           var chart = nv.models.multiBarChart();
-          
+
           d3.select('#chart1 svg')
             .datum(forecast_data_Q1)
             .transition().duration(500).call(chart);
-  
+
           nv.utils.windowResize(chart.update);
-  
+
           return chart;
       },
       callback: function(graph) {
@@ -203,7 +203,7 @@
 
 
         <div class="span5">
-        
+
           <h3>Standard Parameters</h3>
           <p>This is a set of common chart parameters.</p>
           <div>
@@ -287,9 +287,9 @@
 </table>
           </div>
         </div> <!-- end col -->
-        
+
       </div> <!-- end row -->
-    
+
       <div class="row">
         <div class="span12">
 
@@ -309,8 +309,8 @@
       var self = this;
 
       self.collection.bind(
-        'reset', 
-        function(model) 
+        'reset',
+        function(model)
         {
           d3.select(self.el)
             .datum( model.models.map( function(d,i){return d.attributes} ) )
@@ -354,7 +354,7 @@
           <h3>All Opportunities By Lead Source By Outcome </h3>
           <p>Long description. <a href="charts/multiBarHorizontalChart_opportunities.html">Full Screen</a></p>
           <div>
-<div id="horiz1">
+<div id="horiz1" class="chart-container">
   <svg></svg>
 </div>
           </div>
@@ -363,7 +363,7 @@
           <h3>Modules Used By Team Members</h3>
           <p>Long description.</p>
           <div>
-<div id="horiz2">
+<div id="horiz2" class="chart-container">
   <svg></svg>
 </div>
           </div>
@@ -380,7 +380,7 @@
           <h3>Campaign ROI</h3>
           <p>Long description.</p>
           <div>
-<div id="vert1">
+<div id="vert1" class="chart-container">
   <svg></svg>
 </div>
           </div>
@@ -389,7 +389,7 @@
           <h3>My Forecasting</h3>
           <p>This is a new NVD3 chart type created for SugarCRM. An example of usage in the Sugar7 prototype is on <a href="../styleguide/sugar7/forecast_nvd3.html">forecasting page</a>. <a href="charts/multiBarChart_forecast.html">Full Screen</a></p>
           <div>
-<div id="vert2">
+<div id="vert2" class="chart-container">
   <svg></svg>
 </div>
           </div>
@@ -404,18 +404,18 @@
       <div class="row">
         <div class="span6">
           <h3>All Opportunities by Lead Source</h3>
-          <p>Example pie chart.</p>
+          <p>Example pie chart. <a href="charts/pieChart.html">Full Screen</a></p>
           <div>
-<div id="pie">
+<div id="pie" class="chart-container">
   <svg></svg>
 </div>
           </div>
         </div>
         <div class="span6">
-          <h3>Closed Won Opportunities</h3>
-          <p>Example gauge chart. <a href="charts/gaugeChart.html">Full Screen</a></p>
+          <h3>Donut Chart</h3>
+          <p>Example donut chart.</p>
           <div>
-<div id="gauge">
+<div id="donut" class="chart-container">
   <svg></svg>
 </div>
           </div>
@@ -423,25 +423,25 @@
       </div>
     </section>
 
-    <section id="funnel">
+    <section id="custom">
       <div class="page-header">
-        <h2>Funnel Charts <small>used for comparing values in a process</small></h2>
+        <h2>Custom Charts <small>used for comparing values in a process</small></h2>
       </div>
       <div class="row">
         <div class="span6">
           <h3>Pipeline By Sales Stage</h3>
-          <p>This is a new NVD3 chart type created for SugarCRM. It shows the sales pipeline by stage. <a href="charts/funnelChart.html">Full Screen</a></p>
+          <p>This is a new NVD3 funnel chart type created for SugarCRM. <a href="charts/funnelChart.html">Full Screen</a></p>
           <div>
-<div id="funnel1">
+<div id="funnel1" class="chart-container">
   <svg></svg>
 </div>
           </div>
         </div>
         <div class="span6">
-          <h3>Pipeline By Sales Stage</h3>
-          <p>Example gauge chart.</p>
+          <h3>Closed Won Opportunities</h3>
+          <p>This is a new NVD3 gauge chart type created for SugarCRM. <a href="charts/gaugeChart.html">Full Screen</a></p>
           <div>
-<div id="funnel2">
+<div id="gauge" class="chart-container">
   <svg></svg>
 </div>
           </div>
@@ -450,7 +450,7 @@
     </section>
 
   </div>
-  
+
   <script src="js/jquery-1.7.2.min.js"></script>
   <script src="js/google-code-prettify/prettify.js"></script>
   <script src="../assets/js/bootstrap.min.js"></script>
@@ -472,12 +472,15 @@
   <script src="js/nvd3/src/models/funnelChart.js"></script>
   <script src="js/nvd3/src/models/gauge.js"></script>
   <script src="js/nvd3/src/models/gaugeChart.js"></script>
+  <script src="js/nvd3/src/models/pie.js"></script>
+  <script src="js/nvd3/src/models/pieChart.js"></script>
 
   <script src="js/nvd3/data/forecasting_q1.js"></script>
   <script src="js/nvd3/data/forecasting_q2.js"></script>
   <script src="js/nvd3/data/opportunities.js"></script>
   <script src="js/nvd3/data/funnel_data.js"></script>
   <script src="js/nvd3/data/gauge_data.js"></script>
+  <script src="js/nvd3/data/pie_data.js"></script>
 
   <script>
     //Vertical Bar Chart with Line
@@ -497,16 +500,16 @@
                   d3.select('#vert2 svg')
                     .datum(forecast_data_Q2)
                     .transition().duration(500).call(chart);
-                } 
+                }
               );
           //end override
-          
+
           d3.select('#vert2 svg')
             .datum(forecast_data_Q1)
             .transition().duration(500).call(chart);
-  
+
           nv.utils.windowResize(chart.update);
-  
+
           return chart;
       },
       callback: function(graph) {
@@ -583,6 +586,66 @@
 
       //nv.utils.windowResize(gauge.update);
       return gauge;
+    });
+
+    // Pie Chart
+    nv.addGraph(function() {
+        var width = 500,
+            height = 500;
+
+        var chart = nv.models.pieChart()
+            .x(function(d) { return d.key })
+            .y(function(d) { return d.value })
+            .showLabels(true)
+            .showTitle(true)
+            //.color(d3.scale.category10().range())
+            //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
+            //.colorData( 'class' )
+            .colorData( 'default' )
+            //.colorFill( 'gradient' )
+            .colorFill( 'default' )
+            // .width(width)
+            // .height(height);
+
+          d3.select("#pie svg")
+              .datum(pie_data)
+            .transition().duration(1200)
+              .attr('width', width)
+              .attr('height', height)
+              .call(chart);
+
+        return chart;
+    });
+
+    // Donut Chart
+    nv.addGraph(function() {
+        var width = 500,
+            height = 500;
+
+        var chart = nv.models.pieChart()
+            .x(function(d) { return d.key })
+            .y(function(d) { return d.value })
+            .showLabels(true)
+            .showTitle(true)
+            .donut(true)
+            .donutLabelsOutside(true)
+            //.color(d3.scale.category10().range())
+            //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
+            //.colorData( 'class' )
+            .colorData( 'default' )
+            //.colorFill( 'gradient' )
+            .colorFill( 'default' )
+            // .width(width)
+            // .height(height);
+
+          d3.select("#donut svg")
+              .datum(pie_data)
+            .transition().duration(1200)
+              .attr('width', width)
+              .attr('height', height)
+              .call(chart);
+
+        return chart;
     });
   </script>
 </body>

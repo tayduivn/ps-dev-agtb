@@ -120,13 +120,13 @@ nv.models.funnelChart = function() {
       {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
-        legend.width(availableWidth);
+        legend.width(availableWidth+margin.left);
 
         g.select('.nv-legendWrap')
             .datum(data)
             .call(legend);
 
-        legendHeight = legend.height();
+        legendHeight = legend.height() + 10;
 
         if ( margin.top !== legendHeight + titleHeight ) {
           margin.top = legendHeight + titleHeight;
@@ -135,7 +135,7 @@ nv.models.funnelChart = function() {
         }
 
         g.select('.nv-legendWrap')
-            .attr('transform', 'translate(0,' + (-margin.top) +')');
+            .attr('transform', 'translate('+ (-margin.left) +',' + (-margin.top) +')');
       }
 
       if (showTitle && properties.title )
@@ -239,19 +239,21 @@ nv.models.funnelChart = function() {
         , c = availableWidth/2
         ;
 
-      var yAxis = d3.svg.axis().scale(yScale)
-                    .orient('left')
-                    .tickSize( -availableWidth/2, 0)
-                    .tickValues(aTicks)
-                    .tickFormat( function(d,i) {
-                      return '$' + d + 'K';
-                    })
-                    ;
+      var yAxis = d3.svg.axis()
+            .scale(yScale)
+            .orient('left')
+            .tickSize( -availableWidth/2, 0)
+            .tickValues(aTicks)
+            .tickFormat( function(d,i) {
+              return '$' + d + 'K';
+            })
+          ;
 
       d3.transition(g.select('.nv-y.nv-axis'))
         .call(yAxis)
-          .style('stroke-width', '1')
-          .attr('x2', function(d,i){ return aTicks[i] ? ( c + ( r * y(aTicks[i]) ) + w/2 + 40 ) : 0 } );
+          .style('stroke-width', '2')
+          .selectAll('line')
+            .attr('x2', function(d,i){ return aTicks[i] ? ( c + ( r * y(aTicks[i]) ) + w/2 + 60 ) : 0 } );
 
       //------------------------------------------------------------
 
