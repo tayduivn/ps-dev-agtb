@@ -135,7 +135,6 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
  )
 , 'indices' => array (
        array('name' =>'timeperiodspk', 'type' =>'primary', 'fields'=>array('id')),
-       array('start_end_date_timestamp', 'type' =>'index', 'fields'=>array('start_date_timestamp', 'end_date_timestamp'))
   )
 , 'relationships' => array (
 	'timeperiod_forecast_schedules' => array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
