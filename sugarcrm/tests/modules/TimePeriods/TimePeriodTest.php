@@ -35,6 +35,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestHelper::tearDown();
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
     /**
@@ -89,10 +90,8 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     {
         // create a time period
         $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-
         $this->assertEquals($tp->id, TimePeriod::retrieveFromDate('2009-02-15')->id);
 
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
 
