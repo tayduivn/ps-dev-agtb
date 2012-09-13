@@ -51,7 +51,7 @@ class Attachment
 
     /**
      * @access public
-     * @param string $path
+     * @param string $path required
      */
     public function setPath($path) {
         $this->path = $path;
@@ -67,7 +67,7 @@ class Attachment
 
     /**
      * @access public
-     * @param null|string $name     Should be a string, but null is acceptable if the path will be used for the name.
+     * @param null|string $name required Should be a string, but null is acceptable if the path will be used for the name.
      */
     public function setName($name) {
         if (!is_string($name) || $name == '') {
@@ -122,7 +122,7 @@ class Attachment
      * Returns an array representation of the attachment.
      *
      * @access public
-     * @return array    Array of key value pairs representing the properties of the attachment.
+     * @return array Array of key value pairs representing the properties of the attachment.
      */
     public function getAsArray() {
         return array(

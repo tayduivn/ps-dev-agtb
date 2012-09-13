@@ -49,7 +49,7 @@ class EmbeddedImage extends Attachment
 
     /**
      * @access public
-     * @param string $cid
+     * @param string $cid required
      */
     public function setCid($cid) {
         $this->cid = $cid;
@@ -67,7 +67,7 @@ class EmbeddedImage extends Attachment
      * calling the parent method of the same name.
      *
      * @access public
-     * @return array    Array of key value pairs representing the properties of the attachment.
+     * @return array Array of key value pairs representing the properties of the attachment.
      */
     public function getAsArray() {
         $image = parent::getAsArray();

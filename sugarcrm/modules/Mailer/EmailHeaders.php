@@ -102,7 +102,7 @@ class EmailHeaders
 
     /**
      * @access public
-     * @param string $id
+     * @param string $id required
      */
     public function setMessageId($id) {
         $this->messageId = $id;
@@ -160,7 +160,7 @@ class EmailHeaders
 
     /**
      * @access public
-     * @param EmailIdentity $from
+     * @param EmailIdentity $from required
      *
      * @todo throw an exception if not an EmailIdentity?
      */
@@ -178,7 +178,7 @@ class EmailHeaders
 
     /**
      * @access public
-     * @param EmailIdentity $replyTo
+     * @param EmailIdentity $replyTo required
      *
      * @todo throw an exception if not an EmailIdentity?
      */
@@ -196,7 +196,7 @@ class EmailHeaders
 
     /**
      * @access public
-     * @param EmailIdentity $sender
+     * @param EmailIdentity $sender required
      *
      * @todo throw an exception if not an EmailIdentity?
      */
@@ -214,7 +214,7 @@ class EmailHeaders
 
     /**
      * @access public
-     * @param string $subject
+     * @param string $subject required
      *
      * @todo throw an exception if not a string?
      */
@@ -243,8 +243,8 @@ class EmailHeaders
 
     /**
      * @access public
-     * @param string $key   Should look like the real header it represents.
-     * @param string $value The value of the header.
+     * @param string $key   required Should look like the real header it represents.
+     * @param string $value required The value of the header.
      *
      * @todo throw an exception if the custom header is invalid?
      * @todo do we need to prevent overwriting a non-custom header?
@@ -257,8 +257,8 @@ class EmailHeaders
 
     /**
      * @access public
-     * @param string $key
-     * @return null|string  The value of the header or null if the header has not been defined.
+     * @param string $key required
+     * @return null|string The value of the header or null if the header has not been defined.
      */
     public function getCustomHeader($key) {
         if (array_key_exists($key, $this->custom)) {
@@ -270,7 +270,7 @@ class EmailHeaders
 
     /**
      * @access public
-     * @return array    Array of key value pairs representing the custom headers and their values.
+     * @return array Array of key value pairs representing the custom headers and their values.
      */
     public function getCustomHeaders() {
         return $this->custom;
@@ -280,7 +280,7 @@ class EmailHeaders
      * Packages the headers in an array in such a way that they are ready to be included in an email.
      *
      * @access public
-     * @return array    Array of key value pairs representing the headers and their values.
+     * @return array Array of key value pairs representing the headers and their values.
      * @throws MailerException
      */
     public function packageHeaders() {
@@ -305,8 +305,8 @@ class EmailHeaders
      * values are okay to include.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
-     * @throws MailerException  @todo error because From must be supplied
+     * @param array $headers required The headers array to fill that packaging will return.
+     * @throws MailerException @todo error because From must be supplied
      */
     private function packageFrom(&$headers) {
         $from = $this->getFrom();
@@ -327,8 +327,8 @@ class EmailHeaders
      * values are okay to include.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
-     * @throws MailerException  @todo is a warning valid since the Reply-To can be derived from the From by PHPMailer?
+     * @param array $headers required The headers array to fill that packaging will return.
+     * @throws MailerException @todo is a warning valid since the Reply-To can be derived from the From by PHPMailer?
      */
     private function packageReplyTo(&$headers) {
         $replyTo = $this->getReplyTo();
@@ -352,8 +352,8 @@ class EmailHeaders
      * values are okay to include.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
-     * @throws MailerException  @todo is a warning valid since the Sender can be derived from the From by PHPMailer?
+     * @param array $headers required The headers array to fill that packaging will return.
+     * @throws MailerException @todo is a warning valid since the Sender can be derived from the From by PHPMailer?
      */
     private function packageSender(&$headers) {
         $sender = $this->getSender();
@@ -374,8 +374,7 @@ class EmailHeaders
      * Performs the logic required to prepare the Message-ID header to be included in an email.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
-     * @throws MailerException
+     * @param array $headers required The headers array to fill that packaging will return.
      */
     private function packageMessageId(&$headers) {
         $messageId = $this->getMessageId();
@@ -392,8 +391,7 @@ class EmailHeaders
      * and the its setter includes validation, so it can simply be added without performing any validation.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
-     * @throws MailerException
+     * @param array $headers required The headers array to fill that packaging will return.
      */
     private function packagePriority(&$headers) {
         // add the Priority header to the package
@@ -406,8 +404,7 @@ class EmailHeaders
      * the only necessary logic is to determine if it should be included and what value should be used.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
-     * @throws MailerException  @todo is a warning valid since the Sender can be derived from the From by PHPMailer?
+     * @param array $headers required The headers array to fill that packaging will return.
      */
     private function packageRequestConfirmation(&$headers) {
         // only bother with packaging this header if the request is true
@@ -436,8 +433,8 @@ class EmailHeaders
      * values are okay to include.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
-     * @throws MailerException  @todo error because Subject must be supplied
+     * @param array $headers required The headers array to fill that packaging will return.
+     * @throws MailerException @todo error because Subject must be supplied
      */
     private function packageSubject(&$headers) {
         $subject = $this->getSubject();
@@ -457,7 +454,7 @@ class EmailHeaders
      * custom. So this method simply adds the custom headers to the package as they are.
      *
      * @access private
-     * @param array $headers  The headers array to fill that packaging will return.
+     * @param array $headers required The headers array to fill that packaging will return.
      */
     private function packageCustomHeaders(&$headers) {
         foreach ($this->custom as $key => $value) {
