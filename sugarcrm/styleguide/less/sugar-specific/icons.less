@@ -59,7 +59,6 @@ color: @red;
   width: 98%;
   text-align: center;
 }
-#dynamic {margin-right: -20px;}
 .thumbnav {
 #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
 @shadow: inset -2px 0 2px rgba(0,0,0,1),  0 -1px 0 rgba(0,0,0,1);
@@ -138,11 +137,10 @@ width: 72px !important;
   font-size: 18px;
 }
 
-.icon-phone {
-    background: url('@{baseUrl}/img/phone.png') no-repeat 50% 50%;
-    background-size: 80%;
-    height: 26px;
-    width: 26px;
-    display: block;
-    margin-bottom: -22px;
+// Colors
+
+.icon
+ {
+  &-updated        { color: @blue; }
+  &-added         { color: @green; }
 }
