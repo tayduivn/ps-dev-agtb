@@ -44,6 +44,9 @@ var LBL_HIDEOPTIONS = '{sugar_translate module="Users" label="LBL_HIDEOPTIONS"}'
 						<div class="login">
 							<form action="index.php" method="post" name="DetailView" id="form" onsubmit="return document.getElementById('cant_login').value == ''">
 								<table cellpadding="0" cellspacing="2" border="0" align="center" width="100%">
+                                    <td scope="row" colspan="2"><span class="error" id="browser_warning" style="display:none">
+                                        {sugar_translate label="WARN_BROWSER_VERSION_WARNING"}
+                                    </span></td>
 
 						    	{if $LOGIN_ERROR !=''}
 									<tr>

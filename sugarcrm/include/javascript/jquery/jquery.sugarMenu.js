@@ -383,7 +383,10 @@
                         var $$ = $(this),
                             _id = $$.attr("ul-child-id") ? $$.attr("ul-child-id") : ($$.parent('.SugarActionMenu').attr("id")) ? $$.parent('.SugarActionMenu').attr("id") + 'Subnav' : 'sugaractionmenu' + SUGAR.themes.counter,
                             _top = $$.position().top + $$.outerHeight(),
-                            _width = 'auto', //to obtain a certain size, apply min-width in css
+                            //Bug#54711: in IE9, all list menu in Admin are pushed to left side and not visible.
+                            //_width = 'auto', //to obtain a certain size, apply min-width in css
+                            //set width of globalLinks dropdown menu to width of Module
+                            _width = ($$.parent('.SugarActionMenu').attr("id")==='globalLinks') ? $$.parent('.SugarActionMenu').width() : 'auto',
                             _css = {
                                 top: _top,
                                 width: _width,
