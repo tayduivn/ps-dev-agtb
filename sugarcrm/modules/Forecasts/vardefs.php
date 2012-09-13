@@ -625,7 +625,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'len' => '20',
     'comment' => 'Worksheet Placeholder for the forecast commit category: Include, Likely, Omit etc.',
   ),
-  'op_probability' =>
+  'probability' =>
   array (
     'name' => 'probability',
     'vname' => 'LBL_PROBABILITY',
