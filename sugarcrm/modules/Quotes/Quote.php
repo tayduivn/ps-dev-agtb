@@ -97,7 +97,7 @@ class Quote extends SugarBean {
 	var $shipper_id;
 	var $shipper_name;
 	var $currency_id;
-    var $currency_rate;
+    var $base_rate;
 	var $currency_name;
 	var $billing_account_name;
 	var $billing_account_id;
@@ -464,10 +464,10 @@ class Quote extends SugarBean {
         } else {
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
         }
-        $this->currency_rate = $currency->conversion_rate;
+        $this->base_rate = $currency->conversion_rate;
 
         // These amounts are the converted amounts to the base currency,
-        // which will be deprecated once currency_rate is used for calculations
+        // which will be deprecated once base_rate is used for calculations
 		if(!empty($this->shipping)){
 			$this->shipping_usdollar = SugarCurrency::convertAmountToBase($this->shipping, $this->currency_id);
 		}

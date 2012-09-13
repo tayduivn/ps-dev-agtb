@@ -51,7 +51,7 @@ class Opportunity extends SugarBean
 	var $amount;
 	var $amount_usdollar;
 	var $currency_id;
-    var $currency_rate;
+    var $base_rate;
 	var $date_closed;
 	var $next_step;
 	var $sales_stage;
@@ -84,10 +84,8 @@ class Opportunity extends SugarBean
 	var $rel_quote_table = "quotes_opportunities";
 	var $best_case;
 	var $worst_case;
-	var $likely_case;
     var $best_case_base_currency;
     var $worst_case_base_currency;
-    var $likely_case_base_currency;
     var $timeperiod_id;
 	var $commit_stage;
 	var $forecast = -1;
@@ -281,7 +279,6 @@ class Opportunity extends SugarBean
 			if ( $currency->id != $this->currency_id || $currency->deleted == 1 ) {
 				$this->amount      = $this->amount_usdollar;
                 $this->best_case = $this->best_case_base_currency;
-                $this->likely_case = $this->likely_case_base_currency;
                 $this->worst_case = $this->worst_case_base_currency;
 				$this->currency_id = $currency->id;
 			}
@@ -357,7 +354,7 @@ class Opportunity extends SugarBean
                 */
                 $query = sprintf("update opportunities set currency_id='%s',
                     amount_usdollar='%s',
-                    currency_rate='%s'
+                    base_rate='%s'
                     where id='%s';",
                     $currency->id,
                     SugarCurrency::convertAmountToBase($row['amount']),
@@ -434,7 +431,7 @@ class Opportunity extends SugarBean
         } else {
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
         }
-        $this->currency_rate = $currency->conversion_rate;
+        $this->base_rate = $currency->conversion_rate;
 
         //if probablity isn't set, set it based on the sales stage
 		if ( !isset($this->probability) && !empty($this->sales_stage) ) {

@@ -99,9 +99,8 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
         //BEGIN SUGARCRM flav=pro ONLY
-        $opp->likely_case = $opp->amount * $opp->probability / 100;
-        $opp->worst_case = $opp->likely_case * .8;
-        $opp->best_case = $opp->likely_case * 1.2;
+        $opp->worst_case = $opp->amount * .8;
+        $opp->best_case = $opp->amount * 1.2;
         //END SUGARCRM flav=pro ONLY
         $opp->save();
         // Create a linking table entry to assign an account to the opportunity.

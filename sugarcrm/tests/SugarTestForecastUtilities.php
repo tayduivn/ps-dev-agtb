@@ -131,7 +131,8 @@ class SugarTestForecastUtilities
 
         $return = array(
             'opportunities' => array(),
-            'opportunities_total' => 0
+            'opportunities_total' => 0,
+            'opp_worksheets' => array()
         );
 
 
@@ -168,12 +169,10 @@ class SugarTestForecastUtilities
                 $int_date_closed = rand(strtotime(self::$timeperiod->start_date), strtotime(self::$timeperiod->end_date));
                 $date_closed = date('Y-m-d', $int_date_closed);
 
-
                 $opp = SugarTestOpportunityUtilities::createOpportunity();
                 $opp->assigned_user_id = $user->id;
                 $opp->timeperiod_id = $config['timeperiod_id'];
                 $opp->amount = $opp_amount;
-                $opp->likely_case = ($opp_amount - 200);
                 $opp->best_case = ($opp_amount + 200);
                 $opp->worst_case = ($opp_amount - 400);
                 $opp->forecast = $include;
@@ -184,10 +183,26 @@ class SugarTestForecastUtilities
                 $opp->save();
 
                 if ($include) {
-                    $forecast_likely_total += $opp->likely_case;
+                    $forecast_likely_total += $opp->amount;
                     $forecast_best_total += $opp->best_case;
                     $forecast_worst_total += $opp->worst_case;
-                    $return['opportunities_total'] += $opp_amount;
+                }
+
+                $return['opportunities_total'] += $opp_amount;
+
+                if ($config['createWorksheet'] === true) {
+                    $worksheet = SugarTestWorksheetUtilities::createWorksheet();
+                    $worksheet->user_id = $user->id;
+                    $worksheet->related_id = $opp->id;
+                    $worksheet->forecast_type = "Direct";
+                    $worksheet->timeperiod_id = $config['timeperiod_id'];
+                    $worksheet->best_case = $opp->best_case;
+                    $worksheet->likely_case = $opp->amount;
+                    $worksheet->worst_case = $opp->worst_case;
+                    $worksheet->forecast = 1;
+                    $worksheet->save();
+
+                    $return['opp_worksheets'][] = $worksheet;
                 }
 
                 $opportunities[] = $opp;
@@ -221,7 +236,7 @@ class SugarTestForecastUtilities
                 $worksheet = SugarTestWorksheetUtilities::createWorksheet();
                 $worksheet->user_id = (empty($user->reports_to_id)) ? $user->id : $user->reports_to_id;
                 $worksheet->related_id = $user->id;
-                $worksheet->forecast_type = (empty($user->reports_to_id)) ? "Direct" : "Rollup";
+                $worksheet->forecast_type = "Rollup";
                 $worksheet->timeperiod_id = $config['timeperiod_id'];
                 $worksheet->best_case = $forecast_best_total + 100;
                 $worksheet->likely_case = $forecast_likely_total + 100;

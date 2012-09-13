@@ -349,9 +349,9 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
        'type' => 'id',
        'required' => true,
    ),
-   'currency_rate' =>
+   'base_rate' =>
    array (
-       'name' => 'currency_rate',
+       'name' => 'base_rate',
        'vname' => 'LBL_CURRENCY_RATE',
        'type' => 'double',
        'required' => true,
@@ -564,9 +564,9 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
         'type' => 'id',
         'required' => true,
     ),
-    'currency_rate' =>
+    'base_rate' =>
     array (
-        'name' => 'currency_rate',
+        'name' => 'base_rate',
         'vname' => 'LBL_CURRENCY_RATE',
         'type' => 'double',
         'required' => true,
@@ -655,10 +655,9 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
 	array (
 	  'name' => 'version',
 	  'vname' => 'LBL_WK_VERSION',
-	  'type'=>'varchar',
-  	  'len' => 10,
-	  'default' => 'Committed',
-	  'comment' => 'Worksheet version - Committed or Draft.'
+	  'type'=>'int',
+	  'default' => 1,
+	  'comment' => 'Worksheet version - draft = 0'
 	),
  ),
  'indices' => array (

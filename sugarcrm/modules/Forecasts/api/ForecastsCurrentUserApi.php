@@ -53,31 +53,36 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
      * @return array
      */
     public function retrieveCurrentUser($api, $args) {
+        global $current_user;
 
         $data = parent::retrieveCurrentUser($api, $args);
-        global $current_user;
-        $data['current_user']['isManager'] = User::isManager($current_user->id);
-        return $data;
 
+        // Add Forecasts-specific items to returned data
+        $data['current_user']['isManager'] = User::isManager($current_user->id);
+        $data['current_user']['showOpps'] = false;
+        $data['current_user']['first_name'] = $current_user->first_name;
+        $data['current_user']['last_name'] = $current_user->last_name;
+
+        return $data;
     }
 
     /**
-        * Retrieves a "selecteUser" object for a given user id
-        *
-        * @param $api
-        * @param $args
-        * @return array
-        */
-       public function retrieveSelectedUser($api, $args) {
-           $uid = $args['userId'];
-           $user = BeanFactory::getBean('Users', $uid);
-           $data = array();
-           $data['id'] = $user->id;
-           $data['full_name'] = $user->full_name;
-           $data['first_name'] = $user->first_name;
-           $data['last_name'] = $user->last_name;
-           $data['isManager'] = User::isManager($user->id);
-           return $data;
-       }
-
+     * Retrieves a "selecteUser" object for a given user id
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function retrieveSelectedUser($api, $args) {
+        global $locale;
+        $uid = $args['userId'];
+        $user = BeanFactory::getBean('Users', $uid);
+        $data = array();
+        $data['id'] = $user->id;
+        $data['full_name'] = $locale->getLocaleFormattedName($user->first_name,$user->last_name);
+        $data['first_name'] = $user->first_name;
+        $data['last_name'] = $user->last_name;
+        $data['isManager'] = User::isManager($user->id);
+        return $data;
+    }
 }

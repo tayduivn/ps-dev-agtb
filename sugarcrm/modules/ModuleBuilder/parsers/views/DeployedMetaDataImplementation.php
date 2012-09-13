@@ -150,7 +150,7 @@ class DeployedMetaDataImplementation extends AbstractMetaDataImplementation impl
 					$this->_sourceFilename = self::getFileName ( $view, $moduleName, MB_CUSTOMMETADATALOCATION ) ;
 
 					// Now we can copy the wireless view from the template
-					$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/metadata/$_viewtype/views/".basename ( $this->_sourceFilename ) ) ;
+					$loaded = $this->_loadFromFile ( "include/SugarObjects/templates/$type/clients/$_viewtype/views/".basename ( $this->_sourceFilename, '.php' ) . '/' . basename ( $this->_sourceFilename ) ) ;
 
 					if ($loaded === null)
 						throw new Exception( get_class ( $this ) . ": cannot create $_viewtype view for module $moduleName - definitions for $view are missing in the SugarObject template for type $type" ) ;
