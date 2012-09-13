@@ -59,6 +59,10 @@ nv.models.gaugeChart = function() {
           availableHeight = (height || parseInt(container.style('height')) || 400)
                              - margin.top - margin.bottom;
 
+      chart.update = function() { chart(selection); };
+      chart.container = this;
+
+
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
 
@@ -83,13 +87,9 @@ nv.models.gaugeChart = function() {
 
       var wrap = container.selectAll('g.nv-wrap.nv-gaugeChart').data([data]);
       var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-gaugeChart').append('g');
-
-      gEnter.append('g').attr('class', 'nv-gaugeWrap');
-
       var g = wrap.select('g');
 
-      //------------------------------------------------------------
-
+      gEnter.append('g').attr('class', 'nv-gaugeWrap');
 
       //------------------------------------------------------------
       // Title & Legend
@@ -97,17 +97,18 @@ nv.models.gaugeChart = function() {
       var titleHeight = 0
         , legendHeight = 0;
 
-      if (showLegend) 
+      if (showLegend)
       {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
-        legend.width(availableWidth)
+        legend
+          .width(availableWidth)
           .key(gauge.x());
 
         g.select('.nv-legendWrap')
             .datum(data)
             .call(legend);
-        
+
         legendHeight = legend.height();
 
         if ( margin.top !== legendHeight + titleHeight ) {
@@ -120,7 +121,7 @@ nv.models.gaugeChart = function() {
             .attr('transform', 'translate(0,' + (-margin.top) +')');
       }
 
-      if (showTitle && properties.title ) 
+      if (showTitle && properties.title )
       {
         gEnter.append('g').attr('class', 'nv-titleWrap');
 
@@ -137,11 +138,11 @@ nv.models.gaugeChart = function() {
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').style('height') ) +  
-          parseInt( g.select('.nv-title').style('margin-top') ) +  
+        titleHeight = parseInt( g.select('.nv-title').style('height') ) +
+          parseInt( g.select('.nv-title').style('margin-top') ) +
           parseInt( g.select('.nv-title').style('margin-bottom') );
 
-        if ( margin.top !== titleHeight + legendHeight ) 
+        if ( margin.top !== titleHeight + legendHeight )
         {
           margin.top = titleHeight + legendHeight;
           availableHeight = (height || parseInt(container.style('height')) || 400)
@@ -155,8 +156,6 @@ nv.models.gaugeChart = function() {
       //------------------------------------------------------------
 
 
-      //------------------------------------------------------------
-
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 
@@ -165,8 +164,7 @@ nv.models.gaugeChart = function() {
 
       gauge
         .width(availableWidth)
-        .height(availableHeight)
-      ;
+        .height(availableHeight);
 
       var gaugeWrap = g.select('.nv-gaugeWrap')
           .datum(chartData);
@@ -188,16 +186,11 @@ nv.models.gaugeChart = function() {
 
       //============================================================
 
-      //TODO: decide if this makes sense to add into all the models for ease of updating (updating without needing the selection)
-      chart.update = function() { selection.transition().call(chart); };
-      chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
 
     });
 
     return chart;
   }
-
-
 
   //============================================================
   // Event Handling/Dispatching (out of chart's scope)
@@ -228,7 +221,7 @@ nv.models.gaugeChart = function() {
   chart.legend = legend;
   chart.gauge = gauge;
 
-  d3.rebind(chart, gauge, 'valueFormat', 'values', 'x', 'y', 'id', 'showLabels', 'setPointer', 'ringWidth', 'labelThreshold', 'maxValue', 'minValue', 'color', 'gradient', 'useClass', 'transitionMs');
+  d3.rebind(chart, gauge, 'valueFormat', 'values', 'x', 'y', 'id', 'showLabels', 'setPointer', 'ringWidth', 'labelThreshold', 'maxValue', 'minValue', 'transitionMs', 'color', 'gradient', 'useClass');
 
   chart.colorData = function(_) {
     if (arguments[0] === 'graduated')

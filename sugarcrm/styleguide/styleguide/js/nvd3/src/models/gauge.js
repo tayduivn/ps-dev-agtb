@@ -1,55 +1,47 @@
+
 nv.models.gauge = function() {
   /* original inspiration for this chart type is at http://bl.ocks.org/3202712 */
   //============================================================
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var ringWidth = 50
-
-    , pointerWidth = 5
-    , pointerTailLength = 5
-    , pointerHeadLength = 90
-
-    , minValue = 0
-    , maxValue = 10
-
-    , minAngle = -90
-    , maxAngle = 90
-
-    , transitionMs = 750
-
-    , labelFormat = d3.format(',g')
-    , labelInset = 10
-    , valueFormat = d3.format(',.f')
-    , showLabels = true
-
-    , margin = {top: 0, right: 0, bottom: 0, left: 0}
+  var margin = {top: 0, right: 0, bottom: 0, left: 0}
     , width = null
     , height = null
     , clipEdge = true
-
+    , getValues = function(d) { return d.values }
     , getX = function(d) { return d.key }
     , getY = function(d) { return d.y }
-
     , id = Math.floor(Math.random() * 10000) //Create semi-unique ID in case user doesn't select one
     , color = nv.utils.defaultColor()
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
+    , labelFormat = d3.format(',g')
+    , valueFormat = d3.format(',.f')
+    , showLabels = true
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
   ;
 
-
+  var ringWidth = 50
+    , pointerWidth = 5
+    , pointerTailLength = 5
+    , pointerHeadLength = 90
+    , minValue = 0
+    , maxValue = 10
+    , minAngle = -90
+    , maxAngle = 90
+    , transitionMs = 750
+    , labelInset = 10
+  ;
 
   //============================================================
 
   //colorScale = d3.scale.linear().domain([0, .5, 1].map(d3.interpolate(min, max))).range(["green", "yellow", "red"]);
 
-
-  function chart(selection) 
+  function chart(selection)
   {
-
-    selection.each( 
+    selection.each(
 
     function(chartData) {
 
@@ -67,7 +59,7 @@ nv.models.gauge = function() {
           , labelData = [0].concat( data.map( function(d){ return d.y } ) )
           , prop = function(d){ return d*radius/100; }
           , fillGradient = function(d,i) {
-              return nv.utils.colorRadialGradient( d, i, radius, ringWidth/100, color(d,i), wrap.select('defs') );
+              return nv.utils.colorRadialGradient( d, i, 0, 0, radius, ringWidth/100, color(d,i), wrap.select('defs') );
             }
           ;
 
@@ -89,7 +81,7 @@ nv.models.gauge = function() {
 
         wrap.attr('transform', 'translate('+ (margin.left/2 + margin.right/2 + prop(labelInset)) +','+ (margin.top + prop(labelInset)) +')');
         //g.select('.nv-arc-gauge').attr('transform', 'translate('+ availableWidth/2 +','+ availableHeight/2 +')');
-        
+
         //------------------------------------------------------------
 
         // defsEnter.append('clipPath')
@@ -114,7 +106,7 @@ nv.models.gauge = function() {
 
         var ag = g.select('.nv-arc-group')
             .attr('transform', centerTx);
-       
+
         ag.selectAll('.nv-arc-path').transition().duration(10)
             .attr('fill', function(d,i){ return fill(d,i) } )
             .attr('d', arc);
@@ -123,14 +115,14 @@ nv.models.gauge = function() {
             .data(arcData)
           .enter().append('path')
             //.attr('class', 'nv-arc-path')
-            .attr('class', function(d,i) { 
-                return this.getAttribute('class') || ( 
+            .attr('class', function(d,i) {
+                return this.getAttribute('class') || (
                   'nv-arc-path' + (
-                    useClass 
-                      ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) ) 
+                    useClass
+                      ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
                       : ''
                   )
-                ); 
+                );
             } )
             .attr('fill', function(d,i){ return fill(d,i) } )
             .attr('stroke', '#ffffff')
@@ -195,12 +187,12 @@ nv.models.gauge = function() {
 
         //------------------------------------------------------------
         // Gauge pointer
-        var pointerData = [ 
-              [ Math.round(prop(pointerWidth)/2),    0 ], 
+        var pointerData = [
+              [ Math.round(prop(pointerWidth)/2),    0 ],
               [ 0, -Math.round(prop(pointerHeadLength))],
               [ -(Math.round(prop(pointerWidth)/2)), 0 ],
               [ 0, Math.round(prop(pointerWidth)) ],
-              [ Math.round(prop(pointerWidth)/2),    0 ] 
+              [ Math.round(prop(pointerWidth)/2),    0 ]
             ];
 
         var pg = g.select('.nv-pointer')
@@ -220,7 +212,7 @@ nv.models.gauge = function() {
         //------------------------------------------------------------
         // Odometer readout
         g.selectAll('.nv-odom').remove();
-        
+
         g.select('.nv-odomText').transition().duration(0)
             .style('font-size', prop(0.7)+'em');
 
@@ -241,10 +233,10 @@ nv.models.gauge = function() {
         g.select('.nv-odometer')
           .insert('path','.nv-odomText')
           .attr('class', 'nv-odom nv-odomBox')
-          .attr("d", 
+          .attr("d",
             nv.utils.roundedRectangle(
               -bbox.width/2, -bbox.height+prop(1.5), bbox.width+prop(4), bbox.height+prop(2), prop(2)
-            ) 
+            )
           )
           .attr('fill', '#eeffff')
           .attr('stroke','black')
@@ -268,7 +260,7 @@ nv.models.gauge = function() {
         function deg2rad(deg) {
           return deg * Math.PI/180;
         }
-        
+
         function newAngle(d) {
           return minAngle + ( scale(d) * range );
         }
@@ -286,6 +278,7 @@ nv.models.gauge = function() {
 
     return chart;
   }
+
 
   //============================================================
   // Expose Public Variables
@@ -329,6 +322,12 @@ nv.models.gauge = function() {
   chart.height = function(_) {
     if (!arguments.length) return height;
     height = _;
+    return chart;
+  };
+
+  chart.values = function(_) {
+    if (!arguments.length) return getValues;
+    getValues = _;
     return chart;
   };
 
@@ -393,7 +392,7 @@ nv.models.gauge = function() {
     if (!arguments.length) return minValue;
     minValue = _;
     return chart;
-  };  
+  };
   chart.maxValue = function(_) {
     if (!arguments.length) return maxValue;
     maxValue = _;
@@ -403,7 +402,7 @@ nv.models.gauge = function() {
     if (!arguments.length) return minAngle;
     minAngle = _;
     return chart;
-  };  
+  };
   chart.maxAngle = function(_) {
     if (!arguments.length) return maxAngle;
     maxAngle = _;
@@ -413,7 +412,7 @@ nv.models.gauge = function() {
     if (!arguments.length) return transitionMs;
     transitionMs = _;
     return chart;
-  }; 
+  };
   chart.labelFormat = function(_) {
     if (!arguments.length) return labelFormat;
     labelFormat = _;

@@ -8,7 +8,11 @@
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
   <style>
-    #gauge {
+    body {
+      overflow-y:scroll;
+    }
+
+    #pie {
       height: 95%;
       /*width: 700px;*/
       min-width: 100px;
@@ -26,29 +30,16 @@
       font-size: 1.4em;
     }
 
-    .nv-arc-group {
-      fill: steelblue;
-    }
-
-    .nv-pointer {
-      fill: #888888;
-      stroke: #ffffff;
-    }
-    
-    .nv-labels text {
+    .nv-label text {
       font-weight: bold;
       fill: #666;
     }
 
-    .nv-odomText {
-      font-weight: bold;
-      fill: #000;
-    }
-  </style>
+</style>
 </head>
 <body>
 
-<div id="gauge">
+<div id="pie">
   <svg></svg>
 </div>
 
@@ -58,45 +49,43 @@
 <script src="../js/nvd3/src/utils.js"></script>
 <script src="../js/nvd3/src/models/legend.js"></script>
 
-<script src="../js/nvd3/src/models/gauge.js"></script>
-<script src="../js/nvd3/src/models/gaugeChart.js"></script>
+<script src="../js/nvd3/src/models/pie.js"></script>
+<script src="../js/nvd3/src/models/pieChart.js"></script>
 
-<script src="../js/nvd3/data/gauge_data.js"></script>
+<script src="../js/nvd3/data/pie_data.js"></script>
 
 <script>
-  nv.addGraph(function() {
-    var width = nv.utils.windowSize().width,
-        height = nv.utils.windowSize().height;
 
-    var chart = nv.models.gaugeChart()
+nv.addGraph(function() {
+    var width = 500,
+        height = 500;
+
+    var chart = nv.models.pieChart()
         .x(function(d) { return d.key })
-        .y(function(d) { return d.y })
+        .y(function(d) { return d.value })
         .showLabels(true)
         .showTitle(true)
-        .colorData( 'graduated', {c1: '#d62728', c2: '#2ca02c', l: gauge_data.data.length} )
+        //.color(d3.scale.category10().range())
+        //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
         //.colorData( 'class' )
-        //.colorData( 'default' )
+        .colorData( 'default' )
         .colorFill( 'gradient' )
         //.colorFill( 'default' )
-        //.width(width)
-        //.height(height)
-        .ringWidth(50)
-        .maxValue(9)
-        .transitionMs(4000);
+        // .width(width)
+        // .height(height);
 
-    d3.select("#gauge svg")
-        .datum(gauge_data)
-      .transition().duration(1200)
-        //.attr('width', width)
-        //.attr('height', height)
+    d3.select("#pie svg")
+        .datum(pie_data)
+      .transition().duration(500)
+        .attr('width', width)
+        .attr('height', height)
         .call(chart);
 
     nv.utils.windowResize(function(){chart.update();});
 
-    //setInterval(function() { chart.setPointer(Math.random() * 10); }, 5 * 1000);
-
     return chart;
-  });
+});
+
 </script>
 </body>
 </html>
