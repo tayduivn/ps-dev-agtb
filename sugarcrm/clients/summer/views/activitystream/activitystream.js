@@ -19,7 +19,8 @@
         'keyup .sayit': 'getEntities',
         'blur .sayit': 'hideTypeahead',
         'mouseover ul.typeahead li': 'switchActiveTypeahead',
-        'click ul.typeahead li': 'addTag'
+        'click ul.typeahead li': 'addTag',
+        'click .sayit .label a.close': 'removeTag'
     },
 
     initialize: function(options) {
@@ -411,7 +412,7 @@
         var lastIndex = body.innerHTML.lastIndexOf("@");
         var data = $(event.currentTarget).data();
 
-        var tag = $("<span />").addClass("label").addClass("label-"+data.module).text(data.name);
+        var tag = $("<span />").addClass("label").addClass("label-"+data.module).html(data.name + '<a class="close">×</a>');
 
         body.innerHTML = body.innerHTML.substring(0, lastIndex) + " " + tag[0].outerHTML + "&nbsp;";
         if(document.createRange) {
@@ -423,6 +424,11 @@
             selection.addRange(range);
         }
         this.hideTypeahead();
+    },
+
+    removeTag: function(event) {
+        var el = this.$(event.currentTarget);
+        el.parent().remove();
     },
 
     _renderHtml: function() {
