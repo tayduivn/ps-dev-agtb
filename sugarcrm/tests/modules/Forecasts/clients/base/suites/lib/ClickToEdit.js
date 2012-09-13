@@ -87,6 +87,8 @@ describe("ClickToEdit", function(){
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+10.5%")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10.5%")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "10,000.50")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, ".05")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+.05%")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "abc%")).toBeFalsy();
     });
 
@@ -97,6 +99,8 @@ describe("ClickToEdit", function(){
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10%")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+10.5%")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10.5%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, ".05")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+.05%")).toBeTruthy();
         expect(app.view.ClickToEditField.prototype._checkDatatype(field, "abc")).toBeTruthy();
     });
 

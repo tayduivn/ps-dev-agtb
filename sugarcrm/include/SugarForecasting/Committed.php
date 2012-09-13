@@ -74,7 +74,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast
             //bug #54756:
             //Commit button does not get activated when changing best/likely numbers using inline editing for sales rep
             //without default data previous_commit is undefined thus updateTotals() doesn't work
-            $this->dataArray = array(
+            $forecasts[] = array(
                 'timeperiod_name' => '',
                 'start_date' => '',
                 'end_date' => '',

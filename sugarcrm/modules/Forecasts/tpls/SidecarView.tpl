@@ -1,63 +1,6 @@
-
 <script src='include/javascript/sugarAuthStore.js'></script>
 <script type='text/javascript' src='include/SugarCharts/Jit/js/Jit/jit.js'></script>
 <script type='text/javascript' src='include/SugarCharts/Jit/js/sugarCharts.js'></script>
-
-<div id="alert" class="alert-top"></div>
-<div id="core-module">
-    <div id="forecasts" style="" >
-        <div class="row-fluid">
-            <div class="view-forecastsSubnav subnav" id="headerbar"></div>
-        </div>
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span8">
-                    <div class="view-forecastsCommitButtons"></div>
-                    <div class="view-forecastsCommitted"></div>
-                    <div class="view-forecastsFilter"></div>
-                    <div>
-                        <div id="view-sales-rep" style="display:none">
-                            <div class="view-forecastsWorksheet"></div>
-                        </div>
-                        <div id="view-manager" style="display:none">
-                            <div class="view-forecastsWorksheetManager"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}
-                    <div class="tab-pane active" id="overview">
-                        <div class="thumbnail viz">
-                            <div class="view-forecastsChart"></div>
-                            <div class="view-forecastsChartOptions"></div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="block" id="guages">
-                            <div class="view-forecastsProgress"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{*temporarily adding the footer here manually to aid in development.  This should get added automatically once the footer is updated for all of Sugar*}
-<footer>
-    <div class="row-fluid">
-        <div class="span6">
-            <a href="" class="logo">SugarCRM</a>
-        </div>
-        <div class="span6">
-            <div class="btn-toolbar pull-right">
-                <div class="btn-group">
-                    <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
-                    <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
-                    <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</footer>
 
 {literal}
 
@@ -88,6 +31,22 @@
 {/literal}
 
 <div class="content"></div>
+<footer>
+    <div class="row-fluid">
+        <div class="span6">
+            <a href="" class="logo">SugarCRM</a>
+        </div>
+        <div class="span6">
+            <div class="btn-toolbar pull-right">
+                <div class="btn-group">
+                    <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+                    <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
+                    <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
 <script src='{$configFile}'></script>
 <script src='modules/Forecasts/clients/base/helper/hbt-helpers.js'></script>
 <script src='modules/Forecasts/clients/base/lib/ClickToEdit.js'></script>
