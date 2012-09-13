@@ -121,12 +121,12 @@
             // If no date (display default set to none), user may select hrs, minutes, etc., so defaults to now date in this case
             date.val(self.setIfNoDate(date.val()));
             hr = self.patched12AmHour(amPm, hour);
-            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()), {silent: true});
+            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()));
         });
         minute.on('change', function(ev) {
             date.val(self.setIfNoDate(date.val()));
             hr = self.patched12AmHour(amPm, hour);
-            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()), {silent: true});
+            model.set(fieldName, self.buildUnformatted(date.val(), hr, minute.val(), amPm.val()));
         });
         amPm.on('change', function(ev) {
             var isWrongAmPm = false;
