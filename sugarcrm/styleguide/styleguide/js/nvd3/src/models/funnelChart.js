@@ -116,7 +116,7 @@ nv.models.funnelChart = function() {
       var titleHeight = 0
         , legendHeight = 0;
 
-      if (showLegend) 
+      if (showLegend)
       {
         gEnter.append('g').attr('class', 'nv-legendWrap');
 
@@ -125,7 +125,7 @@ nv.models.funnelChart = function() {
         g.select('.nv-legendWrap')
             .datum(data)
             .call(legend);
-        
+
         legendHeight = legend.height();
 
         if ( margin.top !== legendHeight + titleHeight ) {
@@ -138,7 +138,7 @@ nv.models.funnelChart = function() {
             .attr('transform', 'translate(0,' + (-margin.top) +')');
       }
 
-      if (showTitle && properties.title ) 
+      if (showTitle && properties.title )
       {
         gEnter.append('g').attr('class', 'nv-titleWrap');
 
@@ -155,11 +155,11 @@ nv.models.funnelChart = function() {
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').style('height') ) +  
-          parseInt( g.select('.nv-title').style('margin-top') ) +  
+        titleHeight = parseInt( g.select('.nv-title').style('height') ) +
+          parseInt( g.select('.nv-title').style('margin-top') ) +
           parseInt( g.select('.nv-title').style('margin-bottom') );
 
-        if ( margin.top !== titleHeight + legendHeight ) 
+        if ( margin.top !== titleHeight + legendHeight )
         {
           margin.top = titleHeight + legendHeight;
           availableHeight = (height || parseInt(container.style('height')) || 400)
@@ -184,13 +184,15 @@ nv.models.funnelChart = function() {
       funnel
         .width(availableWidth)
         .height(availableHeight)
-        .color(data.map(function(d,i) {
-          return d.color || color(d, i);
-        }).filter(function(d,i) { return !data[i].disabled }));
+        // .color(
+        //   data.map( function(d,i) {
+        //     return d.color || color(d, i);
+        //   }).filter( function(d,i) { return !data[i].disabled } )
+        // );
 
 
       var funnelWrap = g.select('.nv-funnelWrap')
-          .datum(data.filter(function(d) { return !d.disabled }))
+          .datum( data.filter(function(d) { return !d.disabled }) );
 
       d3.transition(funnelWrap).call(funnel);
 
@@ -202,7 +204,7 @@ nv.models.funnelChart = function() {
 
       var series1 = [{x:0,y:0}];
       var series2 = data.filter(
-          function(d) { 
+          function(d) {
             return !d.disabled
           }
         ).map(
@@ -214,10 +216,11 @@ nv.models.funnelChart = function() {
             )
           }
       );
+      var tickData = d3.merge( series1.concat(series2) );
 
       // remap and flatten the data for use in calculating the scales' domains
-      var minmax = d3.extent( d3.merge( series1.concat(series2) ), function(d) { return d.y } );
-      var aTicks = d3.merge( series1.concat(series2) ).map( function(d) { return d.y } );
+      var minmax = d3.extent( tickData , function(d) { return d.y } );
+      var aTicks = d3.merge( tickData ).map( function(d) { return d.y } );
 
       y = d3.scale.linear().domain(minmax).range([availableHeight,0]);
 
@@ -245,9 +248,10 @@ nv.models.funnelChart = function() {
                     })
                     ;
 
-      d3.transition(g.select('.nv-y.nv-axis')).call(yAxis);
-
-      d3.transition(g.selectAll('.nv-y.nv-axis .tick')).attr('x2', function(d,i){ return c + ( r * y(aTicks[i]) ) + w/2 + 40 } );
+      d3.transition(g.select('.nv-y.nv-axis'))
+        .call(yAxis)
+          .style('stroke-width', '1')
+          .attr('x2', function(d,i){ return aTicks[i] ? ( c + ( r * y(aTicks[i]) ) + w/2 + 40 ) : 0 } );
 
       //------------------------------------------------------------
 
@@ -270,14 +274,14 @@ nv.models.funnelChart = function() {
         selection.transition().call(chart);
       });
 
-      dispatch.on('tooltipShow', function(e) { 
-        if (tooltips) showTooltip(e, that.parentNode, properties) 
+      dispatch.on('tooltipShow', function(e) {
+        if (tooltips) showTooltip(e, that.parentNode, properties)
       });
 
       //============================================================
 
       //TODO: decide if this makes sense to add into all the models for ease of updating (updating without needing the selection)
-      chart.update = function() { selection.transition().call(chart); };
+      chart.update = function() { selection.transition().call(chart) };
       chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
 
     });
@@ -298,7 +302,6 @@ nv.models.funnelChart = function() {
   funnel.dispatch.on('elementMouseout.tooltip', function(e) {
     dispatch.tooltipHide(e);
   });
-
   dispatch.on('tooltipHide', function() {
     if (tooltips) nv.tooltip.cleanup();
   });
@@ -316,7 +319,63 @@ nv.models.funnelChart = function() {
   chart.funnel = funnel;
   chart.yAxis = yAxis;
 
-  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay');
+  d3.rebind(chart, funnel, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass');
+
+  chart.colorData = function(_) {
+    if (arguments[0] === 'graduated')
+    {
+      var c1 = arguments[1].c1
+        , c2 = arguments[1].c2
+        , l = arguments[1].l;
+      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l) };
+    }
+    else if (_ === 'class')
+    {
+      chart.useClass(true);
+      legend.useClass(true);
+      var color = function (d,i) { return 'inherit' };
+    }
+    else
+    {
+      var color = nv.utils.defaultColor();
+    }
+
+    legend.color(color);
+    funnel.color(color);
+
+    return chart;
+  };
+
+  chart.colorFill = function(_) {
+    if (_ === 'gradient')
+    {
+      var fill = function (d,i) { return chart.gradient()(d,i) };
+    }
+    else
+    {
+      var fill = chart.color();
+    }
+
+    funnel.fill(fill);
+
+    return chart;
+  };
+
+  chart.x = function(_) {
+    if (!arguments.length) return getX;
+    getX = _;
+    lines.x(_);
+    funnelWrap.x(_);
+    return chart;
+  };
+
+  chart.y = function(_) {
+    if (!arguments.length) return getY;
+    getY = _;
+    lines.y(_);
+    funnel.y(_);
+    return chart;
+  };
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;

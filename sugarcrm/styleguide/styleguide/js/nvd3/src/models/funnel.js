@@ -14,12 +14,15 @@ nv.models.funnel = function() {
     , getX = function(d) { return d.x }
     , getY = function(d) { return d.y }
     , forceY = [0] // 0 is forced by default.. this makes sense for the majority of bar graphs... user can always do chart.forceY([]) to remove
+    , stacked = false
     , clipEdge = true
-    , stacked = true
-    , color = nv.utils.defaultColor()
     , delay = 1200
     , xDomain
     , yDomain
+    , color = nv.utils.defaultColor()
+    , fill = function (d,i) { return color(d,i); }
+    , gradient = function (d,i) { return color(d,i); }
+    , useClass = false
     , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout')
     ;
 
@@ -37,9 +40,15 @@ nv.models.funnel = function() {
 
   function chart(selection) {
     selection.each(function(data) {
-      var availableWidth = width - margin.left - margin.right,
-          availableHeight = height - margin.top - margin.bottom,
-          container = d3.select(this);
+      var availableWidth = width - margin.left - margin.right
+        , availableHeight = height - margin.top - margin.bottom
+        , container = d3.select(this)
+        , fillGradient = function(d,i) {
+            return nv.utils.colorLinearGradient( d, i, 'vertical', color(d,i), wrap.select('defs') );
+          }
+        ;
+
+      chart.gradient( fillGradient );
 
       data = d3.layout.stack()
                .offset('zero')
@@ -109,7 +118,7 @@ nv.models.funnel = function() {
       wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
       //------------------------------------------------------------
-
+      // Clip Path
 
       defsEnter.append('clipPath')
           .attr('id', 'nv-edge-clip-' + id)
@@ -119,6 +128,8 @@ nv.models.funnel = function() {
           .attr('height', availableHeight);
       g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
 
+
+      //------------------------------------------------------------
 
       var w = availableHeight/1.1
         , r = ( ( (w/8) - w ) / 2 ) / availableHeight
@@ -134,9 +145,9 @@ nv.models.funnel = function() {
       d3.transition(groups.exit())
         .selectAll('polygon.nv-bar')
         .delay(function(d,i) { return i * delay/ data[0].values.length })
-          .attr('points', function(d) { 
+          .attr('points', function(d) {
               var w0 = (r * y(d.y0)) + w/2, w1 = (r * y(d.y0+d.y)) + w/2;
-              return ( 
+              return (
                 (c - w0) + ',' +  0 + ' ' +
                 (c - w1) + ',' +  0 + ' ' +
                 (c + w1) + ',' +  0 + ' ' +
@@ -155,12 +166,22 @@ nv.models.funnel = function() {
           .attr('y', 0)
           .remove();
       groups
-          .attr( 'class', function(d,i) { return this.getAttribute('class') || 'nv-group nv-series-' + i + ' nv-fill' + (i%20>9?'':'0') + i%20; } )
-          .classed('hover', function(d) { return d.hover });
-
+          //.attr('class', function(d,i) { return this.getAttribute('class') || 'nv-group nv-series-' + i + ' nv-fill' + (i%20>9?'':'0') + i%20; } )
+          .attr('class', function(d,i) {
+              return this.getAttribute('class') || (
+                'nv-group nv-series-' + i + (
+                  useClass
+                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
+                    : ''
+                )
+              );
+          } )
+          .classed('hover', function(d) { return d.hover })
+          .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i) })
+          .attr('stroke', function(d,i){ return this.getAttribute('fill') || fill(d,i) });
       d3.transition(groups)
           .style('stroke-opacity', 1)
-          .style('fill-opacity', .75);
+          .style('fill-opacity', .85);
 
 
       //------------------------------------------------------------
@@ -174,9 +195,9 @@ nv.models.funnel = function() {
       var funsEnter = funs.enter()
           .append('polygon')
             .attr('class', 'nv-bar positive')
-            .attr('points', function(d) { 
+            .attr('points', function(d) {
               var w0 = (r * y(d.y0)) + w/2, w1 = (r * y(d.y0+d.y)) + w/2;
-              return ( 
+              return (
                 (c - w0) + ',' +  0 + ' ' +
                 (c - w1) + ',' +  0 + ' ' +
                 (c + w1) + ',' +  0 + ' ' +
@@ -186,7 +207,7 @@ nv.models.funnel = function() {
 
       d3.transition(funs)
           .delay(function(d,i) { return i * delay / data[0].values.length })
-          .attr('points', function(d) { 
+          .attr('points', function(d) {
             var w0 = (r * y(d.y0)) + w/2, w1 = (r * y(d.y0+d.y)) + w/2;
             return (
               (c - w0) + ',' +  y(d.y0) + ' ' +
@@ -226,7 +247,7 @@ nv.models.funnel = function() {
             .attr('fill', 'black')
             .attr('dx', -20)
             .attr('dy', '-.5em')
-          ; 
+          ;
 
       d3.transition(lblValue)
           .delay(function(d,i) { return i * delay / data[0].values.length })
@@ -256,7 +277,7 @@ nv.models.funnel = function() {
             .attr('fill', 'black')
             .attr('dx', 20)
             .attr('dy', '-.5em')
-          ; 
+          ;
 
       d3.transition(lblGroup)
           .delay(function(d,i) { return i * delay / data[0].values.length })
@@ -333,6 +354,27 @@ nv.models.funnel = function() {
 
   chart.dispatch = dispatch;
 
+  chart.color = function(_) {
+    if (!arguments.length) return color;
+    color = _;
+    return chart;
+  };
+  chart.fill = function(_) {
+    if (!arguments.length) return fill;
+    fill = _;
+    return chart;
+  };
+  chart.gradient = function(_) {
+    if (!arguments.length) return gradient;
+    gradient = _;
+    return chart;
+  };
+  chart.useClass = function(_) {
+    if (!arguments.length) return useClass;
+    useClass = _;
+    return chart;
+  };
+
   chart.x = function(_) {
     if (!arguments.length) return getX;
     getX = _;
@@ -399,18 +441,6 @@ nv.models.funnel = function() {
     return chart;
   };
 
-  chart.clipEdge = function(_) {
-    if (!arguments.length) return clipEdge;
-    clipEdge = _;
-    return chart;
-  };
-
-  chart.color = function(_) {
-    if (!arguments.length) return color;
-    color = nv.utils.getColor(_);
-    return chart;
-  };
-
   chart.id = function(_) {
     if (!arguments.length) return id;
     id = _;
@@ -420,6 +450,12 @@ nv.models.funnel = function() {
   chart.delay = function(_) {
     if (!arguments.length) return delay;
     delay = _;
+    return chart;
+  };
+
+  chart.clipEdge = function(_) {
+    if (!arguments.length) return clipEdge;
+    clipEdge = _;
     return chart;
   };
 

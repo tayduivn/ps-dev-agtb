@@ -47,7 +47,13 @@
 <script>
   nv.addGraph(function() {
     var chart = nv.models.funnelChart()
-        .showTitle(true);
+          .showTitle(true)
+          .tooltips(true)
+          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
+          //.colorData( 'class' )
+          .colorData( 'default' )
+          .colorFill( 'gradient' )
+          //.colorFill( 'default' )
 
     chart.yAxis
         .tickFormat(d3.format(',.1f'));
