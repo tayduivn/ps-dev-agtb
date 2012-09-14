@@ -105,7 +105,7 @@
             var self = this;
             // need to add error styling to parent view element
             this.$el.parent().parent().addClass("error");
-            this.$el.parent().addClass('input-append');
+            this.$el.wrap('<div class="input-append">');
             // For each error add to error help block
             _.each(errors, function(errorContext, errorName) {
                 self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
