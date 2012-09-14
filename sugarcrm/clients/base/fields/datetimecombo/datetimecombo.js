@@ -1,8 +1,15 @@
 ({
     // datetimecombo
     _render:function(value) {
-        var self = this;
+        var self = this, userTimePrefs;
+        // Determines if we're using 12 or 24 hour clock conventions
+        userTimePrefs = app.user.get('timepref');
+        // 'h' and 'g' specify types of 12 hour time formats (g without leading zeros)
+        this.showAmPm = (userTimePrefs.match(/h/)!==null || userTimePrefs.match(/g/)!==null) ? true : false;
+        this.timeOptions.hours = this.getHours();
+
         app.view.Field.prototype._render.call(self);
+
         $(function() {
             if(self.view.name === 'edit') {
                 $(".datepicker").datepicker({
@@ -15,6 +22,7 @@
     },
     lastHourSelected: null,
     lastMinuteSelected: null,
+    showAmPm: false,
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
@@ -31,6 +39,7 @@
         var jsDate, output, usersDateFormatPreference, usersTimeFormatPreference, myUser = app.user, d, parts;
         usersDateFormatPreference = myUser.get('datepref');
         usersTimeFormatPreference = myUser.get('timepref');
+
 
         // If there is a default 'string' value like "yesterday", format it as a date
         if(!value && this.def.display_default) {
@@ -54,9 +63,10 @@
             hours: app.date.format(jsDate, 'H'),
             minutes: app.date.format(jsDate, 'i'),
             seconds: app.date.format(jsDate, 's'),
-            amPm: app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm'
+            amPm: this.showAmPm ? (app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm') : ''
         };
-        //0am must be shown as 12am
+
+        //0am must be shown as 12am if we're on a 12 hour based time format
         if(typeof value.amPm != "undefined" && value.amPm == 'am' && value.hours == 0) {
             value.hours = '12';
             d = new Date();
@@ -67,36 +77,57 @@
         }
         return value;
     },
-
-    timeOptions:{  //TODO set this via a call to userPrefs in a overloaded initalize
-        hours:[
-            {key: "", value: ""},
-            {key: "00", value: "00"},
-            {key: "01", value: "01"},
-            {key: "02", value: "02"},
-            {key: "03", value: "03"},
-            {key: "04", value: "04"},
-            {key: "05", value: "05"},
-            {key: "06", value: "06"},
-            {key: "07", value: "07"},
-            {key: "08", value: "08"},
-            {key: "09", value: "09"},
-            {key: "10", value: "10"},
-            {key: "11", value: "11"},
-            {key: "12", value: "12"},
-            {key: "13", value: "13"},
-            {key: "14", value: "14"},
-            {key: "15", value: "15"},
-            {key: "16", value: "16"},
-            {key: "17", value: "17"},
-            {key: "18", value: "18"},
-            {key: "19", value: "19"},
-            {key: "20", value: "20"},
-            {key: "21", value: "21"},
-            {key: "22", value: "22"},
-            {key: "23", value: "23"}
-        ],
-            minutes: [
+    getHours: function() {
+        if(this.showAmPm) {
+            return  [
+                {key: "", value: ""},
+                {key: "0", value: "00"},
+                {key: "1", value: "01"},
+                {key: "2", value: "02"},
+                {key: "3", value: "03"},
+                {key: "4", value: "04"},
+                {key: "5", value: "05"},
+                {key: "6", value: "06"},
+                {key: "7", value: "07"},
+                {key: "8", value: "08"},
+                {key: "9", value: "09"},
+                {key: "10", value: "10"},
+                {key: "11", value: "11"},
+                {key: "12", value: "12"}
+            ];
+        } else {
+            return  [
+                {key: "", value: ""},
+                {key: "00", value: "00"},
+                {key: "01", value: "01"},
+                {key: "02", value: "02"},
+                {key: "03", value: "03"},
+                {key: "04", value: "04"},
+                {key: "05", value: "05"},
+                {key: "06", value: "06"},
+                {key: "07", value: "07"},
+                {key: "08", value: "08"},
+                {key: "09", value: "09"},
+                {key: "10", value: "10"},
+                {key: "11", value: "11"},
+                {key: "12", value: "12"},
+                {key: "13", value: "13"},
+                {key: "14", value: "14"},
+                {key: "15", value: "15"},
+                {key: "16", value: "16"},
+                {key: "17", value: "17"},
+                {key: "18", value: "18"},
+                {key: "19", value: "19"},
+                {key: "20", value: "20"},
+                {key: "21", value: "21"},
+                {key: "22", value: "22"},
+                {key: "23", value: "23"}
+            ];
+        }
+    },
+    timeOptions: { 
+        /* hours: set dynamically */
+        minutes: [
             {key: "", value: ""},
             {key: "00", value: "00"},
             {key: "15", value: "15"},
@@ -199,8 +230,9 @@
     },
 
     // If we have 00am we patch the displayed value to 12 am but we still want internally to represent as 00am
+    // if on 12 hour time format .. if not this function will just return hour val anyway.
     patched12AmHour: function (amPm, hour) {
-        // Patch 12am to 00am as we need it this way internally though we present 12am
+        // Patch 12am to 00am as we need it this way internally though we present 12am (if on 12 hr time format)
         if(amPm.val() && amPm.val() === 'am' && hour.val() === '12') {
             return '00';
         } else {

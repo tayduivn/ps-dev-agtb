@@ -38,13 +38,26 @@ describe("datetimecombo field", function() {
             expect(field.format(unformatedValue).time).toEqual(hours + ':00');
             expect(field.format(unformatedValue).seconds).toEqual('00');
         });
-        it("should convert 00am to 12am", function() {
+        it("should convert 00am to 12am if on 12 hour time format", function() {
             var myUser = SUGAR.App.user, jsDate, unformatedValue;
             myUser.set('datepref','m/d/Y');
-            myUser.set('timepref','H:i');
+            myUser.set('timepref','h:i');
+            // the field sets this based on h or H in timepref, but don't want to trigger _render ;=)
+            field.showAmPm = true;
             jsDate = new Date("September 12, 1970 00:00:00")
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue).hours).toEqual('12');
+        });
+        it("should NOT convert 00am to 12am if on 24 hour time format", function() {
+            var myUser = SUGAR.App.user, jsDate, unformatedValue;
+            myUser.set('datepref','m/d/Y');
+            myUser.set('timepref','H:i');
+            // the field sets this based on h or H in timepref, but don't want to trigger _render ;=)
+            field.showAmPm = false;
+            jsDate = new Date("September 12, 1970 00:00:00")
+            unformatedValue = jsDate.toISOString();
+            expect(field.format(unformatedValue).hours).not.toEqual('12');
+            expect(field.format(unformatedValue).hours).toEqual('00');
         });
     });
 });

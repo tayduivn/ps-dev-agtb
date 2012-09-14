@@ -1,1 +1,1 @@
-{{value.date}} {{value.time}} {{value.amPm}}
+{{value.date}} {{value.time}} {{#if this.showAmPm}}{{value.amPm}}{{/if}}
