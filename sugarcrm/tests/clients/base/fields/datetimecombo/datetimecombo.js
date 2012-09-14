@@ -1,4 +1,4 @@
-describe("sugarfields", function() {
+describe("datetimecombo field", function() {
     var app, field;
 
     beforeEach(function() {
