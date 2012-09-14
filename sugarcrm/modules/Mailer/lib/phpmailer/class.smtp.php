@@ -135,10 +135,13 @@ class SMTP {
                                  $tval);   // give up after ? secs
     // verify we connected properly
     if(empty($this->smtp_conn)) {
-      $GLOBALS['log']->fatal("SMTP -> ERROR: Failed to connect to server. Code: $errno Reply: $errstr ");
+      $this->error = array("error" => "Failed to connect to server",
+                           "errno" => $errno,
+                           "errstr" => $errstr);
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": $errstr ($errno)" . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR: Failed to connect to server. Code: $errno Reply: $errstr ");
       return false;
     }
 
@@ -191,6 +194,7 @@ class SMTP {
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": " . $rply . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR: STARTTLS not accepted from server. Code: $code Reply: $rply ");
       return false;
     }
 
@@ -216,10 +220,14 @@ class SMTP {
     $code = substr($rply,0,3);
 
     if($code != 334) {
-      $GLOBALS['log']->fatal("SMTP -> ERROR:AUTH not accepted from server. Code: $code Reply: $rply");
+      $this->error =
+        array("error" => "AUTH not accepted from server",
+              "smtp_code" => $code,
+              "smtp_msg" => substr($rply,4));
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": " . $rply . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR:AUTH not accepted from server. Code: $code Reply: $rply");
       return false;
     }
 
@@ -230,25 +238,32 @@ class SMTP {
     $code = substr($rply,0,3);
 
     if($code != 334) {
-      $GLOBALS['log']->fatal("SMTP -> ERROR:Username not accepted from server. Code: $code Reply: $rply ");
+      $this->error =
+        array("error" => "Username not accepted from server",
+              "smtp_code" => $code,
+              "smtp_msg" => substr($rply,4));
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": " . $rply . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR:Username not accepted from server. Code: $code Reply: $rply ");
       return false;
     }
 
     // Send encoded password
-    $password = from_html($password);
     fputs($this->smtp_conn, base64_encode($password) . $this->CRLF);
 
     $rply = $this->get_lines();
     $code = substr($rply,0,3);
 
     if($code != 235) {
-      $GLOBALS['log']->fatal("SMTP -> ERROR:Password not accepted from server. Code: $code Reply: $rply ");
+      $this->error =
+        array("error" => "Password not accepted from server",
+              "smtp_code" => $code,
+              "smtp_msg" => substr($rply,4));
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": " . $rply . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR:Password not accepted from server. Code: $code Reply: $rply ");
       return false;
     }
 
@@ -501,6 +516,7 @@ class SMTP {
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": " . $rply . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR: $hello not accepted from server. Code: $code, Reply: $rply");
       return false;
     }
 
@@ -550,6 +566,7 @@ class SMTP {
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": " . $rply . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR: MAIL not accepted from server. Code: $code Reply: $rply ");
       return false;
     }
     return true;
@@ -638,10 +655,14 @@ class SMTP {
     }
 
     if($code != 250 && $code != 251) {
-      $GLOBALS['log']->fatal("SMTP -> ERROR: RCPT not accepted from server. Code: $code Reply: $rply ");
+      $this->error =
+        array("error" => "RCPT not accepted from server",
+              "smtp_code" => $code,
+              "smtp_msg" => substr($rply,4));
       if($this->do_debug >= 1) {
         echo "SMTP -> ERROR: " . $this->error["error"] . ": " . $rply . $this->CRLF . '<br />';
       }
+      $GLOBALS['log']->fatal("SMTP -> ERROR: RCPT not accepted from server. Code: $code Reply: $rply ");
       return false;
     }
     return true;

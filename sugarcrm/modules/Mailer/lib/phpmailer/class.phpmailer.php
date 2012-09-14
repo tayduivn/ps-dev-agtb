@@ -1,4 +1,82 @@
 <?php
+
+/*
+
+Modification information for LGPL compliance
+
+Author: Eddy Ramirez <eddy@sugarcrm.com>
+        2011-03-03 18:00:00 -0700 (Thu, 03 Mar 2011) - eddy - bug 31778 - added html chars (apostrophe and ampersand) back to email address before sending
+
+r58121 - 2010-09-09 11:35:17 -0700 (Thu, 09 Sep 2010) - kjing - Merge: 717e037 0ca4d1c
+Author: Jenny Gonsalves <jenny@sugarcrm.com>
+    Merge branch 'master' of git+ssh://github.com/sugarcrm/Mango
+
+r57158 - 2010-06-27 20:13:23 -0700 (Sun, 27 Jun 2010) - kjing - commit a2a7548e2a06c075c99a17472c9c5672e1ec1926
+Author: John Mertic <jmertic@sugarcrm.com>
+    Bug 8312 - Set the encoding type to 'base64' by default if we are sending an HTML email
+
+r56990 - 2010-06-16 13:05:36 -0700 (Wed, 16 Jun 2010) - kjing - snapshot "Mango" svn branch to a new one for GitHub sync
+
+r56989 - 2010-06-16 13:01:33 -0700 (Wed, 16 Jun 2010) - kjing - defunt "Mango" svn dev branch before github cutover
+
+r55980 - 2010-04-19 13:31:28 -0700 (Mon, 19 Apr 2010) - kjing - create Mango (6.1) based on windex
+
+r55695 - 2010-03-30 17:46:05 -0700 (Tue, 30 Mar 2010) - mitani - #36026
+Fixes an issue where CCed recipents would not be listed in the email. Need to upgrade PHP Mailer later on to the latest
+
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+
+r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
+
+r51443 - 2009-10-12 13:34:36 -0700 (Mon, 12 Oct 2009) - jmertic - Bug 33332 - Made application PHP 5.3 compliant with E_DEPRECATED warnings on by:
+- Changing all ereg function to either preg or simple string based ones
+- No more references to magic quotes.
+- Change all the session_unregister() functions to just unset() the correct session variable instead.
+
+r51251 - 2009-09-30 09:30:59 -0700 (Wed, 30 Sep 2009) - roger - svn merge from Tokyo rev: 50982 - 51248.
+
+r50983 - 2009-09-21 13:45:37 -0700 (Mon, 21 Sep 2009) - ajay - Merged code from branches/tokyo version 50739 thru 50982
+
+r50519 - 2009-08-31 15:20:00 -0700 (Mon, 31 Aug 2009) - sgandhi - 31348
+
+r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
+
+r50023 - 2009-08-07 16:30:05 -0700 (Fri, 07 Aug 2009) - eddy - Bug 32412
+Split logic in file to allow string to be parsed for template conversion
+include/phpmailer/class.phpmailer.php
+
+r43691 - 2009-01-29 15:25:53 -0800 (Thu, 29 Jan 2009) - faissah - 27521  : Update to phpmailer version 2.3.
+
+r42807 - 2008-12-29 11:16:59 -0800 (Mon, 29 Dec 2008) - dwong - Branch from trunk/sugarcrm r42806 to branches/tokyo/sugarcrm
+
+r39785 - 2008-09-12 15:49:45 -0700 (Fri, 12 Sep 2008) - faissah - Update to PHPmailer 2.2.1
+
+r39146 - 2008-08-26 17:16:04 -0700 (Tue, 26 Aug 2008) - awu - Merging pre_5_1_0 to trunk
+
+r23880 - 2007-06-26 15:14:35 -0700 (Tue, 26 Jun 2007) - julian - Fix for bug #13475: security vulnerability in phpmailer
+
+r11652 - 2006-02-21 18:24:06 -0800 (Tue, 21 Feb 2006) - chris - Bug 4719: updating PHPMailer classes for security (DDoS)
+Touched:
+include/phpmailer (everything)
+include/SugarPHPMailer.php (adding our constructor)
+modules/Email/Email.php (to use the new constructor)
+
+r10887 - 2006-01-05 22:51:15 -0800 (Thu, 05 Jan 2006) - chris - Bug 3979: fixed filename generation issues that caused PDFs to be sent with the wrong encoding type
+
+r10886 - 2006-01-05 18:24:55 -0800 (Thu, 05 Jan 2006) - chris - Bug 3979: initial code checkin to get reports scheduling in Scheduler
+
+r6053 - 2005-07-06 01:04:42 -0700 (Wed, 06 Jul 2005) - clint - Bug #1400
+Even if I have "Clint Oram <clint@sugarcrm.com>" in the to field, I only end up seeing "clint@sugarcrm.com" in the received email.
+
+r5104 - 2005-05-04 15:33:41 -0700 (Wed, 04 May 2005) - majed - gets rid of HTTP_GET_VARS and what not which has been deprecated
+
+r1573 - 2004-10-29 17:23:17 -0700 (Fri, 29 Oct 2004) - julian - Fix: path to phpmailer language file wrong
+
+r915 - 2004-10-08 15:31:10 -0700 (Fri, 08 Oct 2004) - julian - E-mail notification feature + new admin console
+
+
+*/
+
 /*~ class.phpmailer.php
 .---------------------------------------------------------------------------.
 |  Software: PHPMailer - PHP email class                                    |
@@ -53,7 +131,7 @@ class PHPMailer {
    * Sets the CharSet of the message.
    * @var string
    */
-  public $CharSet           = 'utf-8';
+  public $CharSet           = 'iso-8859-1';
 
   /**
    * Sets the Content-type of the message.
@@ -1643,7 +1721,7 @@ class PHPMailer {
         if (version_compare(PHP_VERSION, '5.3.0', '<')) {
           set_magic_quotes_runtime(0);
         } else {
-		  ini_set('magic_quotes_runtime', 0); 
+		  ini_set('magic_quotes_runtime', 0);
 		}
 	  }
       $file_buffer  = file_get_contents($path);
@@ -1652,7 +1730,7 @@ class PHPMailer {
         if (version_compare(PHP_VERSION, '5.3.0', '<')) {
           set_magic_quotes_runtime($magic_quotes);
         } else {
-		  ini_set('magic_quotes_runtime', $magic_quotes); 
+		  ini_set('magic_quotes_runtime', $magic_quotes);
 	    }
 	  }
       return $file_buffer;
@@ -1738,6 +1816,9 @@ class PHPMailer {
         // Use a custom function which correctly encodes and wraps long
         // multibyte strings without breaking lines within a character
         $encoded = $this->Base64EncodeWrapMB($str);
+        // Bug 39171 - Need to change the passed back line-ending to \n, since that's what the
+        //             regex below expects.
+        $encoded = str_replace($this->LE, "\n", trim($encoded));
       } else {
         $encoded = base64_encode($str);
         $maxlen -= $maxlen % 4;

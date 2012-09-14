@@ -307,6 +307,7 @@ function processReports(){
             $mail->setMailerForSystem();
             $mail->From = $defaults['email'];
             $mail->FromName = $defaults['name'];
+			$mail->Encoding = 'base64';
             $mail->IsHTML(true);
             $mail->ClearAllRecipients();
             $mail->ClearReplyTos();
