@@ -17,7 +17,7 @@ describe("sugarfields", function() {
     describe("url", function() {
         it("should add http if missing on format and leave https and http alone", function() {
             var completeURL = "http://www.google.com";
-            var completeHttpsURL = "http://www.google.com";
+            var completeHttpsURL = "https://www.google.com";
             var incompURL = "www.google.com";
             expect(field.format(completeURL)).toEqual(completeURL);
             expect(field.format(completeHttpsURL)).toEqual(completeHttpsURL);
