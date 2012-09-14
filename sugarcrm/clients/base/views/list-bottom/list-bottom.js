@@ -59,15 +59,11 @@
         this.layout.trigger("list:search:toggle");
     },
     showQuickCreate: function() {
-        //todo: fix params - better way to get components
-        var params = {
-            module: this.module,
-            components: app.metadata.data.layouts.quickcreate.meta.components,
-            layout: "quickcreate",
-            title: "Create " + this.module
-        };
-
-        this.layout.trigger("modal:quickcreate:open", params);
+        this.layout.trigger("modal:quickcreate:open", {
+            context: { module: this.module },
+            components: [ { layout: 'quickcreate' } ],
+            title: "Create " + this.moduleSingular //todo: needs translation (pass to modal via metadata instead of here)
+        });
     },
     getSearchOptions: function() {
         var collection, options, previousTerms, term = '';
