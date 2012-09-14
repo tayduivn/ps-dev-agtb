@@ -54,6 +54,7 @@ class ServerInfoApi extends SugarApi {
     {
         global $sugar_flavor;
         global $sugar_version;
+        global $timedate;
 
         $data['flavor'] = $sugar_flavor;
         $data['version'] = $sugar_version;
@@ -79,9 +80,12 @@ class ServerInfoApi extends SugarApi {
         /*
          * Always return dates in ISO-8601
          */
-        $data['gmt_time'] = gmdate('c', strtotime(TimeDate::getInstance()->nowDb()));
+        
+        $date = new SugarDateTime();
+        
+        $data['server_time'] = $timedate->asIso($date, $GLOBALS['current_user']);
 
-        $data['server_time'] = date('c');
+        $data['gmt_time'] = gmdate('Y-m-d\TH:i:s') . '+0000';
 
         return $data;
     }
