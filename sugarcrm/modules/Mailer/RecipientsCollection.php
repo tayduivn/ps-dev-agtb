@@ -108,7 +108,7 @@ class RecipientsCollection
     public function addRecipients($recipients = array(), $function = RecipientsCollection::FunctionAddTo) {
         // validate the function to use for adding the recipients
         if (!method_exists($this, $function)) {
-            throw new MailerException("Cannot add recipients using {$function}");
+            throw new MailerException("Cannot add recipients using {$function}", MailerException::ResourceNotFound);
         }
 
         $recipients = $this->castRecipientsAsArray($recipients);

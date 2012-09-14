@@ -119,8 +119,7 @@ class EmailHeaders
     /**
      * @access public
      * @param int $priority
-     *
-     * @todo throw a warning exception if not changing the header
+     * @todo report if not changing the header?
      */
     public function setPriority($priority = 3) {
         if (is_integer($priority)) {
@@ -140,8 +139,7 @@ class EmailHeaders
     /**
      * @access public
      * @param bool $request
-     *
-     * @todo throw a warning exception if not changing the header
+     * @todo report if not changing the header?
      */
     public function setRequestConfirmation($request = false) {
         if (is_bool($request)) {
@@ -161,8 +159,6 @@ class EmailHeaders
     /**
      * @access public
      * @param EmailIdentity $from required
-     *
-     * @todo throw an exception if not an EmailIdentity?
      */
     public function setFrom(EmailIdentity $from) {
         $this->from = $from;
@@ -179,8 +175,6 @@ class EmailHeaders
     /**
      * @access public
      * @param EmailIdentity $replyTo required
-     *
-     * @todo throw an exception if not an EmailIdentity?
      */
     public function setReplyTo(EmailIdentity $replyTo) {
         $this->replyTo = $replyTo;
@@ -197,8 +191,6 @@ class EmailHeaders
     /**
      * @access public
      * @param EmailIdentity $sender required
-     *
-     * @todo throw an exception if not an EmailIdentity?
      */
     public function setSender(EmailIdentity $sender) {
         $this->sender = $sender;
@@ -215,12 +207,16 @@ class EmailHeaders
     /**
      * @access public
      * @param string $subject required
-     *
-     * @todo throw an exception if not a string?
+     * @throws MailerException
      */
     public function setSubject($subject) {
         if (is_string($subject)) {
             $this->subject = $subject;
+        } else {
+            throw new MailerException(
+                "Invalid header: " . self::Subject . " must be a string",
+                MailerException::InvalidHeader
+            );
         }
     }
 
@@ -245,13 +241,17 @@ class EmailHeaders
      * @access public
      * @param string $key   required Should look like the real header it represents.
      * @param string $value required The value of the header.
-     *
-     * @todo throw an exception if the custom header is invalid?
-     * @todo do we need to prevent overwriting a non-custom header?
+     * @throws MailerException
+     * @todo prevent overwriting a non-custom header?
      */
     public function addCustomHeader($key, $value) {
         if (is_string($key) && is_string($value)) {
             $this->custom[$key] = $value;
+        } else {
+            throw new MailerException(
+                "Invalid custom header: '{$key}' and '{$value}' must be strings",
+                MailerException::InvalidHeader
+            );
         }
     }
 
@@ -306,14 +306,18 @@ class EmailHeaders
      *
      * @access private
      * @param array $headers required The headers array to fill that packaging will return.
-     * @throws MailerException @todo error because From must be supplied
+     * @throws MailerException
      */
     private function packageFrom(&$headers) {
         $from = $this->getFrom();
 
-        // validate the header value
-        if (!($from instanceof EmailIdentity)) {
-            throw new MailerException("Invalid header: " . self::From);
+        // validate that the From header is present, but its setter took care of validating the actual value so that
+        // is not necessary
+        if (is_null($from)) {
+            throw new MailerException(
+                "Invalid header: " . self::From . " cannot be null",
+                MailerException::InvalidHeader
+            );
         }
 
         // add the From header to the package as an array with an email address and a name
@@ -328,7 +332,6 @@ class EmailHeaders
      *
      * @access private
      * @param array $headers required The headers array to fill that packaging will return.
-     * @throws MailerException @todo is a warning valid since the Reply-To can be derived from the From by PHPMailer?
      */
     private function packageReplyTo(&$headers) {
         $replyTo = $this->getReplyTo();
@@ -337,11 +340,12 @@ class EmailHeaders
         if (!is_null($replyTo)) {
             // validate the header value
             if (!($replyTo instanceof EmailIdentity)) {
-                throw new MailerException("Invalid header: " . self::ReplyTo);
+                //@todo stringify $replyTo and add it to the log
+               $GLOBALS['log']->warn("Invalid header: " . self::ReplyTo);
+            } else {
+                // add the Reply-To header to the package as an array with an email address and a name
+                $headers[self::ReplyTo] = array($replyTo->getEmail(), $replyTo->getName());
             }
-
-            // add the Reply-To header to the package as an array with an email address and a name
-            $headers[self::ReplyTo] = array($replyTo->getEmail(), $replyTo->getName());
         }
     }
 
@@ -353,7 +357,6 @@ class EmailHeaders
      *
      * @access private
      * @param array $headers required The headers array to fill that packaging will return.
-     * @throws MailerException @todo is a warning valid since the Sender can be derived from the From by PHPMailer?
      */
     private function packageSender(&$headers) {
         $sender = $this->getSender();
@@ -362,11 +365,12 @@ class EmailHeaders
         if (!is_null($sender)) {
             // validate the header value
             if (!($sender instanceof EmailIdentity)) {
-                throw new MailerException("Invalid header: " . self::Sender);
+                //@todo stringify $sender and add it to the log
+                $GLOBALS['log']->warn("Invalid header: " . self::Sender);
+            } else {
+                // add the Sender header to the package; only the email address is accepted
+                $headers[self::Sender] = $sender->getEmail();
             }
-
-            // add the Sender header to the package; only the email address is accepted
-            $headers[self::Sender] = $sender->getEmail();
         }
     }
 
@@ -434,7 +438,7 @@ class EmailHeaders
      *
      * @access private
      * @param array $headers required The headers array to fill that packaging will return.
-     * @throws MailerException @todo error because Subject must be supplied
+     * @throws MailerException
      */
     private function packageSubject(&$headers) {
         $subject = $this->getSubject();
@@ -442,7 +446,10 @@ class EmailHeaders
         // validate that the Subject header is present, but its setter took care of validating the actual value so that
         // is not necessary
         if (is_null($subject)) {
-            throw new MailerException("Invalid header: " . self::Subject);
+            throw new MailerException(
+                "Invalid header: " . self::Subject . " cannot be null",
+                MailerException::InvalidHeader
+            );
         }
 
         // add the Subject header to the package

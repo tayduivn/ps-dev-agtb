@@ -23,7 +23,13 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class MailerException extends Exception
 {
-    public function log($level) {
-        $GLOBALS['log']->$level($this->message);
-    }
+    const ResourceNotFound              = 1;
+    const InvalidConfiguration          = 2;
+    const InvalidHeader                 = 3;
+    const InvalidEmailAddress           = 4;
+    const FailedToSend                  = 5;
+    const FailedToConnectToRemoteServer = 6;
+    const FailedToTransferHeaders       = 7;
+    const InvalidMessageBody            = 8;
+    const InvalidAttachment             = 9;
 }

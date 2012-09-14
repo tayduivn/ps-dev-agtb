@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Mailer/SimpleMailer.php');
+require_once 'modules/Mailer/SimpleMailer.php';
 
 class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -186,8 +186,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects(self::never())
             ->method("transferAttachments");
 
-        $actual = $mockMailer->send();
-        self::assertFalse($actual, "Send should have returned false on failure");
+        self::setExpectedException("MailerException");
+        $mockMailer->send();
     }
 
     /**
@@ -226,8 +226,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects(self::never())
             ->method("transferAttachments");
 
-        $actual = $mockMailer->send();
-        self::assertFalse($actual, "Send should have returned false on failure");
+        self::setExpectedException("MailerException");
+        $mockMailer->send();
     }
 
     /**
@@ -267,8 +267,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects(self::never())
             ->method("transferAttachments");
 
-        $actual = $mockMailer->send();
-        self::assertFalse($actual, "Send should have returned false on failure");
+        self::setExpectedException("MailerException");
+        $mockMailer->send();
     }
 
     /**
@@ -309,8 +309,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects(self::never())
             ->method("transferAttachments");
 
-        $actual = $mockMailer->send();
-        self::assertFalse($actual, "Send should have returned false on failure");
+        self::setExpectedException("MailerException");
+        $mockMailer->send();
     }
 
     /**
@@ -352,8 +352,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer->expects(self::never())
             ->method("transferAttachments");
 
-        $actual = $mockMailer->send();
-        self::assertFalse($actual, "Send should have returned false on failure");
+        self::setExpectedException("MailerException");
+        $mockMailer->send();
     }
 
     /**
@@ -396,8 +396,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("transferAttachments")
             ->will(self::throwException(new MailerException()));
 
-        $actual = $mockMailer->send();
-        self::assertFalse($actual, "Send should have returned false on failure");
+        self::setExpectedException("MailerException");
+        $mockMailer->send();
     }
 
     /**
@@ -451,14 +451,14 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("transferAttachments")
             ->will(self::returnValue(true));
 
-        $actual = $mockMailer->send();
-        self::assertFalse($actual, "Send should have returned false on failure");
+        self::setExpectedException("MailerException");
+        $mockMailer->send();
     }
 
     /**
      * @group mailer
      */
-    public function testSend_Success() {
+    public function testSend_AllMethodCallsAreSuccessful_NoExceptionsThrown() {
         $mockPhpMailer = self::getMock("PHPMailer", array("Send"));
 
         $mockPhpMailer->expects(self::any())
@@ -506,7 +506,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("transferAttachments")
             ->will(self::returnValue(true));
 
-        $actual = $mockMailer->send();
-        self::assertTrue($actual, "Send should have returned true on success");
+        $mockMailer->send();
     }
 }

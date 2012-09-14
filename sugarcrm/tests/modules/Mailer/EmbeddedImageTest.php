@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Mailer/EmbeddedImage.php');
+require_once 'modules/Mailer/EmbeddedImage.php';
 
 class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
 {

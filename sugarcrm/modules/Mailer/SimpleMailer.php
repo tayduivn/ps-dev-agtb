@@ -73,37 +73,26 @@ class SimpleMailer extends BaseMailer
      * Performs the send of an email using PHPMailer (currently version 5.2.1).
      *
      * @access public
-     * @return boolean true=success
      * @throws MailerException
      */
     public function send() {
+        $mailer = $this->generateMailer(); // get a fresh PHPMailer object
+
+        $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
+                                                // attempting to send with it
+        $this->connectToHost($mailer);          // connect to the SMTP server
+        $this->transferHeaders($mailer);        // transfer the email headers to PHPMailer
+        $this->transferRecipients($mailer);     // transfer the recipients to PHPMailer
+        $this->transferBody($mailer);           // transfer the message to PHPMailer
+        $this->transferAttachments($mailer);    // transfer the attachments to PHPMailer
+
         try {
-            $mailer = $this->generateMailer(); // get a fresh PHPMailer object
-
-            $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object
-                                                    // before attempting to send with it
-            $this->connectToHost($mailer);          // connect to the SMTP server
-            $this->transferHeaders($mailer);        // transfer the email headers to PHPMailer
-            $this->transferRecipients($mailer);     // transfer the recipients to PHPMailer
-            $this->transferBody($mailer);           // transfer the message to PHPMailer
-            $this->transferAttachments($mailer);    // transfer the attachments to PHPMailer
-
-            try {
-                // send the email with PHPMailer
-                $mailer->Send();
-            } catch (Exception $e) {
-                // eat the phpmailerException but use it's message to provide context for the failure
-                throw new MailerException("Failed to send the email: " . $e->getMessage());
-            }
-        } catch (MailerException $me) {
-            //@todo consider using status codes and grouping them based on the error level that should be used so that different error levels can be logged
-            //@todo could also catch different Exception classes that extend MailerException and log at the level particular to that exception type
-            $me->log('error'); // log the error at the error level
-            return false;
+            // send the email with PHPMailer
+            $mailer->Send();
+        } catch (Exception $e) {
+            // eat the phpmailerException but use it's message to provide context for the failure
+            throw new MailerException("Failed to send the email: " . $e->getMessage(), MailerException::FailedToSend);
         }
-
-        // got here... success!!!
-        return true;
     }
 
     /**
@@ -121,14 +110,11 @@ class SimpleMailer extends BaseMailer
      *
      * @access protected
      * @param PHPMailer $mailer
-     * @throws MailerException
      */
     protected function transferConfigurations(PHPMailer &$mailer) {
         // explicitly set the language even though PHPMailer will do it on its own
-        if (!$mailer->SetLanguage()) {
-            //@todo do we really care if it fails since english will be used anyway?
-            throw new MailerException("Failed to load the language file");
-        }
+        // this call could fail (only if English is not used), but it should be safe to ignore it
+        $mailer->SetLanguage();
 
         // transfer the basic configurations to PHPMailer
         $mailer->Mailer   = self::Protocol;
@@ -167,7 +153,10 @@ class SimpleMailer extends BaseMailer
 //            } else {
 //                $this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
 //            }
-            throw new MailerException("Failed to connect to the remote server");
+            throw new MailerException(
+                "Failed to connect to the remote server",
+                MailerException::FailedToConnectToRemoteServer
+            );
         }
     }
 
@@ -191,7 +180,10 @@ class SimpleMailer extends BaseMailer
                         //@todo might not want to require the second value
                         $mailer->SetFrom($value[0], $value[1]);
                     } catch (Exception $e) {
-                        throw new MailerException("Failed to add the From header");
+                        throw new MailerException(
+                            "Failed to add the " . EmailHeaders::From . " header: " . $e->getMessage(),
+                            MailerException::FailedToTransferHeaders
+                        );
                     }
 
                     break;
@@ -211,7 +203,10 @@ class SimpleMailer extends BaseMailer
                             throw new phpmailerException();
                         }
                     } catch (Exception $e) {
-                        throw new MailerException("Failed to add the Reply-To header");
+                        throw new MailerException(
+                            "Failed to add the " . EmailHeaders::ReplyTo . " header: " . $e->getMessage(),
+                            MailerException::FailedToTransferHeaders
+                        );
                     }
 
                     break;
@@ -271,7 +266,6 @@ class SimpleMailer extends BaseMailer
                 $mailer->AddAddress($recipient->getEmail(), $recipient->getName());
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
-                //throw new MailerException("Failed to add the recipient known by " . $recipient->getEmail());
             }
         }
 
@@ -283,7 +277,6 @@ class SimpleMailer extends BaseMailer
                 $mailer->AddCC($recipient->getEmail(), $recipient->getName());
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
-                //throw new MailerException("Failed to add the CC recipient known by " . $recipient->getEmail());
             }
         }
 
@@ -295,7 +288,6 @@ class SimpleMailer extends BaseMailer
                 $mailer->AddBCC($recipient->getEmail(), $recipient->getName());
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
-                //throw new MailerException("Failed to add the BCC recipient known by " . $recipient->getEmail());
             }
         }
     }
@@ -313,7 +305,7 @@ class SimpleMailer extends BaseMailer
 
         // make sure there is at least one message part
         if (!$hasText && !$hasHtml) {
-            throw new MailerException("No email body was provided");
+            throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
         }
 
         if ($hasHtml) {
@@ -331,7 +323,6 @@ class SimpleMailer extends BaseMailer
             $mailer->Body = $this->textBody; // the plain-text part is the primary message body
         } else {
             // you should never actually send an email without a plain-text part, but we'll allow it (for now)
-            //throw new MailerException("No text body was provided");
         }
     }
 
@@ -358,7 +349,10 @@ class SimpleMailer extends BaseMailer
                         $attachment->getEncoding(),
                         $attachment->getMimeType());
                 } catch (Exception $e) {
-                    throw new MailerException("Failed to add the attachment at " . $attachment->getPath());
+                    throw new MailerException(
+                        "Failed to add the attachment at " . $attachment->getPath() . ": " . $e->getMessage(),
+                        MailerException::InvalidAttachment
+                    );
                 }
             } elseif ($attachment instanceof EmbeddedImage) {
                 // it's an embedded image
@@ -370,11 +364,14 @@ class SimpleMailer extends BaseMailer
                     $attachment->getEncoding(),
                     $attachment->getMimeType())
                 ) {
-                    throw new MailerException("Failed to embed the image at " . $attachment->getPath());
+                    throw new MailerException(
+                        "Failed to embed the image at " . $attachment->getPath(),
+                        MailerException::InvalidAttachment
+                    );
                 }
             } else {
                 // oops!
-                throw new MailerException("Invalid file");
+                throw new MailerException("Invalid attachment type", MailerException::InvalidAttachment);
             }
         }
     }

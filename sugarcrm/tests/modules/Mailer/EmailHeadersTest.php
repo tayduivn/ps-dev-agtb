@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Mailer/EmailHeaders.php');
+require_once 'modules/Mailer/EmailHeaders.php';
 
 class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -82,12 +82,12 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetSubject_PassInInteger_SubjectIsNotUpdated() {
+    public function testSetSubject_PassInInteger_MailerExceptionIsThrown() {
+        self::setExpectedException("MailerException");
         $invalidSubject = 1;
         $headers        = new EmailHeaders();
         $headers->setSubject($invalidSubject);
-        $actual = $headers->getSubject();
-        self::assertNull($actual, "The subject should have remained null");
+        $actual = $headers->getSubject(); // hopefully nothing is actually returned
     }
 
     /**
@@ -124,20 +124,12 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testAddCustomHeader_PassInValidKeyAndInvalidValue_CustomHeaderIsNotUpdated() {
-        $headers = new EmailHeaders();
-
-        // first set the custom header to something valid
-        $key      = "X-CUSTOM-HEADER";
-        $expected = "custom header value";
-        $headers->addCustomHeader($key, $expected);
-
-        // attempt to change the custom header, but it should fail
+    public function testAddCustomHeader_PassInValidKeyAndInvalidValue_MailerExceptionIsThrown() {
+        self::setExpectedException("MailerException");
+        $headers      = new EmailHeaders();
+        $key          = "X-CUSTOM-HEADER";
         $invalidValue = 1;
         $headers->addCustomHeader($key, $invalidValue);
-
-        $actual = $headers->getCustomHeader($key);
-        self::assertEquals($expected, $actual, "The custom header should have remained '{$expected}'");
     }
 
     /**
