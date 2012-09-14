@@ -1,4 +1,4 @@
-/**
+ /**
  * View that displays edit view on a model
  * @class View.Views.EditView
  * @alias SUGAR.App.layout.EditView
@@ -12,8 +12,8 @@
     },
 
     initializeSendEmailModel: function() {
+        var view = this;
         var SaveModel = Backbone.Model.extend({
-            editModel: this.model,
             sync: function (method, model, options) {
                 this.hydrateFromEditModel();
                 var myURL = app.api.buildURL('Emails', 'send');
@@ -21,9 +21,9 @@
             },
             
             hydrateFromEditModel: function() {
-                this.set(_.extend({}, this.editModel.attributes, {
+                this.set(_.extend({}, view.model.attributes, {
                     to_addresses: [ {
-                        email: this.editModel.get('to_addresses')
+                        email: view.model.get('to_addresses')
                     }]
                 }));
             }
@@ -51,10 +51,5 @@
             
             fieldsToValidate: this.getFields(this.module)
         });
-    },
-    
-    _renderHtml: function() {
-//        this.model.set('from_addr_name', 'test@example.com');
-        app.view.View.prototype._renderHtml.call(this);
     }
 })
