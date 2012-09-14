@@ -17,17 +17,14 @@
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
-
         jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
-        return jsDate.toISOString();
-    },
-
-    format:function(value) {
-        var jsDate, output, 
-            usersDateFormatPreference, usersTimeFormatPreference, 
-            myUser = app.user;
-        jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
-        return jsDate.toISOString();
+        if(jsDate && typeof jsDate.toISOString === 'function') {
+            return jsDate.toISOString();
+        } else {
+            debugger
+            app.logger.error("Issue converting date to iso string; no toISOString available for date created for value: "+value);
+            return value;
+        }
     },
 
         usersDateFormatPreference = myUser.get('datepref');
@@ -37,7 +34,9 @@
         if(!value && this.def.display_default) {
             value  = app.date.parseDisplayDefault(this.def.display_default);
             // Preset the model with display default in case user doesn't change anything
-            this.model.set(this.name, new Date(value.slice(0, value.length-2)).toISOString()); 
+            this.model.set(this.name, dt.toISOString()); 
+        } else if(!value) {
+            return value;
         } else {
             // In case ISO 8601 get it back to js native date which date.format understands
             jsDate = new Date(value);
