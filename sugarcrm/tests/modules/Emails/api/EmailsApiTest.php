@@ -95,10 +95,10 @@ class EmailsApiTest extends RestTestBase {
         $message = "<br>This is a <span style='color:red'>Test</span> email";
 
         $this->input = array(
-            // "toaddress"		=> array("sparsley@sugarcrm.com", "nharding@sugarcrm.com", "twolf@sugarcrm.com"),
+            "email_config"  =>  null,
+
             "to_addresses"	=>  array(
                 array("name" => "Captain Kangaroo",  "email" => "twolf@sugarcrm.com"),
-                /*	array("name" => "Donald Duck",  	 "email" => "glevine@sugarcrm.com"), */
                 array("name" => "Mister Moose",  	 "email" => "twb2@webtribune.com"),
             ),
 
@@ -661,7 +661,6 @@ class EmailsApiTest extends RestTestBase {
             $sql = "INSERT into config VALUES('notify', 'fromname', '$a2')";
             $GLOBALS['db']->query($sql);
         }
-
 
         $q = "SELECT id FROM outbound_email WHERE type = 'system'";
         $r = $GLOBALS['db']->query($q);
