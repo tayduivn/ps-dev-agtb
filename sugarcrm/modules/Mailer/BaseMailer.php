@@ -21,13 +21,20 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'IMailer.php';
-require_once 'MailerException.php';
-require_once 'RecipientsCollection.php';
-require_once 'EmailHeaders.php';
+require_once 'IMailer.php';              // requires IMailer in order to implement it
+require_once 'MailerException.php';      // requires MailerException in order to throw exceptions of that type
+require_once 'RecipientsCollection.php'; // stores recipients in a RecipientsCollection
+require_once 'EmailHeaders.php';         // email headers are contained in an EmailHeaders object
 
+/**
+ * This class implements the basic functionality that is expected from a Mailer.
+ *
+ * @abstract
+ * @implements IMailer
+ */
 abstract class BaseMailer implements IMailer
 {
+    // protected members
     protected $configs;
     protected $headers;
     protected $recipients;
@@ -35,10 +42,18 @@ abstract class BaseMailer implements IMailer
     protected $textBody;
     protected $attachments;
 
+    /**
+     * @access public
+     */
     public function __construct() {
-        $this->reset();
+        $this->reset(); // the equivalent of initializing the Mailer object's properties
     }
 
+    /**
+     * Set the object properties back to their initial default values.
+     *
+     * @access public
+     */
     public function reset() {
         $this->loadDefaultConfigs();
         $this->clearAttachments();
@@ -49,30 +64,70 @@ abstract class BaseMailer implements IMailer
         $this->textBody   = null;
     }
 
+    /**
+     * Set the mailer configuration to its default settings for this sending strategy.
+     *
+     * @access public
+     */
     public function loadDefaultConfigs() {
+        // the default configuration
         $defaults = array(
-            'hostname' => '',
-            'charset'  => 'utf-8',
-            'encoding' => self::EncodingQP, // default to quoted-printable for plain/text
-            'wordwrap' => 996,
+            'hostname' => '',                        // the hostname to use in Message-ID and Received headers and as
+                                                     // default HELO string, not the server hostname
+            'charset'  => 'utf-8',                   // the char set of the message
+            'encoding' => Encoding::QuotedPrintable, // default to quoted-printable for plain/text
+            'wordwrap' => 996,                       // number of characters per line before the message body wrap
         );
 
-        $this->setConfigs($defaults);
+        $this->setConfigs($defaults); // set the default configuration
     }
 
+    /**
+     * Replaces the existing configuration with the configuration passed in as a parameter. The configuration must
+     * contain and should only be concerned with "hostname" (string), "charset" (string), "encoding" (string), and
+     * "wordwrap" (int).
+     *
+     * @access public
+     * @param array $configs required The key-value pair configuration to replace the existing configuration.
+     */
     public function setConfigs($configs) {
         $this->configs = $configs;
     }
 
+    /**
+     * Merges the configuration passed in as a parameter with the existing configuration. The configuration must
+     * contain and should only be concerned with "hostname" (string), "charset" (string), "encoding" (string), and
+     * "wordwrap" (int). When key conflicts arise, precedence will be given to the new configuration, as is the
+     * behavior of the array_merge function.
+     *
+     * @access public
+     * @param array $configs required The key-value pair configuration to merge with the existing configuration.
+     */
     public function mergeConfigs($configs) {
         $this->configs = array_merge($this->configs, $configs);
     }
 
+    /**
+     * Sets or overwrites a configuration with the value passed in for the key ($config).
+     *
+     * @access public
+     * @param string $config required The configuration key.
+     * @param mixed  $value  required The configuration value.
+     */
     public function setConfig($config, $value) {
         $this->configs[$config] = $value;
     }
 
+    /**
+     * Returns the configuration value at the specified key ($config).
+     *
+     * @access public
+     * @param string $config required The configuration key.
+     * @return mixed The value stored at the specified key.
+     * @throws MailerException
+     */
     public function getConfig($config) {
+        // make sure the configuration exists
         if (!array_key_exists($config, $this->configs)) {
             throw new MailerException("Configuration does not exist: {$config}");
         }
@@ -80,19 +135,43 @@ abstract class BaseMailer implements IMailer
         return $this->configs[$config];
     }
 
+    /**
+     * Replaces the existing email headers with the headers passed in as a parameter.
+     *
+     * @access public
+     * @param EmailHeaders $headers required
+     */
     public function setHeaders(EmailHeaders $headers) {
         $this->headers = $headers;
     }
 
+    /**
+     * Replaces the existing email headers with an EmailHeaders object hydrated from the array passed in as a parameter.
+     *
+     * @access public
+     * @param array $headers required
+     */
     public function constructHeaders($headers = array()) {
-        //@todo dependent on $this->headers being an EmailHeaders object; throw an exception if not?
         $this->headers->buildFromArray($headers);
     }
 
+    /**
+     * Restores the email headers to a fresh EmailHeaders object.
+     *
+     * @access public
+     */
     public function clearHeaders() {
         $this->headers = new EmailHeaders();
     }
 
+    /**
+     * Clears the recipients from the selected recipient lists. By default, clear all recipients.
+     *
+     * @access public
+     * @param bool $to  true=clear the To list; false=leave the To list alone
+     * @param bool $cc  true=clear the CC list; false=leave the CC list alone
+     * @param bool $bcc true=clear the BCC list; false=leave the BCC list alone
+     */
     public function clearRecipients($to = true, $cc = true, $bcc = true) {
         if ($to) {
             $this->clearRecipientsTo();
@@ -107,51 +186,130 @@ abstract class BaseMailer implements IMailer
         }
     }
 
+    /**
+     * Adds recipients to the To list.
+     *
+     * @access public
+     * @param array $recipients Array of EmailIdentity objects.
+     */
     public function addRecipientsTo($recipients = array()) {
-        return $this->recipients->addRecipients($recipients);
+        $this->recipients->addRecipients($recipients);
     }
 
+    /**
+     * Removes the recipients from the To list.
+     *
+     * @access public
+     */
     public function clearRecipientsTo() {
         $this->recipients->clearTo();
     }
 
+    /**
+     * Adds recipients to the CC list.
+     *
+     * @access public
+     * @param array $recipients Array of EmailIdentity objects.
+     */
     public function addRecipientsCc($recipients = array()) {
         return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddCc);
     }
 
+    /**
+     * Removes the recipients from the CC list.
+     *
+     * @access public
+     */
     public function clearRecipientsCc() {
         $this->recipients->clearCc();
     }
 
+    /**
+     * Adds recipients to the BCC list.
+     *
+     * @access public
+     * @param array $recipients Array of EmailIdentity objects.
+     */
     public function addRecipientsBcc($recipients = array()) {
         return $this->recipients->addRecipients($recipients, RecipientsCollection::FunctionAddBcc);
     }
 
+    /**
+     * Removes the recipients from the BCC list.
+     *
+     * @access public
+     */
     public function clearRecipientsBcc() {
         $this->recipients->clearBcc();
     }
 
-    public function setTextBody($textBody) {
-        $this->textBody = $textBody;
+    /**
+     * Sets the plain-text part of the email.
+     *
+     * @access public
+     * @param string $body required
+     */
+    public function setTextBody($body) {
+        $this->textBody = $body;
     }
 
-    public function setHtmlBody($htmlBody) {
-        $this->htmlBody = $htmlBody;
+    /**
+     * Sets the HTML part of the email.
+     *
+     * @access public
+     * @param string $body required
+     */
+    public function setHtmlBody($body) {
+        $this->htmlBody = $body;
     }
 
-    public function addAttachment($path, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
+    /**
+     * Adds an attachment from a path on the filesystem.
+     *
+     * @access public
+     * @param string      $path     required Path to the file being attached.
+     * @param null|string $name              Name of the file to be used to identify the attachment.
+     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
+     * @param string      $mimeType          Should be a valid MIME type.
+     */
+    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
         $this->attachments[] = new Attachment($path, $name, $encoding, $mimeType);
     }
 
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = self::EncodingBase64, $mimeType = 'application/octet-stream') {
+    /**
+     * Adds an embedded attachment. This can include images, sounds, and just about any other document. Make sure to set
+     * the $mimeType to the appropriate type. For JPEG images use "image/jpeg" and for GIF images use "image/gif".
+     *
+     * @access public
+     * @param string      $path     required Path to the file being attached.
+     * @param string      $cid      required The Content-ID used to reference the image in the message.
+     * @param null|string $name              Name of the file to be used to identify the attachment.
+     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
+     * @param string      $mimeType          Should be a valid MIME type.
+     */
+    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
         $this->attachments[] = new EmbeddedImage($path, $cid, $name, $encoding, $mimeType);
     }
 
+    /**
+     * Removes any existing attachments by restoring the container to an empty array.
+     *
+     * @access public
+     */
     public function clearAttachments() {
         $this->attachments = array();
     }
 
+    /**
+     * Returns true if the value passed in as a parameter is a valid message part. Use this method to determine if a
+     * message has an HTML part or a plain-text part. If both parts exist, then the message is multi-part.
+     *
+     * @access protected
+     * @param string $part required The content of the message part to inspect.
+     * @return bool
+     */
     protected function hasMessagePart($part) {
+        // the content is only valid if it's a string and it's not empty
         if (is_string($part) && $part != '') {
             return true;
         }
