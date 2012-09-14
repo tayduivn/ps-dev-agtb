@@ -34,9 +34,14 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $user = new User();
+        $user->retrieve('a19adb46-86ee-aebd-c361-503f74779927');
+        $GLOBALS["current_user"] = $user;
+        // $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         $this->input = array(
+            "email_config"  =>  "1234567890", // "7c8d3023-dddb-144c-105e-504e1e872b06",
+
             "to_addresses"	=>  array(
                 array("name" => "Captain Kangaroo",  "email" => "twolf@sugarcrm.com"),
                 array("name" => "Mister Moose",  	 "email" => "twb2@webtribune.com"),
@@ -80,13 +85,13 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
     }
 
-
     public function testSaveAsDraft_Success ()
     {
         global $current_user;
 
         $mailRecord = new MailRecord($current_user);
 
+        $mailRecord->mailConfig   = $this->input["email_config"];
         $mailRecord->toAddresses  = $this->input["to_addresses"];
         $mailRecord->ccAddresses  = $this->input["cc_addresses"];
         $mailRecord->bccAddresses = $this->input["bcc_addresses"];
@@ -101,7 +106,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         $mailRecord->text_body    = $this->input["text_body"];
 
         $emailRequest = array (
-            'fromAccount' => '313f4278-4ae4-5082-45b3-502bf679066d',
+            'fromAccount' => '1234567890',
             'sendSubject' => 'This is a Test Email',
             'sendTo' => 'Captain Kangaroo <twolf@sugarcrm.com>, Mister Moose <twb2@webtribune.com>',
             'sendCc' => 'Bunny Rabbit <twb3@webtribune.com>',
@@ -122,18 +127,18 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
         $mockEmailBean =  $this->getMock('Email' , array('email2Send'));
         $mockEmailBean->expects($this->once())
-              ->method('email2Send')
-              ->with($emailRequest)
-              ->will($this->returnValue($emailBeanResponseValue));
+                ->method('email2Send')
+                ->with($emailRequest)
+                ->will($this->returnValue($emailBeanResponseValue));
 
         $mailRecord->emailBean = $mockEmailBean;
         $result = $mailRecord->saveAsDraft();
-        unset($result['EMAIL']);
-        print_r($result);
+
+        //unset($result['EMAIL']);
+        //print_r($result);
 
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
-
 
 
     public function testSaveAsDraft_FromAccountsUnavailable_ExceptionThrown()
@@ -150,11 +155,23 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
             ->will($this->returnValue($fromAccounts));
 
         $mockEmailBean =  $this->getMock('Email', array('email2init'));
-        $mockEmailBean->expects   ($this->once())
+        $mockEmailBean->expects($this->once())
             ->method('email2init');
 
         $mockEmailBean->et = $mockEmailUIBean;
         $mailRecord->emailBean = $mockEmailBean;
+
+        /**/
+        $email = new Email();
+        $email->email2init();
+
+        $ie = new InboundEmail();
+        $ie->email = $email;
+
+        $fromAccounts = $email->et->getFromAccountsArray($ie);
+        // print_r($fromAccounts);
+        // exit;
+        /**/
 
         try {
             $mailRecord->saveAsDraft();
@@ -162,7 +179,6 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         } catch(Exception $ex) {
             return;
         }
-
     }
 }
 ?>

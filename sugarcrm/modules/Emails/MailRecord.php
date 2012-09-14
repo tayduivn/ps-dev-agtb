@@ -41,6 +41,7 @@ class MailRecord {
     var $current_user;
 
     /* MailRecord Properties */
+    public  $mailConfig;
     public  $toAddresses;
     public  $ccAddresses;
     public  $bccAddresses;
@@ -65,27 +66,9 @@ class MailRecord {
     {
         // $email->retrieve($email_id);
         $email->email2init();
-
         $mailRecord = new MailRecord($current_user);
-
-        /**
-        $mailRecord->toAddresses  = $args["to_addresses"];
-        $mailRecord->ccAddresses  = $args["cc_addresses"];
-        $mailRecord->bccAddresses = $args["bcc_addresses"];
-
-        $mailRecord->attachments  = $args["attachments"];
-        $mailRecord->documents    = $args["documents"];
-        $mailRecord->teams        = $args["teams"];
-        $mailRecord->related      = $args["related"];
-
-        $mailRecord->subject      = $args["subject"];
-        $mailRecord->html_body    = $args["html_body"];
-        $mailRecord->text_body    = $args["text_body"];
-         **/
-
         return $mailRecord;
     }
-
 
     public function saveAsDraft() {
         $result = $this->toEmailBean("draft");
@@ -133,12 +116,17 @@ class MailRecord {
 
         $email->email2init();
 
-        $ie = new InboundEmail();
-        $ie->email = $email;
+        if (empty($this->mailConfig)) {
+            $ie = new InboundEmail();
+            $ie->email = $email;
 
-        $fromAccount = $email->et->getFromAccountsArray($ie);
-        if (!is_array($fromAccount) || count($fromAccount) == 0) {
-            throw new MailerException("System Email Configuration Not Found or Not Complete");
+            $fromAccounts = $email->et->getFromAccountsArray($ie);
+            if (!is_array($fromAccounts) || count($fromAccounts) == 0) {
+                throw new MailerException("System Email Configuration Not Found or Not Complete");
+            }
+            $fromAccount = $fromAccounts[0]['value'];
+        } else {
+            $fromAccount = $this->mailConfig;
         }
 
         $sendto = array();
@@ -238,7 +226,7 @@ class MailRecord {
         }
 
         $request = array(
-            'fromAccount'       => $fromAccount[0]['value'],
+            'fromAccount'       => $fromAccount,
 
             'sendSubject'       => $this->subject,
             'sendTo'            => $sendto_addresses,

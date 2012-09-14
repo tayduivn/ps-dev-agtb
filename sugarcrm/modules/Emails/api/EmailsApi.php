@@ -29,7 +29,7 @@ require_once('modules/Emails/MailRecord.php');
 class EmailsApi extends ModuleApi
 {
     public static $fields = array (
-
+        "email_config"      => null,
         "to_addresses"      => null,
         "cc_addresses"      => null,
         "bcc_addresses"     => null,
@@ -162,6 +162,14 @@ class EmailsApi extends ModuleApi
     public $errorLabel = 'request_too_large';
     public $description = "The request is too large to process.";
     }
+
+
+    ------ CREATE/POST Status Codes ----------
+    200 OK	The request was successful, the resource has been updated and the response body contains the representation.
+    201 CREATED	The request was successful, a new resource has been created and the response body contains the resource representation.
+    404 NOT FOUND	The resource has not been found.
+    428 PRECONDITION REQUIRED	The server was unable to update the resource due to edit conflict.
+    422 UNPROCESSABLE ENTITY	The data given in the POST or PUT failed validation. The response body contains validation error object.
     -----***/
 
 
@@ -174,7 +182,17 @@ class EmailsApi extends ModuleApi
     public function createMail($api, $args) {
 
         $result = $this->handleMail($api, $args);
-
+        /*
+        if ($result['SUCCESS']) {
+            $response = array_merge(
+                            array(
+                                     "id" => $result["EMAIL"]["id"],
+                                     "date_created" => $result["EMAIL"]["date_modified"],
+                                 ),
+                            $result
+                        );
+        }
+        */
         return $result;
     }
 
@@ -245,7 +263,6 @@ class EmailsApi extends ModuleApi
     public function notSupported($api, $args) {
 
         throw new SugarApiExceptionNotFound();
-
         // $result = array(
         //    "ERROR"   => "Function Not Supported",
         //    "ARGS"    => $args,
