@@ -170,7 +170,7 @@
                     <img src="{{../../collection.picture_url}}" class="avatar" alt="{{../../collection.full_name}}">
                 </a>
                 <p>
-                <input type="text" value="" class="sayit" placeholder="Add your comment" dropzone="copy">
+                <div contenteditable="true" class="sayit activitystream-comment-box" dropzone="copy" /><br />
                 <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
                 </p>
                 </div>
@@ -184,7 +184,7 @@
                     <img src="{{../../collection.picture_url}}" class="avatar" alt="{{../../collection.full_name}}">
                 </a>
                 <p>
-                <input type="text" value="" class="sayit" placeholder="Add your comment" dropzone="copy">
+                <div contenteditable="true" class="sayit activitystream-comment-box" dropzone="copy" /><br />
                 <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
                 </p>
               </div>

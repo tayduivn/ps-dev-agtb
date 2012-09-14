@@ -105,9 +105,10 @@
     addComment: function(event) {
         var self = this,
             myPost = this.$(event.currentTarget).closest('li'),
-            myPostContents = myPost.find('input.sayit')[0].value,
+            myPostHTML = myPost.find('div.sayit'),
+            myPostTags = myPost.find('div.sayit span'),
             myPostId = this.$(event.currentTarget).data('id'),
-            attachments = [];
+            myPostContents = '';
 
         this.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
             var id = $(el).attr('id');
@@ -116,6 +117,20 @@
                 "data": $('#' + id + '_data', el).val()
             });
         });
+
+
+        $(myPostHTML).contents().each(function() {
+            if(this.nodeName == "#text") {
+                myPostContents += this.data;
+            } else if(this.nodeName == "SPAN") {
+                var el = $(this);
+                el.find('a').remove();
+                var data = el.data();
+                myPostContents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
+            }
+        }).html();
+        myPostContents = myPostContents.replace(/&nbsp;/gi,' ');
+
 
         this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function(post_id) {
             var pending_attachments = self.$(event.currentTarget).siblings('.activitystream-pending-attachment');
@@ -242,7 +257,7 @@
         this.opts.params.filter = 'all';
         this.opts.params.offset = 0;
         this.opts.params.limit = '';
-        this.opts.params.max_num = '';        
+        this.opts.params.max_num = '';
         this.collection.fetch(this.opts);
     },
 
@@ -250,7 +265,7 @@
         this.opts.params.filter = 'myactivities';
         this.opts.params.offset = 0;
         this.opts.params.limit = '';
-        this.opts.params.max_num = '';           
+        this.opts.params.max_num = '';
         this.collection.fetch(this.opts);
     },
 
@@ -258,7 +273,7 @@
         this.opts.params.filter = 'favorites';
         this.opts.params.offset = 0;
         this.opts.params.limit = '';
-        this.opts.params.max_num = '';           
+        this.opts.params.max_num = '';
         this.collection.fetch(this.opts);
     },
 
@@ -407,9 +422,8 @@
                 height: el[0].offsetHeight
             });
 
-            ul.html(items).css({
-                top: pos.top - pos.height
-            }).appendTo(el.parent()).show();
+            ul.html(items).appendTo(el.parent()).show();
+            console.log("showing, within:", el.parent());
         }
     }, 250),
 
@@ -472,6 +486,9 @@
                 comments[comments.length - 3]['_stophidden'] = true;
             }
             _.each(comments, function(comment) {
+                comment.value = comment.value.replace(pattern, function(str, module, id, text) {
+                    return "<span class='label label-"+module+"'><a href='#"+module+'/'+id+"'>"+text+"</a></span>";
+                });
                 _.each(comment.notes, function(note) {
                     if(note.file_mime_type) {
                         note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
