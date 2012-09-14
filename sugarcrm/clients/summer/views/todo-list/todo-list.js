@@ -145,8 +145,6 @@
             // apply input error class
             subject.parent().addClass("control-group error");
             subject.one("keyup", function() {
-                console.log("lol");
-                console.log(subject.parent());
                 subject.parent().removeClass("control-group error");
             });
         }

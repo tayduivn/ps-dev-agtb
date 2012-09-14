@@ -43,7 +43,11 @@ $dictionary['ActivityStream'] =
                 'indices' => array (
                       //name will be re-constructed adding idx_ and table name as the prefix like 'idx_accounts_'
                       array ('name' => 'pk', 'type' => 'primary', 'fields' => array('id')),
-                      array ('name' => 'target', 'type' => 'index', 'fields' => array('target_module','target_id'))
+                      // for all and my favorites
+                      array ('name' => 'target', 'type' => 'index', 'fields' => array('target_module','target_id')),
+                      // for my activities
+                      array ('name' => 'user_target', 'type' => 'index', 'fields' => array('created_by','target_module','target_id')),
+                      array ('name' => 'date_created', 'type' => 'index', 'fields' => array('date_created'))                                               
                 )
         );
 ?>

@@ -105,7 +105,9 @@ $app->post('/rest/users/authenticate', function() use ($app, $box)
     $res = $api->getUrl($email, $box->getSetting('top_url')."summer/splash/rest/users/callback");
     if($res) {
         $add = "&access_type=offline";
-        $user = $box->getUser($email, false);
+        if($email != "gmail.com") {
+            $user = $box->getUser($email, false);
+        }
         if(empty($user) || empty($user['refresh_token'])) {
             // if we need refresh token, we'd need to request approval
             $add .= "&approval_prompt=force";

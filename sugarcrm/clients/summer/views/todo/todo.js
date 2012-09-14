@@ -88,16 +88,26 @@
         e.stopPropagation();
     },
     handleEscKey: function() {
-        // todo: change this horribly inefficient code later
-        $(document).keyup(function(event) {
-            // check if the menu is active
-            if( $(".todo-list-widget").hasClass("open") ) {
+        var self = this;
+        _.defer(function() {
+            self.$(".todo-subject").focus();
+        });
+
+        if( !(this.$(".todo-list-widget").is(".open")) ) {
+            // attach namespaced keyup event listener
+            this.$(".todo-subject,.todo-date").on("keyup.escape", function() {
                 // If esc was pressed
                 if( event.keyCode == 27 ) {
-                    $(".todo-list-widget").removeClass("open");
+                    self.$(".todo-list-widget").removeClass("open");
+                    // remove event listener
+                    self.$(".todo-subject,.todo-date").off("keyup.escape");
                 }
-            }
-        });
+            });
+        }
+        else {
+            // remove event listener
+            this.$(".todo-subject,.todo-date").off("keyup.escape");
+        }
     },
     showDatePicker: function() {
         this.$(".todo-date").datepicker({
