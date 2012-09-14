@@ -83,18 +83,29 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
         
-        // Run through our test files and make sure customs and tests are backed up
+        // Run through our test files and make sure customs, working and core
+        // metadata files are backed up. Core files will restore regardless, but
+        // others will only restore if there was an original file.
         foreach ($this->filesToTest as $file) {
+            // Set aside custom and working files.
             $custom = "custom/$file";
-            $backup = $custom . '.unittest';
-            if (file_exists($custom)) {
-                if (rename($custom, $backup)) {
-                    $this->filesBackedUp[] = $backup;
+            $working = "custom/working/$file";
+            
+            $filesets = array($custom, $working);
+            foreach ($filesets as $filepath) {
+                $backup = $filepath . '.unittest';
+                            
+                // Backup custom first
+                if (file_exists($filepath)) {
+                    if (rename($filepath, $backup)) {
+                        $this->filesBackedUp[] = $backup;
+                    }
+                } else {
+                    $this->filesToTearDown[] = $filepath;
                 }
-            } else {
-                $this->filesToTearDown[] = $custom;
             }
             
+            // Now do core metadata files
             $backup = $file . '.unittest';
             if (file_exists($file)) {
                 if (copy($file, $backup)) {
@@ -140,41 +151,10 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
         
         return false;
     }
-//    
+
     /**
-     * Utility method to parse field defs for MOST grid type layouts
-     * 
-     * @param string $name The field name to check for
-     * @param array $fields The defs to search
-     * @return bool
+     * @group Bug56389
      */
-    protected function _fieldNameFoundInFields($name, $fields) {
-        foreach ($fields as $field) {
-            if (isset($field['name']) && $field['name'] == $name) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    /**
-     * Utility method to search layout defs for mobile grid layouts for a field
-     * 
-     * @param string $name The field name to search for
-     * @param array $layout The defs to search
-     * @return bool
-     */
-    protected function _fieldNameFoundInLayoutFields($name, $layout) {
-        foreach ($layout as $fields) {
-            if ($this->_fieldNameFoundInFields($name, $fields)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-//    
     public function testDeleteFieldRemovesPortalViewDefs()
     {
         // First test, get each def and check the test fields

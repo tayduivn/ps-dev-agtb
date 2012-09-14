@@ -381,25 +381,33 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
     public function removeField($fieldName)
     {
         $return = false;
-        foreach ($this->_paneldefs as $panelIndex => $def) {
-            if (isset($def['fields']) && is_array($def['fields'])) {
-                $newFields = array();
-                foreach ($def['fields'] as $fieldIndex => $field) {
-                    if (!empty($field['name']) && $field['name'] == $fieldName) {
-                        $return = true;
-                        continue;
+        // Start with out current viewdefs
+        if (isset($this->_viewdefs[$this->client]['view'])) {
+            // list, edit or detail
+            $type = key($this->_viewdefs[$this->client]['view']);
+            
+            // The current panels, should be the same as $this->_paneldefs
+            $panels = $this->_viewdefs[$this->client]['view'][$type]['panels'];
+            
+            if (!empty($panels) && is_array($panels)) {
+                foreach ($panels as $panelIndex => $def) {
+                    if (isset($def['fields']) && is_array($def['fields'])) {
+                        $newFields = array();
+                        foreach ($def['fields'] as $fieldIndex => $field) {
+                            if (!empty($field['name']) && $field['name'] == $fieldName) {
+                                $return = true;
+                                continue;
+                            }
+                            
+                            $newFields[] = $field;
+                        }
+                        
+                        // Reset the panel defs for now
+                        $this->_paneldefs[$panelIndex]['fields'] = $newFields;
+                        
+                        // Now handle the change in the viewdefs for saving
+                        $this->_viewdefs[$this->client]['view'][$type]['panels'][$panelIndex]['fields'] = $newFields;
                     }
-                    
-                    $newFields[] = $field;
-                }
-                
-                // Reset the panel defs for now
-                $this->_paneldefs[$panelIndex]['fields'] = $newFields;
-                
-                // Now handle the change in the viewdefs for saving
-                if (isset($this->_viewdefs[$this->client]['view'])) {
-                    $type = key($this->_viewdefs[$this->client]['view']);
-                    $this->_viewdefs[$this->client]['view'][$type]['panels'][$panelIndex]['fields'] = $newFields;
                 }
             }
         }
