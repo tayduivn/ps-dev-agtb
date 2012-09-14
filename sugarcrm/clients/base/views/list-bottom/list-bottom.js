@@ -62,7 +62,7 @@
         this.layout.trigger("modal:quickcreate:open", {
             context: { module: this.module },
             components: [ { layout: 'quickcreate' } ],
-            title: "Create " + this.moduleSingular //todo: needs translation (pass to modal via metadata instead of here)
+            title: app.lang.get('LBL_NEW_FORM_TITLE', this.module)
         });
     },
     getSearchOptions: function() {
