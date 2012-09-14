@@ -108,10 +108,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
          */
     case "sendEmail":
         $GLOBALS['log']->debug("********** EMAIL 2.0 - Asynchronous - at: sendEmail");
-
-
-        $sea = new SugarEmailAddress();
-
         $email->type = 'out';
         $email->status = 'sent';
 
