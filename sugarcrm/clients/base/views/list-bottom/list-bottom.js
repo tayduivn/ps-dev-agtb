@@ -10,7 +10,8 @@
 
     events: {
         'click [name=show_more_button]': 'showMoreRecords',
-        'click .search': 'showSearch'
+        'click .search': 'showSearch',
+        'click .quickcreate': 'showQuickCreate'
     },
     _renderHtml: function() {
         if (app.acl.hasAccess('create', this.module)) {
@@ -56,6 +57,17 @@
         // Toggle on search filter and off the pagination buttons
         this.$('.search').toggleClass('active');
         this.layout.trigger("list:search:toggle");
+    },
+    showQuickCreate: function() {
+        //todo: fix params - better way to get components
+        var params = {
+            module: this.module,
+            components: app.metadata.data.layouts.quickcreate.meta.components,
+            layout: "quickcreate",
+            title: "Create " + this.module
+        };
+
+        this.layout.trigger("modal:quickcreate:open", params);
     },
     getSearchOptions: function() {
         var collection, options, previousTerms, term = '';

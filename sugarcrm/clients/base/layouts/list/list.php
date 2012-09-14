@@ -19,5 +19,12 @@ $viewdefs['base']['layout']['list'] = array(
         array(
             'view' => 'list-bottom',
         ),
+        array(
+            'layout' => array(
+                'type' => 'modal',
+                'showEvent' => 'modal:quickcreate:open',
+            ),
+        ),
+
     ),
 );

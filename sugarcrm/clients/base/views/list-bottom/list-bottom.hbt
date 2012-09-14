@@ -14,7 +14,7 @@
 <ul class="nav nav-pills actions">
     {{#if context.attributes.isCreateEnabled}}
     <li>
-        <a href="#{{buildRoute context model "create" route.options}}" rel="tooltip" title="{{str "LNK_CREATE" module}}"><i
+        <a href="javascript:void(0)" rel="tooltip" title="{{str "LNK_CREATE" module}}" class="quickcreate"><i
                 class="icon-plus"></i></a>
     </li>
     {{/if}}
