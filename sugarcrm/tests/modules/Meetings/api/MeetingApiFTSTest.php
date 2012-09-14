@@ -31,6 +31,7 @@ class MeetingsApiFTSTest extends RestTestBase
     public function setUp()
     {
         parent::setUp();
+        $this->search_engine_name = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
         $meetings = array();
         for($x = 1; $x < 31; $x++)
@@ -46,7 +47,8 @@ class MeetingsApiFTSTest extends RestTestBase
             $meeting->save();
             $this->search_engine->indexBean($meeting, FALSE);
             $this->meetings[] = $meeting;            
-        }         
+        }
+        $GLOBALS['db']->commit();      
     }
     
     public function tearDown()
@@ -62,8 +64,9 @@ class MeetingsApiFTSTest extends RestTestBase
 
 	public function testModuleSearch()
 	{
-
-        $this->markTestIncomplete('Marking this skipped. Until we can figure out why its breaking');
+        if($this->search_engine_name != 'Elastic') {
+            $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
+        }
 
 
         // verify we get 30 meetings
@@ -74,6 +77,7 @@ class MeetingsApiFTSTest extends RestTestBase
         // change a date to the past
         $this->meetings[5]->date_start = gmdate('Y-m-d H:i:s', strtotime("-50 days"));
         $this->meetings[5]->save();
+        $GLOBALS['db']->commit();
         $this->search_engine->indexBean($this->meetings[5], FALSE);
         
         $restReply = $this->_restCall("Meetings?max_num=30");
@@ -83,6 +87,9 @@ class MeetingsApiFTSTest extends RestTestBase
         // change the date back
         $this->meetings[5]->date_start = gmdate("Y-m-d H:i:s", strtotime("+5 days"));
         $this->meetings[5]->save();
+
+        $GLOBALS['db']->commit();
+        
         $this->search_engine->indexBean($this->meetings[5], FALSE);
         
 

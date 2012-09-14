@@ -26,8 +26,9 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/SugarForecasting/Chart/ChartInterface.php');
-abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_Chart_ChartInterface
+require_once('include/SugarForecasting/ForecastProcessInterface.php');
+require_once('include/SugarForecasting/AbstractForecastArgs.php');
+abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_AbstractForecastArgs implements SugarForecasting_ForecastProcessInterface
 {
     /**
      * Which data set are we working with?
@@ -35,11 +36,6 @@ abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_
      * @var string
      */
     protected $dataset = 'likely';
-
-    /**
-     * @var array Rest Arguments
-     */
-    protected $args;
 
     /**
      * Are we a manager
@@ -150,55 +146,7 @@ abstract class SugarForecasting_Chart_AbstractChart implements SugarForecasting_
             $this->dataset = $args['dataset'];
         }
 
-        $this->setArgs($args);
-    }
-
-    /**
-     * Set the arguments
-     *
-     * @param array $args
-     * @return SugarForecasting_AbstractForecast
-     */
-    public function setArgs($args)
-    {
-        $this->args = $args;
-
-        return $this;
-    }
-
-    /**
-     * Return the arguments array
-     *
-     * @return array
-     */
-    public function getArgs()
-    {
-        return $this->args;
-    }
-
-    /**
-     * Get a specific Arg Value, If it doesn't exist return Empty
-     *
-     * @param $key
-     * @return string
-     */
-    public function getArg($key)
-    {
-        return isset($this->args[$key]) ? $this->args[$key] : "";
-    }
-
-    /**
-     * Set an Arg to track
-     *
-     * @param string $key
-     * @param mixed $value
-     * @return SugarForecasting_AbstractForecast
-     */
-    public function setArg($key, $value)
-    {
-        $this->args[$key] = $value;
-
-        return $this;
+        parent::__construct($args);
     }
 
     /**

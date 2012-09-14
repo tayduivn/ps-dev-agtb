@@ -23,6 +23,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class ForecastWorksheet extends SugarBean {
 
     var $id;
+    var $worksheet_id;
+    var $currency_id;
+    var $base_rate;
     var $args;
     var $name;
     var $forecast;
@@ -81,6 +84,8 @@ class ForecastWorksheet extends SugarBean {
         $worksheet->forecast_type = "Direct";
         $worksheet->related_forecast_type = "Product";
         $worksheet->related_id = $this->id;
+        $worksheet->currency_id = $this->currency_id;
+        $worksheet->base_rate = $this->base_rate;
         $worksheet->version = $version;
         $worksheet->save();
     }

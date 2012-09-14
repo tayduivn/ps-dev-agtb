@@ -1,47 +1,35 @@
-
 <script src='include/javascript/sugarAuthStore.js'></script>
 <script type='text/javascript' src='include/SugarCharts/Jit/js/Jit/jit.js'></script>
 <script type='text/javascript' src='include/SugarCharts/Jit/js/sugarCharts.js'></script>
 
-<div id="alert" class="alert-top"></div>
-<div id="core-module">
-    <div id="forecasts" style="" >
-        <div class="row-fluid">
-            <div class="view-forecastsSubnav subnav" id="headerbar"></div>
-        </div>
-        <div class="container-fluid">
-            <div class="row-fluid">
-                <div class="span8">
-                    <div class="view-forecastsCommitButtons"></div>
-                    <div class="view-forecastsCommitted"></div>
-                    <div class="view-forecastsFilter"></div>
-                    <div>
-                        <div id="view-sales-rep" style="display:none">
-                            <div class="view-forecastsWorksheet"></div>
-                        </div>
-                        <div id="view-manager" style="display:none">
-                            <div class="view-forecastsWorksheetManager"></div>
-                        </div>
-                    </div>
-                </div>
+{literal}
 
-                <div class="span4 tab-content">{*<div class="span4 tab-content" id="folded">*}
-                    <div class="tab-pane active" id="overview">
-                        <div class="thumbnail viz">
-                            <div class="view-forecastsChart"></div>
-                            <div class="view-forecastsChartOptions"></div>
-                        </div>
-                        <div class="clearfix"></div>
-                        <div class="block" id="guages">
-                            <div class="view-forecastsProgress"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-{*temporarily adding the footer here manually to aid in development.  This should get added automatically once the footer is updated for all of Sugar*}
+
+<script id="included_template" type="text/x-handlebars-template">
+    <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
+    <th>{{formatCurrency includedAmount "-99"}}</th>
+    <th>{{formatCurrency includedBest "-99"}}</th>
+</script>
+
+<script id="overall_template" type="text/x-handlebars-template">
+    <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
+    <th>{{formatCurrency overallAmount "-99"}}</th>
+    <th>{{formatCurrency overallBest "-99"}}</th>
+</script>
+
+<script id="overall_manager_template" type="text/x-handlebars-template">
+    <tr>
+        <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
+        <td>{{formatCurrency quota "-99"}}</td>
+        <td>{{formatCurrency likely_case "-99"}}</td>
+        <td>{{formatCurrency likely_adjusted "-99"}}</td>
+        <td>{{formatCurrency best_case "-99"}}</td>
+        <td>{{formatCurrency best_adjusted "-99"}}</td>
+    </tr>
+</script>
+{/literal}
+
+<div class="content"></div>
 <footer>
     <div class="row-fluid">
         <div class="span6">
@@ -58,36 +46,6 @@
         </div>
     </div>
 </footer>
-
-{literal}
-
-
-<script id="included_template" type="text/x-handlebars-template">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
-    <th>{{formatNumber includedAmount}}</th>
-    <th>{{formatNumber includedBest}}</th>
-</script>
-
-<script id="overall_template" type="text/x-handlebars-template">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
-    <th>{{formatNumber overallAmount}}</th>
-    <th>{{formatNumber overallBest}}</th>
-</script>
-
-<script id="overall_manager_template" type="text/x-handlebars-template">
-    <tr>
-        <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
-        <td>{{formatNumber amount}}</td>
-        <td>{{formatNumber quota}}</td>
-        <td>{{formatNumber likely_case}}</td>
-        <td>{{formatNumber likely_adjusted}}</td>
-        <td>{{formatNumber best_case}}</td>
-        <td>{{formatNumber best_adjusted}}</td>
-    </tr>
-</script>
-{/literal}
-
-<div class="content"></div>
 <script src='{$configFile}'></script>
 <script src='modules/Forecasts/clients/base/helper/hbt-helpers.js'></script>
 <script src='modules/Forecasts/clients/base/lib/ClickToEdit.js'></script>

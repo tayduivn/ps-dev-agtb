@@ -63,6 +63,7 @@ class RestTestPortalCreate extends RestTestBase
 
         // relate
         $this->contact->accounts->add($account->id);
+        $GLOBALS['db']->commit();
     }
 
     public function tearDown()
@@ -126,5 +127,4 @@ class RestTestPortalCreate extends RestTestBase
         $relatesAccounts = $this->bug->get_linked_beans('accounts', 'Account');
         $this->assertEquals($relatesAccounts[0]->id, $this->account->id);
     }
-
 }

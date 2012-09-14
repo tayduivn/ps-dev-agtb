@@ -65,6 +65,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             "o.best_case, " .
             "o.worst_case, " .
             "o.forecast, " .
+            "o.base_rate, " .
             "o.assigned_user_id, " .
             "w.id worksheet_id, " .
             "w.user_id w_user_id, " .
@@ -77,7 +78,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             "w.version w_version, " .
             "w.commit_stage w_commit_stage, " .
             "w.op_probability w_probability, " .
-            "w.currency_id w_currency_id " .
+            "w.currency_id w_currency_id, " .
+            "w.base_rate w_base_rate " .
             "from opportunities o " .
             "left join worksheet w " .
             "on o.id = w.related_id ";
@@ -104,6 +106,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             $data['amount'] = $row["amount"];
             $data['worksheet_id'] = "";
             $data['name'] = $row["name"];
+            $data['currency_id'] = $row["currency_id"];
+            $data['base_rate'] = $row["base_rate"];
 
             if (isset($row["worksheet_id"])) {
                 $data['worksheet_id'] = $row["worksheet_id"];
