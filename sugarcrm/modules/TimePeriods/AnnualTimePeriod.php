@@ -62,17 +62,18 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
             $start_date = $timedate->asDbDate($timedate->getNow());
         }
         $end_date = $timedate->fromDbDate($start_date);
+        $end_date->setTime(0,0,0);
 
         //set the start/end date
         $this->start_date = $start_date;
         if($this->is_fiscal_year) {
 
             $end_date = $end_date->modify('+52 week');
-            $end_date = $end_date->modify('-1 day');
+            $end_date = $end_date->modify('-1 second');
             $this->end_date = $timedate->asDbDate($end_date);
         } else {
             $end_date = $end_date->modify('+1 year');
-            $end_date = $end_date->modify('-1 day');
+            $end_date = $end_date->modify('-1 second');
             $this->end_date = $timedate->asDbDate($end_date);
         }
     }
@@ -111,6 +112,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     public function createNextTimePeriod() {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromDbDate($this->end_date);
+        $nextStartDate->setTime(0,0,0);
         $nextStartDate = $nextStartDate->modify('+1 day');
         $nextPeriod = new AnnualTimePeriod($timedate->asDbDate($nextStartDate));
         $nextPeriod->save();
