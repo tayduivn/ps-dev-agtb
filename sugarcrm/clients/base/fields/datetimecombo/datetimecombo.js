@@ -60,11 +60,13 @@
             dateTime: app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference),
             date: app.date.format(jsDate, usersDateFormatPreference),
             time: app.date.format(jsDate, usersTimeFormatPreference),
-            hours: app.date.format(jsDate, 'H'),
+            hours: app.date.format(jsDate, (this.showAmPm ? 'h' : 'H')),
             minutes: app.date.format(jsDate, 'i'),
             seconds: app.date.format(jsDate, 's'),
             amPm: this.showAmPm ? (app.date.format(jsDate, 'H') < 12 ? 'am' : 'pm') : ''
         };
+        this.lastHourSelected   = value.hours;
+        this.lastMinuteSelected = value.minutes;
 
         //0am must be shown as 12am if we're on a 12 hour based time format
         if(typeof value.amPm != "undefined" && value.amPm == 'am' && value.hours == 0) {
@@ -74,7 +76,9 @@
             d.setMinutes(0); 
             value.time = app.date.format(d, usersTimeFormatPreference);
             this.model.set(this.name, this.buildUnformatted(value.date, '00', value.minutes, value.amPm), {silent: true});
+            this.lastHourSelected   = '00';
         }
+        
         return value;
     },
     getHours: function() {
