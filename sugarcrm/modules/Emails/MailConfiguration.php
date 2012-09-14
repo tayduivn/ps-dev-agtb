@@ -38,7 +38,7 @@ class MailConfiguration {
     /**
      * @return list of valid Email Accounts (From Name, From Email Address, Outbound Mail configuration id)
      */
-    public function getFromAccounts($systemOnly=false) {
+    public function getFromAccounts($systemOnly=false,$expand=false) {
         $fromAccounts = array();
         $oe = new OutboundEmail();
         $system = $oe->getSystemMailerSettings();
@@ -57,16 +57,26 @@ class MailConfiguration {
             foreach($ieAccounts as $k => $v) {
                 $name = $v->get_stored_options('from_name');
                 $addr = $v->get_stored_options('from_addr');
+                $storedOptions = unserialize(base64_decode($v->stored_options));
+                // var_dump($storedOptions);
                 if ($name != null && $addr != null) {
                     $name = from_html($name);
                     $fromAccount = array (
-                        "id"    => $v->id,
-                        "type"  => "user",
-                        "name"  => "{$name}",
-                        "email" => "{$addr}",
-                        "text"  => "{$name} ({$addr})",
+                        "id"     => $storedOptions["outbound_email"],
+                        "type"   => "user",
+                        "name"   => "{$name}",
+                        "email"  => "{$addr}",
+                        "text"   => "{$name} ({$addr})",
                         "personal" => (bool) ($v->is_personal),
                     );
+
+                    if ($expand) {
+                        $oe = new OutboundEmail();
+                        $oe->retrieve($storedOptions["outbound_email"]);
+                        $config = $this->toArray($oe);
+                        unset($config['id']);
+                        $fromAccount["config"] = $config;
+                    }
                     $fromAccounts[] = $fromAccount;
                 } // if
             } // foreach
@@ -81,17 +91,41 @@ class MailConfiguration {
         }
         if (!empty($system->mail_smtpserver)) {
             $fromAccount = array (
-                "id"    => $system->id,
-                "type"  => "system",
-                "name"  => "{$ret['name']}",
-                "email" => "{$ret['email']}",
-                "text"  => "{$ret['name']} ({$ret['email']})",
+                "id"     => $system->id,
+                "type"   => "system",
+                "name"   => "{$ret['name']}",
+                "email"  => "{$ret['email']}",
+                "text"   => "{$ret['name']} ({$ret['email']})",
                 "personal" => $personal,
             );
+
+            if ($expand) {
+                $oe = new OutboundEmail();
+                $oe->retrieve($system->id);
+                $config = $this->toArray($oe);
+                unset($config['id']);
+                $fromAccount["config"] = $config;
+            }
             $fromAccounts[] = $fromAccount;
         }
 
         return $fromAccounts;
     }
 
+
+    private function toArray($obj, $scalarOnly=true)
+    {
+        $fields = get_object_vars($obj);
+        $arr = array();
+
+        foreach($fields as $name => $type) {
+            if (isset($obj->$name)) {
+                if ((!$scalarOnly) || ( !is_array($obj->$name) && !is_object($obj->$name)) )
+                    $arr[$name] = $obj->$name;
+            } else {
+                $arr[$name] = '';
+            }
+        }
+        return $arr;
+    }
 }
