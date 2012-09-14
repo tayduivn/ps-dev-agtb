@@ -53,6 +53,7 @@ class Opportunity extends SugarBean
 	var $currency_id;
     var $base_rate;
 	var $date_closed;
+    var $date_closed_timestamp;
 	var $next_step;
 	var $sales_stage;
 	var $probability;

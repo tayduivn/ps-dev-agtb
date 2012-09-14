@@ -67,7 +67,36 @@ class TimePeriod extends SugarBean {
 
 	function save($check_notify = false){
 		//if (empty($this->id)) $this->parent_id = null;
-		
+
+        $timedate = TimeDate::getInstance();
+
+        //override the unix time stamp setting here for setting start date timestamp by going with 00:00:00 for the time
+        if ($timedate->check_matching_format($this->start_date, TimeDate::DB_DATE_FORMAT)) {
+            $date_start_datetime = $timedate->fromDbDate($this->start_date);
+            $date_start_datetime->setTime(0,0,0);
+            $this->start_date_timestamp = $date_start_datetime->getTimestamp();
+        } else if ($timedate->check_matching_format($this->start_date, $timedate->get_user_date_format())) {
+            $date_start_datetime = $timedate->fromUserDate($this->start_date, true);
+            $date_start_datetime->setTime(0,0,0);
+            $this->start_date_timestamp = $date_start_datetime->getTimestamp();
+         }else {
+            $this->start_date->setTime(0,0,0);
+            $this->start_date_timestamp = $this->start_date->getTimestamp();
+        }
+
+        //override the unix time stamp setting here for setting end date timestamp by going with 23:59:59 for the time to get the max time of the day
+        if ($timedate->check_matching_format($this->end_date, TimeDate::DB_DATE_FORMAT)) {
+            $date_close_datetime = $timedate->fromDbDate($this->end_date);
+            $date_close_datetime->setTime(23,59,59);
+            $this->end_date_timestamp = $date_close_datetime->getTimestamp();
+        } else if ($timedate->check_matching_format($this->end_date, $timedate->get_user_date_format())) {
+            $date_close_datetime = $timedate->fromUserDate($this->end_date, true);
+            $date_close_datetime->setTime(23,59,59);
+            $this->end_date_timestamp = $date_close_datetime->getTimestamp();
+         }else {
+            $this->end_date->setTime(23,59,59);
+            $this->end_date_timestamp = $this->end_date->getTimestamp();
+        }
 		return parent::save($check_notify);		
 	}
 

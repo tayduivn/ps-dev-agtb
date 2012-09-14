@@ -214,6 +214,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
+    'date_closed_timestamp' =>
+    array (
+        'name' => 'date_closed_timestamp',
+        'vname' => 'LBL_DATE_CLOSED',
+        'type' => 'int',
+        'required' => true,
+        'enable_range_search' => true,
+        'studio' => false
+    ),
   'next_step' =>
   array (
     'name' => 'next_step',
@@ -263,25 +272,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
-  ),
-  'timeperiod_id' =>
-  array (
-    'name' => 'timeperiod_id',
-    'vname' => 'LBL_TIMEPERIOD_ID',
-    'type' => 'enum',
-    'dbType' => 'id',
-    'function' => 'getTimePeriodsDropDown',
-  ),
-  'timeperiods' =>
-  array(
-    'name' => 'timeperiods',
-    'type' => 'link',
-    'relationship' => 'opportunities_timeperiods',
-    'source'=>'non-db',
-    'link_type'=>'one',
-    'module'=>'TimePeriods',
-    'bean_name'=>'TimePeriod',
-    'vname'=>'LBL_TIMEPERIODS',
   ),
   'primary_quote_id' =>
   array (
@@ -536,18 +526,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
    'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'campaign_id',
    'relationship_type'=>'one-to-many'),
    //END SUGARCRM flav!=sales ONLY
-
-   //BEGIN SUGARCRM flav=pro ONLY
-   'opportunities_timeperiods' =>
-   array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
-   'rhs_module'=> 'Opportunities', 'rhs_table'=> 'opportunities', 'rhs_key' => 'timeperiod_id',
-   'relationship_type'=>'one-to-many'),
-
-   'opportunities_worksheet' =>
-   array('lhs_module'=> 'Opportunities', 'lhs_table'=> 'opportunities', 'lhs_key' => 'id',
-   'rhs_module'=> 'Worksheet', 'rhs_table'=> 'worksheet', 'rhs_key' => 'related_id',
-   'relationship_type'=>'one-to-many'),
-   //END SUGARCRM flav=pro ONLY
 
    //BEGIN SUGARCRM flav=ent ONLY
    'opportunities_products' =>
