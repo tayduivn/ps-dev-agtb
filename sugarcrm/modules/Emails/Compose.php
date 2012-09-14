@@ -182,7 +182,7 @@ function generateComposeDataPackage($data,$forFullCompose = TRUE, $bean = null)
 			$emailType = $ie->email->type;
 		}
 		$ie->email->from_addr = $ie->email->from_addr_name;
-		$ie->email->to_addrs = to_html($ie->email->to_addrs_names);
+        $ie->email->to_addrs = to_html(!empty($ie->email->to_addrs_names)? $ie->email->to_addrs_names : $ie->email->to_addrs);
 		$ie->email->cc_addrs = to_html($ie->email->cc_addrs_names);
 		$ie->email->bcc_addrs = $ie->email->bcc_addrs_names;
 		$ie->email->from_name = $ie->email->from_addr;
