@@ -26,7 +26,7 @@
             if (self._isEditView()) {
                 self._setEditorContent(value);
             } else {
-                self._setTextareaContent(value);
+                self._setIframeContent(value);
             }
         });
     },
@@ -57,7 +57,7 @@
         var self = this;
         this._setupIframeOnLoadEvent();
         this.app.on(this._getEventString('ready'), function() {
-            self._setTextareaContent(self.value);
+            self._setIframeContent(self.value);
 
             // remove event handler
             self.app.off(self._getEventString('ready'));
@@ -141,12 +141,12 @@
     },
 
     /**
-     * Sets textarea content
+     * Sets iframe content
      *
      * @param content
      * @private
      */
-    _setTextareaContent: function(content) {
+    _setIframeContent: function(content) {
         this._getHtmlEditableField()
             .contents().find('body')
             .html(content);
