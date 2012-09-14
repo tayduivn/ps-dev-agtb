@@ -41,7 +41,10 @@ class RestTestServerInfo extends RestTestBase {
 
         $this->assertTrue(isset($restReply['reply']['flavor']), "No Flavor Set");
         $this->assertTrue(isset($restReply['reply']['version']), "No Version Set");
+        //BEGIN SUGARCRM flav=pro ONLY
         $this->assertTrue(is_array($restReply['reply']['fts']), "No FTS Info Set");
+        //END SUGARCRM flav=pro ONLY
+        
         $this->assertTrue(isset($restReply['reply']['gmt_time']), "No GMT Time Set");
         $this->assertTrue(isset($restReply['reply']['server_time']), "No Server Time Set");
     }
