@@ -8,7 +8,7 @@
     <h4 class="todo-list-header">Todo List</h4>
 </div>
 
-<div class="tabbable">
+<div class="tabbable todo-list-view">
     <div class="todo-header">
         <div class="input-prepend">
             <span class="add-on"><i class="icon-edit"></i></span><input class="span9 todo-subject" type="text" placeholder="What needs to be done?">
