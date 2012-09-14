@@ -122,7 +122,7 @@
             _.each(errors, function(errorContext, errorName) {
                 self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
             });
-            this.$el.find(this.fieldTag+':last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+            $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(this.$('.help-block'));
         },
 
 
