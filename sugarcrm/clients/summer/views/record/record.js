@@ -112,13 +112,32 @@
         }
     },
 
-    getNextField: function(index) {
-        console.log("Grabbing next field", index);
+    /**
+     * Returns the next cell. If the current cell has more "inner focus elements", check to see if
+     * we are at the end of that cell's last focus element.
+     * @param index {Number} Index number of the current field.
+     * @param field {Field} Current field that is in focus.
+     * @param cell {Cell} Cell that the current field belongs to.
+     * @return {*}
+     */
+    getNextCell: function(index, field, cell) {
         var nextIndex = index + 1,
-            nextField = this.$(".index" + nextIndex),
-            fieldName = nextField.data("fieldname");
-        console.log("Nextfield", nextField, fieldName);
-        return (fieldName) ? this.getField(fieldName) : false;
+            nextFieldEl = this.$(".index" + nextIndex),
+            fieldName = nextFieldEl.data("fieldname"),
+            nextField = this.getField(fieldName),
+            nextCell = nextField.$el.parents(".record-cell");
+
+        // Check to see if field has parent (usually used to get the fieldset parent of the current field).
+        field = field.parent || field;
+
+        // If the fieldset, check if it has more "inner fields" before getting the next field.
+        if (field.focus && field.focus()) {
+            return cell;
+        } else if (cell[0] !== nextCell[0]) {
+            return nextField.$el.parents(".record-cell");
+        }
+
+        return false;
     },
 
     // Handler functions
@@ -138,38 +157,45 @@
         this.editAllMode = (this.editAllMode) ? false : true;
     },
 
-    handleEdit: function(e, field) {
+    /**
+     * Handler for intent to edit. This handler is called both as a callback from click events, and also
+     * triggered as part of tab focus event.
+     * @param e {Event} jQuery Event object (should be from click)
+     * @param cell {jQuery Node} cell of the target node to edit
+     */
+    handleEdit: function(e, cell) {
         var target,
-            cell;
+            cellData,
+            field;
 
-        console.log("Handling edit(): ", e, field);
-
-        // This would be the default code path unless tabbed. Only e event object
-        // should be supplied by the click event.
-        if (!field) {
+        if (e) { // If result of click event, extract target and cell.
             target = this.$(e.target);
             cell = target.parents(".record-cell");
-            cellData = cell.data();
-            field = this.getField(cellData.name);
-        } else { // This is the tab field code path
-            cell = field.$el.parent().find(".record-cell");
         }
+
+        cellData = cell.data();
+        field = this.getField(cellData.name);
 
         // Set Editing mode to on.
         this.editMode = true;
 
+        // TODO: Refactor this for fields to support their own focus handling in future.
+        // Add your own field type handling for focus / editing here.
         switch (field.type) {
             case "img":
                 break;
             case "fieldset":
-                // If it is a field set, we need all the fields to switch to edit mode.
                 this.toggleCell(field, cell);
-                cell.first("input").focus().val(cell.first("input").val());
+                if (field.focus) {
+                    field.focus();
+                } else {
+                    // If it is a field set, we need all the fields to switch to edit mode.
+                    cell.find("input").first().focus().val(cell.find("input").first().val());
+                }
                 break;
             default:
-                console.log("input focusin", cell.find("input"), cell);
                 this.toggleCell(field, cell);
-                cell.find("input").focus().val(cell.find("input").val());
+                field.$el.find("input").focus().val(field.$el.find("input").val());
         }
     },
 
@@ -197,22 +223,28 @@
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);
         }
+
+        this.toggleEdit();
     },
 
     /**
-     * Handles the toggling of fields within itself. Also binds change and focus
-     * listeners.
-     * @param field {View.Field} Field or fieldset
+     * Toggles a cell into editing or detail mode. This should be the entry point function.
+     * @param field {View.Field} Field or fieldset to toggle
      * @param cell {jQuery Node} Current target cell
      */
     toggleCell: function(field, cell, close) {
-        var fields = field.fields || [field];
+        var fields;
 
-        if (field.options.viewName != "edit") {
-//            cell.on("focusout.record", {field: field, cell: cell}, this.fieldClose);
+        // If field is part of a fieldset, set the field to fieldset.
+        field = (field.parent) ? field.parent : field;
+        fields = field.fields || [field];
 
+        if (field.options.viewName != "edit" && !close) { // About to be switched to edit
             $(document).on("mousedown.record" + field.name, {field: field, cell: cell}, this.fieldClose);
-            console.log("binding mousedown.record" + field.name);
+        }
+
+        if (close) {
+            $(document).off("mousedown.record" + field.name);
         }
 
         _.each(fields, function(field) {
@@ -221,7 +253,8 @@
     },
 
     /**
-     * Switches each individual field between detail and edit modes
+     * Switches each individual field between detail and edit modes. This method should not be called directly,
+     * instead call toggleCell.
      * @param field {View.Field} Field that needs to be toggled
      * @param cell {jQuery Node} Cell that field belongs in
      * @param close {Boolean} Force into detail mode
@@ -235,12 +268,8 @@
         field.render();
 
         if (field.options.viewName == "edit") {
-            field.$el.on("change.record", "input", {field: field, cell: cell}, this.fieldClose);
             field.$el.on("keydown.record", "input", {field: field, cell: cell}, this.handleKeyDown);
         } else if (close) {
-            $(document).off("mousedown.record" + field.name);
-//            cell.off("focusout.record");
-            field.$el.off("change.record");
             field.$el.off("keydown.record");
         }
     },
@@ -248,41 +277,44 @@
     fieldClose: function(e) {
         var self = this,
             cell = e.data.cell,
-            field = e.data.field;
+            field = e.data.field,
+            currFieldParent,
+            targetParent;
 
         if (field.options.viewName == "detail") {
             return;
         }
 
-        if (e.type == "mousedown") {
-            var currFieldParent = $(cell),
-                targetParent = self.$(e.target).parents(".record-cell");
+        currFieldParent = $(cell);
+        targetParent = self.$(e.target).parents(".record-cell");
 
-            if (currFieldParent[0] == targetParent[0]) {
-                return;
-            }
-        }
-        if (currFieldParent.data("type") == "fieldset") {
-            self.toggleCell(field, cell, true);
-        } else {
-            self.toggleField(field, cell, true);
+        if (currFieldParent[0] == targetParent[0]) {
+            return;
         }
 
+        self.toggleCell(field, cell, true);
     },
 
     handleKeyDown: function(e) {
-        var next,
+        var nextCell,
             cell = e.data.cell,
             field = e.data.field,
             index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
-            next = this.getNextField(index);
-            console.log("tabbed", next, cell);
-            this.toggleField(field, cell, true);
-            this.handleEdit(null, next);
-        } else if (e.which == 27) {
-            this.fieldClose(e, field, cell);
+            nextCell = this.getNextCell(index, field, cell);
+
+            if (nextCell && (nextCell[0] !== cell[0])) { // Next tab element not within same cell
+                this.toggleCell(field, cell, true);
+                this.handleEdit(null, nextCell);
+            }
+
+            e.preventDefault();
+
+            // Since we prevented the default we still need to trigger a change.
+            field.$el.trigger("change");
+        } else if (e.which == 27) { // If esc
+            this.toggleCell(field, cell, true);
         }
     }
 })
