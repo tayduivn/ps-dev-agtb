@@ -274,9 +274,11 @@ class SugarWebServiceImplv3 extends SugarWebServiceImpl {
     	    case 'default':
     	        $modules = self::$helperObject->get_visible_modules($availModules);
     	       break;
+//BEGIN SUGARCRM flav=pro ONLY
     	    case 'mobile':
     	        $modules = self::$helperObject->get_visible_mobile_modules($availModules);
     	        break;
+//END SUGARCRM flav=pro ONLY
     	    case 'all':
     	    default:
     	        $modules = $availModules;

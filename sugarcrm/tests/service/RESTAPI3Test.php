@@ -408,11 +408,13 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
 
         $sh = new SugarWebServiceUtilv3();
 
+//BEGIN SUGARCRM flav=pro ONLY
         $mobileResult = $this->_makeRESTCall('get_available_modules', array('session' => $session, 'filter' => 'mobile' ));
         $mobileResultExpected = $sh->get_visible_mobile_modules($fullResult['modules']);
         $mobileResultExpected = md5(serialize(array('modules' => $mobileResultExpected)));
         $mobileResult = md5(serialize($mobileResult));
         $this->assertEquals($mobileResultExpected, $mobileResult, "Unable to get all visible mobile modules");
+//END SUGARCRM flav=pro ONLY
 
         $defaultResult = $this->_makeRESTCall('get_available_modules', array('session' => $session, 'filter' => 'default' ));
         $defaultResult = md5(serialize($defaultResult['modules']));
@@ -713,13 +715,13 @@ class RESTAPI3Test extends Sugar_PHPUnit_Framework_TestCase
                 'type' => 'default',
                 'view' => 'subpanel',
             ),
-            //BEGIN SUGARCRM flav!=sales ONLY
+            //BEGIN SUGARCRM flav=pro ONLY
             array(
                 'module' => 'Leads',
                 'type' => 'wireless',
                 'view' => 'subpanel',
             ),
-            //END SUGARCRM flav!=sales ONLY
+            //END SUGARCRM flav=pro ONLY
         );
     }
 

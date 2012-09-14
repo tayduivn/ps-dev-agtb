@@ -789,11 +789,13 @@ class GridLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         {       
 	        foreach ( $panels as $rows) {
 	            foreach ($rows as $fields) {
+//BEGIN SUGARCRM flav=pro ONLY
 	            	//wireless layouts have one less level of depth
 	                if (is_array($fields) && isset($fields['name'])) {
 	                	$ret[$fields['name']] = $fields;  
 	                	continue;
 	                }
+//END SUGARCRM flav=pro ONLY
 	                if (!is_array($fields)) {
 	                	$ret[$fields] = $fields;
 	                	continue;

@@ -87,6 +87,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         return $enabled_modules;
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
      *
@@ -102,6 +103,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         }
         return $this->getModulesFromList($wireless_module_registry, $availModules);
     }
+//END SUGARCRM flav=pro ONLY
 
     /**
      * Examine the application to determine which modules have been enabled..
@@ -359,6 +361,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
         $results = array();
         $view = strtolower($view);
         switch (strtolower($type)){
+//BEGIN SUGARCRM flav=pro ONLY
             case 'wireless':
                 if( $view == 'list'){
                     require_once('include/SugarWireless/SugarWirelessListView.php');
@@ -381,6 +384,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
                 }
 
                 break;
+//END SUGARCRM flav=pro ONLY
             case 'default':
             default:
                 if ($view == 'subpanel')
@@ -441,7 +445,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
      * Add ACL values to metadata files.
      *
      * @param String $module_name
-     * @param String $view_type (wireless or detail)
+     * @param String $view_type
      * @param String $view  (list, detail,edit, etc)
      * @param array $metadata The metadata for the view type and view.
      * @return unknown
@@ -455,6 +459,7 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	       return $metadata;
 	}
 
+//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * Parse wireless listview metadata and add ACL values.
 	 *
@@ -525,6 +530,8 @@ class SugarWebServiceUtilv3_1 extends SugarWebServiceUtilv3
 	    $results['panels'] = $aclRows;
 	    return $results;
 	}
+//END SUGARCRM flav=pro ONLY
+
 	/**
 	 * Return the field level acl raw value.  We cannot use the hasAccess call as we do not have a valid bean
 	 * record at the moment and therefore can not specify the is_owner flag.  We need the raw access value so we

@@ -64,6 +64,7 @@ class AdministrationController extends SugarController
         header("Location: index.php?module=Administration&action=Languages");
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
     public function action_updatewirelessenabledmodules()
     {
         require_once('modules/Administration/Forms.php');
@@ -116,7 +117,6 @@ class AdministrationController extends SugarController
         echo "true";
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * Save the FTS settings for the system and any modules that may be enabled/disabled
      * by the administrator.
