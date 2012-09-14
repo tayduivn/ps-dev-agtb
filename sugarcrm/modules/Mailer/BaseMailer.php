@@ -129,7 +129,7 @@ abstract class BaseMailer implements IMailer
     public function getConfig($config) {
         // make sure the configuration exists
         if (!array_key_exists($config, $this->configs)) {
-            throw new MailerException("Configuration does not exist: {$config}");
+            throw new MailerException("Configuration does not exist: {$config}", MailerException::InvalidConfiguration);
         }
 
         return $this->configs[$config];

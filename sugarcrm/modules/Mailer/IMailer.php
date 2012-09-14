@@ -217,7 +217,7 @@ interface IMailer
      *
      * @abstract
      * @access public
-     * @return boolean true=success
+     * @throws MailerException
      */
     public function send();
 }
