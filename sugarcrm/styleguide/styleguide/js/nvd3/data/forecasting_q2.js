@@ -1,4 +1,23 @@
-var forecast_data_Q2 = [
+var forecast_data_Q2 = {
+  'properties': {
+    'title': 'Forecasting for Q2 2012',
+    'quota': 200,
+    'labels': [
+      {group: 1, l: "Mark Gibson"},
+      {group: 2, l: "Terence Li"},
+      {group: 3, l: "James Joplin"},
+      {group: 4, l: "Amy McCray"},
+      {group: 5, l: "My Opps"}
+    ],
+    'values': [
+      {group: 1, t: 140},
+      {group: 2, t: 250},
+      {group: 3, t: 300},
+      {group: 4, t: 310},
+      {group: 5, t: 290}
+    ]
+  },
+  'data': [
     {
       'key': 'Qualified',
       'type': 'bar',
@@ -53,24 +72,6 @@ var forecast_data_Q2 = [
         {x: 4, y: 310},
         {x: 5, y: 300}
       ]
-    },
-    {
-      'key': 'Chart Data',
-      'type': 'chart',
-      'quota': 200,
-      'labels': [
-        {group: 1, l: "Mark Gibson"},
-        {group: 2, l: "Terence Li"},
-        {group: 3, l: "James Joplin"},
-        {group: 4, l: "Amy McCray"},
-        {group: 5, l: "My Opps"}
-      ],
-      'values': [
-        {group: 1, t: 140},
-        {group: 2, t: 250},
-        {group: 3, t: 300},
-        {group: 4, t: 310},
-        {group: 5, t: 290}
-      ]
     }
-  ];
+  ]
+};

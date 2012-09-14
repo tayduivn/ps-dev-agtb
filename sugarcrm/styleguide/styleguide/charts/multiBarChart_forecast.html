@@ -2,10 +2,12 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Forecasting Chart</title>
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
-  <style type="text/css">
+  <style>
     body {
       overflow-y:scroll;
     }
@@ -15,9 +17,8 @@
     }
 
     #chart1 {
-      height: 500px;
-      width: 700px;
-      margin: 10px;
+      height: 95%;
+      /*width: 700px;*/
       min-width: 100px;
       min-height: 100px;
       border: 1px solid black;
@@ -51,18 +52,20 @@
 </head>
 <body>
 
-  <div id="chart1">
-    <svg></svg>
-  </div>
+<div id="chart1">
+  <svg></svg>
+</div>
 
 <script src="../js/jquery-1.7.2.min.js"></script>
-<script src="../js/nvd3/lib/d3.v2.js"></script>
-<script src="../js/nvd3/nv.d3.min.js"></script>
-
 <script src="../js/underscore-min.js"></script>
 <script src="../js/backbone-min.js"></script>
+<script src="../js/nvd3/lib/d3.v2.min.js"></script>
 
-<script src="../js/nvd3/src/models/multiBar.js"></script>
+<script src="../js/nvd3/nv.d3.min.js"></script>
+<script src="../js/nvd3/src/utils.js"></script>
+<script src="../js/nvd3/src/models/legend.js"></script>
+
+<script src="../js/nvd3/src/models/multiBar_sugar.js"></script>
 <script src="../js/nvd3/src/models/multiBarChart_sugar.js"></script>
 
 <script src="../js/nvd3/data/forecasting_q1.js"></script>
@@ -82,11 +85,11 @@
       var self = this;
 
       self.collection.bind(
-        'reset', 
-        function(model) 
+        'reset',
+        function(model)
         {
           d3.select(self.el)
-            .datum( model.models.map( function(d,i){return d.attributes} ) )
+            .datum( model.models.map( function(d,i){return d.attributes} )[0] )
             .transition().duration(500).call(self.chart);
         }
       );
@@ -95,10 +98,21 @@
     render: function() {
       this.$el.empty();
 
-      this.chart = nv.models.multiBarChart();
+      var chartData = this.collection.models.map( function(d,i){return d.attributes} )[0];
+
+      this.chart = nv.models.multiBarChart()
+            .showTitle(true)
+            .tooltips(true)
+            .showControls(false)
+            //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
+            //.colorData( 'class' )
+            .colorData( 'default' )
+            .colorFill( 'gradient' )
+            //.colorFill( 'default' )
+        ;
 
       d3.select(this.el)
-        .datum( this.collection.models.map( function(d,i){return d.attributes} ) )
+        .datum( chartData )
         .transition().duration(500).call(this.chart);
 
       nv.utils.windowResize(this.chart.update);

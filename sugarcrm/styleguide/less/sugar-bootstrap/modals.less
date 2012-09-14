@@ -3,14 +3,33 @@
    border: 1px solid @grayLight;
   border: 1px solid rgba(0,0,0,.1);
   *border: 1px solid @grayLight; /* IE6-7 */
-  .box-shadow(0 1px 4px rgba(0,0,0,0.2));
+  .box-shadow(0 4px 6px rgba(0,0,0,0.6));
+  .border-radius(8px);
  }
+
+.modal.span10 {
+  width: 900px;
+  margin-left: -450px;
+  .modal-body {
+    height: 350px;
+  }
+}
 
 //bootstomp
 .modal-body {
   overflow-y: inherit;
   max-height: none;
 }
+ .modal-header {
+    color: @white !important;
+   #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
+   .border-radius(3px 3px 0 0);
+  h3, .close {
+     color: @white !important;
+     font-weight: normal;
+     text-shadow: 0 -1px 1px rgba(0,0,0,0.8)
+    }
+ }
  .modal-footer {
    background-color: @grayLighter;
    border-top: 1px solid @grayLight;

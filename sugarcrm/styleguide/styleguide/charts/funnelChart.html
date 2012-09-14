@@ -2,22 +2,15 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=320" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Funnel Chart</title>
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
-  <style type="text/css">
-    body {
-      overflow-y:scroll;
-    }
-
-    text {
-      font: 12px sans-serif;
-    }
-
-    #chart1 {
-      height: 500px;
-      width: 700px;
-      margin: 10px;
+  <style>
+    #funnel {
+      height: 95%;
+      /*width: 700px;*/
       min-width: 100px;
       min-height: 100px;
       border: 1px solid black;
@@ -36,12 +29,16 @@
 </head>
 <body>
 
-  <div id="chart1">
-    <svg></svg>
-  </div>
+<div id="funnel">
+  <svg></svg>
+</div>
 
 <script src="../js/nvd3/lib/d3.v2.js"></script>
+
 <script src="../js/nvd3/nv.d3.min.js"></script>
+<script src="../js/nvd3/src/utils.js"></script>
+<script src="../js/nvd3/src/models/legend.js"></script>
+
 <script src="../js/nvd3/src/models/funnel.js"></script>
 <script src="../js/nvd3/src/models/funnelChart.js"></script>
 
@@ -49,17 +46,19 @@
 
 <script>
   nv.addGraph(function() {
-    var chart = nv.models.funnelChart();
-
-    // chart.xAxis
-    //     .tickFormat(d3.format(',f'));
+    var chart = nv.models.funnelChart()
+          .showTitle(true)
+          .tooltips(true)
+          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
+          //.colorData( 'class' )
+          .colorData( 'default' )
+          .colorFill( 'gradient' )
+          //.colorFill( 'default' )
 
     chart.yAxis
         .tickFormat(d3.format(',.1f'));
 
-    chart.showTitle(true);
-
-    d3.select('#chart1 svg')
+    d3.select('#funnel svg')
         .datum(funnel_data)
       .transition().duration(500).call(chart);
 
@@ -68,6 +67,5 @@
     return chart;
   });
 </script>
-
 </body>
 </html>

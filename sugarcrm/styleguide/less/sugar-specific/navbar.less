@@ -23,25 +23,23 @@
 }
 
 #headerbar {
-    background-color: @grayLighter;
     height: 60px;
     z-index: 1000;
-
+    border-bottom: 1px solid darken(@grayLighter,5%);
     h1 {
         float: left;
-        margin-top: 9px;
-        margin-left: 12px;
+        margin-top: 12px;
+        margin-left: 20px;
     }
-
-    .btn-toolbar {
-        margin-top: 15px;
-        margin-right: 10px;
-        padding-left: 5px;
+    
+    .btn {
+        margin: 7px 8px 0 0;
     }
-
+    
     .dropdown-toggle {
         .box-shadow(none);
     }
+    
     .dropdown-menu.carettop {
         .caret-top(10px,9px,auto,auto);
     }
@@ -63,6 +61,7 @@
     }
 
 }
+
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
@@ -325,11 +324,14 @@ textarea[readonly] {
 }
 .block.tabs-left .nav-tabs .commented {
   background: @grayLighter;
-  margin: 10px 0 10px 50px;
+  margin: 10px 10px 10px 50px;
 }
 .commented li {
   border-top: 1px solid @white !important;
 }
+.commented li .span10 {display: inline;}
+
+.accoment {margin: 0;}
 
 .block.tabs-left .nav-tabs li li p {
   margin: 0 0 10px 36px;
@@ -558,17 +560,27 @@ color: @white;
 #guages {
   margin-bottom: 10px;
 }
-.topline, .navbar-search {
+#guages .row-fluid  {
+  padding: 10px 0 0;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+  margin: 0 3%;
+  width: 94%
+}
+#guages, #guages h4  {
+  border-bottom: 3px solid darken(@grayLighter, 5%);
+  margin: 0;
+}
+#guages {
+  margin-bottom: 10px;
+}
+.topline {
     position: relative;
-    .filter {
-        width: 100% !important;
+    .control-group.filter {
         background-color: @grayLighter;
-        margin-right: -20px;
         padding: 5px 5px 0px 5px;
         margin-bottom: 0px;
-        border-bottom: 1px solid @grayLight;
+        border-bottom: 1px solid darken(@grayLighter,5%);
         position: relative;
-
         .indicator {
             position: absolute;
             top: 6px;
@@ -620,7 +632,7 @@ color: @white;
 }
 .results {position: relative;
   margin: 0 -22px 0 0;
-  padding: 0 10px;
+  padding: 0;
 }
 .data2 {font-size: 12px;}
 .topline h2 {
@@ -635,65 +647,49 @@ color: @white;
   top: 10px;
 }
 .topline .title {
-  padding: 0 20px 10px;
+  padding: 10px 20px;
 }
 .topline .datapoint1 {
   position: absolute;
-  right: 110px;
-  top: 0;
+  right: 150px;
+  top: 20px;
   width: 120px;
 }
 .topline .datapoint2 {
   position: absolute;
-  right: -20px;
-  top: 0;
+  right: 20px;
+  top: 20px;
   width: 120px;
 }
 .topline .log .title {
-  padding: 10px 20px 10px;
+  padding: 0px 20px 10px;
 }
 .topline .log .datapoint1 {
   position: absolute;
-  right: 130px;
-  top: 10px;
+  right: 150px;
+  top: 0;
   width: 120px;
 }
 .topline .log .datapoint2 {
   position: absolute;
-  right: -20px;
-  top: 10px;
-  width: 140px;
-}
-.topline .log .divider {
-  border-right: 1px solid  @grayLight;
-  height: 60px;
-  width: 1px;
-  position: absolute;
-  right: 151px;
+  right: 20px;
   top: 0;
+  width: 120px;
 }
+
 .topline > div.divider {
-  border-right: 1px solid  @grayLight;
-  height: 60px;
+  border-right: 1px solid darken(@grayLighter,5%);
+  height: 100px;
   width: 1px;
   position: absolute;
-  right: 131px;
+  right: 161px;
   top: 0;
-}
-.topline .toggle {
-  position: absolute;
-  right: 10px;
-  top: 10px;
 }
 .topline .log {
   position: relative;
   overflow: hidden;
-  height: 36px;
-  #gradient > .vertical(lighten(@grayLight, 20%), lighten(@grayLight, 15%));
-  border-top: 1px solid @grayLight;
-  border-bottom: 1px solid @grayLight;
-  color: @gray !important;
-  margin-right: -20px;
+  border-bottom: 1px solid darken(@grayLighter,5%);
+  color: lighten(@gray, 20%); !important;
 }
 
 .topline .extend {

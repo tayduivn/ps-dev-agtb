@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Charting - SugarCRM Patterns and Styleguide</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+    <link href="css/ltie9.css" rel="stylesheet">
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link href="css/bootstrap.css" rel="stylesheet">
+  <link href="css/styleguide.css" rel="stylesheet">
+  <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
+  <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+
+  <style type="text/css">
+    #gauge1, #gauge2, #gauge3, #gauge4, #gauge5, #gauge6, #gauge7, #gauge8 {
+      height: 300px;
+      min-width: 100px;
+      min-height: 100px;
+      padding: 10px;
+      border: 1px solid #ddd;
+    /*
+      Minimum height and width is a good idea to prevent negative SVG dimensions...
+      For example width should be =< margin.left + margin.right + 1,
+      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+    */
+    }
+    .nvd3 .nv-x.nv-axis text {
+      font-size: 10px;
+    }
+    .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
+      fill-opacity: 1;
+      stroke-opacity: 1;
+      stroke-width: 2;
+    }
+    .nv-quotaWrap line {
+      opacity: .8;
+      stroke: #444;
+      stroke-width: 3;
+      //stroke-dasharray: '20, 5';
+    }
+    .nv-title {
+      margin: .2em .2em .2em .2em;
+      font-size: 1.4em;
+    }
+
+    .nv-arc-group {
+      fill: steelblue;
+    }
+
+    .nv-pointer {
+      fill: #888888;
+      stroke: #ffffff;
+    }
+
+    .nv-labels text {
+      font-weight: bold;
+      fill: #666;
+    }
+
+    .nv-odomText {
+      font-weight: bold;
+      fill: #000;
+    }
+  </style>
+</head>
+<body data-spy="scroll" data-target=".subnav" data-offset="50">
+
+<!-- Navbar
+  ================================================== -->
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a class="cube" href="index.html" rel="tooltip" title="Dashboard"></a></li>
+            <li>
+              <a href="index.html">Overview</a>
+            </li>
+            <li>
+              <a href="scaffolding.html">Scaffolding</a>
+            </li>
+            <li>
+              <a href="base-css.html">Base CSS</a>
+            </li>
+            <li>
+              <a href="components.html">Components</a>
+            </li>
+            <li>
+              <a href="widgets.html">Widgets</a>
+            </li>
+            <li>
+              <a href="less.html">Quick Styles</a>
+            </li>
+            <li>
+              <a href="theming.html">Theming</a>
+            </li>
+            <li class="active">
+              <a href="charting.html">Charting</a>
+            </li>
+            <li>
+              <a href="sugar7">Prototypes</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Masthead
+    ================================================== -->
+    <header class="jumbotron subhead" id="overview">
+      <h1>Sugar7 Charting Colors</h1>
+      <p class="lead">Implementing standard and custom SVG charts for Sugar7 release using the <a href="http://d3js.org/">D3 library</a> and the <a href="http://nvd3.com/">NVD3 framework</a>.</p>
+      <div class="subnav">
+        <ul class="nav nav-pills">
+          <li><a href="charting.html#horiz-bar">Horizontal Bar</a></li>
+          <li><a href="charting.html#vert-bar">Vertical Bar</a></li>
+          <li><a href="charting.html#circular">Circular</a></li>
+          <li><a href="charting.html#custom">Custom</a></li>
+          <li><a href="chart_colors.html">Colors</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <section id="implementation">
+
+      <div class="page-header">
+        <h2>Defining Chart Colors <small>Flexible methods for assigning color maps and fill methods to D3 charts.</small></h2>
+      </div>
+
+      <div class="row">
+
+        <div class="span6">
+          <h3>Standard Chart Colors</h3>
+          <p>Using standard D3 chart colors is the default (Option 1 data).</p>
+<div id="gauge1">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'default' )
+      .colorFill( 'default' );
+
+  d3.select("#gauge1 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+        <div class="span6">
+          <h3>Standad Chart Colors with Gradient Fill</h3>
+          <p>It is possible to fill the chart shapes with a gradient using the active color palette.</p>
+<div id="gauge2">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+        .colorData( 'default' )
+        .colorFill( 'gradient' );
+
+  d3.select("#gauge2 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+      </div> <!-- end row -->
+
+
+      <div class="row">
+
+        <div class="span6">
+          <h3>Data-Defined Chart Colors</h3>
+          <p>If colors are defined in the data, they are used instead of D3 colors (Option 2 data).</p>
+<div id="gauge3">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'default' )
+      .colorFill( 'default' );
+
+  d3.select("#gauge3 svg")
+    .datum(gauge_data_2)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+        <div class="span6">
+          <h3>Data-Defined Chart Colors with Gradient Fill</h3>
+          <p>It is possible to fill the chart shapes with a gradient using a graduated color palette.</p>
+<div id="gauge4">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+        .colorData( 'default' )
+        .colorFill( 'gradient' );
+
+  d3.select("#gauge4 svg")
+    .datum(gauge_data_2)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+      </div> <!-- end row -->
+
+      <div class="row">
+
+        <div class="span6">
+          <h3>Graduated Palette Chart Colors</h3>
+          <p>It is also possible to use a graduated palette (any data option).</p>
+<div id="gauge5">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data.data.length} )
+      .colorFill( 'default' );
+
+  d3.select("#gauge5 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+        <div class="span6">
+          <h3>Graduated Palette Chart Colors with Gradient Fill</h3>
+          <p>It is possible to fill the chart shapes with a gradient using a graduated color palette.</p>
+<div id="gauge6">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data.data.length} )
+      .colorFill( 'gradient' );
+
+  d3.select("#gauge6 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+      </div> <!-- end row -->
+
+      <div class="row">
+
+        <div class="span6">
+          <h3>CSS Class Chart Colors</h3>
+          <p>Chart colors can be defined using classes (modifiable in themes) in data. If classes are not defined in data, they are assigned sequentially.</p>
+<div id="gauge7">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'class' )
+      .colorFill( 'default' );
+
+  d3.select("#gauge7 svg")
+    .datum(gauge_data_3)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+        <div class="span6">
+          <h3>Data-Defined Chart Classes with Gradient Fill</h3>
+          <p>It is possible to define gradient fills with CSS but requires use of SVG resource files that are not currently supported by theming.</p>
+<!-- <div id="gauge8">
+  <svg></svg>
+</div> -->
+<pre class="prettyprint linenums">
+  .nv-fill-gradient {
+    fill: 'url(./custom_gradient.svg)';
+  }
+</pre>
+        </div> <!-- end col -->
+
+      </div> <!-- end row -->
+
+    </section>
+
+    <section id="colors">
+      <div class="page-header">
+        <h2>Example Chart Data Options <small>Options for setting chart color styles.</small></h2>
+        <p>Color classes and RGB hex values can be embedded in the chart data. Depending on the colorData setting, they may or may not be used.</p>
+      </div>
+      <div class="row">
+
+        <div class="span4">
+          <h3>Option 1: Default Chart Data</h3>
+          <p>A basic data definition for charts will use the standard D3 colors.</p>
+<pre class="prettyprint linenums">
+    var gauge_data_1 = {
+      'properties': {
+        'title': 'Closed Won Opportunities Gauge',
+        'value': 4
+      },
+      'data': [
+        {
+          key: "Range 1"
+          , y: 3
+        },
+        {
+          key: "Range 2"
+          , y: 5
+        },
+        {
+          key: "Range 3"
+          , y: 7
+        },
+        {
+          key: "Range 4"
+          , y: 9
+        }
+      ]
+    };
+</pre>
+        </div> <!-- end col -->
+
+        <div class="span4">
+          <h3>Option 2: Data-Defined Colors</h3>
+          <p>If colors are defined in the data, they are used instead of D3 colors.</p>
+<pre class="prettyprint linenums">
+    var gauge_data_2 = {
+      'properties': {
+        'title': 'Closed Won Opportunities Gauge',
+        'value': 4
+      },
+      'data': [
+        {
+          key: "Range 1"
+          , y: 3
+          , color: "#d62728"
+        },
+        {
+          key: "Range 2"
+          , y: 5
+          , color: "#ff7f0e"
+        },
+        {
+          key: "Range 3"
+          , y: 7
+          , color: "#bcbd22"
+        },
+        {
+          key: "Range 4"
+          , y: 9
+          , color: "#2ca02c"
+        }
+      ]
+    };
+</pre>
+        </div> <!-- end col -->
+
+        <div class="span4">
+          <h3>Option 3: Data-Defined Classes</h3>
+          <p>If classes are defined in the data, they are used to set the style properties.</p>
+<pre class="prettyprint linenums">
+    var gauge_data_3 = {
+      'properties': {
+        'title': 'Closed Won Opportunities Gauge',
+        'value': 4
+      },
+      'data': [
+        {
+          key: "Range 1"
+          , y: 3
+          , class: "nv-fill07"
+        },
+        {
+          key: "Range 2"
+          , y: 5
+          , class: "nv-fill03"
+        },
+        {
+          key: "Range 3"
+          , y: 7
+          , class: "nv-fill17"
+        },
+        {
+          key: "Range 4"
+          , y: 9
+          , class: "nv-fill05"
+        }
+      ]
+    };
+</pre>
+        </div> <!-- end col -->
+
+      </div> <!-- end row -->
+
+    </section>
+    <section id="colors">
+      <div class="page-header">
+        <h2>Color Styles <small>Standard D3 categorical color scales for charts.</small></h2>
+        <p>A description of the color scales is in <a href="https://github.com/mbostock/d3/wiki/Ordinal-Scales">D3 documentation</a>. New color scales can be generated using Cynthia Brewer's <a href="http://colorbrewer2.org/">ColorBrewer</a>.</p>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>Fill</h3>
+          <p>A series of alternating light and dark pastel colors.</p>
+          <div>
+<table class="table table-bordered table-striped">
+  <tr>
+    <td><div class="nv-fill00 swatch"></div></td><td><code>.nv-fill00 { fill:#1f77b4; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill01 swatch"></div></td><td><code>.nv-fill01 { fill:#aec7e8; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill02 swatch"></div></td><td><code>.nv-fill02 { fill:#ff7f0e; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill03 swatch"></div></td><td><code>.nv-fill03 { fill:#ffbb78; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill04 swatch"></div></td><td><code>.nv-fill04 { fill:#2ca02c; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill05 swatch"></div></td><td><code>.nv-fill05 { fill:#98df8a; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill06 swatch"></div></td><td><code>.nv-fill06 { fill:#d62728; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill07 swatch"></div></td><td><code>.nv-fill07 { fill:#ff9896; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill08 swatch"></div></td><td><code>.nv-fill08 { fill:#9467bd; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill09 swatch"></div></td><td><code>.nv-fill09 { fill:#c5b0d5; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill10 swatch"></div></td><td><code>.nv-fill10 { fill:#8c564b; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill11 swatch"></div></td><td><code>.nv-fill11 { fill:#c49c94; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill12 swatch"></div></td><td><code>.nv-fill12 { fill:#e377c2; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill13 swatch"></div></td><td><code>.nv-fill13 { fill:#f7b6d2; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill14 swatch"></div></td><td><code>.nv-fill14 { fill:#7f7f7f; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill15 swatch"></div></td><td><code>.nv-fill15 { fill:#c7c7c7; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill16 swatch"></div></td><td><code>.nv-fill16 { fill:#bcbd22; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill17 swatch"></div></td><td><code>.nv-fill17 { fill:#dbdb8d; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill18 swatch"></div></td><td><code>.nv-fill18 { fill:#17becf; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-fill19 swatch"></div></td><td><code>.nv-fill19 { fill:#9edae5; }</code></td>
+  </tr>
+</table>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Stroke</h3>
+          <p>Bolder colors used to color lines.</p>
+<table class="table table-bordered table-striped">
+  <tr>
+    <td><div class="nv-stroke0 swatch"></div></td><td><code>.nv-stroke0 { stroke:#1f77b4; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke1 swatch"></div></td><td><code>.nv-stroke1 { stroke:#ff7f0e; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke2 swatch"></div></td><td><code>.nv-stroke2 { stroke:#2ca02c; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke3 swatch"></div></td><td><code>.nv-stroke3 { stroke:#d62728; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke4 swatch"></div></td><td><code>.nv-stroke4 { stroke:#9467bd; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke5 swatch"></div></td><td><code>.nv-stroke5 { stroke:#8c564b; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke6 swatch"></div></td><td><code>.nv-stroke6 { stroke:#e377c2; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke7 swatch"></div></td><td><code>.nv-stroke7 { stroke:#7f7f7f; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke8 swatch"></div></td><td><code>.nv-stroke8 { stroke:#bcbd22; }</code></td>
+  </tr>
+  <tr>
+    <td><div class="nv-stroke9 swatch"></div></td><td><code>.nv-stroke9 { stroke:#17becf; }</code></td>
+  </tr>
+</table>
+        </div>
+        <div class="span6 info">
+
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="js/jquery-1.7.2.min.js"></script>
+  <script src="js/google-code-prettify/prettify.js"></script>
+  <script src="../assets/js/bootstrap.min.js"></script>
+  <script src="../assets/js/bootstrap-datepicker.js"></script>
+  <script src="../assets/js/bootstrap-colorpicker.js"></script>
+  <script src="../assets/js/bootstrapx-clickover.js"></script>
+  <script src="js/styleguide.js"></script>
+  <script src="js/application.js"></script>
+
+  <!-- new D3 charting library files -->
+  <script src="js/nvd3/lib/d3.v2.js"></script>
+  <script src="js/nvd3/nv.d3.min.js"></script>
+  <script src="js/nvd3/src/utils.js"></script>
+
+  <script src="js/nvd3/src/models/legend.js"></script>
+  <script src="js/nvd3/src/models/gauge.js"></script>
+  <script src="js/nvd3/src/models/gaugeChart.js"></script>
+
+  <script>
+    var gauge_data_1 = {
+      'properties': {
+        'title': 'Closed Won Opportunities Gauge',
+        'value': 4
+      },
+      'data': [
+        {
+          key: "Range 1"
+          , y: 3
+        },
+        {
+          key: "Range 2"
+          , y: 5
+        },
+        {
+          key: "Range 3"
+          , y: 7
+        },
+        {
+          key: "Range 4"
+          , y: 9
+        }
+      ]
+    };
+
+    var gauge_data_2 = {
+      'properties': {
+        'title': 'Closed Won Opportunities Gauge',
+        'value': 4
+      },
+      'data': [
+        {
+          key: "Range 1"
+          , y: 3
+          , color: "#d62728"
+        },
+        {
+          key: "Range 2"
+          , y: 5
+          , color: "#ff7f0e"
+        },
+        {
+          key: "Range 3"
+          , y: 7
+          , color: "#bcbd22"
+        },
+        {
+          key: "Range 4"
+          , y: 9
+          , color: "#2ca02c"
+        }
+      ]
+    };
+
+    var gauge_data_3 = {
+      'properties': {
+        'title': 'Closed Won Opportunities Gauge',
+        'value': 4
+      },
+      'data': [
+        {
+          key: "Range 1"
+          , y: 3
+          , class: "nv-fill07"
+        },
+        {
+          key: "Range 2"
+          , y: 5
+          , class: "nv-fill03"
+        },
+        {
+          key: "Range 3"
+          , y: 7
+          , class: "nv-fill17"
+        },
+        {
+          key: "Range 4"
+          , y: 9
+          , class: "nv-fill05"
+        }
+      ]
+    };
+  </script>
+
+  <script>
+    // Gauge Chart
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'default' )
+          .colorFill( 'default' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge1 svg")
+          .datum(gauge_data_1)
+          .call(gauge);
+
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
+    });
+
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'default' )
+          .colorFill( 'gradient' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge2 svg")
+          .datum(gauge_data_1)
+        .transition().duration(500)
+          .call(gauge);
+
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
+    });
+
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'default' )
+          .colorFill( 'default' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge3 svg")
+          .datum(gauge_data_2)
+        .transition().duration(500)
+          .call(gauge);
+
+      return gauge;
+    });
+
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'default' )
+          .colorFill( 'gradient' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge4 svg")
+          .datum(gauge_data_2)
+        .transition().duration(500)
+          .call(gauge);
+
+      return gauge;
+    });
+
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data_1.data.length} )
+          .colorFill( 'default' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge5 svg")
+          .datum(gauge_data_1)
+        .transition().duration(500)
+          .call(gauge);
+
+      return gauge;
+    });
+
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: gauge_data_1.data.length} )
+          .colorFill( 'gradient' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge6 svg")
+          .datum(gauge_data_1)
+        .transition().duration(500)
+          .call(gauge);
+
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
+    });
+
+
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'class' )
+          .colorFill( 'default' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge7 svg")
+          .datum(gauge_data_3)
+        .transition().duration(500)
+          .call(gauge);
+
+      return gauge;
+    });
+
+    nv.addGraph(function() {
+      var gauge = nv.models.gaugeChart()
+          .x(function(d) { return d.key })
+          .y(function(d) { return d.y })
+          .showLabels(true)
+          .showTitle(true)
+          .colorData( 'class' )
+          .colorFill( 'default' )
+          .ringWidth(50)
+          .maxValue(9)
+          .transitionMs(4000);
+
+      d3.select("#gauge8 svg")
+          .datum(gauge_data_3)
+        .transition().duration(500)
+          .call(gauge);
+
+      //nv.utils.windowResize(gauge.update);
+      return gauge;
+    });
+  </script>
+</body>
+</html>

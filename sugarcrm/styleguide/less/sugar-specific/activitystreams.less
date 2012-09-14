@@ -51,6 +51,12 @@
 #folded .tab-pane.active#overview {
   border-left: 1px solid darken(@grayLighter, 4%);
 }
+
+.container-fluid#contentflex {
+  margin: 0;
+  padding: 0;
+}
+
 #dashboard #folded .tab-pane.active {
   position: fixed !important;
   top: 47px;
@@ -68,13 +74,14 @@
 }
 #folded .tab-pane.active {
   position: fixed !important;
-  top: 92px;
+  top: 48px;
   right: 0;
   background-image: url('@{textureSecondary}');
   height: 100%;
   width: inherit;
-  padding: 20px 0;
+  padding: 20px 1%;
   border-left: 2px solid @grayLight;
+  margin: 0 0 0 -20px;
 }
 #folded .tab-pane .block span.label  {margin: 0 10px 0 0;}
 #folded .tab-pane .block {width: 90%; margin-left: 5%;}

@@ -63,13 +63,13 @@ position: relative;
 margin: 0;
 text-align: center;
 padding: 5px;
-#gradient > .vertical(darken(@grayLighter, 4%), @grayLighter);
-@shadow: inset 0 1px 0 rgba(0,0,0,.2), inset 0 -1px 0 rgba(0,0,0,.1);
-.box-shadow(@shadow);
+border-top: 1px solid darken(@grayLighter, 5%);
+background: @grayLighter;
+border-bottom: 1px solid darken(@grayLighter, 5%);
 z-index: 1000;
 }
 .form-search {
-  margin: -11px 0 20px;
+  margin: -1px 0 20px;
   z-index: 0;
 }
 
@@ -133,6 +133,8 @@ z-index: 1000;
 .browser-support {
   max-width: 100%;
 }
+
+.commented .more {text-decoration: none !important;}
 
 /* Make tables spaced out a bit more */
 h2 + table,

@@ -42,24 +42,28 @@
     display:inline-block;
 }
 
-.todo-pillbox {
+ul.todo-pillbox {
     margin-left: 14px;
     margin-bottom: 12px;
 }
 
-.todo-pillbox > li {
-    margin-left: 5px;
-}
-
 .todo-pillbox li > a {
     outline: none;
+    border-top: none;
+}
+
+.dropdown-menu li.todo-pills {
+    margin-left: 5px;
 }
 
 .todo-list-item {
     display: inline-block;
     list-style: none;
-    padding: 0 12px;
     width: 100%;
+}
+
+.dropdown-menu li.todo-list-item {
+    padding: 0 12px;
 }
 
 .todo-list-item div {
@@ -71,7 +75,7 @@
 }
 
 .todo-description-container {
-    width: 200px;
+    width: 80%;
 }
 
 .todo-item-finished {
@@ -84,7 +88,7 @@
     text-align:center;
     cursor: pointer;
     position:absolute;
-    right:12px;
+    right: 4%;
 }
 
 .todo-list-item .todo-remove {
@@ -121,8 +125,7 @@
 }
 
 .todo-pillbox.header span.todo-badge {
-    position: relative;
-    top: -1px;
+    display: inline-block;
 }
 
 .todo-badge {
@@ -148,4 +151,26 @@
 .overdue-badge.todo-badge.empty, .todo-badge.empty {
     background-color: #818181;
     border-bottom: 1px solid #616161;
+}
+
+/* Styles for record view */
+.todo-list-view {
+    margin-bottom: 15px;
+}
+.todo-divider {
+    height: 1px;
+    margin: 8px 1px;
+    overflow: hidden;
+    background-color: #E5E5E5;
+    border-bottom: 1px solid white;
+}
+.todo-pillbox.header {
+    float: right;
+}
+
+h4.todo-list-header  {
+    padding-bottom: 15px;
+}
+.tab-content.todo-content {
+    overflow: visible;
 }
