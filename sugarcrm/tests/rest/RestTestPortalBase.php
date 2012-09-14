@@ -75,6 +75,7 @@ class RestTestPortalBase extends RestTestBase {
         
         // Adding it to the contacts array makes sure it gets deleted when done
         $this->contacts[] = $this->contact;
+        $GLOBALS['db']->commit();
     }
     public function tearDown()
     {
@@ -174,6 +175,7 @@ class RestTestPortalBase extends RestTestBase {
         $role->name = "Customer Self-Service Portal Role";
         $role->description = "Customer Self-Service Portal Role";
         $role->save();
+        $GLOBALS['db']->commit();
         $roleActions = $role->getRoleActions($role->id);
         foreach ($roleActions as $moduleName => $actions) {
             // enable allowed moduels

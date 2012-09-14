@@ -1,4 +1,4 @@
-<?php
+   <?php
 $viewdefs['summer']['layout']['stream'] = array(
     'type' => 'fluid',
     'components' =>

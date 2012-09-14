@@ -77,6 +77,7 @@ abstract class SugarApi {
     {
         $ret = array();
         foreach($beans as $bean){
+            if(!is_subclass_of($bean, 'SugarBean'))continue;
             $ret[] = $this->formatBean($api, $args, $bean);
         }
         return $ret;

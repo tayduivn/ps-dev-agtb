@@ -1,3 +1,5 @@
 .htaccess
+boxoffice/.htaccess
 boxoffice/config.php
 configs/config.php
+config.php
