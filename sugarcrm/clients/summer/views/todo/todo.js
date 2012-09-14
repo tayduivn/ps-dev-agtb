@@ -88,20 +88,25 @@
         e.stopPropagation();
     },
     handleEscKey: function() {
+        var self = this;
+        _.defer(function() {
+            self.$(".todo-subject").focus();
+        });
+
         if( !(this.$(".todo-list-widget").is(".open")) ) {
             // attach namespaced keyup event listener
-            $(document).on("keyup.escape", function() {
+            this.$(".todo-subject,.todo-date").on("keyup.escape", function() {
                 // If esc was pressed
                 if( event.keyCode == 27 ) {
-                    $(".todo-list-widget").removeClass("open");
+                    self.$(".todo-list-widget").removeClass("open");
                     // remove event listener
-                    $(document).off("keyup.escape");
+                    self.$(".todo-subject,.todo-date").off("keyup.escape");
                 }
             });
         }
         else {
             // remove event listener
-            $(document).off("keyup.escape");
+            this.$(".todo-subject,.todo-date").off("keyup.escape");
         }
     },
     showDatePicker: function() {
