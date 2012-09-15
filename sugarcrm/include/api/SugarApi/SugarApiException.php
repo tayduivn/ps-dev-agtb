@@ -25,13 +25,13 @@ class SugarApiException extends Exception
     public $httpCode = 400; 
     public $description = "An unknown exception happened.";
     public $errorLabel = 'unknown_exception';
+    public $userMessage = null;
 
     function __construct($description = null, $httpCode = 0, $errorLabel = null)
     {
         if (!empty($description)) {
             $this->description = $description;
         }
-
 
         if (!empty($errorLabel)) {
             $this->errorLabel = $errorLabel;
@@ -56,6 +56,28 @@ class SugarApiException extends Exception
     {
         return $this->errorLabel;
     }
+
+    /**
+     * Used to load user messages that get returned with some Sugar REST API errors.
+     * The difference between description and this message is that the message
+     * is translated and intended to be displayed to end users.
+     * @param array @args OPTIONAL array of arguments to replace in user message
+     * @return String translated string if message exists, NULL if no user message available
+     */
+    public function getUserMessage($args = array()){
+        // Load app list strings if they haven't been already
+        global $app_list_strings;
+        if(!isset($app_list_strings)){
+            $app_list_strings = return_app_list_strings_language($GLOBALS['current_language']);
+        }
+        // Check the current error label against the REST API DOM
+        $restApiMessages = $app_list_strings["rest_api_error_message"];
+        if(isset($restApiMessages[$this->errorLabel])){
+            return string_format($restApiMessages[$this->errorLabel],$args);
+        }
+        return null;
+    }
+
 }
 class SugarApiExceptionError extends SugarApiException 
 { 
@@ -75,6 +97,40 @@ class SugarApiExceptionNotAuthorized extends SugarApiException
     public $errorLabel = 'not_authorized';
     public $description = "This action is not authorized for the current user.";
 }
+class SugarApiExceptionCreateNotAuthorized extends SugarApiException
+{
+    public $httpCode = 403;
+    public $errorLabel = 'create_not_authorized';
+    public $description = 'No access to create new records';
+    private $moduleName = null;
+
+    /**
+     * @param String $moduleName Name of module that user lacks create access
+     */
+    function __construct($moduleName = null)
+    {
+        $this->description = 'No access to create new records for module: ' . $moduleName;
+        $this->moduleName = $moduleName;
+        parent::__construct($this->description);
+    }
+
+    /**
+     * Overloading so we can return error message with module name
+     * @return String message with module name
+     */
+    public function getUserMessage(){
+        $mod_strings = return_module_language($GLOBALS['current_language'], $this->moduleName);
+        return parent::getUserMessage(array($mod_strings['LBL_MODULE_NAME']));
+    }
+}
+
+class SugarApiExceptionPortalNotConfigured extends SugarApiException
+{
+    public $httpCode = 403;
+    public $errorLabel = 'portal_not_configured';
+    public $description = 'No portal api user or portal not enabled.';
+}
+
 class SugarApiExceptionNoMethod extends SugarApiException 
 {
     public $httpCode = 404;
@@ -111,3 +167,4 @@ class SugarApiExceptionRequestTooLarge extends SugarApiException
     public $errorLabel = 'request_too_large';
     public $description = "The request is too large to process.";
 }
+

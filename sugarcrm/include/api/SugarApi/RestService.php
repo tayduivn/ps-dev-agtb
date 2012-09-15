@@ -239,6 +239,7 @@ class RestService extends ServiceBase {
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getErrorLabel();
             $description = $exception->getDescription();
+            $userMessage = $exception->getUserMessage();
         } else if ( is_a($exception,"OAuth2ServerException") ) {
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getMessage();
@@ -277,6 +278,9 @@ class RestService extends ServiceBase {
         );
         if ( !empty($description) ) {
             $replyData['error_description'] = $description;
+        }
+        if( !empty($userMessage) ) {
+            $replyData['error_message'] = $userMessage;
         }
         echo(json_encode($replyData));
         die();

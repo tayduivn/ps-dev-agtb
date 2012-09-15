@@ -368,6 +368,11 @@ $app_list_strings = array (
     'Closed Won' => '100',
     'Closed Lost' => '0',
   ),
+  'rest_api_error_message' => // Sugar REST API messages
+    array(
+        'portal_not_configured' => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
+        'create_not_authorized' => 'You are not authorized to create new {0}.',
+    ),
   'activity_dom' =>
   array (
     'Call' => 'Call',

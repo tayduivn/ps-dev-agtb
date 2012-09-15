@@ -67,7 +67,7 @@ class ModuleApi extends SugarApi {
         
         // TODO: When the create ACL goes in to effect, add it here.
         if (!$bean->ACLAccess('save')) {
-            throw new SugarApiExceptionNotAuthorized('No access to create new records for module: '.$args['module']);
+            throw new SugarApiExceptionCreateNotAuthorized($args['module']);
         }
 
         $id = $this->updateBean($bean, $api, $args);
