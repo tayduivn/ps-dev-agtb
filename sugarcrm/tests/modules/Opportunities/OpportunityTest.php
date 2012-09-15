@@ -43,6 +43,12 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=pro ONLY
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty()
+    {
+        return array(array('best_case'), array('worst_case'));
+    }
+
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty
      */
@@ -53,11 +59,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($opp->$case, $opp->amount);
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
-    public function dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty()
-    {
-        return array(array('best_case'), array('worst_case'));
-    }
 
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty

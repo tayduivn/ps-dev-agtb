@@ -73,12 +73,12 @@ class Bug43452Test extends Sugar_PHPUnit_Framework_TestCase
         $tGoodWhere = "( leads.first_name like 'Fabio%' and ( leads.converted = '0' OR leads.converted IS NULL ) )";
 
         $_searchFields['Leads'] = array ('first_name'=> array('value' => 'Fabio', 'query_type'=>'default'),
-                                         'converted'=> array('value' => '0', 'query_type'=>'default'),
+                                         'converted'=> array('type'=> 'bool', 'value' => '0', 'query_type'=>'default'),
                                         );
         // provides $searchdefs['Leads']
         require "modules/Leads/metadata/searchdefs.php";
         
-        $bean = $this->getMock('Lead');
+        $bean = BeanFactory::getBean('Leads');
         $popup = new PopupSmarty($bean, "Leads");
         $popup->searchForm->searchdefs =  $searchdefs['Leads'];
         $popup->searchForm->searchFields = $_searchFields['Leads'];
