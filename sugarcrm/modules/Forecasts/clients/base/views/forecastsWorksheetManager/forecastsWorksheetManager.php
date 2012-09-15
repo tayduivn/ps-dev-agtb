@@ -26,7 +26,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'type' => 'currency',
                     'label' => 'LBL_AMOUNT',
                     'default' => true,
-                    'enabled' => true,
+                    'enabled' => false,
                     'convertToBase' => true,
                 ),
 

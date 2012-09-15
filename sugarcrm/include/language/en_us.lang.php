@@ -3579,6 +3579,7 @@ $app_strings = array (
 
     'LBL_SYNCED_RECURRING_MSG_CALL' => 'This call originated in another system and was synced to Sugar. To make changes, go to the original call within the other system. Changes made in the other system can be synced to this record.',
     'LBL_SYNCED_RECURRING_MSG_MEETING' => 'This meeting originated in another system and was synced to Sugar. To make changes, go to the original meeting within the other system. Changes made in the other system can be synced to this record.',
+    'LBL_EXISTING' => 'Existing',
 );
 
 

@@ -64,6 +64,7 @@ class UserManagerFunctionsTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
     /**
