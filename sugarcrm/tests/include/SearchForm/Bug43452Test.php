@@ -49,7 +49,9 @@ class Bug43452Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']); 
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
     }
     
     public function tearDown()
