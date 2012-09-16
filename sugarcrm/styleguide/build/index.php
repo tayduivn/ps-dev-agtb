@@ -151,18 +151,20 @@ foreach ($themesClientsDir as $platform) {
         $(this).find('input[type=radio]').attr('checked', 'checked');
     });
 </script>
-<div id="build-result" class="modal hide fade in">
-            <div class="modal-header">
-              <a class="close" data-dismiss="modal">×</a>
-              <h3>Result</h3>
-            </div>
-            <div class="modal-body">
-              <h4></h4>
+    <div id="build-result" class="modal hide fade in">
+        <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Result</h3>
+        </div>
+        <div class="modal-body">
+            <div>
+             <h4></h4>
             </div>
             <div class="modal-footer">
-              <a target="_blank" href="../styleguide" class="btn">Open styleguide</a>
-              <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
+                <a target="_blank" href="../styleguide" class="btn">Open styleguide</a>
+                <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
             </div>
-          </div>
+        </div>
+    </div>
 </body>
 </html>

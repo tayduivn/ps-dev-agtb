@@ -21,8 +21,8 @@ try {
     if (isset($_GET["min"]) && $_GET["min"]=="true") $less->setFormatter("compressed");
     file_put_contents('../styleguide/css/bootstrap-mobile.css', $less->parse($variables));
 
-    //build module-specific.css
-    $modulesRoot = '../bootstrap/less/modules';
+    //build utility css files
+    $modulesRoot = '../less/modules';
     $modulesFile = array_diff(scandir($modulesRoot), array(".", "..", ".DS_Store"));
 
     foreach ($modulesFile as $module) {
