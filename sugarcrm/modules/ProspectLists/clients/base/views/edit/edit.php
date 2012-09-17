@@ -31,22 +31,21 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['ProspectLists']['base']['view']['edit'] = array(
     'buttons' => array(
         array(
-            'name' => 'save_button',
-            'type' => 'button',
-            'label' => 'Save',
-            'value' => 'save',
-            'primary' => true,
+            'name'    => 'save_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'value'   => 'save',
+            'css_class' => 'btn-primary',
         ),
         array(
-            'name' => 'cancel_button',
-            'type' => 'button',
-            'label' => 'Cancel',
-            'value' => 'cancel',
-            'events' =>
-            array(
+            'name'    => 'cancel_button',
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'value'   => 'cancel',
+            'css_class' => 'btn-invisible btn-link',
+            'events'  => array(
                 'click' => 'function(){ window.history.back(); }',
             ),
-            'primary' => false,
         ),
     ),
     'panels' => array(

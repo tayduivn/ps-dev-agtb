@@ -28,34 +28,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-$viewdefs['base']['view']['subnav'] = array(
+$viewdefs['Leads']['base']['view']['subnavdetail'] = array(
+    'type' =>'subnav',
     'buttons' => array(
-        'detail' => array(
-            array(
-                'name'    => 'edit_button',
-                'type'    => 'button',
-                'label'   => 'LBL_EDIT_BUTTON_LABEL',
-                'value'   => 'edit',
-                'primary' => true,
-                'deemphasize' => false,
-            ),
+        array(
+            'name'    => 'edit_button',
+            'type'    => 'button',
+            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'value'   => 'edit',
+            'css_class' => 'btn-primary',
         ),
-        'edit' => array(
-            array(
-                'name'    => 'cancel_button',
-                'type'    => 'button',
-                'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-                'value'   => 'cancel',
-                'primary' => false,
-                'deemphasize' => true,
-            ),
-            array(
-                'name'    => 'save_button',
-                'type'    => 'button',
-                'label'   => 'LBL_SAVE_BUTTON_LABEL',
-                'value'   => 'save',
-                'primary' => true,
-                'deemphasize' => false,
+        array(
+            'name'    => 'convert_button',
+            'type'    => 'button',
+            'icon'    => 'icon-eye-open',
+            'label'   => 'LBL_CONVERTLEAD',
+            'value'   => 'convert',
+            'css_class' => 'btn-primary',
+            'route'   => array (
+                'action'=> 'convert'
             ),
         ),
     ),

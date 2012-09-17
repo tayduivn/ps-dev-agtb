@@ -29,32 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 
 $viewdefs['Leads']['base']['view']['detail'] = array(
-    'buttons' => array(
-        array(
-
-            'name'    => 'edit_button',
-            'type'    => 'button',
-            'label'   => 'Edit',
-            'value'   => 'edit',
-            'class'   => 'edit-profile',
-            'primary' => true,
-            'events'  => array(
-                'click' => 'function(e){this.app.navigate(this.context, this.model, "edit", {trigger:true} );}'
-            ),
-
-        ),
-        array(
-            'name'    => 'convert_button',
-            'type'    => 'button',
-            'icon'    => 'icon-eye-open',
-            'label'   => 'ConvertLead',
-            'value'   => 'convert',
-            'route'   => array (
-                'action'=> 'convert'
-            ),
-            'primary' => true,
-        ),
-    ),
     'panels' => array(
         array(
             'fields' => array(
