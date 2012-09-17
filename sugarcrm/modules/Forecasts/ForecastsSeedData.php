@@ -211,7 +211,7 @@ public static function setupForecastSettings()
         // used to reference the app_list_string entry to indicate the commit stage list to use
         'buckets_dom' => 'commit_stage_dom', // options:  commit_stage_dom, commit_stage_extended_dom
         // the defined ranges the different buckets opportunites will fall in by default based on their probability
-        'category_ranges' => array('committed' => array('min'=>'70','max'=>'100')),
+        'category_ranges' => array('included' => array('min'=>'70','max'=>'100')),
         //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
         'sales_stage_won' => array('Closed Won'),
         //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
