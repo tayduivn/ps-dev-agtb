@@ -1,3 +1,14 @@
+<div class="container-fluid">
+  <div class="dark_cube tcenter">
+      <h1>{{str model.attributes.type}}</h1>
+      <hr class="invisible">
+      <p>{{str model.attributes.title}}</p>
+      <p>{{str model.attributes.message}}</p>
+  </div>
+</div>
+
+
+<!--
 <div class='container-fluid'>
     <div class='row-fluid'>
         <div class='span7'>
@@ -13,3 +24,4 @@
         </div>
     </div>
 </div>
+-->
