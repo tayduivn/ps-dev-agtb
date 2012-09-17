@@ -26,7 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  * Contributor(s): ______________________________________..
  ********************************************************************************/
-require_once('include/phpmailer/class.phpmailer.php');
+require_once('modules/Mailer/lib/phpmailer/class.phpmailer.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 
 /**
@@ -62,9 +62,10 @@ class SugarPHPMailer extends PHPMailer
 		$this->oe = new OutboundEmail();
 		$this->oe->getUserMailerSettings($current_user);
 
-		$this->SetLanguage('en', 'include/phpmailer/language/');
-		$this->PluginDir	= 'include/phpmailer/';
+		$this->SetLanguage('en', 'modules/Mailer/lib/phpmailer/language/');
+		$this->PluginDir	= 'modules/Mailer/lib/phpmailer/';
 		$this->Mailer	 	= 'smtp';
+
         // cn: i18n
         $this->CharSet		= $locale->getPrecedentPreference('default_email_charset');
 		$this->Encoding		= 'quoted-printable';
@@ -150,63 +151,6 @@ class SugarPHPMailer extends PHPMailer
 	}
 
     /**
-     * Attaches all fs, string, and binary attachments to the message.
-     * Returns an empty string on failure.
-     * @access private
-     * @return string
-     */
-    function AttachAll() {
-        // Return text of body
-        $mime = array();
-
-        // Add all attachments
-        for($i = 0; $i < count($this->attachment); $i++) {
-            // Check for string attachment
-            $bString = $this->attachment[$i][5];
-            if ($bString) {
-                $string = $this->attachment[$i][0];
-            } else {
-				$path = $this->attachment[$i][0];
-            }
-
-			// cn: overriding parent class' method to perform encode on the following
-            $filename    = $this->EncodeHeader(trim($this->attachment[$i][1]));
-            $name        = $this->EncodeHeader(trim($this->attachment[$i][2]));
-            $encoding    = $this->attachment[$i][3];
-            $type        = $this->attachment[$i][4];
-            $disposition = $this->attachment[$i][6];
-            $cid         = $this->attachment[$i][7];
-
-            $mime[] = sprintf("--%s%s", $this->boundary[1], $this->LE);
-            $mime[] = sprintf("Content-Type: %s; name=\"%s\"%s", $type, $name, $this->LE);
-            $mime[] = sprintf("Content-Transfer-Encoding: %s%s", $encoding, $this->LE);
-
-            if($disposition == "inline") {
-                $mime[] = sprintf("Content-ID: <%s>%s", $cid, $this->LE);
-            }
-
-            $mime[] = sprintf("Content-Disposition: %s; filename=\"%s\"%s", $disposition, $name, $this->LE.$this->LE);
-
-            // Encode as string attachment
-            if($bString) {
-                $mime[] = $this->EncodeString($string, $encoding);
-                if($this->IsError()) { return ""; }
-                $mime[] = $this->LE.$this->LE;
-            } else {
-                $mime[] = $this->EncodeFile($path, $encoding);
-
-                if($this->IsError()) {
-                	return "";
-                }
-                $mime[] = $this->LE.$this->LE;
-            }
-        }
-        $mime[] = sprintf("--%s--%s", $this->boundary[1], $this->LE);
-
-        return join("", $mime);
-    }
-
-	/**
 	 * handles Charset translation for all visual parts of the email.
 	 * @param string charset Default = ''
 	 */
@@ -371,39 +315,4 @@ eoq;
 				} // else
 			}
 	}
-
-	/**
-	 * overloads class.phpmailer's SetError() method so that we can log errors in sugarcrm.log
-	 *
-	 */
-	function SetError($msg) {
-		$GLOBALS['log']->fatal("SugarPHPMailer encountered an error: {$msg}");
-		parent::SetError($msg);
-	}
-
-	function SmtpConnect() {
-		$connection = parent::SmtpConnect();
-		if (!$connection) {
-			global $app_strings;
-			if(isset($this->oe) && $this->oe->type == "system") {
-				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
-			} else {
-				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
-			} // else
-		}
-		return $connection;
-	} // fn
-
-    /*
-     * overloads PHPMailer::PreSend() to allow for empty messages to go out.
-     */
-    protected function PreSend() {
-        //check to see if message body is empty
-        if(empty($this->Body)){
-            //PHPMailer will throw an error if the body is empty, so insert a blank space if body is empty
-            $this->Body = " ";
-        }
-        return parent::PreSend();
-    }
-
 } // end class definition

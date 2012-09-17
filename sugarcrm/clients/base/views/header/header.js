@@ -58,6 +58,7 @@
 
         app.api.search(params, {
             success:function(data) {
+                data.module_list = app.metadata.getModuleNames(true);
                 plugin.provide(data);
             },
             error:function(error) {

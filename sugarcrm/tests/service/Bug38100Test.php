@@ -40,14 +40,15 @@ class Bug38100Test extends SOAPTestCase
     {
     	$this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2_1/soap.php';
 
-		$GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('mod_strings', array('Reports'));
 		parent::setUp();
     }
 
     public function tearDown()
     {
-		unset($GLOBALS['app_list_strings']);
-		parent::tearDown();
+        SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     public function testGetReportEntries()

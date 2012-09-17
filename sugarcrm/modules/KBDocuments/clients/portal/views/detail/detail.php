@@ -76,14 +76,6 @@ $viewdefs['KBDocuments']['portal']['view']['detail'] = array(
                         'colspan' => 2,
                     ),
                 ),
-                array (
-                    'name' => 'description',
-                    'label' => 'LBL_DESCRIPTION',
-                    'displayParams' =>
-                    array (
-                        'colspan' => 2,
-                    ),
-                ),
                 array(
                     'name'  => 'attachment_list',
                     'label' => 'LBL_ATTACHMENTS',

@@ -2152,6 +2152,7 @@ EOQ;
         $mail->Subject = from_html($emailTemp->subject);
         if ($emailTemp->text_only != 1)
         {
+			$mail->Encoding = 'base64';
             $mail->IsHTML(true);
             $mail->Body = from_html($emailTemp->body_html);
             $mail->AltBody = from_html($emailTemp->body);
@@ -2278,7 +2279,7 @@ EOQ;
         {
             $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted(clean_string($user_id));
             $reports_to_id = $GLOBALS['db']->getOne($query);
-            return !is_null($reports_to_id);
+            return empty($reports_to_id);
         }
         return false;
     }

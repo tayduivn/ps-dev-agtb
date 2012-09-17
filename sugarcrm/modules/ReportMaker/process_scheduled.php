@@ -39,7 +39,7 @@ $modListHeader = array();
 //require_once('modules/Reports/ReportOpportunity.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
-require_once("include/phpmailer/class.phpmailer.php");
+require_once("modules/Mailer/lib/phpmailer/class.phpmailer.php");
 
 $report_schedule = new ReportSchedule();
 

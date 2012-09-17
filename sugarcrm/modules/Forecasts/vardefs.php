@@ -352,7 +352,7 @@ $dictionary['Forecast'] = array('table' => 'forecasts'
    'base_rate' =>
    array (
        'name' => 'base_rate',
-       'vname' => 'LBL_CURRENCY_RATE',
+       'vname' => 'LBL_BASE_RATE',
        'type' => 'double',
        'required' => true,
    ),
@@ -567,7 +567,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'base_rate' =>
     array (
         'name' => 'base_rate',
-        'vname' => 'LBL_CURRENCY_RATE',
+        'vname' => 'LBL_BASE_RATE',
         'type' => 'double',
         'required' => true,
     ),
@@ -616,14 +616,6 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'reportable'=>false,
     'comment' => 'Record deletion indicator'
   ),
-  'forecast' =>
-  array (
-    'name' => 'forecast',
-    'vname' => 'LBL_FORECAST',
-    'type' => 'bool',
-    'default' => '-1',
-    'comment' => 'Boolean indicating whether or not record should be included in forecast'
-  ),
   'commit_stage' =>
   array (
     'name' => 'commit_stage',
@@ -633,9 +625,9 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'len' => '20',
     'comment' => 'Worksheet Placeholder for the forecast commit category: Include, Likely, Omit etc.',
   ),
-  'op_probability' =>
+  'probability' =>
   array (
-    'name' => 'op_probability',
+    'name' => 'probability',
     'vname' => 'LBL_PROBABILITY',
     'type' => 'int',
     'dbType' => 'double',
@@ -684,12 +676,6 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'type' => 'id',
     ),
     array(
-        'name' => 'forecast',
-        'type' => 'toggle',
-        'vname' => 'LBL_FORECAST',
-        'source' => 'non-db',
-    ),
-    array(
         'name' => 'commit_stage',
         'type' => 'enum',
         'options' => 'commit_stage_dom',
@@ -736,6 +722,18 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'name' => 'likely_case',
         'vname' => 'LBL_LIKELY_CASE',
         'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'currency_id',
+        'vname' => 'LBL_CURRENCY_ID',
+        'type' => 'id',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'base_rate',
+        'vname' => 'LBL_BASE_RATE',
+        'type' => 'double',
         'source' => 'non-db',
     ),
 ),
@@ -821,6 +819,18 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
         'name' => 'worst_case_adjusted',
         'vname' => 'LBL_WORST_CASE_ADJUSTED',
         'type' => 'currency',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'currency_id',
+        'vname' => 'LBL_CURRENCY_ID',
+        'type' => 'id',
+        'source' => 'non-db',
+    ),
+    array(
+        'name' => 'base_rate',
+        'vname' => 'LBL_BASE_RATE',
+        'type' => 'double',
         'source' => 'non-db',
     ),
 ),
