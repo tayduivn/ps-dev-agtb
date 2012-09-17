@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /**
  * Created by JetBrains PhpStorm.
  * User: jwhitcraft

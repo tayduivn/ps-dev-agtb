@@ -26,6 +26,8 @@ class ForecastManagerWorksheet extends SugarBean
 {
 	var $args;
     var $id;
+    var $currency_id;
+    var $base_rate;
     var $name;
     var $forecast;
     var $best_case;
@@ -111,6 +113,8 @@ class ForecastManagerWorksheet extends SugarBean
         $worksheet->related_id = $this->args["user_id"];
         $worksheet->quota = $this->args["quota"];
         $worksheet->version = $version;
+        $worksheet->currency_id = $this->currency_id;
+        $worksheet->base_rate = $this->base_rate;
         $worksheet->save();
     }
 

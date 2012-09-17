@@ -292,6 +292,17 @@ class SugarBean
      * set to true if dependent fields updated
      */
     protected $is_updated_dependent_fields = false;
+
+    /**
+     * This method has been moved into the __construct() method to follow php standards
+     *
+     * @see __construct()
+     * @deprecated
+     */
+    function SugarBean()
+    {
+        self::__construct();
+    }
 	
     /**
      * Constructor for the bean, it performs following tasks:
@@ -303,7 +314,7 @@ class SugarBean
      * All implementing classes  must call this constructor using the parent::SugarBean() class.
      *
      */
-    function SugarBean()
+    public function __construct()
     {
         global  $dictionary, $current_user;
         static $loaded_defs = array();
@@ -2532,7 +2543,7 @@ function save_relationship_changes($is_update, $exclude=array())
 
         if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isFavoritesEnabled()) {
             $query_select .= ', sf.id AS my_favorite';
-            $query_from .= " LEFT JOIN sugarfavorites AS sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
+            $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
         }
         //END SUGARCRM flav=pro ONLY
         

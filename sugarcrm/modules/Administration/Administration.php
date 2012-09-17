@@ -198,6 +198,20 @@ class Administration extends SugarBean {
             $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
         }
         sugar_cache_clear('admin_settings_cache');
+
+        // check to see if category is a module
+        if(!empty($platform)) {
+            // we have an api call so lets clear out the cache for the module + platform
+            global $moduleList;
+            if(in_array($category, $moduleList)) {
+                $cache_key = "ModuleConfig-" . $category;
+                if($platform != "base")  {
+                    $cache_key .= $platform;
+                }
+                sugar_cache_clear($cache_key);
+            }
+        }
+
         return $this->db->getAffectedRowCount($result);
     }
 
@@ -211,6 +225,19 @@ class Administration extends SugarBean {
     public function getConfigForModule($module, $platform = 'base') {
         // platform is always lower case
         $platform = strtolower($platform);
+
+        $cache_key = "ModuleConfig-" . $module;
+        if($platform != "base")  {
+            $cache_key .= $platform;
+        }
+
+        // try and see if there is a cache for this
+        $moduleConfig = sugar_cache_retrieve($cache_key);
+
+        if(!empty($moduleConfig)) {
+            return $moduleConfig;
+        }
+
         $sql = "SELECT name, value FROM config WHERE category = '{$module}'";
         if($platform != "base") {
             // if the platform is not base, we need to order it so the platform we are looking for overrides any base values
@@ -225,6 +252,10 @@ class Administration extends SugarBean {
         $moduleConfig = array();
         while($row = $this->db->fetchByAssoc($result)) {
             $moduleConfig[$row['name']] = $row['value'];
+        }
+
+        if(!empty($moduleConfig)) {
+            sugar_cache_put($cache_key, $moduleConfig);
         }
 
         return $moduleConfig;

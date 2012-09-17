@@ -43,6 +43,14 @@ class Bug43716Test extends Sugar_PHPUnit_Framework_TestCase
     private $patchToCheckFile = '';
     private $filenamePostfix = '-restore';
 
+
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+    }
+
+
     /**
      * @brief create user, two patches with different dates
      * @return void
