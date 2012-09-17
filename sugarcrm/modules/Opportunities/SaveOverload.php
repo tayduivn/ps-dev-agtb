@@ -23,7 +23,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
     //if forecast value equals -1, set it to 0 or 1 based on probability
-    global $sugar_config, $app_list_strings, $timedate;
+    global $app_list_strings, $timedate, $current_language;
+    $app_list_strings = return_app_list_strings_language($current_language);
 
     if ($focus->forecast == -1)
     {
@@ -40,6 +41,7 @@ function perform_save(&$focus){
         $admin->retrieveSettings('base');
         $commit_stage_dom = isset($admin->settings['base_buckets_dom']) ? $admin->settings['base_buckets_dom'] : 'commit_stage_dom';
         $commit_stage_arr = $app_list_strings[$commit_stage_dom];
+
         ksort($commit_stage_arr);
         //the keys of this array are upper limit of probability for each stage
         foreach($commit_stage_arr as $key => $value)

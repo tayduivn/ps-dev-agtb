@@ -26,7 +26,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'type' => 'currency',
                     'label' => 'LBL_AMOUNT',
                     'default' => true,
-                    'enabled' => true,
+                    'enabled' => false,
+                    'convertToBase' => true,
                 ),
 
                 array(
@@ -36,6 +37,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true,
+                    'convertToBase'=> true,
                 ),
 
                 array(
@@ -44,6 +46,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'label' => 'LBL_LIKELY_CASE',
                     'default' => true,
                     'enabled' => true,
+                    'convertToBase'=> true,
                 ),
 
                 array(
@@ -52,15 +55,17 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'label' => 'LBL_LIKELY_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
-                ),
+                    'clickToEdit' => true,
+                    'convertToBase'=> true,
+               ),
 
                 array(
                     'name' => 'best_case',
                     'type' => 'currency',
                     'label' => 'LBL_BEST_CASE',
                     'default' => true,
-                    'enabled' => true
+                    'enabled' => true,
+                    'convertToBase'=> true,
                 ),
 
                 array(
@@ -69,8 +74,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'label' => 'LBL_BEST_CASE_VALUE',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
-                ),
+                    'clickToEdit' => true,
+                    'convertToBase'=> true,
+               ),
 
             ),
         ),

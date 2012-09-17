@@ -38,7 +38,6 @@ require_once('modules/Administration/Administration.php');
 require_once('modules/Reports/SavedReport.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
-//require_once("include/phpmailer/class.phpmailer.php");
 require_once('include/SugarPHPMailer.php');
 require_once('log4php/LoggerManager.php');
 require_once('modules/ACL/ACLController.php');

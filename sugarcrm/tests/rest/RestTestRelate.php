@@ -60,7 +60,7 @@ class RestTestRelate extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}'");
+        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}");
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
         
         parent::tearDown();
@@ -129,6 +129,8 @@ class RestTestRelate extends RestTestBase {
                 $opp->contacts->add(array($this->contacts[$contactNum]),array('contact_role'=>$contact_type));
             }
         }
+        
+        $GLOBALS['db']->commit();
 
         // Test normal fetch
         $restReply = $this->_restCall("Accounts/".$this->accounts[4]->id."/link/opportunities");

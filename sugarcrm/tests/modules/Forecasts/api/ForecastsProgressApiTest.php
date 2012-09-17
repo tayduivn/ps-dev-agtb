@@ -51,7 +51,7 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         $forecastConfig = array (
-            'show_buckets' => false,
+            'show_buckets' => 0,
             'committed_probability' => 70,
             'sales_stage_won' => array('Closed Won'),
             'sales_stage_lost' => array('Closed Lost')
@@ -239,6 +239,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $restReply = $restResponse['reply'];
         $this->assertEquals(70000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
         $this->assertEquals(3, $restReply['opportunities'], "opportunity count did not match");
+        $this->assertEquals(50000, $restReply['pipeline_revenue'], "pipeline revenue did not match expected amounts");
     }
 
     /**

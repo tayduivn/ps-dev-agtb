@@ -543,7 +543,7 @@ class Email extends SugarBean {
 		} // if
 
 
-        $mail->Subject = $this->name;
+
         $mail = $this->handleBody($mail);
         $mail->Subject = $this->name;
         $this->description_html = from_html($this->description_html);
@@ -686,7 +686,7 @@ class Email extends SugarBean {
             			$note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
 						//END SUGARCRM flav=pro ONLY
                         $dest = "upload://{$note->id}";
-						if(!copy($fileLocation, $dest)) {
+						if(!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
 							$GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
 						}
 
@@ -707,33 +707,39 @@ class Email extends SugarBean {
 					$docRev = new DocumentRevision();
 					$doc->retrieve($docId);
 					$docRev->retrieve($doc->document_revision_id);
+                    $filename = $docRev->filename;
+                    $fileLocation = "upload://{$docRev->id}";
 
-					$filename = $docRev->filename;
-					$fileLocation = "upload://{$docRev->id}";
-					$mime_type = $docRev->file_mime_type;
-					$mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
+                    if (empty($docRev->id)) {
+                        throw new Exception("Revision Id Not Found");
+                    }
 
-					// only save attachments if we're archiving or drafting
-					if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
-						$note = new Note();
-						$note->id = create_guid();
-						$note->new_with_id = true; // duplicating the note with files
-						$note->parent_id = $this->id;
-						$note->parent_type = $this->module_dir;
-						$note->name = $filename;
-						$note->filename = $filename;
-						$note->file_mime_type = $mime_type;
-						//BEGIN SUGARCRM flav=pro ONLY
-						$note->team_id = $this->team_id;
-						$note->team_set_id = $this->team_set_id;
-						//END SUGARCRM flav=pro ONLY
-                        $dest = "upload://{$note->id}";
-						if(!copy($fileLocation, $dest)) {
-							$GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
-						}
+                    if (!empty($docRev->id) && file_exists($fileLocation)) {  // document found
+                        $mime_type = $docRev->file_mime_type;
+                        $mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
 
-						$note->save();
-					}
+                        // only save attachments if we're archiving or drafting
+                        if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
+                            $note = new Note();
+                            $note->id = create_guid();
+                            $note->new_with_id = true; // duplicating the note with files
+                            $note->parent_id = $this->id;
+                            $note->parent_type = $this->module_dir;
+                            $note->name = $filename;
+                            $note->filename = $filename;
+                            $note->file_mime_type = $mime_type;
+                            //BEGIN SUGARCRM flav=pro ONLY
+                            $note->team_id = $this->team_id;
+                            $note->team_set_id = $this->team_set_id;
+                            //END SUGARCRM flav=pro ONLY
+                            $dest = "upload://{$note->id}";
+                            if(!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
+                                $GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
+                            }
+
+                            $note->save();
+                        }
+                    }
 				}
 			}
 		}
@@ -826,7 +832,7 @@ class Email extends SugarBean {
 			$this->reply_to_status = 0;
 		} // if
 
-		if ($_REQUEST['composeType'] == 'reply' || $_REQUEST['composeType'] == 'replyCase') {
+        if (isset($_REQUEST['composeType']) && ($_REQUEST['composeType'] == 'reply' || $_REQUEST['composeType'] == 'replyCase')) {
 			if (isset($_REQUEST['ieId']) && isset($_REQUEST['mbox'])) {
 				$emailFromIe = new InboundEmail();
 				$emailFromIe->retrieve($_REQUEST['ieId']);
@@ -939,7 +945,7 @@ class Email extends SugarBean {
 			} // if
 		} // if
 		return true;
-	} // end email2send
+	} // end email2Send
 
 	/**
 	 * Generates a config-specified separated name and addresses to be used in compose email screen for
@@ -1102,7 +1108,7 @@ class Email extends SugarBean {
 	    $tmpNote->team_set_id = $this->team_set_id;
 	    //END SUGARCRM flav=pro ONLY
 	    $noteFile = "upload://{$tmpNote->id}";
-	    if(!copy($fileLocation, $noteFile)) {
+        if(!file_exists($fileLocation) || (!copy($fileLocation, $noteFile))) {
     	    $GLOBALS['log']->fatal("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $noteFile");
 	    }
 	    $tmpNote->save();
@@ -2000,6 +2006,7 @@ class Email extends SugarBean {
 		} else {
 			// plain text only
 			$this->description_html = '';
+			$mail->Encoding = 'quoted-printable';
 			$mail->IsHTML(false);
 			$plainText = from_html($this->description);
 			$plainText = str_replace("&nbsp;", " ", $plainText);
@@ -2034,6 +2041,7 @@ class Email extends SugarBean {
 		global $sugar_config;
 		// wp: if body is html, then insert new lines at 996 characters. no effect on client side
 		// due to RFC 2822 which limits email lines to 998
+		$mail->Encoding = 'base64';
 		$mail->IsHTML(true);
 		$body = from_html(wordwrap($this->description_html, 996));
 		$mail->Body = $body;
