@@ -194,14 +194,12 @@ public static function setupForecastSettings()
     $forecastConfig = array(
         // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
         'is_setup' => true,
-        // the start month of the fiscal period over which forecasting can take place.
-        'fiscal_period_start_month' => '01',
-        // the corresponding day of the month with which to start the fiscal period.
-        'fiscal_period_start_day' => '01',
+        // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods
+        'timeperiod_type' => 'fiscal', //options:  'calendar' or 'fiscal'
         // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
         'timeperiod_interval' => 'yearly',
-        // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_leaf_options_dom
-        'timeperiod_leaf_interval' => 'monthly',
+        // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_options_dom, (first, middle, last)
+        'timeperiod_leaf_interval' => 'first',
         // number of timeperiods forward from the current that are displayed
         'timeperiods_shown_forward' => 4,
         // number of timeperiods in the past from the current that are displayed
@@ -211,7 +209,7 @@ public static function setupForecastSettings()
         // used to reference the app_list_string entry to indicate the commit stage list to use
         'buckets_dom' => 'commit_stage_dom', // options:  commit_stage_dom, commit_stage_extended_dom
         // the defined ranges the different buckets opportunites will fall in by default based on their probability
-        'category_ranges' => array('included' => array('min'=>'70','max'=>'100')),
+        'category_ranges' => array('included' => array('min' => 70, 'max' => 100), 'excluded' => array('min' => 0, 'max' => 69)),
         //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
         'sales_stage_won' => array('Closed Won'),
         //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
