@@ -6,6 +6,7 @@
     },
 
     save: function() {
-        console.log('save');
+        this.model.save();
+        this.context.parent.trigger('modal:close');
     }
 })
