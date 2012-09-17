@@ -151,6 +151,8 @@ class RestListTest extends RestTestBase {
 
         // Test finding one record
         $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode($this->accounts[17]->name));
+
+        $this->assertTrue(is_array($restReply3['reply']['records']), "Reply3 Records is not an array");
         
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
@@ -159,6 +161,8 @@ class RestListTest extends RestTestBase {
         // Sorting descending
         $restReply4 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
         
+        $this->assertTrue(is_array($restReply4['reply']['records']), "Reply4 Records is not an array");
+
         $tmp = array_keys($restReply4['reply']['records']);
         $this->assertLessThan($restReply4['reply']['records'][$tmp[0]]['id'],
                               $restReply4['reply']['records'][$tmp[1]]['id'],
@@ -167,6 +171,8 @@ class RestListTest extends RestTestBase {
         // Sorting ascending
         $restReply5 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
         
+        $this->assertTrue(is_array($restReply5['reply']['records']), "Reply5 Records is not an array");
+
         $tmp = array_keys($restReply5['reply']['records']);
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
                                  $restReply5['reply']['records'][$tmp[1]]['id'],

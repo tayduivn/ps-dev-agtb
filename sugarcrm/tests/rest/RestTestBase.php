@@ -128,7 +128,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $httpReply = curl_exec($ch);
         $httpInfo = curl_getinfo($ch);
         $httpError = $httpReply === false ? curl_error($ch) : null;
-
+        $GLOBALS['db']->commit();
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
     

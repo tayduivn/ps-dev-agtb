@@ -464,6 +464,9 @@ class RestPortalSecurityTest extends RestTestPortalBase {
 
         // Validate KBDocuments
         $restReply = $this->_restCall("KBDocuments/");
+
+        $this->assertTrue(is_array($restReply['reply']['records']), "Reply Records was not array");
+
         foreach ( $restReply['reply']['records'] as $kbdoc ) {
             $this->assertEquals('1',$kbdoc['is_external_article']);
             $this->assertEquals('Published',$kbdoc['status_id']);

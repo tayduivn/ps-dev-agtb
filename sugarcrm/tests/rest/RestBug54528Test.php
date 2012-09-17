@@ -30,7 +30,7 @@ class RestBug54528Test extends RestTestBase {
         parent::setUp();
         // Create a portal API user
         $this->apiuser = BeanFactory::newBean('Users');
-        $this->apiuser->id = "UNIT-TEST-portalCreateUser";
+        $this->apiuser->id = create_guid();
         $this->apiuser->new_with_id = true;
         $this->apiuser->first_name = "Portal";
         $this->apiuser->last_name = "Apiuserson";
@@ -45,13 +45,13 @@ class RestBug54528Test extends RestTestBase {
 
         // create account
         $account = new Account();
-        $account->name = "UNIT TEST account - " . create_guid();
+        $account->name = create_guid();
         $account->billing_address_postalcode = sprintf("%08d", 1);
         $account->save();
         $this->account = $account;
         // create contact
         $this->contact = BeanFactory::newBean('Contacts');
-        $this->contact->id = "UNIT-TEST-portalContact" . create_guid();
+        $this->contact->id = create_guid();
         $this->contact->new_with_id = true;
         $this->contact->first_name = "Little";
         $this->contact->last_name = "Unittest";
@@ -59,7 +59,10 @@ class RestBug54528Test extends RestTestBase {
         $this->contact->portal_name = "liltest@unit.com";
         $this->contact->portal_active = '1';
         $this->contact->portal_password = User::getPasswordHash("unittest");
+        $this->contact->assigned_user_id = $this->_user->id;
         $this->contact->save();
+
+        $GLOBALS['db']->commit();
 
         $this->contact->load_relationship('accounts');
 
