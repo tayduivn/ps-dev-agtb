@@ -48,9 +48,9 @@
      */
     handleForecastSettingsClick: function(e) {
         var params = {
-            module: "Forecasts",
-            layout: "forecastsConfig",
-            title: "Forecasts Setup"
+            context:{module: "Forecasts"},
+            components:[{layout:"forecastsConfig"}],
+            title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
         };
 
         this.layout.trigger("modal:forecastsConfig:open", params);

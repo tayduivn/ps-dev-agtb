@@ -105,15 +105,24 @@
             var self = this;
             // need to add error styling to parent view element
             this.$el.parent().parent().addClass("error");
-            this.$el.parent().addClass('input-append');
+            var ftag = this.fieldTag || '';
+
+            // Reset Field
+            if (this.$el.parent().parent().find('.input-append').length > 0) {
+                this.$el.unwrap()
+            }
+            self.$('.help-block').html('');
+            // Remove previous exclamation then add back.
+            this.$('.add-on').remove();
+
+
+            // Add error styling
+            this.$el.wrap('<div class="input-append  '+ftag+'">');
             // For each error add to error help block
             _.each(errors, function(errorContext, errorName) {
                 self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
             });
-
-            // Remove previous exclamation then add back.
-            this.$('.add-on').remove();
-            this.$el.find(this.fieldTag+':last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+            $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(this.$('.help-block'));
         },
 
 
