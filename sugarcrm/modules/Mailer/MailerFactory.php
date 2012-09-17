@@ -56,12 +56,8 @@ class MailerFactory
     public static function getMailer(MailConfiguration $config) {
         // copy the config value becuase you don't want to modify the object by reassigning a public variable
         // in the case of mode being null
-        $mode = strtolower($config->mode); // make sure it's lower case
-
-        //@todo make this a better check
-        if (is_null($mode)) {
-            $mode = "default";
-        }
+        //@todo better validation on the mode
+        $mode = is_null($config->mode) ? "default" : strtolower($config->mode); // make sure it's lower case
 
         $from    = new EmailIdentity($config->sender_email, $config->sender_name); // can bubble up a MailerException
         $headers = self::buildHeadersForMailer($from);
