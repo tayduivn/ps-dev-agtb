@@ -48,8 +48,8 @@
      */
     handleForecastSettingsClick: function(e) {
         var params = {
-            module: "Forecasts",
-            layout: "forecastsConfig",
+            context:{module: "Forecasts"},
+            components:[{layout:"forecastsConfig"}],
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
         };
 

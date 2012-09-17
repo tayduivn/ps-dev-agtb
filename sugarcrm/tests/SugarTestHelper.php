@@ -110,21 +110,21 @@ require_once 'SugarTestTrackerUtility.php';
 require_once 'SugarTestImportUtilities.php';
 require_once 'SugarTestMergeUtilities.php';
 require_once 'SugarTestTaskUtilities.php';
-require_once 'SugarTestQuotaUtilities.php';
 require_once 'SugarTestCurrencyUtilities.php';
+require_once 'SugarTestOpportunityUtilities.php';
+require_once 'SugarTestProspectUtilities.php';
 //BEGIN SUGARCRM flav=pro ONLY
-require_once 'SugarTestTeamUtilities.php';
-require_once 'SugarTestQuoteUtilities.php';
+require_once 'SugarTestForecastUtilities.php';
+require_once 'SugarTestForecastScheduleUtilities.php';
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductCategoryUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
 require_once 'SugarTestProductBundleUtilities.php';
-require_once 'SugarTestOpportunityUtilities.php';
-require_once 'SugarTestWorksheetUtilities.php';
-require_once 'SugarTestProspectUtilities.php';
+require_once 'SugarTestQuotaUtilities.php';
+require_once 'SugarTestQuoteUtilities.php';
+require_once 'SugarTestTeamUtilities.php';
 require_once 'SugarTestTimePeriodUtilities.php';
-require_once 'SugarTestForecastUtilities.php';
-require_once 'SugarTestForecastScheduleUtilities.php';
+require_once 'SugarTestWorksheetUtilities.php';
 //END SUGARCRM flav=pro ONLY
 
 $GLOBALS['db']->commit();

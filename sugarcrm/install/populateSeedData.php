@@ -133,7 +133,7 @@ require_once('modules/TimePeriods/TimePeriodsSeedData.php');
 
 $timedate = TimeDate::getInstance();
 $timeperiods = TimePeriodsSeedData::populateSeedData();
-
+//END SUGARCRM flav=pro ONLY
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -496,14 +496,16 @@ for($i=0; $i<$number_leads; $i++)
 			$lead->assigned_user_id = $account->assigned_user_id;
 	//END SUGARCRM flav=pro ONLY
 			$lead->assigned_user_name = $assigned_team;
-		} else {
+		}
 	//BEGIN SUGARCRM flav=pro ONLY
+        else {
+
 			$teams = $team_demo_data->get_random_teamset();
 			$lead->load_relationship('teams');
 			$lead->teams->add($teams);
 			$lead->assigned_user_id = $account->assigned_user_id;
-	//END SUGARCRM flav=pro ONLY
 		}
+	//END SUGARCRM flav=pro ONLY
 	}
 	//BEGIN SUGARCRM flav=pro ONLY
     else {
@@ -524,7 +526,7 @@ for($i=0; $i<$number_leads; $i++)
 }
 
 
-//end create timeperiods, pro only.
+//BEGIN SUGARCRM flav=pro ONLY
 foreach($sugar_demodata['manufacturer_seed_data_names'] as $v){
 	$manufacturer = new Manufacturer;
 	$manufacturer->name = $v;
@@ -548,10 +550,8 @@ foreach($sugar_demodata['productcategory_seed_data_names'] as $v){
 	$category = new ProductCategory;
 	$category->name = $v;
 	$category->list_order = "1";
-    //BEGIN SUGARCRM flav=pro ONLY
     $key = array_rand($sugar_demodata['users']);
     $category->assigned_user_id = $sugar_demodata['users'][$key]['id'];
-    //END SUGARCRM flav=pro ONLY
 	$category->save();
 	$productcategory_id_arr[] = $category->id;
 }
@@ -719,9 +719,7 @@ if(!empty($sugar_demodata['emailtemplates_seed_data'])) {
 	    $EmailTemp->body = $v['text_body'];
 	    $EmailTemp->body_html = $v['body'];
 	    $EmailTemp->deleted = 0;
-	    //BEGIN SUGARCRM flav=pro ONLY
 	    $EmailTemp->team_id = 1;
-	    //END SUGARCRM flav=pro ONLY
 	    $EmailTemp->published = 'off';
 	    $EmailTemp->text_only = 0;
 	    $id =$EmailTemp->save();
@@ -778,7 +776,7 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 
     require_once('modules/Opportunities/OpportunitiesSeedData.php');
     //BEGIN SUGARCRM flav=com ONLY
-    OpportunitiesSeedData::populateSeedData($number_companies, $app_list_strings, $accounts);
+    $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies, $app_list_strings, $accounts);
     //END SUGARCRM flav=com ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY

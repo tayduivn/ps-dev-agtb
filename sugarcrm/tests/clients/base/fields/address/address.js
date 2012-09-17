@@ -1,4 +1,4 @@
-describe("Address", function() {
+describe("address field", function() {
 
     var app, field, Address;
 

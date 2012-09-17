@@ -37,8 +37,16 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     {
         SugarTestHelper::tearDown();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        //END SUGARCRM flav=pro ONLY
+    }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    public function dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty()
+    {
+        return array(array('best_case'), array('worst_case'));
     }
 
     /**
@@ -51,11 +59,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($opp->$case, $opp->amount);
     }
 
-    public function dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty()
-    {
-        return array(array('best_case'), array('worst_case'));
-    }
-
     /**
      * @dataProvider dataProviderCaseFieldEqualsAmountWhenCaseFieldEmpty
      */
@@ -64,7 +67,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->$case = 0;
         $opp->save();
-
         $this->assertEquals(0, $opp->$case);
     }
 
@@ -95,6 +97,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($tp->id, $opp->timeperiod_id);
     }
+    //END SUGARCRM flav=pro ONLY
 
     /*
      * Test that the base_rate field is populated with rate
@@ -109,8 +112,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->name = "Test Opportunity Delete Me";
         $opportunity->amount = "5000.00";
         $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        //BEGIN SUGARCRM flav=pro ONLY
         $opportunity->best_case = "1000.00";
         $opportunity->worst_case = "600.00";
+        //END SUGARCRM flav=pro ONLY
         $opportunity->save();
         $this->assertEquals(
             sprintf('%.6f',$opportunity->base_rate),
@@ -130,8 +135,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->name = "Test Opportunity Delete Me";
         $opportunity->amount = "5000.00";
         $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        //BEGIN SUGARCRM flav=pro ONLY
         $opportunity->best_case = "1000.00";
         $opportunity->worst_case = "600.00";
+        //END SUGARCRM flav=pro ONLY
         $opportunity->save();
 
         $this->assertEquals(
@@ -139,4 +146,24 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
             sprintf('%.6f',$currency->conversion_rate)
         );
     }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    /*
+     * This method tests that a product record is created for new opportunity and that the necessary opportunity
+     * field values are mapped to the product record
+     */
+    public function testProductEntryWasCreated()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+
+        $expected = array($opp->name, $opp->amount, $opp->best_case, $opp->worst_case, $opp->date_closed, $opp->assigned_user_id);
+        $actual = array($product->name, $product->likely_case, $product->best_case, $product->worst_case, $product->date_closed, $product->assigned_user_id);
+
+        $this->assertEquals($expected, $actual);
+    }
+    //END SUGARCRM flav=pro ONLY
 }
