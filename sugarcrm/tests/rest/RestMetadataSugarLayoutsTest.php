@@ -41,10 +41,6 @@ class RestMetadataSugarLayoutsTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
-        $this->_restLogin($this->_user->user_name,$this->_user->user_name);
 
         foreach ($this->_testPaths as $file) {
             preg_match('#clients/(.*)/layouts/#', $file, $m);

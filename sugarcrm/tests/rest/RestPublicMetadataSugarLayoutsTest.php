@@ -41,9 +41,6 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
-        //Create an anonymous user for login purposes/
-        $this->_user = SugarTestUserUtilities::createAnonymousUser();
-        $GLOBALS['current_user'] = $this->_user;
 
         foreach ($this->_testPaths as $file) {
             preg_match('#clients/(.*)/layouts/#', $file, $m);
@@ -75,7 +72,6 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
             unlink($file);
         }
 
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
     }
     /**

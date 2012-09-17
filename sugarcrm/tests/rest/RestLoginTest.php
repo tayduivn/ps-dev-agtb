@@ -47,6 +47,7 @@ class RestLoginTest extends RestTestBase
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '".$this->apiuser->id."'");
             $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '".$this->apiuser->id."'");
         }
+        $GLOBALS['db']->commit();
     }
 
     /**
