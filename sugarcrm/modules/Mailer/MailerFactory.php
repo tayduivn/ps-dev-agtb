@@ -21,9 +21,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Emails/MailConfiguration.php"; // needs to be able to access the MailConfiguration
-require_once 'EmailIdentity.php';                    // requires EmailIdentity to represent each recipient
-require_once 'EmailHeaders.php';                     // email headers are contained in an EmailHeaders object
+require_once "modules/Emails/MailConfiguration.php";     // needs to be able to access the MailConfiguration
+require_once "modules/Emails/MailConfigurationPeer.php"; // needs the constants that represent the modes
+require_once 'EmailIdentity.php';                        // requires EmailIdentity to represent each recipient
+require_once 'EmailHeaders.php';                         // email headers are contained in an EmailHeaders object
 
 /**
  * Factory to create Mailers.
@@ -37,8 +38,8 @@ class MailerFactory
     // sugarcrm/modules/Mailer library, so no custom Mailers outside of this module will work.
     // key = mode; value = mailer class
     private static $modeToMailerMap = array(
-        "default" => "SimpleMailer",
-        "smtp"    => "SugarMailer",
+        "default"                        => "SimpleMailer",
+        MailConfigurationPeer::MODE_SMTP => "SugarMailer",
     );
 
     /**
