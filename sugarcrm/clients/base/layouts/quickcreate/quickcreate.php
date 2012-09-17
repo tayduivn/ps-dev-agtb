@@ -27,5 +27,8 @@ $viewdefs['base']['layout']['quickcreate'] = array(
         array(
             'view' => 'quickcreate',
         ),
+        array(
+            'view' => 'quickcreateactions',
+        ),
     ),
 );
