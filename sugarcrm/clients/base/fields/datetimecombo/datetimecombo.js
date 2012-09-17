@@ -37,6 +37,10 @@
             return value;
         }
     },
+    format:function(value) {
+        var jsDate, output, 
+            usersDateFormatPreference, usersTimeFormatPreference, 
+            myUser = app.user;
 
     format:function(value) {
         var jsDate, output, usersDateFormatPreference, usersTimeFormatPreference, myUser = app.user, d, parts, before24Hours;
