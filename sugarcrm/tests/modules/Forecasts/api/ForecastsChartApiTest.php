@@ -134,7 +134,7 @@ class ForecastsChartApiTest extends RestTestBase
         $return = $this->_restCall($url);
 
         $chart = $return['reply'];
-        $this->assertEquals("Likely", $chart['properties'][0]['goal_marker_label'][1]);
+        $this->assertEquals("Likely Case", $chart['properties'][0]['goal_marker_label'][1]);
     }
 
     /**

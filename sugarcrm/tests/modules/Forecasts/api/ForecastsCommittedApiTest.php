@@ -31,13 +31,36 @@ require_once('tests/rest/RestTestBase.php');
  */
 class ForecastsCommittedApiTest extends RestTestBase
 {
+    /** @var array
+     */
+    private static $reportee;
 
-    public function setUp() {
-        //$GLOBALS['db']->query('DELETE FROM forecast_schedule');
+    /**
+     * @var array
+     */
+
+    protected static $manager;
+
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+
+        self::$manager = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS['current_user'] = self::$manager;
+  
+        self::$reportee = SugarTestUserUtilities::createAnonymousUser();
+        self::$reportee->reports_to_id = self::$manager->id;
+        self::$reportee->save();
     }
 
-    public function tearDown() {
-
+    public static function tearDownAfterClass()
+    {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /***
@@ -73,4 +96,9 @@ class ForecastsCommittedApiTest extends RestTestBase
         }
     }
 
+    public function testForecastsCommitted()
+    {
+        $response = $this->_restCall("Forecasts/committed");
+        $this->assertNotEmpty($response["reply"], "Rest reply is empty. Default manager data should have been returned.");
+    }
 }
