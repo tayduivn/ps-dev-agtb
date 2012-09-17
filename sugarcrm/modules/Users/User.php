@@ -2279,7 +2279,7 @@ EOQ;
         {
             $query = 'SELECT reports_to_id FROM users WHERE id = ' . $GLOBALS['db']->quoted(clean_string($user_id));
             $reports_to_id = $GLOBALS['db']->getOne($query);
-            return !is_null($reports_to_id);
+            return empty($reports_to_id);
         }
         return false;
     }
