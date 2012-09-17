@@ -1,4 +1,4 @@
-describe("sugarfields", function() {
+describe("enum field", function() {
     var app, field;
 
     beforeEach(function() {

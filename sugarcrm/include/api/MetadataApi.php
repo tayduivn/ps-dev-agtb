@@ -301,6 +301,28 @@ class MetadataApi extends SugarApi {
             }
         }
 
+        // populate available system currencies
+        $data['currencies'] = array();
+        require_once('modules/Currencies/ListCurrency.php');
+        $lcurrency = new ListCurrency();
+        $lcurrency->lookupCurrencies();
+        if(!empty($lcurrency->list))
+        {
+            foreach($lcurrency->list as $current)
+            {
+                $currency = array();
+                $currency['name'] = $current->name;
+                $currency['iso'] = $current->iso4217;
+                $currency['status'] = $current->status;
+                $currency['symbol'] = $current->symbol;
+                $currency['rate'] = $current->conversion_rate;
+                $currency['name'] = $current->name;
+                $currency['date_entered'] = $current->date_entered;
+                $currency['date_modified'] = $current->date_modified;
+                $data['currencies'][$current->id] = $currency;
+            }
+        }
+
         if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
             $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
             // This is a change in the ACL's for users without Accounts
