@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="error-page">
   <div class="dark_cube tcenter">
       <h1>{{str model.attributes.type}}</h1>
       <hr class="invisible">
@@ -6,22 +6,3 @@
       <p>{{str model.attributes.message}}</p>
   </div>
 </div>
-
-
-<!--
-<div class='container-fluid'>
-    <div class='row-fluid'>
-        <div class='span7'>
-            <div class='card2'>
-                <div class='row-fluid'>
-                    <div class='span4'><h1>{{str model.attributes.type}}</h1></div>
-                    <div class='span8'>
-                        <p><strong>{{str model.attributes.title}}</strong><br>
-                            {{str model.attributes.message}}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
--->
