@@ -1,4 +1,4 @@
-describe("sugarviews", function() {
+describe("Filter View", function() {
 
     var view, app;
 

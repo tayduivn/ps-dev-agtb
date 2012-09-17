@@ -1,4 +1,4 @@
-describe("sugarfields", function() {
+describe("iframe", function() {
 
     describe("iframe", function() {
         it("should format the value", function() {
