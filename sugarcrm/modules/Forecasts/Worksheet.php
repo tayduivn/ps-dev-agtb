@@ -65,14 +65,12 @@ class Worksheet extends SugarBean {
 
     function save($check_notify = false){
         require_once 'include/SugarCurrency.php';
-        if(empty($this->currency_id)) {
-            // use user preferences for currency
-            $currency = SugarCurrency::getUserLocaleCurrency();
+        if(!isset($this->id) || ($this->id == ""))
+        {
+        	$currency = SugarCurrency::getUserLocaleCurrency();
             $this->currency_id = $currency->id;
-        } else {
-            $currency = SugarCurrency::getCurrencyByID($this->currency_id);
+            $this->base_rate = $currency->conversion_rate;
         }
-        $this->base_rate = $currency->conversion_rate;
         
         parent::save($check_notify);
     }
