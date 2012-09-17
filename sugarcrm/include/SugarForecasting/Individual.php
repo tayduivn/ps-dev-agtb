@@ -27,7 +27,7 @@
  */
 
 require_once('include/SugarForecasting/AbstractForecast.php');
-class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
+class SugarForecasting_Individual extends SugarForecasting_AbstractForecast implements SugarForecasting_ForecastSaveInterface
 {
     /**
      * Where we store the data we want to use
@@ -127,5 +127,48 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             }
             $this->dataArray[] = $data;
         }
+    }
+
+    /**
+     * Save the Individual Worksheet
+     *
+     * @return mixed
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function save()
+    {
+        require_once('modules/Forecasts/ForecastWorksheet.php');
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        $seed = new ForecastWorksheet();
+        $seed->loadFromRow($this->getArgs());
+        $sfh = new SugarFieldHandler();
+
+        foreach ($seed->field_defs as $properties)
+        {
+            $fieldName = $properties['name'];
+
+            if(!isset($args[$fieldName]))
+            {
+               continue;
+            }
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!$seed->ACLFieldAccess($fieldName,'save') ) {
+                // No write access to this field, but they tried to edit it
+                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $field = $sfh->getSugarField($type);
+
+            if($field != null)
+            {
+               $field->save($seed, $args, $fieldName, $properties);
+            }
+        }
+		$seed->setWorksheetArgs($this->getArgs());
+        $seed->save();
+        return $seed->id;
     }
 }

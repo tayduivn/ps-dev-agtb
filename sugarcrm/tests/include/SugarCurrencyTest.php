@@ -211,27 +211,27 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($currency->symbol . '1,000.00',$format);
         // manual formatting tests
         $amount = 1000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'');
         $this->assertEquals($currency->symbol . '1,000.00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',',true,'');
         $this->assertEquals($currency->symbol . '1,000.000',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','',true,'');
         $this->assertEquals($currency->symbol . '1000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.',true,'');
         $this->assertEquals($currency->symbol . '1.000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','&nbsp;');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'&nbsp;');
         $this->assertEquals($currency->symbol . '&nbsp;1,000.00',$format);
         // manual formatting tests, negative amounts
         $amount = -1000;
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'');
         $this->assertEquals($currency->symbol . '-1,000.00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,3,'.',',',true,'');
         $this->assertEquals($currency->symbol . '-1,000.000',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','',true,'');
         $this->assertEquals($currency->symbol . '-1000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.','');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,',','.',true,'');
         $this->assertEquals($currency->symbol . '-1.000,00',$format);
-        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',','&nbsp;');
+        $format = SugarCurrency::formatAmount($amount,$currency->id,2,'.',',',true,'&nbsp;');
         $this->assertEquals($currency->symbol . '&nbsp;-1,000.00',$format);
         // large amounts
         $amount = 10000;
@@ -331,6 +331,10 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $currency3 = SugarCurrency::getCurrencyByISO('YEN');
         // get base currency
         $currency4 = SugarCurrency::getBaseCurrency();
+        // we have to retrieve the currency manually because
+        // the original value was cached by the bean factory
+        $currency4->retrieve('-99');
+        // test the instances
         $this->assertInstanceOf('Currency', $currency1);
         $this->assertInstanceOf('Currency', $currency2);
         $this->assertInstanceOf('Currency', $currency3);
