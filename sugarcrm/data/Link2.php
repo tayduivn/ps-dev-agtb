@@ -456,7 +456,9 @@ class Link2 {
                 foreach($relationshipFields as $rfName => $field) {
                     if (!empty($vals[$rfName]))
                     {
-                        $result[$id]->$field = $vals[$rfName];
+                        if (!empty($result[$id])) {
+                            $result[$id]->$field = $vals[$rfName];
+                        }
                     }
                 }
             }
