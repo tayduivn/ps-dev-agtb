@@ -4,7 +4,7 @@ $viewdefs['Cases']['portal']['layout']['edit'] = array(
     'components' =>
     array(
         0 => array(
-            'view' => 'subnav',
+            'view' => 'subnavedit',
         ),
         1 => array(
             'layout' =>
