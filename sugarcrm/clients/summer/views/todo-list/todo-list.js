@@ -137,29 +137,31 @@
         app.events.trigger("app:view:todo-list:refresh", this.model, "update_status");
     },
     validateTodo: function(e) {
-        var subject = this.$(".todo-subject"),
-            date = this.$(".todo-date"),
-            target = this.$(e.target);
+        var subjectEl = this.$(".todo-subject"),
+            subjectVal = subjectEl.val(),
+            dateEl = this.$(".todo-date"),
+            dateVal = dateEl.val(),
+            dateObj = app.date.parse(dateVal, app.date.guessFormat(dateVal));
 
-        if( subject.val() == "" ) {
+        if( subjectVal == "" ) {
             // apply input error class
-            subject.parent().addClass("control-group error");
-            subject.one("keyup", function() {
-                subject.parent().removeClass("control-group error");
+            subjectEl.parent().addClass("control-group error");
+            subjectEl.one("keyup", function() {
+                subjectEl.parent().removeClass("control-group error");
             });
         }
-        else if( !(app.date.parse(date.val(), app.date.guessFormat(date.val()))) ) {
+        else if( dateObj == "Invalid Date" || !(dateObj) ) {
             // apply input error class
-            date.parent().addClass("control-group error");
-            date.one("click", function() {
-                date.parent().removeClass("control-group error");
+            dateEl.parent().addClass("control-group error");
+            dateEl.one("focus", function() {
+                dateEl.parent().removeClass("control-group error");
             });
         }
         else {
-            var datetime = date.val() + "T00:00:00+0000";
+            var datetime = dateVal + "T00:00:00+0000";
 
             this.model = app.data.createBean("Tasks", {
-                "name": subject.val(),
+                "name": subjectVal,
                 "assigned_user_id": app.user.get("id"),
                 "date_due": datetime,
                 "parent_id": this.modelID,
@@ -171,8 +173,8 @@
             this.collection.modelList[this.app.view.views.TodoView.prototype.getTaskType(datetime)].push(this.model);
             app.events.trigger("app:view:todo-list:refresh", this.model, "create");
 
-            subject.val("");
-            date.val("");
+            subjectEl.val("");
+            dateEl.val("");
             this.render();
         }
     },
