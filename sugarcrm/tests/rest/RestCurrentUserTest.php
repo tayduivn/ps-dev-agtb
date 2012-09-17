@@ -41,6 +41,8 @@ class RestCurrentUserTest extends RestTestBase {
     public function testRetrieve() {
         $restReply = $this->_restCall("me");
         $this->assertNotEmpty($restReply['reply']['current_user']['id']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['currency_id']);
+        $this->assertNotEmpty($restReply['reply']['current_user']['decimal_precision']);
     }
 
     /**
