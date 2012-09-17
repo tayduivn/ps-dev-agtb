@@ -33,18 +33,14 @@
             this.model.on("change", function() {
                 if (this.context.get('subnavModel')) {
                     this.context.get('subnavModel').set({
-                        'title': app.lang.get('LBL_EDIT_BUTTON', this.module),
-                        'meta': this.meta,
-                        'fields': this.fields
+                        'title': app.lang.get('LBL_EDIT_BUTTON', this.module)
                     });
                 }
             }, this);
         } else {
             if (this.context.get('subnavModel')) {
                 this.context.get('subnavModel').set({
-                    'title': app.lang.get('LBL_NEW_FORM_TITLE', this.module),
-                    'meta': this.meta,
-                    'fields': this.fields
+                    'title': app.lang.get('LBL_NEW_FORM_TITLE', this.module)
                 });
             }
         }
