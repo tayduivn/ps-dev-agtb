@@ -62,9 +62,9 @@ abstract class ServiceBase {
         $current_language = $GLOBALS['sugar_config']['default_language'];
 
         // If the session has a language set, use that
-		if(!empty($_SESSION['authenticated_user_language'])) {
-			$current_language = $_SESSION['authenticated_user_language'];
-		}
+        if(!empty($_SESSION['authenticated_user_language'])) {
+            $current_language = $_SESSION['authenticated_user_language'];
+        }
 
         // get the currrent person object of interest
         $apiPerson = $GLOBALS['current_user'];
@@ -77,7 +77,7 @@ abstract class ServiceBase {
         }
 
         $GLOBALS['app_strings'] = return_application_language($current_language);
-		$GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
     }
 
     /**
@@ -89,7 +89,7 @@ abstract class ServiceBase {
         $current_language = $GLOBALS['sugar_config']['default_language'];
 
         $GLOBALS['app_strings'] = return_application_language($current_language);
-		$GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
     }
 
 }
