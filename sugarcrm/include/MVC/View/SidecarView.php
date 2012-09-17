@@ -84,7 +84,7 @@ class SidecarView extends SugarView
         $html = '<link rel="stylesheet" type="text/css" href="'.$themeObject->getCSSURL('bootstrap.css').'" />';
         $html .= '<link rel="stylesheet" type="text/css" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" />';
         $html .= '<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">';
-        return $html;
+        //return $html;
     }
 
 }
