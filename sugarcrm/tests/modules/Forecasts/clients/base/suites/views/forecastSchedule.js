@@ -222,7 +222,7 @@ describe("The expected opportunities view tests", function(){
         });
 
         it("should be the 'include_expected' field if show_buckets is false", function() {
-            app.config.show_buckets = false;
+            app.config.show_buckets = 0;
             var unused = view._setForecastColumn(field);
             expect(unused).toEqual(field[1]);
             expect(field[0].enabled).toBeTruthy();
@@ -230,7 +230,7 @@ describe("The expected opportunities view tests", function(){
         });
 
         it("should be the 'expected_commit_stage' field if show_buckets is true", function() {
-            app.config.show_buckets = true;
+            app.config.show_buckets = 1;
             var unused = view._setForecastColumn(field);
             expect(unused).toEqual(field[0]);
             expect(field[0].enabled).toBeFalsy();

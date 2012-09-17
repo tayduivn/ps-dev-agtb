@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -134,7 +135,7 @@ class ForecastsChartApiTest extends RestTestBase
         $return = $this->_restCall($url);
 
         $chart = $return['reply'];
-        $this->assertEquals("Likely", $chart['properties'][0]['goal_marker_label'][1]);
+        $this->assertEquals("Likely Case", $chart['properties'][0]['goal_marker_label'][1]);
     }
 
     /**

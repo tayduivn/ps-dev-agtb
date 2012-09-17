@@ -23,7 +23,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
     //if forecast value equals -1, set it to 0 or 1 based on probability
-    global $sugar_config, $app_list_strings, $timedate;
+    global $app_list_strings, $timedate, $current_language;
+    $app_list_strings = return_app_list_strings_language($current_language);
 
     if ($focus->forecast == -1)
     {
@@ -40,6 +41,7 @@ function perform_save(&$focus){
         $admin->retrieveSettings('base');
         $commit_stage_dom = isset($admin->settings['base_buckets_dom']) ? $admin->settings['base_buckets_dom'] : 'commit_stage_dom';
         $commit_stage_arr = $app_list_strings[$commit_stage_dom];
+
         ksort($commit_stage_arr);
         //the keys of this array are upper limit of probability for each stage
         foreach($commit_stage_arr as $key => $value)
@@ -80,12 +82,32 @@ function perform_save(&$focus){
     // Bug49495: amount may be a calculated field
     $focus->updateCalculatedFields();
     //END SUGARCRM flav=pro ONLY
-	//US DOLLAR
+
+	//Store the base currency value
 	if(isset($focus->amount) && !number_empty($focus->amount)){
         require_once 'include/SugarCurrency.php';
         $currency = new Currency();
 		$currency->retrieve($focus->currency_id);
 		$focus->amount_usdollar = SugarCurrency::convertAmountToBase($focus->amount,$currency->id);
     }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    //We create a related product entry for any new opportunity so that we may forecast on produts
+    if (empty($focus->id))
+    {
+        $focus->id = create_guid();
+        $focus->new_with_id = true;
+
+        $product = BeanFactory::getBean('Products');
+        $product->name = $focus->name;
+        $product->best_case = $focus->best_case;
+        $product->likely_case = $focus->amount;
+        $product->worst_case = $focus->worst_case;
+        $product->assigned_user_id = $focus->assigned_user_id;
+        $product->date_closed = $focus->date_closed;
+        $product->opportunity_id = $focus->id;
+        $product->save();
+    }
+    //END SUGARCRM flav=pro ONLY
 }
 ?>

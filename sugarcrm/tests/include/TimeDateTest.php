@@ -930,11 +930,23 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
     		array("input" => '2012-12-12T17:35:15+0000', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
     		array("input" => '2012-12-12T17:35:15Z',     "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
     		array("input" => '2012-12-12T19:35:15+0200', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
+            // with offset in permissible but "strange" formats
+    		array("input" => '2012-12-12T10:35:15.1234-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515.5678-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T10:35:15-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '2012-12-12T103515-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
             // without offset
     		array("input" => '2012-12-12T10:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
     		array("input" => '2012-12-12T09:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
     		array("input" => '2012-12-12T17:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
     		array("input" => '2012-12-12T19:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
+            // without offset in permissible but "strange" formats
+    		array("input" => '2012-12-12T10:35:15.1234', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T103515.1234', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '20121212T10:35:15', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("input" => '2012-12-12T103515', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
         );
 	}
 
