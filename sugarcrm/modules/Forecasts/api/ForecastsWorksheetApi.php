@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -22,24 +22,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/ModuleApi.php');
 
-class ForecastsWorksheetApi extends ModuleApi {
+class ForecastsWorksheetApi extends ModuleApi
+{
 
     public function registerApiRest()
     {
         //Extend with test method
-        $parentApi= array (
+        $parentApi = array(
             'forecastWorksheet' => array(
                 'reqType' => 'GET',
                 'path' => array('ForecastWorksheets'),
-                'pathVars' => array('',''),
+                'pathVars' => array('', ''),
                 'method' => 'forecastWorksheet',
                 'shortHelp' => 'Returns a collection of ForecastWorksheet models',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
             ),
             'forecastWorksheetSave' => array(
                 'reqType' => 'PUT',
-                'path' => array('ForecastWorksheets','?'),
-                'pathVars' => array('module','record'),
+                'path' => array('ForecastWorksheets', '?'),
+                'pathVars' => array('module', 'record'),
                 'method' => 'forecastWorksheetSave',
                 'shortHelp' => 'Updates a ForecastWorksheet model',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
@@ -57,38 +58,22 @@ class ForecastsWorksheetApi extends ModuleApi {
      * @return Array of worksheet data entries
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function forecastWorksheet($api, $args) {
+    public function forecastWorksheet($api, $args)
+    {
         // Load up a seed bean
         require_once('modules/Forecasts/ForecastWorksheet.php');
         $seed = new ForecastWorksheet();
 
-        if (!$seed->ACLAccess('list') ) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
+        if (!$seed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
 
-		global $current_user;
-		
-		$args['timeperiod_id'] =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        global $current_user;
+
+        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
-        // base file and class name
-        $file = 'include/SugarForecasting/Individual.php';
-        $klass = 'SugarForecasting_Individual';
-
-        // check for a custom file exists
-        $include_file = get_custom_file_if_exists($file);
-
-        // if a custom file exists then we need to rename the class name to be Custom_
-        if($include_file != $file) {
-            $klass = "Custom_" . $klass;
-        }
-
-        // include the class in since we don't have a auto loader
-        require_once($include_file);
-        // create the lass
-
-        /* @var $obj SugarForecasting_AbstractForecast */
-        $obj = new $klass($args);
+        $obj = $this->getClass($args);
         return $obj->process();
     }
 
@@ -100,39 +85,37 @@ class ForecastsWorksheetApi extends ModuleApi {
      * @return Array of worksheet data entries
      * @throws SugarApiExceptionNotAuthorized
      */
-    public function forecastWorksheetSave($api, $args) {
-        require_once('modules/Forecasts/ForecastWorksheet.php');
-        require_once('include/SugarFields/SugarFieldHandler.php');
-        $seed = new ForecastWorksheet();
-        $seed->loadFromRow($args);
-        $sfh = new SugarFieldHandler();
+    public function forecastWorksheetSave($api, $args)
+    {
+        $obj = $this->getClass($args);
+        return $obj->save();
+    }
 
-        foreach ($seed->field_defs as $properties)
-        {
-            $fieldName = $properties['name'];
+    /**
+     * @param $args
+     * @return SugarForecasting_Individual
+     */
+    protected function getClass($args)
+    {
+        // base file and class name
+        $file = 'include/SugarForecasting/Individual.php';
+        $klass = 'SugarForecasting_Individual';
 
-            if(!isset($args[$fieldName]))
-            {
-               continue;
-            }
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
 
-            //BEGIN SUGARCRM flav=pro ONLY
-            if (!$seed->ACLFieldAccess($fieldName,'save') ) {
-                // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
-            }
-            //END SUGARCRM flav=pro ONLY
-
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            $field = $sfh->getSugarField($type);
-
-            if($field != null)
-            {
-               $field->save($seed, $args, $fieldName, $properties);
-            }
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if ($include_file != $file) {
+            $klass = "Custom_" . $klass;
         }
-		$seed->setWorksheetArgs($args);
-        $seed->save();
-        return $seed->id;
+
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
+
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+
+        return $obj;
     }
 }
