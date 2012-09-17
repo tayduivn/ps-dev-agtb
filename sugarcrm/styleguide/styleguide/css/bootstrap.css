@@ -5446,11 +5446,73 @@ article:hover { background:#e1f0fa; }
   background:none;
   border-color:transparent;
 }
-.input-append .add-on {
-  -webkit-border-radius:0 3px 3px 0;
-  -moz-border-radius:0 3px 3px 0;
-  border-radius:0 3px 3px 0;
+.input-append {
+  position:relative;
+  display:inline-block;
 }
+.input-append .add-on {
+  border:none;
+  background:transparent !important;
+  margin-left:-4px;
+  position:absolute;
+  top:0;
+  right:0;
+}
+.input-append.textarea, .input-append.select, .input-append.checkbox, .input-append.radio { padding-left:0; }
+.input-append.textarea .add-on, .input-append.select .add-on, .input-append.checkbox .add-on, .input-append.radio .add-on {
+  position:absolute;
+  top:-0px;
+  right:0;
+  background:transparent !important;
+  border:none;
+}
+.input-append.widget { width:100%; }
+.input-append.textarea { display:inline; }
+.input-append input {
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px;
+}
+.radio input[type="radio"], .checkbox input[type="checkbox"] { float:none; }
+.chzn-container { margin-top:-1px; }
+.chzn-container .chzn-container-multi { height:28px; }
+.chzn-container-multi .search-field { height:27px; }
+.chzn-container-multi .chzn-choices .search-field input { height:22px !important; }
+.control-group.error>div:first-child, .control-group.error>div:first-child label, .control-group.error> label {
+  font-weight:500;
+  color:#b60000;
+}
+.control-group.error .input-append label { color:#b60000; }
+.control-group.error .chzn-choices, .control-group.error .chzn-container-single > a.chzn-single { border-color:#b60000; }
+.control-group.error .chzn-container-single > a > div > b { margin-left:-18px; }
+.control-group.error .help-block { font-weight:normal; }
+.control-group { margin-bottom:0; }
+.control-group .wide { text-align:left; }
+.control-group label {
+  display:inline-block;
+  float:none;
+}
+.control-group label input {
+  display:inline-block;
+  float:none;
+}
+#header .control-group label.hide { display:none; }
+.form-horizontal .help-block { margin-top:0; }
+.form-actions {
+  border:none;
+  background:transparent;
+}
+@media (max-width: 480px) {
+  .row > .empty, .row-fluid > .empty { display:none !important; }
+}
+@media (max-width: 768px) {
+  .row > .empty, .row-fluid > .empty { display:none !important; }
+}
+#content .control-group label {
+  padding:0 1em 0 0;
+  display:inline-block;
+}
+input[type=radio] { display:inline-block; }
 #stream { position:relative; }
 #stream table { margin-top:-15px; }
 #stream tr td { padding:20px 4px; }

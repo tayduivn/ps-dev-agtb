@@ -1,5 +1,150 @@
-.input-append { /* Patch for Sugar Internal Bug #55405 */
-  .add-on {
-    .border-radius(0 @inputBorderRadius @inputBorderRadius 0);
-  }
+.input-append {
+	position:relative;
+	display:inline-block;
+	.add-on {
+		/*.border-radius(0 @inputBorderRadius @inputBorderRadius 0);*/
+		border:none;
+		background:transparent !important;
+		margin-left:-4px;
+		position:absolute;
+		top:0;
+		right:0;
+	}
+	&.textarea,
+	&.select,
+	&.checkbox,
+	&.radio {
+		padding-left:0;
+	    .add-on {
+	    	position:absolute;
+	    	top:-0px;
+	    	right:0;
+	    	background:transparent !important;
+	    	border:none;
+	    }
+	}
+	&.widget {
+		width:100%;
+	}
+	&.textarea {
+		display:inline;
+	}
+	&.select .add-on {
+	}
+	input{
+	  .border-radius(@inputBorderRadius);
+	}
 }
+
+.radio input[type="radio"],
+.checkbox input[type="checkbox"] {
+  float: none;
+}
+
+.chzn-container {
+	margin-top:-1px;
+	.chzn-container-multi {
+		height:28px;
+	}
+}
+
+.chzn-container-multi {
+	.search-field {
+		height:27px;
+	}
+	.chzn-choices .search-field input {	
+		height:22px !important;
+	}
+}
+
+/*
+.control-group.error .add-on {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+*/
+
+/* To maintain same size of input boxes, substructing 27px for .add-on exclamation */
+
+.control-group.error {
+/*
+	input.input-mini       { width: 33px; }
+	input.input-small      { width: 63px; }
+	input.input-medium     { width: 127px; }
+	input.input-large      { width: 183px; }
+	input.input-xlarge     { width: 243px; }
+	input.input-xxlarge    { width: 503px; }
+*/
+	&>div:first-child,
+	&>div:first-child label,
+	&> label {
+		font-weight:500;
+		color:@errorText;
+	}
+	.input-append label {
+		color:@errorText;
+	}
+	.chzn-choices,
+	.chzn-container-single > a.chzn-single {
+		border-color:@errorText;
+	}
+	.chzn-container-single > a > div > b {
+		margin-left: -18px;
+	}
+    .help-block {
+        font-weight:normal;
+    }
+}
+
+.control-group {
+	margin-bottom:0;
+	.wide {
+		text-align:left;
+	}
+	label {
+		display:inline-block;
+		float:none;
+		input {
+			display:inline-block;
+			float:none;
+		}
+	}
+}
+
+#header .control-group label.hide {
+    display: none;
+}
+
+.form-horizontal .help-block {
+	margin-top:0;
+}
+
+.form-actions {
+	border:none;
+	background:transparent;
+}
+
+@media (max-width: 480px) {
+	.row > .empty,
+	.row-fluid > .empty {
+		display:none !important;
+	}
+}
+@media (max-width: 768px) {
+	.row > .empty,
+	.row-fluid > .empty {
+		display:none !important;
+	}
+}
+
+#content .control-group label {
+    padding: 0 1em 0 0;
+    display:inline-block;
+}
+
+input[type=radio] {
+    display:inline-block;
+}
+
+
