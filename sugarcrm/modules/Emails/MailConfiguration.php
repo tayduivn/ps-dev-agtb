@@ -23,109 +23,18 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-
-require_once 'include/OutboundEmail/OutboundEmail.php';
-
 class MailConfiguration {
-    var $user;
+    public $mode;
+    public $user_id;
+    public $config_id;
+    public $type;
+    public $sender_name;
+    public $sender_email;
+    public $display_name;
+    public $personal;
+    public $config_data;
 
-    function __construct(User $user)
-    {
-        $this->user = $user;
-    }
-
-
-    /**
-     * @return list of valid Email Accounts (From Name, From Email Address, Outbound Mail configuration id)
-     */
-    public function getFromAccounts($systemOnly=false,$expand=false) {
-        $fromAccounts = array();
-        $oe = new OutboundEmail();
-        $system = $oe->getSystemMailerSettings();
-        $ret = $this->user->getUsersNameAndEmail();
-        if (empty($ret['email'])) {
-            $systemReturn = $this->user->getSystemDefaultNameAndEmail();
-            $ret['email'] = $systemReturn['email'];
-            $ret['name'] = from_html($systemReturn['name']);
-        } else {
-            $ret['name'] = from_html($ret['name']);
-        }
-
-        if (!$systemOnly) {
-            $ie = new InboundEmail();
-            $ieAccounts = $ie->retrieveAllByGroupIdWithGroupAccounts($this->user->id);
-            foreach($ieAccounts as $k => $v) {
-                $name = $v->get_stored_options('from_name');
-                $addr = $v->get_stored_options('from_addr');
-                $storedOptions = unserialize(base64_decode($v->stored_options));
-                // var_dump($storedOptions);
-                if ($name != null && $addr != null) {
-                    $name = from_html($name);
-                    $fromAccount = array (
-                        "id"     => $storedOptions["outbound_email"],
-                        "type"   => "user",
-                        "name"   => "{$name}",
-                        "email"  => "{$addr}",
-                        "text"   => "{$name} ({$addr})",
-                        "personal" => (bool) ($v->is_personal),
-                    );
-
-                    if ($expand) {
-                        $oe = new OutboundEmail();
-                        $oe->retrieve($storedOptions["outbound_email"]);
-                        $config = $this->toArray($oe);
-                        unset($config['id']);
-                        $fromAccount["config"] = $config;
-                    }
-                    $fromAccounts[] = $fromAccount;
-                } // if
-            } // foreach
-        }
-
-        //Substitute in the users system override if its available.
-        $userSystemOverride = $oe->getUsersMailerForSystemOverride($this->user->id);
-        $personal = false;
-        if($userSystemOverride != null) {
-            $system = $userSystemOverride;
-            $personal = true;
-        }
-        if (!empty($system->mail_smtpserver)) {
-            $fromAccount = array (
-                "id"     => $system->id,
-                "type"   => "system",
-                "name"   => "{$ret['name']}",
-                "email"  => "{$ret['email']}",
-                "text"   => "{$ret['name']} ({$ret['email']})",
-                "personal" => $personal,
-            );
-
-            if ($expand) {
-                $oe = new OutboundEmail();
-                $oe->retrieve($system->id);
-                $config = $this->toArray($oe);
-                unset($config['id']);
-                $fromAccount["config"] = $config;
-            }
-            $fromAccounts[] = $fromAccount;
-        }
-
-        return $fromAccounts;
-    }
-
-
-    private function toArray($obj, $scalarOnly=true)
-    {
-        $fields = get_object_vars($obj);
-        $arr = array();
-
-        foreach($fields as $name => $type) {
-            if (isset($obj->$name)) {
-                if ((!$scalarOnly) || ( !is_array($obj->$name) && !is_object($obj->$name)) )
-                    $arr[$name] = $obj->$name;
-            } else {
-                $arr[$name] = '';
-            }
-        }
-        return $arr;
+    public function __construct(User $user) {
+        $this->user_id=$user->id;
     }
 }
