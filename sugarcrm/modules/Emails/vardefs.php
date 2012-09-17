@@ -222,7 +222,14 @@ $dictionary['Email'] = array(
 			'len'		=> 255,
 			'comment' => 'ID of the email item obtained from the email transport system',
 		),
-
+        // Bug #45395 : Deleted emails from a group inbox does not move the emails to the Trash folder for Google Apps
+        'message_uid' => array (
+            'name'		=> 'message_uid',
+            'vname' 	=> 'LBL_MESSAGE_UID',
+            'type'		=> 'varchar',
+            'len'		=> 64,
+            'comment' => 'UID of the email item obtained from the email transport system',
+        ),
 		'name' => array (
 			'name' => 'name',
 			'vname' => 'LBL_SUBJECT',

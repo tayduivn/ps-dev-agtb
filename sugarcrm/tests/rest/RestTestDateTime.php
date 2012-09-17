@@ -65,7 +65,9 @@ class RestTestDateTime extends RestTestBase {
         $this->opp->team_id = '1';
         $this->opp->team_set_id = '1';
         $this->opp->save();
-
+        
+        $GLOBALS['db']->commit();
+        
         $restReply = $this->_restCall("Opportunities/{$this->opp->id}");
         $this->assertEquals('2012-11-10',$restReply['reply']['date_closed']);
 
@@ -91,7 +93,9 @@ class RestTestDateTime extends RestTestBase {
         $this->meeting->team_id = '1';
         $this->meeting->team_set_id = '1';
         $this->meeting->save();
-
+        
+        $GLOBALS['db']->commit();
+        
         $GLOBALS['current_user']->setPreference('timezone','America/Boise');
         $GLOBALS['current_user']->savePreferencesToDB();
 
@@ -124,6 +128,22 @@ class RestTestDateTime extends RestTestBase {
         $row = $GLOBALS['db']->fetchByAssoc($ret);
         $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
 
+        // Check saving with the user's offset (in JS format)
+        $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
+                                      json_encode(array('date_end'=>'2012-12-13T10:15:00.1234-0700')),
+                                      'PUT');
+        $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
+        $row = $GLOBALS['db']->fetchByAssoc($ret);
+        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+
+        // Check saving in GMT (in JS format)
+        $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
+                                      json_encode(array('date_end'=>'2012-12-13T17:15:00.1234Z')),
+                                      'PUT');
+        $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
+        $row = $GLOBALS['db']->fetchByAssoc($ret);
+        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+
 
         $GLOBALS['current_user']->setPreference('timezone','Europe/Helsinki');
         $GLOBALS['current_user']->savePreferencesToDB();
@@ -138,6 +158,14 @@ class RestTestDateTime extends RestTestBase {
         // Check saving without offset
         $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
                                       json_encode(array('date_end'=>'2012-12-13T19:15:00')),
+                                      'PUT');
+        $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
+        $row = $GLOBALS['db']->fetchByAssoc($ret);
+        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+
+        // Check saving without offset (in JS format)
+        $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
+                                      json_encode(array('date_end'=>'2012-12-13T19:15:00.1234')),
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
@@ -160,6 +188,60 @@ class RestTestDateTime extends RestTestBase {
         $row = $GLOBALS['db']->fetchByAssoc($ret);
         $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
         
+    }
+
+    public function testRestInvalidDateTime()
+    {
+        $this->meeting = new Meeting();
+        $this->meeting->name = "UNIT TEST - Meeting";
+        $this->meeting->date_start = "2012-12-13 17:00:00";
+        $this->meeting->date_end = "2012-12-13 17:15:00";
+        $this->meeting->duration_hours = 0;
+        $this->meeting->duration_minutes = 15;
+        $this->meeting->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->meeting->team_id = '1';
+        $this->meeting->team_set_id = '1';
+        $this->meeting->save();
+        
+        $GLOBALS['db']->commit();
+        
+        $GLOBALS['current_user']->setPreference('timezone','America/Boise');
+        $GLOBALS['current_user']->savePreferencesToDB();
+
+        // Check saving without offset
+        $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
+                                      json_encode(array('date_end'=>'this meeting will never end')),
+                                      'PUT');
+        $this->assertEquals('invalid_parameter',$restReply['reply']['error']);
+    }
+
+
+    public function testRestBlankDateTime()
+    {
+        $this->meeting = new Meeting();
+        $this->meeting->name = "UNIT TEST - Meeting";
+        $this->meeting->date_start = "2012-12-13 17:00:00";
+        $this->meeting->date_end = "2012-12-13 17:15:00";
+        $this->meeting->duration_hours = 0;
+        $this->meeting->duration_minutes = 15;
+        $this->meeting->assigned_user_id = $GLOBALS['current_user']->id;
+        $this->meeting->team_id = '1';
+        $this->meeting->team_set_id = '1';
+        $this->meeting->save();
+        
+        $GLOBALS['db']->commit();
+        
+        $GLOBALS['current_user']->setPreference('timezone','America/Boise');
+        $GLOBALS['current_user']->savePreferencesToDB();
+
+        // Check saving without offset
+        $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
+                                      json_encode(array('date_start'=>'','date_end'=>'')),
+                                      'PUT');
+
+        $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
+        $row = $GLOBALS['db']->fetchByAssoc($ret);
+        $this->assertEquals('',$row['date_end']);
     }
 
 }

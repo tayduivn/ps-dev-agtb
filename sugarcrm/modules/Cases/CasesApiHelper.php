@@ -34,6 +34,7 @@ class CasesApiHelper extends SugarBeanApiHelper
     public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
         $data = parent::populateFromApi($bean, $submittedData, $options);
+        
         if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
             if (empty($bean->id)) {
                 $bean->id = create_guid();
@@ -41,9 +42,25 @@ class CasesApiHelper extends SugarBeanApiHelper
             }
             $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
             $account = $contact->account_id;
+            
+            $bean->assigned_user_id = $contact->assigned_user_id;
+
+
+            $support_portal_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            $bean->team_id = $support_portal_user->fetched_row['default_team'];
+            $bean->team_set_id = $support_portal_user->fetched_row['team_set_id'];
+            //END SUGARCRM flav=pro ONLY
+
             $bean->account_id = $account;
             $bean->load_relationship('contacts');
             $bean->contacts->add($contact->id);
+        }
+        // not a support portal user
+        else
+        {
+            $bean->assigned_user_id = $_SESSION['authenticated_user_id'];
         }
         return $data;
     }

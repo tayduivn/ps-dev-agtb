@@ -38,6 +38,7 @@ class RestTestRetrieve extends RestTestBase {
         $this->account = new Account();
         $this->account->name = "UNIT TEST - BEFORE";
         $this->account->save();
+        $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Accounts/{$this->account->id}");
 
         $this->assertEquals($this->account->id,$restReply['reply']['id'],"The returned account id was not the same as the requested account.");
@@ -50,6 +51,7 @@ class RestTestRetrieve extends RestTestBase {
         $this->account = new Account();
         $this->account->name = "UNIT TEST << >> BEFORE";
         $this->account->save();
+        $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Accounts/{$this->account->id}");
 
         $this->assertEquals($this->account->id,$restReply['reply']['id'],"The returned account id was not the same as the requested account.");

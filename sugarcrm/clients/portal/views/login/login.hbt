@@ -8,7 +8,11 @@
                 {{#each meta.panels}}
                 <div class="modal-body tcenter">
                     {{#each fields}}
-                    <div>{{field ../../this ../../model}}</div>
+                    <div class="row-fluid control-group">
+                    <div>
+                    {{field ../../this ../../model}}
+                    </div>
+                    </div>
                     {{/each}}
                     <p class="help-block">
                         <a rel="popoverTop" data-content="{{str "LBL_PORTAL_LOGIN_FORGOTPASSWORD"}}"
