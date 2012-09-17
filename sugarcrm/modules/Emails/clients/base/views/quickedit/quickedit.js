@@ -16,12 +16,13 @@
         var SaveModel = Backbone.Model.extend({
             sync: function (method, model, options) {
                 this.hydrateFromEditModel();
-                var myURL = app.api.buildURL('Emails', 'send');
+                var myURL = app.api.buildURL('Emails');
                 return app.api.call(method, myURL, model, options);
             },
             
             hydrateFromEditModel: function() {
                 this.set(_.extend({}, view.model.attributes, {
+                    status: "ready",
                     to_addresses: [ {
                         email: view.model.get('to_addresses')
                     }]
