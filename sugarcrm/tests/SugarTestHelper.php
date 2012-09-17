@@ -110,9 +110,9 @@ require_once 'SugarTestTrackerUtility.php';
 require_once 'SugarTestImportUtilities.php';
 require_once 'SugarTestMergeUtilities.php';
 require_once 'SugarTestTaskUtilities.php';
-require_once 'SugarTestQuotaUtilities.php';
 require_once 'SugarTestCurrencyUtilities.php';
 //BEGIN SUGARCRM flav=pro ONLY
+require_once 'SugarTestQuotaUtilities.php';
 require_once 'SugarTestTeamUtilities.php';
 require_once 'SugarTestQuoteUtilities.php';
 require_once 'SugarTestProductUtilities.php';

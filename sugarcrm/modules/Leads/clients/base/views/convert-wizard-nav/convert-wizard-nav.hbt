@@ -1,0 +1,5 @@
+<ul class="nav nav-tabs">
+    <li class="active"><a id="convertlead-contact" data-toggle="tab" href="#tab-pane-Contacts">Contact</a></li>
+    <li><a id="convertlead-account" data-toggle="tab" href="#tab-pane-Accounts">Account</a></li>
+    <li><a id="convertlead-opportunity" data-toggle="tab" href="#tab-pane-Opportunities">Opportunity</a></li>
+</ul>

@@ -103,6 +103,8 @@ class RestTestRelateRecord extends RestTestBase {
             }
         }
 
+        $GLOBALS['db']->commit();
+
         // Test normal fetch
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[0]->id);
         
@@ -171,6 +173,8 @@ class RestTestRelateRecord extends RestTestBase {
             $this->opps[] = $opp;
         }
 
+        $GLOBALS['db']->commit();
+
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts",
                                       json_encode(array(
                                                       'last_name'=>'TEST',
@@ -217,6 +221,8 @@ class RestTestRelateRecord extends RestTestBase {
 
         }
 
+        $GLOBALS['db']->commit();
+
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
                                       json_encode(array(
                                                       'last_name'=>"Test O'Chango",
@@ -244,6 +250,8 @@ class RestTestRelateRecord extends RestTestBase {
             $opp->save();
             $this->opps[] = $opp;
         }
+
+        $GLOBALS['db']->commit();
 
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts",
                                       json_encode(array(
@@ -304,6 +312,8 @@ class RestTestRelateRecord extends RestTestBase {
 
         }
 
+        $GLOBALS['db']->commit();
+
         $restReply = $this->_restCall("Opportunities/".$this->opps[0]->id."/link/contacts/".$this->contacts[1]->id,
                                       json_encode(array(
                                                       'opportunity_role'=>'Primary Decision Maker',
@@ -351,6 +361,8 @@ class RestTestRelateRecord extends RestTestBase {
             $opp->save();
             $this->opps[] = $opp;
         }
+
+        $GLOBALS['db']->commit();
 
         $restReply = $this->_restCall("Opportunities/" . $this->opps[0]->id . "/link/contacts/" . $this->contacts[1]->id,
             json_encode(array(
@@ -404,6 +416,8 @@ class RestTestRelateRecord extends RestTestBase {
             }
 
         }
+
+        $GLOBALS['db']->commit();
 
         $ret = $db->query("SELECT COUNT(*) AS link_count FROM opportunities_contacts WHERE opportunity_id ='".$this->opps[0]->id."' AND deleted = 0");
         

@@ -129,6 +129,10 @@
             	}
             	
             }, this);
+            var worksheet = this;
+            $(window).bind("beforeunload",function(){
+            	worksheet.safeFetch();
+            });
         }
     },
     
@@ -136,7 +140,7 @@
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
      */
-    safeFetch: function(updateFcn){
+    safeFetch: function(){
     	var collection = this._collection; 
     	var self = this;
     	if(collection.isDirty){
@@ -190,6 +194,7 @@
      */
     _renderHtml:function (ctx, options) {
         var self = this;
+        var enableCommit = false;
         
         if(!this.showMe()){
         	return false;
@@ -245,6 +250,20 @@
                 }
             });
         }
+        
+        //see if anything in the model is a draft version
+        _.each(this._collection.models, function(model, index){
+        	if(model.get("version") == 0){
+        		enableCommit = true;
+        	}
+        });
+        if(enableCommit){
+        	self.context.forecasts.set({commitButtonEnabled: true});
+        }
+        else{
+        	self.context.forecasts.set({commitButtonEnabled: false});
+        }
+        
         this.calculateTotals();
         this.totalView.render();
     },
@@ -257,6 +276,8 @@
         var best_adjusted = 0;
         var likely_case = 0;
         var likely_adjusted = 0;
+        var worst_adjusted = 0;
+        var worst_case = 0;
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
@@ -266,7 +287,9 @@
                 'best_case' : best_case,
                 'best_adjusted' : best_adjusted,
                 'likely_case' : likely_case,
-                'likely_adjusted' : likely_adjusted
+                'likely_adjusted' : likely_adjusted,
+                'worst_adjusted' : worst_adjusted,
+                'worst_case' : worst_case
             });
             return false;
         }
@@ -274,12 +297,15 @@
 
         _.each(self._collection.models, function (model) {
 
-           amount 			+= parseFloat(model.get('amount'));
-           quota 			+= parseFloat(model.get('quota'));
-           best_case 		+= parseFloat(model.get('best_case'));
-           best_adjusted 	+= parseFloat(model.get('best_adjusted'));
-           likely_case 		+= parseFloat(model.get('likely_case'));
-           likely_adjusted 	+= parseFloat(model.get('likely_adjusted'));
+           var base_rate = parseFloat(model.get('base_rate'));
+           amount 			+= parseFloat(model.get('amount')) * base_rate;
+           quota 			+= parseFloat(model.get('quota')) * base_rate;
+           best_case 		+= parseFloat(model.get('best_case')) * base_rate;
+           best_adjusted 	+= parseFloat(model.get('best_adjusted')) * base_rate;
+           likely_case 		+= parseFloat(model.get('likely_case')) * base_rate;
+           likely_adjusted 	+= parseFloat(model.get('likely_adjusted')) * base_rate;
+           worst_case       += parseFloat(model.get('worst_case')) * base_rate;
+           worst_adjusted 	+= parseFloat(model.get('worst_adjusted')) * base_rate;
                 
         });
 
@@ -289,7 +315,9 @@
             best_case : best_case,
             best_adjusted : best_adjusted,
             likely_case : likely_case,
-            likely_adjusted : likely_adjusted
+            likely_adjusted : likely_adjusted,
+            worst_case : worst_case,
+            worst_adjusted : worst_adjusted
         });
         
         //in case this is needed later..
@@ -299,7 +327,9 @@
             'best_case' : best_case,
             'best_adjusted' : best_adjusted,
             'likely_case' : likely_case,
-            'likely_adjusted' : likely_adjusted
+            'likely_adjusted' : likely_adjusted,
+            'worst_case' : worst_case,
+            'worst_adjusted' : worst_adjusted
         };
 
         this.context.forecasts.set("updatedManagerTotals", totals);
@@ -327,7 +357,7 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        if (app.config.show_buckets) {
+        if (app.config.show_buckets == 1) {
             // TODO: this.
         } else {
             this.category = _.first(params);
