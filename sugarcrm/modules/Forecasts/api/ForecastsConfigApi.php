@@ -62,7 +62,7 @@ class ForecastsConfigApi extends ModuleApi {
      */
     public function config($api, $args) {
         $adminBean = BeanFactory::getBean("Administration");
-        $data = $adminBean->getConfigForModule("Forecasts");
+        $data = $adminBean->getConfigForModule($args['module']);
 
         $temp = json_decode(html_entity_decode(stripslashes($data['sales_stage_won'])));
         $data['sales_stage_won'] = $temp;
