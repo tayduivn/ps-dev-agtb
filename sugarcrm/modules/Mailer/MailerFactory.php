@@ -21,33 +21,114 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once "modules/Emails/MailConfiguration.php"; // needs to be able to access the MailConfiguration
+require_once 'EmailIdentity.php';                    // requires EmailIdentity to represent each recipient
+require_once 'EmailHeaders.php';                     // email headers are contained in an EmailHeaders object
+
+/**
+ * Factory to create Mailers.
+ */
 class MailerFactory
 {
-    const SimpleMailer = "SimpleMailer";
-    const SugarMailer  = "SugarMailer";
+    // private members
+
+    // Maps the mode from a MailConfiguration to the class name that represents the sending strategy for that
+    // configuration. Requires that the class and file name match and that the files are found in the
+    // sugarcrm/modules/Mailer library, so no custom Mailers outside of this module will work.
+    // key = mode; value = mailer class
+    private static $modeToMailerMap = array(
+        "default" => "SimpleMailer",
+        "smtp"    => "SugarMailer",
+    );
 
     /**
-     * @param string $mailerType
-     *      This could become a different object that can be used to determine which class to instantiate.
-     *      But for now just spell out the class you want for testing.
-     * @return mixed
+     * Determines the correct Mailer to use based on the configuration that is provided to it and constructs and
+     * returns that object.
+     *
+     * @static
+     * @access public
+     * @param MailConfiguration $config required The configuration that provides context to the chosen sending
+     *                                           strategy.
+     * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
+     * @throws MailerException
      */
-    public static function getMailer($mailerType, User $user = null) {
-        $mailer = null;
+    public static function getMailer(MailConfiguration $config) {
+        // copy the config value becuase you don't want to modify the object by reassigning a public variable
+        // in the case of mode being null
+        $mode = strtolower($config->mode); // make sure it's lower case
 
-        switch ($mailerType) {
-            case self::SimpleMailer:
-                include_once "{$mailerType}.php";
-                $mailer = new $mailerType();
-                break;
-            case self::SugarMailer:
-                include_once "{$mailerType}.php";
-                $mailer = new $mailerType($user);
-                break;
-            default:
-                break;
+        //@todo make this a better check
+        if (is_null($mode)) {
+            $mode = "default";
         }
 
+        $from    = new EmailIdentity($config->sender_email, $config->sender_name); // can bubble up a MailerException
+        $headers = self::buildHeadersForMailer($from);
+        $mailer  = self::buildMailer($mode);
+        self::configureMailer($mailer, $config);
+        $mailer->setHeaders($headers);
+
         return $mailer;
+    }
+
+    /**
+     * Instantiates the requisite Mailer and returns it.
+     *
+     * @static
+     * @access private
+     * @param string $mode required The mode that represents the sending strategy.
+     * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
+     */
+    private static function buildMailer($mode) {
+        $class = self::$modeToMailerMap[$mode];
+        include_once "{$class}.php"; //@todo confirm that the file exists and throw an exception if it doesn't?
+        return new $class();
+    }
+
+    /**
+     * Replaces the Mailer's default configurations with the configurations found in the MailerConfiguration object.
+     *
+     * @static
+     * @access private
+     * @param BaseMailer        $mailer required An object of one of the Mailers defined in $modeToMailerMap that
+     *                                           extends BaseMailer.
+     * @param MailConfiguration $config required The configuration that provides context to the chosen sending
+     *                                           strategy.
+     */
+    private static function configureMailer(BaseMailer &$mailer, MailConfiguration $config) {
+        // setup the mailer's known configurations
+        $mailer->setConfig("smtp.host", $config->config_data['mail_smtpserver']);
+        $mailer->setConfig("smtp.port", $config->config_data['mail_smtpport']);
+
+        if ($config->config_data['mail_smtpauth_req']) {
+            // require authentication with the SMTP server
+            $mailer->setConfig("smtp.authenticate", true);
+            $mailer->setConfig("smtp.username", $config->config_data['mail_smtpuser']);
+            $mailer->setConfig("smtp.password", $config->config_data['mail_smtppass']); //@todo wrap this value in from_html()?
+        }
+
+        // determine the appropriate encryption layer for the sending strategy
+        if ($config->config_data['mail_smtpssl'] === 1) {
+            $mailer->setConfig("smtp.secure", SimpleMailer::SecureSsl);
+        } elseif ($config->config_data['mail_smtpssl'] === 2) {
+            $mailer->setConfig("smtp.secure", SimpleMailer::SecureTls);
+        }
+    }
+
+    /**
+     * Constructs and returns the Headers object to be used by the Mailer and takes care of initializing the From
+     * header.
+     *
+     * @static
+     * @access private
+     * @param EmailIdentity $from
+     * @return EmailHeaders
+     */
+    private static function buildHeadersForMailer(EmailIdentity $from) {
+        // add the known email headers
+        $headers = new EmailHeaders();
+        $headers->setFrom($from);
+
+        return $headers;
     }
 }
