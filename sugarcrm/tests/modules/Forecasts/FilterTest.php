@@ -24,6 +24,9 @@ require_once("include/SugarParsers/Filter.php");
 require_once("include/SugarParsers/Converter/Report.php");
 require_once("include/SugarCharts/ReportBuilder.php");
 
+/**
+ * @group forecasts
+ */
 class FilterTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
@@ -48,6 +51,7 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
      * testMultipleFilters
      *
      * @group SugarParser
+     * @group Forecasts
      */
     public function testMultipleFilters()
     {

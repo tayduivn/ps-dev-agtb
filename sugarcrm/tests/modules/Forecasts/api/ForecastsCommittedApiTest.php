@@ -28,7 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecasts
  */
 class ForecastsCommittedApiTest extends RestTestBase
 {
@@ -63,9 +62,9 @@ class ForecastsCommittedApiTest extends RestTestBase
         SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
-
-    /***
+    /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testForecastsCommittedApi()
     {
@@ -97,6 +96,10 @@ class ForecastsCommittedApiTest extends RestTestBase
         }
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     */
     public function testForecastsCommitted()
     {
         $response = $this->_restCall("Forecasts/committed");
