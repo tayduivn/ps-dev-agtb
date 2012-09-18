@@ -60,20 +60,11 @@ class RestBug54864Test extends RestTestPortalBase {
             $contact->load_relationship('accounts');
             $accountNum = $i;
             $contact->accounts->add(array($this->accounts[$accountNum]));
-            if ( $i == 2 ) {
-                // This guy is our guy
-                $contact->portal_active = true;
-                $contact->portal_name = "unittestportal";
-                $contact->portal_password = User::getPasswordHash("unittest");
-                
-                // Add it to two accounts, just to make sure we get that much visibility
-                $contact->accounts->add(array($this->accounts[1]));
-
-                $this->portalGuy = $contact;
-            }
+            
             $contact->save();
         }
-
+        $this->portalGuy->load_relationship('accounts');
+        $this->portalGuy->accounts->add(array($this->accounts[1], $this->accounts[2]));
         $GLOBALS['db']->commit();
         
 
