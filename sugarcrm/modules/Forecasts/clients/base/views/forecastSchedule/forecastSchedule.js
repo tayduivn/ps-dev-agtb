@@ -45,10 +45,9 @@
         var self = this;
         this._collection.fetch({success : function() { 
         		self.render();
-        		try{
+        		if(_.isFunction(callback)){
         			callback();
         		}
-        		catch(e){}
         	}});
     },
 
