@@ -39,6 +39,8 @@ class TimePeriod extends SugarBean {
 	var $parent_id;
 	var $start_date;
 	var $end_date;
+    var $start_date_timestamp;
+   	var $end_date_timestamp;
 	var $created_by;
 	var $date_entered;
 	var $date_modified;

@@ -169,6 +169,13 @@ class Opportunity extends SugarBean
 		//BEGIN SUGARCRM flav=pro ONLY
 		$query .= getTeamSetNameJoin('opportunities');
 		//END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query .= " LEFT JOIN timeperiods
+                        ON timeperiods.start_date_timestamp < opportunities.date_closed_timestamp
+                        AND timeperiods.end_date_timestamp >= opportunities.date_closed_timestamp ";
+        //END SUGARCRM flav=pro ONLY
+
 		$query .= "LEFT JOIN $this->rel_account_table
                             ON opportunities.id=$this->rel_account_table.opportunity_id
                             LEFT JOIN accounts

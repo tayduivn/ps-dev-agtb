@@ -95,7 +95,9 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opp->date_closed = "2009-02-15";
         $opp->save();
 
-        $this->assertEquals($tp->id, $opp->timeperiod_id);
+        //check that the timeperiod covers the date closed timestamp
+        $this->assertLessThan($tp->start_date_timestamp, $opp->date_closed_timestamp);
+        $this->assertGreaterThanOrEqual($tp->end_date_timestamp, $opp->date_closed_timestamp);
     }
     //END SUGARCRM flav=pro ONLY
 

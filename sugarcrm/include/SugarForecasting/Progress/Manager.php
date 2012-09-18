@@ -75,7 +75,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         //set user ids and timeperiods
         $where = "( users.reports_to_id = " . $db->quoted($user_id);
         $where .= " OR opportunities.assigned_user_id = " . $db->quoted($user_id) . ")";
-        $where .= " AND opportunities.timeperiod_id = " . $db->quoted($timeperiod_id);
+        $where .= " AND timeperiods.id = " . $db->quoted($timeperiod_id);
 
 
         //per requirements, exclude the sales stages won
@@ -124,8 +124,11 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
 
         //set user ids and timeperiods
         $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
-        $query .= " ON o.assigned_user_id = u.id";
-        $query .= " WHERE o.timeperiod_id = " . $db->quoted($timeperiod_id);
+        $query .= " ON o.assigned_user_id = u.id ";
+        $query .= " left join timeperiods t ";
+        $query .= " ON t.start_date_timestamp < o.date_closed_timestamp ";
+        $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
+        $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
         $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);
         $query .= " OR o.assigned_user_id = " . $db->quoted($user_id) . ")";
 
@@ -134,6 +137,8 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
             $query .= " AND o.sales_stage in ( '";
             $query .= join("','", $sales_stage_won) . "')";
         }
+
+        error_log($query);
 
         $result = $db->query($query);
 
@@ -163,7 +168,10 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         //set user ids and timeperiods
         $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
         $query .= " ON o.assigned_user_id = u.id";
-        $query .= " WHERE o.timeperiod_id = " . $db->quoted($timeperiod_id);
+        $query .= " left join timeperiods t ";
+        $query .= " ON t.start_date_timestamp < o.date_closed_timestamp ";
+        $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
+        $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
         $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);
         $query .= " OR o.assigned_user_id = " . $db->quoted($user_id) . ")";
 
