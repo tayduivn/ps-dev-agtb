@@ -27,7 +27,8 @@ class MailConfiguration {
     public $mode;
     public $user_id;
     public $config_id;
-    public $type;
+    public $config_name;
+    public $config_type;
     public $sender_name;
     public $sender_email;
     public $display_name;
