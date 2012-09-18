@@ -10,10 +10,5 @@
         </div>
         {{/each}}
         {{/each}}
-        <div class="form-actions">
-            {{#each meta.buttons}}
-            {{field ../this}}
-            {{/each}}
-        </div>
     </div>
 </form>

@@ -6,7 +6,7 @@ describe("htmleditable", function() {
         beforeEach(function() {
             var $textarea = $('<textarea class="htmleditable"></textarea>');
             field = SugarTest.createField("base","html_email", "htmleditable", "edit");
-            stub = sinon.stub(field, "_getTextarea", function(){
+            stub = sinon.stub(field, "_getHtmlEditableField", function(){
                 return $textarea;
             });
         });
@@ -74,9 +74,10 @@ describe("htmleditable", function() {
         var field, stub;
 
         beforeEach(function() {
+            var $textarea = $('<iframe class="htmleditable"></iframe>');
             field = SugarTest.createField("base","html_email", "htmleditable", "detail");
-            stub = sinon.stub(field, "_getTextarea", function(){
-                return $('<textarea class="htmleditable"></textarea>');
+            stub = sinon.stub(field, "_getHtmlEditableField", function(){
+                return $textarea;
             });
         });
 
@@ -98,28 +99,28 @@ describe("htmleditable", function() {
             view.restore();
         });
 
-        it("should return textarea and not wysihtml5 editor", function() {
+        it("should not return wysihtml5 editor", function() {
             var wysihtml5Spy = sinon.spy(field, '_getWysiHtml5Editor');
 
             field.render();
 
-            expect(stub.calledOnce).toBeTruthy();
             expect(wysihtml5Spy.called).toBeFalsy();
 
             wysihtml5Spy.restore();
         });
 
-        it("should set the value to the textarea if the model is changed", function() {
-            var expectedValue = 'foo';
-            var setTextareaContentSpy;
+        it("should set the value to the iframe if the model is changed", function() {
+            var mock, expectedValue = 'foo';
 
             field.render();
-            setTextareaContentSpy = sinon.spy(field, '_setTextareaContent');
+
+            mock = sinon.mock(field);
+            mock.expects('_setIframeContent').once().withArgs(expectedValue);
+
             field.model.set(field.name, expectedValue);
 
-            expect(setTextareaContentSpy.withArgs(expectedValue).calledOnce).toBeTruthy();
-
-            setTextareaContentSpy.restore();
+            mock.verify();
+            mock.restore();
         });
     });
 

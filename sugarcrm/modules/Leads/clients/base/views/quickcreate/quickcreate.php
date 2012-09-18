@@ -30,26 +30,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['Leads']['base']['view']['quickcreate'] = array(
     'type' => 'edit',
-    //todo: figure out a better place to put these buttons!!
-    'buttons' => array(
-        array(
-            'name'    => 'save_button',
-            'type'    => 'button',
-            'label'   => 'Save',
-            'value'   => 'save',
-            'primary' => true,
-        ),
-        array(
-            'name'    => 'cancel_button',
-            'type'    => 'button',
-            'label'   => 'Cancel',
-            'value'   => 'cancel',
-            'events'  => array(
-                'click' => 'function(){ this.context.parent.trigger("modal:close"); }',
-            ),
-            'primary' => false,
-        ),
-    ),
     'panels' => array(
         array(
             'fields' => array(

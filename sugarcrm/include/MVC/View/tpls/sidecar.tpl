@@ -44,18 +44,7 @@
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-transition.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-alert.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-modal.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-collapse.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-dropdown.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-scrollspy.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-tab.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-tooltip.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-popover.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-button.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-typeahead.js"></script>
-        <script src="styleguide/bootstrap/js/bootstrap-datepicker.js"></script>
+        <script src="styleguide/assets/js/bootstrap.min.js"></script>
     </head>
     <body>
     	<div id="sugarcrm">
