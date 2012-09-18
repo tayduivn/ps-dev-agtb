@@ -273,7 +273,6 @@
          */
         _showConfigModal: function(showWizard) {
             var params = {
-               context:{module: "Forecasts"},
                components:[{layout:"forecastsConfig"}],
                title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
            };
