@@ -31,15 +31,20 @@ require_once 'EmailHeaders.php';                         // email headers are co
  */
 class MailerFactory
 {
-    // private members
+    // protected members
 
-    // Maps the mode from a MailConfiguration to the class name that represents the sending strategy for that
-    // configuration. Requires that the class and file name match and that the files are found in the
-    // sugarcrm/modules/Mailer library, so no custom Mailers outside of this module will work.
+    // Maps the mode from a MailConfiguration to the class that represents the sending strategy for that
+    // configuration.
     // key = mode; value = mailer class
-    private static $modeToMailerMap = array(
-        "default"                        => "SimpleMailer",
-        MailConfigurationPeer::MODE_SMTP => "SugarMailer",
+    protected static $modeToMailerMap = array(
+        "default"                        => array(
+            "path"  => ".",            // the path to the class file without trailing slash ("/")
+            "class" => "SimpleMailer", // the name of the class
+        ),
+        MailConfigurationPeer::MODE_SMTP => array(
+            "path"  => ".",
+            "class" => "SugarMailer",
+        ),
     );
 
     /**
@@ -77,8 +82,9 @@ class MailerFactory
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      */
     private static function buildMailer($mode) {
-        $class = self::$modeToMailerMap[$mode];
-        include_once "{$class}.php"; //@todo confirm that the file exists and throw an exception if it doesn't?
+        $path  = self::$modeToMailerMap[$mode]["path"];
+        $class = self::$modeToMailerMap[$mode]["class"];
+        include_once "{$path}/{$class}.php"; //@todo confirm that the file exists and throw an exception if it doesn't?
         return new $class();
     }
 
