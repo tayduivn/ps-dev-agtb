@@ -148,6 +148,12 @@ class SummerApi extends SugarApi {
                 $fname = $entry->xpath('gd:name/gd:givenName');
                 $lname = $entry->xpath('gd:name/gd:familyName');
                 $email = $entry->xpath('gd:email[@primary=\'true\']/@address');
+                // TODO: Optimize this, somehow.
+                $res = $GLOBALS['db']->query("SELECT COUNT(id) as x FROM email_addresses WHERE email_address = '".(string)$email[0]."'");
+                $row = $GLOBALS['db']->fetchByAssoc($res);
+                if((int)$row['x'] > 0 || empty($email[0])) {
+                    continue;
+                }
                 $inv = array("email" => (string)$email[0], 'first_name' => '', 'last_name' => '');
                 if(!empty($fname)) {
                     $inv['first_name'] = (string)$fname[0];
@@ -160,5 +166,4 @@ class SummerApi extends SugarApi {
         }
         return array("contacts" => $data);
     }
-
 }
