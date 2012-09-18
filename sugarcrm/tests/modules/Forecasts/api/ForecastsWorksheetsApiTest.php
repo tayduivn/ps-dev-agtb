@@ -167,7 +167,6 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
             "commit_stage" => self::$repData["ops"][0]->commit_stage,
             "id" => self::$repData["ops"][0]->id,
             "worksheet_id" => self::$repData["op_worksheets"][0]->id,
-            "timeperiod_id" => self::$timeperiod->id,
             "current_user" => self::$repData["id"],
             "assigned_user_id" => self::$repData["id"],
         );
