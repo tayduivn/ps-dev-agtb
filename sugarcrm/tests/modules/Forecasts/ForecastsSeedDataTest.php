@@ -31,40 +31,40 @@ require_once('modules/Users/User.php');
 class ForecastsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-private $createdOpportunities;
+    private $createdOpportunities;
 
-function setUp()
-{
-    global $beanFiles, $beanList, $current_user, $app_list_strings;
-    require('include/modules.php');
-    $app_list_strings = return_app_list_strings_language('en_us');
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
-    $current_user->is_admin = 1;
-    $current_user->save();
-}
+    function setUp()
+    {
+        global $beanFiles, $beanList, $current_user, $app_list_strings;
+        require('include/modules.php');
+        $app_list_strings = return_app_list_strings_language('en_us');
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->is_admin = 1;
+        $current_user->save();
+    }
 
-function tearDown()
-{
+    function tearDown()
+    {
 
-}
+    }
 
-/**
- *
- */
-function testPopulateSeedData()
-{
-    $timePeriod = new TimePeriod();
-    $query = $timePeriod->create_new_list_query('', 'timeperiods.is_fiscal_year = 0');
-    $result = $GLOBALS['db']->query($query);
-    $timePeriods = array();
-    while(($row = $GLOBALS['db']->fetchByAssoc($result)))
+    /**
+     * @group forecasts
+     * @group seeddata
+     */
+    function testPopulateSeedData()
     {
         $timePeriod = new TimePeriod();
-        $timePeriod->retrieve($row['id']);
-        $timePeriods[] = $timePeriod;
+        $query = $timePeriod->create_new_list_query('', 'timeperiods.is_fiscal_year = 0');
+        $result = $GLOBALS['db']->query($query);
+        $timePeriods = array();
+        while (($row = $GLOBALS['db']->fetchByAssoc($result))) {
+            $timePeriod = new TimePeriod();
+            $timePeriod->retrieve($row['id']);
+            $timePeriods[] = $timePeriod;
+        }
+        ForecastsSeedData::populateSeedData($timePeriods);
     }
-    ForecastsSeedData::populateSeedData($timePeriods);
-}
 
 
 }
