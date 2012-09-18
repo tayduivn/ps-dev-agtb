@@ -706,6 +706,10 @@ class RenameModules
             array('name' => 'LNK_NEW_RECORD', 'type' => 'plural'), //Module built modules, Create <moduleName>
             array('name' => 'LNK_LIST', 'type' => 'plural'), //Module built modules, View <moduleName>
             array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
+            array('name' => 'LNK_CREATE', 'type' => 'singular'),
+            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular'),
+            array('name' => 'LBL_NEW_FORM_TITLE', 'type' => 'singular'),
+            array('name' => 'LBL_NEW_FORM_BTN', 'type' => 'singular'),
             array('name' => 'LNK_###MODULE_SINGULAR###_LIST', 'type' => 'plural'),
             array('name' => 'LNK_###MODULE_SINGULAR###_REPORTS', 'type' => 'singular'),
             array('name' => 'LNK_IMPORT_VCARD', 'type' => 'singular'),

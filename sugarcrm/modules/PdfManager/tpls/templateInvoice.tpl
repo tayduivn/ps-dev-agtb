@@ -30,7 +30,7 @@
 <table border="0" cellspacing="2">
 <tbody>
 <tr>
-<td rowspan="4" width="180%"><img src="./themes/default/images/pdf_logo.jpg" alt="" /></td>
+<td rowspan="6" width="180%"><img src="./themes/default/images/pdf_logo.jpg" alt="" /></td>
 <td width="60%"><strong>{$MOD.LBL_TPL_INVOICE}</strong></td>
 <td width="60%">&nbsp;</td>
 </tr>
@@ -45,6 +45,14 @@
 <tr>
 <td bgcolor="#DCDCDC" width="75%">{$MOD.LBL_TPL_VALID_UNTIL}</td>
 <td width="75%">{literal}{$fields.date_quote_expected_closed}{/literal}</td>
+</tr>
+<tr>
+<td bgcolor="#DCDCDC" width="75%">{$MOD.LBL_PURCHASE_ORDER_NUM}</td>
+<td width="75%">{literal}{$fields.purchase_order_num}{/literal}</td>
+</tr>
+<tr>
+<td bgcolor="#DCDCDC" width="75%">{$MOD.LBL_PAYMENT_TERMS}</td>
+<td width="75%">{literal}{$fields.payment_terms}{/literal}</td>
 </tr>
 </tbody>
 </table>
@@ -69,7 +77,7 @@
 </tr>
 <tr>
 <td>{literal}{$fields.billing_address_city}, {$fields.billing_address_state}, {$fields.billing_address_postalcode}{/literal}</td>
-<td>{literal}{$fields.shipping_address_city}, {$fields.shipping_address_state}, {$fields.shipping_address_postalcode}{/literal}</td>
+<td>{literal}{if $fields.shipping_address_city!=""}{$fields.shipping_address_city},{/if} {if $fields.shipping_address_state!=""}{$fields.shipping_address_state},{/if} {$fields.shipping_address_postalcode}{/literal}</td>
 </tr>
 <tr>
 <td>{literal}{$fields.billing_address_country}{/literal}</td>

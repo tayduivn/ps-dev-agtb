@@ -75,22 +75,14 @@ class MetadataApi extends SugarApi {
     }
 
     public function getAllMetadata($api, $args) {
-        global $current_language, $app_strings, $current_user;
-        // get the currrent person object of interest
-        $apiPerson = $current_user;
-        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
-            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
-        }
+        global $current_language, $app_strings, $app_list_strings, $current_user;
 
         // asking for a specific language
         if (isset($args['lang']) && !empty($args['lang'])) {
-            $lang = $args['lang'];
-            $current_language = $lang;
-            $app_strings = return_application_language($lang);
-        // load prefs if set
-        } elseif (isset($apiPerson->preferred_language) && !empty($apiPerson->preferred_language)) {
-            $app_strings = return_application_language($apiPerson->preferred_language);
-            $current_language = $apiPerson->preferred_language;
+            $current_language = $args['lang'];
+            $app_strings = return_application_language($current_language);
+            $app_list_strings = return_app_list_strings_language($current_language);
+
         }
 
         // Default the type filter to everything
@@ -177,10 +169,11 @@ class MetadataApi extends SugarApi {
         }
 
         global $current_language, $app_strings, $app_list_strings;
-        $lang = isset($args['lang']) ? $args['lang'] : "en_us";
-        $current_language = $lang;
-        $app_strings = return_application_language($lang);
-        $app_list_strings = return_app_list_strings_language($lang);
+        if ( isset($args['lang']) ) {
+            $current_language = $args['lang'];
+            $app_strings = return_application_language($current_language);
+            $app_list_strings = return_app_list_strings_language($current_language);
+        }
 
 
         // Default the type filter to everything available to the public, no module info at this time
@@ -242,19 +235,22 @@ class MetadataApi extends SugarApi {
 
         $mm = $this->getMetadataManager();
 
-        $this->modules = array_keys(get_user_module_list($this->user));
-
-        $data['modules'] = array();
-        foreach ($this->modules as $modName) {
-            $modData = $mm->getModuleData($modName);
-            $data['modules'][$modName] = $modData;
-        }
-
 
         $data['module_list'] = $mm->getModuleList($this->platforms[0]);
         $data['full_module_list'] = $data['module_list'];
-        foreach($data['module_list'] as $module) {
+
+        $data['modules'] = array();
+
+        foreach($data['full_module_list'] as $module) {
             $bean = BeanFactory::newBean($module);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+
+            $modData = $mm->getModuleData($module);
+            $data['modules'][$module] = $modData;
+
             if (isset($data['modules'][$module]['fields'])) {
                 $fields = $data['modules'][$module]['fields'];
                 foreach($fields as $fieldName => $fieldDef) {
@@ -285,17 +281,45 @@ class MetadataApi extends SugarApi {
         }
 
         $data['acl'] = array();
-        foreach ($this->modules as $modName) {
-            $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
+
+        foreach ($data['full_module_list'] as $modName) {
+            $bean = BeanFactory::newBean($module);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+            $data['acl'][$module] = $mm->getAclForModule($module,$GLOBALS['current_user']->id);
             // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
             if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
-                $data['acl'][$modName]['admin'] = 'no';
-                $data['acl'][$modName]['developer'] = 'no';
-                $data['acl'][$modName]['edit'] = 'no';
-                $data['acl'][$modName]['delete'] = 'no';
-                $data['acl'][$modName]['import'] = 'no';
-                $data['acl'][$modName]['export'] = 'no';
-                $data['acl'][$modName]['massupdate'] = 'no';
+                $data['acl'][$module]['admin'] = 'no';
+                $data['acl'][$module]['developer'] = 'no';
+                $data['acl'][$module]['edit'] = 'no';
+                $data['acl'][$module]['delete'] = 'no';
+                $data['acl'][$module]['import'] = 'no';
+                $data['acl'][$module]['export'] = 'no';
+                $data['acl'][$module]['massupdate'] = 'no';
+            }
+        }
+
+        // populate available system currencies
+        $data['currencies'] = array();
+        require_once('modules/Currencies/ListCurrency.php');
+        $lcurrency = new ListCurrency();
+        $lcurrency->lookupCurrencies();
+        if(!empty($lcurrency->list))
+        {
+            foreach($lcurrency->list as $current)
+            {
+                $currency = array();
+                $currency['name'] = $current->name;
+                $currency['iso'] = $current->iso4217;
+                $currency['status'] = $current->status;
+                $currency['symbol'] = $current->symbol;
+                $currency['rate'] = $current->conversion_rate;
+                $currency['name'] = $current->name;
+                $currency['date_entered'] = $current->date_entered;
+                $currency['date_modified'] = $current->date_modified;
+                $data['currencies'][$current->id] = $currency;
             }
         }
 
