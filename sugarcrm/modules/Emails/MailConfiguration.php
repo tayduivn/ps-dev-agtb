@@ -1,5 +1,6 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,6 +24,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once "modules/Users/User.php";
+
 class MailConfiguration {
     public $mode;
     public $user_id;
@@ -37,5 +40,6 @@ class MailConfiguration {
 
     public function __construct(User $user) {
         $this->user_id=$user->id;
+        $this->config_data = array();
     }
 }
