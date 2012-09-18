@@ -54,19 +54,9 @@
         var plugin = this, mlist, params;
         mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
-
         app.api.search(params, {
             success:function(data) {
-                // Bug56381: Fix-up the strings and hide KBs since Portal users can't create those kinds of records
-                data.module_list = [];
-                var module_list = app.metadata.getModuleNames(true);
-                _.each(module_list, function(loadedModule) {
-                    if(loadedModule !== "KBDocuments"){  // Hide KBDocuments from create menu from Portal user
-                        if(app.acl.hasAccess('create', loadedModule)) {
-                            data.module_list.push(loadedModule);
-                        }
-                    }
-                });
+                data.module_list = app.metadata.getUserCreatableModules();
                 plugin.provide(data);
             },
             error:function(error) {
@@ -130,18 +120,7 @@
         try {
             singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
             if(singularModules) {
-                _.each(self.module_list, function(loadedModule) {
-
-                    // Continue on Leads, Notes, or KBDocuments, but for all others:
-                    // check access to create and push to list
-                    if(loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
-                        app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
-                    } else {
-                        if(app.acl.hasAccess('create', loadedModule)) {
-                            self.createListLabels.push(loadedModule);
-                        }
-                    }
-                });
+                self.createListLabels = self.creatable_module_list;
             }
         } catch(e) {
             return;
@@ -152,6 +131,7 @@
         this.createListLabels = [];
         this.currentModule = this.module;
         this.module_list = app.metadata.getModuleNames(true);
+        this.creatable_module_list = app.metadata.getUserCreatableModules();
     },
 
     /**
