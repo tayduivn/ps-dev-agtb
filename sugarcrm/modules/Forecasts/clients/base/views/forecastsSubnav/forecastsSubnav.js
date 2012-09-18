@@ -47,13 +47,7 @@
      * @param e Event object
      */
     handleForecastSettingsClick: function(e) {
-        var params = {
-            context:{module: "Forecasts"},
-            components:[{layout:"forecastsConfig"}],
-            title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
-        };
-
-        this.layout.trigger("modal:forecastsConfig:open", params);
+        this.layout._showConfigModal(false);
     },
 
     /***

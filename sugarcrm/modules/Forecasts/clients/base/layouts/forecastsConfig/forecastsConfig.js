@@ -36,11 +36,6 @@
                 settingsModel = new Model();
 
             settingsModel.fetch();
-
-            //  TODO:  need to keep this here for access by the field, for now.  Should be done as below, but still investigating.
-            options.context.model = settingsModel;
-
-            // TODO:  this should be the way we set the model, but need to make sure it's working correctly.
             options.context.set("model", settingsModel);
 
             app.view.Layout.prototype.initialize.call(this, options);

@@ -244,6 +244,43 @@
             });
         },
 
+
+        /**
+         * Dropping in to _render to insert some code to display the config wizard for a user's first run on forecasts.  The render process itself is unchanged.
+         *
+         * @return {*}
+         * @private
+         */
+        _render: function () {
+            var mdata;
+
+            app.view.Layout.prototype._render.call(this);
+
+            mdata = app.metadata.getModule("Forecasts");
+            if (mdata.config.is_setup == "0") {
+//              TODO:  if (! user_is_admin) { show different stuff } else {
+                this._showConfigModal(true);
+            }
+
+            return this;
+        },
+
+
+        /**
+         * This is used by the forecasts layout to show the modal with the config views.
+         * @param showWizard Boolean true shows forecasts config wizard, false shows forecasts config view with tabs.
+         * @private
+         */
+        _showConfigModal: function(showWizard) {
+            var params = {
+               context:{module: "Forecasts"},
+               components:[{layout:"forecastsConfig"}],
+               title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
+           };
+
+           this.trigger("modal:forecastsConfig:open", params);
+        },
+
         /**
          * Add a view (or layout) to this layout.
          * @param {View.Layout/View.View} comp Component to add

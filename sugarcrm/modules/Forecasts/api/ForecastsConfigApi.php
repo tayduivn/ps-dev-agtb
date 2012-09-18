@@ -44,7 +44,7 @@ class ForecastsConfigApi extends ModuleApi {
                 'noLoginRequired' => true,
             ),
             'configSave' => array(
-                'reqType' => 'PUT',
+                'reqType' => 'POST',
                 'path' => array('Forecasts','config'),
                 'pathVars' => array('',''),
                 'method' => 'configSave',
