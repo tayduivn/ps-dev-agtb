@@ -2,7 +2,7 @@
 -------------------------------------------------- */
 @media (max-width: 920px) {
   #folded .tab-pane.active {
-  position: relative !important; 
+  position: absolute !important; 
   }
   .row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
   overflow-y: auto !important;
@@ -94,5 +94,100 @@
   .row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
   overflow-y: auto !important;
   margin: 0;
+  }
+  #contentflex .results {
+    margin: 0;
+    padding: 0;
+  }
+  .nav-tabs li
+  {
+    padding: 0 10px;
+  }
+  
+   #folded .tab-pane.active#overview {
+     left: 480px;    
+   }
+   #folded .tab-pane.active, .onL {   
+   position: relative;
+   z-index: 1;  
+   margin-left: 275px;
+   width: 100%;
+   height: 100%;
+   overflow: hidden;
+   -webkit-transition: left .5s ease-in; 
+   transform: translate3d(0,80,0);
+   -webkit-transform: translate3d(0,80,0);
+  }
+  body {
+  transform: translate3d(0,0,0);
+  -webkit-transform: translate3d(0,0,0);
+  }
+    .onL .nav-collapse {
+       height: 100%;
+       width: 275px;
+   	    overflow: auto;
+   	     z-index: 0;
+   	   position: absolute;
+   	    left: -275px;
+   	    top: 0;
+   	   background-color: #333332;
+   	   background-image: -moz-linear-gradient(top, #343433, #313130);
+   	   background-image: -ms-linear-gradient(top, #343433, #313130);
+   	    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#343433), to(#313130));
+   	    background-image: -webkit-linear-gradient(top, #343433, #313130);
+   	    background-image: -o-linear-gradient(top, #343433, #313130);
+   	    background-image: linear-gradient(top, #343433, #313130);
+   	   background-repeat: repeat-x;
+   	    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#343433', endColorstr='#313130', GradientType=0);
+    border-color: #313130 #313130 #0b0b0b;
+      border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+     filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
+     -webkit-box-shadow: inset -2px 1px 6px rgba(0, 0, 0, 0.75);
+     -moz-box-shadow: inset -2px 1px 6px rgba(0, 0, 0, 0.75);
+     box-shadow: inset -2px 1px 6px rgba(0, 0, 0, 0.75);
+     }
+    .onL .nav-collapse:hover,
+    .onL .nav-collapse:active,
+  .onL .nav-collapse.active,
+    .onL .nav-collapse.disabled,
+     .onL .nav-collapse[disabled] {
+       background-color: #313130;
+     }
+     .onL .nav-collapse:active, .onL .nav-collapse.active {
+       background-color: #181817 \9;
+  }
+  .onL .nav-collapse li {
+   	 	
+     margin: 0;
+   	 	
+     background: none;
+     -webkit-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+   	 	
+    -moz-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+     }
+     .onL .nav-collapse li a, .navbar .dropdown-menu a {
+       background-image: url(/img/grip.png);
+       line-height: 26px;
+       height: 26px;
+       display: block;
+       border-top: 1px solid #3d3d3d;
+       border-bottom: 1px solid #242424;
+      -webkit-box-shadow: inset 0 15px 30px rgba(155, 155, 155, 0.05);
+       -moz-box-shadow: inset 0 15px 30px rgba(155, 155, 155, 0.05);
+   	   box-shadow: inset 0 15px 30px rgba(155, 155, 155, 0.05);
+       -webkit-border-radius: 0px;
+       -moz-border-radius: 0px;
+       border-radius: 0px;
+       margin: 0;
+       font-weight: 400;
+      text-shadow: 0 -1px 1px #000000;
+       z-index: 0;
+       position: relative;
+     }
+   	  .onL .nav-collapse li.active a {
+       -webkit-box-shadow: inset 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 1px 5px rgba(0, 0, 0, 0.5);
+       -moz-box-shadow: inset 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 1px 5px rgba(0, 0, 0, 0.5);
+       box-shadow: inset 0 15px 30px rgba(0, 0, 0, 0.5), inset 0 1px 5px rgba(0, 0, 0, 0.5);
   }
 }
