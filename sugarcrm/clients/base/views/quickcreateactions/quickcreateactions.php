@@ -30,7 +30,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 $viewdefs['base']['view']['quickcreateactions'] = array(
     'buttons' => array(
-
+        array(
+            'name'    => 'save_create_button',
+            'type'    => 'button',
+            'label'   => 'Save and Create Another',
+            'value'   => 'cancel',
+            'css_class' => 'btn-invisible btn-link',
+        ),
         array(
             'name'    => 'cancel_button',
             'type'    => 'button',

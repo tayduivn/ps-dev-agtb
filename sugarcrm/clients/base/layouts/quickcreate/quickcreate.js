@@ -5,8 +5,10 @@
         this.context.on('quickcreate:save', this.save, this);
     },
 
-    save: function() {
-        this.model.save();
-        this.context.parent.trigger('modal:close');
+    save: function(success, error) {
+        this.model.save(null, {
+            success: success,
+            error: error
+        });
     }
 })
