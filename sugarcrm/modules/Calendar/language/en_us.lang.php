@@ -136,7 +136,7 @@ $mod_strings = array (
 	'LBL_REPEAT_DOW' => 'On',	
 	'LBL_REPEAT_UNTIL' => 'Repeat Until',
 	'LBL_REPEAT_COUNT' => 'Number of recurrences',
-	'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
+	'LBL_REPEAT_LIMIT_ERROR' => 'This recurring $moduleTitle cannot be scheduled because it exceeds the maximum allowed recurrence of $limit.',
 	
 	'LBL_EDIT_ALL_RECURRENCES' => 'Edit All Recurrences',
 	'LBL_REMOVE_ALL_RECURRENCES' => 'Delete All Recurrences',

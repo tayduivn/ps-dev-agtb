@@ -1655,8 +1655,12 @@
 									if(res.access == 'yes'){
 										
 										if(typeof res.limit_error != "undefined"){
-											var alert_msg = CAL.lbl_repeat_limit_error;
-											alert(alert_msg.replace("\$limit",res.limit));
+											var limitErrorMsg = CAL.lbl_repeat_limit_error;
+											var module = $("#current_module").val()
+											var moduleTitle = SUGAR.language.get('app_list_strings', 'moduleListSingular')[module];
+											limitErrorMsg = limitErrorMsg.replace("\$limit", res.limit).replace("\$moduleTitle", moduleTitle);
+											alert(limitErrorMsg);
+											
 											CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;											
 											ajaxStatus.hideStatus();											
 											CAL.enable_buttons();
