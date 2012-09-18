@@ -55,7 +55,7 @@ class Link2Tag {
     public static function convert($text) {
         // http links
         $text = preg_replace_callback(
-                '#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is',
+                '@(https?://([-\w\.]+)+(:\d+)?(/([\w/_\.]*(\?\S+)?)?)?)@',
                 'Link2Tag::convertHttpLink',
                 ' '.$text);        
         // email, ftp links?
@@ -68,7 +68,7 @@ class Link2Tag {
      */
     protected static function convertHttpLink($matches) {
         $result = $matches[0];
-        $url = $matches[2];
+        $url = $matches[1];
 
         if(empty($url)) {
             return $result;
@@ -91,12 +91,13 @@ class Link2Tag {
                 '#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i',
                 '<img src="$1.$2" alt="$1.$2" />',
                 $result); 
-        
+       
         // other links
         $result = preg_replace(
                 '#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is',
                 '$1<a href="$2">$2</a>',
-                ' '.$result);     
+                ' '.$result); 
+  
         return trim($result);
     }
     
