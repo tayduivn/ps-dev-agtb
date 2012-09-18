@@ -19,7 +19,8 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/Mailer/MailerFactory.php';
+require_once "modules/Mailer/MailerFactory.php";
+require_once 'modules/Emails/MailConfigurationPeer.php';
 
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -95,7 +96,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         self::assertEquals($expected, $actual, "The smtp.username should have been changed to {$expected}");
 
         // test that the smtp.secure has been changed from its default to "tls"
-        $expected = SimpleMailer::SecureTls;
+        $expected = MailConfigurationPeer::SecureTls;
         $actual   = $mailer->getConfig("smtp.secure");
         self::assertEquals($expected, $actual, "The smtp.secure should have been changed to {$expected}");
     }

@@ -31,6 +31,11 @@ class MailConfigurationPeer {
     const MODE_SMTP = "smtp";
     const MODE_WEB  = "web";
 
+    // constants used for documenting which smtp.secure configurations are valid
+    const SecureNone = "";
+    const SecureSsl  = "ssl";
+    const SecureTls  = "tls";
+
     /**
      * @return array MailConfigurations
      */

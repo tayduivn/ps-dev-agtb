@@ -34,9 +34,6 @@ require_once 'BaseMailer.php';                    // requires Attachment in orde
  */
 class SimpleMailer extends BaseMailer
 {
-    // only use SMTP to send email with PHPMailer
-    const Protocol   = 'smtp';
-
     // constants used for documenting which smtp.secure configurations are valid
     const SecureNone = '';
     const SecureSsl  = 'ssl';
@@ -53,17 +50,22 @@ class SimpleMailer extends BaseMailer
 
         // define the additional defaults
         $defaults = array(
-            'smtp.host'         => 'localhost',      // the hostname of the SMTP server to use
-                                                     // multiple hosts can be supplied, but all hosts must be separated
-                                                     // by a semicolon (e.g. "smtp1.example.com;smtp2.example.com") and
-                                                     // hosts will be tried in order
-                                                     // the port for the host can be defined using the format:
-                                                     //     hostname:port
-            'smtp.port'         => 25,               // the SMTP port to use on the server
-            'smtp.secure'       => self::SecureNone, // the SMTP connection prefix ("", "ssl" or "tls")
-            'smtp.authenticate' => false,            // true=require authentication on the SMTP server
-            'smtp.username'     => '',               // the username to use if smtp.authenticate=true
-            'smtp.password'     => '',               // the password to use if smtp.authenticate=true
+            // the hostname of the SMTP server to use
+            // multiple hosts can be supplied, but all hosts must be separated by a semicolon
+            // (e.g. "smtp1.example.com;smtp2.example.com") and hosts will be tried in order
+            // the port for the host can be defined using the format:
+            //     hostname:port
+            'smtp.host'         => 'localhost',
+            // the SMTP port to use on the server
+            'smtp.port'         => 25,
+            // the SMTP connection prefix ("", "ssl" or "tls")
+            'smtp.secure'       => MailConfigurationPeer::SecureNone,
+            // true=require authentication on the SMTP server
+            'smtp.authenticate' => false,
+            // the username to use if smtp.authenticate=true
+            'smtp.username'     => '',
+            // the password to use if smtp.authenticate=true
+            'smtp.password'     => '',
         );
 
         $this->mergeConfigs($defaults); // merge the additional defaults with the base defaults
@@ -117,7 +119,7 @@ class SimpleMailer extends BaseMailer
         $mailer->SetLanguage();
 
         // transfer the basic configurations to PHPMailer
-        $mailer->Mailer   = self::Protocol;
+        $mailer->Mailer   = MailConfigurationPeer::MODE_SMTP; // only use SMTP to send email with PHPMailer
         $mailer->Hostname = $this->configs['hostname'];
         $mailer->CharSet  = $this->configs['charset'];
         $mailer->Encoding = $this->configs['encoding'];

@@ -119,9 +119,9 @@ class MailerFactory
 
         // determine the appropriate encryption layer for the sending strategy
         if ($config->config_data['mail_smtpssl'] === 1) {
-            $mailer->setConfig("smtp.secure", SimpleMailer::SecureSsl);
+            $mailer->setConfig("smtp.secure", MailConfigurationPeer::SecureSsl);
         } elseif ($config->config_data['mail_smtpssl'] === 2) {
-            $mailer->setConfig("smtp.secure", SimpleMailer::SecureTls);
+            $mailer->setConfig("smtp.secure", MailConfigurationPeer::SecureTls);
         }
     }
 
