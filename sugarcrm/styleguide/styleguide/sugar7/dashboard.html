@@ -26,81 +26,78 @@
   <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
       <div class="container-fluid">
+        <div class="nav-collapse">
           <ul class="nav">
-              <li class="active"><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-              <li><a href="accounts.html">Accounts</a></li>
-              <li><a href="contacts.html">Contacts</a></li>
-              <li><a href="opportunities.html">Opportunities</a></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-                  <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-                  <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
-                </ul>
-              </li>
-            </ul>
-            <ul class="nav pull-right">
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
-                <ul class="dropdown-menu">
-                  <li><a href="">System-wide maintenance &hellip;</a></li>
-                  <li class="divider"></li>
-                  <li><a href="">Upgrade to 7.0!</a></li>
-                  <li class="divider"></li>                       
-                  <li><a href="">Please take our survey.</a></li>
-                </ul>
-              </li>
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
-                <ul class="dropdown-menu">
-                  <li><a href="profile_skhan.html">Profile</a></li>
-                  <li><a href="#">Password</a></li>
-                  <li><a href="#">Advanced</a></li>
-                  <li><a href="#">External Accounts</a></li>
-                  <li class="divider"></li>
-                  <li><a href="#">Log Out</a></li>
-                </ul>
-              </li>
-              <li class="divider-vertical"></li>
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
-                <ul class="dropdown-menu quick">
-                  <li><a href="">item</a></li>
-                  <li><a href="">item</a></li>
-                  <li><a href="">item</a></li>
-                </ul>
-              </li>              
-            </ul>
-            <div id="searchForm">
-              <form class="navbar-search pull-right" action="">
-                <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
-                <div class="advanced">
-                  <div class="btn-toolbar pull-right">
-                    <div class="btn-group">
-                      <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
-                        <span class="caret"></span>
-                      </a>
-                      <ul class="dropdown-menu">
-                        <li class="title">Advanced Search:</li>
-                        <li class="divider"></li>
-                        <li><input type="checkbox"> Accounts</li>
-                        <li><input type="checkbox"> Cases</li>
-                        <li><input type="checkbox"> Opportunities</li>
-                        <li><input type="checkbox"> Reports</li>
-                      </ul>
-                      <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
-                    </div>
+            <li class="active"><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+            <li><a href="accounts.html">Accounts</a></li>
+            <li><a href="contacts.html">Contacts</a></li>
+            <li><a href="opportunities.html">Opportunities</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+              </ul>
+            </li>
+          </ul>
+          <ul class="nav pull-right">
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
+              <ul class="dropdown-menu">
+                <li><a href="">System-wide maintenance &hellip;</a></li>
+                <li><a href="">Upgrade to 7.0!</a></li>
+                <li><a href="">Please take our survey.</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#">Password</a></li>
+                <li><a href="#">Advanced</a></li>
+                <li><a href="#">External Accounts</a></li>
+                <li><a href="#">Log Out</a></li>
+              </ul>
+            </li>
+            <li class="divider-vertical"></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
+              <ul class="dropdown-menu quick">
+                <li><a data-toggle="modal" href="#createAccount">Create Account</a></li>
+                <li><a data-toggle="modal" href="#createContact">Create Contact</a></li>
+                <li><a data-toggle="modal" href="#createOpportunity">Create Opportunity</a></li>
+              </ul>
+            </li>              
+          </ul>
+          <div id="searchForm">
+            <form class="navbar-search pull-right" action="">
+              <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+              <div class="advanced">
+                <div class="btn-toolbar pull-right">
+                  <div class="btn-group">
+                    <a class="advanced dropdown-toggle" data-toggle="dropdown" href="#">
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li class="title">Advanced Search:</li>
+                      <li><input type="checkbox"> Accounts</li>
+                      <li><input type="checkbox"> Cases</li>
+                      <li><input type="checkbox"> Opportunities</li>
+                      <li><input type="checkbox"> Reports</li>
+                    </ul>
+                    <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
                   </div>
                 </div>
-              </form>
-            </div>
-          </div><!-- /.nav-collapse -->
-        </div>
-      </div><!-- /navbar-inner -->
-    </div>
+              </div>
+            </form>
+          </div>
+        </div><!-- /.nav-collapse -->
+      </div>
+    </div><!-- /navbar-inner -->
+  </div>
   <div class="container-fluid" id="contentflex">
     <div class="row-fluid">
       <div class="span8" id="headerbar">
@@ -115,11 +112,29 @@
             </ul>
         </div>
       </div>
+    </div>
       <div class="row-fluid">
-        <div class="span8">      
+        <div class="span8">
           <div class="block filtered tabbable tabs-left" id="moduleActivity">
             <form class="form-search" action="">
-              <input value="" class="wide tleft" placeholder="Search activity...">
+              <input value="" class="span12" placeholder="Search activity...">
+              <a href="" class="filter">Filter &nbsp;<i class="icon-caret-down"></i></a>
+              <div class="filtered extend hide">
+                <div class="filtered-header">
+                  <h4>Filter</h4>
+                </div>
+                <div class="filtered-body">
+                  <select>
+                    <option>One</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+              <form class="omnibar clearfix" action="">
+              <a href="" class="avatar avatar42 pull-left">
+                <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
+              </a>
+              <input value="" class="span10 sayit" placeholder="Type a note or drag and drop an attachment...">
             </form>
             <ul class="nav nav-tabs results">
               <li>
@@ -127,7 +142,7 @@
                   <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  <a href="profile_skhan.html">Sabra Khan</a> added <a href="#file1" data-toggle="tab">screenshot_766.png</a> file to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <a href="profile.html">Sabra Khan</a> added <a href="#file1" data-toggle="tab">screenshot_766.png</a> file to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
                   <date class="date"><i class="icon-plus-sign icon-added"></i> 1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                 </p>
@@ -137,7 +152,7 @@
                       <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                     </a>
                     <p>
-                      <a href=" profile_skhan.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
+                      <a href=" profile.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
                       <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                     </p>
                   </li>
@@ -147,7 +162,7 @@
                         <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                       </a>
                       <p>
-                        <a href=" profile_skhan.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
+                        <a href=" profile.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
                         <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                       </p>
                     </li>
@@ -156,7 +171,7 @@
                         <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                       </a>
                       <p>
-                        <a href=" profile_skhan.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
+                        <a href=" profile.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
                         <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                       </p>
                     </li>
@@ -175,7 +190,7 @@
                   <img src="../img/avatar_james.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  <a href="profile_skhan.html">Jim Atlas</a> added email to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <a href="profile.html">Jim Atlas</a> added email to the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
                   <date class="date"><i class="icon-plus-sign icon-added"></i> about 1 minute ago on 3/12/2012 at 3:00 pm EST</date>
                 </p>
@@ -190,7 +205,7 @@
                   <img src="../img/avatar_uwelcome.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  <a href="profile_skhan.html">Uriah Welcome</a> added <a href="detail_bug.html" data-toggle="tab">Page link is not redirecting</a> bug.
+                  <a href="profile.html">Uriah Welcome</a> added <a href="detail_bug.html" data-toggle="tab">Page link is not redirecting</a> bug.
                   <br>
                   <date class="date"><i class="icon-plus-sign icon-added"></i> 1 hour ago on 3/12/2012 at 2:00 pm EST</date>
                 </p>
@@ -205,7 +220,7 @@
                   <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  <a href="profile_skhan.html">Sabra Khan</a> updated <a href="" rel="tooltip" data-title="From: this<br>To: that">phone</a>, <a href="" rel="tooltip" data-title="From: this<br>To: that">url</a>, and <a href="" rel="tooltip" data-title="From: this<br>To: that">email</a> in the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <a href="profile.html">Sabra Khan</a> updated <a href="" rel="tooltip" data-title="From: this<br>To: that">phone</a>, <a href="" rel="tooltip" data-title="From: this<br>To: that">url</a>, and <a href="" rel="tooltip" data-title="From: this<br>To: that">email</a> in the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
                   <date class="date"><i class="icon-ok-sign icon-updated"></i> 1 hour ago on 3/12/2012at 2:00 pm EST</date>
                 </p>
@@ -220,7 +235,7 @@
                   <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
                 </a>
                 <p>
-                  <a href="profile_skhan.html">Sabra Khan</a> updated <a href="" rel="tooltip" data-title="From: this<br>To: that">email</a> the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
+                  <a href="profile.html">Sabra Khan</a> updated <a href="" rel="tooltip" data-title="From: this<br>To: that">email</a> the <a href="opportunity_plato.html">Plato's LED Financial Apps</a> opportunity.
                   <br>
                   <date class="date"><i class="icon-ok-sign icon-updated"></i> 2 hours ago on 3/12/2012 at 1:00 pm EST</date>
                 </p>
@@ -280,9 +295,9 @@
           <div class="tab-pane" id="file1">
             <div class="block" id="">
               <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-              <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
+              <h4>Screenshot_766.png</h4>
               <br>
-              <img src="http://placehold.it/400x300">
+              <img src="http://placehold.it/400x300" alt="Screenshot_766 Image">
               <div class="card2">
                 <div class="row-fluid">
                    <div class="span3">Added:</div>
@@ -290,7 +305,7 @@
                  </div>
                  <div class="row-fluid">
                    <div class="span3">Added By:</div>
-                   <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                   <div class="span9"><a href="profile.html">Sabra Khan</a></div>
                  </div>
                  <div class="row-fluid">
                    <div class="span3">File Type:</div>
@@ -362,7 +377,7 @@
                  </div>
                  <div class="row-fluid">
                    <div class="span3">Added By:</div>
-                   <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                   <div class="span9"><a href="profile.html">Sabra Khan</a></div>
                  </div>
                  <div class="row-fluid">
                    <div class="span3">File Type:</div>
@@ -391,7 +406,7 @@
                  </div>
                  <div class="row-fluid">
                    <div class="span3">Added By:</div>
-                   <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                   <div class="span9"><a href="profile.html">Sabra Khan</a></div>
                  </div>
                </div>
               </div>
@@ -444,7 +459,7 @@
                    </div>
                    <div class="row-fluid">
                      <div class="span3">Added By:</div>
-                     <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                     <div class="span9"><a href="profile.html">Sabra Khan</a></div>
                    </div>
                  </div>
               </div>
@@ -473,7 +488,7 @@
                    </div>
                    <div class="row-fluid">
                      <div class="span3">Added By:</div>
-                     <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                     <div class="span9"><a href="profile.html">Sabra Khan</a></div>
                    </div>
                  </div>
               </div>
@@ -705,9 +720,8 @@
             <hr>
             <ul class="nav nav-tabs results">
               <li>
-                <a href="#file1" data-toggle="tab"><span class="label label-file">File</span></a>
-                <p>
-                  Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                 <p>
+                  Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile.html">Sabra Khan</a>
                   <br>
                   <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
                 </p>
@@ -729,9 +743,8 @@
           <div id="moduleActivity" class="block tabs-left">
             <ul class="nav nav-tabs results">
               <li>
-                <a href="#file1" data-toggle="tab"><span class="label label-file">File</span></a>
                 <p>
-                  Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile_skhan.html">Sabra Khan</a>
+                  Uploaded <a href="#file1" data-toggle="tab">screenshot_766.png</a> added by <a href="profile.html">Sabra Khan</a>
                   <br>
                   <date class="date">Posted 1 hour ago at 3:00 pm EST</date>
                 </p>
@@ -847,7 +860,205 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-link btn-invisible cancel" data-dismiss="modal">Cancel</button>
-          <a href="index.html" data-loading-text="Saving..." class="btn loading btn-primary">
+          <a href="index.html" data-loading-text="Saving..." class="btn loading btn-primary"  data-dismiss="modal">
+            Save
+          </a>
+        </div>
+      </div>
+      <div class="modal span10 hide" id="createContact">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>Add a Contact</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal row-fluid">
+            <fieldset class="span5">             
+              <div class="control-group">
+                <label for="select01" class="control-label">Contact:</label>
+                <div class="controls">
+                
+                <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                  <option value="pk"></option>
+                  <option value="pk">Administrator</option> 
+                  <option value="pk">Majed Itani</option> 
+                  <option value="pk">Uriah Welcome</option>
+                  <option value="pk">+ Create a user</option> 
+                  
+                </select>  
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Assigned to:</label>
+                <div class="controls">
+                
+                  <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                    <option value="pk"></option>
+                    <option value="pk">Administrator</option> 
+                    <option value="pk">Majed Itani</option> 
+                    <option value="pk">Uriah Welcome</option> 
+                    <option value="pk">+ Create a user</option> 
+                  </select>  
+                  </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Teams:</label>
+                <div class="controls">
+                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2" multiple>
+                    <option value="pk">Global</option> 
+                    <option value="pk" selected="selected">East</option> 
+                    <option value="pk">West</option>
+                    <option value="pk">North</option>
+                    <option value="pk">South</option> 
+                  </select>
+                </div>
+                </div>
+            </fieldset>
+            <div class="span1"> </div>
+            <fieldset class="span5">             
+              <div class="control-group">
+                <label for="select01" class="control-label">Contact:</label>
+                <div class="controls">
+                
+                <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                  <option value="pk"></option>
+                  <option value="pk">Administrator</option> 
+                  <option value="pk">Majed Itani</option> 
+                  <option value="pk">Uriah Welcome</option>
+                  <option value="pk">+ Create a user</option> 
+                  
+                </select>  
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Assigned to:</label>
+                <div class="controls">
+                
+                  <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                    <option value="pk"></option>
+                    <option value="pk">Administrator</option> 
+                    <option value="pk">Majed Itani</option> 
+                    <option value="pk">Uriah Welcome</option> 
+                    <option value="pk">+ Create a user</option> 
+                  </select>  
+                  </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Teams:</label>
+                <div class="controls">
+                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2" multiple>
+                    <option value="pk">Global</option> 
+                    <option value="pk" selected="selected">East</option> 
+                    <option value="pk">West</option>
+                    <option value="pk">North</option>
+                    <option value="pk">South</option> 
+                  </select>
+                </div>
+                </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-link btn-invisible cancel" data-dismiss="modal">Cancel</button>
+          <a href="index.html" data-loading-text="Saving..." class="btn loading btn-primary"  data-dismiss="modal">
+            Save
+          </a>
+        </div>
+      </div>
+      <div class="modal span10 hide" id="createOpportunity">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>Add a Opportunity</h3>
+        </div>
+        <div class="modal-body">
+          <form class="form-horizontal row-fluid">
+            <fieldset class="span5">             
+              <div class="control-group">
+                <label for="select01" class="control-label">Contact:</label>
+                <div class="controls">
+                
+                <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                  <option value="pk"></option>
+                  <option value="pk">Administrator</option> 
+                  <option value="pk">Majed Itani</option> 
+                  <option value="pk">Uriah Welcome</option>
+                  <option value="pk">+ Create a user</option> 
+                  
+                </select>  
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Assigned to:</label>
+                <div class="controls">
+                
+                  <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                    <option value="pk"></option>
+                    <option value="pk">Administrator</option> 
+                    <option value="pk">Majed Itani</option> 
+                    <option value="pk">Uriah Welcome</option> 
+                    <option value="pk">+ Create a user</option> 
+                  </select>  
+                  </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Teams:</label>
+                <div class="controls">
+                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2" multiple>
+                    <option value="pk">Global</option> 
+                    <option value="pk" selected="selected">East</option> 
+                    <option value="pk">West</option>
+                    <option value="pk">North</option>
+                    <option value="pk">South</option> 
+                  </select>
+                </div>
+                </div>
+            </fieldset>
+            <div class="span1"> </div>
+            <fieldset class="span5">             
+              <div class="control-group">
+                <label for="select01" class="control-label">Contact:</label>
+                <div class="controls">
+                
+                <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                  <option value="pk"></option>
+                  <option value="pk">Administrator</option> 
+                  <option value="pk">Majed Itani</option> 
+                  <option value="pk">Uriah Welcome</option>
+                  <option value="pk">+ Create a user</option> 
+                  
+                </select>  
+                </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Assigned to:</label>
+                <div class="controls">
+                
+                  <select data-placeholder="Choose a user..." class="chzn-select" tabindex="2">
+                    <option value="pk"></option>
+                    <option value="pk">Administrator</option> 
+                    <option value="pk">Majed Itani</option> 
+                    <option value="pk">Uriah Welcome</option> 
+                    <option value="pk">+ Create a user</option> 
+                  </select>  
+                  </div>
+              </div>
+              <div class="control-group">
+                <label for="select01" class="control-label">Teams:</label>
+                <div class="controls">
+                  <select data-placeholder="Choose a account..." class="chzn-select" tabindex="2" multiple>
+                    <option value="pk">Global</option> 
+                    <option value="pk" selected="selected">East</option> 
+                    <option value="pk">West</option>
+                    <option value="pk">North</option>
+                    <option value="pk">South</option> 
+                  </select>
+                </div>
+                </div>
+            </fieldset>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-link btn-invisible cancel" data-dismiss="modal">Cancel</button>
+          <a href="index.html" data-loading-text="Saving..." class="btn loading btn-primary"  data-dismiss="modal">
             Save
           </a>
         </div>
