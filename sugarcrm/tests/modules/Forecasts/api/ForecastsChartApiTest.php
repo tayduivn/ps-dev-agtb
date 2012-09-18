@@ -28,6 +28,7 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
+ * @group forecastapi
  * @group forecasts
  */
 class ForecastsChartApiTest extends RestTestBase
@@ -90,6 +91,8 @@ class ForecastsChartApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testQuotaIsReturned()
     {
@@ -102,8 +105,10 @@ class ForecastsChartApiTest extends RestTestBase
     }
 
     /**
-     * @group forecastapi
      * @dataProvider providerDataSetValueReturned
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testDataSetValueReturned($actual, $dataset)
     {
@@ -125,9 +130,10 @@ class ForecastsChartApiTest extends RestTestBase
             array(1100, 'worst')
         );
     }
-
     /**
      * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testGoalMarkerLabelSetCorrectly()
     {
@@ -141,6 +147,8 @@ class ForecastsChartApiTest extends RestTestBase
     /**
      * @dataProvider providerGroupByReturnTheProperLabelName
      * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testGroupByReturnTheProperLabelName($actual, $group_by)
     {
@@ -170,7 +178,8 @@ class ForecastsChartApiTest extends RestTestBase
     /**
      * @bug 54921
      * @group forecastapi
-     *
+     * @group forecasts
+     * @group forecastschart
      */
     public function testUsersWithNoDataChartContainsUsers()
     {
@@ -191,6 +200,9 @@ class ForecastsChartApiTest extends RestTestBase
 
     /**
      * @bug 55246
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testNoGroupByReturnsGroupedByForecast()
     {
