@@ -186,18 +186,23 @@ class UploadFile
 				if(copy($oldStyleSource, $source)) {
 					// delete the old
 					if(!unlink($oldStyleSource)) {
-                        $this->setError('error', "upload_file could not unlink [ {$oldStyleSource} ]");
+                        $GLOBALS['log']->error("upload_file could not unlink [ {$oldStyleSource} ]");
 					}
 				} else {
-                    $this->setError('error', "upload_file could not copy [ {$oldStyleSource} ] to [ {$source} ]");
+                    $GLOBALS['log']->error("upload_file could not copy [ {$oldStyleSource} ] to [ {$source} ]");
+                    return false;
 				}
+			} else {
+			    return false;
 			}
 		}
 
 		$destination = "upload://$new_id";
 		if(!copy($source, $destination)) {
-            $this->setError('error', "upload_file could not copy [ {$source} ] to [ {$destination} ]");
+            $GLOBALS['log']->error("upload_file could not copy [ {$source} ] to [ {$destination} ]");
+            return false;
 		}
+		return true;
 	}
 
 	/**

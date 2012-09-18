@@ -47,6 +47,10 @@ class RestService extends ServiceBase {
             
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
                 $this->authenticateUser();
+                // This is needed to load in the app_strings and the app_list_strings and the such
+                $this->loadUserEnvironment();
+            } else {
+                $this->loadGuestEnvironment();
             }
             
             if ( $route == false ) {
