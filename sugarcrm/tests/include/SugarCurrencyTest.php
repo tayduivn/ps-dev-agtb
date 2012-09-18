@@ -141,12 +141,11 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * @access public
      */
-    /*
     public function testCurrencyUserLocale()
     {
         $currency = SugarCurrency::getUserLocaleCurrency();
         $this->assertInstanceOf('Currency',$currency);
-    }*/
+    }
 
 
     /**
