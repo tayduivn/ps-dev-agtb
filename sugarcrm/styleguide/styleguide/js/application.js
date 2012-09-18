@@ -50,7 +50,7 @@
         if(e.keyCode === 27) 
           $(".alert-top").remove();
     })
-
+  
     // add tipsies to grid for scaffolding (styleguide only)
     if ($('#grid-system').length) {
       $('#grid-system').tooltip({
@@ -95,15 +95,42 @@
     // toggle more hide
     $('.more').toggle(
       function (e) {
-    		$(this).parent().prev('.extend').removeClass('hide');
+    		$(this).parent().parent().prev('.extend').removeClass('hide');
     		$(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
     		return false;  
       },
       function (e) {
-      		$(this).parent().prev('.extend').addClass('hide');
-      		$(this).html('More &nbsp;<i class="icon-caret-down"></i>');
+      		$(this).parent().parent().prev('.extend').addClass('hide');
+      		$(this).html('. . .');
       		return false;  
     })
+    
+    // toggle more hide
+    $('.filter').toggle(
+      function (e) {
+    		$(this).parent().find('.extend').removeClass('hide');
+    		$(this).html('Filter &nbsp;<i class="icon-caret-up"></i>');
+    		return false;  
+      },
+      function (e) {
+      		$(this).parent().find('.extend').addClass('hide');
+      		$(this).html('Filter &nbsp;<i class="icon-caret-down"></i>');
+      		return false;  
+    })
+    
+    // toggle more hide
+    $('.edit').toggle(
+      function (e) {
+        $(this).addClass('active');
+    		$(this).parent().parent().parent().find('.extend').removeClass('hide');
+    		return false;  
+      },
+      function (e) {
+        $(this).removeClass('active');
+      		$(this).parent().parent().parent().find('.extend').addClass('hide');
+      		return false;  
+    })
+    
     // toggle more hide
     $('.commented .more').toggle(
       function (e) {
@@ -150,27 +177,48 @@
     // editable example
     $('.dblclick').hover(
       function () {
-        $(this).before('<span class="span2" style="border-right: none; position: absolute; top: -2px; left: -16px; width: 15px"><i class="icon-pencil icon-sm"></i></span>');
+        $(this).before('<span class="editble"><i class="icon-pencil icon-sm"></i></span>');
       },
       function () { 
-        $('span.span2').remove(); 
+        $('span.editble').remove(); 
       }
     )
-    
-})
-    
+ 
     
 
     $(".omnibar").toggle(
       function (e) {
    		$(this).addClass('active');
-   		$(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right">Send to <a href="">Everyone</a> &nbsp;</div>'); 
+   		$(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>'); 
    		return false;
       },
       function (e) {
         $(this).removeClass('active');
         $('.inputactions').remove();
       		return false;  
+    })
+    
+    $('.addme').on('click',
+      function () {
+        $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
+        $('.removeme').on('click',
+          function () {
+            $(this).parent('.filtered-body').remove();
+            return false;
+        })
+        $(this).parent().after('<div class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></div>');
+        $('.addme').on('click',
+          function () {
+            $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
+            $('.removeme').on('click',
+              function () {
+                $(this).parent('.filtered-body').remove();
+                return false;
+            })
+            $(this).parent().after('<div class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></div>');
+            return false;
+        })
+        return false;
     })
 
     $('.actions').find('a[data-toggle=tab]').on('click', function (e) {
@@ -219,9 +267,7 @@
     $("[rel=popover]").popover()
     $("[rel=popoverTop]").popover({placement: "top"})
     $("[rel=popoverBottom]").popover({placement: "bottom"})
-
     $('#moduleActivity .form-search select').chosen()
-
-    $('#moduleActivity .form-search input').quicksearch('ul.results li')
-
+    $('#moduleActivity .form-search input').quicksearch('ul.results li')  
+  })  
 }(window.jQuery)
