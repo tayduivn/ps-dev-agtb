@@ -13,8 +13,8 @@
         'drop .sayit': 'dropAttachment',
         'dragstart .activitystream-attachment': 'saveAttachment',
         'click .deleteRecord': 'deleteRecord',
-        'mouseenter .hasDeleteButton': 'showDeleteButton',
-        'mouseleave .hasDeleteButton': 'hideDeleteButton',
+        //'mouseenter .hasDeleteButton': 'showDeleteButton',
+        //'mouseleave .hasDeleteButton': 'hideDeleteButton',
         'click [name=show_more_button]': 'showMoreRecords',
         'keyup .sayit': 'getEntities',
         'blur .sayit': 'hideTypeahead',
@@ -98,7 +98,7 @@
 
     showAddComment: function(event) {
         event.preventDefault();
-        this.$(event.currentTarget).closest('li').find('.activitystream-comment').show();
+        this.$(event.currentTarget).closest('li').find('.activitystream-comment').toggle();
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
 
@@ -233,6 +233,7 @@
         }});
     },
 
+    /*
     showDeleteButton: function(event) {
         event.preventDefault();
         this.$(event.currentTarget).closest('li').find('.deleteRecord').css('display', 'block');
@@ -242,7 +243,7 @@
         event.preventDefault();
         this.$(event.currentTarget).closest('li').find('.deleteRecord').hide();
     },
-
+	*/
     deleteRecord: function(event) {
         var self = this,
         recordId = this.$(event.currentTarget).data('id'),
@@ -481,9 +482,10 @@
                 model.set("activity_data", activity_data);
             }
 
-            if (comments.length > 2) {
-                comments[0]['_starthidden'] = true;
-                comments[comments.length - 3]['_stophidden'] = true;
+            if (comments.length > 1) {
+                comments[1]['_starthidden'] = true;
+                comments[comments.length - 1]['_stophidden'] = true;
+                comments[comments.length - 1]['_morecomments'] = comments.length - 1;
             }
             _.each(comments, function(comment) {
                 comment.value = comment.value.replace(pattern, function(str, module, id, text) {
