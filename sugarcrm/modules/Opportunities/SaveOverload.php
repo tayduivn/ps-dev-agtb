@@ -56,13 +56,14 @@ function perform_save(&$focus){
 
     if ($timedate->check_matching_format($focus->date_closed, TimeDate::DB_DATE_FORMAT)) {
         $date_close_db = $focus->date_closed;
-        $date_close_datetime = $timedate->fromDbDate($focus->date_closed);
-        $focus->date_closed_timestamp = $date_close_datetime->getTimestamp();
     } else {
         $date_close_db = $timedate->to_db_date($focus->date_closed);
-        $focus->date_closed_timestamp = $focus->date_closed->getTimestamp();
     }
 
+    if(!empty($date_close_db)) {
+        $date_close_datetime = $timedate->fromDbDate($date_close_db);
+        $focus->date_closed_timestamp = $date_close_datetime->getTimestamp();
+    }
 
     // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity
     if(is_null($focus->best_case) || strval($focus->best_case) === "") {

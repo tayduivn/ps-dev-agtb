@@ -376,7 +376,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         $sql = "select u.user_name, sum(amount) as amount from opportunities o left join timeperiods t
         on t.start_date_timestamp < o.date_closed_timestamp and t.end_date_timestamp >= o.date_closed_timestamp
 INNER JOIN users u ON o.assigned_user_id = u.id and (u.reports_to_id = '". $user_id. "' OR u.id = '". $user_id. "')
-where t.timeperiod_id = '" . $this->getArg('timeperiod_id') . "'
+where t.id = '" . $this->getArg('timeperiod_id') . "'
 GROUP BY u.id;";
 
         $db = DBManagerFactory::getInstance();
