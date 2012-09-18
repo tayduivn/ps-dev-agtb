@@ -27,12 +27,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+include_once("include/Link2Tag.php");
 
 /**
  * "Activity Stream" prototype using mysql.
  * It doesn't support 'related' activities yet.
- *
- * @author hqi
  *
  */
 class ActivityStream extends SugarBean {
@@ -81,7 +80,7 @@ class ActivityStream extends SugarBean {
         $values['id'] = $this->db->massageValue($id, $fieldDefs['id']);
         $values['activity_id']= $this->db->massageValue($this->id, $fieldDefs['activity_id']);
         $text = strip_tags($text);
-        $values['value']= $this->db->massageValue($this->parseUrls($text), $fieldDefs['value']);
+        $values['value']= $this->db->massageValue(Link2Tag::convert($text), $fieldDefs['value']);
         $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
         $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
 
@@ -161,7 +160,7 @@ class ActivityStream extends SugarBean {
         }
 
         $text = strip_tags($text);
-        $activityData = array('value'=>$this->parseUrls($text));
+        $activityData = array('value'=>Link2Tag::convert($text));
         return $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
     }
 
@@ -209,8 +208,8 @@ class ActivityStream extends SugarBean {
      */
     protected function addActivity($bean, $activityType, $activityData = array()) {
         global $current_user;
-        $this->target_id = $bean->id;
-        $this->target_module = $bean->module_name;
+        $this->target_id = !empty($bean) ? $bean->id : '';
+        $this->target_module = !empty($bean) ? $bean->module_name : '';
         $this->activity_data = json_encode($activityData);
         $this->activity_type = $activityType;
         $this->date_created = TimeDate::getInstance()->nowDb();
@@ -396,9 +395,15 @@ class ActivityStream extends SugarBean {
      * @param $date
      */
     protected function updateLastActivityDate($bean, $date){
-        if($bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date='" . $date .  "' WHERE id= '{$bean->id}'");
+        if(!empty($bean) && $bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date='" . $date .  "' WHERE id= '{$bean->id}'");
     }
-
+    
+    /**
+     * This function will remove our video or image tags so we need to disable it.
+     * @see SugarBean::cleanBean()
+     */
+    function cleanBean() {
+    }
 }
 
 ?>
