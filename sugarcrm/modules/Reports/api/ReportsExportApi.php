@@ -56,37 +56,57 @@ class ReportsExportApi extends SugarApi {
         $args['module'] = 'Reports';
         $GLOBALS['disable_date_format'] = FALSE;
 
-        // first lets check thecache  and see if this user already has a report for the export type we want
-        
-        $filename = sugar_cache_retrieve($args['record'] . '-' . $GLOBALS['current_user']->id);
 
+        $method = 'export' . ucwords($args['export_type']);
 
-        if(empty($filename)) {
-            $saved_report = $this->loadBean($api, $args, 'view');
-
-            $method = 'export' . ucwords($args['export_type']);
-
-            if(!method_exists($this, $method)) {
-                throw new SugarApiExceptionNoMethod('Export Type Does Not Exists');
-            }
-
-            $filename = $this->$method($saved_report);
-
+        if(!method_exists($this, $method)) {
+            throw new SugarApiExceptionNoMethod('Export Type Does Not Exists');
         }
 
+        $saved_report = $this->loadBean($api, $args, 'view');
+        
+        return $this->$method($saved_report);
 
-        $dl = new DownloadFile();
-        $contents = $dl->getFileByFilename($filename);
-        if(empty($contents)) {
-            throw new SugarApiException('File contents empty.');
+    }
+
+    /**
+     * Export a Base64 PDF Report
+     * @param SugarBean report
+     * @return file contents
+     */
+    protected function exportBase64(SugarBean $report)
+    {
+        global  $beanList, $beanFiles;
+        global $sugar_config,$current_language;
+        require_once('modules/Reports/templates/templates_pdf.php');
+        $contents = '';
+        $report_filename = false;
+        if($report->id != null)
+        {
+            //Translate pdf to correct language
+            $reporter = new Report(html_entity_decode($report->content), '', '');
+            $reporter->layout_manager->setAttribute("no_sort",1);
+            //Translate pdf to correct language
+            $mod_strings = return_module_language($current_language, 'Reports');
+
+            //Generate actual pdf
+            $report_filename = template_handle_pdf($reporter, false);
+
+            sugar_cache_put($report->id . '-' . $GLOBALS['current_user']->id, $report_filename, $this->cacheLength * 60);
+         
+            $dl = new DownloadFile();
+            $contents = $dl->getFileByFilename($report_filename);
+            if(empty($contents)) {
+                throw new SugarApiException('File contents empty.');
+            }            
         }
         return array('file_contents' => base64_encode($contents));
     }
 
     /**
-     * Export a PDF Report
-     * @param SugarBean report
-     * @return file contents
+     * Export a Report As PDF
+     * @param SugarBean $report 
+     * @return null
      */
     protected function exportPdf(SugarBean $report)
     {
@@ -105,8 +125,33 @@ class ReportsExportApi extends SugarApi {
             //Generate actual pdf
             $report_filename = template_handle_pdf($reporter, false);
 
-            sugar_cache_put($report->id . '-' . $GLOBALS['current_user']->id, $report_filename, $this->cacheLength * 60);
+
+
+            header("Pragma: public");
+            header("Cache-Control: maxage=1, post-check=0, pre-check=0");
+            header("Content-Type: application/x-pdf");
+            header("Content-Type: application/force-download");
+            header("Content-type: application/octet-stream");
+            header("Content-Disposition: attachment; filename=\"".basename($report_filename)."\";");
+            header("X-Content-Type-Options: nosniff");
+            header("Content-Length: " . filesize($report_filename));
+            header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', time() + 2592000));
+            set_time_limit(0);
+            ob_start();
+
+
+            //BEGIN SUGARCRM flav=int ONLY
+            // awu: stripping out zend_send_file function call, the function changes the filename to be whatever is on the file system
+            if(function_exists('zend_send_file')){
+                zend_send_file($report_filename);
+            }else{
+            //END SUGARCRM flav=int ONLY
+                readfile($report_filename);
+            //BEGIN SUGARCRM flav=int ONLY
+            }
+            //END SUGARCRM flav=int ONLY
+            @ob_end_flush();
         }
-        return $report_filename;
+
     }
 }
