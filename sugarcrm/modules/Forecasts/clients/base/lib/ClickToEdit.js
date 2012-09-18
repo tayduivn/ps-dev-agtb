@@ -83,19 +83,9 @@
 
                     // hold value for use later in case user enters a +/- percentage, or user enters an empty value
                     settings.field.holder = $(original).html();
-                    /*
-                    // format in numeric value
-                    $(this).html(
-                        app.utils.formatNumber(
-                            settings.field.model.get(settings.field.name),
-                            app.user.get('decimal_precision'),
-                            app.user.get('decimal_precision'),
-                            '',
-                            app.user.get('decimal_separator'))
-                    );
-                    */
                 },
                 callback: function(value, settings) {
+                    // if canceled, do nothing
                     if(settings.field.isCancel) {
                         return value;
                     }
