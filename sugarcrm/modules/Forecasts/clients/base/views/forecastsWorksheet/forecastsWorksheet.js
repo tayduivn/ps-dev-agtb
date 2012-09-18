@@ -329,7 +329,12 @@
         var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
 
         $("#expected_opportunities").remove();
-        view.fetchCollection();
+        view.fetchCollection(function(){
+        	self.calculateTotals.call(self);
+            self.createSubViews.call(self);
+            self.includedView.render.call(self);
+            self.overallView.render.call(self);
+        });
         $("#summary").prepend(view.$el);
 
         // fix the style on the rows that contain a checkbox
@@ -348,10 +353,7 @@
         	self.context.forecasts.set({commitButtonEnabled: false});
         }
         
-        this.calculateTotals();
-        this.createSubViews();
-        this.includedView.render();
-        this.overallView.render();
+        
 
         return this;
     },
