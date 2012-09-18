@@ -28,7 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecasts
  */
 class ForecastsChartManagerApiTest extends RestTestBase
 {
@@ -205,18 +204,33 @@ class ForecastsChartManagerApiTest extends RestTestBase
         return $restReply['reply'];
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testChartDataShouldContainTwoUsers()
     {
         $data = $this->runRestCommand();
         $this->assertEquals(2, count($data['values']));
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testPropertyValueNameContainsAdjusted()
     {
         $data = $this->runRestCommand();
         $this->assertContains('(Adjusted)', $data['properties'][0]['value_name']);
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testGoalParetoLabelContainsAdjusted()
     {
         $data = $this->runRestCommand();
@@ -225,6 +239,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testManagerValueIsLikelyAdjustedValueFromWorksheet()
     {
@@ -234,6 +251,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testReporteeValueIsLikelyAdjustedValueFromWorksheet()
     {
@@ -243,6 +263,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testManagerValueIsBestAdjustedValueFromWorksheet()
     {
@@ -252,6 +275,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testReporteeValueIsBestAdjustedValueFromWorksheet()
     {
@@ -261,6 +287,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testManagerValueIsWorstAdjustedValueFromWorksheet()
     {
@@ -270,13 +299,21 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testReporteeValueIsWorstAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand('worst');
         $this->assertEquals(self::$repWorksheet->worst_case, $data['values'][1]['values'][0]);
     }
-    
+
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testThirdReporteeValueZeroWithoutForecastRecord()
     {
 
