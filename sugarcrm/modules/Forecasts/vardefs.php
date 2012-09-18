@@ -616,14 +616,6 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'reportable'=>false,
     'comment' => 'Record deletion indicator'
   ),
-  'forecast' =>
-  array (
-    'name' => 'forecast',
-    'vname' => 'LBL_FORECAST',
-    'type' => 'bool',
-    'default' => '-1',
-    'comment' => 'Boolean indicating whether or not record should be included in forecast'
-  ),
   'commit_stage' =>
   array (
     'name' => 'commit_stage',
@@ -631,7 +623,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'type' => 'enum',
     'options' => 'commit_stage_dom',
     'len' => '20',
-    'comment' => 'Worksheet Placeholder for the forecast commit category: Include, Likely, Omit etc.',
+    'comment' => 'The bucket stage that the opportunity belongs to',
   ),
   'op_probability' =>
   array (
@@ -682,12 +674,6 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'name' => 'assigned_user_id',
         'vname' => 'LBL_ASSIGNED_USER_ID',
         'type' => 'id',
-    ),
-    array(
-        'name' => 'forecast',
-        'type' => 'toggle',
-        'vname' => 'LBL_FORECAST',
-        'source' => 'non-db',
     ),
     array(
         'name' => 'commit_stage',

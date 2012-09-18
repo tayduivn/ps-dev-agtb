@@ -55,7 +55,6 @@
         if (field.name == 'category') {
             var showBuckets = app.config.show_buckets == 1;
             field.def.options = showBuckets ? (app.config.buckets_dom || 'commit_stage_dom') : 'forecasts_filters_category';
-//            field.value = "70"; // INVESTIGATE: this should work to set the value of the select field, but it is getting reset somewhere in sidecar processing
             field.def.value = showBuckets ? '100' : '1'; // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
             field.def.multi = showBuckets;
             field = this._setUpCategoryField(field);

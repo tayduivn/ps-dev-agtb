@@ -184,9 +184,9 @@ describe("The expected opportunities view tests", function(){
         it("should update the model on change:expected_commit_stage", function() {
             var moduleName = "ForecastSchedule", bean, collection;
             dm.declareModel(moduleName, metadata.modules[moduleName]);
-            forecastSchedule = dm.createBean(moduleName, {  id: "xyz", include_expected : 0, expected_commit_stage : 50, expected_amount : 100, expected_best_case : 100, expected_likely_case : 100 });
+            forecastSchedule = dm.createBean(moduleName, {  id: "xyz", expected_commit_stage : 'exclude', expected_amount : 100, expected_best_case : 100, expected_likely_case : 100 });
             forecastSchedule.hasChanged = function (attr) { return true; };
-            forecastSchedule.save = function() { this.set('expected_commit_stage', '100'); };
+            forecastSchedule.save = function() { this.set('expected_commit_stage', 'include'); };
 
             var collection = new Backbone.Collection([forecastSchedule]);
             view._collection = collection;
@@ -199,10 +199,9 @@ describe("The expected opportunities view tests", function(){
 
             view.context = context;
             view.bindDataChange();
-            forecastSchedule.set('expected_commit_stage', "100");
+            forecastSchedule.set('expected_commit_stage', "include");
             view._collection.trigger("change:expected_commit_stage");
-            expect(forecastSchedule.get("expected_commit_stage")).toEqual("100");
-            expect(forecastSchedule.get("include_expected")).toEqual("1");
+            expect(forecastSchedule.get("expected_commit_stage")).toEqual("include");
         });
     });
 

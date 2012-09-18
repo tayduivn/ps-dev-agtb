@@ -64,7 +64,6 @@ class ForecastWorksheet extends SugarBean {
     	{
 	        //Update the Opportunities bean
 	        $opp = BeanFactory::getBean('Opportunities', $this->id);
-	        $opp->forecast = ($this->forecast) ? 1 : 0;
 	        $opp->probability = $this->probability;
 	        $opp->best_case = $this->best_case;
 	        $opp->sales_stage = $this->sales_stage;
@@ -76,7 +75,6 @@ class ForecastWorksheet extends SugarBean {
 		$worksheet  = BeanFactory::getBean('Worksheet', $worksheetID);
 		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
 		$worksheet->user_id = $this->assigned_user_id;
-		$worksheet->forecast = ($this->forecast) ? 1 : 0;
         $worksheet->best_case = $this->best_case;
         $worksheet->likely_case = $this->amount;
         $worksheet->op_probability = $this->probability;

@@ -82,20 +82,9 @@
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(model, index) {
 
-
-                    if(model.hasChanged("include_expected") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
-                        this._collection.url = this.url;
-                        model.save();
-                    }
-
-                    if(model.hasChanged("expected_commit_stage")) {
-                        if(model.get("expected_commit_stage") == '100') {
-                            this._collection.models[index].set("include_expected", '1');
-                        } else {
-                            this._collection.models[index].set("include_expected", '0');
-                        }
-                        this._collection.url = this.url;
-                        model.save();
+                    if(model.hasChanged("expected_commit_stage") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
+                       this._collection.url = this.url;
+                       model.save();
                     }
 
                 }, this);
@@ -105,20 +94,16 @@
 
     _setForecastColumn: function(fields) {
         var self = this;
-        var forecastField, commitStageField;
 
         _.each(fields, function(field) {
-            if (field.name == "include_expected") {
-                field.enabled = app.config.show_buckets == 0;
-                forecastField = field;
-            } else if (field.name == "expected_commit_stage") {
+            if (field.name == "expected_commit_stage") {
                 field.enabled = app.config.show_buckets != 0;
                 field.options = app.config.buckets_dom || 'commit_stage_dom';
                 field.view = (self.editableWorksheet === true) ? 'edit' : 'default';
-                commitStageField = field;
             }
         });
-        return (app.config.show_buckets == 1) ? forecastField : commitStageField;
+
+        return app.config.show_buckets;
     },
 
     /**

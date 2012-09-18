@@ -353,16 +353,15 @@ $app_list_strings = array (
   ),
   'commit_stage_dom' =>
   array (
-    '100' => 'Include',
-    '70' => 'Likely',
-    '50' => 'Omit',
+    'include' => 'Include',
+    'exclude' => 'Exclude'
   ),
   'commit_stage_expanded_dom' =>
   array (
-    '100' => 'Commit',
-    '80' => 'Stretch',
-    '60' => 'Risk',
-    '50' => 'Omit'
+    'commit' => 'Commit',
+    'stretch' => 'Stretch',
+    'risk' => 'Risk',
+    'omit' => 'Omit'
   ),
   'in_total_group_stages' => array (
     'Draft' => 'Draft',

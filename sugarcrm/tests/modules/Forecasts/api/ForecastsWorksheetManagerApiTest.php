@@ -402,10 +402,9 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $tmpWorksheet->forecast_type = "Rollup";
         $tmpWorksheet->related_forecast_type = "Direct";
         $tmpWorksheet->timeperiod_id = self::$timeperiod->id;
-        $tmpWorksheet->best_case = $tmpForecast->best_case + 100;
-        $tmpWorksheet->likely_case = $tmpForecast->likely_case + 100;
-        $tmpWorksheet->worst_case = $tmpForecast->worst_case - 100;
-        $tmpWorksheet->forecast = 1;
+        $tmpWorksheet->best_case = $tmpForecast->best_case+100;
+        $tmpWorksheet->likely_case = $tmpForecast->likely_case+100;
+        $tmpWorksheet->worst_case = $tmpForecast->worst_case-100;
         $tmpWorksheet->save();
 
         $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);

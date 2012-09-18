@@ -173,16 +173,6 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
        'len' => '26,6',
    ),
 
-  /*
-   * include_expected is used to determine whether or not the expected values should be included in the forecast
-   */
-   'include_expected' =>
-   array(
-       'name' => 'include_expected',
-       'vname' => 'LBL_INCLUDE_EXPECTED',
-       'type' => 'bool',
-       'default' => '0',
-   ),
     /*
      * expected_commit_stage is used to specify forecast commit category (Include, Likely, Omit etc.)
      */

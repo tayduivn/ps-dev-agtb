@@ -54,7 +54,6 @@ class ForecastsChartApiTest extends RestTestBase
         $opp1 = SugarTestOpportunityUtilities::createOpportunity();
         $opp1->assigned_user_id = self::$user->id;
         $opp1->probability = '85';
-        $opp1->forecast = -1;
         $opp1->amount = 1200;
         $opp1->best_case = 1300;
         $opp1->worst_case = 1100;
