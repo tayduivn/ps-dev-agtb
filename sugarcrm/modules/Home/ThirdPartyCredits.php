@@ -83,12 +83,6 @@ $credits = array(
             'description' => 'English (UK) Language Pack by Provident CRM',
             'website' => 'www.providentcrm.com',
         ),
-        'et_EE' => array(
-            'name' => 'Estonian Language Pack (Discontinued with the 6.5.6 release)',
-            'author' => 'Keynote',
-            'description' => 'Estonian Language Pack by Keynote',
-            'website' => 'www.keynote.ee',
-        ),
 
         'fr_FR' => array(
             'name' => 'French Language Pack',
