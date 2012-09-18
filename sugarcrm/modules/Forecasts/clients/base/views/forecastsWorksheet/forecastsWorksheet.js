@@ -353,8 +353,6 @@
         	self.context.forecasts.set({commitButtonEnabled: false});
         }
         
-        
-
         return this;
     },
 
