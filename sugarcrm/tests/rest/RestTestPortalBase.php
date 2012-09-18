@@ -72,6 +72,8 @@ class RestTestPortalBase extends RestTestBase {
         $this->contact->portal_password = User::getPasswordHash("unittest");
         $this->contact->save();
         
+        $this->portalGuy = $this->contact;
+
         // Adding it to the contacts array makes sure it gets deleted when done
         $this->contacts[] = $this->contact;
         $GLOBALS['db']->commit();

@@ -69,19 +69,12 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $accountNum = $i%2;
             }
             $contact->accounts->add(array($this->accounts[$accountNum]));
-            if ( $i == 5 ) {
-                // This guy is our guy
-                $contact->portal_active = true;
-                $contact->portal_name = "unittestportal";
-                $contact->portal_password = User::getPasswordHash("unittest");
-                
-                // Add it to two accounts, just to make sure we get that much visibility
-                $contact->accounts->add(array($this->accounts[1]));
-
-                $this->portalGuy = $contact;
-            }
             $contact->save();
         }
+
+        $this->portalGuy->load_relationship('accounts');
+        $this->portalGuy->accounts->add(array($this->accounts[1], $this->accounts[2]));
+
         // Add some Opportunities to make sure we can't get to them.
         for ( $i = 0 ; $i < 3 ; $i++ ) {
             $opp = new Opportunity();
@@ -243,9 +236,9 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $this->assertEquals($this->contacts[1]->id,$restReply['reply']['id']);
 
         // Positive test: Should be able to change the name of our Contact
-        $restReply = $this->_restCall("Contacts/".$this->contacts[5]->id,json_encode(array('last_name'=>'UnitTestMyGuy')),'PUT');
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id,json_encode(array('last_name'=>'UnitTestMyGuy')),'PUT');
         $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
-        $restReply = $this->_restCall("Contacts/".$this->contacts[5]->id);
+        $restReply = $this->_restCall("Contacts/".$this->portalGuy->id);
         $this->assertEquals('UnitTestMyGuy',$restReply['reply']['last_name']);
 
         // Negative test: Should not be able to create a new Contact
@@ -514,19 +507,11 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $accountNum = $i%2;
             }
             $contact->accounts->add(array($this->accounts[$accountNum]));
-            if ( $i == 5 ) {
-                // This guy is our guy
-                $contact->portal_active = true;
-                $contact->portal_name = "unittestportal";
-                $contact->portal_password = User::getPasswordHash("unittest");
-                
-                // Add it to two accounts, just to make sure we get that much visibility
-                $contact->accounts->add(array($this->accounts[1]));
-
-                $this->portalGuy = $contact;
-            }
             $contact->save();
         }
+
+        $this->portalGuy->load_relationship('accounts');
+        $this->portalGuy->accounts->add(array($this->accounts[1], $this->accounts[2]));
 
         $GLOBALS['db']->commit();
 
@@ -591,17 +576,11 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             $contact->last_name = create_guid();
             $contact->title = sprintf("%08d",($i+1));
             $this->contacts[$i] = $contact;
-
-            if ( $i == 2 ) {
-                // This guy is our guy
-                $contact->portal_active = true;
-                $contact->portal_name = "unittestportal";
-                $contact->portal_password = User::getPasswordHash("unittest");
-                
-                $this->portalGuy = $contact;
-            }
             $contact->save();
         }
+
+        $this->portalGuy->load_relationship('accounts');
+        $this->portalGuy->accounts->add(array($this->accounts[1], $this->accounts[2]));
 
         // How about some cases?
         for ( $i = 0 ; $i < 3 ; $i++ ) {

@@ -80,6 +80,7 @@ class UnifiedSearchApi extends SugarApi {
             }
         }
 
+        $options['selectFields'] = array('id');
         if ( !empty($args['order_by']) ) {
             if ( strpos($args['order_by'],',') !== 0 ) {
                 // There is a comma, we are ordering by more than one thing
@@ -108,7 +109,7 @@ class UnifiedSearchApi extends SugarApi {
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
                 }
 */
-                
+                $options['selectFields'][] = $column;
                 $orderByData[$column] = ($direction=='ASC'?true:false);
                 $orderByArray[] = $column.' '.$direction;
             }
@@ -123,6 +124,7 @@ class UnifiedSearchApi extends SugarApi {
             $orderByData['date_modified'] = false;
             $orderByData['id'] = false;
             $options['orderBySetByApi'] = false;
+            $options['selectFields'][] = 'date_modified';
         }
         $options['orderByArray'] = $orderByData;
         $options['orderBy'] = $orderBy;
@@ -291,8 +293,8 @@ class UnifiedSearchApi extends SugarApi {
 
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
         $returnedRecords = array();
-        foreach ( $results as $result ) {
-            $record = BeanFactory::getBean($result->getModule(), $result->getId());
+        foreach ( $results as $record ) {
+            // $record = BeanFactory::getBean($result->getModule(), $result->getId());
 
             // if we cant' get the bean skip it
             if($record === false)
@@ -353,8 +355,11 @@ class UnifiedSearchApi extends SugarApi {
             'favorites'=>$options['favorites'],
             'orderBy'=>$options['orderBy'],
             'fields'=>$options['fieldFilters'],
+            'selectFields'=>$options['selectFields'],
             'limitPerModule'=>$options['limitPerModule'],
             'allowEmptySearch'=>true,
+            'distinct'=>'DISTINCT', // Needed until we get a query builder
+            'return_beans'=>true,
             );
 
         $multiModule = false;

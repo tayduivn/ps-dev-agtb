@@ -60,20 +60,11 @@ class RestBug54864Test extends RestTestPortalBase {
             $contact->load_relationship('accounts');
             $accountNum = $i;
             $contact->accounts->add(array($this->accounts[$accountNum]));
-            if ( $i == 2 ) {
-                // This guy is our guy
-                $contact->portal_active = true;
-                $contact->portal_name = "unittestportal";
-                $contact->portal_password = User::getPasswordHash("unittest");
-                
-                // Add it to two accounts, just to make sure we get that much visibility
-                $contact->accounts->add(array($this->accounts[1]));
-
-                $this->portalGuy = $contact;
-            }
+            
             $contact->save();
         }
-
+        $this->portalGuy->load_relationship('accounts');
+        $this->portalGuy->accounts->add(array($this->accounts[1], $this->accounts[2]));
         $GLOBALS['db']->commit();
         
 
@@ -84,12 +75,16 @@ class RestBug54864Test extends RestTestPortalBase {
         
         $this->portalGuy->accounts->delete($this->portalGuy->id,$this->accounts[1]);
 
+        $GLOBALS['db']->commit();
+
         $restReply = $this->_restCall("me");
         $this->assertFalse(in_array($this->accounts[1]->id,$restReply['reply']['current_user']['account_ids']),'The first account id is not missing from the list when it should be #2');
         $this->assertTrue(in_array($this->accounts[2]->id,$restReply['reply']['current_user']['account_ids']),'The second account id is missing from the list #2');
 
         $this->portalGuy->accounts->delete($this->portalGuy->id,$this->accounts[2]);
-
+        
+        $GLOBALS['db']->commit();
+        
         $restReply = $this->_restCall("me");
         $this->assertFalse(in_array($this->accounts[1]->id,$restReply['reply']['current_user']['account_ids']),'The first account id is not missing from the list when it should be #3');
         $this->assertFalse(in_array($this->accounts[2]->id,$restReply['reply']['current_user']['account_ids']),'The second account id is not missing from the list when it should be #3');

@@ -360,4 +360,66 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
         }
         return $out;
     }
+
+    /*
+     * Remove a field from the layout
+     * 
+     * @param string $fieldName Name of the field to remove
+     * @return boolean True if the field was removed; false otherwise
+     */
+    function removeField ($fieldName)
+    {
+        // Set the return result
+        $result = false;
+        
+        // Get our original view defs
+        $originalDefs = $this->getImplementation()->getOriginalViewdefs();
+        
+        // Get the panel label
+        $nestedDefs = $this->getNestedDefs($originalDefs, $this->_view);
+        $panelKey = key($nestedDefs['panels']);
+        $label = isset($nestedDefs['panels'][$panelKey]['label']) ? $nestedDefs['panels'][$panelKey]['label'] : $panelKey;
+        
+        // Loop and find
+        if (isset($this->_viewdefs['panels'][$label]) && is_array($this->_viewdefs['panels'][$label])) {
+            foreach ($this->_viewdefs['panels'][$label] as $rowIndex => $row) {
+                if (is_array($row)) {
+                    foreach ($row as $fieldIndex => $field) {
+                        if ($field == $fieldName) {
+                            $this->_viewdefs['panels'][$label][$rowIndex][$fieldIndex] = MBConstants::$EMPTY['name'];
+                            $result = true;
+                            break 2;
+                        }
+                    }
+                }
+            }
+            
+            // Now check to see if any of our rows are totally empty, and if they
+            // are, pluck them completely
+            $newRows = array();
+            foreach ($this->_viewdefs['panels'][$label] as $rowIndex => $row) {
+                if (is_array($row)) {
+                    $cols = count($row);
+                    $empties = 0;
+                    foreach ($row as $field) {
+                        if ($field == MBConstants::$EMPTY['name']) {
+                            $empties++;
+                        }
+                    }
+                    
+                    if ($empties == $cols) {
+                        // All empties, remove it and keep looping
+                        //unset($this->_viewdefs['panels'][$label][$rowIndex]);
+                        continue;
+                    }
+                    
+                    $newRows[] = $row;
+                }
+            }
+            
+            $this->_viewdefs['panels'][$label] = $newRows;
+        }
+        
+        return $result;
+    }
 }
