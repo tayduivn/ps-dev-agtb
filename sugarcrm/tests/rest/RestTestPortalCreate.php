@@ -37,7 +37,7 @@ class RestTestPortalCreate extends RestTestPortalBase
         $this->account->name = "UNIT TEST account - " . create_guid();
         $this->account->billing_address_postalcode = sprintf("%08d", 1);
         $this->account->save();
-        array_push($this->accounts,$this->account);
+        $this->accounts[] = $this->account;
 
         $this->contact->load_relationship('accounts');
         // relate
@@ -74,7 +74,7 @@ class RestTestPortalCreate extends RestTestPortalBase
         $relates = $this->case->get_linked_beans('contacts', 'Contact');
         $this->assertEquals($relates[0]->id, $this->contact->id);
         // Make sure new case is cleaned up
-        array_push($this->cases,$this->case);
+        $this->cases[] = $this->case;
         // create bug
         $bugReply = $this->_restCall("Bugs/",
             json_encode(array('name' => 'UNIT TEST Bug')),
@@ -83,7 +83,7 @@ class RestTestPortalCreate extends RestTestPortalBase
         $this->bug = new Bug();
         $this->bug->retrieve($bugReply['reply']['id']);
         // Make sure new bug is cleaned up
-        array_push($this->bugs,$this->bug);
+        $this->bugs[] = $this->bug;
         $relates = $this->bug->get_linked_beans('contacts', 'Contact');
         $this->assertEquals($relates[0]->id, $this->contact->id);
 
@@ -110,7 +110,7 @@ class RestTestPortalCreate extends RestTestPortalBase
             json_encode(array('name' => 'UNIT TEST Case')),
             'POST');
 
-        $this->assertEquals("create_not_authorized",$caseReply['reply']['error']);
+        $this->assertEquals("not_authorized",$caseReply['reply']['error']);
         $this->assertEquals(403,$caseReply['info']['http_code'],"HTTP Status");
         // Error message should mention the module name
         $this->assertContains('Cases',$caseReply['reply']['error_message'], "The error message should mention the module name.");

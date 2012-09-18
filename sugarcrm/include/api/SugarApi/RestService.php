@@ -238,23 +238,22 @@ class RestService extends ServiceBase {
         if ( is_a($exception,"SugarApiException") ) {
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getErrorLabel();
-            $description = $exception->getDescription();
-            $userMessage = $exception->getUserMessage();
+            $message = $exception->getMessage();
         } else if ( is_a($exception,"OAuth2ServerException") ) {
+            //The OAuth2 Server we are using has a slightly different exception API
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getMessage();
-            $description = $exception->getDescription();
+            $message = $exception->getDescription();
         } else {
             $httpError = 500;
             $errorLabel = 'unknown_error';
-            $description = $exception->getMessage();
+            $message = $exception->getMessage();
         }
         header("HTTP/1.1 {$httpError}");
 
-        $GLOBALS['log']->error('An unknown exception happened: ('.$errorLabel.')'.$description);
-        
-        // TODO: Translate error messages
-        $reply = "ERROR: ".$description;
+        $GLOBALS['log']->error('An exception happened: ('.$errorLabel.')'.$message);
+
+        $reply = "ERROR: ".$message;
 
         $crazyEncoding = false;
         // For edge cases when an HTML response is needed as a wrapper to JSON
@@ -276,12 +275,10 @@ class RestService extends ServiceBase {
         $replyData = array(
             'error'=>$errorLabel,
         );
-        if ( !empty($description) ) {
-            $replyData['error_description'] = $description;
+        if( !empty($message) ) {
+            $replyData['error_message'] = $message;
         }
-        if( !empty($userMessage) ) {
-            $replyData['error_message'] = $userMessage;
-        }
+
         echo(json_encode($replyData));
         die();
     }

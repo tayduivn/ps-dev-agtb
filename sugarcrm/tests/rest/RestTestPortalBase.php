@@ -27,13 +27,13 @@ require_once('tests/rest/RestTestBase.php');
 
 class RestTestPortalBase extends RestTestBase {
 
-protected $accounts = array();
-protected $contacts = array();
-protected $opps = array();
-protected $cases = array();
-protected $bugs = array();
-protected $notes = array();
-protected $kbdocs = array();
+    protected $accounts = array();
+    protected $contacts = array();
+    protected $opps = array();
+    protected $cases = array();
+    protected $bugs = array();
+    protected $notes = array();
+    protected $kbdocs = array();
 
     public function setUp()
     {
