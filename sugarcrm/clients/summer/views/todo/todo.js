@@ -236,6 +236,13 @@
     },
     _render: function() {
         app.view.View.prototype._render.call(this);
+
+        // This will move the entire widget's html to the footer - currently this is needed since the footer
+        // buttons are part of footer.js, but to-dos need to have their own view/template.
+        // TODO: change the structure of the to-do widget (button field that calls a layout with views)
+        if( $(".instance-picker")[0] && $(".instance-picker").siblings(".todo-list-widget").length == 0 ) {
+            $(".instance-picker").after(this.$el);
+        }
     },
     getTaskType: function(todoDate) {
         var todayBegin = new Date().setHours(0,0,0,0),
