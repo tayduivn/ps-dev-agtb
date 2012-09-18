@@ -120,7 +120,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
 
         // Check saving with the user's offset
@@ -129,7 +129,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving in GMT
         $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
@@ -137,7 +137,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving with the user's offset (in JS format)
         $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
@@ -145,7 +145,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving in GMT (in JS format)
         $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
@@ -153,7 +153,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
 
         $GLOBALS['current_user']->setPreference('timezone','Europe/Helsinki');
@@ -172,7 +172,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving without offset (in JS format)
         $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
@@ -180,7 +180,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
 
         // Check saving with the user's offset
@@ -189,7 +189,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
 
         // Check saving in GMT
         $restReply = $this->_restCall("Meetings/{$this->meeting->id}",
@@ -197,7 +197,7 @@ class RestDateTimeTest extends RestTestBase {
                                       'PUT');
         $ret = $GLOBALS['db']->query("SELECT date_end FROM meetings WHERE id = '{$this->meeting->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-12-13 17:15:00',$row['date_end']);
+        $this->assertEquals('2012-12-13 17:15:00',date('Y-m-d H:i:s', strtotime($row['date_end'])));
         
     }
 

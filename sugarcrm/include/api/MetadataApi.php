@@ -283,21 +283,21 @@ class MetadataApi extends SugarApi {
         $data['acl'] = array();
 
         foreach ($data['full_module_list'] as $modName) {
-            $bean = BeanFactory::newBean($module);
+            $bean = BeanFactory::newBean($modName);
             if (!$bean || !is_a($bean,'SugarBean') ) {
                 // There is no bean, we can't get data on this
                 continue;
             }
-            $data['acl'][$module] = $mm->getAclForModule($module,$GLOBALS['current_user']->id);
+            $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
             // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
             if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
-                $data['acl'][$module]['admin'] = 'no';
-                $data['acl'][$module]['developer'] = 'no';
-                $data['acl'][$module]['edit'] = 'no';
-                $data['acl'][$module]['delete'] = 'no';
-                $data['acl'][$module]['import'] = 'no';
-                $data['acl'][$module]['export'] = 'no';
-                $data['acl'][$module]['massupdate'] = 'no';
+                $data['acl'][$modName]['admin'] = 'no';
+                $data['acl'][$modName]['developer'] = 'no';
+                $data['acl'][$modName]['edit'] = 'no';
+                $data['acl'][$modName]['delete'] = 'no';
+                $data['acl'][$modName]['import'] = 'no';
+                $data['acl'][$modName]['export'] = 'no';
+                $data['acl'][$modName]['massupdate'] = 'no';
             }
         }
 
