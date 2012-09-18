@@ -77,16 +77,17 @@ class RestDateTimeTest extends RestTestBase {
         $GLOBALS['db']->commit();
         
         $restReply = $this->_restCall("Opportunities/{$this->opp->id}");
-        $this->assertEquals('2012-11-10',$restReply['reply']['date_closed']);
+        $this->assertEquals('2012-11-10',$restReply['reply']['date_closed'], "POST REST request comparison failed to match");
 
         $restReply = $this->_restCall("Opportunities/{$this->opp->id}",
                                       json_encode(array('date_closed'=>'2012-10-11')),
                                       'PUT');
-        $this->assertEquals('2012-10-11',$restReply['reply']['date_closed']);
+        $this->assertEquals('2012-10-11',$restReply['reply']['date_closed'], "PUT REST request comparison failed to match");
 
         $ret = $GLOBALS['db']->query("SELECT date_closed FROM opportunities WHERE id = '{$this->opp->id}'",true);
         $row = $GLOBALS['db']->fetchByAssoc($ret);
-        $this->assertEquals('2012-10-11',$row['date_closed']);
+        // Substring the date because some DBs return 00:00:00 with date ONLY types
+        $this->assertEquals('2012-10-11', substr($row['date_closed'], 0, 10), "Database select comparison failed to match");
     }
 
     /**

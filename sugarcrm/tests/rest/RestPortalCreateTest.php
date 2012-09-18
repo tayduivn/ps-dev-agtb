@@ -33,7 +33,7 @@ class RestPortalCreateTest extends RestTestBase
 
         // Create a portal API user
         $this->apiuser = BeanFactory::newBean('Users');
-        $this->apiuser->id = "UNIT-TEST-portalCreateUser";
+        $this->apiuser->id = create_guid();
         $this->apiuser->new_with_id = true;
         $this->apiuser->first_name = "Portal";
         $this->apiuser->last_name = "Apiuserson";
@@ -50,7 +50,7 @@ class RestPortalCreateTest extends RestTestBase
         $this->account = $account;
         // create contact
         $this->contact = BeanFactory::newBean('Contacts');
-        $this->contact->id = "UNIT-TEST-portalContact";
+        $this->contact->id = create_guid();
         $this->contact->new_with_id = true;
         $this->contact->first_name = "Little";
         $this->contact->last_name = "Unittest";

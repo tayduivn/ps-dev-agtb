@@ -143,8 +143,12 @@ class RestThemeTest extends RestTestBase
         $row = $GLOBALS['db']->fetchByAssoc($query);
 
         // TEST the config var contains the bootstrap.css url
-        $this->assertEquals(html_entity_decode($row['value']),
-            '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"');
+        $this->assertEquals(
+            // Some databases (*cough* ORACLE *cough*) are backslash escaping this value
+            stripslashes(html_entity_decode($row['value'])),
+            '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"',
+            "$row[value] does not match the expected value"
+        );
     }
 
     /**

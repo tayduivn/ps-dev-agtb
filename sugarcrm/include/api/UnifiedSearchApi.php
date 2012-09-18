@@ -47,10 +47,6 @@ class UnifiedSearchApi extends SugarApi {
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
     protected $defaultModuleLimit = 5; // How many records should we show if they don't pass up a limit
 
-    public function __construct() {
-        // $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
-    }
-
     /**
      * This function pulls all of the search-related options out of the $args array and returns a fully-populated array with either the defaults or the provided settings
      * @param $api ServiceBase The API class of the request
