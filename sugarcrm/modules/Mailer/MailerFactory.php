@@ -66,7 +66,7 @@ class MailerFactory
 
         $from    = new EmailIdentity($config->sender_email, $config->sender_name); // can bubble up a MailerException
         $headers = self::buildHeadersForMailer($from);
-        $mailer  = self::buildMailer($mode);
+        $mailer  = self::buildMailer($mode); // can bubble up a MailerException
         self::configureMailer($mailer, $config);
         $mailer->setHeaders($headers);
 
@@ -80,11 +80,18 @@ class MailerFactory
      * @access private
      * @param string $mode required The mode that represents the sending strategy.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
+     * @throws MailerException
      */
     private static function buildMailer($mode) {
-        $path  = self::$modeToMailerMap[$mode]["path"];
-        $class = self::$modeToMailerMap[$mode]["class"];
-        include_once "{$path}/{$class}.php"; //@todo confirm that the file exists and throw an exception if it doesn't?
+        $path   = self::$modeToMailerMap[$mode]["path"];
+        $class  = self::$modeToMailerMap[$mode]["class"];
+        $file   = "{$path}/{$class}.php";
+        @include_once $file; // suppress errors
+
+        if (!class_exists($class)) {
+            throw new MailerException("Invalid Mailer: Could not find class '{$class}'", MailerException::InvalidMailer);
+        }
+
         return new $class();
     }
 
