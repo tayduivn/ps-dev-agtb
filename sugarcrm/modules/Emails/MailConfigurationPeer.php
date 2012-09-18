@@ -60,7 +60,7 @@ class MailConfigurationPeer {
                     $name = from_html($name);
                     $mailConfiguration = new MailConfiguration($user);
                     $mailConfiguration->config_id   = $storedOptions["outbound_email"];
-                    $mailConfiguration->type = 'user';
+                    $mailConfiguration->config_type = 'user';
                     $mailConfiguration->sender_name = "{$name}";
                     $mailConfiguration->sender_email = "{$addr}";
                     $mailConfiguration->display_name = "{$name} ({$addr})";
@@ -70,6 +70,7 @@ class MailConfigurationPeer {
                     $oe->retrieve($mailConfiguration->config_id);
                     $mailConfiguration->config_data = self::toArray($oe);
                     $mailConfiguration->mode = strtolower($mailConfiguration->config_data['mail_sendtype']);
+                    $mailConfiguration->config_name = $mailConfiguration->config_data['name'];
                     $mailConfigurations[] = $mailConfiguration;
                 } // if
             } // foreach
@@ -86,7 +87,7 @@ class MailConfigurationPeer {
         if (!empty($system->mail_smtpserver)) {
             $mailConfiguration = new MailConfiguration($user);
             $mailConfiguration->config_id   = $system->id;
-            $mailConfiguration->type = 'system';
+            $mailConfiguration->config_type = 'system';
             $mailConfiguration->sender_name = "{$ret['name']}";
             $mailConfiguration->sender_email = "{$ret['email']}";
             $mailConfiguration->display_name = "{$ret['name']} ({$ret['email']})";
@@ -96,6 +97,7 @@ class MailConfigurationPeer {
             $oe->retrieve($system->id);
             $mailConfiguration->config_data = self::toArray($oe);
             $mailConfiguration->mode = strtolower($mailConfiguration->config_data['mail_sendtype']);
+            $mailConfiguration->config_name = $mailConfiguration->config_data['name'];
             $mailConfigurations[] = $mailConfiguration;
         }
         return $mailConfigurations;
