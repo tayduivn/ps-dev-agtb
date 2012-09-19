@@ -380,16 +380,15 @@
             word = _.last(word.split(' @'));
         }
 
-
         // Do initial list filtering.
         var list = _.filter(this.entityList, function(entity) {
             return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
         });
 
-        // Rank the list.
+        // Rank the list and trim it to no more than 8 entries.
         list = (function(list, query) {
-            var begin = [], caseSensitive = [], caseInsensitive = [], item;
-            while(item = list.shift()) {
+            var begin = [], caseSensitive = [], caseInsensitive = [], item = list.shift(), i;
+            for(i = 0; i < 8 && item; i++) {
                 if(item.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
                     begin.push(item);
                 } else if(item.name.indexOf(query) !== -1) {
@@ -397,6 +396,7 @@
                 } else {
                     caseInsensitive.push(item);
                 }
+                item = list.shift();
             }
             return begin.concat(caseSensitive, caseInsensitive);
         })(list, word);
@@ -405,7 +405,7 @@
         var ul = $("<ul/>").addClass('typeahead dropdown-menu');
         var blank_item = '<li><a href="#"></a></li>';
         if(list.length) {
-            items = _.map(_.first(list, 8), function(item) {
+            items = _.map(list, function(item) {
                 var i = $(blank_item).data(item);
                 var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
                 i.find('a').html(function() {
