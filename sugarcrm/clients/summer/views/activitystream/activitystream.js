@@ -25,8 +25,8 @@
 
     initialize: function(options) {
         var self = this;
-    	this.opts = { params: {}};
-    	this.collection = {};
+        this.opts = { params: {}};
+        this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
 
 
@@ -183,7 +183,7 @@
         if(myPostModule !== "ActivityStream") {
             myPostUrl += '/'+myPostModule;
             if(myPostId !== undefined) {
-                myPostUrl += '/'+myPostId
+                myPostUrl += '/'+myPostId;
             }
         }
 
@@ -250,7 +250,7 @@
         recordModule = this.$(event.currentTarget).data('module'),
         myPostUrl = 'ActivityStream/'+recordModule+'/'+recordId;
         this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
-            self.collection.fetch(self.opts)
+            self.collection.fetch(self.opts);
         }});
     },
 
@@ -290,7 +290,7 @@
     shrinkNewPost: function(event) {
         event.stopPropagation();
         event.preventDefault();
-        this.$(event.currentTarget).attr("placeholder", "Type your post").removeClass("dragdrop")
+        this.$(event.currentTarget).attr("placeholder", "Type your post").removeClass("dragdrop");
         return false;
     },
 
@@ -327,7 +327,7 @@
                         container.append("<div>No preview available</div>");
                     }
                     $(event.currentTarget).after(container);
-                }
+                };
             })(file);
 
             fileReader.readAsDataURL(file);
@@ -410,7 +410,7 @@
                 var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
                 i.find('a').html(function() {
                     return item.name.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
-                        return '<strong>' + match + '</strong>'
+                        return '<strong>' + match + '</strong>';
                     });
                 });
 
@@ -474,7 +474,7 @@
         _.each(this.collection.models, function(model) {
             var activity_data = model.get("activity_data");
             var comments = model.get("comments");
-            var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g)
+            var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
             if(activity_data && activity_data.value) {
                 activity_data.value = activity_data.value.replace(pattern, function(str, module, id, text) {
                     return "<span class='label label-"+module+"'><a href='#"+module+'/'+id+"'>"+text+"</a></span>";
