@@ -519,7 +519,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $this->assertEquals("0", $response["reply"][0]["version"], "Draft version was not returned.");
 
         //Now, save as a regular version so things will be reset.
-        $postData["draft"] = 0;i''
+        $postData["draft"] = 0;
         $response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerData["user_id"], json_encode($postData), "PUT");
 
         $db->commit();
