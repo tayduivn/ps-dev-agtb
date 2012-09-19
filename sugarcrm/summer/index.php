@@ -26,12 +26,6 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <meta http-equiv="x-ua-compatible" content="IE=8">
     <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
 
-    <!-- Third party library scripts -->
-    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
-    <script>
-        google.load('visualization', '1', {packages:['corechart', 'geochart', 'gauge']});
-    </script>
-
     <script src="../sidecar/lib/jquery/jquery.min.js"></script>
     <script src="../sidecar/lib/jquery/jquery.iframe.transport.js"></script>
     <script src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
