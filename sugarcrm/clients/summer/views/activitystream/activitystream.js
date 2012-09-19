@@ -401,8 +401,7 @@
             return begin.concat(caseSensitive, caseInsensitive);
         })(list, word);
 
-
-        var ul = $("<ul/>").addClass('typeahead dropdown-menu');
+        var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
         var blank_item = '<li><a href="#"></a></li>';
         if(list.length) {
             items = _.map(list, function(item) {
