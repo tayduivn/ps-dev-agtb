@@ -28,8 +28,7 @@
 
         self.setModuleInfo();
         self.setCreateTasksList();
-        self.setCurrentUserName();
-        self.setCurrentUserImage();                
+        self.setCurrentUserData();           
         app.view.View.prototype._renderHtml.call(self);
 
         // Search ahead drop down menu stuff
@@ -114,14 +113,13 @@
     show: function() {
         this.$el.show();
     },
-    setCurrentUserName: function() {
+    setCurrentUserData: function() {
         this.fullName = app.user.get('full_name');
-    },
-    setCurrentUserImage: function() {
+        this.userId = app.user.get('id');
         var picture = app.user.get('picture');
         this.pictureUrl = (picture) ? app.api.buildFileURL({
             module: 'Users',
-            id: app.user.get('id'),
+            id: this.userId,
             field: 'picture'
         }) : "../clients/summer/views/imagesearch/anonymous.jpg"; 
     },    

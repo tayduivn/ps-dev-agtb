@@ -677,6 +677,7 @@ class MetaDataManager {
             $controller = new TabController();
             $moduleList = array_keys($controller->get_user_tabs($this->user));
             $moduleList[] = 'ActivityStream';
+            $moduleList[] = 'Users';            
         }
 
         $oldModuleList = $moduleList;

@@ -247,8 +247,11 @@ class ActivityStream extends SugarBean {
         $from = 'activity_stream a, users u';
         $where = 'a.created_by = u.id AND a.deleted = 0';
         $limit = '';
-
-        if(!empty($targetModule)) {
+    
+        if($targetModule == 'Users' && !empty($targetId)) {
+            $where .= " AND (a.created_by = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['created_by']) ." OR (a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module'])." AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id'])."))";
+        }        
+        else if(!empty($targetModule)) {
             $where .= " AND ((a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
                 $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
