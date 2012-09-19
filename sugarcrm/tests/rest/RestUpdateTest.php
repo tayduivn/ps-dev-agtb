@@ -40,11 +40,8 @@ class RestUpdateTest extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
             $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$this->contact->id}'");
         }
-        if (isset($this->meeting->id)) {
-            $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting->id}'");
-            $GLOBALS['db']->query("DELETE FROM meetings_contacts WHERE meeting_id = '{$this->meeting->id}'");
-            $GLOBALS['db']->query("DELETE FROM meetings_leads WHERE meeting_id = '{$this->meeting->id}'");
-            $GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting->id}'");
+        if (isset($this->note->id)) {
+            $GLOBALS['db']->query("DELETE FROM notes WHERE id = '{$this->note->id}'");
         }
         
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
@@ -191,19 +188,19 @@ class RestUpdateTest extends RestTestBase {
         $this->account->name = 'ABC TEST';
         $this->account->save();
         
-        // Build a Meeting with a parent id of the account
-        $this->meeting = new Meeting();
-        $this->meeting->name = 'UNIT TEST MEETING';
-        $this->meeting->parent_id = $this->account->id;
-        $this->meeting->parent_type = 'Accounts';
-        $this->meeting->status = 'Not Held';
-        $this->meeting->save();
+        // Build a Note with a parent id of the account
+        $this->note = new Note();
+        $this->note->name = 'UNIT TEST Note';
+        $this->note->parent_id = $this->account->id;
+        $this->note->parent_type = 'Accounts';
+        $this->note->description = "Some description";
+        $this->note->save();
 
         $GLOBALS['db']->commit();
         
-        // Change the meeting status and check for parent_name
-        $reply = $this->_restCall("Meetings/{$this->meeting->id}", json_encode(array('status' => 'Held')), 'PUT');
-        $this->assertEquals($this->meeting->id, $reply['reply']['id'], 'Meeting ID was not the correct ID');
+        // Change the note description and check for parent_name
+        $reply = $this->_restCall("Notes/{$this->note->id}", json_encode(array('description' => 'Some other descriptions')), 'PUT');
+        $this->assertEquals($this->note->id, $reply['reply']['id'], 'Note ID was not the correct ID');
         $this->assertEquals($this->account->name, $reply['reply']['parent_name'], 'Parent Account name was not returned or was incorrect');
     }
 }
