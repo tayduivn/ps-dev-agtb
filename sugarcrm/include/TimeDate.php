@@ -850,10 +850,10 @@ class TimeDate
      * @param User $user
      * @return string The date and time in ISO-8601 format (aka 2012-10-11T13:01:45-07:00)
      */
-    public function asIso(DateTime $date, User $user = null)
+    public function asIso(DateTime $date, User $user = null, $options = null)
     {
         $this->tzUser($date, $user);
-        return $date->format(self::DB_DATE_FORMAT.'\T'.self::DB_TIME_FORMAT).$this->getIsoOffset($date);
+        return $date->format(self::DB_DATE_FORMAT.'\T'.self::DB_TIME_FORMAT).$this->getIsoOffset($date, $options);
     }
 
     /**
@@ -960,15 +960,16 @@ class TimeDate
      * @param DateTime $date The date object
      * @return string The offset of date object in ISO-8601 compatible format (aka -07:00)
      */
-    public function getIsoOffset(DateTime $date)
+    public function getIsoOffset(DateTime $date, $options=null)
     {
+        $tzColon = (isset($options['stripTZColon']) && $options['stripTZColon']) ? '' : ':';
         $offsetSec = $date->getOffset();
         $offsetType = ($offsetSec>-1)?'+':'-';
         $offsetSec = abs($offsetSec);
         $offsetMin = floor($offsetSec/60);
         $offsetHour = floor($offsetMin/60);
         $offsetMin = $offsetMin%60;
-        return sprintf("%s%02d:%02d",$offsetType,$offsetHour,$offsetMin);
+        return sprintf("%s%02d".$tzColon."%02d",$offsetType,$offsetHour,$offsetMin);
     }
 
     /**

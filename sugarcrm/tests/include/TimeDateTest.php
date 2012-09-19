@@ -988,5 +988,25 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($output,$outTime);
         $this->assertEquals($dbdate,$timeDate->asDb($dateTime));
     }
+
+    
+    /**
+     * @dataProvider isoDateTimeReverseTestSet
+     */
+    public function testAsIsoWithOptions($output, $dbdate, $tz)
+    {
+        $this->_setPrefs('d/m/Y', 'h:i:sA', $tz);
+        
+        $timeDate = new TimeDate();
+
+        $dateTime = $timeDate->fromDb($dbdate);
+        $outTime = $timeDate->asIso($dateTime, null, array('stripTZColon' => true));
+        $c = substr($outTime, -3, 1);
+        $this->assertNotEquals(':', $c);
+        $outTime = $timeDate->asIso($dateTime, null, array('stripTZColon' => false));
+        $c = substr($outTime, -3, 1);
+        $this->assertEquals(':',$c);
+    }
+
             
 }
