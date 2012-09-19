@@ -45,7 +45,7 @@
   min-height: 42px;
 }  
 
-.card2 .span10, .card2 .more {
+.card2 .span10, .card2 .span9, .card2 .more {
   min-height: 42px;
   padding: 12px 8px;
   font-weight: bold;
@@ -56,6 +56,13 @@
 .card2 .row-fluid, .card2 span .row-fluid {
   margin: 0;
   padding: 0 !important;
+}
+
+#folded .card2 .row-fluid:first-child .span3 {
+ .border-radius(3px 0 0 0);
+} 
+#folded .card2 .row-fluid:last-child .span3 {
+ .border-radius(0 0 0 3px);
 }
 
 input, select, textarea {z-index: 1000;}

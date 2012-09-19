@@ -5500,7 +5500,7 @@ article:hover { background:#e1f0fa; }
   color:#8b8c8e !important;
   min-height:42px;
 }
-.card2 .span10, .card2 .more {
+.card2 .span10, .card2 .span9, .card2 .more {
   min-height:42px;
   padding:12px 8px;
   font-weight:bold;
@@ -5510,6 +5510,16 @@ article:hover { background:#e1f0fa; }
 .card2 .row-fluid, .card2 span .row-fluid {
   margin:0;
   padding:0 !important;
+}
+#folded .card2 .row-fluid:first-child .span3 {
+  -webkit-border-radius:3px 0 0 0;
+  -moz-border-radius:3px 0 0 0;
+  border-radius:3px 0 0 0;
+}
+#folded .card2 .row-fluid:last-child .span3 {
+  -webkit-border-radius:0 0 0 3px;
+  -moz-border-radius:0 0 0 3px;
+  border-radius:0 0 0 3px;
 }
 input, select, textarea { z-index:1000; }
 .filter {
@@ -5587,17 +5597,6 @@ input, select, textarea { z-index:1000; }
   margin:0;
   padding:0;
 }
-#dashboard #folded .tab-pane.active {
-  position:fixed !important;
-  top:47px;
-  right:0;
-  background-image:url('../../assets/img/light_toast.png');
-  height:100%;
-  overflow:auto;
-  width:inherit;
-  padding:20px 0;
-  border-left:3px solid #cdcccb;
-}
 #dashboard #folded .tab-pane.active.hide { display:none; }
 #folded .tab-pane.active {
   position:fixed !important;
@@ -5607,7 +5606,7 @@ input, select, textarea { z-index:1000; }
   height:100%;
   width:inherit;
   padding:20px 1.1%;
-  border-left:2px solid #cdcccb;
+  border-left:1px solid #cdcccb;
 }
 #folded .tab-pane .block span.label { margin:0 10px 0 0; }
 #folded .tab-pane .block {
@@ -6063,7 +6062,6 @@ h4 i { color:#cdcccb; }
   position:relative;
   padding:8px 0 0;
 }
-#folded .card2 .row-fluid [class*="span"] { padding:0 0 10px 0; }
 .card2 .extend + .row-fluid, .card2 span:last-child .row-fluid { border-bottom:none; }
 .card2 .input-append .add-on { margin-top:-2px; }
 .btn-toolbar { padding-left:20px; }
