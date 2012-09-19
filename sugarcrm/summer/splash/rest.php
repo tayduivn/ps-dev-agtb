@@ -28,7 +28,8 @@ $app->get('/rest/users/callback', function() use ($app, $box)
 
         session_destroy();
         session_start();
-        if($box->getUser($email, false)) {
+        $user = $box->getUser($email, false);
+        if($user && empty($user['error'])) {
             // existing user
             $data = $box->authenticateUser($email, null, $result['identifier']);
         } else {
@@ -38,6 +39,7 @@ $app->get('/rest/users/callback', function() use ($app, $box)
                 ));
             $data = $box->authenticateUser($email, null, $result['identifier']);
         }
+
         if($data['user']['status'] == 'Active') {
             if(!empty($result['oauthAccessToken'])) {
                 $box->setUserTokens($result['oauthAccessToken'],

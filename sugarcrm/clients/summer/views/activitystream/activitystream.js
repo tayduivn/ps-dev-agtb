@@ -13,8 +13,8 @@
         'drop .sayit': 'dropAttachment',
         'dragstart .activitystream-attachment': 'saveAttachment',
         'click .deleteRecord': 'deleteRecord',
-        'mouseenter .hasDeleteButton': 'showDeleteButton',
-        'mouseleave .hasDeleteButton': 'hideDeleteButton',
+        //'mouseenter .hasDeleteButton': 'showDeleteButton',
+        //'mouseleave .hasDeleteButton': 'hideDeleteButton',
         'click [name=show_more_button]': 'showMoreRecords',
         'keyup .sayit': 'getEntities',
         'blur .sayit': 'hideTypeahead',
@@ -25,8 +25,8 @@
 
     initialize: function(options) {
         var self = this;
-    	this.opts = { params: {}};
-    	this.collection = {};
+        this.opts = { params: {}};
+        this.collection = {};
         app.view.View.prototype.initialize.call(this, options);
 
 
@@ -98,7 +98,7 @@
 
     showAddComment: function(event) {
         event.preventDefault();
-        this.$(event.currentTarget).closest('li').find('.activitystream-comment').show();
+        this.$(event.currentTarget).closest('li').find('.activitystream-comment').toggle();
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
 
@@ -183,7 +183,7 @@
         if(myPostModule !== "ActivityStream") {
             myPostUrl += '/'+myPostModule;
             if(myPostId !== undefined) {
-                myPostUrl += '/'+myPostId
+                myPostUrl += '/'+myPostId;
             }
         }
 
@@ -233,6 +233,7 @@
         }});
     },
 
+    /*
     showDeleteButton: function(event) {
         event.preventDefault();
         this.$(event.currentTarget).closest('li').find('.deleteRecord').css('display', 'block');
@@ -242,14 +243,14 @@
         event.preventDefault();
         this.$(event.currentTarget).closest('li').find('.deleteRecord').hide();
     },
-
+	*/
     deleteRecord: function(event) {
         var self = this,
         recordId = this.$(event.currentTarget).data('id'),
         recordModule = this.$(event.currentTarget).data('module'),
         myPostUrl = 'ActivityStream/'+recordModule+'/'+recordId;
         this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
-            self.collection.fetch(self.opts)
+            self.collection.fetch(self.opts);
         }});
     },
 
@@ -289,7 +290,7 @@
     shrinkNewPost: function(event) {
         event.stopPropagation();
         event.preventDefault();
-        this.$(event.currentTarget).attr("placeholder", "Type your post").removeClass("dragdrop")
+        this.$(event.currentTarget).attr("placeholder", "Type your post").removeClass("dragdrop");
         return false;
     },
 
@@ -326,7 +327,7 @@
                         container.append("<div>No preview available</div>");
                     }
                     $(event.currentTarget).after(container);
-                }
+                };
             })(file);
 
             fileReader.readAsDataURL(file);
@@ -379,16 +380,15 @@
             word = _.last(word.split(' @'));
         }
 
-
         // Do initial list filtering.
         var list = _.filter(this.entityList, function(entity) {
             return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
         });
 
-        // Rank the list.
+        // Rank the list and trim it to no more than 8 entries.
         list = (function(list, query) {
-            var begin = [], caseSensitive = [], caseInsensitive = [], item;
-            while(item = list.shift()) {
+            var begin = [], caseSensitive = [], caseInsensitive = [], item = list.shift(), i;
+            for(i = 0; i < 8 && item; i++) {
                 if(item.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
                     begin.push(item);
                 } else if(item.name.indexOf(query) !== -1) {
@@ -396,20 +396,20 @@
                 } else {
                     caseInsensitive.push(item);
                 }
+                item = list.shift();
             }
             return begin.concat(caseSensitive, caseInsensitive);
         })(list, word);
 
-
-        var ul = $("<ul/>").addClass('typeahead dropdown-menu');
+        var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
         var blank_item = '<li><a href="#"></a></li>';
         if(list.length) {
-            items = _.map(_.first(list, 8), function(item) {
+            items = _.map(list, function(item) {
                 var i = $(blank_item).data(item);
                 var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
                 i.find('a').html(function() {
                     return item.name.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
-                        return '<strong>' + match + '</strong>'
+                        return '<strong>' + match + '</strong>';
                     });
                 });
 
@@ -423,7 +423,6 @@
             });
 
             ul.html(items).appendTo(el.parent()).show();
-            console.log("showing, within:", el.parent());
         }
     }, 250),
 
@@ -473,7 +472,7 @@
         _.each(this.collection.models, function(model) {
             var activity_data = model.get("activity_data");
             var comments = model.get("comments");
-            var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g)
+            var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
             if(activity_data && activity_data.value) {
                 activity_data.value = activity_data.value.replace(pattern, function(str, module, id, text) {
                     return "<span class='label label-"+module+"'><a href='#"+module+'/'+id+"'>"+text+"</a></span>";
@@ -481,9 +480,10 @@
                 model.set("activity_data", activity_data);
             }
 
-            if (comments.length > 2) {
-                comments[0]['_starthidden'] = true;
-                comments[comments.length - 3]['_stophidden'] = true;
+            if (comments.length > 1) {
+                comments[1]['_starthidden'] = true;
+                comments[comments.length - 1]['_stophidden'] = true;
+                comments[comments.length - 1]['_morecomments'] = comments.length - 1;
             }
             _.each(comments, function(comment) {
                 comment.value = comment.value.replace(pattern, function(str, module, id, text) {

@@ -45,6 +45,13 @@ class SummerApi extends SugarApi {
                 'method' => 'recommend',
                 'shortHelp' => 'Recommended invites',
             ),
+            'contacts' => array(
+                'reqType' => 'GET',
+                'path' => array('summer','contacts'),
+                'pathVars' => array('',''),
+                'method' => 'contacts',
+                'shortHelp' => 'Recommended contacts',
+            ),
             'invite' => array(
                 'reqType' => 'POST',
                 'path' => array('summer','invite'),
@@ -125,5 +132,38 @@ class SummerApi extends SugarApi {
         }
         $_SESSION['recommended_invites'] = $data;
         return array("invites" => $data);
+    }
+
+    public function contacts($api, $args)
+    {
+        $data = array();
+        $me = $this->box->getCurrentUser();
+        list($myfirst, $mydomain) = explode('@', $me['email']);
+        $res = $this->box->oauthGet("https://www.google.com/m8/feeds/contacts/default/full/?max_results=10");
+        if(!empty($res)) {
+            $xml = simplexml_load_string($res);
+            $xml->registerXPathNamespace("gd", "http://schemas.google.com/g/2005");
+            $xml->registerXPathNamespace("a", "http://www.w3.org/2005/Atom");
+            foreach($xml->xpath("a:entry") as $entry) {
+                $fname = $entry->xpath('gd:name/gd:givenName');
+                $lname = $entry->xpath('gd:name/gd:familyName');
+                $email = $entry->xpath('gd:email[@primary=\'true\']/@address');
+                // TODO: Optimize this, somehow.
+                $res = $GLOBALS['db']->query("SELECT COUNT(id) as x FROM email_addresses WHERE email_address = '".(string)$email[0]."'");
+                $row = $GLOBALS['db']->fetchByAssoc($res);
+                if((int)$row['x'] > 0 || empty($email[0])) {
+                    continue;
+                }
+                $inv = array("email" => (string)$email[0], 'first_name' => '', 'last_name' => '');
+                if(!empty($fname)) {
+                    $inv['first_name'] = (string)$fname[0];
+                }
+                if(!empty($lname)) {
+                    $inv['last_name'] = (string)$lname[0];
+                }
+                $data[] = $inv;
+            }
+        }
+        return array("contacts" => $data);
     }
 }

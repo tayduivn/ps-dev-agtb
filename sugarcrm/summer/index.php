@@ -142,7 +142,7 @@ if (empty($_SESSION['authenticated_user_id'])) {
         <div id="footer">
 
         </div>
-        <div id="todo-widget-container" class="btn-toolbar pull-right" style="float: right;z-index: 1031;position: fixed;right: 210px;bottom: -6px;">
+        <div id="todo-widget-container" class="btn-group">
 
         </div>
     </div>
@@ -163,11 +163,7 @@ if (empty($_SESSION['authenticated_user_id'])) {
                     if (data.current_user) {
                         app.user._reset(data ? data.current_user : null);
                     }
-                    app.trigger("app:login:success", data);
                     //callback(null, data);
-                },
-                error:function (error) {
-                    //callback(error);
                 }
             });
         }
