@@ -72,11 +72,11 @@
             var oldestDateEntered = oldestModel.get('date_entered');
 
             // This will always have a value
-            var newestModelDate = App.date.parse(newestModel.get('date_entered'));
+            var newestModelDate = new Date(Date.parse(newestModel.get('date_entered')));
             var text2 = '';
 
             if(!_.isEmpty(oldestDateEntered)) {
-                var oldestModelDate = App.date.parse(oldestDateEntered);
+                var oldestModelDate = new Date(Date.parse(oldestDateEntered));
 
                 var yearDiff = oldestModelDate.getYear() - newestModelDate.getYear();
                 var monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
