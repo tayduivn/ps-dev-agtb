@@ -848,12 +848,12 @@ class TimeDate
      * Output the date and time in ISO-8601 format
      * @param DateTime $date The date object to output in ISO-8601 format
      * @param User $user
-     * @return string The date and time in ISO-8601 format (aka 2012-10-11T13:01:45-0700)
+     * @return string The date and time in ISO-8601 format (aka 2012-10-11T13:01:45-07:00)
      */
     public function asIso(DateTime $date, User $user = null)
     {
         $this->tzUser($date, $user);
-        return $date->format('Y-m-d\TH:i:s').$this->getIsoOffset($date);
+        return $date->format(self::DB_DATE_FORMAT.'\T'.self::DB_TIME_FORMAT).$this->getIsoOffset($date);
     }
 
     /**
@@ -872,12 +872,12 @@ class TimeDate
      * Output the time in ISO-8601 format
      * @param DateTime $date The date object to output in ISO-8601 format
      * @param User $user
-     * @return string Just the time in ISO-8601 format (aka 13:01:45-0700)
+     * @return string Just the time in ISO-8601 format (aka 13:01:45-07:00)
      */
     public function asIsoTime(DateTime $date, User $user = null)
     {
         $this->tzUser($date, $user);
-        return $date->format('H:i:s').$this->getIsoOffset($date);
+        return $date->format(self::DB_TIME_FORMAT).$this->getIsoOffset($date);
     }
 
     /**
@@ -902,7 +902,7 @@ class TimeDate
             if ( !empty($inputSplit[7]) ) {
                 // This has the attached offset, when 5.3 comes around we can stop messing with manually
                 // tweaking the offset manually and just throw an "O" on the end of the format string.
-                $date = SugarDateTime::createFromFormat('Y-m-d H:i:s',$formattedDate,self::$gmtTimezone);
+                $date = SugarDateTime::createFromFormat(self::DB_DATETIME_FORMAT,$formattedDate,self::$gmtTimezone);
                 $date->adjustByIsoOffset("{$inputSplit[7]}{$inputSplit[8]}{$inputSplit[9]}");
                 
                 $this->tzUser($date,$user);
@@ -910,7 +910,7 @@ class TimeDate
                 return $date;
             } else {
                 // This time doesn't have an attached offset, convert it according to the user's date and time
-                return SugarDateTime::createFromFormat('Y-m-d H:i:s',$formattedDate,$this->_getUserTZ($user));
+                return SugarDateTime::createFromFormat(self::DB_DATETIME_FORMAT,$formattedDate,$this->_getUserTZ($user));
             }
         } catch (Exception $e) {
             $GLOBALS['log']->error("fromIsoTime: Conversion of $inputDate from ISO Time failed. {$e->getMessage()}");
@@ -942,13 +942,13 @@ class TimeDate
         try {
             if ( strlen($inputDate) > 8 ) {
                 // This time does have an attached offset
-                $date = SugarDateTime::createFromFormat("H:i:s",substr($inputDate,0,8),self::$gmtTimezone);
+                $date = SugarDateTime::createFromFormat(self::DB_TIME_FORMAT,substr($inputDate,0,8),self::$gmtTimezone);
                 $date->adjustByIsoOffset(substr($inputDate,8));
                 
                 return $date;
             } else {
                 // This time doesn't have an attached offset, convert it according to the user's date and time
-                return SugarDateTime::createFromFormat("H:i:s",$inputDate,$this->_getUserTZ($user));
+                return SugarDateTime::createFromFormat(self::DB_TIME_FORMAT,$inputDate,$this->_getUserTZ($user));
             }
         } catch (Exception $e) {
             $GLOBALS['log']->error("fromIsoTime: Conversion of $inputDate from ISO Time failed. {$e->getMessage()}");
@@ -958,7 +958,7 @@ class TimeDate
     /**
      * This function converts the offset of the date object into a ISO-8601 compatible format
      * @param DateTime $date The date object
-     * @return string The offset of date object in ISO-8601 compatible format (aka -0700)
+     * @return string The offset of date object in ISO-8601 compatible format (aka -07:00)
      */
     public function getIsoOffset(DateTime $date)
     {
@@ -968,7 +968,7 @@ class TimeDate
         $offsetMin = floor($offsetSec/60);
         $offsetHour = floor($offsetMin/60);
         $offsetMin = $offsetMin%60;
-        return sprintf("%s%02d%02d",$offsetType,$offsetHour,$offsetMin);
+        return sprintf("%s%02d:%02d",$offsetType,$offsetHour,$offsetMin);
     }
 
     /**
@@ -1948,7 +1948,7 @@ class TimeDate
     function convert_to_gmt_datetime($olddatetime)
     {
         if (! empty($olddatetime)) {
-            return date('Y-m-d H:i:s', strtotime($olddatetime) - date('Z'));
+            return date(self::DB_DATETIME_FORMAT, strtotime($olddatetime) - date('Z'));
         }
         return '';
     }

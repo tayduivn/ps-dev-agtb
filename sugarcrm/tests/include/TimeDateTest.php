@@ -966,10 +966,10 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	public function isoDateTimeReverseTestSet()
 	{
 	    return array(
-    		array("output" => '2012-12-12T10:35:15-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
-    		array("output" => '2012-12-12T09:35:15-0800', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
-    		array("output" => '2012-12-12T17:35:15+0000', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
-    		array("output" => '2012-12-12T19:35:15+0200', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
+    		array("output" => '2012-12-12T10:35:15-07:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("output" => '2012-12-12T09:35:15-08:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
+    		array("output" => '2012-12-12T17:35:15+00:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
+    		array("output" => '2012-12-12T19:35:15+02:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
         );
 	}
 
