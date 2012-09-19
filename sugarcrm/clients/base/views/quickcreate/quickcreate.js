@@ -1,8 +1,7 @@
 ({
     initialize: function(options) {
-        debugger;
         app.view.View.prototype.initialize.call(this, options);
-
+        this.context.on('quickcreate:clear', this.clear, this);
         /*
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
@@ -63,7 +62,16 @@
     // Overloaded functions
     _renderHtml: function() { // Use original original
         app.view.View.prototype._renderHtml.call(this);
+    },
+
+    /**
+     * Clears out field values
+     */
+    clear: function() {
+        this.model.clear();
+        this.model.set(this.model._defaults);
     }
+
 })
 
 
