@@ -1657,7 +1657,7 @@
 										if(typeof res.limit_error != "undefined"){
 											var limitErrorMsg = CAL.lbl_repeat_limit_error;
 											var module = $("#current_module").val()
-											var moduleTitle = SUGAR.language.get('app_list_strings', 'moduleListSingular')[module];
+											var moduleTitle = SUGAR.language.get('app_list_strings', 'moduleListSingular')[module].toLowerCase();
 											limitErrorMsg = limitErrorMsg.replace("\$limit", res.limit).replace("\$moduleTitle", moduleTitle);
 											alert(limitErrorMsg);
 											

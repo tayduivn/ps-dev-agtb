@@ -149,7 +149,7 @@ $mod_strings = array (
     'LBL_REPEAT_PARENT_ID' => 'Repeat Parent ID',
     'LBL_RECURRING_SOURCE' => 'Recurring Source',
     'LBL_CONFIRM_REMOVE_ALL_RECURRENCES' => 'Are you sure you want to remove all recurring records?',
-    'LBL_REPEAT_LIMIT_ERROR' => 'This recurring Call cannot be scheduled because it exceeds the maximum allowed recurrence of $limit.',
+    'LBL_REPEAT_LIMIT_ERROR' => 'This recurring call cannot be scheduled because it exceeds the maximum allowed recurrence of $limit.',
     'LBL_RECURRENCE' => 'Recurrence',
     
     'LBL_SYNCED_RECURRING_MSG' => 'This call originated in another system and was synced to Sugar. To make changes, go to the original call within the other system. Changes made in the other system can be synced to this record.',
