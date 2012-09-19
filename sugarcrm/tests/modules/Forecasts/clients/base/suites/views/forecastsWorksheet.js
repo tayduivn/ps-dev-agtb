@@ -188,6 +188,7 @@ describe("The forecasts worksheet", function(){
             ]
         });
 
+        /*
         it("should be the 'forecasts' field if show_buckets is false", function() {
             app.config.show_buckets = 0;
             var unused = view._setForecastColumn(field);
@@ -203,6 +204,7 @@ describe("The forecasts worksheet", function(){
             expect(field[0].enabled).toBeFalsy();
             expect(field[1].enabled).toBeTruthy();
         });
+        */
 
     });
 

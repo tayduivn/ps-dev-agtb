@@ -43,7 +43,6 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->opp = SugarTestOpportunityUtilities::createOpportunity();
-        $this->opp->forecast = -1;
         unset($this->opp->probability);
         unset($this->opp->commit_stage);
     }
@@ -69,50 +68,26 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
     public function probabilityProvider()
     {
         return array(
-            array(0, "50"),
-            array(25, "50"),
-            array(65, "70"),
-            array(85, "100"),
-            array(100, "100")
+            array(0, "exclude"),
+            array(25, "exclude"),
+            array(65, "exclude"),
+            array(85, "include"),
+            array(100, "include")
         );
     }
 
     /**
      * Tests the probability against the expected commit_stage value with the supplied probabilityProvider function
      * @dataProvider probabilityProvider
-     *
+     * @outputBuffering disabled
      */
     public function testSetCommitStage($probability, $commit_stage)
     {
         //Test setting field 'commit_stage'
         $this->opp->probability = $probability;
         $this->opp->save();
-        $this->assertEquals($commit_stage, $this->opp->commit_stage, "commit stage should be $commit_stage");
+        $this->assertEquals($commit_stage, $this->opp->commit_stage, "commit stage should be {$commit_stage} when probability is {$probability}");
     }
-
-    public function forecastProvider()
-    {
-        return array(
-            array(0, 0),
-            array(25, 0),
-            array(65, 0),
-            array(85, 1),
-            array(100, 1)
-        );
-    }
-
-    /**
-     * Test that the default forecast value is correctly set with the supplied forecastProvider function
-     * @dataProvider forecastProvider
-     *
-     */
-    public function testSetForecast($probability, $forecast)
-    {
-        $this->opp->probability = $probability;
-        $this->opp->save();
-        $this->assertEquals($forecast, $this->opp->forecast, "forecast value should be $forecast");
-    }
-
 
     /**
      * Tests the forecast and commit_stage to be updated when sales_stage is "Closed Lost"
@@ -122,7 +97,6 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->opp->sales_stage = "Closed Lost";
         $this->opp->save();
-        $omit_commit_stage = min(array_keys($GLOBALS['app_list_strings']['commit_stage_dom']));
-        $this->assertEquals($omit_commit_stage, $this->opp->commit_stage, "commit_stage should be set to Omit");
+        $this->assertEquals('exclude', $this->opp->commit_stage, "commit_stage should be set to exclude");
     }
 }
