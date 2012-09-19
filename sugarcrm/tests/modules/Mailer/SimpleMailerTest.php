@@ -23,10 +23,10 @@ require_once "modules/Mailer/SimpleMailer.php";
 
 class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private static $mockMailerConfig;
+    private $mockMailerConfig;
 
-    public static function setUpBeforeClass() {
-        self::$mockMailerConfig = self::getMock(
+    public function setUp() {
+        $this->mockMailerConfig = self::getMock(
             "SmtpMailerConfiguration"
         );
     }
@@ -42,7 +42,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "clearRecipientsCc",
                  "clearRecipientsBcc"
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::once())
@@ -71,7 +71,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -111,7 +111,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -152,7 +152,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -194,7 +194,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -237,7 +237,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -281,7 +281,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -333,7 +333,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -389,7 +389,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(self::$mockMailerConfig)
+            array($this->mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
