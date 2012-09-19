@@ -99,6 +99,61 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
         $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
     }
+
+    /**
+     * This test checks to see if we the opportunity is still included on the time period on the first day of the span
+     *
+     */
+    public function testOpportunitySaveFirstDayOfTimePeriod()
+    {
+        global $timedate;
+        $timedate->getNow();
+
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+
+        if(!($tp instanceof TimePeriod))
+        {
+           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        }
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        //We are trying to simulate setting a timeperiod_id based on the date_closed
+        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
+        $opp = new Opportunity();
+        $opp->retrieve($opp->id);
+        $opp->date_closed = "2009-01-01";
+        $opp->save();
+
+        //check that the timeperiod covers the date closed timestamp
+        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
+        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
+    }
+    public function testOpportunitySaveLastDayOfTimePeriod()
+    {
+        global $timedate;
+        $timedate->getNow();
+
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+
+        if(!($tp instanceof TimePeriod))
+        {
+           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        }
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        //We are trying to simulate setting a timeperiod_id based on the date_closed
+        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
+        $opp = new Opportunity();
+        $opp->retrieve($opp->id);
+        $opp->date_closed = "2009-03-31";
+        $opp->save();
+
+        //check that the timeperiod covers the date closed timestamp
+        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
+        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
+    }
     //END SUGARCRM flav=pro ONLY
 
     /*
