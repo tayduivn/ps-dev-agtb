@@ -219,31 +219,6 @@ class ActivityStream extends SugarBean {
     }
 
     /**
-     * Converts youtube and image urls to html tags.
-     * @param string $text
-     * @return string
-     */
-    protected function parseUrls($text) {
-        // TODO: evaluate http://oembed.com/ service
-        // youtube videos
-        $text = preg_replace(
-                '~https?://(?:[0-9A-Z-]+\.)?(?:youtu\.be/| youtube\.com\S*[^\w\-\s])([\w\-]{11})(?=[^\w\-]|$)(?![?=&+%\w]*(?:[\'"][^<>]*>| </a>))[?=&+%\w-]*~ix',
-                '<br/><iframe width="420" height="315" src="http://www.youtube.com/embed/$1?autoplay=1&cc_load_policy=1" frameborder="0" allowfullscreen></iframe><br/>',
-                $text);
-        // images
-        $text = preg_replace(
-                '#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i',
-                '<br/><img src="$1.$2" alt="$1.$2" /><br/>',
-                $text);
-        // other links
-        $text = preg_replace(
-                '#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is',
-                '$1<a href="$2">$2</a>',
-                ' '.$text);
-        return trim($text);
-    }
-
-    /**
      * Returns an array of activities for a bean
      * @param string $targetModule module name
      * @param string $targetId bean id
