@@ -140,18 +140,16 @@
         if(this.$('.modal:first').length == 0) {
             //TODO: Replace inline CSS with css property
             this.$el.append(
-                $('<div>', {'class': 'row-fluid'}).append(
-                    $('<div>', {'class' : 'modal hide'}).append(
-                        this.$body
-                    )
-                ),
-                $("<div>", {'class': 'modal-backdrop hide'})
+                $('<div>', {'class' : 'span'}),
+                $('<div>', {'class' : 'modal hide'}).append(
+                    this.$body
+                )
             );
         }
 
         if(def.bodyComponent) {
             if(_.isUndefined(this.$body)) {
-                this.$body = $('<div>', {'class' : 'modal-body'}).css('overflow-y', 'auto');
+                this.$body = $('<div>', {'class' : 'modal-body'});
                 this.$('.modal:first').append(this.$body);
             }
             this.$body.append(comp.el);
@@ -163,47 +161,18 @@
         this.layout.trigger(this.showEvent, params, callback);
     },
     show: function(span) {
-        var modal_container = this.$(".modal:first"),
-            maxHeight = $(window).height() - ($(".modal-header:first").outerHeight() * 2) - 200;
-        maxHeight = '';
-        //TODO: Replace inline CSS with css property
-        this.$el.addClass("modal-open");
-        this.$el.children(".modal-backdrop").show();
-        modal_container.attr({
-            style: "",
-            class: "modal"
-        }).show();
-
+        var modal_container = this.$(".modal:first");
+        modal_container.modal('show');
         if(_.isNumber(span) && span > 0 && span <= 12) {
-            modal_container.addClass('span' + span).css({
-                'margin' : '0',
-                'left' : (4.255 * (12 - span)) + '%',
-                'top' : '5%',
-                'max-height' : 'none'
-            });
-            modal_container.children(".modal-body").css({
-                'padding': '0',
-                'max-height' : maxHeight
-            });
+            modal_container.addClass('span' + span);
         } else {
-            modal_container.css({
-                'margin-top' : '',
-                'margin-bottom' : '',
-                'top' : '',
-                'max-height' : 'none'
-            });
-
-            modal_container.children(".modal-body").css({
-                'padding': '0',
-                'max-height' : maxHeight
-            });
+            var original_css = modal_container.attr("class").replace(/span\d+/g, "");
+            modal_container.attr("class", original_css);
         }
     },
     hide: function(event) {
         //restore back to the scroll position at the top
         this.$(".modal-body:first").scrollTop(0);
-        this.$el.removeClass("modal-open");
-        this.$(".modal:first").hide();
-        this.$el.children(".modal-backdrop").hide();
+        this.$(".modal:first").modal('hide');
     }
 })
