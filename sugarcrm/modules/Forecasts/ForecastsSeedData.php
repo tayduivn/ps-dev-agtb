@@ -66,7 +66,7 @@ public static function populateSeedData($timeperiods)
                 $fcst_schedule->expected_best_case = $opp_summary_array['WEIGHTEDVALUENUMBER'];
                 $fcst_schedule->expected_likely_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .8;
                 $fcst_schedule->expected_worst_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .5;
-                $fcst_schedule->expected_commit_stage = min(array_keys($app_list_strings['commit_stage_dom']));
+                $fcst_schedule->expected_commit_stage = 'exclude';
                 $fcst_schedule->status='Active';
                 $fcst_schedule->save();
 
@@ -194,23 +194,23 @@ public static function setupForecastSettings()
     $forecastConfig = array(
             //show_buckets is used to indicate whether or not to show the bucket option for grouping opportunities
             'show_buckets' => 0,
-            //committed_probability is the value whereby a new opportunity created with a >= value is marked as included in the forecast
-            'committed_probability' => 70,
             //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
             'sales_stage_won' => array('Closed Won'),
             //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
             'sales_stage_lost' => array('Closed Lost'),
             //base_buckets_dom is used to reference the app_list_string entry to indicate the commit stage list to use
-            'buckets_dom' => 'commit_stage_dom'
+            'buckets_dom' => 'commit_stage_dom',
+            //category_ranges is used to store the buckets ranges
+            'category_ranges' => array('include'=>array('min'=>70, 'max'=>100), 'exclude'=>array('min'=>0, 'max'=>69))
     );
     $admin = BeanFactory::getBean('Administration');
     foreach ($forecastConfig as $name => $value)
     {
         if(is_array($value))
         {
-            $admin->saveSetting('base', $name, json_encode($value));
+            $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
         } else {
-            $admin->saveSetting('base', $name, $value);
+            $admin->saveSetting('Forecasts', $name, $value, 'base');
         }
     }
 }

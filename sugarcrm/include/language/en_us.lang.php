@@ -353,17 +353,20 @@ $app_list_strings = array (
   ),
   'commit_stage_dom' =>
   array (
-    '100' => 'Include',
-    '70' => 'Likely',
-    '50' => 'Omit',
+    'include' => 'Include',
+    'exclude' => 'Exclude',
+    'upside'  => 'Upside',
   ),
+
+  //The n-option for commit_stage dropdowns
   'commit_stage_expanded_dom' =>
   array (
-    '100' => 'Commit',
-    '80' => 'Stretch',
-    '60' => 'Risk',
-    '50' => 'Omit'
+    'include' => 'Include',
+    'exclude' => 'Exclude',
+    'stretch' => 'Stretch',
+    'risk' => 'Risk',
   ),
+
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',

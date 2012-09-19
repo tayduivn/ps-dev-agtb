@@ -28,7 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecastapi
  */
 class ForecastsProgressApiTest extends RestTestBase
 {
@@ -52,7 +51,6 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestHelper::setup('app_list_strings');
         $forecastConfig = array (
             'show_buckets' => 0,
-            'committed_probability' => 70,
             'sales_stage_won' => array('Closed Won'),
             'sales_stage_lost' => array('Closed Lost')
         );
@@ -184,7 +182,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $managerWorksheet->best_case = 62000;
         $managerWorksheet->likely_case = 55000;
         $managerWorksheet->worst_case = 50000;
-        $managerWorksheet->forecast = 1;
         $managerWorksheet->save();
 
         $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
@@ -196,7 +193,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $repWorksheet->best_case = 82000;
         $repWorksheet->likely_case = 74000;
         $repWorksheet->worst_case = 65000;
-        $repWorksheet->forecast = 1;
         $repWorksheet->save();
         $GLOBALS['db']->commit();
     }
@@ -218,6 +214,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testProgress() {
         $url = 'Forecasts/progressRep?user_id=' . self::$user->id . '&timeperiod_id=' . self::$timeperiod->id;
@@ -232,6 +229,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testManagerProgress() {
         $url = 'Forecasts/progressManager?user_id=' . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id;
@@ -244,6 +242,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testProgressNewUser() {
         $newUser = SugarTestUserUtilities::createAnonymousUser();

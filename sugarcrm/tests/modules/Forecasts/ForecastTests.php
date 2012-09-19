@@ -40,10 +40,11 @@ class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
-    /*
+    /**
      * Test that the base_rate field is populated with rate
      * of currency_id
      *
+     * @group forecasts
      */
     public function testForecastRate() {
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();

@@ -27,7 +27,7 @@
  */
 
 require_once('include/SugarForecasting/AbstractForecast.php');
-class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
+class SugarForecasting_Individual extends SugarForecasting_AbstractForecast implements SugarForecasting_ForecastSaveInterface
 {
     /**
      * Where we store the data we want to use
@@ -64,12 +64,10 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             "o.name, " .
             "o.best_case, " .
             "o.worst_case, " .
-            "o.forecast, " .
             "o.base_rate, " .
             "o.assigned_user_id, " .
             "w.id worksheet_id, " .
             "w.user_id w_user_id, " .
-            "w.forecast w_forecast, " .
             "w.best_case w_best_case, " .
             "w.likely_case w_likely_case, " .
             "w.worst_case w_worst_case, " .
@@ -111,7 +109,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
 
             if (isset($row["worksheet_id"])) {
                 $data['worksheet_id'] = $row["worksheet_id"];
-                $data['forecast'] = $row["w_forecast"];
                 $data['best_case'] = $row["w_best_case"];
                 $data['worst_case'] = $row["w_worst_case"];
                 $data['amount'] = $row["w_likely_case"];
@@ -119,7 +116,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
                 $data['probability'] = $row["w_probability"];
                 $data['version'] = $row["w_version"];
             } else {
-                $data['forecast'] = $row["forecast"];
                 $data['best_case'] = $row["best_case"];
                 $data['worst_case'] = $row["worst_case"];
                 $data['commit_stage'] = $row["commit_stage"];
@@ -127,5 +123,48 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             }
             $this->dataArray[] = $data;
         }
+    }
+
+    /**
+     * Save the Individual Worksheet
+     *
+     * @return mixed
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function save()
+    {
+        require_once('modules/Forecasts/ForecastWorksheet.php');
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        $seed = new ForecastWorksheet();
+        $seed->loadFromRow($this->getArgs());
+        $sfh = new SugarFieldHandler();
+
+        foreach ($seed->field_defs as $properties)
+        {
+            $fieldName = $properties['name'];
+
+            if(!isset($args[$fieldName]))
+            {
+               continue;
+            }
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!$seed->ACLFieldAccess($fieldName,'save') ) {
+                // No write access to this field, but they tried to edit it
+                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $field = $sfh->getSugarField($type);
+
+            if($field != null)
+            {
+               $field->save($seed, $args, $fieldName, $properties);
+            }
+        }
+		$seed->setWorksheetArgs($this->getArgs());
+        $seed->save();
+        return $seed->id;
     }
 }
