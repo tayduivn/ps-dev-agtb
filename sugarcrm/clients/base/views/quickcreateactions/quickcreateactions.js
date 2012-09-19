@@ -10,15 +10,14 @@
      * Handle click on save button
      */
     save: function() {
-        this.context.trigger('quickcreate:save');
-        this.context.parent.trigger('modal:close');
+        this.initiateSave(this.closeModal);
     },
 
     /**
      * Handle click on cancel button
      */
     cancel: function() {
-        this.context.parent.trigger('modal:close');
+        this.closeModal();
     },
 
     /**
@@ -26,7 +25,7 @@
      */
     saveAndCreate: function() {
         var self = this;
-        this.context.trigger('quickcreate:save', function() {
+        this.initiateSave(function() {
             self.context.trigger('quickcreate:clear');
         });
     },
@@ -36,9 +35,64 @@
      */
     saveAndView: function() {
         var self = this;
-        this.context.trigger('quickcreate:save', function() {
-            self.context.parent.trigger('modal:close');
+        this.initiateSave(function() {
+            self.closeModal();
             self.app.navigate(self.context, self.model, 'detail');
         });
+    },
+
+    /**
+     * Check for possible duplicates before creating a new record
+     * @param callback
+     */
+    initiateSave: function(callback) {
+        var self = this;
+        async.waterfall([
+            _.bind(this.dupeCheckWaterfall, this),
+            _.bind(this.createRecordWaterfall, this)
+        ], function(error) {
+            if (error) {
+                //TODO: handle error
+            } else {
+                callback.apply(self);
+            }
+        });
+    },
+
+    /**
+     * Check for possible duplicate records
+     * @param callback
+     */
+    dupeCheckWaterfall: function(callback) {
+        var success = function() {
+                callback(false);
+            },
+            error = function() {
+                callback(true)
+            };
+
+        this.context.trigger('quickcreate:dupecheck', success, error);
+    },
+
+    /**
+     * Create new record
+     * @param callback
+     */
+    createRecordWaterfall: function(callback) {
+        var success = function() {
+                callback(false);
+            },
+            error = function() {
+                callback(true)
+            };
+
+        this.context.trigger('quickcreate:save', success, error);
+    },
+
+    /**
+     * Close the modal window
+     */
+    closeModal: function() {
+        this.context.parent.trigger('modal:close');
     }
 })
