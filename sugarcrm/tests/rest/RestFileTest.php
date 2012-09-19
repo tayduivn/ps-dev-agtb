@@ -188,7 +188,7 @@ class RestFileTest extends RestTestBase {
      */
     public function testSimulateFileTooLarge() {
         // We need to skip for now, IIS doesn't appreciate this level of trickery
-        $this->markSkipped();
+        $this->markTestSkipped();
 
         // Send an empty POST request to the file endpoint leaving the request headers in place
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
@@ -206,7 +206,7 @@ class RestFileTest extends RestTestBase {
      */
     public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest() {
         // We need to skip for now, IIS doesn't appreciate this level of trickery
-        $this->markSkipped();
+        $this->markTestSkipped();
 
         // Send an empty GET and POST request to make sure we get a needs login error
         $reply = $this->_restCallNoAuthHeader('Notes');
