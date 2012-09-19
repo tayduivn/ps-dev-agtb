@@ -457,6 +457,9 @@ protected function getTags(){
 
 
 public function buildFile ($path, $startPath, $skipBuilds = array() ){
+    if(!$this->isFile($path)) {
+        $this->quickCopy($path, $skipBuilds);
+    } else {
 	    $this->file = $path;
 	    if(!empty($startPath))$this->startPath = $startPath ;
         //echo $path . "\n";
@@ -485,6 +488,7 @@ public function buildFile ($path, $startPath, $skipBuilds = array() ){
             }
         }
         $this->writeFiles($path, $skipBuilds);
+    }
 }
 
 
