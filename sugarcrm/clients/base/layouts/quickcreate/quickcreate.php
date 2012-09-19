@@ -1,5 +1,7 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,12 +25,17 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 $viewdefs['base']['layout']['quickcreate'] = array(
-    'components' => array(
+    'type' => 'fluid',
+    'components' =>
+    array(
+        array(
+            'view' => 'quickcreate-list'
+        ),
         array(
             'view' => 'quickcreate',
         ),
         array(
             'view' => 'quickcreateactions',
         ),
-    ),
+    )
 );

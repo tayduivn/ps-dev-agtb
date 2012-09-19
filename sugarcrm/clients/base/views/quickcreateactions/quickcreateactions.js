@@ -48,6 +48,7 @@
     initiateSave: function(callback) {
         var self = this;
         async.waterfall([
+            _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
             _.bind(this.createRecordWaterfall, this)
         ], function(error) {
@@ -60,18 +61,42 @@
     },
 
     /**
-     * Check for possible duplicate records
+     * Validate model
      * @param callback
      */
-    dupeCheckWaterfall: function(callback) {
+    validateModelWaterfall: function(callback) {
         var success = function() {
                 callback(false);
             },
             error = function() {
-                callback(true)
+                callback(true);
             };
 
-        this.context.trigger('quickcreate:dupecheck', success, error);
+        this.context.trigger('quickcreate:validateModel', success, error);
+    },
+
+    /**
+     * Check for possible duplicate records
+     * @param callback
+     */
+    dupeCheckWaterfall: function(callback) {
+        var self = this;
+        var noDupFound = function() {
+                self.$('[name=save_button]').data('skipDupCheck', false);
+                callback(false);
+            },
+            dupFound = function() {
+                self.$('[name=save_button]').text('Ignore Duplicate and Save');
+                self.$('[name=save_button]').data('skipDupCheck', true);
+
+                callback(true);
+            };
+
+        if(!this.$('[name=save_button]').data("skipDupCheck")) {
+            this.context.trigger('quickcreate:dupecheck', noDupFound, dupFound);
+        } else {
+            callback(false);
+        }
     },
 
     /**
@@ -83,7 +108,7 @@
                 callback(false);
             },
             error = function() {
-                callback(true)
+                callback(true);
             };
 
         this.context.trigger('quickcreate:save', success, error);

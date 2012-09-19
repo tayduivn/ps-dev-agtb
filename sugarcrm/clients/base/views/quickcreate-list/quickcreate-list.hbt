@@ -1,8 +1,9 @@
-             <div class="subhead">
+             <div class="dataTables_filter">
                    {{#each meta.panels}}
                       <table cellpadding="0" cellspacing="0" border="0" class="table table-striped datatable">
                         <thead>
                         <tr role="row">
+                        <th> actions </th>
                             {{#each fields}}
                             <th role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
                                 {{field ../../this null "list-header"}}
@@ -13,6 +14,13 @@
                         <tbody role="alert" aria-live="polite" aria-relevant="all">
                         {{#each ../collection.models}}
                         <tr name="{{module}}_{{attributes.id}}">
+                         <td>
+
+                             <span class="btn-group">
+                                  <a href="javascript:alert('test');">Edit</a>
+                             </span>
+
+                          </td>
                             {{#each ../fields}}
                             <td>{{field ../../../this ../this}}</td>
                             {{/each}}

@@ -1,14 +1,27 @@
-<form name='{{name}}'>
-    <div class="card2">
-        {{#each meta.panels}}
-        {{#each fields}}
-        <div class="row-fluid control-group">
-            <div class="span2">{{str  this.label ../../this.model.module}}</div>
-            <div class="span10 controls">
-            {{field ../../this}}
+<div class="card2">
+    {{#each meta.panels}}
+          {{#each grid}}
+            <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
+                {{#each this}}
+                      <span>
+                          {{#unless ../../this.labelsOnTop}}
+                              {{#if ../../../this.labels}}
+                                  <div class="span{{../this.labelSpan}} tright" >{{str ../this.label ../../../../../this.model.module}}</div>
+                              {{/if}}
+                          {{/unless}}
+                          <div class="span{{this.span}}" data-type="{{type}}" data-name="{{name}}">
+                              {{#if ../../this.labelsOnTop}}
+                              <div class='record-label'>{{str this.label ../../../../this.model.module}}</div>
+                              {{/if}}
+                              {{#if name}}
+                                  <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}">
+                                      {{field ../../../../this}}
+                                  </span>
+                              {{/if}}
+                          </div>
+                      </span>
+                  {{/each}}
             </div>
-        </div>
         {{/each}}
-        {{/each}}
-    </div>
-</form>
+    {{/each}}
+</div>

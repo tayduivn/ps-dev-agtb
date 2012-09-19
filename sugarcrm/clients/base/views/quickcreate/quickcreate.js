@@ -2,6 +2,7 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.on('quickcreate:clear', this.clear, this);
+        this.context.on('quickcreate:validateModel', this.validateModel, this);
         /*
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
@@ -64,14 +65,46 @@
         app.view.View.prototype._renderHtml.call(this);
     },
 
+    handleValidationError:function (errors) {
+        var self = this;
+
+        _.each(errors, function (fieldErrors, fieldName) {
+            //retrieve the field by name
+            var field = self.getField(fieldName);
+            if (field) {
+                var controlGroup = field.$el.parents('.control-group:first');
+
+                if (controlGroup) {
+                    //Clear out old messages
+                    controlGroup.find('.add-on').remove();
+                    controlGroup.find('.help-block').html("");
+
+                    controlGroup.addClass("error");
+                    controlGroup.find('.controls').addClass('input-append');
+                    _.each(fieldErrors, function (errorContext, errorName) {
+                        controlGroup.find('.help-block').append(self.app.error.getErrorString(errorName, errorContext));
+                    });
+                    controlGroup.find('.controls input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+                }
+            }
+        });
+    },
+
     /**
      * Clears out field values
      */
     clear: function() {
         this.model.clear();
         this.model.set(this.model._defaults);
-    }
+    },
 
+    validateModel: function(success, failure) {
+        if(this.model.isValid(this.getFields(this.module))) {
+            success();
+        } else {
+            failure();
+        }
+    }
 })
 
 
