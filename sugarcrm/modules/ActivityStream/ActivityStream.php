@@ -57,7 +57,7 @@ class ActivityStream extends SugarBean {
     public $created_by;
     public $date_created;
     public $deleted;
-    
+
     /**
      * Constructor
      */
@@ -101,7 +101,7 @@ class ActivityStream extends SugarBean {
         $sql = "UPDATE ".$tableName." SET deleted = 1 WHERE id = '".$commentId."' AND created_by = '".$current_user->id."'";
         return $this->db->query($sql,true);
     }
-    
+
     /**
      * Creates new activity. For update, it may create multiple activity records, one for each changed field
      *
@@ -175,7 +175,7 @@ class ActivityStream extends SugarBean {
         // Should we also delete comments or attachments for this post???
         return $this->db->query($sql,true);
     }
-        
+
     /**
      * Creates a new relationship activity record.
      *
@@ -232,13 +232,13 @@ class ActivityStream extends SugarBean {
                 $text);
         // images
         $text = preg_replace(
-                '#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i', 
-                '<br/><img src="$1.$2" alt="$1.$2" /><br/>', 
+                '#(https?://[^\s]+(?=\.(jpe?g|png|gif)))(\.(jpe?g|png|gif))#i',
+                '<br/><img src="$1.$2" alt="$1.$2" /><br/>',
                 $text);
         // other links
         $text = preg_replace(
-                '#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is', 
-                '$1<a href="$2">$2</a>', 
+                '#(?<=[\s>])(\()?([\w]+?://(?:[\w\\x80-\\xff\#$%&~/\-=?@\[\](+]|[.,;:](?![\s<])|(?(1)\)(?![\s<])|\)))+)#is',
+                '$1<a href="$2">$2</a>',
                 ' '.$text);
         return trim($text);
     }
@@ -254,32 +254,36 @@ class ActivityStream extends SugarBean {
         global $dictionary, $current_language, $current_user;
         $tableName = $dictionary['ActivityStream']['table'];
         $fieldDefs = $dictionary['ActivityStream']['fields'];
-    
+
         // This combination is not supportable
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
             return false;
         }
-    
+
         // Convert to int for security
         $start = isset($options['offset']) ? (int) $options['offset'] : 0;
         $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
         $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1;
         $filter = isset($options['filter']) ? $options['filter'] : 'all';
         $activities = array();
-    
+
         $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name, u.picture as created_by_picture';
         $from = 'activity_stream a, users u';
         $where = 'a.created_by = u.id AND a.deleted = 0';
         $limit = '';
-    
+
         if(!empty($targetModule)) {
-            $where .= " AND a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
+            $where .= " AND ((a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
                 $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
+                $post_tag_header = "@[".$targetModule.":".$targetId;
+                $where .= ") OR (a.activity_data LIKE '%".$post_tag_header."%'";
+                $where .= ") OR (a.id IN (SELECT activity_id FROM activity_comments where value LIKE '%".$post_tag_header."%')";
             }
+            $where .= "))";
         }
-    
+
         if($filter == 'myactivities') {
             $where .= " AND a.created_by = '".$current_user->id."'";
         }
@@ -287,18 +291,18 @@ class ActivityStream extends SugarBean {
             $from .= ", sugarfavorites f";
             $where .= " AND a.target_module = f.module AND a.target_id = f.record_id AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
         }
-    
+
         if($numActivities > 0) {
             $limit = ' LIMIT '.$start. ', '.$numActivities;
         }
-    
+
         $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
         $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
-    
+
         if(!empty($result)) {
             $activityIds = array();
-    
+
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
                 $row['target_name'] = '';
@@ -320,21 +324,21 @@ class ActivityStream extends SugarBean {
                 $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
                 unset($row['first_name']);
                 unset($row['last_name']);
-    
+
                 $activities[] = $row;
                 $activityIds[] = $row['id'];
             }
-    
+
             if(!empty($activityIds)) {
                 $comments = array();
                 $commentNotes = array();
-                
+
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];
                     $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.deleted = 0 AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
-    
+
                     if(!empty($result)) {
                         $commentIds = array();
                         while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
@@ -350,22 +354,22 @@ class ActivityStream extends SugarBean {
                         }
                     }
                 }
-                
+
                 $activityNotes = $this->getNotes('ActivityStream', $activityIds);
-                                
+
                 foreach($activities as &$activity) {
                     $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array();
-                    foreach($activity['comments'] as &$comment) {                        
+                    foreach($activity['comments'] as &$comment) {
                         $comment['notes'] = isset($commentNotes[$comment['id']]) ? $commentNotes[$comment['id']] : array();
                     }
                     $activity['notes'] = isset($activityNotes[$activity['id']]) ? $activityNotes[$activity['id']] : array();
                 }
             }
         }
-    
+
 
         return $activities;
-    } 
+    }
 
     /**
      * Gets notes attached to posts or comments
@@ -373,7 +377,7 @@ class ActivityStream extends SugarBean {
      * @param array $parentIds activity or comment ids
      * @return array
      */
-    protected function getNotes($parentType, $parentIds) { 
+    protected function getNotes($parentType, $parentIds) {
         $notes = array();
         $sql = "SELECT n.id,n.parent_type,n.parent_id,n.name,n.description,n.created_by,n.date_entered,n.file_mime_type,n.filename,u.first_name, u.last_name FROM notes n, users u WHERE n.parent_type='".$parentType."' and parent_id in ('".implode("','",$parentIds)."') AND n.created_by = u.id AND n.deleted = 0 ORDER BY n.date_entered ASC";
         $result = $GLOBALS['db']->query($sql);
@@ -386,8 +390,8 @@ class ActivityStream extends SugarBean {
                 $notes[$row['parent_id']][] = $row;
             }
         }
-        return $notes;                   
-    
+        return $notes;
+
     }
 
     /**
@@ -397,7 +401,7 @@ class ActivityStream extends SugarBean {
     protected function updateLastActivityDate($bean, $date){
         if(!empty($bean) && $bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date='" . $date .  "' WHERE id= '{$bean->id}'");
     }
-    
+
     /**
      * This function will remove our video or image tags so we need to disable it.
      * @see SugarBean::cleanBean()
