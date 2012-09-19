@@ -68,7 +68,7 @@
 
     handleValidationError:function (errors) {
         var self = this;
-debugger;
+
         _.each(errors, function (fieldErrors, fieldName) {
             //retrieve the field by name
             var field = self.getField(fieldName);
@@ -107,7 +107,6 @@ debugger;
     },
 
     validateModel: function(success, failure) {
-        debugger;
         if(this.model.isValid(this.getFields(this.module))) {
             success();
         } else {

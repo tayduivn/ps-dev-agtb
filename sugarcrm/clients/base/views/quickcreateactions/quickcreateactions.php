@@ -33,13 +33,13 @@ $viewdefs['base']['view']['quickcreateactions'] = array(
         array(
             'name'    => 'save_view_button',
             'type'    => 'button',
-            'label'   => 'Save and View',
+            'label'   => 'LBL_SAVE_AND_VIEW',
             'css_class' => 'btn-invisible btn-link',
         ),
         array(
             'name'    => 'save_create_button',
             'type'    => 'button',
-            'label'   => 'Save and Create Another',
+            'label'   => 'LBL_SAVE_AND_CREATE_ANOTHER',
             'css_class' => 'btn-invisible btn-link',
         ),
         array(

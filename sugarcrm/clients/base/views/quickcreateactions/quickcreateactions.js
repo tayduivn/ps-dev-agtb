@@ -10,7 +10,10 @@
      * Handle click on save button
      */
     save: function() {
-        this.initiateSave(this.closeModal);
+        var self = this;
+        this.initiateSave(function() {
+            self.closeModal()
+        });
     },
 
     /**
@@ -55,7 +58,7 @@
             if (error) {
                 //TODO: handle error
             } else {
-                callback.apply(self);
+                callback();
             }
         });
     },
@@ -82,20 +85,18 @@
     dupeCheckWaterfall: function(callback) {
         var self = this;
         var noDupFound = function() {
-                self.$('[name=save_button]').data('skipDupCheck', false);
+                self.setButtonAsSave();
                 callback(false);
             },
             dupFound = function() {
-                self.$('[name=save_button]').text('Ignore Duplicate and Save');
-                self.$('[name=save_button]').data('skipDupCheck', true);
-
+                self.setButtonAsIgnoreDuplicate();
                 callback(true);
             };
 
-        if(!this.$('[name=save_button]').data("skipDupCheck")) {
-            this.context.trigger('quickcreate:dupecheck', noDupFound, dupFound);
-        } else {
+        if(this.skipDupCheck()) {
             callback(false);
+        } else {
+            this.context.trigger('quickcreate:dupecheck', noDupFound, dupFound);
         }
     },
 
@@ -119,5 +120,35 @@
      */
     closeModal: function() {
         this.context.parent.trigger('modal:close');
+    },
+
+    /**
+     * Change button to Ignore Duplicate and Save
+     */
+    setButtonAsIgnoreDuplicate: function() {
+        this.$('[name=save_button]')
+            .data('skipDupCheck', true)
+            .text(this.app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module));
+    },
+
+    /**
+     * Change button to Save
+     */
+    setButtonAsSave: function() {
+        this.$('[name=save_button]')
+            .data('skipDupCheck', false)
+            .text(this.app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
+    },
+
+    /**
+     * Should we skip duplicate check?
+     * @return boolean
+     */
+    skipDupCheck: function() {
+        var skipDupCheck = this.$('[name=save_button]').data('skipDupCheck');
+        if (_.isUndefined(skipDupCheck)) {
+            skipDupCheck = false;
+        }
+        return skipDupCheck;
     }
 })

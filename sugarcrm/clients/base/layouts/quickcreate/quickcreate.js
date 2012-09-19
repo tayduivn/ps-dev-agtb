@@ -40,7 +40,7 @@
 
     retrieveUserKeys:function () {
         var keys,fields;
-debugger;
+
         fields = this.getFields(this.module);
         keys =[];
 
