@@ -11,7 +11,7 @@
             {{/each}}
         </select>
 
-        {{#if value.amPm}}
+        {{#if this.showAmPm}}
         <select class="date_time_ampm">
             {{#each timeOptions.amPm}}
             <option value={{this.value}} {{#eq this.key ../value.amPm}}selected{{/eq}}>{{this.key}}</option>

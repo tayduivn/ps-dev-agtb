@@ -66,7 +66,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $results = $db->query($query);
 
         $forecasts = array();
+        $timedate = TimeDate::getInstance();
         while (($row = $db->fetchByAssoc($results))) {
+            $row['date_entered'] = $timedate->asIso($timedate->fromDb($row['date_entered']), $current_user);
             $forecasts[] = $row;
         }
 
