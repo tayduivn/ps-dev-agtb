@@ -1,7 +1,39 @@
-.input-append { /* Patch for Sugar Internal Bug #55405 */
-  .add-on {
-    .border-radius(0 @inputBorderRadius @inputBorderRadius 0);
-  }
+.input-append {
+	position:relative;
+	display:inline-block;
+	.add-on {
+		/*.border-radius(0 @inputBorderRadius @inputBorderRadius 0);*/
+		border:none;
+		background:transparent !important;
+		margin-left:-4px;
+		position:absolute;
+		top:0;
+		right:0;
+	}
+	&.textarea,
+	&.select,
+	&.checkbox,
+	&.radio {
+		padding-left:0;
+	    .add-on {
+	    	position:absolute;
+	    	top:-0px;
+	    	right:0;
+	    	background:transparent !important;
+	    	border:none;
+	    }
+	}
+	&.widget {
+		width:100%;
+	}
+	&.textarea {
+		display:inline;
+	}
+	&.select .add-on {
+	}
+	input{
+	  .border-radius(@inputBorderRadius);
+	}
 }
 
 .card2 .span2, .card2 .span3  {
