@@ -22,18 +22,17 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once("include/Sugarpdf/sugarpdf_config.php");
-require_once 'include/tcpdf/tcpdf.php';
-require_once 'include/SugarCache/SugarCacheFile.php';
-require_once 'modules/Import/sources/ImportFile.php';
-require_once 'Zend/Http/Response.php';
-
 class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
-        global $current_user;
-        $current_user = SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('current_user');
+        require_once('include/Sugarpdf/sugarpdf_config.php');
+        require_once('include/tcpdf/tcpdf.php');
+        require_once('include/SugarCache/SugarCacheFile.php');
+        require_once('modules/Import/sources/ImportFile.php');
+        require_once('Zend/Http/Response.php');
+        require_once('Zend/Http/Response/Stream.php');
     }
 
     public static function tearDownAfterClass()
@@ -69,7 +68,7 @@ class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getDestructors
-     *
+     * @outputBuffering disabled
      */
     public function testUnserializeExcept($name)
     {
@@ -78,8 +77,9 @@ class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
         try {
             $obj = unserialize("O:$len:\"$name\":1:{s:4:\"test\";b:1;}");
         } catch(Exception $e) {
-             $obj = null;
+            $obj = null;
         }
+
         $this->assertEmpty($obj);
     }
 }
