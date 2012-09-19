@@ -56,7 +56,7 @@
         params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
         app.api.search(params, {
             success:function(data) {
-                data.module_list = app.metadata.getUserCreatableModules();
+                data.module_list = app.metadata.getModuleNames(true,true);
                 plugin.provide(data);
             },
             error:function(error) {
@@ -120,7 +120,7 @@
         try {
             singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
             if(singularModules) {
-                self.createListLabels = self.creatable_module_list;
+                self.createListLabels = this.creatableModuleList;
             }
         } catch(e) {
             return;
@@ -131,7 +131,7 @@
         this.createListLabels = [];
         this.currentModule = this.module;
         this.module_list = app.metadata.getModuleNames(true);
-        this.creatable_module_list = app.metadata.getUserCreatableModules();
+        this.creatableModuleList = app.metadata.getModuleNames(true,true);
     },
 
     /**
