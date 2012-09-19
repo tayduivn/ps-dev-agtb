@@ -1,5 +1,6 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry)
+    die('Not A Valid Entry Point');
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -27,24 +28,23 @@ require_once('include/OutboundEmail/OutboundEmail.php');
 
 class SugarMailer extends SimpleMailer
 {
-    var $locale;
-    var $sugar_config;
-    var $admin_settings;
-
-    var $notes;
+    private $locale;
+    private $sugar_config;
+    private $admin_settings;
+    private $notes;
 
     /**
      * @param MailerConfiguration
      */
-    function __construct(MailerConfiguration $mailerConfig) {
+    public function __construct(MailerConfiguration $mailerConfig) {
         global $locale;
         global $sugar_config;
 
         $admin = new Administration();
         $admin->retrieveSettings();
         $this->admin_settings = $admin->settings;
-        $this->locale = $locale;
-        $this->sugar_config = $sugar_config;
+        $this->locale         = $locale;
+        $this->sugar_config   = $sugar_config;
 
         parent::__construct($mailerConfig);
     }
@@ -52,21 +52,12 @@ class SugarMailer extends SimpleMailer
 
     /**
      * Optionally set notes (Sugar Documents and Uploaded Files)
+     *
      * @param $notesArray  array of note beans
      */
     public function setNotes(array $notesArray) {
         $this->notes = $notesArray;
     }
-
-
-    /**
-     *
-     */
-    public function setSubject($subject) {
-        $this->headers->setSubject($subject);
-    }
-
-
 
 
     /**
@@ -94,8 +85,7 @@ class SugarMailer extends SimpleMailer
             $this->textBody .= "\r\r{$disclosureText}";
         }
 
-
-        $headers = $this->headers;
+        $headers        = $this->headers;
         $this->htmlBody = from_html($this->locale->translateCharset(trim($this->htmlBody), 'UTF-8', $OBCharset));
         $this->textBody = from_html($this->locale->translateCharset(trim($this->textBody), 'UTF-8', $OBCharset));
         $subjectUTF8    = from_html(trim($headers->getSubject()));
@@ -104,8 +94,8 @@ class SugarMailer extends SimpleMailer
 
         // HTML email RFC compliance
         if (strpos($this->htmlBody, '<html') === false) {
-            $langHeader = get_language_header();
-            $head       = <<<eoq
+            $langHeader     = get_language_header();
+            $head           = <<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
 <head>
@@ -117,12 +107,10 @@ eoq;
             $this->htmlBody = $head . $this->htmlBody . "</body></html>";
         }
 
-
         $from = $headers->getFrom();
         $from->setName($this->locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
         $headers->setFrom($from);
     }
-
 
     /**
      *
@@ -169,10 +157,10 @@ eoq;
         }
     }
 
-
     /**
      * Replace images with locations specified by regex with cid: images
      * and attach needed files
+     *
      * @param string $regex        Regular expression
      * @param string $local_prefix Prefix where local files are stored
      * @param bool   $object       Use attachment object
