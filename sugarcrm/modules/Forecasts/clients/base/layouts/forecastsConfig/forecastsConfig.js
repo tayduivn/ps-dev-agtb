@@ -27,7 +27,7 @@
 
         initialize: function (options) {
             var Model = Backbone.Model.extend({
-                    url: app.api.buildURL("Forecasts", "config"),
+                    url: app.api.buildURL("Forecasts", "config", "", {module: "Forecasts"}),
                     sync: function(method, model, options) {
                         var url = _.isFunction(model.url) ? model.url() : model.url;
                         return app.api.call(method, url, model, options);

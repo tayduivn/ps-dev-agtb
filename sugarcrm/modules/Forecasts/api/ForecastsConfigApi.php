@@ -61,17 +61,20 @@ class ForecastsConfigApi extends ModuleApi {
      * @param $args
      */
     public function config($api, $args) {
+        $GLOBALS['log']->fatal("args: " . var_export($args, true));
         $adminBean = BeanFactory::getBean("Administration");
-        $data = $adminBean->getConfigForModule($args['module']);
+        if (!empty($args['module'])) {
+            $data = $adminBean->getConfigForModule($args['module']);
+        } else {
+            return;
+        }
 
-        $temp = json_decode(html_entity_decode(stripslashes($data['sales_stage_won'])));
-        $data['sales_stage_won'] = $temp;
-
-        $temp = json_decode(html_entity_decode(stripslashes($data['sales_stage_lost'])));
-        $data['sales_stage_lost'] = $temp;
-
-        $temp = json_decode(html_entity_decode(stripslashes($data['category_ranges'])));
-        $data['category_ranges'] = $temp;
+        foreach($data as $key => $setting) {
+            $temp = json_decode(html_entity_decode(stripslashes($setting)));
+            if ($temp !== NULL) {
+                $data[$key] = $temp;
+            }
+        }
 
         return $data;
     }
@@ -82,7 +85,15 @@ class ForecastsConfigApi extends ModuleApi {
      * @param $args
      */
     public function configSave($api, $args) {
-        //TODO: this
+        $admin = BeanFactory::getBean('Administration');
+
+        foreach ($args as $name => $value) {
+            if($name != 'module' && $name != '__sugar_url' && is_array($value)) {
+                $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
+            } else {
+                $admin->saveSetting('Forecasts', $name, $value, 'base');
+            }
+        }
     }
 
 }

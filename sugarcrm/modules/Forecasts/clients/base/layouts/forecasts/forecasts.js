@@ -129,15 +129,23 @@
             var self = this,
                 componentsMetadata = this.componentsMeta,
                 module = app.viewModule.toLowerCase(),
-                models = {};
+                models = {},
+                configModel;
 
             // creates the context.forecasts topmost model
             models[module] = app.data.createBean(module);
 
             // creates the config model as a special case
             self.namespace(models, module);
-            models[module]["config"] = self.createModel({name:"config"}, "Forecasts");
-            models[module]["config"].url = app.config.serverUrl + '/' + app.viewModule + '/config';
+            configModel = Backbone.Model.extend({
+                url: app.api.buildURL("Forecasts", "config", "", {module : module}),
+                sync: function(method, model, options) {
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, model, options);
+                }
+            }),
+
+            models[module]["config"] = new configModel();
 
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
@@ -257,7 +265,7 @@
             app.view.Layout.prototype._render.call(this);
 
             mdata = app.metadata.getModule("Forecasts");
-            if (mdata.config.is_setup == "0") {
+            if (!mdata.config.is_setup) {
 //              TODO:  if (! user_is_admin) { show different stuff } else {
                 this._showConfigModal(true);
             }
