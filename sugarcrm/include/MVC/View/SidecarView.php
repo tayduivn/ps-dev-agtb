@@ -66,7 +66,9 @@ class SidecarView extends SugarView
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'unsecureRoutes' => array('login', 'error'),
-            'clientID' => 'sugar'
+            'clientID' => 'sugar',
+            'authStore'  => 'sugarAuthStore',
+            'keyValueStore' => 'sugarAuthStore'
         );
         $configString = json_encode($sidecarConfig);
         $sidecarJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
