@@ -84,18 +84,18 @@ class SimpleMailer extends BaseMailer
 
         // transfer the basic configurations to PHPMailer
         $mailer->Mailer   = MailConfigurationPeer::MODE_SMTP; // only use SMTP to send email with PHPMailer
-        $mailer->Hostname = $this->config->configs["hostname"];
-        $mailer->CharSet  = $this->config->configs["charset"];
-        $mailer->Encoding = $this->config->configs["encoding"];
-        $mailer->WordWrap = $this->config->configs["wordwrap"];
+        $mailer->Hostname = $this->config->getHostname();
+        $mailer->CharSet  = $this->config->getCharset();
+        $mailer->Encoding = $this->config->getEncoding();
+        $mailer->WordWrap = $this->config->getWordwrap();
 
         // transfer the SMTP configurations to PHPMailer
-        $mailer->Host       = $this->config->configs["smtp.host"];
-        $mailer->Port       = $this->config->configs["smtp.port"];
-        $mailer->SMTPSecure = $this->config->configs["smtp.secure"];
-        $mailer->SMTPAuth   = $this->config->configs["smtp.authenticate"];
-        $mailer->Username   = $this->config->configs["smtp.username"];
-        $mailer->Password   = $this->config->configs["smtp.password"];
+        $mailer->Host       = $this->config->getHost();
+        $mailer->Port       = $this->config->getPort();
+        $mailer->SMTPSecure = $this->config->getSecure();
+        $mailer->SMTPAuth   = $this->config->authenticationIsRequired();
+        $mailer->Username   = $this->config->getUsername();
+        $mailer->Password   = $this->config->getPassword();
     }
 
     /**

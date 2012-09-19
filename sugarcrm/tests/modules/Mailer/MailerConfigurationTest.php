@@ -29,80 +29,24 @@ class MailerConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
     public function testLoadDefaultConfigs_CharsetIsReset_WordwrapIsInitialized() {
         $mailerConfig = new MailerConfiguration();
 
-        // change the default configs in order to show that loadDefaultConfigs will reset them
-        // this effectively tests setConfig as well
-        $mailerConfig->setConfig("charset", "asdf"); // some asinine value that wouldn't actually be used
+        // change the default charset in order to show that loadDefaultConfigs will reset it
+        $mailerConfig->setCharset("asdf"); // some asinine value that wouldn't actually be used
 
         // test that the charset has been changed from its default
         $expected = "asdf";
-        $actual   = $mailerConfig->getConfig("charset");
+        $actual   = $mailerConfig->getCharset();
         self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
 
         $mailerConfig->loadDefaultConfigs();
 
         // test that the charset has been returned to its default
         $expected = "utf-8";
-        $actual   = $mailerConfig->getConfig("charset");
+        $actual   = $mailerConfig->getCharset();
         self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
 
         // test that the wordwrap has been initialized correctly
         $expected = 996;
-        $actual   = $mailerConfig->getConfig("wordwrap");
+        $actual   = $mailerConfig->getWordwrap();
         self::assertEquals($expected, $actual, "The wordwrap should have been initialized to {$expected}");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testMergeConfigs_NewConfigAddedToDefaultConfigs() {
-        $mailerConfig = new MailerConfiguration();
-
-        $additionalConfigs = array(
-            "foo" => "bar",
-        );
-        $mailerConfig->mergeConfigs($additionalConfigs);
-
-        $expected = "utf-8";
-        $actual   = $mailerConfig->getConfig("charset");
-        self::assertEquals($expected, $actual, "The charset should have been {$expected}");
-
-        $expected = "bar";
-        $actual   = $mailerConfig->getConfig("foo");
-        self::assertEquals($expected, $actual, "The foo should have been {$expected}");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testMergeConfigs_OverwriteExistingConfig() {
-        $mailerConfig = new MailerConfiguration();
-
-        $expected          = "iso-8559-1";
-        $additionalConfigs = array(
-            "charset" => $expected,
-        );
-        $mailerConfig->mergeConfigs($additionalConfigs);
-
-        $actual = $mailerConfig->getConfig("charset");
-        self::assertEquals($expected, $actual, "The charset should have been {$expected}");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testSetConfigs_ReplaceDefaultConfigsWithNewConfigs() {
-        $mailerConfiguration = new MailerConfiguration();
-
-        $newConfigs = array(
-            "foo" => "bar",
-        );
-        $mailerConfiguration->setConfigs($newConfigs);
-
-        $expected = "bar";
-        $actual   = $mailerConfiguration->getConfig("foo");
-        self::assertEquals($expected, $actual, "The foo should have been {$expected}");
-
-        self::setExpectedException("MailerException");
-        $actual = $mailerConfiguration->getConfig("charset"); // hopefully this default no longer exists
     }
 }

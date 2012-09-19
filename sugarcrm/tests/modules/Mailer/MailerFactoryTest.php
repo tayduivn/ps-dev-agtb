@@ -25,8 +25,14 @@ require_once "modules/Mailer/SmtpMailerConfiguration.php";
 
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $mockMailerConfig;
+
     public function setUp() {
         $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
+
+        $this->mockMailerConfig = self::getMock(
+            "SmtpMailerConfiguration"
+        );
     }
 
     public function tearDown() {
@@ -49,15 +55,9 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_NoMode_ReturnsSimpleMailer() {
-        $mailerConfig = new SmtpMailerConfiguration();
-        $mailerConfig->configs["mail_smtpserver"]   = "localhost";
-        $mailerConfig->configs["mail_smtpport"]     = 25;
-        $mailerConfig->configs["mail_smtpauth_req"] = 0;
-        $mailerConfig->configs["mail_smtpssl"]      = 0;
-
         $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
         $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $mailerConfig;
+        $mailConfig->mailerConfigData = $this->mockMailerConfig;
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
@@ -68,16 +68,10 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_ModeIsDEFAULT_ReturnsSimpleMailer() {
-        $mailerConfig = new SmtpMailerConfiguration();
-        $mailerConfig->configs["mail_smtpserver"]   = "localhost";
-        $mailerConfig->configs["mail_smtpport"]     = 25;
-        $mailerConfig->configs["mail_smtpauth_req"] = 0;
-        $mailerConfig->configs["mail_smtpssl"]      = 0;
-
         $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
         $mailConfig->mode             = "DEFAULT";
         $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $mailerConfig;
+        $mailConfig->mailerConfigData = $this->mockMailerConfig;
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);

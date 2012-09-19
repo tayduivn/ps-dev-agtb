@@ -131,22 +131,22 @@ class MailConfigurationPeer {
         switch ($mode) {
             case self::MODE_SMTP:
                 $mailerConfig = new SmtpMailerConfiguration();
-                $mailerConfig->setConfig("smtp.host", $oe['mail_smtpserver']);
-                $mailerConfig->setConfig("smtp.port", $oe['mail_smtpport']);
+                $mailerConfig->setHost($oe['mail_smtpserver']);
+                $mailerConfig->setPort($oe['mail_smtpport']);
 
                 if ($oe['mail_smtpauth_req']) {
                     // require authentication with the SMTP server
-                    $mailerConfig->setConfig("smtp.authenticate", true);
-                    $mailerConfig->setConfig("smtp.username", $oe['mail_smtpuser']);
+                    $mailerConfig->setAuthenticate(true);
+                    $mailerConfig->setUsername($oe['mail_smtpuser']);
                     //@todo wrap this value in from_html()? do now or at time of transfer?
-                    $mailerConfig->setConfig("smtp.password", $oe['mail_smtppass']);
+                    $mailerConfig->setPassword($oe['mail_smtppass']);
                 }
 
                 // determine the appropriate encryption layer for the sending strategy
                 if ($oe['mail_smtpssl'] === 1) {
-                    $mailerConfig->setConfig("smtp.secure", SmtpMailerConfiguration::SecureSsl);
+                    $mailerConfig->setSecure(SmtpMailerConfiguration::SecureSsl);
                 } elseif ($oe['mail_smtpssl'] === 2) {
-                    $mailerConfig->setConfig("smtp.secure", SmtpMailerConfiguration::SecureTls);
+                    $mailerConfig->setSecure(SmtpMailerConfiguration::SecureTls);
                 }
 
                 break;
