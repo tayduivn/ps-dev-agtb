@@ -25,6 +25,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once "modules/Users/User.php";
+require_once "modules/Mailer/SmtpMailerConfiguration.php"; // also imports MailerConfiguration.php
 
 class MailConfiguration {
     public $mode;
@@ -36,10 +37,9 @@ class MailConfiguration {
     public $sender_email;
     public $display_name;
     public $personal;
-    public $config_data;
+    public $mailerConfigData; // MailerConfiguration or SmtpMailerConfiguration
 
     public function __construct(User $user) {
         $this->user_id=$user->id;
-        $this->config_data = array();
     }
 }

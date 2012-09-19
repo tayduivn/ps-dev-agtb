@@ -1,5 +1,6 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,105 +24,154 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/OutboundEmail/OutboundEmail.php';
-require_once 'modules/Emails/MailConfiguration.php';
+require_once "include/OutboundEmail/OutboundEmail.php";
+require_once "modules/InboundEmail/InboundEmail.php";
+require_once "MailConfiguration.php";
+require_once "modules/Users/User.php";
 
 class MailConfigurationPeer {
 
     const MODE_SMTP = "smtp";
     const MODE_WEB  = "web";
 
-    // constants used for documenting which smtp.secure configurations are valid
-    const SecureNone = "";
-    const SecureSsl  = "ssl";
-    const SecureTls  = "tls";
-
     /**
      * @return array MailConfigurations
      */
     public static function getMailConfigurations(User $user, $systemOnly=false) {
         $mailConfigurations = array();
-        $oe = new OutboundEmail();
-        $system = $oe->getSystemMailerSettings();
-        $ret = $user->getUsersNameAndEmail();
+        $ret                = $user->getUsersNameAndEmail();
+
         if (empty($ret['email'])) {
             $systemReturn = $user->getSystemDefaultNameAndEmail();
             $ret['email'] = $systemReturn['email'];
-            $ret['name'] = from_html($systemReturn['name']);
+            $ret['name']  = from_html($systemReturn['name']);
         } else {
             $ret['name'] = from_html($ret['name']);
         }
 
         if (!$systemOnly) {
             /* Retrieve any Inbound User Mail Accounts and the Outbound Mail Accounts Associated with them */
-            $ie = new InboundEmail();
+            $ie         = new InboundEmail();
             $ieAccounts = $ie->retrieveAllByGroupIdWithGroupAccounts($user->id);
-            foreach($ieAccounts as $k => $v) {
-                $name = $v->get_stored_options('from_name');
-                $addr = $v->get_stored_options('from_addr');
+
+            foreach ($ieAccounts as $k => $v) {
+                $name          = $v->get_stored_options('from_name');
+                $addr          = $v->get_stored_options('from_addr');
                 $storedOptions = unserialize(base64_decode($v->stored_options));
                 // var_dump($storedOptions);
+
                 if ($name != null && $addr != null) {
-                    $name = from_html($name);
-                    $mailConfiguration = new MailConfiguration($user);
-                    $mailConfiguration->config_id   = $storedOptions["outbound_email"];
-                    $mailConfiguration->config_type = 'user';
-                    $mailConfiguration->sender_name = "{$name}";
+                    $name                            = from_html($name);
+                    $mailConfiguration               = new MailConfiguration($user);
+                    $mailConfiguration->config_id    = $storedOptions["outbound_email"];
+                    $mailConfiguration->config_type  = 'user';
+                    $mailConfiguration->sender_name  = "{$name}";
                     $mailConfiguration->sender_email = "{$addr}";
                     $mailConfiguration->display_name = "{$name} ({$addr})";
-                    $mailConfiguration->personal = (bool) ($v->is_personal);
+                    $mailConfiguration->personal     = (bool)($v->is_personal);
 
+                    // turn the OutboundEmail object into a useable set of mail configurations
                     $oe = new OutboundEmail();
                     $oe->retrieve($mailConfiguration->config_id);
-                    $mailConfiguration->config_data = self::toArray($oe);
-                    $mailConfiguration->mode = strtolower($mailConfiguration->config_data['mail_sendtype']);
-                    $mailConfiguration->config_name = $mailConfiguration->config_data['name'];
+                    $oeAsArray                           = self::toArray($oe);
+                    $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
+                    $mailConfiguration->config_name      = $oeAsArray['name'];
+                    $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
+                        $oeAsArray,
+                        $mailConfiguration->mode
+                    );
+
                     $mailConfigurations[] = $mailConfiguration;
                 } // if
             } // foreach
         }
 
+        $oe     = new OutboundEmail();
+        $system = $oe->getSystemMailerSettings();
 
         //Substitute in the users system override if its available.
         $userSystemOverride = $oe->getUsersMailerForSystemOverride($user->id);
-        $personal = false;
-        if($userSystemOverride != null) {
-            $system = $userSystemOverride;
+        $personal           = false;
+
+        if ($userSystemOverride != null) {
+            $system   = $userSystemOverride;
             $personal = true;
         }
+
         if (!empty($system->mail_smtpserver)) {
-            $mailConfiguration = new MailConfiguration($user);
-            $mailConfiguration->config_id   = $system->id;
-            $mailConfiguration->config_type = 'system';
-            $mailConfiguration->sender_name = "{$ret['name']}";
+            $mailConfiguration               = new MailConfiguration($user);
+            $mailConfiguration->config_id    = $system->id;
+            $mailConfiguration->config_type  = 'system';
+            $mailConfiguration->sender_name  = "{$ret['name']}";
             $mailConfiguration->sender_email = "{$ret['email']}";
             $mailConfiguration->display_name = "{$ret['name']} ({$ret['email']})";
-            $mailConfiguration->personal = $personal;
+            $mailConfiguration->personal     = $personal;
 
+            // turn the OutboundEmail object into a useable set of mail configurations
             $oe = new OutboundEmail();
             $oe->retrieve($system->id);
-            $mailConfiguration->config_data = self::toArray($oe);
-            $mailConfiguration->mode = strtolower($mailConfiguration->config_data['mail_sendtype']);
-            $mailConfiguration->config_name = $mailConfiguration->config_data['name'];
+            $oeAsArray                           = self::toArray($oe);
+            $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
+            $mailConfiguration->config_name      = $oeAsArray['name'];
+            $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
+                $oeAsArray,
+                $mailConfiguration->mode
+            );
+
             $mailConfigurations[] = $mailConfiguration;
         }
+
         return $mailConfigurations;
     }
 
+    private static function buildMailerConfiguration($oe, $mode) {
+        $mailerConfig = null;
 
-    private static function toArray($obj, $scalarOnly=true)
-    {
+        // setup the mailer's known configurations based on the type of mailer
+        switch ($mode) {
+            case self::MODE_SMTP:
+                $mailerConfig = new SmtpMailerConfiguration();
+                $mailerConfig->setConfig("smtp.host", $oe['mail_smtpserver']);
+                $mailerConfig->setConfig("smtp.port", $oe['mail_smtpport']);
+
+                if ($oe['mail_smtpauth_req']) {
+                    // require authentication with the SMTP server
+                    $mailerConfig->setConfig("smtp.authenticate", true);
+                    $mailerConfig->setConfig("smtp.username", $oe['mail_smtpuser']);
+                    //@todo wrap this value in from_html()? do now or at time of transfer?
+                    $mailerConfig->setConfig("smtp.password", $oe['mail_smtppass']);
+                }
+
+                // determine the appropriate encryption layer for the sending strategy
+                if ($oe['mail_smtpssl'] === 1) {
+                    $mailerConfig->setConfig("smtp.secure", SmtpMailerConfiguration::SecureSsl);
+                } elseif ($oe['mail_smtpssl'] === 2) {
+                    $mailerConfig->setConfig("smtp.secure", SmtpMailerConfiguration::SecureTls);
+                }
+
+                break;
+            default:
+                $mailerConfig = new MailerConfiguration();
+                break;
+        }
+
+        return $mailerConfig;
+    }
+
+    private static function toArray($obj, $scalarOnly=true) {
         $fields = get_object_vars($obj);
-        $arr = array();
+        $arr    = array();
 
-        foreach($fields as $name => $type) {
+        foreach ($fields as $name => $type) {
             if (isset($obj->$name)) {
-                if ((!$scalarOnly) || ( !is_array($obj->$name) && !is_object($obj->$name)) )
+                if ((!$scalarOnly) || (!is_array($obj->$name) && !is_object($obj->$name))) {
                     $arr[$name] = $obj->$name;
+                }
             } else {
                 $arr[$name] = '';
             }
         }
+
         return $arr;
     }
 }

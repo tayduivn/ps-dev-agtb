@@ -20,7 +20,7 @@
  ********************************************************************************/
 
 require_once "modules/Mailer/MailerFactory.php";
-require_once 'modules/Emails/MailConfigurationPeer.php';
+require_once "modules/Mailer/SmtpMailerConfiguration.php";
 
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -50,10 +50,10 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetMailer_NoMode_ReturnsSimpleMailer() {
         $mailConfig                                   = new MailConfiguration($GLOBALS['current_user']);
         $mailConfig->sender_email                     = "foo@bar.com";
-        $mailConfig->config_data['mail_smtpserver']   = "localhost";
-        $mailConfig->config_data['mail_smtpport']     = 25;
-        $mailConfig->config_data['mail_smtpauth_req'] = 0;
-        $mailConfig->config_data['mail_smtpssl']      = 0;
+        $mailConfig->mailerConfigData['mail_smtpserver']   = "localhost";
+        $mailConfig->mailerConfigData['mail_smtpport']     = 25;
+        $mailConfig->mailerConfigData['mail_smtpauth_req'] = 0;
+        $mailConfig->mailerConfigData['mail_smtpssl']      = 0;
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
@@ -67,12 +67,12 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $mailConfig                                   = new MailConfiguration($GLOBALS['current_user']);
         $mailConfig->mode                             = "DEFAULT";
         $mailConfig->sender_email                     = "foo@bar.com";
-        $mailConfig->config_data['mail_smtpserver']   = "smtp.gmail.com";
-        $mailConfig->config_data['mail_smtpport']     = 443;
-        $mailConfig->config_data['mail_smtpauth_req'] = 1;
-        $mailConfig->config_data['mail_smtpuser']     = "foo";
-        $mailConfig->config_data['mail_smtppass']     = "bar";
-        $mailConfig->config_data['mail_smtpssl']      = 2;
+        $mailConfig->mailerConfigData['mail_smtpserver']   = "smtp.gmail.com";
+        $mailConfig->mailerConfigData['mail_smtpport']     = 443;
+        $mailConfig->mailerConfigData['mail_smtpauth_req'] = 1;
+        $mailConfig->mailerConfigData['mail_smtpuser']     = "foo";
+        $mailConfig->mailerConfigData['mail_smtppass']     = "bar";
+        $mailConfig->mailerConfigData['mail_smtpssl']      = 2;
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
@@ -96,7 +96,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         self::assertEquals($expected, $actual, "The smtp.username should have been changed to {$expected}");
 
         // test that the smtp.secure has been changed from its default to "tls"
-        $expected = MailConfigurationPeer::SecureTls;
+        $expected = SmtpMailerConfiguration::SecureTls;
         $actual   = $mailer->getConfig("smtp.secure");
         self::assertEquals($expected, $actual, "The smtp.secure should have been changed to {$expected}");
     }

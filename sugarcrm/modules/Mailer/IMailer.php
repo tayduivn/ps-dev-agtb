@@ -21,8 +21,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'Encoding.php';      // needs to know the valid encodings that are available for email
-require_once 'EmailIdentity.php'; // requires EmailIdentity for representing email senders and recipients
+require_once "Encoding.php";      // needs to know the valid encodings that are available for email
+require_once "EmailIdentity.php"; // requires EmailIdentity for representing email senders and recipients
+require_once "MailerConfiguration.php";
 
 /**
  * This defines the basic interface that is expected from a Mailer.
@@ -34,8 +35,9 @@ interface IMailer
     /**
      * @abstract
      * @access public
+     * @param MailerConfiguration $config required
      */
-    public function __construct();
+    public function __construct(MailerConfiguration $config);
 
     /**
      * Set the object properties back to their initial default values.
@@ -44,42 +46,6 @@ interface IMailer
      * @access public
      */
     public function reset();
-
-    /**
-     * Set the mailer configuration to its default settings for this sending strategy.
-     *
-     * @abstract
-     * @access public
-     */
-    public function loadDefaultConfigs();
-
-    /**
-     * Replaces the existing configuration with the configuration passed in as a parameter.
-     *
-     * @abstract
-     * @access public
-     * @param array $configs required The key-value pair configuration to replace the existing configuration.
-     */
-    public function setConfigs($configs);
-
-    /**
-     * Merges the configuration passed in as a parameter with the existing configuration.
-     *
-     * @abstract
-     * @access public
-     * @param array $configs required The key-value pair configuration to merge with the existing configuration.
-     */
-    public function mergeConfigs($configs);
-
-    /**
-     * Sets or overwrites a configuration with the value passed in for the key ($config).
-     *
-     * @abstract
-     * @access public
-     * @param string $config required The configuration key.
-     * @param mixed  $value  required The configuration value.
-     */
-    public function setConfig($config, $value);
 
     /**
      * Replaces the existing email headers with the headers passed in as a parameter.
