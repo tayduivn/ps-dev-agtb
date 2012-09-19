@@ -423,7 +423,6 @@
             });
 
             ul.html(items).appendTo(el.parent()).show();
-            console.log("showing, within:", el.parent());
         }
     }, 250),
 
