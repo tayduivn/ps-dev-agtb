@@ -67,7 +67,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
-        self::$managerData = array("amount" => self::$manager['opportunities_total'],
+        self::$managerData = array(
+            "amount" => self::$manager['opportunities_total'],
             "quota" => self::$manager['quota']->amount,
             "quota_id" => self::$manager['quota']->id,
             "best_case" => self::$manager['forecast']->best_case,
@@ -76,7 +77,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
             "best_adjusted" => self::$manager['worksheet']->best_case,
             "likely_adjusted" => self::$manager['worksheet']->likely_case,
             "worst_adjusted" => self::$manager['worksheet']->worst_case,
-            "forecast" => intval(self::$manager['worksheet']->forecast),
+            "commit_stage" => self::$manager['worksheet']->commit_stage,
             "forecast_id" => self::$manager['forecast']->id,
             "worksheet_id" => self::$manager['worksheet']->id,
             "show_opps" => true,
@@ -85,10 +86,10 @@ class ForecastsWorksheetsApiTest extends RestTestBase
             "id" => self::$manager['user']->id,
             "name" => 'Opportunities (' . self::$manager['user']->first_name . ' ' . self::$manager['user']->last_name . ')',
             "user_id" => self::$manager['user']->id,
-
         );
 
-        self::$repData = array("amount" => self::$reportee['opportunities_total'],
+        self::$repData = array(
+            "amount" => self::$reportee['opportunities_total'],
             "quota" => self::$reportee['quota']->amount,
             "quota_id" => self::$reportee['quota']->id,
             "best_case" => self::$reportee['forecast']->best_case,
@@ -97,7 +98,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
             "best_adjusted" => self::$reportee['worksheet']->best_case,
             "likely_adjusted" => self::$reportee['worksheet']->likely_case,
             "worst_adjusted" => self::$reportee['worksheet']->worst_case,
-            "forecast" => intval(self::$reportee['worksheet']->forecast),
+            "commit_stage" => self::$manager['worksheet']->commit_stage,
             "forecast_id" => self::$reportee['forecast']->id,
             "worksheet_id" => self::$reportee['worksheet']->id,
             "show_opps" => true,
@@ -106,31 +107,16 @@ class ForecastsWorksheetsApiTest extends RestTestBase
             "id" => self::$reportee['user']->id,
             "name" => self::$reportee['user']->first_name . ' ' . self::$reportee['user']->last_name,
             "user_id" => self::$reportee['user']->id,
-
         );
 
     }
 
     public static function tearDownAfterClass()
     {
-        /*SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-SugarTestOpportunityUtilities::removeAllCreatedOpps();
-SugarTestQuotaUtilities::removeAllCreatedQuotas();
-SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-$GLOBALS['db']->query("DELETE FROM forecasts WHERE id IN ('" . self::$managerForecast->id . "','" . self::$repForecast->id . "')");
-$GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod->id . "';");*/
-
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         parent::tearDown();
     }
 
-    /*public function setUp()
-    {
-        //Create an anonymous user for login purposes/
-        $this->_user = self::$manager;
-        $GLOBALS['current_user'] = $this->_user;
-
-    }*/
 
     public function tearDown()
     {
@@ -146,6 +132,7 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
         $this->assertNotEmpty($response["reply"], "Rest reply is empty. Rep data should have been returned.");
     }
 
+
     /**
      * @group forecastapi
      * @group forecasts
@@ -154,15 +141,15 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
     {
 
         self::$repData["op_worksheets"][0]->best_case = self::$repData["op_worksheets"][0]->best_case + 100;
-        self::$repData["ops"][0]->probability = self::$repData["ops"][0]->probability + 10;
+        self::$repData["ops"][0]->probability = (self::$repData["ops"][0]->probability + 10);
         $returnBest = '';
         $returnProb = '';
         $returnCommitStage = '';
 
-        $postData = array("amount" => self::$repData["ops"][0]->amount,
+        $postData = array(
+            "amount" => self::$repData["ops"][0]->amount,
             "best_case" => self::$repData["op_worksheets"][0]->best_case,
             "likely_case" => self::$repData["op_worksheets"][0]->likely_case,
-            "forecast" => self::$repData["forecast"],
             "probability" => self::$repData["ops"][0]->probability,
             "commit_stage" => self::$repData["ops"][0]->commit_stage,
             "id" => self::$repData["ops"][0]->id,
@@ -174,28 +161,34 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
 
         $response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
 
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
+
         // now get the data back to see if it was saved to all the proper tables.
         $response = $this->_restCall("ForecastWorksheets?user_id=" . self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);
 
         //loop through response and pick out the rows that correspond with ops[0]->id
-        foreach ($response["reply"] as $record) {
-            if ($record["id"] == self::$repData["ops"][0]->id) {
+        foreach ($response["reply"] as $record)
+        {
+            if ($record["id"] == self::$repData["ops"][0]->id)
+            {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnCommitStage = $record["commit_stage"];
+                break;
             }
         }
 
         //check to see if the data to the Opportunity table was saved
-        $this->assertEquals($returnProb, self::$repData["ops"][0]->probability, "Opportunity data was not saved.");
+        $this->assertEquals(self::$repData["ops"][0]->probability, $returnProb, "Opportunity data was not saved.");
 
         //check to see if the best_case in the Worksheet table was saved
-        $this->assertEquals($returnBest, self::$repData["op_worksheets"][0]->best_case, "Worksheet best_case was not saved.");
+        $this->assertEquals(self::$repData["op_worksheets"][0]->best_case, $returnBest, "Worksheet best_case was not saved.");
 
         //check to see if the commit_stage in worksheet table was saved
-        $this->assertEquals($returnCommitStage, self::$repData["op_worksheets"][0]->commit_stage, "Worksheet commit_stage was not saved.");
-
+        $this->assertEquals(self::$repData["op_worksheets"][0]->commit_stage, $returnCommitStage, "Worksheet commit_stage was not saved.");
     }
+
 
     /**
      * @group forecastapi
@@ -212,7 +205,7 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
         $postData = array("amount" => self::$repData["ops"][0]->amount,
             "best_case" => self::$repData["op_worksheets"][0]->best_case,
             "likely_case" => self::$repData["op_worksheets"][0]->likely_case,
-            "forecast" => self::$repData["forecast"],
+            "commit_stage" => self::$repData["commit_stage"],
             "probability" => self::$repData["ops"][0]->probability,
             "id" => self::$repData["ops"][0]->id,
             "worksheet_id" => self::$repData["op_worksheets"][0]->id,
@@ -228,6 +221,9 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
         $this->authToken = "";
 
         $response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
+
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
 
         // now get the data back to see if it was saved to all the proper tables.
         $response = $this->_restCall("ForecastWorksheets?user_id=" . self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);
@@ -281,7 +277,7 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
         $postData = array("amount" => self::$repData["ops"][0]->amount,
             "best_case" => self::$repData["op_worksheets"][0]->best_case,
             "likely_case" => self::$repData["op_worksheets"][0]->likely_case,
-            "forecast" => self::$repData["forecast"],
+            "commit_stage" => self::$repData["commit_stage"],
             "probability" => self::$repData["ops"][0]->probability,
             "id" => self::$repData["ops"][0]->id,
             "worksheet_id" => self::$repData["op_worksheets"][0]->id,
@@ -297,6 +293,9 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
         $this->authToken = "";
 
         $response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
+
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
 
         // set the current user to Manager
         $this->_user = self::$manager['user'];
@@ -327,6 +326,8 @@ $GLOBALS['db']->query("DELETE FROM timeperiods WHERE id ='" . self::$timeperiod-
         //Now, save as a regular version so things will be reset.
         $postData["draft"] = 0;
         $response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
+
+        $db->commit();
 
         // now get the data back to see if it was saved to all the proper tables.
         $response = $this->_restCall("ForecastWorksheets?user_id=" . self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);

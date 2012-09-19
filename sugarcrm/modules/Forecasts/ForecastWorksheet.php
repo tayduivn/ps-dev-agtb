@@ -28,7 +28,8 @@ class ForecastWorksheet extends SugarBean {
     var $base_rate;
     var $args;
     var $name;
-    var $forecast;
+    var $commit_stage;
+    var $probability;
     var $best_case;
     var $likely_case;
     var $worst_case;
@@ -53,13 +54,12 @@ class ForecastWorksheet extends SugarBean {
     function save($check_notify = false)
     {
     	$version = 1;
-    	
+
     	if(isset($this->args["draft"]) && $this->args["draft"] == 1){
 			$version = 0;
 		}
 		
 		$worksheetID = $this->getWorksheetID($version);
-    	
     	if($version != 0)
     	{
 	        //Update the Opportunities bean
@@ -119,5 +119,6 @@ class ForecastWorksheet extends SugarBean {
 		}
 		return $id;
 	}
+
 }
 

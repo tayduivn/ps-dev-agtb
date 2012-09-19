@@ -467,7 +467,7 @@
             var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
             var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
             var amount = parseFloat(model.get('amount'));
-            var included = model.get('forecast');
+            var commit_stage = model.get('commit_stage');
             var best = parseFloat(model.get('best_case'));
             var base_rate = parseFloat(model.get('base_rate'));
             var amount_base = amount * base_rate;
@@ -482,7 +482,7 @@
                 lostCount++;
             }
 
-            if(included == true || included == 1) {
+            if(commit_stage === 'include') {
                 includedAmount += amount_base;
                 includedBest += best_base;
                 includedCount++;
@@ -509,7 +509,8 @@
                    var amount_base = amount * base_rate;
                    var best_base = best * base_rate;
 
-                   if(model.get('include_expected') == 1)
+                   //If commit_stage is include then we count the forecast schedule model
+                   if(model.get('commit_stage') === 'include')
                    {
                         includedAmount += amount_base;
                         includedBest += best_base;

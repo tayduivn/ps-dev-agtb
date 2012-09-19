@@ -675,66 +675,66 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'vname' => 'LBL_ASSIGNED_USER_ID',
         'type' => 'id',
     ),
+    'commit_stage' =>
     array(
         'name' => 'commit_stage',
         'type' => 'enum',
         'options' => 'commit_stage_dom',
         'vname' => 'LBL_COMMIT_STAGE',
-        'source' => 'non-db',
     ),
+    'name' =>
     array(
         'name' => 'name',
         'vname' => 'LBL_NAME',
         'type' => 'varchar',
-        'source' => 'non-db',
     ),
+    'date_closed' =>
     array(
         'name' => 'date_closed',
         'vname' => 'LBL_DATE_CLOSED',
         'type' => 'date',
-        'source' => 'non-db',
     ),
+    'sales_stage' =>
     array(
         'name' => 'sales_stage',
         'vname' => 'LBL_SALES_STAGE',
         'type' => 'varchar',
-        'source' => 'non-db',
     ),
+    'probability' =>
     array(
         'name' => 'probability',
         'vname' => 'LBL_PROBABILITY',
         'type' => 'int',
-        'source' => 'non-db',
     ),
+    'amount' =>
     array(
         'name' => 'amount',
         'vname' => 'LBL_AMOUNT',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'best_case' =>
     array(
         'name' => 'best_case',
         'vname' => 'LBL_BEST_CASE',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'likely_case' =>
     array(
         'name' => 'likely_case',
         'vname' => 'LBL_LIKELY_CASE',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'currency_id' =>
     array(
         'name' => 'currency_id',
         'vname' => 'LBL_CURRENCY_ID',
         'type' => 'id',
-        'source' => 'non-db',
     ),
+    'base_rate' =>
     array(
         'name' => 'base_rate',
         'vname' => 'LBL_BASE_RATE',
         'type' => 'double',
-        'source' => 'non-db',
     ),
 ),
 );
@@ -767,71 +767,71 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
         'vname' => 'LBL_WORKSHEET_ID',
         'type' => 'id',
     ),
+    'name' =>
     array(
         'name' => 'name',
         'vname' => 'LBL_NAME',
         'type' => 'varchar',
-        'source' => 'non-db',
     ),
+    'amount' =>
     array(
         'name' => 'amount',
         'vname' => 'LBL_AMOUNT',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'quota' =>
     array(
         'name' => 'quota',
         'vname' => 'LBL_QUOTA',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'best_case' =>
     array(
         'name' => 'best_case',
         'vname' => 'LBL_BEST_CASE',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'best_case_adjusted' =>
     array(
         'name' => 'best_case_adjusted',
         'vname' => 'LBL_BEST_CASE_ADJUSTED',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'likely_case' =>
     array(
         'name' => 'likely_case',
         'vname' => 'LBL_LIKELY_CASE',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'likely_case_adjusted' =>
     array(
         'name' => 'likely_case_adjusted',
         'vname' => 'LBL_LIKELY_CASE_ADJUSTED',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'worst_case' =>
     array(
         'name' => 'worst_case',
         'vname' => 'LBL_WORST_CASE',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'worst_case_adjusted' =>
     array(
         'name' => 'worst_case_adjusted',
         'vname' => 'LBL_WORST_CASE_ADJUSTED',
         'type' => 'currency',
-        'source' => 'non-db',
     ),
+    'currency_id' =>
     array(
         'name' => 'currency_id',
         'vname' => 'LBL_CURRENCY_ID',
         'type' => 'id',
-        'source' => 'non-db',
     ),
+    'base_rate' =>
     array(
         'name' => 'base_rate',
         'vname' => 'LBL_BASE_RATE',
         'type' => 'double',
-        'source' => 'non-db',
     ),
 ),
 );
