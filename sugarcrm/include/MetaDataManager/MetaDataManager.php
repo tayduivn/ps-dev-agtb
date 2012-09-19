@@ -194,7 +194,9 @@ class MetaDataManager {
      * returned in the case of no metadata.
      */
     public function getModuleData($moduleName) {
+        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+        //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
 
         $data['fields'] = $vardefs['fields'];
@@ -202,7 +204,9 @@ class MetaDataManager {
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
+        //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
+        //END SUGARCRM flav=pro ONLY
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = $md5;

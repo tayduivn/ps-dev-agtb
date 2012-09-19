@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+require_once('include/SearchForm/SugarSpot.php');
 class UnifiedSearchApi extends SugarApi {
     public function registerApiRest() {
         return array(
@@ -192,6 +192,7 @@ class UnifiedSearchApi extends SugarApi {
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {
+        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
@@ -210,10 +211,23 @@ class UnifiedSearchApi extends SugarApi {
             $recordSet = $this->globalSearchFullText($api,$args,$searchEngine,$options);
             $sortByDateModified = false;
         }
+        //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav!=pro ONLY
+        $GLOBALS['disable_date_format'] = true;
+        $options = $this->parseSearchOptions($api,$args);
+        $searchEngine = new SugarSpot();
+        $options['resortResults'] = true;
+        $recordSet = $this->globalSearchSpot($api,$args,$searchEngine,$options);
+        $sortByDateModified = true;
+        //END SUGARCRM flav=!pro ONLY
+
 
         return $recordSet;
 
     }
+    
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * This function is used to determine the search engine to use
      * @param $api ServiceBase The API class of the request
@@ -267,6 +281,8 @@ class UnifiedSearchApi extends SugarApi {
         }
         return 'SugarSearchEngine';
     }
+    //END SUGARCRM flav=pro ONLY
+
     /**
      * This function is used to hand off the global search to the FTS Search Emgine
      * @param $api ServiceBase The API class of the request
@@ -343,7 +359,7 @@ class UnifiedSearchApi extends SugarApi {
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
      */
-    protected function globalSearchSpot(ServiceBase $api, array $args, SugarSearchEngine $searchEngine, array $options) {
+    protected function globalSearchSpot(ServiceBase $api, array $args, $searchEngine, array $options) {
         require_once('modules/Home/UnifiedSearchAdvanced.php');
 
         
