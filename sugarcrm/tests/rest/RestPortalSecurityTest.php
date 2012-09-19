@@ -546,7 +546,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Remove the contact from one of the accounts and make sure that
         // it doesn't come up on the list
         $this->portalGuy->accounts->delete($this->portalGuy->id,$this->accounts[1]);
-
+        $GLOBALS['db']->commit();
         // Positive test: Make sure we can only see one account now
         $restReply = $this->_restCall('Accounts/');
         foreach ( $restReply['reply']['records'] as $record ) {
@@ -580,7 +580,6 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         }
 
         $this->portalGuy->load_relationship('accounts');
-        $this->portalGuy->accounts->add(array($this->accounts[1], $this->accounts[2]));
 
         // How about some cases?
         for ( $i = 0 ; $i < 3 ; $i++ ) {
