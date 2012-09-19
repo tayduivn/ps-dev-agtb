@@ -3,6 +3,7 @@
         app.view.View.prototype.initialize.call(this, options);
         this.context.on('quickcreate:clear', this.clear, this);
         this.context.on('quickcreate:validateModel', this.validateModel, this);
+        this.model.on("error:validation", this.handleValidationError, this);
         /*
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
@@ -67,24 +68,31 @@
 
     handleValidationError:function (errors) {
         var self = this;
-
+debugger;
         _.each(errors, function (fieldErrors, fieldName) {
             //retrieve the field by name
             var field = self.getField(fieldName);
+            var ftag = this.fieldTag || '';
+
             if (field) {
                 var controlGroup = field.$el.parents('.control-group:first');
 
                 if (controlGroup) {
-                    //Clear out old messages
+                    controlGroup.addClass("error");
                     controlGroup.find('.add-on').remove();
                     controlGroup.find('.help-block').html("");
 
-                    controlGroup.addClass("error");
-                    controlGroup.find('.controls').addClass('input-append');
+                    if (field.$el.parent().parent().find('.input-append').length > 0) {
+                        field.$el.unwrap()
+                    }
+                    // Add error styling
+                    field.$el.wrap('<div class="input-append  '+ftag+'">');
+
                     _.each(fieldErrors, function (errorContext, errorName) {
                         controlGroup.find('.help-block').append(self.app.error.getErrorString(errorName, errorContext));
                     });
-                    controlGroup.find('.controls input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+
+                    $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(controlGroup.find('.help-block'));
                 }
             }
         });
@@ -99,6 +107,7 @@
     },
 
     validateModel: function(success, failure) {
+        debugger;
         if(this.model.isValid(this.getFields(this.module))) {
             success();
         } else {
