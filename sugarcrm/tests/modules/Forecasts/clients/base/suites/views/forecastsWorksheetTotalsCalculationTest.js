@@ -28,11 +28,11 @@ describe("The forecasts worksheet totals calculation test", function(){
         SugarTest.seedApp();
         app = SugarTest.app;
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheet", "forecastsWorksheet", "js", function(d) { return eval(d); });
-        var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, forecast: 1,  best_case : 100, likely_case : 100, base_rate : 1 });
-        var model2 = new Backbone.Model({amount: 100, sales_stage: 'Closed Lost', probability: 70, forecast: 0, best_case : 100, likely_case : 100, base_rate : 1 });
-        var model3 = new Backbone.Model({amount: 100, sales_stage: 'Negotiating', probability: 70, forecast: 0,  best_case : 100, likely_case : 100, base_rate : 1 });
-        var model4 = new Backbone.Model({amount: 100, sales_stage: 'Lost Custom', probability: 70, forecast: 0,  best_case : 100, likely_case : 100, base_rate : 1 });
-        var model5 = new Backbone.Model({amount: 100, sales_stage: 'Won Custom', probability: 70, forecast: 0,  best_case : 100, likely_case : 100, base_rate : 1 });
+        var model1 = new Backbone.Model({amount: 100, sales_stage: 'Closed Won', probability: 70, commit_stage: 'include',  best_case : 100, likely_case : 100, base_rate : 1 });
+        var model2 = new Backbone.Model({amount: 100, sales_stage: 'Closed Lost', probability: 70, commit_stage: 'exclude', best_case : 100, likely_case : 100, base_rate : 1 });
+        var model3 = new Backbone.Model({amount: 100, sales_stage: 'Negotiating', probability: 70, commit_stage: 'exclude',  best_case : 100, likely_case : 100, base_rate : 1 });
+        var model4 = new Backbone.Model({amount: 100, sales_stage: 'Lost Custom', probability: 70, commit_stage: 'exclude',  best_case : 100, likely_case : 100, base_rate : 1 });
+        var model5 = new Backbone.Model({amount: 100, sales_stage: 'Won Custom', probability: 70, commit_stage: 'exclude',  best_case : 100, likely_case : 100, base_rate : 1 });
         var collection = new Backbone.Collection([model1, model2, model3, model4, model5]);
         view._collection = collection;
         view.includedModel = new Backbone.Model();
@@ -45,7 +45,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the included values based on forecast value along with expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 1, status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({commit_stage : 'include', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -70,7 +70,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the included values based on forecast value without expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -95,7 +95,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should default the included values to 0 when the amounts are null", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 1, status : 'Active', expected_amount : null, expected_best_case : null, base_rate : 1});
+            var expectedModel = new Backbone.Model({commit_stage : 'include', status : 'Active', expected_amount : null, expected_best_case : null, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -125,7 +125,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the closed_opp_count and closed_amount values", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -160,7 +160,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the correct values for custom sales stages", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -195,7 +195,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the correct values for multiple custom sales stages", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({include_expected : 0, status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});

@@ -99,7 +99,6 @@ class Individual implements IChartAndWorksheet {
         {
             $return = array();
             $return['id'] = $row['primaryid'];
-            $return['forecast'] = ($row['opportunities_forecast'] == 1) ? true : false;
             $return['commit_stage'] = $row['opportunities_commit_stage'];
             $return['name'] = $row['opportunities_name'];
             $return['amount'] = $row['opportunities_amount'];

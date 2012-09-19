@@ -22,34 +22,24 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
-    //if forecast value equals -1, set it to 0 or 1 based on probability
     global $app_list_strings, $timedate, $current_language;
     $app_list_strings = return_app_list_strings_language($current_language);
 
-    if ($focus->forecast == -1)
+    //Determine the default commit_stage based on the probability
+    if (empty($focus->commit_stage) && $focus->probability !== '')
     {
         $admin = BeanFactory::getBean('Administration');
         $admin->retrieveSettings();
-        $committed_probability = isset($admin->settings['base_committed_probability']) ? $admin->settings['base_committed_probability'] : 70;
-        $focus->forecast = ($focus->probability >= $committed_probability) ? 1 : 0;
-    }
 
-    //if commit_stage isn't set, set it based on the probability
-    if (empty($focus->commit_stage) && isset($focus->probability))
-    {
-        $admin = BeanFactory::getBean('Administration');
-        $admin->retrieveSettings('base');
-        $commit_stage_dom = isset($admin->settings['base_buckets_dom']) ? $admin->settings['base_buckets_dom'] : 'commit_stage_dom';
-        $commit_stage_arr = $app_list_strings[$commit_stage_dom];
+        //Retrieve Forecasts_category_ranges and json decode as an associative array
+        $category_ranges = json_decode(html_entity_decode($admin->settings['Forecasts_category_ranges']), true);
 
-        ksort($commit_stage_arr);
-        //the keys of this array are upper limit of probability for each stage
-        foreach($commit_stage_arr as $key => $value)
+        foreach($category_ranges as $key=>$entry)
         {
-            $focus->commit_stage = $key;
-            if($focus->probability < $key)
+            if($focus->probability >= $entry['min'] && $focus->probability <= $entry['max'])
             {
-                break;
+               $focus->commit_stage = $key;
+               break;
             }
         }
     }
@@ -87,7 +77,7 @@ function perform_save(&$focus){
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
-    //We create a related product entry for any new opportunity so that we may forecast on produts
+    //We create a related product entry for any new opportunity so that we may forecast on products
     if (empty($focus->id))
     {
         $focus->id = create_guid();
@@ -99,7 +89,6 @@ function perform_save(&$focus){
         $product->likely_case = $focus->amount;
         $product->worst_case = $focus->worst_case;
         $product->assigned_user_id = $focus->assigned_user_id;
-        $product->date_closed = $focus->date_closed;
         $product->opportunity_id = $focus->id;
         $product->save();
     }

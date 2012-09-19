@@ -299,15 +299,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'vname' => 'LBL_PRIMARY_QUOTE_ID',
     'comment' => 'The primary quote this opportunity is associated with'
   ),
-  'forecast' =>
-  array (
-    'name' => 'forecast',
-    'vname' => 'LBL_FORECAST',
-    'type' => 'int',
-    'dbType' => 'tinyint',
-    'default' => '-1',
-    'comment' => 'Integer indicating whether or not record should be included in forecast'
-  ),
   'commit_stage' =>
   array (
     'name' => 'commit_stage',

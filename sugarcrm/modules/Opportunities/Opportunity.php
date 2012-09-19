@@ -89,7 +89,6 @@ class Opportunity extends SugarBean
     var $worst_case_base_currency;
     var $timeperiod_id;
 	var $commit_stage;
-	var $forecast = -1;
 //END SUGARCRM flav=pro ONLY
 
 	var $importable = true;

@@ -81,7 +81,7 @@
      *
      */
     Handlebars.registerHelper("expected_opportunity_column", function(tag) {
-        if(this.name == 'include_expected' || this.name == 'expected_commit_stage')
+        if(this.name == 'expected_commit_stage')
         {
            return tag == 'start' ? '<td><div style="font-weight: normal; width: 100%; text-align: center;">' : '</div></td>';
         } else if (this.name == 'expected_amount') {

@@ -51,7 +51,6 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestHelper::setup('app_list_strings');
         $forecastConfig = array (
             'show_buckets' => 0,
-            'committed_probability' => 70,
             'sales_stage_won' => array('Closed Won'),
             'sales_stage_lost' => array('Closed Lost')
         );
@@ -183,7 +182,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $managerWorksheet->best_case = 62000;
         $managerWorksheet->likely_case = 55000;
         $managerWorksheet->worst_case = 50000;
-        $managerWorksheet->forecast = 1;
         $managerWorksheet->save();
 
         $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
@@ -195,7 +193,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $repWorksheet->best_case = 82000;
         $repWorksheet->likely_case = 74000;
         $repWorksheet->worst_case = 65000;
-        $repWorksheet->forecast = 1;
         $repWorksheet->save();
         $GLOBALS['db']->commit();
     }

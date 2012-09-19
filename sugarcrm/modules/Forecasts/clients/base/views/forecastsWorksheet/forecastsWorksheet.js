@@ -134,7 +134,7 @@
 
         if(field.name == "commit_stage")
         {
-            //Set the field.def.optoins value based on app.config.buckets_dom (if set)
+            //Set the field.def.options value based on app.config.buckets_dom (if set)
             field.def.options = app.config.buckets_dom || 'commit_stage_dom';
             if(this.isEditableWorksheet)
             {
@@ -165,15 +165,7 @@
 
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element, index){
-                    if(element.hasChanged("forecast")) {
-                        this.toggleIncludeInForecast(element);
-                    }
                     if(element.hasChanged("commit_stage")) {
-                        if(element.get("commit_stage") == '100') {
-                            this._collection.models[index].set("forecast", '1');
-                        } else {
-                            this._collection.models[index].set("forecast", '0');
-                        }
                         this.toggleIncludeInForecast(element);
                     }
                 }, this);
@@ -252,20 +244,14 @@
 
     _setForecastColumn: function(fields) {
         var self = this;
-        var forecastField, commitStageField;
 
         _.each(fields, function(field) {
-            if (field.name == "forecast") {
-                field.enabled = (app.config.show_buckets == 0);
-                forecastField = field;
-            } else if (field.name == "commit_stage") {
-                field.enabled = (app.config.show_buckets == 1);
+            if (field.name == "commit_stage") {
+                //field.enabled = (app.config.show_buckets == 1);
                 field.view = self.isEditableWorksheet ? 'edit' : 'default';
-                commitStageField = field;
             }
         });
 
-        return (app.config.show_buckets == 1) ? forecastField : commitStageField;
     },
 
     /**
@@ -282,14 +268,14 @@
         $("#view-manager").hide();
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
-        var unusedField = this._setForecastColumn(this.meta.panels[0].fields);
+        this._setForecastColumn(this.meta.panels[0].fields);
 
         app.view.View.prototype._render.call(this);
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
-        var fields = _.without(this.meta.panels[0].fields, unusedField);
+        var fields = this.meta.panels[0].fields;
         var columnKeys = {};
 
         _.each(fields, function(field, key){
@@ -346,13 +332,14 @@
         		enableCommit = true;
         	}
         });
+
         if(enableCommit){
         	self.context.forecasts.set({commitButtonEnabled: true});
         }
         else{
         	self.context.forecasts.set({commitButtonEnabled: false});
         }
-        
+
         return this;
     },
 
@@ -480,7 +467,7 @@
             var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
             var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
             var amount = parseFloat(model.get('amount'));
-            var included = model.get('forecast');
+            var commit_stage = model.get('commit_stage');
             var best = parseFloat(model.get('best_case'));
             var base_rate = parseFloat(model.get('base_rate'));
             var amount_base = amount * base_rate;
@@ -495,7 +482,7 @@
                 lostCount++;
             }
 
-            if(included == true || included == 1) {
+            if(commit_stage === 'include') {
                 includedAmount += amount_base;
                 includedBest += best_base;
                 includedCount++;
@@ -522,14 +509,15 @@
                    var amount_base = amount * base_rate;
                    var best_base = best * base_rate;
 
-                   if(model.get('include_expected') == 1)
-                    {
+                   //If commit_stage is include then we count the forecast schedule model
+                   if(model.get('commit_stage') === 'include')
+                   {
                         includedAmount += amount_base;
                         includedBest += best_base;
-                    }
+                   }
 
-                    overallAmount += amount_base;
-                    overallBest += best_base;
+                   overallAmount += amount_base;
+                   overallBest += best_base;
                }
            });
         }
