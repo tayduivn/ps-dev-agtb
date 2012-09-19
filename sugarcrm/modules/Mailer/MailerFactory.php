@@ -111,7 +111,7 @@ class MailerFactory
         // add the known email headers
         $from    = new EmailIdentity($senderEmail, $senderName);
         $headers = new EmailHeaders();
-        $headers->setFrom($from);
+        $headers->setHeader(EmailHeaders::From, $from);
 
         return $headers;
     }

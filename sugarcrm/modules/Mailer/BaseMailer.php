@@ -81,9 +81,33 @@ abstract class BaseMailer implements IMailer
      *
      * @access public
      * @param array $headers required
+     * @throws MailerException
      */
     public function constructHeaders($headers = array()) {
         $this->headers->buildFromArray($headers);
+    }
+
+    /**
+     * Adds or replaces header values.
+     *
+     * @access public
+     * @param string $key   required Should look like the real header it represents.
+     * @param mixed  $value required The value of the header.
+     * @throws MailerException
+     */
+    public function setHeader($key, $value) {
+        $this->headers->setHeader($key, $value);
+    }
+
+    /**
+     * Adds or replaces the Subject header.
+     *
+     * @access public
+     * @param string $subject required
+     * @throws MailerException
+     */
+    public function setSubject($subject) {
+        $this->setHeader(EmailHeaders::Subject, $subject);
     }
 
     /**

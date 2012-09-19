@@ -57,6 +57,25 @@ interface IMailer
     public function setHeaders(EmailHeaders $headers);
 
     /**
+     * Adds or replaces header values.
+     *
+     * @access public
+     * @param string $key   required Should look like the real header it represents.
+     * @param mixed  $value required The value of the header.
+     * @throws MailerException
+     */
+    public function setHeader($key, $value);
+
+    /**
+     * Adds or replaces the Subject header.
+     *
+     * @access public
+     * @param string $subject required
+     * @throws MailerException
+     */
+    public function setSubject($subject);
+
+    /**
      * Restores the email headers to a fresh EmailHeaders object.
      *
      * @abstract

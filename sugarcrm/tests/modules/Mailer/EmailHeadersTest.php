@@ -26,10 +26,10 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetPriority_PassInInteger_PriorityIsUpdated() {
+    public function testSetPriority_ThroughSetHeader_PassInInteger_PriorityIsUpdated() {
         $expected = 5;
         $headers  = new EmailHeaders();
-        $headers->setPriority($expected);
+        $headers->setHeader(EmailHeaders::Priority, $expected);
         $actual = $headers->getPriority();
         self::assertEquals($expected, $actual, "The priority should have changed to {$expected}");
     }
@@ -37,11 +37,11 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetPriority_PassInString_PriorityIsNotUpdated() {
+    public function testSetPriority_ThroughSetHeader_PassInString_PriorityIsNotUpdated() {
         $invalidPriority = "5";
         $headers         = new EmailHeaders();
         $expected        = $headers->getPriority();
-        $headers->setPriority($invalidPriority);
+        $headers->setHeader(EmailHeaders::Priority, $invalidPriority);
         $actual = $headers->getPriority();
         self::assertEquals($expected, $actual, "The priority should have remained {$expected}");
     }
@@ -49,10 +49,10 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetRequestConfirmation_PassInBoolean_RequestConfirmationIsUpdated() {
+    public function testSetRequestConfirmation_ThroughSetHeader_PassInBoolean_RequestConfirmationIsUpdated() {
         $expected = true;
         $headers  = new EmailHeaders();
-        $headers->setRequestConfirmation($expected);
+        $headers->setHeader(EmailHeaders::DispositionNotificationTo, $expected);
         $actual = $headers->getRequestConfirmation();
         self::assertTrue($actual, "The request confirmation flag should have changed to true");
     }
@@ -60,10 +60,10 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetRequestConfirmation_PassInInteger_RequestConfirmationIsNotUpdated() {
+    public function testSetRequestConfirmation_ThroughSetHeader_PassInInteger_RequestConfirmationIsNotUpdated() {
         $invalidRequestConfirmation = 1;
         $headers                    = new EmailHeaders();
-        $headers->setRequestConfirmation($invalidRequestConfirmation);
+        $headers->setHeader(EmailHeaders::DispositionNotificationTo, $invalidRequestConfirmation);
         $actual = $headers->getRequestConfirmation();
         self::assertFalse($actual, "The request confirmation flag should have remained false");
     }
@@ -71,10 +71,10 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetSubject_PassInString_SubjectIsUpdated() {
+    public function testSetSubject_ThroughSetHeader_PassInString_SubjectIsUpdated() {
         $expected = "this is a subject";
         $headers  = new EmailHeaders();
-        $headers->setSubject($expected);
+        $headers->setHeader(EmailHeaders::Subject, $expected);
         $actual = $headers->getSubject();
         self::assertEquals($expected, $actual, "The subject should have changed to {$expected}");
     }
@@ -82,22 +82,22 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetSubject_PassInInteger_MailerExceptionIsThrown() {
+    public function testSetSubject_ThroughSetHeader_PassInInteger_MailerExceptionIsThrown() {
         self::setExpectedException("MailerException");
         $invalidSubject = 1;
         $headers        = new EmailHeaders();
-        $headers->setSubject($invalidSubject);
+        $headers->setHeader(EmailHeaders::Subject, $invalidSubject);
         $actual = $headers->getSubject(); // hopefully nothing is actually returned
     }
 
     /**
      * @group mailer
      */
-    public function testAddCustomHeader_PassInStrings_CustomHeaderIsAdded() {
+    public function testAddCustomHeader_ThroughSetHeader_PassInStrings_CustomHeaderIsAdded() {
         $key      = "X-CUSTOM-HEADER";
         $expected = "custom header value";
         $headers  = new EmailHeaders();
-        $headers->addCustomHeader($key, $expected);
+        $headers->setHeader($key, $expected);
         $actual = $headers->getCustomHeader($key);
         self::assertEquals($expected, $actual, "The custom header should have been added");
     }
@@ -105,17 +105,17 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testAddCustomHeader_UpdateExistingCustomHeader() {
+    public function testAddCustomHeader_ThroughSetHeader_UpdateExistingCustomHeader() {
         $headers = new EmailHeaders();
 
         // first set the custom header to something
         $key   = "X-CUSTOM-HEADER";
         $value = "custom header value";
-        $headers->addCustomHeader($key, $value);
+        $headers->setHeader($key, $value);
 
         // change the existing custom header
         $expected = "a different value";
-        $headers->addCustomHeader($key, $expected);
+        $headers->setHeader($key, $expected);
 
         $actual = $headers->getCustomHeader($key);
         self::assertEquals($expected, $actual, "The custom header should have changed to '{$expected}'");
@@ -124,12 +124,12 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testAddCustomHeader_PassInValidKeyAndInvalidValue_MailerExceptionIsThrown() {
+    public function testAddCustomHeader_ThroughSetHeader_PassInValidKeyAndInvalidValue_MailerExceptionIsThrown() {
         self::setExpectedException("MailerException");
         $headers      = new EmailHeaders();
         $key          = "X-CUSTOM-HEADER";
         $invalidValue = 1;
-        $headers->addCustomHeader($key, $invalidValue);
+        $headers->setHeader($key, $invalidValue);
     }
 
     /**
