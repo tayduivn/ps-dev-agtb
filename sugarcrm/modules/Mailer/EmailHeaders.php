@@ -21,8 +21,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'MailerException.php'; // requires MailerException in order to throw exceptions of that type
-require_once 'EmailIdentity.php';   // requires EmailIdentity for From, Reply-To, and Sender
+require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
+require_once "EmailIdentity.php";   // requires EmailIdentity for From, Reply-To, and Sender
 
 /**
  * This class encapsulates properties and behavior of email headers so that business logic relating to headers can exist
@@ -31,13 +31,13 @@ require_once 'EmailIdentity.php';   // requires EmailIdentity for From, Reply-To
 class EmailHeaders
 {
     // the non-custom header field names we support
-    const MessageId                 = 'Message-ID';
-    const Priority                  = 'Priority';
-    const DispositionNotificationTo = 'Disposition-Notification-To';
-    const From                      = 'From';
-    const ReplyTo                   = 'Reply-To';
-    const Sender                    = 'Sender';
-    const Subject                   = 'Subject';
+    const MessageId                 = "Message-ID";
+    const Priority                  = "Priority";
+    const DispositionNotificationTo = "Disposition-Notification-To";
+    const From                      = "From";
+    const ReplyTo                   = "Reply-To";
+    const Sender                    = "Sender";
+    const Subject                   = "Subject";
 
     // protected members
     protected $messageId;           // The value to be mapped to the Message-ID header.

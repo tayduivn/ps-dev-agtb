@@ -19,115 +19,16 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/Mailer/SimpleMailer.php';
+require_once "modules/Mailer/SimpleMailer.php";
 
 class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    /**
-     * @group mailer
-     */
-    public function testLoadDefaultConfigs_SmtpPortAndCharsetAreBothReset_WordwrapAndSmtpAuthenticateAreBothInitialized() {
-        $mailer = new SimpleMailer();
+    private static $mockMailerConfig;
 
-        // change the default configs in order to show that loadDefaultConfigs will reset them
-        // this effectively tests SimpleMailer::setConfig() as well
-        $mailer->setConfig("charset", "asdf"); // some asinine value that wouldn't actually be used
-        $mailer->setConfig("smtp.port", 9000); // should not match the default
-
-        // test that the charset has been changed from its default
-        $expected = "asdf";
-        $actual   = $mailer->getConfig("charset");
-        self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
-
-        // test that the smtp.port has been changed from its default
-        $expected = 9000;
-        $actual   = $mailer->getConfig("smtp.port");
-        self::assertEquals($expected, $actual, "The smtp.port should have been reset to {$expected}");
-
-        $mailer->loadDefaultConfigs();
-
-        // test that the charset has been returned to its default
-        $expected = "utf-8";
-        $actual   = $mailer->getConfig("charset");
-        self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
-
-        // test that the smtp.port has been returned its default
-        $expected = 25;
-        $actual   = $mailer->getConfig("smtp.port");
-        self::assertEquals($expected, $actual, "The smtp.port should have been reset to {$expected}");
-
-        // test that the wordwrap has been initialized correctly
-        $expected = 996;
-        $actual   = $mailer->getConfig("wordwrap");
-        self::assertEquals($expected, $actual, "The wordwrap should have been initialized to {$expected}");
-
-        // test that the smtp.authenticate has been initialized correctly
-        $actual = $mailer->getConfig("smtp.authenticate");
-        self::assertFalse($actual, "The smtp.authenticate should have been initialized to false");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testMergeConfigs_NewConfigAddedToDefaultConfigs() {
-        $mailer = new SimpleMailer();
-
-        $additionalConfigs = array(
-            "foo" => "bar",
+    public static function setUpBeforeClass() {
+        self::$mockMailerConfig = self::getMock(
+            "SmtpMailerConfiguration"
         );
-        $mailer->mergeConfigs($additionalConfigs);
-
-        $expected = "utf-8";
-        $actual   = $mailer->getConfig("charset");
-        self::assertEquals($expected, $actual, "The charset should have been {$expected}");
-
-        $expected = "bar";
-        $actual   = $mailer->getConfig("foo");
-        self::assertEquals($expected, $actual, "The foo should have been {$expected}");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testMergeConfigs_OverwriteExistingConfig() {
-        $mailer = new SimpleMailer();
-
-        $expected          = "iso-8559-1";
-        $additionalConfigs = array(
-            "charset" => $expected,
-        );
-        $mailer->mergeConfigs($additionalConfigs);
-
-        $actual = $mailer->getConfig("charset");
-        self::assertEquals($expected, $actual, "The charset should have been {$expected}");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testSetConfigs_ReplaceDefaultConfigsWithNewConfigs() {
-        $mailer = new SimpleMailer();
-
-        $newConfigs = array(
-            "foo" => "bar",
-        );
-        $mailer->setConfigs($newConfigs);
-
-        $expected = "bar";
-        $actual   = $mailer->getConfig("foo");
-        self::assertEquals($expected, $actual, "The foo should have been {$expected}");
-
-        $exceptionWasCaught = false;
-
-        try {
-            $actual = $mailer->getConfig("charset"); // hopefully this default no longer exists
-        } catch (MailerException $me) {
-            $exceptionWasCaught = true;
-        }
-
-        if (!$exceptionWasCaught) {
-            self::fail("A MailerException should have been raised because charset is an invalid config");
-        }
     }
 
     /**
@@ -136,7 +37,12 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
     public function testClearRecipients_ClearToAndBccButNotCc() {
         $mockMailer = self::getMock(
             "SimpleMailer",
-            array("clearRecipientsTo", "clearRecipientsCc", "clearRecipientsBcc")
+            array(
+                 "clearRecipientsTo",
+                 "clearRecipientsCc",
+                 "clearRecipientsBcc"
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::once())
@@ -164,7 +70,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -203,7 +110,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -243,7 +151,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -284,7 +193,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -326,7 +236,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -369,7 +280,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -420,7 +332,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())
@@ -475,7 +388,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
                  "transferAttachments",
-            )
+            ),
+            array(self::$mockMailerConfig)
         );
 
         $mockMailer->expects(self::any())

@@ -27,9 +27,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 class Encoding
 {
-    const EightBit        = '8bit';
-    const SevenBit        = '7bit';
-    const Binary          = 'binary';
-    const Base64          = 'base64';
-    const QuotedPrintable = 'quoted-printable';
+    const EightBit        = "8bit";
+    const SevenBit        = "7bit";
+    const Binary          = "binary";
+    const Base64          = "base64";
+    const QuotedPrintable = "quoted-printable";
 }

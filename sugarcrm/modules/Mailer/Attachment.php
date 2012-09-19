@@ -21,7 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'Encoding.php'; // needs the valid encodings defined in Encoding
+require_once "Encoding.php"; // needs the valid encodings defined in Encoding
 
 /**
  * This class encapsulates properties and behavior of an attachment so that a common interface can be expected
@@ -42,7 +42,7 @@ class Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
+    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
         $this->setPath($path);
         $this->setName($name);
         $this->setEncoding($encoding);
@@ -70,7 +70,7 @@ class Attachment
      * @param null|string $name required Should be a string, but null is acceptable if the path will be used for the name.
      */
     public function setName($name) {
-        if (!is_string($name) || $name == '') {
+        if (!is_string($name) || $name == "") {
             // derive the name from the path if the name is invalid
             $name = basename($this->path);
         }
@@ -106,7 +106,7 @@ class Attachment
      * @access public
      * @param string $mimeType
      */
-    public function setMimeType($mimeType = 'application/octet-stream') {
+    public function setMimeType($mimeType = "application/octet-stream") {
         $this->mimeType = $mimeType;
     }
 
@@ -126,10 +126,10 @@ class Attachment
      */
     public function getAsArray() {
         return array(
-            'path'     => $this->getPath(),
-            'name'     => $this->getName(),
-            'encoding' => $this->getEncoding(),
-            'mimetype' => $this->getMimeType(),
+            "path"     => $this->getPath(),
+            "name"     => $this->getName(),
+            "encoding" => $this->getEncoding(),
+            "mimetype" => $this->getMimeType(),
         );
     }
 }

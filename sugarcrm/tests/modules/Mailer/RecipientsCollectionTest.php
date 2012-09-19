@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/Mailer/RecipientsCollection.php';
+require_once "modules/Mailer/RecipientsCollection.php";
 
 class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -46,14 +46,14 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
         // make sure the recipients have been added
         $expected      = 4;
         $allRecipients = $recipientsCollection->getAll();
-        $actual        = count($allRecipients['to']) + count($allRecipients['cc']) + count($allRecipients['bcc']);
+        $actual        = count($allRecipients["to"]) + count($allRecipients["cc"]) + count($allRecipients["bcc"]);
         self::assertEquals($expected, $actual, "{$expected} recipients should have been added");
 
         // now clear all recipients
         $recipientsCollection->clearAll();
         $expected      = 0;
         $allRecipients = $recipientsCollection->getAll();
-        $actual        = count($allRecipients['to']) + count($allRecipients['cc']) + count($allRecipients['bcc']);
+        $actual        = count($allRecipients["to"]) + count($allRecipients["cc"]) + count($allRecipients["bcc"]);
         self::assertEquals($expected, $actual, "{$expected} recipients should remain");
     }
 
@@ -136,19 +136,19 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected      = 4;
         $allRecipients = $recipientsCollection->getAll();
-        $actual        = count($allRecipients['to']) + count($allRecipients['cc']) + count($allRecipients['bcc']);
+        $actual        = count($allRecipients["to"]) + count($allRecipients["cc"]) + count($allRecipients["bcc"]);
         self::assertEquals($expected, $actual, "{$expected} recipients should have been added");
 
         $expected = $to[1]->getEmail();
-        $actual   = $allRecipients['to'][$expected]->getEmail();
+        $actual   = $allRecipients["to"][$expected]->getEmail();
         self::assertEquals($expected, $actual, "{$expected} should have been found in the TO list");
 
         $expected = $cc[0]->getEmail();
-        $actual   = $allRecipients['cc'][$expected]->getEmail();
+        $actual   = $allRecipients["cc"][$expected]->getEmail();
         self::assertEquals($expected, $actual, "{$expected} should have been found in the CC list");
 
         $expected = $bcc[0]->getEmail();
-        $actual   = $allRecipients['bcc'][$expected]->getEmail();
+        $actual   = $allRecipients["bcc"][$expected]->getEmail();
         self::assertEquals($expected, $actual, "{$expected} should have been found in the BCC list");
     }
 
@@ -162,7 +162,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected      = 0;
         $allRecipients = $recipientsCollection->getAll();
-        $actual        = count($allRecipients['to']) + count($allRecipients['cc']) + count($allRecipients['bcc']);
+        $actual        = count($allRecipients["to"]) + count($allRecipients["cc"]) + count($allRecipients["bcc"]);
         self::assertEquals($expected, $actual, "{$expected} recipients should have been found");
     }
 }

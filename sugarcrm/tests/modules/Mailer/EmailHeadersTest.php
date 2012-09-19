@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/Mailer/EmailHeaders.php';
+require_once "modules/Mailer/EmailHeaders.php";
 
 class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
 {

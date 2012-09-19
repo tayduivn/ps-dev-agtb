@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'modules/Mailer/EmbeddedImage.php';
+require_once "modules/Mailer/EmbeddedImage.php";
 
 class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -28,23 +28,23 @@ class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetAsArray() {
         $expected      = array(
-            'path' => "path/to/somewhere",
-            'cid'  => "1234",
-            'name' => "abcd",
+            "path" => "path/to/somewhere",
+            "cid"  => "1234",
+            "name" => "abcd",
         );
-        $embeddedImage = new EmbeddedImage($expected['path'], $expected['cid'], $expected['name']);
+        $embeddedImage = new EmbeddedImage($expected["path"], $expected["cid"], $expected["name"]);
         $actual        = $embeddedImage->getAsArray();
 
         $key = "path";
         self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
-        self::assertEquals($expected['path'], $actual['path'], "The paths don't match");
+        self::assertEquals($expected["path"], $actual["path"], "The paths don't match");
 
         $key = "cid";
         self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
-        self::assertEquals($expected['cid'], $actual['cid'], "The CIDs don't match");
+        self::assertEquals($expected["cid"], $actual["cid"], "The CIDs don't match");
 
         $key = "name";
         self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
-        self::assertEquals($expected['name'], $actual['name'], "The names don't match");
+        self::assertEquals($expected["name"], $actual["name"], "The names don't match");
     }
 }

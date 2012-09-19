@@ -154,7 +154,7 @@ interface IMailer
      * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
      * @param string      $mimeType          Should be a valid MIME type.
      */
-    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream');
+    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream");
 
     /**
      * Adds an embedded attachment. This can include images, sounds, and just about any other document. Make sure to set
@@ -168,7 +168,7 @@ interface IMailer
      * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
      * @param string      $mimeType          Should be a valid MIME type.
      */
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream');
+    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream");
 
     /**
      * Removes any existing attachments by restoring the container to an empty array.

@@ -20,24 +20,25 @@
  ********************************************************************************/
 
 require_once "modules/Mailer/MailerFactory.php";
+require_once "modules/Emails/MailConfiguration.php";
 require_once "modules/Mailer/SmtpMailerConfiguration.php";
 
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp() {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
     }
 
     public function tearDown() {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        unset($GLOBALS["current_user"]);
     }
 
     /**
      * @group mailer
      */
     public function testGetMailer_ConfigSenderEmailIsInvalid_ThrowsException() {
-        $mailConfig               = new MailConfiguration($GLOBALS['current_user']);
+        $mailConfig               = new MailConfiguration($GLOBALS["current_user"]);
         $mailConfig->sender_email = 1234; // an invalid From email address
 
         self::setExpectedException("MailerException");
@@ -48,12 +49,15 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_NoMode_ReturnsSimpleMailer() {
-        $mailConfig                                   = new MailConfiguration($GLOBALS['current_user']);
-        $mailConfig->sender_email                     = "foo@bar.com";
-        $mailConfig->mailerConfigData['mail_smtpserver']   = "localhost";
-        $mailConfig->mailerConfigData['mail_smtpport']     = 25;
-        $mailConfig->mailerConfigData['mail_smtpauth_req'] = 0;
-        $mailConfig->mailerConfigData['mail_smtpssl']      = 0;
+        $mailerConfig = new SmtpMailerConfiguration();
+        $mailerConfig->configs["mail_smtpserver"]   = "localhost";
+        $mailerConfig->configs["mail_smtpport"]     = 25;
+        $mailerConfig->configs["mail_smtpauth_req"] = 0;
+        $mailerConfig->configs["mail_smtpssl"]      = 0;
+
+        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
+        $mailConfig->sender_email     = "foo@bar.com";
+        $mailConfig->mailerConfigData = $mailerConfig;
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
@@ -63,41 +67,20 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testGetMailer_ModeIsDEFAULT_ChangesConfigsIncludingRequiresAuthAndUsesTLS_ReturnsSimpleMailer() {
-        $mailConfig                                   = new MailConfiguration($GLOBALS['current_user']);
-        $mailConfig->mode                             = "DEFAULT";
-        $mailConfig->sender_email                     = "foo@bar.com";
-        $mailConfig->mailerConfigData['mail_smtpserver']   = "smtp.gmail.com";
-        $mailConfig->mailerConfigData['mail_smtpport']     = 443;
-        $mailConfig->mailerConfigData['mail_smtpauth_req'] = 1;
-        $mailConfig->mailerConfigData['mail_smtpuser']     = "foo";
-        $mailConfig->mailerConfigData['mail_smtppass']     = "bar";
-        $mailConfig->mailerConfigData['mail_smtpssl']      = 2;
+    public function testGetMailer_ModeIsDEFAULT_ReturnsSimpleMailer() {
+        $mailerConfig = new SmtpMailerConfiguration();
+        $mailerConfig->configs["mail_smtpserver"]   = "localhost";
+        $mailerConfig->configs["mail_smtpport"]     = 25;
+        $mailerConfig->configs["mail_smtpauth_req"] = 0;
+        $mailerConfig->configs["mail_smtpssl"]      = 0;
+
+        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
+        $mailConfig->mode             = "DEFAULT";
+        $mailConfig->sender_email     = "foo@bar.com";
+        $mailConfig->mailerConfigData = $mailerConfig;
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
         self::assertInstanceOf($expected, $actual, "The Mailer should have been a {$expected}");
-
-        $mailer = $actual;
-
-        // test that the smtp.host has been changed from its default
-        $expected = "smtp.gmail.com";
-        $actual   = $mailer->getConfig("smtp.host");
-        self::assertEquals($expected, $actual, "The smtp.host should have been changed to {$expected}");
-
-        // test that the smtp.port has been changed from its default
-        $expected = 443;
-        $actual   = $mailer->getConfig("smtp.port");
-        self::assertEquals($expected, $actual, "The smtp.port should have been changed to {$expected}");
-
-        // test that the smtp.username has been changed from its default
-        $expected = "foo";
-        $actual   = $mailer->getConfig("smtp.username");
-        self::assertEquals($expected, $actual, "The smtp.username should have been changed to {$expected}");
-
-        // test that the smtp.secure has been changed from its default to "tls"
-        $expected = SmtpMailerConfiguration::SecureTls;
-        $actual   = $mailer->getConfig("smtp.secure");
-        self::assertEquals($expected, $actual, "The smtp.secure should have been changed to {$expected}");
     }
 }

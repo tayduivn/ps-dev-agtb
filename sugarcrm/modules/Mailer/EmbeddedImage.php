@@ -21,7 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'Attachment.php'; // requires Attachment in order to extend it
+require_once "Attachment.php"; // requires Attachment in order to extend it
 
 /**
  * This class encapsulates properties and behavior of an embedded image, which is a type of attachment, so that a common
@@ -42,7 +42,7 @@ class EmbeddedImage extends Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
+    public function __construct($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
         $this->setCid($cid);
         parent::__construct($path, $name, $encoding, $mimeType);
     }
@@ -71,7 +71,7 @@ class EmbeddedImage extends Attachment
      */
     public function getAsArray() {
         $image = parent::getAsArray();
-        $image['cid'] = $this->getCid();
+        $image["cid"] = $this->getCid();
 
         return $image;
     }
