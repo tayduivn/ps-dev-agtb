@@ -178,19 +178,22 @@ class SugarCurrency
     }
 
     /**
-     * get a currency object by user preferences
+     * Get a currency object by user preferences.  If no user is supplied, attempt to use the global $current_user.
+     * If global $current_user object is empty then use default system currency id (-99).
      *
      * @access public
      * @param  object $user Optional the user object
      * @return object  currency object
      */
     public static function getUserLocaleCurrency( $user = null ) {
+
         if(empty($user))
         {
-            global $current_user;
-            $user = $current_user;
+           global $current_user;
+           $user = $current_user;
         }
-        $currencyId = $user->getPreference('currency');
+
+        $currencyId = !empty($user) ? $user->getPreference('currency') : '-99';
         return self::_getCurrency($currencyId);
     }
 
