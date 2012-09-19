@@ -8,36 +8,36 @@
         </div>
     </div>
         {{#if model.isNotEmpty}}
-    {{#each meta.panels}}
-            {{#each grid}}
-                <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
-                    {{#each this}}
-                        <span>
-                            {{#unless ../../this.labelsOnTop}}
-                                {{#if ../../../this.labels}}
-                                    <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
-                                {{/if}}
-                            {{/unless}}
-                            <div class="span{{this.span}} record-cell" data-type="{{type}}" data-name="{{name}}">
-                                {{#if ../../this.labelsOnTop}}
-                                <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
-                                {{/if}}
-                                {{#if name}}
-                                    <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}">
-                                        {{field ../../../../../this}}
-                                    </span>
-                                {{/if}}
-                                {{#unless noedit}}
-                                    <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                                        <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
-                                    </span>
+            {{#each meta.panels}}
+                {{#each grid}}
+                    <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
+                        {{#each this}}
+                            <span>
+                                {{#unless ../../this.labelsOnTop}}
+                                    {{#if ../../../this.labels}}
+                                        <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
+                                    {{/if}}
                                 {{/unless}}
-                            </div>
-                        </span>
-                    {{/each}}
-                </div>
+                                <div class="span{{this.span}} record-cell" data-type="{{type}}" data-name="{{name}}">
+                                    {{#if ../../this.labelsOnTop}}
+                                    <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
+                                    {{/if}}
+                                    {{#if name}}
+                                        <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}">
+                                            {{field ../../../../../this}}
+                                        </span>
+                                    {{/if}}
+                                    {{#unless noedit}}
+                                        <span class="record-edit-link-wrapper" data-name="{{../name}}">
+                                            <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                                        </span>
+                                    {{/unless}}
+                                </div>
+                            </span>
+                        {{/each}}
+                    </div>
+                {{/each}}
             {{/each}}
-    {{/each}}
         {{else}}
             {{#if context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
         {{/if}}

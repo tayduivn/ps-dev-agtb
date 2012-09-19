@@ -29,7 +29,7 @@
          * Logging level.
          * @cfg {Object} [logLevel=Utils.Logger.Levels.DEBUG]
          */
-        logLevel: 'TRACE',
+        logLevel: 'ERROR',
 
         /**
          * Logging writer.
