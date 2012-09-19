@@ -7,8 +7,8 @@
             <a class="btn btn-small record-delete" data-toggle="modal" href="#delete-confirmation">Delete</a>
         </div>
     </div>
+        {{#if model.isNotEmpty}}
     {{#each meta.panels}}
-        {{#if ../model.isNotEmpty}}
             {{#each grid}}
                 <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
                     {{#each this}}
@@ -37,10 +37,10 @@
                     {{/each}}
                 </div>
             {{/each}}
-        {{else}}
-            {{#if ../context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
-        {{/if}}
     {{/each}}
+        {{else}}
+            {{#if context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
+        {{/if}}
 </div>
 
 <div class="row-fluid">

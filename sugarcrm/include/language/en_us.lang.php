@@ -3516,8 +3516,7 @@ $app_strings = array (
     'ERR_GENERIC_TITLE' => 'Error',
     'ERR_CONTACT_TECH_SUPPORT' => 'Please contact technical support.',
 
-    'LBL_SYNCED_RECURRING_MSG_CALL' => 'This call originated in another system and was synced to Sugar. To make changes, go to the original call within the other system. Changes made in the other system can be synced to this record.',
-    'LBL_SYNCED_RECURRING_MSG_MEETING' => 'This meeting originated in another system and was synced to Sugar. To make changes, go to the original meeting within the other system. Changes made in the other system can be synced to this record.',
+    'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
 );
 

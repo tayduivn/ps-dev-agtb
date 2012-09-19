@@ -107,7 +107,10 @@ class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDat
         //$this->_paneldefs = $this->implementation->getPanelDefs();
         $this->_standardizeFieldLabels( $this->_fielddefs );
         $this->_viewdefs = array_change_key_case ( $this->implementation->getViewdefs () ) ; // force to lower case so don't have problems with case mismatches later
-
+        
+        
+        // Set the module name
+        $this->_moduleName = $moduleName;
     }
 
     /*
