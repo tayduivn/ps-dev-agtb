@@ -3,7 +3,7 @@
           {{#each grid}}
             <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
                 {{#each this}}
-                      <span>
+                      <span class="row-fluid control-group">
                           {{#unless ../../this.labelsOnTop}}
                               {{#if ../../../this.labels}}
                                   <div class="span{{../this.labelSpan}} tright" >{{str ../this.label ../../../../../this.model.module}}</div>

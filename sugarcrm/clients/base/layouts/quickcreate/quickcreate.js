@@ -16,22 +16,21 @@
 
     dupeCheck: function(noDupFound, dupFound) {
         var self = this;
-        //TODO: perform duplicate check here
-        console.log('dupe check complete');
         var options = {
             limit: this.limit || null,
             params: {
-                q: 'kim'
+                q: 'first_name=charley'
             },
             fields: this.collection.fields || {},
             success: function(collection) {
-              //  self.retrieveUserKeys();
+                var keys = self.retrieveUserKeys();
                 if (collection.models.length > 0) {
                     self.context.trigger('quickcreate:list:toggled', true);
-                   // self.showDuplicateAlertMessage();
-                  //  self.context.trigger('quickcreate:actions:duplicate', true);
+                    // self.showDuplicateAlertMessage();
+                    //  self.context.trigger('quickcreate:actions:duplicate', true);
+                    dupFound();
                 }
-                dupFound();
+                noDupFound();
             },
             error: noDupFound
         };
@@ -40,27 +39,13 @@
     },
 
     retrieveUserKeys:function () {
-        var fields = this.getFields(this.module);
-        debugger;
-        _.each(fields, function (fieldErrors, fieldName) {
-            //retrieve the field by name
-            var field = self.getField(fieldName);
-            if (field) {
-                var controlGroup = field.$el.parents('.control-group:first');
+        var keys,fields;
+debugger;
+        fields = this.getFields(this.module);
+        keys =[];
 
-                if (controlGroup) {
-                    //Clear out old messages
-                    controlGroup.find('.add-on').remove();
-                    controlGroup.find('.help-block').html("");
-
-                    controlGroup.addClass("error");
-                    controlGroup.find('.controls').addClass('input-append');
-                    _.each(fieldErrors, function (errorContext, errorName) {
-                        controlGroup.find('.help-block').append(self.app.error.getErrorString(errorName, errorContext));
-                    });
-                    controlGroup.find('.controls input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
-                }
-            }
+        _.each(fields, function (field, index, list) {
+            keys.push('ddd');
         });
     }
 })
