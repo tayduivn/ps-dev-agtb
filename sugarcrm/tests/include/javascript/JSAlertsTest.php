@@ -30,9 +30,8 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
 
         global $current_user;
         $this->beans = array();
@@ -48,12 +47,13 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
             $bean->mark_deleted($bean->id);
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-
+        /*
 		unset($GLOBALS['app_list_strings']);
 		unset($GLOBALS['current_user']);
 		unset($GLOBALS['app_strings']);
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);
+        */
     }
 
     protected function createNewMeeting()
@@ -76,7 +76,7 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
     {
 
         global $app_list_strings;
-            $app_list_strings['reminder_max_time'] = 5000;
+        $app_list_strings['reminder_max_time'] = 5000;
         $m = $this->createNewMeeting();
         $alerts = new jsAlerts();
         $script = $alerts->getScript();
@@ -87,7 +87,7 @@ class JSAlertsTest extends Sugar_PHPUnit_Framework_TestCase
     {
 
         global $app_list_strings;
-            $app_list_strings['reminder_max_time'] = 5000;
+        $app_list_strings['reminder_max_time'] = 5000;
         $m = $this->createNewMeeting();
         //Decline the meeting
         $query = "UPDATE meetings_users SET deleted = 0, accept_status = 'decline' " .
