@@ -56,7 +56,7 @@
         params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
         app.api.search(params, {
             success:function(data) {
-                data.module_list = app.metadata.getModuleNames(true,true);
+                data.module_list = app.metadata.getModuleNames(true,"create");
                 plugin.provide(data);
             },
             error:function(error) {
@@ -131,7 +131,7 @@
         this.createListLabels = [];
         this.currentModule = this.module;
         this.module_list = app.metadata.getModuleNames(true);
-        this.creatableModuleList = app.metadata.getModuleNames(true,true);
+        this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 
     /**
