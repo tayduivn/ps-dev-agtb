@@ -848,6 +848,7 @@ class TimeDate
      * Output the date and time in ISO-8601 format
      * @param DateTime $date The date object to output in ISO-8601 format
      * @param User $user
+     * @param array $options 
      * @return string The date and time in ISO-8601 format (aka 2012-10-11T13:01:45-07:00)
      */
     public function asIso(DateTime $date, User $user = null, $options = null)
@@ -958,6 +959,7 @@ class TimeDate
     /**
      * This function converts the offset of the date object into a ISO-8601 compatible format
      * @param DateTime $date The date object
+     * @param array $options 
      * @return string The offset of date object in ISO-8601 compatible format (aka -07:00)
      */
     public function getIsoOffset(DateTime $date, $options=null)
