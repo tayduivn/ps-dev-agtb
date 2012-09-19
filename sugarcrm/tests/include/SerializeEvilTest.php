@@ -30,6 +30,17 @@ require_once 'Zend/Http/Response.php';
 
 class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        global $current_user;
+        $current_user = SugarTestHelper::setUp('current_user');
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
 
     public function testSugarCacheFile()
     {
