@@ -11,32 +11,30 @@
   <![endif]-->
   <link href="../css/bootstrap.css" rel="stylesheet">
 </head>
-<body id="portal">
+<body>
   <div class="container welcome">
     <div class="row">
-      <div class="span4 offset4 thumbnail">
-        <div class="modal-header tcenter">
+      <div class="span4 offset4 thumbnail login">
+        <div class="tcenter">
           <h2 class="brand">SugarCRM</h2>
         </div>
-        <div class="modal-body tcenter">
-          <div>
-            <div class="control-group">
-              <label for="loginUsername" class="hide">Username</label>
-              <input type="text" class="center" id="loginUsername" placeholder="Username" tabindex="1">
-            </div>
-            <div class="control-group">
-              <label for="loginPassword" class="hide">Password</label>
-              <input type="password" class="center" id="loginPassword" placeholder="Password" tabindex="2">
-            </div>
-            <div class="control-group">
-              <label for="input01" class="hide">Url</label>
-              <input type="text" tabindex="3" id="user_url" name="user_url" placeholder="https://">
-            </div>
+        <div class="tcenter">
+          <div class="control-group">
+            <label for="loginUsername" class="hide">Username</label>
+            <input type="text" class="center" id="loginUsername" placeholder="Username" tabindex="1">
           </div>
           <div class="modal-footer tleft">
             <a href="signup.html" class="btn btn-invisible btn-link" tabindex="4">Forgot password?</a>
             <a href="dashboard.html" class="btn btn-primary pull-right" tabindex="3">Log In</a>
           </div>
+          <div class="control-group">
+            <label for="input01" class="hide">Url</label>
+            <input type="text" tabindex="3" id="user_url" name="user_url" placeholder="https://">
+          </div>
+        </div>                                                
+        <div class="login-footer span3">
+          <a href="signup.html" class="btn btn-invisible btn-link" tabindex="4">Forgot password?</a>
+          <a href="dashboard.html" class="btn btn-primary pull-right" tabindex="5">Log In</a>
         </div>
       </div>
     </div>
