@@ -68,7 +68,6 @@ class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider getDestructors
-     * @outputBuffering disabled
      */
     public function testUnserializeExcept($name)
     {
