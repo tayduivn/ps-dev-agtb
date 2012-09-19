@@ -383,8 +383,8 @@ class SugarSpot
             $allowBlankSearch = false;
             // Add an extra search filter for my items
             // Verify the bean has assigned_user_id before we blindly assume it does
-            if (!empty($options['my_items']) && $options['my_items'] == true && isset($GLOBALS['dictionary'][$class]['fields']['assigned_user_id'])) {
-                if (!empty($custom_where)) {
+            if (!empty($options['my_items']) && $options['my_items'] == true && isset($seed->field_defs['assigned_user_id'])) {
+                if(!empty($custom_where)) {
                     $custom_where .= " AND ";
                 }
                 $custom_where .= "{$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}'";
@@ -497,11 +497,12 @@ class SugarSpot
                 $orderBy = $options['orderBy'];
             }
 
-            if (empty($where_clauses)) {
-                if ($allowBlankSearch) {
+            if(empty($where_clauses))
+            {
+                if ( $allowBlankSearch ) {
                     $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
-
-                    if (!empty($custom_select)) {
+                    
+                    if(!empty($custom_select)) {
                         $ret_array['select'] .= $custom_select;
                     }
                     if (!empty($custom_from)) {
@@ -523,7 +524,7 @@ class SugarSpot
             else if (count($where_clauses) > 1) {
                 $query_parts = array();
 
-                $ret_array_start = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
+                $ret_array_start = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, false);
                 $search_keys = array_keys($searchFields[$moduleName]);
 
                 foreach ($where_clauses as $n => $clause) {
@@ -538,7 +539,7 @@ class SugarSpot
                     }
                     // Individual UNION's don't allow order by
                     $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, true);
-                    if (!empty($custom_select)) {
+                    if(!empty($custom_select)) {
                         $ret_array_start['select'] .= $custom_select;
                     }
                     if (!empty($custom_from)) {
@@ -566,7 +567,7 @@ class SugarSpot
                     }
                 }
 
-                $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, true);
+                $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, false);
 
                 if (!empty($custom_select)) {
                     $ret_array['select'] .= $custom_select;
