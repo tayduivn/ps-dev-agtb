@@ -35,17 +35,18 @@ class ForecastsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 
     function setUp()
     {
-        global $beanFiles, $beanList, $current_user, $app_list_strings;
-        require('include/modules.php');
-        $app_list_strings = return_app_list_strings_language('en_us');
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        global $current_user;
         $current_user->is_admin = 1;
         $current_user->save();
     }
 
     function tearDown()
     {
-
+        SugarTestHelper::tearDown();
     }
 
     /**
