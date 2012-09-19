@@ -173,48 +173,8 @@
         }
     });
 
-    /**
-     * Extends the `save` action to add `portal` specific params to the payload.
-     *
-     * @param {Object} attributes(optional) model attributes
-     * @param {Object} options(optional) standard save options as described by Backbone docs and
-     * optional `fieldsToValidate` parameter.
-     */
-    var __superBeanSave__ = app.Bean.prototype.save;
-    app.Bean.prototype.save = function (attributes, options) {
-        //Here is the list of params that must be set for portal use case.
-        var defaultParams = {
-            portal_flag:1,
-            portal_viewable:1
-        };
-        var moduleFields = app.metadata.getModule(this.module).fields || {};
-        for (var field in defaultParams) {
-            if (moduleFields[field]) {
-                this.set(field, defaultParams[field], {silent: true});
-            }
-        }
-        //Call the prototype
-        __superBeanSave__.call(this, attributes, options);
-    };
 
-    var _rrh = {
-        /**
-         * Handles `signup` route.
-         */
-        signup:function () {
-            app.logger.debug("Route changed to signup!");
-            app.controller.loadView({
-                module:"Signup",
-                layout:"signup",
-                create:true
-            });
-        }
-    };
 
-    app.events.on("app:init", function () {
-        // Register portal specific routes
-        app.router.route("signup", "signup", _rrh.signup);
-    });
 
     /**
      * Checks if there are `file` type fields in the view. If yes, process upload of the files

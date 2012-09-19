@@ -163,11 +163,7 @@ if (empty($_SESSION['authenticated_user_id'])) {
                     if (data.current_user) {
                         app.user._reset(data ? data.current_user : null);
                     }
-                    app.trigger("app:login:success", data);
                     //callback(null, data);
-                },
-                error:function (error) {
-                    //callback(error);
                 }
             });
         }
