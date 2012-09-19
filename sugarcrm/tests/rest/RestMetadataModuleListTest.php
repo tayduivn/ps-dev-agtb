@@ -22,7 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once 'tests/rest/RestTestBase.php';
+require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RestMetadataModuleListTest extends RestTestBase {
     //BEGIN SUGARCRM flav=ent ONLY
@@ -34,6 +35,8 @@ class RestMetadataModuleListTest extends RestTestBase {
     public function setUp()
     {
         parent::setUp();
+        // Portal test needs this one, tear down happens in parent
+        SugarTestHelper::setup('mod_strings', array('ModuleBuilder'));
         
         //BEGIN SUGARCRM flav=ent ONLY
         $this->unitTestFiles[] = $this->oppTestPath;
@@ -52,9 +55,14 @@ class RestMetadataModuleListTest extends RestTestBase {
         foreach($this->unitTestFiles as $unitTestFile ) {
             if ( file_exists($unitTestFile) ) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
-                @unlink($this->oppTestPath);
+                unlink($unitTestFile);
             }
         }
+        //BEGIN SUGARCRM flav=ent ONLY
+        if (file_exists($this->oppTestPath)) {
+            unlink($this->oppTestPath);
+        }
+        //END SUGARCRM flav=ent ONLY
         
         if ($this->createdStudioFile && file_exists('modules/Opportunities/metadata/studio.php')) {
             unlink('modules/Opportunities/metadata/studio.php');
@@ -179,15 +187,16 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no base module list');
         $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
-        require_once("modules/MySettings/TabController.php");
-        $tc = new TabController();
-        $enabledModules = $tc->get_user_tabs($this->_user);
-        $enabledBase = array_keys($enabledModules);
-        foreach ( $enabledBase as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the base module list.');
-        }
-        $this->assertEquals(count($enabledBase),count($restModules),'There are extra modules in the base module list');
         
+        // Get the expected
+        $modules = $this->_getModuleListsLikeTheAPIDoes();
+        $modules = $modules['module_list'];
+        
+        // Diff
+        $extras = array_diff($restModules, $modules);
+        
+        // Assert
+        $this->assertEmpty($extras, "There are extra modules in the REST list");
     }
 
     /**
@@ -195,16 +204,77 @@ class RestMetadataModuleListTest extends RestTestBase {
      */
     public function testMetadataGetFullModuleListBase() {
         $restReply = $this->_restCall('metadata?type_filter=full_module_list');
+        $this->assertArrayHasKey('full_module_list', $restReply['reply'], "Full Module List is missing from the reply");
         $fullRestModules = $restReply['reply']['full_module_list'];
-        $this->assertTrue(isset($restReply['reply']['full_module_list']['_hash']),'There is no base module list');
-        $tc = new TabController();
-        $enabledModules = $tc->get_user_tabs($this->_user);
-        $enabledBase = array_keys($enabledModules);
-        foreach ( $enabledBase as $module ) {
-            $this->assertTrue(in_array($module,$fullRestModules),'Module '.$module.' missing from the full module list.');
-        }
-
-        $this->assertGreaterThan(count($enabledBase),count($fullRestModules),'There are too many modules in the full list');
+        $this->assertArrayHasKey('_hash', $fullRestModules, 'There is no _hash key in the response');
+        unset($fullRestModules['_hash']);
+        
+        // Now get what we expect
+        $fullModuleList = $this->_getFullModuleListLikeTheAPIDoes();
+        
+        // Check for differences
+        $extras = array_diff($fullRestModules, $fullModuleList);
+        
+        // Assert
+        $this->assertEmpty($extras, "There are extra modules in the rest reply");
     }
 
+    /**
+     * Helper function that gets a full module list like the API would do
+     * 
+     * @return array
+     */
+    protected function _getFullModuleListLikeTheAPIDoes() {
+        $data = $this->_getModuleListsLikeTheAPIDoes();
+        return $data['full_module_list'];
+    }
+
+    /**
+     * Helper method to get all the module lists that the API would get. Returns
+     * an array of modules, module_list and full_module_list
+     * 
+     * @return array
+     */
+    protected function _getModuleListsLikeTheAPIDoes() {
+        // Get the metadata manager
+        $mm = new MetaDataManager($this->_user);
+        $data['module_list'] = $mm->getModuleList();
+        $data['full_module_list'] = $data['module_list'];
+        
+        $data['modules'] = array();
+        
+        foreach($data['full_module_list'] as $module) {
+            $bean = BeanFactory::newBean($module);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+
+            $modData = $mm->getModuleData($module);
+            $data['modules'][$module] = $modData;
+
+            if (isset($data['modules'][$module]['fields'])) {
+                $fields = $data['modules'][$module]['fields'];
+                foreach($fields as $fieldName => $fieldDef) {
+                    if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
+                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
+                            $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
+                        }
+                    } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
+                        $bean->load_relationship($fieldDef['name']);
+                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                        $data['full_module_list'][$otherSide] = $otherSide;
+                    }
+                }
+            }
+        }
+
+        foreach($data['modules'] as $moduleName => $moduleDef) {
+            if (!array_key_exists($moduleName, $data['full_module_list'])) {
+                unset($data['modules'][$moduleName]);
+            }
+        }
+        
+        return $data;
+    }
 }

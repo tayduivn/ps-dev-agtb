@@ -77,11 +77,20 @@ class SugarPortalModule{
      */
 	public static function getViewFiles()
     {
+        // If mod strings are empty, rebuild them - some rest calls are failing 
+        // here
+        global $mod_strings;
+        if (empty($mod_strings)) {
+            $mstrings = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
+        } else {
+            $mstrings = $mod_strings;
+        }
+        
         // These mod_strings are ModuleBuilder module strings
         return array(
-            'edit.php'   => array('name' => $GLOBALS['mod_strings']['LBL_EDITVIEW'],    'type' => 'editView'),
-            'detail.php' => array('name' => $GLOBALS['mod_strings']['LBL_DETAILVIEW'] , 'type' => 'detailView'),
-            'list.php'   => array('name' => $GLOBALS['mod_strings']['LBL_LISTVIEW'],    'type' => 'list'),
+            'edit.php'   => array('name' => $mstrings['LBL_EDITVIEW'],    'type' => 'editView'),
+            'detail.php' => array('name' => $mstrings['LBL_DETAILVIEW'] , 'type' => 'detailView'),
+            'list.php'   => array('name' => $mstrings['LBL_LISTVIEW'],    'type' => 'list'),
         );
     }
 	
