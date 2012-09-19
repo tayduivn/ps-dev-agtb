@@ -1,12 +1,11 @@
-<div class="card2 record">
-    <div class="row-fluid">
-        <span class=" record-save-prompt pull-right" style="display:none;">
-            <a style="cursor: pointer" class="btn btn-success record-save">Save</a>
-            <a style="cursor: pointer" class="btn record-cancel">Cancel</a>
-        </span>
-        <span class="record-edit-prompt pull-right">
-            <a style="cursor: pointer" class="btn btn-primary record-edit">Edit</a>
-        </span>
+<div class="record">
+    <div class="row-fluid record-button-bar">
+        <div class="btn-group pull-right">
+            <a class="btn btn-small record-save btn-success btn-disabled">Save</a>
+            <a class="btn btn-small record-cancel btn-disabled">Cancel</a>
+            <a class="btn btn-small record-edit">Edit</a>
+            <a class="btn btn-small record-delete" data-toggle="modal" href="#delete-confirmation">Delete</a>
+        </div>
     </div>
     {{#each meta.panels}}
         {{#if ../model.isNotEmpty}}
@@ -49,4 +48,20 @@
          <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
          <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
    </div>
+</div>
+
+<div id="delete-confirmation" class="modal hide">
+  <div class="modal-header">
+    <a class="close" data-dismiss="modal">×</a>
+    <h3>Delete Confirmation</h3>
+  </div>
+  <div class="modal-body">
+    <div class="modal-scroll">
+      <p>Are you sure you want to delete this record?</p>
+    </div>
+    <div class="modal-footer">
+      <a class="btn btn-danger confirm-delete" data-dismiss="modal">Delete</a>
+      <a class="btn" data-dismiss="modal">Close</a>
+    </div>
+  </div>
 </div>

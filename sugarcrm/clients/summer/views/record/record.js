@@ -8,7 +8,8 @@
             "click .record-edit": "toggleEdit",
             "click .record-edit-link-wrapper": "handleEdit",
             "click .record-save": "handleSave",
-            "click .record-cancel": "handleCancel"
+            "click .record-cancel": "handleCancel",
+            "click .record-delete": "handleDelete"
         };
 
         _.bindAll(this);
@@ -227,6 +228,17 @@
         this.toggleEdit();
     },
 
+    handleDelete: function() {
+        // Open up a modal
+        var self = this,
+            modal = this.$(".delete-confirmation").modal();
+
+        this.$(".confirm-delete").on("click", function() {
+            self.model.destroy();
+            app.router.navigate("#" + self.module, {trigger: true});
+        });
+    },
+
     /**
      * Toggles a cell into editing or detail mode. This should be the entry point function.
      * @param field {View.Field} Field or fieldset to toggle
@@ -312,7 +324,7 @@
             e.preventDefault();
 
             // Since we prevented the default we still need to trigger a change.
-            field.$el.trigger("change");
+            field.$el.find("input").trigger("change");
         } else if (e.which == 27) { // If esc
             this.toggleCell(field, cell, true);
         }
