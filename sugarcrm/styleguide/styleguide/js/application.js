@@ -52,7 +52,8 @@
     $(document).keyup( function (e){
         if(e.keyCode === 27) {
           $(".alert-top").remove();
-    })
+        }
+      })
   
     // add tipsies to grid for scaffolding (styleguide only)
     if ($('#grid-system').length) {
