@@ -29,7 +29,7 @@ class ForecastManagerWorksheet extends SugarBean
     var $currency_id;
     var $base_rate;
     var $name;
-    var $forecast;
+    var $commit_stage;
     var $best_case;
     var $likely_case;
     var $worst_case;
@@ -104,9 +104,9 @@ class ForecastManagerWorksheet extends SugarBean
         $worksheet = BeanFactory::getBean("Worksheet", $worksheetID);
 		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
 		$worksheet->user_id = $this->args["current_user"];
-		$worksheet->forecast = ($this->args["forecast"]) ? 1 : 0;
         $worksheet->best_case = $this->args["best_adjusted"];
         $worksheet->likely_case = $this->args["likely_adjusted"];
+        $worksheet->commit_stage = $this->args["commit_stage"];
         $worksheet->forecast_type = "Rollup";
         $worksheet->related_forecast_type = $relatedType;
         $worksheet->worst_case = (isset($this->args["worst_adjusted"])) ? $this->args["worst_adjusted"] : 0;

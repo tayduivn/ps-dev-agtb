@@ -40,7 +40,6 @@ class Worksheet extends SugarBean {
     var $date_modified;
     var $modified_user_id;
     var $deleted;
-    var $forecast;
     var $commit_stage;
     var $op_probability;
     var $quota;

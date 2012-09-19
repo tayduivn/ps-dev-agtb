@@ -603,14 +603,6 @@ array (
     'type' => 'currency',
     'len' => '26,6',
 ),
-'forecast' =>
-array (
-    'name' => 'forecast',
-    'vname' => 'LBL_FORECAST',
-    'type' => 'bool',
-    'default' => '-1',
-    'comment' => 'Boolean indicating whether or not record should be included in forecast'
-),
 //END SUGARCRM flav=ent ONLY
   'type_name' =>
   array (
