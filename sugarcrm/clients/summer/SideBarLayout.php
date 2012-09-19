@@ -69,11 +69,18 @@ class SideBarLayout
     {
         if (empty($this->containers['side'])) {
             $this->spans['main'] = 12;
-
         }
 
-         $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
+        if(empty($this->containers['side']) && empty($this->containers['top']) && empty($this->containers['bottom'])) {
+            $this->layout = array(
+                    'type' => 'simple',
+                    'span' => $this->spans['main'],
+                    'components' => $this->containers['main'],
+                );
 
+        } else {
+            $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
+        }
         return $this->layout;
     }
 
