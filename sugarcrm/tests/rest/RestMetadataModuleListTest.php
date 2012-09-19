@@ -99,6 +99,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $newModuleList = array('Home','Accounts','Contacts','Opportunities','Bugs','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
         
         $tabs->set_system_tabs($newModuleList);
+        $GLOBALS['db']->commit();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
@@ -117,7 +118,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $newModuleList = array('Home','Accounts','Contacts','Opportunities','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
         
         $tabs->set_system_tabs($newModuleList);
-
+        $GLOBALS['db']->commit();
         // Now add an extra file and make sure it gets picked up
         if (is_dir($dir = dirname($this->oppTestPath)) === false) {
             sugar_mkdir($dir, null, true);
@@ -129,6 +130,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         // Set the tabs back to what they were
         $tabs->set_system_tabs($defaultTabs[0]);
+        $GLOBALS['db']->commit();
     }
     //END SUGARCRM flav=ent ONLY
     
