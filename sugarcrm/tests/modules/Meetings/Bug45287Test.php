@@ -36,9 +36,13 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setup()
     {
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
         global $current_user;
         // Create Anon User setted on GMT+2 TimeZone
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->setPreference('datef', "d/m/Y");
         $current_user->setPreference('timef', "H:i:s");
         $current_user->setPreference('timezone', "Europe/Rome");
@@ -107,7 +111,7 @@ class Bug45287Test extends Sugar_PHPUnit_Framework_TestCase
         unset($this->searchFields);
         unset($this->timedate);
 
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
 
