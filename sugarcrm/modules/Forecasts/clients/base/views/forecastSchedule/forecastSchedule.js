@@ -39,11 +39,16 @@
     /**
      * This is a helper function to fetch the collection given the existing filters for timeperiod and selected user
      */
-    fetchCollection: function()
+    fetchCollection: function(callback)
     {
         this._collection.url = this.createURL();
         var self = this;
-        this._collection.fetch({success : function() { self.render() } });
+        this._collection.fetch({success : function() { 
+        		self.render();
+        		if(_.isFunction(callback)){
+        			callback();
+        		}
+        	}});
     },
 
 

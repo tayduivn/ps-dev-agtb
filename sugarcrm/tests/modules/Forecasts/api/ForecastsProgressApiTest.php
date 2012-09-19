@@ -28,7 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecastapi
  */
 class ForecastsProgressApiTest extends RestTestBase
 {
@@ -218,6 +217,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testProgress() {
         $url = 'Forecasts/progressRep?user_id=' . self::$user->id . '&timeperiod_id=' . self::$timeperiod->id;
@@ -232,6 +232,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testManagerProgress() {
         $url = 'Forecasts/progressManager?user_id=' . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id;
@@ -244,6 +245,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testProgressNewUser() {
         $newUser = SugarTestUserUtilities::createAnonymousUser();
