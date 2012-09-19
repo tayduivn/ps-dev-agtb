@@ -5492,45 +5492,6 @@ article:hover { background:#e1f0fa; }
   -moz-border-radius:3px;
   border-radius:3px;
 }
-.radio input[type="radio"], .checkbox input[type="checkbox"] { float:none; }
-.chzn-container { margin-top:-1px; }
-.chzn-container .chzn-container-multi { height:28px; }
-.chzn-container-multi .search-field { height:27px; }
-.chzn-container-multi .chzn-choices .search-field input { height:22px !important; }
-.control-group.error>div:first-child, .control-group.error>div:first-child label, .control-group.error> label {
-  font-weight:500;
-  color:#b60000;
-}
-.control-group.error .input-append label { color:#b60000; }
-.control-group.error .chzn-choices, .control-group.error .chzn-container-single > a.chzn-single { border-color:#b60000; }
-.control-group.error .chzn-container-single > a > div > b { margin-left:-18px; }
-.control-group.error .help-block { font-weight:normal; }
-.control-group { margin-bottom:0; }
-.control-group .wide { text-align:left; }
-.control-group label {
-  display:inline-block;
-  float:none;
-}
-.control-group label input {
-  display:inline-block;
-  float:none;
-}
-#header .control-group label.hide { display:none; }
-.form-horizontal .help-block { margin-top:0; }
-.form-actions {
-  border:none;
-  background:transparent;
-}
-@media (max-width: 480px) {
-  .row > .empty, .row-fluid > .empty { display:none !important; }
-}
-@media (max-width: 768px) {
-  .row > .empty, .row-fluid > .empty { display:none !important; }
-}
-#content .control-group label {
-  padding:0 1em 0 0;
-  display:inline-block;
-}
 .card2 .span2, .card2 .span3 {
   background:#f5f5f5;
   border-bottom:1px solid #e8e8e8;
@@ -6590,7 +6551,7 @@ img.pull-left { margin:0 8px 8px 0; }
   border-bottom:1px solid #e8e8e8;
   z-index:1000;
 }
-.form-search input.query {
+.form-search input.query, .accoment input {
   margin:0;
   padding:6px 8px;
   border:1px solid #e8e8e8;
@@ -6605,6 +6566,7 @@ img.pull-left { margin:0 8px 8px 0; }
   border-bottom:1px solid #e8e8e8;
 }
 .omnibar input.sayit {
+  padding:6px 8px;
   position:relative;
   z-index:1;
   border:dashed 1px #cdcccb;
