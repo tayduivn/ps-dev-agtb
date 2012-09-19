@@ -22,15 +22,24 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/Sugarpdf/sugarpdf_config.php');
-require_once('include/tcpdf/tcpdf.php');
-require_once('include/SugarCache/SugarCacheFile.php');
-require_once('modules/Import/sources/ImportFile.php');
-require_once('Zend/Http/Response.php');
-require_once('Zend/Http/Response/Stream.php');
-
 class SerializeEvilTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        require_once('include/Sugarpdf/sugarpdf_config.php');
+        require_once('include/tcpdf/tcpdf.php');
+        require_once('include/SugarCache/SugarCacheFile.php');
+        require_once('modules/Import/sources/ImportFile.php');
+        require_once('Zend/Http/Response.php');
+        require_once('Zend/Http/Response/Stream.php');
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
 
     public function testSugarCacheFile()
     {
