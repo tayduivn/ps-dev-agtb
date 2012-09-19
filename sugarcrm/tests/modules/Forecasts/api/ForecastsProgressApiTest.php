@@ -101,7 +101,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->likely_case = '18000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Negotiation/Review';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->start_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -114,7 +114,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->likely_case = '18000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Negotiation/Review';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->end_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -127,7 +127,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '20000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Closed Won';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->start_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -137,7 +137,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '10000';
         $opp->worst_case = '7000';
         $opp->sales_stage = 'Negotiation/Review';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->end_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -148,7 +148,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '30000';
         $opp->worst_case = '23000';
         $opp->sales_stage = 'Closed Won';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->start_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -159,7 +159,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '20000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Closed Won';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->end_date;
         $opp->save();
         $opportunities[] = $opp;
 
