@@ -1375,25 +1375,6 @@ class SugarBean
             if(!$this->db->tableExists($this->table_name))
             {
                 $this->db->createTable($this);
-//BEGIN SUGARCRM flav=dce ONLY
-                if($GLOBALS['sugar_flavor']=='DCE'){
-                    global $DCEbeanList, $beanFiles;
-                    foreach($DCEbeanList as $module=>$class){
-                        if(isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
-                            require_once($beanFiles[$class]);
-                            $mod = new $class();
-                            if($this->module_dir === $mod->module_dir){
-                                if($this->bean_implements('ACL')){
-                                    ACLAction::addActions($this->module_dir);
-                                }
-                                if($this->bean_implements('DCEACL')){
-                                    ACLAction::addActions($this->module_dir, 'DCE');
-                                }
-                            }
-                        }
-                    }
-                }else{
-//END SUGARCRM flav=dce ONLY
                     if($this->bean_implements('ACL')){
                         if(!empty($this->acltype)){
                             ACLAction::addActions($this->getACLCategory(), $this->acltype);
@@ -1401,9 +1382,6 @@ class SugarBean
                             ACLAction::addActions($this->getACLCategory());
                         }
                     }
-//BEGIN SUGARCRM flav=dce ONLY
-                }
-//END SUGARCRM flav=dce ONLY
             }
             else
             {
@@ -5812,22 +5790,6 @@ function save_relationship_changes($is_update, $exclude=array())
                 return ACLController::checkAccess($this->module_dir,'export', $is_owner, $this->acltype);
             case 'import':
                 return ACLController::checkAccess($this->module_dir,'import', true, $this->acltype);
-//BEGIN SUGARCRM flav=dce ONLY
-            case 'upgrade':
-                return ACLController::checkAccess($this->module_dir, 'upgrade', true, 'DCE');
-            case 'archive':
-                return ACLController::checkAccess($this->module_dir, 'archive', true, 'DCE');
-            case 'clone':
-                return ACLController::checkAccess($this->module_dir, 'clone', true, 'DCE');
-            case 'convert':
-                return ACLController::checkAccess($this->module_dir, 'convert', true, 'DCE');
-            case 'deploy':
-                return ACLController::checkAccess($this->module_dir, 'deploy', true, 'DCE');
-            case 'recover':
-                return ACLController::checkAccess($this->module_dir, 'recover', true, 'DCE');
-            case 'support_user':
-                return ACLController::checkAccess($this->module_dir, 'support_user', true, 'DCE');
-//END SUGARCRM flav=dce ONLY
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;

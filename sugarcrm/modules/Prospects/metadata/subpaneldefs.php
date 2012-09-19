@@ -45,10 +45,8 @@ $layout_defs['Prospects'] = array(
 
 			'top_buttons' => array(
 				array('widget_class' => 'SubPanelTopCreateTaskButton'),
-//BEGIN SUGARCRM flav!=dce ONLY
 				array('widget_class' => 'SubPanelTopScheduleMeetingButton'),
 				array('widget_class' => 'SubPanelTopScheduleCallButton'),
-//END SUGARCRM flav!=dce ONLY
 				array('widget_class' => 'SubPanelTopComposeEmailButton'),
 			),
 			'collection_list' => array(	
@@ -57,7 +55,6 @@ $layout_defs['Prospects'] = array(
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'tasks',
 				),
-//BEGIN SUGARCRM flav!=dce ONLY
                 'meetings' => array(
                     'module' => 'Meetings',
                     'subpanel_name' => 'ForActivities',
@@ -68,7 +65,6 @@ $layout_defs['Prospects'] = array(
 					'subpanel_name' => 'ForActivities',
 					'get_subpanel_data' => 'calls',
 				),	
-//END SUGARCRM flav!=dce ONLY
 			)			
 		),
 
@@ -93,7 +89,6 @@ $layout_defs['Prospects'] = array(
                     'subpanel_name' => 'ForHistory',
                     'get_subpanel_data' => 'tasks',
                 ),
-//BEGIN SUGARCRM flav!=dce ONLY
 				'meetings' => array(
 					'module' => 'Meetings',
 					'subpanel_name' => 'ForHistory',
@@ -104,7 +99,6 @@ $layout_defs['Prospects'] = array(
 					'subpanel_name' => 'ForHistory',
 					'get_subpanel_data' => 'calls',
 				),	
-//END SUGARCRM flav!=dce ONLY
 				'notes' => array(
 					'module' => 'Notes',
 					'subpanel_name' => 'ForHistory',

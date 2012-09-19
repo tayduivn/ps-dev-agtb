@@ -249,7 +249,6 @@
 
 
 {* //END SUGARCRM flav!=sales ONLY*}
-<!--//BEGIN SUGARCRM flav!=dce ONLY -->
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 
@@ -267,7 +266,6 @@
 
 
 <!--//END SUGARCRM flav=ent ONLY -->
-<!--//END SUGARCRM flav!=dce ONLY -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 	<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_SKYPEOUT_TITLE}</h4></th>
@@ -301,7 +299,6 @@
 </table>
 {* //END SUGARCRM flav!=sales && flav!=com ONLY*}
 
-<!--//BEGIN SUGARCRM flav!=dce ONLY -->
 <!--//BEGIN SUGARCRM flav=ent ONLY -->
 
 
@@ -322,7 +319,6 @@
 </table>
 
 <!--//END SUGARCRM flav=ent ONLY -->
-<!--//END SUGARCRM flav!=dce ONLY -->
 {* //BEGIN SUGARCRM flav!=sales ONLY*}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>

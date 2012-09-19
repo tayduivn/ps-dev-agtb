@@ -197,7 +197,6 @@ function disableReturnSubmission(e) {
                         <td ><slot><select tabindex='14' name='timeformat'>{$TIMEOPTIONS}</select></slot></td>
 
                     </tr>
-                    <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                     <tr>
                         <td colspan="4"><hr /></td>
                     </tr>
@@ -236,7 +235,6 @@ function disableReturnSubmission(e) {
                                     type='text' maxlength='1' size='1' value='{$NUM_GRP_SEP}'
                                     onkeydown='setSigDigits();' onkeyup='setSigDigits();'></td>
                     </tr>
-                    <!--//END SUGARCRM flav!=dce ONLY -->
                     <tr>
                         <td colspan="4"><hr /></td>
                     </tr>

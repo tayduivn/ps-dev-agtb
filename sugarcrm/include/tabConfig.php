@@ -117,19 +117,6 @@ $GLOBALS['tabStructure'] = array(
         )
     ),
 //END SUGARCRM flav=pro || flav=sales ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-    "LBL_TABGROUP_DCE"=>array(
-        'label' => 'LBL_TABGROUP_DCE',
-        'modules' => array(
-            "Home",
-            "DCEActions",
-            "DCEInstances",
-            "DCETemplates",
-            "DCEClusters",
-            "DCEDataBases",
-        )
-    )
-//END SUGARCRM flav=dce ONLY
 );
 
 if(file_exists('custom/include/tabConfig.php')){

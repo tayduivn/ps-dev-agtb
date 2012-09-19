@@ -366,38 +366,6 @@ echo "<br>";
 
     echo $mod_strings['LBL_PERFORM_DONE'];
 
-//BEGIN SUGARCRM flav=dce ONLY
-    //create OOB user roles for DCE
-    installLog("Create Out Of the Box User Roles");
-    $ACLaccessOverride=array(
-      //'name of the Role'=>array('name of the module'=>array('action to override'=>'new value')
-        'Sales'=>array(
-            'DCEInstances'=>array('delete'=>-99,'edit'=>-99,'view'=>75,'list'=>75,'import'=>-99,'deploy'=>-99,'upgrade'=>-99,'convert'=>75,'archive'=>-99,'clone'=>-99,'recover'=>75),
-            'DCEClusters'=>array('access'=>-98),
-            'DCETemplates'=>array('access'=>-98),
-            'DCEDataBases'=>array('access'=>-98),
-            'DCEActions'=>array('delete'=>-99,'edit'=>-99,'import'=>-99),
-        ),
-        'IT'=>array(
-            'DCEInstances'=>array('import'=>-99,'delete'=>-99),
-            'DCEClusters'=>array('import'=>-99,'delete'=>-99),
-            'DCETemplates'=>array('import'=>-99,'delete'=>-99),
-            'DCEDataBases'=>array('import'=>-99,'delete'=>-99,'fields'=>array('user_pass'=>40)),
-            'DCEActions'=>array('import'=>-99),
-        ),
-        'Support'=>array(
-            'DCEInstances'=>array('import'=>-99,'delete'=>-99),
-            'DCEClusters'=>array('access'=>-98),
-            'DCETemplates'=>array('access'=>-98),
-            'DCEDataBases'=>array('access'=>-98),
-            'DCEActions'=>array('import'=>-99),
-        ),
-    );
-
-    global $db;
-
-    addDefaultRoles($ACLaccessOverride);
-//END SUGARCRM flav=dce ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
 $defaultTrackerRoles = array(
@@ -637,7 +605,6 @@ FP;
     $enabled_tabs = array();
     $enabled_tabs[] = 'Home';
 
-    //BEGIN SUGARCRM flav!=dce ONLY
     $enabled_tabs[] = 'Accounts';
     $enabled_tabs[] = 'Contacts';
     $enabled_tabs[] = 'Opportunities';
@@ -670,19 +637,7 @@ FP;
     $enabled_tabs[] = 'Prospects';
     $enabled_tabs[] = 'ProspectLists';
     //END SUGARCRM flav!=sales ONLY
-    //END SUGARCRM flav!=dce ONLY
 
-    //BEGIN SUGARCRM flav=dce ONLY
-    $enabled_tabs[] = 'Accounts';
-    $enabled_tabs[] = 'Contacts';
-    $enabled_tabs[] = 'DCEClusters';
-    $enabled_tabs[] = 'DCETemplates';
-    $enabled_tabs[] = 'DCEInstances';
-    $enabled_tabs[] = 'DCEActions';
-    $enabled_tabs[] = 'Emails';
-    $enabled_tabs[] = 'Cases';
-    $enabled_tabs[] = 'Reports';
-    //END SUGARCRM flav=dce ONLY
 
     installerHook('pre_setSystemTabs');
     require_once('modules/MySettings/TabController.php');

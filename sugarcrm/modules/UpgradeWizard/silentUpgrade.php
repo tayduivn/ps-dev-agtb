@@ -59,17 +59,6 @@ if (substr($sapi_type, 0, 3) != 'cli') {
 //End of #52872
 
 $php_path = '';
-$run_dce_upgrade = false;
-if(isset($argv[3]) && is_dir($argv[3]) && file_exists($argv[3]."/ini_setup.php")) {
-                //this is a dce call, set the dce flag
-                chdir($argv[3]);
-                $run_dce_upgrade = true;
-                //set the php path if found
-                if(is_file($argv[7].'dce_config.php')){
-                   include($argv[7].'dce_config.php');
-                   $php_path = $dce_config['client_php_path'].'/';
-                }
-}
 
 $php_file = $argv[0];
 $p_info = pathinfo($php_file);
@@ -83,24 +72,10 @@ if($output != 0) {
 $has_error = $output == 0 ? false : true;
 
 if(!$has_error) {
-	if($run_dce_upgrade) {
-		$step2 = $php_path."php -f {$php_dir}silentUpgrade_dce_step1.php " . build_argument_string($argv);
-		passthru($step2, $output);
-	} else {
-		$step2 = "php -f {$php_dir}silentUpgrade_step2.php " . build_argument_string($argv);
-		passthru($step2, $output);
-	}
-}
-
-if($run_dce_upgrade) {
-	$has_error = $output == 0 ? false : true;
-	if(!$has_error) {
-	   $step3 = $php_path."php -f {$php_dir}silentUpgrade_dce_step2.php " . build_argument_string($argv);
-	   passthru($step3, $output);
-	}
+	$step2 = "php -f {$php_dir}silentUpgrade_step2.php " . build_argument_string($argv);
+	passthru($step2, $output);
 }
 
 if($output != 0) {
    echo "***************         silentupgrade failed         ***************: $output\n";
 }
-?>

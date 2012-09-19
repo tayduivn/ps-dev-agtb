@@ -76,11 +76,6 @@ class SubPanelTiles
 
         $subpanelTabsPref = $current_user->getPreference('subpanel_tabs');
         if(!isset($subpanelTabsPref)) $subpanelTabsPref = $GLOBALS['sugar_config']['default_subpanel_tabs'];
-//BEGIN SUGARCRM flav=dce ONLY
-        if($GLOBALS['sugar_flavor'] == 'DCE'){
-            $subpanelTabsPref = false;
-        }
-//END SUGARCRM flav=dce ONLY
         if(!empty($GLOBALS['tabStructure']) && (!empty($_SESSION['subpanelTabs']) || !empty($sugar_config['subpanelTabs']) || !empty($subpanelTabsPref)))
         {
             // Determine selected group

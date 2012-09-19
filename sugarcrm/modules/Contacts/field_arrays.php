@@ -80,10 +80,6 @@ $fields_array['Contact'] = array ('column_fields' => Array("id"
 	, "team_name"
 //END SUGARCRM flav=pro ONLY
     ,'invalid_email'
-//BEGIN SUGARCRM flav=dce ONLY
-    ,'dceinstance_role' 
-    ,'dceinstance_rel_id'
-//END SUGARCRM flav=dce ONLY
 		),
         'required_fields' => array("last_name"=>1),
 );

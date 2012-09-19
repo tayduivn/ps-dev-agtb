@@ -556,17 +556,6 @@ $mod_strings = array (
 	'LBL_DISPLAY_COLS_HELP_DESC'=>"<b>Steps to Choose Display Columns:</b><br/><br/>1) Click on a Module in the <b>Related Modules</b> pane that you would like to use to display data in your report. By default, the primary module (top node in the tree view) that you chose during the 'Select Module' step is selected.<br/><br/>	You can select fields from a related module (child node in the tree view) by clicking on the module. Modules related to the modules related to the primary module can also be selected. The module that you select determines which reportable fields appear in the <b>Available Fields</b> pane.<br/><br/>	2) Click on the Field in the <b>Available Fields</b> pane to display the field data in the records in your report. You can also search for the field by typing in the text box in the pane.<br/><br/>	After selecting any number of fields from the module selected in the <b>Related Modules</b> pane, you can choose a different module from which you can select additional fields. You can select any number of fields, but the report is generated more slowly and becomes less readable when you add more than necessary fields in the report.<br/><br/>	You can change the order fields by dragging and dropping them to the desired position. Changing the field order changes the order in which the columns are displayed in the results." ,
 	'LBL_DISPLAY_SUMMARY_HELP_DESC'=>"<b>Steps to Choose Display Summaries:</b><br/><br/>1) Click on the Module in the <b>Related Modules</b> pane that you would like to use for the summaries in your report. By default, the primary module (top node in the tree view) is selected.<br/><br/>	You can select a related module (child node in the tree view) by clicking on the module. Expand the node to view additional modules related to the related module. The module that you select determines which reportable fields appear in the <b>Available Fields</b> pane.<br/><br/>	2) Click on a Field in the <b>Available Fields</b> pane to select summaries for your report. You can also search for the field by typing in the text box in the pane.<br/><br/>	After selecting any number of fields from the module selected in the <b>Related Modules</b> pane, you can choose a different module from which you can select additional fields for the summaries in your report.<br/><br/>" .	"For Matrix Reports, you can select more than one field to display multiple values within a single cell in your report." ,
 
-// BEGIN DCE SUGARCRM ONLY
-    'LBL_DCE_LICENSING_REPORT'=>'Licensing Report',
-    'DEFAULT_REPORT_TITLE_33' => 'Template Usage',
-    'DEFAULT_REPORT_TITLE_34' => 'Max Sessions Per Day (Last 7 Days)',
-    'DEFAULT_REPORT_TITLE_35' => 'Request per Day (Last 7 Days)',
-    'DEFAULT_REPORT_TITLE_36' => 'Logins Per Day (Last 7 Days)',
-    'DEFAULT_REPORT_TITLE_37' => 'Queries Per Day (Last 7 Days)',
-    'DEFAULT_REPORT_TITLE_38' => 'Files Per Day (Last 7 Days)',
-    'DEFAULT_REPORT_TITLE_39' => 'Users Per Day (Last 7 Days)',
-    'DEFAULT_REPORT_TITLE_40' => 'Memory Usage Per Day (Last 7 Days)',
-// END DCE SUGARCRM ONLY
 	'LBL_ALT_SHOW' => 'Show',
   	'LBL_REPORT_DATA_COLUMN_ORDERS' => 'This report contains data in following column orders:',
 	'LBL_HELP' => 'Help' /*for 508 compliance fix*/,

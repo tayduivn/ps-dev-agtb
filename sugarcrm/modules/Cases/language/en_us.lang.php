@@ -93,9 +93,6 @@ $mod_strings = array (
 
     'LBL_CREATED_USER' => 'Created User',
     'LBL_MODIFIED_USER' => 'Modified User',
-    //BEGIN SUGARCRM flav=dce ONLY
-    'LBL_DCEINSTANCES_SUBPANEL_TITLE'=>'Instances',
-    //END SUGARCRM flav=dce ONLY
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     'LBL_CASE_INFORMATION' => 'Overview',
 

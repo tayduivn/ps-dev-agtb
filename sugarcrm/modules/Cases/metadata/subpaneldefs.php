@@ -185,17 +185,6 @@ $layout_defs['Cases'] = array(
                 array('widget_class' => 'SubPanelTopSelectButton'),
 			),
 		),
-//BEGIN SUGARCRM flav=dce ONLY
-		'dceinstances' => array(
-            'order' => 50,
-            'sort_order' => 'desc',
-            'sort_by' => 'name',
-            'module' => 'DCEInstances',
-            'subpanel_name' => 'ForCases',
-            'get_subpanel_data' => 'DCEInstances',
-            'title_key' => 'LBL_DCEINSTANCES_SUBPANEL_TITLE',
-        ),
-//END SUGARCRM flav=dce ONLY
 	),
 );
 ?>

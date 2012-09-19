@@ -48,9 +48,6 @@ $modules_exempt_from_availability_check['Users']='Users';
 $modules_exempt_from_availability_check['Teams']='Teams';
 $modules_exempt_from_availability_check['SchedulersJobs']='SchedulersJobs';
 $modules_exempt_from_availability_check['DocumentRevisions']='DocumentRevisions';
-//BEGIN SUGARCRM flav=dce ONLY
-$modules_exempt_from_availability_check['DCEActions']='DCEActions';
-//END SUGARCRM flav=dce ONLY
 function query_module_access_list(&$user)
 {
 	require_once('modules/MySettings/TabController.php');

@@ -263,7 +263,6 @@
                             {* //END SUGARCRM flav!=sales ONLY*}
                             </td>
                         </tr>
-                        <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                         <!--//BEGIN SUGARCRM flav=pro ONLY -->
                         <!-- BEGIN: pro_oc -->
                         <tr>
@@ -276,7 +275,6 @@
                         </tr>
                         <!-- END: pro_oc -->
                         <!--//END SUGARCRM flav=pro ONLY -->
-                        <!--//END SUGARCRM flav!=dce ONLY -->
                         <!--//BEGIN SUGARCRM flav=pro ONLY -->
                         <!-- BEGIN: pro -->
                         <tr>
@@ -338,7 +336,6 @@
                             <td width="17%" scope="row"><slot>{$MOD.LBL_DATE_FORMAT}:</slot>&nbsp;{sugar_help text=$MOD.LBL_DATE_FORMAT_TEXT }</td>
                             <td width="33%"><slot><select tabindex='14' name='dateformat'>{$DATEOPTIONS}</select></slot></td>
                             <!-- END: prompttz -->
-                            <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                             <!-- BEGIN: currency -->
                             <td width="17%" scope="row"><slot>{$MOD.LBL_CURRENCY}:</slot>&nbsp;{sugar_help text=$MOD.LBL_CURRENCY_TEXT }</td>
                                 <td ><slot>
@@ -346,12 +343,10 @@
                                     <input type="hidden" id="symbol" value="">
                                 </slot></td>
                             <!-- END: currency -->
-                            <!--//END SUGARCRM flav!=dce ONLY -->
                         </tr>
                         <tr>
                             <td scope="row"><slot>{$MOD.LBL_TIME_FORMAT}:</slot>&nbsp;{sugar_help text=$MOD.LBL_TIME_FORMAT_TEXT }</td>
                             <td ><slot><select tabindex='14' name='timeformat'>{$TIMEOPTIONS}</select></slot></td>
-                            <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                             <!-- BEGIN: currency -->
                             <td width="17%" scope="row"><slot>
                                 {$MOD.LBL_CURRENCY_SIG_DIGITS}:
@@ -360,12 +355,10 @@
                                 <select id='sigDigits' onchange='setSigDigits(this.value);' name='default_currency_significant_digits'>{$sigDigits}</select>
                             </slot></td>
                             <!-- END: currency -->
-                            <!--//END SUGARCRM flav!=dce ONLY -->
                         </tr>
                         <tr>
                             <td scope="row"><slot>{$MOD.LBL_TIMEZONE}:</slot>&nbsp;{sugar_help text=$MOD.LBL_TIMEZONE_TEXT }</td>
                             <td ><slot><select tabindex='14' name='timezone'>{html_options options=$TIMEZONEOPTIONS selected=$TIMEZONE_CURRENT}</select></slot></td>
-                            <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                             <!-- BEGIN: currency -->
                             <td width="17%" scope="row"><slot>
                                 <i>{$MOD.LBL_LOCALE_EXAMPLE_NAME_FORMAT}</i>:
@@ -374,7 +367,6 @@
                                 <input type="text" disabled id="sigDigitsExample" name="sigDigitsExample">
                             </slot></td>
                             <!-- END: currency -->
-                            <!--//END SUGARCRM flav!=dce ONLY -->
                         </tr>
                         <tr>
                         <!--  //BEGIN SUGARCRM flav!=sales ONLY -->
@@ -441,7 +433,6 @@
         </div>
         <!--//END SUGARCRM flav=pro ONLY -->
         <!--//BEGIN SUGARCRM flav!=sales ONLY -->
-        <!--//BEGIN SUGARCRM flav!=dce ONLY -->
         <div id="calendar_options" style="display:{$HIDE_FOR_GROUP_AND_PORTAL}">
         <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
             <tr>
@@ -472,7 +463,6 @@
                         </tr>
                     </table>
         </div>
-        <!--//END SUGARCRM flav!=dce ONLY -->
         <!--//END SUGARCRM flav!=sales ONLY -->
     </div>
     {if $ID}

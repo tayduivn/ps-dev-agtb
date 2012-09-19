@@ -563,11 +563,6 @@ $mod_strings = array(
     'LBL_OOTB_TRACKER'		=> 'Prune tracker tables',
     'LBL_OOTB_SEND_EMAIL_REMINDERS'	=> 'Run Email Reminder Notifications',
     'LBL_UPDATE_TRACKER_SESSIONS' => 'Update tracker_sessions table',
-    //BEGIN SUGARCRM flav=dce ONLY
-    'LBL_OOTB_DCE_CLNUP'          => 'Close loop on completed DCE actions',
-    'LBL_OOTB_DCE_REPORT'         => 'Create Action to gather daily reports',
-    'LBL_OOTB_DCE_SALES_REPORT'   => 'Create weekly Sales Report Email',
-    //END SUGARCRM flav=dce ONLY
     'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
 
     // BEGIN SUGARCRM flav=pro ONLY

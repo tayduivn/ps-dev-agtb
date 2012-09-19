@@ -170,7 +170,6 @@ function disableReturnSubmission(e) {
                 <tr>
                     <td colspan="4"><hr /></td>
                 </tr>
-                <!--//BEGIN SUGARCRM flav!=dce ONLY -->
                 <tr>
                     <td nowrap="nowrap" scope="row" width="200">{sugar_translate module='Administration' label='LBL_LOCALE_DEFAULT_CURRENCY_NAME'}: </td>
                     <td>
@@ -202,7 +201,6 @@ function disableReturnSubmission(e) {
                 <tr>
                     <td colspan="4"><hr /></td>
                 </tr>
-                <!--//END SUGARCRM flav!=dce ONLY -->
                 <tr>
                     <td nowrap="nowrap" scope="row" valign="top">{sugar_translate module='Administration' label='LBL_LOCALE_DEFAULT_NAME_FORMAT'}: </td>
                     <td>

@@ -117,55 +117,6 @@ $GLOBALS['ACLActions'] = array(
 
 
 				),),
-//BEGIN SUGARCRM flav=dce ONLY
-	'DCE'=>array('actions'=>
-				array(
-
-                        'deploy'=>
-                            array(
-                                    'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                                    'label'=>'LBL_ACTION_DEPLOY',
-                                    'default'=>ACL_ALLOW_ALL,
-                                ),
-                        'upgrade'=>
-                            array(
-                                    'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                                    'label'=>'LBL_ACTION_UPGRADE',
-                                    'default'=>ACL_ALLOW_ALL,
-                                ),
-                        'convert'=>
-                            array(
-                                    'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                                    'label'=>'LBL_ACTION_CONVERT',
-                                    'default'=>ACL_ALLOW_ALL,
-                                ),
-                        'archive'=>
-                            array(
-                                    'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                                    'label'=>'LBL_ACTION_ARCHIVE',
-                                    'default'=>ACL_ALLOW_ALL,
-                                ),
-                        'clone'=>
-                            array(
-                                    'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                                    'label'=>'LBL_ACTION_CLONE',
-                                    'default'=>ACL_ALLOW_ALL,
-                                ),
-                        'recover'=>
-                            array(
-                                    'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                                    'label'=>'LBL_ACTION_RECOVER',
-                                    'default'=>ACL_ALLOW_ALL,
-                                ),
-                        'support_user'=>
-                            array(
-                                    'aclaccess'=>array(ACL_ALLOW_ALL,ACL_ALLOW_OWNER,ACL_ALLOW_DEFAULT, ACL_ALLOW_NONE),
-                                    'label'=>'LBL_ACTION_SUPPORT_USER',
-                                    'default'=>ACL_ALLOW_ALL,
-                                ),
-			         )
-				),
-//END SUGARCRM flav=dce ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 'Tracker'=>array('actions'=>
 						array(

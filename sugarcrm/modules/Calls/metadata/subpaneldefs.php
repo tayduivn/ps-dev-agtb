@@ -20,8 +20,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
  
-// $Id: layout_defs.php 14232 2006-06-23 00:33:16Z wayne $
-
 $layout_defs['Calls'] = array(
 	// sets up which panels to show, in which order, and with what linked_fields
 	'subpanel_setup' => array(
@@ -45,7 +43,7 @@ $layout_defs['Calls'] = array(
 			'get_subpanel_data' => 'users',
 			'title_key' => 'LBL_USERS_SUBPANEL_TITLE',
 		),
-        //BEGIN SUGARCRM flav!=dce && flav!=sales ONLY
+        //BEGIN SUGARCRM flav!=sales ONLY
 		'leads' => array(
 			'order' => 30,
 			'module' => 'Leads',
@@ -56,7 +54,7 @@ $layout_defs['Calls'] = array(
 			'title_key' => 'LBL_LEADS_SUBPANEL_TITLE',
 			'top_buttons' => array(),
 		),
-        //END SUGARCRM flav!=dce && flav!=sales ONLY
+        //END SUGARCRM flav!=sales ONLY
 		'history' => array(
 			'order' => 40,
 			'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE',
