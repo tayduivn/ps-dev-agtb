@@ -79,7 +79,7 @@ class RestLoginTest extends RestTestBase
      */
     public function testRestLoginUserAutocreateKey()
     {
-        $GLOBALS['db']->query("DELETE FROM oauth_keys WHERE c_key = 'sugar'");
+        $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'sugar'");
         $GLOBALS['db']->commit();
         $args = array(
             'grant_type' => 'password',
