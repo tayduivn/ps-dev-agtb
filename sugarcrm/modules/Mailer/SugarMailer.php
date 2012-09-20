@@ -26,7 +26,6 @@ require_once('include/OutboundEmail/OutboundEmail.php');
 
 class SugarMailer extends SimpleMailer
 {
-    private $locale;
     private $sugar_config;
     private $notes;
 
@@ -37,11 +36,9 @@ class SugarMailer extends SimpleMailer
      * @param MailerConfiguration
      */
     public function __construct(MailerConfiguration $mailerConfig) {
-        global $locale;
         global $sugar_config;
 
-        $this->locale         = $locale;
-        $this->sugar_config   = $sugar_config;
+        $this->sugar_config = $sugar_config;
 
         parent::__construct($mailerConfig);
         $this->retrieveDisclosureSettings();
@@ -89,7 +86,9 @@ class SugarMailer extends SimpleMailer
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
      */
     protected function prepareMessageContent() {
-        $OBCharset = $this->locale->getPrecedentPreference('default_email_charset');
+        global $locale;
+
+        $OBCharset = $locale->getPrecedentPreference('default_email_charset');
 
         if ($this->includeDisclosure) {
             $this->htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}";
@@ -97,10 +96,10 @@ class SugarMailer extends SimpleMailer
         }
 
         $headers        = $this->headers;
-        $this->htmlBody = from_html($this->locale->translateCharset(trim($this->htmlBody), 'UTF-8', $OBCharset));
-        $this->textBody = from_html($this->locale->translateCharset(trim($this->textBody), 'UTF-8', $OBCharset));
+        $this->htmlBody = from_html($locale->translateCharset(trim($this->htmlBody), 'UTF-8', $OBCharset));
+        $this->textBody = from_html($locale->translateCharset(trim($this->textBody), 'UTF-8', $OBCharset));
         $subjectUTF8    = from_html(trim($headers->getSubject()));
-        $subject        = $this->locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
+        $subject        = $locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
         $headers->setSubject($subject);
 
         // HTML email RFC compliance
@@ -119,7 +118,7 @@ eoq;
         }
 
         $from = $headers->getFrom();
-        $from->setName($this->locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
+        $from->setName($locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
         $headers->setFrom($from);
     }
 
