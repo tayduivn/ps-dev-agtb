@@ -223,13 +223,10 @@ abstract class BaseMailer implements IMailer
      * Adds an attachment from a path on the filesystem.
      *
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param Attachment   $attachment
      */
-    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
-        $this->attachments[] = new Attachment($path, $name, $encoding, $mimeType);
+    public function addAttachment(Attachment $attachment) {
+        $this->attachments[] = $attachment;
     }
 
     /**
@@ -237,14 +234,10 @@ abstract class BaseMailer implements IMailer
      * the $mimeType to the appropriate type. For JPEG images use "image/jpeg" and for GIF images use "image/gif".
      *
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param string      $cid      required The Content-ID used to reference the image in the message.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param EmbeddedImage $embeddedImage
      */
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
-        $this->attachments[] = new EmbeddedImage($path, $cid, $name, $encoding, $mimeType);
+    public function addEmbeddedImage(EmbeddedImage $embeddedImage) {
+        $this->attachments[] = $embeddedImage;
     }
 
     /**

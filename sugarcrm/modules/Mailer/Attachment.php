@@ -43,12 +43,59 @@ class Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
+    public function __construct($path=null, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
         $this->setPath($path);
         $this->setName($name);
-        $this->setEncoding($encoding);
         $this->setMimeType($mimeType);
+        $this->setEncoding($encoding);
     }
+
+
+    /**
+     * @access public
+     * @param SugarBean $bean    required
+     */
+    public static function FromSugarBean(SugarBean $bean) {
+        $bean_classname = get_class($bean);
+
+        $mimeType = "application/octet-stream";
+        $encoding = Encoding::Base64;
+
+        switch ($bean_classname) {
+            case "Note":
+            {
+                $filePath   = "upload/{$bean->id}";
+                $fileName   = empty($bean->filename) ? $bean->name : $bean->filename;
+                $mimeType   = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
+                break;
+            }
+            case "DocumentRevision":
+            {
+                $filePath   = "upload/{$bean->id}";
+                $fileName   = empty($bean->filename) ? $bean->name : $bean->filename;
+                $mimeType   = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
+                break;
+            }
+            default: {
+                throw new MailerException("SugarBean Type: '$bean_classname' not supported as an Email Attachment", MailerException::InvalidAttachment);
+            }
+        }
+
+        // Path must Exist and Must be a Regular File
+        if (!is_file($filePath)) {
+            throw new MailerException("Attachment File Not Found: ".$filePath, MailerException::InvalidAttachment);
+        }
+
+        $attachment = new Attachment();
+        $attachment->setPath($filePath);
+        $attachment->setName($fileName);
+        $attachment->setMimeType($mimeType);
+        $attachment->setEncoding($encoding);
+
+        return $attachment;
+    }
+
+
 
     /**
      * @access public
@@ -133,7 +180,7 @@ class Attachment
      * @access public
      * @return array Array of key value pairs representing the properties of the attachment.
      */
-    public function getAsArray() {
+    public function toArray() {
         return array(
             "path"     => $this->getPath(),
             "name"     => $this->getName(),

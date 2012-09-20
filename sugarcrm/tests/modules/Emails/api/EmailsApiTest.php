@@ -225,7 +225,9 @@ class EmailsApiTest extends RestTestBase {
     }
 
 
-
+    /**
+     * @group mailer
+     */
     public function testCreate_Draft_Success() {
         $this->input["status"] = "draft";
 
@@ -254,7 +256,7 @@ class EmailsApiTest extends RestTestBase {
     }
 
     /**
-     * @group emails_related
+     * @group mailer
      */
     public function testCreate_Draft_WithRelationship_Success() {
         $this->input["status"] = "draft";
@@ -296,7 +298,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emails_attachment
+     * @group mailer
      */
     public function testCreate_Draft_WithAttachment_Success() {
         $this->input["status"] = "draft";
@@ -333,7 +335,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emails_multiple_teams
+     * @group mailer
      */
      public function testCreate_Draft_WithMultipleTeams_Success() {
 
@@ -375,7 +377,7 @@ class EmailsApiTest extends RestTestBase {
     }
 
     /**
-     * @group emails_document
+     * @group mailer
      */
     public function testCreate_Draft_WithSugarDocumentAttached_Success() {
         $this->input["status"] = "draft";
@@ -412,7 +414,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group send
+     * @group mailer
      */
     public function testCreate_Ready_Success() {
         if ($this->skip_mail_send) {
@@ -450,7 +452,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group send
+     * @group mailer
      */
     public function testCreate_Ready_WithAttachment_Success() {
         if ($this->skip_mail_send) {
@@ -494,7 +496,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group send
+     * @group mailer
      */
     public function testCreate_Ready_WithSugarDocumentAttached_Success() {
         if ($this->skip_mail_send) {
@@ -536,7 +538,9 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
     }
 
-
+    /**
+     * @group mailer
+     */
     public function testCreate_InvalidStatus() {
         $this->input["status"] = "bogus";
 

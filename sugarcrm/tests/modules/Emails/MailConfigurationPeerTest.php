@@ -87,6 +87,9 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    /**
+     * @group mailer
+     */
    function testgetMailConfigurations_All_Success()
     {
         $config1_array = array(
@@ -153,7 +156,9 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($mail_configs_expected, $mail_configs_actual, "Unexpected list for 'ALL' MailConfigurations");
     }
 
-
+    /**
+     * @group mailer
+     */
     function testgetMailConfigurations_SystemOnly_Success()
     {
         $config1_array = array(

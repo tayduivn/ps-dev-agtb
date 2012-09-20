@@ -69,8 +69,8 @@ class EmbeddedImage extends Attachment
      * @access public
      * @return array Array of key value pairs representing the properties of the attachment.
      */
-    public function getAsArray() {
-        $image = parent::getAsArray();
+    public function toArray() {
+        $image = parent::toArray();
         $image["cid"] = $this->getCid();
 
         return $image;

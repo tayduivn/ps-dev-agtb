@@ -85,6 +85,9 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
     }
 
+    /**
+     * @group mailer
+     */
     public function testSaveAsDraft_Success ()
     {
         global $current_user;
@@ -140,7 +143,9 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
 
-
+    /**
+     * @group mailer
+     */
     public function testSaveAsDraft_FromAccountsUnavailable_ExceptionThrown()
     {
         global $current_user;

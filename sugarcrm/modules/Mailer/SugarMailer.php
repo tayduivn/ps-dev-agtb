@@ -29,7 +29,6 @@ class SugarMailer extends SimpleMailer
     private $locale;
     private $sugar_config;
     private $admin_settings;
-    private $notes;
 
     /**
      * @param MailerConfiguration
@@ -47,24 +46,12 @@ class SugarMailer extends SimpleMailer
         parent::__construct($mailerConfig);
     }
 
-
-    /**
-     * Optionally set notes (Sugar Documents and Uploaded Files)
-     *
-     * @param $notesArray  array of note beans
-     */
-    public function setNotes(array $notesArray) {
-        $this->notes = $notesArray;
-    }
-
-
     /**
      * a potential solution to allow for manipulation of the message parts at send time without actually
      * changing the message parts beyond repair
      */
     public function send() {
         $this->prepareMessageContent();
-        $this->handleAttachments();
 
         parent::send();
     }
@@ -88,7 +75,7 @@ class SugarMailer extends SimpleMailer
         $this->textBody = from_html($this->locale->translateCharset(trim($this->textBody), 'UTF-8', $OBCharset));
         $subjectUTF8    = from_html(trim($headers->getSubject()));
         $subject        = $this->locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
-        $headers->setSubject($subject);
+        $this->setSubject($subject);
 
         // HTML email RFC compliance
         if (strpos($this->htmlBody, '<html') === false) {
@@ -107,52 +94,15 @@ eoq;
 
         $from = $headers->getFrom();
         $from->setName($this->locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
-        $headers->setFrom($from);
-    }
+        $headers->setHeader(EmailHeaders::From,$from);
 
-    /**
-     *
-     */
-    protected function handleAttachments() {
         //replace references to cache/images with cid tag
         $this->htmlBody = str_replace(sugar_cached('images/'), 'cid:', $this->htmlBody);
-
-        if (empty($this->notes)) {
-            return;
-        }
 
         $this->replaceImageByRegex("(?:{$this->sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
 
         //Replace any embeded images using the secure entryPoint for src url.
         $this->replaceImageByRegex("(?:{$this->sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
-
-        //Handle regular attachments.
-        foreach ($this->notes as $note) {
-            $mime_type     = 'text/plain';
-            $file_location = '';
-            $filename      = '';
-
-            if ($note->object_name == 'Note') {
-                if (!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) {
-                    $file_location = $note->file->temp_file_location;
-                    $filename      = $note->file->original_file_name;
-                    $mime_type     = $note->file->mime_type;
-                } else {
-                    $file_location = "upload://{$note->id}";
-                    $filename      = $note->id . $note->filename;
-                    $mime_type     = $note->file_mime_type;
-                }
-            } elseif ($note->object_name == 'DocumentRevision') { // from Documents
-                $filename      = $note->id . $note->filename;
-                $file_location = "upload://$filename";
-                $mime_type     = $note->file_mime_type;
-            }
-
-            $filename = substr($filename, 36, strlen($filename)); // strip GUID	for PHPMailer class to name outbound file
-            if (!$note->embed_flag) {
-                $this->addAttachment($file_location, $filename, 'base64', $mime_type);
-            }
-        }
     }
 
     /**

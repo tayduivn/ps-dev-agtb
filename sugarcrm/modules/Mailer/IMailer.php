@@ -24,6 +24,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once "Encoding.php";            // needs to know the valid encodings that are available for email
 require_once "EmailIdentity.php";       // requires EmailIdentity for representing email senders and recipients
 require_once "MailerConfiguration.php"; // needs to take on a MailerConfiguration or a type that derives from it
+require_once "Attachment.php";          // needs to take on a MailerConfiguration or a type that derives from it
+require_once "EmbeddedImage.php";       // needs to take on a MailerConfiguration or a type that derives from it
 
 /**
  * This defines the basic interface that is expected from a Mailer.
@@ -168,12 +170,9 @@ interface IMailer
      *
      * @abstract
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param Attachment $attachment
      */
-    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream");
+    public function addAttachment(Attachment $attachment);
 
     /**
      * Adds an embedded attachment. This can include images, sounds, and just about any other document. Make sure to set
@@ -181,13 +180,9 @@ interface IMailer
      *
      * @abstract
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param string      $cid      required The Content-ID used to reference the image in the message.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param EmbeddedImage $embeddedImage
      */
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream");
+    public function addEmbeddedImage(EmbeddedImage $embeddedImage);
 
     /**
      * Removes any existing attachments by restoring the container to an empty array.
