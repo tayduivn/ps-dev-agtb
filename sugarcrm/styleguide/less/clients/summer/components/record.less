@@ -29,6 +29,7 @@
 
     .record-edit-link-wrapper {
         a {
+            display: none;
             text-decoration: none;
             cursor: pointer;
         }
@@ -36,5 +37,9 @@
 
     .record-cell {
         display: inline-block;
+    }
+
+    .record-cell:hover > span > a {
+        display: inline;
     }
 }
