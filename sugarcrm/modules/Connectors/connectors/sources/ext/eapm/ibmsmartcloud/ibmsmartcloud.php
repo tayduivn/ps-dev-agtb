@@ -21,22 +21,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$config = array (
-  'name' => 'LotusLive&#169;',
-  'eapm' => array(
-    'enabled' => true,
-    'only' => true,
-  ),
-  'order' => 16,
-  'properties' => array (
-      'oauth_consumer_key' => '',
-      'oauth_consumer_secret' => '',
-  ),
-  'encrypt_properties' => array (
-      'oauth_consumer_secret',
-  ),
-);
-//BEGIN SUGARCRM flav=int ONLY
-$config['properties']['oauth_consumer_key'] = '9399cf0ce6e4ca4d30d56a76b21da89';
-$config['properties']['oauth_consumer_secret'] = '7704b27829c5715445e14637415b67c1';
-//END SUGARCRM flav=int ONLY
+require_once('include/connectors/sources/default/source.php');
+
+class ext_eapm_ibmsmartcloud extends source {
+	protected $_enable_in_wizard = false;
+	protected $_enable_in_hover = false;
+	protected $_has_testing_enabled = false;
+
+	public function getItem($args=array(), $module=null){}
+	public function getList($args=array(), $module=null) {}
+}

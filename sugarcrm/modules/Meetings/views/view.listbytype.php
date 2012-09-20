@@ -31,13 +31,13 @@ class MeetingsViewListbytype extends ViewList {
     }
     
  	function listViewProcess(){
-        if (!$eapmBean = EAPM::getLoginInfo('LotusLive', true) ) {
+        if (!$eapmBean = EAPM::getLoginInfo('IBMSmartCloud', true) ) {
             $smarty = new Sugar_Smarty();
-            echo $smarty->fetch('include/externalAPI/LotusLive/LotusLiveSignup.'.$GLOBALS['current_language'].'.tpl');
+            echo $smarty->fetch('include/externalAPI/IBMSmartCloud/IBMSmartCloudSignup.'.$GLOBALS['current_language'].'.tpl');
             return;
         }
 
-        $apiName = 'LotusLive';
+        $apiName = 'IBMSmartCloud';
         $api = ExternalAPIFactory::loadAPI($apiName,true);
         $api->loadEAPM($eapmBean);
 
@@ -92,7 +92,7 @@ class MeetingsViewListbytype extends ViewList {
 
     function processSearchForm(){
    		// $type = 'LotusLiveDirect';
-   		$type = 'LotusLive';
+   		$type = 'IBMSmartCloud';
           global $timedate;
 
          //BEGIN SUGARCRM flav=int ONLY
