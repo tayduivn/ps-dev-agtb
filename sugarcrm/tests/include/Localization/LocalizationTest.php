@@ -65,6 +65,7 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public static function tearDownAfterClass()
     {
+        SugarTestHelper::tearDown();
     }
 
     public function providerGetLocaleFormattedName()
