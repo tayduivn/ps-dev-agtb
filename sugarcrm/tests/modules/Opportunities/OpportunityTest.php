@@ -24,16 +24,19 @@
 
 class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarTestHelper::setUP('forecasts');
+        //END SUGARCRM flav=pro ONLY
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
-	}
+    }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();

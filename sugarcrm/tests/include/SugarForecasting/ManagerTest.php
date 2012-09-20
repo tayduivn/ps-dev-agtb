@@ -11,14 +11,23 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected $users = array();
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('forecasts');
         SugarTestHelper::setup('mod_strings', array('Forecasts'));
+    }
 
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
+    public function setUp()
+    {
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
 
         $this->args['timeperiod_id'] = $timeperiod->id;

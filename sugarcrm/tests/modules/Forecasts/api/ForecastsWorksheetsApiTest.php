@@ -115,7 +115,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     public static function tearDownAfterClass()
     {
-        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
+        //SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         parent::tearDown();
     }
 
@@ -142,8 +142,9 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     public function testForecastWorksheetSave()
     {
 
+        $test_name = self::$repData["ops"][0]->name;
         self::$repData["op_worksheets"][0]->best_case = self::$repData["op_worksheets"][0]->best_case + 100;
-        self::$repData["ops"][0]->probability = (self::$repData["ops"][0]->probability + 10);
+        self::$repData["ops"][0]->probability = self::$repData["ops"][0]->probability + 10;
         $returnBest = '';
         $returnProb = '';
         $returnCommitStage = '';
@@ -172,7 +173,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         //loop through response and pick out the rows that correspond with ops[0]->id
         foreach ($response["reply"] as $record)
         {
-            if ($record["id"] == self::$repData["ops"][0]->id)
+            if ($record["id"] == self::$repData["ops"][0]->id && $record["name"] == $test_name)
             {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
@@ -195,6 +196,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     /**
      * @group forecastapi
      * @group forecasts
+     * @outputBuffering disabled
      */
     public function testWorksheetVersionSave()
     {

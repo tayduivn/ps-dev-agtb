@@ -56,13 +56,14 @@ class SugarForecasting_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestHelper::tearDown();
+
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
+        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 
