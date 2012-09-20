@@ -113,6 +113,14 @@ class UnifiedSearchApi extends SugarApi {
                 // Common cause of this was the id field, since we always add it
                 // by default.
                 if (in_array($column, $options['selectFields'])) {
+                    // Before busting out of this, ensure we have what we need
+                    if (empty($orderByData[$column])) {
+                        $orderByData[$column] = ($direction=='ASC'?true:false);
+                        if (!in_array("$column $direction", $orderByArray)) {
+                            $orderByArray[] = $column.' '.$direction;
+                        }
+                    }
+
                     continue;
                 }
                 $options['selectFields'][] = $column;
