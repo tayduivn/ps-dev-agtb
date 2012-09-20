@@ -123,7 +123,7 @@ class ViewPortalLayoutView extends ViewLayoutView
 
 		$ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');
         $ajax->addCrumb(translate('LBL_LAYOUTS', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&portal=1&layout=1")');
-        $ajax->addCrumb(ucwords($this->editModule), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&portal=1&editModule='.$this->editModule.'")');
+        $ajax->addCrumb(ucwords(translate('LBL_MODULE_NAME',$this->editModule)), 'ModuleBuilder.getContent("module=ModuleBuilder&action=wizard&portal=1&editModule='.$this->editModule.'")');
         $ajax->addCrumb(ucwords($this->editLayout), '');
 
 		// set up language files
