@@ -29,6 +29,9 @@ $viewdefs['base']['layout']['quickcreate'] = array(
     'components' =>
     array(
         array(
+            'view' => 'quickcreate-alert',
+        ),
+        array(
             'view' => 'quickcreate-list'
         ),
         array(

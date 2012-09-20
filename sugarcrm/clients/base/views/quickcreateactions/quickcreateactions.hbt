@@ -1,4 +1,4 @@
-<div class="form-actions">
+<div class="form-actions modal-footer">
     {{#each meta.buttons}}
         {{field ../this}}
     {{/each}}

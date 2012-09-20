@@ -91,7 +91,7 @@
             success = function(collection) {
                 var keys = self.getFieldValuesForUserKeys(self.getUserKeys());
                 if (collection.models.length > 0) {
-                    self.handleDuplicateFound();
+                    self.handleDuplicateFound(collection);
                     callback(true);
                 } else {
                     self.handleDuplicateNotFound();
@@ -147,11 +147,15 @@
     /**
      * Duplicate found: display duplicates and change buttons
      */
-    handleDuplicateFound: function() {
+    handleDuplicateFound: function(collection) {
         this.context.trigger('quickcreate:list:toggled', true);
         // self.showDuplicateAlertMessage();
         this.skipDupCheck(true);
         this.context.trigger('quickcreate:actions:setButtonAsIgnoreDuplicate');
+        this.context.trigger('quickcreate:alert', {
+            level: 'warning',
+            messages: this.getAlertMessage(collection.models.length),
+            autoClose: false});
     },
 
     /**
@@ -223,10 +227,17 @@
         return keys;
     },
 
+    getAlertMessage: function(dupCount) {
+        return "<span class=\"alert-message\">" +
+            "<strong>" + dupCount + " Duplicate Records.</strong>  You can " +
+            "<a>ignore duplicates and save</a> or select to edit one of the duplicates." +
+            "</span>";
+    },
     /**
      * Close the modal window
      */
     closeModal: function() {
+        debugger;
         this.context.parent.trigger('modal:close');
     }
 })
