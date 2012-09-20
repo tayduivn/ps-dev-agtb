@@ -93,12 +93,6 @@
         <h1>Accounts</h1>
         <div class="btn-toolbar pull-right dropdown">
           <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
-            <a href="#" data-toggle="dropdown" class="btn btn-invisible"><i class="icon-cog"></i></a>
-              <ul class="dropdown-menu">
-                <li><a href="">item</a></li>
-                <li><a href="">item</a></li>
-                <li><a href="">item</a></li>
-              </ul>
         </div>
       </div>
     </div>
@@ -658,16 +652,18 @@
                 <input type="text" id="input01" class="input-xlarge">
               </div>
             </div>
-            <div class="control-group">
-              <label for="select01" class="control-label">Result Amount</label>
+            <div class="control-group teams">
+              <label for="select01" class="control-label">Teams:</label>
               <div class="controls">
-                <select id="select01">
-                  <option>something</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
+                <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
+                  <option value="pk">Global</option>
+                  <option value="pk" selected="selected">East</option>
+                  <option value="pk">West</option>
+                  <option value="pk">North</option>
+                  <option value="pk">South</option>
                 </select>
+                <button class="btn add" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
+                <a href="" class="btn remove" rel="tooltip" data-original-title="Add team"><i class="icon-plus"></i></a>
               </div>
             </div>
             <div class="control-group">

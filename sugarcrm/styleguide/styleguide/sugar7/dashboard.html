@@ -74,9 +74,8 @@
                     <ul class="dropdown-menu">
                       <li class="title">Advanced Search:</li>
                       <li><input type="checkbox"> Accounts</li>
-                      <li><input type="checkbox"> Cases</li>
+                      <li><input type="checkbox"> Contacts</li>
                       <li><input type="checkbox"> Opportunities</li>
-                      <li><input type="checkbox"> Reports</li>
                     </ul>
                     <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
                   </div>
@@ -93,12 +92,11 @@
       <div class="span8" id="headerbar">
         <h1>My Dashboard</h1>
         <div class="btn-toolbar pull-right dropdown">
-          <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
-            <a href="#" data-toggle="dropdown" class="btn btn-invisible"><i class="icon-cog"></i></a>
+          <a href="#createAccount" data-toggle="dropdown" title="Create Account" class="btn btn-primary">Create</a>
             <ul class="dropdown-menu">
-              <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-              <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-              <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+              <li><a data-toggle="modal" href="#createAccount">Account</a></li>
+              <li><a data-toggle="modal" href="#createContact">Contacts</a></li>
+              <li><a data-toggle="modal" href="#createOpportunity">Opportunities</a></li>
             </ul>
         </div>
       </div>

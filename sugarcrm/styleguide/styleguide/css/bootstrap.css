@@ -3158,7 +3158,7 @@ a.label:hover, a.badge:hover {
   -moz-background-clip:padding;
   -webkit-background-clip:padding-box;
   background-clip:padding-box;
-  border:1px solid #aaaaaa;
+  border:1px solid #cdcccb;
   -webkit-box-shadow:0 0 3px #ffffff inset, 0 1px 1px rgba(0,0,0,0.1);
   -moz-box-shadow:0 0 3px #ffffff inset, 0 1px 1px rgba(0,0,0,0.1);
   box-shadow:0 0 3px #ffffff inset, 0 1px 1px rgba(0,0,0,0.1);
@@ -3180,9 +3180,9 @@ a.label:hover, a.badge:hover {
   background-image:linear-gradient(top,#ffffff,#ebebeb);
   background-repeat:repeat-x;
   filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ebebeb', GradientType=0);
-  -webkit-border-radius:2px;
-  -moz-border-radius:2px;
-  border-radius:2px;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px;
 }
 .chzn-container-single .chzn-default { color:#999999; }
 .chzn-container-single .chzn-single span {
@@ -5925,7 +5925,8 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
 .commented li { border-top:1px solid #ffffff !important; }
 .commented li .span10 { display:inline; }
 .accoment { margin:0; }
-.block.tabs-left .nav-tabs li li p { margin:0 0 10px 36px; }
+.accoment .control-group { padding:0; }
+.block.tabs-left .nav-tabs li li p { margin:0 0 0 36px; }
 .block.tabs-left .nav-tabs > li > a:hover, .block.tabs-left .nav-tabs > li > a {
   background:none !important;
   border:none !important;
@@ -6549,7 +6550,7 @@ img.pull-left { margin:0 8px 8px 0; }
   border-bottom:1px solid #e8e8e8;
   z-index:1000;
 }
-.form-search input.query, .accoment input {
+.form-search input.query, .acomment input {
   margin:0;
   padding:6px 8px;
   border:1px solid #e8e8e8;

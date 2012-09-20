@@ -85,7 +85,7 @@
 
     $('.comment').toggle(
       function () {
-        $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment" class="span10"> <input type="submit" class="btn btn-primary" value="Reply"></div></li>');
+        $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><a href="" class="pull-left avatar"><img src="../img/avatar_sabra.jpg" alt="Skhan avatar"></a><input placeholder="Add your comment" class="span10"><input type="submit" class="btn btn-primary" value="Reply"></div></li>');
         $(this).addClass('active');
         return false;
       },
@@ -141,7 +141,7 @@
         $(this).parent().parent().parent().find('.comment').remove();
         $(this).parent().parent().find('.acomment').remove();
         $(this).parent().prev('.extend').removeClass('hide');
-        $(this).html('<div class="control-group form-horizontal accoment"><input placeholder="Add your comment" class="span10"> <input type="submit" class="btn btn-primary" value="Reply"></div>');
+        $(this).html('<div class="control-group form-horizontal acomment"><input placeholder="Add your comment" class="span10"><a href="" class="pull-left avatar"><img src="../img/avatar_sabra.jpg" alt="Skhan avatar"></a><input type="submit" class="btn btn-primary" value="Reply"></div>');
         return false;
       },
       function (e) {
