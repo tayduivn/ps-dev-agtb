@@ -42,7 +42,7 @@ class RestMetadataSugarViewsTest extends RestTestBase {
                 file_put_contents($filename,$filecontents);
             }
         }
-        
+        $this->_clearMetadataCache();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
     }
@@ -105,13 +105,13 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when that was the direct option");
-        //END SUGARCRM flav=pro ONLY
 
         // Make sure we get it when we ask for mobile, even though there is base code there
         file_put_contents('clients/base/views/address/address.js','BASE CODE');
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when base code was there.");
+        //END SUGARCRM flav=pro ONLY
 
 
         // Make sure we get the base code when we ask for it.
@@ -149,9 +149,9 @@ class RestMetadataSugarViewsTest extends RestTestBase {
             'clients/base/views/address/detailView.hbt',
             'custom/clients/base/views/address/editView.hbt',
             'custom/clients/base/views/address/detailView.hbt',
+            //BEGIN SUGARCRM flav=pro ONLY
             'clients/mobile/views/address/editView.hbt',
             'clients/mobile/views/address/detailView.hbt',
-            //BEGIN SUGARCRM flav=pro ONLY
             'clients/mobile/views/address/editView.hbt',
             'clients/mobile/views/address/detailView.hbt',
             'custom/clients/mobile/views/address/editView.hbt',
