@@ -109,9 +109,13 @@ class UnifiedSearchApi extends SugarApi {
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
                 }
 */
-                if (!in_array($column, $options['selectFields'])) {
-                    $options['selectFields'][] = $column;
+                // If this field has already been added, don't do it again
+                // Common cause of this was the id field, since we always add it
+                // by default.
+                if (in_array($column, $options['selectFields'])) {
+                    continue;
                 }
+                $options['selectFields'][] = $column;
                 $orderByData[$column] = ($direction=='ASC'?true:false);
                 $orderByArray[] = $column.' '.$direction;
             }
