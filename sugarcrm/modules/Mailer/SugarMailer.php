@@ -159,7 +159,7 @@ eoq;
 
             $filename = substr($filename, 36, strlen($filename)); // strip GUID	for PHPMailer class to name outbound file
             if (!$note->embed_flag) {
-                $this->addAttachment($file_location, $filename, 'base64', $mime_type);
+                $this->addAttachment($file_location, $filename, Encoding::Base64, $mime_type);
             }
         }
     }
@@ -204,7 +204,7 @@ eoq;
             } else {
                 $mime_type = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             }
-            $this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+            $this->AddEmbeddedImage($file_location, $cid, $filename, Encoding::Base64, $mime_type);
             $i++;
         }
         //replace references to cache with cid tag
