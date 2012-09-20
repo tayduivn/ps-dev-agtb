@@ -1,58 +1,34 @@
 ({
-
-    initialize: function(options) {
-        app.view.View.prototype.initialize.call(this,options);
-        var lid = this.options.lid || ""; // Layout Id
-
-    },
-
-    reset: function(context) {
-        this.$el.toggle(!(context.id === "new"));
-        this.model = context.data;
-        this.model.bind("change", this.getData);
+    initialize: function(o) {
+        app.view.View.prototype.initialize.call(this, o);
         this.getData();
     },
 
-    _render: function(o) {
+    render: function() {
+        if (!this.responseData || this.responseData.results.length < 0) {
+            this.$el.hide();
+            return;
+        }
 
-            this.$el.show();
-            app.view.View.prototype._render.call(this);
-            this.$("a.googledoc-fancybox").fancybox({
-                'width': '95%',
-                'height': '95%',
-                'autoScale': true,
-                'transitionIn': 'fadeIn',
-                'transitionOut': 'fadeOut',
-                'type': 'iframe'
-            });
-
+        this.$el.show();
+        app.view.View.prototype.render.call(this);
     },
 
     getData: function() {
-        var url;
-        var name = this.model.get("name");
-        if(!name)name = this.model.get('account_name');
-        if(!name)name = this.model.get('full_name');
-        var self = this;
+        var name = this.model.get("name") || this.model.get('account_name') || this.model.get('full_name');
+
         if (name) {
-            url = "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + name.toLowerCase();
             $.ajax({
-                url: url,
+                url: "https://ajax.googleapis.com/ajax/services/search/news?v=1.0&q=" + name.toLowerCase(),
                 dataType: "jsonp",
-                success: function(data){
-                    self = _.extend(self, data);
-                    app.view.View.prototype._renderHtml.call(self);
+                success: function(data) {
+                    data.responseData.results = _.first(data.responseData.results, 3);
+                    _.extend(this, data);
+                    this.render();
                 },
                 context: this
             });
         }
-    },
-
-    // If edit mode is turned on, set to show and then fade it
-    toggle: function(editOn) {
-        console.log("Toggle " + editOn);
-        this.$el.toggle(editOn);
-        this.$el.fadeToggle("fast");
     },
 
     bindDataChange: function() {

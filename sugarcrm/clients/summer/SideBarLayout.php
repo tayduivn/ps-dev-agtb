@@ -1,39 +1,32 @@
 <?php
 
-class SideBarLayout
-{
-
-
-    function __construct(){
-
-    }
+class SideBarLayout {
 
     protected $containers = array('top' => array(), 'bottom' => array(), 'main' => array(), 'side' => array());
     protected $spans = array('main' => 8, 'side' => 4);
     protected $layout = array(
         'type' => 'simple',
         'components' =>
-        array(
-
-        ),
+        array(),
     );
 
+    public function __construct() {}
 
-    function push($section, $component, $index = -1)
-    {
+    public function push($section, $component, $index = -1) {
         $this->containers[$section] = $this->insert($this->containers[$section], $component, $index);
-
     }
 
-    function setSectionSpan($section, $span)
-    {
+    public function setSectionSpan($section, $span) {
         $this->spans[$section] = $span;
     }
 
-    protected function getMainLayout()
-    {
+    protected function getMainLayout() {
         $components = array();
-        if (empty($this->containers['main']) && empty($this->containers['side'])) return array();
+
+        if (empty($this->containers['main']) && empty($this->containers['side'])) {
+            return array();
+        }
+
         if (!empty($this->containers['main'])) {
             $components[] = array(
                 'layout' =>
@@ -44,6 +37,7 @@ class SideBarLayout
                 ),
             );
         }
+
         if (!empty($this->containers['side'])) {
             $components[] = array(
                 'layout' =>
@@ -54,6 +48,7 @@ class SideBarLayout
                 )
             );
         }
+
         return array(
             'layout' =>
             array(
@@ -61,12 +56,9 @@ class SideBarLayout
                 'components' => $components
             ),
         );
-
     }
 
-    function getLayout()
-
-    {
+    public function getLayout() {
         if (empty($this->containers['side'])) {
             $this->spans['main'] = 12;
         }
@@ -84,8 +76,7 @@ class SideBarLayout
         return $this->layout;
     }
 
-    protected function insert($components, $component, $index = -1)
-    {
+    protected function insert($components, $component, $index = -1) {
         if ($index == -1) {
             $components[] = $component;
             return $components;
@@ -100,6 +91,4 @@ class SideBarLayout
             return $components;
         }
     }
-
-
 }

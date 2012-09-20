@@ -1,5 +1,5 @@
 ({
-    events:{
+    events: {
         'click .reply': 'showAddComment',
         'click .postReply': 'addComment',
         'click .addPost': 'addPost',
@@ -25,12 +25,12 @@
 
     initialize: function(options) {
         var self = this;
-        this.opts = { params: {}};
-        this.collection = {};
-        app.view.View.prototype.initialize.call(this, options);
-
 
         _.bindAll(this);
+        app.view.View.prototype.initialize.call(this, options);
+
+        this.opts = {params: {}};
+        this.collection = {};
 
         // Check to see if we need to make a related activity stream.
         if (this.module !== "ActivityStream") {
@@ -47,7 +47,7 @@
         var url = app.api.buildURL("CustomReport/EntityList");
         if(this.opts.params.module) {
             url += "?module=" + this.opts.params.module;
-            if(this.opts.params.id) {
+            if (this.opts.params.id) {
                 url += "&id=" + this.opts.params.id;
             }
         }
@@ -71,14 +71,15 @@
         jQuery.event.props.push('dataTransfer');
     },
 
-    showMoreRecords: function(event) {
+    showMoreRecords: function() {
         var self = this, options = {};
-        app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
+
+        app.alert.show('show_more_records', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
+
         options.params = this.opts.params;
         options.params.offset = this.collection.next_offset;
-        options.params.limit = "";// use default
-        // Indicates records will be added to those already loaded in to view
-        options.add = true;
+        options.params.limit = ""; // use default
+        options.add = true; // Indicates records will be added to those already loaded in to view
 
         options.success = function() {
             app.alert.dismiss('show_more_records');
@@ -86,6 +87,7 @@
             self.render();
             window.scrollTo(0, document.body.scrollHeight);
         };
+
         this.collection.paginate(options);
     },
 
@@ -118,19 +120,17 @@
             });
         });
 
-
         $(myPostHTML).contents().each(function() {
-            if(this.nodeName == "#text") {
+            if (this.nodeName == "#text") {
                 myPostContents += this.data;
-            } else if(this.nodeName == "SPAN") {
+            } else if (this.nodeName == "SPAN") {
                 var el = $(this);
                 el.find('a').remove();
                 var data = el.data();
                 myPostContents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
             }
         }).html();
-        myPostContents = myPostContents.replace(/&nbsp;/gi,' ');
-
+        myPostContents = myPostContents.replace(/&nbsp;/gi, ' ');
 
         this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function(post_id) {
             var pending_attachments = self.$(event.currentTarget).siblings('.activitystream-pending-attachment');
@@ -180,24 +180,24 @@
             myPostUrl = 'ActivityStream',
             myPostContents = '';
 
-        if(myPostModule !== "ActivityStream") {
-            myPostUrl += '/'+myPostModule;
-            if(myPostId !== undefined) {
-                myPostUrl += '/'+myPostId;
+        if (myPostModule !== "ActivityStream") {
+            myPostUrl += '/' + myPostModule;
+            if (myPostId !== undefined) {
+                myPostUrl += '/' + myPostId;
             }
         }
 
         $(myPostHTML).contents().each(function() {
-            if(this.nodeName == "#text") {
+            if (this.nodeName == "#text") {
                 myPostContents += this.data;
-            } else if(this.nodeName == "SPAN") {
+            } else if (this.nodeName == "SPAN") {
                 var el = $(this);
                 el.find('a').remove();
                 var data = el.data();
                 myPostContents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
             }
         }).html();
-        myPostContents = myPostContents.replace(/&nbsp;/gi,' ');
+        myPostContents = myPostContents.replace(/&nbsp;/gi, ' ');
 
         this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function(post_id) {
             myPost.find('.activitystream-pending-attachment').each(function(index, el) {
@@ -234,21 +234,21 @@
     },
 
     /*
-    showDeleteButton: function(event) {
-        event.preventDefault();
-        this.$(event.currentTarget).closest('li').find('.deleteRecord').css('display', 'block');
-    },
+     showDeleteButton: function(event) {
+     event.preventDefault();
+     this.$(event.currentTarget).closest('li').find('.deleteRecord').css('display', 'block');
+     },
 
-    hideDeleteButton: function(event) {
-        event.preventDefault();
-        this.$(event.currentTarget).closest('li').find('.deleteRecord').hide();
-    },
-	*/
+     hideDeleteButton: function(event) {
+     event.preventDefault();
+     this.$(event.currentTarget).closest('li').find('.deleteRecord').hide();
+     },
+     */
     deleteRecord: function(event) {
         var self = this,
-        recordId = this.$(event.currentTarget).data('id'),
-        recordModule = this.$(event.currentTarget).data('module'),
-        myPostUrl = 'ActivityStream/'+recordModule+'/'+recordId;
+            recordId = this.$(event.currentTarget).data('id'),
+            recordModule = this.$(event.currentTarget).data('module'),
+            myPostUrl = 'ActivityStream/' + recordModule + '/' + recordId;
         this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
             self.collection.fetch(self.opts);
         }});
@@ -257,24 +257,18 @@
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.opts.params.offset = 0;
-        this.opts.params.limit = '';
-        this.opts.params.max_num = '';
         this.collection.fetch(this.opts);
     },
 
     showMyActivities: function(event) {
         this.opts.params.filter = 'myactivities';
         this.opts.params.offset = 0;
-        this.opts.params.limit = '';
-        this.opts.params.max_num = '';
         this.collection.fetch(this.opts);
     },
 
     showFavoritesActivities: function(event) {
         this.opts.params.filter = 'favorites';
         this.opts.params.offset = 0;
-        this.opts.params.limit = '';
-        this.opts.params.max_num = '';
         this.collection.fetch(this.opts);
     },
 
@@ -307,7 +301,7 @@
                     var sizes = ['B', 'KB', 'MB', 'GB'];
                     var size_index = 0;
                     var size = file.size;
-                    while(size > 1024 && size_index < sizes.length - 1) {
+                    while (size > 1024 && size_index < sizes.length - 1) {
                         size_index++;
                         size /= 1024;
                     }
@@ -316,12 +310,12 @@
                     app.drag_drop = app.drag_drop || {};
                     app.drag_drop[unique] = file;
                     var container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
-                    $('<a class="close">&times;</a>').on('click', function(e) {
+                    $('<a class="close">&times;</a>').on('click',function(e) {
                         $(this).parent().remove();
                         delete app.drag_drop[container.attr("id")];
                     }).appendTo(container);
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
-                    if(file.type.indexOf("image/") !== -1) {
+                    if (file.type.indexOf("image/") !== -1) {
                         container.append("<img style='display:block;' src='" + e.target.result + "' />");
                     } else {
                         container.append("<div>No preview available</div>");
@@ -336,7 +330,7 @@
 
     saveAttachment: function(event) {
         // The following is only true for Chrome.
-        if(event.dataTransfer && event.dataTransfer.constructor == Clipboard &&
+        if (event.dataTransfer && event.dataTransfer.constructor == Clipboard &&
             event.dataTransfer.setData('DownloadURL', 'http://www.sugarcrm.com')) {
             var el = $(event.currentTarget),
                 mime = el.data("mime"),
@@ -349,19 +343,19 @@
             path = path.concat(file.split('/'));
 
             // Resolve .. and . in paths. Chrome doesn't do it for us.
-            for(var i = 0; i < path.length; i++) {
-                if(".." == path[i+1]) {
-                    delete path[i+1];
+            for (var i = 0; i < path.length; i++) {
+                if (".." == path[i + 1]) {
+                    delete path[i + 1];
                     delete path[i];
                     i--;
                 }
-                if("." == path[i]) {
+                if ("." == path[i]) {
                     delete path[i];
                     i--;
                 }
             }
             path = _.compact(path);
-            event.dataTransfer.setData("DownloadURL", mime+":"+name+":"+origin+"/"+path.join('/'));
+            event.dataTransfer.setData("DownloadURL", mime + ":" + name + ":" + origin + "/" + path.join('/'));
         }
     },
 
@@ -369,10 +363,10 @@
         var el = this.$(event.currentTarget);
         el.parent().find("ul.typeahead").remove();
         var word = event.currentTarget.innerText;
-        if(word.indexOf("@") === -1) {
+        if (word.indexOf("@") === -1) {
             // If there's no @, don't do anything.
             return;
-        } else if(word.indexOf("@") === 0) {
+        } else if (word.indexOf("@") === 0) {
             word = _.last(word.split('@'));
         } else {
             // Prevent email addresses from being caught, even though emails
@@ -388,10 +382,10 @@
         // Rank the list and trim it to no more than 8 entries.
         list = (function(list, query) {
             var begin = [], caseSensitive = [], caseInsensitive = [], item = list.shift(), i;
-            for(i = 0; i < 8 && item; i++) {
-                if(item.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
+            for (i = 0; i < 8 && item; i++) {
+                if (item.name.toLowerCase().indexOf(query.toLowerCase()) === 0) {
                     begin.push(item);
-                } else if(item.name.indexOf(query) !== -1) {
+                } else if (item.name.indexOf(query) !== -1) {
                     caseSensitive.push(item);
                 } else {
                     caseInsensitive.push(item);
@@ -403,12 +397,12 @@
 
         var ul = $("<ul/>").addClass('typeahead dropdown-menu activitystream-tag-dropdown');
         var blank_item = '<li><a href="#"></a></li>';
-        if(list.length) {
+        if (list.length) {
             items = _.map(list, function(item) {
                 var i = $(blank_item).data(item);
                 var query = word.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
                 i.find('a').html(function() {
-                    return item.name.replace(new RegExp('(' + query + ')', 'ig'), function ($1, match) {
+                    return item.name.replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
                         return '<strong>' + match + '</strong>';
                     });
                 });
@@ -449,10 +443,10 @@
         var lastIndex = body.innerHTML.lastIndexOf("@");
         var data = $(event.currentTarget).data();
 
-        var tag = $("<span />").addClass("label").addClass("label-"+data.module).html(data.name + '<a class="close">×</a>');
+        var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name + '<a class="close">×</a>');
         tag.attr("data-id", data.id).attr("data-module", data.module);
         body.innerHTML = body.innerHTML.substring(0, lastIndex) + " " + tag[0].outerHTML + "&nbsp;";
-        if(document.createRange) {
+        if (document.createRange) {
             var range = document.createRange();
             range.selectNodeContents(body);
             range.collapse(false);
@@ -473,9 +467,9 @@
             var activity_data = model.get("activity_data");
             var comments = model.get("comments");
             var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
-            if(activity_data && activity_data.value) {
+            if (activity_data && activity_data.value) {
                 activity_data.value = activity_data.value.replace(pattern, function(str, module, id, text) {
-                    return "<span class='label label-"+module+"'><a href='#"+module+'/'+id+"'>"+text+"</a></span>";
+                    return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
                 });
                 model.set("activity_data", activity_data);
             }
@@ -487,7 +481,7 @@
             }
             _.each(comments, function(comment) {
                 comment.value = comment.value.replace(pattern, function(str, module, id, text) {
-                    return "<span class='label label-"+module+"'><a href='#"+module+'/'+id+"'>"+text+"</a></span>";
+                    return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
                 });
                 _.each(comment.notes, function(note) {
                     if(note.file_mime_type) {
@@ -508,7 +502,7 @@
 
         // Sets correct offset and limit for future fetch if we are 'showing more'
         this.opts.params.offset = 0;
-        if(this.collection.models.length > 0) {
+        if (this.collection.models.length > 0) {
             this.opts.params.limit = this.collection.models.length;
             this.opts.params.max_num = this.collection.models.length;
         }

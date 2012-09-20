@@ -1,14 +1,18 @@
 <?php
-if (empty($session_id)) session_start();
-if(!empty($_REQUEST['token'])) {
+if (empty($session_id)) {
+    session_start();
+}
+if (!empty($_REQUEST['token'])) {
     chdir('..');
-    if(!defined('sugarEntry'))define('sugarEntry', true);
+    if (!defined('sugarEntry')) {
+        define('sugarEntry', true);
+    }
     include 'include/entryPoint.php';
     require_once 'summer/splash/BoxOfficeClient.php';
     $box = BoxOfficeClient::getInstance();
     $box->createSession();
     // reload
-    if(empty($_SESSION['authenticated_user_id'])) {
+    if (empty($_SESSION['authenticated_user_id'])) {
         $box->noLogin();
     }
     header("Location: index.php");
@@ -38,8 +42,7 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src="../sidecar/lib/sugar/sugar.searchahead.js"></script>
     <script src="../sidecar/lib/sugar/sugar.timeago.js"></script>
     <script src="lib/jquery/jquery.fancybox-1.3.4.js"></script>
-    <script
-        src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDhofIE96RHrdEd7mBRLaHeYoPrFcBakac&sensor=true"></script>
+    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDhofIE96RHrdEd7mBRLaHeYoPrFcBakac&sensor=true"></script>
     <script src="lib/Crypto/Crypto.js"></script>
 
     <!-- App Scripts -->
@@ -77,13 +80,8 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src='../sidecar/src/view/alert.js'></script>
     <script src='summer.js'></script>
 
-    <script src="../sidecar/lib/sinon/sinon.js"></script>
-    <script src="../sidecar/lib/sugarapi/demoServerData.js"></script>
-    <script src="../sidecar/lib/sugarapi/demoRestServer.js"></script>
-    <script src="../sidecar/lib/sinon/sinon.js"></script>
     <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-
 
     <!-- Styleguide scripts that are not useful yet -->
     <script src="../styleguide/assets/js/bootstrap-transition.js"></script>
@@ -97,7 +95,6 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src="lib/twitterbootstrap/js/editable.js"></script>
 
     <!-- Styleguide scripts that need to be included -->
-
     <script src="../styleguide/assets/js/bootstrap-button.js"></script>
     <script src="../styleguide/assets/js/bootstrap-tooltip.js"></script>
     <script src="../styleguide/assets/js/bootstrap-popover.js"></script>
@@ -121,39 +118,28 @@ if (empty($_SESSION['authenticated_user_id'])) {
 <body>
 <div>
     <div id="sidecar">
-        <div id="alert" class="alert-top">
-
-        </div>
-        <div id="header">
-
-        </div>
-        <div id="subnav">
-
-        </div>
-        <div id="content">
-
-        </div>
-        <div id="footer">
-
-        </div>
-        <div id="todo-widget-container" class="btn-group">
-
-        </div>
+        <div id="alert" class="alert-top"></div>
+        <div id="header"></div>
+        <div id="subnav"></div>
+        <div id="content"></div>
+        <div id="footer"></div>
+        <div id="todo-widget-container" class="btn-group"></div>
     </div>
 </div>
 
 <script language="javascript">
-    var syncResult, view, layout, html;
+    var App, syncResult, view, layout, html;
+
     SUGAR.App[SUGAR.App.config.authStore || "cache"].set('AuthAccessToken', '<?php echo session_id();?>');
     SUGAR.App[SUGAR.App.config.authStore || "cache"].set('AuthRefreshToken', '<?php echo session_id();?>');
 
-    var App = SUGAR.App.init({
-        el:"#sidecar",
-        callback:function (app) {
+    App = SUGAR.App.init({
+        el: "#sidecar",
+        callback: function(app) {
 
             app.start();
             app.api.me("read", null, null, {
-                success:function (data) {
+                success: function(data) {
                     if (data.current_user) {
                         app.user._reset(data ? data.current_user : null);
                     }

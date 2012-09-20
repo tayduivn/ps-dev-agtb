@@ -1,6 +1,8 @@
 <?php
 //FILE SUGARCRM flav=pro || flav=sales ONLY
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) {
+    die('Not A Valid Entry Point');
+}
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -47,14 +49,23 @@ $viewdefs['Opportunities']['summer']['view']['record'] = array(
     ),
     'panels' => array(
         array(
+            'name' => 'panel_head',
             'label' => 'LBL_PANEL_1',
-            'labels'=>true,
-            'labelsOnTop'=>true,
-            'columns'=>2,
-            'placeholders'=>true,
+            'columns' => 1,
+            'labels' => false,
+            'labelsOnTop' => false,
+            'placeholders' => true,
             'fields' => array(
-               array('label'=>' ', 'labelSpan'=>0, 'name'=>'name', 'css'=>'big', 'span'=>12),
-                '',
+                array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
+            ),
+        ),
+        array(
+            'label' => 'panel_body',
+            'columns' => 2,
+            'labels' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
+            'fields' => array(
                 'amount',
                 'sales_stage',
                 'probability',
@@ -65,4 +76,3 @@ $viewdefs['Opportunities']['summer']['view']['record'] = array(
         )
     ),
 );
-?>
