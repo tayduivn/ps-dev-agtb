@@ -1,28 +1,28 @@
 <div class="block filtered tabbable tabs-left" id="moduleActivity">
   <ul id="activitystream-pills" class="nav nav-pills">
     {{#if opts.params.filter}}
-        <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>All</span></a></li>
+        <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>All Activities</span></a></li>
         <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Activities</span></a></li>
         {{#if opts.params.id}}
         {{else}}
-            <li class="filterFavorites{{#eq opts.params.filter "favorites"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Favorites</span></a></li>
+            <li class="filterFavorites{{#eq opts.params.filter "favorites"}} active{{/eq}}"><a href="#" onclick="javascript: return false;"><span>My Favorites'</span></a></li>
         {{/if}}
     {{else}}
-        <li class="filterAll active"><a href="#" onclick="javascript: return false;"><span>All</span></a></li>
+        <li class="filterAll active"><a href="#" onclick="javascript: return false;"><span>All Activities</span></a></li>
         <li class="filterMyActivities"><a href="#" onclick="javascript: return false;"><span>My Activities</span></a></li>
         {{#if opts.params.id}}
         {{else}}
-            <li class="filterFavorites"><a href="#" onclick="javascript: return false;"><span>My Favorites</span></a></li>
+            <li class="filterFavorites"><a href="#" onclick="javascript: return false;"><span>My Favorites'</span></a></li>
         {{/if}}
     {{/if}}
   </ul>
-  <h4 id="activitystream-header">Activity</h4>
+  <h4 id="activitystream-header">&nbsp;</h4>
   <div class="activitystream-post">
     <p>
       <div contenteditable="true" class="span12 sayit" dropzone="copy" />
-      <input type="submit" class="btn btn-primary addPost" />
+      <input type="submit" class="btn btn-primary addPost" value="Post"/>
     </p>
-  </div>
+  </div>  
   <form class="form-search hide" action="">
     <input value="" class="wide tleft" placeholder="Search activity...">
   </form>
@@ -146,13 +146,16 @@
                 {{#if this._stophidden}}
                     </div>
                     <li style="">
-                        <a href="" class="more">{{this._morecomments}} more comments...</a>
+                        <a href="" class="more">{{this._morecomments}} more comment(s)...</a>
                     </li>                    
                 {{/if}}
             {{/each}}
          {{/if}}            
-             <li class="activitystream-comment hide">
-                <div class="control-group form-horizontal">
+             <li class="activitystream-comment {{#eq attributes.comments.length "0"}}hide{{/eq}}">
+                <div class="control-group form-horizontal">    
+                <a href="#Users/{{collection.user_id}}" class="pull-left avatar">
+                    <img src="{{collection.picture_url}}" class="avatar" alt="{{collection.full_name}}">
+                </a>              
                 <div contenteditable="true" class="sayit activitystream-comment-box" dropzone="copy"></div>
                 <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
                 </div>
@@ -163,8 +166,10 @@
           {{#eq attributes.activity_type "posted"}}
           <a data-module="ActivityStream" data-id="{{attributes.id}}" href="" class="deleteRecord"><i class="icon-remove" rel="tooltip" data-title="Delete"></i></a>
           {{/eq}}
-          {{/eq}}        
+          {{/eq}}  
+          {{#eq attributes.comments.length "0"}}  
           <a class="comment reply" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
+          {{/eq}}
           <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
         </div>         
       </li>
