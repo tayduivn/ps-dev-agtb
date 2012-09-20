@@ -26,24 +26,32 @@ require_once('include/OutboundEmail/OutboundEmail.php');
 
 class SugarMailer extends SimpleMailer
 {
-    private $locale;
-    private $sugar_config;
-    private $admin_settings;
+    private $includeDisclosure = false;
+    private $disclosureContent;
 
     /**
      * @param MailerConfiguration
      */
     public function __construct(MailerConfiguration $mailerConfig) {
-        global $locale;
-        global $sugar_config;
+        parent::__construct($mailerConfig);
+        $this->retrieveDisclosureSettings();
+    }
 
+    /**
+     * Retrieves settings from the administrator configuration indicating whether or not to include a disclosure
+     * at the bottom of an email, and if so, the content to disclose.
+     *
+     * @access private
+     * @todo consider how this could become a merge field that is added prior to the Mailer getting created
+     */
+    private function retrieveDisclosureSettings() {
         $admin = new Administration();
         $admin->retrieveSettings();
-        $this->admin_settings = $admin->settings;
-        $this->locale         = $locale;
-        $this->sugar_config   = $sugar_config;
 
-        parent::__construct($mailerConfig);
+        if (isset($admin->settings['disclosure_enable']) && !empty($admin->settings['disclosure_enable'])) {
+            $this->includeDisclosure = true;
+            $this->disclosureContent = $admin->settings['disclosure_text'];
+        }
     }
 
     /**
@@ -56,26 +64,26 @@ class SugarMailer extends SimpleMailer
         parent::send();
     }
 
-
     /**
      * Handles any final updates to document prior to sending. Updates include Charset translation for all
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
      */
     protected function prepareMessageContent() {
-        $OBCharset = $this->locale->getPrecedentPreference('default_email_charset');
+        global $locale;
 
-        if (isset($this->admin_settings['disclosure_enable']) && !empty($this->admin_settings['disclosure_enable'])) {
-            $disclosureText = $this->admin_settings['disclosure_text'];
-            $this->htmlBody .= "<br />&nbsp;<br />{$disclosureText}";
-            $this->textBody .= "\r\r{$disclosureText}";
+        $OBCharset = $locale->getPrecedentPreference('default_email_charset');
+
+        if ($this->includeDisclosure) {
+            $this->htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}";
+            $this->textBody .= "\r\r{$this->disclosureContent}";
         }
 
         $headers        = $this->headers;
-        $this->htmlBody = from_html($this->locale->translateCharset(trim($this->htmlBody), 'UTF-8', $OBCharset));
-        $this->textBody = from_html($this->locale->translateCharset(trim($this->textBody), 'UTF-8', $OBCharset));
+        $this->htmlBody = from_html($locale->translateCharset(trim($this->htmlBody), 'UTF-8', $OBCharset));
+        $this->textBody = from_html($locale->translateCharset(trim($this->textBody), 'UTF-8', $OBCharset));
         $subjectUTF8    = from_html(trim($headers->getSubject()));
-        $subject        = $this->locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
-        $this->setSubject($subject);
+        $subject        = $locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
+        $headers->setSubject($subject);
 
         // HTML email RFC compliance
         if (strpos($this->htmlBody, '<html') === false) {
@@ -93,8 +101,8 @@ eoq;
         }
 
         $from = $headers->getFrom();
-        $from->setName($this->locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
-        $headers->setHeader(EmailHeaders::From,$from);
+        $from->setName($locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
+        $headers->setFrom($from);
 
         //replace references to cache/images with cid tag
         $this->htmlBody = str_replace(sugar_cached('images/'), 'cid:', $this->htmlBody);
@@ -145,7 +153,7 @@ eoq;
             } else {
                 $mime_type = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
             }
-            $this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
+            $this->AddEmbeddedImage($file_location, $cid, $filename, Encoding::Base64, $mime_type);
             $i++;
         }
         //replace references to cache with cid tag
