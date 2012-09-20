@@ -28,8 +28,10 @@ class SugarMailer extends SimpleMailer
 {
     private $locale;
     private $sugar_config;
-    private $admin_settings;
     private $notes;
+
+    private $includeDisclosure = false;
+    private $disclosureContent;
 
     /**
      * @param MailerConfiguration
@@ -38,15 +40,29 @@ class SugarMailer extends SimpleMailer
         global $locale;
         global $sugar_config;
 
-        $admin = new Administration();
-        $admin->retrieveSettings();
-        $this->admin_settings = $admin->settings;
         $this->locale         = $locale;
         $this->sugar_config   = $sugar_config;
 
         parent::__construct($mailerConfig);
+        $this->retrieveDisclosureSettings();
     }
 
+    /**
+     * Retrieves settings from the administrator configuration indicating whether or not to include a disclosure
+     * at the bottom of an email, and if so, the content to disclose.
+     *
+     * @access private
+     * @todo consider how this could become a merge field that is added prior to the Mailer getting created
+     */
+    private function retrieveDisclosureSettings() {
+        $admin = new Administration();
+        $admin->retrieveSettings();
+
+        if (isset($admin->settings['disclosure_enable']) && !empty($admin->settings['disclosure_enable'])) {
+            $this->includeDisclosure = true;
+            $this->disclosureContent = $admin->settings['disclosure_text'];
+        }
+    }
 
     /**
      * Optionally set notes (Sugar Documents and Uploaded Files)
@@ -56,7 +72,6 @@ class SugarMailer extends SimpleMailer
     public function setNotes(array $notesArray) {
         $this->notes = $notesArray;
     }
-
 
     /**
      * a potential solution to allow for manipulation of the message parts at send time without actually
@@ -69,7 +84,6 @@ class SugarMailer extends SimpleMailer
         parent::send();
     }
 
-
     /**
      * Handles any final updates to document prior to sending. Updates include Charset translation for all
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
@@ -77,10 +91,9 @@ class SugarMailer extends SimpleMailer
     protected function prepareMessageContent() {
         $OBCharset = $this->locale->getPrecedentPreference('default_email_charset');
 
-        if (isset($this->admin_settings['disclosure_enable']) && !empty($this->admin_settings['disclosure_enable'])) {
-            $disclosureText = $this->admin_settings['disclosure_text'];
-            $this->htmlBody .= "<br />&nbsp;<br />{$disclosureText}";
-            $this->textBody .= "\r\r{$disclosureText}";
+        if ($this->includeDisclosure) {
+            $this->htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}";
+            $this->textBody .= "\r\r{$this->disclosureContent}";
         }
 
         $headers        = $this->headers;
