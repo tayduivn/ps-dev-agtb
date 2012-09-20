@@ -26,11 +26,11 @@
     initialize: function(options) {
         var self = this;
 
-        _.bindAll(this);
-        app.view.View.prototype.initialize.call(this, options);
-
         this.opts = {params: {}};
         this.collection = {};
+
+        _.bindAll(this);
+        app.view.View.prototype.initialize.call(this, options);
 
         // Check to see if we need to make a related activity stream.
         if (this.module !== "ActivityStream") {
