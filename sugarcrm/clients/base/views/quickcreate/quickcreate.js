@@ -106,12 +106,14 @@
         this.model.set(this.model._defaults);
     },
 
-    validateModel: function(success, failure) {
-        if(this.model.isValid(this.getFields(this.module))) {
-            success();
-        } else {
-            failure();
-        }
+    /**
+     * Check to make sure that all fields are valid
+     * @param callback
+     */
+    validateModel: function(callback) {
+        var isValid = this.model.isValid(this.getFields(this.module));
+        callback(isValid);
+        return isValid;
     }
 })
 
