@@ -138,8 +138,6 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
             $query .= join("','", $sales_stage_won) . "')";
         }
 
-        error_log($query);
-
         $result = $db->query($query);
 
         while ($row = $db->fetchByAssoc($result)) {
