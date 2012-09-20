@@ -38,23 +38,6 @@ class SugarMailer extends SimpleMailer
     }
 
     /**
-     * Retrieves settings from the administrator configuration indicating whether or not to include a disclosure
-     * at the bottom of an email, and if so, the content to disclose.
-     *
-     * @access private
-     * @todo consider how this could become a merge field that is added prior to the Mailer getting created
-     */
-    private function retrieveDisclosureSettings() {
-        $admin = new Administration();
-        $admin->retrieveSettings();
-
-        if (isset($admin->settings["disclosure_enable"]) && !empty($admin->settings["disclosure_enable"])) {
-            $this->includeDisclosure = true;
-            $this->disclosureContent = $admin->settings["disclosure_text"];
-        }
-    }
-
-    /**
      * Optionally set notes (Sugar Documents and Uploaded Files)
      *
      * @param $notesArray  array of note beans
@@ -199,5 +182,22 @@ eoq;
         $body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', "", $body);
 
         return $body;
+    }
+
+    /**
+     * Retrieves settings from the administrator configuration indicating whether or not to include a disclosure
+     * at the bottom of an email, and if so, the content to disclose.
+     *
+     * @access private
+     * @todo consider how this could become a merge field that is added prior to the Mailer getting created
+     */
+    private function retrieveDisclosureSettings() {
+        $admin = new Administration();
+        $admin->retrieveSettings();
+
+        if (isset($admin->settings["disclosure_enable"]) && !empty($admin->settings["disclosure_enable"])) {
+            $this->includeDisclosure = true;
+            $this->disclosureContent = $admin->settings["disclosure_text"];
+        }
     }
 }
