@@ -64,8 +64,8 @@
         field.find('input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
     },
     setLoading: function() {
-        self.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
-        self.$('[name=save_button]').button('loading');
+        this.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
+        this.$('[name=save_button]').button('loading');
     },
     verify: function(contactModel) {
         var self = this, currentPassword, password, confirmPassword, confirmPasswordField, isError=false,
