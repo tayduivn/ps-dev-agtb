@@ -112,6 +112,23 @@ class EmailHeaders
         }
     }
 
+
+    /**
+     * @access public
+     * @param string $subject required
+     * @throws MailerException
+     */
+    public function setSubject($subject) {
+        if (is_string($subject)) {
+            $this->subject = $subject;
+        } else {
+            throw new MailerException(
+                "Invalid header: " . self::Subject . " must be a string",
+                MailerException::InvalidHeader
+            );
+        }
+    }
+
     /**
      * @access public
      * @return string
@@ -414,22 +431,6 @@ class EmailHeaders
      */
     private function setSender(EmailIdentity $sender) {
         $this->sender = $sender;
-    }
-
-    /**
-     * @access private
-     * @param string $subject required
-     * @throws MailerException
-     */
-    private function setSubject($subject) {
-        if (is_string($subject)) {
-            $this->subject = $subject;
-        } else {
-            throw new MailerException(
-                "Invalid header: " . self::Subject . " must be a string",
-                MailerException::InvalidHeader
-            );
-        }
     }
 
     /**

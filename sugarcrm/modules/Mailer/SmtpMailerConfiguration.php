@@ -101,14 +101,14 @@ class SmtpMailerConfiguration extends MailerConfiguration
      * @throws MailerException
      */
     public function setPort($port = 25) {
-        if (!is_int($port)) {
+        if (!is_numeric($port)) {
             throw new MailerException(
                 "Invalid Configuration: SMTP port must be an integer",
                 MailerException::InvalidConfiguration
             );
         }
 
-        $this->port = $port;
+        $this->port = (int) $port;
     }
 
     /**

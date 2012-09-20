@@ -25,7 +25,6 @@ require_once "SimpleMailer.php";
 
 class SugarMailer extends SimpleMailer
 {
-    private $notes;
     private $includeDisclosure = false;
     private $disclosureContent;
 

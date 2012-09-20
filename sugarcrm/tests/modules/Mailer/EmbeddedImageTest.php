@@ -26,14 +26,14 @@ class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testGetAsArray() {
+    public function testToArray() {
         $expected      = array(
             "path" => "path/to/somewhere",
             "cid"  => "1234",
             "name" => "abcd",
         );
         $embeddedImage = new EmbeddedImage($expected["path"], $expected["cid"], $expected["name"]);
-        $actual        = $embeddedImage->getAsArray();
+        $actual        = $embeddedImage->toArray();
 
         $key = "path";
         self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
