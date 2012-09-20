@@ -64,12 +64,10 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             "o.name, " .
             "o.best_case, " .
             "o.worst_case, " .
-            "o.forecast, " .
             "o.base_rate, " .
             "o.assigned_user_id, " .
             "w.id worksheet_id, " .
             "w.user_id w_user_id, " .
-            "w.forecast w_forecast, " .
             "w.best_case w_best_case, " .
             "w.likely_case w_likely_case, " .
             "w.worst_case w_worst_case, " .
@@ -111,7 +109,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
 
             if (isset($row["worksheet_id"])) {
                 $data['worksheet_id'] = $row["worksheet_id"];
-                $data['forecast'] = $row["w_forecast"];
                 $data['best_case'] = $row["w_best_case"];
                 $data['worst_case'] = $row["w_worst_case"];
                 $data['amount'] = $row["w_likely_case"];
@@ -119,7 +116,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                 $data['probability'] = $row["w_probability"];
                 $data['version'] = $row["w_version"];
             } else {
-                $data['forecast'] = $row["forecast"];
                 $data['best_case'] = $row["best_case"];
                 $data['worst_case'] = $row["worst_case"];
                 $data['commit_stage'] = $row["commit_stage"];

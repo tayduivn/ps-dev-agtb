@@ -209,7 +209,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 	'indices' => array(
        	  array('name' =>'quotaspk', 'type' =>'primary', 'fields'=>array('id')),
-       	  array('name' =>'idx_user_period', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id')),
+       	  array('name' =>'idx_quota_user_tp', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id')),
 	),
 );
 

@@ -123,12 +123,8 @@ public static function populateSeedData($records, $app_list_strings, $accounts
             $product->id = null;
             $product->product_id = $prod->id;
             $product->opportunity_id = $opp->id;
-            $product->best_case = $opp->amount / $count;
-            $product->likely_case = ($opp->amount / $count) * .8;
-            $product->worst_case = ($opp->amount / $count) * .5;
             $product->created_by = $opp->assigned_user_id;
             $product->modified_user_id = $opp->assigned_user_id;
-            $product->forecast = $opp->probability >= 70 ? 1 : 0;
             $product->date_entered = $timedate->asDb($timedate->getNow());
             $product->date_modified = $prod->date_entered;
             $product->name = $prod->name;

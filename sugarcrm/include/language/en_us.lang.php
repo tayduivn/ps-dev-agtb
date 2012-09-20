@@ -353,17 +353,20 @@ $app_list_strings = array (
   ),
   'commit_stage_dom' =>
   array (
-    '100' => 'Include',
-    '70' => 'Likely',
-    '50' => 'Omit',
+    'include' => 'Include',
+    'exclude' => 'Exclude',
+    'upside'  => 'Upside',
   ),
+
+  //The n-option for commit_stage dropdowns
   'commit_stage_expanded_dom' =>
   array (
-    '100' => 'Commit',
-    '80' => 'Stretch',
-    '60' => 'Risk',
-    '50' => 'Omit'
+    'include' => 'Include',
+    'exclude' => 'Exclude',
+    'stretch' => 'Stretch',
+    'risk' => 'Risk',
   ),
+
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',
@@ -3558,8 +3561,7 @@ $app_strings = array (
     'ERR_GENERIC_TITLE' => 'Error',
     'ERR_CONTACT_TECH_SUPPORT' => 'Please contact technical support.',
 
-    'LBL_SYNCED_RECURRING_MSG_CALL' => 'This call originated in another system and was synced to Sugar. To make changes, go to the original call within the other system. Changes made in the other system can be synced to this record.',
-    'LBL_SYNCED_RECURRING_MSG_MEETING' => 'This meeting originated in another system and was synced to Sugar. To make changes, go to the original meeting within the other system. Changes made in the other system can be synced to this record.',
+    'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
 );
 

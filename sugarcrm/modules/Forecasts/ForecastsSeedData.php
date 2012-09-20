@@ -66,7 +66,7 @@ public static function populateSeedData($timeperiods)
                 $fcst_schedule->expected_best_case = $opp_summary_array['WEIGHTEDVALUENUMBER'];
                 $fcst_schedule->expected_likely_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .8;
                 $fcst_schedule->expected_worst_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .5;
-                $fcst_schedule->expected_commit_stage = min(array_keys($app_list_strings['commit_stage_dom']));
+                $fcst_schedule->expected_commit_stage = 'exclude';
                 $fcst_schedule->status='Active';
                 $fcst_schedule->save();
 

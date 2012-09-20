@@ -160,8 +160,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestProductUtilities::setCreatedProduct(array($product->id));
 
-        $expected = array($opp->name, $opp->amount, $opp->best_case, $opp->worst_case, $opp->date_closed, $opp->assigned_user_id);
-        $actual = array($product->name, $product->likely_case, $product->best_case, $product->worst_case, $product->date_closed, $product->assigned_user_id);
+        $expected = array($opp->name, $opp->amount, $opp->best_case, $opp->worst_case);
+        $actual = array($product->name, $product->likely_case, $product->best_case, $product->worst_case);
 
         $this->assertEquals($expected, $actual);
     }
