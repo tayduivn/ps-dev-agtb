@@ -52,6 +52,7 @@
      * @param callback
      */
     initiateSave: function(callback) {
+        this.context.trigger('quickcreate:list:toggle', false);
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
@@ -148,7 +149,7 @@
      * Duplicate found: display duplicates and change buttons
      */
     handleDuplicateFound: function(collection) {
-        this.context.trigger('quickcreate:list:toggled', true);
+        this.context.trigger('quickcreate:list:toggle', true);
         // self.showDuplicateAlertMessage();
         this.skipDupCheck(true);
         this.context.trigger('quickcreate:actions:setButtonAsIgnoreDuplicate');
@@ -237,7 +238,6 @@
      * Close the modal window
      */
     closeModal: function() {
-        debugger;
         this.context.parent.trigger('modal:close');
     }
 })
