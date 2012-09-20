@@ -27,7 +27,7 @@
  ********************************************************************************/
 
 $dictionary['GhettoSearch'] = array(
-    'table' => 'ghetto_search',
+    'table' => 'ghettosearch',
     'engine' => 'MyISAM', // To allow text search indexing on MySQL
     'audited' => false,
     'duplicate_merge' => false,
@@ -73,10 +73,10 @@ $dictionary['GhettoSearch'] = array(
      	  ),
         'boost' =>
         array (
-          'name' => 'field_name',
-          'type' => 'varchar',
-          'len' => '255',
-          'comment' => 'Name of the field in the parent module',
+          'name' => 'boost',
+          'type' => 'int',
+          'len' => '10',
+          'comment' => 'Boost Value',
       	  'required'=>true,
         ),
     ),

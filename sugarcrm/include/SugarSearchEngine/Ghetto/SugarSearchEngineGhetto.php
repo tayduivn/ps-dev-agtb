@@ -31,25 +31,11 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
 {
     private $_config = array();
     private $_client = null;
-    private $_indexName = "";
 
     const DEFAULT_INDEX_TYPE = 'SugarBean';
     const WILDCARD_CHAR = '%';
 
-    private $_indexType = 'SugarBean';
-
-    public function __construct($params = array())
-    {
-        $this->_config = $params;
-        $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
-
-        //Ghetto client uses own auto-load schema similar to ZF.
-        spl_autoload_register(array($this, 'loader'));
-        if (empty($this->_config['timeout']))
-        {
-            $this->_config['timeout'] = 15;
-        }
-    }
+    public function __construct($params = array()) {}
 
     /**
      * Either index single bean or add the record to be indexed into _documents for later batch indexing,
@@ -122,17 +108,18 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
             $ghettoBean = BeanFactory::newBean('GhettoSearch');                            
             //All fields have already been formatted to db values at this point so no further processing necessary
             if(!empty($bean->$fieldName)) {
-                $ghettoBean->fieldName = $fieldName;
-                $gettoBean->fieldValue = $bean->$fieldName;
-                $ghettoBean->boostValue = $bean->fieldDefs[$fieldName]->boostValue;
+                $ghettoBean->field_name = $fieldName;
+                $gettoBean->field_value = $bean->$fieldName;
+                $ghettoBean->boost = $bean->fieldDefs[$fieldName]->boostValue;
             }
             if(isset($current_records[$fieldName]))
             {
                 $ghettoBean->id = $current_records[$fieldName]->id;
             }
 
-            $ghettoBean->module = $bean->module_dir;
-            $ghettoBean->module_id = $bean->id;
+            $ghettoBean->parent = $bean->module_dir;
+            $ghettoBean->parent_id = $bean->id;
+            $ghettoBean->team_set_id = $bean->team_set_id;
             $ghettoBean->save();
         }
         
@@ -141,21 +128,11 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         {
             $ghettoBean->id = $current_records['assigned_user_id']->id;
         }
-        $ghettoBean->fieldName = 'assigned_user_id';
-        $ghettoBean->fieldValue = $bean->assigned_user_id;
-        $ghettoBean->module = $bean->module_dir;
-        $ghettoBean->module_id = $bean->id;
-        $ghettoBean->save();
-
-        $ghettoBean = BeanFactory::newBean('Ghetto');
-        if($current_records['team_set_id'])
-        {
-            $ghettoBean->id = $current_records['assigned_user_id']->id;
-        }        
-        $ghettoBean->fieldName = 'team_set_id';
-        $ghettoBean->fieldValue = $bean->team_set_id;
-        $ghettoBean->module = $bean->module_dir;
-        $ghettoBean->module_id = $bean->id;
+        $ghettoBean->team_set_id = $bean->team_set_id;
+        $ghettoBean->field_name = 'assigned_user_id';
+        $ghettoBean->field_value = $bean->assigned_user_id;
+        $ghettoBean->parent = $bean->module_dir;
+        $ghettoBean->parent_id = $bean->id;
         $ghettoBean->save();
 
     }
@@ -319,35 +296,19 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         return true;
     }
 
-    /**
-     * This function constructs and returns team filter for elasticsearch query.
-     *
-     * @return where
-     */
-    protected function constructTeamFilter()
-    {
-        $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
-
-        //TODO: Determine why term filters aren't working with the hyphen present.
-        //Term filters dont' work for terms with '-' present so we need to clean
-        $teamIDS = array_map(array($this,'cleanTeamSetID'), $teamIDS);
-
-        $termFilter = new Ghetto_Filter_Terms('team_set_id', $teamIDS);
-
-        return $termFilter;
-    }
 
     /**
      * This function constructs and returns type term filter for elasticsearch query.
      *
      * @return where
      */
-    protected function getTypeTermFilter($module)
+    protected function getTypeTermFilter($modules, &$module_where)
     {
-        $typeTermFilter = new Ghetto_Filter_Term();
-        $typeTermFilter->setTerm('_type', $module);
-
-        return $typeTermFilter;
+        $module_where = array();
+        foreach($modules AS $module) {
+            $module_where[] = "parent_type = '{$module}'";
+        }
+        return $module_where;
     }
 
     /**
@@ -357,106 +318,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
      */
     protected function getOwnerTermFilter()
     {
-        $ownerTermFilter = new Ghetto_Filter_Term();
-        $ownerTermFilter->setTerm('doc_owner', $GLOBALS['current_user']->id);
-
-        return $ownerTermFilter;
-    }
-
-    /**
-     * This function constructs and returns module level filter for elasticsearch query.
-     *
-     * @return where
-     */
-    protected function constructModuleLevelFilter($module)
-    {
-        $requireOwner = ACLController::requireOwner($module, 'list');
-
-        $class = $GLOBALS['beanList'][$module];
-        $seed = new $class();
-        $hasAdminAccess = $GLOBALS['current_user']->isAdminForModule($seed->getACLCategory());
-
-        if ($hasAdminAccess)
-        {
-            // user has admin access for this module, skip team filter
-            if ($requireOwner)
-            {
-                // need to be document owner to view
-                $moduleFilter = new Ghetto_Filter_And();
-
-                // type term filter
-                $typeTermFilter = $this->getTypeTermFilter($module);
-                $moduleFilter->addFilter($typeTermFilter);
-
-                // owner term filter
-                $ownerTermFilter = $this->getOwnerTermFilter();
-                $moduleFilter->addFilter($ownerTermFilter);
-            }
-            else
-            {
-                // do not need to be document owner to view
-                // a single type term filter is all we need
-                $moduleFilter = $this->getTypeTermFilter($module);
-            }
-        }
-        else
-        {
-            // user does not have admin access, need team filter
-            $moduleFilter = new Ghetto_Filter_And();
-
-            // team filter
-            $teamFilter = $this->constructTeamFilter();
-            $moduleFilter->addFilter($teamFilter);
-
-            // type term filter
-            $typeTermFilter = $this->getTypeTermFilter($module);
-            $moduleFilter->addFilter($typeTermFilter);
-
-            if ($requireOwner)
-            {
-                // need to be document owner to view, owner term filter
-                $ownerTermFilter = $this->getOwnerTermFilter();
-                $moduleFilter->addFilter($ownerTermFilter);
-            }
-        }
-        return $moduleFilter;
-    }
-
-    /**
-     * This function constructs and returns main filter for elasticsearch query.
-     *
-     * @return where
-     */
-    protected function constructMainFilter($finalTypes)
-   {
-        $mainFilter = new Ghetto_Filter_Or();
-        foreach ($finalTypes as $module)
-        {
-            $moduleFilter = $this->constructModuleLevelFilter($module);
-            
-            // if we want myitems add more to the module filter
-            if(isset($options['my_items']) && $options['my_items'] !== false) {
-                $moduleFilter = $this->myItemsSearch($moduleFilter);
-            }
-            if(isset($options['filter']) && $options['filter']['type'] == 'range') {
-                $moduleFilter = $this->constructRangeFilter($moduleFilter, $options['filter']);
-            }
-            //BEGIN SUGARCRM flav=pro ONLY
-            
-            // we only want JUST favorites if the option is 2
-            // if the option is 1 that means we want all including favorites,
-            // which in FTS is a normal search parameter
-            if(isset($options['favorites']) && $options['favorites'] == 2) {
-                $moduleFilter = $this->constructMyFavoritesFilter($moduleFilter);
-            }
-
-            //END SUGARCRM flav=pro ONLY
-
-            $mainFilter->addFilter($moduleFilter);
-
-        }
-
-        return $mainFilter;
+        return array("fieldName='assigned_user_id' AND fieldValue='{$GLOBALS['current_user']->id}");
     }
 
     /**
@@ -484,7 +346,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
 
         $ghettoBean = BeanFactory::newBean();
 
-
+        $where = $this->constructTeamFilter();
         //TODO: add performSearch
         $results = $ghettoBean->performSearch($queryString, $offset, $limit, $options);
 
@@ -494,6 +356,11 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         }
         return $return;
     }
+    
+    public function getServerStatus() {}
+    
+    public function bulkInsert(array $docs) {}
 
- 
+    public function createIndex($recreate = false) {}
+
 }
