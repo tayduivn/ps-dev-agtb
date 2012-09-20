@@ -8,7 +8,7 @@
     initialize:function (options) {
         _.bindAll(this);
         var div = $('<div/>').addClass('tabbable');
-        div.append($('<ul/>').addClass('nav nav-tabs'));
+        div.append($('<ul/>').addClass('nav nav-tabs related-tabs'));
         div.append($('<div/>').addClass('tab-content'));
 
         this.$el.append(div);
