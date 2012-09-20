@@ -36,8 +36,8 @@ class ForecastsConfigApi extends ModuleApi {
         $parentApi= array (
             'config' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts','config'),
-                'pathVars' => array('',''),
+                'path' => array('<module>','config'),
+                'pathVars' => array('module',''),
                 'method' => 'config',
                 'shortHelp' => 'forecasts config',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#config',
@@ -45,16 +45,16 @@ class ForecastsConfigApi extends ModuleApi {
             ),
             'configCreate' => array(
                 'reqType' => 'POST',
-                'path' => array('Forecasts','config'),
-                'pathVars' => array('',''),
+                'path' => array('<module>','config'),
+                'pathVars' => array('module',''),
                 'method' => 'configSave',
                 'shortHelp' => 'create forecasts config',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#configCreate',
             ),
             'configUpdate' => array(
                 'reqType' => 'PUT',
-                'path' => array('Forecasts','config'),
-                'pathVars' => array('',''),
+                'path' => array('<module>','config'),
+                'pathVars' => array('module',''),
                 'method' => 'configSave',
                 'shortHelp' => 'Update forecasts config',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#configUpdate',
@@ -69,6 +69,8 @@ class ForecastsConfigApi extends ModuleApi {
      * @param $args
      */
     public function config($api, $args) {
+        $GLOBALS['log']->fatal('args:  ' . var_export($args, true));
+        $this->requireArgs($args,array('module'));
         $adminBean = BeanFactory::getBean("Administration");
         if (!empty($args['module'])) {
             $data = $adminBean->getConfigForModule($args['module']);
@@ -92,6 +94,7 @@ class ForecastsConfigApi extends ModuleApi {
      * @param $args
      */
     public function configSave($api, $args) {
+        $this->requireArgs($args,array('module'));
         $admin = BeanFactory::getBean('Administration');
 
         // these are not part of the config values, so unset
