@@ -30,14 +30,22 @@ require_once('modules/Administration/SessionManager.php');
 
 require_once('include/api/SugarApi/SugarApiException.php');
 
+require_once 'include/SugarOAuth2/SugarOAuth2StorageInterface.php';
+
 /**
  * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to 
  * store and retrieve data.
  * This class should only be used by the OAuth2 library and cannot be relied
  * on as a stable API for any other sources. 
  */
-class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
-
+class SugarOAuth2StorageBase implements IOAuth2GrantUser, IOAuth2RefreshTokens, SugarOAuth2SugarInterface {
+    /**
+     * The client type that this client is associated with
+     * 
+     * @var string
+     */
+    protected $clientType = null;
+    
     // When we authenticate these beans, store them here so if the user id's match (which it will), we just use these instead
     
     /**
@@ -45,16 +53,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
      * @var User
      */
     protected $userBean;
-    /**
-     * The Portal API user used as a stand-in user for all portal logins
-     * @var User
-     */
-    protected $portalApiUser;
-    /**
-     * The Contact record for the portal login
-     * @var Contact
-     */
-    protected $contactBean;
+    
     /**
      * The record of the OAuth Key based off of the user's supplide client_id
      * @var OAuthKeys
@@ -62,32 +61,77 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
     protected $oauthKeyRecord;
 
     /**
-     * This method locates the portal API user for the specified client_id
-     * Currently there is no way to associate a specific user with a specific client_id, so that parameter is ignored for now
-     * @param $client_id string The client identifier of the portal account, should be used to identifiy different portal types
-     * @return User Returs the user bean of the portal user that it found.
+     * The user type for this client
+     * 
+     * @var string
      */
-    protected function findPortalApiUser($client_id) 
-    {
-        if (isset($this->portalApiUser)) {
-            return $this->portalApiUser;
-        }
-
-        $portalApiUser = BeanFactory::newBean('Users');
-
-        // Find the Portal API user
-        // FIXME: What to do if they have more than one portal user?
-        $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1','status'=>'Active'));
-        
-        if ($portalApiUser != null) {
-            $this->portalApiUser = $portalApiUser;
-            return $this->portalApiUser;
-        } else {
-            return null;
-        }
-        
+    protected $userType;
+    
+    // BEING METHOD FROM SugarOAuth2StorageInterface
+    /**
+     * Get the user type for this user
+     * 
+     * @return string
+     */
+    public function getUserType() {
+        return 'user';
     }
 
+    /**
+     * Gets a user bean 
+     * 
+     * @param  string $user_id The ID of the User to get
+     * @return User
+     */
+    public function getUserBean($user_id) {
+        return BeanFactory::getBean('Users', $user_id);
+    }
+
+    /**
+     * Small validator for child classes to use to determine whether a session can
+     * be written to
+     * 
+     * @return boolean
+     */
+    public function canStartSession() {
+        return true;
+    }
+    /**
+     * Fills in any added session data needed by this client type
+     * 
+     * This method is used by child classes like portal
+     */
+    public function fillInAddedSessionData() {
+        return true;
+    }
+    
+    /**
+     * Gets the authentication bean for a given client
+     * @param OAuthToken
+     * @return mixed
+     */
+    public function getAuthBean(OAuthToken $token) {
+        $authBean = BeanFactory::getBean('Users', $token->assigned_user_id);
+        if ( $authBean == null || $authBean->status == 'Inactive' ) {
+            $authBean = null;
+        }
+        
+        return $authBean;
+    }
+    
+    /**
+     * Gets contact and user ids for a user id. Most commonly different for clients
+     * like portal
+     * 
+     * @param string $client_id The client id for this check
+     * @return array An array of contact_id and user_id
+     */
+    public function getIdsForUser($user_id, $client_id) {
+        return array('contact_id' => '', 'user_id' => $user_id);
+    }
+
+    // END METHOD FROM SugarOAuth2StorageInterface    
+        
     // BEGIN METHODS FROM IOAuth2Storage
 	/**
 	 * Make sure that the client credentials is valid.
@@ -139,6 +183,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	 */
 	public function getClientDetails($client_id)
     {
+        // Get the client bean for this client id
         if ( isset($this->oauthKeyRecord) && $this->oauthKeyRecord->c_key == $client_id ) {
             $clientBean = $this->oauthKeyRecord;
         } else {
@@ -148,32 +193,36 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             $this->oauthKeyRecord = $clientBean;
         }
 
-        // Auto-create beans for the built-in clients, if they don't already exist
+        // Auto-create beans for "sugar" client only as it doesn't exist yet
         if ( $clientBean == null ) {
+            if ($client_id != 'sugar') {
+                return false;
+            }
+            
             $newKey = BeanFactory::newBean('OAuthKeys');
             $newKey->oauth_type = 'oauth2';
             $newKey->c_secret = '';
-            if ( $client_id == 'sugar' ) {
-                $newKey->client_type = 'user';
-                $newKey->c_key = 'sugar';
-                $newKey->name = 'Standard OAuth Username & Password Key';
-                $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable username and password logins';
-            } else if ( $client_id == 'support_portal' ) {
-                $newKey->client_type = 'support_portal';
-                $newKey->c_key = 'support_portal';
-                $newKey->name = 'OAuth Support Portal Key';
-                $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
-            }
+            $newKey->client_type = 'user';
+            $newKey->c_key = 'sugar';
+            $newKey->name = 'Standard OAuth Username & Password Key';
+            $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable username and password logins';
+            $newKey->save();
             
-            if ( !empty($newKey->client_type) ) {
-                $newKey->save();
-                $clientBean = $newKey;
-                $this->oauthKeyRecord = $clientBean;
-            }
-            
+            // Set the client bean/authkey record
+            $clientBean = $newKey;
+            $this->oauthKeyRecord = $clientBean;
         }
 
-        if ( $clientBean != null ) {
+        // Add platform validation to this return. We have a bean and the bean
+        // client key is either sugar OR the client type matches the named type
+        // of the storage. For now this assumes a one-to-one mapping of oauthkey
+        // client_type to the client type in an oauth2storage class
+        $clientAllowed = $clientBean != null && 
+                         (
+                             $clientBean->c_key == 'sugar' ||
+                             (!empty($this->clientType) && $clientBean->client_type == $this->clientType)
+                         );
+        if ($clientAllowed) {
             // Other than redirect_uri, there isn't a lot of docs on what else to return here
             $returnData = array('redirect_uri'=>'',
                                 'client_id'=>$clientBean->c_key,
@@ -182,9 +231,10 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                                 'record_id'=>$clientBean->id,
             );
             return $returnData;
-        } else {
-            return false;
-        }
+        } 
+        
+        // If we get here we didn't meet all the necessary checks
+        return false;
     }
 
 	/**
@@ -258,39 +308,17 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         if ( $clientInfo === false ) {
             return false;
         }
+        
+        // Get the user bean if there is one to be found
+        $userBean = $this->getUserBean($user_id);
 
-        if ( $clientInfo['client_type'] != 'support_portal' ) {
-            $userBean = BeanFactory::getBean('Users',$user_id);
-
-            if ( $userBean == null ) {
-                return false;
-            }
-            $this->userBean = $userBean;
-            $userType = 'user';
-        } else {
-            $userType = 'support_portal';
-            $userBean = $this->findPortalApiUser($client_id);
-            if ( $userBean == null ) {
-                return false;
-            }
-            $this->userBean = $userBean;
-
-            if ( isset($this->contactBean) && $this->contactBean->id == $user_id ) {
-                $contactBean = $this->contactBean;
-            } else {
-                $contactBean = BeanFactory::newBean('Contacts');
-                //BEGIN SUGARCRM flav=pro ONLY
-                // Need to disable the row-level security because this user probably doesn't have access to much of anything
-                $contactBean->disable_row_level_security = true;
-                //END SUGARCRM flav=pro ONLY
-                $contactBean->retrieve($user_id);
-                if ( empty($contactBean->id) ) {
-                    return false;
-                }
-                $this->contactBean = $contactBean;
-            }
+        if ( $userBean == null ) {
+            return false;
         }
+        $this->userBean = $userBean;
+        $this->userType = $this->getUserType();
 
+        // Handle the session now
         if ( session_id() != '' && session_id() != $oauth_token ) {
             // Oh, we are in trouble, we have a session and it's the wrong one.
             // Let's close this session and start a new one with the correct ID.
@@ -303,35 +331,26 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         // Clear out the old session data
         $_SESSION = array();
 
-        // Since we have to setup the session for oauth2 here, we might as well set up the rest of the session
-        $GLOBALS['current_user'] = $userBean;
-        $_SESSION['is_valid_session'] = true;
-        $_SESSION['ip_address'] = query_client_ip();
-        $_SESSION['user_id'] = $userBean->id;
-        $_SESSION['type'] = 'user';
-        $_SESSION['authenticated_user_id'] = $userBean->id;
-        $_SESSION['unique_key'] = $sugar_config['unique_key'];
-        
-        if ( $userType != 'user' ) {
-            $_SESSION['type'] = $userType;
-            $_SESSION['contact_id'] = $contactBean->id;
-            $_SESSION['portal_user_id'] = $userBean->id;
-            //BEGIN SUGARCRM flav=pro ONLY
-            // This is to make sure the licensing is handled correctly for portal logins
-            $sessionManager = new SessionManager();
-            $sessionManager->session_type = 'contact';
-            $sessionManager->last_request_time = TimeDate::getInstance()->nowDb();
-            $sessionManager->session_id = session_id();
-            $sessionManager->save();
-            //END SUGARCRM flav=pro ONLY
+        // Since we have to setup the session for oauth2 here, we might as well 
+        // set up the rest of the session, but only if we have what is needed
+        if ($this->canStartSession()) {
+            $GLOBALS['current_user'] = $this->userBean;
+            $_SESSION['is_valid_session'] = true;
+            $_SESSION['ip_address'] = query_client_ip();
+            $_SESSION['user_id'] = $this->userBean->id;
+            $_SESSION['type'] = 'user';
+            $_SESSION['authenticated_user_id'] = $this->userBean->id;
+            $_SESSION['unique_key'] = $sugar_config['unique_key'];
+            
+            $this->fillInAddedSessionData();
+            $_SESSION['oauth2'] = array(
+                'client_id'=>$client_id,
+                'user_id'=>$user_id,
+                'expires'=>$expires,
+            );
+            
+            return true;
         }
-
-        $_SESSION['oauth2'] = array(
-            'client_id'=>$client_id,
-            'user_id'=>$user_id,
-            'expires'=>$expires,
-        );
-        return true;
     }
 
 	/**
@@ -396,63 +415,31 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	 */
 	public function checkUserCredentials($client_id, $username, $password)
     {
-
         $clientInfo = $this->getClientDetails($client_id);
         if ( $clientInfo === false ) {
             return false;
         }
 
-        if ( $clientInfo['client_type'] != 'support_portal' ) {
-            // Is just a regular Sugar User
-            $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
-            $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true));
-            if ( $loginSuccess && !empty($auth->nextStep) ) {
-                // Set it here, and then load it in to the session on the next pass
-                // TODO: How do we pass the next required step to the client via the REST API?
-                $GLOBALS['nextStep'] = $auth->nextStep;
-            }
-            if ( $loginSuccess ) {
-                $userBean = BeanFactory::newBean('Users');
-                $userBean = $userBean->retrieve_by_string_fields(array('user_name'=>$username));
-                if ( $userBean == null ) {
-                    throw new SugarApiExceptionNeedLogin();
-                }
-                $this->userBean = $userBean;
-                return array('user_id' => $this->userBean->id);
-            } else {
-                throw new SugarApiExceptionNeedLogin();
-            }
-        } else {
-            $portalApiUser = $this->findPortalApiUser($client_id);
-            if ( $portalApiUser == null ) {
-                // Can't login as a portal user if there is no API user
-                throw new SugarApiExceptionNotAuthorized('There is no portal user configured in the system or the portal is not enabled for this system.');
-            }
-            // It's a portal user, log them in against the Contacts table
-            $contact = BeanFactory::newBean('Contacts');
-            //BEGIN SUGARCRM flav=pro ONLY
-            $contact->disable_row_level_security = true;
-            //END SUGARCRM flav=pro ONLY
-            $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username,  'portal_active'=>'1', 'deleted'=>0) );
-            if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
-                $contact = null;
-            }
-            if ( !empty($contact) ) {
-                //BEGIN SUGARCRM flav=pro ONLY
-                $sessionManager = new SessionManager();
-                if(!$sessionManager->canAddSession()){
-                    //not able to add another session right now
-                    $GLOBALS['log']->error("Unable to add new session");
-                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions',0,'too_many_concurrent_connections');
-                }
-                //END SUGARCRM flav=pro ONLY
-                $this->contactBean = $contact;
-                return array('user_id'=>$contact->id);
-            } else {
-                throw new SugarApiExceptionNeedLogin();
-            }
+        // Is just a regular Sugar User
+        $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
+        $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true));
+        if ( $loginSuccess && !empty($auth->nextStep) ) {
+            // Set it here, and then load it in to the session on the next pass
+            // TODO: How do we pass the next required step to the client via the REST API?
+            $GLOBALS['nextStep'] = $auth->nextStep;
         }
         
+        if ( $loginSuccess ) {
+            $userBean = BeanFactory::newBean('Users');
+            $userBean = $userBean->retrieve_by_string_fields(array('user_name'=>$username));
+            if ( $userBean == null ) {
+                throw new SugarApiExceptionNeedLogin();
+            }
+            $this->userBean = $userBean;
+            return array('user_id' => $this->userBean->id);
+        } else {
+            throw new SugarApiExceptionNeedLogin();
+        }
     }
     // END METHODS FROM IOAuth2GrantUser
 
@@ -486,38 +473,19 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             return null;
         }
 
-        if ( $token->consumer_obj->client_type == 'support_portal' ) {
-            $portalApiUser = $this->findPortalApiUser($token->consumer_obj->c_key);
-            if ( $portalApiUser == null ) {
-                return false;
-            }
-            $contact = BeanFactory::newBean('Contacts');
-            //BEGIN SUGARCRM flav=pro ONLY
-            $contact->disable_row_level_security = true;
-            //END SUGARCRM flav=pro ONLY
-            $authBean = $contact->retrieve($token->contact_id);
-            if ( $authBean->portal_active != 1 ) {
-                $authBean = null;
-            } else if ( empty($authBean->portal_name) ) {
-                $authBean = null;
-            }
-        } else {
-            $authBean = BeanFactory::getBean('Users',$token->assigned_user_id);
-            if ( $authBean == null || $authBean->status == 'Inactive' ) {
-                $authBean = null;
-            }
-        }
+        // Get the auth bean
+        $authBean = $this->getAuthBean($token);
 
         if ( $token === FALSE || $token->consumer_obj === FALSE || $authBean === null ) {
             return null;
-        } else {
-            return array(
-                'refresh_token'=>$token->id,
-                'client_id'=>$token->consumer_obj->c_key,
-                'expires'=>$token->expire_ts,
-                'user_id'=>$authBean->id,
-            );
         }
+        
+        return array(
+            'refresh_token'=>$token->id,
+            'client_id'=>$token->consumer_obj->c_key,
+            'expires'=>$token->expire_ts,
+            'user_id'=>$authBean->id,
+        );
     }
 
 	/**
@@ -545,17 +513,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = NULL)
     {
         $keyInfo = $this->getClientDetails($client_id);
-
-        $contact_id = '';
-        if ( $keyInfo['client_type'] == 'support_portal' ) {
-            $portalApiUser = $this->findPortalApiUser($client_id);
-            if ( $portalApiUser == null ) {
-                return;
-            }
-            $contact_id = $user_id;
-            $user_id = $portalApiUser->id;
+        
+        list($contact_id, $user_id) = $this->getIdsForUser($user_id, $client_id);
+        
+        if (!$contact_id && !$user_id) {
+            return;
         }
-
+        
         $token = BeanFactory::newBean('OAuthTokens');
         
         $token->id = $refresh_token;

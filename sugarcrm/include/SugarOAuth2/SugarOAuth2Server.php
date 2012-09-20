@@ -21,7 +21,6 @@
  ********************************************************************************/
 
 require_once('include/oauth2-php/lib/OAuth2.php');
-require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 
 /**
  * Sugar OAuth2.0 server, is a wrapper around the php-oauth2 library
@@ -34,14 +33,45 @@ class SugarOAuth2Server extends OAuth2
      * the custom/ directory so users can customize the authorization 
      * types and storage
      */
-    public static function getOAuth2Server() {
+    public static function getOAuth2Server($platform = 'base') {
         static $currentOAuth2Server = null;
 
         if ( ! isset($currentOAuth2Server) ) {
-            $oauthStorageName = 'SugarOAuth2Storage';
-            if ( file_exists('custom/include/SugarOAuth2/SugarOAuth2StorageCstm.php') ) {
-                require_once('custom/include/SugarOAuth2/SugarOAuth2StorageCstm.php');
-                $oauthStorageName = 'SugarOAuth2StorageCstm';
+            // Normalize the platform
+            $storageType = ucfirst(strtolower($platform));
+            
+            // Setup the default platform and base storage classes
+            $classes[3] = 'SugarOAuth2StorageBase';
+            $classes[1] = 'SugarOAuth2Storage' . $storageType;
+            
+            // Setup the custom platform and base storage classes
+            $classes[2] = $classes[3] . 'Cstm';
+            $classes[0] = $classes[1] . 'Cstm';
+            
+            // Run through the stack of storages and fight the right one
+            $oauthStorageName = null;
+            ksort($classes);
+            foreach ($classes as $class) {
+                $path = 'include/SugarOAuth2/' . $class;
+                
+                // Handle custom class names
+                if (substr($class, -4) == 'Cstm') {
+                    $path = 'custom/' . $path;
+                }
+                
+                // Build the file name
+                $file = $path . '.php';
+                if (file_exists($file)) {
+                    require_once $file;
+                    
+                    // Set the storage class name for instantiation later
+                    $oauthStorageName = $class;
+                    break;
+                }
+            }
+            
+            if (empty($oauthStorageName)) {
+                throw new Exception('No OAuth storage handler found');
             }
             
             $oauthServerName = 'SugarOAuth2Server';
