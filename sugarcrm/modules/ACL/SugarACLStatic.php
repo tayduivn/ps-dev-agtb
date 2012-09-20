@@ -59,11 +59,11 @@ class SugarACLStatic extends SugarACLStrategy
         }
 
         $action = strtolower($action);
-
+        //BEGIN SUGARCRM flav=pro ONLY
         if($action == "field") {
             return $this->fieldACL($module, $context['action'], $context);
         }
-
+        //END SUGARCRM flav=pro ONLY
         if(!empty($context['bean'])) {
             return $this->beanACL($module, $action, $context);
         }
@@ -84,7 +84,7 @@ class SugarACLStatic extends SugarACLStrategy
         'detailview' => 'view',
         'save' => 'edit',
     );
-
+//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Check access to fields
      * @param string $module
@@ -126,7 +126,7 @@ class SugarACLStatic extends SugarACLStrategy
 
         return ($field_access == 4 || $field_access == $access);
     }
-
+//END SUGARCRM flav=pro ONLY
     /**
      * Check bean ACLs
      * @param string $module
