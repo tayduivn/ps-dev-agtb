@@ -25,7 +25,7 @@ require_once "MailerException.php";                      // requires MailerExcep
                                                          // that type
 require_once "modules/Emails/MailConfigurationPeer.php"; // needs the constants that represent the modes
 require_once "modules/Emails/MailConfiguration.php";     // uses the properties to produce the expected mailer
-require_once "MailerCongfiguration.php";                 // required if producing a base Mailer
+require_once "MailerConfiguration.php";                 // required if producing a base Mailer
 require_once "SmtpMailerConfiguration.php";              // required if producing an SMTP Mailer
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
@@ -41,15 +41,15 @@ class MailerFactory
     // configuration.
     // key = mode; value = mailer class
     protected static $modeToMailerMap = array(
-        "default"                        => array(
+        MailConfigurationPeer::MODE_DEFAULT => array(
             "path"  => ".",            // the path to the class file without trailing slash ("/")
             "class" => "SimpleMailer", // the name of the class
         ),
-        MailConfigurationPeer::MODE_SMTP => array(
+        MailConfigurationPeer::MODE_SMTP    => array(
             "path"  => ".",
             "class" => "SugarMailer",
         ),
-        MailConfigurationPeer::MODE_WEB  => array(
+        MailConfigurationPeer::MODE_WEB     => array(
             "path"  => ".",
             "class" => "WebMailer",
         ),

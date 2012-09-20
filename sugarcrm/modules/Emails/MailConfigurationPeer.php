@@ -29,10 +29,11 @@ require_once "modules/InboundEmail/InboundEmail.php";
 require_once "MailConfiguration.php";
 require_once "modules/Users/User.php";
 
-class MailConfigurationPeer {
-
-    const MODE_SMTP = "smtp";
-    const MODE_WEB  = "web";
+class MailConfigurationPeer
+{
+    const MODE_DEFAULT = "default";
+    const MODE_SMTP    = "smtp";
+    const MODE_WEB     = "web";
 
     /**
      * Returns true/false indicating whether or not $mode is a valid sending strategy.
@@ -44,6 +45,7 @@ class MailConfigurationPeer {
      */
     public static function isValidMode($mode) {
         switch ($mode) {
+            case self::MODE_DEFAULT:
             case self::MODE_SMTP:
             case self::MODE_WEB:
                 return true;
