@@ -427,12 +427,14 @@ class Localization {
 	////	NUMBER DISPLAY FORMATTING CODE
 	function getDecimalSeparator($user=null) {
         // Bug50887 this is purposefully misspelled as ..._seperator to match the way it's defined throughout the app.
-		$dec = $this->getPrecedentPreference('default_decimal_seperator', $user);
+		$dec = $this->getPrecedentPreference('dec_sep', $user);
+        $dec = $dec ? $dec : $this->getPrecedentPreference('default_decimal_seperator', $user);
 		return $dec;
 	}
 
 	function getNumberGroupingSeparator($user=null) {
-		$sep = $this->getPrecedentPreference('default_number_grouping_seperator', $user);
+		$sep = $this->getPrecedentPreference('num_grp_sep', $user);
+        $sep = $sep ? $sep : $this->getPrecedentPreference('default_number_grouping_seperator', $user);
 		return $sep;
 	}
 
@@ -442,8 +444,11 @@ class Localization {
 	}
 
 	function getCurrencySymbol($user=null) {
-		$dec = $this->getPrecedentPreference('default_currency_symbol', $user);
-		return $dec;
+        require_once('include/SugarCurrency.php');
+        $currencyId = $this->getPrecedentPreference('currency', $user);
+        $currencyId = $currencyId ? $currencyId : '-99';
+		$currency = SugarCurrency::getCurrencyByID($currencyId);
+		return $currency->symbol;
 	}
 
 	/**
