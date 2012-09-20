@@ -4418,6 +4418,19 @@ $app_list_strings['FORECASTS_CONFIG_CATEGORY_OPTIONS_DOM'] = array(
     'show_buckets' => 'Three Categories',
     'show_n_buckets' => 'N Categories',
 );
+$app_list_strings['FORECASTS_TIMEPERIOD_TYPES_DOM'] = array(
+    'fiscal' => 'Fiscal Year',
+    'chronological' => 'Date Based Year',
+);
+$app_list_strings['FORECASTS_TIMEPERIOD_OPTIONS_DOM'] = array(
+    'yearly' => 'Yearly',
+    'quarterly' => 'Quarterly',
+);
+$app_list_strings['FORECASTS_TIMEPERIOD_LEAF_QUARTERLY_OPTIONS_DOM'] = array(
+    'first' => 'First',
+    'middle' => 'Middle',
+    'last' => 'Last'
+);
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (
 		'yes' => 'Yes' ,

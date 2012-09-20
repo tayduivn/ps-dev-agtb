@@ -194,11 +194,11 @@ public static function setupForecastSettings()
     $forecastConfig = array(
         // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
         'is_setup' => true,
-        // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods
-        'timeperiod_type' => 'fiscal', //options:  'calendar' or 'fiscal'
-        // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
+        // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from FORECASTS_TIMEPERIOD_TYPES_DOM
+        'timeperiod_type' => 'fiscal', //options:  'chronological' or 'fiscal'
+        // the timeperiod intervals users can forecasts over, options come from FORECASTS_TIMEPERIOD_OPTIONS_DOM
         'timeperiod_interval' => 'yearly',
-        // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_options_dom, (first, middle, last)
+        // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from FORECASTS_TIMEPERIOD_LEAF_QUARTERLY_OPTIONS_DOM, (first, middle, last)
         'timeperiod_leaf_interval' => 'first',
         // number of timeperiods forward from the current that are displayed
         'timeperiods_shown_forward' => 4,

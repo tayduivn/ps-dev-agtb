@@ -315,8 +315,7 @@ $mod_strings = array (
 
     // timeperiod config
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
-    'LBL_FORECASTS_CONFIG_FISCAL_START_MONTH' => 'Select the month that is the start of your fiscal time period:',
-    'LBL_FORECASTS_CONFIG_FISCAL_START_DAY' => 'Select the day of the month on which to start your fiscal time period:',
+    'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
     'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
