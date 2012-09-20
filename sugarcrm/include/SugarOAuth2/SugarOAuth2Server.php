@@ -21,7 +21,7 @@
  ********************************************************************************/
 
 require_once('include/oauth2-php/lib/OAuth2.php');
-require_once('include/SugarOAuth2Storage.php');
+require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 
 /**
  * Sugar OAuth2.0 server, is a wrapper around the php-oauth2 library
@@ -39,14 +39,14 @@ class SugarOAuth2Server extends OAuth2
 
         if ( ! isset($currentOAuth2Server) ) {
             $oauthStorageName = 'SugarOAuth2Storage';
-            if ( file_exists('custom/include/SugarOAuth2StorageCstm.php') ) {
-                require_once('custom/include/SugarOAuth2StorageCstm.php');
+            if ( file_exists('custom/include/SugarOAuth2/SugarOAuth2StorageCstm.php') ) {
+                require_once('custom/include/SugarOAuth2/SugarOAuth2StorageCstm.php');
                 $oauthStorageName = 'SugarOAuth2StorageCstm';
             }
             
             $oauthServerName = 'SugarOAuth2Server';
-            if ( file_exists('custom/include/SugarOAuth2ServerCstm.php') ) {
-                require_once('custom/include/SugarOAuth2ServerCstm.php');
+            if ( file_exists('custom/include/SugarOAuth2/SugarOAuth2ServerCstm.php') ) {
+                require_once('custom/include/SugarOAuth2/SugarOAuth2ServerCstm.php');
                 $oauthServerName = 'SugarOAuth2ServerCstm';
             }
             

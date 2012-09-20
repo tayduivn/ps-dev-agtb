@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once('include/SugarOAuth2Storage.php');
+require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 require_once('tests/rest/RestTestPortalBase.php');
 
 class SugarOAuth2StorageTest extends RestTestPortalBase

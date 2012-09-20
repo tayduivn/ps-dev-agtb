@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/SugarApi/ServiceBase.php');
 require_once('include/api/SugarApi/ServiceDictionaryRest.php');
-require_once('include/SugarOAuth2Server.php');
+require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 
 class RestService extends ServiceBase {
 
