@@ -43,13 +43,21 @@ class ForecastsConfigApi extends ModuleApi {
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#config',
                 'noLoginRequired' => true,
             ),
-            'configSave' => array(
+            'configCreate' => array(
                 'reqType' => 'POST',
                 'path' => array('Forecasts','config'),
                 'pathVars' => array('',''),
                 'method' => 'configSave',
-                'shortHelp' => 'save forecasts config',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#configSave',
+                'shortHelp' => 'create forecasts config',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#configCreate',
+            ),
+            'configUpdate' => array(
+                'reqType' => 'PUT',
+                'path' => array('Forecasts','config'),
+                'pathVars' => array('',''),
+                'method' => 'configSave',
+                'shortHelp' => 'Update forecasts config',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#configUpdate',
             ),
         );
         return $parentApi;
