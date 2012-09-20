@@ -42,7 +42,7 @@ class ForecastsProgressApiTest extends RestTestBase
     protected static $quota;
     protected static $managerQuota;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');

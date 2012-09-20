@@ -60,6 +60,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
 
         self::$manager = SugarTestForecastUtilities::createForecastUser();
 
