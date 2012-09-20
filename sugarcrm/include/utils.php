@@ -1071,6 +1071,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
 
         // FG - bug 45525 - Specific codelists must NOT be overwritten
 	$exemptDropdowns[] = "moduleList";
+	$exemptDropdowns[] = "moduleListSingular";
         $exemptDropdowns[] = "parent_type_display";
         $exemptDropdowns[] = "record_type_display";
         $exemptDropdowns[] = "record_type_display_notes";
@@ -4153,7 +4154,7 @@ function getTrackerSubstring($name) {
 		$chopped = $name;
 	}
 
-	return to_html($chopped);
+	return $chopped;
 }
 function generate_search_where ($field_list=array(),$values=array(),&$bean,$add_custom_fields=false,$module='') {
 	$where_clauses= array();
@@ -4273,6 +4274,18 @@ function rebuildConfigFile($sugar_config, $sugar_version) {
 	else {
 		return false;
 	}
+}
+
+/**
+ * Loads clean configuration, not overridden by config_override.php
+ *
+ * @return array
+ */
+function loadCleanConfig()
+{
+    $sugar_config = array();
+    require 'config.php';
+    return $sugar_config;
 }
 
 /**
