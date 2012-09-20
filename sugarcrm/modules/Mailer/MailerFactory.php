@@ -102,8 +102,8 @@ class MailerFactory
      *
      * @static
      * @access private
-     * @param string $senderEmail required
-     * @param string|null $senderName
+     * @param string      $senderEmail required
+     * @param null|string $senderName           Should be a string, but null is acceptable if no name is associated.
      * @return EmailHeaders
      * @throws MailerException
      */

@@ -89,8 +89,16 @@ class Attachment
     /**
      * @access public
      * @param string $encoding
+     * @throws MailerException
      */
     public function setEncoding($encoding = Encoding::Base64) {
+        if (!Encoding::isValid($encoding)) {
+            throw new MailerException(
+                "Invalid Attachment: encoding is invalid",
+                MailerException::InvalidAttachment
+            );
+        }
+
         $this->encoding = $encoding;
     }
 

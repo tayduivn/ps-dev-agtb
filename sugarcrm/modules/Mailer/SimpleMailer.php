@@ -93,7 +93,7 @@ class SimpleMailer extends BaseMailer
         $mailer->Host       = $this->config->getHost();
         $mailer->Port       = $this->config->getPort();
         $mailer->SMTPSecure = $this->config->getSecure();
-        $mailer->SMTPAuth   = $this->config->authenticationIsRequired();
+        $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
         $mailer->Password   = $this->config->getPassword();
     }

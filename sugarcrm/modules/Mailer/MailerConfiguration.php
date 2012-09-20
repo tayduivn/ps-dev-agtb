@@ -21,18 +21,24 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "MailerException.php";
-require_once "Encoding.php";
+require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
+require_once "Encoding.php";        // needs the valid encodings defined in Encoding
 
+/**
+ * Represents the base configurations and contains the logic for setting the configurations for a Mailer.
+ */
 class MailerConfiguration
 {
     // protected members
     protected $hostname; // the hostname to use in Message-ID and Received headers and as default HELO string
                          // not the server hostname
     protected $charset;  // the character set of the message
-    protected $encoding;
+    protected $encoding; // the encoding of the message, which must be one of the valid encodings from Encoding
     protected $wordwrap; // number of characters per line before the message body wrap
 
+    /**
+     * @access public
+     */
     public function __construct() {
         $this->loadDefaultConfigs();
     }
@@ -50,52 +56,113 @@ class MailerConfiguration
     }
 
     /**
-     * Sets or overwrites a configuration with the value passed in for the key ($config).
+     * Sets or overwrites the hostname configuration.
      *
      * @access public
-     * @param string $config required The configuration key.
-     * @param mixed  $value  required The configuration value.
+     * @param string $hostname required
+     * @throws MailerException
      */
     public function setHostname($hostname = "") {
+        if (!is_string($hostname)) {
+            throw new MailerException(
+                "Invalid Configuration: hostname must be a string",
+                MailerException::InvalidConfiguration
+            );
+        }
+
         $this->hostname = $hostname;
     }
 
     /**
-     * Returns the configuration value at the specified key ($config).
+     * Returns the hostname configuration.
      *
      * @access public
-     * @param string $config required The configuration key.
-     * @return mixed The value stored at the specified key.
-     * @throws MailerException
+     * @return string
      */
     public function getHostname() {
         return $this->hostname;
     }
 
+    /**
+     * Sets or overwrites the charset configuration.
+     *
+     * @access public
+     * @param string $charset required
+     * @throws MailerException
+     */
     public function setCharset($charset = "utf-8") {
-        //@todo make sure it's a string
+        if (!is_string($charset)) {
+            throw new MailerException(
+                "Invalid Configuration: charset must be a string",
+                MailerException::InvalidConfiguration
+            );
+        }
+
         $this->charset = $charset;
     }
 
+    /**
+     * Returns the charset configuration.
+     *
+     * @access public
+     * @return string
+     */
     public function getCharset() {
         return $this->charset;
     }
 
-    // default to quoted-printable for plain/text
+    /**
+     * Sets or overwrites the encoding configuration. Default to quoted-printable for plain/text.
+     *
+     * @access public
+     * @param string $encoding required
+     * @throws MailerException
+     */
     public function setEncoding($encoding = Encoding::QuotedPrintable) {
-        //@todo make sure it's one of the valid encodings from Encoding?
+        if (!Encoding::isValid($encoding)) {
+            throw new MailerException(
+                "Invalid Configuration: encoding is invalid",
+                MailerException::InvalidConfiguration
+            );
+        }
+
         $this->encoding = $encoding;
     }
 
+    /**
+     * Returns the encoding configuration.
+     *
+     * @access public
+     * @return string
+     */
     public function getEncoding() {
         return $this->encoding;
     }
 
+    /**
+     * Sets or overwrites the wordwrap configuration, which is the number of characters before a line will be wrapped.
+     *
+     * @access public
+     * @param int $chars required
+     * @throws MailerException
+     */
     public function setWordwrap($chars = 996) {
-        //@todo make sure it's an int
+        if (!is_int($chars)) {
+            throw new MailerException(
+                "Invalid Configuration: wordwrap must be an integer",
+                MailerException::InvalidConfiguration
+            );
+        }
+
         $this->wordwrap = $chars;
     }
 
+    /**
+     * Returns the wordwrap configuration.
+     *
+     * @access public
+     * @return string
+     */
     public function getWordwrap() {
         return $this->wordwrap;
     }

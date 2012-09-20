@@ -136,7 +136,7 @@ class MailConfigurationPeer {
 
                 if ($oe['mail_smtpauth_req']) {
                     // require authentication with the SMTP server
-                    $mailerConfig->setAuthenticate(true);
+                    $mailerConfig->setAuthenticationRequirement(true);
                     $mailerConfig->setUsername($oe['mail_smtpuser']);
                     //@todo wrap this value in from_html()? do now or at time of transfer?
                     $mailerConfig->setPassword($oe['mail_smtppass']);
@@ -144,9 +144,9 @@ class MailConfigurationPeer {
 
                 // determine the appropriate encryption layer for the sending strategy
                 if ($oe['mail_smtpssl'] === 1) {
-                    $mailerConfig->setSecure(SmtpMailerConfiguration::SecureSsl);
+                    $mailerConfig->setCommunicationProtocol(SmtpMailerConfiguration::CommunicationProtocolSsl);
                 } elseif ($oe['mail_smtpssl'] === 2) {
-                    $mailerConfig->setSecure(SmtpMailerConfiguration::SecureTls);
+                    $mailerConfig->setCommunicationProtocol(SmtpMailerConfiguration::CommunicationProtocolTls);
                 }
 
                 break;
