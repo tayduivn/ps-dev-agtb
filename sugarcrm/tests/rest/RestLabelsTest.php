@@ -41,7 +41,6 @@ class RestLabelsTest extends RestTestBase {
     public function testLabels() {
         $restReply = $this->_restCall('metadata?type_filter=mod_strings,app_strings');
         $this->assertNotEmpty($restReply['reply']['app_strings']['LBL_ADD'],"Could not find the label for the add button (LBL_ADD), probably didn't get the app strings (/metadata)");
-        
         $this->assertNotEmpty($restReply['reply']['mod_strings']['Contacts']['LBL_ACCOUNT_NAME']);
     }
 

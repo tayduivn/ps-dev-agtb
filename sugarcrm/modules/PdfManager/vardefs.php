@@ -234,7 +234,6 @@ $dictionary['PdfManager'] = array(
     ),
     'relationships'=>array (),
     'optimistic_locking'=>true,
-    'unified_search'=>true,
 );
 
 if (!class_exists('VardefManager')) {

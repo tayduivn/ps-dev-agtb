@@ -136,7 +136,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
                     $date = $timedate->fromDb($bean->$fieldName);
-                    $keyValues[$fieldName] = $timedate->asIso($date);
+                    $keyValues[$fieldName] = $timedate->asIso($date, array('stripTZColon' => true));
                 }
                 
             }
