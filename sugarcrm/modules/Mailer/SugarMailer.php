@@ -26,9 +26,7 @@ require_once('include/OutboundEmail/OutboundEmail.php');
 
 class SugarMailer extends SimpleMailer
 {
-    private $sugar_config;
     private $notes;
-
     private $includeDisclosure = false;
     private $disclosureContent;
 
@@ -36,10 +34,6 @@ class SugarMailer extends SimpleMailer
      * @param MailerConfiguration
      */
     public function __construct(MailerConfiguration $mailerConfig) {
-        global $sugar_config;
-
-        $this->sugar_config = $sugar_config;
-
         parent::__construct($mailerConfig);
         $this->retrieveDisclosureSettings();
     }
@@ -126,6 +120,9 @@ eoq;
      *
      */
     protected function handleAttachments() {
+        global $sugar_config;
+        $siteUrl = $sugar_config["site_url"];
+
         //replace references to cache/images with cid tag
         $this->htmlBody = str_replace(sugar_cached('images/'), 'cid:', $this->htmlBody);
 
@@ -133,10 +130,10 @@ eoq;
             return;
         }
 
-        $this->replaceImageByRegex("(?:{$this->sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
+        $this->replaceImageByRegex("(?:{$siteUrl})?/?cache/images/", sugar_cached("images/"));
 
         //Replace any embeded images using the secure entryPoint for src url.
-        $this->replaceImageByRegex("(?:{$this->sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
+        $this->replaceImageByRegex("(?:{$siteUrl})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
 
         //Handle regular attachments.
         foreach ($this->notes as $note) {
