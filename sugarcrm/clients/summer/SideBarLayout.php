@@ -44,7 +44,13 @@ class SideBarLayout {
                 array(
                     'type' => 'simple',
                     'span' => $this->spans['side'],
-                    'components' => $this->containers['side'],
+                    'components' => array(array(
+                        'layout' => array(
+                            'css_class' => 'tab-pane active',
+                            'components' => $this->containers['side'],
+                        ),
+                    )),
+                    'css_class' => 'tab-content folded',
                 )
             );
         }
@@ -53,7 +59,7 @@ class SideBarLayout {
             'layout' =>
             array(
                 'type' => 'fluid',
-                'components' => $components
+                'components' => $components,
             ),
         );
     }
