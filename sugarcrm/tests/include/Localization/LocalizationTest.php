@@ -26,17 +26,47 @@ require_once 'include/Localization/Localization.php';
 
 class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
 {
+
+    /**
+     * pre-class environment setup
+     *
+     * @access public
+     */
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+    }
+
     public function setUp() 
     {
         $this->_locale = new Localization();
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $this->_currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
+
     }
     
     public function tearDown()
     {
-    	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        // remove test user
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($this->_locale);
+        unset($this->_user);
+        unset($this->_currency);
+
+        // remove test currencies
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
-    
+
+    /**
+     * post-object environment teardown
+     *
+     * @access public
+     */
+    public static function tearDownAfterClass()
+    {
+    }
+
     public function providerGetLocaleFormattedName()
     {
         return array(
@@ -227,11 +257,11 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetCurrencySymbol()
     {
-        $this->_user->setPreference('default_currency_symbol','&&');
-        
+        $this->_user->setPreference('currency',$this->_currency->id);
+
         $this->assertEquals(
             $this->_locale->getCurrencySymbol($this->_user),
-            '&&'
+            '¥'
             );
     }
     
@@ -240,12 +270,14 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetLocaleFormattedNumberWithNoCurrencySymbolSpecified()
     {
-        $this->_user->setPreference('default_currency_symbol','**');
-        $this->_user->setPreference('default_decimal_separator','.');
-        
+        $this->_user->setPreference('currency',$this->_currency->id);
+        $this->_user->setPreference('dec_sep','.');
+        $this->_user->setPreference('num_grp_sep',',');
+        $this->_user->setPreference('default_currency_significant_digits',2);
+
         $this->assertEquals(
             $this->_locale->getLocaleFormattedNumber(20,'',true,$this->_user),
-            '**20'
+            '¥20'
             );
     }
 }
