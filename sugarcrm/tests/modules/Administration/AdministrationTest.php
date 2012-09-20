@@ -34,6 +34,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('moduleList');
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'AdministrationTest'");
         /* @var $admin Administration */
