@@ -27,7 +27,7 @@
  ********************************************************************************/
 
 $dictionary['GhettoSearch'] = array(
-    'table' => 'ghettosearch',
+    'table' => 'ghetto_search',
     'engine' => 'MyISAM', // To allow text search indexing on MySQL
     'audited' => false,
     'duplicate_merge' => false,

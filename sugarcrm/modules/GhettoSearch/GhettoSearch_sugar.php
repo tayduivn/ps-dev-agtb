@@ -38,7 +38,7 @@ class GhettoSearch_sugar extends Basic
     var $new_schema = true;
     var $module_dir = 'GhettoSearch';
     var $object_name = 'GhettoSearch';
-    var $table_name = 'GhettoSearch';
+    var $table_name = 'ghetto_search';
     var $importable = false;
     var $id;
     var $name;
