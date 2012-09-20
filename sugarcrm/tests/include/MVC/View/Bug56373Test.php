@@ -34,7 +34,7 @@ class Bug56373Test extends Sugar_PHPUnit_Framework_TestCase
      * @group bug56373
      */
     public function testProcessRecentRecordsForHTML() {
-        $view = new SugarViewMock();
+        $view = new Bug56373TestSugarViewMock();
 
         $history = array(
                         array('item_summary' => '&lt;img src=x alert(true)', 'module_name'=>'Accounts'),
@@ -53,7 +53,7 @@ class Bug56373Test extends Sugar_PHPUnit_Framework_TestCase
 
 }
 
-class SugarViewMock extends SugarView
+class Bug56373TestSugarViewMock extends SugarView
 {
     public function processRecentRecords($history)
     {
