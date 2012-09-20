@@ -52,7 +52,7 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
     	$testValue = "$100,000.50";
     	
     	$unformattedValue = unformat_number($testValue);
-    	$this->assertEquals($unformattedValue, 100000.50, "Assert that $100,000.50 becomes 100000.50. Formatted value is: ".$unformattedValue);
+    	$this->assertEquals($unformattedValue, 100000.50, "Assert that $100,000.50 becomes 100000.50. Unformatted value is: ".$unformattedValue);
     	
     	//Switch the num_grp_sep and dec_sep values
         $current_user->setPreference('num_grp_sep', '.');
@@ -64,7 +64,13 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
         
         $testValue = "$100.000,50";
         $unformattedValue = unformat_number($testValue);
-    	$this->assertEquals($unformattedValue, 100000.50, "Assert that $100.000,50 becomes 100000.50. Formatted value is: ".$unformattedValue);
+    	$this->assertEquals($unformattedValue, 100000.50, "Assert that $100.000,50 becomes 100000.50. Unformatted value is: ".$unformattedValue);
+
+        $testValue = "0.9";
+        $unformattedValue = unformat_number($testValue);
+        $this->assertEquals($unformattedValue, 0.9, "Assert that 0.9 stays 0.9. Unformatted value is: ".$unformattedValue);
+
+
     }
     
     

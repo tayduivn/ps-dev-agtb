@@ -138,7 +138,7 @@
             // creates the config model as a special case
             self.namespace(models, module);
             configModel = Backbone.Model.extend({
-                url: app.api.buildURL("Forecasts", "config", "", {module : module}),
+                url: app.api.buildURL("Forecasts", "config"),
                 sync: function(method, model, options) {
                     var url = _.isFunction(model.url) ? model.url() : model.url;
                     return app.api.call(method, url, model, options);
