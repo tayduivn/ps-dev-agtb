@@ -637,7 +637,7 @@ class SugarTestHelper
     protected static function setUp_forecasts()
     {
         $admin = BeanFactory::getBean('Administration');
-        if(!isset($admin->settings['Forecasts_category_ranges']) || empty($admin->settings['Forecasts_category_ranges'])) {
+        if(!isset($admin->settings['Forecasts_category_ranges']) || empty($admin->settings['Forecasts_category_ranges']))
         {
             require_once('modules/Forecasts/ForecastsSeedData.php');
             ForecastsSeedData::setupForecastSettings();
