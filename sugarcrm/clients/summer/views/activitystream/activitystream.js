@@ -147,10 +147,10 @@
                 seed.save({}, {
                     success: function(model) {
                         var data = new FormData();
-                        data.append("filename", App.drag_drop[id]);
+                        data.append("filename", app.drag_drop[id]);
 
-                        var url = App.api.buildURL("Notes/" + model.get("id") + "/file/filename");
-                        url += "?oauth_token="+App.api.getOAuthToken();
+                        var url = app.api.buildURL("Notes/" + model.get("id") + "/file/filename");
+                        url += "?oauth_token="+app.api.getOAuthToken();
 
                         $.ajax({
                             url: url,
@@ -159,7 +159,7 @@
                             processData: false,
                             contentType: false,
                             success: function() {
-                                delete App.drag_drop[id];
+                                delete app.drag_drop[id];
                                 postSave();
                             }
                         });
@@ -210,10 +210,10 @@
                 seed.save({}, {
                     success: function(model) {
                         var data = new FormData();
-                        data.append("filename", App.drag_drop[id]);
+                        data.append("filename", app.drag_drop[id]);
 
-                        var url = App.api.buildURL("Notes/" + model.get("id") + "/file/filename");
-                        url += "?oauth_token="+App.api.getOAuthToken();
+                        var url = app.api.buildURL("Notes/" + model.get("id") + "/file/filename");
+                        url += "?oauth_token="+app.api.getOAuthToken();
 
                         $.ajax({
                             url: url,
@@ -222,7 +222,7 @@
                             processData: false,
                             contentType: false,
                             success: function() {
-                                delete App.drag_drop[id];
+                                delete app.drag_drop[id];
                                 self.collection.fetch(self.opts);
                             }
                         });
@@ -313,12 +313,12 @@
                     }
                     size = Math.round(size);
                     var unique = _.uniqueId("activitystream_attachment");
-                    App.drag_drop = App.drag_drop || {};
-                    App.drag_drop[unique] = file;
+                    app.drag_drop = app.drag_drop || {};
+                    app.drag_drop[unique] = file;
                     var container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
                     $('<a class="close">&times;</a>').on('click', function(e) {
                         $(this).parent().remove();
-                        delete App.drag_drop[container.attr("id")];
+                        delete app.drag_drop[container.attr("id")];
                     }).appendTo(container);
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
                     if(file.type.indexOf("image/") !== -1) {
@@ -491,7 +491,7 @@
                 });
                 _.each(comment.notes, function(note) {
                     if(note.file_mime_type) {
-                        note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                        note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
                         note.image = (note.file_mime_type.indexOf("image") !== -1);
                     }
                 });
@@ -499,7 +499,7 @@
 
             _.each(model.get("notes"), function(note) {
                 if(note.file_mime_type) {
-                    note.url = App.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+App.api.getOAuthToken());
+                    note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
                     note.image = (note.file_mime_type.indexOf("image") !== -1);
                 }
             });

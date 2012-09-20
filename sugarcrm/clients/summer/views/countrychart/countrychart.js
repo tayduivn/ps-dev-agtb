@@ -21,14 +21,14 @@
 
         $('.chartSelector').val(this.options['url']);
 
-        App.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {success: function(o) {
+        app.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {success: function(o) {
             var results = {};
             var values = [];
             for (i = 0; i < o.length; i++) {
                 var country = o[i]['country'];
                 if("USA" == country) country = "United States of America";
-                results[country] = parseInt(o[i]['amount']);
-                values.push(parseInt(o[i]['amount']));
+                results[country] = parseInt(o[i]['amount'], 10);
+                values.push(results[country]);
             }
 
             var color = d3.scale.linear().domain([0, _.max(values)]).range(["gray", "blue"]);

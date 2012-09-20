@@ -6,7 +6,7 @@
         app.events.on("app:login:success", this.render, this);
         app.events.on("app:logout", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
-        App.api.call('GET', '../rest/v10/summer/recommend', null, {
+        app.api.call('GET', '../rest/v10/summer/recommend', null, {
         	success: function(o) {
         		$("#invitesList").html("");
         		for(i=0;i<o.invites.length;i++) {

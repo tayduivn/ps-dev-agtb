@@ -15,7 +15,7 @@
 
         app.view.View.prototype._render.call(this);
 
-        App.api.call('GET', '../rest/v10/CustomReport/OpportunityLeaderboard', null, {success: function(o) {
+        app.api.call('GET', '../rest/v10/CustomReport/OpportunityLeaderboard', null, {success: function(o) {
             var results = [{
                 key: "Opportunity Leaderboard",
                 values: []
@@ -23,7 +23,7 @@
             for (i = 0; i < o.length; i++) {
                 results[0].values.push({
                     label: o[i]['user_name'],
-                    value: parseInt(o[i]['amount'])
+                    value: parseInt(o[i]['amount'], 10)
                 });
             }
 
