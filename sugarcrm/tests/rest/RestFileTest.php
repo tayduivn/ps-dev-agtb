@@ -75,15 +75,17 @@ class RestFileTest extends RestTestBase {
      * @group rest
      */
     public function testGetList() {
+        //BEGIN SUGARCRM flav=pro ONLY
         $restReply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/');
-        $this->assertNotEmpty($restReply['reply'], 'Reply was empty');
+        $this->assertNotEmpty($restReply['reply'], 'First reply was empty');
         $this->assertArrayHasKey('picture', $restReply['reply'], 'Missing response data for Contacts');
-
+        //END SUGARCRM flav=pro ONLY
         $restReply = $this->_restCall('Notes/' . $this->_note_id . '/file/');
-        $this->assertNotEmpty($restReply['reply'], 'Reply was empty');
+        $this->assertNotEmpty($restReply['reply'], 'Second reply was empty');
         $this->assertArrayHasKey('filename', $restReply['reply'], 'Missing response data for Notes');
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -99,7 +101,7 @@ class RestFileTest extends RestTestBase {
         $this->assertEquals($this->_contact_id, $fetch['reply']['id'], 'Known contact id and fetched contact id do not match');
         $this->assertEquals($reply['reply']['picture']['name'], $fetch['reply']['picture'], 'Contact picture field and picture file name do not match');
     }
-
+    
     /**
      * @group rest
      */
@@ -142,7 +144,7 @@ class RestFileTest extends RestTestBase {
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', '', 'DELETE');
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing fields');
     }
-
+    //END SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
