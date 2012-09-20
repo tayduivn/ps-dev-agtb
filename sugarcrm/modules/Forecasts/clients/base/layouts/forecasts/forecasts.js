@@ -266,7 +266,6 @@
 
             mdata = app.metadata.getModule("Forecasts");
             if (!mdata.config.is_setup) {
-//              TODO:  if (! user_is_admin) { show different stuff } else {
                 this._showConfigModal(true);
             }
 
@@ -280,12 +279,23 @@
          * @private
          */
         _showConfigModal: function(showWizard) {
-            var params = {
-               components:[{layout:"forecastsConfig"}],
-               title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
-           };
+            // callback is only used if the user is not an admin, gets to the modal,
+            // sees the "Not configured yet" message and clicks ok.  Not used if
+            // user is an admin, but needs to be passed
+            var callback = function(){};
 
-           this.trigger("modal:forecastsConfig:open", params);
+            // begin building params to pass to modal
+            var params = {
+                title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
+            };
+
+            if(app.user.get('isAdmin')) {
+                params.components = [{layout:"forecastsConfig"}];
+            } else {
+                params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
+            }
+
+            this.trigger("modal:forecastsConfig:open", params, callback);
         },
 
         /**
