@@ -38,6 +38,7 @@ class Bug49878Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	public function tearDown()
 	{
         parent::tearDown();
+
         SugarTestHelper::tearDown();
     }
 

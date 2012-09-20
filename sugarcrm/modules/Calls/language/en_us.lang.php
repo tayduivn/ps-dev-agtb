@@ -81,6 +81,7 @@ $mod_strings = array (
     'LBL_REMINDER' => 'Reminders:',
     'LBL_REMINDER_POPUP' => 'Popup',
     'LBL_REMINDER_EMAIL' => 'Email',
+    'LBL_REMINDER_EMAIL_ALL_INVITEES' => 'Email all invitees',
     'LBL_EMAIL_REMINDER' => 'Email Reminder',
     'LBL_EMAIL_REMINDER_TIME' => 'Email Reminder Time',
     'LBL_SEND_BUTTON_TITLE'=>'Save & Send Invites [Alt+I]',
@@ -151,9 +152,7 @@ $mod_strings = array (
     'LBL_CONFIRM_REMOVE_ALL_RECURRENCES' => 'Are you sure you want to remove all recurring records?',
     'LBL_REPEAT_LIMIT_ERROR' => 'Your request was going to create more than $limit meetings.',
     'LBL_RECURRENCE' => 'Recurrence',
-    
     'LBL_SYNCED_RECURRING_MSG' => 'This call originated in another system and was synced to Sugar. To make changes, go to the original call within the other system. Changes made in the other system can be synced to this record.',
-
     'LBL_RELATED_TO' => 'Related to:',
 );
 
