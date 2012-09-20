@@ -29,8 +29,9 @@
                     // self.showDuplicateAlertMessage();
                     //  self.context.trigger('quickcreate:actions:duplicate', true);
                     dupFound();
+                } else {
+                    noDupFound();
                 }
-                noDupFound();
             },
             error: noDupFound
         };
