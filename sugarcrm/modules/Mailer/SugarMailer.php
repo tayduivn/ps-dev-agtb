@@ -169,7 +169,8 @@ eoq;
                     $mimeType = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 }
 
-                $this->addEmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
+                $embeddedImage = new EmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
+                $this->addEmbeddedImage($embeddedImage);
                 $i++;
             }
         }

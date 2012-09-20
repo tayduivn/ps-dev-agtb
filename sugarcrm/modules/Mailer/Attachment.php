@@ -31,10 +31,10 @@ require_once "Encoding.php";        // needs the valid encodings defined in Enco
 class Attachment
 {
     // protected members
-    protected $path;        // Path to the file being attached.
-    protected $name;        // Name of the file to be used to identify the attachment.
-    protected $encoding;    // The encoding used on the file. Should be one of the valid encodings from Encoding.
-    protected $mimeType;    // Should be a valid MIME type.
+    protected $path;     // Path to the file being attached.
+    protected $name;     // Name of the file to be used to identify the attachment.
+    protected $encoding; // The encoding used on the file. Should be one of the valid encodings from Encoding.
+    protected $mimeType; // Should be a valid MIME type.
 
     /**
      * @access public
@@ -43,7 +43,7 @@ class Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($path=null, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
+    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
         $this->setPath($path);
         $this->setName($name);
         $this->setMimeType($mimeType);
@@ -59,26 +59,23 @@ class Attachment
         $bean_classname = get_class($bean);
 
         $mimeType = "application/octet-stream";
-        $encoding = Encoding::Base64;
 
         switch ($bean_classname) {
             case "Note":
-            {
                 $filePath   = "upload/{$bean->id}";
                 $fileName   = empty($bean->filename) ? $bean->name : $bean->filename;
                 $mimeType   = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
                 break;
-            }
             case "DocumentRevision":
-            {
                 $filePath   = "upload/{$bean->id}";
                 $fileName   = empty($bean->filename) ? $bean->name : $bean->filename;
                 $mimeType   = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
                 break;
-            }
-            default: {
-                throw new MailerException("SugarBean Type: '$bean_classname' not supported as an Email Attachment", MailerException::InvalidAttachment);
-            }
+            default:
+                throw new MailerException(
+                    "SugarBean Type: '{$bean_classname}' not supported as an Email Attachment",
+                    MailerException::InvalidAttachment
+                );
         }
 
         // Path must Exist and Must be a Regular File
@@ -86,11 +83,7 @@ class Attachment
             throw new MailerException("Attachment File Not Found: ".$filePath, MailerException::InvalidAttachment);
         }
 
-        $attachment = new Attachment();
-        $attachment->setPath($filePath);
-        $attachment->setName($fileName);
-        $attachment->setMimeType($mimeType);
-        $attachment->setEncoding($encoding);
+        $attachment = new Attachment($filePath, $fileName, Encoding::Base64, $mimeType);
 
         return $attachment;
     }

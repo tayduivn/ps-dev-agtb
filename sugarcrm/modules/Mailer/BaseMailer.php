@@ -25,7 +25,6 @@ require_once "IMailer.php";              // requires IMailer in order to impleme
 require_once "MailerException.php";      // requires MailerException in order to throw exceptions of that type
 require_once "RecipientsCollection.php"; // stores recipients in a RecipientsCollection
 require_once "EmailHeaders.php";         // email headers are contained in an EmailHeaders object
-require_once "EmbeddedImage.php";        // requires Attachment and EmbeddedImage, which imports Attachment
 
 /**
  * This class implements the basic functionality that is expected from a Mailer.
@@ -223,7 +222,7 @@ abstract class BaseMailer implements IMailer
      * Adds an attachment from a path on the filesystem.
      *
      * @access public
-     * @param Attachment   $attachment
+     * @param Attachment $attachment
      */
     public function addAttachment(Attachment $attachment) {
         $this->attachments[] = $attachment;
@@ -237,7 +236,7 @@ abstract class BaseMailer implements IMailer
      * @param EmbeddedImage $embeddedImage
      */
     public function addEmbeddedImage(EmbeddedImage $embeddedImage) {
-        $this->attachments[] = $embeddedImage;
+        $this->addAttachment($embeddedImage);
     }
 
     /**
