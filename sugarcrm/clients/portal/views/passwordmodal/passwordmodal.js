@@ -64,11 +64,15 @@
         field.find('.add-on').remove();
         field.find('.controls').find('input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
     },
+    setLoading: function() {
+        self.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
+        self.$('[name=save_button]').button('loading');
+    },
     verify: function(contactModel) {
         var self = this, currentPassword, password, confirmPassword, confirmPasswordField, isError=false,
             passwordField, maxLen, currentPasswordField;
-
-        self.$('[name=save_button]').button().text(app.lang.get('LBL_LOADING'));
+        self.setLoading();
+        
         currentPasswordField = this.$('[name=current_password]');
         currentPassword = currentPasswordField.val();
         // TODO: Here we will call a password verification endpoint which does not yet exist
@@ -91,7 +95,7 @@
             isError=true;
         }
         if(password !== confirmPassword) {
-            self.$('[name=save_button]').button().text(app.lang.get('LBL_SAVE_BUTTON_LABEL'));
+            self.setLoading();
             self.handleCustomValidationError(confirmPasswordField.parents('.control-group'),app.lang.get('LBL_PORTAL_PASSWORDS_MUST_MATCH'));
             isError=true;
         }
@@ -107,7 +111,7 @@
         if(self.verify(contactModel)) {
             self.saveModel(contactModel);
         } else {
-            self.$('[name=save_button]').button().text(app.lang.get('LBL_SAVE_BUTTON_LABEL'));
+            self.resetButton();
         }
     },
     saveModel: function(contactModel) {
@@ -137,7 +141,7 @@
                         messages: app.lang.get('LBL_PORTAL_PASSWORD_UPDATE_FAILED'),
                         autoClose: true});
                     self.$('.modal').modal().find('input:text, input:password').val('');
-                    self.$('[name=save_button]').button().text(app.lang.get('LBL_SAVE_BUTTON_LABEL'));
+                    self.resetButton();
                 }
             },
             error: function(error) {
