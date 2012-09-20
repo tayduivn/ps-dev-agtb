@@ -95,4 +95,8 @@ $dictionary['GhettoSearch'] = array(
 if (!class_exists('VardefManager')) {
     require_once('include/SugarObjects/VardefManager.php');
 }
-VardefManager::createVardef('GhettoSearch', 'GhettoSearch', array('basic', 'team_security'));
+VardefManager::createVardef('GhettoSearch', 'GhettoSearch', array('basic', 
+//BEGIN SUGARCRM flav=pro ONLY
+  'team_security'
+//END SUGARCRM flav=pro ONLY
+  ));
