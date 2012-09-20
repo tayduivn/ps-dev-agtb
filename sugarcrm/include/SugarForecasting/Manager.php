@@ -170,15 +170,12 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))";
 
         $result = $db->query($quota_query);
-        $data = array();
 
         while(($row=$db->fetchByAssoc($result))!=null)
         {
-            $data[$row['user_name']]['quota_id'] = $row['quota_id'];
-            $data[$row['user_name']]['quota'] = $row['quota'];
+            $this->dataArray[$row['user_name']]['quota_id'] = $row['quota_id'];
+            $this->dataArray[$row['user_name']]['quota'] = $row['quota'];
         }
-
-        $this->dataArray = array_replace_recursive($this->dataArray, $data);
     }
 
     /**
@@ -226,27 +223,26 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 			$reportees_query .= "and w.version = 1";
 		}
 
-        $result = $GLOBALS['db']->query($reportees_query);
-        $data = array();
+        $db = DBManagerFactory::getInstance();
 
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+        $result = $db->query($reportees_query);
+        
+        while(($row=$db->fetchByAssoc($result))!=null)
         {
-            $data[$row['user_name']]['worksheet_id'] = $row['worksheet_id'];
-            $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
-            $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
-            $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
-            $data[$row['user_name']]['currency_id'] = $row['currency_id'];
-            $data[$row['user_name']]['base_rate'] = $row['base_rate'];
-            $data[$row['user_name']]['commit_stage'] = $row['commit_stage'];
-            $data[$row['user_name']]['version'] = $row['version'];
+            $this->dataArray[$row['user_name']]['worksheet_id'] = $row['worksheet_id'];
+            $this->dataArray[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
+            $this->dataArray[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
+            $this->dataArray[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
+            $this->dataArray[$row['user_name']]['currency_id'] = $row['currency_id'];
+            $this->dataArray[$row['user_name']]['base_rate'] = $row['base_rate'];
+            $this->dataArray[$row['user_name']]['commit_stage'] = $row['commit_stage'];
+            $this->dataArray[$row['user_name']]['version'] = $row['version'];
             if($row['version'] == 0)
             {
-            	$data[$row['user_name']]['quota'] = $row['quota'];
+            	$this->dataArray[$row['user_name']]['quota'] = $row['quota'];
             }
 
         }
-
-        $this->dataArray = array_replace_recursive($this->dataArray, $data);
     }
 
     /**
@@ -300,8 +296,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         $user = BeanFactory::getBean('Users', $args['user_id']);
         $ids[$args['user_id']] = $user->user_name;
 
-        $data = array();
-
         foreach($ids as $id=>$user_name)
         {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
@@ -315,23 +309,21 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $result = $db->limitQuery($forecast_query, 0, 1);
 
             while($row=$db->fetchByAssoc($result)) {
-                $data[$user_name]['best_case'] = $row['best_case'];
+                $this->dataArray[$user_name]['best_case'] = $row['best_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
-                $data[$user_name]['best_adjusted'] = $row['best_case'];
-                $data[$user_name]['likely_case'] = $row['likely_case'];
+                $this->dataArray[$user_name]['best_adjusted'] = $row['best_case'];
+                $this->dataArray[$user_name]['likely_case'] = $row['likely_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
-                $data[$user_name]['likely_adjusted'] = $row['likely_case'];
-                $data[$user_name]['worst_case'] = $row['worst_case'];
+                $this->dataArray[$user_name]['likely_adjusted'] = $row['likely_case'];
+                $this->dataArray[$user_name]['worst_case'] = $row['worst_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
-                $data[$user_name]['worst_adjusted'] = $row['worst_case'];
-                $data[$user_name]['forecast_id'] = $row['id'];
-                $data[$user_name]['date_modified'] = $row['date_modified'];
-                $data[$user_name]['currency_id'] = $row['currency_id'];
-                $data[$user_name]['base_rate'] = $row['base_rate'];
+                $this->dataArray[$user_name]['worst_adjusted'] = $row['worst_case'];
+                $this->dataArray[$user_name]['forecast_id'] = $row['id'];
+                $this->dataArray[$user_name]['date_modified'] = $row['date_modified'];
+                $this->dataArray[$user_name]['currency_id'] = $row['currency_id'];
+                $this->dataArray[$user_name]['base_rate'] = $row['base_rate'];
             }
         }
-
-        $this->dataArray = array_replace_recursive($this->dataArray, $data);
     }
 
     /**
