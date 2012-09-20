@@ -106,6 +106,18 @@
                 }
 
             });
+
+            // Fetch the config model
+            if(self.context.forecasts.config) {
+                try {
+                    self.context.forecasts.config.fetch();
+                } catch (e) {
+                    app.alert.show("forecastsConfigError", {
+                        messages : e.message,
+                        level:"error"
+                    })
+                }
+            }
         },
 
         /**
@@ -117,10 +129,23 @@
             var self = this,
                 componentsMetadata = this.componentsMeta,
                 module = app.viewModule.toLowerCase(),
-                models = {};
+                models = {},
+                configModel;
 
             // creates the context.forecasts topmost model
             models[module] = app.data.createBean(module);
+
+            // creates the config model as a special case
+            self.namespace(models, module);
+            configModel = Backbone.Model.extend({
+                url: app.api.buildURL("Forecasts", "config", "", {module : module}),
+                sync: function(method, model, options) {
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, model, options);
+                }
+            }),
+
+            models[module]["config"] = new configModel();
 
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
@@ -225,6 +250,42 @@
                 $('#drawer').toggleClass('span2');
                 $('#charts').toggleClass('span10').toggleClass('span12');
             });
+        },
+
+
+        /**
+         * Dropping in to _render to insert some code to display the config wizard for a user's first run on forecasts.  The render process itself is unchanged.
+         *
+         * @return {*}
+         * @private
+         */
+        _render: function () {
+            var mdata;
+
+            app.view.Layout.prototype._render.call(this);
+
+            mdata = app.metadata.getModule("Forecasts");
+            if (!mdata.config.is_setup) {
+//              TODO:  if (! user_is_admin) { show different stuff } else {
+                this._showConfigModal(true);
+            }
+
+            return this;
+        },
+
+
+        /**
+         * This is used by the forecasts layout to show the modal with the config views.
+         * @param showWizard Boolean true shows forecasts config wizard, false shows forecasts config view with tabs.
+         * @private
+         */
+        _showConfigModal: function(showWizard) {
+            var params = {
+               components:[{layout:"forecastsConfig"}],
+               title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
+           };
+
+           this.trigger("modal:forecastsConfig:open", params);
         },
 
         /**
