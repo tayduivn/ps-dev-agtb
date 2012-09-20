@@ -81,6 +81,7 @@ $moduleList[] = 'Cases';
 $moduleList[] = 'Reports';
 //END SUGARCRM flav=dce ONLY
 
+
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
 $beanList = array();
@@ -591,6 +592,12 @@ $beanFiles['PdfManager']     = 'modules/PdfManager/PdfManager.php';
 $modInvisList[] = 'PdfManager';
 $adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
+
+
+$moduleList[] = 'GhettoSearch';
+$beanList['GhettoSearch']     = 'GhettoSearch';
+$beanFiles['GhettoSearch']     = 'modules/GhettoSearch/GhettoSearch.php';
+$modInvisList[] = 'GhettoSearch';
 
 if (file_exists('include/modules_override.php'))
 {
