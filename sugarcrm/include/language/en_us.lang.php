@@ -330,7 +330,8 @@ $app_list_strings = array (
   'sales_stage_default_key' => 'Prospecting',
   'fts_type' => array (
       '' => '',
-      'Elastic' => 'elasticsearch'
+      'Elastic' => 'elasticsearch',
+      'Ghetto'  => 'ghettosearch'
   ),
   'sales_stage_dom' =>
   array (
