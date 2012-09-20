@@ -107,7 +107,6 @@ class BeanFactory {
 
     public static function getBeanName($module)
     {
-        require('include/modules.php');
         global $beanList;
         if (empty($beanList[$module]))  {
             return false;
