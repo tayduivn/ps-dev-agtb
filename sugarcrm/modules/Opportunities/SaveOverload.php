@@ -29,10 +29,6 @@ function perform_save(&$focus){
     if (empty($focus->commit_stage) && $focus->probability !== '')
     {
         $admin = BeanFactory::getBean('Administration');
-        if(empty($admin) || !is_object($admin))
-        {
-           display_stack_trace();
-        }
         $admin->retrieveSettings();
 
         //Retrieve Forecasts_category_ranges and json decode as an associative array
