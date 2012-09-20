@@ -19,7 +19,7 @@
         var options = {
             limit: this.limit || null,
             params: {
-                q: 'first_name=charley'
+                q: 'w'
             },
             fields: this.collection.fields || {},
             success: function(collection) {
@@ -29,8 +29,9 @@
                     // self.showDuplicateAlertMessage();
                     //  self.context.trigger('quickcreate:actions:duplicate', true);
                     dupFound();
+                } else {
+                    noDupFound();
                 }
-                noDupFound();
             },
             error: noDupFound
         };

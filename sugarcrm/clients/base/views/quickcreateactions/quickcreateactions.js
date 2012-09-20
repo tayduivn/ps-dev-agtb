@@ -56,6 +56,7 @@
             _.bind(this.createRecordWaterfall, this)
         ], function(error) {
             if (error) {
+                console.log("Saving failed.");
                 //TODO: handle error
             } else {
                 callback();
