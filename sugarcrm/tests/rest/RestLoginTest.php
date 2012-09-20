@@ -185,7 +185,7 @@ class RestLoginTest extends RestTestBase
         $replyPing = $this->_restCall('ping');
         $this->assertEquals('pong',$replyPing['reply']);
     }
-
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */
@@ -261,7 +261,7 @@ class RestLoginTest extends RestTestBase
         $this->assertEquals('pong',$replyPing['reply']);
                                                           
     }
-
+    //END SUGARCRM flav=pro ONLY
     /**
      * @group rest
      */

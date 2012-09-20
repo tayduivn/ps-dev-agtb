@@ -60,9 +60,14 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
      * @group rest
      */    
     public function testMetadataViewTemplatesHbt() {
-        $filesToCheck = array('clients/portal/views/edit/edit.hbt',
+        $filesToCheck = array(
+                              //BEGIN SUGARCRM flav=ent ONLY
+                              'clients/portal/views/edit/edit.hbt',
+                              //END SUGARCRM flav=ent ONLY
                               'clients/base/views/edit/edit.hbt',
+                              //BEGIN SUGARCRM flav=ent ONLY
                               'custom/clients/portal/views/edit/edit.hbt',
+                              //END SUGARCRM flav=ent ONLY
                               'custom/clients/base/views/edit/edit.hbt',
         );
         
@@ -74,9 +79,14 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
             }
         }
 
-        $dirsToMake = array('clients/portal/views/edit',
+        $dirsToMake = array(
+                            //BEGIN SUGARCRM flav=ent ONLY
+                            'clients/portal/views/edit',
+                            //END SUGARCRM flav=ent ONLY
                             'clients/base/views/edit',
+                            //BEGIN SUGARCRM flav=ent ONLY
                             'custom/clients/portal/views/edit',
+                            //END SUGARCRM flav=ent ONLY
                             'custom/clients/base/views/edit',
         );
 
@@ -86,6 +96,7 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
             }
         }
         
+        //BEGIN SUGARCRM flav=ent ONLY
         // Make sure we get it when we ask for portal
         file_put_contents($filesToCheck[0],'PORTAL CODE');
         $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
@@ -96,13 +107,13 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
         file_put_contents($filesToCheck[1],'BASE CODE');
         $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't get portal code when base code was there.");
-
+        //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
         $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't get base code when it was the direct option");
 
-
+        //BEGIN SUGARCRM flav=ent ONLY
         // Delete the portal template and make sure it falls back to base
         unlink($filesToCheck[0]);
         $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
@@ -113,7 +124,8 @@ class RestMetadataViewTemplatesTest extends RestTestBase {
         file_put_contents($filesToCheck[2],'CUSTOM PORTAL CODE');
         $restReply = $this->_restCall('metadata/?type_filter=view_templates&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't use the custom portal code.");
-
+        //END SUGARCRM flav=ent ONLY
+        
         // Make sure custom base code works
         file_put_contents($filesToCheck[3],'CUSTOM BASE CODE');
         $restReply = $this->_restCall('metadata/?type_filter=view_templates');
