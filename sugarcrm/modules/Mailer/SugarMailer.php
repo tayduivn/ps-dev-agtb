@@ -70,6 +70,7 @@ class SugarMailer extends SimpleMailer
      */
     protected function prepareMessageContent() {
         global $locale;
+        global $sugar_config;
 
         $OBCharset = $locale->getPrecedentPreference('default_email_charset');
 
@@ -102,15 +103,15 @@ eoq;
 
         $from = $headers->getFrom();
         $from->setName($locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
-        $headers->setFrom($from);
+        $headers->setHeader(EmailHeaders::From,$from);
 
         //replace references to cache/images with cid tag
         $this->htmlBody = str_replace(sugar_cached('images/'), 'cid:', $this->htmlBody);
 
-        $this->replaceImageByRegex("(?:{$this->sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
+        $this->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
 
         //Replace any embeded images using the secure entryPoint for src url.
-        $this->replaceImageByRegex("(?:{$this->sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
+        $this->replaceImageByRegex("(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
     }
 
     /**
