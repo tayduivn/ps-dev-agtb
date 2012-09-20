@@ -179,9 +179,11 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         {
             return false;
         }
-        if(empty($bean->id))
+        if(empty($bean->id)) {
             return false;
+        }
 
+        //TODO: add deleteAllRecords
         // create a ghetto bean function that deletes all records for a specific module id
         $ghettoBean = BeanFactory::newBean('GhettoSearch');
         $ghettoBean->deleteAllRecords($bean);
@@ -482,6 +484,8 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
 
         $ghettoBean = BeanFactory::newBean();
 
+
+        //TODO: add performSearch
         $results = $ghettoBean->performSearch($queryString, $offset, $limit, $options);
 
         $return = array();
