@@ -151,7 +151,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
     {
         $amounts = $this->getUserAmounts();
 
-        $this->dataArray = array_replace_recursive($this->dataArray, $amounts);
+        foreach($amounts as $user => $amount) {
+            $this->dataArray[$user]['amount'] = $amount['amount'];
+        }
     }
 
     /**
