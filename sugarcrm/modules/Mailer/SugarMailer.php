@@ -21,8 +21,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('SimpleMailer.php');
-require_once('include/OutboundEmail/OutboundEmail.php');
+require_once "SimpleMailer.php";
 
 class SugarMailer extends SimpleMailer
 {
@@ -49,9 +48,9 @@ class SugarMailer extends SimpleMailer
         $admin = new Administration();
         $admin->retrieveSettings();
 
-        if (isset($admin->settings['disclosure_enable']) && !empty($admin->settings['disclosure_enable'])) {
+        if (isset($admin->settings["disclosure_enable"]) && !empty($admin->settings["disclosure_enable"])) {
             $this->includeDisclosure = true;
-            $this->disclosureContent = $admin->settings['disclosure_text'];
+            $this->disclosureContent = $admin->settings["disclosure_text"];
         }
     }
 
@@ -70,7 +69,6 @@ class SugarMailer extends SimpleMailer
      */
     public function send() {
         $this->prepareMessageContent();
-        $this->handleAttachments();
 
         parent::send();
     }
@@ -80,136 +78,126 @@ class SugarMailer extends SimpleMailer
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
      */
     protected function prepareMessageContent() {
-        global $locale;
+        global $locale, $sugar_config;
+        $charset = $locale->getPrecedentPreference("default_email_charset");
+        $siteUrl = $sugar_config["site_url"];
 
-        $OBCharset = $locale->getPrecedentPreference('default_email_charset');
+        $from = $this->headers->getFrom();
+        $from->setName($locale->translateCharset($from->getName(), "UTF-8", $charset));
+        $this->headers->setFrom($from);
 
-        if ($this->includeDisclosure) {
-            $this->htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}";
-            $this->textBody .= "\r\r{$this->disclosureContent}";
-        }
+        $subject = $this->headers->getSubject();
+        $subject = from_html($locale->translateCharset($subject, "UTF-8", $charset));
+        $this->setSubject($subject);
 
-        $headers        = $this->headers;
-        $this->htmlBody = from_html($locale->translateCharset(trim($this->htmlBody), 'UTF-8', $OBCharset));
-        $this->textBody = from_html($locale->translateCharset(trim($this->textBody), 'UTF-8', $OBCharset));
-        $subjectUTF8    = from_html(trim($headers->getSubject()));
-        $subject        = $locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
-        $headers->setSubject($subject);
+        $this->setTextBody(from_html($locale->translateCharset($this->textBody, "UTF-8", $charset)));
+
+        $htmlBody = from_html($locale->translateCharset($this->htmlBody, "UTF-8", $charset));
 
         // HTML email RFC compliance
-        if (strpos($this->htmlBody, '<html') === false) {
-            $langHeader     = get_language_header();
-            $head           = <<<eoq
+        if (strpos($htmlBody, "<html") === false) {
+            $langHeader = get_language_header();
+            $head       = <<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset={$OBCharset}" />
+<meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
 <title>{$subject}</title>
 </head>
 <body>
 eoq;
-            $this->htmlBody = $head . $this->htmlBody . "</body></html>";
+            $htmlBody = "{$head}{$htmlBody}</body></html>";
         }
 
-        $from = $headers->getFrom();
-        $from->setName($locale->translateCharset(trim($from->getName()), 'UTF-8', $OBCharset));
-        $headers->setFrom($from);
+        if ($this->includeDisclosure) {
+            $htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}"; //@todo why do we include &nbsp;?
+            $htmlBody .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
+        }
+
+        // replace references to cache/images with cid tag
+        $htmlBody = str_replace(sugar_cached("images/"), "cid:", $htmlBody);
+
+        // replace any embeded images using cache/images for src url
+        $htmlBody = $this->convertInlineImageToEmbeddedImage(
+            $htmlBody,
+            "(?:{$siteUrl})?/?cache/images/",
+            sugar_cached("images/")
+        );
+
+        // replace any embeded images using the secure entryPoint for src url
+        $htmlBody = $this->convertInlineImageToEmbeddedImage(
+            $htmlBody,
+            "(?:{$siteUrl})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=",
+            "upload://",
+            true
+        );
+
+        $this->setHtmlBody($htmlBody);
     }
 
     /**
+     * Replace images with locations specified by regex with cid: images and attach needed files.
      *
-     */
-    protected function handleAttachments() {
-        global $sugar_config;
-        $siteUrl = $sugar_config["site_url"];
-
-        //replace references to cache/images with cid tag
-        $this->htmlBody = str_replace(sugar_cached('images/'), 'cid:', $this->htmlBody);
-
-        if (empty($this->notes)) {
-            return;
-        }
-
-        $this->replaceImageByRegex("(?:{$siteUrl})?/?cache/images/", sugar_cached("images/"));
-
-        //Replace any embeded images using the secure entryPoint for src url.
-        $this->replaceImageByRegex("(?:{$siteUrl})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
-
-        //Handle regular attachments.
-        foreach ($this->notes as $note) {
-            $mime_type     = 'text/plain';
-            $file_location = '';
-            $filename      = '';
-
-            if ($note->object_name == 'Note') {
-                if (!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) {
-                    $file_location = $note->file->temp_file_location;
-                    $filename      = $note->file->original_file_name;
-                    $mime_type     = $note->file->mime_type;
-                } else {
-                    $file_location = "upload://{$note->id}";
-                    $filename      = $note->id . $note->filename;
-                    $mime_type     = $note->file_mime_type;
-                }
-            } elseif ($note->object_name == 'DocumentRevision') { // from Documents
-                $filename      = $note->id . $note->filename;
-                $file_location = "upload://$filename";
-                $mime_type     = $note->file_mime_type;
-            }
-
-            $filename = substr($filename, 36, strlen($filename)); // strip GUID	for PHPMailer class to name outbound file
-            if (!$note->embed_flag) {
-                $this->addAttachment($file_location, $filename, Encoding::Base64, $mime_type);
-            }
-        }
-    }
-
-    /**
-     * Replace images with locations specified by regex with cid: images
-     * and attach needed files
-     *
+     * @param string $body
      * @param string $regex        Regular expression
-     * @param string $local_prefix Prefix where local files are stored
+     * @param string $localPrefix Prefix where local files are stored
      * @param bool   $object       Use attachment object
+     * @return string
      */
-    protected function replaceImageByRegex($regex, $local_prefix, $object = false) {
-        preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $this->htmlBody, $matches);
-        $i = 0;
-        foreach ($matches[2] as $match) {
-            $filename      = urldecode($match);
-            $cid           = $filename;
-            $file_location = $local_prefix . $filename;
-            if (!file_exists($file_location))
-                continue;
-            if ($object) {
-                if (preg_match('#&(?:amp;)?type=([\w]+)#i', $matches[0][$i], $typematch)) {
-                    switch (strtolower($typematch[1])) {
-                        case 'documents':
-                            $beanname = 'DocumentRevisions';
-                            break;
-                        case 'notes':
-                            $beanname = 'Notes';
-                            break;
+    protected function convertInlineImageToEmbeddedImage($body, $regex, $localPrefix, $object = false) {
+        $i       = 0;
+        $foundImages = array();
+        preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $body, $foundImages);
+
+        foreach ($foundImages[2] as $image) {
+            $filename     = urldecode($image);
+            $cid          = $filename;
+            $fileLocation = $localPrefix . $filename;
+
+            if (file_exists($fileLocation)) {
+                $mimeType = null;
+
+                if ($object) {
+                    $mimeType  = "application/octet-stream";
+                    $objectType = array();
+
+                    if (preg_match("#&(?:amp;)?type=([\w]+)#i", $foundImages[0][$i], $objectType)) {
+                        $beanName = null;
+
+                        switch (strtolower($objectType[1])) {
+                            case "documents":
+                                $beanName = "DocumentRevisions";
+                                break;
+                            case "notes":
+                                $beanName = "Notes";
+                                break;
+                        }
                     }
-                }
-                $mime_type = "application/octet-stream";
-                if (isset($beanname)) {
-                    $bean = SugarModule::get($beanname)->loadBean();
-                    $bean->retrieve($filename);
-                    if (!empty($bean->id)) {
-                        $mime_type = $bean->file_mime_type;
-                        $filename  = $bean->filename;
+
+                    if (!is_null($beanName)) {
+                        $bean = SugarModule::get($beanName)->loadBean();
+                        $bean->retrieve($filename);
+
+                        if (!empty($bean->id)) {
+                            $mimeType  = $bean->file_mime_type;
+                            $filename  = $bean->filename;
+                        }
                     }
+                } else {
+                    $mimeType = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 }
-            } else {
-                $mime_type = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+                $this->addEmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
+                $i++;
             }
-            $this->AddEmbeddedImage($file_location, $cid, $filename, Encoding::Base64, $mime_type);
-            $i++;
         }
-        //replace references to cache with cid tag
-        $this->htmlBody = preg_replace("|\"$regex|i", '"cid:', $this->htmlBody);
+
+        // replace references to cache with cid tag
+        $body = preg_replace("|\"{$regex}|i", '"cid:', $body);
+
         // remove bad img line from outbound email
-        $this->htmlBody = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', '', $this->htmlBody);
+        $body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', "", $body);
+
+        return $body;
     }
 }

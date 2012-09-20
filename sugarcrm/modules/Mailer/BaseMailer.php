@@ -206,7 +206,7 @@ abstract class BaseMailer implements IMailer
      * @param string $body required
      */
     public function setTextBody($body) {
-        $this->textBody = $body;
+        $this->textBody = trim($body);
     }
 
     /**
@@ -216,7 +216,7 @@ abstract class BaseMailer implements IMailer
      * @param string $body required
      */
     public function setHtmlBody($body) {
-        $this->htmlBody = $body;
+        $this->htmlBody = trim($body);
     }
 
     /**
