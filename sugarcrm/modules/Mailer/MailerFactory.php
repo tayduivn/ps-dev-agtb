@@ -62,8 +62,11 @@ class MailerFactory
     public static function getMailer(MailConfiguration $config) {
         // copy the config value becuase you don't want to modify the object by reassigning a public variable
         // in the case of mode being null
-        //@todo better validation on the mode
         $mode = is_null($config->mode) ? "default" : strtolower($config->mode); // make sure it's lower case
+
+        if (!MailConfigurationPeer::isValidMode($mode)) {
+            throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);
+        }
 
         // these method calls can bubble up a MailerException
         $headers = self::buildHeadersForMailer($config->sender_email, $config->sender_name);

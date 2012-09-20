@@ -35,6 +35,26 @@ class MailConfigurationPeer {
     const MODE_WEB  = "web";
 
     /**
+     * Returns true/false indicating whether or not $mode is a valid sending strategy.
+     *
+     * @static
+     * @access public
+     * @param string $mode required
+     * @return bool
+     */
+    public static function isValidMode($mode) {
+        switch ($mode) {
+            case self::MODE_SMTP:
+            case self::MODE_WEB:
+                return true;
+                break;
+            default:
+                return false;
+                break;
+        }
+    }
+
+    /**
      * @return array MailConfigurations
      */
     public static function getMailConfigurations(User $user, $systemOnly=false) {
