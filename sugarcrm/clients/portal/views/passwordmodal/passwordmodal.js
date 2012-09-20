@@ -57,12 +57,11 @@
     // Since we don't have a true Bean/meta driven validation for matching two temp fields 
     // (password and confirmation password), etc., we manually add validation errors here
     handleCustomValidationError: function(field, errorMsg) {
-        field.find('.control-group').addClass("error");
+        field.addClass('error');// Note the field is row fluid control group
         field.find('.help-block').html("");
-        field.find('.controls').addClass('input-append');
         field.find('.help-block').append(errorMsg);
         field.find('.add-on').remove();
-        field.find('.controls').find('input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+        field.find('input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
     },
     setLoading: function() {
         self.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
