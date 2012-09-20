@@ -46,7 +46,7 @@
     $("th:contains('Subject')").css("width","50%");
     $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","1%");
     $("th:contains('Opportunity'),th:contains('Name')").css("width","30%");
-    $("#folded th:contains('Opportunity'),th:contains('Name')").css("width","70%");
+    $(".folded th:contains('Opportunity'),th:contains('Name')").css("width","70%");
 
     // keybinding
     $(document).keyup( function (e){
@@ -232,7 +232,7 @@
     })
 
     // remove a close item
-    $('#folded').find('[data-toggle=tab]').on('click', function (e) {
+    $('.folded').find('[data-toggle=tab]').on('click', function (e) {
 			$('.nav-tabs').find('li').removeClass('on');
     })
 

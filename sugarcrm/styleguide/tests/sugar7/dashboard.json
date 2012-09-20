@@ -10,7 +10,7 @@
   }
 , {
     "label": "right dashboard tab panel",
-    "selector": "#dashboard #folded .tab-pane.active",
+    "selector": "#dashboard .folded .tab-pane.active",
     "tests": 
     [
         [ "border-left-color", "#CDCCCB" ]
