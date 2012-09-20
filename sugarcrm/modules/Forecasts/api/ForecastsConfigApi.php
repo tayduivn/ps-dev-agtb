@@ -86,8 +86,12 @@ class ForecastsConfigApi extends ModuleApi {
     public function configSave($api, $args) {
         $admin = BeanFactory::getBean('Administration');
 
+        // these are not part of the config values, so unset
+        unset($args['module']);
+        unset($args['__sugar_url']);
+
         foreach ($args as $name => $value) {
-            if($name != 'module' && $name != '__sugar_url' && is_array($value)) {
+            if(is_array($value)) {
                 $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
             } else {
                 $admin->saveSetting('Forecasts', $name, $value, 'base');
