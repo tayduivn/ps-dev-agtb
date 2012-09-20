@@ -61,7 +61,6 @@ class ForecastsConfigApi extends ModuleApi {
      * @param $args
      */
     public function config($api, $args) {
-        $GLOBALS['log']->fatal("args: " . var_export($args, true));
         $adminBean = BeanFactory::getBean("Administration");
         if (!empty($args['module'])) {
             $data = $adminBean->getConfigForModule($args['module']);
