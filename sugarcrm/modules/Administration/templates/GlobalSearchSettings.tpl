@@ -418,7 +418,10 @@
 
     $('#fts_type').change(function(e)
     {
-        $('.shouldToggle').toggle();
+        if($('.fts_type').value != 'elasticsearch')
+        {
+            $('.shouldToggle').toggle();
+        }
 
         if($(this).val() == '')
         {
