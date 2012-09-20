@@ -205,7 +205,6 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/images/sugar_md_sales.png'=>1,
 'sugarcrm/include/images/sugar_md_corp.png'=>1,
 'sugarcrm/include/images/sugar_md_ult.png'=>1,
-'sugarcrm/include/SugarSearchEngine' => 1,
 
 'sugarcrm/themes/default/images/AccountReports.gif'=>1,
 'sugarcrm/themes/default/images/CallReports.gif'=>1,
