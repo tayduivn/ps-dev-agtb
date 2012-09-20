@@ -36,6 +36,8 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
 
 	static public function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $admin = new Administration();
         $admin->retrieveSettings();
         self::$admin_settings = $admin->settings;
