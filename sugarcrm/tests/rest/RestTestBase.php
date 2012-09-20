@@ -222,4 +222,13 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         return array('info' => array(), 'reply' => $reply, 'replyRaw' => $response, 'error' => null);
     }
     
+    protected function _clearMetadataCache()
+    {
+        $metadataFiles = glob(sugar_cached('api/metadata/').'*');
+        if ( is_array($metadataFiles) ) {
+            foreach ( $metadataFiles as $metadataFile ) {
+                @unlink($metadataFile);
+            }
+        }
+    }
 }
