@@ -82,7 +82,7 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
                 /* @var $opp Opportunity */
                 $opp = BeanFactory::getBean('Opportunities', $opp_id);
 
-                if($opp->forecast == 1) {
+                if($opp->commit_stage == 'include') {
                     $best += $opp->best_case;
                     $likely += $opp->amount;
                     $worst += $opp->worst_case;

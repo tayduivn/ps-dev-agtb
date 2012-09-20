@@ -79,7 +79,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $managerOpp->amount = 1800;
         $managerOpp->likely_case = 1700;
         $managerOpp->best_case = 1900;
-        $managerOpp->forecast = -1;
         $managerOpp->probability = '85';
         $managerOpp->date_closed = '2012-01-30';
         $managerOpp->team_id = '1';
@@ -92,7 +91,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $repOpp->amount = 1300;
         $repOpp->likely_case = 1200;
         $repOpp->best_case = 1400;
-        $repOpp->forecast = -1;
         $repOpp->probability = '85';
         $repOpp->date_closed = '2012-01-30';
         $repOpp->team_id = '1';
@@ -144,7 +142,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         self::$managerWorksheet->best_case = 1550;
         self::$managerWorksheet->likely_case = 1250;
         self::$managerWorksheet->worst_case = 950;
-        self::$managerWorksheet->forecast = 1;
         self::$managerWorksheet->team_set_id = 1;
         self::$managerWorksheet->save();
 
@@ -156,7 +153,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         self::$repWorksheet->best_case = 1150;
         self::$repWorksheet->likely_case = 950;
         self::$repWorksheet->worst_case = 750;
-        self::$repWorksheet->forecast = 1;
         self::$repWorksheet->team_set_id = 1;
         self::$repWorksheet->save();
 
@@ -329,7 +325,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $repOpp->amount = 1800;
         $repOpp->likely_case = 1700;
         $repOpp->best_case = 1900;
-        $repOpp->forecast = -1;
         $repOpp->probability = '85';
         $repOpp->date_closed = '2012-01-30';
         $repOpp->team_id = '1';

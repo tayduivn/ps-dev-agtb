@@ -69,7 +69,7 @@
 </tr>
 <tr>
 <td>{literal}{$fields.billing_address_city}, {$fields.billing_address_state}, {$fields.billing_address_postalcode}{/literal}</td>
-<td>{literal}{$fields.shipping_address_city}, {$fields.shipping_address_state}, {$fields.shipping_address_postalcode}{/literal}</td>
+<td>{literal}{if $fields.shipping_address_city!=""}{$fields.shipping_address_city},{/if} {if $fields.shipping_address_state!=""}{$fields.shipping_address_state},{/if} {$fields.shipping_address_postalcode}{/literal}</td>
 </tr>
 <tr>
 <td>{literal}{$fields.billing_address_country}{/literal}</td>

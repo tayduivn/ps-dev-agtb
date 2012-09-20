@@ -144,6 +144,24 @@ class SugarFavorites extends Basic
         $this->db->query($query, true, "Error marking favorites deleted: ");
 	}
 
+	/**
+	 * An easy way to toggle a favorite on and off.
+	 * @param string $id 
+	 * @param int $deleted 
+	 * @return bool
+	 */
+	public function toggleExistingFavorite($id, $deleted)
+	{
+		$deleted = (int) $deleted;
+		if($deleted != 0 && $deleted != 1) {
+			return false;
+		}
+
+		$query = "UPDATE {$this->table_name} SET deleted = {$deleted} WHERE id = '{$id}'";
+		$this->db->query($query, true, "Error marking favorites deleted to {$deleted}: ");
+		return true;
+	}
+
     public static function markRecordDeletedInFavorites($record_id, $date_modified, $modified_user_id = "")
     {
         $focus = new SugarFavorites();

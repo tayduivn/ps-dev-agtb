@@ -107,7 +107,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "best_adjusted" => self::$manager['worksheet']->best_case,
             "likely_adjusted" => self::$manager['worksheet']->likely_case,
             "worst_adjusted" => self::$manager['worksheet']->worst_case,
-            "forecast" => intval(self::$manager['worksheet']->forecast),
+            "commit_stage" => self::$manager['worksheet']->commit_stage,
             "forecast_id" => self::$manager['forecast']->id,
             "worksheet_id" => self::$manager['worksheet']->id,
             "show_opps" => true,
@@ -126,7 +126,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "best_adjusted" => self::$manager2['worksheet']->best_case,
             "likely_adjusted" => self::$manager2['worksheet']->likely_case,
             "worst_adjusted" => self::$manager2['worksheet']->worst_case,
-            "forecast" => intval(self::$manager2['worksheet']->forecast),
+            "commit_stage" =>self::$manager2['worksheet']->commit_stage,
             "forecast_id" => self::$manager2['forecast']->id,
             "worksheet_id" => self::$manager2['worksheet']->id,
             "show_opps" => true,
@@ -145,7 +145,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "best_adjusted" => self::$reportee['worksheet']->best_case,
             "likely_adjusted" => self::$reportee['worksheet']->likely_case,
             "worst_adjusted" => self::$reportee['worksheet']->worst_case,
-            "forecast" => intval(self::$reportee['worksheet']->forecast),
+            "commit_stage" => self::$reportee['worksheet']->commit_stage,
             "forecast_id" => self::$reportee['forecast']->id,
             "worksheet_id" => self::$reportee['worksheet']->id,
             "show_opps" => true,
@@ -402,10 +402,9 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $tmpWorksheet->forecast_type = "Rollup";
         $tmpWorksheet->related_forecast_type = "Direct";
         $tmpWorksheet->timeperiod_id = self::$timeperiod->id;
-        $tmpWorksheet->best_case = $tmpForecast->best_case + 100;
-        $tmpWorksheet->likely_case = $tmpForecast->likely_case + 100;
-        $tmpWorksheet->worst_case = $tmpForecast->worst_case - 100;
-        $tmpWorksheet->forecast = 1;
+        $tmpWorksheet->best_case = $tmpForecast->best_case+100;
+        $tmpWorksheet->likely_case = $tmpForecast->likely_case+100;
+        $tmpWorksheet->worst_case = $tmpForecast->worst_case-100;
         $tmpWorksheet->save();
 
         $restReply = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
@@ -414,7 +413,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "amount" => self::$reportee['opportunities_total'] + $rep1['opportunities_total'] + $rep2['opportunities_total'],
             "best_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->best_case),
             "best_case" => SugarTestForecastUtilities::formatTestNumber($tmpForecast->best_case),
-            "forecast" => intval($tmpWorksheet->forecast),
+            "commit_stage" => $tmpWorksheet->commit_stage,
             "forecast_id" => $tmpForecast->id,
             "id" => self::$reportee["user"]->id,
             "likely_adjusted" => SugarTestForecastUtilities::formatTestNumber($tmpWorksheet->likely_case),
@@ -435,7 +434,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
                 $this->assertEquals($expected["amount"], $record["amount"], 'Failed retrieving correct amount value');
                 $this->assertEquals($expected["best_adjusted"], $record["best_adjusted"], 'Failed retrieving correct best_adjusted value');
                 $this->assertEquals($expected["best_case"], $record["best_case"], 'Failed retrieving correct best_case value');
-                $this->assertEquals($expected["forecast"], $record["forecast"], 'Failed retrieving correct forecast value');
+                $this->assertEquals($expected["commit_stage"], $record["commit_stage"], 'Failed retrieving correct forecast value');
                 $this->assertEquals($expected["forecast_id"], $record["forecast_id"], 'Failed retrieving correct forecast_id value');
                 $this->assertEquals($expected["id"], $record["id"], 'Failed retrieving correct id value');
                 $this->assertEquals($expected["likely_adjusted"], $record["likely_adjusted"], 'Failed retrieving correct likely_adjusted value');
@@ -496,7 +495,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "best_adjusted" => self::$managerData["best_adjusted"],
             "likely_adjusted" => self::$managerData["likely_adjusted"],
             "worst_adjusted" => self::$managerData["worst_adjusted"],
-            "forecast" => self::$managerData["forecast"],
+            "commit_stage" => self::$managerData["commit_stage"],
             "forecast_id" => self::$managerData["forecast_id"],
             "id" => self::$managerData["id"],
             "worksheet_id" => self::$managerData["worksheet_id"],
@@ -511,6 +510,9 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         //save draft version
         $response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerData["user_id"], json_encode($postData), "PUT");
 
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
+
         //see if draft version comes back
         $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
 
@@ -519,6 +521,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         //Now, save as a regular version so things will be reset.
         $postData["draft"] = 0;
         $response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerData["user_id"], json_encode($postData), "PUT");
+
+        $db->commit();
 
         //now, see if the regular version comes back.
         $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
@@ -543,7 +547,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
             "best_adjusted" => self::$managerData2["best_adjusted"],
             "likely_adjusted" => self::$managerData2["likely_adjusted"],
             "worst_adjusted" => self::$managerData2["worst_adjusted"],
-            "forecast" => self::$managerData2["forecast"],
+            "commit_stage" => self::$managerData2["commit_stage"],
             "forecast_id" => self::$managerData2["forecast_id"],
             "id" => self::$managerData2["id"],
             "worksheet_id" => self::$managerData2["worksheet_id"],
@@ -561,6 +565,9 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         //save draft version for manager2
         $response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerData2["user_id"], json_encode($postData), "PUT");
+
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
 
         // reset current user to manager1
         $this->_user = self::$manager['user'];

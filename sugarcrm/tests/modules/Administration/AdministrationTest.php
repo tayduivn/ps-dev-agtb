@@ -31,6 +31,11 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
         //END SUGARCRM flav=pro ONLY
     );
 
+    public static function setUpBeforeClass()
+    {
+        sugar_cache_clear('admin_settings_cache');
+    }
+
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
@@ -68,7 +73,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $results = $admin->getConfigForModule('Forecasts', 'base');
 
-        $this->assertEquals(1, count($results));
+        $this->assertTrue(count($results) > 0);
     }
 
     public function testRetrieveSettingsByValidModuleWithPlatformOverRidesBasePlatform()

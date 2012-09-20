@@ -74,7 +74,7 @@ class ForecastsCommittedApi extends ModuleApi
 
         $args['user_id'] = $user_id;
 
-        $args['forecast_type'] = (isset($args['forecast_type'])) ? $args['forecast_type'] : (User::isManager($user_id)) ? 'Rollup' : 'Direct';
+        $args['forecast_type'] = (isset($args['forecast_type'])) ? $args['forecast_type'] : (User::isManager($user_id) ? 'Rollup' : 'Direct');
         $args['timeperiod_id'] = (isset($args['timeperiod_id'])) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['include_deleted'] = (isset($args['show_deleted']) && $args['show_deleted'] === true);
 

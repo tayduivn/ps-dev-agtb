@@ -38,13 +38,6 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
             'fields' =>
             array(
                 array(
-                    'name' => 'include_expected',
-                    'type' => 'bool',
-                    'label' => 'LBL_INCLUDE_EXPECTED',
-                    'default' => true,
-                    'enabled' => true
-                ),
-                array(
                     'name' => 'expected_commit_stage',
                     'type' => 'enum',
                     'view' => 'edit',

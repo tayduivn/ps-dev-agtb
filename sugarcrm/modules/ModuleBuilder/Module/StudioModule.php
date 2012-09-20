@@ -472,14 +472,17 @@ class StudioModule
         //BEGIN SUGARCRM flav=pro || flav=sales ONLY
         $sources = array_merge($sources, $this->getWirelessLayouts());
         //END SUGARCRM flav=pro || flav=sales ONLY
-        
+        //BEGIN SUGARCRM flav=ent ONLY
+        $sources = array_merge($sources, $this->getPortalLayoutSources());
+        //END SUGARCRM flav=ent ONLY
+
         $GLOBALS [ 'log' ]->debug ( print_r( $sources,true) ) ;
         foreach ( $sources as $name => $defs )
         {
             //If this module type doesn't support a given metadata type, we will get an exception from getParser()
             try {
                 $parser = ParserFactory::getParser( $defs [ 'type' ] , $this->module ) ;
-                if ($parser->removeField ( $fieldName ) )
+                if ($parser && method_exists($parser, 'removeField') && $parser->removeField ( $fieldName ) )
                     $parser->handleSave(false) ; // don't populate from $_REQUEST, just save as is...
             } catch(Exception $e){}
         }
@@ -524,7 +527,22 @@ class StudioModule
         }
         return $view;
     }
-	
-	
+    //BEGIN SUGARCRM flav=ent ONLY
+
+    /**
+     * Gets a simple array of source layout types for field deletion
+     * 
+     * @return array
+     */
+    public function getPortalLayoutSources()
+    {
+        return array(
+            array('type' => MB_PORTALDETAILVIEW),
+            array('type' => MB_PORTALEDITVIEW),
+            array('type' => MB_PORTALLISTVIEW),
+            array('type' => MB_PORTALSEARCHVIEW),
+        );
+    }
+    //END SUGARCRM flav=ent ONLY
 }
 ?>
