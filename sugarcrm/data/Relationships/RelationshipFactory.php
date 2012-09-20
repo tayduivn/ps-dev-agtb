@@ -154,7 +154,7 @@ class SugarRelationshipFactory {
         if ($buildingRelCache)
             return;
         $buildingRelCache = true;
-        include_once("modules/TableDictionary.php");
+        include("modules/TableDictionary.php");
 
         if (empty($beanList))
             include("include/modules.php");
@@ -187,8 +187,8 @@ class SugarRelationshipFactory {
         }
         //Save it out
         sugar_mkdir(dirname($this->getCacheFile()), null, true);
-        $out="<?php \n \$relationships=" . var_export($relationships, true) .";";
-        sugar_file_put_contents($this->getCacheFile(), $out);
+        $out = "<?php \n \$relationships = " . var_export($relationships, true) . ";";
+        sugar_file_put_contents_atomic($this->getCacheFile(), $out);
 
         $this->relationships = $relationships;
         $buildingRelCache = false;

@@ -104,7 +104,7 @@ class AssignToUserAction extends AbstractAction{
 	 * @param SugarBean $target
 	 */
 	function fire(&$target) {
-        require_once ('modules/home/quicksearchQuery.php');
+        require_once ('modules/Home/quicksearchQuery.php');
         require_once ('include/QuickSearchDefaults.php');
         $json = getJSONobj();
         $userName = Parser::evaluate($this.expr, $target).evaluate();

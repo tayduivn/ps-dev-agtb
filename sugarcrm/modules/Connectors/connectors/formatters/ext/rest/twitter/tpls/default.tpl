@@ -32,7 +32,6 @@
 * Reserved. Contributor(s): contact@synolia.com - www.synolia.com
 * *******************************************************************************/
 *}
-<div style="visibility:hidden;" id="twitter_popup_div"></div>
 <script src="//widgets.twimg.com/j/2/widget.js" type="text/javascript"></script>
 <script type="text/javascript" src="{sugar_getjspath file='include/connectors/formatters/default/company_detail.js'}"></script>
 <script type="text/javascript">

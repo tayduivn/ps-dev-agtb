@@ -705,7 +705,11 @@ AH.getRelatedField = function(link, ftype, field, view){
         return null;
 
     var linkDef = SUGAR.forms.AssignmentHandler.getLink(link);
-    var currId = linkDef.id_name ? SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true) : false;
+    var currId;
+    if (linkDef.id_name)
+     {
+         currId = SUGAR.forms.AssignmentHandler.getValue(linkDef.id_name, false, true);
+     }
 
     if (typeof(linkDef[ftype]) == "undefined"
         || (field && typeof(linkDef[ftype][field]) == "undefined")
