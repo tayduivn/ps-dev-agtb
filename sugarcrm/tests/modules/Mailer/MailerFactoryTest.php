@@ -48,7 +48,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $mailConfig->sender_email = 1234; // an invalid From email address
 
         self::setExpectedException("MailerException");
-        MailerFactory::getMailer($mailConfig);
+        $actual = MailerFactory::getMailer($mailConfig); // hopefully nothing is actually returned
     }
 
     /**
@@ -61,7 +61,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
-        self::assertInstanceOf($expected, $actual, "The Mailer should have been a {$expected}");
+        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
     /**
@@ -75,6 +75,19 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = "SimpleMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
-        self::assertInstanceOf($expected, $actual, "The Mailer should have been a {$expected}");
+        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
+    }
+
+    /**
+     * @group mailer
+     */
+    public function testGetMailer_ModeIsInvalid_ThrowsException() {
+        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
+        $mailConfig->mode             = "asdf"; // some asinine value that wouldn't actually be used
+        $mailConfig->sender_email     = "foo@bar.com";
+        $mailConfig->mailerConfigData = $this->mockMailerConfig;
+
+        self::setExpectedException("MailerException");
+        $actual = MailerFactory::getMailer($mailConfig); // hopefully nothing is actually returned
     }
 }

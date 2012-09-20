@@ -21,11 +21,14 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once "MailerException.php";                      // requires MailerException in order to throw exceptions of
+                                                         // that type
 require_once "modules/Emails/MailConfigurationPeer.php"; // needs the constants that represent the modes
-                                                         // also imports MailConfiguration.php
-require_once "EmailIdentity.php";                        // requires EmailIdentity to represent each recipient
+require_once "modules/Emails/MailConfiguration.php";     // uses the properties to produce the expected mailer
+require_once "MailerCongfiguration.php";                 // required if producing a base Mailer
+require_once "SmtpMailerConfiguration.php";              // required if producing an SMTP Mailer
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
-require_once "MailerConfiguration.php";
+require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
 
 /**
  * Factory to create Mailers.
@@ -45,6 +48,10 @@ class MailerFactory
         MailConfigurationPeer::MODE_SMTP => array(
             "path"  => ".",
             "class" => "SugarMailer",
+        ),
+        MailConfigurationPeer::MODE_WEB  => array(
+            "path"  => ".",
+            "class" => "WebMailer",
         ),
     );
 
@@ -93,7 +100,10 @@ class MailerFactory
         @include_once $file; // suppress errors
 
         if (!class_exists($class)) {
-            throw new MailerException("Invalid Mailer: Could not find class '{$class}'", MailerException::InvalidMailer);
+            throw new MailerException(
+                "Invalid Mailer: Could not find class '{$class}'",
+                MailerException::InvalidMailer
+            );
         }
 
         return new $class($config);

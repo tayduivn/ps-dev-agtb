@@ -21,9 +21,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "Encoding.php";      // needs to know the valid encodings that are available for email
-require_once "EmailIdentity.php"; // requires EmailIdentity for representing email senders and recipients
-require_once "MailerConfiguration.php";
+require_once "Encoding.php";            // needs to know the valid encodings that are available for email
+require_once "EmailIdentity.php";       // requires EmailIdentity for representing email senders and recipients
+require_once "MailerConfiguration.php"; // needs to take on a MailerConfiguration or a type that derives from it
 
 /**
  * This defines the basic interface that is expected from a Mailer.

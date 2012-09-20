@@ -1,6 +1,5 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry)
-    die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
@@ -22,7 +21,6 @@ if (!defined('sugarEntry') || !sugarEntry)
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('MailerConfiguration.php');
 require_once('SimpleMailer.php');
 require_once('include/OutboundEmail/OutboundEmail.php');
 

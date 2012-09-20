@@ -24,8 +24,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once "lib/phpmailer/class.phpmailer.php"; // needs the PHPMailer library
 require_once "lib/phpmailer/class.smtp.php";      // required to establish the SMTP connection prior to PHPMailer's
                                                   // send for error handling purposes
-require_once "BaseMailer.php";                    // requires Attachment in order to extend it
-require_once "SmtpMailerConfiguration.php";
+require_once "BaseMailer.php";                    // requires BaseMailer in order to extend it
+require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMailerConfiguration
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
