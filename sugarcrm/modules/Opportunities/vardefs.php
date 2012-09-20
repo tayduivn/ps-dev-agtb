@@ -462,15 +462,10 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 				'fields' => array('assigned_user_id'),
 			),
 			array(
-				'name' => 'idx_opp_id_deleted',
+				'name' => 'idx_opp_id_deleted_closed_timestamp',
 				'type' => 'index',
-				'fields' => array('id','deleted'),
-			),
-            array(
-                'name' => 'idx_date_closed_timestamp',
-                'type' => 'index',
-                'fields' => array('date_closed_timestamp'),
-            ),
+				'fields' => array('id','deleted', 'date_closed_timestamp'),
+			)
 		),
 
  'relationships' => array (
