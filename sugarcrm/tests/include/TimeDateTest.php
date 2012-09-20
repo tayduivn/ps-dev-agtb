@@ -966,10 +966,10 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
 	public function isoDateTimeReverseTestSet()
 	{
 	    return array(
-    		array("output" => '2012-12-12T10:35:15-0700', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
-    		array("output" => '2012-12-12T09:35:15-0800', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
-    		array("output" => '2012-12-12T17:35:15+0000', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
-    		array("output" => '2012-12-12T19:35:15+0200', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
+    		array("output" => '2012-12-12T10:35:15-07:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Boise',),
+    		array("output" => '2012-12-12T09:35:15-08:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'America/Los_Angeles',),
+    		array("output" => '2012-12-12T17:35:15+00:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/London',),
+    		array("output" => '2012-12-12T19:35:15+02:00', "dbdate" => "2012-12-12 17:35:15", 'tz' => 'Europe/Helsinki',),
         );
 	}
 
@@ -988,5 +988,25 @@ class TimeDateTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($output,$outTime);
         $this->assertEquals($dbdate,$timeDate->asDb($dateTime));
     }
+
+    
+    /**
+     * @dataProvider isoDateTimeReverseTestSet
+     */
+    public function testAsIsoWithOptions($output, $dbdate, $tz)
+    {
+        $this->_setPrefs('d/m/Y', 'h:i:sA', $tz);
+        
+        $timeDate = new TimeDate();
+
+        $dateTime = $timeDate->fromDb($dbdate);
+        $outTime = $timeDate->asIso($dateTime, null, array('stripTZColon' => true));
+        $c = substr($outTime, -3, 1);
+        $this->assertNotEquals(':', $c);
+        $outTime = $timeDate->asIso($dateTime, null, array('stripTZColon' => false));
+        $c = substr($outTime, -3, 1);
+        $this->assertEquals(':',$c);
+    }
+
             
 }
