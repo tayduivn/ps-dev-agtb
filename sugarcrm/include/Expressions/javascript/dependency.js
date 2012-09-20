@@ -617,8 +617,6 @@ AH.loadComplete = function()
         fields = $.merge(fields, AH.QUEUEDDEPS[i].getRelatedFields());
     }
 
-    AH.getRelatedFieldValues(fields);
-
     //Now fire all the queued dependencies
     for (var i = 0; i < AH.QUEUEDDEPS.length; i++)
     {
