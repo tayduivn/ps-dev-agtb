@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>Horizontal Bar Chart</title>
+  <title>Stacked Area Chart</title>
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
   <style>
@@ -12,13 +12,8 @@
       overflow-y:scroll;
     }
 
-    text {
-      font: 12px sans-serif;
-    }
-
-    #chart1 {
+    #area {
       height: 95%;
-      /*width: 700px;*/
       min-width: 100px;
       min-height: 100px;
       border: 1px solid black;
@@ -33,54 +28,64 @@
       margin: .2em .2em .2em .2em;
       font-size: 1.4em;
     }
+
   </style>
 </head>
 <body>
 
-<div id="chart1">
+<div id="area">
   <svg></svg>
 </div>
 
-<script src="../js/nvd3/lib/d3.v2.min.js"></script>
+<script src="../js/nvd3/lib/d3.v2.js"></script>
 
 <script src="../js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/src/utils.js"></script>
 <script src="../js/nvd3/src/tooltip.js"></script>
 <script src="../js/nvd3/src/models/legend.js"></script>
 
-<script src="../js/nvd3/src/models/multiBarHorizontal_sugar.js"></script>
-<script src="../js/nvd3/src/models/multiBarHorizontalChart_sugar.js"></script>
+<script src="../js/nvd3/src/models/stackedArea.js"></script>
+<script src="../js/nvd3/src/models/stackedAreaChart_sugar.js"></script>
 
-<script src="../js/nvd3/data/opportunities.js"></script>
+<script src="../js/nvd3/data/line_data.js"></script>
 
 <script>
+
+  /*
+  .map(function(series) {
+    series.values = series.values.map(function(d) {
+      return { x: d[0], y: d[1] }
+    });
+    return series;
+  });
+  */
+
+  // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
   nv.addGraph(function() {
-    var chart = nv.models.multiBarHorizontalChart()
-          .x(function(d) { return d.label })
-          .y(function(d) { return d.value })
-          .margin({top: 30, right: 20, bottom: 50, left: 150})
-          .showValues(true)
+
+    var chart = nv.models.stackedAreaChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
+          .tooltip( function(key, x, y, e, graph) {
+              return '<p>Category: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
+                     '<p>Date: <b>' +  x + '</b></p>'
+            })
           .showTitle(true)
           .tooltips(true)
           .showControls(true)
-          .stacked(true)
-          .colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: opportunities_data.data.length} )
-          //.colorData( 'class' )
-          //.colorData( 'default' )
-          //.colorFill( 'gradient' )
-          .colorFill( 'default' )
-          .tooltip( function(key, x, y, e, graph) {
-            return '<p>Outcome: <b>' + key + '</b></p>' +
-                   '<p>Lead Source: <b>' +  x + '</b></p>' +
-                   '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
-            })
+          //.clipEdge(true)
         ;
 
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+
     chart.yAxis
+        .axisLabel('Expenditures ($)')
         .tickFormat(d3.format(',.2f'));
 
-    d3.select('#chart1 svg')
-        .datum(opportunities_data)
+    d3.select('#area svg')
+        .datum(line_data)
       .transition().duration(500)
         .call(chart);
 
@@ -88,6 +93,7 @@
 
     return chart;
   });
+
 </script>
 </body>
 </html>

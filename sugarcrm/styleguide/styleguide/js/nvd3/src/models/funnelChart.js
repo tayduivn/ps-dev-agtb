@@ -19,9 +19,8 @@ nv.models.funnelChart = function() {
     , reduceXTicks = false // if false a tick will show for every data point
     , tooltips = true
     , tooltip = function(key, x, y, e, graph) {
-        return '<p>Stage: <b>' + key + '</b></p>' +
-               '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-               '<p>Percent: <b>' +  x + '%</b></p>'
+        return '<h3>' + key + " - " + x + '</h3>' +
+               '<p>' +  y + '</p>'
       }
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()

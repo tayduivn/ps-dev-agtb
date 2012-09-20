@@ -21,6 +21,9 @@
   <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 
   <style type="text/css">
+      body {
+      overflow-y:scroll;
+    }
     .chart-container {
       height: 300px;
       min-width: 100px;
@@ -35,7 +38,7 @@
     .nvd3 .nv-x.nv-axis text {
       font-size: 10px;
     }
-    .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
+    #vert2 .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
       fill-opacity: 1;
       stroke-opacity: 1;
       stroke-width: 2;
@@ -123,14 +126,146 @@
       <p class="lead">Implementing standard and custom SVG charts for Sugar7 release using the <a href="http://d3js.org/">D3 library</a> and the <a href="http://nvd3.com/">NVD3 framework</a>.</p>
       <div class="subnav">
         <ul class="nav nav-pills">
+          <li><a href="charting.html#line">Line</a></li>
           <li><a href="charting.html#horiz-bar">Horizontal Bar</a></li>
           <li><a href="charting.html#vert-bar">Vertical Bar</a></li>
           <li><a href="charting.html#circular">Circular</a></li>
           <li><a href="charting.html#custom">Custom</a></li>
+          <li><a href="charting.html#implementation">Implementation</a></li>
           <li><a href="chart_colors.html">Colors</a></li>
         </ul>
       </div>
     </header>
+
+    <section id="line">
+      <div class="page-header">
+        <h2>Line <small>used for comparing data series</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>Standard Line Chart</h3>
+          <p>Line chart with baseline y-axis. <a href="charts/lineChart.html">Full Screen</a> with options for line interpolation and fill.</p>
+          <div>
+<div id="line1" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Stacked Area Chart</h3>
+          <p>Line chart with cumulative y-axis. <a href="charts/stackedAreaChart.html">Full Screen</a> showing options for cumulative scale.</p>
+          <div>
+<div id="area" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="horiz-bar">
+      <div class="page-header">
+        <h2>Horizontal Bar <small>used for comparing many values in a single series</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>All Opportunities By Lead Source By Outcome</h3>
+          <p>A horizontal bar chart with stacked data. <a href="charts/multiBarHorizontalChart_opportunities.html">Full Screen</a> showing graduated fill option and grouping option.</p>
+          <div>
+<div id="horiz1" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Short/Long Horizontal Bar</h3>
+          <p>A horizontal bar chart with grouped data for comparing series relative to a baseline. <a href="charts/multiBarHorizontalChart.html">Full Screen</a> showing gradient fill.</p>
+          <div>
+<div id="horiz2" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="vert-bar">
+      <div class="page-header">
+        <h2>Vertical Bar <small>used for comparing multiple series with a few values</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>Standard Vertical Bar Chart</h3>
+          <p>Long description. <a href="charts/multiBarChart_sugar.html">Full Screen</a> with graduated fill and grouping option.</p></p>
+          <div>
+<div id="vert1" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>My Forecasting</h3>
+          <p>This is a new NVD3 chart type created for SugarCRM. An example of usage in the Sugar7 prototype is on <a href="../styleguide/sugar7/forecast_nvd3.html">forecasting page</a>. <a href="charts/multiBarChart_forecast.html">Full Screen</a> with gradient fill.</p>
+          <div>
+<div id="vert2" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="circular">
+      <div class="page-header">
+        <h2>Circular Charts <small>used for comparing parts to a whole</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>All Opportunities by Lead Source</h3>
+          <p>Example pie chart. <a href="charts/pieChart.html">Full Screen</a></p>
+          <div>
+<div id="pie" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Donut Chart</h3>
+          <p>Example donut chart.</p>
+          <div>
+<div id="donut" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="custom">
+      <div class="page-header">
+        <h2>Custom Charts <small>used for comparing values in a process</small></h2>
+      </div>
+      <div class="row">
+        <div class="span6">
+          <h3>Pipeline By Sales Stage</h3>
+          <p>This is a new NVD3 funnel chart type created for SugarCRM. <a href="charts/funnelChart.html">Full Screen</a></p>
+          <div>
+<div id="funnel1" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+        <div class="span6">
+          <h3>Closed Won Opportunities</h3>
+          <p>This is a new NVD3 gauge chart type created for SugarCRM. <a href="charts/gaugeChart.html">Full Screen</a></p>
+          <div>
+<div id="gauge" class="chart-container">
+  <svg></svg>
+</div>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <section id="implementation">
 
@@ -345,110 +480,6 @@
       </div>
     </section>
 
-    <section id="horiz-bar">
-      <div class="page-header">
-        <h2>Horizontal Bar <small>used for comparing many values in a single series</small></h2>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h3>All Opportunities By Lead Source By Outcome </h3>
-          <p>Long description. <a href="charts/multiBarHorizontalChart_opportunities.html">Full Screen</a></p>
-          <div>
-<div id="horiz1" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-        <div class="span6">
-          <h3>Modules Used By Team Members</h3>
-          <p>Long description.</p>
-          <div>
-<div id="horiz2" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="vert-bar">
-      <div class="page-header">
-        <h2>Vertical Bar <small>used for comparing multiple series with a few values</small></h2>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h3>Campaign ROI</h3>
-          <p>Long description.</p>
-          <div>
-<div id="vert1" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-        <div class="span6">
-          <h3>My Forecasting</h3>
-          <p>This is a new NVD3 chart type created for SugarCRM. An example of usage in the Sugar7 prototype is on <a href="../styleguide/sugar7/forecast_nvd3.html">forecasting page</a>. <a href="charts/multiBarChart_forecast.html">Full Screen</a></p>
-          <div>
-<div id="vert2" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="circular">
-      <div class="page-header">
-        <h2>Circular Charts <small>used for comparing parts to a whole</small></h2>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h3>All Opportunities by Lead Source</h3>
-          <p>Example pie chart. <a href="charts/pieChart.html">Full Screen</a></p>
-          <div>
-<div id="pie" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-        <div class="span6">
-          <h3>Donut Chart</h3>
-          <p>Example donut chart.</p>
-          <div>
-<div id="donut" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section id="custom">
-      <div class="page-header">
-        <h2>Custom Charts <small>used for comparing values in a process</small></h2>
-      </div>
-      <div class="row">
-        <div class="span6">
-          <h3>Pipeline By Sales Stage</h3>
-          <p>This is a new NVD3 funnel chart type created for SugarCRM. <a href="charts/funnelChart.html">Full Screen</a></p>
-          <div>
-<div id="funnel1" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-        <div class="span6">
-          <h3>Closed Won Opportunities</h3>
-          <p>This is a new NVD3 gauge chart type created for SugarCRM. <a href="charts/gaugeChart.html">Full Screen</a></p>
-          <div>
-<div id="gauge" class="chart-container">
-  <svg></svg>
-</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
   </div>
 
   <script src="js/jquery-1.7.2.min.js"></script>
@@ -462,8 +493,11 @@
 
   <!-- new D3 charting library files -->
   <script src="js/nvd3/lib/d3.v2.js"></script>
-  <script src="js/nvd3/nv.d3.min.js"></script>
+  <script src="js/nvd3/nv.d3.js"></script>
   <script src="js/nvd3/src/utils.js"></script>
+  <script src="js/nvd3/src/models/legend.js"></script>
+
+  <script src="js/nvd3/src/tooltip.js"></script>
 
   <script src="js/nvd3/src/models/multiBar_sugar.js"></script>
   <script src="js/nvd3/src/models/multiBarChart_sugar.js"></script>
@@ -474,13 +508,20 @@
   <script src="js/nvd3/src/models/gaugeChart.js"></script>
   <script src="js/nvd3/src/models/pie.js"></script>
   <script src="js/nvd3/src/models/pieChart.js"></script>
+  <script src="js/nvd3/src/models/line.js"></script>
+  <script src="js/nvd3/src/models/lineChart_sugar.js"></script>
+  <script src="js/nvd3/src/models/stackedArea.js"></script>
+  <script src="js/nvd3/src/models/stackedAreaChart_sugar.js"></script>
 
   <script src="js/nvd3/data/forecasting_q1.js"></script>
   <script src="js/nvd3/data/forecasting_q2.js"></script>
+  <script src="js/nvd3/data/vertical_data.js"></script>
   <script src="js/nvd3/data/opportunities.js"></script>
   <script src="js/nvd3/data/funnel_data.js"></script>
   <script src="js/nvd3/data/gauge_data.js"></script>
   <script src="js/nvd3/data/pie_data.js"></script>
+  <script src="js/nvd3/data/line_data.js"></script>
+  <script src="js/nvd3/data/horizbar_data.js"></script>
 
   <script>
     //Vertical Bar Chart with Line
@@ -489,26 +530,32 @@
           //var chart = nv.models.multiBarChart();
           //override default barClick function
           var chart = nv.models.multiBarChart()
-              .margin({top: 10, right: 10, bottom: 30, left: 40})
-              .showControls(false)
-              .showTitle(true)
-              .barClick( function(data,e,selection) {
-                  //if only one bar series is disabled
-                  // console.log(data);
-                  // console.log(e);
-                  // console.log(selection);
-                  d3.select('#vert2 svg')
-                    .datum(forecast_data_Q2)
-                    .transition().duration(500).call(chart);
-                }
-              );
+                .margin({top: 10, right: 10, bottom: 30, left: 40})
+                .showControls(false)
+                .showTitle(false)
+                .barClick( function(data,e,selection) {
+                    //if only one bar series is disabled
+                    // console.log(data);
+                    // console.log(e);
+                    // console.log(selection);
+                    d3.select('#vert2 svg')
+                      .datum(forecast_data_Q2)
+                      .transition().duration(500).call(chart);
+                  })
+                .tooltipBar( function(key, x, y, e, graph) {
+                  return '<p>Stage: <b>' + key + '</b></p>' +
+                         '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                         '<p>Percent: <b>' +  x + '%</b></p>'
+                  })
+                .tooltipLine( function(key, x, y, e, graph) {
+                    return '<p>Likely: <b>' + parseInt(y) + 'K</b></p>'
+                  })
+                ;
           //end override
 
           d3.select('#vert2 svg')
             .datum(forecast_data_Q1)
             .transition().duration(500).call(chart);
-
-          nv.utils.windowResize(chart.update);
 
           return chart;
       },
@@ -517,18 +564,54 @@
       }
     });
 
+    // Vertical Bar Chart without Line
+    nv.addGraph(function() {
+
+      var chart = nv.models.multiBarChart()
+            .showTitle(false)
+            .tooltips(true)
+            .showControls(false)
+            //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#336699', l: forecast_data_Q1.data.length} )
+            //.colorData( 'class' )
+            .colorData( 'default' )
+            //.colorFill( 'gradient' )
+            .colorFill( 'default' )
+            .tooltipBar( function(key, x, y, e, graph) {
+                return '<p>Stage: <b>' + key + '</b></p>' +
+                       '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                       '<p>Percent: <b>' +  x + '%</b></p>'
+                })
+            //.forceY([0,400]).forceX([0,6]);
+          ;
+
+      d3.select('#vert1 svg')
+          .datum(vertical_data)
+        .transition().duration(500)
+          .call(chart);
+
+      nv.utils.windowResize(chart.update);
+
+      return chart;
+    });
+
     // Multibar Horizontal Chart
     nv.addGraph({
       generate: function() {
         nv.addGraph(function() {
           var chart = nv.models.multiBarHorizontalChart()
-              .x(function(d) { return d.label })
-              .y(function(d) { return d.value })
-              .margin({top: 10, right: 10, bottom: 20, left: 90})
-              .showValues(true)
-              .showTitle(true)
-              .tooltips(true)
-              .showControls(false);
+                .x(function(d) { return d.label })
+                .y(function(d) { return d.value })
+                .margin({top: 10, right: 10, bottom: 20, left: 90})
+                .showValues(true)
+                .showTitle(false)
+                .tooltips(true)
+                .showControls(false)
+                .tooltip( function(key, x, y, e, graph) {
+                  return '<p>Outcome: <b>' + key + '</b></p>' +
+                         '<p>Lead Source: <b>' +  x + '</b></p>' +
+                         '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
+                  })
+              ;
 
           chart.yAxis
               .tickFormat(d3.format(',.2f'));
@@ -538,7 +621,41 @@
             .transition().duration(500)
               .call(chart);
 
-          nv.utils.windowResize(chart.update);
+          return chart;
+        });
+      },
+      callback: function(graph) {
+        $('#log').text('Chart is loaded');
+      }
+    });
+
+    // Multibar Horizontal Chart with Baseline
+    nv.addGraph({
+      generate: function() {
+        nv.addGraph(function() {
+          var chart = nv.models.multiBarHorizontalChart()
+                .x(function(d) { return d.label })
+                .y(function(d) { return d.value })
+                .margin({top: 10, right: 10, bottom: 20, left: 80})
+                .showValues(true)
+                .showTitle(false)
+                .tooltips(true)
+                .showControls(false)
+                .stacked(false)
+                // .tooltip( function(key, x, y, e, graph) {
+                //   return '<p>Outcome: <b>' + key + '</b></p>' +
+                //          '<p>Lead Source: <b>' +  x + '</b></p>' +
+                //          '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
+                //   })
+              ;
+
+          chart.yAxis
+              .tickFormat(d3.format(',.2f'));
+
+          d3.select('#horiz2 svg')
+              .datum(horizbar_data)
+            .transition().duration(500)
+              .call(chart);
 
           return chart;
         });
@@ -551,7 +668,13 @@
     // Funnel Chart
     nv.addGraph(function() {
       var chart = nv.models.funnelChart()
-          .showTitle(true);
+            .showTitle(false)
+            .tooltip( function(key, x, y, e, graph) {
+                return '<p>Stage: <b>' + key + '</b></p>' +
+                       '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                       '<p>Percent: <b>' +  x + '%</b></p>'
+              })
+          ;
 
       chart.yAxis
           .tickFormat(d3.format(',.1f'));
@@ -560,8 +683,6 @@
           .datum(funnel_data)
         .transition().duration(500)
           .call(chart);
-
-      nv.utils.windowResize(chart.update);
 
       return chart;
     });
@@ -572,7 +693,7 @@
           .x(function(d) { return d.key })
           .y(function(d) { return d.y })
           .showLabels(true)
-          .showTitle(true)
+          .showTitle(false)
           .colorData( 'default' )
           .colorFill( 'gradient' )
           .ringWidth(50)
@@ -584,49 +705,44 @@
         .transition().duration(500)
           .call(gauge);
 
-      //nv.utils.windowResize(gauge.update);
       return gauge;
     });
 
     // Pie Chart
     nv.addGraph(function() {
-        var width = 500,
-            height = 500;
-
-        var chart = nv.models.pieChart()
+      var chart = nv.models.pieChart()
             .x(function(d) { return d.key })
             .y(function(d) { return d.value })
             .showLabels(true)
-            .showTitle(true)
+            .showTitle(false)
             //.color(d3.scale.category10().range())
             //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
             //.colorData( 'class' )
             .colorData( 'default' )
             //.colorFill( 'gradient' )
             .colorFill( 'default' )
-            // .width(width)
-            // .height(height);
+            .tooltip( function(key, x, y, e, graph) {
+              return '<p>Stage: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                     '<p>Percent: <b>' +  x + '%</b></p>'
+              })
+          ;
 
-          d3.select("#pie svg")
-              .datum(pie_data)
-            .transition().duration(1200)
-              .attr('width', width)
-              .attr('height', height)
-              .call(chart);
+        d3.select("#pie svg")
+            .datum(pie_data)
+          .transition().duration(500)
+            .call(chart);
 
-        return chart;
+      return chart;
     });
 
     // Donut Chart
     nv.addGraph(function() {
-        var width = 500,
-            height = 500;
-
-        var chart = nv.models.pieChart()
+      var chart = nv.models.pieChart()
             .x(function(d) { return d.key })
             .y(function(d) { return d.value })
             .showLabels(true)
-            .showTitle(true)
+            .showTitle(false)
             .donut(true)
             .donutLabelsOutside(true)
             //.color(d3.scale.category10().range())
@@ -635,17 +751,84 @@
             .colorData( 'default' )
             //.colorFill( 'gradient' )
             .colorFill( 'default' )
-            // .width(width)
-            // .height(height);
+            .tooltip( function(key, x, y, e, graph) {
+              return '<p>Stage: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                     '<p>Percent: <b>' +  x + '%</b></p>'
+              })
+          ;
 
-          d3.select("#donut svg")
-              .datum(pie_data)
-            .transition().duration(1200)
-              .attr('width', width)
-              .attr('height', height)
-              .call(chart);
+        d3.select("#donut svg")
+            .datum(pie_data)
+          .transition().duration(1200)
+            .call(chart);
 
-        return chart;
+      return chart;
+    });
+
+    // Line chart
+    nv.addGraph(function() {
+      var chart = nv.models.lineChart()
+            .x(function(d) { return d[0] })
+            .y(function(d) { return d[1] })
+            .showTitle(false)
+            .tooltips(true)
+            .showControls(false)
+            .tooltip( function(key, x, y, e, graph) {
+                return '<p>Category: <b>' + key + '</b></p>' +
+                       '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
+                       '<p>Date: <b>' +  x + '</b></p>'
+              })
+            //.forceY([0,400]).forceX([0,6]);
+          ;
+
+      chart.xAxis
+          .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+
+      chart.yAxis
+          .axisLabel('Voltage (v)')
+          .tickFormat(d3.format(',.2f'));
+
+      d3.select('#line1 svg')
+          .datum(line_data)
+        .transition().duration(500)
+          .call(chart);
+
+      return chart;
+    });
+
+    // Stacked area chart
+    nv.addGraph(function() {
+
+      var chart = nv.models.stackedAreaChart()
+            .x(function(d) { return d[0] })
+            .y(function(d) { return d[1] })
+            .tooltip( function(key, x, y, e, graph) {
+                return '<p>Category: <b>' + key + '</b></p>' +
+                       '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
+                       '<p>Date: <b>' +  x + '</b></p>'
+              })
+            .showTitle(false)
+            .tooltips(true)
+            .showControls(false)
+            //.clipEdge(true)
+          ;
+
+      chart.xAxis
+          .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+
+      chart.yAxis
+          .axisLabel('Expenditures ($)')
+          .tickFormat(d3.format(',.2f'));
+
+      d3.select('#area svg')
+          .datum(line_data)
+        .transition().duration(500)
+          .call(chart);
+
+      nv.utils.windowResize(chart.update);
+
+      return chart;
     });
   </script>
 </body>

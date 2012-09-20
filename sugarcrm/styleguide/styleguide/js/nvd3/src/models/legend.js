@@ -52,11 +52,11 @@ nv.models.legend = function() {
             dispatch.legendDblclick(d,i);
           });
       seriesEnter.append('circle')
-          .attr('class', function(d,i) { 
+          .attr('class', function(d,i) {
             return this.getAttribute('class') || (
-              useClass 
+              useClass
                 ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
-                : '' ); 
+                : '' );
             }
           )
           .attr('fill', function(d,i) { return color(d,i) })
@@ -191,7 +191,7 @@ nv.models.legend = function() {
 
   chart.color = function(_) {
     if (!arguments.length) return color;
-    color = _;
+    color = nv.utils.getColor(_);
     return chart;
   };
 
@@ -200,7 +200,7 @@ nv.models.legend = function() {
     useClass = _;
     return chart;
   };
-  
+
   chart.align = function(_) {
     if (!arguments.length) return align;
     align = _;

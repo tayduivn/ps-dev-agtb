@@ -13,7 +13,7 @@ nv.models.line = function() {
     , getX = function(d) { return d.x } // accessor to get the x value from a data point
     , getY = function(d) { return d.y } // accessor to get the y value from a data point
     , defined = function(d,i) { return !isNaN(getY(d,i)) && getY(d,i) !== null } // allows a line to be not continous when it is not defined
-    , isArea = function(d) { return d.area } // decides if a line is an area or just a line
+    , isArea = function(d) { return (d && d.area) || false } // decides if a line is an area or just a line
     , clipEdge = false // if true, masks lines within x and y scale
     , x //can be accessed via chart.xScale()
     , y //can be accessed via chart.yScale()
@@ -124,9 +124,9 @@ nv.models.line = function() {
 
 
       var areaPaths = groups.selectAll('path.nv-area')
-          .data(function(d) { return [d] }); // this is done differently than lines because I need to check if series is an area
+          .data(function(d) { return isArea(d) ? [d] : [] } );
       areaPaths.enter().append('path')
-          .filter(isArea)
+          //.filter(isArea)
           .attr('class', 'nv-area')
           .attr('d', function(d) {
             return d3.svg.area()
@@ -138,6 +138,8 @@ nv.models.line = function() {
                 //.y1(function(d,i) { return y0(0) }) //assuming 0 is within y domain.. may need to tweak this
                 .apply(this, [d.values])
           });
+      areaPaths.exit().remove();
+
       d3.transition(groups.exit().selectAll('path.nv-area'))
           .attr('d', function(d) {
             return d3.svg.area()
@@ -149,7 +151,7 @@ nv.models.line = function() {
                 //.y1(function(d,i) { return y0(0) }) //assuming 0 is within y domain.. may need to tweak this
                 .apply(this, [d.values])
           });
-      d3.transition(areaPaths.filter(isArea))
+      d3.transition(areaPaths)//d3.transition(areaPaths.filter(isArea))
           .attr('d', function(d) {
             return d3.svg.area()
                 .interpolate(interpolate)
@@ -162,11 +164,10 @@ nv.models.line = function() {
           });
 
 
-
       var linePaths = groups.selectAll('path.nv-line')
           .data(function(d) { return [d.values] });
       linePaths.enter().append('path')
-          .attr('class', function(d) { return 'nv-line' })
+          .attr('class', 'nv-line')
           .attr('d',
             d3.svg.line()
               .interpolate(interpolate)
@@ -214,7 +215,10 @@ nv.models.line = function() {
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;
-    margin = _;
+    margin.top    = typeof _.top    != 'undefined' ? _.top    : margin.top;
+    margin.right  = typeof _.right  != 'undefined' ? _.right  : margin.right;
+    margin.bottom = typeof _.bottom != 'undefined' ? _.bottom : margin.bottom;
+    margin.left   = typeof _.left   != 'undefined' ? _.left   : margin.left;
     return chart;
   };
 

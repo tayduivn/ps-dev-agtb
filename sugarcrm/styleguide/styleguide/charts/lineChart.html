@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=320" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <title>Pie Chart</title>
+  <title>Line Chart</title>
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
   <style>
@@ -12,7 +12,7 @@
       overflow-y:scroll;
     }
 
-    #pie {
+    #line {
       height: 95%;
       min-width: 100px;
       min-height: 100px;
@@ -29,58 +29,58 @@
       font-size: 1.4em;
     }
 
-    .nv-label text {
-      font-weight: bold;
-      fill: #666;
-    }
-
   </style>
 </head>
 <body>
 
-<div id="pie">
+<div id="line">
   <svg></svg>
 </div>
 
 <script src="../js/nvd3/lib/d3.v2.js"></script>
 
-<script src="../js/nvd3/nv.d3.js"></script>
+<script src="../js/nvd3/nv.d3.min.js"></script>
 <script src="../js/nvd3/src/utils.js"></script>
+<script src="../js/nvd3/src/tooltip.js"></script>
 <script src="../js/nvd3/src/models/legend.js"></script>
 
-<script src="../js/nvd3/src/models/pie.js"></script>
-<script src="../js/nvd3/src/models/pieChart.js"></script>
+<script src="../js/nvd3/src/models/line.js"></script>
+<script src="../js/nvd3/src/models/lineChart_sugar.js"></script>
 
-<script src="../js/nvd3/data/pie_data.js"></script>
+<script src="../js/nvd3/data/line_data.js"></script>
 
 <script>
 
+  // Wrapping in nv.addGraph allows for '0 timeout render', stors rendered charts in nv.graphs, and may do more in the future... it's NOT required
   nv.addGraph(function() {
 
-    var chart = nv.models.pieChart()
-          .x(function(d) { return d.key })
-          .y(function(d) { return d.value })
-          .showLabels(true)
-          .showTitle(true)
-          //.color(d3.scale.category10().range())
-          //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: pie_data.data.length} )
-          //.colorData( 'class' )
-          .colorData( 'default' )
-          .colorFill( 'gradient' )
-          //.colorFill( 'default' )
+    var chart = nv.models.lineChart()
+          .x(function(d) { return d[0] })
+          .y(function(d) { return d[1] })
           .tooltip( function(key, x, y, e, graph) {
-            return '<p>Stage: <b>' + key + '</b></p>' +
-                   '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                   '<p>Percent: <b>' +  x + '%</b></p>'
+              return '<p>Category: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  parseInt(y) + 'M</b></p>' +
+                     '<p>Date: <b>' +  x + '</b></p>'
             })
+          .showTitle(true)
+          .tooltips(true)
+          .showControls(true)
+          //.forceY([0,400]).forceX([0,6]);
         ;
 
-    d3.select("#pie svg")
-        .datum(pie_data)
+    chart.xAxis
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)) });
+
+    chart.yAxis
+        .axisLabel('Expenditures ($)')
+        .tickFormat(d3.format(',.2f'));
+
+    d3.select('#line svg')
+        .datum(line_data)
       .transition().duration(500)
         .call(chart);
 
-    nv.utils.windowResize(function(){chart.update();});
+    nv.utils.windowResize(chart.update);
 
     return chart;
   });

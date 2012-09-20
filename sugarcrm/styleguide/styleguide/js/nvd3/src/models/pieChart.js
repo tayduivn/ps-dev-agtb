@@ -20,11 +20,6 @@ nv.models.pieChart = function() {
         return '<h3>' + key + '</h3>' +
                '<p>' +  y + '</p>'
       }
-    , tooltip = function(key, x, y, e, graph) {
-        return '<p>Stage: <b>' + key + '</b></p>' +
-               '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-               '<p>Percent: <b>' +  x + '%</b></p>'
-      }
     , noData = "No Data Available."
     , dispatch = d3.dispatch('tooltipShow', 'tooltipHide')
     ;
@@ -54,7 +49,7 @@ nv.models.pieChart = function() {
       , content = ( tooltip( e.point.key, x, y, e, chart ) )
     ;
 
-    nv.tooltip.show([left, top], content, e.value < 0 ? 'n' : 's', null, offsetElement);
+    nv.tooltip.show([left, top], content, null, null, offsetElement);
   };
 
   //============================================================

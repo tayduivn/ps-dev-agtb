@@ -22,6 +22,10 @@ nv.models.multiBarHorizontal = function() {
     , xDomain
     , yDomain
     , color = nv.utils.defaultColor()
+    , tooltip = function(key, x, y, e, graph) {
+        return '<h3>' + key + " - " + x + '</h3>' +
+               '<p>' +  y + '</p>'
+      }
     , fill = function (d,i) { return color(d,i); }
     , gradient = function (d,i) { return color(d,i); }
     , useClass = false
@@ -128,14 +132,14 @@ nv.models.multiBarHorizontal = function() {
           .remove();
       groups
           //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
-          .attr('class', function(d,i) { 
+          .attr('class', function(d,i) {
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
-                  useClass 
-                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) ) 
+                  useClass
+                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
                     : ''
                 )
-              ); 
+              );
           } )
           .classed('hover', function(d) { return d.hover })
           .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i) })
@@ -251,7 +255,7 @@ nv.models.multiBarHorizontal = function() {
           //.delay(function(d,i) { return i * delay / data[0].values.length })
             .attr('transform', function(d,i) {
               //TODO: stacked must be all positive or all negative, not both?
-              return 'translate(' + 
+              return 'translate(' +
               (getY(d,i) < 0 ? y(getY(d,i)) : y(0))
               + ',' +
               (d.series * x.rangeBand() / data.length

@@ -54,6 +54,12 @@
           .colorData( 'default' )
           .colorFill( 'gradient' )
           //.colorFill( 'default' )
+          .tooltip( function(key, x, y, e, graph) {
+              return '<p>Stage: <b>' + key + '</b></p>' +
+                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                     '<p>Percent: <b>' +  x + '%</b></p>'
+            })
+        ;
 
     chart.yAxis
         .tickFormat(d3.format(',.1f'));
