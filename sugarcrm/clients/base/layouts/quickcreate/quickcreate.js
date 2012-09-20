@@ -19,11 +19,11 @@
         var options = {
             limit: this.limit || null,
             params: {
-                q: 'first_name=charley'
+                q: 'w'
             },
             fields: this.collection.fields || {},
             success: function(collection) {
-                var keys = self.retrieveUserKeys();
+                var keys = self.getFieldValuesForUserKeys(self.getUserKeys());
                 if (collection.models.length > 0) {
                     self.context.trigger('quickcreate:list:toggled', true);
                     // self.showDuplicateAlertMessage();
@@ -38,14 +38,27 @@
         this.collection.fetch(options);
     },
 
-    retrieveUserKeys:function () {
+    getFieldValuesForUserKeys: function(keys) {
+        var data = [], self = this;
+
+        _.each(keys, function (key) {
+            data.push(self.model.get(self.formatFieldName(key)));
+        });
+
+        return data;
+    },
+
+    getUserKeys:function () {
         var keys,fields;
-debugger;
+
         fields = this.getFields(this.module);
         keys =[];
 
-        _.each(fields, function (field, index, list) {
-            keys.push('ddd');
+        _.each(fields, function (field) {
+            if (field.duplicate_merge && field.duplicate_merge === 'default') {
+                keys.push(field.name);
+            }
         });
+        return keys;
     }
 })

@@ -17,9 +17,7 @@
     },
 
     listToggled: function(isOpened) {
-        debugger;
         this.listOpened = isOpened;
-
         this.$('.dataTables_filter').toggle();
     }
 })
