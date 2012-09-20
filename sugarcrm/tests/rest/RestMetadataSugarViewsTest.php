@@ -90,7 +90,7 @@ class RestMetadataSugarViewsTest extends RestTestBase {
 //BEGIN SUGARCRM flav=ent ONLY
                             'clients/portal/views/address',
                             'custom/clients/portal/views/address',
-//ENT SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=ent ONLY
         );
 
         foreach ($dirsToMake as $dir ) {
