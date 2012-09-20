@@ -44,7 +44,7 @@
             this.collection.fetch(this.opts);
         }
 
-        var url = "../rest/v10/CustomReport/EntityList";
+        var url = app.api.buildURL("CustomReport/EntityList");
         if(this.opts.params.module) {
             url += "?module=" + this.opts.params.module;
             if(this.opts.params.id) {
@@ -52,12 +52,12 @@
             }
         }
 
-        App.api.call('GET', url, null, {success: function(o) {
+        app.api.call('GET', url, null, {success: function(o) {
             self.entityList = o;
         }});
 
         // There maybe better way to make the following data available in hbt
-        this.collection['oauth_token'] = App.api.getOAuthToken();
+        this.collection['oauth_token'] = app.api.getOAuthToken();
         this.collection['user_id'] = app.user.get('id');
         this.collection['full_name'] = app.user.get('full_name');
         var picture = app.user.get('picture');
