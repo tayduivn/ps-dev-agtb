@@ -276,7 +276,9 @@ class MetaDataManager {
      */
     public function getAclForModule($module,$userId) {
         $aclAction = new ACLAction();
+        //BEGIN SUGARCRM flav=pro ONLY
         $aclField = new ACLField();
+        //END SUGARCRM flav=pro ONLY 
         $acls = $aclAction->getUserActions($userId);
         $obj = BeanFactory::getObjectName($module);
 
@@ -321,8 +323,10 @@ class MetaDataManager {
                 $outputAcl['create'] = $outputAcl['edit'];
 
                 // Now time to dig through the fields
+                $fieldsAcl = array();
+                //BEGIN SUGARCRM flav=pro ONLY
                 $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
-
+                //END SUGARCRM flav=pro ONLY
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl ) {
                         case ACL_READ_WRITE:
