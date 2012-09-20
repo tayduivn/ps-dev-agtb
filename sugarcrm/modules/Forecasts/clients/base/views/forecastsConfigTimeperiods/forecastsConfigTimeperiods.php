@@ -31,7 +31,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'name' => 'timeperiod_type',
                     'type' => 'enum',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE',
-                    'options' => 'FORECASTS_TIMEPERIOD_TYPES_DOM',
+                    'options' => 'forecasts_timeperiod_types_dom',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
@@ -39,7 +39,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                 array(
                     'name' => 'timeperiod_interval',
                     'type' => 'enum',
-                    'options' => 'FORECASTS_TIMEPERIOD_OPTIONS_DOM',
+                    'options' => 'forecasts_timeperiod_options_dom',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
@@ -48,7 +48,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                 array(
                     'name' => 'timeperiod_leaf_interval',
                     'type' => 'enum',
-                    'options' => 'FORECASTS_TIMEPERIOD_LEAF_QUARTERLY_OPTIONS_DOM',
+                    'options' => 'forecasts_timeperiod_leaf_quarterly_options_dom',
                     'label' => 'LBL_FORECASTS_CONFIG_LEAFPERIOD',
                     'default' => false,
                     'enabled' => true,
