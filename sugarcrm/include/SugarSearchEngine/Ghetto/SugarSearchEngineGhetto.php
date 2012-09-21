@@ -361,7 +361,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
     }
     
     public function getServerStatus() {
-        return array('valid' => true, 'status' => "We be searchin' yo' dataz, dawg.");
+        return array('valid' => true, 'status' => "Yo, We be searchin' yo' dataz, dawg.");
     }
     
     public function bulkInsert(array $docs) {}
