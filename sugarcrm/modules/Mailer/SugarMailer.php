@@ -60,12 +60,17 @@ class SugarMailer extends SimpleMailer
         $this->setHeader(EmailHeaders::From, $from);
 
         $subject = $this->headers->getSubject();
-        $subject = from_html($locale->translateCharset($subject, "UTF-8", $charset));
+        $subject = $locale->translateCharset($subject, "UTF-8", $charset);
         $this->setSubject($subject);
 
-        $this->setTextBody(from_html($locale->translateCharset($this->textBody, "UTF-8", $charset)));
+        $this->setTextBody($locale->translateCharset($this->textBody, "UTF-8", $charset));
 
-        $htmlBody = from_html($locale->translateCharset($this->htmlBody, "UTF-8", $charset));
+        $htmlBody = $this->htmlBody;
+
+        if ($this->includeDisclosure) {
+            $htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}"; //@todo why do we include &nbsp;?
+            $htmlBody .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
+        }
 
         // HTML email RFC compliance
         if (strpos($htmlBody, "<html") === false) {
@@ -82,10 +87,7 @@ eoq;
             $htmlBody = "{$head}{$htmlBody}</body></html>";
         }
 
-        if ($this->includeDisclosure) {
-            $htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}"; //@todo why do we include &nbsp;?
-            $htmlBody .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
-        }
+        $htmlBody = $locale->translateCharset($this->htmlBody, "UTF-8", $charset);
 
         // replace references to cache/images with cid tag
         $htmlBody = str_replace(sugar_cached("images/"), "cid:", $htmlBody);

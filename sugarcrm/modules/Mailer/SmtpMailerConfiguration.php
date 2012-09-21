@@ -220,8 +220,7 @@ class SmtpMailerConfiguration extends MailerConfiguration
             );
         }
 
-        //@todo do the from_html() thing?
-        $this->password = $password;
+        $this->password = from_html($password);
     }
 
     /**

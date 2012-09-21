@@ -119,14 +119,14 @@ class EmailHeaders
      * @throws MailerException
      */
     public function setSubject($subject) {
-        if (is_string($subject)) {
-            $this->subject = $subject;
-        } else {
+        if (!is_string($subject)) {
             throw new MailerException(
                 "Invalid header: " . self::Subject . " must be a string",
                 MailerException::InvalidHeader
             );
         }
+
+        $this->subject = from_html($subject);
     }
 
     /**
