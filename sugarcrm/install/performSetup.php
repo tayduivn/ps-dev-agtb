@@ -313,7 +313,11 @@ echo "<br>";
 
   //END SUGARCRM lic=sub ONLY
 
-
+    //BEGIN SUGARCRM flav=PRO ONLY
+    //Intall forecasts configuration
+    require_once('modules/Forecasts/ForecastsSeedData.php');
+    ForecastsSeedData::setupForecastSettings();
+    //END SUGARCRM flav=PRO ONLY
 
     installerHook('pre_createUsers');
     if ($new_tables) {
@@ -495,10 +499,6 @@ createFTSLogicHook('Extension/application/Ext/LogicHooks/SugarFTSHooks.php');
         global $current_user;
         $current_user = new User();
         $current_user->retrieve(1);
-        //BEGIN SUGARCRM flav=PRO ONLY
-        require_once('modules/Forecasts/ForecastsSeedData.php');
-        ForecastsSeedData::setupForecastSettings();
-        //END SUGARCRM flav=PRO ONLY
         include("install/populateSeedData.php");
         installerHook('post_installDemoData');
         //BEGIN SUGARCRM flav=pro ONLY
@@ -631,7 +631,6 @@ FP;
     $admin=new Administration();
     $admin->saveSetting('notify','allow_default_outbound', 0);
     //END SUGARCRM flav=sales ONLY
-
 
     // Bug 28601 - Set the default list of tabs to show
     $enabled_tabs = array();

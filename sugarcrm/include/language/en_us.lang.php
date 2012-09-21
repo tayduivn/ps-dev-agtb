@@ -4432,10 +4432,23 @@ $app_strings ['documentation'] = array (
 	'COM' => '05_Sugar_Community_Edition'
 );
 
-$app_list_strings['FORECASTS_CONFIG_CATEGORY_OPTIONS_DOM'] = array(
+$app_list_strings['forecasts_config_category_options_dom'] = array(
     'binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
     'show_n_buckets' => 'N Categories',
+);
+$app_list_strings['forecasts_timeperiod_types_dom'] = array(
+    'fiscal' => 'Fiscal Year',
+    'chronological' => 'Date Based Year',
+);
+$app_list_strings['forecasts_timeperiod_options_dom'] = array(
+    'yearly' => 'Yearly',
+    'quarterly' => 'Quarterly',
+);
+$app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
+    'first' => 'First',
+    'middle' => 'Middle',
+    'last' => 'Last'
 );
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (
