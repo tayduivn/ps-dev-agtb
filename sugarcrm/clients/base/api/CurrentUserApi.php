@@ -69,6 +69,125 @@ class CurrentUserApi extends SugarApi {
      * @return array
      */
     public function retrieveCurrentUser($api, $args) {
+        $current_user = $this->getUserBean();
+        
+        // Get the basics
+        $user_data = $this->getBasicUserInfo();
+        
+        // Fill in the rest
+        $user_data['type'] = 'user';
+        $user_data['id'] = $current_user->id;
+        $user_data['full_name'] = $current_user->full_name;
+        $user_data['user_name'] = $current_user->user_name;
+        if(isset($current_user->preferred_language)) {
+            $user_data['preferred_language'] = $current_user->preferred_language;
+        }
+        
+        return array('current_user' => $user_data);
+    }
+    
+    /**
+     * Updates current user info
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function updateCurrentUser($api, $args) {
+        $bean = $this->getUserBean();
+
+        // setting these for the loadBean
+        $args['module'] = $bean->module_name;
+        $args['record'] = $bean->id;
+
+        $id = $this->updateBean($bean, $api, $args);
+
+        return $this->retrieveCurrentUser($api, $args);
+    }
+
+    /**
+     * Updates the current user's password
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
+     */
+    public function updatePassword($api, $args) {
+        $user_data['valid'] = false;
+        
+        // Deals with missing required args else assigns oldpass and new paswords
+        if (empty($args['old_password']) || empty($args['new_password'])) {
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionMissingParameter('Error: Missing argument.');
+        } else {
+            $oldpass = $args['old_password'];
+            $newpass = $args['new_password'];
+        }
+        
+        $bean = $this->getUserIfPassword($oldpass);
+        if (null !== $bean) {
+            $change = $this->changePassword($bean, $oldpass, $newpass);
+            if (!$change) {
+                $user_data['message'] = 'Error: There was a problem updating password for this user.';
+            } else {
+                $user_data = array_merge($user_data, $change);
+            }
+        } else {
+            $user_data['message'] = 'Error: Incorrect password.'; 
+        }
+        
+        return $user_data;
+    }
+
+    /**
+     * Verifies against the current user's password
+     *
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function verifyPassword($api, $args) {
+        $user_data['valid'] = false;
+        
+        // Deals with missing required args else assigns oldpass and new paswords
+        if (empty($args['password_to_verify'])) {
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionMissingParameter('Error: Missing argument.');
+        }
+        
+        // If the user password is good, send that messaging back
+        if (!is_null($this->getUserIfPassword($args['password_to_verify']))) {
+            $user_data['valid'] = true;
+            $user_data['message'] = 'Password verified.'; 
+            $user_data['expiration'] = $this->getUserLoginExpirationPreference();
+        }
+        return $user_data;
+    }
+
+    /**
+     * Checks a given password and sends back the user bean if the password matches
+     * 
+     * @param string $passwordToVerify
+     * @return User
+     */
+    private function getUserIfPassword($passwordToVerify) {
+        $user = BeanFactory::getBean('Users', $GLOBALS['current_user']->id); 
+        $currentPassword = $user->user_hash;
+        if (User::checkPassword($passwordToVerify, $currentPassword)) {
+            return $user;
+        }
+        
+        return null;
+    }
+
+    /**
+     * Gets the basic user data that all users that are logged in will need. Client
+     * specific user information will be filled in within the client API class.
+     * 
+     * @return array
+     */
+    protected function getBasicUserInfo() {
         global $current_user;
         global $locale;
         
@@ -92,161 +211,46 @@ class CurrentUserApi extends SugarApi {
         $user_data['decimal_separator'] = $locale->getDecimalSeparator();
         $user_data['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
 
-        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
-            $user_data['type'] = 'support_portal';
-            $user_data['user_id'] = $current_user->id;
-            $user_data['user_name'] = $current_user->user_name;
-            $user_data['id'] = $_SESSION['contact_id'];
-            
-            // We need to ask the visibility system for the list of account ids
-            $visibility = new SupportPortalVisibility($contact);
-            $user_data['account_ids'] = $visibility->getAccountIds();
-
-            $user_data['full_name'] = $contact->full_name;
-            $user_data['portal_name'] = $contact->portal_name;
-            if(isset($contact->preferred_language))
-            {
-                $user_data['preferred_language'] = $contact->preferred_language;
-            }
-        } else {
-            $user_data['type'] = 'user';
-            $user_data['id'] = $current_user->id;
-            $user_data['full_name'] = $current_user->full_name;
-            $user_data['user_name'] = $current_user->user_name;
-            if(isset($current_user->preferred_language))
-            {
-                $user_data['preferred_language'] = $current_user->preferred_language;
-            }
-        }
-        return $data = array('current_user'=>$user_data);
-    }
-    /**
-     * Updates current user info
-     *
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function updateCurrentUser($api, $args) {
-        global $current_user;
-
-        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-            $bean = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
-        } else {
-            $bean = $current_user;
-        }
-
-        // setting these for the loadBean
-        $args['module'] = $bean->module_name;
-        $args['record'] = $bean->id;
-
-        $id = $this->updateBean($bean, $api, $args);
-
-        return $this->retrieveCurrentUser($api, $args);
-    }
-
-    /**
-     * Updates the current user's password
-     *
-     * @param $api
-     * @param $args
-     * @return array
-     * @throws SugarApiExceptionMissingParameter|SugarApiExceptionNotFound
-     */
-    public function updatePassword($api, $args) {
-
-        global $current_user;
-        $user_data['valid'] = false;
-        
-        // Deals with missing required args else assigns oldpass and new paswords
-        if (empty($args['old_password']) || empty($args['new_password'])) {
-            // @TODO Localize this exception message
-            throw new SugarApiExceptionMissingParameter('Error: Missing argument.');
-        } else {
-            $oldpass = $args['old_password'];
-            $newpass = $args['new_password'];
-        }
-
-        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-
-            // Update password for portal user. They must have entered correct "old password"
-            if (null !== ($contact = $this->getPortalUserIfPassword($oldpass))) {
-                $contact->portal_password = User::getPasswordHash($newpass);
-                $contact->save();
-                $user_data['valid'] = true;
-                $user_data['message'] = 'Password updated.'; 
-                $user_data['expiration'] = null;
-            } else {
-                $user_data['message'] = 'Error: Incorrect password.'; 
-            }
-        } else {
-            // Update password for normal non support_portal user
-            if (null !== ($user = $this->getUserIfPassword($oldpass))) {
-                if($user->change_password($oldpass, $newpass)) {
-                    $user_data['valid'] = true;
-                    $user_data['message'] = 'Password updated.'; 
-                    $user_data['expiration'] = $user->getPreference('loginexpiration');
-                } else {
-                    $user_data['message'] = 'Error: There was a problem updating password for this user.';
-                }
-            } else {
-                $user_data['message'] = 'Error: Incorrect password.'; 
-            }
-        }
-
         return $user_data;
     }
 
     /**
-     * Verifies against the current user's password
-     *
-     * @param $api
-     * @param $args
+     * Gets the user bean for the user of the api
+     * 
+     * @return User
+     */
+    protected function getUserBean() {
+        global $current_user;
+        return $current_user;
+    }
+
+    /**
+     * Changes a password for a user from old to new
+     * 
+     * @param User $bean User bean
+     * @param string $old Old password 
+     * @param string $new New password
      * @return array
      */
-    public function verifyPassword($api, $args) {
-
-        global $current_user;
-        $user_data['valid'] = false;
+    protected function changePassword($bean, $old, $new) {
+        if ($bean->change_password($old, $new)) {
+            return array(
+                'valid' => true,
+                'message' => 'Password updated.',
+                'expiration' => $bean->getPreference('loginexpiration'),
+            );
+        }
         
-        // Deals with missing required args else assigns oldpass and new paswords
-        if (empty($args['password_to_verify'])) {
-            // @TODO Localize this exception message
-            throw new SugarApiExceptionMissingParameter('Error: Missing argument.');
-        } else {
-            if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-                if(!is_null($this->getPortalUserIfPassword($args['password_to_verify']))) {
-                    $user_data['valid'] = true;
-                    $user_data['message'] = 'Password verified.'; 
-                    $user_data['expiration'] = null;
-                } 
-            } else {
-                if(!is_null($this->getUserIfPassword($args['password_to_verify']))) {
-                    $user_data['valid'] = true;
-                    $user_data['message'] = 'Password verified.'; 
-                    $user_data['expiration'] = $current_user->getPreference('loginexpiration');
-                } 
-            }
-        }
-        return $user_data;
+        return array();
     }
-
-    private function getPortalUserIfPassword($passwordToVerify) {
-        $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
-        $currentPassword = $contact->portal_password;
-        if (User::checkPassword($passwordToVerify, $currentPassword)) {
-            return $contact;
-        }
-        return null;
-    }
-
-    private function getUserIfPassword($passwordToVerify) {
-        $user = BeanFactory::getBean('Users', $GLOBALS['current_user']->id); 
-        $currentPassword = $user->user_hash;
-        if (User::checkPassword($passwordToVerify, $currentPassword)) {
-            return $user;
-        }
-        return null;
+    
+    /**
+     * Gets the preference for user login expiration
+     * 
+     * @return string
+     */
+    protected function getUserLoginExpirationPreference() {
+        global $current_user;
+        return $current_user->getPreference('loginexpiration');
     }
 }
