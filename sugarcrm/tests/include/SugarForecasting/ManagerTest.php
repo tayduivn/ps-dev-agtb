@@ -36,13 +36,13 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-
         SugarTestHelper::setup('mod_strings', array('Forecasts'));
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        parent::tearDown();
     }
 
     public function setUp()
@@ -79,7 +79,6 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestHelper::tearDown();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
     }
