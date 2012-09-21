@@ -157,7 +157,7 @@ foreach ($themesClientsDir as $platform) {
             <h3>Result</h3>
         </div>
         <div class="modal-body">
-            <div>
+            <div class="modal-content">
              <h4></h4>
             </div>
             <div class="modal-footer">
