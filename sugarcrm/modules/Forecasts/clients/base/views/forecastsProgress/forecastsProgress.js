@@ -94,6 +94,15 @@
                     self.recalculateRepTotals(totals);
                 }
             });
+
+            //Listen for config changes
+            this.context.forecasts.config.on('change:show_projected_likely change:show_projected_best change:show_projected_worst', function(context, stuff) {
+                self.model.set({
+                    show_projected_likely: context.get('show_projected_likely') == 1,
+                    show_projected_best: context.get('show_projected_best') == 1,
+                    show_projected_worst: context.get('show_projected_worst') == 1
+                });
+            });
         }
     },
 
