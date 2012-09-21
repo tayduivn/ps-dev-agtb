@@ -33,7 +33,14 @@ $dictionary['GhettoSearch'] = array(
     'duplicate_merge' => false,
 
     'fields' => array(
-
+        'name' =>
+        array (
+          'name' => 'name',
+          'type' => 'varchar',
+          'len' => '255',
+          'comment' => 'Unused Name',
+          'required'=>false,
+        ),
         'parent_type'=>
         array(
         	'name'=>'parent_type',

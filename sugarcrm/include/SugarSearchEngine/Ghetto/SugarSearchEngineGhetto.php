@@ -96,12 +96,16 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
      */
     public function createIndexDocument($bean, $searchFields = null)
     {
+
         if($searchFields == null)
             $searchFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($bean);
 
-        $ghettoBean = BeanFactory::newBean('GhettoSearch');
-        $current_records = $ghettoBean->getAllRecords($bean);
+        if(empty($searchFields))
+            return false;
 
+        $ghettoBean = BeanFactory::newBean('GhettoSearch');
+        //$current_records = $ghettoBean->getAllRecords($bean);
+        $current_records = array();
         foreach($searchFields as $fieldName => $fieldDef)
         {
             //TODO: CHANGE ME
@@ -109,21 +113,21 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
             //All fields have already been formatted to db values at this point so no further processing necessary
             if(!empty($bean->$fieldName)) {
                 $ghettoBean->field_name = $fieldName;
-                $gettoBean->field_value = $bean->$fieldName;
+                $ghettoBean->field_value = $bean->$fieldName;
                 $ghettoBean->boost = $bean->fieldDefs[$fieldName]->boostValue;
-            }
-            if(isset($current_records[$fieldName]))
-            {
-                $ghettoBean->id = $current_records[$fieldName]->id;
-            }
+                if(isset($current_records[$fieldName]))
+                {
+                    $ghettoBean->id = $current_records[$fieldName]->id;
+                }
 
-            $ghettoBean->parent = $bean->module_dir;
-            $ghettoBean->parent_id = $bean->id;
-            $ghettoBean->team_set_id = $bean->team_set_id;
-            $ghettoBean->save();
+                $ghettoBean->parent_type = $bean->module_dir;
+                $ghettoBean->parent_id = $bean->id;
+                $ghettoBean->team_set_id = $bean->team_set_id;
+                $ghettoBean->save();                
+            }
         }
         
-        $ghettoBean = BeanFactory::newBean('Ghetto');
+        $ghettoBean = BeanFactory::newBean('GhettoSearch');
         if($current_records['assigned_user_id'])
         {
             $ghettoBean->id = $current_records['assigned_user_id']->id;
@@ -131,7 +135,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         $ghettoBean->team_set_id = $bean->team_set_id;
         $ghettoBean->field_name = 'assigned_user_id';
         $ghettoBean->field_value = $bean->assigned_user_id;
-        $ghettoBean->parent = $bean->module_dir;
+        $ghettoBean->parent_type = $bean->module_dir;
         $ghettoBean->parent_id = $bean->id;
         $ghettoBean->save();
 
@@ -344,7 +348,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         $GLOBALS['log']->info("Going to search with query $queryString");
         $results = null;
 
-        $ghettoBean = BeanFactory::newBean();
+        $ghettoBean = BeanFactory::newBean('GhettoSearch');
 
         $where = $this->constructTeamFilter();
         //TODO: add performSearch
