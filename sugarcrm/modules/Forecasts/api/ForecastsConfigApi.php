@@ -77,13 +77,6 @@ class ForecastsConfigApi extends ModuleApi {
             return;
         }
 
-        foreach($data as $key => $setting) {
-            $temp = json_decode(html_entity_decode(stripslashes($setting)));
-            if ($temp !== NULL) {
-                $data[$key] = $temp;
-            }
-        }
-
         return $data;
     }
 
