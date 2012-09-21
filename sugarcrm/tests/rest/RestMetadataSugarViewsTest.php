@@ -105,16 +105,18 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when that was the direct option");
-        //END SUGARCRM flav=pro ONLY
-
+        
         // Make sure we get it when we ask for mobile, even though there is base code there
         file_put_contents('clients/base/views/address/address.js','BASE CODE');
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when base code was there.");
-
+        //END SUGARCRM flav=pro ONLY
 
         // Make sure we get the base code when we ask for it.
+        //BEGIN SUGARCRM flav=com ONLY
+        file_put_contents('clients/base/views/address/address.js','BASE CODE');
+        //END SUGARCRM flav=com ONLY
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get base code when it was the direct option");
@@ -214,6 +216,9 @@ class RestMetadataSugarViewsTest extends RestTestBase {
 
 
         // Make sure we get the base code when we ask for it.
+        //BEGIN SUGARCRM flav=com ONLY
+        file_put_contents('clients/base/views/address/editView.hbt','BASE EDITVIEW');
+        //END SUGARCRM flav=com ONLY
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');
         $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get base code when it was the direct option");
