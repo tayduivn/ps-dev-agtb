@@ -20,8 +20,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/SugarApi/ServiceBase.php');
-require_once('include/api/SugarApi/ServiceDictionaryRest.php');
+require_once('include/api/ServiceBase.php');
+require_once('include/api/ServiceDictionaryRest.php');
 require_once('include/SugarOAuth2Server.php');
 
 class RestService extends ServiceBase {
@@ -212,7 +212,12 @@ class RestService extends ServiceBase {
     protected function findRoute($path, $version, $requestType) {
         // Load service dictionary
         $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');
-        return $this->dict->lookupRoute($path, $version, $requestType);
+        if ( !isset($_SESSION['platform']) ) {
+            $platform = 'base';
+        } else {
+            $platform = $_SESSION['platform'];
+        }
+        return $this->dict->lookupRoute($path, $version, $requestType, $platform);
     }
 
     /**

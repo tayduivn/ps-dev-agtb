@@ -28,7 +28,7 @@ require_once('include/oauth2-php/lib/IOAuth2RefreshTokens.php');
 require_once('modules/Administration/SessionManager.php');
 //END SUGARCRM flav=pro ONLY
 
-require_once('include/api/SugarApi/SugarApiException.php');
+require_once('include/api/SugarApiException.php');
 
 /**
  * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to 

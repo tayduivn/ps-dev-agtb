@@ -20,14 +20,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/SugarApi/ServiceDictionary.php');
+require_once('include/api/ServiceDictionary.php');
 
 class ServiceDictionaryRest extends ServiceDictionary {
+    /**
+     * Loads the dictionary so it can be searche
+     */
     public function loadDictionary() {
         $this->dict = $this->loadDictionaryFromStorage('rest');
     }
 
-    public function lookupRoute($path, $version, $requestType) {
+    /**
+     * Looks up a route based on the passed in information
+     * @param array $path Split up array of path elements
+     * @param string $version The requested API verison
+     * @param srting $requestType The HTTP request type (GET/POST/DELETE)
+     * @param srting $platform The platform for the API request
+     * @return array The best-match path element
+     */
+    public function lookupRoute($path, $version, $requestType, $platform) {
         $pathLength = count($path);
 
         // Put the request type on the front of the path, it is how it is indexed
@@ -39,30 +50,34 @@ class ServiceDictionaryRest extends ServiceDictionary {
             throw new SugarApiExceptionNoMethod('Could not find a route with '.$pathLength.' elements');
         }
 
-        return $this->lookupChildRoute($this->dict[$pathLength], $path, $version);
+        if ( isset($this->dict[$pathLength][$platform]) ) {
+            $route = $this->lookupChildRoute($this->dict[$pathLength][$platform], $path, $version);
+        }
+        
+        // If we didn't find a route and we are on a non-base platform, see if we find one
+        // in base.
+        if (!$route && $platform != 'base' && isset($this->dict[$pathLength]['base']) ) {
+            $route = $this->lookupChildRoute($this->dict[$pathLength]['base'], $path, $version);
+        }
+        
+        if ($route == false) {
+            throw new SugarApiExceptionNoMethod('Could not find a route with '.$pathLength.' elements');
+        }
+
+        return $route;
     }
 
-    protected function lookupChildRoute($routeBase, $path, $version ) {
+    /**
+     * Recursively digs through routes to find all options and picks the best one
+     * @param array $routeBase The current list of routes you are picking between
+     * @param array $path The list of path elements to search through
+     * @param float $version The API version you are looking for
+     * @return array The best-match path element
+     */
+    protected function lookupChildRoute($routeBase, $path, $version) {
         if ( count($path) == 0 ) {
             // We are at the end of the lookup, the elements here are actual paths, we need to return the best one
-            $bestScore = 0.0;
-            $bestRoute = false;
-            foreach ( $routeBase as $route ) {
-                if ( isset($route['minVersion']) && $route['minVersion'] > $version ) {
-                    // Min version is too low, look for another route
-                    continue;
-                }
-                if ( isset($route['maxVersion']) && $route['maxVersion'] < $version ) {
-                    // Max version is too high, look for another route
-                    continue;
-                }
-                if ( $route['score'] > $bestScore ) {
-                    $bestRoute = $route;
-                    $bestScore = $route['score'];
-                }
-            }
-
-            return $bestRoute;
+            return $this->getBestEnding($routeBase,$version);
         }
 
         // Grab the element of the path we are actually looking at
@@ -101,6 +116,36 @@ class ServiceDictionaryRest extends ServiceDictionary {
         return $bestRoute;
     }
 
+    /**
+     * Picks the best route from the leaf-nodes discovered through lookupChildRoute
+     * @param array $routes The current list of routes you are picking between
+     * @param array $path The list of path elements to search through
+     * @param float $version The API version you are looking for
+     * @return array The best-match path element
+     */
+    protected function getBestEnding($routes, $version)
+    {
+        $bestScore = 0.0;
+        $bestRoute = false;
+        
+        foreach ( $routes as $route ) {
+            if ( isset($route['minVersion']) && $route['minVersion'] > $version ) {
+                // Min version is too low, look for another route
+                continue;
+            }
+            if ( isset($route['maxVersion']) && $route['maxVersion'] < $version ) {
+                // Max version is too high, look for another route
+                continue;
+            }
+            if ( $route['score'] > $bestScore ) {
+                $bestRoute = $route;
+                $bestScore = $route['score'];
+            }
+        }
+        
+        return $bestRoute;
+    }
+
     protected function matchModule( $pathElement ) {
         return isset($GLOBALS['beanList'][$pathElement]);
     }
@@ -109,15 +154,15 @@ class ServiceDictionaryRest extends ServiceDictionary {
         $this->endpointBuffer = array();
     }
     
-    public function registerEndpoints($newEndpoints, $file, $fileClass, $isCustom ) {
+    public function registerEndpoints($newEndpoints, $file, $fileClass, $platform, $isCustom ) {
         if ( ! is_array($newEndpoints) ) {
             return;
         }
         
         foreach ( $newEndpoints as $endpoint ) {
-            // We use the path length and request type as the first two keys to search by
+            // We use the path length, platform, and request type as the first three keys to search by
             $path = $endpoint['path'];
-            array_unshift($path,count($endpoint['path']),$endpoint['reqType']);
+            array_unshift($path,count($endpoint['path']),$platform,$endpoint['reqType']);
             
             $endpointScore = 0.0;
             if ( isset($endpoint['extraScore']) ) {

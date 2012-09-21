@@ -96,7 +96,7 @@ EOQ;
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
-        $this->assertTrue(!file_exists('cache/include/api/SugarApi/ServiceDictionary.rest.php'), "Didn't really clear the cache");
+        $this->assertTrue(!file_exists('cache/include/api/ServiceDictionary.rest.php'), "Didn't really clear the cache");
 
 
         // verify pong is there now
@@ -124,7 +124,7 @@ EOQ;
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
-        $this->assertTrue(!file_exists('cache/include/api/SugarApi/ServiceDictionary.rest.php'), "Didn't really clear the cache the SECOND time");
+        $this->assertTrue(!file_exists('cache/include/api/ServiceDictionary.rest.php'), "Didn't really clear the cache the SECOND time");
         
         // verify pong isn't there
         $replyPong = $this->_restCall('ping');

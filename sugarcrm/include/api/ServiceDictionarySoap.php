@@ -20,7 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/SugarApi/ServiceDictionary.php');
+require_once('include/api/ServiceDictionary.php');
 
 class ServiceDictionarySoap extends ServiceDictionary {
     public function loadDictionary() {
@@ -32,7 +32,7 @@ class ServiceDictionarySoap extends ServiceDictionary {
         $this->typeBuffer = array();
     }
     
-    public function registerEndpoints($newEndpoints, $file, $fileClass, $isCustom ) {
+    public function registerEndpoints($newEndpoints, $file, $fileClass, $platform, $isCustom ) {
         if ( ! is_array($newEndpoints) ) {
             return;
         }

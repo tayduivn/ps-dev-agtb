@@ -43,9 +43,17 @@ class HelpApi extends SugarApi {
         // This function needs to peer into the deep, twisted soul of the RestServiceDictionary
         $dir = $api->dict->dict;
         
+        if ( empty($args['platform']) ) {
+            $platform = 'base';
+        } else {
+            $platform = $args['platform'];
+        }
+
         $endpointList = array();
         foreach ( $dir as $startDepth => $dirPart ) {
-            $endpointList = array_merge($endpointList, $this->getEndpoints($dirPart,$startDepth));
+            if ( isset($dirPart[$platform]) ) {
+                $endpointList = array_merge($endpointList, $this->getEndpoints($dirPart[$platform],$startDepth));
+            }
         }
 
         // Add in the full endpoint paths, so we can sort by them

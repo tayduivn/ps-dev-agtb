@@ -20,23 +20,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * API service dictionary
+ * Collects information about what endpoints are available in the system
+ */
 class ServiceDictionary {
     public function __construct() {
-        $this->cacheDir = sugar_cached('include/api/SugarApi/');
+        $this->cacheDir = sugar_cached('include/api/');
     }
 
-    // clear the cache of the API
-    public function clearCache($thedir = 'include/api/SugarApi', $extension='php') {
-        $thedir = sugar_cached($thedir);
+    /**
+     * Clear all API path caches
+     */
+    public function clearCache() {
+        $thedir = $this->cacheDir;
         if ($current = @opendir($thedir)) {
             while (false !== ($children = readdir($current))) {
                 $children = trim($children);
                 $fileexists = (is_file($thedir."/". $children)) ? "TRUE" : "FALSE";
                 if ($children != "." && $children != "..") {
                     if (is_dir($thedir . "/" . $children)) {
-                        $this->clearCache($thedir . "/" . $children, $extension);
+                        $this->clearCache($thedir . "/" . $children, 'php');
                     }
-                    elseif (is_file($thedir . "/" . $children) && (substr_count($children, $extension))) {
+                    elseif (is_file($thedir . "/" . $children) && (substr_count($children, 'php'))) {
                         unlink($thedir . "/" . $children);
                     }
                 }
@@ -44,6 +50,12 @@ class ServiceDictionary {
         }
     }
 
+    /**
+     * Load a dictionary for a particular api
+     * @internal
+     * @param string $apiType The api type for the dictionary you want to load ("Rest" or "Soap")
+     * @return array The data stored in saveDictionaryToStorage()
+     */
     protected function loadDictionaryFromStorage($apiType) {
         $dictFile = $this->cacheDir.'ServiceDictionary.'.$apiType.'.php';
         if ( ! file_exists($dictFile) ) {
@@ -56,6 +68,12 @@ class ServiceDictionary {
         return $apiDictionary[$apiType];
     }
 
+    /**
+     * Save a dictionary for a particular API to storage
+     * @internal
+     * @param string $apiType The api type for the dictionary you want to load ("Rest" or "Soap")
+     * @param array $storageData The data that the API needs to store for it's dictionary.
+     */
     protected function saveDictionaryToStorage($apiType,$storageData) {
         if ( !is_dir($this->cacheDir) ) {
             sugar_mkdir($this->cacheDir,null,true);
@@ -65,6 +83,9 @@ class ServiceDictionary {
         
     }
 
+    /**
+     * Build all dictionaries for the known service types.
+     */
     public function buildAllDictionaries() {
         $apis = $this->loadAllDictionaryClasses();
 
@@ -72,10 +93,11 @@ class ServiceDictionary {
             $api->preRegisterEndpoints();
         }
 
-        $globPaths = array(array('glob'=>'include/api/*.php','custom'=>false),
-                           array('glob'=>'modules/*/api/*.php','custom'=>false),
-                           array('glob'=>'custom/include/api/*.php','custom'=>true),
-                           array('glob'=>'custom/modules/*/api/*.php','custom'=>true),
+        $globPaths = array(
+            array('glob'=>'clients/*/api/*.php','custom'=>false, 'platformPart'=>1),
+            array('glob'=>'custom/clients/*/api/*.php','custom'=>true, 'platformPart'=>2),
+            array('glob'=>'modules/*/clients/*/api/*.php','custom'=>false, 'platformPart'=>3),
+            array('glob'=>'custom/modules/*/clients/*/api/*.php','custom'=>true, 'platformPart'=>4),
         );
 
         foreach ( $globPaths as $path ) {
@@ -89,6 +111,13 @@ class ServiceDictionary {
                 // Strip off the directory, then the .php from the end
                 $fileClass = substr(basename($file),0,-4);
 
+                $pathParts = explode('/',$path);
+                if (empty($pathParts[$path['platformPart']]) ) {
+                    $platform = 'base';
+                } else {
+                    $platform = $pathParts[$path['platformPart']];
+                }
+
                 require_once($file);
                 if (!(class_exists($fileClass) 
                       && is_subclass_of($fileClass,'SugarApi')) ) {
@@ -101,7 +130,7 @@ class ServiceDictionary {
                     $methodName = 'registerApi'.$apiType;
                     
                     if ( method_exists($obj,$methodName) ) {
-                        $api->registerEndpoints($obj->$methodName(),$file,$fileClass,$path['custom']);
+                        $api->registerEndpoints($obj->$methodName(),$file,$fileClass,$platform,$path['custom']);
                     }
                 }
             }
@@ -112,10 +141,14 @@ class ServiceDictionary {
         }
     }
 
+    /**
+     * Fetch the list of recognized service types.
+     * @internal
+     */
     protected function loadAllDictionaryClasses() {
         // Currently hardcoded to just Soap and Rest
-        require_once('include/api/SugarApi/ServiceDictionaryRest.php');
-        // require_once('include/api/SugarApi/ServiceDictionarySoap.php');
+        require_once('include/api/ServiceDictionaryRest.php');
+        // require_once('include/api/ServiceDictionarySoap.php');
         
 
         $apis = array();

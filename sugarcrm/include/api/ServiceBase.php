@@ -20,15 +20,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/SugarApi/SugarApiException.php');
-require_once('include/api/SugarApi/SugarApi.php');
+require_once('include/api/SugarApiException.php');
+require_once('include/api/SugarApi.php');
 
 abstract class ServiceBase {
     abstract public function execute();
     abstract protected function handleException(Exception $exception);
     
     protected function loadServiceDictionary($dictionaryName) {
-        require_once("include/api/SugarApi/{$dictionaryName}.php");
+        require_once("include/api/{$dictionaryName}.php");
         
         $dict = new $dictionaryName();
 
