@@ -1,5 +1,5 @@
 <div class="block filtered tabbable tabs-left" id="moduleActivity">
-  <ul id="activitystream-pills" class="nav nav-pills">
+  <ul id="activitystream-pills" class="nav nav-pills" tour="tour-stream-filter">
     {{#if opts.params.filter}}
         <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
         <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
@@ -19,7 +19,7 @@
   <h4 id="activitystream-header">&nbsp;</h4>
   <div class="activitystream-post">
     <p>
-      <div contenteditable="true" class="span12 sayit" dropzone="copy" />
+      <div contenteditable="true" class="span12 sayit" dropzone="copy" tour="tour-stream-post" />
       <input type="submit" class="btn btn-primary addPost" value="Post"/>
     </p>
   </div>
@@ -72,7 +72,7 @@
                 {{#eq this.file_type "image"}}
                 <a href="#attachment-{{this.id}}" data-toggle="modal">
                 {{this.filename}}
-                <img src="{{this.url}}" alt="{{this.filename}}" />
+                <img src="{{this.url}}" class="activitystream-attachment-thumbnail" alt="{{this.filename}}" />
                 <div class="modal" style="display:none" id="attachment-{{this.id}}">
                   <div class="modal-header">
                     <a class="close" data-dismiss="modal">×</a>
@@ -128,7 +128,7 @@
                               {{#eq this.file_type "image"}}
                               <a href="#attachment-{{this.id}}" data-toggle="modal">
                               {{this.filename}}
-                              <img src="{{this.url}}" alt="{{this.filename}}" />
+                              <img src="{{this.url}}" class="activitystream-attachment-thumbnail" alt="{{this.filename}}" />
                               <div class="modal" style="display:none" id="attachment-{{this.id}}">
                                 <div class="modal-header">
                                   <a class="close" data-dismiss="modal">×</a>

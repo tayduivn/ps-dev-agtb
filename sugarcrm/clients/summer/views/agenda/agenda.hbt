@@ -1,7 +1,7 @@
 <div class="block">
      <h4>Agenda:</h4>
      {{#if loaded}}
-          <div class="accordion" id="accordion2">
+          <div class="accordion" id="accordion2" tour="tour-agenda">
             <div class="accordion-group">
               <div class="accordion-heading">
                 <h5>
