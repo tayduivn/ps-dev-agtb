@@ -125,6 +125,9 @@
                             }
                         }
 
+                        // unformat the value from user prefs before sending to model
+                        value = app.currency.unformatAmountLocale(value);
+
                         var values = {};
                         values[settings.field.name] = value;
                         values["timeperiod_id"] = settings.field.context.forecasts.get("selectedTimePeriod").id;
