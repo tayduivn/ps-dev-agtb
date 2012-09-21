@@ -41,7 +41,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     protected $backupGlobals = FALSE;
 
-    static public function setupBeforeClass()
+    static public function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
