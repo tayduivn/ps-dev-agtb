@@ -34,7 +34,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
     private $_client = null;
 
     const DEFAULT_INDEX_TYPE = 'SugarBean';
-    const WILDCARD_CHAR = '%';
+    const WILDCARD_CHAR = '*';
 
     public function __construct($params = array()) {}
 
@@ -336,6 +336,10 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         if (self::isSearchEngineDown())
         {
             return null;
+        }
+
+        if($this->canAppendWildcard($queryString)) {
+            $queryString .= self::WILDCARD_CHAR;
         }
 
         $GLOBALS['log']->info("Going to search with query $queryString");
