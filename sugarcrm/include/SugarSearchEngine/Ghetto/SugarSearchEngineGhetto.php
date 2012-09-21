@@ -23,6 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineHighlighter.php');
+require_once('include/SugarSearchEngine/Ghetto/SugarSearchEngineGhettoResultSet.php');
 
 /**
  * Engine implementation for GhettoSearch
@@ -343,22 +344,23 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         {
             $appendWildcard = true;
         }
-        $queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
+        //$queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
 
         $GLOBALS['log']->info("Going to search with query $queryString");
         $results = null;
 
         $ghettoBean = BeanFactory::newBean('GhettoSearch');
 
-        $where = $this->constructTeamFilter();
+        //$where = $this->constructTeamFilter();
         //TODO: add performSearch
-        $results = $ghettoBean->performSearch($queryString, $offset, $limit, $options);
+        $results = $ghettoBean->performSearch($queryString);
 
         $return = array();
         foreach($results AS $ghettoLicious) {
-            $return[] = BeanFactory::getBean($ghettoLicious->module, $ghettoLicious->module_id);
+            $bean = BeanFactory::getBean($ghettoLicious->parent_type, $ghettoLicious->parent_id);
+            $return[] = new SugarSearchEngineGhettoResult($bean);
         }
-        return $return;
+        return new SugarSearchEngineGhettoResultSet($return);
     }
     
     public function getServerStatus() {}

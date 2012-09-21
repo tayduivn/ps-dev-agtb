@@ -38,6 +38,16 @@ class GhettoSearch extends GhettoSearch_sugar
         parent::GhettoSearch_sugar();
     }
 
+
+    function performSearch($query) {
+    	$returns = array();
+    	$results = $GLOBALS['db']->query("SELECT * FROM {$this->table_name} WHERE " . $GLOBALS['db']->getFulltextQuery('field_value', array($query)));
+    	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
+    		$returns[$row['field_name']] = BeanFactory::getBean('GhettoSearch', $row['id']);
+    	}
+
+    	return $returns;
+    }
 }
 
 ?>

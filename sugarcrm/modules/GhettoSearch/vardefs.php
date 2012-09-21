@@ -40,7 +40,17 @@ $dictionary['GhettoSearch'] = array(
           'len' => '255',
           'comment' => 'Unused Name',
           'required'=>false,
+          'source' => 'non-db',
         ),
+        'description' =>
+        array (
+          'name' => 'description',
+          'type' => 'varchar',
+          'len' => '255',
+          'comment' => 'Unused Name',
+          'required'=>false,
+          'source' => 'non-db',
+        ),        
         'parent_type'=>
         array(
         	'name'=>'parent_type',
