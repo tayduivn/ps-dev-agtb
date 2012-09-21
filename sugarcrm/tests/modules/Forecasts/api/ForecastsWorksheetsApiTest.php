@@ -184,6 +184,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         }
 
         //check to see if the data to the Opportunity table was saved
+        //TODO: Fix this... there may be a logic fallacy or the save triggers are resetting the adjusted value
         //$this->assertEquals(self::$repData["ops"][0]->probability, $returnProb, "Opportunity data was not saved.");
 
         //check to see if the best_case in the Worksheet table was saved
