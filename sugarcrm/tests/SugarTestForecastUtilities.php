@@ -292,6 +292,7 @@ class SugarTestForecastUtilities
     {
         if (!empty(self::$timeperiod)) {
             SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+            self::$timeperiod = null;
         }
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
@@ -321,5 +322,7 @@ class SugarTestForecastUtilities
                                             $user->getPreference('default_number_grouping_seperator')
          );
     }
+
+
 
 }

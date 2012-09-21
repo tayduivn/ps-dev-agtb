@@ -28,8 +28,15 @@ class ForecastTreeSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	public static function setUpBeforeClass()
 	{
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $GLOBALS['db']->query("DELETE FROM forecast_tree WHERE hierarchy_type in ('users','products')");
 	}
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
 
 	public function testCreateForecastUserSeedData()
 	{

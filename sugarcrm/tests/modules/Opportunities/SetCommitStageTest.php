@@ -52,11 +52,14 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
     }
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass()
     {
-        require_once('modules/Forecasts/ForecastsSeedData.php');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         SugarTestHelper::setUp('current_user');
+        require_once('modules/Forecasts/ForecastsSeedData.php');
         ForecastsSeedData::setupForecastSettings();
     }
 

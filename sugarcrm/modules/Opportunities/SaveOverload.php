@@ -32,6 +32,11 @@ function perform_save(&$focus){
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
+        if(empty($admin) || !is_object($admin))
+        {
+           display_stack_trace();
+        }
+
         //Retrieve Forecasts_category_ranges and json decode as an associative array
         $category_ranges = isset($settings['category_ranges']) ? $settings['category_ranges'] : array();
 
