@@ -67,4 +67,11 @@ interface SugarOAuth2SugarInterface {
      * @return array An array of contact_id and user_id
      */
     public function getIdsForUser($user_id, $client_id);
+
+    /**
+     * Sets up necessary visibility for a client. Not all clients will set this
+     * 
+     * @return void
+     */
+    public function setupVisibility();
 }

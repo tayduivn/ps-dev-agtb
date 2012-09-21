@@ -155,6 +155,28 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
     }
     
     /**
+     * Sets up necessary visibility for a client. Not all clients will set this
+     * 
+     * @return void
+     */
+    public function setupVisibility() {
+        // Add the necessary visibility and acl classes to the default bean list
+        require_once('modules/ACL/SugarACLSupportPortal.php');
+        $default_acls = SugarBean::getDefaultACL();
+        // This one overrides the Static ACL's, so disable that
+        unset($default_acls['SugarACLStatic']);
+        $default_acls['SugarACLStatic'] = false;
+        $default_acls['SugarACLSupportPortal'] = true;
+        SugarBean::setDefaultACL($default_acls);
+        SugarACL::resetACLs();
+
+        $default_visibility = SugarBean::getDefaultVisibility();
+        $default_visibility['SupportPortalVisibility'] = true;
+        SugarBean::setDefaultVisibility($default_visibility);
+        $GLOBALS['log']->debug("Added SupportPortalVisibility to session.");
+    }
+    
+    /**
      * This method locates the portal API user for the specified client_id
      * Currently there is no way to associate a specific user with a specific client_id, so that parameter is ignored for now
      * @param $client_id string The client identifier of the portal account, should be used to identifiy different portal types

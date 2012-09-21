@@ -129,6 +129,13 @@ class SugarOAuth2StorageBase implements IOAuth2GrantUser, IOAuth2RefreshTokens, 
     public function getIdsForUser($user_id, $client_id) {
         return array('contact_id' => '', 'user_id' => $user_id);
     }
+    
+    /**
+     * Sets up necessary visibility for a client. Not all clients will set this
+     * 
+     * @return void
+     */
+    public function setupVisibility() {}
 
     // END METHOD FROM SugarOAuth2StorageInterface    
         

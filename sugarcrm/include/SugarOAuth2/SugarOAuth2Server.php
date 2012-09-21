@@ -91,6 +91,12 @@ class SugarOAuth2Server extends OAuth2
         return $currentOAuth2Server;
     }
 
+    /**
+     * Sets up visibility where needed
+     */
+    public function setupVisibility() {
+        $this->storage->setupVisibility();
+    }
 
 	/**
 	 * Generates an unique access token.
