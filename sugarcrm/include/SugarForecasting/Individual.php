@@ -59,7 +59,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             "o.probability, " .
             "o.commit_stage, " .
             "o.sales_stage, " .
-            "o.timeperiod_id, " .
             "o.currency_id, " .
             "o.name, " .
             "o.best_case, " .

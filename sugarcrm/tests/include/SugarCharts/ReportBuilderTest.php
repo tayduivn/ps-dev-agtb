@@ -26,7 +26,7 @@ class ReportBuilderTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * setUpBeforeClass
      *
-     * Override setupBeforeClass to instantiate global beanFile and beanList variables
+     * Override setUpBeforeClass to instantiate global beanFile and beanList variables
      */
     public static function setUpBeforeClass()
     {
