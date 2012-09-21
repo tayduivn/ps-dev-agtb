@@ -151,23 +151,6 @@ class MetadataApi extends SugarApi {
 
     // this is the function for the endpoint of the public metadata api.
     public function getPublicMetadata($api, $args) {
-        $configs = array();
-
-        // right now we are getting the config only for the portal
-        // Added an isset check for platform because with no platform set it was
-        // erroring out. -- rgonzalez
-        if(isset($args['platform']) && $args['platform'] == 'portal') {
-
-            $admin = new Administration();
-            $admin->retrieveSettings();
-            foreach($admin->settings AS $setting_name => $setting_value) {
-                if(stristr($setting_name, 'portal_')) {
-                    $key = str_replace('portal_', '', $setting_name);
-                    $configs[$key] = json_decode(html_entity_decode($setting_value));
-                }
-            }
-        }
-
         global $current_language, $app_strings, $app_list_strings;
         if ( isset($args['lang']) ) {
             $current_language = $args['lang'];
@@ -205,10 +188,9 @@ class MetadataApi extends SugarApi {
         $app_list_strings = $mm->getAppListStrings();
         $app_list_strings_public = array();
         $app_list_strings_public['available_language_dom'] = $app_list_strings['available_language_dom'];
-        if (isset($args['platform']) && $args['platform'] == 'portal') {
-            $app_list_strings_public['countries_dom'] = $app_list_strings['countries_dom'];
-            $app_list_strings_public['state_dom'] = $app_list_strings['state_dom'];
-        }
+        
+        // Let clients fill in any gaps that may need to be filled in
+        $app_list_strings_public = $this->fillInAppListStrings($app_list_strings_public, $app_list_strings);
 
         // Start collecting data
         $data = array();
@@ -219,7 +201,7 @@ class MetadataApi extends SugarApi {
         $data['view_templates'] = $mm->getViewTemplates();
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
-        $data['config'] = $configs;
+        $data['config'] = $this->getConfigs();
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
@@ -234,9 +216,8 @@ class MetadataApi extends SugarApi {
         $data = array();
 
         $mm = $this->getMetadataManager();
-
-
-        $data['module_list'] = $mm->getModuleList($this->platforms[0]);
+        
+        $data['module_list'] = $this->getModuleList();
         $data['full_module_list'] = $data['module_list'];
 
         $data['modules'] = array();
@@ -289,16 +270,7 @@ class MetadataApi extends SugarApi {
                 continue;
             }
             $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
-            // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
-            if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
-                $data['acl'][$modName]['admin'] = 'no';
-                $data['acl'][$modName]['developer'] = 'no';
-                $data['acl'][$modName]['edit'] = 'no';
-                $data['acl'][$modName]['delete'] = 'no';
-                $data['acl'][$modName]['import'] = 'no';
-                $data['acl'][$modName]['export'] = 'no';
-                $data['acl'][$modName]['massupdate'] = 'no';
-            }
+            $data['acl'][$modName] = $this->verifyACLs($data['acl'][$modName]);
         }
 
         // populate available system currencies
@@ -322,20 +294,10 @@ class MetadataApi extends SugarApi {
                 $data['currencies'][$current->id] = $currency;
             }
         }
-
-        if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
-            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
-            // This is a change in the ACL's for users without Accounts
-            $vis = new SupportPortalVisibility($apiPerson);
-            $accounts = $vis->getAccountIds();
-            if (count($accounts)==0) {
-                // This user has no accounts, modify their ACL's so that they match up with enforcement
-                $data['acl']['Accounts']['access'] = 'no';
-                $data['acl']['Cases']['access'] = 'no';
-            }
         
-        }
-
+        // Handle enforcement of acls for clients that do this (portal)
+        $data['acl'] = $this->enforceModuleACLs($data['acl']);
+        
         // remove the disabled modules from the module list
         require_once("modules/MySettings/TabController.php");
         $controller = new TabController();
@@ -448,4 +410,74 @@ class MetadataApi extends SugarApi {
         return $data;
     }
 
+    /**
+     * Gets configs
+     * 
+     * @return array
+     */
+    protected function getConfigs() {
+        $configs = array();
+        
+        // As of now configs are only for portal
+        return $configs;
+    }
+
+    /**
+     * Manipulates the ACLs as needed, per client
+     * 
+     * @param array $acls
+     * @return array
+     */
+    protected function verifyACLs(Array $acls) {
+        // No manipulation for base acls
+        return $acls;
+    }
+
+    /**
+     * Enforces module specific ACLs for users without accounts, as needed
+     * 
+     * @param array $acls
+     * @return array
+     */
+    protected function enforceModuleACLs(Array $acls) {
+        // No manipulation for base acls
+        return $acls;
+    }
+
+    /**
+     * Fills in additional app list strings data as needed by the client
+     * 
+     * @param array $public Public app list strings
+     * @param array $main Core app list strings
+     * @return array
+     */
+    protected function fillInAppListStrings(Array $public, Array $main) {
+        return $public;
+    }
+
+    /**
+     * Gets the list of modules for this client
+     * 
+     * @return array
+     */
+    protected function getModules() {
+        // Loading a standard module list
+        return array_keys($GLOBALS['app_list_strings']['moduleList']);
+    }
+
+    /**
+     * Gets the cleaned up list of modules for this client
+     * @return array
+     */
+    public function getModuleList() {
+        $moduleList = $this->getModules();
+        $oldModuleList = $moduleList;
+        $moduleList = array();
+        foreach ( $oldModuleList as $module ) {
+            $moduleList[$module] = $module;
+        }
+
+        $moduleList['_hash'] = md5(serialize($moduleList));
+        return $moduleList;
+    }
 }
