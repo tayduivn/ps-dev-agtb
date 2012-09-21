@@ -25,18 +25,18 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_RANGE',
+            'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE',
             'fields' => array(
                 array(
-                    'name' => 'likely',
+                    'name' => 'show_worksheet_likely',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_RANGE_LIKELY',
+                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
                 ),
                 array(
-                    'name' => 'best',
+                    'name' => 'show_worksheet_best',
                     'type' => 'bool',
                     'label' => 'LBL_FORECASTS_CONFIG_RANGE_BEST',
                     'default' => false,
@@ -44,9 +44,38 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'view' => 'edit',
                 ),
                 array(
-                    'name' => 'worst',
+                    'name' => 'show_worksheet_worst',
                     'type' => 'bool',
                     'label' => 'LBL_FORECASTS_CONFIG_RANGE_WORST',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit',
+                ),
+            ),
+        ),
+        array(
+            'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE',
+            'fields' => array(
+                array(
+                    'name' => 'show_projected_likely',
+                    'type' => 'bool',
+                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit',
+                ),
+                array(
+                    'name' => 'show_projected_best',
+                    'type' => 'bool',
+                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit',
+                ),
+                array(
+                    'name' => 'show_projected_worst',
+                    'type' => 'bool',
+                    'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_WORST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
