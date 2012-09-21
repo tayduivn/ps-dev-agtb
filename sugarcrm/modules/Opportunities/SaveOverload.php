@@ -28,11 +28,12 @@ function perform_save(&$focus){
     //Determine the default commit_stage based on the probability
     if (empty($focus->commit_stage) && $focus->probability !== '')
     {
+        /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
-        $admin->retrieveSettings();
+        $settings = $admin->getConfigForModule('Forecasts');
 
         //Retrieve Forecasts_category_ranges and json decode as an associative array
-        $category_ranges = json_decode(html_entity_decode($admin->settings['Forecasts_category_ranges']), true);
+        $category_ranges = isset($settings['category_ranges']) ? $settings['category_ranges'] : array();
 
         foreach($category_ranges as $key=>$entry)
         {
