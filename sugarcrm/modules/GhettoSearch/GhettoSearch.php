@@ -43,7 +43,7 @@ class GhettoSearch extends GhettoSearch_sugar
     	$returns = array();
     	$results = $GLOBALS['db']->query("SELECT id, field_name FROM {$this->table_name} WHERE " . $GLOBALS['db']->getFulltextQuery('field_value', array($query)));
     	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
-    		$returns[$row['field_name']] = BeanFactory::getBean('GhettoSearch', $row['id']);
+    		$returns[] = BeanFactory::getBean('GhettoSearch', $row['id']);
     	}
 
     	return $returns;
