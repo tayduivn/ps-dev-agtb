@@ -514,9 +514,12 @@ class SugarOAuth2StorageBase implements IOAuth2GrantUser, IOAuth2RefreshTokens, 
     {
         $keyInfo = $this->getClientDetails($client_id);
         
-        list($contact_id, $user_id) = $this->getIdsForUser($user_id, $client_id);
+        $ids = $this->getIdsForUser($user_id, $client_id);
+        $contact_id = $ids['contact_id'];
+        $user_id = $ids['user_id'];
         
-        if (!$contact_id && !$user_id) {
+        // User ID should always be set. Contact may not always be set to something
+        if (!$user_id) {
             return;
         }
         

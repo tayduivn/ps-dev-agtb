@@ -40,14 +40,17 @@ class SugarOAuth2Server extends OAuth2
             // Normalize the platform
             $storageType = ucfirst(strtolower($platform));
             
-            // Setup the default platform and base storage classes
+            // Setup the default platform and base storage classes as well as
+            // the custom ones
             $classes[3] = 'SugarOAuth2StorageBase';
-            $classes[1] = 'SugarOAuth2Storage' . $storageType;
-            
-            // Setup the custom platform and base storage classes
             $classes[2] = $classes[3] . 'Cstm';
-            $classes[0] = $classes[1] . 'Cstm';
             
+            // Only add these in if the platform is not base
+            if ($platform != 'base') {
+                $classes[1] = 'SugarOAuth2Storage' . $storageType;
+                $classes[0] = $classes[1] . 'Cstm';
+            }
+
             // Run through the stack of storages and fight the right one
             $oauthStorageName = null;
             ksort($classes);
