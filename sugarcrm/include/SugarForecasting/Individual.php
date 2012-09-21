@@ -59,7 +59,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             "o.probability, " .
             "o.commit_stage, " .
             "o.sales_stage, " .
-            "o.timeperiod_id, " .
             "o.currency_id, " .
             "o.name, " .
             "o.best_case, " .
@@ -79,6 +78,9 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             "w.currency_id w_currency_id, " .
             "w.base_rate w_base_rate " .
             "from opportunities o " .
+            "left join timeperiods t ".
+            "on t.start_date_timestamp < o.date_closed_timestamp ".
+            "and t.end_date_timestamp >= o.date_closed_timestamp ".
             "left join worksheet w " .
             "on o.id = w.related_id ";
         if ($this->getArg('user_id') == $current_user->id) {
@@ -89,8 +91,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $sql .= "and w.version = 1 ";
         }
 
-        $sql .= "where o.timeperiod_id = '" . $this->getArg('timeperiod_id') . "' " .
-            "and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
+        $sql .= "where t.id =  '" . $this->getArg('timeperiod_id') . "' " .
+            " and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
             "and o.deleted = 0";
 
         $result = $db->query($sql);
