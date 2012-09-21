@@ -70,6 +70,9 @@ class CurrencyTest extends Sugar_PHPUnit_Framework_TestCase {
         $unformattedValue = unformat_number($testValue);
         $this->assertEquals($unformattedValue, 0.9, "Assert that 0.9 stays 0.9. Unformatted value is: ".$unformattedValue);
 
+        $testValue = "-0.9";
+        $unformattedValue = unformat_number($testValue);
+        $this->assertEquals($unformattedValue, -0.9, "Assert that -0.9 stays -0.9. Unformatted value is: ".$unformattedValue);
 
     }
     
