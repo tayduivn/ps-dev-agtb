@@ -30,9 +30,6 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        //BEGIN SUGARCRM flav=pro ONLY
-        SugarTestHelper::setUP('forecasts');
-        //END SUGARCRM flav=pro ONLY
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
     }
 

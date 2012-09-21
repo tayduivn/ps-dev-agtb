@@ -138,13 +138,17 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     /**
      * @group forecastapi
      * @group forecasts
+     * @group save
      */
     public function testForecastWorksheetSave()
     {
 
-        $test_name = self::$repData["ops"][0]->name;
         self::$repData["op_worksheets"][0]->best_case = self::$repData["op_worksheets"][0]->best_case + 100;
-        self::$repData["ops"][0]->probability = self::$repData["ops"][0]->probability + 10;
+        self::$repData["ops"][0]->probability = (self::$repData["ops"][0]->probability + 10);
+
+        //$GLOBALS['log']->fatal(var_export( self::$repData["ops"][0]->id, true));
+        //$GLOBALS['log']->fatal("-------------------------------------------------");
+
         $returnBest = '';
         $returnProb = '';
         $returnCommitStage = '';
@@ -171,14 +175,15 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $response = $this->_restCall("ForecastWorksheets?user_id=" . self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);
 
         //loop through response and pick out the rows that correspond with ops[0]->id
+        //$GLOBALS['log']->fatal(var_export($response["reply"], true));
+
         foreach ($response["reply"] as $record)
         {
-            if ($record["id"] == self::$repData["ops"][0]->id && $record["name"] == $test_name)
+            if ($record["id"] == self::$repData["ops"][0]->id)
             {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnCommitStage = $record["commit_stage"];
-                break;
             }
         }
 
@@ -196,7 +201,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     /**
      * @group forecastapi
      * @group forecasts
-     * @outputBuffering disabled
      */
     public function testWorksheetVersionSave()
     {
@@ -238,7 +242,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
-                break;
             }
         }
 
@@ -258,7 +261,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
-                break;
             }
         }
 
@@ -315,7 +317,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
-                break;
             }
         }
 
@@ -342,7 +343,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
-                break;
             }
         }
 
