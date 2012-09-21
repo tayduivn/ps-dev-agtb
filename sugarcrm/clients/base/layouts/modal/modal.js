@@ -124,18 +124,24 @@
                 callback(model);
                 self.hide();
             },this);
+            
             self.context.off("modal:close");
             self.context.on("modal:close", self.hide, self);
 
+            self.context.off("modal:changetitle");
+            self.context.on("modal:changetitle", self.changeTitle, self);
+            
             self.show(span);
             self.loadData();
             self.render();
         }, this);
 
     },
+    
     getBodyComponents: function() {
         return _.rest(this._components, this._initComponentSize);
     },
+    
     _placeComponent: function(comp, def) {
         if(this.$('.modal:first').length == 0) {
             //TODO: Replace inline CSS with css property
@@ -159,9 +165,19 @@
             this.$('.modal:first').append(comp.el);
         }
     },
+    
+    changeTitle: function(title) {
+        var header_view = this.getComponent('modal-header');
+        if (header_view) {
+            header_view.setTitle(title);
+            header_view.render();
+        }
+    },
+    
     open: function(params, callback) {
         this.layout.trigger(this.showEvent, params, callback);
     },
+    
     show: function(span) {
         var modal_container = this.$(".modal:first"),
             maxHeight = $(window).height() - ($(".modal-header:first").outerHeight() * 2) - 200;
@@ -199,6 +215,7 @@
             });
         }
     },
+    
     hide: function(event) {
         //restore back to the scroll position at the top
         this.$(".modal-body:first").scrollTop(0);

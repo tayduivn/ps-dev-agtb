@@ -2,6 +2,8 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.on('quickcreate:clear', this.clear, this);
+        this.context.on('quickcreate:edit', this.editExisting, this);
+        this.context.on('quickcreate:restore', this.restoreModel, this);
         this.context.on('quickcreate:validateModel', this.validateModel, this);
         this.model.on("error:validation", this.handleValidationError, this);
         /*
@@ -104,6 +106,42 @@
     clear: function() {
         this.model.clear();
         this.model.set(this.model._defaults);
+    },
+    
+    editExisting: function(model) {
+        var origModel = this.storeModel();
+        this.model.set(this.extendModel(model, origModel).toJSON());
+        var newTitle = this.app.lang.get('LBL_EDIT_LEAD_TITLE', this.module);
+        this.context.parent.trigger("modal:changetitle", newTitle);
+    },
+
+    extendModel: function(newModel, oldModel) {
+        var model = newModel.clone();
+        var newJSON = model.toJSON();
+        // It looks like the values with empty string are overwriting keys with
+        // real values.  this is  an attempt to fix that, but it's not working.
+        _.each(newJSON, function(value, key, list) {
+            if ( value !== "" ) {
+                delete newJSON[key];
+            }
+        });
+        
+        model.set(_.extend({}, oldModel.toJSON(), newJSON));
+        return model;
+    },
+    
+    restoreModel: function() {
+        if ( this.origModel ) {
+            this.model.clear();
+            this.model.set(this.origModel.toJSON());
+            var newTitle = this.app.lang.get('LBL_CREATE_LEAD_TITLE', this.module);
+            this.context.parent.trigger("modal:changetitle", newTitle);
+        }
+    },
+    
+    storeModel: function() {
+        this.origModel = this.model.clone();
+        return this.origModel;
     },
 
     /**

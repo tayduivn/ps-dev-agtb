@@ -187,7 +187,8 @@
      * @return {*}
      */
     skipDupCheck: function(skip) {
-        var skipDupCheck, saveButton = this.$('[name=save_button]');
+        var skipDupCheck,
+            saveButton = this.$('[name=save_button]');
 
         if (_.isUndefined(skip)) {
             skipDupCheck = saveButton.data('skipDupCheck');
@@ -205,7 +206,8 @@
     },
 
     getFieldValuesForUserKeys: function(keys) {
-        var data = [], self = this;
+        var data = [],
+            self = this;
 
         _.each(keys, function (key) {
             data.push(self.model.get(self.formatFieldName(key)));
@@ -215,16 +217,15 @@
     },
 
     getUserKeys:function () {
-        var keys,fields;
-
-        fields = this.getFields(this.module);
-        keys =[];
+        var keys = [],
+            fields = this.getFields(this.module);
 
         _.each(fields, function (field) {
             if (field.duplicate_merge && field.duplicate_merge === 'default') {
                 keys.push(field.name);
             }
         });
+        
         return keys;
     },
 
