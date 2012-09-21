@@ -162,12 +162,11 @@
     },
     show: function(span) {
         var modal_container = this.$(".modal:first");
+        var original_css = modal_container.attr("class").replace(/span\d+/g, "");
+        modal_container.attr("class", original_css);
         modal_container.modal('show');
         if(_.isNumber(span) && span > 0 && span <= 12) {
             modal_container.addClass('span' + span);
-        } else {
-            var original_css = modal_container.attr("class").replace(/span\d+/g, "");
-            modal_container.attr("class", original_css);
         }
     },
     hide: function(event) {
