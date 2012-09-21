@@ -22,7 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/api/ServiceBase.php');
 require_once('include/api/ServiceDictionaryRest.php');
-require_once('include/SugarOAuth2Server.php');
+require_once('include/SugarOAuth2/SugarOAuth2Server.php');
 
 class RestService extends ServiceBase {
 
@@ -46,7 +46,10 @@ class RestService extends ServiceBase {
             $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD']);
             
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
-                $this->authenticateUser();
+                // Grab the platform if it is set
+                $platform = empty($_REQUEST['platform']) ? 'base' : $_REQUEST['platform'];
+                $this->authenticateUser($platform);
+                
                 // This is needed to load in the app_strings and the app_list_strings and the such
                 $this->loadUserEnvironment();
             } else {
@@ -312,9 +315,10 @@ class RestService extends ServiceBase {
     /**
      * Handles authentication of the current user
      *
+     * @param string $platform The platform type for this request
      * @throws SugarApiExceptionNeedLogin
      */
-    protected function authenticateUser() {
+    protected function authenticateUser($platform) {
         $valid = false;
         
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
@@ -327,7 +331,7 @@ class RestService extends ServiceBase {
         }
 
         if ( !empty($this->sessionId) ) {
-            $oauthServer = SugarOAuth2Server::getOAuth2Server();
+            $oauthServer = SugarOAuth2Server::getOAuth2Server($platform);
             $oauthServer->verifyAccessToken($this->sessionId);
 
             if ( isset($_SESSION['authenticated_user_id']) ) {
@@ -371,23 +375,8 @@ class RestService extends ServiceBase {
         SugarApplication::trackLogin();
         //END SUGARCRM flav=pro ONLY
 
-        // Need to setup the session for portal users
-        if( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-            // Add the necessary visibility and acl classes to the default bean list
-            require_once('modules/ACL/SugarACLSupportPortal.php');
-            $default_acls = SugarBean::getDefaultACL();
-            // This one overrides the Static ACL's, so disable that
-            unset($default_acls['SugarACLStatic']);
-            $default_acls['SugarACLStatic'] = false;
-            $default_acls['SugarACLSupportPortal'] = true;
-            SugarBean::setDefaultACL($default_acls);
-            SugarACL::resetACLs();
-
-            $default_visibility = SugarBean::getDefaultVisibility();
-            $default_visibility['SupportPortalVisibility'] = true;
-            SugarBean::setDefaultVisibility($default_visibility);
-            $GLOBALS['log']->debug("Added SupportPortalVisibility to session.");
-        }
+        // Setup visibility where needed
+        $oauthServer->setupVisibility();
         
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
