@@ -20,9 +20,16 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/SugarOAuth2/SugarOAuth2StorageBase.php';
+require_once 'include/SugarOAuth2/SugarOAuth2StoragePlatform.php';
 
-class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
+class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
+    /**
+     * The user type for this client
+     * 
+     * @var string
+     */
+    protected $userType = 'support_portal';
+
     /**
      * The client type that this client is associated with
      * 
@@ -45,15 +52,6 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
     protected $contactBean;
 
     /**
-     * Get the user type for this user
-     * 
-     * @return string
-     */
-    public function getUserType() {
-        return 'support_portal';
-    }
-
-    /**
      * Gets a user bean. Also sets the contact id for this portal user.
      * 
      * @return User
@@ -65,6 +63,10 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
         }
         
         if ( isset($this->contactBean) && $this->contactBean->id == $user_id ) {
+            if (!isset($this->userBean)) {
+                $this->userBean = $userBean;
+            }
+
             return $userBean;
         } else {
             $contactBean = BeanFactory::newBean('Contacts');
@@ -78,6 +80,9 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
             }
             
             $this->contactBean = $contactBean;
+            if (!isset($this->userBean)) {
+                $this->userBean = $userBean;
+            }
         }
         
         return $userBean;
@@ -88,7 +93,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
      * be written to
      */
     public function canStartSession() {
-        return $this->userType && !empty($this->contactBean) && !empty($this->userBean);
+        return !empty($this->contactBean) && !empty($this->userBean);
     }
     
     /**
@@ -235,8 +240,8 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
    	 *
    	 * @ingroup oauth2_section_4
    	 */
-   	public function checkUserCredentials($client_id, $username, $password) {
-        $clientInfo = $this->getClientDetails($client_id);
+   	public function checkUserCredentials(IOAuth2GrantUser $storage, $client_id, $username, $password) {
+        $clientInfo = $storage->getClientDetails($client_id);
         if ( $clientInfo === false ) {
             return false;
         }
@@ -268,6 +273,10 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
             //END SUGARCRM flav=pro ONLY
             
             $this->contactBean = $contact;
+            if (empty($this->userBean)) {
+                $this->userBean = $portalApiUser;
+            }
+            
             return array('user_id'=>$contact->id);
         } else {
             throw new SugarApiExceptionNeedLogin();

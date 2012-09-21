@@ -46,9 +46,7 @@ class RestService extends ServiceBase {
             $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD']);
             
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
-                // Grab the platform if it is set
-                $platform = empty($_REQUEST['platform']) ? 'base' : $_REQUEST['platform'];
-                $this->authenticateUser($platform);
+                $this->authenticateUser();
                 
                 // This is needed to load in the app_strings and the app_list_strings and the such
                 $this->loadUserEnvironment();
@@ -315,10 +313,9 @@ class RestService extends ServiceBase {
     /**
      * Handles authentication of the current user
      *
-     * @param string $platform The platform type for this request
      * @throws SugarApiExceptionNeedLogin
      */
-    protected function authenticateUser($platform) {
+    protected function authenticateUser() {
         $valid = false;
         
         if ( isset($_SERVER['HTTP_OAUTH_TOKEN']) ) {
@@ -331,7 +328,7 @@ class RestService extends ServiceBase {
         }
 
         if ( !empty($this->sessionId) ) {
-            $oauthServer = SugarOAuth2Server::getOAuth2Server($platform);
+            $oauthServer = SugarOAuth2Server::getOAuth2Server();
             $oauthServer->verifyAccessToken($this->sessionId);
 
             if ( isset($_SESSION['authenticated_user_id']) ) {

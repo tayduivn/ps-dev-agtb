@@ -19,7 +19,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-interface SugarOAuth2SugarInterface {
+interface SugarOAuth2StorageInterface {
     /**
      * Get the user type for this user
      * 
