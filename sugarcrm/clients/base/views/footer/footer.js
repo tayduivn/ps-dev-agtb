@@ -1,12 +1,14 @@
 ({
     events: {
-        'click #tour': 'systemTour',
+        'click #tour': 'systemTourModal',
         'click #print': 'print',
         'click #top': 'top',
         'click #languageList .dropdown-menu a' : 'setLanguage',
         'click #instance': 'instanceMenu',
         'click #invite': 'invite',
         'click #instancesContainer': 'ignore',
+        'click .tour-module-start': 'startSystemTour',
+        'click .tour-full-start': 'startSystemTour'
     },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
@@ -35,8 +37,29 @@
         this.instance_name = app.user.get('instance_name');
         app.view.View.prototype._renderHtml.call(this);
     },
-    systemTour: function() {
-        this.$('#systemTour').modal('show');
+    systemTourModal: function() {
+        // check to make sure you're not already touring the system
+        if( app.view.views.TourView.prototype.tourMode !== true ) {
+            this.$('.system-tour').modal('show');
+        }
+    },
+    startSystemTour: function(e) {
+        // Get the current module and view type (list, record, etc)
+        var currentModule = app.controller.layout.options.module,
+            viewType = app.controller.layout.options.name,
+            fullTour;
+
+        // If "Full Tour" was clicked, relay this to startTour(),
+        // to determine whether or not to route to the homepage
+        if( this.$(e.target).hasClass("tour-full-start") ) {
+            fullTour = true;
+        }
+        else {
+            fullTour = false;
+        }
+
+        this.$('.system-tour').modal('hide');
+        app.view.views.TourView.prototype.startTour(currentModule, viewType, fullTour);
     },
     print: function() {
         window.print();
