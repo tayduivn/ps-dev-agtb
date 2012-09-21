@@ -26,7 +26,6 @@ require_once "lib/phpmailer/class.smtp.php";      // required to establish the S
                                                   // send for error handling purposes
 require_once "BaseMailer.php";                    // requires BaseMailer in order to extend it
 require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMailerConfiguration
-require_once "include/Localization.php";          // required for using the global $locale, which is a Localization
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
@@ -350,43 +349,32 @@ class SimpleMailer extends BaseMailer
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
      */
     protected function prepareToSend() {
-        global $locale;
-
         $from = $this->headers->getFrom();
-        $from = $this->prepareFrom($from, $locale);
+        $from->setName(
+            $this->config->getLocale()->translateCharset(
+                $from->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            )
+        );
         $this->setHeader(EmailHeaders::From, $from);
 
         $subject = $this->headers->getSubject();
-        $subject = $this->prepareSubject($subject, $locale);
+        $subject = $this->config->getLocale()->translateCharset($subject, "UTF-8", $this->config->getCharset());
         $subject = from_html($subject);
         $this->setSubject($subject);
 
-        $textBody = $this->prepareTextBody($this->textBody, $locale);
+        $textBody = $this->prepareTextBody($this->textBody);
         $textBody = from_html($textBody);
         $this->setTextBody($textBody);
 
-        $htmlBody = $this->prepareHtmlBody($this->htmlBody, $locale);
+        $htmlBody = $this->prepareHtmlBody($this->htmlBody);
         $htmlBody = from_html($htmlBody);
         $this->setHtmlBody($htmlBody);
     }
 
-    protected function prepareFrom($from, Localization $locale) {
-        $charset = $locale->getPrecedentPreference("default_email_charset");
-        $from->setName($locale->translateCharset($from->getName(), "UTF-8", $charset));
-
-        return $from;
-    }
-
-    protected function prepareSubject($subject, Localization $locale) {
-        $charset = $locale->getPrecedentPreference("default_email_charset");
-        $subject = $locale->translateCharset($subject, "UTF-8", $charset);
-
-        return $subject;
-    }
-
-    protected function prepareTextBody($body, Localization $locale) {
-        $charset = $locale->getPrecedentPreference("default_email_charset");
-        $body    = $locale->translateCharset($body, "UTF-8", $charset);
+    protected function prepareTextBody($body) {
+        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
 
         return $body;
     }
@@ -395,18 +383,18 @@ class SimpleMailer extends BaseMailer
      * Handles any final updates to document prior to sending. Updates include Charset translation for all
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
      */
-    protected function prepareHtmlBody($body, Localization $locale) {
-        $charset = $locale->getPrecedentPreference("default_email_charset");
-        $body    = $this->forceRfcComplianceOnHtmlBody($body, $charset);
-        $body    = $locale->translateCharset($body, "UTF-8", $charset);
+    protected function prepareHtmlBody($body) {
+        $body = $this->forceRfcComplianceOnHtmlBody($body);
+        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
 
         return $body;
     }
 
-    protected function forceRfcComplianceOnHtmlBody($body, $charset) {
+    protected function forceRfcComplianceOnHtmlBody($body) {
         // HTML email RFC compliance
         if (strpos($body, "<html") === false) {
             $subject    = $this->headers->getSubject();
+            $charset    = $this->config->getCharset();
             $langHeader = get_language_header();
             $head       = <<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

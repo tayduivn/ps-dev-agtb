@@ -21,8 +21,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
-require_once "Encoding.php";        // needs the valid encodings defined in Encoding
+require_once "MailerException.php";      // requires MailerException in order to throw exceptions of that type
+require_once "Encoding.php";             // needs the valid encodings defined in Encoding
+require_once "include/Localization.php"; // required for using the global $locale, which is a Localization
 
 /**
  * Represents the base configurations and contains the logic for setting the configurations for a Mailer.
@@ -32,6 +33,7 @@ class MailerConfiguration
     // protected members
     protected $hostname; // the hostname to use in Message-ID and Received headers and as default HELO string
                          // not the server hostname
+    protected $locale;
     protected $charset;  // the character set of the message
     protected $encoding; // the encoding of the message, which must be one of the valid encodings from Encoding
     protected $wordwrap; // number of characters per line before the message body wrap
@@ -50,6 +52,7 @@ class MailerConfiguration
      */
     public function loadDefaultConfigs() {
         $this->setHostname();
+        $this->setLocale();
         $this->setCharset();
         $this->setEncoding();
         $this->setWordwrap();
@@ -81,6 +84,14 @@ class MailerConfiguration
      */
     public function getHostname() {
         return $this->hostname;
+    }
+
+    public function setLocale(Localization $locale = null) {
+        $this->locale = $locale;
+    }
+
+    public function getLocale() {
+        return $this->locale;
     }
 
     /**

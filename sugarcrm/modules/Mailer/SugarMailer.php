@@ -36,12 +36,12 @@ class SugarMailer extends SimpleMailer
         $this->retrieveDisclosureSettings();
     }
 
-    protected function prepareTextBody($body, Localization $locale) {
+    protected function prepareTextBody($body) {
         if ($this->includeDisclosure) {
             $body .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
         }
 
-        $body = parent::prepareTextBody($body, $locale);
+        $body = parent::prepareTextBody($body);
 
         return $body;
     }
@@ -50,7 +50,7 @@ class SugarMailer extends SimpleMailer
      * Handles any final updates to document prior to sending. Updates include Charset translation for all
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
      */
-    protected function prepareHtmlBody($body, Localization $locale) {
+    protected function prepareHtmlBody($body) {
         global $sugar_config;
         $siteUrl = $sugar_config["site_url"];
 
@@ -76,7 +76,7 @@ class SugarMailer extends SimpleMailer
             true
         );
 
-        $body = parent::prepareHtmlBody($body, $locale);
+        $body = parent::prepareHtmlBody($body);
 
         return $body;
     }

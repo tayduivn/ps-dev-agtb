@@ -59,7 +59,15 @@ class MailConfigurationPeer
     /**
      * @return array MailConfigurations
      */
-    public static function getMailConfigurations(User $user, $systemOnly=false) {
+    public static function getMailConfigurations(User $user, $systemOnly = false, Localization $locale = null, $charset = null) {
+        if (is_null($locale)) {
+            $locale = $GLOBALS["locale"];
+        }
+
+        if (is_null($charset)) {
+            $charset = $locale->getPrecedentPreference("default_email_charset");
+        }
+
         $mailConfigurations = array();
         $ret                = $user->getUsersNameAndEmail();
 
@@ -100,7 +108,9 @@ class MailConfigurationPeer
                     $mailConfiguration->config_name      = $oeAsArray['name'];
                     $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
                         $oeAsArray,
-                        $mailConfiguration->mode
+                        $mailConfiguration->mode,
+                        $locale,
+                        $charset
                     );
 
                     $mailConfigurations[] = $mailConfiguration;
@@ -137,7 +147,9 @@ class MailConfigurationPeer
             $mailConfiguration->config_name      = $oeAsArray['name'];
             $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
                 $oeAsArray,
-                $mailConfiguration->mode
+                $mailConfiguration->mode,
+                $locale,
+                $charset
             );
 
             $mailConfigurations[] = $mailConfiguration;
@@ -146,7 +158,7 @@ class MailConfigurationPeer
         return $mailConfigurations;
     }
 
-    private static function buildMailerConfiguration($oe, $mode) {
+    private static function buildMailerConfiguration($oe, $mode, Localization $locale, $charset) {
         $mailerConfig = null;
 
         // setup the mailer's known configurations based on the type of mailer
@@ -175,6 +187,9 @@ class MailConfigurationPeer
                 $mailerConfig = new MailerConfiguration();
                 break;
         }
+
+        $mailerConfig->setLocale($locale);
+        $mailerConfig->setCharset($charset);
 
         return $mailerConfig;
     }
