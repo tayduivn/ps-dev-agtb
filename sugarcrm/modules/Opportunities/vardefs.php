@@ -457,14 +457,14 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
 				'fields' => array('name'),
 			),
 			array(
-				'name' => 'idx_opp_assigned',
+				'name' => 'idx_opp_assigned_timestamp',
 				'type' => 'index',
-				'fields' => array('assigned_user_id'),
+				'fields' => array('assigned_user_id', 'date_closed_timestamp'),
 			),
 			array(
-				'name' => 'idx_opp_id_deleted_closed_timestamp',
+				'name' => 'idx_opp_id_deleted',
 				'type' => 'index',
-				'fields' => array('id','deleted', 'date_closed_timestamp'),
+				'fields' => array('id','deleted'),
 			)
 		),
 
