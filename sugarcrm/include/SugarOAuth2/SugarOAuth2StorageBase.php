@@ -40,6 +40,14 @@ require_once 'include/SugarOAuth2/SugarOAuth2StorageInterface.php';
  */
 class SugarOAuth2StorageBase implements IOAuth2GrantUser, IOAuth2RefreshTokens, SugarOAuth2SugarInterface {
     /**
+     * The name of the platform. Does not have to be set but if it is will be used
+     * to identify the platform for this storage mechanism.
+     * 
+     * @var string
+     */
+    protected $platformName = null;
+    
+    /**
      * The client type that this client is associated with
      * 
      * @var string
@@ -138,7 +146,17 @@ class SugarOAuth2StorageBase implements IOAuth2GrantUser, IOAuth2RefreshTokens, 
     public function setupVisibility() {}
 
     // END METHOD FROM SugarOAuth2StorageInterface    
+    
+    public function getPlatformName() {
+        // If the class sets the name of its platform, use it
+        if (!empty($this->platformName)) {
+            return $this->platformName;
+        }
         
+        // Send back the name of the platform from the class name
+        return strtolower(str_replace('SugarOAuth2Storage', '', get_class($this)));
+    }
+    
     // BEGIN METHODS FROM IOAuth2Storage
 	/**
 	 * Make sure that the client credentials is valid.
@@ -348,6 +366,7 @@ class SugarOAuth2StorageBase implements IOAuth2GrantUser, IOAuth2RefreshTokens, 
             $_SESSION['type'] = 'user';
             $_SESSION['authenticated_user_id'] = $this->userBean->id;
             $_SESSION['unique_key'] = $sugar_config['unique_key'];
+            $_SESSION['platform'] = $this->getPlatformName();
             
             $this->fillInAddedSessionData();
             $_SESSION['oauth2'] = array(
