@@ -217,7 +217,8 @@ class RestTestPortalSecurity extends RestTestPortalBase {
         }
         // Clean up any hanging related records
         SugarRelationship::resaveRelatedBeans();
-
+        
+        $GLOBALS['db']->commit();
 
         // Negative test: Try and fetch a Contact you shouldn't be able to see
         $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);
@@ -506,6 +507,8 @@ class RestTestPortalSecurity extends RestTestPortalBase {
             }
             $contact->save();
         }
+
+        $GLOBALS['db']->commit();
 
         // Negative test: Try and fetch a Contact you shouldn't be able to see
         $restReply = $this->_restCall("Contacts/".$this->contacts[2]->id);

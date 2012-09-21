@@ -98,7 +98,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	        require_once($metadataFile);
 
 			//BEGIN SUGARCRM flav=pro ONLY
-			SugarACL::listFilter($module, $listViewDefs[ $this->module], array("owner_override" => true));
+			SugarACL::listFilter($this->module, $listViewDefs[ $this->module], array("owner_override" => true));
 			//END SUGARCRM flav=pro ONLY
 
 			$this->lv = new ListViewSmarty();

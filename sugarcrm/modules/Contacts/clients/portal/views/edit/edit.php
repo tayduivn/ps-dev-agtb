@@ -37,7 +37,7 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                 'label' => 'LBL_SAVE_BUTTON_LABEL',
                 'value' => 'save',
                 'class' => 'save-profile',
-                'primary' => true,
+                'css_class' => 'btn-primary',
             ),
             array(
                 'name' => 'cancel_button',
@@ -48,7 +48,7 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                 array(
                     'click' => 'function(){ window.history.back(); }',
                 ),
-                'primary' => false,
+                'css_class' => 'btn-invisible btn-link',
             ),
         ),
     'templateMeta' =>
@@ -113,7 +113,6 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                     ),
                     array(
                         'name' => 'email',
-                        'type' => 'email',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -132,7 +131,6 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                     ),
                     array(
                         'name' => 'phone_work',
-                        'type' => 'text',
                         'displayParams' =>
                         array(
                             'colspan' => 2,
@@ -154,7 +152,6 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                     ),
                     array(
                         'name' => 'primary_address_state',
-                        'type' => 'enum',
                         'options' => 'state_dom',
                         'displayParams' =>
                         array(
@@ -170,7 +167,6 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                     ),
                     array (
                         'name' => 'primary_address_country',
-                        'type' => 'enum',
                         'options' => 'countries_dom',
                         'displayParams' =>
                         array(
@@ -179,7 +175,6 @@ $viewdefs ['Contacts']['portal']['view']['edit'] = array(
                     ),
                     array (
                         'name' => 'preferred_language',
-                        'type' => 'enum',
                         'options' => 'available_language_dom',
                     ),
                 ),

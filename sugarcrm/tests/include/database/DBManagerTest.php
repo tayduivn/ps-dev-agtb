@@ -2435,4 +2435,5 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     }
 
+
 }

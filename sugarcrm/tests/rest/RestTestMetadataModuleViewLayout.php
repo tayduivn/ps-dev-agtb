@@ -98,6 +98,14 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');   
     }
 
+
+    public function testMetadataFTS()
+    {
+        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']),'No ftsEnabled for the cases module');   
+    }
+
+
     public function testMetadataModuleViews() {
         $filesToCheck = array('modules/Cases/metadata/portal/views/edit.php',
                               'custom/modules/Cases/metadata/portal/views/edit.php',

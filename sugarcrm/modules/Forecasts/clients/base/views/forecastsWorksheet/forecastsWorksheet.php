@@ -68,7 +68,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase'=> true,
                 ),
 
                 array(
@@ -77,7 +78,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase'=> true,
                 ),
             ),
         ),

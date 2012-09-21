@@ -24,11 +24,6 @@ require_once('include/api/ModuleApi.php');
 
 class ForecastsWorksheetApi extends ModuleApi {
 
-    public function __construct()
-    {
-
-    }
-
     public function registerApiRest()
     {
         //Extend with test method
@@ -71,55 +66,30 @@ class ForecastsWorksheetApi extends ModuleApi {
             throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$args['module']);
         }
 
-        require_once('modules/Reports/Report.php');
-        require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
+		global $current_user;
+		
+		$args['timeperiod_id'] =  isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
-        global $app_list_strings,$current_language, $current_user;
+        // base file and class name
+        $file = 'include/SugarForecasting/Individual.php';
+        $klass = 'SugarForecasting_Individual';
 
-        $app_list_strings = return_app_list_strings_language($current_language);
+        // check for a custom file exists
+        $include_file = get_custom_file_if_exists($file);
 
-        $mgr = new ChartAndWorksheetManager();
-        $report_defs = $mgr->getWorksheetDefinition('individual', 'opportunities');
+        // if a custom file exists then we need to rename the class name to be Custom_
+        if($include_file != $file) {
+            $klass = "Custom_" . $klass;
+        }
 
-        $timeperiod_id = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $user_id = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
+        // include the class in since we don't have a auto loader
+        require_once($include_file);
+        // create the lass
 
-        $testFilters = array(
-            'timeperiod_id' => array('$is' => $timeperiod_id),
-            'assigned_user_link' => array('id' => $user_id),
-        );
-
-        require_once('include/SugarParsers/Filter.php');
-        require_once("include/SugarParsers/Converter/Report.php");
-        require_once("include/SugarCharts/ReportBuilder.php");
-
-        // create the a report builder instance
-        $rb = new ReportBuilder("Opportunities");
-        // load the default report into the report builder
-        $rb->setDefaultReport($report_defs[2]);
-
-        // parse any filters from above
-        $filter = new SugarParsers_Filter(new Opportunity());
-        $filter->parse($testFilters);
-        $converter = new SugarParsers_Converter_Report($rb);
-        $reportFilters = $filter->convert($converter);
-        // add the filter to the report builder
-
-        $rb->addFilter($reportFilters);
-
-        // create the json for the reporting engine to use
-        $chart_contents = $rb->toJson();
-        $report = new Report($chart_contents);
-        $returnData = $mgr->getWorksheetGridData('individual', $report);
-       	
-       	$index = 0;
-       	foreach($returnData as $data)
-        {
-        	$returnData[$index]["worksheet_id"] = $this->getRelatedWorksheetID($data["id"]);
-        	$index++;	
-        }  
-       
-        return $returnData;
+        /* @var $obj SugarForecasting_AbstractForecast */
+        $obj = new $klass($args);
+        return $obj->process();
     }
 
     /**
@@ -161,31 +131,8 @@ class ForecastsWorksheetApi extends ModuleApi {
                $field->save($seed, $args, $fieldName, $properties);
             }
         }
-		$seed->setWorksheetId($args['worksheet_id']);
+		$seed->setWorksheetArgs($args);
         $seed->save();
         return $seed->id;
-    }
-    
-    /**
-     * This function gets the worksheet id related to opportunities
-     * @param string oppId Opportunity ID
-     */
-    protected function getRelatedWorksheetID($oppId)
-    {
-        //getting data from worksheet table for reportees
-        $sql = "SELECT w.id worksheet_id
-                            FROM worksheet w
-                            WHERE w.related_id = '{$oppId}' AND w.forecast_type = 'Direct'";
-		
-        $result = $GLOBALS['db']->query($sql);
-
-        $data = '';
-
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
-        {
-            $data = $row['worksheet_id'];
-        }             
-
-        return $data;
     }
 }

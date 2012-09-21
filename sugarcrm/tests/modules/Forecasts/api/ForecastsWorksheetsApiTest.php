@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -150,15 +151,19 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     	self::$repData["ops"][0]->probability = self::$repData["ops"][0]->probability + 10;
         $returnBest = '';
         $returnProb = '';
+        $returnCommitStage = '';
         
     	$postData = array("amount" => self::$repData["ops"][0]->amount,
                              "best_case" => self::$repData["op_worksheets"][0]->best_case,
                              "likely_case" => self::$repData["op_worksheets"][0]->likely_case,                            
                              "forecast" => self::$repData["forecast"],
                              "probability" => self::$repData["ops"][0]->probability,
+                             "commit_stage" => self::$repData["ops"][0]->commit_stage,
                              "id" => self::$repData["ops"][0]->id,
                              "worksheet_id" => self::$repData["op_worksheets"][0]->id,
-                             "timeperiod_id" => self::$timeperiod->id
+                             "timeperiod_id" => self::$timeperiod->id,
+                             "current_user" => self::$repData["id"],
+                             "assigned_user_id" => self::$repData["id"],
                         );
         
 		$response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
@@ -173,16 +178,171 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 			{
 				$returnBest = $record["best_case"];
 				$returnProb = $record["probability"];
-				break;
+                $returnCommitStage = $record["commit_stage"];
 			}
 		}
 		
 		//check to see if the data to the Opportunity table was saved
 		$this->assertEquals($returnProb, self::$repData["ops"][0]->probability, "Opportunity data was not saved.");
 				
-		//check to see if the data to the Worksheet table was saved
-		$this->assertEquals($returnBest, self::$repData["op_worksheets"][0]->best_case, "Worksheet data was not saved.");
+		//check to see if the best_case in the Worksheet table was saved
+		$this->assertEquals($returnBest, self::$repData["op_worksheets"][0]->best_case, "Worksheet best_case was not saved.");
+
+        //check to see if the commit_stage in worksheet table was saved
+        $this->assertEquals($returnCommitStage, self::$repData["op_worksheets"][0]->commit_stage, "Worksheet commit_stage was not saved.");
 				
+    }
+    
+    /**
+    * @group forecastapi
+    */
+    public function testWorksheetVersionSave(){
+    	
+    	self::$repData["op_worksheets"][0]->best_case = self::$repData["op_worksheets"][0]->best_case + 100;
+    	self::$repData["ops"][0]->probability = self::$repData["ops"][0]->probability + 10;
+        $returnBest = '';
+        $returnProb = '';
+        
+    	$postData = array("amount" => self::$repData["ops"][0]->amount,
+                             "best_case" => self::$repData["op_worksheets"][0]->best_case,
+                             "likely_case" => self::$repData["op_worksheets"][0]->likely_case,                            
+                             "forecast" => self::$repData["forecast"],
+                             "probability" => self::$repData["ops"][0]->probability,
+                             "id" => self::$repData["ops"][0]->id,
+                             "worksheet_id" => self::$repData["op_worksheets"][0]->id,
+                             "timeperiod_id" => self::$timeperiod->id,
+                             "current_user" => self::$repData["id"],
+                             "assigned_user_id" => self::$repData["id"],
+                             "draft" => 1
+                        );
+                        
+        // set the current user to salesrep
+        $this->_user = self::$reportee['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+        
+		$response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
+		
+		// now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastWorksheets?user_id=". self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);
+				
+		//loop through response and pick out the rows that correspond with ops[0]->id
+		foreach($response["reply"] as $record)
+		{
+			if($record["id"] == self::$repData["ops"][0]->id)
+			{
+				$returnBest = $record["best_case"];
+				$returnProb = $record["probability"];
+				$returnVersion = $record["version"];
+				break;
+			}
+		}
+		
+		//check to see if the draft data comes back
+		$this->assertEquals("0", $returnVersion, "Draft Data was not returned.");
+		
+		//Now, save as a regular version so things will be reset.
+		$postData["draft"] = 0;			
+		$response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
+		
+		// now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastWorksheets?user_id=". self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);
+		
+		//loop through response and pick out the rows that correspond with ops[0]->id
+		foreach($response["reply"] as $record)
+		{
+			if($record["id"] == self::$repData["ops"][0]->id)
+			{
+				$returnBest = $record["best_case"];
+				$returnProb = $record["probability"];
+				$returnVersion = $record["version"];
+				break;
+			}
+		}
+		
+		//check to see if the live data comes back
+		$this->assertEquals("1", $returnVersion, "Live Data was not returned.");			
+    }
+    
+    /**
+    * @group forecastapi
+    */
+    public function testWorksheetDraftVisibility(){
+    	
+    	self::$repData["op_worksheets"][0]->best_case = self::$repData["op_worksheets"][0]->best_case + 100;
+    	self::$repData["ops"][0]->probability = self::$repData["ops"][0]->probability + 10;
+        $returnBest = '';
+        $returnProb = '';
+        
+    	$postData = array("amount" => self::$repData["ops"][0]->amount,
+                             "best_case" => self::$repData["op_worksheets"][0]->best_case,
+                             "likely_case" => self::$repData["op_worksheets"][0]->likely_case,                            
+                             "forecast" => self::$repData["forecast"],
+                             "probability" => self::$repData["ops"][0]->probability,
+                             "id" => self::$repData["ops"][0]->id,
+                             "worksheet_id" => self::$repData["op_worksheets"][0]->id,
+                             "timeperiod_id" => self::$timeperiod->id,
+                             "current_user" => self::$repData["id"],
+                             "assigned_user_id" => self::$repData["id"],
+                             "draft" => 1
+                        );
+                        
+        // set the current user to salesrep
+        $this->_user = self::$reportee['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+        
+		$response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
+		
+		// set the current user to Manager
+        $this->_user = self::$manager['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+		
+		// now get the data back to see if it we get the live version, not the draft version
+		$response = $this->_restCall("ForecastWorksheets?user_id=". self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);
+				
+		//loop through response and pick out the rows that correspond with ops[0]->id
+		foreach($response["reply"] as $record)
+		{
+			if($record["id"] == self::$repData["ops"][0]->id)
+			{
+				$returnBest = $record["best_case"];
+				$returnProb = $record["probability"];
+				$returnVersion = $record["version"];
+				break;
+			}
+		}
+		
+		//check to see if the live data comes back
+		$this->assertEquals("1", $returnVersion, "Live Data was not returned for Manager.");
+		
+		// set the current user to salesrep
+        $this->_user = self::$reportee['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+		
+		//Now, save as a regular version so things will be reset.
+		$postData["draft"] = 0;			
+		$response = $this->_restCall("ForecastWorksheets/" . self::$repData["ops"][0]->id, json_encode($postData), "PUT");
+		
+		// now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastWorksheets?user_id=". self::$repData["id"] . "&timeperiod_id=" . self::$timeperiod->id);
+		
+		//loop through response and pick out the rows that correspond with ops[0]->id
+		foreach($response["reply"] as $record)
+		{
+			if($record["id"] == self::$repData["ops"][0]->id)
+			{
+				$returnBest = $record["best_case"];
+				$returnProb = $record["probability"];
+				$returnVersion = $record["version"];
+				break;
+			}
+		}
+		
+		//check to see if the live data comes back
+		$this->assertEquals("1", $returnVersion, "Live Data was not returned.");			
     }
     
     /**

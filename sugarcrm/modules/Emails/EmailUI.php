@@ -1770,6 +1770,28 @@ EOQ;
 
 					case "deleted":
 						$email->delete();
+                        // Bug #45395 : Deleted emails from a group inbox does not move the emails to the Trash folder for Google Apps
+                        if ( !empty($email->message_uid) )
+                        {
+                            $ieX = new InboundEmail();
+                            $ieX->retrieve_by_string_fields(array('groupfolder_id' => $ieId, 'deleted' => 0));
+                            if ( !empty($ieX->id) && !$ieX->is_personal )
+                            {
+                                // function retrieve_by_string_fields don't decrypt email_password -> call retrieve to do it
+                                $ieX->retrieve($ieX->id);
+                                if ($ieX->isPop3Protocol())
+                                {
+                                    $msgNo = $ieX->getCorrectMessageNoForPop3($email->message_uid);
+                                    $ieX->connectMailserver();
+                                    $ieX->deleteMessageOnMailServerForPop3($msgNo);
+                                }
+                                else
+                                {
+                                    $ieX->deleteMessageOnMailServer($email->message_uid);
+                                }
+                                $ieX->deleteMessageFromCache($email->message_uid);
+                            }
+                        }
 					break;
 
 					case "flagged":
@@ -2230,6 +2252,10 @@ eoq;
 		$ret['parent_type'] = $email->parent_type;
 		$ret['parent_id'] = $email->parent_id;
 
+       if ($email->type == 'draft') {
+            $ret['cc'] = from_html($ccAddresses);
+            $ret['bcc'] = $bccAddresses;
+        }
 		// reply all
 		if(isset($_REQUEST['composeType']) && $_REQUEST['composeType'] == 'replyAll') {
 		    $ret['cc'] = from_html($ccAddresses);

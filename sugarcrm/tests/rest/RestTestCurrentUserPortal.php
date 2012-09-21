@@ -70,7 +70,8 @@ class RestTestCurrentUserPortal extends RestTestBase {
         
         $this->portalGuy = $contact;
         $contact->save();
-
+        
+        $GLOBALS['db']->commit();
     }
 
 

@@ -59,6 +59,8 @@ class RestTestBug54864 extends RestTestPortalBase {
             }
             $contact->save();
         }
+
+        $GLOBALS['db']->commit();
         
 
         $restReply = $this->_restCall("me");

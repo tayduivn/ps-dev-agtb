@@ -45,7 +45,7 @@ if(!isset($_REQUEST['record']))
 	
 	$focus->retrieve($_REQUEST['record']);
 	
-	$focus->cascade_delete( $focus, true);
+    $focus->mark_deleted($_REQUEST['record']);
 	/*
 	//Completely remove the trigger components////////////////////////
 		$trigger_object_list = $focus->get_linked_beans('triggers','WorkFlowTriggerShell');

@@ -37,7 +37,7 @@
                             <label class="control-label hide" for="appendedInput">{{str "LBL_SEARCH"}}</label>
                             <div class="controls">
                                 <div class="input-append">
-                                    <input type="text" class="search-query span3" placeholder="{{str "LBL_SEARCH"}}" data-items="10"><span class="add-on"><i class="icon-search"></i></span>
+                                    <input type="text" class="search-query span3" placeholder="{{str "LBL_SEARCH"}}" data-items="10"><div class="btn btn-inverse"><i class="icon icon-search"></i></div>
                                 </div>
                             </div>
                         </div>

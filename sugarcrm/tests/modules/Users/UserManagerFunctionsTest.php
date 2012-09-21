@@ -32,9 +32,9 @@ class UserManagerFunctionsTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $beanList, $beanFiles, $current_user;
-        require('include/modules.php');
-
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        global $current_user;
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->user_name = 'employee0';
         $current_user->save();
@@ -64,10 +64,9 @@ class UserManagerFunctionsTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
     }
 
-    /**
-     */
     public function testUserManagementFunctions()
     {
         global $current_user;

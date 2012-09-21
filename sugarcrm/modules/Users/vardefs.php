@@ -66,6 +66,7 @@ $dictionary['User'] = array(
             'len' => '255',
             'reportable' => false,
             'importable' => 'false',
+            'sensitive' => true,
             'studio' => array(
                 'no_duplicate'=>true,
                 'listview' => false,
@@ -688,7 +689,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'studio' => false,
         ),
-        
+
         'aclroles' => array(
             'name' => 'aclroles',
             'type' => 'link',

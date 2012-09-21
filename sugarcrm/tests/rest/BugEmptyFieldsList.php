@@ -30,6 +30,7 @@ class RestTestList extends RestTestBase {
         //Create an anonymous user for login purposes/
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['current_user'] = $this->_user;
+        $GLOBALS['db']->commit();
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
 
         $this->accounts = array();
@@ -42,6 +43,7 @@ class RestTestList extends RestTestBase {
             $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$account->id}'");
         }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        $GLOBALS['db']->commit();
     }
 
     public function testList() {
@@ -53,7 +55,7 @@ class RestTestList extends RestTestBase {
             $account->save();
             $this->accounts[] = $account;
         }
-
+        $GLOBALS['db']->commit();
         $restReply = $this->_restCall("Accounts?fields=");
         $this->assertNotEquals($restReply['replyRaw'],"ERROR: No access to view field:  in module: Accounts");
     }

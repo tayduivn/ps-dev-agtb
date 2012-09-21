@@ -54,7 +54,7 @@
             self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            if (app.config.show_buckets) {
+            if (app.config.show_buckets == 0) {
                 // TODO: this.
             } else {
                 self.handleRenderOptions({category:_.first(value)});

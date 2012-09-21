@@ -143,6 +143,20 @@ class Meeting extends SugarBean {
 		return parent::ACLAccess($view,$is_owner);
 	}
 
+    /**
+   	 * Disable edit if meeting is recurring and source is not Sugar.
+     * It should be edited only from external source like Outlook.
+   	 */
+   	function canEditRecord() {
+   	    // don't check if meeting is being synced from Outlook or other external source
+   	    if ($this->syncing == false) {
+           if (!empty($this->recurring_source) && $this->recurring_source != "Sugar") {
+               return false;
+           }
+        }
+        return true;
+   	}
+
 	/**
 	 * Stub for integration
 	 * @return bool

@@ -1,18 +1,18 @@
-        <input type=text class=input-xlarge datepicker value={{value.date}}>
-        <select class=date_time_hours>
+        <input type=text class="datepicker" value={{value.date}}>
+        <select class="date_time_hours">
             {{#each timeOptions.hours}}
             <option value={{this.value}} {{#eq this.key ../value.hours}}selected{{/eq}}>{{this.key}}</option>
             {{/each}}
         </select>
         :
-        <select class=date_time_minutes>
+        <select class="date_time_minutes">
             {{#each timeOptions.minutes}}
             <option value={{this.value}} {{#eq this.key ../value.minutes}}selected{{/eq}}>{{this.key}}</option>
             {{/each}}
         </select>
 
         {{#if value.amPm}}
-        <select class=date_time_ampm>
+        <select class="date_time_ampm">
             {{#each timeOptions.amPm}}
             <option value={{this.value}} {{#eq this.key ../value.amPm}}selected{{/eq}}>{{this.key}}</option>
             {{/each}}

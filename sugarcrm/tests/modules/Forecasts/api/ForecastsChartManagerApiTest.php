@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -228,7 +229,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     public function testManagerValueIsLikelyAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand();
-        $this->assertSame(self::$managerWorksheet->likely_case, $data['values'][0]['values'][0]);
+        $this->assertEquals(self::$managerWorksheet->likely_case, $data['values'][0]['values'][0]);
     }
 
     /**
@@ -237,7 +238,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     public function testReporteeValueIsLikelyAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand();
-        $this->assertSame(self::$repWorksheet->likely_case, $data['values'][1]['values'][0]);
+        $this->assertEquals(self::$repWorksheet->likely_case, $data['values'][1]['values'][0]);
     }
 
     /**
@@ -246,7 +247,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     public function testManagerValueIsBestAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand('best');
-        $this->assertSame(self::$managerWorksheet->best_case, $data['values'][0]['values'][0]);
+        $this->assertEquals(self::$managerWorksheet->best_case, $data['values'][0]['values'][0]);
     }
 
     /**
@@ -255,7 +256,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     public function testReporteeValueIsBestAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand('best');
-        $this->assertSame(self::$repWorksheet->best_case, $data['values'][1]['values'][0]);
+        $this->assertEquals(self::$repWorksheet->best_case, $data['values'][1]['values'][0]);
     }
 
     /**
@@ -264,7 +265,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     public function testManagerValueIsWorstAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand('worst');
-        $this->assertSame(self::$managerWorksheet->worst_case, $data['values'][0]['values'][0]);
+        $this->assertEquals(self::$managerWorksheet->worst_case, $data['values'][0]['values'][0]);
     }
 
     /**
@@ -273,7 +274,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     public function testReporteeValueIsWorstAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand('worst');
-        $this->assertSame(self::$repWorksheet->worst_case, $data['values'][1]['values'][0]);
+        $this->assertEquals(self::$repWorksheet->worst_case, $data['values'][1]['values'][0]);
     }
     
     public function testThirdReporteeValueZeroWithoutForecastRecord()
@@ -307,6 +308,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $repQuota->save();
 
         $data = $this->runRestCommand();
-        $this->assertSame(0, $data['values'][2]['values'][0]);
+        $this->assertEquals(0, $data['values'][2]['values'][0]);
     }
 }

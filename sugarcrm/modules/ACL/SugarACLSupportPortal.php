@@ -156,6 +156,26 @@ class SugarACLSupportPortal extends SugarACLStatic
     protected function fieldACL($module, $action, $context)
     {
         $accessGranted = $this->portalAccess($module, $action, $context);
+        
+        // Handle file and image type field checking here, specifically for creates
+        if ($accessGranted === false && $action == 'create') {
+            $bean = isset($context['bean']) ? $context['bean'] : null;
+            
+            // If there is a bean, and a field name and defs for that fieldname...
+            if ($bean && isset($context['field']) && isset($bean->field_defs[$context['field']])) {
+                $field = $context['field'];
+                $def = $bean->field_defs[$field];
+                
+                // If the field type is an image or file
+                if (isset($def['type']) && ($def['type'] == 'image' || $def['type'] == 'file')) {
+                    // And the value for this field in the bean is empty, it is
+                    // a create, which should make accessGranted = null
+                    if (empty($bean->$field)) {
+                        $accessGranted = null;
+                    }
+                }
+            }
+        }
 
         if( !isset($accessGranted) ) {
             $accessGranted = parent::fieldACL($module, $action, $context);

@@ -104,13 +104,13 @@ class RestTestTheme extends RestTestBase
         // Fake the user is an admin
         $this->_user->is_admin = 1;
         $this->_user->save();
-
+        $GLOBALS['db']->commit();
         // TEST= POST theme
         $restReply = $this->_restCall('theme', json_encode($args));
 
         $this->_user->is_admin = 0;
         $this->_user->save();
-
+        $GLOBALS['db']->commit();
         // TEST the boostrap.css file has been created
         $this->assertEquals(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
 
@@ -145,13 +145,13 @@ class RestTestTheme extends RestTestBase
         // Fake the user is an admin
         $this->_user->is_admin = 1;
         $this->_user->save();
-
+        $GLOBALS['db']->commit();
         // TEST= POST theme with reset=true
         $this->_restCall('theme', json_encode($args));
 
         $this->_user->is_admin = 0;
         $this->_user->save();
-
+        $GLOBALS['db']->commit();
         // TEST boostrap.css file has been created
         $this->assertEquals(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
 

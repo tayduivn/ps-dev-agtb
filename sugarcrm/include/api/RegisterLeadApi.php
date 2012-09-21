@@ -99,9 +99,22 @@ class RegisterLeadApi extends SugarApi {
      */
     public function createLeadRecord($api, $args) {
 
+
         // Bug 54647 Lead registration can create empty leads
         if (!isset($args['last_name'])) {
             throw new SugarApiExceptionMissingParameter();
+        }
+
+        /**
+         *
+         * Bug56194: This API can be hit without logging into Sugar, but the creation of a Lead SugarBean
+         * uses messages that require the use of the app strings.
+         *
+         **/
+        global $app_list_strings;
+        global $current_language;
+        if(!isset($app_list_strings)){
+            $app_list_strings = return_app_list_strings_language($current_language);
         }
 
         $bean = BeanFactory::newBean('Leads');

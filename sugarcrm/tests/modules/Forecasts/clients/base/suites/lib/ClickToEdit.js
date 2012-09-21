@@ -79,4 +79,29 @@ describe("ClickToEdit", function(){
         expect(field.$el.parent()).not.toContain("i.icon-pencil");
     });
 
+    it("should correctly validate the percentage adjustments for currency fields", function() {
+        field.type = 'currency';
+        var clickToEdit = new app.view.ClickToEditField(field, view);
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+10%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+10.5%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10.5%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "10,000.50")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, ".05")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+.05%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "abc%")).toBeFalsy();
+    });
+
+    it("should correctly accept input for all text type fields", function() {
+        field.type = 'text';
+        var clickToEdit = new app.view.ClickToEditField(field, view);
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+10%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+10.5%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "-10.5%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, ".05")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "+.05%")).toBeTruthy();
+        expect(app.view.ClickToEditField.prototype._checkDatatype(field, "abc")).toBeTruthy();
+    });
+
 });

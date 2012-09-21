@@ -229,3 +229,17 @@ var {{$module}}_detailview_tabs = new YAHOO.widget.TabView("{{$module}}_detailvi
 {{$module}}_detailview_tabs.selectTab(0);
 </script>
 {{/if}}
+<script type="text/javascript">
+SUGAR.util.doWhen("typeof collapsePanel == 'function'",
+        function(){ldelim}
+            var sugar_panel_collase = Get_Cookie("sugar_panel_collase");
+            if(sugar_panel_collase != null) {ldelim}
+                sugar_panel_collase = YAHOO.lang.JSON.parse(sugar_panel_collase);
+                for(panel in sugar_panel_collase['{{$module}}_d'])
+                    if(sugar_panel_collase['{{$module}}_d'][panel])
+                        collapsePanel(panel);
+                    else
+                        expandPanel(panel);
+            {rdelim}
+        {rdelim});
+</script>

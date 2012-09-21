@@ -20,8 +20,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+//BEGIN SUGARCRM flav=pro ONLY
+
 require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+
+//END SUGARCRM flav=pro ONLY
+
 /*
  * @api
  */
@@ -48,31 +53,29 @@ class ServerInfoApi extends SugarApi {
     public function getServerInfo($api, $args)
     {
         global $sugar_flavor;
+        global $sugar_version;
 
         $data['flavor'] = $sugar_flavor;
+        $data['version'] = $sugar_version;
+        
 
-        $admin  = new Administration();
-        $admin->retrieveSettings('info');
-        if(isset($admin->settings['info_sugar_version'])){
-            $data['version'] = $admin->settings['info_sugar_version'];
-        }else{
-            $data['version'] = '1.0';
-        }
-
-        if(!isSearchEngineDown())
+        //BEGIN SUGARCRM flav=pro ONLY
+        $fts_enabled = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
+        if(!empty($fts_enabled) && $fts_enabled != 'SugarSearchEngine')
         {
             $data['fts'] = array(
-                                    'enabled'       =>  'TRUE',
-                                    'modules'       =>  SugarSearchEngineMetadataHelper::getSystemEnabledFTSModules(),
-                                    'type'          =>  SugarSearchEngineFactory::getFTSEngineNameFromConfig(),
+                                    'enabled'       =>  true,
+                                    'type'          =>  $fts_enabled,
                                 );
         }
         else
         {
             $data['fts'] = array(
-                                    'enabled'   =>  'FALSE',
+                                    'enabled'   =>  false,
                                 );
         }
+        //END SUGARCRM flav=pro ONLY
+
         /*
          * Always return dates in ISO-8601
          */

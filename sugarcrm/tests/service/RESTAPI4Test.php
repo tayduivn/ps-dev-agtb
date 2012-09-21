@@ -151,17 +151,6 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
             );
     }
     //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * Test the login function to ensure it returns the available quotes layouts when application name
-     * is mobile.
-     *
-     */
-    public function testLoginForMobileWithQuotes()
-    {
-        $results = $this->_login($this->_admin_user);
-        $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Standard']) );
-        $this->assertTrue(isset($results['name_value_list']['avail_quotes_layouts']['Invoice']) );
-    }
 
     /**
      * Test the get_entry_list call with Export access disabled to ensure results are returned.

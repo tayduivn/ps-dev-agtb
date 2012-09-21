@@ -102,6 +102,11 @@ class SugarTestForecastUtilities
         return self::$timeperiod;
     }
 
+    public static function setTimePeriod($timeperiod)
+    {
+        self::$timeperiod = $timeperiod;
+    }
+
     /**
      * This method will create a new user with opportunities with a variable number of items based on an array passed in
      */
@@ -177,6 +182,7 @@ class SugarTestForecastUtilities
                 $opp->worst_case = ($opp_amount - 400);
                 $opp->forecast = $include;
                 $opp->probability = rand(50, 90);
+                $opp->commit_stage = 100;
                 $opp->date_closed = $date_closed;
                 $opp->team_id = '1';
                 $opp->team_set_id = '1';
@@ -199,6 +205,8 @@ class SugarTestForecastUtilities
                     $worksheet->best_case = $opp->best_case;
                     $worksheet->likely_case = $opp->amount;
                     $worksheet->worst_case = $opp->worst_case;
+                    $worksheet->op_probability = $opp->probability;
+                    $worksheet->commit_stage = $opp->commit_stage;
                     $worksheet->forecast = 1;
                     $worksheet->save();
 

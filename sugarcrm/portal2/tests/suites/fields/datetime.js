@@ -6,7 +6,7 @@ describe("sugarfields", function() {
             var controller = SugarFieldTest.loadSugarField('datetime/datetime'),
                 field = SugarFieldTest.createField("datetime", "detail"),
                 unformatedValue, expectedValue,
-                myUser = SUGAR.App.user.getUser();
+                myUser = SUGAR.App.user;
             field = _.extend(field, controller);
             
             myUser.set('datepref','m/d/Y');
@@ -21,7 +21,7 @@ describe("sugarfields", function() {
             var controller = SugarFieldTest.loadSugarField('datetime/datetime','portal'),
                 field = SugarFieldTest.createField("datetime", "detail"),
                 unformatedValue, expectedValue,
-                myUser = SUGAR.App.user.getUser();
+                myUser = SUGAR.App.user;
             field = _.extend(field, controller);
             
             myUser.set('datepref','m/d/Y');

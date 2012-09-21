@@ -195,6 +195,7 @@
                 'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
+           //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array(
                 'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'portal2/portal.min.js',
 
@@ -209,8 +210,11 @@
                 'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
                 'portal2/portal.js'              => 'portal2/portal.min.js',
                 'portal2/portal-ui.js'           => 'portal2/portal.min.js',
+                'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
+                'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
 
             ),
+           //END SUGARCRM flav=ent ONLY
         );
 
     /**

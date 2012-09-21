@@ -76,14 +76,15 @@
         this._collection = this.context.forecasts.forecastschedule;
 
         if (this._collection) {
-            //this._collection.on("reset", function() { self.render() }, this);
-
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(model, index) {
-                    if(model.hasChanged("include_expected")) {
+
+
+                    if(model.hasChanged("include_expected") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
                         this._collection.url = this.url;
                         model.save();
-                       }
+                    }
+
                     if(model.hasChanged("expected_commit_stage")) {
                         if(model.get("expected_commit_stage") == '100') {
                             this._collection.models[index].set("include_expected", '1');
@@ -91,8 +92,9 @@
                             this._collection.models[index].set("include_expected", '0');
                         }
                         this._collection.url = this.url;
-                       model.save();
+                        model.save();
                     }
+
                 }, this);
             }, this);
         }
@@ -104,16 +106,16 @@
 
         _.each(fields, function(field) {
             if (field.name == "include_expected") {
-                field.enabled = !app.config.show_buckets;
+                field.enabled = app.config.show_buckets == 0;
                 forecastField = field;
             } else if (field.name == "expected_commit_stage") {
-                field.enabled = app.config.show_buckets;
+                field.enabled = app.config.show_buckets != 0;
                 field.options = app.config.buckets_dom || 'commit_stage_dom';
                 field.view = (self.editableWorksheet === true) ? 'edit' : 'default';
                 commitStageField = field;
             }
         });
-        return app.config.show_buckets ? forecastField : commitStageField;
+        return (app.config.show_buckets == 1) ? forecastField : commitStageField;
     },
 
     /**

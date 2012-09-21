@@ -653,7 +653,7 @@ require_once('include/EditView/EditView2.php');
      public function generateSearchWhere($add_custom_fields = false, $module='') {
          global $timedate;
 
-         $db = $this->seed->db;
+         $db = DBManagerFactory::getInstance();
          $this->searchColumns = array () ;
          $values = $this->searchFields;
 
@@ -892,10 +892,10 @@ require_once('include/EditView/EditView2.php');
                             // The regular expression check is to circumvent special case YYYY-MM
                              $operator = '=';
                              if(preg_match('/^\d{4}.\d{1,2}$/', $field_value) != 0) { // preg_match returns number of matches
-                                $db_field = $this->seed->db->convert($db_field, "date_format", array("%Y-%m"));
+                                $db_field = $db->convert($db_field, "date_format", array("%Y-%m"));
                             } else {
                                 $field_value = $timedate->to_db_date($field_value, false);
-                                $db_field = $this->seed->db->convert($db_field, "date_format", array("%Y-%m-%d"));
+                                $db_field = $db->convert($db_field, "date_format", array("%Y-%m-%d"));
                             }
                          }
 
@@ -1035,7 +1035,7 @@ require_once('include/EditView/EditView2.php');
                                          if(!$first){
                                              $where .= $and_or;
                                          }
-                                         $where .= " {$db_field} $in ({$q} ".$this->seed->db->quoted($field_value.'%').") ";
+                                         $where .= " {$db_field} $in ({$q} ".$db->quoted($field_value.'%').") ";
                                          $first = false;
                                      }
                                  }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
@@ -1044,7 +1044,7 @@ require_once('include/EditView/EditView2.php');
                                  } else {
                                      //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
                                      //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
-                                     $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').") {$field}_derived)";
+                                     $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$db->quoted($field_value.'%').") {$field}_derived)";
                                  }
 
                                  break;
@@ -1077,11 +1077,11 @@ require_once('include/EditView/EditView2.php');
                                              $second_db_fields = explode('.', $second_field);
                                              if(count($first_db_fields)==2) $first_field = $first_db_fields[1];
                                              if(count($second_db_fields)==2) $second_field = $second_db_fields[1];
-                                             $where .= $this->seed->db->concat($column_name[0],array($first_field,$second_field)) . " LIKE ".$this->seed->db->quoted($field_value.'%');
-                                             $where .= ' OR ' . $this->seed->db->concat($column_name[0],array($second_field,$first_field)) . " LIKE ".$this->seed->db->quoted($field_value.'%');
+                                             $where .= $db->concat($column_name[0],array($first_field,$second_field)) . " LIKE ".$db->quoted($field_value.'%');
+                                             $where .= ' OR ' . $db->concat($column_name[0],array($second_field,$first_field)) . " LIKE ".$db->quoted($field_value.'%');
                                          }else{
                                              //no space was found, add normal where clause
-                                             $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));
+                                             $where .=  $db_field . " like ".$db->quoted(sql_like_string($field_value, $like_char));
                                          }
 
                                      }else {
@@ -1107,7 +1107,7 @@ require_once('include/EditView/EditView2.php');
                                          }
 
                                          //field is not last name or this is not from global unified search, so do normal where clause
-                                         $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));
+                                         $where .=  $db_field . " like ".$db->quoted(sql_like_string($field_value, $like_char));
                                      }
                                  }
                                  break;

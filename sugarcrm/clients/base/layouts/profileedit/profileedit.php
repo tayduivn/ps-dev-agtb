@@ -4,8 +4,7 @@ $viewdefs['base']['layout']['profileedit'] = array(
     'components' =>
     array(
         0 => array(
-            'view' => 'subnav',
-            'meta' => 'edit'
+            'view' => 'subnavedit',
         ),
         1 => array(
             'layout' =>

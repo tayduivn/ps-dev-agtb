@@ -83,8 +83,13 @@
      * @param commitButtonEnabled boolean value for the changed commitButtonEnabled from the context
      */
     commitButtonStateChangeHandler: function(context, commitButtonEnabled){
-        this.commitButtonEnabled = commitButtonEnabled;
-        this._render();
+    	var commitbtn =  this.$el.find('#commit_forecast');
+    	if(commitButtonEnabled){
+    		commitbtn.removeClass("disabled");
+    	}
+    	else{
+    		commitbtn.addClass("disabled");
+    	}
     },
 
     /**
@@ -93,26 +98,35 @@
      */
     triggerCommit: function() {
     	var commitbtn =  this.$el.find('#commit_forecast');
+    	var savebtn = this.$el.find('#save_draft');
     	var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
     	var self = this;
+    	var modelCount = 0;
+		var saveCount = 0;
         if(!commitbtn.hasClass("disabled")){
     		var models = worksheet.models;
     		_.each(models, function(model, index){
     			var isDirty = model.get("isDirty");
     			if(model.get("version") == 0 || (typeof(isDirty) == "boolean" && isDirty)){
     				var values = {};
+    				modelCount++;
                     values["draft"] = 0;
                     values["isDirty"] = false;
                     values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
         			values["current_user"] = app.user.get('id');
         			model.set(values, {silent:true});
     				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
-    				model.save();
+    				model.save({}, {success:function(){
+    					saveCount++;
+    					if(saveCount === modelCount){
+    						self.context.forecasts.set({reloadWorksheetFlag: true});
+    					}
+    				}});
     				worksheet.isDirty = false;
     			}    			    				
     		});
+    		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
-            self.context.forecasts.set({reloadWorksheetFlag: true});
     	}        
     },
 
@@ -124,16 +138,25 @@
     	var savebtn = this.$el.find('#save_draft');
     	if(!savebtn.hasClass("disabled")){
     		var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
-    		
+    		var self = this;
+    		var modelCount = 0;
+    		var saveCount = 0;
     		_.each(worksheet.models, function(model, index){
     			var isDirty = model.get("isDirty");
     			if(typeof(isDirty) == "boolean" && isDirty ){
+    				modelCount++;
     				model.set({draft: 1}, {silent:true});
-    				model.save();
+    				model.save({}, {success:function(){
+    					saveCount++;
+    					if(saveCount === modelCount){
+    						self.context.forecasts.set({reloadWorksheetFlag: true});
+    					}
+    				}});
     				model.set({isDirty: false}, {silent:true});
     				worksheet.isDirty = false;
     			}    			    				
     		});
+    		
     		savebtn.addClass("disabled");
     		this.context.forecasts.set({commitButtonEnabled: true});
     	}

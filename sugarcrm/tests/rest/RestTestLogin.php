@@ -105,7 +105,9 @@ class RestTestLogin extends RestTestBase
         $consumer->oauth_type = 'oauth2';
         $consumer->client_type = 'user';
         $consumer->save();
-
+        
+        $GLOBALS['db']->commit();
+        
         $args = array(
             'grant_type' => 'password',
             'username' => $this->_user->user_name,
@@ -196,6 +198,8 @@ class RestTestLogin extends RestTestBase
         $this->contact->portal_password = User::getPasswordHash("unittest");
         $this->contact->save();
 
+        $GLOBALS['db']->commit();
+        
         $args = array(
             'grant_type' => 'password',
             'username' => $this->contact->portal_name,

@@ -1,11 +1,14 @@
                         {{#each data.records}}
                             <li>
-                                <span>{{_module}},</span><a href="#{{_module}}/{{id}}"><strong>{{name}}</strong></a>
+                                <span>{{_module}}: </span><a href="#{{_module}}/{{id}}"><strong>{{name}}</strong></a>
                             </li>
                         {{/each}}
                         {{#eq data.records.length "0"}}
                             <li>
                                 <a href="#search/{{term}}"><strong>{{str "LNK_SEARCH_NO_RESULTS"}}</a>
+                            {{#each data.module_list}}
+                                <a href="#{{this}}/create">You may add a {{this}} record now.</a>
+                            {{/each}}
                             </li>
                         {{else}}
                             <li>

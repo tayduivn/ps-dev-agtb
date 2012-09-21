@@ -193,7 +193,7 @@ public static function setupForecastSettings()
 {
     $forecastConfig = array(
             //show_buckets is used to indicate whether or not to show the bucket option for grouping opportunities
-            'show_buckets' => false,
+            'show_buckets' => 0,
             //committed_probability is the value whereby a new opportunity created with a >= value is marked as included in the forecast
             'committed_probability' => 70,
             //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won

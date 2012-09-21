@@ -479,7 +479,7 @@ $mod_strings = array(
 'LBL_ROLLUP' => 'Rollup',
 'LBL_RELATED_FIELD' => 'Related Field',
 'LBL_CONFIG_PORTAL_URL'=>'URL to custom logo image. The recommended logo dimensions are 163 × 18 pixels.',
-'LBL_PORTAL_ROLE_DESC' => 'Do not delete this role. Customer Self-Service Portal Role is a system-generated role created during the Sugar Portal activation process. Use Access controls within this Role to enable and/or disable Bugs, Cases or KBDocuments modules in Sugar Portal. Do not modify any other access controls for this role to avoid unknown and unpredictable system behavior. In case of accidental deletion of this role, recreate it by disabling and enabling Sugar Portal.',
+'LBL_PORTAL_ROLE_DESC' => 'Do not delete this role. Customer Self-Service Portal Role is a system-generated role created during the Sugar Portal activation process. Use Access controls within this Role to enable and/or disable Bugs, Cases or Knowledge Base modules in Sugar Portal. Do not modify any other access controls for this role to avoid unknown and unpredictable system behavior. In case of accidental deletion of this role, recreate it by disabling and enabling Sugar Portal.',
 //END SUGARCRM flav=pro ONLY
 
 //RELATIONSHIPS

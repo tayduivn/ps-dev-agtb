@@ -33,20 +33,19 @@ $viewdefs['Prospects']['base']['view']['edit'] = array(
         array(
             'name'    => 'save_button',
             'type'    => 'button',
-            'label'   => 'Save',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
             'value'   => 'save',
-            'primary' => true,
+            'css_class' => 'btn-primary',
         ),
         array(
             'name'    => 'cancel_button',
             'type'    => 'button',
-            'label'   => 'Cancel',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
             'value'   => 'cancel',
-            'events'  =>
-            array(
+            'css_class' => 'btn-invisible btn-link',
+            'events'  => array(
                 'click' => 'function(){ window.history.back(); }',
             ),
-            'primary' => false,
         ),
     ),
     'panels' => array(

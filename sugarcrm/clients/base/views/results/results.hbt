@@ -4,7 +4,7 @@
                 <ul class="nav nav-tabs results">
                     {{#each collection.models}}
                     <li class="search">
-                        <a href="javascript:void(0)" data-toggle="tab"><span class="label label-{{attributes._module}}">{{str "LBL_MODULE_NAME_SINGULAR" attributes._module}}</span></a>
+                        <a class="pull-left" href="javascript:void(0)" data-toggle="tab"><span class="label label-{{attributes._module}}">{{str "LBL_MODULE_NAME_SINGULAR" attributes._module}}</span></a>
                         <p><a href="#{{attributes._module}}/{{id}}">{{attributes.name}}</a></p>
                         <div class="actions">
                            <a href="javascript:void(0)" rel="tooltip" data-title="{{str "LBL_PREVIEW"}}"><i class="icon-eye-open"></i></a>

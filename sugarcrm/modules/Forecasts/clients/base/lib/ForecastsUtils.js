@@ -46,21 +46,21 @@
             if(best_changed && likely_changed)
             {
                 args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
-                args[1] = "$" + App.utils.formatNumber(Math.abs(best_difference), 0, 0, ',', '.');
-                args[2] = "$" + App.utils.formatNumber(newestModel.get('best_case'), 0, 0, ',', '.');
+                args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
+                args[2] = app.currency.formatAmountLocale(newestModel.get('best_case'));
                 args[3] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
-                args[4] = "$" + App.utils.formatNumber(Math.abs(likely_difference), 0, 0, ',', '.');
-                args[5] = "$" + App.utils.formatNumber(newestModel.get('likely_case'), 0, 0, ',', '.');
+                args[4] = app.currency.formatAmountLocale(Math.abs(likely_difference));
+                args[5] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
                 text = 'LBL_COMMITTED_HISTORY_BOTH_CHANGED';
             } else if (!best_changed && likely_changed) {
                 args[0] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
-                args[1] = "$" + App.utils.formatNumber(Math.abs(likely_difference), 0, 0, ',', '.');
-                args[2] = "$" + App.utils.formatNumber(newestModel.get('likely_case'), 0, 0, ',', '.');
+                args[1] = app.currency.formatAmountLocale(Math.abs(likely_difference));
+                args[2] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
                 text = 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED';
             } else if (best_changed && !likely_changed) {
                 args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
-                args[1] = "$" + App.utils.formatNumber(Math.abs(best_difference), 0, 0, ',', '.');
-                args[2] = "$" + App.utils.formatNumber(newestModel.get('best_case'), 0, 0, ',', '.');
+                args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
+                args[2] = app.currency.formatAmountLocale(newestModel.get('best_case'));
                 text = 'LBL_COMMITTED_HISTORY_BEST_CHANGED';
             }
 

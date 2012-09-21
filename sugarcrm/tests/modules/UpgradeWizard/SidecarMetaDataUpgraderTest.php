@@ -117,6 +117,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
         $this->assertEmpty($failures, 'There were upgrade failures');
     }
     
+    //BEGIN SUGARCRM flav=ent ONLY
     // Added for Bug 55568 - new OOTB metadata was not included in upgrade
     public function testUpgraderUsedNewViewDefs() {
         // Bug 55936 - Fixed hardcoded path for testing to pick up metadata changes
@@ -127,6 +128,7 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
         require $filename;
         $this->assertNotEmpty($viewdefs['Cases']['portal']['view']['edit']['buttons'], 'The buttons array from the new metadata was not captured');
     }
+    //END SUGARCRM flav=ent ONLY
     
     public function _sidecarFilesInPlaceProvider() {
         $builder = self::getBuilder();

@@ -101,6 +101,13 @@ class ViewQuickedit extends ViewAjax
      */
     public function display()
     {	    
+        // when the meeting or call is synched from external source, we do not want it to be quickeditable
+        if ((($this->bean instanceOf Meeting) || ($this->bean instanceOf Call)) && !$this->bean->canEditRecord()) {
+            $msg = 'LBL_SYNCED_RECURRING_MSG_'.strtoupper(get_class($this->bean));
+            echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $GLOBALS['app_strings'][$msg], 'eval'=>true));
+            return;
+        }
+
         if(($this->bean instanceOf SugarBean) && !$this->bean->ACLAccess('edit')){
             $no_defs_js = '<script>SUGAR.ajaxUI.loadContent("index.php?module=' . $this->bean->module_dir . '&action=Noaccess&record=' . $this->bean->id.'")</script>';
             echo json_encode(array('scriptOnly'=> $no_defs_js));

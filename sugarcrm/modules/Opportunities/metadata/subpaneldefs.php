@@ -187,10 +187,6 @@ $layout_defs['Opportunities'] = array(
 				array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect')
 			),
 		),
-        //END SUGARCRM flav=pro ONLY
-
-        //BEGIN SUGARCRM flav=ent ONLY
-
         'products' => array(
             'order' => 50,
             'module' => 'Products',
@@ -205,7 +201,7 @@ $layout_defs['Opportunities'] = array(
             ),
         ),
 
-        //END SUGARCRM flav=ent ONLY
+        //END SUGARCRM flav=pro ONLY
 
         //BEGIN SUGARCRM flav!=sales ONLY
 

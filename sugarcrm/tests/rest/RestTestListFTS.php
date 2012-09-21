@@ -36,6 +36,7 @@ class RestTestListFTS extends RestTestBase {
         $this->cases = array();
         $this->bugs = array();
         $this->files = array();
+        $this->search_engine_name = SugarSearchEngineFactory::getFTSEngineNameFromConfig();
         $this->search_engine = SugarSearchEngineFactory::getInstance(SugarSearchEngineFactory::getFTSEngineNameFromConfig(), array(), false);
     }
 
@@ -75,9 +76,13 @@ class RestTestListFTS extends RestTestBase {
         foreach($this->files AS $file) {
             unlink($file);
         }
+        $GLOBALS['db']->commit();
     }
 
     public function testModuleSearch() {
+        if($this->search_engine_name != 'Elastic') {
+            $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
+        }        
         // Make sure there is at least one page of accounts
         for ( $i = 0 ; $i < 40 ; $i++ ) {
             $account = new Account();
@@ -106,7 +111,9 @@ class RestTestListFTS extends RestTestBase {
             
             $this->search_engine->indexBean($account, FALSE);
         }
-
+        
+        $GLOBALS['db']->commit();
+        
         // Test searching for a lot of records
         $restReply = $this->_restCall("Accounts/?q=".rawurlencode("UNIT TEST")."&max_num=30");
 
@@ -135,6 +142,9 @@ class RestTestListFTS extends RestTestBase {
     }
 
     public function testGlobalSearch() {
+        if($this->search_engine_name != 'Elastic') {
+            $this->markTestSkipped('Marking this skipped. Elastic Search is not installed.');
+        }        
         // Make sure there is at least one page of accounts
         for ( $i = 0 ; $i < 40 ; $i++ ) {
             $account = new Account();
@@ -208,6 +218,8 @@ class RestTestListFTS extends RestTestBase {
             $this->search_engine->indexBean($opportunity, false);            
         }
 
+        $GLOBALS['db']->commit();
+        
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
         

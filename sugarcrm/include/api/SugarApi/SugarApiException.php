@@ -28,13 +28,13 @@ class SugarApiException extends Exception
 
     function __construct($description = null, $httpCode = 0, $errorLabel = null)
     {
-        if (isset($description)) {
+        if (!empty($description)) {
             $this->description = $description;
         }
 
 
-        if (isset($errorLabel)) {
-            $this->errorLabel = $this->errorLabel;
+        if (!empty($errorLabel)) {
+            $this->errorLabel = $errorLabel;
         }
         
         if ($httpCode != 0) {

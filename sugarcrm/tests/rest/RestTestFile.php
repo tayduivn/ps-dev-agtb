@@ -48,6 +48,7 @@ class RestTestFile extends RestTestBase {
         $note->save();
         $this->_note_id = $note->id;
         $this->_note = $note;
+        $GLOBALS['db']->commit();
     }
     
     public function tearDown()
@@ -58,6 +59,7 @@ class RestTestFile extends RestTestBase {
         $GLOBALS['db']->query("DELETE FROM notes WHERE id = '{$this->_note_id}'");
 
         unset($this->_contact, $this->_note);
+        $GLOBALS['db']->commit();
     }
 
     public function testGetList() {

@@ -28,6 +28,19 @@ require_once('modules/Administration/views/view.configureshortcutbar.php');
  */
 class Bug49878Test extends Sugar_PHPUnit_Framework_OutputTestCase
 {
+	public function setUp()
+	{
+        parent::setUp();
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('current_user');
+    }
+
+	public function tearDown()
+	{
+        parent::tearDown();
+        SugarTestHelper::tearDown();
+    }
+
     /**
     * @group 49878
     */

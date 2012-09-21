@@ -63,7 +63,7 @@ class SugarSearchEngineFactory
     public static function getFTSEngineNameFromConfig()
     {
         $name = "";
-        if(!empty($GLOBALS['sugar_config']['full_text_engine']))
+        if(!empty($GLOBALS['sugar_config']['full_text_engine']) && is_array($GLOBALS['sugar_config']['full_text_engine']))
         {
             $keys = array_keys($GLOBALS['sugar_config']['full_text_engine']);
             $name = array_pop($keys);

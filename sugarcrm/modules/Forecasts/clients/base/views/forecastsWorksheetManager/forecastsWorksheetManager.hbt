@@ -5,7 +5,9 @@
         <thead>
             <tr>
             {{#each fields}}
-                <th>{{str label ../../viewModule}}</th>
+                {{#if enabled}}
+                <th>{{str label ../../../viewModule}}</th>
+                {{/if}}
             {{/each}}
             </tr>
         </thead>
@@ -13,7 +15,9 @@
         {{#each ../_collection.models}}
             <tr>
             {{#each ../fields}}
-                <td>{{field ../../../this ../this}}</td>
+                {{#if enabled}}
+                <td>{{field ../../../../this ../../this}}</td>
+                {{/if}}
             {{/each}}
             </tr>
         {{/each}}

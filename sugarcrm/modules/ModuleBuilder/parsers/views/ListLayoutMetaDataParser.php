@@ -26,7 +26,17 @@ require_once 'modules/ModuleBuilder/parsers/views/MetaDataParserInterface.php' ;
 
 class ListLayoutMetaDataParser extends AbstractMetaDataParser implements MetaDataParserInterface
 {
-
+    /**
+     * Defines the current view if requested and set. Not all parsers will set 
+     * this, but any that need to use the isValidField method of list need it to
+     * at least exist, even if it is empty.
+     *
+     * Bug 56100 - SubpanelMetadataParser throwing undefined property notices
+     * 
+     * @var string The view being requested
+     */
+    public $view = '';
+    
     // Columns is used by the view to construct the listview - each column is built by calling the named function
     public $columns = array ( 'LBL_DEFAULT' => 'getDefaultFields' , 'LBL_AVAILABLE' => 'getAdditionalFields' , 'LBL_HIDDEN' => 'getAvailableFields' ) ;
     protected $labelIdentifier = 'label' ; // labels in the listviewdefs.php are tagged 'label' =>
