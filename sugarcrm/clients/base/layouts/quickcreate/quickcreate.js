@@ -7,6 +7,7 @@
         this.context.on('quickcreate:save', this.save, this);
         this.context.on('quickcreate:saveAndCreate', this.saveAndCreate, this);
         this.context.on('quickcreate:saveAndView', this.saveAndView, this);
+        this.context.on('quickcreate:resetDuplicateState', this.resetDuplicateState, this);
     },
 
     /**

@@ -99,16 +99,22 @@
      * @param model
      */
     editExisting: function(model) {
-        var newTitle = this.app.lang.get('LBL_EDIT_BUTTON', this.module),
-            origModel = this.storeModel();
+        var newTitle = this.app.lang.get('LBL_EDIT_BUTTON', this.module) + '' + this.module,
+            origAttributes = this.saveFormData();
 
         this.model.clear();
-        this.model.set(this.extendModel(model, origModel));
+        this.model.set(this.extendModel(model, origAttributes));
 
         this.context.parent.trigger("modal:changetitle", newTitle);
     },
 
-    extendModel: function(newModel, oldModel) {
+    /**
+     * Merge the selected record with the data entered in the form
+     * @param newModel
+     * @param origAttributes
+     * @return {*}
+     */
+    extendModel: function(newModel, origAttributes) {
         var modelAttributes = newModel.previousAttributes();
 
         _.each(modelAttributes, function(value, key, list) {
@@ -117,21 +123,31 @@
             }
         });
 
-        return _.extend({}, oldModel, modelAttributes);
+        return _.extend({}, origAttributes, modelAttributes);
     },
-    
+
+    /**
+     * Restore to the original form state before edit selection
+     */
     restoreModel: function() {
-        if ( this.origModel ) {
-            this.model.clear();
-            this.model.set(this.origModel.toJSON());
-            var newTitle = this.app.lang.get('LBL_CREATE_LEAD_TITLE', this.module);
-            this.context.parent.trigger("modal:changetitle", newTitle);
+        var newTitle = this.app.lang.get('LBL_NEW_FORM_TITLE', this.module);
+        this.context.parent.trigger('modal:changetitle', newTitle);
+
+        this.context.trigger('quickcreate:resetDuplicateState');
+
+        this.model.clear();
+        if (this._origAttributes) {
+            this.model.set(this._origAttributes);
         }
     },
-    
-    storeModel: function() {
-        this.origModel = this.model.previousAttributes();
-        return this.origModel;
+
+    /**
+     * Save the data entered in the form
+     * @return {*}
+     */
+    saveFormData: function() {
+        this._origAttributes = this.model.previousAttributes();
+        return this._origAttributes;
     },
 
     /**

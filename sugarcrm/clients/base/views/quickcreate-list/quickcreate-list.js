@@ -39,7 +39,6 @@
             editModel = this.collection.get(recordId);
 
         this.context.trigger('quickcreate:edit', editModel);
-        this.context.trigger('quickcreate:actions:setButtonAsSave');
         this.context.trigger('quickcreate:alert:dismiss');
         this.context.trigger('quickcreate:list:close');
     },
