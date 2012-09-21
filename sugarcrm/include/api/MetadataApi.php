@@ -283,21 +283,21 @@ class MetadataApi extends SugarApi {
         $data['acl'] = array();
 
         foreach ($data['full_module_list'] as $modName) {
-            $bean = BeanFactory::newBean($module);
+            $bean = BeanFactory::newBean($modName);
             if (!$bean || !is_a($bean,'SugarBean') ) {
                 // There is no bean, we can't get data on this
                 continue;
             }
-            $data['acl'][$module] = $mm->getAclForModule($module,$GLOBALS['current_user']->id);
+            $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
             // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
             if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
-                $data['acl'][$module]['admin'] = 'no';
-                $data['acl'][$module]['developer'] = 'no';
-                $data['acl'][$module]['edit'] = 'no';
-                $data['acl'][$module]['delete'] = 'no';
-                $data['acl'][$module]['import'] = 'no';
-                $data['acl'][$module]['export'] = 'no';
-                $data['acl'][$module]['massupdate'] = 'no';
+                $data['acl'][$modName]['admin'] = 'no';
+                $data['acl'][$modName]['developer'] = 'no';
+                $data['acl'][$modName]['edit'] = 'no';
+                $data['acl'][$modName]['delete'] = 'no';
+                $data['acl'][$modName]['import'] = 'no';
+                $data['acl'][$modName]['export'] = 'no';
+                $data['acl'][$modName]['massupdate'] = 'no';
             }
         }
 
@@ -411,6 +411,21 @@ class MetadataApi extends SugarApi {
                 if (!in_array($chunk,$this->typeFilter)
                     || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
                     unset($data[$chunk]);
+                }
+            }
+            
+            // Relationships are special, they are a baseChunk but also need to pay attention to modules
+            if (!empty($moduleFilter) && isset($data['relationships']) ) {
+                // We only want some modules, but we want the relationships
+                foreach ($data['relationships'] as $relName => $relData ) {
+                    if ( $relName == '_hash' ) {
+                        continue;
+                    }
+                    if (!in_array($relData['rhs_module'],$moduleFilter)
+                        && !in_array($relData['lhs_module'],$moduleFilter)) {
+                        unset($data['relationships'][$relName]);
+                    }
+                    else { $data['relationships'][$relName]['checked'] = 1; }
                 }
             }
 

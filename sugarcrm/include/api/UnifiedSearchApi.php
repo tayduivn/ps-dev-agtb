@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+require_once('include/SearchForm/SugarSpot.php');
 class UnifiedSearchApi extends SugarApi {
     public function registerApiRest() {
         return array(
@@ -46,10 +46,6 @@ class UnifiedSearchApi extends SugarApi {
 
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
     protected $defaultModuleLimit = 5; // How many records should we show if they don't pass up a limit
-
-    public function __construct() {
-        // $this->defaultLimit = $GLOBALS['sugar_config']['list_max_entries_per_page'];
-    }
 
     /**
      * This function pulls all of the search-related options out of the $args array and returns a fully-populated array with either the defaults or the provided settings
@@ -84,6 +80,7 @@ class UnifiedSearchApi extends SugarApi {
             }
         }
 
+        $options['selectFields'] = array('id');
         if ( !empty($args['order_by']) ) {
             if ( strpos($args['order_by'],',') !== 0 ) {
                 // There is a comma, we are ordering by more than one thing
@@ -112,7 +109,21 @@ class UnifiedSearchApi extends SugarApi {
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$column.' in module: '.$args['module']);
                 }
 */
-                
+                // If this field has already been added, don't do it again
+                // Common cause of this was the id field, since we always add it
+                // by default.
+                if (in_array($column, $options['selectFields'])) {
+                    // Before busting out of this, ensure we have what we need
+                    if (empty($orderByData[$column])) {
+                        $orderByData[$column] = ($direction=='ASC'?true:false);
+                        if (!in_array("$column $direction", $orderByArray)) {
+                            $orderByArray[] = $column.' '.$direction;
+                        }
+                    }
+
+                    continue;
+                }
+                $options['selectFields'][] = $column;
                 $orderByData[$column] = ($direction=='ASC'?true:false);
                 $orderByArray[] = $column.' '.$direction;
             }
@@ -127,6 +138,7 @@ class UnifiedSearchApi extends SugarApi {
             $orderByData['date_modified'] = false;
             $orderByData['id'] = false;
             $options['orderBySetByApi'] = false;
+            $options['selectFields'][] = 'date_modified';
         }
         $options['orderByArray'] = $orderByData;
         $options['orderBy'] = $orderBy;
@@ -198,6 +210,7 @@ class UnifiedSearchApi extends SugarApi {
      * @return array result set
      */
     public function globalSearch(ServiceBase $api, array $args) {
+        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
 
         // This is required to keep the loadFromRow() function in the bean from making our day harder than it already is.
@@ -216,10 +229,23 @@ class UnifiedSearchApi extends SugarApi {
             $recordSet = $this->globalSearchFullText($api,$args,$searchEngine,$options);
             $sortByDateModified = false;
         }
+        //END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav!=pro ONLY
+        $GLOBALS['disable_date_format'] = true;
+        $options = $this->parseSearchOptions($api,$args);
+        $searchEngine = new SugarSpot();
+        $options['resortResults'] = true;
+        $recordSet = $this->globalSearchSpot($api,$args,$searchEngine,$options);
+        $sortByDateModified = true;
+        //END SUGARCRM flav=!pro ONLY
+
 
         return $recordSet;
 
     }
+    
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * This function is used to determine the search engine to use
      * @param $api ServiceBase The API class of the request
@@ -273,6 +299,8 @@ class UnifiedSearchApi extends SugarApi {
         }
         return 'SugarSearchEngine';
     }
+    //END SUGARCRM flav=pro ONLY
+
     /**
      * This function is used to hand off the global search to the FTS Search Emgine
      * @param $api ServiceBase The API class of the request
@@ -299,8 +327,8 @@ class UnifiedSearchApi extends SugarApi {
 
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
         $returnedRecords = array();
-        foreach ( $results as $result ) {
-            $record = BeanFactory::getBean($result->getModule(), $result->getId());
+        foreach ( $results as $record ) {
+            // $record = BeanFactory::getBean($result->getModule(), $result->getId());
 
             // if we cant' get the bean skip it
             if($record === false)
@@ -349,7 +377,7 @@ class UnifiedSearchApi extends SugarApi {
      * @param $options array An array of options to pass through to the search engine, they get translated to the $searchOptions array so you can see exactly what gets passed through
      * @return array Two elements, 'records' the list of returned records formatted through FormatBean, and 'next_offset' which will indicate to the user if there are additional records to be returned.
      */
-    protected function globalSearchSpot(ServiceBase $api, array $args, SugarSearchEngine $searchEngine, array $options) {
+    protected function globalSearchSpot(ServiceBase $api, array $args, $searchEngine, array $options) {
         require_once('modules/Home/UnifiedSearchAdvanced.php');
 
         
@@ -362,8 +390,11 @@ class UnifiedSearchApi extends SugarApi {
             'untouched'=>$options['untouched'],
             'orderBy'=>$options['orderBy'],
             'fields'=>$options['fieldFilters'],
+            'selectFields'=>$options['selectFields'],
             'limitPerModule'=>$options['limitPerModule'],
             'allowEmptySearch'=>true,
+            'distinct'=>'DISTINCT', // Needed until we get a query builder
+            'return_beans'=>true,
             );
 
         $multiModule = false;

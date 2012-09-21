@@ -524,11 +524,13 @@ class Link2 {
      * @param array $rel_keys array of ids or SugarBean objects. If you have the bean in memory, pass it in.
      * @param array $additional_values the values should be passed as key value pairs with column name as the key name and column value as key value.
      *
-     * @return void
+     * @return boolean|array          Return true if all relationships were added.  Return an array with the failed keys if any of them failed.
      */
     function add($rel_keys,$additional_values=array()) {
         if (!is_array($rel_keys))
             $rel_keys = array($rel_keys);
+
+        $failures = array();
 
         foreach($rel_keys as $key)
         {
@@ -559,9 +561,18 @@ class Link2 {
             if ($lhs->isActivityEnabled() && !$this->relationship->relationship_exists($lhs, $rhs)) {
                 $activity = new ActivityStream();
                 $activity->addRelate($lhs, $rhs);
-            }                      
-            $this->relationship->add($lhs, $rhs, $additional_values);           
+            }   
+            
+            $success = $this->relationship->add($lhs, $rhs, $additional_values);
+            
+            if($success == false) {
+                $failures[] = $key->id;
+            }
         }
+        if(!empty($failures)) {
+            return $failures;
+        }
+
         return true;
     }
 
@@ -571,7 +582,7 @@ class Link2 {
      * Marks the relationship delted for this given record pair.
      * @param $id id of the Parent/Focus SugarBean
      * @param string $related_id id or SugarBean to unrelate. Pass a SugarBean if you have it.
-     * @return void
+     * @return boolean          true if delete was successful or false if it was not
      */
     function delete($id, $related_id='') {
         if (empty($this->focus->id))
@@ -582,15 +593,15 @@ class Link2 {
                 $related_id = $this->getRelatedBean($related_id);
             }
             if ($this->getSide() == REL_LHS) {
-                $this->relationship->remove($this->focus, $related_id);
+                return $this->relationship->remove($this->focus, $related_id);
             }
             else {
-                $this->relationship->remove($related_id, $this->focus);
+                return $this->relationship->remove($related_id, $this->focus);
             }
         }
         else
         {
-            $this->relationship->removeAll($this);
+            return $this->relationship->removeAll($this);
         }
     }
 

@@ -126,6 +126,7 @@ class SugarFieldFile extends SugarFieldBase {
                 // Report the error
                 $this->error = $upload_file->getErrorMessage();
             }
+
         } else if ( ! empty($old_id) ) {
             // It's a duplicate, I think
 
@@ -169,5 +170,5 @@ class SugarFieldFile extends SugarFieldBase {
                 $bean->$clearField = '';
             }
         }
-	}
+    }
 }

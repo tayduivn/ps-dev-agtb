@@ -24,6 +24,10 @@
                 template: SUGAR.App.template
             });
         }
+        /**
+         * Fix placeholder on global search on IE and old browsers
+         */
+        this.$("input[placeholder]").placeholder();
     };
 
     /**
@@ -42,10 +46,8 @@
      */
     var __superFieldRender__ = app.view.SupportPortalField.prototype._render;
     app.view.SupportPortalField.prototype._render = function() {
-
         __superFieldRender__.call(this);
-
-        this.$("input:visible[placeholder]").placeholder();
+        this.$("input[placeholder]").placeholder();
     };
 
 

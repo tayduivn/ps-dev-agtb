@@ -152,7 +152,7 @@
     </tr>
     <tr>
         <td  scope="row" width='12%' nowrap>
-            {$MOD.NEW_LOGO}&nbsp;{sugar_help text=$MOD.NEW_LOGO_HELP}
+            {$MOD.NEW_LOGO}&nbsp;{sugar_help text=$MOD.NEW_LOGO_HELP_NO_SPACE}
         </td>
         <td  width='35%'>
             <div id="container_upload"></div>
