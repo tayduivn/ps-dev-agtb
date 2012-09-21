@@ -158,7 +158,7 @@
         // self.showDuplicateAlertMessage();
         this.skipDupCheck(true);
         this.context.trigger('quickcreate:actions:setButtonAsIgnoreDuplicate');
-        this.context.trigger('quickcreate:alert:show',this.getAlertMessage(collection.models.length));
+        this.context.trigger('quickcreate:alert:show',collection.models.length);
         this.context.trigger('quickcreate:highlightDuplicateFields', keys);
     },
 
@@ -245,18 +245,6 @@
         return keys;
     },
 
-    /**
-     * Generates the alert message that will be shown for duplicate messages
-     * to either true or false.
-     * @param {number} dupCount
-     * @return {string} The duplicate message as an html string.
-     */
-    getAlertMessage: function(dupCount) {
-        return "<span class=\"alert-message\">" +
-            "<strong>" + dupCount + " Duplicate Records.</strong>  You can " +
-            "<a>ignore duplicates and save</a> or select to edit one of the duplicates." +
-            "</span>";
-    },
     /**
      * Close the modal window
      */
