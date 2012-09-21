@@ -161,10 +161,16 @@
         this.layout.trigger(this.showEvent, params, callback);
     },
     show: function(span) {
-        var modal_container = this.$(".modal:first");
-        var original_css = modal_container.attr("class").replace(/span\d+/g, "");
-        modal_container.attr("class", original_css);
+        var modal_container = this.$(".modal:first"),
+            original_css = modal_container.attr("class").replace(/span\d+/g, ""),
+            modal_body = modal_container.find(".modal-body:first"),
+            maxHeight = _.max([$(window).height() - 300, 400]);
+
+        modal_body.css('max-height' ,maxHeight);
         modal_container.modal('show');
+        var top = -(maxHeight / 2) - 100;
+        modal_container.attr("class", original_css).css('margin-top', top);
+
         if(_.isNumber(span) && span > 0 && span <= 12) {
             modal_container.addClass('span' + span);
         }
