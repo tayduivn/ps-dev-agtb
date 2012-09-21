@@ -292,6 +292,7 @@ class SugarTestForecastUtilities
     {
         if (!empty(self::$timeperiod)) {
             SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+            self::$timeperiod = null;
         }
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();

@@ -69,9 +69,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $rep->reports_to_id = self::$user->id;
         $rep->save();
 
-        self::$timeperiod = new TimePeriod();
-        self::$timeperiod->start_date = "2012-01-01";
-        self::$timeperiod->end_date = "2012-03-31";
+        self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod("2012-01-01", "2012-03-31");
         self::$timeperiod->name = "Test";
         self::$timeperiod->save();
 
@@ -173,7 +171,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-        $GLOBALS['db']->query('DELETE FROM timeperiods WHERE id ="' . self::$timeperiod->id . '";');
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         $GLOBALS['db']->query('DELETE FROM forecasts WHERE user_id IN (\'' . implode("', '", $userIds) . '\')');
 
         parent::tearDownAfterClass();

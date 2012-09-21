@@ -66,8 +66,8 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->obj->parse($testFilters);
         $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
         $reportFilters = $this->obj->convert($converter);
-        //We should have 3 elements (two for the probability) + the operator (AND)
-        $this->assertEquals(4, count($reportFilters['Filter_1']));
+        //We should have 3 elements (two for the probability and sales_stage) + the operator (AND)
+        $this->assertEquals(3, count($reportFilters['Filter_1']));
 
     }
 }

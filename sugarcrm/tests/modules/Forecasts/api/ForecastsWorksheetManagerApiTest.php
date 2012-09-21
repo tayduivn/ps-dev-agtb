@@ -170,7 +170,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
     public static function tearDownAfterClass()
     {
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
-
         parent::tearDown();
     }
 
