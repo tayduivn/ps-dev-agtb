@@ -176,7 +176,6 @@ class SugarTestForecastUtilities
 
                 $opp = SugarTestOpportunityUtilities::createOpportunity();
                 $opp->assigned_user_id = $user->id;
-                $opp->timeperiod_id = $config['timeperiod_id'];
                 $opp->amount = $opp_amount;
                 $opp->best_case = ($opp_amount + 200);
                 $opp->worst_case = ($opp_amount - 400);
