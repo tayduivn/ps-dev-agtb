@@ -259,13 +259,6 @@ class UnifiedSearchApi extends SugarApi {
             4 - not order by
         */
 
-        // portal
-        
-        if(isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal')
-        {
-            return 'SugarSearchEngine';
-        }
-
         /*
          * If a module isn't FTS switch to spot search.  Global Search should be done with either the enabled modules
          * Using the new ServerInfo endpoint OR passing in a blank module list.
