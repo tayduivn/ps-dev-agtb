@@ -104,25 +104,33 @@
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
 
-    addComment: function(event) {
-        var self = this,
-            myPost = this.$(event.currentTarget).closest('li'),
-            myPostHTML = myPost.find('div.sayit'),
-            myPostTags = myPost.find('div.sayit span'),
-            myPostId = this.$(event.currentTarget).data('id'),
-            myPostContents = '';
+    _addPostComment: function() {
 
-        $(myPostHTML).contents().each(function() {
+    },
+
+    _processTags: function(postHTML) {
+        var contents = '';
+        $(postHTML).contents().each(function() {
             if (this.nodeName == "#text") {
-                myPostContents += this.data;
+                contents += this.data;
             } else if (this.nodeName == "SPAN") {
                 var el = $(this);
                 el.find('a').remove();
                 var data = el.data();
-                myPostContents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
+                contents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
             }
         }).html();
-        myPostContents = myPostContents.replace(/&nbsp;/gi, ' ');
+        return contents.replace(/&nbsp;/gi, ' ');
+    },
+
+    addComment: function(event) {
+        var self = this,
+            myPost = this.$(event.currentTarget).closest('li'),
+            myPostTags = myPost.find('div.sayit span'),
+            myPostId = this.$(event.currentTarget).data('id'),
+            myPostContents;
+
+        myPostContents = this._processTags(myPost.find('div.sayit'));
 
         this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function(post_id) {
             var pending_attachments = self.$(event.currentTarget).siblings('.activitystream-pending-attachment');
@@ -165,12 +173,11 @@
     addPost: function() {
         var self = this,
             myPost = this.$(".activitystream-post"),
-            myPostHTML = myPost.find('div.sayit'),
             myPostTags = myPost.find('div.sayit span'),
             myPostId = this.context.get("modelId"),
             myPostModule = this.module,
             myPostUrl = 'ActivityStream',
-            myPostContents = '';
+            myPostContents;
 
         if (myPostModule !== "ActivityStream") {
             myPostUrl += '/' + myPostModule;
@@ -179,17 +186,7 @@
             }
         }
 
-        $(myPostHTML).contents().each(function() {
-            if (this.nodeName == "#text") {
-                myPostContents += this.data;
-            } else if (this.nodeName == "SPAN") {
-                var el = $(this);
-                el.find('a').remove();
-                var data = el.data();
-                myPostContents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
-            }
-        }).html();
-        myPostContents = myPostContents.replace(/&nbsp;/gi, ' ');
+        myPostContents = this._processTags(myPost.find('div.sayit'));
 
         this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function(post_id) {
             myPost.find('.activitystream-pending-attachment').each(function(index, el) {
