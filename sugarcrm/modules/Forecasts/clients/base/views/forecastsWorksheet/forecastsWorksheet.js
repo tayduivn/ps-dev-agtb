@@ -624,9 +624,13 @@
                         //initial load still has html here, or it is a dropdown.
                         else{
                             var checkboxVal = jVal.find("input").attr("checked");
+                            var selectVal = jVal.find("select").attr("value");
 
-                            if(typeof(checkboxVal) != "undefined"){
+                            if( !_.isUndefined(checkboxVal)){
                                 returnVal = 1;
+                            }
+                            else if( !_.isUndefined(selectVal) && selectVal == 'include'){
+                                returnVal = selectVal;
                             }
                         }
 
