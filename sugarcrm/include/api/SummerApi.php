@@ -52,6 +52,13 @@ class SummerApi extends SugarApi {
                 'method' => 'contacts',
                 'shortHelp' => 'Recommended contacts',
             ),
+            'emails' => array(
+                'reqType' => 'GET',
+                'path' => array('summer','emails'),
+                'pathVars' => array('',''),
+                'method' => 'emails',
+                'shortHelp' => 'Get messaging having specific email address',
+            ),
             'invite' => array(
                 'reqType' => 'POST',
                 'path' => array('summer','invite'),
@@ -107,7 +114,7 @@ class SummerApi extends SugarApi {
             return array("invites" => array());
         }
         // FIXME: use memcache/local storage?
-        if(!empty($_SESSION['recommended_invites'])) {
+        if(0 && !empty($_SESSION['recommended_invites'])) {
             return array("invites" => $_SESSION['recommended_invites']);
         }
         $res = $this->box->oauthGet("https://www.google.com/m8/feeds/contacts/default/full/");
@@ -165,5 +172,13 @@ class SummerApi extends SugarApi {
             }
         }
         return array("contacts" => $data);
+    }
+
+    public function emails($api, $args)
+    {
+        if(!isset($args['email'])) {
+            throw new SugarApiExceptionMissingParameter('Email is missing.');
+        }
+        return $this->box->getMails($args['email']);
     }
 }

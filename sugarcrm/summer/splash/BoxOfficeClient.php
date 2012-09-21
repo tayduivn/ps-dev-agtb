@@ -1,6 +1,8 @@
 <?php
 require_once 'summer/splash/lib/BoxOfficeMail/BoxOfficeMail.php';
 require_once 'Zend/Http/Client.php';
+require_once 'Zend/Mail/Protocol/Imap.php';
+require_once 'Zend/Mail/Storage/Imap.php';
 
 class BoxOfficeClient
 {
@@ -51,7 +53,7 @@ class BoxOfficeClient
             $this->session = $this->session_data['token'];
         }
 
-        if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
+//        if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
     }
 
    /**
@@ -133,7 +135,7 @@ class BoxOfficeClient
             $this->user = $this->callBox("POST", "rest/users/login", array("email" => $email, "password" => $password));
         }
         if ($this->user) {
-            $_SESSION['logged_in_user'] = $this->user;
+//            $_SESSION['logged_in_user'] = $this->user;
             return $this->getUserInstances();
         } else {
             return false;
@@ -174,9 +176,6 @@ class BoxOfficeClient
             return;
         }
         $this->callBox("POST", "rest/users/{$this->user['id']}/tokens", array("token" => $token, "refresh_token" => $refreshToken, "expires" => $expires));
-        // refresh data
-        unset($_SESSION['boxoffice']);
-        $this->getSessionData();
     }
 
     /**
@@ -510,7 +509,7 @@ class BoxOfficeClient
         if(empty($data) || empty($data['access_token'])) {
             return false;
         }
-        $this->user['oauth_token'] = $data['access_token'];
+        $this->user['oauth_token'] = $_SESSION['boxoffice']['user']['oauth_token'] = $data['access_token'];
         $this->callBox("POST", "rest/sessions/{$this->getToken()}/token", array("token" => $data['access_token'], "expires" => $data['expires_in']));
         return true;
     }
@@ -543,5 +542,90 @@ class BoxOfficeClient
             }
         }
         return false;
+    }
+
+    /**
+     * Gmail authentication
+     * Can not use standard means since Gmail returns + on failure,
+     * expecting client response, and standard Zend IMAP just hangs on that.
+     * @param Zend_Mail_Protocol_Imap $imap
+     * @param bool $retry Should retry on bad token?
+     * @return boolean
+     */
+    protected function gmailAuth($imap, $retry = true)
+    {
+        $authenticateParams = array('XOAUTH2', $this->getXoauth2());
+        $tag = "S01";
+        $imap->sendRequest('AUTHENTICATE', $authenticateParams, $tag);
+        $nexttag = '';
+        while(!$imap->readLine($tokens, $tag, false, '')) ;
+
+        // last line has response code
+        if ($tokens[0] == 'OK') {
+        	return true;
+        } else if ($tokens[0] == 'NO'){
+            $line = join(' ', $tokens);
+            if(strpos($line, "Invalid credentials") !== false) {
+                // bad token, refresh & retry
+                $this->refreshToken();
+                return $this->gmailAuth($imap, false);
+            }
+        }
+        return false;
+    }
+
+    protected $send_fields = array('from' => true, 'to'=> true, 'reply-to'=> true, 'subject' => true, 'message-id' => true, 'cc' => true);
+
+    /**
+     * Filter message headers, return only ones that are in the list $send_fields
+     * @param array $data
+     * @return array
+     */
+    protected function filterHeaders($data)
+    {
+        foreach($data as $key => $value) {
+            if(empty($this->send_fields[strtolower($key)])) {
+                unset($data[$key]);
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Get XOAUTH2 SASL token
+     */
+    protected function getXoauth2()
+    {
+        return base64_encode("user={$this->user['email']}\001auth=Bearer {$this->user['oauth_token']}\001\001");
+    }
+
+    /**
+     * Get all emails for email address for last month
+     * @param string $email
+     * @return array
+     */
+    public function getMails($email)
+    {
+        $imap = new Zend_Mail_Protocol_Imap('imap.gmail.com', '993', true);
+        if(!$this->gmailAuth($imap)) {
+            return array();
+        }
+        $imap->select();
+        $cutoff = new DateTime();
+        $cutoff->modify("-1 month");
+        $res = $imap->search(array('X-GM-RAW', "\"after:{$cutoff->format('Y/m/d')} $email\""));
+        if(empty($res)) return array();
+        $messages = array();
+        $storage = new Zend_Mail_Storage_Imap($imap);
+        if(count($res) > 10) {
+            array_splice($res, 0, -10);
+        }
+        foreach($res as $id) {
+            $msg = $storage->getMessage($id);
+            $msgdata = $this->filterHeaders($msg->getHeaders());
+            $msgdata['uid'] = $storage->getUniqueId($id);
+            $messages[] = $msgdata;
+        }
+        return $messages;
     }
 }
