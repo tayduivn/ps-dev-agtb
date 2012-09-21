@@ -176,9 +176,14 @@ return $created_ids;
  */
 public static function getRelatedOpportunities($user_id, $timeperiod_id)
 {
-    global $db;
+
+    $db = DBManagerFactory::getInstance();
     $opps = array();
-    $query = "SELECT id FROM opportunities WHERE assigned_user_id = '$user_id' AND timeperiod_id = '$timeperiod_id' AND deleted = 0 AND sales_stage != 'Closed Lost'";
+
+    $query = sprintf("SELECT o.id FROM opportunities o
+LEFT JOIN timeperiods tp ON tp.start_date_timestamp < o.date_closed_timestamp and tp.end_date_timestamp >= o.date_closed_timestamp
+WHERE tp.id = '%s' AND o.assigned_user_id = '%s' AND o.deleted = 0 AND o.sales_stage != '%s'", $timeperiod_id, $user_id, "Closed Lost");
+
     $result = $db->query($query, false, "Error fetching related opps for user");
     while (($row = $db->fetchByAssoc($result)) != null)
     {

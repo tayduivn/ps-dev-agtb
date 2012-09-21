@@ -89,9 +89,17 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetTimePeriodFromDbDateWithValidDate()
     {
-        // create a time period
-        $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-        $this->assertEquals($tp->id, TimePeriod::retrieveFromDate('2009-02-15')->id);
+        // get time period within 2009-02-15
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+        if(empty($tp))
+        {
+            // create time period if it does not exist
+            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+            $expected_id = $tp->id;
+        } else {
+            $expected_id = $tp->id;
+        }
+        $this->assertEquals($expected_id, TimePeriod::retrieveFromDate('2009-02-15')->id);
 
     }
 
