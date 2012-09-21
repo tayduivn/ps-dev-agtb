@@ -5552,6 +5552,11 @@ input, select, textarea { z-index:1000; }
   border-top:1px solid #c2c2c2;
   border-bottom:1px solid #e8e8e8;
 }
+#content .control-group label {
+  padding:0 1em 0 0;
+  display:inline-block;
+}
+input[type=radio] { display:inline-block; }
 #stream { position:relative; }
 #stream table { margin-top:-15px; }
 #stream tr td { padding:20px 4px; }
@@ -5590,7 +5595,7 @@ input, select, textarea { z-index:1000; }
   -moz-transition:all .2s linear;
   transition:all .2s linear;
 }
-.folded > div { width:inherit; }
+.folded > div, .folded { width:inherit; }
 .folded .tab-pane#overview { border-left:none; }
 .folded .tab-pane.active#overview { border-left:1px solid #ebebeb; }
 .container-fluid#contentflex {
