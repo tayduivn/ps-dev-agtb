@@ -628,20 +628,4 @@ class SugarTestHelper
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], $params[0]);
         return true;
     }
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * Setup forecasts module configuration seed data where code could be dependent on such settings
-     *
-     */
-    protected static function setUp_forecasts()
-    {
-        $admin = BeanFactory::getBean('Administration');
-        if(!isset($admin->settings['Forecasts_category_ranges']) || empty($admin->settings['Forecasts_category_ranges']))
-        {
-            require_once('modules/Forecasts/ForecastsSeedData.php');
-            ForecastsSeedData::setupForecastSettings();
-        }
-    }
-    //END SUGARCRM flav=pro ONLY
 }

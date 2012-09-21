@@ -31,7 +31,7 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-        SugarTestHelper::setUp('forecasts');
+
 
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
@@ -53,9 +53,10 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->createdFiles as $file)
         {
             if (is_file($file))
+            {
                 unlink($file);
+            }
         }
-        SugarTestHelper::tearDown();
 	}
 	
 

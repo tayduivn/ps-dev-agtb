@@ -50,7 +50,7 @@ class Bug44206Test extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('forecasts');
+
         $this->opportunity = new Opportunity();
         $this->opportunity->currency_id = -99;
         $this->opportunity->save();
