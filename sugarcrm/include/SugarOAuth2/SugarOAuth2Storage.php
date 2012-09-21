@@ -582,15 +582,15 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
      * @throws Exception
      */
     protected function setPlatformStore($platform = null) {
-        if (empty($this->platformStore) || $platform) {
+        if (empty($this->platformStore) || ($platform && ($store = $this->platformStore->getPlatformName()) != $platform)) {
             // Handle setting the platform storage object
             if (empty($platform)) {
                 $platform = empty($_SESSION['platform']) ? 'base' : $_SESSION['platform'];
-                
-                // Set the platform if it isn't set
-                if (empty($this->platform)) {
-                    $this->platform = $platform;
-                }
+            }
+            
+            // Reset the platform if it doesn't match
+            if ($this->platform != $platform) {
+                $this->platform = $platform;
             }
             
             // Normalize the platform
