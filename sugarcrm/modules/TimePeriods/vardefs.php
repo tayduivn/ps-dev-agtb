@@ -59,6 +59,15 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
     'isnull' => 'false',
     'importable' => 'required',
   ),
+  'start_date_timestamp' =>
+  array (
+    'name' => 'start_date_timestamp',
+    'vname' => 'LBL_TP_START_DATE',
+    'type' => 'int',
+    'required' => true,
+    'enable_range_search' => true,
+    'studio' => false
+  ),
   'end_date' =>
   array (
     'name' => 'end_date',
@@ -67,6 +76,15 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
     'isnull' => 'false',
     'importable' => 'required',
   ),
+  'end_date_timestamp' =>
+    array (
+      'name' => 'end_date_timestamp',
+      'vname' => 'LBL_TP_START_DATE',
+      'type' => 'int',
+      'required' => true,
+      'enable_range_search' => true,
+      'studio' => false
+    ),
   'created_by' =>
   array (
     'name' => 'created_by',
@@ -116,7 +134,8 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
 
  )
 , 'indices' => array (
-       array('name' =>'timeperiodspk', 'type' =>'primary', 'fields'=>array('id'))
+       array('name' =>'timeperiodspk', 'type' =>'primary', 'fields'=>array('id'),),
+       array('name' =>'idx_timestamps', 'type' =>'index', 'fields'=>array('id','start_date_timestamp','end_date_timestamp'))
   )
 , 'relationships' => array (
 	'timeperiod_forecast_schedules' => array('lhs_module'=> 'TimePeriods', 'lhs_table'=> 'timeperiods', 'lhs_key' => 'id',
