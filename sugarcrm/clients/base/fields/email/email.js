@@ -22,6 +22,7 @@
         this.model.set(this.name, existingAddresses);
 
         this.$('.newEmail').removeClass('newEmail');//Bug 56555
+        this.$el.parents('body').find('div.tooltip').remove();//Bug 56601
         this.render();
     },
     /**
