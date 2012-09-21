@@ -72,7 +72,7 @@
                 {{#eq this.file_type "image"}}
                 <a href="#attachment-{{this.id}}" data-toggle="modal">
                 {{this.filename}}
-                <img src="{{this.url}}" alt="{{this.filename}}" />
+                <img src="{{this.url}}" class="activitystream-attachment-thumbnail" alt="{{this.filename}}" />
                 <div class="modal" style="display:none" id="attachment-{{this.id}}">
                   <div class="modal-header">
                     <a class="close" data-dismiss="modal">×</a>
@@ -128,7 +128,7 @@
                               {{#eq this.file_type "image"}}
                               <a href="#attachment-{{this.id}}" data-toggle="modal">
                               {{this.filename}}
-                              <img src="{{this.url}}" alt="{{this.filename}}" />
+                              <img src="{{this.url}}" class="activitystream-attachment-thumbnail" alt="{{this.filename}}" />
                               <div class="modal" style="display:none" id="attachment-{{this.id}}">
                                 <div class="modal-header">
                                   <a class="close" data-dismiss="modal">×</a>
