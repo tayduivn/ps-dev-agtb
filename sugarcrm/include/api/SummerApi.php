@@ -114,7 +114,7 @@ class SummerApi extends SugarApi {
             return array("invites" => array());
         }
         // FIXME: use memcache/local storage?
-        if(0 && !empty($_SESSION['recommended_invites'])) {
+        if(!empty($_SESSION['recommended_invites'])) {
             return array("invites" => $_SESSION['recommended_invites']);
         }
         $res = $this->box->oauthGet("https://www.google.com/m8/feeds/contacts/default/full/");
