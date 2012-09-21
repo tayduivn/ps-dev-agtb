@@ -232,6 +232,9 @@ class RestListTest extends RestTestBase {
      * @group rest
      */
     public function testCaseSearch() {
+        // This global only needs to be set for this test
+        SugarTestHelper::setUp('mod_strings', array('Administration'));
+        
         // Cases searches not only by fields in the module, but by the related account_name so it caused some extra problems so it gets some extra tests.
         // Make sure there is at least one page of cases
         for ( $i = 0 ; $i < 40 ; $i++ ) {

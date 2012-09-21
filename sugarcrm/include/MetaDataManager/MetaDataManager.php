@@ -286,7 +286,7 @@ class MetaDataManager {
         if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
 
-            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
                 $outputAcl['admin'] = 'yes';
                 $isAdmin = true;
             } else {
@@ -294,7 +294,7 @@ class MetaDataManager {
                 $isAdmin = false;
             }
 
-            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
                 $outputAcl['developer'] = 'yes';
             } else {
                 $outputAcl['developer'] = 'no';
