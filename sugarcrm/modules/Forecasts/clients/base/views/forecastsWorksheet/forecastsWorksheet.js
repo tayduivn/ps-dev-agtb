@@ -27,12 +27,22 @@
      */
     toggleIncludeInForecast:function(model)
     {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() {
-        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
-        	this.render(); 
-        }, this)});
+    	var self = this;
+        
+        var values = {};
+        values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
+		values["current_user"] = app.user.get('id');
+		values["isDirty"] = true;
+		
+		//If there is an id, add it to the URL
+        if(model.isNew())
+        {
+        	model.url = app.api.buildURL('ForecastWorksheets', 'create');
+        } else {
+        	model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":model.get('id')});
+        }
+        
+        model.set(values);
     },
 
     /**
@@ -114,11 +124,19 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-        field._save = function(event, input) {
-            this.model.set('commit_stage', input.selected);
-            this.view.context.set('selectedToggle', field);
-        };
-        field.events = _.extend({"change select": "_save"}, field.events);
+    	/*var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	
+    	field.bindDomChange = function() {};
+    	//if type is checkbox.
+    	//show_binary, show_buckets, show_n_buckets
+    	if(forecastCategories == "show_binary"){
+    		field.type = "bool";
+    	}
+    	else{
+    		field.type = "enum";
+    		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+    	}*/  	
+    	field.type = "bool";
         return field;
     },
 
@@ -140,6 +158,7 @@
             {
                field = this._setUpCommitStage(field);
             }
+            
         }
 
         /*
@@ -166,7 +185,7 @@
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element, index){
                     if(element.hasChanged("commit_stage")) {
-                        this.toggleIncludeInForecast(element);
+                        //this.toggleIncludeInForecast(element);
                     }
                 }, this);
             }, this);
