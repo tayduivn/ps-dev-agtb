@@ -57,7 +57,7 @@ class SugarMailer extends SimpleMailer
 
         $from = $this->headers->getFrom();
         $from->setName($locale->translateCharset($from->getName(), "UTF-8", $charset));
-        $this->headers->setFrom($from);
+        $this->setHeader(EmailHeaders::From, $from);
 
         $subject = $this->headers->getSubject();
         $subject = from_html($locale->translateCharset($subject, "UTF-8", $charset));
