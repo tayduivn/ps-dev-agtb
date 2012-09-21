@@ -54,11 +54,6 @@
         app.view.View.prototype.render.call(this);
     },
 
-    // Overloaded functions
-    _renderHtml: function() { // Use original original
-        app.view.View.prototype._renderHtml.call(this);
-    },
-
     handleValidationError:function (errors) {
         var self = this;
 
@@ -98,12 +93,18 @@
         this.model.clear();
         this.model.set(this.model._defaults);
     },
-    
+
+    /**
+     * Make the specified record as the data to be edited, and merge the existing data.
+     * @param model
+     */
     editExisting: function(model) {
-        var origModel = this.storeModel();
+        var newTitle = this.app.lang.get('LBL_EDIT_BUTTON', this.module),
+            origModel = this.storeModel();
+
         this.model.clear();
         this.model.set(this.extendModel(model, origModel));
-        var newTitle = this.app.lang.get('LBL_EDIT_LEAD_TITLE', this.module);
+
         this.context.parent.trigger("modal:changetitle", newTitle);
     },
 

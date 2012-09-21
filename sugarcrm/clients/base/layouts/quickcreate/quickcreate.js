@@ -7,7 +7,6 @@
         this.context.on('quickcreate:save', this.save, this);
         this.context.on('quickcreate:saveAndCreate', this.saveAndCreate, this);
         this.context.on('quickcreate:saveAndView', this.saveAndView, this);
-        this.context.on('quickcreate:resetDuplicateState', this.resetDuplicateState, this);
     },
 
     /**
@@ -163,7 +162,7 @@
     },
 
     /**
-     * No duplicates found
+     * Clear out all things related to duplicate checks
      */
     resetDuplicateState: function() {
         this.skipDupCheck(false);

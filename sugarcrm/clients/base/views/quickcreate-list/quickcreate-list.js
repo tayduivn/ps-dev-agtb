@@ -27,15 +27,21 @@
     close: function() {
         this.$('.dataTables_filter').hide();
     },
-    
+
+    /**
+     * Handle selecting a record to edit
+     * @param e
+     */
     edit: function(e) {
         var $button = $(e.target),
             $parentRow = $button.closest("tr"),
             recordId = $parentRow.data("record-id"),
             editModel = this.collection.get(recordId);
 
-        this.context.trigger('quickcreate:edit', editModel)
-        this.context.trigger('quickcreate:resetDuplicateState');
+        this.context.trigger('quickcreate:edit', editModel);
+        this.context.trigger('quickcreate:actions:setButtonAsSave');
+        this.context.trigger('quickcreate:alert:dismiss');
+        this.context.trigger('quickcreate:list:close');
     },
 
     /**
