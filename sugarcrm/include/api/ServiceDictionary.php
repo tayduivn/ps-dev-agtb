@@ -111,7 +111,7 @@ class ServiceDictionary {
                 // Strip off the directory, then the .php from the end
                 $fileClass = substr(basename($file),0,-4);
 
-                $pathParts = explode('/',$path);
+                $pathParts = explode('/',$file);
                 if (empty($pathParts[$path['platformPart']]) ) {
                     $platform = 'base';
                 } else {
