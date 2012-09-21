@@ -253,12 +253,13 @@
 		    removeButton.setAttribute("id", this.id + "removeButton" + this.numberEmailAddresses);
 			removeButton.setAttribute("class", "id-ff-remove");
 		    removeButton.setAttribute("name", this.numberEmailAddresses);
-			removeButton.eaw = this;
+		    removeButton.setAttribute("type", "button");
             removeButton.setAttribute("tabindex", tabIndexCount);
-		    removeButton.onclick = function(){
-		    	this.eaw.removeEmailAddress(this.name);
-		    	return false;
-		    };
+            removeButton.onclick = (function(eaw) {
+                return function() {
+                    eaw.removeEmailAddress(this.name);
+                }
+            })(this);
             removeButton.appendChild(removeButtonImg);
 		    
 		    // set record id
@@ -451,13 +452,10 @@
 
 		removeEmailAddress : function(index) {
 			removeFromValidate(this.emailView, this.id + 'emailAddress' + index);
-			var oNodeToRemove = $("#" + this.id +  'emailAddressRow' + index);
-            var form = oNodeToRemove.parents("form")[0];
-            oNodeToRemove.find("input").each(function(index, node){
-            	$(node).remove();
-            });
-            oNodeToRemove.css("display", "none");
-            
+            var oNodeToRemove = Dom.get(this.id +  'emailAddressRow' + index);
+            var form = Dom.getAncestorByTagName(oNodeToRemove, "form");
+            oNodeToRemove.parentNode.removeChild(oNodeToRemove);
+
             var removedIndex = parseInt(index);
             //If we are not deleting the last email address, we need to shift the numbering to fill the gap
             if(this.numberEmailAddresses != removedIndex) {

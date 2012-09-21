@@ -1431,6 +1431,38 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     
 }
 
+#footer #buffer {
+    float: right;
+    margin-right: 25px;
+    height: 31px;
+}
+
+#footer #help {
+    float: right;
+    border-right: 1px solid #CCC;
+    height: 31px;
+}
+
+#footer #help a {
+    color: #444;
+    text-decoration: none;
+    font-size: 12px;
+    float: left;
+    padding: 0px 10px 0px;
+ }
+
+
+#footer #help a .icon {
+    float: left;
+    height: 24px;
+    margin: 5px 4px 4px 0px;
+}
+
+#footer #help a span.title {
+    float: left;
+    padding-top: 8px;
+}
+
 #footer #partner a {
 	float: left;
 }
@@ -1442,7 +1474,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 #footer #partner {
     float:right;
-    margin-right:25px;
      border-right: 1px solid #CCCCCC;
      height: 31px;
 }
@@ -5232,7 +5263,7 @@ font-size: 13px;
 }
 
 .yui-navset .yui-nav li, .yui-navset .yui-navset-top .yui-nav li {
-margin: 0 4px 0 0;
+margin: 2px 4px 0 0;
 *height: 24px; /* ie 7 hack */
 }
 
@@ -5245,9 +5276,13 @@ margin: 0 4px 0 0;
 }
 
 
-.yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav, .yui-layout .yui-layout-hd {
+.yui-navset .yui-nav, .yui-navset .yui-navset-top .yui-nav {
+    background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-tab-bg.png'); 
+    border-color: #c3c3c3;
+}
 
-    background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png') repeat-x scroll 0 0; 
+.yui-layout .yui-layout-hd {
+    background:transparent url('../../../../index.php?entryPoint=getImage&themeName=Sugar&imageName=sugar-yui-sprites.png'); 
     border-color: #c3c3c3;
 }
 
@@ -6512,6 +6547,11 @@ ul.clickMenu {
     *zoom:1;
 }
 ul.clickMenu form, div.action_buttons form, div.action_buttons input {float:left;}
+
+/** bug 55940 - prevent wrapping of action buttons in button mode in the detail view header **/
+.actionsContainer div.action_buttons input {
+    float:none;
+}
 ul.SugarActionMenuIESub {
     font-family: 'Lucida Grande',Tahoma,Verdana,Arial,sans-serif;
 }
@@ -6780,8 +6820,6 @@ ul#globalLinks.clickMenu > li > a {
 	font-size: 14px;
     padding: 14px 7px !important;	
 }
-
-#contentTable .yui-nav, #contentTable .yui-nav * { position:static; }
 
 ul#selectLink.clickMenu {
 	height: 22px;

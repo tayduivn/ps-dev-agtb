@@ -212,6 +212,7 @@ class SugarBean
     var $relationship_fields = array();
     var $current_notify_user;
     var $fetched_row=false;
+    var $fetched_rel_row = array();
     var $layout_def;
     var $force_load_details = false;
     var $optimistic_lock = false;
@@ -2502,6 +2503,14 @@ class SugarBean
 		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
         $this->fill_in_relationship_fields();
+// save related fields values for audit
+         foreach ($this->get_related_fields() as $rel_field_name)
+         {
+             if (! empty($this->$rel_field_name['name']))
+             {
+                 $this->fetched_rel_row[$rel_field_name['name']] = $this->$rel_field_name['name'];
+             }
+         }        
         //make a copy of fields in the relationship_fields array. These field values will be used to
         //clear relationship.
         foreach ( $this->field_defs as $key => $def )

@@ -92,7 +92,6 @@ padding-top: 9px;
 }
 
 .modal-footer {
-    padding-left: 0px;
 }
 
 .modal ul li {
@@ -144,8 +143,7 @@ i.icon-arrow-up:before {
 }
 
 .pointer.down {
-    background-position: 0px 109px;
-    background-position: 0px -109px\9;
+    background-position: 0px -109px;
 }
 
 
@@ -257,4 +255,8 @@ i.icon-arrow-up:before {
     -moz-transform:rotate(-45deg); /* Firefox */
     -webkit-transform:rotate(-45deg); /* Safari and Chrome */
     -o-transform:rotate(-45deg); /* Opera */
+}
+
+#pageContainer > div > table td:first-child {
+    padding-right: 20px;
 }

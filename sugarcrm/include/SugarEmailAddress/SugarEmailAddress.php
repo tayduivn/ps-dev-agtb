@@ -615,8 +615,7 @@ class SugarEmailAddress extends SugarBean {
 
         if ($id)
         {
-            $q = sprintf('SELECT * FROM email_addresses WHERE id=\'%s\'', $this->db->quote($id));
-            $r = $this->db->query($q);
+            $r = $this->db->query("SELECT * FROM email_addresses WHERE id='".$this->db->quote($id)."'");
             $a = $this->db->fetchByAssoc($r);
         }
         else
@@ -1072,30 +1071,22 @@ class SugarEmailAddress extends SugarBean {
 
     public function stash($parentBeanId, $moduleName)
     {
-        $queryRelatedIds = sprintf('select email_address_id ' .
-                                   'from email_addr_bean_rel eabr ' .
-                                   'WHERE eabr.bean_id = "%s" ' .
-                                   'AND eabr.bean_module = "%s" ' .
-                                   'and eabr.deleted=0',
-                                   $this->db->quote($parentBeanId),
-                                   $this->db->quote($moduleName));
-
-        $result = $this->db->query($queryRelatedIds);
-        $queryEmailData = 'SELECT id, email_address, invalid_email, opt_out ' .
-                          'FROM ' . $this->table_name . ' WHERE id IN (';
-
-        while ($row = $this->db->fetchByAssoc($result, false))
-        {
-            $queryEmailData .= '"' . $this->db->quote($row['email_address_id']) . '",';
-        }
-
-        $queryEmailData .= '"0") AND deleted=0';
-        $result = $this->db->query($queryEmailData);
+        $result = $this->db->query("select email_address_id from email_addr_bean_rel eabr WHERE eabr.bean_id = '".$this->db->quote($parentBeanId)."' AND eabr.bean_module = '".$this->db->quote($moduleName)."' and eabr.deleted=0");
         $this->stateBeforeWorkflow = array();
-
+        $ids = array();
         while ($row = $this->db->fetchByAssoc($result, false))
         {
-            $this->stateBeforeWorkflow[$row['id']] = array_diff_key($row, array('id' => null));
+            $ids[] =$this->db->quote($row['email_address_id']); // avoid 2nd order SQL Injection
+        }
+        if (!empty($ids))
+        {
+            $ids = implode("', '", $ids);
+            $queryEmailData = "SELECT id, email_address, invalid_email, opt_out FROM {$this->table_name} WHERE id IN ('$ids') AND deleted=0";
+            $result = $this->db->query($queryEmailData);
+            while ($row = $this->db->fetchByAssoc($result, false))
+            {
+                $this->stateBeforeWorkflow[$row['id']] = array_diff_key($row, array('id' => null));
+            }
         }
     }
 } // end class def

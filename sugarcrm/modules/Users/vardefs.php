@@ -43,14 +43,14 @@ $dictionary['User'] = array(
                'quickcreate' => false,
                'basic_search' => false,
                'advanced_search' => false,
-               //BEGIN SUGARCRM flav=pro
+               //BEGIN SUGARCRM flav=pro ONLY
                'wirelesseditview' => false,
                'wirelessdetailview' => true,
                'wirelesslistview' => false,
                'wireless_basic_search' => false,
                'wireless_advanced_search' => false,
                'rollup' => false,
-               //END SUGARCRM flav=pro
+               //END SUGARCRM flav=pro ONLY
                ),
         ) ,
         'user_hash' => array(
@@ -84,8 +84,8 @@ $dictionary['User'] = array(
                 'searchview'=>false,
                 'editview'=>false,
                 'quickcreate'=>false,
-                'wirelesseditview' => false,
                 //BEGIN SUGARCRM flav=pro ONLY
+                'wirelesseditview' => false,
                 'related' => false,
                 'formula' => false,
                 'rollup' => false,
@@ -221,15 +221,27 @@ $dictionary['User'] = array(
             'vname' => 'LBL_DATE_ENTERED',
             'type' => 'datetime',
             'required' => true,
-            'studio' => array('editview' => false, 'quickcreate' => false, 'wirelesseditview' => false),
+            'studio' => array(
+                'editview' => false,
+                'quickcreate' => false,
+//BEGIN SUGARCRM flav=pro ONLY
+                'wirelesseditview' => false,
+//END SUGARCRM flav=pro ONLY
+            ),
         ) ,
         'date_modified' => array(
             'name' => 'date_modified',
             'vname' => 'LBL_DATE_MODIFIED',
             'type' => 'datetime',
             'required' => true,
-            'studio' => array('editview' => false, 'quickcreate' => false, 'wirelesseditview' => false),
-        ) ,
+            'studio' => array(
+                'editview' => false,
+                'quickcreate' => false,
+//BEGIN SUGARCRM flav=pro ONLY
+                'wirelesseditview' => false,
+//END SUGARCRM flav=pro ONLY
+            ),
+        ),
         'modified_user_id' => array(
             'name' => 'modified_user_id',
             'rname' => 'user_name',
@@ -447,7 +459,15 @@ $dictionary['User'] = array(
 				'source' => 'non-db',
 				'len' => 36,
 				'custom_type' => 'teamset',
-                'studio' => array('listview' => false, 'searchview'=>false, 'editview'=>false, 'quickcreate'=>false, 'wirelesseditview' => false),
+                'studio' => array(
+                    'listview'    => false,
+                    'searchview'  =>false,
+                    'editview'    =>false,
+                    'quickcreate' =>false,
+//BEGIN SUGARCRM flav=pro ONLY
+                    'wirelesseditview' => false,
+//END SUGARCRM flav=pro ONLY
+                ),
 			),
 			'team_link' =>
 		    array (

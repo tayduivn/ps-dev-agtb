@@ -19,8 +19,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$searchFields['Teams'] = 
-	array (
-		'name' => array('query_type' => 'default', 'db_field' => array('name', 'name_2'), 'force_unifiedsearch' => true),
-	);
-?>
+/**
+ * Use this script to fetch linkedin js code.
+ */
+
+$url = '';
+$type = !empty($_GET['type']) ? $_GET['type'] : '';
+switch ($type)
+{
+    case 'linkedin' :
+        require_once('include/connectors/formatters/FormatterFactory.php');
+        $formatter = FormatterFactory::getInstance('ext_rest_linkedin');
+        $url = $formatter->getComponent()->getSource()->getConfig();
+        $url = $url['properties']['company_url'];
+        break;
+}
+
+if ($url == '')
+{
+    return;
+}
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, $url);
+curl_setopt($ch, CURLOPT_TIMEOUT, '30');
+curl_exec($ch);
+curl_close($ch);

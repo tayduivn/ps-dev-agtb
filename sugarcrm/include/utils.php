@@ -4140,7 +4140,7 @@ function getTrackerSubstring($name) {
 		$chopped = $name;
 	}
 
-	return to_html($chopped);
+	return $chopped;
 }
 function generate_search_where ($field_list=array(),$values=array(),&$bean,$add_custom_fields=false,$module='') {
 	$where_clauses= array();

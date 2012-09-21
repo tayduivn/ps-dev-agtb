@@ -220,7 +220,7 @@ class DashletsDialog {
                 $sugaFav = new SugarFavorites();
                 $current_favorites_beans = $sugaFav->getUserFavoritesByModule('Reports', $current_user);
                 $current_favorites = array();
-                foreach ($current_favorites_beans as $key=>$val) {
+                foreach ((array)$current_favorites_beans as $key=>$val) {
                     array_push($current_favorites,$val->record_id);
                 }
                 if(is_array($current_favorites) && !empty($current_favorites))

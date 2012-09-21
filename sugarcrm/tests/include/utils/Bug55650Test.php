@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,48 +22,47 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once("modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php");
-require_once("modules/ModuleBuilder/parsers/views/ListLayoutMetaDataParser.php");
-
-class Bug42085Test extends Sugar_PHPUnit_Framework_TestCase
+/**
+ * 
+ * Check if getTrackerSubstring() utils function returns a html decoded value
+ * which is also chopped to the tracker_max_display_length parameter
+ * 
+ * @ticket 55650
+ * @author avucinic@sugarcrm.com
+ *
+ */
+class Bug55650Test extends Sugar_PHPUnit_Framework_TestCase
 {
-	var $meeting;
-	//var $listLayoutMetaDataParser;
 	
-	public function setUp()
-	{
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-		$this->meeting = SugarTestMeetingUtilities::createMeeting();	
-		//$this->listLayoutMetaDataParser = new ListLayoutMetaDataParser(MB_LISTVIEW, 'Meetings');
-	}
-	
-	public function tearDown()
-	{
-		SugarTestMeetingUtilities::removeAllCreatedMeetings();
-		SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-		unset($GLOBALS['current_user']);
-	}
-	
-    public function testHideMeetingType()
+    /**
+     * @dataProvider providerTestGetTrackerSubstring
+     */
+    public function testGetTrackerSubstring($value, $expected)
     {
-    	$validDef = $this->meeting->field_defs['type'];
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
+    	// Setup some helper values
+    	$add = "";
+    	$cut = $GLOBALS['sugar_config']['tracker_max_display_length'];
+    	// If the length is longer then the set tracker_max_display_length, the substring length for asserting equal will be
+    	// -3 the length of the tracker_max_display_length, and we should add ...
+    	if (strlen($expected) > $GLOBALS['sugar_config']['tracker_max_display_length'])
+    	{
+    		$add = "...";
+    		$cut = $cut - 3;
+    	}
+    	
+    	// Test if the values got converted, and if the original string was chopped to the expected string
+        $this->assertEquals(getTrackerSubstring($value), substr($expected, 0, $cut) . $add, '');
     }
-
-    public function testHideMeetingPassword()
+    
+    function providerTestGetTrackerSubstring()
     {
-    	$validDef = $this->meeting->field_defs['password'];
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
-    } 
-
-    public function testHideMeetingDisplayedURL()
-    {
-    	$validDef = $this->meeting->field_defs['displayed_url'];
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelesseditview'));
-		$this->assertFalse(AbstractMetaDataParser::validField($validDef, 'wirelessdetailview'));
-    }       
+        return array(
+        	0 => array("A lot of quotes &#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;", "A lot of quotes '''''''''''''''"),
+        	1 => array("A lot of quotes <>'\" &#34; &#62; &#60; &#8364; &euro;&euro;&euro;&euro;&euro;&euro;&euro;&euro;", "A lot of quotes <>'\" \" > < € €€€€€€€€"),
+        	2 => array("A lot of quotes &amp;", "A lot of quotes &"),
+        );
+    }
+    
 }
 
 ?>
