@@ -97,7 +97,6 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
      */
     public function createIndexDocument($bean, $searchFields = null)
     {
-
         if($searchFields == null)
             $searchFields = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($bean);
 
@@ -105,17 +104,17 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
             return false;
 
         $ghettoBean = BeanFactory::newBean('GhettoSearch');
-        //$current_records = $ghettoBean->getAllRecords($bean);
-        $current_records = array();
+        $current_records = $ghettoBean->getAllRecords($bean);
+        
         foreach($searchFields as $fieldName => $fieldDef)
         {
             //TODO: CHANGE ME
             $ghettoBean = BeanFactory::newBean('GhettoSearch');                            
             //All fields have already been formatted to db values at this point so no further processing necessary
-            if(!empty($bean->$fieldName)) {
+            if(!empty($bean->$fieldName) || (isset($current_records[$fieldName]) && $current_records[$fieldName]->field_value != $bean->$fieldName)) {
                 $ghettoBean->field_name = $fieldName;
                 $ghettoBean->field_value = $bean->$fieldName;
-                $ghettoBean->boost = $bean->fieldDefs[$fieldName]->boostValue;
+                $ghettoBean->boost = 1;
                 if(isset($current_records[$fieldName]))
                 {
                     $ghettoBean->id = $current_records[$fieldName]->id;
@@ -129,7 +128,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
         }
         
         $ghettoBean = BeanFactory::newBean('GhettoSearch');
-        if($current_records['assigned_user_id'])
+        if(isset($current_records['assigned_user_id']))
         {
             $ghettoBean->id = $current_records['assigned_user_id']->id;
         }
@@ -339,31 +338,27 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
             return null;
         }
 
-        $appendWildcard = false;
-        if( !empty($options['append_wildcard']) && $this->canAppendWildcard($queryString) )
-        {
-            $appendWildcard = true;
-        }
-        //$queryString = sql_like_string($queryString, self::WILDCARD_CHAR, self::WILDCARD_CHAR, $appendWildcard);
-
         $GLOBALS['log']->info("Going to search with query $queryString");
-        $results = null;
+
 
         $ghettoBean = BeanFactory::newBean('GhettoSearch');
 
-        //$where = $this->constructTeamFilter();
-        //TODO: add performSearch
         $results = $ghettoBean->performSearch($queryString);
 
         $return = array();
+
         foreach($results AS $ghettoLicious) {
             $bean = BeanFactory::getBean($ghettoLicious->parent_type, $ghettoLicious->parent_id);
-            $return[] = new SugarSearchEngineGhettoResult($bean);
+            $return[$bean->id] = new SugarSearchEngineGhettoResult($bean);
         }
-        return new SugarSearchEngineGhettoResultSet($return);
+        $return = array_values($return);
+        $resultset = new SugarSearchEngineGhettoResultSet($return);
+        return $resultset;
     }
     
-    public function getServerStatus() {}
+    public function getServerStatus() {
+        return array('valid' => true, 'status' => "We be searchin' yo' dataz.");
+    }
     
     public function bulkInsert(array $docs) {}
 

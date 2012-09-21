@@ -41,12 +41,26 @@ class GhettoSearch extends GhettoSearch_sugar
 
     function performSearch($query) {
     	$returns = array();
-    	$results = $GLOBALS['db']->query("SELECT * FROM {$this->table_name} WHERE " . $GLOBALS['db']->getFulltextQuery('field_value', array($query)));
+    	$results = $GLOBALS['db']->query("SELECT id, field_name FROM {$this->table_name} WHERE " . $GLOBALS['db']->getFulltextQuery('field_value', array($query)));
     	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
     		$returns[$row['field_name']] = BeanFactory::getBean('GhettoSearch', $row['id']);
     	}
 
     	return $returns;
+    }
+
+    function getAllRecords($bean) {
+        $returns = array();
+        $results = $GLOBALS['db']->query("SELECT id, field_name FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
+        while($row = $GLOBALS['db']->fetchByAssoc($results)) {
+            $returns[$row['field_name']] = BeanFactory::getBean('GhettoSearch', $row['id']);
+        }
+        return $returns;
+    }
+
+    function deleteAllRecords($bean) {
+        $GLOBALS['db']->query("DELETE FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
+        return true;
     }
 }
 
