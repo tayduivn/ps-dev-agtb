@@ -92,6 +92,38 @@
     };
 
     app.view.SupportPortalField = app.view.Field.extend({
+        
+        /**
+         * Handles how validation errors are appended to the email "sub fields" (inputs).
+         *
+         * @param {Object} errors hash of validation errors
+         */
+        handleEmailValidationError: function(emailErrorsArray) {
+            var self = this, emails;
+
+            this.$el.find('.control-group.email').addClass("error");
+
+            emails = this.$el.find('.existing .email');
+            
+            // Remove any and all previous exclamation then add back per field error
+            $(emails).find('.add-on').remove();
+            
+            // For each error add to error help block
+            _.each(emailErrorsArray, function(emailWithError, i) {
+
+                // For each of our "sub-email" fields
+                _.each(emails, function(e) {
+                    var emailFieldValue = $(e).data('emailaddress');
+
+                    // if we're on an email sub field where error occured, add error help block
+                    if(emailFieldValue === emailWithError) {
+                        $(e).find('.row-fluid')
+                            .append('<span class="add-on"><i class="icon-exclamation-sign"></i></span><p class="help-block">'+app.error.getErrorString('email', [emailFieldValue])+'</p>');
+                    }
+                });
+            });
+        },
+
         /**
          * Handles how validation errors are appended to the fields dom element
          *
@@ -103,17 +135,34 @@
          */
         handleValidationError: function(errors) {
             var self = this;
+
+            // Email is special case as each input email is a sort of field within the one email 
+            // field itself; and we need to append errors directly beneath said sub-fields
+            if(self.type==='email') {
+                self.handleEmailValidationError(errors.email);
+                return;
+            }
+
             // need to add error styling to parent view element
             this.$el.parent().parent().addClass("error");
-            this.$el.parent().addClass('input-append');
+            var ftag = this.fieldTag || '';
+
+            // Reset Field
+            if (this.$el.parent().parent().find('.input-append').length > 0) {
+                this.$el.unwrap()
+            }
+            self.$('.help-block').html('');
+            // Remove previous exclamation then add back.
+            this.$('.add-on').remove();
+
+
+            // Add error styling
+            this.$el.wrap('<div class="input-append  '+ftag+'">');
             // For each error add to error help block
             _.each(errors, function(errorContext, errorName) {
                 self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
             });
-
-            // Remove previous exclamation then add back.
-            this.$('.add-on').remove();
-            this.$el.find(this.fieldTag+':last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
+            $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(this.$('.help-block'));
         },
 
 

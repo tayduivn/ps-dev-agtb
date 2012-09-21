@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -23,24 +23,25 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('include/api/ModuleApi.php');
 require_once('modules/Forecasts/api/ForecastsChartApi.php');
 
-class ForecastsWorksheetManagerApi extends ForecastsChartApi {
+class ForecastsWorksheetManagerApi extends ForecastsChartApi
+{
 
     public function registerApiRest()
     {
         //Extend with test method
-        $parentApi= array (
+        $parentApi = array(
             'forecastManagerWorksheet' => array(
                 'reqType' => 'GET',
                 'path' => array('ForecastManagerWorksheets'),
-                'pathVars' => array('',''),
+                'pathVars' => array('', ''),
                 'method' => 'forecastManagerWorksheet',
                 'shortHelp' => 'Returns a collection of ForecastManagerWorksheet models',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManager',
             ),
             'forecastManagerWorksheetSave' => array(
                 'reqType' => 'PUT',
-                'path' => array('ForecastManagerWorksheets','?'),
-                'pathVars' => array('module','record'),
+                'path' => array('ForecastManagerWorksheets', '?'),
+                'pathVars' => array('module', 'record'),
                 'method' => 'forecastManagerWorksheetSave',
                 'shortHelp' => 'Update a ForecastManagerWorksheet model',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManagerSave',
@@ -49,7 +50,8 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
         return $parentApi;
     }
 
-    public function forecastManagerWorksheet($api, $args) {
+    public function forecastManagerWorksheet($api, $args)
+    {
         // Load up a seed bean
         require_once('modules/Forecasts/ForecastManagerWorksheet.php');
         $seed = new ForecastManagerWorksheet();
@@ -60,6 +62,23 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
 
+        $obj = $this->getClass($args);
+        return $obj->process();
+    }
+
+
+    public function forecastManagerWorksheetSave($api, $args)
+    {
+        $obj = $this->getClass($args);
+        return $obj->save();
+    }
+
+    /**
+     * @param $args
+     * @return SugarForecasting_Manager
+     */
+    protected function getClass($args)
+    {
         // base file and class name
         $file = 'include/SugarForecasting/Manager.php';
         $klass = 'SugarForecasting_Manager';
@@ -78,43 +97,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi {
 
         /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);
-        return $obj->process();
-    }
-
-
-    public function forecastManagerWorksheetSave($api, $args) {
-        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
-        require_once('include/SugarFields/SugarFieldHandler.php');
-        $seed = new ForecastManagerWorksheet();
-        $seed->loadFromRow($args);
-        $sfh = new SugarFieldHandler();
-
-        foreach ($seed->field_defs as $properties)
-        {
-            $fieldName = $properties['name'];
-
-            if (!isset($args[$fieldName])) {
-                continue;
-            }
-
-            //BEGIN SUGARCRM flav=pro ONLY
-            if (!$seed->ACLFieldAccess($fieldName, 'save')) {
-                // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field ' . $fieldName . ' in module: ' . $args['module']);
-            }
-            //END SUGARCRM flav=pro ONLY
-
-            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
-            $field = $sfh->getSugarField($type);
-
-            if ($field != null) {
-                $field->save($seed, $args, $fieldName, $properties);
-            }
-        }
-
-        $seed->setWorksheetArgs($args);
-        $seed->save();
-        return $seed->id;
+        return $obj;
     }
 
 }

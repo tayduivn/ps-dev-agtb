@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -39,10 +40,11 @@ class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
-    /*
+    /**
      * Test that the base_rate field is populated with rate
      * of currency_id
      *
+     * @group forecasts
      */
     public function testForecastRate() {
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();

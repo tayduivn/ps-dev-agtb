@@ -20,7 +20,6 @@
 <script id="overall_manager_template" type="text/x-handlebars-template">
     <tr>
         <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
-        <td>{{formatCurrency amount "-99"}}</td>
         <td>{{formatCurrency quota "-99"}}</td>
         <td>{{formatCurrency likely_case "-99"}}</td>
         <td>{{formatCurrency likely_adjusted "-99"}}</td>
@@ -92,6 +91,8 @@
                 return app;
             }
             }));
+
+        /*
         app.view.Field = app.view.Field.extend({
             _render: function() {
                 if (this.def.type == 'bool' && (this.name == "forecast" || this.name == 'include_expected')) {
@@ -101,6 +102,7 @@
                 app.view.Field.__super__._render.call(this);
             }
         });
+        */
      })(SUGAR.App);
 
     //Call initForecast with the session id as token

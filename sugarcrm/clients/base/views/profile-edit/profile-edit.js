@@ -87,8 +87,8 @@
                 app.alert.dismiss('save_profile_edit_view');
 
                 var langKey = self.model.get('preferred_language');
-                if (langKey)
-                    app.lang.setLanguage(langKey);
+                if (langKey && langKey != app.lang.getLanguage())
+                    app.lang.setLanguage(langKey,{},{noUserUpdate: true});
 
                 app.router.navigate('profile', {trigger: true});
             },

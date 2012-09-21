@@ -66,7 +66,7 @@ public static function populateSeedData($timeperiods)
                 $fcst_schedule->expected_best_case = $opp_summary_array['WEIGHTEDVALUENUMBER'];
                 $fcst_schedule->expected_likely_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .8;
                 $fcst_schedule->expected_worst_case = $opp_summary_array['WEIGHTEDVALUENUMBER'] * .5;
-                $fcst_schedule->expected_commit_stage = min(array_keys($app_list_strings['commit_stage_dom']));
+                $fcst_schedule->expected_commit_stage = 'exclude';
                 $fcst_schedule->status='Active';
                 $fcst_schedule->save();
 
@@ -192,25 +192,52 @@ public static function populateSeedData($timeperiods)
 public static function setupForecastSettings()
 {
     $forecastConfig = array(
-            //show_buckets is used to indicate whether or not to show the bucket option for grouping opportunities
-            'show_buckets' => 0,
-            //committed_probability is the value whereby a new opportunity created with a >= value is marked as included in the forecast
-            'committed_probability' => 70,
-            //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
-            'sales_stage_won' => array('Closed Won'),
-            //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
-            'sales_stage_lost' => array('Closed Lost'),
-            //base_buckets_dom is used to reference the app_list_string entry to indicate the commit stage list to use
-            'buckets_dom' => 'commit_stage_dom'
+        // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
+        'is_setup' => true,
+        // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
+        'timeperiod_type' => 'fiscal', //options:  'chronological' or 'fiscal'
+        // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
+        'timeperiod_interval' => 'yearly',
+        // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_quarterly_options_dom, (first, middle, last)
+        'timeperiod_leaf_interval' => 'first',
+        // number of timeperiods forward from the current that are displayed
+        'timeperiods_shown_forward' => 4,
+        // number of timeperiods in the past from the current that are displayed
+        'timeperiods_shown_backward' => 4,
+        // used to indicate the available option for grouping opportunities
+        'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_n_buckets'
+        // used to reference the app_list_string entry to indicate the commit stage list to use
+        'buckets_dom' => 'commit_stage_dom', // options:  commit_stage_dom, commit_stage_extended_dom
+        // the defined ranges the different buckets opportunites will fall in by default based on their probability
+        'category_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
+        //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
+        'sales_stage_won' => array('Closed Won'),
+        //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
+        'sales_stage_lost' => array('Closed Lost'),
+        // whether or not to show the likely column in the forecasts worksheets
+        'show_worksheet_likely' => true,
+        // whether or not to show the best column in the forecasts worksheets
+        'show_worksheet_best' => true,
+        // whether or not to show the worst column in the forecasts worksheets
+        'show_worksheet_worst' => false,
+        // whether or not to show the likely total in the forecasts projected view
+        'show_projected_likely' => true,
+        // whether or not to show the best total in the forecasts projected view
+        'show_projected_best' => true,
+        // whether or not to show the worst total in the forecasts projected view
+        'show_projected_worst' => false,
+        // whether or not to show the print button on the forecasts module
+        'show_print_button' => true,
     );
+
     $admin = BeanFactory::getBean('Administration');
     foreach ($forecastConfig as $name => $value)
     {
         if(is_array($value))
         {
-            $admin->saveSetting('base', $name, json_encode($value));
+            $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
         } else {
-            $admin->saveSetting('base', $name, $value);
+            $admin->saveSetting('Forecasts', $name, $value, 'base');
         }
     }
 }

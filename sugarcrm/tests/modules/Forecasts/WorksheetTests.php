@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -27,7 +28,7 @@ class WorksheetTests extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars', '$', 'MOD', 2.0);
     }
 
     public function tearDown()
@@ -38,19 +39,22 @@ class WorksheetTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
     }
 
-    /*
+    /**
      * Test that the base_rate field is populated with rate
      * of currency_id
      *
+     * @group forecasts
+     * @group worksheet
      */
-    public function testWorksheetRate() {
+    public function testWorksheetRate()
+    {
         $worksheet = SugarTestWorksheetUtilities::createWorksheet();
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
         $worksheet->currency_id = $currency->id;
         $worksheet->save();
         $this->assertEquals(
-            sprintf('%.6f',$worksheet->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
+            sprintf('%.6f', $worksheet->base_rate),
+            sprintf('%.6f', $currency->conversion_rate)
         );
     }
 }

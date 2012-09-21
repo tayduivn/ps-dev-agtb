@@ -52,4 +52,44 @@ abstract class ServiceBase {
         
         return $apiClass;
     }
+
+    /**
+     * This function loads various items needed to setup the user's environment (such as app_strings and app_list_strings)
+     */
+    protected function loadUserEnvironment()
+    {
+        global $current_user, $current_language;
+        $current_language = $GLOBALS['sugar_config']['default_language'];
+
+        // If the session has a language set, use that
+        if(!empty($_SESSION['authenticated_user_language'])) {
+            $current_language = $_SESSION['authenticated_user_language'];
+        }
+
+        // get the currrent person object of interest
+        $apiPerson = $GLOBALS['current_user'];
+        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+        }
+        // If they have their own language set, use that instead
+        if (isset($apiPerson->preferred_language) && !empty($apiPerson->preferred_language)) {
+            $current_language = $apiPerson->preferred_language;
+        }
+
+        $GLOBALS['app_strings'] = return_application_language($current_language);
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
+    }
+
+    /**
+     * This function loads various items when the user is not logged in
+     */
+    protected function loadGuestEnvironment()
+    {
+        global $current_language;
+        $current_language = $GLOBALS['sugar_config']['default_language'];
+
+        $GLOBALS['app_strings'] = return_application_language($current_language);
+        $GLOBALS['app_list_strings'] = return_app_list_strings_language($current_language);
+    }
+
 }

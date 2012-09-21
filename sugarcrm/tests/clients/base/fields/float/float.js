@@ -1,4 +1,4 @@
-describe("sugarfields", function() {
+describe("float field", function() {
 
     var app, field;
 

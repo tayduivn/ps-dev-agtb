@@ -1,6 +1,5 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
-
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -97,6 +96,8 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Here we call the mock Manager class.  Since the loadForecastValues is protected we override the function in our mock object.
+     * @group forecastapi
+     * @group forecasts
      */
     public function testReturnsMostRecentForecast()
     {
@@ -110,10 +111,8 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
         $found = false;
 
-        foreach($data as $user_name=>$entry)
-        {
-            if($entry['forecast_id'] == $this->forecast3->id)
-            {
+        foreach ($data as $user_name => $entry) {
+            if ($entry['forecast_id'] == $this->forecast3->id) {
                 $this->assertEquals(1234, $entry['best_case'], 'Failed asserting best_case is 1234');
                 $this->assertEquals(1234, $entry['likely_case'], 'Failed asserting likely_case is 1234');
                 $found = true;

@@ -284,6 +284,10 @@ $config['blackList']['com'] = array(
 
 'sugarcrm/portal2' =>1,
 'sugarcrm/tests/portal2'=>1,
+'sugarcrm/tests/include/SugarForecasting'=>1,
+'sugarcrm/tests/modules/Forecasts'=>1,
+'sugarcrm/tests/modules/ForecastSchedule'=>1,
+'sugarcrm/tests/modules/Forecasts/api'=>1,
 'sugarcrm/sidecar' =>1 
 );
 $build = 'com';

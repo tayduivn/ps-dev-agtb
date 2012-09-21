@@ -28,6 +28,22 @@
             // Normal dropdown, just get selected
             newval = this.model.get(this.name);
         }
+        // dropdown with default string so convert it to something we understand
+        if(this.def.isMultiSelect && this.view.name === 'edit' && this.def.default && typeof newval ==='string') {
+            newval = this.convertMultiSelectDefaultString(newval);
+        }
         return newval;
+    },
+    /**
+     * Converts multiselect default strings into array of option keys for template
+     * @param {String} defaultString string of the format "^option1^,^option2^,^option3^"
+     * @return {Array} of the format ["option1","option2","option3"]
+     */
+    convertMultiSelectDefaultString: function(defaultString) {
+        var result = defaultString.split(",");
+        _.each(result, function(value, key) {
+            result[key] = value.replace(/\^/g,"");
+        })
+        return result;
     }
 })

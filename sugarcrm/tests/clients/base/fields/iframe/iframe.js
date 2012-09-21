@@ -1,4 +1,4 @@
-describe("sugarfields", function() {
+describe("iframe", function() {
 
     var app, field;
 

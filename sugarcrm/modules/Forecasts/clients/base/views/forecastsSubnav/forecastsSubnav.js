@@ -47,13 +47,7 @@
      * @param e Event object
      */
     handleForecastSettingsClick: function(e) {
-        var params = {
-            module: "Forecasts",
-            layout: "forecastsConfig",
-            title: "Forecasts Setup"
-        };
-
-        this.layout.trigger("modal:forecastsConfig:open", params);
+        this.layout._showConfigModal(false);
     },
 
     /***

@@ -344,6 +344,7 @@ class PdfManagerHelper
                 case "encrypt":
                 case "enum":
                 case "radio":
+                case "radioenum":
                 case "multienum":
                     $fieldArray[$fieldName] = array($fieldName, 'string');
                     break;
@@ -419,7 +420,7 @@ class PdfManagerHelper
         foreach ($module_instance->toArray() as $name => $value) {
 
             if (isset($module_instance->field_defs[$name]['type']) &&
-                ($module_instance->field_defs[$name]['type'] == 'enum' || $module_instance->field_defs[$name]['type'] == 'radio' ) &&
+                ($module_instance->field_defs[$name]['type'] == 'enum' || $module_instance->field_defs[$name]['type'] == 'radio' || $module_instance->field_defs[$name]['type'] == 'radioenum') &&
                 isset($module_instance->field_defs[$name]['options']) &&
                 isset($app_list_strings[$module_instance->field_defs[$name]['options']]) &&
                 isset($app_list_strings[$module_instance->field_defs[$name]['options']][$value])

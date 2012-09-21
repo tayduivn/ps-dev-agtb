@@ -34,15 +34,15 @@ class SugarCurrency
      * get a currency object
      *
      * @access protected
-     * @param  string $currency_id Optional if empty, base currency is returned
+     * @param  string $currencyId Optional if empty, base currency is returned
      * @return object   currency object
      */
-    protected static function _getCurrency( $currency_id = null ) {
-        if(empty($currency_id)) {
-            $currency_id = '-99';
+    protected static function _getCurrency( $currencyId = null ) {
+        if(empty($currencyId)) {
+            $currencyId = '-99';
         }
-        $currency = BeanFactory::getBean('Currencies');
-        $currency->retrieve($currency_id);
+        $currency = BeanFactory::getBean('Currencies', $currencyId);
+        //$currency->retrieve($currencyId);
         return $currency;
     }
 
@@ -51,13 +51,13 @@ class SugarCurrency
      *
      * @access public
      * @param  float  $amount
-     * @param  string $from_id source currency_id
-     * @param  string $to_id target currency_id
+     * @param  string $fromId source currency_id
+     * @param  string $toId target currency_id
      * @return float   converted amount
      */
-    public static function convertAmount( $amount, $from_id, $to_id ) {
-        $currency1 = self::_getCurrency($from_id);
-        $currency2 = self::_getCurrency($to_id);
+    public static function convertAmount( $amount, $fromId, $toId ) {
+        $currency1 = self::_getCurrency($fromId);
+        $currency2 = self::_getCurrency($toId);
         // NOTE: we always calculate in maximum precision, which the database defines to 6
         // formatting to two decimals is done with formatting functions
         return round($amount * $currency1->conversion_rate / $currency2->conversion_rate, 6);
@@ -68,11 +68,11 @@ class SugarCurrency
      *
      * @access public
      * @param  float  $amount
-     * @param  string $from_id source currency_id
+     * @param  string $fromId source currency_id
      * @return float   converted amount
      */
-    public static function convertAmountToBase( $amount, $from_id ) {
-        return self::convertAmount($amount, $from_id, '-99');
+    public static function convertAmountToBase( $amount, $fromId ) {
+        return self::convertAmount($amount, $fromId, '-99');
     }
 
     /**
@@ -80,11 +80,11 @@ class SugarCurrency
      *
      * @access public
      * @param  float  $amount
-     * @param  string $from_id source currency_id
+     * @param  string $toId source currency_id
      * @return float   converted amount
      */
-    public static function convertAmountFromBase( $amount, $to_id ) {
-        return self::convertAmount($amount, '-99', $to_id);
+    public static function convertAmountFromBase( $amount, $toId ) {
+        return self::convertAmount($amount, '-99', $toId);
     }
 
     /**
@@ -92,24 +92,28 @@ class SugarCurrency
      *
      * @access public
      * @param  float  $amount
-     * @param  string $currency_id
-     * @param  int    $decimal_precision Optional the number of decimal places to use
-     * @param  string $decimal_separator Optional the string to use as decimal separator
-     * @param  string $number_grouping_separator Optional the string to use for thousands separator
-     * @param  string $symbol_separator Optional string between symbol and amount
+     * @param  string $currencyId
+     * @param  int    $decimalPrecision Optional the number of decimal places to use
+     * @param  string $decimalSeparator Optional the string to use as decimal separator
+     * @param  string $numberGroupingSeparator Optional the string to use for thousands separator
+     * @param  bool   $showSymbol Optional show symbol along with currency default true
+     * @param  string $symbolSeparator Optional string between symbol and amount
      * @return string  formatted amount
      */
     public static function formatAmount(
         $amount,
-        $currency_id,
-        $decimal_precision = 2,
-        $decimal_separator = '.',
-        $number_grouping_separator = ',',
-        $symbol_separator = ''
+        $currencyId,
+        $decimalPrecision = 2,
+        $decimalSeparator = '.',
+        $numberGroupingSeparator = ',',
+        $showSymbol = true,
+        $symbolSeparator = ''
     ) {
-        $currency = self::_getCurrency($currency_id);
+        $currency = self::_getCurrency($currencyId);
 
-        return $currency->symbol . $symbol_separator . number_format($amount, $decimal_precision, $decimal_separator, $number_grouping_separator);
+        return $showSymbol
+            ? $currency->symbol . $symbolSeparator . number_format($amount, $decimalPrecision, $decimalSeparator, $numberGroupingSeparator)
+            : number_format($amount, $decimalPrecision, $decimalSeparator, $numberGroupingSeparator);
     }
 
     /**
@@ -117,22 +121,24 @@ class SugarCurrency
      *
      * @access public
      * @param  float  $amount
-     * @param  string $currency_id
-     * @param  string $symbol_separator Optional string between symbol and amount
+     * @param  string $currencyId
+     * @param  bool   $showSymbol Optional show symbol along with currency default true
+     * @param  string $symbolSeparator Optional string between symbol and amount
      * @return string  formatted amount
      */
     public static function formatAmountUserLocale(
         $amount,
-        $currency_id,
-        $symbol_separator = ''
+        $currencyId,
+        $showSymbol=true,
+        $symbolSeparator = ''
     ) {
         global $locale;
         // get user defined preferences
-        $decimal_precision = $locale->getPrecision();
-        $decimal_separator = $locale->getDecimalSeparator();
-        $number_grouping_separator = $locale->getNumberGroupingSeparator();
+        $decimalPrecision = $locale->getPrecision();
+        $decimalSeparator = $locale->getDecimalSeparator();
+        $numberGroupingSeparator = $locale->getNumberGroupingSeparator();
 
-        return self::formatAmount($amount, $currency_id, $decimal_precision, $decimal_separator, $number_grouping_separator, $symbol_separator);
+        return self::formatAmount($amount, $currencyId, $decimalPrecision, $decimalSeparator, $numberGroupingSeparator, $showSymbol, $symbolSeparator);
     }
 
     /**
@@ -142,7 +148,7 @@ class SugarCurrency
      * @return object  currency object
      */
     public static function getBaseCurrency( ) {
-        // the base currency has a hard-coded currency_id of -99
+        // the base currency has a hard-coded currency id of -99
         return self::_getCurrency('-99');
     }
 
@@ -150,11 +156,11 @@ class SugarCurrency
      * get a currency object by currency_id
      *
      * @access public
-     * @param  string $currency_id
+     * @param  string $currencyId
      * @return object  currency object
      */
-    public static function getCurrencyByID( $currency_id = null ) {
-        return self::_getCurrency($currency_id);
+    public static function getCurrencyByID( $currencyId = null ) {
+        return self::_getCurrency($currencyId);
     }
 
     /**
@@ -166,8 +172,8 @@ class SugarCurrency
      */
     public static function getCurrencyByISO( $ISO ) {
         $currency = self::_getCurrency();
-        $currency_id = $currency->retrieveIDByISO($ISO);
-        $currency->retrieve($currency_id);
+        $currencyId = $currency->retrieveIDByISO($ISO);
+        $currency->retrieve($currencyId);
         return $currency;
     }
 
@@ -184,8 +190,8 @@ class SugarCurrency
             global $current_user;
             $user = $current_user;
         }
-        $currency_id = $user->getPreference('currency');
-        return self::_getCurrency($currency_id);
+        $currencyId = $user->getPreference('currency');
+        return self::_getCurrency($currencyId);
     }
 
 

@@ -375,7 +375,11 @@
             {
                 previousModel = model;
                 var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
-                self.previousText = hb({'likely_case' : previousModel.get('date_entered')});
+                var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
+                if (dateEntered == 'Invalid Date') {
+                    dateEntered = previousModel.get('date_entered');
+                }
+                self.previousText = hb({'likely_case' : App.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'))});
                 self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
                 self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
             } else {
@@ -384,9 +388,8 @@
                     self.previousText = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
                     self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
                     self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
-                    var dateEntered = App.date.parse(model.get('date_entered'));
-                    // TODO: user preferences are not working for formatting dates, hard code for now
-                    self.previousDateEntered = App.date.format(dateEntered, 'Y-m-d \\at g:i a');
+                    dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
+                    self.previousDateEntered = App.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
                 }
                 self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
                 previousModel = model;

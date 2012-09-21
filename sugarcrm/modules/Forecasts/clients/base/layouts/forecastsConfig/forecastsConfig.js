@@ -1,6 +1,3 @@
-<?php
-//FILE SUGARCRM flav=ent ONLY
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,35 +21,26 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-/**
- * ChartAndWorksheetManagerTest.php
- *
- * This is a test for the ChartAndWorksheetManager class
- *
- */
-require_once('modules/Forecasts/data/ChartAndWorksheetManager.php');
+(function (app) {
 
-class ChartAndWorksheetManagerTest extends Sugar_PHPUnit_Framework_TestCase
-{
+    app.view.layouts.ForecastsConfigLayout = app.view.Layout.extend({
 
-    public static function tearDownAfterClass()
-    {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestProductUtilities::removeAllCreatedProducts();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
-        parent::tearDownAfterClass();
-    }
+        initialize: function (options) {
+            var Model = Backbone.Model.extend({
+                    url: app.api.buildURL("Forecasts", "config"),
+                    sync: function(method, model, options) {
+                        var url = _.isFunction(model.url) ? model.url() : model.url;
+                        return app.api.call(method, url, model, options);
+                    }
+                }),
+                settingsModel = new Model();
 
-    /**
-     * Test to see that the calls to retrieve manager and individual worksheet definitions return data
-     */
-    function testChartAndWorksheetManager()
-    {
-        $manager = new ChartAndWorksheetManager();
-        $def = $manager->getWorksheetDefinition('manager', 'opportunities');
-        $this->assertNotEmpty($def);
+            settingsModel.fetch();
+            options.context.set("model", settingsModel);
 
-        $def = $manager->getWorksheetDefinition('individual', 'opportunities');
-        $this->assertNotEmpty($def);
-    }
-}
+            app.view.Layout.prototype.initialize.call(this, options);
+        }
+
+    });
+
+})(SUGAR.App)
