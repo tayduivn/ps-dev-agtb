@@ -29,12 +29,13 @@
     },
     
     edit: function(e) {
-        var $button = $(e.target);
-        var $parentRow = $button.closest("tr");
-        var recordId = $parentRow.data("record-id");
-        var editModel = this.collection.get(recordId);
-        this.context.trigger('quickcreate:edit', editModel);
-        this.context.trigger('quickcreate:list:close');
+        var $button = $(e.target),
+            $parentRow = $button.closest("tr"),
+            recordId = $parentRow.data("record-id"),
+            editModel = this.collection.get(recordId);
+
+        this.context.trigger('quickcreate:edit', editModel)
+        this.context.trigger('quickcreate:resetDuplicateState');
     },
 
     /**

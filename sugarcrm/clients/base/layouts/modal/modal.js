@@ -181,7 +181,7 @@
     show: function(span) {
         var modal_container = this.$(".modal:first"),
             maxHeight = $(window).height() - ($(".modal-header:first").outerHeight() * 2) - 200;
-        maxHeight = '';
+
         //TODO: Replace inline CSS with css property
         this.$el.addClass("modal-open");
         this.$el.children(".modal-backdrop").show();

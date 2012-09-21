@@ -5,17 +5,8 @@
         this.context.on('quickcreate:edit', this.editExisting, this);
         this.context.on('quickcreate:restore', this.restoreModel, this);
         this.context.on('quickcreate:validateModel', this.validateModel, this);
+        this.context.on('quickcreate:highlightDuplicateFields', this);
         this.model.on("error:validation", this.handleValidationError, this);
-        /*
-        // Set the save button to show if the model has been edited.
-        this.model.on("change", function() {
-            if (true || this.editMode) {
-                this.$(".record-save-prompt").show();
-            }
-
-            this.previousModelState = this.model.previousAttributes();
-        }, this);
-*/
     },
 
     render: function() {
@@ -110,24 +101,22 @@
     
     editExisting: function(model) {
         var origModel = this.storeModel();
-        this.model.set(this.extendModel(model, origModel).toJSON());
+        this.model.clear();
+        this.model.set(this.extendModel(model, origModel));
         var newTitle = this.app.lang.get('LBL_EDIT_LEAD_TITLE', this.module);
         this.context.parent.trigger("modal:changetitle", newTitle);
     },
 
     extendModel: function(newModel, oldModel) {
-        var model = newModel.clone();
-        var newJSON = model.toJSON();
-        // It looks like the values with empty string are overwriting keys with
-        // real values.  this is  an attempt to fix that, but it's not working.
-        _.each(newJSON, function(value, key, list) {
-            if ( value !== "" ) {
-                delete newJSON[key];
+        var modelAttributes = newModel.previousAttributes();
+
+        _.each(modelAttributes, function(value, key, list) {
+            if ( _.isUndefined(value)|| _.isEmpty(value)) {
+                delete modelAttributes[key];
             }
         });
-        
-        model.set(_.extend({}, oldModel.toJSON(), newJSON));
-        return model;
+
+        return _.extend({}, oldModel, modelAttributes);
     },
     
     restoreModel: function() {
@@ -140,7 +129,7 @@
     },
     
     storeModel: function() {
-        this.origModel = this.model.clone();
+        this.origModel = this.model.previousAttributes();
         return this.origModel;
     },
 

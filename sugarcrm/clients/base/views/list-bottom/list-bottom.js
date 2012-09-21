@@ -83,7 +83,7 @@
         }
 
         this.layout.trigger("modal:quickcreate:open", {
-            span: 12,
+            span: 10,
             context: { module: this.module },
             components: [ { layout: 'quickcreate' } ],
             title: app.lang.get('LBL_NEW_FORM_TITLE', this.module)

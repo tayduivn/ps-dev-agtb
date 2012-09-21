@@ -7,6 +7,7 @@
         this.context.on('quickcreate:save', this.save, this);
         this.context.on('quickcreate:saveAndCreate', this.saveAndCreate, this);
         this.context.on('quickcreate:saveAndView', this.saveAndView, this);
+        this.context.on('quickcreate:resetDuplicateState', this.resetDuplicateState, this);
     },
 
     /**
@@ -33,6 +34,7 @@
         var self = this;
         this.initiateSave(function() {
             self.context.trigger('quickcreate:clear');
+            self.resetDuplicateState();
         });
     },
 
@@ -52,7 +54,8 @@
      * @param callback
      */
     initiateSave: function(callback) {
-        this.context.trigger('quickcreate:list:toggle', false);
+        this.context.trigger('quickcreate:alert:dismiss');
+        this.context.trigger('quickcreate:list:close');
         async.waterfall([
             _.bind(this.validateModelWaterfall, this),
             _.bind(this.dupeCheckWaterfall, this),
@@ -92,10 +95,10 @@
             success = function(collection) {
                 var keys = self.getFieldValuesForUserKeys(self.getUserKeys());
                 if (collection.models.length > 0) {
-                    self.handleDuplicateFound(collection);
+                    self.handleDuplicateFound(collection, keys);
                     callback(true);
                 } else {
-                    self.handleDuplicateNotFound();
+                    self.resetDuplicateState();
                     callback(false);
                 }
             },
@@ -147,24 +150,26 @@
 
     /**
      * Duplicate found: display duplicates and change buttons
+     * @param {object} Collection of sugar beans
+     * @param {array} List of user key fields
      */
-    handleDuplicateFound: function(collection) {
+    handleDuplicateFound: function(collection, keys) {
         this.context.trigger('quickcreate:list:toggle', true);
         // self.showDuplicateAlertMessage();
         this.skipDupCheck(true);
         this.context.trigger('quickcreate:actions:setButtonAsIgnoreDuplicate');
-        this.context.trigger('quickcreate:alert', {
-            level: 'warning',
-            messages: this.getAlertMessage(collection.models.length),
-            autoClose: false});
+        this.context.trigger('quickcreate:alert:show',this.getAlertMessage(collection.models.length));
+        this.context.trigger('quickcreate:highlightDuplicateFields', keys);
     },
 
     /**
      * No duplicates found
      */
-    handleDuplicateNotFound: function() {
+    resetDuplicateState: function() {
         this.skipDupCheck(false);
         this.context.trigger('quickcreate:actions:setButtonAsSave');
+        this.context.trigger('quickcreate:alert:dismiss');
+        this.context.trigger('quickcreate:list:close');
     },
 
     /**
@@ -205,6 +210,12 @@
         }
     },
 
+    /**
+     * Retrieves the values for the user key fields and returns as an assoicative array
+     * to either true or false.
+     * @param {array} keys
+     * @return {array} Array of key/value pairs for fields and values.
+     */
     getFieldValuesForUserKeys: function(keys) {
         var data = [],
             self = this;
@@ -216,6 +227,11 @@
         return data;
     },
 
+    /**
+     * Retrieves list of user keys for performing duplicate check.
+     * to either true or false.
+     * @return {array} Array of key/value pairs for fields and values.
+     */
     getUserKeys:function () {
         var keys = [],
             fields = this.getFields(this.module);
@@ -229,6 +245,12 @@
         return keys;
     },
 
+    /**
+     * Generates the alert message that will be shown for duplicate messages
+     * to either true or false.
+     * @param {number} dupCount
+     * @return {string} The duplicate message as an html string.
+     */
     getAlertMessage: function(dupCount) {
         return "<span class=\"alert-message\">" +
             "<strong>" + dupCount + " Duplicate Records.</strong>  You can " +
