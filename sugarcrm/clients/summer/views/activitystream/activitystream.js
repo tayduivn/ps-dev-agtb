@@ -104,94 +104,11 @@
         this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
 
-    _addPostComment: function() {
-
-    },
-
-    _processTags: function(postHTML) {
-        var contents = '';
-        $(postHTML).contents().each(function() {
-            if (this.nodeName == "#text") {
-                contents += this.data;
-            } else if (this.nodeName == "SPAN") {
-                var el = $(this);
-                el.find('a').remove();
-                var data = el.data();
-                contents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
-            }
-        }).html();
-        return contents.replace(/&nbsp;/gi, ' ');
-    },
-
-    addComment: function(event) {
-        var self = this,
-            myPost = this.$(event.currentTarget).closest('li'),
-            myPostTags = myPost.find('div.sayit span'),
-            myPostId = this.$(event.currentTarget).data('id'),
-            myPostContents;
-
-        myPostContents = this._processTags(myPost.find('div.sayit'));
-
-        this.app.api.call('create', this.app.api.buildURL('ActivityStream/ActivityStream/' + myPostId), {'value': myPostContents}, {success: function(post_id) {
-            var pending_attachments = self.$(event.currentTarget).siblings('.activitystream-pending-attachment');
-            pending_attachments.each(function(index, el) {
+    _addPostComment: function(url, contents, attachments) {
+        app.api.call('create', url, {'value': contents}, {success: function(post_id) {
+            attachments.each(function(index, el) {
                 var id = $(el).attr('id');
-                var seed = self.app.data.createBean('Notes', {
-                    'parent_id': post_id,
-                    'parent_type': 'ActivityComments'
-                });
-                var postSave = _.after(pending_attachments.length, function() {
-                    self.collection.fetch(self.opts);
-                });
-
-                seed.save({}, {
-                    success: function(model) {
-                        var data = new FormData();
-                        data.append("filename", app.drag_drop[id]);
-
-                        var url = app.api.buildURL("Notes/" + model.get("id") + "/file/filename");
-                        url += "?oauth_token="+app.api.getOAuthToken();
-
-                        $.ajax({
-                            url: url,
-                            type: "POST",
-                            data: data,
-                            processData: false,
-                            contentType: false,
-                            success: function() {
-                                delete app.drag_drop[id];
-                                postSave();
-                            }
-                        });
-                    }
-                });
-            });
-            self.collection.fetch(self.opts);
-        }});
-    },
-
-    addPost: function() {
-        var self = this,
-            myPost = this.$(".activitystream-post"),
-            myPostTags = myPost.find('div.sayit span'),
-            myPostId = this.context.get("modelId"),
-            myPostModule = this.module,
-            myPostUrl = 'ActivityStream',
-            myPostContents;
-
-        if (myPostModule !== "ActivityStream") {
-            myPostUrl += '/' + myPostModule;
-            if (myPostId !== undefined) {
-                myPostUrl += '/' + myPostId;
-            }
-        }
-
-        myPostContents = this._processTags(myPost.find('div.sayit'));
-
-        this.app.api.call('create', this.app.api.buildURL(myPostUrl), {'value': myPostContents}, {success: function(post_id) {
-            myPost.find('.activitystream-pending-attachment').each(function(index, el) {
-                var id = $(el).attr('id');
-                var seed = self.app.data.createBean('Notes', {
+                var seed = app.data.createBean('Notes', {
                     'parent_id': post_id,
                     'parent_type': 'ActivityStream',
                     'team_id': 1
@@ -220,6 +137,56 @@
             });
             self.collection.fetch(self.opts);
         }});
+    },
+
+    _processTags: function(postHTML) {
+        var contents = '';
+        $(postHTML).contents().each(function() {
+            if (this.nodeName == "#text") {
+                contents += this.data;
+            } else if (this.nodeName == "SPAN") {
+                var el = $(this);
+                el.find('a').remove();
+                var data = el.data();
+                contents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
+            }
+        }).html();
+        return contents.replace(/&nbsp;/gi, ' ');
+    },
+
+    addComment: function(event) {
+        var self = this,
+            myPost = this.$(event.currentTarget).closest('li'),
+            myPostTags = myPost.find('div.sayit span'),
+            myPostId = this.$(event.currentTarget).data('id'),
+            myPostUrl = app.api.buildURL('ActivityStream/ActivityStream/' + myPostId),
+            myPostContents,
+            attachments = this.$(event.currentTarget).siblings('.activitystream-pending-attachment');
+
+        myPostContents = this._processTags(myPost.find('div.sayit'));
+        this._addPostComment(myPostUrl, myPostContents, attachments);
+    },
+
+    addPost: function() {
+        var self = this,
+            myPost = this.$(".activitystream-post"),
+            myPostTags = myPost.find('div.sayit span'),
+            myPostId = this.context.get("modelId"),
+            myPostModule = this.module,
+            myPostUrl = 'ActivityStream',
+            myPostContents,
+            attachments = myPost.find('.activitystream-pending-attachment');
+
+        if (myPostModule !== "ActivityStream") {
+            myPostUrl += '/' + myPostModule;
+            if (myPostId !== undefined) {
+                myPostUrl += '/' + myPostId;
+            }
+        }
+
+        myPostUrl = this.app.api.buildURL(myPostUrl);
+        myPostContents = this._processTags(myPost.find('div.sayit'));
+        this._addPostComment(myPostUrl, myPostContents, attachments);
     },
 
     /*
