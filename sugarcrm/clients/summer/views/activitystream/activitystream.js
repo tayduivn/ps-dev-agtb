@@ -110,16 +110,7 @@
             myPostHTML = myPost.find('div.sayit'),
             myPostTags = myPost.find('div.sayit span'),
             myPostId = this.$(event.currentTarget).data('id'),
-            myPostContents = '',
-            attachments = [];
-            
-        this.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
-            var id = $(el).attr('id');
-            attachments.push({
-                "name": $('#' + id + '_name', el).val(),
-                "data": $('#' + id + '_data', el).val()
-            });
-        });
+            myPostContents = '';
 
         $(myPostHTML).contents().each(function() {
             if (this.nodeName == "#text") {
@@ -488,7 +479,7 @@
                     if(note.file_mime_type) {
                         note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
                         note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                        note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row                    
+                        note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
                     }
                 });
             });
