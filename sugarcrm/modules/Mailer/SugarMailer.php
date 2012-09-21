@@ -37,15 +37,6 @@ class SugarMailer extends SimpleMailer
     }
 
     /**
-     * Optionally set notes (Sugar Documents and Uploaded Files)
-     *
-     * @param $notesArray  array of note beans
-     */
-    public function setNotes(array $notesArray) {
-        $this->notes = $notesArray;
-    }
-
-    /**
      * a potential solution to allow for manipulation of the message parts at send time without actually
      * changing the message parts beyond repair
      */
