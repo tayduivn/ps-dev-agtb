@@ -31,6 +31,11 @@ function perform_save(&$focus){
         $admin = BeanFactory::getBean('Administration');
         $admin->retrieveSettings();
 
+        if(empty($admin) || !is_object($admin))
+        {
+           display_stack_trace();
+        }
+
         //Retrieve Forecasts_category_ranges and json decode as an associative array
         $category_ranges = json_decode(html_entity_decode($admin->settings['Forecasts_category_ranges']), true);
 
