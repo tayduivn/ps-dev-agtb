@@ -110,8 +110,9 @@
             myPostHTML = myPost.find('div.sayit'),
             myPostTags = myPost.find('div.sayit span'),
             myPostId = this.$(event.currentTarget).data('id'),
-            myPostContents = '';
-
+            myPostContents = '',
+            attachments = [];
+            
         this.$(event.currentTarget).siblings('.activitystream-pending-attachment').each(function(index, el) {
             var id = $(el).attr('id');
             attachments.push({
@@ -483,18 +484,20 @@
                 comment.value = comment.value.replace(pattern, function(str, module, id, text) {
                     return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
                 });
-                _.each(comment.notes, function(note) {
+                _.each(comment.notes, function(note, index) {
                     if(note.file_mime_type) {
                         note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
-                        note.image = (note.file_mime_type.indexOf("image") !== -1);
+                        note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
+                        note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row                    
                     }
                 });
             });
 
-            _.each(model.get("notes"), function(note) {
+            _.each(model.get("notes"), function(note, index) {
                 if(note.file_mime_type) {
                     note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
-                    note.image = (note.file_mime_type.indexOf("image") !== -1);
+                    note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
+                    note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
                 }
             });
 

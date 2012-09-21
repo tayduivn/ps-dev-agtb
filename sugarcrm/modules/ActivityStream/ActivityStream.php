@@ -357,7 +357,7 @@ class ActivityStream extends SugarBean {
      */
     protected function getNotes($parentType, $parentIds) {
         $notes = array();
-        $sql = "SELECT n.id,n.parent_type,n.parent_id,n.name,n.description,n.created_by,n.date_entered,n.file_mime_type,n.filename,u.first_name, u.last_name FROM notes n, users u WHERE n.parent_type='".$parentType."' and parent_id in ('".implode("','",$parentIds)."') AND n.created_by = u.id AND n.deleted = 0 ORDER BY n.date_entered ASC";
+        $sql = "SELECT n.id,n.parent_type,n.parent_id,n.name,n.description,n.created_by,n.date_entered,n.file_mime_type,n.filename,u.first_name, u.last_name FROM notes n, users u WHERE n.parent_type='".$parentType."' and parent_id in ('".implode("','",$parentIds)."') AND n.created_by = u.id AND n.deleted = 0 ORDER BY n.file_mime_type, n.date_entered ASC";
         $result = $GLOBALS['db']->query($sql);
 
         if(!empty($result)) {
