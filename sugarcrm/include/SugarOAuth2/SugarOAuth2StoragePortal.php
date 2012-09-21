@@ -20,7 +20,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/SugarOAuth2StorageBase.php';
+require_once 'include/SugarOAuth2/SugarOAuth2StorageBase.php';
 
 class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
     /**
@@ -138,10 +138,10 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StorageBase {
      * Gets contact and user ids for a user id. Most commonly different for clients
      * like portal
      * 
-     * @param string $user_id The ID of the user this is for
+     * @param string $client_id The client id for this check
      * @return array An array of contact_id and user_id
      */
-    public function getIdsForUser($user_id) {
+    public function getIdsForUser($user_id, $client_id) {
         $return = array('contact_id' => '', 'user_id' => '');
         $portalApiUser = $this->findPortalApiUser($client_id);
         if ( $portalApiUser == null ) {

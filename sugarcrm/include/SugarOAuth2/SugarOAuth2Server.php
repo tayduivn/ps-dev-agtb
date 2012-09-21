@@ -85,6 +85,13 @@ class SugarOAuth2Server extends OAuth2
             
             $oauthStorage = new $oauthStorageName();
             
+            // Set the platform name if the name in the storage is base and the
+            // request platform is not
+            $storagePlatform = $oauthStorage->getPlatformName();
+            if ($storagePlatform != $platform && $storagePlatform == 'base') {
+                $oauthStorage->setPlatformName($platform);
+            }
+            
             $currentOAuth2Server = new $oauthServerName($oauthStorage);
         }
 

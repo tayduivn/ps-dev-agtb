@@ -147,6 +147,20 @@ class SugarOAuth2StorageBase implements IOAuth2GrantUser, IOAuth2RefreshTokens, 
 
     // END METHOD FROM SugarOAuth2StorageInterface    
     
+    /**
+     * Allows setting of the platform name from the server
+     * 
+     * @param string $name The name of the platform to set to
+     */
+    public function setPlatformName($name) {
+        $this->platformName = $name;
+    }
+
+    /**
+     * Gets the platform name of the given storage mechanism
+     * 
+     * @return string
+     */
     public function getPlatformName() {
         // If the class sets the name of its platform, use it
         if (!empty($this->platformName)) {
