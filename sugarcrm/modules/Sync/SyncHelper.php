@@ -534,6 +534,7 @@ function sync_users($soapclient, $session, $clean = false, $is_conversion = fals
 						$offset = $result['next_offset'];
 				}
 			}//end while
+                restoreUserPassword($user_id);
 					require_once('modules/Sync/config.php');
 						$sync_info['last_syncUsers'] = $start_time;
 
@@ -587,4 +588,30 @@ function sync_get_user_auth_data()
 {
     global $sugar_config;
     return array('user_name'=>$sugar_config['oc_username'],'password'=>$sugar_config['oc_password'], 'version'=>'1.0');
+}
+
+/**
+ * Function for restoring user password after syncronization with server
+ * @param $user_id string
+ */
+function restoreUserPassword($user_id)
+{
+    global $current_user;
+    $temp_user = new User();
+    if($temp_user->retrieve($user_id) && !$temp_user->user_hash)
+    {
+        if(!empty($_SESSION['oc_install']))
+        {
+            if(isset($_SESSION['oc_password']))
+            {
+                $temp_user->user_hash = User::getPasswordHash($_SESSION['oc_password']);
+                $temp_user->save(false);
+            }
+        }
+        elseif($user_id == $current_user->id && $current_user->user_hash)
+        {
+            $temp_user->user_hash = $current_user->user_hash;
+            $temp_user->save(false);
+        }
+    }
 }
