@@ -9,6 +9,8 @@ nv.models.stackedArea = function() {
     , width = 960
     , height = 500
     , color = nv.utils.defaultColor() // a function that computes the color
+    , fill = function (d,i) { return color(d,i); }
+    , gradient = function (d,i) { return color(d,i); }
     , id = Math.floor(Math.random() * 100000) //Create semi-unique ID incase user doesn't selet one
     , getX = function(d) { return d.x } // accessor to get the x value from a data point
     , getY = function(d) { return d.y } // accessor to get the y value from a data point
@@ -20,6 +22,7 @@ nv.models.stackedArea = function() {
     , y //can be accessed via chart.yScale()
     , scatter = nv.models.scatter()
     , dispatch =  d3.dispatch('tooltipShow', 'tooltipHide', 'areaClick', 'areaMouseover', 'areaMouseout')
+    , useClass = false
     ;
 
   scatter
@@ -148,7 +151,8 @@ nv.models.stackedArea = function() {
       var path = g.select('.nv-areaWrap').selectAll('path.nv-area')
           .data(function(d) { return d });
           //.data(function(d) { return d }, function(d) { return d.key });
-      path.enter().append('path').attr('class', function(d,i) { return 'nv-area nv-area-' + i })
+      path.enter().append('path')
+			//.attr('class', function(d,i) { return 'nv-area nv-area-' + i })
           .on('mouseover', function(d,i) {
             d3.select(this).classed('hover', true);
             dispatch.areaMouseover({
@@ -180,8 +184,17 @@ nv.models.stackedArea = function() {
           .attr('d', function(d,i) { return zeroArea(d.values,i) })
           .remove();
       path
-          .style('fill', function(d,i){ return d.color || color(d, i) })
-          .style('stroke', function(d,i){ return d.color || color(d, i) });
+          .attr('class', function(d,i) {
+              return this.getAttribute('class') || (
+                'nv-area nv-area-' + i + (
+                  useClass
+                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
+                    : ''
+                )
+              );
+          } )
+          .attr('fill', function(d,i){ return d.color || fill(d, i) })
+          .attr('stroke', function(d,i){ return d.color || fill(d, i) });
       d3.transition(path)
           .attr('d', function(d,i) { return area(d.values,i) })
 
@@ -233,6 +246,27 @@ nv.models.stackedArea = function() {
 
   d3.rebind(chart, scatter, 'interactive', 'size', 'xScale', 'yScale', 'zScale', 'xDomain', 'yDomain', 'sizeDomain', 'forceX', 'forceY', 'forceSize', 'clipVoronoi', 'clipRadius');
 
+  chart.color = function(_) {
+    if (!arguments.length) return color;
+    color = _;
+    return chart;
+  };
+  chart.fill = function(_) {
+    if (!arguments.length) return fill;
+    fill = _;
+    return chart;
+  };
+  chart.gradient = function(_) {
+    if (!arguments.length) return gradient;
+    gradient = _;
+    return chart;
+  };
+  chart.useClass = function(_) {
+    if (!arguments.length) return useClass;
+    useClass = _;
+    return chart;
+  };
+
   chart.x = function(_) {
     if (!arguments.length) return getX;
     getX = d3.functor(_);
@@ -243,7 +277,7 @@ nv.models.stackedArea = function() {
     if (!arguments.length) return getY;
     getY = d3.functor(_);
     return chart;
-  }
+  };
 
   chart.margin = function(_) {
     if (!arguments.length) return margin;
@@ -266,12 +300,6 @@ nv.models.stackedArea = function() {
   chart.clipEdge = function(_) {
     if (!arguments.length) return clipEdge;
     clipEdge = _;
-    return chart;
-  };
-
-  chart.color = function(_) {
-    if (!arguments.length) return color;
-    color = nv.utils.getColor(_);
     return chart;
   };
 

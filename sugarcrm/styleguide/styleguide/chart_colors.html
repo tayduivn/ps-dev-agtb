@@ -260,8 +260,25 @@
 
         <div class="span6">
           <h3>CSS Class Chart Colors</h3>
-          <p>Chart colors can be defined using classes (modifiable in themes) in data. If classes are not defined in data, they are assigned sequentially.</p>
+          <p>Chart colors can be defined using classes. The default classes in themes). If classes are not defined in data, they are assigned sequentially.</p>
 <div id="gauge7">
+  <svg></svg>
+</div>
+<pre class="prettyprint linenums">
+  var gauge = nv.models.gaugeChart()
+      .colorData( 'class' )
+      .colorFill( 'default' );
+
+  d3.select("#gauge7 svg")
+    .datum(gauge_data_1)
+    .call(gauge);
+</pre>
+        </div> <!-- end col -->
+
+        <div class="span6">
+          <h3>Data-Defined Chart Classes</h3>
+          <p>It is possible to specify which chart class to use for use for a data series in the chart data (Option 3 data).</p>
+<div id="gauge8">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -275,21 +292,10 @@
 </pre>
         </div> <!-- end col -->
 
-        <div class="span6">
-          <h3>Data-Defined Chart Classes with Gradient Fill</h3>
-          <p>It is possible to define gradient fills with CSS but requires use of SVG resource files that are not currently supported by theming.</p>
-<!-- <div id="gauge8">
-  <svg></svg>
-</div> -->
-<pre class="prettyprint linenums">
-  .nv-fill-gradient {
-    fill: 'url(./custom_gradient.svg)';
-  }
-</pre>
-        </div> <!-- end col -->
-
       </div> <!-- end row -->
-
+          <div class="alert alert-info">
+            <strong>Data-Defined Chart Classes with Gradient Fill</strong> It is possible to define gradient fills with CSS but requires use of SVG resource files <code>.nv-fill-gradient { fill: 'url(./custom_gradient.svg)'; }</code>; however, they are not currently supported by the theming engine.
+          </div>
     </section>
 
     <section id="colors">
@@ -477,6 +483,7 @@
 </table>
           </div>
         </div>
+
         <div class="span6">
           <h3>Stroke</h3>
           <p>Bolder colors used to color lines.</p>
@@ -513,8 +520,14 @@
   </tr>
 </table>
         </div>
-        <div class="span6 info">
 
+        <div class="span6">
+          <h3>Creating New Chart Color Themes</h3>
+
+          <div class="alert alert-info">
+            <p>New chart color themes are created in the <code>/styleguide/themes/clients/base</code> directory. Copy the <code>/default</code> folder and rename. Inside this folder, edit the variables.less file. In the CHART section, edit the @fillXX and @strokeXX LESS variables as needed. Then go to the Bootstrap Builder at <a href="../build/">/styleguide/build/</a>, choose your new theme folder and click the "Compile" button. Your new chart color theme will be available.</p>
+            <p>Your new chart color theme will be visible in the charts on this page. To enable the use of chart color CSS classes, set the <code>.colorData( 'class' )</code> and <code>.colorFill('default')</code> properties in your chart definition (see example above). Custom SVG gradient fills in CSS are not supported.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -762,7 +775,7 @@
           .transitionMs(4000);
 
       d3.select("#gauge7 svg")
-          .datum(gauge_data_3)
+          .datum(gauge_data_1)
         .transition().duration(500)
           .call(gauge);
 

@@ -12,31 +12,31 @@
   <link href="../css/bootstrap.css" rel="stylesheet">
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
   <style type="text/css">
-  #chart1 {
-    height: 300px;
-    min-width: 100px;
-    min-height: 100px;
-  /*
-    Minimum height and width is a good idea to prevent negative SVG dimensions...
-    For example width should be =< margin.left + margin.right + 1,
-    of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
-  */
-  }
-  .nvd3 .nv-x.nv-axis text {
-    font-size: 10px;
-  }
-  .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
-    fill-opacity: 1;
-    stroke-opacity: 1;
-    stroke-width: 2;
-  }
-  .nv-quotaWrap line {
-    opacity: .8;
-    stroke: #444;
-    stroke-width: 3;
-    //stroke-dasharray: '20, 5';
-  }
-</style>
+    #chart1 {
+      height: 300px;
+      min-width: 100px;
+      min-height: 100px;
+    /*
+      Minimum height and width is a good idea to prevent negative SVG dimensions...
+      For example width should be =< margin.left + margin.right + 1,
+      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
+    */
+    }
+    .nvd3 .nv-x.nv-axis text {
+      font-size: 10px;
+    }
+    .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
+      fill-opacity: 1;
+      stroke-opacity: 1;
+      stroke-width: 2;
+    }
+    .nv-quotaWrap line {
+      opacity: .8;
+      stroke: #444;
+      stroke-width: 3;
+      //stroke-dasharray: '20, 5';
+    }
+  </style>
 </head>
 <body>
   <div class="navbar navbar-fixed-top">
@@ -357,189 +357,21 @@
   <script src="../js/nvd3/nv.d3.min.js"></script>
   <script src="../js/nvd3/src/utils.js"></script>
   <script src="../js/nvd3/src/models/legend.js"></script>
-  <script src="../js/nvd3/src/models/axis.js"></script>
-  <script src="../js/nvd3/src/models/scatter.js"></script>
-  <script src="../js/nvd3/src/models/line.js"></script>
-  <script src="../js/nvd3/src/models/multiBar.js"></script>
+  <script src="../js/nvd3/src/models/multiBar_sugar.js"></script>
   <script src="../js/nvd3/src/models/multiBarChart_sugar.js"></script>
+
+  <script src="../js/nvd3/data/forecasting_q1.js"></script>
+  <script src="../js/nvd3/data/forecasting_q2.js"></script>
 
   <script src="../js/application.js"></script>
 
-  <script>
-  //dummy data for D3 chart example
-  var forecast_data_Q1 = [
-      {
-        'key': 'Qualified',
-        'type': 'bar',
-        'values': [
-          {series: 0, x: 1, y: 50,  y0: 0},
-          {series: 0, x: 2, y: 80,  y0: 0},
-          {series: 0, x: 3, y: 100, y0: 0},
-          {series: 0, x: 4, y: 100, y0: 0},
-          {series: 0, x: 5, y: 100, y0: 0}
-        ]
-      },
-      {
-        'key': 'Proposal',
-        'type': 'bar',
-        'values': [
-          {series: 1, x: 1, y: 50,  y0:  50},
-          {series: 1, x: 2, y: 80,  y0:  80},
-          {series: 1, x: 3, y: 100, y0: 100},
-          {series: 1, x: 4, y: 100, y0: 100},
-          {series: 1, x: 5, y: 100, y0: 100}
-        ]
-      },
-      {
-        'key': 'Negotiation',
-        'type': 'bar',
-        'values': [
-          {series: 2, x: 1, y: 10, y0: 100},
-          {series: 2, x: 2, y: 50, y0: 160},
-          {series: 2, x: 3, y: 40, y0: 200},
-          {series: 2, x: 4, y: 40, y0: 200},
-          {series: 2, x: 5, y: 40, y0: 200}
-        ]
-      },
-      {
-        'key': 'Closed',
-        'type': 'bar',
-        'values': [
-          {series: 3, x: 1, y: 0,  y0: 110},
-          {series: 3, x: 2, y: 10, y0: 210},
-          {series: 3, x: 3, y: 20, y0: 240},
-          {series: 3, x: 4, y: 30, y0: 240},
-          {series: 3, x: 5, y: 30, y0: 240}
-        ]
-      },
-      {
-        'key': 'Likely',
-        'type': 'line',
-        'values': [
-          {x: 1, y: 120},
-          {x: 2, y: 240},
-          {x: 3, y: 290},
-          {x: 4, y: 290},
-          {x: 5, y: 290}
-        ]
-      },
-      {
-        'key': 'Chart Data',
-        'type': 'chart',
-        'quota': 200,
-        'labels': [
-          {group: 1, l: "Mark Gibson"},
-          {group: 2, l: "Terence Li"},
-          {group: 3, l: "James Joplin"},
-          {group: 4, l: "Amy McCray"},
-          {group: 5, l: "My Opps"}
-        ],
-        'values': [
-          {group: 1, t: 110},
-          {group: 2, t: 220},
-          {group: 3, t: 260},
-          {group: 4, t: 270},
-          {group: 5, t: 270}
-        ]
-      }
-    ];
-
-  var forecast_data_Q2 = [
-      {
-        'key': 'Qualified',
-        'type': 'bar',
-        'values': [
-          {series: 0, x: 1, y: 60,  y0: 0},
-          {series: 0, x: 2, y: 90,  y0: 0},
-          {series: 0, x: 3, y: 110, y0: 0},
-          {series: 0, x: 4, y: 120, y0: 0},
-          {series: 0, x: 5, y: 110, y0: 0}
-        ]
-      },
-      {
-        'key': 'Proposal',
-        'type': 'bar',
-        'values': [
-          {series: 1, x: 1, y: 60,  y0:  60},
-          {series: 1, x: 2, y: 80,  y0:  90},
-          {series: 1, x: 3, y: 100, y0: 110},
-          {series: 1, x: 4, y: 110, y0: 120},
-          {series: 1, x: 5, y: 100, y0: 110}
-        ]
-      },
-      {
-        'key': 'Negotiation',
-        'type': 'bar',
-        'values': [
-          {series: 2, x: 1, y: 20, y0: 120},
-          {series: 2, x: 2, y: 60, y0: 170},
-          {series: 2, x: 3, y: 50, y0: 210},
-          {series: 2, x: 4, y: 50, y0: 230},
-          {series: 2, x: 5, y: 50, y0: 210}
-        ]
-      },
-      {
-        'key': 'Closed',
-        'type': 'bar',
-        'values': [
-          {series: 3, x: 1, y: 10, y0: 130},
-          {series: 3, x: 2, y: 20, y0: 230},
-          {series: 3, x: 3, y: 40, y0: 260},
-          {series: 3, x: 4, y: 30, y0: 280},
-          {series: 3, x: 5, y: 30, y0: 260}
-        ]
-      },
-      {
-        'key': 'Likely',
-        'type': 'line',
-        'values': [
-          {x: 1, y: 150},
-          {x: 2, y: 260},
-          {x: 3, y: 310},
-          {x: 4, y: 310},
-          {x: 5, y: 300}
-        ]
-      },
-      {
-        'key': 'Chart Data',
-        'type': 'chart',
-        'quota': 200,
-        'labels': [
-          {group: 1, l: "Mark Gibson"},
-          {group: 2, l: "Terence Li"},
-          {group: 3, l: "James Joplin"},
-          {group: 4, l: "Amy McCray"},
-          {group: 5, l: "My Opps"}
-        ],
-        'values': [
-          {group: 1, t: 140},
-          {group: 2, t: 250},
-          {group: 3, t: 300},
-          {group: 4, t: 310},
-          {group: 5, t: 290}
-        ]
-      }
-    ];
-    </script>
 
     <script>
       //instantiate D3 chart using NVD3
 	  nv.addGraph({
 	    generate: function() {
-	        //var chart = nv.models.multiBarChart();
-	        //override default barClick function
-	        var chart = nv.models.multiBarChart().barClick( function(data,e,selection) {
-	                      //if only one bar series is disabled
-	                      // console.log(data);
-	                      // console.log(e);
-	                      // console.log(selection);
-	                      d3.select('#chart1 svg')
-	                        .datum(forecast_data_Q2)
-	                        .transition().duration(500).call(chart);
-	                    } 
-	                  );
-	        //end override
-	        
+	        var chart = nv.models.multiBarChart();
+	
 	        d3.select('#chart1 svg')
 	          .datum(forecast_data_Q1)
 	          .transition().duration(500).call(chart);

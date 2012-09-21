@@ -387,7 +387,7 @@ nv.models.lineChart = function() {
     }
 
     legend.color(color);
-    multibar.color(color);
+    lines.color(color);
 
     return chart;
   };
@@ -402,7 +402,7 @@ nv.models.lineChart = function() {
       var fill = chart.color();
     }
 
-    multibar.fill(fill);
+    lines.fill(fill);
 
     return chart;
   };

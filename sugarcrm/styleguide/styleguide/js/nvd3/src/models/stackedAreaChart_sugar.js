@@ -8,7 +8,6 @@ nv.models.stackedAreaChart = function() {
   var margin = {top: 30, right: 20, bottom: 50, left: 60}
     , width = null
     , height = null
-    , color = nv.utils.defaultColor()
     , showControls = true
     , showLegend = true
     , showTitle = false
@@ -364,7 +363,7 @@ nv.models.stackedAreaChart = function() {
     }
 
     legend.color(color);
-    multibar.color(color);
+    stacked.color(color);
 
     return chart;
   };
@@ -379,7 +378,7 @@ nv.models.stackedAreaChart = function() {
       var fill = chart.color();
     }
 
-    multibar.fill(fill);
+    stacked.fill(fill);
 
     return chart;
   };

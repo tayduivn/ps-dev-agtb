@@ -4439,11 +4439,11 @@ img {
   font-weight:normal;
   text-shadow:0 -1px 1px rgba(0,0,0,0.8);
 }
-.modal-body { padding:0; }
-.modal-body>div:first-child {
-  padding:15px;
+.modal-body {
+  padding:0;
   margin-bottom:58px;
 }
+.modal-content { padding:15px; }
 .modal-scroll { overflow-y:scroll; }
 .modal-footer {
   position:absolute;
@@ -5595,7 +5595,7 @@ input[type=radio] { display:inline-block; }
   -moz-transition:all .2s linear;
   transition:all .2s linear;
 }
-.folded > div, .folded { width:inherit; }
+.folded > div { width:inherit; }
 .folded .tab-pane#overview { border-left:none; }
 .folded .tab-pane.active#overview { border-left:1px solid #ebebeb; }
 .container-fluid#contentflex {
@@ -5603,16 +5603,13 @@ input[type=radio] { display:inline-block; }
   padding:0;
 }
 #dashboard .folded .tab-pane.active.hide { display:none; }
-.acomment .avatar { margin-right:10px; }
 .folded .tab-pane.active {
-  position:absolute !important;
+  position:fixed !important;
   top:48px;
   right:0;
+  background-image:url('../../assets/img/light_toast.png');
   height:100%;
   width:inherit;
-  position:relative;
-  background-image:url('../../assets/img/light_toast.png');
-  padding-top:40px;
   padding:20px 1.1%;
   border-left:1px solid #cdcccb;
 }
@@ -5787,14 +5784,14 @@ input[type=radio] { display:inline-block; }
   margin-top:8px;
 }
 .avatar img {
-  -webkit-border-radius:2px;
-  -moz-border-radius:2px;
-  border-radius:2px;
+  -webkit-border-radius:3px;
+  -moz-border-radius:3px;
+  border-radius:3px;
 }
 .avatar.thumbnail { padding:3px; }
 .navbar .avatar, li li .avatar, .avatar img {
-  height:28px;
-  width:28px;
+  height:24px;
+  width:24px;
 }
 .avatar32 img {
   height:32px;
@@ -5919,7 +5916,7 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
   margin-bottom:10px;
 }
 .block.tabs-left .nav-tabs p { margin:0 80px 20px 55px; }
-.block.tabs-left .nav-tabs li li .avatar img { margin:3px 10px 0 0; }
+.block.tabs-left .nav-tabs li li .avatar img { margin:3px 0 0; }
 .block.tabs-left .nav-tabs li li {
   margin:0;
   padding:10px;

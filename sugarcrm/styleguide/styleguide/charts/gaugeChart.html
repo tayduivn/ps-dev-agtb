@@ -6,8 +6,17 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <title>Gauge Chart</title>
   <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
-  <link href="../css/nvd3/src/sugar_colors.css" rel="stylesheet" type="text/css">
+  <link href="../css/bootstrap.css" rel="stylesheet" type="text/css">
   <style>
+    body {
+      overflow-y:scroll;
+      padding: 20px;
+    }
+
+    text {
+      font: 12px sans-serif;
+    }
+
     #gauge {
       height: 95%;
       /*width: 700px;*/
@@ -71,9 +80,9 @@
           .y(function(d) { return d.y })
           .showLabels(true)
           .showTitle(true)
-          .colorData( 'graduated', {c1: '#d62728', c2: '#2ca02c', l: gauge_data.data.length} )
+          //.colorData( 'graduated', {c1: '#d62728', c2: '#2ca02c', l: gauge_data.data.length} )
           //.colorData( 'class' )
-          //.colorData( 'default' )
+          .colorData( 'default' )
           .colorFill( 'gradient' )
           //.colorFill( 'default' )
           .ringWidth(50)
