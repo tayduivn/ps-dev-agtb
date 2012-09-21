@@ -24,11 +24,30 @@ require_once "modules/Mailer/SimpleMailer.php";
 class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $mockMailerConfig;
+    private $mockMailer;
 
     public function setUp() {
         $this->mockMailerConfig = self::getMock(
             "SmtpMailerConfiguration"
         );
+
+        $this->mockMailer = self::getMock(
+            "SimpleMailer",
+            array(
+                 "prepareToSend",
+                 "transferConfigurations",
+                 "connectToHost",
+                 "transferHeaders",
+                 "transferRecipients",
+                 "transferBody",
+                 "transferAttachments",
+            ),
+            array($this->mockMailerConfig)
+        );
+
+        $this->mockMailer->expects(self::any())
+            ->method("prepareToSend")
+            ->will(self::returnValue(true)); // doesn't matter what it returns
     }
 
     /**
@@ -61,255 +80,177 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSend_TransferConfigurationsThrowsAnException() {
-        $mockMailer = self::getMock(
-            "SimpleMailer",
-            array(
-                 "transferConfigurations",
-                 "connectToHost",
-                 "transferHeaders",
-                 "transferRecipients",
-                 "transferBody",
-                 "transferAttachments",
-            ),
-            array($this->mockMailerConfig)
-        );
-
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferConfigurations")
             ->will(self::throwException(new MailerException()));
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("connectToHost");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferHeaders");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferRecipients");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferBody");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferAttachments");
 
         self::setExpectedException("MailerException");
-        $mockMailer->send();
+        $this->mockMailer->send();
     }
 
     /**
      * @group mailer
      */
     public function testSend_ConnectToHostThrowsAnException() {
-        $mockMailer = self::getMock(
-            "SimpleMailer",
-            array(
-                 "transferConfigurations",
-                 "connectToHost",
-                 "transferHeaders",
-                 "transferRecipients",
-                 "transferBody",
-                 "transferAttachments",
-            ),
-            array($this->mockMailerConfig)
-        );
-
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("connectToHost")
             ->will(self::throwException(new MailerException()));
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferHeaders");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferRecipients");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferBody");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferAttachments");
 
         self::setExpectedException("MailerException");
-        $mockMailer->send();
+        $this->mockMailer->send();
     }
 
     /**
      * @group mailer
      */
     public function testSend_TransferHeadersThrowsAnException() {
-        $mockMailer = self::getMock(
-            "SimpleMailer",
-            array(
-                 "transferConfigurations",
-                 "connectToHost",
-                 "transferHeaders",
-                 "transferRecipients",
-                 "transferBody",
-                 "transferAttachments",
-            ),
-            array($this->mockMailerConfig)
-        );
-
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("connectToHost")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferHeaders")
             ->will(self::throwException(new MailerException()));
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferRecipients");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferBody");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferAttachments");
 
         self::setExpectedException("MailerException");
-        $mockMailer->send();
+        $this->mockMailer->send();
     }
 
     /**
      * @group mailer
      */
     public function testSend_TransferRecipientsThrowsAnException() {
-        $mockMailer = self::getMock(
-            "SimpleMailer",
-            array(
-                 "transferConfigurations",
-                 "connectToHost",
-                 "transferHeaders",
-                 "transferRecipients",
-                 "transferBody",
-                 "transferAttachments",
-            ),
-            array($this->mockMailerConfig)
-        );
-
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("connectToHost")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferHeaders")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferRecipients")
             ->will(self::throwException(new MailerException()));
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferBody");
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferAttachments");
 
         self::setExpectedException("MailerException");
-        $mockMailer->send();
+        $this->mockMailer->send();
     }
 
     /**
      * @group mailer
      */
     public function testSend_TransferBodyThrowsAnException() {
-        $mockMailer = self::getMock(
-            "SimpleMailer",
-            array(
-                 "transferConfigurations",
-                 "connectToHost",
-                 "transferHeaders",
-                 "transferRecipients",
-                 "transferBody",
-                 "transferAttachments",
-            ),
-            array($this->mockMailerConfig)
-        );
-
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("connectToHost")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferHeaders")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferRecipients")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferBody")
             ->will(self::throwException(new MailerException()));
 
-        $mockMailer->expects(self::never())
+        $this->mockMailer->expects(self::never())
             ->method("transferAttachments");
 
         self::setExpectedException("MailerException");
-        $mockMailer->send();
+        $this->mockMailer->send();
     }
 
     /**
      * @group mailer
      */
     public function testSend_TransferAttachmentsThrowsAnException() {
-        $mockMailer = self::getMock(
-            "SimpleMailer",
-            array(
-                 "transferConfigurations",
-                 "connectToHost",
-                 "transferHeaders",
-                 "transferRecipients",
-                 "transferBody",
-                 "transferAttachments",
-            ),
-            array($this->mockMailerConfig)
-        );
-
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("connectToHost")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferHeaders")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferRecipients")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferBody")
             ->will(self::returnValue(true));
 
-        $mockMailer->expects(self::any())
+        $this->mockMailer->expects(self::any())
             ->method("transferAttachments")
             ->will(self::throwException(new MailerException()));
 
         self::setExpectedException("MailerException");
-        $mockMailer->send();
+        $this->mockMailer->send();
     }
 
     /**
@@ -325,6 +266,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer = self::getMock(
             "SimpleMailer",
             array(
+                 "prepareToSend",
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
@@ -335,6 +277,10 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array($this->mockMailerConfig)
         );
+
+        $mockMailer->expects(self::any())
+            ->method("prepareToSend")
+            ->will(self::returnValue(true)); // doesn't matter what it returns
 
         $mockMailer->expects(self::any())
             ->method("generateMailer")
@@ -381,6 +327,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer = self::getMock(
             "SimpleMailer",
             array(
+                 "prepareToSend",
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
@@ -391,6 +338,10 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array($this->mockMailerConfig)
         );
+
+        $mockMailer->expects(self::any())
+            ->method("prepareToSend")
+            ->will(self::returnValue(true)); // doesn't matter what it returns
 
         $mockMailer->expects(self::any())
             ->method("generateMailer")
