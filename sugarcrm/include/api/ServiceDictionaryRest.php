@@ -55,8 +55,9 @@ class ServiceDictionaryRest extends ServiceDictionary {
         }
         
         // If we didn't find a route and we are on a non-base platform, see if we find one
-        // in base.
-        if (!$route && $platform != 'base' && isset($this->dict[$pathLength]['base']) ) {
+        // in base. Using empty here because if platform route wasn't found then $route
+        // will not yet be defined.
+        if (empty($route) && $platform != 'base' && isset($this->dict[$pathLength]['base']) ) {
             $route = $this->lookupChildRoute($this->dict[$pathLength]['base'], $path, $version);
         }
         
