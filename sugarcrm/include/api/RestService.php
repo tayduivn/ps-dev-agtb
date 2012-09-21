@@ -43,21 +43,43 @@ class RestService extends ServiceBase {
             $rawPath = $this->getRawPath();
 
             list($version,$path) = $this->parsePath($rawPath);
-            $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD']);
-            
+
+            $isLoggedIn = $this->authenticateUser();
+
+            // Figure out the platform
+            $platform = 'base';
+            if ( $isLoggedIn ) {
+                if ( isset($_SESSION['platform']) ) {
+                    $platform = $_SESSION['platform'];
+                }
+            } else {
+                // Since we don't have a session we have to allow the user to specify their platform
+                // However, since the results from the same URL will be different with
+                // no variation in the oauth_token header we need to only take it as a GET request.
+                if ( !empty($_GET['platform']) ) {
+                    $platform = $_GET['platform'];
+                }
+            }
+
+
+            $route = $this->findRoute($path,$version,$_SERVER['REQUEST_METHOD'],$platform);
+                        
+            if ( $route == false ) {
+                throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$rawPath);
+            }
+
             if ( !isset($route['noLoginRequired']) || $route['noLoginRequired'] == false ) {
-                // Grab the platform if it is set
-                $platform = empty($_REQUEST['platform']) ? 'base' : $_REQUEST['platform'];
-                $this->authenticateUser($platform);
+                if ( !$isLoggedIn ) {
+                    // @TODO Localize exception strings
+                    throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
+                }
+            }
                 
+            if ( $isLoggedIn ) {
                 // This is needed to load in the app_strings and the app_list_strings and the such
                 $this->loadUserEnvironment();
             } else {
                 $this->loadGuestEnvironment();
-            }
-            
-            if ( $route == false ) {
-                throw new SugarApiExceptionNoMethod('Could not find any route that accepted a path like: '.$rawPath);
             }
 
             // This loads the path variables in, so that on the /Accounts/abcd, $module is set to Accounts, and $id is set to abcd
@@ -210,16 +232,12 @@ class RestService extends ServiceBase {
      * @param array $path The request path
      * @param int $version The API version number
      * @param string $requestType The request method
+     * @param string $platform The platform of the request
      * @return mixed
      */
-    protected function findRoute($path, $version, $requestType) {
+    protected function findRoute($path, $version, $requestType, $platform = 'base') {
         // Load service dictionary
         $this->dict = $this->loadServiceDictionary('ServiceDictionaryRest');
-        if ( !isset($_SESSION['platform']) ) {
-            $platform = 'base';
-        } else {
-            $platform = $_SESSION['platform'];
-        }
         return $this->dict->lookupRoute($path, $version, $requestType, $platform);
     }
 
@@ -316,6 +334,7 @@ class RestService extends ServiceBase {
      * Handles authentication of the current user
      *
      * @param string $platform The platform type for this request
+     * @returns bool Was the login successful
      * @throws SugarApiExceptionNeedLogin
      */
     protected function authenticateUser($platform) {
@@ -367,8 +386,7 @@ class RestService extends ServiceBase {
                 }
             }
 
-            // @TODO Localize exception strings
-            throw new SugarApiExceptionNeedLogin("No valid authentication for user.");
+            return false;
         }
         
         //BEGIN SUGARCRM flav=pro ONLY
@@ -381,6 +399,8 @@ class RestService extends ServiceBase {
         LogicHook::initialize()->call_custom_logic('', 'after_session_start');
 
         $this->user = $GLOBALS['current_user'];
+
+        return true;
     }
 
     /**
