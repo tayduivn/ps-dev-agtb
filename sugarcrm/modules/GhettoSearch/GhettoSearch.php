@@ -39,9 +39,16 @@ class GhettoSearch extends GhettoSearch_sugar
     }
 
 
-    function performSearch($query) {
+    function performSearch($text) {
     	$returns = array();
-    	$results = $GLOBALS['db']->query("SELECT id, field_name FROM {$this->table_name} WHERE " . $GLOBALS['db']->getFulltextQuery('field_value', array($query)));
+        
+        $query = "SELECT id, field_name FROM {$this->table_name} ";
+        $this->addVisibilityFrom($query);
+        $query .= "WHERE " . $GLOBALS['db']->getFulltextQuery('field_value', array($text));
+        $this->addVisibilityWhere($query);
+
+    	$results = $GLOBALS['db']->query($query);
+        $GLOBALS['log']->fatal("\r\n\r\n::::::\r\n\r\n" . $query . "\r\n\r\n::::::\r\n\r\n");
     	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
     		$returns[] = BeanFactory::getBean('GhettoSearch', $row['id']);
     	}
