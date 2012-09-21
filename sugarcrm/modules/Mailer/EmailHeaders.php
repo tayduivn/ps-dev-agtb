@@ -126,7 +126,7 @@ class EmailHeaders
             );
         }
 
-        $this->subject = from_html($subject);
+        $this->subject = $subject;
     }
 
     /**

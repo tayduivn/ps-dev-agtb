@@ -160,7 +160,6 @@ class MailConfigurationPeer
                     // require authentication with the SMTP server
                     $mailerConfig->setAuthenticationRequirement(true);
                     $mailerConfig->setUsername($oe['mail_smtpuser']);
-                    //@todo wrap this value in from_html()? do now or at time of transfer?
                     $mailerConfig->setPassword($oe['mail_smtppass']);
                 }
 

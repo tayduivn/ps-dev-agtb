@@ -26,6 +26,7 @@ require_once "lib/phpmailer/class.smtp.php";      // required to establish the S
                                                   // send for error handling purposes
 require_once "BaseMailer.php";                    // requires BaseMailer in order to extend it
 require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMailerConfiguration
+require_once "include/Localization.php";          // required for using the global $locale, which is a Localization
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
@@ -42,6 +43,8 @@ class SimpleMailer extends BaseMailer
      * @throws MailerException
      */
     public function send() {
+        $this->prepareToSend();
+
         $mailer = $this->generateMailer(); // get a fresh PHPMailer object
 
         $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
@@ -95,7 +98,7 @@ class SimpleMailer extends BaseMailer
         $mailer->SMTPSecure = $this->config->getCommunicationProtocol();
         $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
-        $mailer->Password   = $this->config->getPassword();
+        $mailer->Password   = from_html($this->config->getPassword());
     }
 
     /**
@@ -340,5 +343,83 @@ class SimpleMailer extends BaseMailer
                 throw new MailerException("Invalid attachment type", MailerException::InvalidAttachment);
             }
         }
+    }
+
+    /**
+     * Handles any final updates to document prior to sending. Updates include Charset translation for all
+     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     */
+    protected function prepareToSend() {
+        global $locale;
+
+        $from = $this->headers->getFrom();
+        $from = $this->prepareFrom($from, $locale);
+        $this->setHeader(EmailHeaders::From, $from);
+
+        $subject = $this->headers->getSubject();
+        $subject = $this->prepareSubject($subject, $locale);
+        $subject = from_html($subject);
+        $this->setSubject($subject);
+
+        $textBody = $this->prepareTextBody($this->textBody, $locale);
+        $textBody = from_html($textBody);
+        $this->setTextBody($textBody);
+
+        $htmlBody = $this->prepareHtmlBody($this->htmlBody, $locale);
+        $htmlBody = from_html($htmlBody);
+        $this->setHtmlBody($htmlBody);
+    }
+
+    protected function prepareFrom($from, Localization $locale) {
+        $charset = $locale->getPrecedentPreference("default_email_charset");
+        $from->setName($locale->translateCharset($from->getName(), "UTF-8", $charset));
+
+        return $from;
+    }
+
+    protected function prepareSubject($subject, Localization $locale) {
+        $charset = $locale->getPrecedentPreference("default_email_charset");
+        $subject = $locale->translateCharset($subject, "UTF-8", $charset);
+
+        return $subject;
+    }
+
+    protected function prepareTextBody($body, Localization $locale) {
+        $charset = $locale->getPrecedentPreference("default_email_charset");
+        $body    = $locale->translateCharset($body, "UTF-8", $charset);
+
+        return $body;
+    }
+
+    /**
+     * Handles any final updates to document prior to sending. Updates include Charset translation for all
+     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     */
+    protected function prepareHtmlBody($body, Localization $locale) {
+        $charset = $locale->getPrecedentPreference("default_email_charset");
+        $body    = $this->forceRfcComplianceOnHtmlBody($body, $charset);
+        $body    = $locale->translateCharset($body, "UTF-8", $charset);
+
+        return $body;
+    }
+
+    protected function forceRfcComplianceOnHtmlBody($body, $charset) {
+        // HTML email RFC compliance
+        if (strpos($body, "<html") === false) {
+            $subject    = $this->headers->getSubject();
+            $langHeader = get_language_header();
+            $head       = <<<eoq
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
+<title>{$subject}</title>
+</head>
+<body>
+eoq;
+            $body = "{$head}{$body}</body></html>";
+        }
+
+        return $body;
     }
 }

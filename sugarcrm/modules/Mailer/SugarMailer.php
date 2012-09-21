@@ -36,78 +36,49 @@ class SugarMailer extends SimpleMailer
         $this->retrieveDisclosureSettings();
     }
 
-    /**
-     * a potential solution to allow for manipulation of the message parts at send time without actually
-     * changing the message parts beyond repair
-     */
-    public function send() {
-        $this->prepareMessageContent();
+    protected function prepareTextBody($body, Localization $locale) {
+        if ($this->includeDisclosure) {
+            $body .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
+        }
 
-        parent::send();
+        $body = parent::prepareTextBody($body, $locale);
+
+        return $body;
     }
 
     /**
      * Handles any final updates to document prior to sending. Updates include Charset translation for all
      * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
      */
-    protected function prepareMessageContent() {
-        global $locale, $sugar_config;
-        $charset = $locale->getPrecedentPreference("default_email_charset");
+    protected function prepareHtmlBody($body, Localization $locale) {
+        global $sugar_config;
         $siteUrl = $sugar_config["site_url"];
 
-        $from = $this->headers->getFrom();
-        $from->setName($locale->translateCharset($from->getName(), "UTF-8", $charset));
-        $this->setHeader(EmailHeaders::From, $from);
-
-        $subject = $this->headers->getSubject();
-        $subject = $locale->translateCharset($subject, "UTF-8", $charset);
-        $this->setSubject($subject);
-
-        $this->setTextBody($locale->translateCharset($this->textBody, "UTF-8", $charset));
-
-        $htmlBody = $this->htmlBody;
-
         if ($this->includeDisclosure) {
-            $htmlBody .= "<br />&nbsp;<br />{$this->disclosureContent}"; //@todo why do we include &nbsp;?
-            $htmlBody .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
+            $body .= "<br /><br />{$this->disclosureContent}";
         }
-
-        // HTML email RFC compliance
-        if (strpos($htmlBody, "<html") === false) {
-            $langHeader = get_language_header();
-            $head       = <<<eoq
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
-<title>{$subject}</title>
-</head>
-<body>
-eoq;
-            $htmlBody = "{$head}{$htmlBody}</body></html>";
-        }
-
-        $htmlBody = $locale->translateCharset($this->htmlBody, "UTF-8", $charset);
 
         // replace references to cache/images with cid tag
-        $htmlBody = str_replace(sugar_cached("images/"), "cid:", $htmlBody);
+        $body = str_replace(sugar_cached("images/"), "cid:", $body);
 
         // replace any embeded images using cache/images for src url
-        $htmlBody = $this->convertInlineImageToEmbeddedImage(
-            $htmlBody,
+        $body = $this->convertInlineImageToEmbeddedImage(
+            $body,
             "(?:{$siteUrl})?/?cache/images/",
             sugar_cached("images/")
         );
 
         // replace any embeded images using the secure entryPoint for src url
-        $htmlBody = $this->convertInlineImageToEmbeddedImage(
-            $htmlBody,
+        $body = $this->convertInlineImageToEmbeddedImage(
+            $body,
             "(?:{$siteUrl})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=",
             "upload://",
             true
         );
 
-        $this->setHtmlBody($htmlBody);
+        $body = parent::prepareHtmlBody($body, $locale);
+
+        return $body;
     }
 
     /**
