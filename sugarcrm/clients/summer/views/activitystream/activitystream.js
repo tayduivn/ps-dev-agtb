@@ -44,6 +44,7 @@
             this.collection.fetch(this.opts);
         }
 
+        // Fetch taggable entities.
         var url = app.api.buildURL("CustomReport/EntityList");
         if(this.opts.params.module) {
             url += "?module=" + this.opts.params.module;
@@ -105,6 +106,7 @@
     },
 
     _addPostComment: function(url, contents, attachments) {
+        var self = this;
         app.api.call('create', url, {'value': contents}, {success: function(post_id) {
             attachments.each(function(index, el) {
                 var id = $(el).attr('id');
@@ -157,7 +159,6 @@
     addComment: function(event) {
         var self = this,
             myPost = this.$(event.currentTarget).closest('li'),
-            myPostTags = myPost.find('div.sayit span'),
             myPostId = this.$(event.currentTarget).data('id'),
             myPostUrl = app.api.buildURL('ActivityStream/ActivityStream/' + myPostId),
             myPostContents,
@@ -170,7 +171,6 @@
     addPost: function() {
         var self = this,
             myPost = this.$(".activitystream-post"),
-            myPostTags = myPost.find('div.sayit span'),
             myPostId = this.context.get("modelId"),
             myPostModule = this.module,
             myPostUrl = 'ActivityStream',
