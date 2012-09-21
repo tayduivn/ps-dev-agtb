@@ -41,6 +41,7 @@
           transition: all .2s linear;
   }
 
+
 .folded > div {
     width: inherit;
 }
@@ -61,16 +62,20 @@
 #dashboard .folded .tab-pane.active.hide {
    display: none;
 }
+.acomment .avatar {margin-right: 10px;}
 .folded .tab-pane.active {
-  position: fixed !important;
+  position: absolute !important;
   top: 48px;
   right: 0;
-  background-image: url('@{textureSecondary}');
   height: 100%;
   width: inherit;
+  position: relative;
+  background-image: url('@{textureSecondary}');
+  padding-top: 40px;
   padding: 20px 1.1%;
   border-left: 1px solid @grayLight;
 }
+
 .folded .tab-pane .block span.label  {margin: 0 10px 0 0;}
 .folded .tab-pane .block {width: 90%; margin-left: 5%;}
 .folded [data-toggle="tab"].actions {top: 0; color: @gray;}

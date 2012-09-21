@@ -5598,13 +5598,16 @@ input, select, textarea { z-index:1000; }
   padding:0;
 }
 #dashboard .folded .tab-pane.active.hide { display:none; }
+.acomment .avatar { margin-right:10px; }
 .folded .tab-pane.active {
-  position:fixed !important;
+  position:absolute !important;
   top:48px;
   right:0;
-  background-image:url('../../assets/img/light_toast.png');
   height:100%;
   width:inherit;
+  position:relative;
+  background-image:url('../../assets/img/light_toast.png');
+  padding-top:40px;
   padding:20px 1.1%;
   border-left:1px solid #cdcccb;
 }
@@ -5779,14 +5782,14 @@ input, select, textarea { z-index:1000; }
   margin-top:8px;
 }
 .avatar img {
-  -webkit-border-radius:3px;
-  -moz-border-radius:3px;
-  border-radius:3px;
+  -webkit-border-radius:2px;
+  -moz-border-radius:2px;
+  border-radius:2px;
 }
 .avatar.thumbnail { padding:3px; }
 .navbar .avatar, li li .avatar, .avatar img {
-  height:24px;
-  width:24px;
+  height:28px;
+  width:28px;
 }
 .avatar32 img {
   height:32px;
@@ -5911,7 +5914,7 @@ input[disabled], select[disabled], textarea[disabled], input[readonly], select[r
   margin-bottom:10px;
 }
 .block.tabs-left .nav-tabs p { margin:0 80px 20px 55px; }
-.block.tabs-left .nav-tabs li li .avatar img { margin:3px 0 0; }
+.block.tabs-left .nav-tabs li li .avatar img { margin:3px 10px 0 0; }
 .block.tabs-left .nav-tabs li li {
   margin:0;
   padding:10px;
