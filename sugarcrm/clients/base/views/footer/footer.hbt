@@ -4,7 +4,7 @@
         <div class="span9">
             <div class="btn-toolbar pull-right">
                 {{#if isAuthenticated}}
-                <div class="btn-group dropup instance-picker">
+                <div class="btn-group dropup instance-picker" tour="tour-instances">
                     <a title="{{ instance_name }}" class="btn" id="instance" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i> {{ instance_name }}</a>
                     <div class="dropdown-menu bottom-up" id="instancesContainer">
                     <h5>Your instances:</h5>
@@ -34,25 +34,26 @@
 
 
 <!-- Tour Guide -->
-<div class="modal hide" id="systemTour">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal"><i class="icon-cog"></i></a>
-    <h3>Tour the Portal</h3>
-  </div>
-  <div class="modal-body">
-    <p>The primary actions to get things done in the portal.</p>
-  </div>
-  <div class='pointsolight'>
-  <div id="tourCube" class="tourSee"><span>Dashboard</span></div>
-  <div id="tourCreate" class="tourSee"><span>Quick create</span></div>
-  <div id="tourUser" class="tourSee"><span>User admin</span></div>
-  <div id="tourModules" class="tourSee"><span>Modules</span></div>
-  <div id="tourUSearch" class="tourSee"><span>Universal search</span></div>
-  <div id="tourSort" class="tourSee"><span>Sort columns</span></div>
-  <div id="tourRefine" class="tourSee"><span>Filter items</span></div>
-  <div id="tourAdd" class="tourSee"><span>Add item</span></div>
-  </div>
+<div class="modal hide system-tour">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+        <h3>Tour the Portal</h3>
+    </div>
+    <div class="modal-body">
+        <div class="tour-modal-description">
+            <p>Take a tour of Summer! (Estimated time: 15 mins)</p>
+            <div class="tour-modal-image">
+                Image goes here
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal">Cancel</a>
+            <a class="btn btn-primary tour-module-start">Tour this Page</a>
+            <a class="btn btn-primary tour-full-start">Full Tour</a>
+        </div>
+    </div>
 </div>
+<div class="modal-backdrop hide system-tour-backdrop"></div>
 <style>
     .bottom-up {top: auto; bottom: 100%; }
 </style>

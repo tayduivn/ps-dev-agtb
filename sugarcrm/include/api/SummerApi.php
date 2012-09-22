@@ -52,6 +52,13 @@ class SummerApi extends SugarApi {
                 'method' => 'contacts',
                 'shortHelp' => 'Recommended contacts',
             ),
+            'emails' => array(
+                'reqType' => 'GET',
+                'path' => array('summer','emails'),
+                'pathVars' => array('',''),
+                'method' => 'emails',
+                'shortHelp' => 'Get messaging having specific email address',
+            ),
             'invite' => array(
                 'reqType' => 'POST',
                 'path' => array('summer','invite'),
@@ -165,5 +172,13 @@ class SummerApi extends SugarApi {
             }
         }
         return array("contacts" => $data);
+    }
+
+    public function emails($api, $args)
+    {
+        if(!isset($args['email'])) {
+            throw new SugarApiExceptionMissingParameter('Email is missing.');
+        }
+        return $this->box->getMails($args['email']);
     }
 }

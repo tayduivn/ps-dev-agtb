@@ -1,4 +1,4 @@
-<h4>Invite recommendations</h4>
+<h4 tour="tour-recommended-invites">Invite recommendations</h4>
 These are the recommended invites:
 <div>
 <ul id="invitesList">
