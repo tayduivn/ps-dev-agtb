@@ -107,35 +107,44 @@ class RestPublicMetadataViewTemplatesTest extends RestTestBase {
         //BEGIN SUGARCRM flav=ent ONLY
         // Make sure we get it when we ask for portal
         file_put_contents($filesToCheck['portal'][0],'PORTAL CODE');
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't get portal code when that was the direct option");
 
 
         // Make sure we get it when we ask for portal, even though there is base code there
         file_put_contents($filesToCheck['base'][0],'BASE CODE');
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
         $this->assertEquals('PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't get portal code when base code was there.");
         //END SUGARCRM flav=ent ONLY
 
         // Make sure we get the base code when we ask for it.
+        //BEGIN SUGARCRM flav=com ONLY
+        file_put_contents($filesToCheck['base'][0],'BASE CODE');
+        $this->_clearMetadataCache();
+        //END SUGARCRM flav=com ONLY
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=base');
         $this->assertEquals('BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't get base code when it was the direct option");
 
         //BEGIN SUGARCRM flav=ent ONLY
         // Delete the portal template and make sure it falls back to base
         unlink($filesToCheck['portal'][0]);
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
         $this->assertEquals('BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't fall back to base code when portal code wasn't there.");
 
 
         // Make sure the portal code is loaded before the non-custom base code
         file_put_contents($filesToCheck['portal'][1],'CUSTOM PORTAL CODE');
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['view_templates']['edit'],"Didn't use the custom portal code.");
         //END SUGARCRM flav=ent ONLY
         
         // Make sure custom base code works
         file_put_contents($filesToCheck['base'][1],'CUSTOM BASE CODE');
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/public?type_filter=view_templates');
         $this->assertEquals('CUSTOM BASE CODE',$restReply['reply']['view_templates']['edit'],"Didn't use the custom base code.");
 
