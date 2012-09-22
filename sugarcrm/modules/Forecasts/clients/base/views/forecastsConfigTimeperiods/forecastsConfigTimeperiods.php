@@ -28,60 +28,43 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
             'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC',
             'fields' => array(
                 array(
-                    'name' => 'fiscalStartDate',
-                    'type' => 'datetime',
-                    'label' => 'LBL_FORECASTS_CONFIG_FISCAL_START_DATE',
+                    'name' => 'timeperiod_type',
+                    'type' => 'enum',
+                    'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE',
+                    'options' => 'forecasts_timeperiod_types_dom',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'timeperiod',
+                    'name' => 'timeperiod_interval',
                     'type' => 'enum',
-                    'options' => array(
-                        'annual' => 'Annual',
-                        'quarter' => 'Quarter',
-                    ),
+                    'options' => 'forecasts_timeperiod_options_dom',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'leafperiod',
+                    'name' => 'timeperiod_leaf_interval',
                     'type' => 'enum',
-                    'options' => array(
-                        'weekly' => 'Weekly',
-                        'monthly' => 'Monthly',
-                    ),
+                    'options' => 'forecasts_timeperiod_leaf_quarterly_options_dom',
                     'label' => 'LBL_FORECASTS_CONFIG_LEAFPERIOD',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'timeperiodsForward',
-                    'type' => 'enum',
-                    'options' => array(
-                        '1' => '1',
-                        '2' => '2',
-                        '3' => '3',
-                        '4' => '4',
-                    ),
+                    'name' => 'timeperiods_shown_forward',
+                    'type' => 'int',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'timeperiodsBack',
-                    'type' => 'enum',
-                    'options' => array(
-                        '1' => '1',
-                        '2' => '2',
-                        '3' => '3',
-                        '4' => '4',
-                    ),
+                    'name' => 'timeperiods_shown_backward',
+                    'type' => 'int',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD',
                     'default' => false,
                     'enabled' => true,

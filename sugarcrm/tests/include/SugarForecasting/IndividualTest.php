@@ -39,6 +39,11 @@ class SugarForecasting_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setup('mod_strings', array('Forecasts'));
 
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
         self::$args['timeperiod_id'] = $timeperiod->id;
@@ -49,23 +54,16 @@ class SugarForecasting_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
         self::$args['user_id'] = self::$user['user']->id;
     }
 
-    public function setUp()
-    {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setup('mod_strings', array('Forecasts'));
-    }
-
     public function tearDown()
     {
-        SugarTestHelper::tearDown();
+
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
+        SugarTestHelper::tearDown();
         parent::tearDown();
     }
 

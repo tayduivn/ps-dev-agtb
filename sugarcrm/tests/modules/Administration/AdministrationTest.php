@@ -28,6 +28,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
         //BEGIN SUGARCRM flav=pro ONLY
         array('name' => 'AdministrationTest', 'value' => 'Base', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'AdministrationTest', 'value' => 'Portal', 'platform' => 'portal', 'category' => 'Forecasts'),
+        array('name' => 'AdministrationTest', 'value' => '["Portal"]', 'platform' => 'json', 'category' => 'Forecasts'),
         //END SUGARCRM flav=pro ONLY
     );
 
@@ -39,6 +40,7 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('moduleList');
         $db = DBManagerFactory::getInstance();
         $db->query("DELETE FROM config where name = 'AdministrationTest'");
         /* @var $admin Administration */
@@ -116,6 +118,16 @@ class AdministrationTest extends Sugar_PHPUnit_Framework_TestCase
         $admin->saveSetting("Forecasts", "AdministrationTest", "testCacheClearedAfterSave", "base");
 
         $this->assertEmpty(sugar_cache_retrieve("ModuleConfig-Forecasts"));
+    }
+
+    public function testJsonValueIsArray()
+    {
+         /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+
+        $results = $admin->getConfigForModule('Forecasts', 'json');
+
+        $this->assertEquals(array("Portal"), $results['AdministrationTest']);
     }
     //END SUGARCRM flav=pro ONLY
 }

@@ -176,7 +176,6 @@ class SugarTestForecastUtilities
 
                 $opp = SugarTestOpportunityUtilities::createOpportunity();
                 $opp->assigned_user_id = $user->id;
-                $opp->timeperiod_id = $config['timeperiod_id'];
                 $opp->amount = $opp_amount;
                 $opp->best_case = ($opp_amount + 200);
                 $opp->worst_case = ($opp_amount - 400);
@@ -293,6 +292,7 @@ class SugarTestForecastUtilities
     {
         if (!empty(self::$timeperiod)) {
             SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+            self::$timeperiod = null;
         }
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestOpportunityUtilities::removeAllCreatedOpps();
@@ -322,5 +322,7 @@ class SugarTestForecastUtilities
                                             $user->getPreference('default_number_grouping_seperator')
          );
     }
+
+
 
 }

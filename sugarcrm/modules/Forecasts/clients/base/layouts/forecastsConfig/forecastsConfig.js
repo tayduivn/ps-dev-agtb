@@ -1,6 +1,3 @@
-<?php
-//FILE SUGARCRM flav=ent ONLY
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,47 +21,26 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Forecasts/ForecastsSeedData.php');
-require_once('modules/TimePeriods/TimePeriod.php');
-require_once('modules/Users/User.php');
+(function (app) {
 
-class ForecastsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
-{
+    app.view.layouts.ForecastsConfigLayout = app.view.Layout.extend({
 
-    private $createdOpportunities;
+        initialize: function (options) {
+            var Model = Backbone.Model.extend({
+                    url: app.api.buildURL("Forecasts", "config"),
+                    sync: function(method, model, options) {
+                        var url = _.isFunction(model.url) ? model.url() : model.url;
+                        return app.api.call(method, url, model, options);
+                    }
+                }),
+                settingsModel = new Model();
 
-    function setUp()
-    {
-        global $beanFiles, $beanList, $current_user, $app_list_strings;
-        require('include/modules.php');
-        $app_list_strings = return_app_list_strings_language('en_us');
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
-        $current_user->is_admin = 1;
-        $current_user->save();
-    }
+            settingsModel.fetch();
+            options.context.set("model", settingsModel);
 
-    function tearDown()
-    {
-
-    }
-
-    /**
-     * @group forecasts
-     * @group seeddata
-     */
-    function testPopulateSeedData()
-    {
-        $timePeriod = new TimePeriod();
-        $query = $timePeriod->create_new_list_query('', 'timeperiods.is_fiscal_year = 0');
-        $result = $GLOBALS['db']->query($query);
-        $timePeriods = array();
-        while (($row = $GLOBALS['db']->fetchByAssoc($result))) {
-            $timePeriod = new TimePeriod();
-            $timePeriod->retrieve($row['id']);
-            $timePeriods[] = $timePeriod;
+            app.view.Layout.prototype.initialize.call(this, options);
         }
-        ForecastsSeedData::populateSeedData($timePeriods);
-    }
 
+    });
 
-}
+})(SUGAR.App)

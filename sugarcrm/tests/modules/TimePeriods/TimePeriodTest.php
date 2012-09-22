@@ -89,11 +89,40 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testGetTimePeriodFromDbDateWithValidDate()
     {
-        // create a time period
-        $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-        $this->assertEquals($tp->id, TimePeriod::retrieveFromDate('2009-02-15')->id);
+        // get time period within 2009-02-15
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+        if(empty($tp))
+        {
+            // create time period if it does not exist
+            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+            $expected_id = $tp->id;
+        } else {
+            $expected_id = $tp->id;
+        }
+        $this->assertEquals($expected_id, TimePeriod::retrieveFromDate('2009-02-15')->id);
 
     }
 
+    /**
+     * check that the timestamps are generated correctly
+     */
+    public function testTimePeriodTimeStamps()
+    {
+        // create a time period
+        $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        $timedate = TimeDate::getInstance();
+
+        $start_date_timestamp = $timedate->fromDbDate('2009-01-01');
+        $start_date_timestamp->setTime(0,0,0);
+        $start_date_timestamp = $start_date_timestamp->getTimestamp();
+
+        $end_date_timestamp = $timedate->fromDbDate('2009-03-31');
+        $end_date_timestamp->setTime(23,59,59);
+        $end_date_timestamp = $end_date_timestamp->getTimestamp();
+
+        $this->assertEquals($start_date_timestamp, $tp->start_date_timestamp, "start time stamps do not match");
+        $this->assertEquals($end_date_timestamp, $tp->end_date_timestamp, "end time stamps do not match");
+
+    }
 
 }

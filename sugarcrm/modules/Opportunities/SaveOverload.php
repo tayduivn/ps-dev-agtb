@@ -28,11 +28,17 @@ function perform_save(&$focus){
     //Determine the default commit_stage based on the probability
     if (empty($focus->commit_stage) && $focus->probability !== '')
     {
+        /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
-        $admin->retrieveSettings();
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if(empty($admin) || !is_object($admin))
+        {
+           display_stack_trace();
+        }
 
         //Retrieve Forecasts_category_ranges and json decode as an associative array
-        $category_ranges = json_decode(html_entity_decode($admin->settings['Forecasts_category_ranges']), true);
+        $category_ranges = isset($settings['category_ranges']) ? $settings['category_ranges'] : array();
 
         foreach($category_ranges as $key=>$entry)
         {
@@ -44,20 +50,15 @@ function perform_save(&$focus){
         }
     }
 
-    //Set the timeperiod_id value
     if ($timedate->check_matching_format($focus->date_closed, TimeDate::DB_DATE_FORMAT)) {
         $date_close_db = $focus->date_closed;
     } else {
         $date_close_db = $timedate->to_db_date($focus->date_closed);
     }
 
-    // only do this if the date_closed changes or if no timeperiod_id is set
-    if(empty($focus->timeperiod_id) || (isset($focus->fetched_row['date_closed']) && $focus->fetched_row['date_closed'] != $date_close_db)) {
-        $timeperiod = TimePeriod::retrieveFromDate($date_close_db);
-
-        if($timeperiod instanceof TimePeriod && !empty($timeperiod->id)) {
-            $focus->timeperiod_id = $timeperiod->id;
-        }
+    if(!empty($date_close_db)) {
+        $date_close_datetime = $timedate->fromDbDate($date_close_db);
+        $focus->date_closed_timestamp = $date_close_datetime->getTimestamp();
     }
 
     // if any of the case fields are NULL or an empty string set it to the amount from the main opportunity
