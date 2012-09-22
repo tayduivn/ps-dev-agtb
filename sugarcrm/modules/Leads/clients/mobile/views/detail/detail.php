@@ -51,6 +51,7 @@ $viewdefs['Leads']['mobile']['view']['detail'] = array(
                 'primary_address_country',
                 'status',
                 'assigned_user_name',
+                'picture',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
                 //END SUGARCRM flav=pro ONLY
