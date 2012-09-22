@@ -6,8 +6,6 @@
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {
-            console.log("Routing recordhandler");
-
             var opts = {
                 module: module,
                 layout: "record",

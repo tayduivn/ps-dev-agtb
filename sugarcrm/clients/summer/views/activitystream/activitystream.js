@@ -380,7 +380,7 @@
         this._getEntities(event);
     },
 
-    hideTypeahead: function(event) {
+    hideTypeahead: function() {
         setTimeout(function() {
             self.$("ul.typeahead").remove();
         }, 150);
@@ -414,8 +414,7 @@
     },
 
     removeTag: function(event) {
-        var el = this.$(event.currentTarget);
-        el.parent().remove();
+        this.$(event.currentTarget).parent().remove();
     },
 
     _renderHtml: function() {
