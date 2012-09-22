@@ -347,7 +347,7 @@ class SugarSearchEngineGhetto extends SugarSearchEngineAbstractBase
 
         $ghettoBean = BeanFactory::newBean('GhettoSearch');
 
-        $results = $ghettoBean->performSearch($queryString);
+        $results = $ghettoBean->performSearch($queryString, $offset, $limit, $options);
 
         $return = array();
 

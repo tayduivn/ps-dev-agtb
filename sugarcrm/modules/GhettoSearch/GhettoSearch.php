@@ -39,34 +39,64 @@ class GhettoSearch extends GhettoSearch_sugar
     }
 
 
-    function performSearch($text) {
+    function performSearch($queryString, $offset = 0, $limit = 20, $options = array()) {
     	$returns = array();
         
         $query = "SELECT id, field_name FROM {$this->table_name} ";
         $this->addVisibilityFrom($query);
-        $query .= "WHERE " . $GLOBALS['db']->getFulltextQuery('field_value', array($text));
+        $query .= "WHERE " . $this->db->getFulltextQuery('field_value', array($queryString)) . $this->getModulesWhere($options);
         $this->addVisibilityWhere($query);
 
-    	$results = $GLOBALS['db']->query($query);
+        $results = $this->db->limitQuery($query, $offset, $limit);
         $GLOBALS['log']->fatal("\r\n\r\n::::::\r\n\r\n" . $query . "\r\n\r\n::::::\r\n\r\n");
-    	while($row = $GLOBALS['db']->fetchByAssoc($results)) {
+    	while($row = $this->db->fetchByAssoc($results)) {
     		$returns[] = BeanFactory::getBean('GhettoSearch', $row['id']);
     	}
 
     	return $returns;
     }
 
+    function getModulesWhere($options = array()) {
+        // TODO XXX This functionality is the same for all search engines and therefore should be moved to the abstract parent. The search engine implementation should have 1 function which converts this array to a filter or where clause
+        $where = '';
+        $finalTypes = array();
+        if(!empty($options['moduleFilter']))
+        {
+            if( is_admin($GLOBALS['current_user']) ) {
+                $finalTypes = $options['moduleFilter'];
+            }
+            else
+            {
+                foreach ($options['moduleFilter'] as $moduleName)
+                {
+                    $class = $GLOBALS['beanList'][$moduleName];
+                    $seed = new $class();
+                    // only add the module to the list if it can be viewed
+                    if ($seed->ACLAccess('ListView'))
+                    {
+                        $finalTypes[] = $moduleName;
+                    }
+                }
+            }
+            if (!empty($finalTypes))
+            {
+                $where = " AND parent_type IN ( '" . implode("', '", $finalTypes) . "' ) ";
+            }
+        }
+        return $where;
+    }
+
     function getAllRecords($bean) {
         $returns = array();
-        $results = $GLOBALS['db']->query("SELECT id, field_name FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
-        while($row = $GLOBALS['db']->fetchByAssoc($results)) {
+        $results = $this->db->query("SELECT id, field_name FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
+        while($row = $this->db->fetchByAssoc($results)) {
             $returns[$row['field_name']] = BeanFactory::getBean('GhettoSearch', $row['id']);
         }
         return $returns;
     }
 
     function deleteAllRecords($bean) {
-        $GLOBALS['db']->query("DELETE FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
+        $this->db->query("DELETE FROM {$this->table_name} WHERE parent_type = '{$bean->module_dir}' AND parent_id = '{$bean->id}'");
         return true;
     }
 }
