@@ -131,6 +131,11 @@
                 module = app.viewModule.toLowerCase(),
                 models = {};
 
+// creates the context.forecasts topmost model
+models[module] = app.data.createBean(module);
+
+            // creates the config model as a special case
+            self.namespace(models, module);
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
                 var name,
