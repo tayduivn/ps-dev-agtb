@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
+abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $authToken;
     protected $refreshToken;

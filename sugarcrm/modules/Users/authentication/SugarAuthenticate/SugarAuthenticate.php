@@ -148,7 +148,7 @@ class SugarAuthenticate{
 		}
 		else
 		{
-			if(!empty($usr_id) && $res['lockoutexpiration'] > 0){
+			if(!empty($usr_id) && isset($res['lockoutexpiration']) && $res['lockoutexpiration'] > 0){
 				if (($logout=$usr->getPreference('loginfailed'))=='')
 	        		$usr->setPreference('loginfailed','1');
 	    		else

@@ -298,7 +298,6 @@ class RestLoginTest extends RestTestBase
         $this->authToken = 'LOGGING_IN';
         $replyPing = $this->_restCall('ping?oauth_token='.$generatedSession);
         $this->assertEquals('pong',$replyPing['reply']);
-        error_reporting($er);
         
     }
 
