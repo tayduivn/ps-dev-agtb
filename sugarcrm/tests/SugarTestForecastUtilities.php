@@ -180,13 +180,13 @@ class SugarTestForecastUtilities
                 $opp->best_case = ($opp_amount + 200);
                 $opp->worst_case = ($opp_amount - 400);
                 $opp->probability = rand(50, 90);
-                //$opp->commit_stage = 'include';
+                $opp->commit_stage = ($include == 1) ? 'include' : 'exclude';
                 $opp->date_closed = $date_closed;
                 $opp->team_id = '1';
                 $opp->team_set_id = '1';
                 $opp->save();
 
-                if ($include) {
+                if ($include == 1) {
                     $forecast_likely_total += $opp->amount;
                     $forecast_best_total += $opp->best_case;
                     $forecast_worst_total += $opp->worst_case;

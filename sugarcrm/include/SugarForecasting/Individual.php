@@ -83,15 +83,21 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             "and t.end_date_timestamp >= o.date_closed_timestamp ".
             "left join worksheet w " .
             "on o.id = w.related_id ";
+
         if ($this->getArg('user_id') == $current_user->id) {
             $sql .= "and w.date_modified = (select max(date_modified) from worksheet w2 " .
                 "where w2.user_id = o.assigned_user_id and related_id = o.id " .
-                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') ";
+                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') where ";
         } else {
-            $sql .= "and w.version = 1 ";
+            $sql .= "and w.version = 1 where ";
         }
 
-        $sql .= "where t.id =  '" . $this->getArg('timeperiod_id') . "' " .
+        if(isset($this->args['id']))
+        {
+            $sql .= " o.id = '" . $this->getArg('id') . "' and ";
+        }
+
+        $sql .= " t.id =  '" . $this->getArg('timeperiod_id') . "' " .
             " and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
             "and o.deleted = 0";
 
@@ -138,14 +144,14 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         require_once('modules/Forecasts/ForecastWorksheet.php');
         require_once('include/SugarFields/SugarFieldHandler.php');
         $seed = new ForecastWorksheet();
-        $seed->loadFromRow($this->getArgs());
+        $seed->loadFromRow($this->args);
         $sfh = new SugarFieldHandler();
 
         foreach ($seed->field_defs as $properties)
         {
             $fieldName = $properties['name'];
 
-            if(!isset($args[$fieldName]))
+            if(!isset($this->args[$fieldName]))
             {
                continue;
             }
@@ -153,7 +159,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             //BEGIN SUGARCRM flav=pro ONLY
             if (!$seed->ACLFieldAccess($fieldName,'save') ) {
                 // No write access to this field, but they tried to edit it
-                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field '.$fieldName.' in module: '.$args['module']);
+                global $app_strings;
+                throw new SugarApiException(string_format($app_strings['SUGAR_API_EXCEPTION_NOT_AUTHORIZED'], array($fieldName, $this->args['module'])));
             }
             //END SUGARCRM flav=pro ONLY
 
@@ -162,10 +169,10 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
 
             if($field != null)
             {
-               $field->save($seed, $args, $fieldName, $properties);
+               $field->save($seed, $this->args, $fieldName, $properties);
             }
         }
-		$seed->setWorksheetArgs($this->getArgs());
+		$seed->setWorksheetArgs($this->args);
         $seed->save();
         return $seed->id;
     }
