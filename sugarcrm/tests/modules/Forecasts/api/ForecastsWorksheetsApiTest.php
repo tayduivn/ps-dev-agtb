@@ -121,23 +121,12 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     public function tearDown()
     {
-        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
+        //SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
     }
 
     public static function tearDownAfterClass()
     {
-        //SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         parent::tearDown();
-    }
-
-    /**
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testForecastWorksheets()
-    {
-        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
-        $this->assertNotEmpty($response["reply"], "Rest reply is empty. Rep data should have been returned.");
     }
 
 
@@ -148,9 +137,9 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     public function testForecastWorksheetSave()
     {
-
         $this->repData["op_worksheets"][0]->best_case = $this->repData["op_worksheets"][0]->best_case + 100;
         $this->repData["ops"][0]->probability = $this->repData["ops"][0]->probability + 10;
+        $this->repData["op_worksheets"][0]->likely_case = 123456; //Set this to something unique so we know of all the worksheet records, this is the one we want
 
         $returnBest = '';
         $returnProb = '';
@@ -180,11 +169,12 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         //loop through response and pick out the rows that correspond with ops[0]->id
         foreach ($response["reply"] as $record)
         {
-            if ($record["id"] == $this->repData["ops"][0]->id)
+            if ($record["id"] == $this->repData["ops"][0]->id && $record["likely_case"] == "123456")
             {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnCommitStage = $record["commit_stage"];
+                break;
             }
         }
 
@@ -198,6 +188,15 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $this->assertEquals($this->repData["op_worksheets"][0]->commit_stage, $returnCommitStage, "Worksheet commit_stage was not saved.");
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     */
+    public function testForecastWorksheets()
+    {
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
+        $this->assertNotEmpty($response["reply"], "Rest reply is empty. Rep data should have been returned.");
+    }
 
     /**
      * @group forecastapi
@@ -205,7 +204,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     public function testWorksheetVersionSave()
     {
-
         $this->repData["op_worksheets"][0]->best_case = $this->repData["op_worksheets"][0]->best_case + 100;
         $this->repData["ops"][0]->probability = $this->repData["ops"][0]->probability + 10;
         $returnBest = '';

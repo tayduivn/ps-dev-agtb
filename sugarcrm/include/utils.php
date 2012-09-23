@@ -1440,15 +1440,9 @@ function generate_where_statement($where_clauses)
  * @return bool False on failure
  */
 function is_guid($guid) {
-	if(strlen($guid) != 36) {
-		return false;
-	}
 
-	if(preg_match("/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/i", $guid)) {
-		return true;
-	}
+    return strlen($guid) == 36 && preg_match("/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/i", $guid);
 
-	return true;;
 }
 
 

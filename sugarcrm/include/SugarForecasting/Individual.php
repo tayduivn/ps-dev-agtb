@@ -43,13 +43,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
      */
     public function process()
     {
-        $this->loadWorksheet();
-
-        return array_values($this->dataArray);
-    }
-
-    protected function loadWorksheet()
-    {
         global $current_user;
         $db = DBManagerFactory::getInstance();
 
@@ -118,20 +111,26 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             if (isset($row["worksheet_id"])) {
                 $data['worksheet_id'] = $row["worksheet_id"];
                 $data['best_case'] = $row["w_best_case"];
+                $data['likely_case'] = $row["w_likely_case"];
                 $data['worst_case'] = $row["w_worst_case"];
                 $data['amount'] = $row["w_likely_case"];
                 $data['commit_stage'] = $row["w_commit_stage"];
                 $data['probability'] = $row["w_probability"];
                 $data['version'] = $row["w_version"];
             } else {
+                //Set default values to that of the opportunity's
                 $data['best_case'] = $row["best_case"];
+                $data['likely_case'] = $row["likely_case"];
                 $data['worst_case'] = $row["worst_case"];
                 $data['commit_stage'] = $row["commit_stage"];
                 $data['probability'] = $row["probability"];
             }
             $this->dataArray[] = $data;
         }
+
+        return array_values($this->dataArray);
     }
+
 
     /**
      * Save the Individual Worksheet
