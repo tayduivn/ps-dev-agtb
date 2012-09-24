@@ -96,11 +96,11 @@ class ReportsExportApi extends SugarApi {
             sugar_cache_put($report->id . '-' . $GLOBALS['current_user']->id, $report_filename, $this->cacheLength * 60);
          
             $dl = new DownloadFile();
-            $contents = $dl->getFileByFilename($report_filename);
-            if(empty($contents)) {
-                throw new SugarApiException('File contents empty.');
-            }            
+            $contents = $dl->getFileByFilename($report_filename);     
         }
+        if(empty($contents)) {
+            throw new SugarApiException('File contents empty.');
+        }               
         return array('file_contents' => base64_encode($contents));
     }
 
