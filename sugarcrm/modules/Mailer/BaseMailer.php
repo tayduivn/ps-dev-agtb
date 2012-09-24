@@ -53,7 +53,7 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
-     * Set the object properties back to their initial default values.
+     * Sets the object properties back to their initial default values.
      *
      * @access public
      */

@@ -42,7 +42,7 @@ class SimpleMailer extends BaseMailer
      * @throws MailerException
      */
     public function send() {
-        $this->prepareToSend();
+        $this->prepareToSend(); // perform any necessary preparations before the email can be sent
 
         $mailer = $this->generateMailer(); // get a fresh PHPMailer object
 
@@ -345,8 +345,10 @@ class SimpleMailer extends BaseMailer
     }
 
     /**
-     * Handles any final updates to document prior to sending. Updates include Charset translation for all
-     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     * Performs character set translations and content validation-related manipulations on the From and Subject headers
+     * and on the plain-text and HTML bodies based on the locale defined in the configuration.
+     *
+     * @access protected
      */
     protected function prepareToSend() {
         $from = $this->headers->getFrom();
@@ -358,6 +360,8 @@ class SimpleMailer extends BaseMailer
             )
         );
         $this->setHeader(EmailHeaders::From, $from);
+
+        //@todo need to do the same on Reply-To, so maybe move the header preparations to the prepare* methods in EmailHeaders
 
         $subject = $this->headers->getSubject();
         $subject = $this->config->getLocale()->translateCharset($subject, "UTF-8", $this->config->getCharset());
@@ -373,6 +377,13 @@ class SimpleMailer extends BaseMailer
         $this->setHtmlBody($htmlBody);
     }
 
+    /**
+     * Performs character set translations on the plain-text body based on the charset defined in the configuration.
+     *
+     * @access protected
+     * @param string $body required The plain-text body that is to be translated.
+     * @return string The translated body.
+     */
     protected function prepareTextBody($body) {
         $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
 
@@ -380,8 +391,12 @@ class SimpleMailer extends BaseMailer
     }
 
     /**
-     * Handles any final updates to document prior to sending. Updates include Charset translation for all
-     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     * Enforces RFC compliance to the structure of the HTML body and performs character set translations on the body
+     * based on the charset defined in the configuration.
+     *
+     * @access protected
+     * @param string $body required The HTML body that is to be translated.
+     * @return string The compliant and translated body.
      */
     protected function prepareHtmlBody($body) {
         $body = $this->forceRfcComplianceOnHtmlBody($body);
@@ -390,22 +405,33 @@ class SimpleMailer extends BaseMailer
         return $body;
     }
 
+    /**
+     * HTML message bodies must include a doctype and appropriate html, head, and body elements to be RFC compliant.
+     * Enforces this compliance by wrapping the body with the compliant document structure if the body is not found
+     * to be compliant.
+     *
+     * @note This is flawed because the absence of "<html" doesn't also indicate the absence of "</body>" or "</html>".
+     *       Yet, the assumption is that it is an indication of said absence. Thus, there is a potential for the
+     *       document body to become invalid HTML.
+     *
+     * @param string $body required The HTML body to test for compliance and modify, if necessary.
+     * @return string The compliant HTML body.
+     */
     protected function forceRfcComplianceOnHtmlBody($body) {
-        // HTML email RFC compliance
         if (strpos($body, "<html") === false) {
-            $subject    = $this->headers->getSubject();
-            $charset    = $this->config->getCharset();
-            $langHeader = get_language_header();
-            $head       = <<<eoq
+            $subject   = $this->headers->getSubject(); // used for the document title
+            $charset   = $this->config->getCharset();  // used for the document charset
+            $language  = get_language_header();
+            $head      = <<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
+<html xmlns="http://www.w3.org/1999/xhtml" {$language}>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
 <title>{$subject}</title>
 </head>
 <body>
 eoq;
-            $body = "{$head}{$body}</body></html>";
+            $body = "{$head}{$body}</body></html>"; // prepend the document head and append the footer elements
         }
 
         return $body;

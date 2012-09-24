@@ -93,8 +93,6 @@ class Attachment
         return $attachment;
     }
 
-
-
     /**
      * @access public
      * @param string $path required
