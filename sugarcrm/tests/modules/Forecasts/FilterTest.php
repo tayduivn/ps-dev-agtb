@@ -34,10 +34,12 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
      *
      */
     protected $obj;
+    protected $timeperiod;
 
     public function setUp()
     {
         $this->obj = new SugarParsers_Filter(new Opportunity());
+        $this->timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
     }
 
     public function tearDown()
@@ -45,6 +47,7 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $filterDict = new FilterDictionary();
         $filterDict->resetCache();
         unset($this->obj);
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
     /**
@@ -56,10 +59,9 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
     public function testMultipleFilters()
     {
         $this->obj = new SugarParsers_Filter(new Opportunity());
-        $timeperiod = TimePeriod::getTimePeriod();
         $testFilters = array
         (
-            'date_closed_timestamp' => array('$between' => array($timeperiod->start_date_timestamp, $timeperiod->end_date_timestamp)),
+            'date_closed_timestamp' => array('$between' => array($this->timeperiod->start_date_timestamp, $this->timeperiod->end_date_timestamp)),
             'probability' => array('$between' => array('0', '70')),
             'sales_stage' => array('$in' => array('Prospecting', 'Qualification', 'Needs Analysis')),
         );
@@ -67,8 +69,8 @@ class FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $this->obj->parse($testFilters);
         $converter = new SugarParsers_Converter_Report(new ReportBuilder("Opportunities"));
         $reportFilters = $this->obj->convert($converter);
-        //We should have 3 elements (two for the probability and sales_stage) + the operator (AND)
-        $this->assertEquals(3, count($reportFilters['Filter_1']));
+        //We should have 4 elements (two for the probability and one for sales_stage) + the operator (AND)
+        $this->assertEquals(4, count($reportFilters['Filter_1']));
 
     }
 }

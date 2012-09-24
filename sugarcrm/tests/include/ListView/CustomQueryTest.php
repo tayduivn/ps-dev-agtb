@@ -53,7 +53,7 @@ class CustomQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCustomQuery()
     {
-        $bean = new SugarBean();
+        $bean = new Contact();
         $bean->field_defs = $this->defs;
         $bean->field_defs['testquery'] = array(
           "name" => "testquery",
@@ -72,7 +72,7 @@ class CustomQueryTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testCustomQueryForced()
     {
-        $bean = new SugarBean();
+        $bean = new Contact();
         $bean->field_defs = $this->defs;
         $bean->field_defs['testquery'] = array(
           "name" => "testquery",

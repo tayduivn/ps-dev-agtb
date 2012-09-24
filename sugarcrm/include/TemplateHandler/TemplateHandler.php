@@ -535,7 +535,8 @@ class TemplateHandler {
      */
     function createDependencyJavascript($fieldDefs, $viewDefs, $view, $module = null) {
         //Use a doWhen to wait for the page to be fulled loaded (!SUGAR.util.ajaxCallInProgress())
-        $js = "<script type=text/javascript>SUGAR.util.doWhen('!SUGAR.util.ajaxCallInProgress() && (typeof DCMenu != \"undefined\") && DCMenu.module', function(){\n"
+        $js = "<script type=text/javascript>\n"
+            . "SUGAR.util.doWhen('!SUGAR.util.ajaxCallInProgress() && ((typeof action_sugar_grp1 != \"undefined\" && action_sugar_grp1 == \"Popup\") || (typeof DCMenu != \"undefined\" && DCMenu.module))', function(){\n"
             . "SUGAR.forms.AssignmentHandler.registerView('$view');\n";
 
         $js .= DependencyManager::getLinkFields($fieldDefs, $view);
