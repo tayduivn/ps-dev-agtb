@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -32,6 +34,8 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
     private $currency;
     private $opportunity;
     private $forecast;
+    private $quota;
+    private $forecastSchedule;
 
     public static function setUpBeforeClass()
     {
@@ -62,6 +66,16 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $this->forecast->base_rate = $this->currency->conversion_rate;
         $this->forecast->save();
 
+        $this->forecastSchedule = SugarTestForecastScheduleUtilities::createForecastSchedule($timeperiod, $current_user);
+        $this->forecastSchedule->currency_id = $this->currency->id;
+        $this->forecastSchedule->base_rate = $this->currency->conversion_rate;
+        $this->forecastSchedule->save();
+
+        $this->quota = SugarTestQuotaUtilities::createQuota(500);
+        $this->quota->currency_id = $this->currency->id;
+        $this->quota->base_rate = $this->currency->conversion_rate;
+        $this->quota->save();
+
         $this->jobRan = FALSE;
     }
 
@@ -75,9 +89,12 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
-        //SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        //SugarTestForecastUtilities::removeAllCreatedForecasts();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestForecastUtilities::removeAllCreatedForecasts();
+        SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+
     }
 
     protected function createJob($data)
@@ -126,9 +143,13 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $oppBaseRate = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunity->id));
         $forecastBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
+        $quotaBaseRate = $db->getOne(sprintf("SELECT base_rate FROM quotas WHERE id = '%s'", $this->quota->id));
+        $forecastScheduleBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecast_schedule WHERE id = '%s'", $this->forecastSchedule->id));
 
         $this->assertEquals(1.234, $oppBaseRate, 'opportunities.base_rate was modified by BaseRateSchedulerJob');
         $this->assertEquals(1.4, $forecastBaseRate, 'forecasts.base_rate was not modified by BaseRateSchedulerJob');
+        $this->assertEquals(1.4, $quotaBaseRate, 'quota.base_rate was not modified by BaseRateSchedulerJob');
+        $this->assertEquals(1.4, $forecastScheduleBaseRate, 'forecast_schedule.base_rate was not modified by BaseRateSchedulerJob');
     }
 
 }
