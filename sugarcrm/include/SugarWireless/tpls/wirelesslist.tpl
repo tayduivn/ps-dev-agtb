@@ -65,15 +65,31 @@
 					<a href="index.php?module={$MODULE}&action=wirelessdetail&record={$rowData.ID}">{$rowData.$col}</a>
                 {elseif $params.customCode} 
 					{sugar_evalcolumn_old var=$params.customCode rowData=$rowData}
-				{elseif $params.currency_format} 
-					{sugar_currency_format 
-                        var=$rowData.$col 
-                        round=$params.currency_format.round 
-                        decimals=$params.currency_format.decimals 
-                        symbol=$params.currency_format.symbol
-                        convert=$params.currency_format.convert
-                        currency_symbol=$params.currency_format.currency_symbol
-					}
+				{elseif $params.currency_format}
+                    {**
+                     * Need to refactor this wireless list fields to use the
+                     * SugarFields enabling customization levels per field.
+                     * Currency fields shouldn't be defined using name fields
+                     * like "_USD", but rather a parameter telling what is the
+                     * related currency for that field.
+                     *
+                     * @see SugarFieldCurrency::getListViewSmarty
+                     * @see include/SugarFields/Fields/Currency/ListView.tpl
+                     *}
+                    {if stripos(strtoupper($col), '_USD')}
+                        {sugar_currency_format var=$rowData.$col}
+                    {elseif !empty($rowData.CURRENCY_ID)}
+                        {sugar_currency_format var=$rowData.$col
+                        currency_id=$rowData.CURRENCY_ID
+                        }
+                    {elseif !empty($rowData.currency_id)}
+                        {sugar_currency_format var=$rowData.$col
+                        currency_id=$rowData.currency_id
+                        }
+                    {else}
+                        {* empty currency id *}
+                        {sugar_currency_format var=$rowData.$col}
+                    {/if}
 				{elseif $params.type == 'bool'}
 						<input type='checkbox' disabled=disabled class='checkbox'
 						{if !empty($rowData[$col])}
