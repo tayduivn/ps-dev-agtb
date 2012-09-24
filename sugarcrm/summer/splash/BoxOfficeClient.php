@@ -53,7 +53,7 @@ class BoxOfficeClient
             $this->session = $this->session_data['token'];
         }
 
-//        if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
+        if (!empty($_SESSION['logged_in_user'])) $this->user = $_SESSION['logged_in_user'];
     }
 
    /**
@@ -135,7 +135,7 @@ class BoxOfficeClient
             $this->user = $this->callBox("POST", "rest/users/login", array("email" => $email, "password" => $password));
         }
         if ($this->user) {
-//            $_SESSION['logged_in_user'] = $this->user;
+            $_SESSION['logged_in_user'] = $this->user;
             return $this->getUserInstances();
         } else {
             return false;
