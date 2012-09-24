@@ -35,7 +35,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         //BEGIN SUGARCRM flav=pro ONLY
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();

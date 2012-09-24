@@ -295,7 +295,7 @@ class SugarTestForecastUtilities
             self::$timeperiod = null;
         }
         SugarTestForecastUtilities::removeAllCreatedForecasts();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
     }
