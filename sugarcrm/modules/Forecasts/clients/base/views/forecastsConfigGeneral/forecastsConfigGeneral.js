@@ -5,7 +5,6 @@
     },
 
     close: function(evt) {
-        debugger;
         this.layout.context.trigger("modal:close");
     },
 

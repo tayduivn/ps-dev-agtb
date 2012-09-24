@@ -126,7 +126,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
         $query .= " ON o.assigned_user_id = u.id ";
         $query .= " left join timeperiods t ";
-        $query .= " ON t.start_date_timestamp < o.date_closed_timestamp ";
+        $query .= " ON t.start_date_timestamp <= o.date_closed_timestamp ";
         $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
         $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
         $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);
@@ -167,7 +167,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
         $query .= " ON o.assigned_user_id = u.id";
         $query .= " left join timeperiods t ";
-        $query .= " ON t.start_date_timestamp < o.date_closed_timestamp ";
+        $query .= " ON t.start_date_timestamp <= o.date_closed_timestamp ";
         $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
         $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
         $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);

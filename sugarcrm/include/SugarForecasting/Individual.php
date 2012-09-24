@@ -72,7 +72,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             "w.base_rate w_base_rate " .
             "from opportunities o " .
             "left join timeperiods t ".
-            "on t.start_date_timestamp < o.date_closed_timestamp ".
+            "on t.start_date_timestamp <= o.date_closed_timestamp ".
             "and t.end_date_timestamp >= o.date_closed_timestamp ".
             "left join worksheet w " .
             "on o.id = w.related_id ";
