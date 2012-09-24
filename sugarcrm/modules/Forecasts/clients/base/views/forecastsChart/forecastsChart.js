@@ -10,8 +10,43 @@
 
     chart: null,
 
+    chartRendered: false,
+    commitUpdate: false,
+
     chartTitle: '',
     timeperiod_label: '',
+
+    /**
+     * events on the view to watch for
+     */
+    events : {
+        'click #forecastsChartDisplayOptions input[type=radio]' : 'changeDisplayOptions'
+    },
+
+    /**
+     * event handler to update which dataset is used.
+     */
+    changeDisplayOptions : function()
+    {
+        this.handleRenderOptions({dataset: this.getCheckedDisplayOptions()})
+    },
+
+    /**
+     * find all the checkedDisplayOptions
+     *
+     * @return {Array}
+     */
+    getCheckedDisplayOptions : function()
+    {
+        var chkOptions = this.$el.find("input[type=radio]:checked");
+
+        var datasets = [];
+        _.each(chkOptions, function(o) {
+            datasets.push(o.value);
+        });
+
+        return datasets;
+    },
 
     /**
      * Override the _rerderHtml function
@@ -22,16 +57,17 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
+
         var values = {
             user_id: app.user.get('id'),
             display_manager : app.user.get('isManager'),
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
             group_by : app.defaultSelections.group_by.id,
-            dataset : app.defaultSelections.dataset.id,
+            dataset : this.getCheckedDisplayOptions(),
             category : app.defaultSelections.category
         };
 
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
         this.handleRenderOptions(values);
     },
 
@@ -40,6 +76,18 @@
      */
     bindDataChange:function () {
         var self = this;
+        this.context.forecasts.worksheetmanager.on('reset', function(){
+
+            if(self.commitUpdate && self.chartRendered) {
+                self.commitUpdate = false;
+                self.renderChart();
+            }
+        }, this);
+        this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
+            if(flag) {
+                self.commitUpdate = true;
+            }
+        }, this);
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
         });
@@ -51,18 +99,13 @@
             self.handleRenderOptions({group_by: groupBy});
         });
         this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
-            self.handleRenderOptions({dataset: dataset});
+            //self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
             if (app.config.show_buckets == 0) {
                 // TODO: this.
             } else {
                 self.handleRenderOptions({category:_.first(value)});
-            }
-        });
-        this.context.forecasts.on('change:updatedTotals', function(context, totals){
-            if(!_.isEmpty(self.chart)) {
-                self.updateChart();
             }
         });
     },
@@ -111,7 +154,7 @@
             },
             chartConfig = {
                 "orientation":"vertical",
-                "barType":"stacked",
+                "barType": this.values.display_manager ? "grouped" : "stacked",
                 "tip":"name",
                 "chartType":"barChart",
                 "imageExportType":"png",
@@ -152,6 +195,7 @@
         this.$el.find('h4').html(text);
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
+        this.chartRendered = true;
         return chart.chartObject;
     }
 })

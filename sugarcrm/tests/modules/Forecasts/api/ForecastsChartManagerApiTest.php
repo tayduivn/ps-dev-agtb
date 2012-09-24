@@ -38,14 +38,14 @@ class ForecastsChartManagerApiTest extends RestTestBase
     protected static $user;
 
     /**
-     * @var Forecast
+     * @var array
      */
-    protected static $managerWorksheet;
+    protected static $manager;
 
     /**
-     * @var Forecast
+     * @var array
      */
-    protected static $repWorksheet;
+    protected static $rep;
 
     /**
      * @var TimePeriod;
@@ -63,98 +63,12 @@ class ForecastsChartManagerApiTest extends RestTestBase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        self::$user = SugarTestUserUtilities::createAnonymousUser();
 
-        $rep = SugarTestUserUtilities::createAnonymousUser();
-        $rep->reports_to_id = self::$user->id;
-        $rep->save();
 
-        self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod("2012-01-01", "2012-03-31");
-        self::$timeperiod->name = "Test";
-        self::$timeperiod->save();
+        self::$manager = SugarTestForecastUtilities::createForecastUser();
+        self::$rep = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => self::$manager['user']->id)));
 
-        $managerOpp = SugarTestOpportunityUtilities::createOpportunity();
-        $managerOpp->assigned_user_id = self::$user->id;
-        $managerOpp->timeperiod_id = self::$timeperiod->id;
-        $managerOpp->amount = 1800;
-        $managerOpp->likely_case = 1700;
-        $managerOpp->best_case = 1900;
-        $managerOpp->probability = '85';
-        $managerOpp->date_closed = '2012-01-30';
-        $managerOpp->team_id = '1';
-        $managerOpp->team_set_id = '1';
-        $managerOpp->save();
-
-        $repOpp = SugarTestOpportunityUtilities::createOpportunity();
-        $repOpp->assigned_user_id = $rep->id;
-        $repOpp->timeperiod_id = self::$timeperiod->id;
-        $repOpp->amount = 1300;
-        $repOpp->likely_case = 1200;
-        $repOpp->best_case = 1400;
-        $repOpp->probability = '85';
-        $repOpp->date_closed = '2012-01-30';
-        $repOpp->team_id = '1';
-        $repOpp->team_set_id = '1';
-        $repOpp->save();
-
-        //setup quotas
-        $managerQuota = SugarTestQuotaUtilities::createQuota(2000);
-        $managerQuota->user_id = self::$user->id;
-        $managerQuota->quota_type = "Direct";
-        $managerQuota->timeperiod_id = self::$timeperiod->id;
-        $managerQuota->team_set_id = 1;
-        $managerQuota->save();
-
-        $repQuota = SugarTestQuotaUtilities::createQuota(1500);
-        $repQuota->user_id = $rep->id;
-        $repQuota->quota_type = "Direct";
-        $repQuota->timeperiod_id = self::$timeperiod->id;
-        $repQuota->team_set_id = 1;
-        $repQuota->save();
-
-        //setup forecasts
-        $managerForecast = new Forecast();
-        $managerForecast->user_id = self::$user->id;
-        $managerForecast->best_case = 1500;
-        $managerForecast->likely_case = 1200;
-        $managerForecast->worst_case = 900;
-        $managerForecast->timeperiod_id = self::$timeperiod->id;
-        $managerForecast->forecast_type = "Direct";
-        $managerForecast->team_set_id = 1;
-        $managerForecast->save();
-
-        $repForecast = new Forecast();
-        $repForecast->user_id = $rep->id;
-        $repForecast->best_case = 1100;
-        $repForecast->likely_case = 900;
-        $repForecast->worst_case = 700;
-        $repForecast->timeperiod_id = self::$timeperiod->id;
-        $repForecast->forecast_type = "Direct";
-        $repForecast->team_set_id = 1;
-        $repForecast->save();
-
-        //setup worksheets
-        self::$managerWorksheet = SugarTestWorksheetUtilities::createWorksheet();
-        self::$managerWorksheet->user_id = self::$user->id;
-        self::$managerWorksheet->related_id = self::$user->id;
-        self::$managerWorksheet->forecast_type = "Direct";
-        self::$managerWorksheet->timeperiod_id = self::$timeperiod->id;
-        self::$managerWorksheet->best_case = 1550;
-        self::$managerWorksheet->likely_case = 1250;
-        self::$managerWorksheet->worst_case = 950;
-        self::$managerWorksheet->team_set_id = 1;
-        self::$managerWorksheet->save();
-
-        self::$repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
-        self::$repWorksheet->user_id = self::$user->id;
-        self::$repWorksheet->related_id = $rep->id;
-        self::$repWorksheet->forecast_type = "Rollup";
-        self::$repWorksheet->timeperiod_id = self::$timeperiod->id;
-        self::$repWorksheet->best_case = 1150;
-        self::$repWorksheet->likely_case = 950;
-        self::$repWorksheet->worst_case = 750;
-        self::$repWorksheet->team_set_id = 1;
-        self::$repWorksheet->save();
+        self::$timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
         parent::setUpBeforeClass();
     }
@@ -166,13 +80,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
      */
     public static function tearDownAfterClass()
     {
-        $userIds = SugarTestUserUtilities::getCreatedUserIds();
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        $GLOBALS['db']->query('DELETE FROM forecasts WHERE user_id IN (\'' . implode("', '", $userIds) . '\')');
+        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
 
         parent::tearDownAfterClass();
         // this strange as we only want to call this when the class expires;
@@ -194,7 +102,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
      */
     protected function runRestCommand($dataset = 'likely')
     {
-        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$user->id . '&group_by=sales_stage&dataset=' . $dataset . '&display_manager=true';
+        $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod->id . '&user_id=' . self::$manager['user']->id . '&group_by=sales_stage&dataset=' . $dataset . '&display_manager=true';
         $restReply = $this->_restCall($url);
 
         return $restReply['reply'];
@@ -211,98 +119,49 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $this->assertEquals(2, count($data['values']));
     }
 
-    /**
-     * @group forecastapi
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testPropertyValueNameContainsAdjusted()
+    public function dataProviderWorksheetValues()
     {
-        $data = $this->runRestCommand();
-        $this->assertContains('(Adjusted)', $data['properties'][0]['value_name']);
-    }
-
-    /**
-     * @group forecastapi
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testGoalParetoLabelContainsAdjusted()
-    {
-        $data = $this->runRestCommand();
-        $this->assertContains('(Adjusted)', $data['properties'][0]['goal_marker_label'][1]);
+        // keys are as follows
+        // 1 -> where do we get the data from
+        // 2 -> dataset type
+        // 3 -> dataset field name
+        // 4 -> position in value array
+        return array(
+            array('worksheet', 'likely', '_case', 1),
+            array('worksheet', 'best', '_case', 1),
+            array('worksheet', 'worst', '_case', 1),
+            array('forecast', 'likely', '_case', 0),
+            array('forecast', 'best', '_case', 0),
+            array('forecast', 'worst', '_case', 0)
+        );
     }
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @dataProvider dataProviderWorksheetValues
      * @group forecastapi
      * @group forecasts
      * @group forecastschart
      */
-    public function testManagerValueIsLikelyAdjustedValueFromWorksheet()
+    public function testManagerValueIsCorrectValueFromWorksheet($type, $dataset, $field, $pos)
     {
-        $data = $this->runRestCommand();
-        $this->assertEquals(self::$managerWorksheet->likely_case, $data['values'][0]['values'][0]);
+        $data = $this->runRestCommand($dataset);
+        $_field = $dataset . $field;
+        $this->assertEquals(self::$manager[$type]->$_field, $data['values'][0]['values'][$pos]);
     }
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @dataProvider dataProviderWorksheetValues
      * @group forecastapi
      * @group forecasts
      * @group forecastschart
      */
-    public function testReporteeValueIsLikelyAdjustedValueFromWorksheet()
+    public function testReporteeValueIsCorrectValueFromWorksheet($type, $dataset, $field, $pos)
     {
-        $data = $this->runRestCommand();
-        $this->assertEquals(self::$repWorksheet->likely_case, $data['values'][1]['values'][0]);
-    }
-
-    /**
-     * @depends testChartDataShouldContainTwoUsers
-     * @group forecastapi
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testManagerValueIsBestAdjustedValueFromWorksheet()
-    {
-        $data = $this->runRestCommand('best');
-        $this->assertEquals(self::$managerWorksheet->best_case, $data['values'][0]['values'][0]);
-    }
-
-    /**
-     * @depends testChartDataShouldContainTwoUsers
-     * @group forecastapi
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testReporteeValueIsBestAdjustedValueFromWorksheet()
-    {
-        $data = $this->runRestCommand('best');
-        $this->assertEquals(self::$repWorksheet->best_case, $data['values'][1]['values'][0]);
-    }
-
-    /**
-     * @depends testChartDataShouldContainTwoUsers
-     * @group forecastapi
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testManagerValueIsWorstAdjustedValueFromWorksheet()
-    {
-        $data = $this->runRestCommand('worst');
-        $this->assertEquals(self::$managerWorksheet->worst_case, $data['values'][0]['values'][0]);
-    }
-
-    /**
-     * @depends testChartDataShouldContainTwoUsers
-     * @group forecastapi
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testReporteeValueIsWorstAdjustedValueFromWorksheet()
-    {
-        $data = $this->runRestCommand('worst');
-        $this->assertEquals(self::$repWorksheet->worst_case, $data['values'][1]['values'][0]);
+        $data = $this->runRestCommand($dataset);
+        $_field = $dataset . $field;
+        $this->assertEquals(self::$rep[$type]->$_field, $data['values'][1]['values'][$pos]);
     }
 
     /**
@@ -316,11 +175,11 @@ class ForecastsChartManagerApiTest extends RestTestBase
         global $app_list_strings;
         $app_list_strings = return_app_list_strings_language('en_us');
         $rep = SugarTestUserUtilities::createAnonymousUser();
-        $rep->reports_to_id = self::$user->id;
+        $rep->reports_to_id = self::$manager['user']->id;
         $rep->save();
 
         $repOpp = SugarTestOpportunityUtilities::createOpportunity();
-        $repOpp->assigned_user_id = self::$user->id;
+        $repOpp->assigned_user_id = self::$manager['user']->id;
         $repOpp->timeperiod_id = self::$timeperiod->id;
         $repOpp->amount = 1800;
         $repOpp->likely_case = 1700;
@@ -333,7 +192,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
         //setup quotas
         $repQuota = SugarTestQuotaUtilities::createQuota(2000);
-        $repQuota->user_id = self::$user->id;
+        $repQuota->user_id = self::$manager['user']->id;
         $repQuota->quota_type = "Direct";
         $repQuota->timeperiod_id = self::$timeperiod->id;
         $repQuota->team_set_id = 1;

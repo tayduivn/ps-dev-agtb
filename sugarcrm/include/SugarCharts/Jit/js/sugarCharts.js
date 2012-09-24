@@ -116,7 +116,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 color: css["gridLineColor"]
                             },
                             //bars separation
-                            barsOffset: (chartConfig["orientation"] == "vertical") ? 30 : 20,
+                            barsOffset: (chartConfig["orientation"] == "vertical") ? 10 : 20,
                             //visualization offset
                             Margin: {
                                 top:20,
@@ -175,7 +175,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                         }
 
                                         if(properties.label_name != "undefined" && properties.label_name != "") {
-                                            eval("tip.innerHTML = properties.label_name + ': <b>' + elem."+chartConfig["tip"]+" + '</b><br> '+properties.value_name+': <b>' + "+value+" + '</b> <br> Percentage: <b>' + elem.percentage + '</b>' + drillDown");
+                                            eval("tip.innerHTML = properties.label_name + ': <b>' + elem."+chartConfig["tip"]+" + '</b><br> '+properties.value_name+': <b>' + "+value+" + '</b>' + drillDown");
                                         } else {
                                             eval("tip.innerHTML = '<b>' + elem."+chartConfig["tip"]+" + '</b>: ' + "+value+" + ' - ' + elem.percentage + '%' + drillDown");
                                         }
