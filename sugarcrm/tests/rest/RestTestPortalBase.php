@@ -76,6 +76,21 @@ class RestTestPortalBase extends RestTestBase {
 
         // Adding it to the contacts array makes sure it gets deleted when done
         $this->contacts[] = $this->contact;
+
+        // Add the support_portal oauth key
+        $consumer = BeanFactory::newBean('OAuthKeys');
+        // Delete any stale unit test keys
+        $db->query("DELETE FROM ".$consumer->table_name." WHERE id LIKE 'UNIT-TEST-%'");
+
+        // Create a unit test login ID
+        $consumer->id = 'UNIT-TEST-portallogin';
+        $consumer->new_with_id = true;
+        $consumer->c_key = 'support_portal';
+        $consumer->c_secret = '';
+        $consumer->oauth_type = 'oauth2';
+        $consumer->client_type = 'support_portal';
+        $consumer->save();
+        
         $GLOBALS['db']->commit();
     }
     public function tearDown()
@@ -153,6 +168,7 @@ class RestTestPortalBase extends RestTestBase {
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         
         // Prevent an infinite loop, put a fake authtoken in here.

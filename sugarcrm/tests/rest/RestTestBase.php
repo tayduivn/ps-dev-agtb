@@ -51,7 +51,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->commit();
     }
 
-    protected function _restLogin($username = '', $password = '')
+    protected function _restLogin($username = '', $password = '', $platform = 'base')
     {
         if ( empty($username) && empty($password) ) {
             $username = $this->_user->user_name;
@@ -65,6 +65,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             'password' => $password,
             'client_id' => $this->consumerId,
             'client_secret' => '',
+            'platform' => $platform,
         );
         
         // Prevent an infinite loop, put a fake authtoken in here.

@@ -113,6 +113,7 @@ class RestBug54528Test extends RestTestBase {
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         // reload user
 

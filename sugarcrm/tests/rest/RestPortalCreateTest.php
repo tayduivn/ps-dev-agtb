@@ -100,6 +100,7 @@ class RestPortalCreateTest extends RestTestBase
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
 
         // Prevents _restCall from automatically logging in

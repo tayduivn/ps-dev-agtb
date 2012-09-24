@@ -61,6 +61,7 @@ class RestLoginTest extends RestTestBase
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
 
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -87,6 +88,7 @@ class RestLoginTest extends RestTestBase
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -124,6 +126,7 @@ class RestLoginTest extends RestTestBase
             'password' => $this->_user->user_name,
             'client_id' => $consumer->c_key,
             'client_secret' => '',
+            'platform' => 'base',
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -148,6 +151,7 @@ class RestLoginTest extends RestTestBase
             'password' => $this->_user->user_name,
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -168,6 +172,7 @@ class RestLoginTest extends RestTestBase
             'refresh_token' => $refreshToken,
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
         
         // Prevents _restCall from automatically logging in
@@ -222,6 +227,7 @@ class RestLoginTest extends RestTestBase
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         
         $reply = $this->_restCall('oauth2/token',json_encode($args));
@@ -243,6 +249,7 @@ class RestLoginTest extends RestTestBase
             'refresh_token' => $refreshToken,
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         
         // Prevents _restCall from automatically logging in
@@ -312,6 +319,7 @@ class RestLoginTest extends RestTestBase
             'password' => 'this is not the correct password',
             'client_id' => 'sugar',
             'client_secret' => '',
+            'platform' => 'base',
         );
 
         $reply = $this->_restCall('oauth2/token',json_encode($args));
