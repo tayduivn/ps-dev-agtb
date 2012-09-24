@@ -18,8 +18,8 @@
         'click [name=show_more_button]': 'showMoreRecords',
         'keyup .sayit': 'getEntities',
         'blur .sayit': 'hideTypeahead',
-        'mouseover ul.typeahead li': 'switchActiveTypeahead',
-        'click ul.typeahead li': 'addTag',
+        'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
+        'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
         'click .sayit .label a.close': 'removeTag'
     },
 
@@ -317,7 +317,7 @@
 
     _getEntities: _.debounce(function(event) {
         var el = this.$(event.currentTarget);
-        el.parent().find("ul.typeahead").remove();
+        el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
         var word = event.currentTarget.innerText;
         if (word.indexOf("@") === -1) {
             // If there's no @, don't do anything.
@@ -380,14 +380,14 @@
         this._getEntities(event);
     },
 
-    hideTypeahead: function(event) {
+    hideTypeahead: function() {
         setTimeout(function() {
-            self.$("ul.typeahead").remove();
+            self.$("ul.typeahead.activitystream-tag-dropdown").remove();
         }, 150);
     },
 
     switchActiveTypeahead: function(event) {
-        this.$("ul.typeahead .active").removeClass('active');
+        this.$("ul.typeahead.activitystream-tag-dropdown .active").removeClass('active');
         this.$(event.currentTarget).addClass('active');
     },
 
@@ -414,8 +414,7 @@
     },
 
     removeTag: function(event) {
-        var el = this.$(event.currentTarget);
-        el.parent().remove();
+        this.$(event.currentTarget).parent().remove();
     },
 
     _renderHtml: function() {

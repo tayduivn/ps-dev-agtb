@@ -1,4 +1,5 @@
 <div class="record">
+    {{#if editable}}
     <div class="row-fluid record-button-bar">
         <div class="btn-group pull-right">
             <a class="btn btn-small record-save btn-success btn-disabled">Save</a>
@@ -7,6 +8,7 @@
             <a class="btn btn-small record-delete" data-toggle="modal" href="#delete-confirmation">Delete</a>
         </div>
     </div>
+    {{/if}}
         {{#if model.isNotEmpty}}
             {{#each meta.panels}}
                 {{#each grid}}

@@ -89,6 +89,14 @@
         app.view.View.prototype._renderHtml.call(this);
     },
 
+    checkReadOnly: function() {
+        if (this.context.get("model").module == "Users") {
+            this.editable = (app.user.get("id") == this.context.get("model").id);
+        } else {
+            this.editable = app.acl.hasAccessToModel("edit", this.model);
+        }
+    },
+
     toggleMoreLess: function() {
         this.$(".less").toggleClass("hide");
         this.$(".more").toggleClass("hide");
@@ -98,16 +106,10 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                if (this.context.get('subnavModel')) {
-                    this.context.get('subnavModel').set({
-                        'title': this.model.get('name'),
-                        'meta': this.meta
-                    });
-
-                    if (this.model.isNotEmpty !== true) {
-                        this.model.isNotEmpty = true;
-                        this.render();
-                    }
+                if (this.model.isNotEmpty !== true) {
+                    this.model.isNotEmpty = true;
+                    this.checkReadOnly();
+                    this.render();
                 }
             }, this);
         }
