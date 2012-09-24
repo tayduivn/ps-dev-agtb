@@ -5,7 +5,8 @@
         this.context.on('quickcreate:edit', this.editExisting, this);
         this.context.on('quickcreate:restore', this.restoreModel, this);
         this.context.on('quickcreate:validateModel', this.validateModel, this);
-        this.context.on('quickcreate:highlightDuplicateFields', this);
+        this.context.on('quickcreate:highlightDuplicateFields', this.highlightDuplicateFields, this);
+        this.context.on('quickcreate:clearHighlightDuplicateFields', this.clearHighlightDuplicateFields, this)
         this.model.on("error:validation", this.handleValidationError, this);
     },
 
@@ -84,6 +85,34 @@
                 }
             }
         });
+    },
+
+    /**
+     * Highlights all of the user keys that were used in the duplicate match.
+     * @param {array} List of user keys used in the module search
+     * @param {boolean} whether to turn on or off the warnings
+     */
+    highlightDuplicateFields: function(keys) {
+        var self = this,
+            cssName = 'warning';
+
+        keys = ['first_name','last_name'];
+        _.each(keys, function (fieldName) {
+            var field = self.getField(fieldName);
+            var ftag = this.fieldTag || '';
+
+            if (field) {
+                var controlGroup = field.$el.parents('.control-group:first');
+
+                if (controlGroup) {
+                    controlGroup.addClass(cssName);
+                }
+            }
+        });
+    },
+
+    clearHighlightDuplicateFields: function() {
+         this.$('div .control-group.warning').removeClass('warning');
     },
 
     /**

@@ -103,7 +103,6 @@
                 }
             },
             error = function() {
-                console.log('dupe check failed on server').
                 callback(true);
             };
 
@@ -167,6 +166,7 @@
      */
     resetDuplicateState: function() {
         this.skipDupCheck(false);
+        this.context.trigger('quickcreate:clearHighlightDuplicateFields');
         this.context.trigger('quickcreate:actions:setButtonAsSave');
         this.context.trigger('quickcreate:alert:dismiss');
         this.context.trigger('quickcreate:list:close');
