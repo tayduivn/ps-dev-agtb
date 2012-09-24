@@ -123,6 +123,18 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             $values[] = $val;
         }
 
+        // fix the properties
+        $properties = $this->defaultPropertiesArray;
+        // remove the pareto lines
+        unset($properties['goal_marker_label'][1]);
+        $properties['value_name'] = $forecast_strings['LBL_CHART_AMOUNT'];
+        $properties['label_name'] = $forecast_strings['LBL_CHART_TYPE'];
+        // add a second pareto line
+        $properties['goal_marker_type'][] = "pareto";
+        // set the pareto line colors
+        $properties['goal_marker_color'][1] = $this->defaultColorsArray[0];
+        $properties['goal_marker_color'][2] = $this->defaultColorsArray[1];
+
         // figure out the labels
         $labels = array();
         foreach ($this->dataset as $dataset) {
@@ -143,13 +155,8 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             }
         }
 
-        // fix the properties
-        $properties = $this->defaultPropertiesArray;
-
-        // remove the pareto lines
-        unset($properties['goal_marker_type'][1], $properties['goal_marker_color'][1], $properties['goal_marker_label'][1]);
-        $properties['value_name'] = $forecast_strings['LBL_CHART_AMOUNT'];
-        $properties['label_name'] = $forecast_strings['LBL_CHART_TYPE'];
+        // set the pareto labels
+        $properties['goal_marker_label'] = array_merge($properties['goal_marker_label'], $labels);
 
         // create the chart array
         $chart = array(
