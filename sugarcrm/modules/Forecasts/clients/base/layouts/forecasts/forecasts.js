@@ -25,6 +25,18 @@
 
             options.context = _.extend(options.context, this.initializeAllModels());
 
+            // Initialize the config model
+            var ConfigModel = Backbone.Model.extend({
+                url: app.api.buildURL("Forecasts", "config"),
+                sync: function(method, model, options) {
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, model, options);
+                },
+                // include metadata from config into the config model by default
+                defaults: app.metadata.getModule('Forecasts').config
+            });
+            options.context.forecasts.config = new ConfigModel();
+
             var defaultSelections = app.defaultSelections;
 
             // Set initial selected data on the context
@@ -106,18 +118,6 @@
                 }
 
             });
-
-            // Fetch the config model
-            if(self.context.forecasts.config) {
-                try {
-                    self.context.forecasts.config.fetch();
-                } catch (e) {
-                    app.alert.show("forecastsConfigError", {
-                        messages : e.message,
-                        level:"error"
-                    })
-                }
-            }
         },
 
         /**
@@ -129,24 +129,13 @@
             var self = this,
                 componentsMetadata = this.componentsMeta,
                 module = app.viewModule.toLowerCase(),
-                models = {},
-                configModel;
+                models = {};
 
             // creates the context.forecasts topmost model
             models[module] = app.data.createBean(module);
 
             // creates the config model as a special case
             self.namespace(models, module);
-            configModel = Backbone.Model.extend({
-                url: app.api.buildURL("Forecasts", "config"),
-                sync: function(method, model, options) {
-                    var url = _.isFunction(model.url) ? model.url() : model.url;
-                    return app.api.call(method, url, model, options);
-                }
-            }),
-
-            models[module]["config"] = new configModel();
-
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
                 var name,
@@ -266,7 +255,6 @@
 
             mdata = app.metadata.getModule("Forecasts");
             if (!mdata.config.is_setup) {
-//              TODO:  if (! user_is_admin) { show different stuff } else {
                 this._showConfigModal(true);
             }
 
@@ -280,12 +268,23 @@
          * @private
          */
         _showConfigModal: function(showWizard) {
-            var params = {
-               components:[{layout:"forecastsConfig"}],
-               title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
-           };
+            // callback is only used if the user is not an admin, gets to the modal,
+            // sees the "Not configured yet" message and clicks ok.  Not used if
+            // user is an admin, but needs to be passed
+            var callback = function(){};
 
-           this.trigger("modal:forecastsConfig:open", params);
+            // begin building params to pass to modal
+            var params = {
+                title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
+            };
+
+            if(app.user.get('isAdmin')) {
+                params.components = [{layout:"forecastsConfig"}];
+            } else {
+                params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
+            }
+
+            this.trigger("modal:forecastsConfig:open", params, callback);
         },
 
         /**
