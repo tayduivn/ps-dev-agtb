@@ -26,15 +26,22 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
     protected $createdBeans = array();
     protected $createdFiles = array();
 
-    public function setUp()
+    public static function setUpBeforeClass()
 	{
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+
+
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
 	}
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
 
 	public function tearDown()
 	{
@@ -46,9 +53,10 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
         foreach($this->createdFiles as $file)
         {
             if (is_file($file))
+            {
                 unlink($file);
+            }
         }
-        SugarTestHelper::tearDown();
 	}
 	
 

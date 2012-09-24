@@ -33,7 +33,7 @@ class DBHelperTest extends Sugar_PHPUnit_Framework_TestCase
     private $_db;
     private $_helper;
 
-    static public function setupBeforeClass()
+    static public function setUpBeforeClass()
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);

@@ -66,6 +66,9 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+
         global $mod_strings;
         $mod_strings = return_module_language($GLOBALS['current_language'], 'EmailTemplates');
 
