@@ -38,7 +38,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'show_worksheet_best',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_RANGE_BEST',
+                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
@@ -46,7 +46,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                 array(
                     'name' => 'show_worksheet_worst',
                     'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_RANGE_WORST',
+                    'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
