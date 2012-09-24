@@ -23,13 +23,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('modules/SchedulersJobs/SchedulersJob.php');
 
+/**
+ * BaseRateSchedulerJob.php
+ *
+ * This class implements RunnableSchedulerJob and provides the support for modifying the base_column value for tables
+ * when a currency rate has been updated.
+ *
+ */
 class BaseRateSchedulerJob implements RunnableSchedulerJob {
 
     protected $job;
 
     /**
+     * This method implements setJob from RunnableSchedulerJob and sets the SchedulersJob instance for the class
      *
-     * @param SchedulersJob $job
+     * @param SchedulersJob $job the SchedulersJob instance set by the job queue
      *
      */
     public function setJob(SchedulersJob $job)
@@ -37,6 +45,11 @@ class BaseRateSchedulerJob implements RunnableSchedulerJob {
         $this->job = $job;
     }
 
+    /**
+     * This method implements the run function of RunnableSchedulerJob and handles processing a SchedulersJob
+     *
+     * @param Mixed $data parameter passed in from the job_queue.data column when a SchedulerJob is run
+     */
     public function run($data)
     {
         $db = DBManagerFactory::getInstance();
@@ -49,7 +62,22 @@ class BaseRateSchedulerJob implements RunnableSchedulerJob {
         $currencyId = $dataText->currencyId;
         $currency = BeanFactory::getBean('Currencies', $currencyId);
 
-        $tables = array('forecasts', 'worksheet', 'opportunities');
+        $tables = $db->getTablesArray();
+        foreach($tables as $table) {
+            $columns = $db->get_columns($table);
+            if(isset($columns['base_rate']) && isset($columns['currency_id']))
+            {
+                if(!in_array($table, $excludeModules))
+                {
+                    $sql = sprintf("UPDATE %s SET base_rate = %s WHERE currency_id = '%s'", $table, $currency->conversion_rate, $currency->id);
+                    $db->query($sql);
+                }
+            }
+        }
+
+        /*
+        //This is probably more optimal, but not as generic
+        $tables = array('forecasts', 'worksheet', 'opportunities', 'quotas', 'quotes', 'forecast_schedule');
 
         foreach($tables as $table)
         {
@@ -59,6 +87,7 @@ class BaseRateSchedulerJob implements RunnableSchedulerJob {
                 $db->query($sql);
             }
         }
+        */
 
         $db->commit();
     }
