@@ -1,27 +1,25 @@
 <div class="block filtered tabbable tabs-left" id="moduleActivity">
-  <ul id="activitystream-pills" class="nav nav-pills" tour="tour-stream-filter">
-    {{#if opts.params.filter}}
-        <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
-        <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
-        {{#if opts.params.id}}
-        {{else}}
-            <li class="filterFavorites{{#eq opts.params.filter "favorites"}} active{{/eq}}"><a><span>My Favorites</span></a></li>
-        {{/if}}
-    {{else}}
-        <li class="filterAll active"><a><span>All Activities</span></a></li>
-        <li class="filterMyActivities"><a><span>My Activities</span></a></li>
-        {{#if opts.params.id}}
-        {{else}}
-            <li class="filterFavorites"><a><span>My Favorites</span></a></li>
-        {{/if}}
-    {{/if}}
-  </ul>
-  <h4 id="activitystream-header">&nbsp;</h4>
-  <div class="activitystream-post">
-    <p>
-      <div contenteditable="true" class="span12 sayit" dropzone="copy" tour="tour-stream-post" />
-      <input type="submit" class="btn btn-primary addPost" value="Post"/>
-    </p>
+  <div class="row">
+    <ul id="activitystream-pills" class="nav nav-pills" tour="tour-stream-filter">
+          <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
+          <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
+          {{#if opts.params.id}}
+          {{else}}
+              <li class="filterFavorites{{#eq opts.params.filter "favorites"}} active{{/eq}}"><a><span>My Favorites</span></a></li>
+          {{/if}}
+    </ul>
+  </div>
+  <div class="activitystream-post row omnibar">
+      <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
+        <img src="{{picture_url}}" alt="{{full_name}}">
+      </a>
+      <div contenteditable="true" class="span10 offset2 sayit" dropzone="copy" tour="tour-stream-post" />
+      <div class="inputactions span10">
+        <a href=""><i class="icon-tag"></i></a>
+        <a href=""><i class="icon-paper-clip"></i></a>
+        <input type="submit" class="pull-right btn btn-primary addPost" />
+        <span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a></span>
+      </div>
   </div>
   <form class="form-search hide" action="">
     <input value="" class="wide tleft" placeholder="Search activity...">
@@ -29,9 +27,9 @@
   <ul class="nav nav-tabs results activitystream-list">
     {{#if collection.models.length}}
       {{#each collection.models}}
-      <li data-id="{{attributes.id}}" class="{{#eq collection.user_id attributes.created_by}}{{#eq attributes.activity_type "posted"}}hasDeleteButton{{/eq}}{{/eq}}">
+      <li data-id="{{attributes.id}}" class="{{#eq user_id attributes.created_by}}{{#eq attributes.activity_type "posted"}}hasDeleteButton{{/eq}}{{/eq}}">
         <a href="#Users/{{attributes.created_by}}" class="avatar avatar42 pull-left">
-          <img src="{{#if attributes.created_by_picture}}../rest/v10/Users/{{attributes.created_by}}/file/picture?oauth_token={{collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" alt="{{this.created_by_name}}">
+          <img src="{{attributes.created_by_picture_url}}" alt="{{attributes.created_by_name}}">
         </a>
         <p>
           <a href="#Users/{{attributes.created_by}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
@@ -68,34 +66,34 @@
           <div class="activitystream-attachments">
             <ul class="thumbnails">
             {{#each attributes.notes}}
-              <li class="span4 activitystream-attachment" data-url="{{{this.url}}}" data-mime="{{{this.file_mime_type}}}" data-filename="{{{this.filename}}}">
-                {{#eq this.file_type "image"}}
-                <a href="#attachment-{{this.id}}" data-toggle="modal">
-                {{this.filename}}
-                <img src="{{this.url}}" class="activitystream-attachment-thumbnail" alt="{{this.filename}}" />
-                <div class="modal" style="display:none" id="attachment-{{this.id}}">
+              <li class="span4 activitystream-attachment" data-url="{{{url}}}" data-mime="{{{file_mime_type}}}" data-filename="{{{filename}}}">
+                {{#eq file_type "image"}}
+                <a href="#attachment-{{id}}" data-toggle="modal">
+                {{filename}}
+                <img src="{{url}}" class="activitystream-attachment-thumbnail" alt="{{filename}}" />
+                <div class="modal" style="display:none" id="attachment-{{id}}">
                   <div class="modal-header">
                     <a class="close" data-dismiss="modal">×</a>
-                    <h3>{{this.filename}}</h3>
+                    <h3>{{filename}}</h3>
                   </div>
                   <div class="modal-body">
-                     <a href="{{this.url}}"><img src="{{this.url}}" alt="{{this.filename}}" /></a>
+                     <a href="{{url}}"><img src="{{url}}" alt="{{filename}}" /></a>
                   </div>
                 </div>
                 </a>
                 {{/eq}}
-                {{#eq this.file_type "pdf"}}
-                <a href="{{this.url}}">
-                <i class="icon-download-alt"></i> {{this.filename}}
+                {{#eq file_type "pdf"}}
+                <a href="{{url}}">
+                <i class="icon-download-alt"></i> {{filename}}
                 </a>
                 {{/eq}}
-                {{#eq this.file_type "other"}}
-                <a href="{{this.url}}">
-                <i class="icon-download-alt"></i> {{this.filename}}
+                {{#eq file_type "other"}}
+                <a href="{{url}}">
+                <i class="icon-download-alt"></i> {{filename}}
                 </a>
                 {{/eq}}
               </li>
-              {{#if this.newline}}
+              {{#if newline}}
               </ul>
               <ul class="thumbnails">
               {{/if}}
@@ -115,7 +113,7 @@
                 {{/if}}
                 <li>
                   <a href="#Users/{{this.created_by}}" class="pull-left avatar">
-                    <img src="{{#if this.created_by_picture}}../rest/v10/Users/{{this.created_by}}/file/picture?oauth_token={{../../collection.oauth_token}}{{else}}../clients/summer/views/imagesearch/anonymous.jpg{{/if}}" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{created_by_picture_url}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a> commented "{{{this.value}}}"<br>
@@ -161,7 +159,7 @@
                       {{/if}}
                     <date class="date">{{timeago this.date_created}}</date>
                   </p>
-                  {{#eq ../collection.user_id this.created_by}}
+                  {{#eq ../user_id this.created_by}}
                     <div class="actions">
                       <a data-toggle="modal" data-module="ActivityComments" data-id="{{this.id}}" href="#deleteRecord" class="deleteRecord"><i class="icon-remove"></i></a>
                     </div>
@@ -177,8 +175,8 @@
          {{/if}}
              <li class="activitystream-comment {{#eq attributes.comments.length "0"}}hide{{/eq}}">
                 <div class="control-group form-horizontal">
-                <a href="#Users/{{collection.user_id}}" class="pull-left avatar">
-                    <img src="{{collection.picture_url}}" class="avatar" alt="{{collection.full_name}}">
+                <a href="#Users/{{../../user_id}}" class="pull-left avatar">
+                    <img src="{{../../picture_url}}" class="avatar" alt="{{../../full_name}}">
                 </a>
                 <div contenteditable="true" class="sayit activitystream-comment-box" dropzone="copy"></div>
                 <input type="submit" data-id="{{attributes.id}}" class="btn btn-primary postReply" value="Reply">
@@ -186,7 +184,7 @@
              </li>
          </ul>
         <div class="actions">
-          {{#eq collection.user_id attributes.created_by}}
+          {{#eq user_id attributes.created_by}}
           {{#eq attributes.activity_type "posted"}}
           <a data-module="ActivityStream" data-id="{{attributes.id}}" href="" class="deleteRecord"><i class="icon-remove" rel="tooltip" data-title="Delete"></i></a>
           {{/eq}}
