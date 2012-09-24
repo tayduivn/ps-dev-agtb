@@ -41,9 +41,9 @@
                     this.context.get('subnavModel').set({
                         'title': this.model.get('name')
                     });
-                    this.model.isNotEmpty = true;
-                    this.render();
                 }
+                this.model.isNotEmpty = true;
+                this.render();
             }, this);
         }
     }
