@@ -182,7 +182,7 @@ class MetadataApi extends SugarApi {
 
 
         // Default the type filter to everything available to the public, no module info at this time
-        $this->typeFilter = array('fields','viewTemplates','appStrings','views', 'layouts', 'config', 'modules');
+        $this->typeFilter = array('fields','viewTemplates','app_strings','views', 'layouts', 'config', 'modules');
 
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
