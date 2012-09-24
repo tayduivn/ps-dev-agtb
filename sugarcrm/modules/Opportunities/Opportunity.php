@@ -171,7 +171,7 @@ class Opportunity extends SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         $query .= " LEFT JOIN timeperiods
-                        ON timeperiods.start_date_timestamp < opportunities.date_closed_timestamp
+                        ON timeperiods.start_date_timestamp <= opportunities.date_closed_timestamp
                         AND timeperiods.end_date_timestamp >= opportunities.date_closed_timestamp ";
         //END SUGARCRM flav=pro ONLY
 
