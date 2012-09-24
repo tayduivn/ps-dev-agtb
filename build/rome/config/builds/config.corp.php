@@ -25,7 +25,6 @@ $config['builds']['corp']['languages']= array(
 'da_DK',
 'de_DE',
 'es_ES',
-'et_EE',
 'fr_FR',
 'he_IL',
 'hu_HU',
