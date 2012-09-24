@@ -5513,12 +5513,11 @@ class SugarBean
      */
     function process_workflow_alerts()
     {
-        require_once('include/workflow/WorkFlowHandler.php');
-        $handler = new WorkFlowHandler($this, 'after_save');
-        if(!empty($_SESSION['WORKFLOW_ALERTS']))
+        if (!empty($_SESSION['WORKFLOW_ALERTS'][$this->module_dir]))
         {
-            $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
-            unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+            require_once('include/workflow/WorkFlowHandler.php');
+            $handler = new WorkFlowHandler($this, 'after_save');
+            $handler->process_alerts($this);
         }
     }
     //END SUGARCRM flav=pro ONLY
