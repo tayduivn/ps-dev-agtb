@@ -37,6 +37,7 @@ class ReportsExportApi extends SugarApi {
                 'path' => array('Reports', '?', '?'),
                 'pathVars' => array('module', 'record', 'export_type'),
                 'method' => 'exportRecord',
+                'rawReply'=> true,
                 'shortHelp' => 'This method exports a record in the specified type',
                 'longHelp' => '',
             ),
@@ -125,13 +126,9 @@ class ReportsExportApi extends SugarApi {
             //Generate actual pdf
             $report_filename = template_handle_pdf($reporter, false);
 
-
-
             header("Pragma: public");
             header("Cache-Control: maxage=1, post-check=0, pre-check=0");
-            header("Content-Type: application/x-pdf");
-            header("Content-Type: application/force-download");
-            header("Content-type: application/octet-stream");
+            header("Content-Type: application/pdf");
             header("Content-Disposition: attachment; filename=\"".basename($report_filename)."\";");
             header("X-Content-Type-Options: nosniff");
             header("Content-Length: " . filesize($report_filename));
