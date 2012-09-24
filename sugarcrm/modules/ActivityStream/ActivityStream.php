@@ -236,6 +236,19 @@ class ActivityStream extends SugarBean {
             return false;
         }
 
+        if(empty($options['view'])) {
+            $options['view'] = 'list';
+        }
+        
+        // TimelineJS adds some garbage data to url
+        if(strpos($options['view'], 'timeline') !== false) {
+            $options['view'] = 'timeline';
+        }
+        
+        if(!in_array($options['view'], array('list', 'timeline'))) {
+            return false;
+        }
+        
         // Convert to int for security
         $start = isset($options['offset']) ? (int) $options['offset'] : 0;
         $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
@@ -345,10 +358,109 @@ class ActivityStream extends SugarBean {
             }
         }
 
-
-        return $activities;
+        $getViewData = "get".ucfirst($options['view'])."ViewData";
+        return $this->$getViewData($activities, $options);
     }
 
+    protected function getListViewData($activities, $options = array()) {
+        $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
+        $list = array('next_offset'=>$nextOffset,'records'=>$activities);
+        return $list;        
+    }
+    
+    protected function getTimelineViewData($activities, $options = array()) {
+        $timeline = array(
+                "headline"=>$options['filter'] == "all" ? "ALL Activities" : ($options['filter'] == "myactivities" ? "My Activities" : "My Favorities Activities") ,
+                "type"=>"default",
+                "text"=>"",
+                "startDate"=>$this->getTimelineDate($activities[0]),
+                "asset"=> array(
+                        "media"=>"",
+                        "credit"=>"",
+                        "caption"=>""));
+        $date = array();
+        foreach($activities as $activity) {
+            $date[] = array(
+                    "startDate"=>$this->getTimelineDate($activity),
+                    //"endDate"=>date("Y,m,d",strtotime($activity['date_created'])+24*3600),
+                    "headline"=>$this->getTimelineHeadline($activity),
+                    "text"=>$this->getTimelineText($activity),
+                    "tag"=>"",
+                    "asset"=> array(
+                            "media"=>$this->getTimelineMedia($activity),
+                            "thumbnail"=>$this->getTimelineThumbnail($activity),
+                            "credit"=>"",
+                            "caption"=>""));
+        }
+        
+        $timeline['date'] = $date;
+        return array('timeline'=>$timeline);
+    }    
+    
+    protected function getTimelineDate($activity) {
+        return date("m/d/Y H:i:s",strtotime($activity['date_created']));       
+    }
+    
+    protected function getTimelineHeadline($activity) {
+        return '<a href="#Users/'.$activity['created_by'].'">'.$activity['created_by_name'].'</a> '.$activity['activity_type'];        
+    }
+    
+    protected function getTimelineMedia($activity) {
+        return '<a href=#Users/'.$activity['created_by'].' class="avatar avatar42"><img src='.($activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg").'></a>'; 
+    }
+
+    protected function getTimelineThumbnail($activity) {
+        return $activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg";
+    }
+        
+    protected function getTimelineText($activity) {
+        $result = '';
+        
+        switch ($activity['activity_type']) {
+            case "posted":
+                $result = $activity['activity_data']['value']; 
+                if(!empty($activity['target_module'])) {
+                    if(!empty($activity['target_id'])) {
+                        $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                    }
+                    else {
+                        $result .= ' on <a href="#'.$activity['target_module'].'">'.$activity['target_name'].'</a>';
+                    }
+                }
+                break;
+            case "created":
+                $result = '<a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                break;
+            case "related":
+                $result = '<a href="#'.$activity['activity_data']['relate_to'].'/'.$activity['activity_data']['relate_id'].'">'.$activity['activity_data']['relate_name'].'</a> to <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                break;
+            case "updated":
+                foreach($activity['activity_data'] as $i =>$update) {
+                    if($i != 0) {
+                        $result .= ', ';
+                    }
+                    $result .= '<a href="#" rel="tooltip" title="Was: '.$update['before'].'<br>Now: '.$update['after'].'">'.$update['field_name'].'</a>';
+                }
+                if(!empty($activity['target_name'])) {
+                    $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                }  
+                break;          
+            default:
+                break;
+        }
+        
+        $result .= '<br/>';
+                
+        if(count($activity['notes']) > 0) {
+            $result .= "<br/>Attachments(".count($activity['notes']).")";
+        }
+        if(count($activity['comments']) > 0) {
+            $result .= "<br/>Comments(".count($activity['comments']).")";
+        }
+        
+        return $result;
+    }
+    
     /**
      * Gets notes attached to posts or comments
      * @param string $parentType 'ActivityStream' or 'ActivityComments'
@@ -371,7 +483,7 @@ class ActivityStream extends SugarBean {
         return $notes;
 
     }
-
+ 
     /**
      * @param $bean
      * @param $date

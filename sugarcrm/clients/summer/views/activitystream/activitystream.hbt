@@ -17,6 +17,7 @@
     {{/if}}
   </ul>
   <h4 id="activitystream-header">&nbsp;</h4>
+  <div id="activitystream-timeline"></div>
   <div class="activitystream-post">
     <p>
       <div contenteditable="true" class="span12 sayit" dropzone="copy" />
@@ -25,7 +26,7 @@
   </div>
   <form class="form-search hide" action="">
     <input value="" class="wide tleft" placeholder="Search activity...">
-  </form>
+  </form>  
   <ul class="nav nav-tabs results activitystream-list">
     {{#if collection.models.length}}
       {{#each collection.models}}
@@ -202,9 +203,11 @@
       <em>No recent activity found.</em>
     {{/if}}
   </ul>
+  {{#if collection.models.length}}
   {{#notEq collection.next_offset "-1"}}
     <a href="javascript:void(0)" name="show_more_button" class="loading wide ">Show More</a>
   {{/notEq}}
+  {{/if}}
 </div>
 
 

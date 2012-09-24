@@ -74,15 +74,7 @@ class ActivityStreamApi extends ListApi {
         $targetModule = !empty($args['module']) ? $args['module'] : '';
         $targetId = !empty($args['id']) ? $args['id'] : '';
         $options = $this->parseArguments($api, $args, $seed);
-        $activities = $seed->getActivities($targetModule, $targetId, $options);
-
-        if($activities !== false) {
-            $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
-            return array('next_offset'=>$nextOffset,'records'=>$activities);
-        }
-        else {
-            return false;
-        }
+        return $seed->getActivities($targetModule, $targetId, $options);
     }
 
     public function handlePost($api, $args) {
@@ -125,6 +117,9 @@ class ActivityStreamApi extends ListApi {
         if(!empty($args['limit'])) {
             $options['limit'] = $args['limit'];
         }
+        if(!empty($args['view'])) {
+            $options['view'] = $args['view'];
+        }        
         return $options;
     }
 }
