@@ -61,19 +61,26 @@
      * @protected
      */
     _renderField: function(field) {
-
-        app.view.View.prototype._renderField.call(this, field);
-
-        if(this.editableWorksheet === true)
-        {
-            if (field.def.clickToEdit === true) {
-                new app.view.ClickToEditField(field, this);
-            }
-
-            if (field.name == "expected_commit_stage") {
-                new app.view.BucketGridEnum(field, this);
+    	if(field.name == "expected_commit_stage")
+        {    		
+            //Set the field.def.options value based on app.config.buckets_dom (if set)
+            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            if(this.editableWorksheet)
+            {
+               field = this._setForecastColumn(field);
             }
         }
+    	
+    	app.view.View.prototype._renderField.call(this, field);
+        
+    	if (this.editableWorksheet === true && field.def.clickToEdit === true) {
+            new app.view.ClickToEditField(field, this);
+        }
+
+        if (this.editableWorksheet === true && field.name == "expected_commit_stage") {
+            new app.view.BucketGridEnum(field, this);
+        }
+     
     },
 
     bindDataChange: function(params) {
@@ -94,18 +101,22 @@
         }
     },
 
-    _setForecastColumn: function(fields) {
-        var self = this;
-
-        _.each(fields, function(field) {
-            if (field.name == "expected_commit_stage") {
-                field.enabled = app.config.show_buckets != 0;
-                field.options = app.config.buckets_dom || 'commit_stage_dom';
-                field.view = (self.editableWorksheet === true) ? 'edit' : 'default';
-            }
-        });
-
-        return app.config.show_buckets;
+    _setForecastColumn: function(field) {
+    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var self = this;
+    	
+    	field.bindDomChange = function(){};
+    	
+    	//show_binary, show_buckets, show_n_buckets
+    	if(forecastCategories == "show_binary"){
+    		field.type = "bool";
+    	}
+    	else{
+    		field.type = "enum";
+    		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+    	}  	
+    	
+        return field;
     },
 
     /**
@@ -115,7 +126,7 @@
      */
     _renderHtml : function(ctx, options) {
         this.editableWorksheet = this.isMyWorksheet();
-        this._setForecastColumn(this.meta.panels[0].fields);
+        //this._setForecastColumn(this.meta.panels[0].fields);
         app.view.View.prototype._renderHtml.call(this, ctx, options);
     },
 

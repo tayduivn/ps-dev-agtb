@@ -41,7 +41,7 @@
         } else {
         	model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":model.get('id')});
         }
-        
+        console.log("ToggleFcn");
         model.set(values);
     },
 
@@ -104,16 +104,7 @@
         }
 
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        /*
-        var params = '';
-        _.each(args, function (value, key) {
-            params += '&' + key + '=' + encodeURIComponent(value);
-        });
-
-        if(params)
-        {
-            url += '?' + params.substr(1);
-        }*/
+        
         return url;
     },
 
@@ -124,10 +115,12 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-    	/*var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var self = this;
     	
-    	field.bindDomChange = function() {};
-    	//if type is checkbox.
+    	field.bindDomChange = function(){console.log("domChange");};  
+    	field.bindDataChange = function(){console.log("dataChange");};
+    	    	
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
     		field.type = "bool";
@@ -135,8 +128,8 @@
     	else{
     		field.type = "enum";
     		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-    	}*/  	
-    	field.type = "bool";
+    	}  	
+    	
         return field;
     },
 
@@ -158,7 +151,6 @@
             {
                field = this._setUpCommitStage(field);
             }
-            
         }
 
         /*
@@ -181,14 +173,7 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
-
-            this._collection.on("change", function() {
-                _.each(this._collection.models, function(element, index){
-                    if(element.hasChanged("commit_stage")) {
-                        //this.toggleIncludeInForecast(element);
-                    }
-                }, this);
-            }, this);
+            
         }
 
         // listening for updates to context for selectedUser:change
