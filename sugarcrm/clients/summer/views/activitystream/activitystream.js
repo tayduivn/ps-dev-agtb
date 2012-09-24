@@ -13,13 +13,11 @@
         'drop .sayit': 'dropAttachment',
         'dragstart .activitystream-attachment': 'saveAttachment',
         'click .deleteRecord': 'deleteRecord',
-        //'mouseenter .hasDeleteButton': 'showDeleteButton',
-        //'mouseleave .hasDeleteButton': 'hideDeleteButton',
         'click [name=show_more_button]': 'showMoreRecords',
         'keyup .sayit': 'getEntities',
         'blur .sayit': 'hideTypeahead',
-        'mouseover ul.typeahead li': 'switchActiveTypeahead',
-        'click ul.typeahead li': 'addTag',
+        'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
+        'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
         'click .sayit .label a.close': 'removeTag'
     },
 
@@ -57,12 +55,13 @@
             self.entityList = o;
         }});
 
-        // There maybe better way to make the following data available in hbt
-        this.collection['oauth_token'] = app.api.getOAuthToken();
-        this.collection['user_id'] = app.user.get('id');
-        this.collection['full_name'] = app.user.get('full_name');
+        // By default, show all posts.
+        this.opts.params.filter = 'all';
+
+        this.user_id = app.user.get('id');
+        this.full_name = app.user.get('full_name');
         var picture = app.user.get('picture');
-        this.collection['picture_url'] = (picture) ? app.api.buildFileURL({
+        this.picture_url = (picture) ? app.api.buildFileURL({
             module: 'Users',
             id: app.user.get('id'),
             field: 'picture'
@@ -71,7 +70,7 @@
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
-    
+
     showMoreRecords: function() {
         var self = this, options = {};
 
@@ -189,17 +188,6 @@
         this._addPostComment(myPostUrl, myPostContents, attachments);
     },
 
-    /*
-     showDeleteButton: function(event) {
-     event.preventDefault();
-     this.$(event.currentTarget).closest('li').find('.deleteRecord').css('display', 'block');
-     },
-
-     hideDeleteButton: function(event) {
-     event.preventDefault();
-     this.$(event.currentTarget).closest('li').find('.deleteRecord').hide();
-     },
-     */
     deleteRecord: function(event) {
         var self = this,
             recordId = this.$(event.currentTarget).data('id'),
@@ -213,6 +201,7 @@
     showAllActivities: function(event) {
         this.opts.params.filter = 'all';
         this.opts.params.offset = 0;
+        this.opts.params.limit = 20;
         this.collection.fetch(this.opts);
     },
 
@@ -317,7 +306,7 @@
 
     _getEntities: _.debounce(function(event) {
         var el = this.$(event.currentTarget);
-        el.parent().find("ul.typeahead").remove();
+        el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
         var word = event.currentTarget.innerText;
         if (word.indexOf("@") === -1) {
             // If there's no @, don't do anything.
@@ -380,14 +369,14 @@
         this._getEntities(event);
     },
 
-    hideTypeahead: function(event) {
+    hideTypeahead: function() {
         setTimeout(function() {
-            self.$("ul.typeahead").remove();
+            self.$("ul.typeahead.activitystream-tag-dropdown").remove();
         }, 150);
     },
 
     switchActiveTypeahead: function(event) {
-        this.$("ul.typeahead .active").removeClass('active');
+        this.$("ul.typeahead.activitystream-tag-dropdown .active").removeClass('active');
         this.$(event.currentTarget).addClass('active');
     },
 
@@ -414,13 +403,13 @@
     },
 
     removeTag: function(event) {
-        var el = this.$(event.currentTarget);
-        el.parent().remove();
+        this.$(event.currentTarget).parent().remove();
     },
 
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
             var activity_data = model.get("activity_data");
+            var picture = model.get("created_by_picture");
             var comments = model.get("comments");
             var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
             if (activity_data && activity_data.value) {
@@ -429,6 +418,13 @@
                 });
                 model.set("activity_data", activity_data);
             }
+
+            model.set("created_by_picture_url", (picture) ? app.api.buildFileURL({
+                module: 'Users',
+                id: model.get('created_by'),
+                field: 'picture'
+            }) : "../clients/summer/views/imagesearch/anonymous.jpg");
+
 
             if (comments.length > 1) {
                 comments[1]['_starthidden'] = true;
@@ -439,6 +435,13 @@
                 comment.value = comment.value.replace(pattern, function(str, module, id, text) {
                     return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
                 });
+
+                comment.created_by_picture_url = (comment.created_by_picture) ? app.api.buildFileURL({
+                    module: 'Users',
+                    id: model.get('created_by'),
+                    field: 'picture'
+                }) : "../clients/summer/views/imagesearch/anonymous.jpg";
+
                 _.each(comment.notes, function(note, index) {
                     if(note.file_mime_type) {
                         note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
@@ -502,7 +505,7 @@
     
         return app.view.View.prototype._renderHtml.call(this);
     },
-    
+
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
