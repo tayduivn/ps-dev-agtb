@@ -32,6 +32,7 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src='../sidecar/tests/fixtures/api.js'></script>
     <script type="text/javascript" src='../sidecar/tests/fixtures/metadata.js'></script>
     <script type="text/javascript" src='../sidecar/tests/fixtures/language.js'></script>
+    <script type="text/javascript" src='../tests/modules/Forecasts/fixtures/forecastsMetadata.js'></script>
 
     <!-- Begin test files -->
 <?php
