@@ -25,6 +25,18 @@
 
             options.context = _.extend(options.context, this.initializeAllModels());
 
+            // Initialize the config model
+            var ConfigModel = Backbone.Model.extend({
+                url: app.api.buildURL("Forecasts", "config"),
+                sync: function(method, model, options) {
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, model, options);
+                },
+                // include metadata from config into the config model by default
+                defaults: app.metadata.getModule('Forecasts').config
+            });
+            options.context.forecasts.config = new ConfigModel();
+
             var defaultSelections = app.defaultSelections;
 
             // Set initial selected data on the context
@@ -106,18 +118,6 @@
                 }
 
             });
-
-            // Fetch the config model
-            if(self.context.forecasts.config) {
-                try {
-                    self.context.forecasts.config.fetch();
-                } catch (e) {
-                    app.alert.show("forecastsConfigError", {
-                        messages : e.message,
-                        level:"error"
-                    })
-                }
-            }
         },
 
         /**
@@ -129,24 +129,13 @@
             var self = this,
                 componentsMetadata = this.componentsMeta,
                 module = app.viewModule.toLowerCase(),
-                models = {},
-                configModel;
+                models = {};
 
             // creates the context.forecasts topmost model
             models[module] = app.data.createBean(module);
 
             // creates the config model as a special case
             self.namespace(models, module);
-            configModel = Backbone.Model.extend({
-                url: app.api.buildURL("Forecasts", "config"),
-                sync: function(method, model, options) {
-                    var url = _.isFunction(model.url) ? model.url() : model.url;
-                    return app.api.call(method, url, model, options);
-                }
-            }),
-
-            models[module]["config"] = new configModel();
-
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
                 var name,
