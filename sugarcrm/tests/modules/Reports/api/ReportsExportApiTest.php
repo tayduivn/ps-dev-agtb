@@ -55,7 +55,23 @@ class ReportsExportApiTest extends RestTestBase
         parent::tearDown();
     }
 
-    public function testReportExportApi()
+    public function testReportExportBase64Api()
+    {
+        $rep = new SavedReport();
+        $rep->save_report(-1, $GLOBALS['current_user']->id, "Test Account Report", "Accounts","tabular",$this->reportDefs, 0, 1);
+        
+        $GLOBALS['db']->commit();
+
+        $id = $rep->id;
+        // call the Rest
+        $restReply = $this->_restCall("Reports/{$id}/base64",
+                                    json_encode(array()),
+                                    'GET');
+
+        $this->assertTrue(!empty($restReply['reply']['file_contents']), 'no file received');
+    }
+
+    public function testReportExportPdfApi()
     {
         $rep = new SavedReport();
         $rep->save_report(-1, $GLOBALS['current_user']->id, "Test Account Report", "Accounts","tabular",$this->reportDefs, 0, 1);
@@ -68,6 +84,6 @@ class ReportsExportApiTest extends RestTestBase
                                     json_encode(array()),
                                     'GET');
 
-        $this->assertTrue(!empty($restReply['reply']['file_contents']), 'no file received');
-    }
+        $this->assertTrue(!empty($restReply), 'no file received');
+    }    
 }
