@@ -31,7 +31,7 @@ require_once('modules/Calls/CallFormBase.php');
 $formBase = new CallFormBase();
 if ($formBase->prepareRecurring()) {
     if ($limit = $formBase->checkRecurringLimitExceeded()) {
-        echo str_replace('$limit', $limit, $GLOBALS['mod_strings']['LBL_REPEAT_LIMIT_ERROR']);
+        echo str_replace('$limit', $limit, $GLOBALS['mod_strings']['LBL_RECURRING_LIMIT_ERROR']);
         sugar_cleanup(true);
     }
 }

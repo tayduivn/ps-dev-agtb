@@ -68,7 +68,7 @@
 		
 		CAL.lbl_error_saving = "{$MOD.LBL_ERROR_SAVING}";
 		CAL.lbl_error_loading = "{$MOD.LBL_ERROR_LOADING}";
-		CAL.lbl_repeat_limit_error = "{$MOD.LBL_REPEAT_LIMIT_ERROR}";
+		CAL.lbl_repeat_limit_error = "{$MOD.LBL_RECURRING_LIMIT_ERROR}";
 		
 		CAL.year = {$year};
 		CAL.month = {$month};
