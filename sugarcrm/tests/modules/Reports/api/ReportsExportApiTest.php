@@ -68,7 +68,7 @@ class ReportsExportApiTest extends RestTestBase
                                     json_encode(array()),
                                     'GET');
 
-        $this->assertTrue(!empty($restReply['reply']['file_contents']), 'no file received');
+        $this->assertTrue(!empty($restReply), 'no file received');
     }
 
     public function testReportExportPdfApi()

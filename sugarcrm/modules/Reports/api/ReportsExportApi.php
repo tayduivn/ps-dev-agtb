@@ -100,8 +100,9 @@ class ReportsExportApi extends SugarApi {
         }
         if(empty($contents)) {
             throw new SugarApiException('File contents empty.');
-        }               
-        return array('file_contents' => base64_encode($contents));
+        }
+        // Reply is raw just pass back the base64 encoded contents
+        echo base64_encode($contents);
     }
 
     /**
