@@ -16,7 +16,8 @@
     save: function() {
         var self = this;
         this.initiateSave(function() {
-            self.closeModal()
+            self.closeModal();
+            self.context.parent.trigger("list:refresh");
         });
     },
 

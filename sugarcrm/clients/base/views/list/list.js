@@ -21,13 +21,18 @@
         this.layout.off("list:filter:toggled", null, this);
         this.layout.on("list:filter:toggled", this.filterToggled, this);
 
+        this.context.off("list:refresh", null, this);
+        this.context.on("list:refresh", this.refresh, this);
+        
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
     },
+    
     filterToggled: function(isOpened) {
         this.filterOpened = isOpened;
     },
+    
     fireSearch: function(term) {
         var options = {
             limit: this.limit || null,
@@ -107,6 +112,7 @@
         // refetch the collection
         collection.fetch(options);
     },
+    
     getSearchOptions: function() {
         var collection, options, previousTerms, term = '';
         collection = this.context.get('collection');
@@ -127,12 +133,19 @@
         };
         return options;
     },
+    
+    refresh: function(options) {
+        this.collection.fetch(options);
+    },
+    
     showActions: function(e) {
         $(e.currentTarget).children("td").children("span").children(".btn-group").show();
     },
+    
     hideActions: function(e) {
         $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
     },
+    
     bindDataChange: function() {
         if (this.collection) {
             this.collection.on("reset", this.render, this);
