@@ -453,8 +453,8 @@ function shouldCheckSugar(){
 // License Agreement.  Neither the Company nor the Users
 // may modify any portion of the Critical Control Software.
 
-//Adding a comment for 6.5.4
 
+//Adding a comment for 6.5.5
 function authenticateDownloadKey(){
 	$data = array();
 	if(empty($GLOBALS['license']->settings['license_validation_key']) && shouldCheckSugar()){

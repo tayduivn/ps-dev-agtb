@@ -193,7 +193,8 @@ class SugarCurrency
            $user = $current_user;
         }
 
-        $currencyId = !empty($user) ? $user->getPreference('currency') : '-99';
+        $currencyId = empty($user) ? -99 : $user->getPreference('currency');
+
         return self::_getCurrency($currencyId);
     }
 

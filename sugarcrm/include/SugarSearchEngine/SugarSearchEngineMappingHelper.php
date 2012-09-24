@@ -28,6 +28,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
+/**
+ * Helper class for search engine mappings
+ * @api
+ */
 class SugarSearchEngineMappingHelper
 {
     /**

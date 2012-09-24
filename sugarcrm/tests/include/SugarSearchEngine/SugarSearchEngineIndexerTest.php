@@ -242,12 +242,11 @@ class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
     */
     public function testMarkBeansProcessed($ids, $expected)
     {
-        $GLOBALS['db'] = DBManagerFactory::getInstance();
         $DBManagerClass = get_class($GLOBALS['db']);
         $db = $this->getMock($DBManagerClass);
         $db->expects($this->exactly($expected))->method('query');
-        $GLOBALS['db'] = $db;
         $indexer = new TestSugarSearchEngineFullIndexer();
+        $indexer->setDB($db);
         $indexer->markBeansProcessedStub($ids);
     }
 
@@ -284,6 +283,11 @@ class TestSugarSearchEngineFullIndexer extends SugarSearchEngineFullIndexer
     public function getEngine()
     {
         return $this->SSEngine;
+    }
+
+    public function setDB($db)
+    {
+        $this->db = $db;
     }
 
     public function clearFTSIndexQueueStub()

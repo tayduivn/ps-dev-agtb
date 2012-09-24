@@ -67,10 +67,13 @@ class SugarForecasting_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
         parent::tearDown();
     }
 
+    /**
+     * @group forecasts
+     */
     public function testWorksheetContainsCorrectNumberOfRows()
     {
         $obj = new MockSugarForecasting_Individual(self::$args);
-        $obj->loadWorksheet();
+        $obj->process();
         $dataArray = $obj->getDataArray();
 
         $this->assertEquals(count(self::$user['opportunities']), count($dataArray));
@@ -79,8 +82,8 @@ class SugarForecasting_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
 
 class MockSugarForecasting_Individual extends SugarForecasting_Individual
 {
-    public function loadWorksheet()
+    public function process()
     {
-        parent::loadWorksheet();
+        parent::process();
     }
 }

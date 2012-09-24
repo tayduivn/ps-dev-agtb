@@ -100,14 +100,12 @@
          */
         handleEmailValidationError: function(emailErrorsArray) {
             var self = this, emails;
-
-            this.$el.find('.control-group.email').addClass("error");
-
+            this.$el.find('.control-group.email').removeClass("error");
             emails = this.$el.find('.existing .email');
             
             // Remove any and all previous exclamation then add back per field error
-            $(emails).find('.add-on').remove();
-            
+            $(emails).removeClass("error").find('.add-on').remove();
+
             // For each error add to error help block
             _.each(emailErrorsArray, function(emailWithError, i) {
 
@@ -117,6 +115,9 @@
 
                     // if we're on an email sub field where error occured, add error help block
                     if(emailFieldValue === emailWithError) {
+                        
+                        // First remove in case already there and then add back. Note add-on and help-block are adjacent
+                        $(e).addClass("error").find('.row-fluid .help-block').remove().find('add-on').remove();
                         $(e).find('.row-fluid')
                             .append('<span class="add-on"><i class="icon-exclamation-sign"></i></span><p class="help-block">'+app.error.getErrorString('email', [emailFieldValue])+'</p>');
                     }

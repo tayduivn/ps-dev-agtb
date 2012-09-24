@@ -2480,6 +2480,7 @@ $app_strings = array (
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
+    'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
@@ -2942,6 +2943,7 @@ $app_strings = array (
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
     'LNK_HELP' => 'Help',
     'LNK_CREATE' => 'Create',
+    'LNK_CREATE_WHEN_EMPTY' => 'Create a record now.',
     'LNK_LIST_END' => 'End',
     'LNK_LIST_NEXT' => 'Next',
     'LNK_LIST_PREVIOUS' => 'Previous',

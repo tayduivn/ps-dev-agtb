@@ -144,7 +144,7 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->dropTableName('_hierarchy_return_set');
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestProductUtilities::removeAllCreatedProducts();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
     }
 
     /**
