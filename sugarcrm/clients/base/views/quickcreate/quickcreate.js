@@ -96,14 +96,12 @@
         var self = this,
             cssName = 'warning';
 
-        keys = ['first_name','last_name'];
         _.each(keys, function (fieldName) {
-            var field = self.getField(fieldName);
-            var ftag = this.fieldTag || '';
+            var controlGroup, field;
 
-            if (field) {
-                var controlGroup = field.$el.parents('.control-group:first');
-
+            field = self.getField(fieldName);
+             if (field) {
+                controlGroup = field.$el.parents('.control-group:first');
                 if (controlGroup) {
                     controlGroup.addClass(cssName);
                 }
