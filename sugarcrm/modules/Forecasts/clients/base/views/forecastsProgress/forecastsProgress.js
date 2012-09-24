@@ -18,31 +18,33 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.model = new Backbone.Model({
-                    opportunities : 0,
-                    revenue : 0,
-                    closed_amount : 0,
-                    closed_likely_amount : 0,
-                    closed_likely_percent : 0,
-                    closed_likely_above : 0,
-                    quota_amount : 0,
-                    quota_likely_amount : 0,
-                    quota_likely_percent : 0,
-                    quota_likely_above : 0,
-                    closed_best_amount : 0,
-                    closed_best_percent : 0,
-                    closed_best_above : 0,
-                    quota_best_amount : 0,
-                    quota_best_percent : 0,
-                    quota_best_above : 0,
-                    closed_worst_amount : 0,
-                    closed_worst_percent : 0,
-                    closed_worst_above : 0,
-                    quota_worst_amount : 0,
-                    quota_worst_percent : 0,
-                    quota_worst_above : 0,
-
-                    pipeline : 0
-                });
+            opportunities : 0,
+            revenue : 0,
+            closed_amount : 0,
+            closed_likely_amount : 0,
+            closed_likely_percent : 0,
+            closed_likely_above : 0,
+            quota_amount : 0,
+            quota_likely_amount : 0,
+            quota_likely_percent : 0,
+            quota_likely_above : 0,
+            closed_best_amount : 0,
+            closed_best_percent : 0,
+            closed_best_above : 0,
+            quota_best_amount : 0,
+            quota_best_percent : 0,
+            quota_best_above : 0,
+            closed_worst_amount : 0,
+            closed_worst_percent : 0,
+            closed_worst_above : 0,
+            quota_worst_amount : 0,
+            quota_worst_percent : 0,
+            quota_worst_above : 0,
+            show_projected_likely: options.context.forecasts.config.get('show_projected_likely'),
+            show_projected_best: options.context.forecasts.config.get('show_projected_best'),
+            show_projected_worst: options.context.forecasts.config.get('show_projected_worst'),
+            pipeline : 0
+        });
 
         this.selectedUser = this.context.forecasts.get("selectedUser");
         this.shouldRollup = this.isManagerView();
@@ -91,6 +93,15 @@
                 if(!self.shouldRollup) {
                     self.recalculateRepTotals(totals);
                 }
+            });
+
+            //Listen for config changes
+            this.context.forecasts.config.on('change:show_projected_likely change:show_projected_best change:show_projected_worst', function(context, stuff) {
+                self.model.set({
+                    show_projected_likely: context.get('show_projected_likely') == 1,
+                    show_projected_best: context.get('show_projected_best') == 1,
+                    show_projected_worst: context.get('show_projected_worst') == 1
+                });
             });
         }
     },

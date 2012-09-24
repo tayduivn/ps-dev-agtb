@@ -37,6 +37,10 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         self::$common_obj = new Common();
     }
 
@@ -47,8 +51,6 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
         $this->manager = SugarTestUserUtilities::createAnonymousUser();
 
         $this->rep = SugarTestUserUtilities::createAnonymousUser();

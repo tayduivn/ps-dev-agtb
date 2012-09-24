@@ -49,14 +49,17 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
     }
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass()
     {
-        require_once('modules/Forecasts/ForecastsSeedData.php');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         SugarTestHelper::setUp('current_user');
+        require_once('modules/Forecasts/ForecastsSeedData.php');
         ForecastsSeedData::setupForecastSettings();
     }
 
@@ -79,7 +82,7 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * Tests the probability against the expected commit_stage value with the supplied probabilityProvider function
      * @dataProvider probabilityProvider
-     * @outputBuffering disabled
+     * @group forecasts
      */
     public function testSetCommitStage($probability, $commit_stage)
     {
@@ -91,7 +94,7 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Tests the forecast and commit_stage to be updated when sales_stage is "Closed Lost"
-     *
+     * @group forecasts
      */
     public function testUpdateForecastAndCommitStage()
     {

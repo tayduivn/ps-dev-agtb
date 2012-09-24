@@ -521,11 +521,22 @@ class SugarSpot
                 $orderBy = $options['orderBy'];
             }
 
+            $selectFields = '';
+            if (!empty($options['selectFields']) ) {
+                foreach ( $options['selectFields'] as $selectField ) {
+                    $selectFields .= $seed->table_name.".".$selectField." ".$selectField.", ";
+                }
+                $selectFields = rtrim($selectFields,', ');
+            }
+            
             if(empty($where_clauses))
             {
                 if ( $allowBlankSearch ) {
-                    $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, false);
+                    $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
                     
+                    if (!empty($selectFields)) {
+                        $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
+                    }
                     if(!empty($custom_select)) {
                         $ret_array['select'] .= $custom_select;
                     }
@@ -549,7 +560,7 @@ class SugarSpot
             {
                 $query_parts =  array();
 
-                $ret_array_start = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, false);
+                $ret_array_start = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
                 $search_keys = array_keys($searchFields[$moduleName]);
 
                 foreach($where_clauses as $n => $clause)
@@ -565,7 +576,11 @@ class SugarSpot
                         }
                     }
                     // Individual UNION's don't allow order by
-                    $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, false);
+                    $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, true);
+                    if (!empty($selectFields)) {
+                        $ret_array_start['select'] = "SELECT DISTINCT ".$selectFields;
+                    }
+
                     if(!empty($custom_select)) {
                         $ret_array_start['select'] .= $custom_select;
                     }
@@ -597,8 +612,11 @@ class SugarSpot
                     }
                 }
 
-                $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, false);
+                $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, true);
 
+                if (!empty($selectFields)) {
+                    $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
+                }
                 if(!empty($custom_select)) {
                     $ret_array['select'] .= $custom_select;
                 }

@@ -96,11 +96,18 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
         return $this->_history;
     }
     
-    function handleSave ($populate = true)
+    function handleSave($populate = true)
     {
         if ($populate)
-            $this->_populateFromRequest () ;
-        $this->deploy ( $this->_viewdefs ) ;
+        {
+            $this->_populateFromRequest();
+        }
+            
+        // We only need Module specific data in the converdefs.php
+        unset($this->_viewdefs['panels']);
+        unset($this->_viewdefs['templateMeta']);
+        
+        $this->deploy($this->_viewdefs) ;
     }
     
     /**
@@ -225,7 +232,6 @@ class ConvertLayoutMetadataParser extends GridLayoutMetaDataParser
     		}
     	}
     	$this->_viewdefs[$this->_moduleName]['ConvertLead']['panels'] = $this->_convertToCanonicalForm($this->_viewdefs['panels'], $this->_fielddefs);
-    	unset($this->_viewdefs['panels']);
     }
     
     function loadViewDefs() {

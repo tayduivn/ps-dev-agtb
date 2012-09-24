@@ -36,7 +36,7 @@
 
 require_once 'tests/service/SOAPTestCase.php';
 
-class Bug56077Test extends SOAPTestCase
+class Bug50677Test extends SOAPTestCase
 {
     /**
      * @var Product

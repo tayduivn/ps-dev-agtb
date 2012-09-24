@@ -20,10 +20,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-class SugarWidgetFieldLong extends SugarWidgetFieldInt
+class SugarWidgetFieldLong extends SugarWidgetFieldDecimal
 {
 	function SugarWidgetFieldLong(&$layout_manager) {
-		parent::SugarWidgetFieldInt($layout_manager);
+		parent::SugarWidgetFieldDecimal($layout_manager);
 	}	
 }
+
+?>
