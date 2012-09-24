@@ -68,8 +68,6 @@
             field: 'picture'
         }) : "../clients/summer/views/imagesearch/anonymous.jpg";
 
-        var sourceUrl = app.api.buildURL('ActivityStream')+"?view=streamline";
-        this.collection['streamline_options'] = {width:"300",height:"300",embed_id:"streamline",source:sourceUrl};
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
     },
