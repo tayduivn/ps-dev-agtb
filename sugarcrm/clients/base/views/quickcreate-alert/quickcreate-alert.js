@@ -3,11 +3,13 @@
     events: {
         'click .alert-action-save' : 'save'
     },
+
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.on('quickcreate:alert:show', this.showAlert, this);
         this.context.on('quickcreate:alert:dismiss', this.dismissAlert, this);
     },
+
     showAlert: function(dupCount){
         this.dismissAlert();
         var options = {
@@ -18,6 +20,7 @@
         this.alert = this.show(options);
 
     },
+
     dismissAlert: function() {
         if(this.alert) {
             this.alert.close();

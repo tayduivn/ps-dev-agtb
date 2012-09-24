@@ -9,7 +9,6 @@
         app.view.View.prototype.initialize.call(this, options);
         this.context.off("quickcreate:list:toggle", null, this);
         this.context.on("quickcreate:list:toggle", this.toggleList, this);
-
         this.context.on("quickcreate:list:close", this.close, this);
     },
 
@@ -41,6 +40,7 @@
         this.context.trigger('quickcreate:edit', editModel);
         this.context.trigger('quickcreate:alert:dismiss');
         this.context.trigger('quickcreate:list:close');
+        this.context.trigger('quickcreate:clearHighlightDuplicateFields');
     },
 
     /**

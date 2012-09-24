@@ -177,43 +177,41 @@
     open: function(params, callback) {
         this.layout.trigger(this.showEvent, params, callback);
     },
-    
+
     show: function(span) {
         var modal_container = this.$(".modal:first"),
-            maxHeight = $(window).height() - ($(".modal-header:first").outerHeight() * 2) - 200;
+            modal_body = this.$(".modal-body:first"),
+            winHeight = $(window).height();
 
-        //TODO: Replace inline CSS with css property
-        this.$el.addClass("modal-open");
-        this.$el.children(".modal-backdrop").show();
-        modal_container.attr({
-            style: "",
-            class: "modal"
-        }).show();
+        modal_body.css({'max-height':'none'});
 
-        if(_.isNumber(span) && span > 0 && span <= 12) {
-            modal_container.addClass('span' + span).css({
-                'margin' : '0',
-                'left' : (4.255 * (12 - span)) + '%',
-                'top' : '5%',
-                'max-height' : 'none'
-            });
-            modal_container.children(".modal-body").css({
-                'padding': '0',
-                'max-height' : maxHeight
-            });
-        } else {
-            modal_container.css({
-                'margin-top' : '',
-                'margin-bottom' : '',
-                'top' : '',
-                'max-height' : 'none'
-            });
+        modal_container.css({'margin-top':'-99999px'}).show( "fast", function(){
 
-            modal_container.children(".modal-body").css({
-                'padding': '0',
-                'max-height' : maxHeight
-            });
-        }
+            if(_.isNumber(span) && span > 0 && span <= 12) {
+                modal_container.addClass('span' + span);
+            }
+
+            var modalHeight = $(this).outerHeight(),
+                modalBodyHeight = modal_body.outerHeight();
+
+            modal_body.css({'max-height':Math.max(winHeight - 100 - (modalHeight-modalBodyHeight),400),"overflow":"hidden"});
+
+            if ( winHeight < modalHeight )
+            {
+                if (winHeight-100 < 400)
+                {
+                    //$(document.body).css({'overflow':'auto'})
+                }
+                modal_container.hide().css( { 'margin-top':-( (winHeight - 100) / 2) } );
+            }
+            else
+            {
+                //modal_body.css({'max-height':winHeight - 100});
+                modal_container.hide().css( { 'margin-top':-( modalHeight / 2) } );
+            }
+
+            modal_container.modal();
+        });
     },
     
     hide: function(event) {
