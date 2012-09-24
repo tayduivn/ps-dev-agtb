@@ -44,7 +44,8 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src="lib/jquery/jquery.fancybox-1.3.4.js"></script>
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDhofIE96RHrdEd7mBRLaHeYoPrFcBakac&sensor=true"></script>
     <script src="lib/Crypto/Crypto.js"></script>
-
+    <script src="lib/TimelineJS/js/storyjs-embed.js"></script>
+    
     <!-- App Scripts -->
     <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
     <script src='../sidecar/src/app.js'></script>
