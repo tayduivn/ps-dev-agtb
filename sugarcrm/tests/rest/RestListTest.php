@@ -25,6 +25,7 @@
 require_once('tests/rest/RestTestBase.php');
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/SugarFavorites/SugarFavorites.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 //END SUGARCRM flav=pro ONLY
 
 class RestListTest extends RestTestBase {
@@ -38,7 +39,10 @@ class RestListTest extends RestTestBase {
         $this->bugs = array();
         $this->files = array();
         // set the FTS engine as down and make sure the config removes FTS
-        searchEngineDown();
+        
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarSearchEngineAbstractBase::markSearchEngineStatus();
+        //END SUGARCRM flav=pro ONLY
         $this->config_file_override = '';
         if(file_exists('config_override.php'))
             $this->config_file_override = file_get_contents('config_override.php');
@@ -51,7 +55,10 @@ class RestListTest extends RestTestBase {
     public function tearDown()
     {
         // restore FTS and config override
-        restoreSearchEngine();
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
+        //END SUGARCRM flav=pro ONLY
+        
         file_put_contents('config_override.php', $this->config_file_override);
 
         $accountIds = array();
