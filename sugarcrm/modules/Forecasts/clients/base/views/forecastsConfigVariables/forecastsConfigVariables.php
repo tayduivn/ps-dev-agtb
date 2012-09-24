@@ -30,13 +30,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
                 array(
                     'name' => 'sales_stage_lost',
                     'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE',
-                    'type' => 'radioenum',
-                    'options' => array(
-                        'a' => 'sales stage a',
-                        'b' => 'sales stage b',
-                        'c' => 'sales stage c',
-                        'd' => 'sales stage d',
-                    ),
+                    'type' => 'multienum',
+                    'options' => 'sales_stage_dom',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
@@ -44,13 +39,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
                 array(
                     'name' => 'sales_stage_won',
                     'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE',
-                    'type' => 'radioenum',
-                    'options' => array(
-                        'a' => 'sales stage a',
-                        'b' => 'sales stage b',
-                        'c' => 'sales stage c',
-                        'd' => 'sales stage d',
-                    ),
+                    'type' => 'multienum',
+                    'options' => 'sales_stage_dom',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',
