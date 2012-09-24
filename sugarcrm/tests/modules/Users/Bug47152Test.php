@@ -39,7 +39,7 @@ class Bug47152Test extends Sugar_PHPUnit_Framework_OutputTestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         $admin = new Administration();
-        $admin->retrieveSettings();
+        $admin->retrieveSettings(false, true);
         self::$admin_settings = $admin->settings;
         if(!isset($GLOBALS['current_language'])) {
             $GLOBALS['current_language'] = 'en_us';

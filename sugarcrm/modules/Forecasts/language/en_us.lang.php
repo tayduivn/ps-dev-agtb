@@ -330,13 +330,13 @@ $mod_strings = array (
 
     // range config
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Show these ranges on the worksheets',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Likely',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Best',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Worst',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Show Likely Case Column',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Show Best Case Column',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Show Worst Case Column',
     'LBL_FORECASTS_CONFIG_PROJECTED_RANGE' => 'Show projected ranges in the totals',
-    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY' => 'Likely',
-    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST' => 'Best',
-    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_WORST' => 'Worst',
+    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY' => 'Show Likely Case Totals',
+    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST' => 'Show Best Case Totals',
+    'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_WORST' => 'Show Worst Case Totals',
 
     // variables config
     'LBL_FORECASTS_CONFIG_VARIABLES' => 'Variables',

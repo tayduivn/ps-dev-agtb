@@ -76,7 +76,7 @@ class ForecastWorksheet extends SugarBean {
 		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
 		$worksheet->user_id = $this->assigned_user_id;
         $worksheet->best_case = $this->best_case;
-        $worksheet->likely_case = $this->amount;
+        $worksheet->likely_case = $this->likely_case;
         $worksheet->op_probability = $this->probability;
         $worksheet->commit_stage = $this->commit_stage;
         $worksheet->forecast_type = "Direct";

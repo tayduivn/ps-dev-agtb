@@ -76,30 +76,14 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
 
     }
 
-    protected function checkException($e)
-    {
-        if ($e instanceof Elastica_Exception_Client)
-        {
-            $error = $e->getError();
-            switch ($error) {
-                case CURLE_UNSUPPORTED_PROTOCOL:
-                case CURLE_FAILED_INIT:
-                case CURLE_URL_MALFORMAT:
-                case CURLE_COULDNT_RESOLVE_PROXY:
-                case CURLE_COULDNT_RESOLVE_HOST:
-                case CURLE_COULDNT_CONNECT:
-                case CURLE_OPERATION_TIMEOUTED:
-                    $this->disableFTS();
-                    return true;
-            }
-        }
-        return false;
-    }
-
+    /**
+     * Disable FTS and write to config.
+     *
+     */
     protected function disableFTS()
     {
         $GLOBALS['log']->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
-        searchEngineDown();
+        self::markSearchEngineStatus(true);
 
         // notification
         $cfg = new Configurator();
@@ -107,15 +91,16 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         $cfg->handleOverride();
     }
 
+    /**
+     * This function adds records to FTS queue.
+     *
+     * @param $records array of records
+     */
     protected function addRecordsToQueue($records)
     {
-        $GLOBALS['log']->fatal('addRecordsToQueue');
-        global $db;
-        if (empty($db))
-        {
-            $db = DBManagerFactory::getInstance('fts');
-            $db->resetQueryCount();
-        }
+        $GLOBALS['log']->info('addRecordsToQueue');
+        $db = DBManagerFactory::getInstance('fts');
+        $db->resetQueryCount();
 
         foreach ($records as $rec)
         {
@@ -133,5 +118,31 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         $indexer = new SugarSearchEngineSyncIndexer();
         $indexer->removeExistingFTSSyncConsumer();
         $indexer->createJobQueueConsumer();
+    }
+
+    /**
+     * This function checks config to see if search engine is down.
+     *
+     * @return Boolean
+     */
+    static public function isSearchEngineDown()
+    {
+        $admin = new Administration();
+        $settings = $admin->retrieveSettings();
+        if (!empty($settings->settings['info_fts_down'])) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This function marks config to indicate that search engine is up or down.
+     *
+     * @param Boolean $isDown
+     */
+    static public function markSearchEngineStatus($isDown = true)
+    {
+        $admin = new Administration();
+        $admin->saveSetting('info', 'fts_down', $isDown? 1: 0);
     }
 }

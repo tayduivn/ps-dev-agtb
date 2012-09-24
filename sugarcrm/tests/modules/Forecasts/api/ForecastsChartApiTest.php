@@ -80,7 +80,7 @@ class ForecastsChartApiTest extends RestTestBase
     public static function tearDownAfterClass()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         parent::tearDownAfterClass();

@@ -83,6 +83,9 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
     }
 
+    /**
+     * @group forecasts
+     */
     public function testLoadUsersThrowExceptionWhenUserIsNotManager()
     {
         $testUser = SugarTestUserUtilities::createAnonymousUser();
@@ -101,6 +104,9 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
+    /**
+     * @group forecasts
+     */
     public function testLoadUsersReturnsTwoUsersForCurrentUser()
     {
         $obj = new MockSugarForecasting_Manager($this->args);
@@ -112,6 +118,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
      * @dataProvider dataProviderUserTypes
+     * @group forecasts
      */
     public function testLoadUserAmount($user)
     {
@@ -137,6 +144,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
      * @dataProvider dataProviderUserTypes
+     * @group forecasts
      */
     public function testLoadUsersQuota($user)
     {
@@ -153,6 +161,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
      * @dataProvider dataProviderLoadForecastValues
+     * @group forecasts
      */
     public function testLoadForecastValuesForUser($user, $dataKey)
     {
@@ -180,6 +189,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
      * @dataProvider dataProviderLoadWorksheetAdjustedValues
+     * @group forecasts
      */
     public function testLoadWorksheetAdjustedValuesForUser($user, $dataKey, $worksheetKey)
     {
@@ -206,6 +216,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
+     * @group forecasts
      */
     public function testLoadManagerAmountsForReporteeIsTotalOfReporteeAndHisReportee()
     {
@@ -225,6 +236,7 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
      * @dataProvider dataProviderLoadWorksheetAdjustedValues
+     * @group forecasts
      */
     public function testMakeSureAdjustedNumberAreNotEmpty($user, $dataKey, $worksheetKey)
     {

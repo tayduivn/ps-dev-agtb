@@ -85,6 +85,11 @@ class Product extends SugarBean {
     var $currency_name;
     var $default_currency_symbol;
     var $discount_amount;
+    //BEGIN SUGARCRM flav=ent ONLY
+    var $best_case = 0;
+    var $likely_case = 0;
+    var $worst_case = 0;
+    //END SUGARCRM flav=ent ONLY
 
 	// These are for related fields
 	var $type_name;

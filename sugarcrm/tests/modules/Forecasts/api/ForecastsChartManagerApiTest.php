@@ -168,7 +168,7 @@ class ForecastsChartManagerApiTest extends RestTestBase
     {
         $userIds = SugarTestUserUtilities::getCreatedUserIds();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
