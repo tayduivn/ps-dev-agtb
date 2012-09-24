@@ -54,6 +54,11 @@ class CronRemoteTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testQueueJob()
     {
+        if(preg_match('/^5\.2/', PHP_VERSION))
+        {
+           $this->markTestSkipped('There is a bug with parse_str that will prevent this test from working properly (it returns double slashes on entity characters encoded)');
+        }
+
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->scheduler_id = 'unittest';
