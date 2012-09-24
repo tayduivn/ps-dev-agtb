@@ -57,6 +57,7 @@ $layout_defs['Project'] = array(
 			'subpanel_name' => 'project',   //this values is not associated with a physical file.
 			'module'=>'Project',
 
+			// The buttons are defined at the bottom of this file
 			'top_buttons' => array(
 				//array('widget_class' => 'SubPanelTopSelectUsersButton', ),
 				//array('widget_class' => 'SubPanelTopSelectContactsButton', ),
@@ -295,17 +296,17 @@ if (isset($app) && isset($app->controller))
 $projectId = $app->controller->record;
 $focus = new Project();
 $focus->retrieve($projectId);
-if (isset($focus) && $focus->object_name == 'Project'){
+	if (isset($focus) && $focus->object_name == 'Project')
+	{	
+		// make this security check ONLY in the Project detail view
+	    $layout_defs['Project']['subpanel_setup']['holidays']['top_buttons'] =
+	    array(array('widget_class' => 'SubPanelTopCreateButton'),array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect' ));
 	
-	// make this security check ONLY in the Project detail view
-    $layout_defs['Project']['subpanel_setup']['holidays']['top_buttons'] =
-    array(array('widget_class' => 'SubPanelTopCreateButton'),array('widget_class' => 'SubPanelTopSelectButton', 'mode'=>'MultiSelect' ));
-
-	$layout_defs['Project']['subpanel_setup']['projectresources']['top_buttons'] =
-	array(array('widget_class' => 'SubPanelTopSelectUsersButton', 'mode'=>'MultiSelect' ),
-	array('widget_class' => 'SubPanelTopSelectContactsButton', 'mode'=>'MultiSelect' ));
-	
-}
+		$layout_defs['Project']['subpanel_setup']['projectresources']['top_buttons'] =
+		array(array('widget_class' => 'SubPanelTopSelectUsersButton', 'mode'=>'MultiSelect' ),
+		array('widget_class' => 'SubPanelTopSelectContactsButton', 'mode'=>'MultiSelect' ));
+		
+	}
 }
 //END SUGARCRM flav=pro ONLY
 $layout_defs['ProjectTemplates'] = array(
