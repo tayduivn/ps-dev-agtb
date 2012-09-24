@@ -8,7 +8,7 @@
         var self = this;
         app.view.View.prototype._render.call(this);
 
-        app.api.call('GET', '../rest/v10/summer/contacts', null, {
+        app.api.call('GET', '../rest/v10/google/contacts', null, {
             success: function(o) {
                 $("#"+self.guid).html("");
                 _.each(o.contacts, function(contact) {
