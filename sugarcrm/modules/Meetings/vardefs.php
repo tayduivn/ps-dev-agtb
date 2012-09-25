@@ -509,6 +509,17 @@ $dictionary['Meeting'] = array('table' => 'meetings',
 		'reportable' => false,
 		'importable' => false,
 	),
+	'add_parent_invitee' =>
+	array(
+		'name' => 'add_parent_invitee',
+		'vname' => 'LBL_ADD_PARENT_INVITEE',
+        'type' => 'bool',
+		'source' => 'non-db',
+		'comment' => 'Checkbox for adding related to records to the invitees',
+		'massupdate' => false,
+		'reportable' => false,
+		'importable' => false,
+	),
 ),
  'relationships' => array (
 	  'meetings_assigned_user' =>
