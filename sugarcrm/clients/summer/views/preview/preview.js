@@ -17,7 +17,7 @@
         this.layout.layout.layout.layout.off("dashboard:preview", null, this);
         this.layout.layout.layout.layout.on("dashboard:preview", this.togglePreview, this);
 
-        this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
+        this.$el.parent().parent().addClass("container-fluid tab-content");
     },
     _renderHtml: function() {
         var fieldsArray, that;
