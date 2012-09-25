@@ -19,6 +19,7 @@
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
         'click .sayit .label a.close': 'removeTag',
+        'click .showAnchor': 'showAnchor',        
         'click .icon-eye-open': 'previewRecord'
     },
 
@@ -72,6 +73,12 @@
         jQuery.event.props.push('dataTransfer');
     },
 
+    showAnchor: function(event) {
+        event.preventDefault();    	
+        var myId = this.$(event.currentTarget).data('id');
+        $('html, body').animate({ scrollTop: $('#'+myId).offset().top - 50 }, 'slow');
+    },
+    
     showMoreRecords: function() {
         var self = this, options = {};
 
