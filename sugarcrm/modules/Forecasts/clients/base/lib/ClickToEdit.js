@@ -70,6 +70,7 @@
                   if(settings.field.type !== 'currency') {
                       return value;
                   }
+                  // format for currency editing, mimic excel
                   return app.utils.formatNumber(
                       settings.field.model.get(settings.field.name),
                       app.user.get('decimal_precision'),
@@ -77,7 +78,7 @@
                       '',
                       app.user.get('decimal_separator'));
                 },
-                onedit:function(settings, original){
+                onedit: function(settings, original){
                     // clear styling
                     $(this).css("background-color", "");
                     $(this).css("color", $.data(this, "color"));
