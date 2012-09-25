@@ -313,11 +313,21 @@ class DownloadFile {
      * @return string
      */
     public function getMimeType($filename) {
-        if( function_exists( 'mime_content_type' ) ) {
-            $mimetype = mime_content_type($filename);
-        } elseif( function_exists( 'ext2mime' ) ) {
-            $mimetype = ext2mime($filename);
-        } else {
+        // Bug 55455 - On some versions of PHP, file stat was throwing an error.
+        // This attempts to relieve that.
+        $mimetype = '';
+        
+        // Ensure the file exists
+        if (file_exists($filename)) {
+            if( function_exists( 'mime_content_type' ) ) {
+                $mimetype = mime_content_type($filename);
+            } elseif( function_exists( 'ext2mime' ) ) {
+                $mimetype = ext2mime($filename);
+            } 
+        }
+        
+        // If the mimetype is empty, set it manually
+        if (empty($mimetype)) {
             $mimetype = 'application/octet-stream';
         }
 
