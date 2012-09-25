@@ -46,11 +46,11 @@ class SideBarLayout {
                     'span' => $this->spans['side'],
                     'components' => array(array(
                         'layout' => array(
-                            'css_class' => 'tab-pane active',
+                            'css_class' => 'sidebar-pane active',
                             'components' => $this->containers['side'],
                         ),
                     )),
-                    'css_class' => 'tab-content folded',
+                    'css_class' => 'sidebar-content folded',
                 )
             );
         }
