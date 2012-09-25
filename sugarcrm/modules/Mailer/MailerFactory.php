@@ -30,6 +30,9 @@ require_once "SmtpMailerConfiguration.php";              // required if producin
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
 
+require_once "SimpleMailer.php";                         //
+require_once "SugarMailer.php";                          //
+
 /**
  * Factory to create Mailers.
  */

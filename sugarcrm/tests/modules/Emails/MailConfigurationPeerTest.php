@@ -90,7 +90,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-   function testgetMailConfigurations_All_Success()
+   function testListMailConfigurations_All_Success()
     {
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
@@ -134,7 +134,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         );
         //print_r($mail_configs_expected);
 
-        $configs = MailConfigurationPeer::getMailConfigurations(self::$current_user,false);
+        $configs = MailConfigurationPeer::listMailConfigurations(self::$current_user);
 
         $mail_configs_actual = array();
         if (is_array($configs)) {
@@ -159,7 +159,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    function testgetMailConfigurations_SystemOnly_Success()
+    function testListMailConfigurations_SystemOnly_Success()
     {
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
@@ -196,20 +196,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         list($ib1, $ob1) = self::createInboundAndOutboundEmail($config1_array);
         list($ib2, $ob2) = self::createInboundAndOutboundEmail($config2_array);
 
-        $mail_configs_expected = array(
-            self::$system_config->id => self::$system_config->name
-        );
-        //print_r($mail_configs_expected);
-
-        $configs = MailConfigurationPeer::getMailConfigurations(self::$current_user,true);
-
-        $mail_configs_actual = array();
-        if (is_array($configs)) {
-            foreach($configs AS $config) {
-                $mail_configs_actual[$config->config_id] = $config->config_name;
-            }
-        }
-        //print_r($mail_configs_actual);
+        $config = MailConfigurationPeer::getSystemMailConfiguration(self::$current_user);
 
         self::deleteInboundEmail($ib1->id,$ib1->name);
         self::deleteInboundEmail($ib2->id,$ib2->name);
@@ -220,7 +207,8 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
             self::deleteOutboundEmail(self::$system_config->id,self::$system_config->name);
         }
 
-        $this->assertEquals($mail_configs_expected, $mail_configs_actual, "Unexpected list for 'SYSTEM' MailConfigurations");
+        $this->assertNotEmpty($config, "SYSTEM MailConfiguration Not Found");
+        $this->assertEquals($config->config_id, self::$system_config->id, "Unexpected 'SYSTEM' MailConfiguration");
     }
 
 
