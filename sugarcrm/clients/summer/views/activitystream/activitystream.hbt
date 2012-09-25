@@ -1,6 +1,6 @@
 <div class="block filtered tabbable tabs-left" id="moduleActivity">
   <div class="row">
-    <ul id="activitystream-pills" class="nav nav-pills" tour="tour-stream-filter">
+    <ul id="activitystream-pills" class="nav nav-pills" data-tour="tour-stream-filter">
           <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
           <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
           {{#if opts.params.id}}
@@ -14,7 +14,7 @@
       <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
         <img src="{{picture_url}}" alt="{{full_name}}">
       </a>
-      <div contenteditable="true" class="span10 offset2 sayit" dropzone="copy" tour="tour-stream-post" />
+      <div contenteditable="true" class="span10 offset2 sayit" dropzone="copy" data-tour="tour-stream-post" />
       <div class="inputactions span10">
         <a href=""><i class="icon-tag"></i></a>
         <a href=""><i class="icon-paper-clip"></i></a>
