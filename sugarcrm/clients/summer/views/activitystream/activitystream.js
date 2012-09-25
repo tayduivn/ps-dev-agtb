@@ -18,7 +18,8 @@
         'blur .sayit': 'hideTypeahead',
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
-        'click .sayit .label a.close': 'removeTag'
+        'click .sayit .label a.close': 'removeTag',
+        'click .icon-eye-open': 'previewRecord'
     },
 
     initialize: function(options) {
@@ -406,6 +407,26 @@
         this.$(event.currentTarget).parent().remove();
     },
 
+    previewRecord: function(event) {
+        var self = this;
+        var root = this.$(event.currentTarget).parent().parent().parent();
+        var hash = root.find("p a:last").attr("href").replace('#', '');
+        var arr = hash.split('/');
+        var module = arr[0], id = arr[1];
+
+        // Grab model corresponding to preview icon clicked
+        var model = App.data.createBean(module);
+        model.set("id", id);
+        model.fetch({
+            success: function(model) {
+                console.log ("Done with model.", model, self.layout);
+                model.set("_module", module);
+                // Fire on parent layout .. works nicely for relatively simple page ;=)
+                self.layout.layout.layout.trigger("dashboard:preview", model);
+            }
+        });
+    },
+
     _renderHtml: function() {
         _.each(this.collection.models, function(model) {
             var activity_data = model.get("activity_data");
@@ -480,29 +501,29 @@
             }
             if(this.opts.params.offset != 'undefined') {
                 paramStr += '&offset='+this.opts.params.offset;
-            }   
+            }
             if(this.opts.params.max_num != 'undefined') {
                 paramStr += '&max_num='+this.opts.params.max_num;
-            } 
+            }
             if(this.opts.params.limit != 'undefined' ) {
                 paramStr += '&limit='+this.opts.params.limit;
-            } 
-        } 
-        
+            }
+        }
+
         if(this.collection.models.length > 0) {
-            setTimeout(function() {     
+            setTimeout(function() {
                 createStoryJS({
                     type:       'timeline',
                     width:      '100%',
                     height:     '400',
-                    start_at_end:true,  
+                    start_at_end:true,
                     js: 'lib/TimelineJS/js/timeline.js',
                     source:     app.api.buildURL('ActivityStream')+"?oauth_token="+app.api.getOAuthToken()+paramStr+"&view=timeline",
                     embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
-                }); 
+                });
             }, 300);
-        }  
-        
+        }
+
         return app.view.View.prototype._renderHtml.call(this);
     },
 
