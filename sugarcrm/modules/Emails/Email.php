@@ -569,7 +569,10 @@ class Email extends SugarBean {
             $mailer->setTextBody($textBody);
 
             if (!empty($mailConfig->replyto_email)) {
-                $mailer->setHeader(EmailHeaders::ReplyTo, new EmailIdentity($mailConfig->replyto_email, $mailConfig->replyto_name));
+                $mailer->setHeader(
+                    EmailHeaders::ReplyTo,
+                    new EmailIdentity($mailConfig->replyto_email, $mailConfig->replyto_name)
+                );
             }
 
             foreach($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
