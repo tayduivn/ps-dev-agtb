@@ -1,8 +1,13 @@
+{{#if data}}
 <div class="block thumbnail padded">
     <h4 tour="tour-recommended-invites">Invite recommendations</h4>
     These are the recommended invites:
     <div>
     <ul id="invitesList">
+        {{#each data}}
+        <li>{{first_name}} {{last_name}} <strong>&lt;{{email}}&gt;</strong></li>
+        {{/each}}
     </ul>
     </div>
 </div>
+{{/if}}
