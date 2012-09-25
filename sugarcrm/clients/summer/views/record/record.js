@@ -30,6 +30,7 @@
 
         if (this.context.get("create") === true) {
             this.model.isNotEmpty = true;
+            this.editable = true;
         }
     },
 
