@@ -123,6 +123,37 @@ class SugarTestTimePeriodUtilities
         return $timeperiod;
     }
 
+    public static function createAnnualFiscalTimePeriod (){
+
+        global $timedate;
+        $timedate = TimeDate::getInstance();
+        $start_date = $timedate->getNow();
+        $month = $timedate->getNow()->format('n');
+        if($month < 4)
+        {
+            $month = 1;
+        } else if ($month < 8) {
+            $month = 4;
+        } else if ($month < 11) {
+            $month = 7;
+        } else {
+            $month = 10;
+        }
+
+
+        $year = $timedate->getNow()->format('Y');
+        $time = mt_rand();
+        $name = 'SugarAnnualTimePeriod' . $time;
+        $start_date->setDate($year, $month, 1);
+        $timeperiod = new AnnualTimePeriod($timedate->asDbDate($start_date),true);
+
+        $timeperiod->name = $name;
+        $timeperiod->time_period_type = "Annual";
+        $timeperiod->save();
+        self::$_createdTimePeriods[] = $timeperiod;
+        return $timeperiod;
+    }
+
     public static function addTimePeriod($timeperiod=NULL) {
         if(is_null($timeperiod)) {
             return;

@@ -519,6 +519,27 @@ function post_install() {
 		}
     }
 
+    if($origVersion < '670') {
+        $db = DBManagerFactory::getInstance();
+        // grab all opportunities and resave them to get the date_closed_timestamp filled in
+        $query = "SELECT opportunities.id opportunity_id FROM opportunities";
+        $data = $db->query($query);
+        while($row = $db->fetchByAssoc($data)) {
+    			$opp = new Opportunity();
+    			$opp->retrieve($row['opportunity_id']);
+    			$opp->save();
+        }
+        // grab all timeperiods and resave them to get the timestamp columns filled in
+        $query = "SELECT timeperiods.id timeperiod_id FROM timeperiods";
+        $data = $db->query($query);
+        while($row = $db->fetchByAssoc($data)) {
+    			$tp = new TimePeriod();
+                $tp->retrieve($row['timeperiod_id']);
+                $tp->save();
+        }
+
+    }
+
     //BEGIN SUGARCRM flav=ent ONLY
     ///////////////////////////////////////////////////////////////////////////
 	////	REBUILD PORTAL CONFIG

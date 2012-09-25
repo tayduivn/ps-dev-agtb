@@ -28,8 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/TimePeriods/iTimePeriod.php');
-class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
-
+class Quarter454TimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * constructor override
      *
@@ -40,8 +39,8 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
         $timedate = TimeDate::getInstance();
 
         //set defaults
-        $this->time_period_type = 'Quarter';
-        $this->is_fiscal = false;
+        $this->time_period_type = 'Quarter454';
+        $this->is_fiscal = true;
         $this->is_leaf = false;
 
         $this->setStartDate($start_date);
@@ -64,21 +63,22 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
 
         //set the start/end date
         $this->start_date = $start_date;
-        $end_date = $end_date->modify('+3 month');
+        $end_date = $end_date->modify('+13 week');
         $end_date = $end_date->modify('-1 day');
         $this->end_date = $timedate->asDbDate($end_date);
     }
 
     /**
-     * creates a new QuarterTimePeriod to start to use
+     * creates a new Quarter454TimePeriod to start to use
      *
-     * @return QuarterTimePeriod
+     * @return Quarter454TimePeriod
      */
     public function createNextTimePeriod() {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromDbDate($this->end_date);
         $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = new QuarterTimePeriod($timedate->asDbDate($nextStartDate));
+        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
         $nextPeriod->is_leaf = $this->is_leaf;
         $nextPeriod->save();
 

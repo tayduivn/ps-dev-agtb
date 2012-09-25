@@ -104,11 +104,22 @@ class TimePeriod extends SugarBean {
 		return "$this->name";
 	}
 
-	
-	function retrieve($id, $encode=false, $deleted=true){
-		$ret = parent::retrieve($id, $encode, $deleted);
-		return $ret;
-	}
+    /**
+     * custom override of retrieve function to disable the date formatting and reset it again after the bean has been retrieved.
+     *
+     * @param string $id
+     * @param bool $encode
+     * @param bool $deleted
+     * @return null|SugarBean
+     */
+    function retrieve($id, $encode=false, $deleted=true){
+        global $disable_date_format;
+        $previous_disable_date_format = $disable_date_format;
+        $disable_date_format = 1;
+   		$ret = parent::retrieve($id, $encode, $deleted);
+        $disable_date_format = $previous_disable_date_format;
+   		return $ret;
+   	}
 
 	function is_authenticated()
 	{

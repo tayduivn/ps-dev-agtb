@@ -62,18 +62,17 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
             $start_date = $timedate->asDbDate($timedate->getNow());
         }
         $end_date = $timedate->fromDbDate($start_date);
-        $end_date->setTime(0,0,0);
 
         //set the start/end date
         $this->start_date = $start_date;
-        if($this->is_fiscal_year) {
+        if($this->is_fiscal) {
 
             $end_date = $end_date->modify('+52 week');
-            $end_date = $end_date->modify('-1 second');
+            $end_date = $end_date->modify('-1 day');
             $this->end_date = $timedate->asDbDate($end_date);
         } else {
             $end_date = $end_date->modify('+1 year');
-            $end_date = $end_date->modify('-1 second');
+            $end_date = $end_date->modify('-1 day');
             $this->end_date = $timedate->asDbDate($end_date);
         }
     }
@@ -84,9 +83,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
      * @return bool
      */
     public function hasLeaves() {
-        $this->load_relationship('related_timeperiods');
-
-        if(count($this->related_timeperiods))
+        if(count($this->getLeaves()))
             return true;
 
         return false;
@@ -94,14 +91,30 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     }
 
     /**
-     * loads the related time periods and returns the array
-     *
-     * @return mixed
+     * removes related timeperiods
+     */
+    public function removeLeaves() {
+        $this->load_relationship('related_timeperiods');
+        $this->related_timeperiods->delete($this->id);
+    }
+
+    /**
+     * loads the related time periods
      */
     public function getLeaves() {
-        $this->load_relationship('related_timeperiods');
+        //$this->load_relationship('related_timeperiods');
+        $leaves = array();
+        $db = DBManagerFactory::getInstance();
+        $query = "select id, time_period_type from timeperiods "
+        . "WHERE parent_id = " . $db->quoted($this->id) . " "
+        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
 
-        return $this->related_timeperiods;
+        $result = $db->query($query);
+
+        while($row = $db->fetchByAssoc($result)) {
+            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
+        }
+        return $leaves;
     }
 
     /**
@@ -112,9 +125,8 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
     public function createNextTimePeriod() {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromDbDate($this->end_date);
-        $nextStartDate->setTime(0,0,0);
         $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = new AnnualTimePeriod($timedate->asDbDate($nextStartDate));
+        $nextPeriod = new AnnualTimePeriod($timedate->asDbDate($nextStartDate), $this->is_fiscal);
         $nextPeriod->save();
 
         return $nextPeriod;
@@ -128,10 +140,12 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
      */
     public function buildLeaves($timePeriodType) {
         if($this->hasLeaves()) {
-            return;
+            throw new Exception("This TimePeriod already has leaves");
         }
-        $timedate = TimeDate::getInstance();
-        $leafStartDate = $timedate->fromDbDate($this->start_date);
+
+        if($this->is_leaf) {
+            throw new Exception("Leaf Time Periods cannot have leaves");
+        }
 
         $n = 0;
 
@@ -139,32 +153,42 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         //valid time periods to be leaves of this period
         switch($timePeriodType) {
             //set up the first leaf
-            case "Quarter":
+            case "Quarter";
                 $n = 4;
                 $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
-                $leafPeriod->setStartDate($this->start_date);
-                $this->related_timeperiods->add($leafPeriod->id);
                 break;
-            case "Quarter544":
+            case "Quarter544";
                 $n = 4;
-                $leafPeriod = BeanFactory::newBean("QuarterTimePeriods544");
-                $leafPeriod->setStartDate($this->start_date);
-                $this->related_timeperiods->add($leafPeriod->id);
+                $leafPeriod = BeanFactory::newBean("Quarter544TimePeriods");
                 break;
-            case "Quarter445":
+            case "Quarter454";
                 $n = 4;
-                $leafPeriod = BeanFactory::newBean("QuarterTimePeriods445");
-                $leafPeriod->setStartDate($this->start_date);
-                $this->related_timeperiods->add($leafPeriod->id);
+                $leafPeriod = BeanFactory::newBean("Quarter454TimePeriods");
                 break;
-            case "Month":
+            case "Quarter445";
+                $n = 4;
+                $leafPeriod = BeanFactory::newBean("Quarter445TimePeriods");
+                break;
+            case "Month";
                 $n = 12;
                 $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
                 $leafPeriod->is_fiscal = $this->is_fiscal;
-                $this->related_timeperiods->add($leafPeriod->id);
+                break;
+            default;
+                $n = 4;
+                if($this->is_fiscal) {
+                    $leafPeriod = BeanFactory::newBean("QuarterTimePeriods445");
+                } else {
+                    $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
+                }
                 break;
 
         }
+        $leafPeriod->setStartDate($this->start_date);
+        $leafPeriod->is_leaf = 1;
+        $leafPeriod->save();
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
 
         //loop the count to create the next n leaves to fill out the relationship
         for($i = 1; $i < $n; $i++) {
@@ -175,26 +199,10 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
                 $leafPeriod = $leafPeriod->createNextTimePeriod();
             }
             $this->related_timeperiods->add($leafPeriod->id);
+            $leafPeriod->save();
         }
 
         $this->save();
 
     }
-
-    /**
-     * custom override of retrieve function to disable the date formatting and reset it again after the bean has been retrieved.
-     *
-     * @param string $id
-     * @param bool $encode
-     * @param bool $deleted
-     * @return null|SugarBean
-     */
-    function retrieve($id, $encode=false, $deleted=true){
-        global $disable_date_format;
-        $previous_disable_date_format = $disable_date_format;
-        $disable_date_format = 1;
-   		$ret = parent::retrieve($id, $encode, $deleted);
-        $disable_date_format = $previous_disable_date_format;
-   		return $ret;
-   	}
 }

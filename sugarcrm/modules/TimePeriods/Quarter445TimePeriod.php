@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/TimePeriods/iTimePeriod.php');
-class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
+class Quarter445TimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
      * constructor override
@@ -81,12 +81,12 @@ class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
     }
 
     /**
-     * creates a new QuarterTimePeriod445 to start to use
+     * creates a new Quarter445TimePeriod to start to use
      *
-     * @return QuarterTimePeriod445
+     * @return Quarter445TimePeriod
      */
     public function createNextTimePeriod() {
-        $nextPeriod = new QuarterTimePeriod445();
+        $nextPeriod = new Quarter445TimePeriod();
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromUserDate($this->start_date);
         $nextEndDate = $timedate->fromUserDate($this->end_date);
@@ -106,13 +106,19 @@ class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
      * @return bool
      */
     public function hasLeaves() {
-        $this->load_relationship('related_timeperiods');
-
-        if(count($this->related_timeperiods))
+        if(count($this->getLeaves()))
             return true;
 
         return false;
 
+    }
+
+    /**
+     * removes related timeperiods
+     */
+    public function removeLeaves() {
+        $this->load_relationship('related_timeperiods');
+        $this->related_timeperiods->delete($this->id);
     }
 
     /**
@@ -121,9 +127,19 @@ class QuarterTimePeriod445 extends TimePeriod implements iTimePeriod {
      * @return mixed
      */
     public function getLeaves() {
-        $this->load_relationship('related_timeperiods');
+        //$this->load_relationship('related_timeperiods');
+        $leaves = array();
+        $db = DBManagerFactory::getInstance();
+        $query = "select id, time_period_type from timeperiods "
+        . "WHERE parent_id = " . $db->quoted($this->id) . " "
+        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
 
-        return $this->related_timeperiods;
+        $result = $db->query($query);
+
+        while($row = $db->fetchByAssoc($result)) {
+            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
+        }
+        return $leaves;
     }
 
     /**

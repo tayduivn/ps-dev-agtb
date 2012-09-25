@@ -154,6 +154,8 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
   	'name' => 'related_timeperiods',
     'type' => 'link',
     'relationship' => 'related_timeperiods',
+    'link_type' => 'many',
+    'side' => 'left',
     'source'=>'non-db',
   ),
 
