@@ -40,8 +40,10 @@ class LocalizationTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp() 
     {
+        global $current_user;
         $this->_locale = new Localization();
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user = $this->_user;
         $this->_currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
 
     }
