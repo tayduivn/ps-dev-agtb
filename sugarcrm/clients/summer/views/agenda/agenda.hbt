@@ -1,6 +1,6 @@
+{{#if loaded}}
 <div class="block thumbnail padded">
      <h4 data-tour="tour-agenda">Agenda:</h4>
-     {{#if loaded}}
           <div class="accordion" id="accordion2">
             <div class="accordion-group">
               <div class="accordion-heading">
@@ -69,7 +69,5 @@
               </div>
             </div>
           </div>
-     {{else}}
-     Loading...
-     {{/if}}
 </div>
+{{/if}}
