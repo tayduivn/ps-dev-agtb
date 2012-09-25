@@ -18,7 +18,8 @@
         'blur .sayit': 'hideTypeahead',
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
-        'click .sayit .label a.close': 'removeTag'
+        'click .sayit .label a.close': 'removeTag',
+        'click .showAnchor': 'showAnchor'
     },
 
     initialize: function(options) {
@@ -71,6 +72,12 @@
         jQuery.event.props.push('dataTransfer');
     },
 
+    showAnchor: function(event) {
+        event.preventDefault();    	
+        var myId = this.$(event.currentTarget).data('id');
+        $('html, body').animate({ scrollTop: $('#'+myId).offset().top - 50 }, 'slow');
+    },
+    
     showMoreRecords: function() {
         var self = this, options = {};
 
@@ -495,7 +502,7 @@
                     type:       'timeline',
                     width:      '100%',
                     height:     '400',
-                    start_at_end:true,  
+                    start_at_end:true, 
                     js: 'lib/TimelineJS/js/timeline.js',
                     source:     app.api.buildURL('ActivityStream')+"?oauth_token="+app.api.getOAuthToken()+paramStr+"&view=timeline",
                     embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into

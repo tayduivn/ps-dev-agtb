@@ -402,7 +402,7 @@ class ActivityStream extends SugarBean {
     }
     
     protected function getTimelineHeadline($activity) {
-        return '<a href="#Users/'.$activity['created_by'].'">'.$activity['created_by_name'].'</a> '.$activity['activity_type'];        
+        return '<a href="" data-id="'.$activity['id'].'" class="showAnchor">'.$activity['created_by_name'].' '.$activity['activity_type'].'</a>';        
     }
     
     protected function getTimelineMedia($activity) {
