@@ -275,12 +275,8 @@ class MailRecord {
             }
         }
 
-        //$email->type = 'out';
-        //$email->status = 'sent';
         if ($status == "draft") {
             $request['saveDraft'] = 'true';    // Send is the default behavior
-            //$email->type = 'draft';
-            //$email->status = 'draft';
         }
 
         $_REQUEST = array_merge($_REQUEST, $request);

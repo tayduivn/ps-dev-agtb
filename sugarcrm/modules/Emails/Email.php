@@ -521,53 +521,6 @@ class Email extends SugarBean {
 				$this->parent_type = "";
 		} // if
 
-
-
-//================
-
-        /*-----------------------------------------------------------------
-        require_once("modules/Mailer/MailerFactory.php");
-
-        require_once('modules/Mailer/EmailIdentity.php');
-        require_once("include/OutboundEmail/OutboundEmail.php");
-
-        require_once("modules/Emails/MailConfigurationPeer.php");
-        require_once("modules/Emails/MailConfiguration.php");
-
-        require_once("modules/Mailer/SimpleMailer.php");
-        require_once("modules/Mailer/SugarMailer.php");
-        -------------------------------------------------------------------*/
-
-/**
-        $mailer->addRecipientsTo( new EmailIdentity( 'twolf@sugarcrm.com',    'Bullwinkle Moose' ) );
-        $mailer->setHtmlBody($message);
-        $mailer->setTextBody(from_html($message));
-
-        $mailer->setSubject("This is a Test Email");
-
-        $documentRevisions = loadDocumentRevisions($curly);
-        if (is_array($documentRevisions) && count($documentRevisions) > 0) {
-            foreach($documentRevisions as $documentRevision) {
-                $attachment = Attachment::FromSugarBean($documentRevision);
-                //print_r($attachment);
-                $mailer->addAttachment($attachment);
-            }
-        }
-
-        $notes = loadNotes($curly);
-        if (is_array($notes) && count($notes) > 0) {
-            foreach($notes as $note) {
-                $attachment = Attachment::FromSugarBean($note);
-                //print_r($attachment);
-                $mailer->addAttachment($attachment);
-            }
-        }
-
-        $mailer->send();
-**/
-
-//================
-
         $forceSave = false;
         $subject = $this->name;
         $htmlBody = $this->description_html;
@@ -610,14 +563,6 @@ class Email extends SugarBean {
                 throw new MailerException("No Valid Mail Configurations Found");
             }
 
-            // $mailer_locale   = $mailConfig->mailerConfigData->getLocale();
-            // $mailer_encoding = $mailConfig->mailerConfigData->getEncoding();
-            $charset = $mailConfig->mailerConfigData->getCharset();
-
-            // $mailConfig->mailerConfigData->setLocale($locale);     //
-            // $mailConfig->mailerConfigData->setCharset($charset);   // 'en_us',
-            // print_r($mailConfig);
-
             $mailer = MailerFactory::getMailer($mailConfig);
             $mailer->setSubject($subject);
             $mailer->setHtmlBody($htmlBody);
@@ -625,20 +570,17 @@ class Email extends SugarBean {
 
             foreach($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
                 if(empty($addr_arr['email'])) continue;
-                $name = empty($addr_arr['display']) ? '' : $locale->translateCharsetMIME(trim( $addr_arr['display']), 'UTF-8', $charset);
-                $mailer->addRecipientsTo( new EmailIdentity( $addr_arr['email'],  $name) );
+                $mailer->addRecipientsTo( new EmailIdentity( $addr_arr['email'],  $addr_arr['display']) );
             }
 
             foreach($this->email2ParseAddresses($request['sendCc']) as $addr_arr) {
                 if(empty($addr_arr['email'])) continue;
-                $name = empty($addr_arr['display']) ? '' : $locale->translateCharsetMIME(trim( $addr_arr['display']), 'UTF-8', $charset);
-                $mailer->addRecipientsCc( new EmailIdentity( $addr_arr['email'],  $name) );
+                $mailer->addRecipientsCc( new EmailIdentity( $addr_arr['email'],  $addr_arr['display']) );
             }
 
             foreach($this->email2ParseAddresses($request['sendBcc']) as $addr_arr) {
                 if(empty($addr_arr['email'])) continue;
-                $name = empty($addr_arr['display']) ? '' : $locale->translateCharsetMIME(trim( $addr_arr['display']), 'UTF-8', $charset);
-                $mailer->addRecipientsBcc( new EmailIdentity( $addr_arr['email'],  $name) );
+                $mailer->addRecipientsBcc( new EmailIdentity( $addr_arr['email'],  $addr_arr['display']) );
             }
 
             /* handle attachments */
@@ -684,7 +626,7 @@ class Email extends SugarBean {
                             //$note->x_mime_type   = $note->file_mime_type;
                         }
 
-                        $attachment = Attachment::FromSugarBean($note);
+                        $attachment = Attachment::fromSugarBean($note);
                         //print_r($attachment);
                         $mailer->addAttachment($attachment);
                     }
@@ -737,7 +679,7 @@ class Email extends SugarBean {
                             $note->save();
                         }
 
-                        $attachment = Attachment::FromSugarBean($documentRevision);
+                        $attachment = Attachment::fromSugarBean($documentRevision);
                         //print_r($attachment);
                         $mailer->addAttachment($attachment);
                     }
@@ -762,7 +704,7 @@ class Email extends SugarBean {
                             if (!$note->embed_flag) {
 
 
-                                $attachment = Attachment::FromSugarBean($note);
+                                $attachment = Attachment::fromSugarBean($note);
                                 //print_r($attachment);
                                 $mailer->addAttachment($attachment);
 
@@ -799,7 +741,7 @@ class Email extends SugarBean {
                             //$note->x_file_exists = (bool) (!empty($note->id) && (file_exists($note->x_file_path)));
                             //$note->x_mime_type   = $note->file_mime_type;
 
-                            $attachment = Attachment::FromSugarBean($note);
+                            $attachment = Attachment::fromSugarBean($note);
                             //print_r($attachment);
                             $mailer->addAttachment($attachment);
 
