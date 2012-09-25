@@ -39,10 +39,10 @@
             } else {
                 this.opts = { params: { module: this.module }};
             }
-
-            this.collection = app.data.createBeanCollection("ActivityStream");
-            this.collection.fetch(this.opts);
         }
+
+        this.collection = app.data.createBeanCollection("ActivityStream");
+        this.collection.fetch(this.opts);
 
         // Fetch taggable entities.
         var url = app.api.buildURL("CustomReport/EntityList");
