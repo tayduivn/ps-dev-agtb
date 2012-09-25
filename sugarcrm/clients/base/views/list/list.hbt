@@ -8,6 +8,9 @@
                                 {{field ../../this null "list-header"}}
                             </th>
                             {{/each}}
+                            <tr class="alert alert-warning hide">
+                                <td colspan="{{fields.length}}" class="container"></td>
+                            </tr>
                         </tr>
                         </thead>
                         <tbody role="alert" aria-live="polite" aria-relevant="all">
