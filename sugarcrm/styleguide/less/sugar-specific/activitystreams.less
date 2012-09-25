@@ -3,20 +3,20 @@
 #stream {position: relative;}
 #stream table {margin-top: -15px;}
 #stream tr td {padding: 20px 4px }
-#stream tbody tr:first-child td {border-top: none;} 
+#stream tbody tr:first-child td {border-top: none;}
 #stream tbody tr td:first-child {
   width: 40px;
 }
 #stream tbody tr td:last-child {
   width: 75px;
   padding-right: 20px;
-} 
+}
 
 .nav-pills > li > a {
     padding: 6px;
 }
 
-#colright { position: absolute; top: 0; right: -2px; 
+#colright { position: absolute; top: 0; right: -2px;
   background: @grayLight;
 }
 #colleft { position: absolute; top: 0; left: -2px; }
@@ -46,40 +46,42 @@
     width: inherit;
 }
 
-.folded .tab-pane#overview {
-    border-left: none;
-  }
-.folded .tab-pane.active#overview {
-  border-left: 1px solid darken(@grayLighter, 4%);
-}
-
 .container-fluid#contentflex {
   margin: 0;
   padding: 0;
 }
-
-
-#dashboard .folded .tab-pane.active.hide {
-   display: none;
-}
 .acomment .avatar {margin-right: 10px;}
-.folded .tab-pane.active {
-  position: absolute !important;
-  top: 48px;
-  right: 0;
-  height: 100%;
-  width: inherit;
-  position: relative;
-  background-image: url('@{textureSecondary}');
-  padding-top: 40px;
-  padding: 20px 1.1%;
-  border-left: 1px solid @grayLight;
+
+.folded > .sidebar-pane {
+  display: none;
+  &.active {
+    top: 48px;
+    right: 0;
+    height: 100%;
+    width: inherit;
+    position: absolute;
+    background-image: url('@{textureSecondary}');
+    padding-top: 40px;
+    padding: 20px 1.1%;
+    border-left: 1px solid @grayLight;
+    display: block;
+    &.hide {
+      display: none;
+    }
+  }
+
+
+  .block {
+    width: 90%;
+    margin-left: 5%;
+    span.label {
+      margin: 0 10px 0 0;
+    }
+  }
 }
 
-.folded .tab-pane .block span.label  {margin: 0 10px 0 0;}
-.folded .tab-pane .block {width: 90%; margin-left: 5%;}
 .folded [data-toggle="tab"].actions {top: 0; color: @gray;}
-#dashboard  .folded .tab-pane.active .thumbnail {margin: 0 20px 20px;}
+#dashboard  .folded .sidebar-pane.active .thumbnail {margin: 0 20px 20px;}
 
 //55231: fix detail listing view on notes
 //6062ae3b6ab9bac3f9d6f4742e316f5fac0d5b51

@@ -54,7 +54,7 @@
           $(".alert-top").remove();
         }
       })
-  
+
     // add tipsies to grid for scaffolding (styleguide only)
     if ($('#grid-system').length) {
       $('#grid-system').tooltip({
@@ -101,40 +101,40 @@
       function (e) {
     		$(this).parent().parent().prev('.extend').removeClass('hide');
     		$(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
-    		return false;  
+    		return false;
       },
       function (e) {
       		$(this).parent().parent().prev('.extend').addClass('hide');
       		$(this).html('. . .');
-      		return false;  
+      		return false;
     })
-    
+
     // toggle more hide
     $('.filter').toggle(
       function (e) {
     		$(this).parent().find('.extend').removeClass('hide');
     		$(this).html('Filter &nbsp;<i class="icon-caret-up"></i>');
-    		return false;  
+    		return false;
       },
       function (e) {
       		$(this).parent().find('.extend').addClass('hide');
       		$(this).html('Filter &nbsp;<i class="icon-caret-down"></i>');
-      		return false;  
+      		return false;
     })
-    
+
     // toggle more hide
     $('.edit').toggle(
       function (e) {
         $(this).addClass('active');
     		$(this).parent().parent().parent().find('.extend').removeClass('hide');
-    		return false;  
+    		return false;
       },
       function (e) {
         $(this).removeClass('active');
       		$(this).parent().parent().parent().find('.extend').addClass('hide');
-      		return false;  
+      		return false;
     })
-    
+
     // toggle more hide
     $('.commented .more').toggle(
       function (e) {
@@ -184,25 +184,25 @@
       function () {
         $(this).before('<span class="editble"><i class="icon-pencil icon-sm"></i></span>');
       },
-      function () { 
-        $('span.editble').remove(); 
+      function () {
+        $('span.editble').remove();
       }
     )
- 
-    
+
+
 
     $(".omnibar").toggle(
       function (e) {
    		$(this).addClass('active');
-   		$(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>'); 
+   		$(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>');
    		return false;
       },
       function (e) {
         $(this).removeClass('active');
         $('.inputactions').remove();
-      		return false;  
+      		return false;
     })
-    
+
     $('.addme').on('click',
       function () {
         $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
@@ -256,7 +256,7 @@
   	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
   	    return false;
   	})
-    
+
     $('table.datatable').dataTable({
       "bPaginate": false,
       "bFilter": true,
@@ -273,7 +273,7 @@
     $("[rel=popoverTop]").popover({placement: "top"})
     $("[rel=popoverBottom]").popover({placement: "bottom"})
     $('#moduleActivity .form-search select').chosen()
-    $('#moduleActivity .form-search input').quicksearch('ul.results li')  
-  })  
+    $('#moduleActivity .form-search input').quicksearch('ul.results li')
+  })
 }(window.jQuery)
 

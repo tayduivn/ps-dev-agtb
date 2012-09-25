@@ -5596,36 +5596,35 @@ input[type=radio] { display:inline-block; }
   transition:all .2s linear;
 }
 .folded > div, .folded { width:inherit; }
-.folded .tab-pane#overview { border-left:none; }
-.folded .tab-pane.active#overview { border-left:1px solid #ebebeb; }
 .container-fluid#contentflex {
   margin:0;
   padding:0;
 }
-#dashboard .folded .tab-pane.active.hide { display:none; }
 .acomment .avatar { margin-right:10px; }
-.folded .tab-pane.active {
-  position:absolute !important;
+.folded > .sidebar-pane { display:none; }
+.folded > .sidebar-pane.active {
   top:48px;
   right:0;
   height:100%;
   width:inherit;
-  position:relative;
+  position:absolute;
   background-image:url('../../assets/img/light_toast.png');
   padding-top:40px;
   padding:20px 1.1%;
   border-left:1px solid #cdcccb;
+  display:block;
 }
-.folded .tab-pane .block span.label { margin:0 10px 0 0; }
-.folded .tab-pane .block {
+.folded > .sidebar-pane.active.hide { display:none; }
+.folded > .sidebar-pane .block {
   width:90%;
   margin-left:5%;
 }
+.folded > .sidebar-pane .block span.label { margin:0 10px 0 0; }
 .folded [data-toggle="tab"].actions {
   top:0;
   color:#58595b;
 }
-#dashboard  .folded .tab-pane.active .thumbnail { margin:0 20px 20px; }
+#dashboard  .folded .sidebar-pane.active .thumbnail { margin:0 20px 20px; }
 .block span.label {
   width:auto;
   margin:-6px 10px 0 -10px;
@@ -6487,10 +6486,10 @@ tr:hover td { overflow:display; }
   margin-left:40px;
   margin-bottom:10px;
 }
-.folded .tab-pane.active .thumbnail p, .folded .tab-pane.active .thumbnail li { margin:10px; }
-.folded .tab-pane.active .thumbnail .unstyled li .progress, .folded .tab-pane.active .thumbnail .unstyled li .progress .bar { height:12px; }
-.folded .tab-pane.active .thumbnail .unstyled { padding-bottom:20px; }
-.folded .tab-pane {
+.folded > .sidebar-pane.active .thumbnail p, .folded > .sidebar-pane.active .thumbnail li { margin:10px; }
+.folded > .sidebar-pane.active .thumbnail .unstyled li .progress, .folded > .sidebar-pane.active .thumbnail .unstyled li .progress .bar { height:12px; }
+.folded > .sidebar-pane.active .thumbnail .unstyled { padding-bottom:20px; }
+.folded > .sidebar-pane {
   -webkit-box-shadow:inset -1px 2px 20px rgba(0,0,0,.2),inset 1px 0 0 rgba(0,0,0,.1);
   -moz-box-shadow:inset -1px 2px 20px rgba(0,0,0,.2),inset 1px 0 0 rgba(0,0,0,.1);
   box-shadow:inset -1px 2px 20px rgba(0,0,0,.2),inset 1px 0 0 rgba(0,0,0,.1);
