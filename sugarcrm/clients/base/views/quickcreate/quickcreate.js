@@ -1,6 +1,5 @@
 ({
     initialize: function(options) {
-        debugger;
         app.view.View.prototype.initialize.call(this, options);
 
         /*
