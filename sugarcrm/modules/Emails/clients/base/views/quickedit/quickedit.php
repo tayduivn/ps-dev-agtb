@@ -7,7 +7,12 @@ $viewdefs['Emails']['base']['view']['quickedit'] = array(
             'name'    => 'save_button',
             'type'    => 'button',
             'label'   => 'LBL_SEND_BUTTON_LABEL',
-            'value'   => 'send',
+            'primary' => true,
+        ),
+        array(
+            'name'    => 'save_draft_button',
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_AS_DRAFT_BUTTON_LABEL',
             'primary' => true,
         ),
         array(

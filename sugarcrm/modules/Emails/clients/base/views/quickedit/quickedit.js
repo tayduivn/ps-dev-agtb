@@ -5,6 +5,11 @@
  * @extends View.View
  */
 ({
+    events: {
+        'click [name=save_draft_button]': 'saveAsDraft',
+        'click [name=save_button]': 'send'
+    },
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 //        this.model.on("error:validation", this.handleValidationError, this);
@@ -22,7 +27,6 @@
             
             hydrateFromEditModel: function() {
                 this.set(_.extend({}, view.model.attributes, {
-                    status: "ready",
                     to_addresses: [ {
                         email: view.model.get('to_addresses')
                     }],
@@ -37,16 +41,31 @@
         });
         return new SaveModel;
     },
-    
-    saveModel: function() {
-        // TODO we need to dismiss this in global error handler
+
+    saveAsDraft: function(){
+        debugger;
+        this.saveModel('draft', app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS'));
+    },
+
+    send: function() {
+        debugger;
+        this.saveModel('ready', app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS'));
+    },
+
+    saveModel: function(status, successMessage) {
+        var self = this;
+
         app.alert.show('save_edit_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
+
+        this.sendModel.set('status', status);
         this.sendModel.save(null, {
             success: function(data, textStatus, jqXHR) {
-                app.alert.show('save_edit_view', {autoclose: false, level: 'process', title: app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS')});
+                app.alert.dismiss('save_edit_view');
+                app.alert.show('save_edit_view', {autoclose: true, level: 'success', title: successMessage});
                 console.info("Email sent!", arguments);
             },
             error: function(jqXHR, textStatus, errorThrown) {
+                app.alert.dismiss('save_edit_view');
                 var msg = {autoclose: false, level: 'error', title: app.lang.getAppString('LBL_EMAIL_SEND_FAILURE')};
 
                 if(_.isString(textStatus.description)) {
@@ -57,12 +76,14 @@
                 console.error("Email not sent!", arguments);
             },
             complete: function() {
-                setTimeout(function() {
+                /*setTimeout(function() {
                     app.alert.dismiss('save_edit_view');
-                }, 2000);
+                }, 2000);*/
             },
             
             fieldsToValidate: this.getFields(this.module)
         });
     }
+
+
 })
