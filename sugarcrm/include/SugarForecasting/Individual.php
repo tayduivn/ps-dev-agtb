@@ -84,10 +84,10 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
 
         if ($this->getArg('user_id') == $current_user->id) {
             $sql .= "and w.date_modified = (select max(date_modified) from worksheet w2 " .
-                "where w2.user_id = o.assigned_user_id and related_id = o.id " .
-                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') where ";
+                "where w2.user_id = p.assigned_user_id and related_id = p.id " .
+                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') ";
         } else {
-            $sql .= "and w.version = 1 where ";
+            $sql .= "and w.version = 1 ";
         }
 
         /*if(isset($this->args['id']))
@@ -98,7 +98,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $sql .= " t.id =  '" . $this->getArg('timeperiod_id') . "' " .
             " and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
             "and o.deleted = 0";*/
-		$sql .= "p.deleted = 0 " .
+		$sql .= "where p.deleted = 0 " .
 				"and o.deleted = 0 ";
         $result = $db->query($sql);
 

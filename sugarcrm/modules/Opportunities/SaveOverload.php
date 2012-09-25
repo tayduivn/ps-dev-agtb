@@ -94,7 +94,7 @@ function perform_save(&$focus){
         $product->best_case = $focus->best_case;
         $product->likely_case = $focus->amount;
         $product->worst_case = $focus->worst_case;
-        $product->cost = $focus->amount;
+        $product->cost_price = $focus->amount;
         $product->quantity = 1;
         $product->currency_id = $focus->currency_id;
         $product->base_rate = $focus->base_rate;
