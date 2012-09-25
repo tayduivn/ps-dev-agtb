@@ -101,7 +101,7 @@ class MailerConfiguration
 
     /**
      * @access public
-     * @return Localization
+     * @return Localization|null Null if initialized but never set.
      */
     public function getLocale() {
         return $this->locale;
