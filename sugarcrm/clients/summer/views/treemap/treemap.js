@@ -17,7 +17,7 @@
         // Set up variables for d3 treemap.
         var margin = {top: 20, right: 0, bottom: 0, left: 0},
             // TODO: Fix the following
-            width = parseInt($("#"+this.guid).width()),
+            width = parseInt($("#"+this.guid).width(), 10),
             height = 400,
             transitioning;
 
@@ -66,7 +66,7 @@
             var d1 = new Date(today.getTime() + 31*day_ms);
             var data;
             if(self.collection) {
-                var data = self.collection.filter(function(model) {
+                data = self.collection.filter(function(model) {
                     // Filter for 30 days from now.
                     var d2 = new Date(model.get("date_closed") || "1970-01-01");
                     return (d2-d1)/day_ms <= 30;
@@ -93,7 +93,7 @@
                 _.each(value1, function(value2, key2) {
                     _.each(value2, function(record) {
                         record.className = 'stage_'+record.get("sales_stage").toLowerCase().replace(' ', '');
-                        record.value = parseInt(record.get("amount_usdollar"));
+                        record.value = parseInt(record.get("amount_usdollar"), 10);
                         record.name = record.get("name");
                     });
                     child.push({
@@ -123,7 +123,7 @@
                 nodes.push(d);
                 if(d.children) {
                     return d.value = d.children.reduce(function(p, v) {
-                        return p + accumulate(v)
+                        return p + accumulate(v);
                     }, 0);
                 }
                 return d.value;
@@ -216,13 +216,13 @@
                 return g;
             }
 
-            function text(text) {
-                text.attr("x", function(d) { return x(d.x) + 6; })
+            function text(t) {
+                t.attr("x", function(d) { return x(d.x) + 6; })
                     .attr("y", function(d) { return y(d.y) + 6; });
             }
 
-            function rect(rect) {
-                rect.attr("x", function(d) { return x(d.x); })
+            function rect(r) {
+                r.attr("x", function(d) { return x(d.x); })
                     .attr("y", function(d) { return y(d.y); })
                     .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
                     .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
@@ -235,9 +235,10 @@
             }
 
             function name(d) {
-                return d.parent
-                    ? name(d.parent) + " / " + d.name
-                    : d.name;
+                if(d.parent) {
+                    return name(d.parent) + " / " + d.name;
+                }
+                return d.name;
             }
 
             initialize(root);
