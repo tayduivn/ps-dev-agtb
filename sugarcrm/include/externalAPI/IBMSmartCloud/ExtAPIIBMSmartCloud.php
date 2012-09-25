@@ -21,10 +21,10 @@
  ********************************************************************************/
 
 /**
- * ExtAPILotusLive.php
+ * ExtAPIIBMSmartCloud.php
  *
  * This class handles the implementation of the External API access to create and retrieve meetings and
- * documents to the LotusLive cloud service.  It also handles the authentication of the OAuth session
+ * documents to the IBM SmartCloud (was LotusLive) cloud service.  It also handles the authentication of the OAuth session
  * to connect to the service.
  *
  */
@@ -33,12 +33,11 @@ require_once('include/externalAPI/Base/OAuthPluginBase.php');
 require_once('include/externalAPI/Base/WebMeeting.php');
 require_once('include/externalAPI/Base/WebDocument.php');
 
-class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument {
+class ExtAPIIBMSmartCloud extends OAuthPluginBase implements WebMeeting,WebDocument {
 
     static protected $llMimeWhitelist = array(
         'application/msword',
         'application/pdf',
-        'application/postscript',
         'application/vnd.ms-excel',
         'application/vnd.ms-powerpoint',
         'application/vnd.oasis.opendocument.formula',
@@ -80,7 +79,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     public $supportMeetingPassword = false;
     public $docSearch = true;
     public $restrictUploadsByExtension = false;
-    public $connector = "ext_eapm_lotuslive";
+    public $connector = "ext_eapm_ibmsmartcloud";
 
     public $hostURL;
     protected $oauthReq = "/manage/oauth/getRequestToken";
@@ -196,12 +195,9 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     }
 
     /**
-     * Create a new Lotus meeting.
-     * @param string $name
-     * @param string $startdate
-     * @param string $duration
-     * @param string $password
-     * return: boolean
+     * Create a new IBM meeting.
+     * @param $bean - meeting bean
+     * @return: array ('success' => boolean)
      */
     function scheduleMeeting($bean) {
         global $current_user;
@@ -212,7 +208,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     }
 
     /**
-     * Edit an existing Lotus meeting
+     * Edit an existing IBM meeting
      * @param string $name
      * @param string $startdate
      * @param string $duration
@@ -224,8 +220,8 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     }
 
     /**
-     * Delete an existing Lotus meeting.
-     * @param string $meeting - The Lotus meeting key.
+     * Delete an existing IBM meeting.
+     * @param string $meeting - The IBM meeting key.
      * return: boolean
      */
     function unscheduleMeeting($bean) {
@@ -234,44 +230,44 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     }
 
     /**
-     * NOT SUPPORTED BY LOTUS
+     * NOT SUPPORTED BY IBM
      * Invite $attendee to the meeting with key $session.
-     * @param string $meeting - The Lotus session key.
+     * @param string $meeting - The IBM session key.
      * @param array $attendee - An array with entries for 'name' and 'email'
      * return: boolean.
      */
     function inviteAttendee($bean, $attendee, $sendInvites = false) {
-        // There is nothing to do here, this is not supported by Lotus Live
+        // There is nothing to do here, this is not supported by IBM SmartCloud
         return array('success'=>TRUE);
     }
 
     /**
-     * NOT SUPPORTED BY LOTUS
+     * NOT SUPPORTED BY IBM
      * Uninvite the attendee with ID $attendeeID from the meeting.
      * Note: attendee ID is returned as part of the response to
      * inviteAtendee().  The attendee ID refers to a specific person
      * and a specific meeting.
-     * @param array $attendeeID - Lotus attendee ID.
+     * @param array $attendeeID - IBM attendee ID.
      * return: boolean.
      */
     function uninviteAttendee($bean,$attendeeID) {
-        // There is nothing to do here, this is not supported by Lotus Live
+        // There is nothing to do here, this is not supported by IBM SmartCloud
         return array('success'=>TRUE);
     }
 
     /**
-     * List all meetings created by this object's Lotus user.
+     * List all meetings created by this object's IBM SmartCloud user.
      */
     function listMyMeetings() {
-        // There is nothing to do here, this is not supported by Lotus Live
+        // There is nothing to do here, this is not supported by IBM SmartCloud
         return array('success'=>TRUE);
     }
 
     /**
      * Get detailed information about the meeting
      * with key $meeting.
-     * @param string meeting- The Lotus meeting key.
-     * return: The XML response from the Lotus server.
+     * @param string meeting- The IBM meeting key.
+     * return: The XML response from the IBM server.
      */
     function getMeetingDetails($bean) {
         // TODO: Implement this, get the meeting information from the provided tags.
@@ -279,7 +275,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     }
 
     /**
-     * Get HTTP client for communication with Lotus
+     * Get HTTP client for communication with IBM
      *
      * Creates and setup the http client object, including authorization data if needed
      *
@@ -304,7 +300,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         if ( $this->getVersion() == 1 ) {
             $url .= "!{$this->api_data['subscriberId']}";
         }
-        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
+        $GLOBALS['log']->debug("IBM REQUEST: $url");
         $rawResponse = $client->setUri($url)
             ->setRawData(file_get_contents($fileToUpload), $mimeType)
             ->setHeaders("slug", $docName)
@@ -354,7 +350,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
     {
         $client = $this->getClient();
         $url = $this->url."files/basic/cmis/repository/p!{$this->api_data['subscriberId']}/object/snx:file!{$document->doc_id}";
-        $GLOBALS['log']->debug("LOTUS REQUEST: $url");
+        $GLOBALS['log']->debug("IBM REQUEST: $url");
         $rawResponse = $client->setUri($url)
             ->request("DELETE");
         $reply = array('rawResponse' => $rawResponse->getBody());
@@ -374,7 +370,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
         global $db, $current_user;
 
         create_cache_directory('/include/externalAPI/');
-        $cacheFileBase = 'cache/include/externalAPI/docCache_'.$current_user->id.'_LotusLiveDirect';
+        $cacheFileBase = 'cache/include/externalAPI/docCache_'.$current_user->id.'_IBMSmartCloudDirect';
         if ( !$forceReload && file_exists($cacheFileBase.'.php') ) {
             // File exists
             include_once($cacheFileBase.'.php');
@@ -533,7 +529,7 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
                 $version = 2;
                 break;
             default:
-                $GLOBALS['log']->error('Lotus Live API version could not be detected, the version label returned was: '.$versionLabel);
+                $GLOBALS['log']->error('IBM SmartCloud API version could not be detected, the version label returned was: '.$versionLabel);
                 $version = 2;
                 break;
         }
@@ -547,9 +543,9 @@ class ExtAPILotusLive extends OAuthPluginBase implements WebMeeting,WebDocument 
    	 * getErrorStringFromCode
      *
      * This method overrides the getErrorStringFromCode method from the ExternalAPIBase class and provides
-     * for custom error messages specific to the Lotus Live web service.
+     * for custom error messages specific to the IBM SmartCloud web service.
    	 *
-   	 * @param $error Mixed variable of the error message, number or object returned from Lotus Live web service
+   	 * @param $error Mixed variable of the error message, number or object returned from IBM SmartCloud web service
      * @return String Translated string label for the error message
    	 */
    	protected function getErrorStringFromCode($error='')

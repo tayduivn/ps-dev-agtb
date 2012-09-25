@@ -37,7 +37,7 @@ IBM SmartCloud&trade; helps you collaborate seamlessly across companies with onl
 <br>
 Connect to your IBM SmartCloud&trade; account to access IBM SmartCloud&trade; web meetings and files in Sugar.
 <br>
-<button onclick="DCMenu.closeOverlay(); window.open('index.php?module=EAPM&action=QuickSave&application=LotusLive&closeWhenDone=1');" style="padding:2px; margin:8px;">Connect</button>
+<button onclick="DCMenu.closeOverlay(); window.open('index.php?module=EAPM&action=QuickSave&application=IBMSmartCloud&closeWhenDone=1');" style="padding:2px; margin:8px;">Connect</button>
 <br>&nbsp;<br>
 Not yet an IBM SmartCloud&trade; member? Sign up to get a trial account.
 <br>
