@@ -12387,21 +12387,18 @@ $jit.ST.Plot.NodeTypes.implement({
                           ctx.lineWidth = 4;
                           ctx.lineCap = "round";
 
-                          var moveUp = (i*15);
-
                           if (nodeIndex < nodeCount - 1) {
                               ctx.save();
                               ctx.beginPath();
-                              ctx.moveTo(pos.x, pos.y - goalMarkerDim + (dataPointSize / 2) - moveUp);
-                              ctx.lineTo(pos.x + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize / 2) - moveUp);
+                              ctx.moveTo(pos.x, pos.y - goalMarkerDim + (dataPointSize / 2));
+                              ctx.lineTo(pos.x + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize / 2));
                               ctx.stroke();
                               ctx.restore();
                           }
                           //render data point
-                          console.log(pos);
 
                           ctx.beginPath();
-                          ctx.arc(pos.x, pos.y - (goalMarkerDim - dataPointSize / 2) - moveUp, dataPointSize, 0, Math.PI * 2, true);
+                          ctx.arc(pos.x, pos.y - (goalMarkerDim - dataPointSize / 2), dataPointSize, 0, Math.PI * 2, true);
                           ctx.closePath();
                           ctx.fill();
 
