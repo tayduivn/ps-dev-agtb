@@ -436,7 +436,6 @@ class Email extends SugarBean {
 
 		/* satisfy basic HTML email requirements */
 		$this->name = $request['sendSubject'];
-		$this->description_html = $request['sendDescription'];
 
         // work-around legacy code in SugarPHPMailer
         if($_REQUEST['setEditor'] == 1) {
@@ -608,7 +607,7 @@ class Email extends SugarBean {
                 $mailConfig =  MailConfigurationPeer::getSystemMailConfiguration($current_user);
             }
             if (is_null($mailConfig)) {
-                throw new MailerException("No Vaild Mail Configurations Found");
+                throw new MailerException("No Valid Mail Configurations Found");
             }
 
             // $mailer_locale   = $mailConfig->mailerConfigData->getLocale();
@@ -1965,154 +1964,230 @@ class Email extends SugarBean {
 	}
 
 
-	/**
-	 * Sends Email
-	 * @return bool True on success
-	 */
-	function send() {
-		global $mod_strings,$app_strings;
-		global $current_user;
-		global $sugar_config;
-		global $locale;
+    /**
+     * preps SugarPHPMailer object for HTML or Plain text sends
+     * @param SugarPHPMailer $mail SugarPHPMailer instance
+     */
+    function handleBody($mail) {
+        global $current_user;
+        global $sugar_config;
+        ///////////////////////////////////////////////////////////////////////
+        ////	HANDLE EMAIL FORMAT PREFERENCE
+        // the if() below is HIGHLY dependent on the Javascript unchecking the Send HTML Email box
+        // HTML email
+        if( (isset($_REQUEST['setEditor']) /* from Email EditView navigation */
+            && $_REQUEST['setEditor'] == 1
+            && trim($_REQUEST['description_html']) != '')
+            || trim($this->description_html) != '' /* from email templates */
+                && $current_user->getPreference('email_editor_option', 'global') !== 'plain' //user preference is not set to plain text
+        ) {
+            $this->handleBodyInHTMLformat($mail);
+        } else {
+            // plain text only
+            $this->description_html = '';
+            $mail->Encoding = 'quoted-printable';
+            $mail->IsHTML(false);
+            $plainText = from_html($this->description);
+            $plainText = str_replace("&nbsp;", " ", $plainText);
+            $plainText = str_replace("</p>", "</p><br />", $plainText);
+            $plainText = strip_tags(br2nl($plainText));
+            $plainText = str_replace("&amp;", "&", $plainText);
+            $plainText = str_replace("&#39;", "'", $plainText);
+            $mail->Body = wordwrap($plainText, 996);
+            $mail->Body = $this->decodeDuringSend($mail->Body);
+            $this->description = $mail->Body;
+        }
+
+        // wp: if plain text version has lines greater than 998, use base64 encoding
+        foreach(explode("\n", ($mail->ContentType == "text/html") ? $mail->AltBody : $mail->Body) as $line) {
+            if(strlen($line) > 998) {
+                $mail->Encoding = 'base64';
+                break;
+            }
+        }
+        ////	HANDLE EMAIL FORMAT PREFERENCE
+        ///////////////////////////////////////////////////////////////////////
+
+        return $mail;
+    }
+
+    /**
+     * Retrieve function from handlebody() to unit test easily
+     * @param SugarPHPMailer $mail SugarPHPMailer instance
+     * @return formatted $mail body
+     */
+    function handleBodyInHTMLformat($mail) {
+        global $sugar_config;
+        // wp: if body is html, then insert new lines at 996 characters. no effect on client side
+        // due to RFC 2822 which limits email lines to 998
+        $mail->Encoding = 'base64';
+        $mail->IsHTML(true);
+        $body = from_html(wordwrap($this->description_html, 996));
+        $mail->Body = $body;
+
+        // cn: bug 9725
+        // new plan is to use the selected type (html or plain) to fill the other
+        $plainText = from_html($this->description_html);
+        $plainText = strip_tags(br2nl($plainText));
+        $mail->AltBody = $plainText;
+        $this->description = $plainText;
+
+        $mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
+
+        //Replace any embeded images using the secure entryPoint for src url.
+        $mail->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
+
+        $mail->Body = from_html($mail->Body);
+    }
+
+    /**
+     * Sends Email
+     * @return bool True on success
+     */
+    function send() {
+        global $mod_strings,$app_strings;
+        global $current_user;
+        global $sugar_config;
+        global $locale;
         $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-		$mail = new SugarPHPMailer();
+        $mail = new SugarPHPMailer();
 
-		foreach ($this->to_addrs_arr as $addr_arr) {
-			if ( empty($addr_arr['display'])) {
-				$mail->AddAddress($addr_arr['email'], "");
-			} else {
-				$mail->AddAddress($addr_arr['email'],$locale->translateCharsetMIME(trim( $addr_arr['display']), 'UTF-8', $OBCharset));
-			}
-		}
-		foreach ($this->cc_addrs_arr as $addr_arr) {
-			if ( empty($addr_arr['display'])) {
-				$mail->AddCC($addr_arr['email'], "");
-			} else {
-				$mail->AddCC($addr_arr['email'],$locale->translateCharsetMIME(trim($addr_arr['display']), 'UTF-8', $OBCharset));
-			}
-		}
+        foreach ($this->to_addrs_arr as $addr_arr) {
+            if ( empty($addr_arr['display'])) {
+                $mail->AddAddress($addr_arr['email'], "");
+            } else {
+                $mail->AddAddress($addr_arr['email'],$locale->translateCharsetMIME(trim( $addr_arr['display']), 'UTF-8', $OBCharset));
+            }
+        }
+        foreach ($this->cc_addrs_arr as $addr_arr) {
+            if ( empty($addr_arr['display'])) {
+                $mail->AddCC($addr_arr['email'], "");
+            } else {
+                $mail->AddCC($addr_arr['email'],$locale->translateCharsetMIME(trim($addr_arr['display']), 'UTF-8', $OBCharset));
+            }
+        }
 
-		foreach ($this->bcc_addrs_arr as $addr_arr) {
-			if ( empty($addr_arr['display'])) {
-				$mail->AddBCC($addr_arr['email'], "");
-			} else {
-				$mail->AddBCC($addr_arr['email'],$locale->translateCharsetMIME(trim($addr_arr['display']), 'UTF-8', $OBCharset));
-			}
-		}
+        foreach ($this->bcc_addrs_arr as $addr_arr) {
+            if ( empty($addr_arr['display'])) {
+                $mail->AddBCC($addr_arr['email'], "");
+            } else {
+                $mail->AddBCC($addr_arr['email'],$locale->translateCharsetMIME(trim($addr_arr['display']), 'UTF-8', $OBCharset));
+            }
+        }
 
-		$mail = $this->setMailer($mail);
+        $mail = $this->setMailer($mail);
 
-		// FROM ADDRESS
-		if(!empty($this->from_addr)) {
-			$mail->From = $this->from_addr;
-		} else {
-			$mail->From = $current_user->getPreference('mail_fromaddress');
-			$this->from_addr = $mail->From;
-		}
-		// FROM NAME
-		if(!empty($this->from_name)) {
-			$mail->FromName = $this->from_name;
-		} else {
-			$mail->FromName =  $current_user->getPreference('mail_fromname');
-			$this->from_name = $mail->FromName;
-		}
+        // FROM ADDRESS
+        if(!empty($this->from_addr)) {
+            $mail->From = $this->from_addr;
+        } else {
+            $mail->From = $current_user->getPreference('mail_fromaddress');
+            $this->from_addr = $mail->From;
+        }
+        // FROM NAME
+        if(!empty($this->from_name)) {
+            $mail->FromName = $this->from_name;
+        } else {
+            $mail->FromName =  $current_user->getPreference('mail_fromname');
+            $this->from_name = $mail->FromName;
+        }
 
-		//Reply to information for case create and autoreply.
-		if(!empty($this->reply_to_name)) {
-			$ReplyToName = $this->reply_to_name;
-		} else {
-			$ReplyToName = $mail->FromName;
-		}
-		if(!empty($this->reply_to_addr)) {
-			$ReplyToAddr = $this->reply_to_addr;
-		} else {
-			$ReplyToAddr = $mail->From;
-		}
-		$mail->Sender = $mail->From; /* set Return-Path field in header to reduce spam score in emails sent via Sugar's Email module */
-		$mail->AddReplyTo($ReplyToAddr,$locale->translateCharsetMIME(trim($ReplyToName), 'UTF-8', $OBCharset));
+        //Reply to information for case create and autoreply.
+        if(!empty($this->reply_to_name)) {
+            $ReplyToName = $this->reply_to_name;
+        } else {
+            $ReplyToName = $mail->FromName;
+        }
+        if(!empty($this->reply_to_addr)) {
+            $ReplyToAddr = $this->reply_to_addr;
+        } else {
+            $ReplyToAddr = $mail->From;
+        }
+        $mail->Sender = $mail->From; /* set Return-Path field in header to reduce spam score in emails sent via Sugar's Email module */
+        $mail->AddReplyTo($ReplyToAddr,$locale->translateCharsetMIME(trim($ReplyToName), 'UTF-8', $OBCharset));
 
-		//$mail->Subject = html_entity_decode($this->name, ENT_QUOTES, 'UTF-8');
-		$mail->Subject = $this->name;
+        //$mail->Subject = html_entity_decode($this->name, ENT_QUOTES, 'UTF-8');
+        $mail->Subject = $this->name;
 
-		///////////////////////////////////////////////////////////////////////
-		////	ATTACHMENTS
-		foreach($this->saved_attachments as $note) {
-			$mime_type = 'text/plain';
-			if($note->object_name == 'Note') {
-				if(!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) { // brandy-new file upload/attachment
-					$file_location = "upload://$note->id";
-					$filename = $note->file->original_file_name;
-					$mime_type = $note->file->mime_type;
-				} else { // attachment coming from template/forward
-					$file_location = "upload://{$note->id}";
-					// cn: bug 9723 - documents from EmailTemplates sent with Doc Name, not file name.
-					$filename = !empty($note->filename) ? $note->filename : $note->name;
-					$mime_type = $note->file_mime_type;
-				}
-			} elseif($note->object_name == 'DocumentRevision') { // from Documents
-				$filePathName = $note->id;
-				// cn: bug 9723 - Emails with documents send GUID instead of Doc name
-				$filename = $note->getDocumentRevisionNameForDisplay();
-				$file_location = "upload://$note->id";
-				$mime_type = $note->file_mime_type;
-			}
+        ///////////////////////////////////////////////////////////////////////
+        ////	ATTACHMENTS
+        foreach($this->saved_attachments as $note) {
+            $mime_type = 'text/plain';
+            if($note->object_name == 'Note') {
+                if(!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) { // brandy-new file upload/attachment
+                    $file_location = "upload://$note->id";
+                    $filename = $note->file->original_file_name;
+                    $mime_type = $note->file->mime_type;
+                } else { // attachment coming from template/forward
+                    $file_location = "upload://{$note->id}";
+                    // cn: bug 9723 - documents from EmailTemplates sent with Doc Name, not file name.
+                    $filename = !empty($note->filename) ? $note->filename : $note->name;
+                    $mime_type = $note->file_mime_type;
+                }
+            } elseif($note->object_name == 'DocumentRevision') { // from Documents
+                $filePathName = $note->id;
+                // cn: bug 9723 - Emails with documents send GUID instead of Doc name
+                $filename = $note->getDocumentRevisionNameForDisplay();
+                $file_location = "upload://$note->id";
+                $mime_type = $note->file_mime_type;
+            }
 
-			// strip out the "Email attachment label if exists
-			$filename = str_replace($mod_strings['LBL_EMAIL_ATTACHMENT'].': ', '', $filename);
+            // strip out the "Email attachment label if exists
+            $filename = str_replace($mod_strings['LBL_EMAIL_ATTACHMENT'].': ', '', $filename);
             $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
-			//is attachment in our list of bad files extensions?  If so, append .txt to file location
-			//check to see if this is a file with extension located in "badext"
-			foreach($sugar_config['upload_badext'] as $badExt) {
-		       	if(strtolower($file_ext) == strtolower($badExt)) {
-			       	//if found, then append with .txt to filename and break out of lookup
-			       	//this will make sure that the file goes out with right extension, but is stored
-			       	//as a text in db.
-			        $file_location = $file_location . ".txt";
-			        break; // no need to look for more
-		       	}
-	        }
-			$mail->AddAttachment($file_location,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
+            //is attachment in our list of bad files extensions?  If so, append .txt to file location
+            //check to see if this is a file with extension located in "badext"
+            foreach($sugar_config['upload_badext'] as $badExt) {
+                if(strtolower($file_ext) == strtolower($badExt)) {
+                    //if found, then append with .txt to filename and break out of lookup
+                    //this will make sure that the file goes out with right extension, but is stored
+                    //as a text in db.
+                    $file_location = $file_location . ".txt";
+                    break; // no need to look for more
+                }
+            }
+            $mail->AddAttachment($file_location,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $mime_type);
 
-			// embedded Images
-			if($note->embed_flag == true) {
-				$cid = $filename;
-				$mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64',$mime_type);
-			}
-		}
-		////	END ATTACHMENTS
-		///////////////////////////////////////////////////////////////////////
+            // embedded Images
+            if($note->embed_flag == true) {
+                $cid = $filename;
+                $mail->AddEmbeddedImage($file_location, $cid, $filename, 'base64',$mime_type);
+            }
+        }
+        ////	END ATTACHMENTS
+        ///////////////////////////////////////////////////////////////////////
 
-		$mail = $this->handleBody($mail);
+        $mail = $this->handleBody($mail);
 
-		$GLOBALS['log']->debug('Email sending --------------------- ');
+        $GLOBALS['log']->debug('Email sending --------------------- ');
 
-		///////////////////////////////////////////////////////////////////////
-		////	I18N TRANSLATION
-		$mail->prepForOutbound();
-		////	END I18N TRANSLATION
-		///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+        ////	I18N TRANSLATION
+        $mail->prepForOutbound();
+        ////	END I18N TRANSLATION
+        ///////////////////////////////////////////////////////////////////////
 
-		if($mail->Send()) {
-			///////////////////////////////////////////////////////////////////
-			////	INBOUND EMAIL HANDLING
-			// mark replied
-			if(!empty($_REQUEST['inbound_email_id'])) {
-				$ieMail = new Email();
-				$ieMail->retrieve($_REQUEST['inbound_email_id']);
-				$ieMail->status = 'replied';
-				$ieMail->save();
-			}
-			$GLOBALS['log']->debug(' --------------------- buh bye -- sent successful');
-			////	END INBOUND EMAIL HANDLING
-			///////////////////////////////////////////////////////////////////
-  			return true;
-		}
-	    $GLOBALS['log']->debug($app_strings['LBL_EMAIL_ERROR_PREPEND'].$mail->ErrorInfo);
-		return false;
-	}
+        if($mail->Send()) {
+            ///////////////////////////////////////////////////////////////////
+            ////	INBOUND EMAIL HANDLING
+            // mark replied
+            if(!empty($_REQUEST['inbound_email_id'])) {
+                $ieMail = new Email();
+                $ieMail->retrieve($_REQUEST['inbound_email_id']);
+                $ieMail->status = 'replied';
+                $ieMail->save();
+            }
+            $GLOBALS['log']->debug(' --------------------- buh bye -- sent successful');
+            ////	END INBOUND EMAIL HANDLING
+            ///////////////////////////////////////////////////////////////////
+            return true;
+        }
+        $GLOBALS['log']->debug($app_strings['LBL_EMAIL_ERROR_PREPEND'].$mail->ErrorInfo);
+        return false;
+    }
 
 
-	function listviewACLHelper(){
+    function listviewACLHelper(){
 		$array_assign = parent::listviewACLHelper();
 		$is_owner = false;
 		if(!empty($this->parent_name)){
