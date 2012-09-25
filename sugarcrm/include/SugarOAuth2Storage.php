@@ -443,7 +443,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 if(!$sessionManager->canAddSession()){
                     //not able to add another session right now
                     $GLOBALS['log']->error("Unable to add new session");
-                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions',0,'too_many_concurrent_connections');
+                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions', null, null, 0, 'too_many_concurrent_connections');
                 }
                 //END SUGARCRM flav=pro ONLY
                 $this->contactBean = $contact;

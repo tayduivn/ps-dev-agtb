@@ -368,20 +368,6 @@ $app_list_strings = array (
     'Closed Won' => '100',
     'Closed Lost' => '0',
   ),
-  'rest_api_default_messages' =>    // Default Sugar REST API exception messages
-    array(
-        'unknown_exception'         => 'Your request failed due to an unknown exception.',
-        'fatal_error'               => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
-        'need_login'                => 'You need to be logged in to perform this action.',
-        'not_authorized'            => 'You are not authorized to perform this action. Contact your administrator if you need access.',
-        'portal_not_configured'     => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
-        'no_method'                 => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
-        'not_found'                 => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
-        'missing_parameter'         => 'A required parameter in your request was missing.',
-        'invalid_parameter'         => 'A parameter in your request was invalid.',
-        'request_failure'           => 'Your request failed to complete.',
-        'request_too_large'         => 'Your request is too large to process.',
-    ),
   'activity_dom' =>
   array (
     'Call' => 'Call',
@@ -2458,7 +2444,21 @@ $app_strings = array (
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
-    'ERR_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {0}. Contact your administrator if you need access.',
+
+    'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
+
+    // Default SugarApiException error messages
+    'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
+    'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
+    'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
+    'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
+    'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
+    'EXCEPTION_NOT_FOUND'               => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
+    'EXCEPTION_MISSING_PARAMTER'        => 'A required parameter in your request was missing.',
+    'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
+    'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
+    'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages

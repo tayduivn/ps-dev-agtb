@@ -240,7 +240,7 @@ class RestService extends ServiceBase {
             $errorLabel = $exception->getErrorLabel();
             $message = $exception->getMessage();
         } else if ( is_a($exception,"OAuth2ServerException") ) {
-            //The OAuth2 Server we are using has a slightly different exception API
+            //The OAuth2 Server uses a slightly different exception API
             $httpError = $exception->getHttpCode();
             $errorLabel = $exception->getMessage();
             $message = $exception->getDescription();
@@ -253,8 +253,7 @@ class RestService extends ServiceBase {
 
         $GLOBALS['log']->error('An exception happened: ('.$errorLabel.')'.$message);
 
-        $reply = "ERROR: ".$message;
-
+        $reply = $message;
         $crazyEncoding = false;
         // For edge cases when an HTML response is needed as a wrapper to JSON
         if (isset($_REQUEST['format']) && $_REQUEST['format'] == 'sugar-html-json') {
