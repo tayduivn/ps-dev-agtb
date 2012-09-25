@@ -23,22 +23,32 @@
  ********************************************************************************/
 
 require_once('modules/UpgradeWizard/uw_utils.php');
+require_once ('modules/SchedulersJobs/SchedulersJob.php');
 
 class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
 var $meeting;
 var $call;
-var $original_current_user;
+private $jobs = array();
+
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('current_user');
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestProductUtilities::removeAllCreatedProducts();
+        SugarTestHelper::tearDown();
+    }
 
 function setUp()
 {
-	global $db, $timedate, $current_user;
+    global $current_user;
 
-
-	$this->original_current_user = $current_user;
-	$user = new User();
-	$user->retrieve('1');
-	$current_user = $user;
+    $db = DBManagerFactory::getInstance();
+    $timedate = TimeDate::getInstance();
 
 	if($db->dbType != 'mysql')
 	{
@@ -82,7 +92,11 @@ function tearDown() {
 	$db->query($meetingsSql);
 	$db->query($callsSql);
 
-	$current_user = $this->original_current_user;
+    if(!empty($this->jobs))
+    {
+        $jobs = implode("','", $this->jobs);
+        $db->query(sprintf("DELETE FROM job_queue WHERE id IN ('%s')", $jobs));
+    }
 }
 
 function testUpgradeDateTimeFields() {
@@ -104,8 +118,49 @@ function testUpgradeDateTimeFields() {
 	$end_time = strtotime($row['date_end']);
 	$this->assertEquals(2.5*60*60, $end_time - $start_time,  'Assert that date_end in calls table has been properly converted');
 }
+//BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * Check that for every old opportunity related products are created via job queue
+     * @global type $current_user
+	 * @group forecasts
+     */
+    function testCreateProductForOpp()
+    {
+        global $current_user;
 
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = $current_user->id;
+        $opp->save();
 
+        //unset opportunity_id in the product which was automatically created during opp save
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+        $product->opportunity_id = '';
+        $product->save();
+
+        $this->jobs = createProductForOpp();
+
+        $job = new SchedulersJob();
+        $job->retrieve_by_string_fields(array('data' => $opp->id));
+        $job->runnable_ran = true;
+        $job->runnable_data = '';
+        $job->runJob();
+
+        $this->assertTrue($job->runnable_ran);
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+
+        $this->assertEquals($opp->name, $product->name, "Product name doesn't equal to related opp's one");
+        $this->assertEquals($opp->amount, $product->likely_case, "Product likely_case doesn't equal to related opp's one");
+        $this->assertEquals($opp->best_case, $product->best_case, "Product best_case doesn't equal to related opp's one");
+        $this->assertEquals($opp->worst_case, $product->worst_case, "Product worst_case doesn't equal to related opp's one");
+        $this->assertEquals($opp->assigned_user_id, $product->expert_id, "Product expert_id doesn't equal to related opp's assigned_user_id");
+    }
+//END SUGARCRM flav=pro ONLY
 }
-
 ?>

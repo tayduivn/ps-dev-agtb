@@ -94,7 +94,7 @@ function perform_save(&$focus){
         $product->best_case = $focus->best_case;
         $product->likely_case = $focus->amount;
         $product->worst_case = $focus->worst_case;
-        $product->assigned_user_id = $focus->assigned_user_id;
+        $product->expert_id = $focus->assigned_user_id;
         $product->opportunity_id = $focus->id;
         $product->save();
     }

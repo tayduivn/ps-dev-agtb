@@ -4795,4 +4795,44 @@ function addPdfManagerTemplate() {
     
     logThis('End addPdfManagerTemplate');
 }
+
+/**
+ * createProductForOpp
+ *
+ * This function creats job queue for old opportunities
+ * to be upgraded w/ related product for forecasting
+ */
+function createProductForOpp()
+{
+    global $current_user;
+    $db = DBManagerFactory::getInstance();
+    $query = "SELECT id FROM opportunities WHERE deleted = 0";
+    $result = $db->query($query);
+
+    $opp_ids = array();
+    $job_ids = array();
+
+    while (($row = $db->fetchByAssoc($result)) != null)
+    {
+        $opp_ids[] = $row['id'];
+    }
+
+    require_once(get_custom_file_if_exists('modules/Opportunities/jobs/CreateDefaultProductJob.php'));
+    require_once (modules/SchedulersJobs/SchedulersJob.php);
+
+    foreach ($opp_ids as $key => $id)
+    {
+        $job = new SchedulersJob();
+        $job->name = "Create Default Product For Opp: " . $id;
+        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+        $job->target = "class::CreateDefaultProductJob";
+        $job->data = $id;
+        $job->retry_count = 0;
+        $job->assigned_user_id = $current_user->id;
+        $job->save();
+        $job_ids[] = $job->id;
+    }
+
+    return $job_ids;
+}
 //END SUGARCRM flav=pro ONLY

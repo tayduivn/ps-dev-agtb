@@ -367,6 +367,8 @@ if($_SESSION['current_db_version'] < '670')
 {
     require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::setupForecastSettings();
+    //create default product for every old opportunity
+    createProductForOpp();
 }
 //END SUGARCRM flav=PRO ONLY
 
