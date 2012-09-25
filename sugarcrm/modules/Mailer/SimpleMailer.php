@@ -251,9 +251,17 @@ class SimpleMailer extends BaseMailer
         foreach ($to as $recipient) {
             $recipient->decode();
 
+            // perform MIME character set translations on the recipient's name
+            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            $name = $this->config->getLocale()->translateCharsetMIME(
+                $recipient->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            );
+
             try {
                 // attempt to add the recipient to PHPMailer in the To list
-                $mailer->AddAddress($recipient->getEmail(), $recipient->getName());
+                $mailer->AddAddress($recipient->getEmail(), $name);
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
             }
@@ -262,9 +270,17 @@ class SimpleMailer extends BaseMailer
         foreach ($cc as $recipient) {
             $recipient->decode();
 
+            // perform MIME character set translations on the recipient's name
+            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            $name = $this->config->getLocale()->translateCharsetMIME(
+                $recipient->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            );
+
             try {
                 // attempt to add the recipient to PHPMailer in the CC list
-                $mailer->AddCC($recipient->getEmail(), $recipient->getName());
+                $mailer->AddCC($recipient->getEmail(), $name);
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
             }
@@ -273,9 +289,17 @@ class SimpleMailer extends BaseMailer
         foreach ($bcc as $recipient) {
             $recipient->decode();
 
+            // perform MIME character set translations on the recipient's name
+            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            $name = $this->config->getLocale()->translateCharsetMIME(
+                $recipient->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            );
+
             try {
                 // attempt to add the recipient to PHPMailer in the BCC list
-                $mailer->AddBCC($recipient->getEmail(), $recipient->getName());
+                $mailer->AddBCC($recipient->getEmail(), $name);
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
             }
