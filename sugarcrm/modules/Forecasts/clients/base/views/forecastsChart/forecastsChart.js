@@ -13,6 +13,12 @@
     chartRendered: false,
     commitUpdate: false,
 
+    chartDataSet : [],
+    chartGroupByOptions : [],
+
+    defaultDataset: '',
+    defaultGroupBy: '',
+
     chartTitle: '',
     timeperiod_label: '',
 
@@ -20,7 +26,8 @@
      * events on the view to watch for
      */
     events : {
-        'click #forecastsChartDisplayOptions input[type=radio]' : 'changeDisplayOptions'
+        'click #forecastsChartDisplayOptions div.datasetOptions input[type=radio]' : 'changeDisplayOptions',
+        'click #forecastsChartDisplayOptions div.groupByOptions input[type=radio]' : 'changeGroupByOptions'
     },
 
     /**
@@ -28,24 +35,33 @@
      */
     changeDisplayOptions : function()
     {
-        this.handleRenderOptions({dataset: this.getCheckedDisplayOptions()})
+        this.handleRenderOptions({dataset: this.getCheckedOptions('datasetOptions')})
     },
 
     /**
-     * find all the checkedDisplayOptions
+     * Handle any group by changes
+     */
+    changeGroupByOptions: function()
+    {
+        this.handleRenderOptions({group_by:_.first(this.getCheckedOptions('groupByOptions'))});
+    },
+
+    /**
+     * find all the checkedOptions in a give option class
      *
+     * @param {string}
      * @return {Array}
      */
-    getCheckedDisplayOptions : function()
+    getCheckedOptions : function(divClass)
     {
-        var chkOptions = this.$el.find("input[type=radio]:checked");
+        var chkOptions = this.$el.find("div." + divClass + " input[type=radio]:checked");
 
-        var datasets = [];
+        var options = [];
         _.each(chkOptions, function(o) {
-            datasets.push(o.value);
+            options.push(o.value);
         });
 
-        return datasets;
+        return options;
     },
 
     /**
@@ -57,18 +73,37 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
+        this.chartDataSet = app.metadata.data.app_list_strings.forecasts_chart_options_dataset || [];
+        this.chartGroupByOptions = app.metadata.data.app_list_strings.forecasts_chart_options_group || [];
+        this.defaultDataset = app.defaultSelections.dataset;
+        this.defaultGroupBy = app.defaultSelections.group_by;
+
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         var values = {
             user_id: app.user.get('id'),
             display_manager : app.user.get('isManager'),
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
-            group_by : app.defaultSelections.group_by.id,
-            dataset : this.getCheckedDisplayOptions(),
+            group_by : this.getCheckedOptions('groupByOptions'),
+            dataset : this.getCheckedOptions('datasetOptions'),
             category : app.defaultSelections.category
         };
 
         this.handleRenderOptions(values);
+    },
+
+    _render : function() {
+        app.view.View.prototype._render.call(this);
+
+        this.toggleRepOptionsVisibility();
+    },
+
+    toggleRepOptionsVisibility : function() {
+        if(this.values.display_manager === true) {
+            this.$el.find('div.groupByOptions').hide();
+        } else {
+            this.$el.find('div.groupByOptions').show();
+        }
     },
 
     /**
@@ -90,6 +125,7 @@
         }, this);
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
+            self.toggleRepOptionsVisibility();
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
             self.timeperiod_label = timePeriod.label;
