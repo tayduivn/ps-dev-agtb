@@ -1,17 +1,12 @@
+{{#if gPlusId}}
+{{#if gPlusPosts}}
 <div class="block thumbnail padded widget">
     <h4>G+ Activity</h4>
     <div class="gplus-widget">
         <br>
-
-        {{#if gPlusId}}
         <div class='activityContainer' style="width:400px">
             <ul class="gmail-list" style="margin:0 0 0 0">
-
-
-                {{#if gPlusPosts}}
                 {{#each gPlusPosts}}
-
-
                 <div class="mailentry">
                     <img src={{this.image}} style="float:left; margin:0 10px 0 0;">
                     <div class="gplusPost">
@@ -25,15 +20,9 @@
                 </a>
                 <br><br>
                 {{/each}}
-                {{else}}
-                {{gPlusDisplayName}} has no activity at this time
-                {{/if}}
             </ul>
-
         </div>
-
-        {{else}}
-        No Google Plus account found
-        {{/if}}
     </div>
 </div>
+{{/if}}
+{{/if}}
