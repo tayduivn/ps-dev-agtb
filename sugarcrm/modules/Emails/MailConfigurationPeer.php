@@ -91,10 +91,17 @@ class MailConfigurationPeer
             $systemReturn = $user->getSystemDefaultNameAndEmail();
             $ret['email'] = $systemReturn['email'];
             $ret['name']  = from_html($systemReturn['name']);
+            $system_replyToAddress = $ret['email'];
         } else {
             $ret['name'] = from_html($ret['name']);
+            $system_replyToAddress = '';
         }
 
+        $system_replyToName    = $ret['name'];
+        $replyTo = $user->emailAddress->getReplyToAddress($user, true);
+        if (!empty($replyTo)) {
+            $system_replyToAddress = $replyTo;
+        }
 
         /* Retrieve any Inbound User Mail Accounts and the Outbound Mail Accounts Associated with them */
         $ie         = new InboundEmail();
@@ -104,6 +111,7 @@ class MailConfigurationPeer
             $name          = $v->get_stored_options('from_name');
             $addr          = $v->get_stored_options('from_addr');
             $storedOptions = unserialize(base64_decode($v->stored_options));
+
             // var_dump($storedOptions);
 
             if ($name != null && $addr != null) {
@@ -115,6 +123,9 @@ class MailConfigurationPeer
                 $mailConfiguration->sender_email = "{$addr}";
                 $mailConfiguration->display_name = "{$name} ({$addr})";
                 $mailConfiguration->personal     = (bool)($v->is_personal);
+
+                $mailConfiguration->replyto_name  = (!empty($storedOptions['reply_to_name']) ? $storedOptions['reply_to_name'] : $mailConfiguration->sender_name);
+                $mailConfiguration->replyto_email = (!empty($storedOptions['reply_to_addr']) ? $storedOptions['reply_to_addr'] : $mailConfiguration->sender_email);
 
                 // turn the OutboundEmail object into a useable set of mail configurations
                 $oe = new OutboundEmail();
@@ -153,6 +164,9 @@ class MailConfigurationPeer
             $mailConfiguration->sender_email = "{$ret['email']}";
             $mailConfiguration->display_name = "{$ret['name']} ({$ret['email']})";
             $mailConfiguration->personal     = $personal;
+
+            $mailConfiguration->replyto_name  = $system_replyToName;
+            $mailConfiguration->replyto_email = $system_replyToAddress;
 
             // turn the OutboundEmail object into a useable set of mail configurations
             $oe = new OutboundEmail();

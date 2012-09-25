@@ -148,6 +148,7 @@ class SimpleMailer extends BaseMailer
                             "UTF-8",
                             $this->config->getCharset()
                         );
+                        $value[1] = from_html($value[1]);
                     }
 
                     // set PHPMailer's From so that PHPMailer can correctly construct the From header at send time
@@ -173,6 +174,7 @@ class SimpleMailer extends BaseMailer
                             "UTF-8",
                             $this->config->getCharset()
                         );
+                        $value[1] = from_html($value[1]);
                     }
 
                     // set PHPMailer's ReplyTo so that PHPMailer can correctly construct the Reply-To header at send

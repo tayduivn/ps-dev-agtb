@@ -135,6 +135,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         //print_r($mail_configs_expected);
 
         $configs = MailConfigurationPeer::listMailConfigurations(self::$current_user);
+        // print_r($configs);
 
         $mail_configs_actual = array();
         if (is_array($configs)) {

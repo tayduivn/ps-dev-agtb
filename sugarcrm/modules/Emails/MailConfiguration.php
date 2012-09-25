@@ -36,6 +36,8 @@ class MailConfiguration {
     public $sender_name;
     public $sender_email;
     public $display_name;
+    public $replyto_name;
+    public $replyto_email;
     public $personal;
     public $mailerConfigData; // MailerConfiguration or SmtpMailerConfiguration
 
