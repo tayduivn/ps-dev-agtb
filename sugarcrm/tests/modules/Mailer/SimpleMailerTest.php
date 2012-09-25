@@ -34,7 +34,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->mockMailer = self::getMock(
             "SimpleMailer",
             array(
-                 "prepareToSend",
                  "transferConfigurations",
                  "connectToHost",
                  "transferHeaders",
@@ -44,10 +43,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array($this->mockMailerConfig)
         );
-
-        $this->mockMailer->expects(self::any())
-            ->method("prepareToSend")
-            ->will(self::returnValue(true)); // doesn't matter what it returns
     }
 
     /**
@@ -266,7 +261,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer = self::getMock(
             "SimpleMailer",
             array(
-                 "prepareToSend",
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
@@ -277,10 +271,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array($this->mockMailerConfig)
         );
-
-        $mockMailer->expects(self::any())
-            ->method("prepareToSend")
-            ->will(self::returnValue(true)); // doesn't matter what it returns
 
         $mockMailer->expects(self::any())
             ->method("generateMailer")
@@ -327,7 +317,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
         $mockMailer = self::getMock(
             "SimpleMailer",
             array(
-                 "prepareToSend",
                  "generateMailer",
                  "transferConfigurations",
                  "connectToHost",
@@ -338,10 +327,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ),
             array($this->mockMailerConfig)
         );
-
-        $mockMailer->expects(self::any())
-            ->method("prepareToSend")
-            ->will(self::returnValue(true)); // doesn't matter what it returns
 
         $mockMailer->expects(self::any())
             ->method("generateMailer")
