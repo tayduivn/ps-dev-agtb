@@ -28,24 +28,55 @@
     app.view.ClickToEditField.prototype.render = function() {
         this._addCTEIcon(this.field);
 
-        this.field.$el.editable(function(value, settings){
+        this.field.$el.editable(
+            function(value, settings) {
+                // check if input was valid for formatting in callback
+                settings.field.isValid = settings.checkDatatype(settings.field, value);
+                // This function returns the value that will be displayed after editing.
                 // set back to original value if user manages to undefine or enters in a blank value.
                 if(value == undefined || value == "") {
                     value = settings.field.holder;
+                    settings.field.isCancel = true;
+                } else {
+                    settings.field.isCancel = false;
                 }
-                $(this).parent().find(".cte_currency_symbol").each(function(index, node){
-                    $(node).remove();
-                });
-
+                if(settings.field.type == 'currency') {
+                    $(this).parent().find(".cte_currency_symbol").each(function(index, node){
+                        $(node).remove();
+                    });
+                }
                 return value;
             },
             {
+                style: "width: 100",
                 select: true,
                 field: this.field,
                 view: this.view,
                 numberTypes: this.numberTypes,
                 checkDatatype: this._checkDatatype,
-                onblur: 'submit',
+                onblur: 'cancel',
+                onreset: function(settings, original) {
+                    // This is called on cancel, such as clicking outside of input field.
+                    // Remove currency symbol from front of input field.
+                    if(settings.field.type == 'currency') {
+                        $(this).parent().parent().find(".cte_currency_symbol").each(function(index, node){
+                            $(node).remove();
+                        });
+                    }
+                },
+                // data returns the string to be edited.
+                // we want to edit the raw decimal value.
+                data: function(value, settings) {
+                  if(settings.field.type !== 'currency') {
+                      return value;
+                  }
+                  return app.utils.formatNumber(
+                      settings.field.model.get(settings.field.name),
+                      app.user.get('decimal_precision'),
+                      app.user.get('decimal_precision'),
+                      '',
+                      app.user.get('decimal_separator'));
+                },
                 onedit:function(settings, original){
                     // clear styling
                     $(this).css("background-color", "");
@@ -53,25 +84,22 @@
                     $(this).parent().find(".tempMsg").each(function(index, node){
                         $(node).remove();
                     });
-
-                    var symbol = app.currency.getCurrencySymbol(settings.field.model.get('currency_id'));
-                    $(this).before('<span class="cte_currency_symbol" style="float: left; padding-right: 2px;">'+symbol+'</span>');
+                    if(settings.field.type == 'currency') {
+                        // add symbol before input field
+                        var symbol = app.currency.getCurrencySymbol(settings.field.model.get('currency_id'));
+                        $(this).before('<span class="cte_currency_symbol" style="float: left; padding-right: 2px;">'+symbol+'</span>');
+                    }
 
                     // hold value for use later in case user enters a +/- percentage, or user enters an empty value
                     settings.field.holder = $(original).html();
-                    // format in numeric value
-                    $(this).html(
-                        app.utils.formatNumber(
-                            settings.field.model.get(settings.field.name),
-                            app.user.get('decimal_precision'),
-                            app.user.get('decimal_precision'),
-                            '',
-                            app.user.get('decimal_separator'))
-                    );
                 },
                 callback: function(value, settings) {
+                    // if canceled, do nothing
+                    if(settings.field.isCancel) {
+                        return value;
+                    }
                     //check to see if the datatype matches the input, if not return and show an error.
-                    if(!settings.checkDatatype(settings.field, value)){
+                    if(!settings.field.isValid){
                     	var invalid = $("<span>" + app.lang.get("LBL_CLICKTOEDIT_INVALID", "Forecasts") + "</span>");
                     	
                     	$.data(this, "color", $(this).css("color"));
@@ -97,6 +125,9 @@
                             }
                         }
 
+                        // unformat the value from user prefs before sending to model
+                        value = app.currency.unformatAmountLocale(value);
+
                         var values = {};
                         values[settings.field.name] = value;
                         values["timeperiod_id"] = settings.field.context.forecasts.get("selectedTimePeriod").id;
@@ -114,16 +145,18 @@
                         settings.field.model.set(values);
 
                         //settings.field.context.forecasts.set({commitButtonEnabled: true});
-
-                        // convert value and format for display
-                        var currencyId = settings.field.model.get('currency_id');
-                        if(settings.field.def.convertToBase) {
-                            value = value * settings.field.model.get('base_rate');
-                            currencyId = '-99';
+                        if(settings.field.type == 'currency') {
+                            // convert value and format for display
+                            var currencyId = settings.field.model.get('currency_id');
+                            if(settings.field.def.convertToBase) {
+                                value = value * settings.field.model.get('base_rate');
+                                currencyId = '-99';
+                            }
+                            value = app.currency.formatAmountLocale(
+                                value,
+                                currencyId);
+                            $(this).html(value);
                         }
-                        value = app.currency.formatAmountLocale(
-                            value,
-                            currencyId);
 
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);

@@ -29,7 +29,7 @@
 // This class is used for the Manager Views
 require_once('include/SugarForecasting/AbstractForecast.php');
 require_once('include/SugarForecasting/Exception.php');
-class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
+class SugarForecasting_Manager extends SugarForecasting_AbstractForecast implements SugarForecasting_ForecastSaveInterface
 {
 
     /**
@@ -151,7 +151,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
     {
         $amounts = $this->getUserAmounts();
 
-        $this->dataArray = array_replace_recursive($this->dataArray, $amounts);
+        foreach($amounts as $user => $amount) {
+            $this->dataArray[$user]['amount'] = $amount['amount'];
+        }
     }
 
     /**
@@ -170,15 +172,12 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
 						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))";
 
         $result = $db->query($quota_query);
-        $data = array();
 
         while(($row=$db->fetchByAssoc($result))!=null)
         {
-            $data[$row['user_name']]['quota_id'] = $row['quota_id'];
-            $data[$row['user_name']]['quota'] = $row['quota'];
+            $this->dataArray[$row['user_name']]['quota_id'] = $row['quota_id'];
+            $this->dataArray[$row['user_name']]['quota'] = $row['quota'];
         }
-
-        $this->dataArray = array_replace_recursive($this->dataArray, $data);
     }
 
     /**
@@ -192,7 +191,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         //getting data from worksheet table for reportees
 		$reportees_query = "SELECT u2.user_name, " .
 						   "w.id worksheet_id, " .
-						   "w.forecast, " .
+						   "w.commit_stage, " .
 						   "w.best_case best_adjusted, " .
 						   "w.likely_case likely_adjusted, " .
 						   "w.worst_case worst_adjusted, " .
@@ -226,27 +225,26 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
 			$reportees_query .= "and w.version = 1";
 		}
 
-        $result = $GLOBALS['db']->query($reportees_query);
-        $data = array();
+        $db = DBManagerFactory::getInstance();
 
-        while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null)
+        $result = $db->query($reportees_query);
+        
+        while(($row=$db->fetchByAssoc($result))!=null)
         {
-            $data[$row['user_name']]['worksheet_id'] = $row['worksheet_id'];
-            $data[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
-            $data[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
-            $data[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
-            $data[$row['user_name']]['currency_id'] = $row['currency_id'];
-            $data[$row['user_name']]['base_rate'] = $row['base_rate'];
-            $data[$row['user_name']]['forecast'] = $row['forecast'];
-            $data[$row['user_name']]['version'] = $row['version'];
+            $this->dataArray[$row['user_name']]['worksheet_id'] = $row['worksheet_id'];
+            $this->dataArray[$row['user_name']]['best_adjusted'] = $row['best_adjusted'];
+            $this->dataArray[$row['user_name']]['likely_adjusted'] = $row['likely_adjusted'];
+            $this->dataArray[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
+            $this->dataArray[$row['user_name']]['currency_id'] = $row['currency_id'];
+            $this->dataArray[$row['user_name']]['base_rate'] = $row['base_rate'];
+            $this->dataArray[$row['user_name']]['commit_stage'] = $row['commit_stage'];
+            $this->dataArray[$row['user_name']]['version'] = $row['version'];
             if($row['version'] == 0)
             {
-            	$data[$row['user_name']]['quota'] = $row['quota'];
+            	$this->dataArray[$row['user_name']]['quota'] = $row['quota'];
             }
 
         }
-
-        $this->dataArray = array_replace_recursive($this->dataArray, $data);
     }
 
     /**
@@ -300,8 +298,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
         $user = BeanFactory::getBean('Users', $args['user_id']);
         $ids[$args['user_id']] = $user->user_name;
 
-        $data = array();
-
         foreach($ids as $id=>$user_name)
         {
             // if the reportee is the manager, we need to get the roll up amount instead of the direct amount
@@ -315,23 +311,21 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
             $result = $db->limitQuery($forecast_query, 0, 1);
 
             while($row=$db->fetchByAssoc($result)) {
-                $data[$user_name]['best_case'] = $row['best_case'];
+                $this->dataArray[$user_name]['best_case'] = $row['best_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
-                $data[$user_name]['best_adjusted'] = $row['best_case'];
-                $data[$user_name]['likely_case'] = $row['likely_case'];
+                $this->dataArray[$user_name]['best_adjusted'] = $row['best_case'];
+                $this->dataArray[$user_name]['likely_case'] = $row['likely_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
-                $data[$user_name]['likely_adjusted'] = $row['likely_case'];
-                $data[$user_name]['worst_case'] = $row['worst_case'];
+                $this->dataArray[$user_name]['likely_adjusted'] = $row['likely_case'];
+                $this->dataArray[$user_name]['worst_case'] = $row['worst_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
-                $data[$user_name]['worst_adjusted'] = $row['worst_case'];
-                $data[$user_name]['forecast_id'] = $row['id'];
-                $data[$user_name]['date_modified'] = $row['date_modified'];
-                $data[$user_name]['currency_id'] = $row['currency_id'];
-                $data[$user_name]['base_rate'] = $row['base_rate'];
+                $this->dataArray[$user_name]['worst_adjusted'] = $row['worst_case'];
+                $this->dataArray[$user_name]['forecast_id'] = $row['id'];
+                $this->dataArray[$user_name]['date_modified'] = $row['date_modified'];
+                $this->dataArray[$user_name]['currency_id'] = $row['currency_id'];
+                $this->dataArray[$user_name]['base_rate'] = $row['base_rate'];
             }
         }
-
-        $this->dataArray = array_replace_recursive($this->dataArray, $data);
     }
 
     /**
@@ -373,9 +367,10 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast
             $user_id = $this->getArg('user_id');
         }
 
-        $sql = "select u.user_name, sum(amount) as amount from opportunities o
+        $sql = "select u.user_name, sum(amount) as amount from opportunities o left join timeperiods t
+        on t.start_date_timestamp <= o.date_closed_timestamp and t.end_date_timestamp >= o.date_closed_timestamp
 INNER JOIN users u ON o.assigned_user_id = u.id and (u.reports_to_id = '". $user_id. "' OR u.id = '". $user_id. "')
-where o.timeperiod_id = '" . $this->getArg('timeperiod_id') . "'
+where t.id = '" . $this->getArg('timeperiod_id') . "'
 GROUP BY u.id;";
 
         $db = DBManagerFactory::getInstance();
@@ -388,5 +383,47 @@ GROUP BY u.id;";
         }
 
         return $return;
+    }
+
+    /**
+     * Save the Manager Worksheet
+     *
+     * @return string
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function save()
+    {
+        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        $seed = new ForecastManagerWorksheet();
+        $seed->loadFromRow($this->getArgs());
+        $sfh = new SugarFieldHandler();
+
+        foreach ($seed->field_defs as $properties)
+        {
+            $fieldName = $properties['name'];
+
+            if (!isset($args[$fieldName])) {
+                continue;
+            }
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!$seed->ACLFieldAccess($fieldName, 'save')) {
+                // No write access to this field, but they tried to edit it
+                throw new SugarApiExceptionNotAuthorized('Not allowed to edit field ' . $fieldName . ' in module: ' . $args['module']);
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $field = $sfh->getSugarField($type);
+
+            if ($field != null) {
+                $field->save($seed, $args, $fieldName, $properties);
+            }
+        }
+
+        $seed->setWorksheetArgs($this->getArgs());
+        $seed->save();
+        return $seed->id;
     }
 }

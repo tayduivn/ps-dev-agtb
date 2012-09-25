@@ -28,7 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecasts
  */
 class ForecastsFiltersApiTest extends RestTestBase
 {
@@ -45,6 +44,8 @@ class ForecastsFiltersApiTest extends RestTestBase
 
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
 
         self::$currentUser = SugarTestUserUtilities::createAnonymousUser();
         self::$currentUser->user_name = 'employee0';
@@ -87,6 +88,8 @@ class ForecastsFiltersApiTest extends RestTestBase
     /***
      * Test that we get the reportees assigned to the currentUser id
      *
+     * @group forecastapi
+     * @group forecasts
      */
     public function testReportees() {
 
@@ -107,6 +110,8 @@ class ForecastsFiltersApiTest extends RestTestBase
     /**
      * Test that a deleted user does not show up from the filter call
      *
+     * @group forecastapi
+     * @group forecasts
      */
     public function testDeletedReportees() {
         // delete one user for this test
@@ -134,11 +139,14 @@ class ForecastsFiltersApiTest extends RestTestBase
     /**
      * Test the timeperiods and that we don't return any fiscal year timeperiods
      *
+     * @group forecastapi
+     * @group forecasts
      */
     public function testTimeperiods()
     {
         $restReply = $this->_restCall("Forecasts/timeframes/");
         $db = DBManagerFactory::getInstance();
+        $fiscal_timeperiods = array();
 
         $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 1 AND deleted=0');
         while(($row = $db->fetchByAssoc($result)))
@@ -157,6 +165,8 @@ class ForecastsFiltersApiTest extends RestTestBase
      * This test is to see that the data returned for the name field is set correctly when locale name format changes
      *
      * @group testGetLocaleFormattedName
+     * @group forecastapi
+     * @group forecasts
      */
     public function testGetLocaleFormattedName()
     {

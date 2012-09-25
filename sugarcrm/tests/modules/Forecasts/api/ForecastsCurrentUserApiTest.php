@@ -33,7 +33,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecasts
  */
 class ForecastsCurrentUserApiTest extends RestTestBase
 {
@@ -46,6 +45,8 @@ class ForecastsCurrentUserApiTest extends RestTestBase
 
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
 
         self::$currentUser = SugarTestUserUtilities::createAnonymousUser();
         self::$currentUser->user_name = 'employee0';
@@ -66,6 +67,8 @@ class ForecastsCurrentUserApiTest extends RestTestBase
 
     /**
      * This test is to make sure Forecasts/me endpoint returns an isManager property
+     * @group forecastapi
+     * @group forecasts
      */
     public function testCheckForecastSpecificIsManager()
     {
@@ -76,6 +79,8 @@ class ForecastsCurrentUserApiTest extends RestTestBase
 
     /**
      * This test is to make sure Forecasts/me endpoint returns an showOpps property
+     * @group forecastapi
+     * @group forecasts
      */
     public function testCheckForecastSpecificShowOpps()
     {
@@ -86,6 +91,8 @@ class ForecastsCurrentUserApiTest extends RestTestBase
 
     /**
      * This test is to make sure Forecasts/me endpoint returns an first_name property
+     * @group forecastapi
+     * @group forecasts
      */
     public function testCheckForecastSpecificFirstName()
     {
@@ -96,6 +103,8 @@ class ForecastsCurrentUserApiTest extends RestTestBase
 
     /**
      * This test is to make sure Forecasts/me endpoint returns an last_name property
+     * @group forecastapi
+     * @group forecasts
      */
     public function testCheckForecastSpecificLastName()
     {
@@ -108,6 +117,8 @@ class ForecastsCurrentUserApiTest extends RestTestBase
      * This test is to see that the data returned for the name field is set correctly when locale name format changes
      *
      * @group testGetLocaleFormattedName
+     * @group forecastapi
+     * @group forecasts
      */
     public function testGetLocaleFormattedName()
     {

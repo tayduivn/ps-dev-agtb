@@ -29,36 +29,37 @@ require_once('modules/Forecasts/WorksheetSeedData.php');
 class WorksheetSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-private $createdWorksheets;
+    private $createdWorksheets;
 
-function setUp()
-{
-    global $beanFiles, $beanList, $current_user, $app_list_strings;
-    require('include/modules.php');
-    $app_list_strings = return_app_list_strings_language('en_us');
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
-    $current_user->is_admin = 1;
-    $current_user->save();
-    $GLOBALS['db']->query("UPDATE worksheet SET deleted = 1");
-}
-
-function tearDown()
-{
-    return;
-    foreach($this->createdWorksheets as $id)
+    function setUp()
     {
-        $GLOBALS['db']->query("DELETE FROM worksheet WHERE id = '{$id}'");
+        global $beanFiles, $beanList, $current_user, $app_list_strings;
+        require('include/modules.php');
+        $app_list_strings = return_app_list_strings_language('en_us');
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->is_admin = 1;
+        $current_user->save();
+        $GLOBALS['db']->query("UPDATE worksheet SET deleted = 1");
     }
-    $GLOBALS['db']->query("UPDATE worksheet SET deleted = 0");
-}
 
-/**
- *
- */
-function testPopulateSeedData()
-{
-    $this->createdWorksheets = WorksheetSeedData::populateSeedData();
-}
+    function tearDown()
+    {
+        return;
+        foreach ($this->createdWorksheets as $id) {
+            $GLOBALS['db']->query("DELETE FROM worksheet WHERE id = '{$id}'");
+        }
+        $GLOBALS['db']->query("UPDATE worksheet SET deleted = 0");
+    }
+
+    /**
+     * @group forecasts
+     * @group worksheet
+     * @gropu seeddata
+     */
+    function testPopulateSeedData()
+    {
+        $this->createdWorksheets = WorksheetSeedData::populateSeedData();
+    }
 
 
 }

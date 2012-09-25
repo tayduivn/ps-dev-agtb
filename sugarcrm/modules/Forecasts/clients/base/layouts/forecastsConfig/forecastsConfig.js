@@ -1,6 +1,3 @@
-<?php
-//FILE SUGARCRM flav=ent ONLY
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,47 +21,37 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Forecasts/ForecastsSeedData.php');
-require_once('modules/TimePeriods/TimePeriod.php');
-require_once('modules/Users/User.php');
+(function (app) {
 
-class ForecastsSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
-{
+    app.view.layouts.ForecastsConfigLayout = app.view.Layout.extend({
 
-private $createdOpportunities;
+        initialize: function (options) {
+            settingsModel = {};
+            if(_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config') ) {
+                // if we're using this layout from inside the Forecasts module
+                // and forecasts already has a config model, use that config model
+                // as our current context so we're updating the same model
+                settingsModel = options.context.forecasts.config;
+            } else {
+                // if we're not coming in from the Forecasts module (e.g. Admin)
+                // create a new model and use that to change/save
+                var Model = Backbone.Model.extend({
+                    url: app.api.buildURL("Forecasts", "config"),
+                    sync: function(method, model, options) {
+                        var url = _.isFunction(model.url) ? model.url() : model.url;
+                        return app.api.call(method, url, model, options);
+                    }
+                }),
+                settingsModel = new Model();
 
-function setUp()
-{
-    global $beanFiles, $beanList, $current_user, $app_list_strings;
-    require('include/modules.php');
-    $app_list_strings = return_app_list_strings_language('en_us');
-    $current_user = SugarTestUserUtilities::createAnonymousUser();
-    $current_user->is_admin = 1;
-    $current_user->save();
-}
+                settingsModel.fetch();
+            }
 
-function tearDown()
-{
+            options.context.set("model", settingsModel);
 
-}
+            app.view.Layout.prototype.initialize.call(this, options);
+        }
 
-/**
- *
- */
-function testPopulateSeedData()
-{
-    $timePeriod = new TimePeriod();
-    $query = $timePeriod->create_new_list_query('', 'timeperiods.is_fiscal_year = 0');
-    $result = $GLOBALS['db']->query($query);
-    $timePeriods = array();
-    while(($row = $GLOBALS['db']->fetchByAssoc($result)))
-    {
-        $timePeriod = new TimePeriod();
-        $timePeriod->retrieve($row['id']);
-        $timePeriods[] = $timePeriod;
-    }
-    ForecastsSeedData::populateSeedData($timePeriods);
-}
+    });
 
-
-}
+})(SUGAR.App)

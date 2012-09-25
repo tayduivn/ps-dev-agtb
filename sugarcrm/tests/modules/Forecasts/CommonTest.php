@@ -37,6 +37,10 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         self::$common_obj = new Common();
     }
 
@@ -47,8 +51,6 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
         $this->manager = SugarTestUserUtilities::createAnonymousUser();
 
         $this->rep = SugarTestUserUtilities::createAnonymousUser();
@@ -78,6 +80,8 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Only one record should be returned since we only created the forecast for the first user and not the second user
+     *
+     * @group forecasts
      */
     public function testGetReporteesWithForecastsReturnsOneRecord()
     {
@@ -86,6 +90,9 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertSame(1, count($return));
     }
 
+    /**
+     * @group forecasts
+     */
     public function testGetReporteesWithForecastsReturnsEmptyWithInvalidTimePeriod()
     {
         $return = self::$common_obj->getReporteesWithForecasts($this->manager->id, 'invalid time period');
@@ -93,6 +100,9 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($return);
     }
 
+    /**
+     * @group forecasts
+     */
     public function testGetReporteesWithForecastsReturnsEmptyWithInvalidUserId()
     {
         $return = self::$common_obj->getReporteesWithForecasts('Invalid Manager Id', $this->timeperiod->id);
@@ -100,8 +110,10 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEmpty($return);
     }
 
-    /*
+    /**
      * check my_timeriods has current timeperiod for current user
+     *
+     * @group forecasts
      */
     public function testGetMyTimeperiods()
     {

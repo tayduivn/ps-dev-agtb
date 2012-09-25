@@ -313,7 +313,11 @@ echo "<br>";
 
   //END SUGARCRM lic=sub ONLY
 
-
+    //BEGIN SUGARCRM flav=PRO ONLY
+    //Intall forecasts configuration
+    require_once('modules/Forecasts/ForecastsSeedData.php');
+    ForecastsSeedData::setupForecastSettings();
+    //END SUGARCRM flav=PRO ONLY
 
     installerHook('pre_createUsers');
     if ($new_tables) {
@@ -627,11 +631,6 @@ FP;
     $admin=new Administration();
     $admin->saveSetting('notify','allow_default_outbound', 0);
     //END SUGARCRM flav=sales ONLY
-
-    //BEGIN SUGARCRM flav=PRO ONLY
-    require_once('modules/Forecasts/ForecastsSeedData.php');
-    ForecastsSeedData::setupForecastSettings();
-    //END SUGARCRM flav=PRO ONLY
 
     // Bug 28601 - Set the default list of tabs to show
     $enabled_tabs = array();

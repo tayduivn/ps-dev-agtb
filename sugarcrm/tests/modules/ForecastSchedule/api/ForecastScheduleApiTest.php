@@ -64,6 +64,10 @@ class ForecastScheduleApiTest extends RestTestBase
      */
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
     	self::$manager = SugarTestUserUtilities::createAnonymousUser();
     	self::$manager->save();
 

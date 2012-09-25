@@ -27,6 +27,13 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     protected $obj;
 
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+    }
+
     public function setUp()
     {
         $this->obj = new SugarParsers_Filter(new Account());
@@ -37,6 +44,11 @@ class SugarParsers_FilterTest extends Sugar_PHPUnit_Framework_TestCase
         $filterDict = new FilterDictionary();
         $filterDict->resetCache();
         unset($this->obj);
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
     }
 
     /**

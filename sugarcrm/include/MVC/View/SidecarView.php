@@ -66,7 +66,9 @@ class SidecarView extends SugarView
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'unsecureRoutes' => array('login', 'error'),
-            'clientID' => 'sugar'
+            'clientID' => 'sugar',
+            'authStore'  => 'sugarAuthStore',
+            'keyValueStore' => 'sugarAuthStore'
         );
         $configString = json_encode($sidecarConfig);
         $sidecarJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
@@ -80,11 +82,7 @@ class SidecarView extends SugarView
      */
     public function getThemeCss()
     {
-        $themeObject = SugarThemeRegistry::current();
-        $html = '<link rel="stylesheet" type="text/css" href="'.$themeObject->getCSSURL('bootstrap.css').'" />';
-        $html .= '<link rel="stylesheet" type="text/css" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" />';
-        $html .= '<link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">';
-        return $html;
+        // this is left empty since we are generating the CSS via the API
     }
 
 }

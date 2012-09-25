@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,26 +21,48 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
-require_once('tests/rest/RestTestBase.php');
-
-/***
- * Used to test Forecast Module endpoints from ForecastModuleApi.php
+ 
+/**
+ * 
+ * Check if getTrackerSubstring() utils function returns a html decoded value
+ * which is also chopped to the tracker_max_display_length parameter
+ * 
+ * @ticket 55650
+ * @author avucinic@sugarcrm.com
  *
- * @group forecasts
  */
-class ForecastsApiTest extends RestTestBase
+class Bug55650Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    public function setUp(){}
-
-    public function tearDown(){}
-
-    /***
-     * @group forecastapi
+	
+    /**
+     * @dataProvider providerTestGetTrackerSubstring
      */
-    public function testForecastsApi()
+    public function testGetTrackerSubstring($value, $expected)
     {
-        $this->markTestIncomplete("Placeholder only:  " . $this->getName() . " needs to be implemented.");
+    	// Setup some helper values
+    	$add = "";
+    	$cut = $GLOBALS['sugar_config']['tracker_max_display_length'];
+    	// If the length is longer then the set tracker_max_display_length, the substring length for asserting equal will be
+    	// -3 the length of the tracker_max_display_length, and we should add ...
+    	if (strlen($expected) > $GLOBALS['sugar_config']['tracker_max_display_length'])
+    	{
+    		$add = "...";
+    		$cut = $cut - 3;
+    	}
+    	
+    	// Test if the values got converted, and if the original string was chopped to the expected string
+        $this->assertEquals(getTrackerSubstring($value), substr($expected, 0, $cut) . $add, '');
     }
+    
+    function providerTestGetTrackerSubstring()
+    {
+        return array(
+        	0 => array("A lot of quotes &#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;&#039;", "A lot of quotes '''''''''''''''"),
+        	1 => array("A lot of quotes <>'\" &#34; &#62; &#60; &#8364; &euro;&euro;&euro;&euro;&euro;&euro;&euro;&euro;", "A lot of quotes <>'\" \" > < € €€€€€€€€"),
+        	2 => array("A lot of quotes &amp;", "A lot of quotes &"),
+        );
+    }
+    
 }
+
+?>
