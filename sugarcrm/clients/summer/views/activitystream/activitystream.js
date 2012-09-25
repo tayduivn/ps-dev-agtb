@@ -421,6 +421,67 @@
         });
     },
 
+    _addTimelineEvent: function(model) {
+        var events = [], self = this;
+        var parseDate = function(datestring) {
+            var d = new Date(datestring);
+            var s = (d.getMonth()+1)+"/";
+            s += d.getDate() + "/";
+            s += d.getFullYear() + " ";
+            s += d.getHours() + ":";
+            s += d.getMinutes() + ":";
+            s += d.getSeconds();
+            return s;
+        };
+
+        _.each(model.get('comments'), function(comment) {
+            if(comment.value) {
+                var event = {};
+                event.tag = "commented";
+                event.startDate = parseDate(comment.date_created);
+                event.text = event.tag + " by " + comment.created_by_name;
+                event.headline = comment.value;
+                events.push(event);
+            }
+            _.each(comment.notes, function(attachment) {
+                var event = {};
+                event.tag = "attached";
+                event.startDate = parseDate(attachment.date_entered);
+                event.text = event.tag + " by " + attachment.created_by_name;
+                event.headline = attachment.filename;
+                events.push(event);
+            });
+        });
+
+        if(model.get("target_name") || self._parseTags(model.get("activity_data").value)) {
+            var event = {};
+            event.startDate = parseDate(model.get("date_created"));
+            event.text = model.get("activity_type") + " by " + model.get("created_by_name");
+            event.headline = model.get("target_name") || self._parseTags(model.get("activity_data").value);
+            event.tag = model.get("activity_type");
+            event.asset = {
+                media: "<img src='"+model.get("created_by_picture_url")+"' />",
+                caption: model.get("created_by_name")
+            };
+            events.push(event);
+        }
+        _.each(model.get('notes'), function(attachment) {
+            var event = {};
+            event.tag = "attached";
+            event.startDate = parseDate(attachment.date_entered);
+            event.text = event.tag + " by " + attachment.created_by_name;
+            event.headline = attachment.filename;
+            if(attachment.file_type == "image") {
+                event.asset = {
+                    media: "<img src='"+attachment.url+"' />",
+                    caption: attachment.filename
+                };
+            }
+            events.push(event);
+        });
+        return events;
+    },
+
     previewRecord: function(event) {
         var self = this;
         var root = this.$(event.currentTarget).parent().parent().parent();
@@ -500,39 +561,35 @@
         }
 
         // Start the user focused in the activity stream input.
-        setTimeout(function() {
+        _.defer(function() {
             $(".activitystream-post .sayit").focus();
-        }, 300);
+        });
 
-        var paramStr = "";
-        if(this.opts.params != 'undefined') {
-            if(this.opts.params.filter != 'undefined') {
-                paramStr += '&filter='+this.opts.params.filter;
+        // Construct the timeline data.
+        var timeline ={
+            "timeline": {
+                "type":"default"
             }
-            if(this.opts.params.offset != 'undefined') {
-                paramStr += '&offset='+this.opts.params.offset;
-            }
-            if(this.opts.params.max_num != 'undefined') {
-                paramStr += '&max_num='+this.opts.params.max_num;
-            }
-            if(this.opts.params.limit != 'undefined' ) {
-                paramStr += '&limit='+this.opts.params.limit;
-            }
-        }
+        };
 
-        if(this.collection.models.length > 0) {
-            setTimeout(function() {
-                createStoryJS({
-                    type:       'timeline',
-                    width:      '100%',
-                    height:     '400',
-                    start_at_end:true,
-                    js: 'lib/TimelineJS/js/timeline.js',
-                    source:     app.api.buildURL('ActivityStream')+"?oauth_token="+app.api.getOAuthToken()+paramStr+"&view=timeline",
-                    embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
-                });
-            }, 300);
-        }
+        var objarrays = _.map(this.collection.models, this._addTimelineEvent);
+        timeline.timeline.date = _.flatten(objarrays);
+
+        this.collection.each(function(model) {
+            timeline.timeline.date.push(self._addTimelineEvent(model));
+        });
+
+        _.defer(function() {
+            createStoryJS({
+                type:       'timeline',
+                width:      '100%',
+                height:     '400',
+                start_at_end:true,
+                js: 'lib/TimelineJS/js/timeline.js',
+                source: timeline,
+                embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
+            });
+        });
 
         return app.view.View.prototype._renderHtml.call(this);
     },
