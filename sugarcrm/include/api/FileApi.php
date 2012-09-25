@@ -347,7 +347,7 @@ class FileApi extends SugarApi {
         try {
             $download->getFile($bean, $field);
         } catch (Exception $e) {
-            throw new SugarApiExceptionNotFound($e->getMessage(), null, 0, $e);
+            throw new SugarApiExceptionNotFound($e->getMessage(), null, null, 0, $e);
         }
     }
 
