@@ -29,7 +29,8 @@
         app.router.route("", "dashboard", function() {
             app.controller.loadView({
                 layout: "dashboard",
-                module: "ActivityStream"
+                module: "ActivityStream",
+                title: "My Dashboard"
             });
         });
 

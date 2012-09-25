@@ -2,8 +2,6 @@
     events: {},
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        if('ActivityStream' == this.module) {
-            this.title = "My Dashboard";
-        }
+        this.title = this.context.get('title');
     }
 })
