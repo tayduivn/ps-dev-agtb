@@ -414,6 +414,13 @@
         this.$(event.currentTarget).parent().remove();
     },
 
+    _parseTags: function(text) {
+        var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
+        return text.replace(pattern, function(str, module, id, text) {
+            return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
+        });
+    },
+
     previewRecord: function(event) {
         var self = this;
         var root = this.$(event.currentTarget).parent().parent().parent();
@@ -435,15 +442,13 @@
     },
 
     _renderHtml: function() {
+        var self = this;
         _.each(this.collection.models, function(model) {
             var activity_data = model.get("activity_data");
             var picture = model.get("created_by_picture");
             var comments = model.get("comments");
-            var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
             if (activity_data && activity_data.value) {
-                activity_data.value = activity_data.value.replace(pattern, function(str, module, id, text) {
-                    return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
-                });
+                activity_data.value = self._parseTags(activity_data.value);
                 model.set("activity_data", activity_data);
             }
 
@@ -460,9 +465,7 @@
                 comments[comments.length - 1]['_morecomments'] = comments.length - 1;
             }
             _.each(comments, function(comment) {
-                comment.value = comment.value.replace(pattern, function(str, module, id, text) {
-                    return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
-                });
+                comment.value = self._parseTags(comment.value);
 
                 comment.created_by_picture_url = (comment.created_by_picture) ? app.api.buildFileURL({
                     module: 'Users',
