@@ -4,7 +4,7 @@
         <div class="span9">
             <div class="btn-toolbar pull-right">
                 {{#if isAuthenticated}}
-                <div class="btn-group dropup instance-picker" tour="tour-instances">
+                <div class="btn-group dropup instance-picker" data-tour="tour-instances">
                     <a title="{{ instance_name }}" class="btn" id="instance" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-share"></i> {{ instance_name }}</a>
                     <div class="dropdown-menu bottom-up" id="instancesContainer">
                     <h5>Your instances:</h5>
@@ -42,9 +42,7 @@
     <div class="modal-body">
         <div class="tour-modal-description">
             <p>Take a tour of Summer! (Estimated time: 15 mins)</p>
-            <div class="tour-modal-image">
-                Image goes here
-            </div>
+            <div class="tour-modal-image"></div>
         </div>
         <div class="modal-footer">
             <a class="btn" data-dismiss="modal">Cancel</a>
@@ -55,5 +53,11 @@
 </div>
 <div class="modal-backdrop hide system-tour-backdrop"></div>
 <style>
+    .tour-modal-image {
+        background-image: url("../clients/summer/views/tour/tour.jpg");
+        background-size: 100%;
+        height: 285px;
+        background-position-y: -20px;
+    }
     .bottom-up {top: auto; bottom: 100%; }
 </style>

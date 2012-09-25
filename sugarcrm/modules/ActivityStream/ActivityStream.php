@@ -402,7 +402,7 @@ class ActivityStream extends SugarBean {
     }
     
     protected function getTimelineHeadline($activity) {
-        return '<a href="#Users/'.$activity['created_by'].'">'.$activity['created_by_name'].'</a> '.$activity['activity_type'];        
+        return '<a href="" data-id="'.$activity['id'].'" class="showAnchor">'.$activity['created_by_name'].' '.$activity['activity_type'].'</a>';        
     }
     
     protected function getTimelineMedia($activity) {
@@ -452,10 +452,10 @@ class ActivityStream extends SugarBean {
         $result .= '<br/>';
                 
         if(count($activity['notes']) > 0) {
-            $result .= "<br/>Attachments(".count($activity['notes']).")";
+            $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Attachments('.count($activity['notes']).')</a>';
         }
         if(count($activity['comments']) > 0) {
-            $result .= "<br/>Comments(".count($activity['comments']).")";
+            $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Comments('.count($activity['comments']).')</a>';
         }
         
         return $result;

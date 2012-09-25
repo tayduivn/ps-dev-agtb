@@ -1,4 +1,4 @@
-<div class="block widget">
+<div class="block padded thumbnail widget">
     <div class="news-widget">
         <h4>News</h4>
         {{#each responseData.results}}

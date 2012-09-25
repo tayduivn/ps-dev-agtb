@@ -57,6 +57,7 @@
         else {
             fullTour = false;
         }
+        //console.log("startSystemTour::fullTour", fullTour);
 
         this.$('.system-tour').modal('hide');
         app.view.views.TourView.prototype.startTour(currentModule, viewType, fullTour);
@@ -111,7 +112,7 @@
     	var curr_id = app.user.get('instance_id');
     	if(id == curr_id) {
     		app.alert.show('already_there', {level: 'info', title:'You\'re here', messages: 'You are already using this instance', autoClose: true});
-    		return;
+            return;
     	}
     	App.api.call('create', '../rest/v10/summer/logout', null, {
     		success: function(o) {

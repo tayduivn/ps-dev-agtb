@@ -1,5 +1,5 @@
 {{#if isAuthenticated}}
-    <div class="btn-group todo-list-widget dropup {{#if open}}open{{/if}}" tour="tour-todo">
+    <div class="btn-group todo-list-widget dropup {{#if open}}open{{/if}}" data-tour="tour-todo">
         <button title="Todo List" class="btn dropdown-toggle todo" data-toggle="dropdown">
             <i class="icon-list-alt"></i> Todo</button>
 
