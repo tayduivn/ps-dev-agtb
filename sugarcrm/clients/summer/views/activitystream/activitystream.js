@@ -19,13 +19,12 @@
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
         'click .sayit .label a.close': 'removeTag',
-        'click .showAnchor': 'showAnchor',        
+        'click .showAnchor': 'showAnchor',
         'click .icon-eye-open': 'previewRecord'
     },
 
     initialize: function(options) {
         var self = this;
-
         this.opts = {params: {}};
         this.collection = {};
 
@@ -74,11 +73,11 @@
     },
 
     showAnchor: function(event) {
-        event.preventDefault();    	
+        event.preventDefault();
         var myId = this.$(event.currentTarget).data('id');
         $('html, body').animate({ scrollTop: $('#'+myId).offset().top - 50 }, 'slow');
     },
-    
+
     showMoreRecords: function() {
         var self = this, options = {};
 
