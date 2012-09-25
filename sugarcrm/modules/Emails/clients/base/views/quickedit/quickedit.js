@@ -25,6 +25,12 @@
                     status: "ready",
                     to_addresses: [ {
                         email: view.model.get('to_addresses')
+                    }],
+                    cc_addresses: [ {
+                        email: view.model.get('cc_addresses')
+                    }],
+                    bcc_addresses: [ {
+                        email: view.model.get('bcc_addresses')
                     }]
                 }));
             }
@@ -37,11 +43,17 @@
         app.alert.show('save_edit_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
         this.sendModel.save(null, {
             success: function(data, textStatus, jqXHR) {
-                app.alert.show('save_edit_view', {level: 'process', title: app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS')});
+                app.alert.show('save_edit_view', {autoclose: false, level: 'process', title: app.lang.getAppString('LBL_EMAIL_SEND_SUCCESS')});
                 console.info("Email sent!", arguments);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                app.alert.show('save_edit_view', {level: 'process', title: app.lang.getAppString('LBL_EMAIL_SEND_FAILURE')});
+                var msg = {autoclose: false, level: 'error', title: app.lang.getAppString('LBL_EMAIL_SEND_FAILURE')};
+
+                if(_.isString(textStatus.description)) {
+                    msg.messages = [textStatus.description];
+                }
+
+                app.alert.show('save_edit_view', msg);
                 console.error("Email not sent!", arguments);
             },
             complete: function() {
