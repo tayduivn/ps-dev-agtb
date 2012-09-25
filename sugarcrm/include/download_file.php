@@ -310,28 +310,29 @@ class DownloadFile {
      * Gets the mime type of a file
      *
      * @param string $filename Path to the file
-     * @return string
+     * @return string|false The string mime type or false if the file does not exist
      */
     public function getMimeType($filename) {
         // Bug 55455 - On some versions of PHP, file stat was throwing an error.
         // This attempts to relieve that.
-        $mimetype = '';
-        
-        // Ensure the file exists
+        // Ensure the file exists, making sure to clear the stat cache first
+        clearstatcache();
         if (file_exists($filename)) {
             if( function_exists( 'mime_content_type' ) ) {
                 $mimetype = mime_content_type($filename);
             } elseif( function_exists( 'ext2mime' ) ) {
                 $mimetype = ext2mime($filename);
-            } 
-        }
-        
-        // If the mimetype is empty, set it manually
-        if (empty($mimetype)) {
-            $mimetype = 'application/octet-stream';
+            }
+            
+            // If the mimetype is empty, set it manually
+            if (empty($mimetype)) {
+                $mimetype = 'application/octet-stream';
+            }
+            
+            return $mimetype;
         }
 
-        return $mimetype;
+        return false;
     }
 
     /**
