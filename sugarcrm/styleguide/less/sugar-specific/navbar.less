@@ -22,10 +22,12 @@
   padding: 0 1px;
 }
 
-#headerbar {
+.headerbar {
     height: 60px;
     z-index: 1000;
     background: @grayLighter;
+    padding: 0 5px 0 0;
+        
     h1 {
         float: left;
         margin-top: 12px;
@@ -49,24 +51,14 @@
     .dropdown-menu.carettop {
         .caret-top(10px,9px,auto,auto);
     }
-
-    .drawerTrig {
-        background-color: #fff;
-        background-image: none;
-        padding: 5px 15px 2px 15px;
-        .border-radius(4px 4px 0 0);
-        height: 14px;
-        border-bottom: 0px none;
-        .box-shadow(none);
-        top: -11px;
-
-    }
-
+    
     .span12 {
         margin-left: 0px;
     }
 
 }
+
+.content {margin: 0;}
 
 
 /* Tweak navbar brand link to be super sleek
@@ -337,8 +329,9 @@ textarea[readonly] {
 }
 .commented li .span10 {display: inline;}
 
-.accoment {margin: 0;}
-.accoment .control-group {padding: 0;}
+.acomment {margin: 0; padding: 0;}
+.acomment .control-group {padding: 0; margin: 0;}
+.acomment .btn {margin-left: 10px;}
 
 .block.tabs-left .nav-tabs li li p {
   margin: 0 0 0 36px;
@@ -359,25 +352,12 @@ textarea[readonly] {
 }
 
 .row-fluid > #charts.span12 {margin-left: 0 !important;}
-.drawerTrig {font-size: 6px; padding: 6px 5px 2px 4px; z-index: 1010; position: absolute;}
 h4 i {color: @grayLight;}
-.drawerTrig.pull-right {
-  .border-radius(0 2px 2px 0);
-  position: relative;
-}
-
-.drawerTrig.pull-left {
-  .border-radius(2px);
-  margin-right: 0;
-  padding: 4px 4px 0 4px;
-  position: absolute;
-  left: 0;
-  top: 0;
-}
 
 .block.tabs-left .nav-tabs li .actions {
   display: block;
   top: -2px;
+  color: @grayLight;
 }
 .block.tabs-left .nav-tabs li .actions a i {
   padding: 4px;
