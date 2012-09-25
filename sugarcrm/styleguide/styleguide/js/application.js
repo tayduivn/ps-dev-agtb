@@ -71,8 +71,10 @@
 
     // toggle all checkboxes
     $('.toggle-all').on('click', function () {
+      $('table').find('tr.message').remove();
       $('table').find(':checkbox').attr('checked', this.checked);
-    });
+      $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7">You have selected 10 records. Do you want select <a href="">select all 300</a> records.</td></tr>');
+    })
 
     // timeout the alerts
     setTimeout( function (){$('.timeten').fadeOut().remove();}, 9000);
@@ -97,16 +99,13 @@
     })
 
     // toggle more hide
-    $('.filter').toggle(
+    $('.newfilter').toggle(
       function (e) {
-    		$(this).parent().find('.extend').removeClass('hide');
-    		$(this).html('Filter &nbsp;<i class="icon-caret-up"></i>');
-    		return false;
+    		$(this).parent().parent().parent().parent().find('.extend').removeClass('hide');
+    		$(this).dropdown('toggle');
       },
       function (e) {
-      		$(this).parent().find('.extend').addClass('hide');
-      		$(this).html('Filter &nbsp;<i class="icon-caret-down"></i>');
-      		return false;
+      	$(this).parent().parent().parent().parent().find('.extend').addClass('hide');
     })
 
     // toggle more hide
@@ -228,6 +227,17 @@
   		$(this).parent().parent().addClass('on');
     })
 
+    $('.actions').find('a.remove').on('click', function (e) {
+      $('.tooltip').remove();
+  		$(this).parent().parent().remove();
+  		return false;
+    })
+    
+    // remove a dashlet
+    $('.thumbnail').find('.remove').on('click', function (e) {
+  		$(this).parent().parent().parent().parent().parent().remove();
+    })
+
     // remove a close item
     $('.folded').find('[data-toggle=tab]').on('click', function (e) {
 			$('.nav-tabs').find('li').removeClass('on');
@@ -262,7 +272,7 @@
     })
 
     // Select widget
-    $(".chzn-select").chosen()
+    $(".chzn-select").chosen({ disable_search_threshold: 5 })
     $(".chzn-select-deselect").chosen({allow_single_deselect:true})
 
     //popover
