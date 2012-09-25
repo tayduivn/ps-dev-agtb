@@ -1,7 +1,7 @@
 <div class="btn-toolbar pull-right">
-    <form class="dropdown form-horizontal" id="forecastsChartDisplayOptions">
-        <a href="#" data-toggle="dropdown" class="btn btn-mini btn-invisible"><span class="icon-cog"></span></a>
-        <ul class="dropdown-menu carettop fancyRadioButtons" id="chartDisplayOptions">
+    <form class="dropdown form-horizontal btn-group" id="forecastsChartDisplayOptions">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-mini btn-invisible"><span class="icon-cog"></span></a>
+        <ul class="dropdown-menu left carettop" id="chartDisplayOptions">
             <li><a href="#"><label><input type="radio" name="radioChartOptions" value="likely" checked="checked" />&nbsp;{{str "LBL_CHART_OPTION_LIKELY" "Forecasts"}}</label></a></li>
             <li><a href="#"><label><input type="radio" name="radioChartOptions" value="best" />&nbsp;{{str "LBL_CHART_OPTION_BEST" "Forecasts"}}</label></a></li>
             <li><a href="#"><label><input type="radio" name="radioChartOptions" value="worst" />&nbsp;{{str "LBL_CHART_OPTION_WORST" "Forecasts"}}</label></a></li>
