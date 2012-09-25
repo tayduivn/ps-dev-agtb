@@ -702,6 +702,11 @@ function get_team_name($team_id)
  */
 function get_team_array($add_blank = FALSE) {
 	global  $current_user;
+    if (empty($current_user) || empty($current_user->id))
+    {
+        return array();
+    }
+
 	$team_array = get_register_value('team_array', $add_blank.'ADDBLANK'.$current_user->id);
 
 	if(!empty($team_array))
