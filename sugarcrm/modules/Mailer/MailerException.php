@@ -32,4 +32,5 @@ class MailerException extends Exception
     const FailedToTransferHeaders       = 7;
     const InvalidMessageBody            = 8;
     const InvalidAttachment             = 9;
+    const InvalidMailer                 = 10;
 }

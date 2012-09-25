@@ -34,10 +34,10 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $user = new User();
-        $user->retrieve('a19adb46-86ee-aebd-c361-503f74779927');
-        $GLOBALS["current_user"] = $user;
-        // $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        // $user = new User();
+        // $user->retrieve('a19adb46-86ee-aebd-c361-503f74779927');
+        // $GLOBALS["current_user"] = $user;
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 
         $this->input = array(
             "email_config"  =>  "1234567890", // "7c8d3023-dddb-144c-105e-504e1e872b06",
@@ -85,6 +85,9 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
     }
 
+    /**
+     * @group mailer
+     */
     public function testSaveAsDraft_Success ()
     {
         global $current_user;
@@ -140,7 +143,9 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
 
-
+    /**
+     * @group mailer
+     */
     public function testSaveAsDraft_FromAccountsUnavailable_ExceptionThrown()
     {
         global $current_user;

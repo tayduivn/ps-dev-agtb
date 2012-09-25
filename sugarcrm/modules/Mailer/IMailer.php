@@ -21,8 +21,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'Encoding.php';      // needs to know the valid encodings that are available for email
-require_once 'EmailIdentity.php'; // requires EmailIdentity for representing email senders and recipients
+require_once "Encoding.php";            // needs to know the valid encodings that are available for email
+require_once "EmailIdentity.php";       // requires EmailIdentity for representing email senders and recipients
+require_once "MailerConfiguration.php"; // needs to take on a MailerConfiguration or a type that derives from it
+require_once "EmbeddedImage.php";        // requires Attachment and EmbeddedImage, which imports Attachment
 
 /**
  * This defines the basic interface that is expected from a Mailer.
@@ -34,8 +36,9 @@ interface IMailer
     /**
      * @abstract
      * @access public
+     * @param MailerConfiguration $config required
      */
-    public function __construct();
+    public function __construct(MailerConfiguration $config);
 
     /**
      * Set the object properties back to their initial default values.
@@ -46,42 +49,6 @@ interface IMailer
     public function reset();
 
     /**
-     * Set the mailer configuration to its default settings for this sending strategy.
-     *
-     * @abstract
-     * @access public
-     */
-    public function loadDefaultConfigs();
-
-    /**
-     * Replaces the existing configuration with the configuration passed in as a parameter.
-     *
-     * @abstract
-     * @access public
-     * @param array $configs required The key-value pair configuration to replace the existing configuration.
-     */
-    public function setConfigs($configs);
-
-    /**
-     * Merges the configuration passed in as a parameter with the existing configuration.
-     *
-     * @abstract
-     * @access public
-     * @param array $configs required The key-value pair configuration to merge with the existing configuration.
-     */
-    public function mergeConfigs($configs);
-
-    /**
-     * Sets or overwrites a configuration with the value passed in for the key ($config).
-     *
-     * @abstract
-     * @access public
-     * @param string $config required The configuration key.
-     * @param mixed  $value  required The configuration value.
-     */
-    public function setConfig($config, $value);
-
-    /**
      * Replaces the existing email headers with the headers passed in as a parameter.
      *
      * @abstract
@@ -89,6 +56,25 @@ interface IMailer
      * @param EmailHeaders $headers required
      */
     public function setHeaders(EmailHeaders $headers);
+
+    /**
+     * Adds or replaces header values.
+     *
+     * @access public
+     * @param string $key   required Should look like the real header it represents.
+     * @param mixed  $value required The value of the header.
+     * @throws MailerException
+     */
+    public function setHeader($key, $value);
+
+    /**
+     * Adds or replaces the Subject header.
+     *
+     * @access public
+     * @param string $subject required
+     * @throws MailerException
+     */
+    public function setSubject($subject);
 
     /**
      * Restores the email headers to a fresh EmailHeaders object.
@@ -183,12 +169,9 @@ interface IMailer
      *
      * @abstract
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param Attachment $attachment
      */
-    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream');
+    public function addAttachment(Attachment $attachment);
 
     /**
      * Adds an embedded attachment. This can include images, sounds, and just about any other document. Make sure to set
@@ -196,13 +179,9 @@ interface IMailer
      *
      * @abstract
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param string      $cid      required The Content-ID used to reference the image in the message.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param EmbeddedImage $embeddedImage
      */
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream');
+    public function addEmbeddedImage(EmbeddedImage $embeddedImage);
 
     /**
      * Removes any existing attachments by restoring the container to an empty array.

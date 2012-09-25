@@ -21,7 +21,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'Encoding.php'; // needs the valid encodings defined in Encoding
+require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
+require_once "Encoding.php";        // needs the valid encodings defined in Encoding
 
 /**
  * This class encapsulates properties and behavior of an attachment so that a common interface can be expected
@@ -30,10 +31,10 @@ require_once 'Encoding.php'; // needs the valid encodings defined in Encoding
 class Attachment
 {
     // protected members
-    protected $path;        // Path to the file being attached.
-    protected $name;        // Name of the file to be used to identify the attachment.
-    protected $encoding;    // The encoding used on the file. Should be one of the valid encodings from Encoding.
-    protected $mimeType;    // Should be a valid MIME type.
+    protected $path;     // Path to the file being attached.
+    protected $name;     // Name of the file to be used to identify the attachment.
+    protected $encoding; // The encoding used on the file. Should be one of the valid encodings from Encoding.
+    protected $mimeType; // Should be a valid MIME type.
 
     /**
      * @access public
@@ -42,12 +43,52 @@ class Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
+    public function __construct($path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
         $this->setPath($path);
         $this->setName($name);
-        $this->setEncoding($encoding);
         $this->setMimeType($mimeType);
+        $this->setEncoding($encoding);
     }
+
+
+    /**
+     * @access public
+     * @param SugarBean $bean    required
+     */
+    public static function FromSugarBean(SugarBean $bean) {
+        $bean_classname = get_class($bean);
+
+        $mimeType = "application/octet-stream";
+
+        switch ($bean_classname) {
+            case "Note":
+                $filePath   = "upload/{$bean->id}";
+                $fileName   = empty($bean->filename) ? $bean->name : $bean->filename;
+                $mimeType   = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
+                break;
+            case "DocumentRevision":
+                $filePath   = "upload/{$bean->id}";
+                $fileName   = empty($bean->filename) ? $bean->name : $bean->filename;
+                $mimeType   = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
+                break;
+            default:
+                throw new MailerException(
+                    "SugarBean Type: '{$bean_classname}' not supported as an Email Attachment",
+                    MailerException::InvalidAttachment
+                );
+        }
+
+        // Path must Exist and Must be a Regular File
+        if (!is_file($filePath)) {
+            throw new MailerException("Attachment File Not Found: ".$filePath, MailerException::InvalidAttachment);
+        }
+
+        $attachment = new Attachment($filePath, $fileName, Encoding::Base64, $mimeType);
+
+        return $attachment;
+    }
+
+
 
     /**
      * @access public
@@ -70,7 +111,7 @@ class Attachment
      * @param null|string $name required Should be a string, but null is acceptable if the path will be used for the name.
      */
     public function setName($name) {
-        if (!is_string($name) || $name == '') {
+        if (!is_string($name) || $name == "") {
             // derive the name from the path if the name is invalid
             $name = basename($this->path);
         }
@@ -89,8 +130,16 @@ class Attachment
     /**
      * @access public
      * @param string $encoding
+     * @throws MailerException
      */
     public function setEncoding($encoding = Encoding::Base64) {
+        if (!Encoding::isValid($encoding)) {
+            throw new MailerException(
+                "Invalid Attachment: encoding is invalid",
+                MailerException::InvalidAttachment
+            );
+        }
+
         $this->encoding = $encoding;
     }
 
@@ -106,7 +155,7 @@ class Attachment
      * @access public
      * @param string $mimeType
      */
-    public function setMimeType($mimeType = 'application/octet-stream') {
+    public function setMimeType($mimeType = "application/octet-stream") {
         $this->mimeType = $mimeType;
     }
 
@@ -124,12 +173,12 @@ class Attachment
      * @access public
      * @return array Array of key value pairs representing the properties of the attachment.
      */
-    public function getAsArray() {
+    public function toArray() {
         return array(
-            'path'     => $this->getPath(),
-            'name'     => $this->getName(),
-            'encoding' => $this->getEncoding(),
-            'mimetype' => $this->getMimeType(),
+            "path"     => $this->getPath(),
+            "name"     => $this->getName(),
+            "encoding" => $this->getEncoding(),
+            "mimetype" => $this->getMimeType(),
         );
     }
 }

@@ -21,10 +21,11 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'lib/phpmailer/class.phpmailer.php'; // needs the PHPMailer library
-require_once 'lib/phpmailer/class.smtp.php';      // required to establish the SMTP connection prior to PHPMailer's
+require_once "lib/phpmailer/class.phpmailer.php"; // needs the PHPMailer library
+require_once "lib/phpmailer/class.smtp.php";      // required to establish the SMTP connection prior to PHPMailer's
                                                   // send for error handling purposes
-require_once 'BaseMailer.php';                    // requires Attachment in order to extend it
+require_once "BaseMailer.php";                    // requires BaseMailer in order to extend it
+require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMailerConfiguration
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
@@ -34,41 +35,6 @@ require_once 'BaseMailer.php';                    // requires Attachment in orde
  */
 class SimpleMailer extends BaseMailer
 {
-    // only use SMTP to send email with PHPMailer
-    const Protocol   = 'smtp';
-
-    // constants used for documenting which smtp.secure configurations are valid
-    const SecureNone = '';
-    const SecureSsl  = 'ssl';
-    const SecureTls  = 'tls';
-
-    /**
-     * Extends the default configurations for this sending strategy. Adds default SMTP configurations needed to send
-     * email over SMTP using PHPMailer.
-     *
-     * @access public
-     */
-    public function loadDefaultConfigs() {
-        parent::loadDefaultConfigs(); // load the base defaults
-
-        // define the additional defaults
-        $defaults = array(
-            'smtp.host'         => 'localhost',      // the hostname of the SMTP server to use
-                                                     // multiple hosts can be supplied, but all hosts must be separated
-                                                     // by a semicolon (e.g. "smtp1.example.com;smtp2.example.com") and
-                                                     // hosts will be tried in order
-                                                     // the port for the host can be defined using the format:
-                                                     //     hostname:port
-            'smtp.port'         => 25,               // the SMTP port to use on the server
-            'smtp.secure'       => self::SecureNone, // the SMTP connection prefix ("", "ssl" or "tls")
-            'smtp.authenticate' => false,            // true=require authentication on the SMTP server
-            'smtp.username'     => '',               // the username to use if smtp.authenticate=true
-            'smtp.password'     => '',               // the password to use if smtp.authenticate=true
-        );
-
-        $this->mergeConfigs($defaults); // merge the additional defaults with the base defaults
-    }
-
     /**
      * Performs the send of an email using PHPMailer (currently version 5.2.1).
      *
@@ -76,6 +42,8 @@ class SimpleMailer extends BaseMailer
      * @throws MailerException
      */
     public function send() {
+        $this->prepareToSend();
+
         $mailer = $this->generateMailer(); // get a fresh PHPMailer object
 
         $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
@@ -117,19 +85,19 @@ class SimpleMailer extends BaseMailer
         $mailer->SetLanguage();
 
         // transfer the basic configurations to PHPMailer
-        $mailer->Mailer   = self::Protocol;
-        $mailer->Hostname = $this->configs['hostname'];
-        $mailer->CharSet  = $this->configs['charset'];
-        $mailer->Encoding = $this->configs['encoding'];
-        $mailer->WordWrap = $this->configs['wordwrap'];
+        $mailer->Mailer   = MailConfigurationPeer::MODE_SMTP; // only use SMTP to send email with PHPMailer
+        $mailer->Hostname = $this->config->getHostname();
+        $mailer->CharSet  = $this->config->getCharset();
+        $mailer->Encoding = $this->config->getEncoding();
+        $mailer->WordWrap = $this->config->getWordwrap();
 
         // transfer the SMTP configurations to PHPMailer
-        $mailer->Host       = $this->configs['smtp.host'];
-        $mailer->Port       = $this->configs['smtp.port'];
-        $mailer->SMTPSecure = $this->configs['smtp.secure'];
-        $mailer->SMTPAuth   = $this->configs['smtp.authenticate'];
-        $mailer->Username   = $this->configs['smtp.username'];
-        $mailer->Password   = $this->configs['smtp.password']; //@todo do we need to wrap this value in from_html()?
+        $mailer->Host       = $this->config->getHost();
+        $mailer->Port       = $this->config->getPort();
+        $mailer->SMTPSecure = $this->config->getCommunicationProtocol();
+        $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
+        $mailer->Username   = $this->config->getUsername();
+        $mailer->Password   = from_html($this->config->getPassword());
     }
 
     /**
@@ -374,5 +342,72 @@ class SimpleMailer extends BaseMailer
                 throw new MailerException("Invalid attachment type", MailerException::InvalidAttachment);
             }
         }
+    }
+
+    /**
+     * Handles any final updates to document prior to sending. Updates include Charset translation for all
+     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     */
+    protected function prepareToSend() {
+        $from = $this->headers->getFrom();
+        $from->setName(
+            $this->config->getLocale()->translateCharset(
+                $from->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            )
+        );
+        $this->setHeader(EmailHeaders::From, $from);
+
+        $subject = $this->headers->getSubject();
+        $subject = $this->config->getLocale()->translateCharset($subject, "UTF-8", $this->config->getCharset());
+        $subject = from_html($subject);
+        $this->setSubject($subject);
+
+        $textBody = $this->prepareTextBody($this->textBody);
+        $textBody = from_html($textBody);
+        $this->setTextBody($textBody);
+
+        $htmlBody = $this->prepareHtmlBody($this->htmlBody);
+        $htmlBody = from_html($htmlBody);
+        $this->setHtmlBody($htmlBody);
+    }
+
+    protected function prepareTextBody($body) {
+        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
+
+        return $body;
+    }
+
+    /**
+     * Handles any final updates to document prior to sending. Updates include Charset translation for all
+     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     */
+    protected function prepareHtmlBody($body) {
+        $body = $this->forceRfcComplianceOnHtmlBody($body);
+        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
+
+        return $body;
+    }
+
+    protected function forceRfcComplianceOnHtmlBody($body) {
+        // HTML email RFC compliance
+        if (strpos($body, "<html") === false) {
+            $subject    = $this->headers->getSubject();
+            $charset    = $this->config->getCharset();
+            $langHeader = get_language_header();
+            $head       = <<<eoq
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
+<title>{$subject}</title>
+</head>
+<body>
+eoq;
+            $body = "{$head}{$body}</body></html>";
+        }
+
+        return $body;
     }
 }

@@ -21,386 +21,147 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('SimpleMailer.php');
-require_once('../../include/OutboundEmail/OutboundEmail.php');
+require_once "SimpleMailer.php";
 
 class SugarMailer extends SimpleMailer
 {
-	var $protocol = "tcp://"; // it's not clear how this variable is used, looks like it's just set and never used
-	var $mailer = "smtp";
-	var $host = "localhost";
-	var $port = "25";
+    private $includeDisclosure = false;
+    private $disclosureContent;
 
-	var $user;
-	var $locale;
-	var $sugar_config;
+    /**
+     * @param MailerConfiguration
+     */
+    public function __construct(MailerConfiguration $mailerConfig) {
+        parent::__construct($mailerConfig);
+        $this->retrieveDisclosureSettings();
+    }
 
-	var $preppedForOutbound = false;
-	var $disclosureEnabled;
-	var $disclosureText;
-	var $isHostEmpty = false;
-	var $opensslOpened = true;
+    protected function prepareTextBody($body) {
+        if ($this->includeDisclosure) {
+            $body .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
+        }
 
-	/**
-	 * @param User    $current_user   - Current Signed In User
-	 * @param         $locale
-	 * @param         $sugar_config
-	 */
-	function __construct(User $current_user, Locale $locale, SugarConfig $sugar_config) {
-		$admin = new Administration();
-		$admin->retrieveSettings();
+        $body = parent::prepareTextBody($body);
 
-		if (isset($admin->settings['disclosure_enable']) && !empty($admin->settings['disclosure_enable'])) {
-			$this->disclosureEnabled = true;
-			$this->disclosureText    = $admin->settings['disclosure_text'];
-		}
+        return $body;
+    }
 
-		$oe = new OutboundEmail();
-		$oe->getUserMailerSettings($current_user);
+    /**
+     * Handles any final updates to document prior to sending. Updates include Charset translation for all
+     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     */
+    protected function prepareHtmlBody($body) {
+        global $sugar_config;
+        $siteUrl = $sugar_config["site_url"];
 
-		if (!($current_user instanceof User) ||
-		    !($locale instanceof Locale) ||
-		    !($sugar_config instanceof SugarConfig)
-		) {
-			throw new MailerException("SugarMailer Invalid Constructor Argument");
-		}
+        if ($this->includeDisclosure) {
+            $body .= "<br /><br />{$this->disclosureContent}";
+        }
 
-		/**
-		$this->SetLanguage('en', 'lib/phpmailer/language/');
-		$this->Mailer	 	= 'smtp';
-		// cn: i18n
-		$this->CharSet		= $locale->getPrecedentPreference('default_email_charset');
-		$this->Encoding		= 'quoted-printable';
-		$this->IsHTML(false);  // default to plain-text email
-		$this->Hostname = $sugar_config['host_name'];
-		$this->WordWrap		= 996;
-		// cn: gmail fix
-		$this->protocol = ($this->oe->mail_smtpssl == 1) ? "ssl://" : $this->protocol;
+        // replace references to cache/images with cid tag
+        $body = str_replace(sugar_cached("images/"), "cid:", $body);
 
-		//BEGIN SUGARCRM flav=int ONLY
-		$this->SMTPDebug	= false;
-		//END SUGARCRM flav=int ONLY
-		 **/
-	}
+        // replace any embeded images using cache/images for src url
+        $body = $this->convertInlineImageToEmbeddedImage(
+            $body,
+            "(?:{$siteUrl})?/?cache/images/",
+            sugar_cached("images/")
+        );
 
-	/**
-	 * Prefills outbound details
-	 */
-	function setMailer($current_user = null) {
-		$oe = new OutboundEmail();
-		if ($current_user != null) {
-			$oe = $oe->getUserMailerSettings($current_user);
-		} else {
-			$oe = $oe->getSystemMailerSettings();
-		}
+        // replace any embeded images using the secure entryPoint for src url
+        $body = $this->convertInlineImageToEmbeddedImage(
+            $body,
+            "(?:{$siteUrl})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=",
+            "upload://",
+            true
+        );
 
-		// ssl or tcp - keeping outside isSMTP b/c a default may inadvertently set ssl://
-		$this->protocol = ($oe->mail_smtpssl) ? "ssl://" : "tcp://";
+        $body = parent::prepareHtmlBody($body);
 
-		if ($oe->mail_sendtype == "SMTP") {
-			//Set mail send type information
-			$this->Mailer = "smtp";
-			$this->Host   = $oe->mail_smtpserver;
-			$this->Port   = $oe->mail_smtpport;
-			if ($oe->mail_smtpssl == 1) {
-				$this->SMTPSecure = 'ssl';
-			} // if
-			if ($oe->mail_smtpssl == 2) {
-				$this->SMTPSecure = 'tls';
-			} // if
+        return $body;
+    }
 
-			if ($oe->mail_smtpauth_req) {
-				$this->SMTPAuth = TRUE;
-				$this->Username = $oe->mail_smtpuser;
-				$this->Password = $oe->mail_smtppass;
-			}
-		} else
-			$this->Mailer = "sendmail";
-	}
+    /**
+     * Replace images with locations specified by regex with cid: images and attach needed files.
+     *
+     * @param string $body
+     * @param string $regex        Regular expression
+     * @param string $localPrefix Prefix where local files are stored
+     * @param bool   $object       Use attachment object
+     * @return string
+     */
+    protected function convertInlineImageToEmbeddedImage($body, $regex, $localPrefix, $object = false) {
+        $i       = 0;
+        $foundImages = array();
+        preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $body, $foundImages);
 
-	/**
-	 * Prefills mailer for system
-	 */
-	function setMailerForSystem() {
-		$oe = new OutboundEmail();
-		$oe = $oe->getSystemMailerSettings();
+        foreach ($foundImages[2] as $image) {
+            $filename     = urldecode($image);
+            $cid          = $filename;
+            $fileLocation = $localPrefix . $filename;
 
-		// ssl or tcp - keeping outside isSMTP b/c a default may inadvertantly set ssl://
-		$this->protocol = ($oe->mail_smtpssl) ? "ssl://" : "tcp://";
+            if (file_exists($fileLocation)) {
+                $mimeType = null;
 
-		if ($oe->mail_sendtype == "SMTP") {
-			//Set mail send type information
-			$this->Mailer = "smtp";
-			$this->Host   = $oe->mail_smtpserver;
-			$this->Port   = $oe->mail_smtpport;
-			if ($oe->mail_smtpssl == 1) {
-				$this->SMTPSecure = 'ssl';
-			} // if
-			if ($oe->mail_smtpssl == 2) {
-				$this->SMTPSecure = 'tls';
-			} // if
-			if ($oe->mail_smtpauth_req) {
-				$this->SMTPAuth = TRUE;
-				$this->Username = $oe->mail_smtpuser;
-				$this->Password = $oe->mail_smtppass;
-			}
-		} else
-			$this->Mailer = "sendmail";
-	}
+                if ($object) {
+                    $mimeType  = "application/octet-stream";
+                    $objectType = array();
 
-	/**
-	 * @todo drop this method... it doesn't add anything of real value to the method it overrides
-	 *
-	 * Attaches all fs, string, and binary attachments to the message.
-	 * Returns an empty string on failure.
-	 * @access private
-	 * @return string
-	 */
-	function AttachAll() {
-		// Return text of body
-		$mime = array();
+                    if (preg_match("#&(?:amp;)?type=([\w]+)#i", $foundImages[0][$i], $objectType)) {
+                        $beanName = null;
 
-		// Add all attachments
-		for ($i = 0; $i < count($this->attachment); $i++) {
-			// Check for string attachment
-			$bString = $this->attachment[$i][5];
-			if ($bString) {
-				$string = $this->attachment[$i][0];
-			} else {
-				$path = $this->attachment[$i][0];
-			}
+                        switch (strtolower($objectType[1])) {
+                            case "documents":
+                                $beanName = "DocumentRevisions";
+                                break;
+                            case "notes":
+                                $beanName = "Notes";
+                                break;
+                        }
+                    }
 
-			// cn: overriding parent class' method to perform encode on the following
-			$filename    = $this->EncodeHeader(trim($this->attachment[$i][1]));
-			$name        = $this->EncodeHeader(trim($this->attachment[$i][2]));
-			$encoding    = $this->attachment[$i][3];
-			$type        = $this->attachment[$i][4];
-			$disposition = $this->attachment[$i][6];
-			$cid         = $this->attachment[$i][7];
+                    if (!is_null($beanName)) {
+                        $bean = SugarModule::get($beanName)->loadBean();
+                        $bean->retrieve($filename);
 
-			$mime[] = sprintf("--%s%s", $this->boundary[1], $this->LE);
-			$mime[] = sprintf("Content-Type: %s; name=\"%s\"%s", $type, $name, $this->LE);
-			$mime[] = sprintf("Content-Transfer-Encoding: %s%s", $encoding, $this->LE);
+                        if (!empty($bean->id)) {
+                            $mimeType  = $bean->file_mime_type;
+                            $filename  = $bean->filename;
+                        }
+                    }
+                } else {
+                    $mimeType = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                }
 
-			if ($disposition == "inline") {
-				$mime[] = sprintf("Content-ID: <%s>%s", $cid, $this->LE);
-			}
+                $embeddedImage = new EmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
+                $this->addEmbeddedImage($embeddedImage);
+                $i++;
+            }
+        }
 
-			$mime[] = sprintf("Content-Disposition: %s; filename=\"%s\"%s", $disposition, $name, $this->LE . $this->LE);
+        // replace references to cache with cid tag
+        $body = preg_replace("|\"{$regex}|i", '"cid:', $body);
 
-			// Encode as string attachment
-			if ($bString) {
-				$mime[] = $this->EncodeString($string, $encoding);
-				if ($this->IsError()) {
-					return "";
-				}
-				$mime[] = $this->LE . $this->LE;
-			} else {
-				$mime[] = $this->EncodeFile($path, $encoding);
+        // remove bad img line from outbound email
+        $body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', "", $body);
 
-				if ($this->IsError()) {
-					return "";
-				}
-				$mime[] = $this->LE . $this->LE;
-			}
-		}
-		$mime[] = sprintf("--%s--%s", $this->boundary[1], $this->LE);
+        return $body;
+    }
 
-		return join("", $mime);
-	}
+    /**
+     * Retrieves settings from the administrator configuration indicating whether or not to include a disclosure
+     * at the bottom of an email, and if so, the content to disclose.
+     *
+     * @access private
+     * @todo consider how this could become a merge field that is added prior to the Mailer getting created
+     */
+    private function retrieveDisclosureSettings() {
+        $admin = new Administration();
+        $admin->retrieveSettings();
 
-	/**
-	 * handles Charset translation for all visual parts of the email.
-	 * @param string charset Default = ''
-	 */
-	function prepForOutbound() {
-		global $locale;
-
-		if ($this->preppedForOutbound == false) {
-			//bug 28534. We should not set it to true to circumvent the following conversion as each email is independent.
-			//$this->preppedForOutbound = true; // flag so we don't redo this
-			$OBCharset = $locale->getPrecedentPreference('default_email_charset');
-
-			// handle disclosure
-			if ($this->disclosureEnabled) {
-				$this->Body .= "<br />&nbsp;<br />{$this->disclosureText}";
-				$this->AltBody .= "\r\r{$this->disclosureText}";
-			}
-
-			// body text
-			$this->Body    = from_html($locale->translateCharset(trim($this->Body), 'UTF-8', $OBCharset));
-			$this->AltBody = from_html($locale->translateCharset(trim($this->AltBody), 'UTF-8', $OBCharset));
-			$subjectUTF8   = from_html(trim($this->Subject));
-			$subject       = $locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
-			$this->Subject = $locale->translateCharset($subjectUTF8, 'UTF-8', $OBCharset);
-
-			// HTML email RFC compliance
-			if ($this->ContentType == "text/html") {
-				if (strpos($this->Body, '<html') === false) {
-
-					$langHeader = get_language_header();
-
-					$head       = <<<eoq
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
-<head>
-	<meta http-equiv="Content-Type" content="text/html; charset={$OBCharset}" />
-<title>{$subject}</title>
-</head>
-<body>
-eoq;
-					$this->Body = $head . $this->Body . "</body></html>";
-				}
-			}
-
-			$this->FromName = $locale->translateCharset(trim($this->FromName), 'UTF-8', $OBCharset);
-		}
-	}
-
-	/**
-	 * a potential solution to allow for manipulation of the message parts at send time without actually
-	 * changing the message parts beyond repair
-	 */
-	public function send() {
-		// local copies of the message parts
-		$textBody = $this->textBody;
-		$htmlBody = $this->htmlBody;
-
-		$success = false;
-
-		if (parent::send()) {
-			$success = true;
-		}
-
-		// now return the message parts to their original format
-		$this->textBody = $textBody;
-		$this->htmlBody = $htmlBody;
-
-		return $success;
-	}
-
-	/**
-	 * @todo leave the manipulation of message parts for send time
-	 *
-	 * Replace images with locations specified by regex with cid: images
-	 * and attach needed files
-	 * @param string $regex        Regular expression
-	 * @param string $local_prefix Prefix where local files are stored
-	 * @param bool   $object       Use attachment object
-	 */
-	public function replaceImageByRegex($regex, $local_prefix, $object = false) {
-		preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $this->Body, $matches);
-		$i = 0;
-		foreach ($matches[2] as $match) {
-			$filename      = urldecode($match);
-			$cid           = $filename;
-			$file_location = $local_prefix . $filename;
-			if (!file_exists($file_location))
-				continue;
-			if ($object) {
-				if (preg_match('#&(?:amp;)?type=([\w]+)#i', $matches[0][$i], $typematch)) {
-					switch (strtolower($typematch[1])) {
-						case 'documents':
-							$beanname = 'DocumentRevisions';
-							break;
-						case 'notes':
-							$beanname = 'Notes';
-							break;
-					}
-				}
-				$mime_type = "application/octet-stream";
-				if (isset($beanname)) {
-					$bean = SugarModule::get($beanname)->loadBean();
-					$bean->retrieve($filename);
-					if (!empty($bean->id)) {
-						$mime_type = $bean->file_mime_type;
-						$filename  = $bean->filename;
-					}
-				}
-			} else {
-				$mime_type = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-			}
-			$this->AddEmbeddedImage($file_location, $cid, $filename, 'base64', $mime_type);
-			$i++;
-		}
-		//replace references to cache with cid tag
-		$this->Body = preg_replace("|\"$regex|i", '"cid:', $this->Body);
-		// remove bad img line from outbound email
-		$this->Body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', '', $this->Body);
-	}
-
-	/**
-	 * @todo override addAttachment if necessary, but leave the manipulation of message parts for send time
-	 *
-	 * @param notes    array of note beans
-	 */
-	function handleAttachments($notes) {
-		global $sugar_config;
-
-		//replace references to cache/images with cid tag
-		$this->Body = str_replace(sugar_cached('images/'), 'cid:', $this->Body);
-
-		if (empty($notes)) {
-			return;
-		}
-		// cn: bug 4864 - reusing same SugarPHPMailer class, need to clear attachments
-		$this->ClearAttachments();
-
-		$this->replaceImageByRegex("(?:{$sugar_config['site_url']})?/?cache/images/", sugar_cached("images/"));
-
-		//Replace any embeded images using the secure entryPoint for src url.
-		$this->replaceImageByRegex("(?:{$sugar_config['site_url']})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=", "upload://", true);
-
-		//Handle regular attachments.
-		foreach ($notes as $note) {
-			$mime_type     = 'text/plain';
-			$file_location = '';
-			$filename      = '';
-
-			if ($note->object_name == 'Note') {
-				if (!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) {
-					$file_location = $note->file->temp_file_location;
-					$filename      = $note->file->original_file_name;
-					$mime_type     = $note->file->mime_type;
-				} else {
-					$file_location = "upload://{$note->id}";
-					$filename      = $note->id . $note->filename;
-					$mime_type     = $note->file_mime_type;
-				}
-			} elseif ($note->object_name == 'DocumentRevision') { // from Documents
-				$filename      = $note->id . $note->filename;
-				$file_location = "upload://$filename";
-				$mime_type     = $note->file_mime_type;
-			}
-
-			$filename = substr($filename, 36, strlen($filename)); // strip GUID	for PHPMailer class to name outbound file
-			if (!$note->embed_flag) {
-				$this->AddAttachment($file_location, $filename, 'base64', $mime_type);
-			}
-		}
-	}
-
-	/**
-	 * @todo drop this method
-	 */
-	function SetError($msg) {
-		$GLOBALS['log']->fatal("SugarPHPMailer encountered an error: {$msg}");
-		parent::SetError($msg);
-	}
-
-	/**
-	 * @todo drop this method
-	 */
-	function SmtpConnect() {
-		$connection = parent::SmtpConnect();
-		if (!$connection) {
-			global $app_strings;
-			if (isset($this->oe) && $this->oe->type == "system") {
-				$this->SetError($app_strings['LBL_EMAIL_INVALID_SYSTEM_OUTBOUND']);
-			} else {
-				$this->SetError($app_strings['LBL_EMAIL_INVALID_PERSONAL_OUTBOUND']);
-			}
-		}
-		return $connection;
-	}
+        if (isset($admin->settings["disclosure_enable"]) && !empty($admin->settings["disclosure_enable"])) {
+            $this->includeDisclosure = true;
+            $this->disclosureContent = $admin->settings["disclosure_text"];
+        }
+    }
 }

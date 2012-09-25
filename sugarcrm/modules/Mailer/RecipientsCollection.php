@@ -21,8 +21,8 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'EmailIdentity.php';   // requires EmailIdentity to represent each recipient
-require_once 'MailerException.php'; // requires MailerException in order to throw exceptions of that type
+require_once "EmailIdentity.php";   // requires EmailIdentity to represent each recipient
+require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
 
 /**
  * This class encapsulates behavior related to translating recipient lists to the package that is being used to deliver
@@ -32,9 +32,9 @@ require_once 'MailerException.php'; // requires MailerException in order to thro
 class RecipientsCollection
 {
     // constants used for documenting which Add methods are valid
-    const FunctionAddTo  = 'addTo';
-    const FunctionAddCc  = 'addCc';
-    const FunctionAddBcc = 'addBcc';
+    const FunctionAddTo  = "addTo";
+    const FunctionAddCc  = "addCc";
+    const FunctionAddBcc = "addBcc";
 
     // private members
     private $to;

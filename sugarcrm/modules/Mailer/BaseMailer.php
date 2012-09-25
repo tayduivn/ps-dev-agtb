@@ -21,10 +21,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'IMailer.php';              // requires IMailer in order to implement it
-require_once 'MailerException.php';      // requires MailerException in order to throw exceptions of that type
-require_once 'RecipientsCollection.php'; // stores recipients in a RecipientsCollection
-require_once 'EmailHeaders.php';         // email headers are contained in an EmailHeaders object
+require_once "IMailer.php";              // requires IMailer in order to implement it
+require_once "MailerException.php";      // requires MailerException in order to throw exceptions of that type
+require_once "RecipientsCollection.php"; // stores recipients in a RecipientsCollection
+require_once "EmailHeaders.php";         // email headers are contained in an EmailHeaders object
 
 /**
  * This class implements the basic functionality that is expected from a Mailer.
@@ -35,7 +35,7 @@ require_once 'EmailHeaders.php';         // email headers are contained in an Em
 abstract class BaseMailer implements IMailer
 {
     // protected members
-    protected $configs;
+    protected $config;
     protected $headers;
     protected $recipients;
     protected $htmlBody;
@@ -44,9 +44,12 @@ abstract class BaseMailer implements IMailer
 
     /**
      * @access public
+     * @param MailerConfiguration $config required
      */
-    public function __construct() {
+    public function __construct(MailerConfiguration $config) {
         $this->reset(); // the equivalent of initializing the Mailer object's properties
+
+        $this->config = $config;
     }
 
     /**
@@ -55,84 +58,12 @@ abstract class BaseMailer implements IMailer
      * @access public
      */
     public function reset() {
-        $this->loadDefaultConfigs();
         $this->clearAttachments();
         $this->clearHeaders();
 
         $this->recipients = new RecipientsCollection();
         $this->htmlBody   = null;
         $this->textBody   = null;
-    }
-
-    /**
-     * Set the mailer configuration to its default settings for this sending strategy.
-     *
-     * @access public
-     */
-    public function loadDefaultConfigs() {
-        // the default configuration
-        $defaults = array(
-            'hostname' => '',                        // the hostname to use in Message-ID and Received headers and as
-                                                     // default HELO string, not the server hostname
-            'charset'  => 'utf-8',                   // the char set of the message
-            'encoding' => Encoding::QuotedPrintable, // default to quoted-printable for plain/text
-            'wordwrap' => 996,                       // number of characters per line before the message body wrap
-        );
-
-        $this->setConfigs($defaults); // set the default configuration
-    }
-
-    /**
-     * Replaces the existing configuration with the configuration passed in as a parameter. The configuration must
-     * contain and should only be concerned with "hostname" (string), "charset" (string), "encoding" (string), and
-     * "wordwrap" (int).
-     *
-     * @access public
-     * @param array $configs required The key-value pair configuration to replace the existing configuration.
-     */
-    public function setConfigs($configs) {
-        $this->configs = $configs;
-    }
-
-    /**
-     * Merges the configuration passed in as a parameter with the existing configuration. The configuration must
-     * contain and should only be concerned with "hostname" (string), "charset" (string), "encoding" (string), and
-     * "wordwrap" (int). When key conflicts arise, precedence will be given to the new configuration, as is the
-     * behavior of the array_merge function.
-     *
-     * @access public
-     * @param array $configs required The key-value pair configuration to merge with the existing configuration.
-     */
-    public function mergeConfigs($configs) {
-        $this->configs = array_merge($this->configs, $configs);
-    }
-
-    /**
-     * Sets or overwrites a configuration with the value passed in for the key ($config).
-     *
-     * @access public
-     * @param string $config required The configuration key.
-     * @param mixed  $value  required The configuration value.
-     */
-    public function setConfig($config, $value) {
-        $this->configs[$config] = $value;
-    }
-
-    /**
-     * Returns the configuration value at the specified key ($config).
-     *
-     * @access public
-     * @param string $config required The configuration key.
-     * @return mixed The value stored at the specified key.
-     * @throws MailerException
-     */
-    public function getConfig($config) {
-        // make sure the configuration exists
-        if (!array_key_exists($config, $this->configs)) {
-            throw new MailerException("Configuration does not exist: {$config}", MailerException::InvalidConfiguration);
-        }
-
-        return $this->configs[$config];
     }
 
     /**
@@ -150,9 +81,33 @@ abstract class BaseMailer implements IMailer
      *
      * @access public
      * @param array $headers required
+     * @throws MailerException
      */
     public function constructHeaders($headers = array()) {
         $this->headers->buildFromArray($headers);
+    }
+
+    /**
+     * Adds or replaces header values.
+     *
+     * @access public
+     * @param string $key   required Should look like the real header it represents.
+     * @param mixed  $value required The value of the header.
+     * @throws MailerException
+     */
+    public function setHeader($key, $value) {
+        $this->headers->setHeader($key, $value);
+    }
+
+    /**
+     * Adds or replaces the Subject header.
+     *
+     * @access public
+     * @param string $subject required
+     * @throws MailerException
+     */
+    public function setSubject($subject) {
+        $this->setHeader(EmailHeaders::Subject, $subject);
     }
 
     /**
@@ -250,7 +205,7 @@ abstract class BaseMailer implements IMailer
      * @param string $body required
      */
     public function setTextBody($body) {
-        $this->textBody = $body;
+        $this->textBody = trim($body);
     }
 
     /**
@@ -260,20 +215,17 @@ abstract class BaseMailer implements IMailer
      * @param string $body required
      */
     public function setHtmlBody($body) {
-        $this->htmlBody = $body;
+        $this->htmlBody = trim($body);
     }
 
     /**
      * Adds an attachment from a path on the filesystem.
      *
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param Attachment $attachment
      */
-    public function addAttachment($path, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
-        $this->attachments[] = new Attachment($path, $name, $encoding, $mimeType);
+    public function addAttachment(Attachment $attachment) {
+        $this->attachments[] = $attachment;
     }
 
     /**
@@ -281,14 +233,10 @@ abstract class BaseMailer implements IMailer
      * the $mimeType to the appropriate type. For JPEG images use "image/jpeg" and for GIF images use "image/gif".
      *
      * @access public
-     * @param string      $path     required Path to the file being attached.
-     * @param string      $cid      required The Content-ID used to reference the image in the message.
-     * @param null|string $name              Name of the file to be used to identify the attachment.
-     * @param string      $encoding          The encoding used on the file. Should be one of the valid encodings from Encoding.
-     * @param string      $mimeType          Should be a valid MIME type.
+     * @param EmbeddedImage $embeddedImage
      */
-    public function addEmbeddedImage($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = 'application/octet-stream') {
-        $this->attachments[] = new EmbeddedImage($path, $cid, $name, $encoding, $mimeType);
+    public function addEmbeddedImage(EmbeddedImage $embeddedImage) {
+        $this->addAttachment($embeddedImage);
     }
 
     /**
@@ -310,7 +258,7 @@ abstract class BaseMailer implements IMailer
      */
     protected function hasMessagePart($part) {
         // the content is only valid if it's a string and it's not empty
-        if (is_string($part) && $part != '') {
+        if (is_string($part) && $part != "") {
             return true;
         }
 

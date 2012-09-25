@@ -1,5 +1,6 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /**
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement ("License") which can be viewed at
@@ -27,53 +28,26 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-
-$viewdefs['ProspectLists']['base']['view']['edit'] = array(
+$viewdefs['Leads']['base']['view']['subnavdetail'] = array(
+    'type' =>'subnav',
     'buttons' => array(
         array(
-            'name'    => 'save_button',
+            'name'    => 'edit_button',
             'type'    => 'button',
-            'label'   => 'LBL_SAVE_BUTTON_LABEL',
-            'value'   => 'save',
+            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'value'   => 'edit',
             'css_class' => 'btn-primary',
         ),
         array(
-            'name'    => 'cancel_button',
+            'name'    => 'convert_button',
             'type'    => 'button',
-            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
-            'value'   => 'cancel',
-            'css_class' => 'btn-invisible btn-link',
-            'events'  => array(
-                'click' => 'function(){ window.history.back(); }',
+            'icon'    => 'icon-eye-open',
+            'label'   => 'LBL_CONVERTLEAD',
+            'value'   => 'convert',
+            'css_class' => 'btn-primary',
+            'route'   => array (
+                'action'=> 'convert'
             ),
-        ),
-    ),
-    'panels' => array(
-        array(
-            'fields' =>
-            array(
-                array('name' => 'name', 'displayParams' => array('required' => true)),
-                'description',
-                array('name' => 'list_type', 'displayParams' => array('required' => true)),
-                array(
-                    'name' => 'domain_name',
-                    'type' => 'secondary',
-                    'primary' => array(
-                        'field' => 'list_type',
-                        'value' => 'exempt_domain',
-                    )
-                ),
-                'assigned_user_name',
-
-                //BEGIN SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'team_name',
-                    'displayParams' => array('display' => true),
-                ),
-                //END SUGARCRM flav=pro ONLY
-            ),
-
         ),
     ),
 );
-
