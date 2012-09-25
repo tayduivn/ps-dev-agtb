@@ -325,6 +325,7 @@ class MailRecord {
      * @return EmailIdentity
      */
     protected function generateEmailIdentity($data) {
+        $recipient=null;
         if (is_array($data) && !empty($data['email'])) {
             $email = $data['email'];
             $name = null;
