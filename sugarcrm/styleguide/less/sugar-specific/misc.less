@@ -15,9 +15,6 @@
   //padding-left: 72px;
   position: relative;
 }
-.content.span12 {
-    padding-right: 20px;
-}
 .content .btn-toolbar {
   //breaks styleguide
   //margin: 0 -20px 8px !important;
@@ -109,7 +106,7 @@ border-bottom: 1px solid darken(@grayLighter, 5%);
 z-index: 1000;
 }
 
-.form-search input.query, .acomment input,  {
+.form-search input.query, .acomment input.reply,  {
   margin: 0;
   padding: 6px 8px;
   border: 1px solid darken(@grayLighter, 5%);
@@ -126,10 +123,14 @@ z-index: 1000;
 }
 .omnibar .sayit  {
   padding: 6px 8px; position: relative; z-index: 1; border: dashed 1px @grayLight;  min-height: 42px !important;
-  margin-left: 0px !important
+  margin-left: 0px !important;
+  color: @grayLight;
 }
-.omnibar.active .sayit {border: solid 1px @grayLight;  min-height: 42px !important;
+.omnibar.active .sayit {
+  border: solid 1px @grayLight;  
+  min-height: 42px !important;
   .border-radius(3px 3px 0 0);
+  color: @gray;
   }
 .omnibar .inputactions {margin: -1px 0 0 0;}
 .omnibar .inputactions {

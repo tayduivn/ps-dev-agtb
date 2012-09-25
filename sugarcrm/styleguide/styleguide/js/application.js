@@ -83,19 +83,6 @@
       return false;
     });
 
-    $('.comment').toggle(
-      function () {
-        $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><a href="" class="pull-left avatar"><img src="../img/avatar_sabra.jpg" alt="Skhan avatar"></a><input placeholder="Add your comment" class="span10"><input type="submit" class="btn btn-primary" value="Reply"></div></li>');
-        $(this).addClass('active');
-        return false;
-      },
-      function () {
-        $(this).parent().parent().find('.acomment').remove();
-        $(this).removeClass('active');
-        return false;
-      }
-    );
-
     // toggle more hide
     $('.more').toggle(
       function (e) {
@@ -135,19 +122,32 @@
       		return false;
     })
 
+    $('.comment').toggle(
+      function () {
+        $(this).parent().parent().parent().find('.acomment').remove();
+        $(this).parent().parent().find('ul').append('<li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment" class="reply span10"><input type="submit" class="btn btn-primary" value="Reply"></div></li>');
+        $(this).addClass('active');
+        return false;
+      },
+      function () {
+        $(this).parent().parent().parent().find('.acomment').remove();
+        $(this).removeClass('active');
+        return false;
+      }
+    );
+
     // toggle more hide
     $('.commented .more').toggle(
       function (e) {
-        $(this).parent().parent().parent().find('.comment').remove();
-        $(this).parent().parent().find('.acomment').remove();
+        $(this).parent().parent().parent().find('.comment').hide();
         $(this).parent().prev('.extend').removeClass('hide');
-        $(this).html('<div class="control-group form-horizontal acomment"><input placeholder="Add your comment" class="span10"><a href="" class="pull-left avatar"><img src="../img/avatar_sabra.jpg" alt="Skhan avatar"></a><input type="submit" class="btn btn-primary" value="Reply"></div>');
         return false;
       },
       function (e) {
-          $(this).parent().prev('.extend').addClass('hide');
-          $(this).html('2 more comments...');
-          return false;
+        $(this).parent().parent().parent().find('.comment').show();      
+        $(this).parent().prev('.extend').addClass('hide');
+        $(this).html('2 more comments...');
+        return false;
       }
     );
 
@@ -167,13 +167,9 @@
 
     // column collapse
     $('.drawerTrig').on('click', function () {
-      // $(this).toggleClass('pull-right').toggleClass('pull-left');
       $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
-      $(this).parent("div").toggleClass("span12").toggleClass("span8");
-      $('#overview').toggleClass('hide');
-      $('.content').toggleClass("span12").toggleClass("span8");
-      //$('.bordered').toggleClass('hide');
-      //$('#charts').toggleClass('span10').toggleClass('span12');
+      $('.sidebar-pane').toggleClass('hide');
+      $('.content, .headerbar').toggleClass("span12").toggleClass("span8");
       return false;
     });
 
@@ -195,6 +191,7 @@
       function (e) {
    		$(this).addClass('active');
    		$(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>');
+   		$('.sayit').html('');
    		return false;
       },
       function (e) {
