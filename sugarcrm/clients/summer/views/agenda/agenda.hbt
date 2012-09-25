@@ -1,4 +1,4 @@
-<div class="block">
+<div class="block thumbnail padded">
      <h4>Agenda:</h4>
      {{#if loaded}}
           <div class="accordion" id="accordion2" tour="tour-agenda">

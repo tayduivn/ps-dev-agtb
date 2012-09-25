@@ -1,5 +1,5 @@
-<div class="block">
-  <h4>Sales</h4>
+<div class="block thumbnail padded">
+  <h4>Sales by Country</h4>
     {{#if urls}}
       <select class="chartSelector">
           {{#each urls}}

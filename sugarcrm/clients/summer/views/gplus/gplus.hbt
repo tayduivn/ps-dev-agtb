@@ -1,7 +1,6 @@
-<div class="block widget">
-
+<div class="block thumbnail padded widget">
+    <h4>G+ Activity</h4>
     <div class="gplus-widget">
-        <h4>G+ Activity</h4>
         <br>
 
         {{#if gPlusId}}

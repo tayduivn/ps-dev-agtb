@@ -1,4 +1,4 @@
-<div class="block">
+<div class="block thumbnail padded">
   <h4 tour="tour-recommended-contacts">Recommended contacts:</h4>
   <ul id="{{this.guid}}">
   </ul>
