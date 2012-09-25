@@ -12539,7 +12539,15 @@ $jit.ST.Plot.NodeTypes.implement({
 
                     } else if(goalMarkerType[i] == 'pareto') {
 
-                        var x1 = pos.x + (dataPointSize/2),
+                        var start = pos.x;
+
+                          if(i == 1) {
+                              start = pos.x-(width/4);
+                          } else if(i == 2) {
+                              start = pos.x+(width/4);
+                          }
+
+                        var x1 = start + (dataPointSize/2),
                             y1 = (pos.y - goalMarkerDim) + 2;
                         var r = dataPointSize;
                         if ((mpos.x-x1)*(mpos.x-x1)+(mpos.y-y1)*(mpos.y-y1) < r*r) {
@@ -12588,8 +12596,9 @@ $jit.ST.Plot.NodeTypes.implement({
             };
           }
         } else {
-          var limit = x + fixedDim * i;
-          if(mpos.x >= limit && mpos.x <= limit + fixedDim && mpos.y >= y - dimi) {
+            var space = (i*5)
+          var limit = (x + fixedDim * i)+space;
+          if(mpos.x >= limit && mpos.x <= (limit + fixedDim)+space && mpos.y >= y - dimi) {
             return {
               'name': node.getData('stringArray')[i],
               'color': node.getData('colorArray')[i],

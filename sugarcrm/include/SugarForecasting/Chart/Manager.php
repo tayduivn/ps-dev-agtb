@@ -98,7 +98,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
             $val['label'] = $data['name'];
             $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale($quota, $currency_id);
             $val['goalmarkervalue'][] = number_format($quota, 2, '.', '');
-            $val['links'] = "";
+            $val['links'] = array();
             //$val['gvalue'] = number_format($data[$this->dataset . '_adjusted'], 2, '.', '');
             //$val['gvaluelabel'] = number_format($data[$this->dataset . '_adjusted'], 2, '.', '');
 
@@ -110,6 +110,10 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
                 }
                 $dataset_sums[$dataset] += $data[$dataset . '_case'];
                 $dataset_sums[$dataset . '_adjusted'] += $data[$dataset . '_adjusted'];
+
+                // set the empty  links
+                $val['links'][] = "";
+                $val['links'][] = "";
 
                 $val['values'][] = number_format($data[$dataset . '_case'], 2, '.', '');
                 $val['values'][] = number_format($data[$dataset . '_adjusted'], 2, '.', '');
