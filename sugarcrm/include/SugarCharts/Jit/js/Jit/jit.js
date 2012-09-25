@@ -12250,7 +12250,8 @@ $jit.ST.Plot.NodeTypes.implement({
           if(horz) {
             ctx.fillRect(x, y + fixedDim * i, dimArray[i], fixedDim);
           } else {
-            ctx.fillRect(x + fixedDim * i, y - dimArray[i], fixedDim, dimArray[i]);
+            var space = (i*5)
+            ctx.fillRect((x + fixedDim * i)+space, y - dimArray[i], fixedDim, dimArray[i]);
           }
           if(border && border.name == stringArray[i]) {
             opt.acum = fixedDim * i;
@@ -12387,18 +12388,26 @@ $jit.ST.Plot.NodeTypes.implement({
                           ctx.lineWidth = 4;
                           ctx.lineCap = "round";
 
+                          var start = pos.x;
+
+                          if(i == 1) {
+                              start = pos.x-(width/4);
+                          } else if(i == 2) {
+                              start = pos.x+(width/4);
+                          }
+
                           if (nodeIndex < nodeCount - 1) {
                               ctx.save();
                               ctx.beginPath();
-                              ctx.moveTo(pos.x, pos.y - goalMarkerDim + (dataPointSize / 2));
-                              ctx.lineTo(pos.x + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize / 2));
+                              ctx.moveTo(start, pos.y - goalMarkerDim + (dataPointSize / 2));
+                              ctx.lineTo(start + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize / 2));
                               ctx.stroke();
                               ctx.restore();
                           }
                           //render data point
 
                           ctx.beginPath();
-                          ctx.arc(pos.x, pos.y - (goalMarkerDim - dataPointSize / 2), dataPointSize, 0, Math.PI * 2, true);
+                          ctx.arc(start, pos.y - (goalMarkerDim - dataPointSize / 2), dataPointSize, 0, Math.PI * 2, true);
                           ctx.closePath();
                           ctx.fill();
 

@@ -116,7 +116,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                                 color: css["gridLineColor"]
                             },
                             //bars separation
-                            barsOffset: (chartConfig["orientation"] == "vertical") ? 10 : 20,
+                            barsOffset: (chartConfig["orientation"] == "vertical") ? 20 : 20,
                             //visualization offset
                             Margin: {
                                 top:20,
