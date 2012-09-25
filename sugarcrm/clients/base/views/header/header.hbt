@@ -9,6 +9,11 @@
                         <a href="#{{this}}">{{str "LBL_MODULE_NAME" this}}</a>
                     </li>
                     {{/each}}
+                    <li class="dropdown more">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="nav pull-right" id="userList">
                     <li class="divider-vertical"></li>
