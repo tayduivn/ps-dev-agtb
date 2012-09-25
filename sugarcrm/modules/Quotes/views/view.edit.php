@@ -283,7 +283,8 @@ class QuotesViewEdit extends ViewEdit
 								'$line_item->mft_part_num', 'group_$product_bundle->id', '$product_bundle->bundle_stage', '$product_bundle->name', '".format_money($product_bundle->shipping,FALSE)
 							    ."', '".js_escape(br2nl($line_item->description))."', '"
 							    . $line_item->type_id ."','"
-							    . $line_item->discount_amount_usdollar."',".($line_item->discount_select?1:0)
+							    . format_number($line_item->discount_amount_usdollar, $significantDigits, $significantDigits, array('convert' => !$line_item->discount_select, 'currency_id' => $curid))."',"
+                                .($line_item->discount_select?1:0)
 							    . ",0, '". $line_item->status."');\n";
 
 						} //foreach
