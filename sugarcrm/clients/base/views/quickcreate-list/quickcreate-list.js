@@ -1,6 +1,7 @@
 ({
     extendsFrom:'ListView',
-    
+    gTable:'',
+
     events: {
         "click .action-edit": "edit"
     },
@@ -10,6 +11,23 @@
         this.context.off("quickcreate:list:toggle", null, this);
         this.context.on("quickcreate:list:toggle", this.toggleList, this);
         this.context.on("quickcreate:list:close", this.close, this);
+    },
+
+    /**
+     * Renders view
+     */
+    _render: function() {
+        var self = this;
+        app.view.View.prototype._render.call(this);
+
+        this.gTable = this.$('.quickcreateListTable').dataTable(
+            {
+                "bPaginate": false,
+                "bFilter": false,
+                "bInfo": false
+            }
+        );
+
     },
 
     /**
