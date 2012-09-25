@@ -17,6 +17,7 @@
                 <td>
                     <div class="btn-group">
                         <button class="btn btn-mini action-edit" title="Edit this record instead of creating a new one."><i class="icon-edit"></i> Edit</button>
+                        <button class="btn btn-mini action-preview"><i class="icon-eye-open"></i></button>
                     </div>
                 </td>
                 {{#each ../fields}}
