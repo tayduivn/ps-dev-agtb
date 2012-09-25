@@ -117,14 +117,7 @@ class MailRecord {
         $email->email2init();
 
         if (empty($this->mailConfig)) {
-            $ie = new InboundEmail();
-            $ie->email = $email;
-
-            $fromAccounts = $email->et->getFromAccountsArray($ie);
-            if (!is_array($fromAccounts) || count($fromAccounts) == 0) {
-                throw new MailerException("System Email Configuration Not Found or Not Complete");
-            }
-            $fromAccount = $fromAccounts[0]['value'];
+            $fromAccount = null;
         } else {
             $fromAccount = $this->mailConfig;
         }
@@ -282,12 +275,12 @@ class MailRecord {
             }
         }
 
-        $email->type = 'out';
-        $email->status = 'sent';
+        //$email->type = 'out';
+        //$email->status = 'sent';
         if ($status == "draft") {
             $request['saveDraft'] = 'true';    // Send is the default behavior
-            $email->type = 'draft';
-            $email->status = 'draft';
+            //$email->type = 'draft';
+            //$email->status = 'draft';
         }
 
         $_REQUEST = array_merge($_REQUEST, $request);
@@ -332,6 +325,7 @@ class MailRecord {
      * @return EmailIdentity
      */
     protected function generateEmailIdentity($data) {
+        $recipient=null;
         if (is_array($data) && !empty($data['email'])) {
             $email = $data['email'];
             $name = null;

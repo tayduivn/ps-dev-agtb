@@ -226,12 +226,14 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
+     * @group emailsapi01
      * @group mailer
      */
     public function testCreate_Draft_Success() {
         $this->input["status"] = "draft";
 
         $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+
         $reply = $post_response['reply'];
 
         $http_status = $post_response['info']['http_code'];
@@ -256,6 +258,7 @@ class EmailsApiTest extends RestTestBase {
     }
 
     /**
+     * @group emailsapi02
      * @group mailer
      */
     public function testCreate_Draft_WithRelationship_Success() {
@@ -298,6 +301,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
+     * @group emailsapi03
      * @group mailer
      */
     public function testCreate_Draft_WithAttachment_Success() {
@@ -335,6 +339,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
+     * @group emailsapi04
      * @group mailer
      */
      public function testCreate_Draft_WithMultipleTeams_Success() {
@@ -377,6 +382,7 @@ class EmailsApiTest extends RestTestBase {
     }
 
     /**
+     * @group emailsapi05
      * @group mailer
      */
     public function testCreate_Draft_WithSugarDocumentAttached_Success() {
@@ -414,6 +420,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
+     * @group emailsapi06
      * @group mailer
      */
     public function testCreate_Ready_Success() {
@@ -452,6 +459,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
+     * @group emailsapi07
      * @group mailer
      */
     public function testCreate_Ready_WithAttachment_Success() {
@@ -496,6 +504,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
+     * @group emailsapi08
      * @group mailer
      */
     public function testCreate_Ready_WithSugarDocumentAttached_Success() {
@@ -538,7 +547,9 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("sent", $email['status'], "Email Status Incorrect");
     }
 
+
     /**
+     * @group emailsapi09
      * @group mailer
      */
     public function testCreate_InvalidStatus() {
@@ -549,7 +560,7 @@ class EmailsApiTest extends RestTestBase {
 
         $this->assertEquals(412, $post_response['info']['http_code'], "Expected Request Failure Http Status Code");
         $this->assertEquals("request_failure", $post_response['reply']['error'], "Expected Request Failure Response");
-        $this->assertEquals("Invalid Status", $post_response['reply']['error_description'], "Expected Request Failure Response");
+        $this->assertEquals("Invalid Status Property", $post_response['reply']['error_description'], "Expected Request Failure Response");
     }
 
 

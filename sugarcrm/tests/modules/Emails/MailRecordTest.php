@@ -142,48 +142,5 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($result['SUCCESS'],  $emailBeanResponseValue, "Unexpected Success Value");
     }
-
-    /**
-     * @group mailer
-     */
-    public function testSaveAsDraft_FromAccountsUnavailable_ExceptionThrown()
-    {
-        global $current_user;
-
-        $mailRecord = new MailRecord($current_user);
-
-        $fromAccounts = array();
-
-        $mockEmailUIBean =  $this->getMock('EmailUI', array('getFromAccountsArray'));
-        $mockEmailUIBean->expects($this->once())
-            ->method('getFromAccountsArray')
-            ->will($this->returnValue($fromAccounts));
-
-        $mockEmailBean =  $this->getMock('Email', array('email2init'));
-        $mockEmailBean->expects($this->once())
-            ->method('email2init');
-
-        $mockEmailBean->et = $mockEmailUIBean;
-        $mailRecord->emailBean = $mockEmailBean;
-
-        /**/
-        $email = new Email();
-        $email->email2init();
-
-        $ie = new InboundEmail();
-        $ie->email = $email;
-
-        $fromAccounts = $email->et->getFromAccountsArray($ie);
-        // print_r($fromAccounts);
-        // exit;
-        /**/
-
-        try {
-            $mailRecord->saveAsDraft();
-            $this->fail('Expected an Exception: FromAccount Configuration Data Not Valid');
-        } catch(Exception $ex) {
-            return;
-        }
-    }
 }
 ?>
