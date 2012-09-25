@@ -2,7 +2,7 @@
 
 require_once('clients/summer/SideBarLayout.php');
 $layout = new SideBarLayout();
-$layout->push('top', array('view'=>'activitystream-top'));
+$layout->push('top', array('view'=>'subnav', 'title' => 'My Dashboard'));
 $layout->push('main',array('view'=>'activitystream'));
 $layout->push('side',array('view'=>'agenda'));
 
