@@ -13,7 +13,7 @@ $viewdefs['base']['layout']['list'] = array(
         ),
         2 =>
         array(
-            'view' => 'list',
+            'view' => 'quickcreate-list',
         ),
         3 =>
         array(

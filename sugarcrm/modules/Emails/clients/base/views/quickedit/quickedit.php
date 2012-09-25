@@ -28,7 +28,15 @@ $viewdefs['Emails']['base']['view']['quickedit'] = array(
             'fields' => array(
                 array(
                     'name' => 'to_addresses',
-                    'label' => 'LBL_LIST_TO_ADDR',
+                    'label' => 'LBL_TO_ADDRS',
+                ),
+                array(
+                    'name' => 'cc_addresses',
+                    'label' => 'LBL_CC',
+                ),
+                array(
+                    'name' => 'bcc_addresses',
+                    'label' => 'LBL_BCC',
                 ),
                 array(
                     'name' => 'subject',

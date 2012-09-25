@@ -12,6 +12,7 @@
         'mouseleave tr': 'hideActions'
     },
     _renderHtml: function() {
+        debugger;
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
