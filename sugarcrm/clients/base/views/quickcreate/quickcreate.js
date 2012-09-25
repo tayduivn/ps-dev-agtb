@@ -126,7 +126,7 @@
      * @param model
      */
     editExisting: function(model) {
-        var newTitle = this.app.lang.get('LBL_EDIT_BUTTON', this.module) + '' + this.module,
+        var newTitle = this.app.lang.get('LBL_EDIT_BUTTON', this.module) + ' ' + this.module,
             origAttributes = this.saveFormData();
 
         this.model.clear();
