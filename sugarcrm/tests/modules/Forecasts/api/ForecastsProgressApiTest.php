@@ -198,6 +198,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     public static function tearDownAfterClass()
     {
+        SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 
