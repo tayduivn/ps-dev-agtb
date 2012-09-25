@@ -568,6 +568,10 @@ class Email extends SugarBean {
             $mailer->setHtmlBody($htmlBody);
             $mailer->setTextBody($textBody);
 
+            if (!empty($mailConfig->replyto_email)) {
+                $mailer->setHeader(EmailHeaders::ReplyTo, new EmailIdentity($mailConfig->replyto_email, $mailConfig->replyto_name));
+            }
+
             foreach($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
                 if(empty($addr_arr['email'])) continue;
                 $mailer->addRecipientsTo( new EmailIdentity( $addr_arr['email'],  $addr_arr['display']) );
@@ -880,6 +884,8 @@ class Email extends SugarBean {
 
         /**** --------------------------------- ?????????
 		if(!empty($request['fromAccount'])) {
+            $ie = new InboundEmail();
+            $ie->retrieve($request['fromAccount']);
 			if (isset($ie->id) && !$ie->isPop3Protocol() && $mail->oe->mail_smtptype != 'gmail') {
 				$sentFolder = $ie->get_stored_options("sentFolder");
 				if (!empty($sentFolder)) {
