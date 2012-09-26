@@ -72,7 +72,7 @@ abstract class SugarForecasting_Chart_AbstractChart extends SugarForecasting_Abs
         ),
         'goal_marker_color' =>
         array(
-            0 => '#000000',
+            0 => '#3FB300',
             1 => '#7D12B2',
         ),
         'goal_marker_label' =>

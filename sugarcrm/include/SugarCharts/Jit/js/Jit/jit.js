@@ -12143,7 +12143,7 @@ $jit.ST.Plot.NodeTypes.implement({
   },
   'barchart-grouped' : {
     'render' : function(node, canvas) {
-      var pos = node.pos.getc(true),
+      var pos = node.pos.getc(true), 
           width = node.getData('width'),
           height = node.getData('height'),
           algnPos = this.getAlignedPos(pos, width, height),
@@ -12152,17 +12152,9 @@ $jit.ST.Plot.NodeTypes.implement({
           valueArray = node.getData('valueArray'),
           valuelabelArray = node.getData('valuelabelArray'),
           linkArray = node.getData('linkArray'),
-          goalMarkerLabel = node.getData('goalMarkerLabel'),
-          goalMarker = node.getData('goalMarker'),
-          goalMarkerNext = node.getData('goalMarkerNext'),
-          goalMarkerColor = node.getData('goalMarkerColor'),
-          goalMarkerType = node.getData('goalMarkerType'),
-          gvl = node.getData('gvl'),
+          valueLength = valueArray.length,
           colorArray = node.getData('colorArray'),
           colorLength = colorArray.length,
-          nodeCount = node.getData('nodeCount'),
-          nodeIndex = node.getData('nodeIndex');
-          valueLength = valueArray.length,
           stringArray = node.getData('stringArray'); 
 
       var ctx = canvas.getCtx(),
@@ -12177,14 +12169,12 @@ $jit.ST.Plot.NodeTypes.implement({
           label = config.Label,
           shadow = config.shadow,
           margin = config.Margin,
-          fixedDim = (horz? height : width) / valueLength,
-          chartDim = node.getData('chartDim'),
-          maxTickValue = node.getData('maxTickValue'),
-          dataPointSize = config.dataPointSize;
+          fixedDim = (horz? height : width) / valueLength;
       
       //drop shadow
       
        maxValue = Math.max.apply(null, dimArray);
+       
        
 	  
 	   ctx.fillStyle = "rgba(0,0,0,.2)";
@@ -12250,8 +12240,7 @@ $jit.ST.Plot.NodeTypes.implement({
           if(horz) {
             ctx.fillRect(x, y + fixedDim * i, dimArray[i], fixedDim);
           } else {
-            var space = (i*5)
-            ctx.fillRect((x + fixedDim * i)+space, y - dimArray[i], fixedDim, dimArray[i]);
+            ctx.fillRect(x + fixedDim * i, y - dimArray[i], fixedDim, dimArray[i]);
           }
           if(border && border.name == stringArray[i]) {
             opt.acum = fixedDim * i;
@@ -12343,79 +12332,6 @@ $jit.ST.Plot.NodeTypes.implement({
 				}
 			}
         }
-          if (goalMarkerType != undefined) {
-              for (var i = 0; i < goalMarker.length; i++) {
-                  ctx.strokeStyle = goalMarkerColor[i];
-                  ctx.lineWidth = 3;
-
-                  var goalMarkerDim = chartDim / maxTickValue * goalMarker[i],
-                      goalMarkerNextDim = chartDim / maxTickValue * goalMarkerNext[i];
-                  if (horz) {
-                      if (goalMarkerType[i] == 'group' && nodeIndex == nodeCount - 1) {
-
-                          var y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
-                              y2 = canvasSize.height / 2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0)),
-                              x1 = x + goalMarkerDim,
-                              x2 = x + goalMarkerDim;
-                          ctx.beginPath();
-                          $.dashedLine(ctx, x1, y1, x2, y2);
-                          ctx.closePath();
-                          ctx.stroke();
-                      } else if (goalMarkerType[i] == 'individual') {
-                          ctx.beginPath();
-                          $.dashedLine(ctx, x + goalMarkerDim, y, x + (acum / valAcum * goalMarker[i]), y + height);
-                          ctx.closePath();
-                          ctx.stroke();
-                      }
-                  } else {
-                      if (goalMarkerType[i] == 'group' && nodeIndex == nodeCount - 1) {
-                          var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
-                              x2 = canvasSize.width / 2 - margin.right,
-                              y1 = y - goalMarkerDim,
-                              y2 = y - goalMarkerDim;
-                          ctx.beginPath();
-                          //console.log(x1, y1, x2, y2)
-                          $.dashedLine(ctx, x1, y1, x2, y2);
-                          ctx.closePath();
-                          ctx.stroke();
-                      } else if (goalMarkerType[i] == 'individual') {
-                          ctx.beginPath();
-                          $.dashedLine(ctx, x, y - goalMarkerDim, x + width, y - (acum / valAcum * goalMarker[i]));
-                          ctx.closePath();
-                          ctx.stroke();
-                      } else if (goalMarkerType[i] == 'pareto') {
-                          ctx.fillStyle = ctx.strokeStyle;
-                          ctx.lineWidth = 4;
-                          ctx.lineCap = "round";
-
-                          var start = pos.x;
-
-                          if(i == 1) {
-                              start = pos.x-(width/4);
-                          } else if(i == 2) {
-                              start = pos.x+(width/4);
-                          }
-
-                          if (nodeIndex < nodeCount - 1) {
-                              ctx.save();
-                              ctx.beginPath();
-                              ctx.moveTo(start, pos.y - goalMarkerDim + (dataPointSize / 2));
-                              ctx.lineTo(start + this.config.siblingOffset + width, pos.y - goalMarkerNextDim + (dataPointSize / 2));
-                              ctx.stroke();
-                              ctx.restore();
-                          }
-                          //render data point
-
-                          ctx.beginPath();
-                          ctx.arc(start, pos.y - (goalMarkerDim - dataPointSize / 2), dataPointSize, 0, Math.PI * 2, true);
-                          ctx.closePath();
-                          ctx.fill();
-
-                      }
-                  }
-              }
-
-          }
         if(border) {
           ctx.save();
           ctx.lineWidth = 2;
@@ -12466,105 +12382,7 @@ $jit.ST.Plot.NodeTypes.implement({
           config = node.getData('config'),
           rx = mpos.x - x,
           horz = config.orientation == 'horizontal',
-          fixedDim = (horz? height : width) / len,
-          goalMarkerLabel = node.getData('goalMarkerLabel'),
-          goalMarker = node.getData('goalMarker'),
-          goalMarkerColor = node.getData('goalMarkerColor'),
-          goalMarkerType = node.getData('goalMarkerType'),
-          goalMarkerValueLabel = node.getData('goalMarkerValueLabel'),
-          nodeCount = node.getData('nodeCount'),
-          nodeIndex = node.getData('nodeIndex'),
-          label = config.Label,
-          margin = config.Margin,
-          canvasSize = this.viz.canvas.getSize(),
-          chartDim = node.getData('chartDim'),
-          maxTickValue = node.getData('maxTickValue'),
-          dataPointSize = config.dataPointSize;
-
-
-        if(goalMarker != undefined)   {
-            for (var i=0; i<goalMarker.length; i++){
-                var goalMarkerDim = chartDim/maxTickValue * goalMarker[i];
-                if(horz) {
-
-                    if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1 ) {
-                        var x1 = (x + goalMarkerDim) - 2,
-                            x2 = (x + goalMarkerDim) + 2,
-                            y1 = -canvasSize.height / 2 + margin.top + (title.text ? title.size + title.offset : 0),
-                            y2 = canvasSize.height/2 - (margin.bottom + label.size + config.labelOffset + (subtitle.text ? subtitle.size + subtitle.offset : 0));
-                    } else if(goalMarkerType[i] == 'individual') {
-                        var x1 = (x + goalMarkerDim) - 2,
-                            x2 = (x + goalMarkerDim) + 2,
-                            y1 = y,
-                            y2 = y + height;
-
-                    }
-
-                    if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
-                        return {
-                            'name': goalMarkerLabel[i],
-                            'value':goalMarker[i],
-                            'valuelabel':goalMarkerValueLabel[i],
-                            'type': 'marker'
-                        }
-                    }
-                } else {
-                    if(goalMarkerType[i] == 'group' && nodeIndex == nodeCount-1) {
-                        var x1 = -canvasSize.width / 2 + margin.left + config.labelOffset + label.size - 1,
-                            x2 = canvasSize.width/2 - margin.right,
-                            y1 = (y - goalMarkerDim) - 2,
-                            y2 = (y - goalMarkerDim) + 2;
-                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
-                            return {
-                                'name': goalMarkerLabel[i],
-                                'value':goalMarker[i],
-                                'valuelabel':goalMarkerValueLabel[i],
-                                'type': 'marker'
-                            }
-                        }
-                    } else if(goalMarkerType[i] == 'individual') {
-                        var x1 = x,
-                            x2 = x + width,
-                            y1 = (y - goalMarkerDim) - 2,
-                            y2 = (y - goalMarkerDim) + 2;
-                        if(mpos.x > x1 && mpos.x < x2 && mpos.y > y1 && mpos.y < y2){
-                            return {
-                                'name': goalMarkerLabel[i],
-                                'value':goalMarker[i],
-                                'valuelabel':goalMarkerValueLabel[i],
-                                'type': 'marker'
-                            }
-                        }
-
-
-                    } else if(goalMarkerType[i] == 'pareto') {
-
-                        var start = pos.x;
-
-                          if(i == 1) {
-                              start = pos.x-(width/4);
-                          } else if(i == 2) {
-                              start = pos.x+(width/4);
-                          }
-
-                        var x1 = start + (dataPointSize/2),
-                            y1 = (pos.y - goalMarkerDim) + 2;
-                        var r = dataPointSize;
-                        if ((mpos.x-x1)*(mpos.x-x1)+(mpos.y-y1)*(mpos.y-y1) < r*r) {
-
-                            return {
-                                'name': goalMarkerLabel[i],
-                                'value':goalMarker[i],
-                                'valuelabel':goalMarkerValueLabel[i],
-                                'type': 'marker'
-                            }
-                        }
-
-                    }
-                }
-            }
-        }
-
+          fixedDim = (horz? height : width) / len;
       //bounding box check
       if(horz) {
         if(mpos.x < x || mpos.x > x + width
@@ -12596,9 +12414,8 @@ $jit.ST.Plot.NodeTypes.implement({
             };
           }
         } else {
-            var space = (i*5)
-          var limit = (x + fixedDim * i)+space;
-          if(mpos.x >= limit && mpos.x <= (limit + fixedDim)+space && mpos.y >= y - dimi) {
+          var limit = x + fixedDim * i;
+          if(mpos.x >= limit && mpos.x <= limit + fixedDim && mpos.y >= y - dimi) {
             return {
               'name': node.getData('stringArray')[i],
               'color': node.getData('colorArray')[i],
