@@ -158,6 +158,9 @@
             alert: {
                 target: '#alert'
             },
+            subnav: {
+                target: '#subnav'
+            },
             footer: {
                 target: '#footer'
             },
