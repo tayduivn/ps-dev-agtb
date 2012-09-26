@@ -77,7 +77,13 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'clickToEdit' => true,
                     'convertToBase'=> true,
                ),
-
+                array(
+                    'name' => 'user_history_log',
+                    'type' => 'historyLog',
+                    'label' => '',
+                    'default' => true,
+                    'enabled' => true,
+               ),
             ),
         ),
     ),

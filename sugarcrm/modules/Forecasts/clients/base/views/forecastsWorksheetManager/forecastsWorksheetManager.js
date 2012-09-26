@@ -13,7 +13,24 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
-    
+
+    /**
+     * Template to use wen updating the likelyCase on the committed bar
+     */
+    commitLogTemplate : _.template('<article><%= text %><br><date><%= text2 %></date></article>'),
+
+    /**
+     * Template to use when we are fetching the commit history
+     */
+    commitLogLoadingTemplate : _.template('<div class="extend results"><article>Loading Commit History...</article></div>'),
+
+    /**
+     * Handle Any Events
+     */
+    events:{
+        'click a[rel=historyLog] i.icon-exclamation-sign':'displayHistoryLog'
+    },
+
     /**
      * Initialize the View
      *
@@ -23,9 +40,7 @@
     initialize:function (options) {
         this.viewModule = app.viewModule;
         var self = this;
-        //set expandable behavior to false by default
-        this.isExpandableRows = false;
-        
+
         app.view.View.prototype.initialize.call(this, options);
 
         //set up base selected user
@@ -36,7 +51,7 @@
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
         this._collection.isDirty = false;
-    	
+
     	//Setup total subview
     	var TotalModel = Backbone.Model.extend({
 
@@ -120,14 +135,14 @@
                 this.totalView.render();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-            	
+
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		var model = this.context.forecasts.worksheetmanager;
             		model.url = this.createURL();
             		this.safeFetch();
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
-            	
+
             }, this);
             var worksheet = this;
             $(window).bind("beforeunload",function(){
@@ -135,13 +150,13 @@
             });
         }
     },
-    
+
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
      */
     safeFetch: function(){
-    	var collection = this._collection; 
+    	var collection = this._collection;
     	var self = this;
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
@@ -152,14 +167,14 @@
         				model.set({draft: 1}, {silent:true});
         				model.save();
         				model.set({isDirty: false}, {silent:true});
-        			}  
+        			}
 				});
     			collection.isDirty = false;
 				$.when(!collection.isDirty).then(function(){
 	    			self.context.forecasts.set({reloadCommitButton: true});
 	    			collection.fetch();
     		});
-			
+
 		}
     		else{
     			//ignore, fetch still
@@ -170,8 +185,8 @@
     	}
     	else{
     		//no changes, fetch like normal.
-    		collection.fetch();	
-    	}    	
+    		collection.fetch();
+    	}
     },
 
     /**
@@ -232,17 +247,6 @@
             }
         );
 
-        // if isExpandable, add expandable row behavior
-        if (this.isExpandableRows) {
-            $('.worksheetManagerTable tr').on('click', function () {
-                if (self.gTable.fnIsOpen(this)) {
-                    self.gTable.fnClose(this);
-                } else {
-                    self.gTable.fnOpen(this, self.formatAdditionalDetails(this), 'details');
-                }
-            });
-        }
-
         //see if anything in the model is a draft version
         _.each(this._collection.models, function(model, index){
         	if(model.get("version") == 0){
@@ -259,7 +263,90 @@
         this.totalView.render();
     },
 
-    calculateTotals: function() {
+    /**
+     * Handle the click event from a history log icon click.
+     *
+     * @param event
+     */
+    displayHistoryLog:function (event) {
+        var self = this;
+        var nTr = _.first($(event.target).parents('tr'));
+        // test to see if it's open
+        if (self.gTable.fnIsOpen(nTr)) {
+            // if it's open, close it
+            self.gTable.fnClose(nTr);
+        } else {
+            //Open this row
+
+            var colspan = $(nTr).children('td').length;
+
+            self.gTable.fnOpen(nTr, this.commitLogLoadingTemplate() , 'details');
+            $(nTr).next().children("td").attr("colspan", colspan);
+
+            self.fetchUserCommitHistory(event, nTr);
+        }
+    },
+
+    /**
+     * Event handler when popoverIcon is clicked,
+     * @param event
+     * @return {*}
+     */
+    fetchUserCommitHistory: function(event, nTr) {
+        var options = {
+            timeperiod_id : this.timePeriod,
+            user_id : $(event.target).attr('data-uid')
+        };
+
+        var dataCommitDate = $(event.target).attr('data-commitdate');
+
+        return app.api.call('read',
+             app.api.buildURL('Forecasts', 'committed', null, options),
+            null,
+            {
+                success : function(data) {
+                    var commitDate = new Date(dataCommitDate),
+                        newestModel = {},
+                        oldestModel = {},
+                        len = data.length,
+                        outputLog = {};
+
+                    if(len == 1) {
+                        newestModel = new Backbone.Model(data[0]);
+                    } else {
+                        // using for because you can't break out of _.each
+                        for(var i = 0; i < len; i++) {
+                            var entry = data[i];
+
+                            //if first model, put it in newestModel
+                            if(i == 0) {
+                                newestModel = new Backbone.Model(entry);
+                                continue;
+                            }
+
+                            var entryDate = app.forecasts.utils.parseDBDate(entry.date_modified);
+
+                            // check for the first model equal to or past the forecast commit date
+                            // we want the last commit just before the whole forecast was committed
+                            if(entryDate <= commitDate) {
+                                oldestModel = new Backbone.Model(entry);
+                                break;
+                            }
+                        }
+                    }
+
+                    // create the history log
+                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                    // update the div that was created earlier and set the html to what was the commit log
+                    $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
+                }
+            },
+            { context : this }
+        );
+    },
+
+
+    calculateTotals:function () {
         var self = this;
         var amount = 0;
         var quota = 0;
@@ -297,7 +384,6 @@
            likely_adjusted 	+= parseFloat(model.get('likely_adjusted')) * base_rate;
            worst_case       += parseFloat(model.get('worst_case')) * base_rate;
            worst_adjusted 	+= parseFloat(model.get('worst_adjusted')) * base_rate;
-                
         });
 
         self.totalModel.set({
@@ -310,7 +396,7 @@
             worst_case : worst_case,
             worst_adjusted : worst_adjusted
         });
-        
+
         //in case this is needed later..
         var totals = {
             'amount' : amount,
@@ -325,19 +411,16 @@
 
         this.context.forecasts.set("updatedManagerTotals", totals);
     },
-    
-    
+
     /**
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
     	var selectedUser = this.selectedUser;
     	this.show = false;
-    	
     	if(!selectedUser.showOpps && selectedUser.isManager){
     		this.show = true;
     	}
-    	
     	return this.show;
     },
 
