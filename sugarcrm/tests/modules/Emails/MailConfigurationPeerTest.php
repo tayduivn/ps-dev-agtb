@@ -39,10 +39,10 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $sql = "DELETE FROM outbound_email where name like 'SugarTest%'";
+        $sql = "DELETE FROM outbound_email where name like 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
         //printf("(DELETE) SQL: %s\n",$sql);
-        $sql = "DELETE FROM inbound_email where name like 'SugarTest%'";
+        $sql = "DELETE FROM inbound_email where name like 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
         //printf("(DELETE) SQL: %s\n",$sql);
 
@@ -75,16 +75,16 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        $sql = "DELETE FROM outbound_email where name like 'SugarTest%'";
+        $sql = "DELETE FROM outbound_email where name like 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
         //printf("(DELETE) SQL: %s\n",$sql);
-        $sql = "DELETE FROM inbound_email where name like 'SugarTest%'";
+        $sql = "DELETE FROM inbound_email where name like 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
         //printf("(DELETE) SQL: %s\n",$sql);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-        parent::tearDown();
+        parent::tearDownAfterClass();
     }
 
     /**
@@ -95,7 +95,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
             "from_email"        => "unit_test1@sugar_unit_test.net",
-            "name"              => 'SugarTest1',
+            "name"              => 'Sugar___Test1',
             "type"              => 'user',
             "user_id"           => self::$current_user->id,
             "mail_sendtype"     => "SMTP",
@@ -111,7 +111,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         $config2_array = array(
             "from_name"         => "Sugar UnitTest2",
             "from_email"        => "unit_test2@sugar_unit_test.net",
-            "name"              => 'SugarTest2',
+            "name"              => 'Sugar___Test2',
             "type"              => 'user',
             "user_id"           => self::$current_user->id,
             "mail_sendtype"     => "SMTP",
@@ -165,7 +165,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
             "from_email"        => "unit_test1@sugar_unit_test.net",
-            "name"              => 'SugarTest1',
+            "name"              => 'Sugar___Test1',
             "type"              => 'user',
             "user_id"           => self::$current_user->id,
             "mail_sendtype"     => "SMTP",
@@ -181,7 +181,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         $config2_array = array(
             "from_name"         => "Sugar UnitTest2",
             "from_email"        => "unit_test2@sugar_unit_test.net",
-            "name"              => 'SugarTest2',
+            "name"              => 'Sugar___Test2',
             "type"              => 'user',
             "user_id"           => self::$current_user->id,
             "mail_sendtype"     => "SMTP",
@@ -211,7 +211,6 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEmpty($config, "SYSTEM MailConfiguration Not Found");
         $this->assertEquals($config->config_id, self::$system_config->id, "Unexpected 'SYSTEM' MailConfiguration");
     }
-
 
 
     private static function createOutboundEmail($config) {

@@ -33,6 +33,7 @@ class MailConfiguration {
     public $config_id;
     public $config_name;
     public $config_type;
+    public $inbox_id;
     public $sender_name;
     public $sender_email;
     public $display_name;

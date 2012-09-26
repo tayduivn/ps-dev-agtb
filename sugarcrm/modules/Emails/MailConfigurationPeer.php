@@ -112,13 +112,18 @@ class MailConfigurationPeer
             $addr          = $v->get_stored_options('from_addr');
             $storedOptions = unserialize(base64_decode($v->stored_options));
 
-            // var_dump($storedOptions);
-
-            if ($name != null && $addr != null) {
+            $outbound_config_id = $storedOptions["outbound_email"];
+            $oe = null;
+            if (!empty($outbound_config_id)) {
+                $oe = new OutboundEmail();
+                $oe->retrieve($outbound_config_id);
+            }
+            if ($name != null && $addr != null && !empty($outbound_config_id) && !empty($oe) && ($outbound_config_id == $oe->id)) {
                 $name                            = from_html($name);
                 $mailConfiguration               = new MailConfiguration($user);
-                $mailConfiguration->config_id    = $storedOptions["outbound_email"];
+                $mailConfiguration->config_id    = $outbound_config_id;
                 $mailConfiguration->config_type  = 'user';
+                $mailConfiguration->inbox_id     = $k;
                 $mailConfiguration->sender_name  = "{$name}";
                 $mailConfiguration->sender_email = "{$addr}";
                 $mailConfiguration->display_name = "{$name} ({$addr})";
@@ -132,8 +137,6 @@ class MailConfigurationPeer
                     $mailConfiguration->sender_email);
 
                 // turn the OutboundEmail object into a useable set of mail configurations
-                $oe = new OutboundEmail();
-                $oe->retrieve($mailConfiguration->config_id);
                 $oeAsArray                           = self::toArray($oe);
                 $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
                 $mailConfiguration->config_name      = $oeAsArray['name'];
