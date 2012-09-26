@@ -56,10 +56,26 @@ class MailConfigurationPeer
         }
     }
 
+
+    /**
+     * @return MailConfiguration  System or User defined System-Override Mail Configuration
+     */
+    public static function getSystemMailConfiguration(User $user, Localization $locale = null, $charset = null) {
+        $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
+
+        foreach($mailConfigurations AS $mailConfiguration) {
+            if ($mailConfiguration->config_type == 'system') {
+                return $mailConfiguration;
+            }
+        }
+        return null;
+    }
+
+
     /**
      * @return array MailConfigurations
      */
-    public static function getMailConfigurations(User $user, $systemOnly = false, Localization $locale = null, $charset = null) {
+    public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null) {
         if (is_null($locale)) {
             $locale = $GLOBALS["locale"];
         }
@@ -75,48 +91,65 @@ class MailConfigurationPeer
             $systemReturn = $user->getSystemDefaultNameAndEmail();
             $ret['email'] = $systemReturn['email'];
             $ret['name']  = from_html($systemReturn['name']);
+            $system_replyToAddress = $ret['email'];
         } else {
             $ret['name'] = from_html($ret['name']);
+            $system_replyToAddress = '';
         }
 
-        if (!$systemOnly) {
-            /* Retrieve any Inbound User Mail Accounts and the Outbound Mail Accounts Associated with them */
-            $ie         = new InboundEmail();
-            $ieAccounts = $ie->retrieveAllByGroupIdWithGroupAccounts($user->id);
-
-            foreach ($ieAccounts as $k => $v) {
-                $name          = $v->get_stored_options('from_name');
-                $addr          = $v->get_stored_options('from_addr');
-                $storedOptions = unserialize(base64_decode($v->stored_options));
-                // var_dump($storedOptions);
-
-                if ($name != null && $addr != null) {
-                    $name                            = from_html($name);
-                    $mailConfiguration               = new MailConfiguration($user);
-                    $mailConfiguration->config_id    = $storedOptions["outbound_email"];
-                    $mailConfiguration->config_type  = 'user';
-                    $mailConfiguration->sender_name  = "{$name}";
-                    $mailConfiguration->sender_email = "{$addr}";
-                    $mailConfiguration->display_name = "{$name} ({$addr})";
-                    $mailConfiguration->personal     = (bool)($v->is_personal);
-
-                    // turn the OutboundEmail object into a useable set of mail configurations
-                    $oe = new OutboundEmail();
-                    $oe->retrieve($mailConfiguration->config_id);
-                    $oeAsArray                           = self::toArray($oe);
-                    $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
-                    $mailConfiguration->config_name      = $oeAsArray['name'];
-                    $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
-                        $oeAsArray,
-                        $mailConfiguration->mode,
-                        $locale,
-                        $charset
-                    );
-
-                    $mailConfigurations[] = $mailConfiguration;
-                } // if
-            } // foreach
+        $system_replyToName    = $ret['name'];
+        $replyTo = $user->emailAddress->getReplyToAddress($user, true);
+        if (!empty($replyTo)) {
+            $system_replyToAddress = $replyTo;
         }
+
+        /* Retrieve any Inbound User Mail Accounts and the Outbound Mail Accounts Associated with them */
+        $ie         = new InboundEmail();
+        $ieAccounts = $ie->retrieveAllByGroupIdWithGroupAccounts($user->id);
+
+        foreach ($ieAccounts as $k => $v) {
+            $name          = $v->get_stored_options('from_name');
+            $addr          = $v->get_stored_options('from_addr');
+            $storedOptions = unserialize(base64_decode($v->stored_options));
+
+            $outbound_config_id = $storedOptions["outbound_email"];
+            $oe = null;
+            if (!empty($outbound_config_id)) {
+                $oe = new OutboundEmail();
+                $oe->retrieve($outbound_config_id);
+            }
+            if ($name != null && $addr != null && !empty($outbound_config_id) && !empty($oe) && ($outbound_config_id == $oe->id)) {
+                $name                            = from_html($name);
+                $mailConfiguration               = new MailConfiguration($user);
+                $mailConfiguration->config_id    = $outbound_config_id;
+                $mailConfiguration->config_type  = 'user';
+                $mailConfiguration->inbox_id     = $k;
+                $mailConfiguration->sender_name  = "{$name}";
+                $mailConfiguration->sender_email = "{$addr}";
+                $mailConfiguration->display_name = "{$name} ({$addr})";
+                $mailConfiguration->personal     = (bool)($v->is_personal);
+
+                $mailConfiguration->replyto_name  = (!empty($storedOptions['reply_to_name']) ?
+                    $storedOptions['reply_to_name'] :
+                    $mailConfiguration->sender_name);
+                $mailConfiguration->replyto_email = (!empty($storedOptions['reply_to_addr']) ?
+                    $storedOptions['reply_to_addr'] :
+                    $mailConfiguration->sender_email);
+
+                // turn the OutboundEmail object into a useable set of mail configurations
+                $oeAsArray                           = self::toArray($oe);
+                $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
+                $mailConfiguration->config_name      = $oeAsArray['name'];
+                $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
+                    $oeAsArray,
+                    $mailConfiguration->mode,
+                    $locale,
+                    $charset
+                );
+
+                $mailConfigurations[] = $mailConfiguration;
+            } // if
+        } // foreach
 
         $oe     = new OutboundEmail();
         $system = $oe->getSystemMailerSettings();
@@ -139,6 +172,9 @@ class MailConfigurationPeer
             $mailConfiguration->display_name = "{$ret['name']} ({$ret['email']})";
             $mailConfiguration->personal     = $personal;
 
+            $mailConfiguration->replyto_name  = $system_replyToName;
+            $mailConfiguration->replyto_email = $system_replyToAddress;
+
             // turn the OutboundEmail object into a useable set of mail configurations
             $oe = new OutboundEmail();
             $oe->retrieve($system->id);
@@ -157,6 +193,7 @@ class MailConfigurationPeer
 
         return $mailConfigurations;
     }
+
 
     private static function buildMailerConfiguration($oe, $mode, Localization $locale, $charset) {
         $mailerConfig = null;
@@ -193,6 +230,7 @@ class MailConfigurationPeer
 
         return $mailerConfig;
     }
+
 
     private static function toArray($obj, $scalarOnly=true) {
         $fields = get_object_vars($obj);

@@ -97,7 +97,7 @@ class SmtpMailerConfiguration extends MailerConfiguration
      * Sets or overwrites the port number configuration. Default to 25, which is the default port number for SMTP.
      *
      * @access public
-     * @param int $port required
+     * @param int $port required A numeric string is acceptable, as it can be casted to an integer.
      * @throws MailerException
      */
     public function setPort($port = 25) {

@@ -42,8 +42,6 @@ class SimpleMailer extends BaseMailer
      * @throws MailerException
      */
     public function send() {
-        $this->prepareToSend();
-
         $mailer = $this->generateMailer(); // get a fresh PHPMailer object
 
         $this->transferConfigurations($mailer); // transfer the configurations to set up the PHPMailer object before
@@ -97,7 +95,7 @@ class SimpleMailer extends BaseMailer
         $mailer->SMTPSecure = $this->config->getCommunicationProtocol();
         $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
-        $mailer->Password   = from_html($this->config->getPassword());
+        $mailer->Password   = from_html($this->config->getPassword());  // perform HTML character translations
     }
 
     /**
@@ -143,9 +141,20 @@ class SimpleMailer extends BaseMailer
         foreach ($headers as $key => $value) {
             switch ($key) {
                 case EmailHeaders::From:
+                    if (!empty($value[1])) {
+                        // perform character set translations on the name in the From header
+                        $value[1] = $this->config->getLocale()->translateCharset(
+                            $value[1],
+                            "UTF-8",
+                            $this->config->getCharset()
+                        );
+
+                        // perform HTML character translations on the From name
+                        $value[1] = from_html($value[1]);
+                    }
+
                     // set PHPMailer's From so that PHPMailer can correctly construct the From header at send time
                     try {
-                        //@todo might not want to require the second value
                         $mailer->SetFrom($value[0], $value[1]);
                     } catch (Exception $e) {
                         throw new MailerException(
@@ -160,13 +169,25 @@ class SimpleMailer extends BaseMailer
                     // so clear PHPMailer's Reply-To array if this header is provided
                     $mailer->ClearReplyTos();
 
+                    if (!empty($value[1])) {
+                        // perform character set translations on the name in the Reply-To header
+                        $value[1] = $this->config->getLocale()->translateCharset(
+                            $value[1],
+                            "UTF-8",
+                            $this->config->getCharset()
+                        );
+
+                        // perform HTML character translations on the Reply-To name
+                        $value[1] = from_html($value[1]);
+                    }
+
                     // set PHPMailer's ReplyTo so that PHPMailer can correctly construct the Reply-To header at send
                     // time
                     try {
                         // PHPMailer's AddReplyTo could return true or false or allow an exception to bubble up. We
                         // want the same behavior to be applied for both false and on error, so throw a
                         // phpMailerException on failure.
-                        if (!$mailer->AddReplyTo($value[0], $value[1])) { //@todo might not want to require the second value
+                        if (!$mailer->AddReplyTo($value[0], $value[1])) {
                             // doesn't matter what the message is since we're going to eat phpmailerExceptions
                             throw new phpmailerException();
                         }
@@ -198,11 +219,18 @@ class SimpleMailer extends BaseMailer
                     $mailer->ConfirmReadingTo = $value;
                     break;
                 case EmailHeaders::Subject:
+                    // perform character set translations on the subject
+                    $value = $this->config->getLocale()->translateCharset($value, "UTF-8", $this->config->getCharset());
+
+                    // perform HTML character translations on the subject
+                    $value = from_html($value);
+
                     // set PHPMailer's Subject so that PHPMailer can correctly construct the Subject header at send time
                     $mailer->Subject = $value;
                     break;
                 default:
                     // it's not known, so it must be a custom header; add it to PHPMailer's custom headers array
+                    //@todo any need for charset translations for from_html on the value?
                     $mailer->AddCustomHeader("{$key}:{$value}");
                     break;
             }
@@ -229,9 +257,17 @@ class SimpleMailer extends BaseMailer
         foreach ($to as $recipient) {
             $recipient->decode();
 
+            // perform MIME character set translations on the recipient's name
+            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            $name = $this->config->getLocale()->translateCharsetMIME(
+                $recipient->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            );
+
             try {
                 // attempt to add the recipient to PHPMailer in the To list
-                $mailer->AddAddress($recipient->getEmail(), $recipient->getName());
+                $mailer->AddAddress($recipient->getEmail(), $name);
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
             }
@@ -240,9 +276,17 @@ class SimpleMailer extends BaseMailer
         foreach ($cc as $recipient) {
             $recipient->decode();
 
+            // perform MIME character set translations on the recipient's name
+            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            $name = $this->config->getLocale()->translateCharsetMIME(
+                $recipient->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            );
+
             try {
                 // attempt to add the recipient to PHPMailer in the CC list
-                $mailer->AddCC($recipient->getEmail(), $recipient->getName());
+                $mailer->AddCC($recipient->getEmail(), $name);
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
             }
@@ -251,9 +295,17 @@ class SimpleMailer extends BaseMailer
         foreach ($bcc as $recipient) {
             $recipient->decode();
 
+            // perform MIME character set translations on the recipient's name
+            //@todo why translateCharsetMIME here but translateCharset on other headers?
+            $name = $this->config->getLocale()->translateCharsetMIME(
+                $recipient->getName(),
+                "UTF-8",
+                $this->config->getCharset()
+            );
+
             try {
                 // attempt to add the recipient to PHPMailer in the BCC list
-                $mailer->AddBCC($recipient->getEmail(), $recipient->getName());
+                $mailer->AddBCC($recipient->getEmail(), $name);
             } catch (Exception $e) {
                 // eat the exception for now as we'll send to as many valid recipients as possible
             }
@@ -276,19 +328,33 @@ class SimpleMailer extends BaseMailer
             throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
         }
 
+        if ($hasText) {
+            // perform character set translations on the plain-text body
+            $textBody = $this->prepareTextBody($this->textBody);
+
+            // perform HTML character translations on the plain-text body
+            $textBody = from_html($textBody);
+        }
+
         if ($hasHtml) {
+            // perform character set translations HTML body
+            $htmlBody = $this->prepareHtmlBody($this->htmlBody);
+
+            // perform HTML character translations on the HTML body
+            $htmlBody = from_html($htmlBody);
+
             // there is an HTML part so set up PHPMailer appropriately for sending a multi-part email
             $mailer->IsHTML(true);
             $mailer->Encoding = Encoding::Base64; // so that embedded images are encoded properly
-            $mailer->Body     = $this->htmlBody;  // the HTML part is the primary message body
+            $mailer->Body     = $htmlBody;        // the HTML part is the primary message body
         }
 
         if ($hasText && $hasHtml) {
             // it's a multi-part email with both the plain-text and HTML parts
-            $mailer->AltBody = $this->textBody; // the plain-text part is the alternate message body
+            $mailer->AltBody = $textBody; // the plain-text part is the alternate message body
         } elseif ($hasText) {
             // there is only a plain-text part so set up PHPMailer appropriately for sending a text-only email
-            $mailer->Body = $this->textBody; // the plain-text part is the primary message body
+            $mailer->Body = $textBody; // the plain-text part is the primary message body
         } else {
             // you should never actually send an email without a plain-text part, but we'll allow it (for now)
         }
@@ -345,34 +411,12 @@ class SimpleMailer extends BaseMailer
     }
 
     /**
-     * Handles any final updates to document prior to sending. Updates include Charset translation for all
-     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     * Performs character set translations on the plain-text body based on the charset defined in the configuration.
+     *
+     * @access protected
+     * @param string $body required The plain-text body that is to be translated.
+     * @return string The translated body.
      */
-    protected function prepareToSend() {
-        $from = $this->headers->getFrom();
-        $from->setName(
-            $this->config->getLocale()->translateCharset(
-                $from->getName(),
-                "UTF-8",
-                $this->config->getCharset()
-            )
-        );
-        $this->setHeader(EmailHeaders::From, $from);
-
-        $subject = $this->headers->getSubject();
-        $subject = $this->config->getLocale()->translateCharset($subject, "UTF-8", $this->config->getCharset());
-        $subject = from_html($subject);
-        $this->setSubject($subject);
-
-        $textBody = $this->prepareTextBody($this->textBody);
-        $textBody = from_html($textBody);
-        $this->setTextBody($textBody);
-
-        $htmlBody = $this->prepareHtmlBody($this->htmlBody);
-        $htmlBody = from_html($htmlBody);
-        $this->setHtmlBody($htmlBody);
-    }
-
     protected function prepareTextBody($body) {
         $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
 
@@ -380,8 +424,12 @@ class SimpleMailer extends BaseMailer
     }
 
     /**
-     * Handles any final updates to document prior to sending. Updates include Charset translation for all
-     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     * Enforces RFC compliance to the structure of the HTML body and performs character set translations on the body
+     * based on the charset defined in the configuration.
+     *
+     * @access protected
+     * @param string $body required The HTML body that is to be translated.
+     * @return string The compliant and translated body.
      */
     protected function prepareHtmlBody($body) {
         $body = $this->forceRfcComplianceOnHtmlBody($body);
@@ -390,22 +438,33 @@ class SimpleMailer extends BaseMailer
         return $body;
     }
 
+    /**
+     * HTML message bodies must include a doctype and appropriate html, head, and body elements to be RFC compliant.
+     * Enforces this compliance by wrapping the body with the compliant document structure if the body is not found
+     * to be compliant.
+     *
+     * @note This is flawed because the absence of "<html" doesn't also indicate the absence of "</body>" or "</html>".
+     *       Yet, the assumption is that it is an indication of said absence. Thus, there is a potential for the
+     *       document body to become invalid HTML.
+     *
+     * @param string $body required The HTML body to test for compliance and modify, if necessary.
+     * @return string The compliant HTML body.
+     */
     protected function forceRfcComplianceOnHtmlBody($body) {
-        // HTML email RFC compliance
         if (strpos($body, "<html") === false) {
-            $subject    = $this->headers->getSubject();
-            $charset    = $this->config->getCharset();
-            $langHeader = get_language_header();
-            $head       = <<<eoq
+            $subject   = $this->headers->getSubject(); // used for the document title
+            $charset   = $this->config->getCharset();  // used for the document charset
+            $language  = get_language_header();
+            $head      = <<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" {$langHeader}>
+<html xmlns="http://www.w3.org/1999/xhtml" {$language}>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset={$charset}" />
 <title>{$subject}</title>
 </head>
 <body>
 eoq;
-            $body = "{$head}{$body}</body></html>";
+            $body = "{$head}{$body}</body></html>"; // prepend the document head and append the footer elements
         }
 
         return $body;
