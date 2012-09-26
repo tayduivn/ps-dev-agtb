@@ -13,7 +13,23 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
-    
+
+    /**
+     * Contains a list of column names from metadata and maps them to correct config param
+     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
+     *
+     * @property _tableColumnsConfigKeyMap
+     */
+    _tableColumnsConfigKeyMap: {
+        'likely_case': 'show_worksheet_likely',
+        'likely_adjusted': 'show_worksheet_likely',
+        'best_case': 'show_worksheet_best',
+        'best_adjusted': 'show_worksheet_best',
+        'worst_case': 'show_worksheet_worst',
+        'worst_adjusted': 'show_worksheet_worst'
+
+    },
+
     /**
      * Initialize the View
      *
@@ -103,6 +119,8 @@
         }
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
+            var self = this;
+
             this.context.forecasts.on("change:selectedUser",
                 function(context, selectedUser) {
                     this.updateWorksheetBySelectedUser(selectedUser);
@@ -129,13 +147,78 @@
             	}
             	
             }, this);
+
+            this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
+                self.setColumnVisibility(['likely_case', 'likely_adjusted'], value, self);
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
+                self.setColumnVisibility(['best_case', 'best_adjusted'], value, self);
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
+                self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
+            });
+
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-            	worksheet.safeFetch();
+                worksheet.safeFetch();
             });
         }
     },
-    
+
+    /**
+     * Sets the visibility of a column or columns if array is passed in
+     *
+     * @param cols {*} Array or String, the sName of the column to change
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     * @param ctx {Object} the context of this view to have access to the checkForColumnsSetVisibility function
+     */
+    setColumnVisibility: function(cols, value, ctx) {
+        var aoColumns = this.gTable.fnSettings().aoColumns;
+        if(_.isArray(cols)) {
+            for(var i in cols) {
+                var columnName = cols[i];
+                ctx.checkForColumnsSetVisibility(aoColumns, columnName, value);
+            }
+        } else if(_.isString(cols)) {
+            ctx.checkForColumnsSetVisibility(aoColumns, cols, value);
+        }
+    },
+
+    /**
+     * Checks for a column name in an array of columns and sets the visibibility to value
+     *
+     * @param columns {Array} an array of the columns in the table
+     * @param colName {String} the sName of a column in the table we're looking for
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     */
+    checkForColumnsSetVisibility: function(columns, colName, value) {
+        for(var k in columns) {
+            if(columns[k].sName == colName)  {
+                this.gTable.fnSetColumnVis(k, value == 1);
+                break;
+            }
+        }
+    },
+
+    /**
+     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     *
+     * @param colKey {String} the column sName to check in the keymap
+     * @return {*} returns null if not found in the keymap, returns true/false if it did find it
+     */
+    checkConfigForColumnVisibility: function(colKey) {
+        var returnValue = null;
+        // check to see if it's in the map first
+        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
+            var configKey = this._tableColumnsConfigKeyMap[colKey];
+            returnValue = this.context.forecasts.config.get(configKey);
+        }
+
+        return returnValue;
+    },
+
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
@@ -213,11 +296,17 @@
 
         for( var i = 0; i < fields.length; i++ )  {
             if(fields[i].enabled) {
+                var bVis = this.checkConfigForColumnVisibility(fields[i].name);
+                //if bVis is null, it did not have a config option to correlate to, so set it visible
+                if(_.isNull(bVis)) {
+                    bVis = true;
+                }
                 // in case we add column rearranging
                 columnDefs.push( {
                     "sName": fields[i].name,
                     "aTargets": [ _colIndex++ ],
-                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%'
+                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%',
+                    "bVisible" : bVis
                 } );
             }
         }
