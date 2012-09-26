@@ -1,17 +1,17 @@
 ({
 
-/**
- * View that displays a list of models pulled from the context's collection.
- * @class View.Views.ListView
- * @alias SUGAR.App.layout.ListView
- * @extends View.View
- */
-    events: {
-        'click [class*="orderBy"]': 'setOrderBy',
-        'mouseenter tr': 'showActions',
-        'mouseleave tr': 'hideActions'
+    /**
+     * View that displays a list of models pulled from the context's collection.
+     * @class View.Views.ListView
+     * @alias SUGAR.App.layout.ListView
+     * @extends View.View
+     */
+    events:{
+        'click [class*="orderBy"]':'setOrderBy',
+        'mouseenter tr':'showActions',
+        'mouseleave tr':'hideActions'
     },
-    _renderHtml: function() {
+    _renderHtml:function () {
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
@@ -25,17 +25,20 @@
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
     },
-    filterToggled: function(isOpened) {
+    filterToggled:function (isOpened) {
         this.filterOpened = isOpened;
     },
-    fireSearch: function(term) {
+    fireSearch:function (term) {
         var options = {
-            limit: this.limit || null,
-            params: { 
-                q: term
+            limit:this.limit || null,
+            params:{
+                q:term
             },
-            fields: this.collection.fields || {}
-        };
+            fields:this.collection.fields || {}
+        }
+        if (this.context.get('link')) {
+            options.relate = true;
+        }
         this.collection.fetch(options);
     },
 
@@ -43,7 +46,7 @@
      * Sets order by on collection and view
      * @param {Object} event jquery event object
      */
-    setOrderBy: function(event) {
+    setOrderBy:function (event) {
         var orderMap, collection, fieldName, nOrder, options, eventTarget, orderBy;
         var self = this;
         //set on this obj and not the prototype
@@ -51,8 +54,8 @@
 
         //mapping for css
         orderMap = {
-            "desc": "_desc",
-            "asc": "_asc"
+            "desc":"_desc",
+            "asc":"_asc"
         };
 
         //TODO probably need to check if we can sort this field from metadata
@@ -69,9 +72,9 @@
 
         if (!collection.orderBy) {
             collection.orderBy = {
-                field: "",
-                direction: "",
-                columnName: ""
+                field:"",
+                direction:"",
+                columnName:""
             };
         }
 
@@ -99,41 +102,47 @@
 
         // If injected context with a limit (dashboard) then fetch only that 
         // amount. Also, add true will make it append to already loaded records.
-        options.limit   = self.limit || null;
-        options.success = function() {
+        options.limit = self.limit || null;
+        options.success = function () {
             self.render();
         };
-        
+        if (this.context.get('link')) {
+            options.relate = true;
+        }
+
         // refetch the collection
         collection.fetch(options);
     },
-    getSearchOptions: function() {
+    getSearchOptions:function () {
         var collection, options, previousTerms, term = '';
         collection = this.context.get('collection');
 
         // If we've made a previous search for this module grab from cache
-        if(app.cache.has('previousTerms')) {
+        if (app.cache.has('previousTerms')) {
             previousTerms = app.cache.get('previousTerms');
-            if(previousTerms) {
+            if (previousTerms) {
                 term = previousTerms[this.module];
-            } 
+            }
         }
         // build search-specific options and return
         options = {
-            params: { 
-                q: term
+            params:{
+                q:term
             },
-            fields: collection.fields ? collection.fields : this.collection
+            fields:collection.fields ? collection.fields : this.collection
         };
+        if (this.context.get('link')) {
+            options.relate = true;
+        }
         return options;
     },
-    showActions: function(e) {
+    showActions:function (e) {
         $(e.currentTarget).children("td").children("span").children(".btn-group").show();
     },
-    hideActions: function(e) {
+    hideActions:function (e) {
         $(e.currentTarget).children("td").children("span").children(".btn-group").hide();
     },
-    bindDataChange: function() {
+    bindDataChange:function () {
         if (this.collection) {
             this.collection.on("reset", this.render, this);
         }

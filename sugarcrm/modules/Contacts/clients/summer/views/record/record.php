@@ -52,13 +52,14 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
         array(
             'name' => 'panel_head',
             'label' => 'LBL_PANEL_1',
-            'columns' => 2,
+            'columns' => 3,
             'labels' => false,
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
                 array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
-                array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
+                array('name' => 'first_name', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_FIRST_NAME'),
+                array('name' => 'last_name', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_LAST_NAME'),
             )
         ),
         array(
@@ -70,14 +71,18 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
             'fields' => array(
                 'title',
                 'account_name',
+                'email1',
                 'primary_address_street',
+                'phone_mobile',
                 array(
-                    "name" => "fieldset_address",
-                    "type" => "fieldst",
-                    "label" => "Address",
-                    'fields' => array('primary_address_city', 'primary_address_state', 'primary_address_postalcode')),
+                    'name' => 'fieldset_address',
+                    'type' => 'fieldset',
+                    'label' => 'Primary Address',
+                    'fields' => array('primary_address_city', 'primary_address_state', 'primary_address_postalcode')
+                ),
+                'phone_work',
                 'primary_address_country',
-                'email1', 'phone_work', 'phone_mobile',
+
                 'assigned_user_name',
             ),
         ),

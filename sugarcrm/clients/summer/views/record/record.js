@@ -306,7 +306,7 @@
         if (currFieldParent[0] == targetParent[0]) {
             return;
         }
-
+        field.$el.find("input").trigger("change");
         self.toggleCell(field, cell, true);
     },
 
@@ -317,6 +317,8 @@
             index = field.$el.parent().data("index");
 
         if (e.which == 9) { // If tab
+            e.preventDefault();
+            field.$el.find("input").trigger("change");
             nextCell = this.getNextCell(index, field, cell);
 
             if (nextCell && (nextCell[0] !== cell[0])) { // Next tab element not within same cell
@@ -324,10 +326,7 @@
                 this.handleEdit(null, nextCell);
             }
 
-            e.preventDefault();
 
-            // Since we prevented the default we still need to trigger a change.
-            field.$el.find("input").trigger("change");
         } else if (e.which == 27) { // If esc
             this.toggleCell(field, cell, true);
         }

@@ -51,7 +51,7 @@
         var self = this;
         var collection = app.data.createBeanCollection(this.def.module);
         collection.fetch({
-            params: {basicSearch:event.target.value},  // TODO update this to filtering API
+            params: {q:event.target.value},  // TODO update this to filtering API
             success: function(data) {
                 if (data.models.length > 0) {
                     self.selectOptions = data.models;

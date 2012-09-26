@@ -5,7 +5,7 @@
     },
 
     render: function() {
-        if (!this.responseData || this.responseData.results.length < 0) {
+        if (!this.emails || this.emails.length <= 0) {
             this.$el.hide();
             return;
         }
@@ -16,11 +16,14 @@
 
     getData: function() {
         var email = this.model.get("email1") || this.model.get('email2');
-
+        this.email = email;
+        var self = this;
                if (email) {
 
                    app.api.call('GET', '../rest/v10/summer/emails?email=' + email, null, {success: function(o) {
-                       console.log(o);
+                    self.emails = o;
+
+                    self.render();
 
 
                    }});

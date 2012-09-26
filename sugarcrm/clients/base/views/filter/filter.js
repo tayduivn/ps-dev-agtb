@@ -44,12 +44,14 @@
             }, app.config.requiredElapsed);
 
         // If user removing characters and down to 0 chars reset table to all data
-        } else if(previousTerm && !term.length) {
-            this.collection.fetch({limit: this.context.get('limit') || null });
+        } else if((previousTerm && !term.length) || (!term && evt.which === 8)) {
+            var options = {limit: this.context.get('limit') || null };
+            if (this.context.get('link')) {
+                options.relate = true;
+            }
+            this.collection.fetch(options);
 
         // Edge case - just in case user might highlight the input and hit 'Back' to delete.
-        } else if(!term && evt.which === 8) {
-            this.collection.fetch({limit: this.context.get('limit') || null });
         }
     },
     fireSearchRequest: function(term) {
