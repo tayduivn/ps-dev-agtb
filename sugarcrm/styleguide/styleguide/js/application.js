@@ -71,7 +71,7 @@
 
     // toggle all checkboxes
     $('.toggle-all').on('click', function () {
-      $('table').find('tr.message').remove();
+      $('table').find('tr.alert').remove();
       $('table').find(':checkbox').attr('checked', this.checked);
       $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="">select all 300</a> records.</td></tr>');
     })
