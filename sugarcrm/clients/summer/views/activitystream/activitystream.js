@@ -574,20 +574,18 @@
         var objarrays = _.map(this.collection.models, this._addTimelineEvent);
         timeline.timeline.date = _.flatten(objarrays);
 
-        this.collection.each(function(model) {
-            timeline.timeline.date.push(self._addTimelineEvent(model));
-        });
-
         _.defer(function() {
-            createStoryJS({
-                type:       'timeline',
-                width:      '100%',
-                height:     '400',
-                start_at_end:true,
-                js: 'lib/TimelineJS/js/timeline.js',
-                source: timeline,
-                embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
-            });
+            if(timeline.timeline.date.length) {
+                createStoryJS({
+                    type:       'timeline',
+                    width:      '100%',
+                    height:     '400',
+                    start_at_end:true,
+                    js: 'lib/TimelineJS/js/timeline.js',
+                    source: timeline,
+                    embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
+                });
+            }
         });
 
         return app.view.View.prototype._renderHtml.call(this);
