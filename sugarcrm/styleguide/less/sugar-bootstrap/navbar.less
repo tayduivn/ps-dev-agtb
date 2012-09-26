@@ -36,7 +36,7 @@
     margin-bottom: 7px;
   }
 }
-
+.dropdown-menu {padding: 0;}
 .dropdown-menu h4.title {
   margin-top: -5px;
   padding: 5px 10px;
@@ -61,7 +61,7 @@
 .dropdown-menu  a {
   margin: 0;
   padding: 8px 10px;
-  border-top: 1px solid darken(@grayLighter, 5%);
+  border-top: 1px solid @grayLighter;
 }
 .dropdown-menu  li:first-child a {
   border-top: none;    
@@ -72,29 +72,33 @@
   margin-left: 6px;
 }
 
+.navbar-search .btn-group .dropdown-toggle {
+  box-shadow: none;
+}
+
 // Navbar search
 .navbar-search {
-  .search-query.filter, .chzn-container-multi .chzn-choices {
+  .search-query, .chzn-container-multi .chzn-choices {
     color: @grayLighter;
-    background: @NavigationBar;
+    #gradient > .vertical(lighten(@navbarBackground, 20%), lighten(@navbarBackgroundHighlight, 20%));
     border: 1px solid #111;
     .border-radius(2px);
     @shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0px rgba(255,255,255,.15);
     .box-shadow(@shadow);
 
     // Placeholder text gets special styles; can't be bundled together though for some reason
-    .placeholder(@grayLighter);
+    .placeholder(@grayDarker);
 
     // Hover states
     &:hover {
       color: @grayDark;
-      background-color: @grayDark;
+      background: @white;
     }
     // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
     &:focus,
     &.focused {
       color: @grayDark;
-      background-color: @grayDarker;
+      background: @white;
       border: 1px solid @gray;
     }
   }

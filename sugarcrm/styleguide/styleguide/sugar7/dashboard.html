@@ -10,6 +10,7 @@
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <link href="../css/bootstrap.css" rel="stylesheet">
+  <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
 </head>
 <body>
   <div class="navbar navbar-fixed-top">
@@ -18,15 +19,13 @@
         <div class="nav-collapse">
           <ul class="nav">
             <li class="active"><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-            <li><a href="accounts.html">Accounts</a></li>
-            <li><a href="contacts.html">Contacts</a></li>
-            <li><a href="opportunities.html">Opportunities</a></li>
+            <li><a href="accounts.html" class="moduleAccounts">Accounts</a></li>
+            <li><a href="contacts.html" class="moduleContacts">Contacts</a></li>
+            <li><a href="opportunities.html" class="moduleOpportunities">Opportunities</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
               <ul class="dropdown-menu">
-                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
-                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
-                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+                <li><a href="forecast.html" class="moduleForecasts">Forecasts</a></li>
               </ul>
             </li>
           </ul>
@@ -63,7 +62,7 @@
           </ul>
           <div id="searchForm">
             <form class="navbar-search pull-right" action="">
-              <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+              <input type="text" class="search-query" placeholder="Search..." data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
               <div class="advanced">
                 <div class="btn-toolbar pull-right">
                   <div class="btn-group">
@@ -105,24 +104,36 @@
         <div class="span8 content">
           <div class="block filtered tabbable tabs-left" id="moduleActivity">
             <form class="form-search" action="">
-              <input value="" class="span12" placeholder="Search activity...">
-              <a href="" class="filter">Filter &nbsp;<i class="icon-caret-down"></i></a>
-              <div class="filtered extend hide">
-                <div class="filtered-header">
-                  <strong>Filter</strong>
+               <div class="actions btn-group pull-right dropdown">
+                 <a href="" data-toggle="dropdown" class="dropdown-toggle btn">Filter &nbsp;<i class="icon-caret-down"></i></a>
+                 <ul class="dropdown-menu">
+                   <li><a href="#myAccount">My accounts</a></li>
+                   <li><a href="#myContacts">My contacts</a></li>
+                   <li><a href="#myOpportunities">My opportunities</a></li>
+                   <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
+                 </ul>
+               </div>
+                <input value="" class="span11" placeholder="Search activity...">
+                <div class="filtered extend hide">
+                  <div class="filtered-header">
+                    <input placeholder="Select a name...">
+                    <div class="btn-group pull-right dropdown">
+                      <a href="" class="btn">Save</a>
+                    </div>
+                  </div>
+                  <div class="filtered-body">
+                    <select class="chzn-select span12 buildit">
+                      <option>Name</option>
+                      <option>Sales Stage</option>
+                    </select>
+                    <select class="chzn-select span12">
+                      <option>matches</option>
+                    </select>
+                    <input placeholder="Select a name...">
+                    <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+                  </div>
                 </div>
-                <div class="filtered-body">
-                  <select class="chzn-select">
-                    <option>Name</option>
-                  </select>
-                  <select class="chzn-select span12">
-                    <option>matches</option>
-                  </select>
-                  <input placeholder="Select a name...">
-                  <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-                </div>
-              </div>
-            </form>
+              </form>
               <form class="omnibar clearfix" action="">
               <a href="" class="avatar avatar42 pull-left">
                 <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
@@ -149,7 +160,7 @@
                       <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                     </p>
                     <div class="actions">
-                      <a class="" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                      <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
                     </div>
                   </li>
                   <div class="extend hide">
@@ -161,6 +172,9 @@
                         <a href=" profile.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
                         <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
                       </p>
+                      <div class="actions">
+                        <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                      </div>
                     </li>
                     <li>
                       <a href="" class="pull-left avatar">
@@ -169,6 +183,9 @@
                       <p>
                         <a href=" profile.html">Sabra Khan</a> commented "This is a solid flow chart for figuring out our goals"<br>
                         <date class="date">1 hour ago on 3/12/2012  at 3:00 pm EST</date>
+                        <div class="actions">
+                          <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                        </div>
                       </p>
                     </li>
                   </div>
@@ -178,7 +195,7 @@
                   <li class="acomment"><div class="control-group form-horizontal"><input placeholder="Add your comment" class="reply span10"><input type="submit" class="btn btn-primary" value="Reply"></div></li>
                 </ul>
                 <div class="actions">
-                  <a class="" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                  <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
                   <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
                   <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                 </div>
@@ -194,7 +211,7 @@
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
-                  <a class="" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                  <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
                   <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
                   <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                 </div>
@@ -210,7 +227,7 @@
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
-                  <a class="" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                  <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
                   <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
                   <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                 </div>
@@ -226,7 +243,7 @@
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
-                  <a class="" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                  <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
                   <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
                   <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                 </div>
@@ -242,7 +259,7 @@
                 </p>
                 <ul class="commented"></ul>
                 <div class="actions">
-                  <a class="" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
+                  <a class="remove" href="#"><i class="icon-remove" rel="tooltip" data-title="Remove"></i></a>
                   <a class="comment" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
                   <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
                 </div>
@@ -253,9 +270,17 @@
         <div class="span4 sidebar-content folded">
           <div class="sidebar-pane active" id="overview">
             <div class="block thumbnail">
-              <h4>Pipeline</h4>
+              <h4>Events</h4>
               <div id="donut" class="chart-container" style="height: 300px">
                 <svg></svg>
+              </div>
+              <div class="actions dropdown pull-right">
+                <a data-toggle="dropdown" rel="tooltip" class="dashletActionAdmin dropdown-toggle" href="#" title="Admin"><i class="icon-cog"></i></a>
+                <ul class="dropdown-menu">
+                  <li><a href="">Expand</a></li>
+                  <li><a href="">Chart options</a></li>
+                  <li class="primary"><a href="" class="remove">Remove dashlet</a></li>
+                </ul>
               </div>
             </div>
           </div>  
@@ -285,7 +310,6 @@
           <div class="sidebar-pane" id="lead1">
             <div class="block" id="">
               <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-
               <h4><span class="label label-lead">Lead</span> Perkin Kleiners - 100 Seats</h4>
               <br>
               <div class="row">
@@ -1083,11 +1107,11 @@
           .showTitle(false)
           .donut(true)
           .donutLabelsOutside(true)
-          .colorData( 'graduated', {c1: '#982224', c2: '#aaaaaa', l: gauge_data.data.length} )
+          .colorData( 'default' )
           .colorFill( 'default' )
           .tooltip( function(key, x, y, e, graph) {
-            return '<p>Stage: <b>' + key + '</b></p>' +
-                   '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+            return '<p>Event: <b>' + key + '</b></p>' +
+                   '<p>Amount: <b>' +  parseInt(y) + '</b></p>' +
                    '<p>Percent: <b>' +  x + '%</b></p>'
       });
           d3.select("#donut svg")
