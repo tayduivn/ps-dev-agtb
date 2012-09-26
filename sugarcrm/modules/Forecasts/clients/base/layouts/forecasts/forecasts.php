@@ -6,9 +6,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             'view' => 'forecastsFilter',
         ),
         array(
-            'view' => 'forecastsChartOptions',
-        ),
-        array(
             'view' => 'forecastsTree',
         ),
         array(

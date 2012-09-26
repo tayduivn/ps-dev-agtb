@@ -1901,9 +1901,9 @@ $app_list_strings = array (
         'probability' => 'Probability'
     ),
     'forecasts_chart_options_dataset' => array(
-        'likely' => 'Likely Case',
-        'best' => 'Best Case',
-        'worst' => 'Worst Case'
+        'likely' => 'Likely',
+        'best' => 'Best',
+        'worst' => 'Worst'
     ),
 );
 
