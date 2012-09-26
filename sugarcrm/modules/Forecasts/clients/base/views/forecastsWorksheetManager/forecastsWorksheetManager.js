@@ -188,55 +188,47 @@
             field = new app.view.ClickToEditField(field, this);
         }
     },
-    
+
     /**
      * Renders view
      */
-    _renderHtml:function (ctx, options) {
+    _render:function () {
         var self = this;
         var enableCommit = false;
-        
+
         if(!this.showMe()){
         	return false;
         }
         $("#view-sales-rep").hide();
         $("#view-manager").show();
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
-        
+        app.view.View.prototype._render.call(this);
+
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
-        // define vars for use in loop, created outside loop
-        var def = {};
-        var name = '';
-        var colWidth = '';
+
+        var _colIndex = 0;
 
         for( var i = 0; i < fields.length; i++ )  {
-            name = fields[i].name;
-            // explicitly looking for column "name" instead of the first column
-            // in case we add column rearranging
-            if(name == "name") {
-                colWidth = '40%';
-            } else {
-                colWidth = '10%';
+            if(fields[i].enabled) {
+                // in case we add column rearranging
+                columnDefs.push( {
+                    "sName": fields[i].name,
+                    "aTargets": [ _colIndex++ ],
+                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%'
+                } );
             }
-            def = {
-                "sName": name,
-                "aTargets": [ i ],
-                "sWidth" : colWidth
-            };
-            columnDefs.push( def );
         }
 
-        this.gTable = this.$(".view-forecastsWorksheetManager").dataTable(
+        this.gTable = this.$el.find(".worksheetManagerTable").dataTable(
             {
                 "bAutoWidth": false,
+                "aaSorting": [],
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
                 "bPaginate":false
-
             }
         );
 
@@ -250,24 +242,23 @@
                 }
             });
         }
-        
+
         //see if anything in the model is a draft version
         _.each(this._collection.models, function(model, index){
         	if(model.get("version") == 0){
         		enableCommit = true;
         	}
         });
-        if(enableCommit){
+        if (enableCommit) {
         	self.context.forecasts.set({commitButtonEnabled: true});
-        }
-        else{
+        } else {
         	self.context.forecasts.set({commitButtonEnabled: false});
         }
-        
+
         this.calculateTotals();
         this.totalView.render();
     },
-    
+
     calculateTotals: function() {
         var self = this;
         var amount = 0;
