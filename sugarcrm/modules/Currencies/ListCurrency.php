@@ -37,25 +37,90 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	  	} 
 		
 	}
-	function handleAdd(){
-			global $current_user;
-			if($current_user->is_admin){
-			if(isset($_POST['edit']) && $_POST['edit'] == 'true' && isset($_POST['name']) && !empty($_POST['name']) && isset($_POST['conversion_rate']) && !empty($_POST['conversion_rate']) && isset($_POST['symbol']) && !empty($_POST['symbol'])){
-				
-				$currency = new Currency();
-				if(isset($_POST['record']) && !empty($_POST['record'])){
-	
-					$currency->retrieve($_POST['record']);
-				}
-				$currency->name = $_POST['name'];
-				$currency->status = $_POST['status'];
-				$currency->symbol = $_POST['symbol'];
-				$currency->iso4217 = $_POST['iso4217'];
-				$currency->conversion_rate = unformat_number($_POST['conversion_rate']);
-				$currency->save();
-				$this->focus = $currency;
-			}
-			}
+
+     /**
+      * handle creating or updating a currency record
+      *
+      */
+     function handleAdd()
+     {
+        global $current_user;
+
+        if($current_user->is_admin)
+        {
+            if(isset($_POST['edit']) && $_POST['edit'] == 'true' && isset($_POST['name']) && !empty($_POST['name']) && isset($_POST['conversion_rate']) && !empty($_POST['conversion_rate']) && isset($_POST['symbol']) && !empty($_POST['symbol']))
+            {
+
+                $currency = new Currency();
+                if(isset($_POST['record']) && !empty($_POST['record'])){
+
+                   $currency->retrieve($_POST['record']);
+                }
+                $currency->name = $_POST['name'];
+                $currency->status = $_POST['status'];
+                $currency->symbol = $_POST['symbol'];
+                $currency->iso4217 = $_POST['iso4217'];
+                $previousConversionRate = $currency->conversion_rate;
+                $currency->conversion_rate = unformat_number($_POST['conversion_rate']);
+                $currency->save();
+                $this->focus = $currency;
+
+                //Check if the conversion rates changed and, if so, update the rates with a scheduler job
+                if($previousConversionRate != $currency->conversion_rate)
+                {
+                    $globPaths = array(
+                        array('modules/*/jobs/*BaseRateSchedulerJob.php'),
+                        array('custom/modules/*/jobs/Custom*BaseRateSchedulerJob.php'),
+                    );
+
+                    //Keep track of which modules have a custom or module specific implementation
+                    $individualModules = array();
+                    $filesToRun = array();
+
+                    foreach ($globPaths as $entry)
+                    {
+                        $files = glob($entry, GLOB_NOSORT);
+
+                        if(!empty($files))
+                        {
+                            foreach($files as $jobFile)
+                            {
+                                //Store the module in first key and the name of the file in the second key
+                                preg_match('/modules\/([^\/]+?)\/jobs\/(.+?)\.php$/', $jobFile, $matches);
+                                if($matches[1] != 'Currencies')
+                                {
+                                   $individualModules[$matches[1]] = $matches[1];
+                                   $filesToRun[$jobFile] = $matches[1];
+                                }
+
+                            }
+                        }
+                    }
+
+                    require_once(get_custom_file_if_exists('modules/Currencies/jobs/BaseRateSchedulerJob.php'));
+                    $schedulerJob = new BaseRateSchedulerJob();
+
+                    global $timedate;
+                    $job = new SchedulersJob();
+                    $job->name = "BaseRateSchedulerJob: " . $timedate->getNow()->asDb();
+                    $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+                    $job->target = "class::BaseRateSchedulerJob";
+                    $job->data = json_encode($individualModules);
+                    $job->retry_count = 0;
+                    $job->assigned_user_id = $current_user->id;
+                    $job->save();
+
+                    /*
+                    foreach($filesToRun as $file=>$name)
+                    {
+                        require_once($file);
+                        $schedulerJob = new $name();
+                        $schedulerJob->run();
+                    }
+                    */
+                }
+            }
+        }
 		
 	}
 		
