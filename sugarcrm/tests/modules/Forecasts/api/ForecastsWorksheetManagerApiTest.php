@@ -487,6 +487,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
      */
     public function testWorksheetVersionSave()
     {
+    	$version = "";
+    	
         $postData = array("amount" => self::$managerData["amount"],
             "quota" => self::$managerData["quota"],
             "quota_id" => self::$managerData["quota_id"],
@@ -516,8 +518,17 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         //see if draft version comes back
         $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
-
-        $this->assertEquals("0", $response["reply"][0]["version"], "Draft version was not returned.");
+		
+		foreach($response["reply"] as $record)
+        {
+        	if($record["id"] == $postData["id"])
+        	{
+        		$version = $record["version"];
+        	}
+        	break;
+        }
+	
+        $this->assertEquals("0", $version, "Draft version was not returned.");
 
         //Now, save as a regular version so things will be reset.
         $postData["draft"] = 0;
@@ -527,7 +538,15 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         //now, see if the regular version comes back.
         $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
-        $this->assertEquals("1", $response["reply"][0]["version"], "Comitted version was not returned.");
+        foreach($response["reply"] as $record)
+        {
+        	if($record["id"] == $postData["id"])
+        	{
+        		$version = $record["version"];
+        	}
+        	break;
+        }
+        $this->assertEquals("1", $version, "Comitted version was not returned.");
 
     }
 
@@ -538,7 +557,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
     public function testWorksheetDraftVisibility()
     {
         self::$managerData2["best_adjusted"] = self::$managerData2["best_adjusted"] + 100;
-
+		$best_adjusted = "";
+		
         $postData = array("amount" => self::$managerData2["amount"],
             "quota" => self::$managerData2["quota"],
             "quota_id" => self::$managerData2["quota_id"],
@@ -577,7 +597,16 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         //Check the table as a manager1 to see if the draft version is hidden
         $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager2['user']->id . '&timeperiod_id=' . self::$timeperiod->id);
-        $this->assertEquals(self::$managerData2["best_adjusted"] - 100, $response["reply"][0]["best_adjusted"], "Draft version was returned");
+        foreach($response["reply"] as $record)
+        {
+        	if($record["id"] == $postData["id"])
+        	{
+        		$best_adjusted = $record["best_adjusted"];
+        	}
+        	break;
+        }
+        
+        $this->assertEquals(self::$managerData2["best_adjusted"] - 100, $best_adjusted, "Draft version was returned");
     }
 }
 
