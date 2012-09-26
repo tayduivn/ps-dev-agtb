@@ -74,29 +74,52 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSend_ConnectToHostThrowsAnException() {
-        $this->mockMailer->expects(self::any())
+    public function testSend_PHPMailerSmtpConnectThrowsException_ConnectToHostCatchesAndThrowsMailerException() {
+        $mockPhpMailer = self::getMock(
+            "PHPMailer",
+            array("SmtpConnect"),
+            array(true) // use PHPMailer with exceptions
+        );
+
+        $mockPhpMailer->expects(self::any())
+            ->method("SmtpConnect")
+            ->will(self::throwException(new phpmailerException()));
+
+        $mockMailer = self::getMock(
+            "SimpleMailer",
+            array(
+                 "generateMailer",
+                 "transferConfigurations",
+                 "transferHeaders",
+                 "transferRecipients",
+                 "transferBody",
+                 "transferAttachments",
+            ),
+            array($this->mockMailerConfig)
+        );
+
+        $mockMailer->expects(self::any())
+            ->method("generateMailer")
+            ->will(self::returnValue($mockPhpMailer));
+
+        $mockMailer->expects(self::any())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
-        $this->mockMailer->expects(self::any())
-            ->method("connectToHost")
-            ->will(self::throwException(new MailerException()));
-
-        $this->mockMailer->expects(self::never())
+        $mockMailer->expects(self::never())
             ->method("transferHeaders");
 
-        $this->mockMailer->expects(self::never())
+        $mockMailer->expects(self::never())
             ->method("transferRecipients");
 
-        $this->mockMailer->expects(self::never())
+        $mockMailer->expects(self::never())
             ->method("transferBody");
 
-        $this->mockMailer->expects(self::never())
+        $mockMailer->expects(self::never())
             ->method("transferAttachments");
 
         self::setExpectedException("MailerException");
-        $this->mockMailer->send();
+        $mockMailer->send();
     }
 
     /**
