@@ -73,8 +73,9 @@
     $('.toggle-all').on('click', function () {
       $('table').find('tr.message').remove();
       $('table').find(':checkbox').attr('checked', this.checked);
-      $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7">You have selected 10 records. Do you want select <a href="">select all 300</a> records.</td></tr>');
-    });
+      $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="">select all 300</a> records.</td></tr>');
+    })
+
 
     // timeout the alerts
     setTimeout( function (){$('.timeten').fadeOut().remove();}, 9000);
