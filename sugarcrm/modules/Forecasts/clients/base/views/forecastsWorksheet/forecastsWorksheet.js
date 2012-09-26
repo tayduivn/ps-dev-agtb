@@ -17,6 +17,17 @@
     isEditableWorksheet:false,
     _collection:{},
 
+    /**
+     * Contains a list of column names from metadata and maps them to correct config param
+     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
+     *
+     * @property _tableColumnsConfigKeyMap
+     */
+    _tableColumnsConfigKeyMap: {
+        'amount': 'show_worksheet_likely',
+        'best_case': 'show_worksheet_best',
+        'worst_case': 'show_worksheet_worst',
+    },
 
     /**
      * This function handles updating the totals calculation and calling the render function.  It takes the model entry
@@ -197,13 +208,96 @@
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
             }, this);
+
+            this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility('amount', value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility('best_case', value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility('worst_case', value, self);
+                }
+            });
+
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-            	worksheet.safeFetch();
+                worksheet.safeFetch();
             });
         }
     },
-    
+
+    /**
+     * Sets the visibility of a column or columns if array is passed in
+     *
+     * @param cols {*} Array or String, the sName of the column to change
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     * @param ctx {Object} the context of this view to have access to the checkForColumnsSetVisibility function
+     */
+    setColumnVisibility: function(cols, value, ctx) {
+        var aoColumns = ctx.gTable.fnSettings().aoColumns;
+        if(_.isArray(cols)) {
+            for(var i in cols) {
+                var columnName = cols[i];
+                ctx.checkForColumnsSetVisibility(aoColumns, columnName, value);
+            }
+        } else if(_.isString(cols)) {
+            ctx.checkForColumnsSetVisibility(aoColumns, cols, value);
+        }
+    },
+
+    /**
+     * Checks for a column name in an array of columns and sets the visibibility to value
+     *
+     * @param columns {Array} an array of the columns in the table
+     * @param colName {String} the sName of a column in the table we're looking for
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     */
+    checkForColumnsSetVisibility: function(columns, colName, value) {
+        for(var k in columns) {
+            if(columns[k].sName == colName)  {
+                this.gTable.fnSetColumnVis(k, value == 1);
+                break;
+            }
+        }
+    },
+
+    /**
+     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     *
+     * @param colKey {String} the column sName to check in the keymap
+     * @return {*} returns null if not found in the keymap, returns true/false if it did find it
+     */
+    checkConfigForColumnVisibility: function(colKey) {
+        var returnValue = null;
+        // check to see if it's in the map first
+        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
+            var configKey = this._tableColumnsConfigKeyMap[colKey];
+            returnValue = this.context.forecasts.config.get(configKey);
+        }
+
+        //if returnValue is null, it did not have a config option to correlate to,
+        // so set it visible
+        if(_.isNull(returnValue)) {
+            returnValue = true;
+        } else {
+            // convert returnValue to boolean if it isnt null
+            returnValue = returnValue == 1;
+        }
+
+        return returnValue;
+    },
+
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
@@ -280,7 +374,13 @@
 
         _.each(fields, function(field, key){
             var name = field.name;
-            var fieldDef = { "sName": name, "aTargets": [ key ] };
+
+            var fieldDef = {
+                "sName": name,
+                "aTargets": [ key ],
+                "bVisible" : self.checkConfigForColumnVisibility(field.name)
+            };
+
             if(typeof(field.type) != "undefined" && field.type == "bool"){
             	fieldDef["sSortDataType"] = "dom-checkbox";
             }
@@ -342,7 +442,6 @@
 
         return this;
     },
-
 
     /**
      * Creates the "included totals" and "overall totals" subviews for the worksheet

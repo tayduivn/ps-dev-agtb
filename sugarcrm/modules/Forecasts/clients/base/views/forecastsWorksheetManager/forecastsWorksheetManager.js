@@ -149,15 +149,24 @@
             }, this);
 
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
-                self.setColumnVisibility(['likely_case', 'likely_adjusted'], value, self);
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['likely_case', 'likely_adjusted'], value, self);
+                }
             });
 
             this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
-                self.setColumnVisibility(['best_case', 'best_adjusted'], value, self);
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['best_case', 'best_adjusted'], value, self);
+                }
             });
 
             this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
-                self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
+                }
             });
 
             var worksheet = this;
@@ -214,6 +223,15 @@
         if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
             var configKey = this._tableColumnsConfigKeyMap[colKey];
             returnValue = this.context.forecasts.config.get(configKey);
+        }
+
+        //if returnValue is null, it did not have a config option to correlate to,
+        // so set it visible
+        if(_.isNull(returnValue)) {
+            returnValue = true;
+        } else {
+            // convert returnValue to boolean if it isnt null
+            returnValue = returnValue == 1;
         }
 
         return returnValue;
@@ -296,17 +314,12 @@
 
         for( var i = 0; i < fields.length; i++ )  {
             if(fields[i].enabled) {
-                var bVis = this.checkConfigForColumnVisibility(fields[i].name);
-                //if bVis is null, it did not have a config option to correlate to, so set it visible
-                if(_.isNull(bVis)) {
-                    bVis = true;
-                }
                 // in case we add column rearranging
                 columnDefs.push( {
                     "sName": fields[i].name,
                     "aTargets": [ _colIndex++ ],
                     "sWidth" : (fields[i].name == "name") ? '40%' : '10%',
-                    "bVisible" : bVis
+                    "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
                 } );
             }
         }
