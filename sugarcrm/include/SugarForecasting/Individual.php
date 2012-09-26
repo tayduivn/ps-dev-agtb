@@ -89,15 +89,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         } else {
             $sql .= "and w.version = 1 ";
         }
-
-        /*if(isset($this->args['id']))
-        {
-            $sql .= " o.id = '" . $this->getArg('id') . "' and ";
-        }
-
-        $sql .= " t.id =  '" . $this->getArg('timeperiod_id') . "' " .
-            " and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
-            "and o.deleted = 0";*/
+        
 		$sql .= "where p.deleted = 0 " .
 				"and o.deleted = 0 ";
         $result = $db->query($sql);
