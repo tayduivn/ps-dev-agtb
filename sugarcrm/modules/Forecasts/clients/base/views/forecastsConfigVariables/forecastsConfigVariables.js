@@ -6,7 +6,7 @@
      * @private
      */
     _renderField: function(field) {
-        if (field.multi) {
+        if (field.def.multi) {
             field = this._setUpMultiselectField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
