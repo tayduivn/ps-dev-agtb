@@ -103,10 +103,10 @@ describe("Quickcreate", function() {
             expect(layout.$el.find('.dataTables_filter th').size()).toEqual(4);
         });
 
-        it("should have only have header row on the quickcreate-list table", function() {
+        it("should have the quickcreate-list table with no data", function() {
             layout.render();
 
-            expect(layout.$el.find('.dataTables_filter tr').size()).toEqual(1);
+            expect(layout.$el.find('.dataTables_filter td.dataTables_empty').size()).toEqual(1);
         });
 
         it("should have five buttons", function() {
