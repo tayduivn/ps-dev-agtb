@@ -129,6 +129,13 @@ class DownloadFile {
                 if ($bean->field_defs[$field]['type'] == 'image') {
                     $filename = $bean->{$field};
                     $filepath = 'upload://' . $filename;
+                    
+                    // Quick existence check to make sure we are actually working 
+                    // on a real file
+                    if (!file_exists($filepath)) {
+                        return false;
+                    }
+                    
                     $filedata = getimagesize($filepath);
 
                     // Add in image height and width
@@ -207,7 +214,13 @@ class DownloadFile {
                     }
 
                     $filepath = $this->getFilePathFromId($fileid);
-
+                    
+                    // Quick existence check to make sure we are actually working 
+                    // on a real file
+                    if (!file_exists($filepath)) {
+                        return false;
+                    }
+                    
                     if (empty($fileurl) && !empty($bean->doc_url)) {
                         $fileurl = $bean->doc_url;
                     }
