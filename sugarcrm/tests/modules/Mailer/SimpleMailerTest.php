@@ -74,33 +74,6 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSend_TransferConfigurationsThrowsAnException() {
-        $this->mockMailer->expects(self::any())
-            ->method("transferConfigurations")
-            ->will(self::throwException(new MailerException()));
-
-        $this->mockMailer->expects(self::never())
-            ->method("connectToHost");
-
-        $this->mockMailer->expects(self::never())
-            ->method("transferHeaders");
-
-        $this->mockMailer->expects(self::never())
-            ->method("transferRecipients");
-
-        $this->mockMailer->expects(self::never())
-            ->method("transferBody");
-
-        $this->mockMailer->expects(self::never())
-            ->method("transferAttachments");
-
-        self::setExpectedException("MailerException");
-        $this->mockMailer->send();
-    }
-
-    /**
-     * @group mailer
-     */
     public function testSend_ConnectToHostThrowsAnException() {
         $this->mockMailer->expects(self::any())
             ->method("transferConfigurations")
