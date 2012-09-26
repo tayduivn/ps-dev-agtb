@@ -70,18 +70,6 @@ class EmailsApiTest extends RestTestBase {
         $this->team_id   = "unit_test_team_id_";
         $this->team_name = "unit_test_team_name_";
 
-        $sql = "DELETE FROM teams WHERE name like 'Sugar%'";
-        $GLOBALS['db']->query($sql);
-
-        $sql = "DELETE FROM teams WHERE name like '{$this->team_name}%'";
-        $GLOBALS['db']->query($sql);
-
-        $sql = "DELETE FROM team_sets";
-        $GLOBALS['db']->query($sql);
-
-        $sql = "DELETE FROM team_sets_teams";
-        $GLOBALS['db']->query($sql);
-
         for ($i=0; $i<3; $i++) {
             $id = $this->team_id . $i;
             $name = $this->team_name . $i;
@@ -154,7 +142,6 @@ class EmailsApiTest extends RestTestBase {
         $this->uploaded_document_file_path = "{$this->document_upload_directory}/{$this->document->id}";
         copy($fromDocumentFile, $this->uploaded_document_file_path);
 
-
         $this->document->revision = '38';
         $this->document->filename = $this->document_file_name;
         $this->document->document_name = 'EmailsAPI Unit Test Document';
@@ -174,46 +161,12 @@ class EmailsApiTest extends RestTestBase {
 
     public function tearDown()
     {
-        // $sql = "DELETE FROM users WHERE first_name = 'SugarUser'";
-        // $sql = "DELETE FROM users WHERE id = '{$this->current_user->id}'";
-        // $GLOBALS['db']->query($sql);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-
-        $sql = "DELETE FROM teams WHERE name like 'Sugar%'";
-        $GLOBALS['db']->query($sql);
-
-        $sql = "DELETE FROM teams WHERE name like '{$this->team_name}%'";
-        $GLOBALS['db']->query($sql);
-
-        $sql = "DELETE FROM team_sets";
-        $GLOBALS['db']->query($sql);
-
-        $sql = "DELETE FROM team_sets_teams";
-        $GLOBALS['db']->query($sql);
 
         if (isset($this->email_id)) {
             $this->deleteEmails($this->email_id);
             unset($this->email_id);
-        }
-
-        if (file_exists($this->uploaded_image_file_path)) {
-            $res=unlink($this->uploaded_image_file_path);
-            //printf("UNLINK  '%s '(RES=%d)\n",$this->uploaded_image_file_path, $res);
-        }
-        if (file_exists($this->user_cache_directory)) {
-            $res=rmdir($this->user_cache_directory);
-            //printf("RMDIR  '%s '(RES=%d)\n",$this->user_cache_directory, $res);
-        }
-
-        if (file_exists($this->uploaded_document_file_path)) {
-            $res=unlink($this->uploaded_document_file_path);
-            //printf("UNLINK Uploaded Document File: '%s '(RES=%d)\n",$this->uploaded_document_file_path, $res);
-        }
-
-        if (file_exists($this->renamed_document_file_path)) {
-            $res=unlink($this->renamed_document_file_path);
-            //printf("UNLINK Renamed Document File: '%s '(RES=%d)\n",$this->renamed_document_file_path, $res);
         }
 
         $sql = "DELETE FROM documents WHERE id = '{$this->document->id}'";
@@ -378,7 +331,6 @@ class EmailsApiTest extends RestTestBase {
 
         $this->assertTrue($this->check_team_sets(), "Expected Team Sets Not Created");
         $this->assertEquals($this->teams[0],$email['team_id'],"Unexpected Email Team ID");
-        $this->assertEquals($this->get_team_set_id(),$email['team_set_id'],"Unexpected Email Team Set ID");
     }
 
     /**
@@ -571,59 +523,50 @@ class EmailsApiTest extends RestTestBase {
      */
     private function check_team_sets() {
         $ids = array();
-        $team_set_ids = array();
         $save_team_set_id=null;
 
-        $sql1 = "SELECT team_id, id, team_set_id FROM team_sets_teams WHERE team_id like '{$this->team_id}%'";
+        $sql1 = "SELECT team_id, team_set_id FROM team_sets_teams WHERE team_id like '{$this->team_id}%'";
         $result = $GLOBALS['db']->query($sql1);
         while($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            $id = $row['id'];
             $team_set_id = $row['team_set_id'];
-            $ids[$id] = true;
-            $team_set_ids[$team_set_id] = true;
             $save_team_set_id = $team_set_id;
         }
 
-        $count=0;
-        $sql2 = "SELECT id FROM team_sets WHERE id = '$save_team_set_id'";
+        $sql2 = "SELECT id, team_id FROM team_sets_teams WHERE team_set_id = '$save_team_set_id'";
         $result = $GLOBALS['db']->query($sql2);
+        while($row = $GLOBALS['db']->fetchByAssoc($result)) {
+            $id = $row['id'];
+            $ids[$id] = true;
+        }
+
+        $count=0;
+        $sql3 = "SELECT id FROM team_sets WHERE id = '$save_team_set_id'";
+        $result = $GLOBALS['db']->query($sql3);
         if ($result) {
             while($row = $GLOBALS['db']->fetchByAssoc($result)) {
                 $count++;
             }
         }
 
-        /*
-        printf("save_team_set_id: %s\n",$save_team_set_id);
+        /**
         printf("SQL1: %s\n",$sql1);
+        printf("save_team_set_id: %s\n",$save_team_set_id);
+        printf("SQL2: %s\n",$sql1);
         print_r($ids);
-        printf("COUNT IDS: %d\n",count($ids)); // SHOULD BE THREE
-        print_r($team_set_ids);
-        printf("COUNT TEAM SET IDS: %d\n",count($team_set_ids)); // SHOULD BE ONE
+        printf("COUNT IDS: %d\n",count($ids));
 
-        printf("SQL2: %s\n",$sql2);
+        printf("SQL3: %s\n",$sql3);
         printf("COUNT TEAM SETS: %d\n",$count);
-        */
+        **/
 
         if (count($ids) != 3)
             return false;   // should be exactly three
-        if (count($team_set_ids) != 1)
-            return false;   // should be exactly one
         if ($count != 1)
             return false;   // should be exactly one
 
         return true;
     }
 
-
-    private function get_team_set_id() {
-        $sql1 = "SELECT team_id, id, team_set_id FROM team_sets_teams WHERE team_id like '{$this->team_id}%' LIMIT 1";
-        $result = $GLOBALS['db']->query($sql1);
-        if ($row = $GLOBALS['db']->fetchByAssoc($result)) {
-            return $row['team_set_id'];
-        }
-        return '';
-    }
 
 
     private function deleteEmails($email_id) {
