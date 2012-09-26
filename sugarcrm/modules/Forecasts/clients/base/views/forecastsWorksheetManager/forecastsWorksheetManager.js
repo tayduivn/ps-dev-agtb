@@ -185,28 +185,17 @@
      */
     setColumnVisibility: function(cols, value, ctx) {
         var aoColumns = this.gTable.fnSettings().aoColumns;
-        if(_.isArray(cols)) {
-            for(var i in cols) {
-                var columnName = cols[i];
-                ctx.checkForColumnsSetVisibility(aoColumns, columnName, value);
-            }
-        } else if(_.isString(cols)) {
-            ctx.checkForColumnsSetVisibility(aoColumns, cols, value);
+        if(!_.isArray(cols)) {
+            // make cols an array
+            cols = [cols]
         }
-    },
-
-    /**
-     * Checks for a column name in an array of columns and sets the visibibility to value
-     *
-     * @param columns {Array} an array of the columns in the table
-     * @param colName {String} the sName of a column in the table we're looking for
-     * @param value {*} int or Boolean, 1/true or 0/false to show the column
-     */
-    checkForColumnsSetVisibility: function(columns, colName, value) {
-        for(var k in columns) {
-            if(columns[k].sName == colName)  {
-                this.gTable.fnSetColumnVis(k, value == 1);
-                break;
+        for(var i in cols) {
+            var columnName = cols[i];
+            for(var k in aoColumns) {
+                if(aoColumns[k].sName == columnName)  {
+                    this.gTable.fnSetColumnVis(k, value == 1);
+                    break;
+                }
             }
         }
     },
