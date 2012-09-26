@@ -6,8 +6,9 @@ class SideBarLayout {
     protected $spans = array('main' => 8, 'side' => 4);
     protected $layout = array(
         'type' => 'simple',
-        'components' =>
-        array(),
+        'components' => array(
+            array('layout' => array('type' => 'default'))
+        ),
     );
 
     public function __construct() {}
@@ -34,6 +35,7 @@ class SideBarLayout {
                     'type' => 'simple',
                     'span' => $this->spans['main'],
                     'components' => $this->containers['main'],
+                    'name' => "main",
                 ),
             );
         }
@@ -51,6 +53,7 @@ class SideBarLayout {
                         ),
                     )),
                     'css_class' => 'sidebar-content folded',
+                    'name' => "sidebar",
                 )
             );
         }
@@ -65,19 +68,20 @@ class SideBarLayout {
     }
 
     public function getLayout() {
+        // No sidebar in layout, set to full width
         if (empty($this->containers['side'])) {
             $this->spans['main'] = 12;
         }
 
-        if(empty($this->containers['side']) && empty($this->containers['top']) && empty($this->containers['bottom'])) {
+        // Only main
+        if (empty($this->containers['side']) && empty($this->containers['top']) && empty($this->containers['bottom'])) {
             $this->layout = array(
-                    'type' => 'simple',
-                    'span' => $this->spans['main'],
-                    'components' => $this->containers['main'],
-                );
-
+                'type' => 'simple',
+                'span' => $this->spans['main'],
+                'components' => $this->containers['main'],
+            );
         } else {
-            $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
+            $this->layout['components'][0]["layout"]['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
         }
         return $this->layout;
     }
@@ -91,9 +95,9 @@ class SideBarLayout {
                 $start = array_slice($components, 0, $index);
                 $end = array_slice($components, $index);
                 return array_merge($start, array($component), $end);
-
             }
             $components[$index] = $component;
+
             return $components;
         }
     }

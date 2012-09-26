@@ -1,13 +1,8 @@
 ({
-/**
- * View that displays a model pulled from the activities stream.
- * @class View.Views.PreviewView
- * @alias SUGAR.App.view.views.PreviewView
- * @extends View.View
- */
     events: {
         'click .closeSubdetail': 'closePreview'
     },
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
@@ -19,8 +14,9 @@
 
         this.$el.parent().parent().addClass("container-fluid tab-content");
     },
+
     _renderHtml: function() {
-        var fieldsArray, that;
+        var fieldsArray;
         console.log(this, "_renderHtml");
         app.view.View.prototype._renderHtml.call(this);
     },
@@ -28,7 +24,7 @@
     togglePreview: function(model) {
         console.log(this, model, "test");
         var fieldsToDisplay = app.config.fieldsToDisplay || 5;
-        if(model) {
+        if (model) {
             // Create a corresponding Bean and Context for clicked search result. It
             // might be a Case, a Bug, etc...we don't know, so we build dynamically.
             this.model = app.data.createBean(model.get('_module'), model.toJSON());
@@ -48,6 +44,7 @@
             app.view.View.prototype._render.call(this);
         }
     },
+
     closePreview: function() {
         this.model.clear();
         this.$el.empty();
