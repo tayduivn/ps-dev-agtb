@@ -61,19 +61,19 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
             $start_date = $timedate->getNow()->asDbDate();
         }
 
-        $start_date = $timedate->fromDbDate($start_date);
+        $end_date = $timedate->fromDbDate($start_date);
 
         //set the start/end date
-        $this->start_date = $timedate->asUserDate($start_date);
+        $this->start_date = $start_date;
 
         if($this->is_fiscal) {
-            $endDate = $start_date->modify('+$week_count month');
-            $endDate = $endDate->modify('-1 day');
+            $end_date = $end_date->modify('+$week_count month');
+            $end_date = $end_date->modify('-1 day');
         } else {
-            $endDate = $start_date->modify('+1 month');
-            $endDate = $endDate->modify('-1 day');
+            $end_date = $end_date->modify('+1 month');
+            $end_date = $end_date->modify('-1 day');
         }
-        $this->end_date = $timedate->asUserDate($endDate);
+        $this->end_date = $timedate->asDbDate($end_date);
     }
 
     /**
@@ -84,19 +84,18 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
      * @return MonthTimePeriod
      */
     public function createNextTimePeriod($week_length=4) {
-        $nextPeriod = new MonthTimePeriod();
         $timedate = TimeDate::getInstance();
-        $nextEndDate = $timedate->fromUserDate($this->end_date);
+        $nextEndDate = $timedate->fromDbDate($this->end_date);
 
         $nextStartDate = $nextEndDate->modify('+1 day');
+        $nextStartDate = $timedate->asDbDate($nextStartDate);
         if($this->is_fiscal)
         {
-            $nextEndDate = $nextEndDate->modify('+$week_length week');
+            $nextPeriod = new MonthTimePeriod($nextStartDate, true, $week_length);
         } else {
-            $nextEndDate = $nextEndDate->modify('+1 month');
+            $nextPeriod = new MonthTimePeriod($nextStartDate, false);
         }
-        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
-        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
+        $nextPeriod->is_leaf = $this->is_leaf;
         $nextPeriod->save();
 
         return $nextPeriod;
@@ -123,28 +122,32 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
      * @return mixed
      */
     public function getLeaves() {
-        $this->load_relationship('related_timeperiods');
+        //$this->load_relationship('related_timeperiods');
+        $leaves = array();
+        $db = DBManagerFactory::getInstance();
+        $query = "select id, time_period_type from timeperiods "
+        . "WHERE parent_id = " . $db->quoted($this->id) . " "
+        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
 
-        return $this->related_timeperiods;
+        $result = $db->query($query);
+
+        while($row = $db->fetchByAssoc($result)) {
+            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
+        }
+        return $leaves;
     }
+
 
     /**
      * build leaves for the timeperiod by creating the specified types of timeperiods
+     * currently the monthly time period doesn't allow these, so it will throw an exception right now
+     * this can be changed in the future to allow drillable periods if necessary
      *
      * @param string $timePeriodType
      * @return mixed
      */
     public function buildLeaves($timePeriodType) {
-        if($this->hasLeaves()) {
-            return;
-        }
-
-        switch($timePeriodType) {//todo exception for making further leaves
-
-            case "Weekly":
-                break;
-
-        }
+        throw new Exception("This TimePeriod is a leaf only and not allowed to be a leaf");
 
     }
 }

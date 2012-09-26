@@ -174,7 +174,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $endDate->setTime(23,59,59);
 
         $this->assertEquals($startDate->getTimestamp(), self::$calendarLeaves[0]->start_date_timestamp, "1st quarter start timestamp is wrong");
-        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[0]->end_date_timestamp, "1st quarter end timestamp is wrong");;
+        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[0]->end_date_timestamp, "1st quarter end timestamp is wrong");
     }
 
     /**
@@ -196,7 +196,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $endDate->setTime(23,59,59);
 
         $this->assertEquals($startDate->getTimestamp(), self::$calendarLeaves[1]->start_date_timestamp, "2nd quarter start timestamp is wrong");
-        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[1]->end_date_timestamp, "2nd quarter end timestamp is wrong");;
+        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[1]->end_date_timestamp, "2nd quarter end timestamp is wrong");
     }
 
     /**
@@ -218,7 +218,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $endDate->setTime(23,59,59);
 
         $this->assertEquals($startDate->getTimestamp(), self::$calendarLeaves[2]->start_date_timestamp, "3rd quarter start timestamp is wrong");
-        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[2]->end_date_timestamp, "3rd quarter end timestamp is wrong");;
+        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[2]->end_date_timestamp, "3rd quarter end timestamp is wrong");
     }
 
     /**
@@ -240,7 +240,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $endDate->setTime(23,59,59);
 
         $this->assertEquals($startDate->getTimestamp(), self::$calendarLeaves[3]->start_date_timestamp, "4th quarter start timestamp is wrong");
-        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[3]->end_date_timestamp, "4th quarter end timestamp is wrong");;
+        $this->assertEquals($endDate->getTimestamp(), self::$calendarLeaves[3]->end_date_timestamp, "4th quarter end timestamp is wrong");
     }
 
     ///////////// fiscal tests ////////////////
@@ -275,6 +275,127 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $dayLength = 52 * 7;
 
         $this->assertEquals($dayLength, $nextTimePeriod->getLengthInDays());
+    }
+
+    /**
+     * @group forecasts
+     */
+    function test1stQuarterFiscalLeafBounds()
+    {
+        global $app_strings;
+
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $baseTimePeriod = self::$fiscalTP;
+        $startDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $endDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $endDate = $endDate->modify("+13 week");
+        $endDate = $endDate->modify("-1 day");
+        $startDate->setTime(0,0,0);
+        $endDate->setTime(23,59,59);
+
+        $this->assertEquals($startDate->getTimestamp(), self::$fiscalLeaves[0]->start_date_timestamp, "1st quarter start timestamp is wrong");
+        $this->assertEquals($endDate->getTimestamp(), self::$fiscalLeaves[0]->end_date_timestamp, "1st quarter end timestamp is wrong");
+    }
+
+    /**
+     * @group forecasts
+     */
+    function test2ndQuarterFiscalLeafBounds()
+    {
+        global $app_strings;
+
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $baseTimePeriod = self::$fiscalTP;
+        $startDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $endDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $startDate = $startDate->modify("+13 week");
+        $endDate = $endDate->modify("+26 week");
+        $endDate = $endDate->modify("-1 day");
+        $startDate->setTime(0,0,0);
+        $endDate->setTime(23,59,59);
+
+        $this->assertEquals($startDate->getTimestamp(), self::$fiscalLeaves[1]->start_date_timestamp, "2nd quarter start timestamp is wrong");
+        $this->assertEquals($endDate->getTimestamp(), self::$fiscalLeaves[1]->end_date_timestamp, "2nd quarter end timestamp is wrong");
+    }
+
+    /**
+     * @group forecasts
+     */
+    function test3rdQuarterFiscalLeafBounds()
+    {
+        global $app_strings;
+
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $baseTimePeriod = self::$fiscalTP;
+        $startDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $endDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $startDate = $startDate->modify("+26 week");
+        $endDate = $endDate->modify("+39 week");
+        $endDate = $endDate->modify("-1 day");
+        $startDate->setTime(0,0,0);
+        $endDate->setTime(23,59,59);
+
+        $this->assertEquals($startDate->getTimestamp(), self::$fiscalLeaves[2]->start_date_timestamp, "3rd quarter start timestamp is wrong");
+        $this->assertEquals($endDate->getTimestamp(), self::$fiscalLeaves[2]->end_date_timestamp, "3rd quarter end timestamp is wrong");
+    }
+
+    /**
+     * @group forecasts
+     */
+    function test4thQuarterFiscalLeafBounds()
+    {
+        global $app_strings;
+
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $baseTimePeriod = self::$fiscalTP;
+        $startDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $endDate = $timedate->fromDbDate($baseTimePeriod->start_date);
+        $startDate = $startDate->modify("+39 week");
+        $endDate = $endDate->modify("+52 week");
+        $endDate = $endDate->modify("-1 day");
+        $startDate->setTime(0,0,0);
+        $endDate->setTime(23,59,59);
+
+        $this->assertEquals($startDate->getTimestamp(), self::$fiscalLeaves[3]->start_date_timestamp, "4th quarter start timestamp is wrong");
+        $this->assertEquals($endDate->getTimestamp(), self::$fiscalLeaves[3]->end_date_timestamp, "4th quarter end timestamp is wrong");
+    }
+
+    /**
+     * @group forecasts
+     */
+    function testBuildLeavesAlreadyExistException()
+    {
+        global $app_strings;
+        $exceptionThrown = false;
+        //get current timeperiod
+        $baseTimePeriod = self::$calendarTP;
+        try {
+            $baseTimePeriod->buildLeaves();
+        } catch (Exception $e) {
+            $exceptionThrown = true;
+        }
+        $this->assertTrue($exceptionThrown);
+    }
+
+    /**
+     * @group forecasts
+     */
+    function testBuildLeavesOnLeafException()
+    {
+        global $app_strings;
+        $exceptionThrown = false;
+        //get a leaf
+        $leaf = self::$calendarLeaves[0];
+        try {
+            $leaf->buildLeaves();
+        } catch (Exception $e) {
+            $exceptionThrown = true;
+        }
+        $this->assertTrue($exceptionThrown);
     }
 
 }

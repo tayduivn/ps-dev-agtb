@@ -130,21 +130,46 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * build leaves for the timeperiod by creating the specified types of timeperiods
      *
-     * @param string $timePeriodType
+     * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
      * @return mixed
      */
     public function buildLeaves($timePeriodType) {
         if($this->hasLeaves()) {
-            return;
+            throw new Exception("This TimePeriod already has leaves");
         }
+
+        if($this->is_leaf) {
+            throw new Exception("Leaf Time Periods cannot have leaves");
+        }
+
+        $this->load_relationship('related_timeperiods');
 
         switch($timePeriodType) {
-            case "Monthly":
+            case "Monthly";
+                $n = 3;
+                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
+                $leafPeriod->is_fiscal = $this->is_fiscal;
                 break;
-            case "Weekly":
+            default;
+                $n = 3;
+                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
+                $leafPeriod->is_fiscal = $this->is_fiscal;
                 break;
-
         }
+        $leafPeriod->setStartDate($this->start_date);
+        $leafPeriod->is_leaf = 1;
+        $leafPeriod->save();
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
+
+        //loop the count to create the next n leaves to fill out the relationship
+        for($i = 1; $i < $n; $i++) {
+            $leafPeriod = $leafPeriod->createNextTimePeriod();
+            $this->related_timeperiods->add($leafPeriod->id);
+            $leafPeriod->save();
+        }
+
+        $this->save();
 
     }
 }

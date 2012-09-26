@@ -90,28 +90,31 @@ class SugarTestTimePeriodUtilities
         return $timeperiod;
     }
 
+    public static function createQuarterTimePeriod (){
+
+        global $timedate;
+        $timedate = TimeDate::getInstance();
+        $time = mt_rand();
+        $name = 'SugarQuarterTimePeriod' . $time;
+        $start_date = self::getRandDate();
+        $timeperiod = new QuarterTimePeriod($timedate->asDbDate($start_date));
+
+        $timeperiod->name = $name;
+        $timeperiod->is_fiscal_year = 0;
+        $timeperiod->is_leaf = 0;
+        $timeperiod->save();
+        self::$_createdTimePeriods[] = $timeperiod;
+        return $timeperiod;
+    }
+
+
     public static function createAnnualTimePeriod (){
 
         global $timedate;
         $timedate = TimeDate::getInstance();
-        $start_date = $timedate->getNow();
-        $month = $timedate->getNow()->format('n');
-        if($month < 4)
-        {
-            $month = 1;
-        } else if ($month < 8) {
-            $month = 4;
-        } else if ($month < 11) {
-            $month = 7;
-        } else {
-            $month = 10;
-        }
-
-
-        $year = $timedate->getNow()->format('Y');
         $time = mt_rand();
         $name = 'SugarAnnualTimePeriod' . $time;
-        $start_date->setDate($year, $month, 1);
+        $start_date = self::getRandDate();
         $timeperiod = new AnnualTimePeriod($timedate->asDbDate($start_date));
 
         $timeperiod->name = $name;
@@ -124,10 +127,25 @@ class SugarTestTimePeriodUtilities
     }
 
     public static function createAnnualFiscalTimePeriod (){
-
         global $timedate;
         $timedate = TimeDate::getInstance();
-        $start_date = $timedate->getNow();
+
+        $time = mt_rand();
+        $name = 'SugarAnnualTimePeriod' . $time;
+        $start_date = self::getRandDate();
+        $timeperiod = new AnnualTimePeriod($timedate->asDbDate($start_date),true);
+
+        $timeperiod->name = $name;
+        $timeperiod->time_period_type = "Annual";
+        $timeperiod->save();
+        self::$_createdTimePeriods[] = $timeperiod;
+        return $timeperiod;
+    }
+
+    private static function getRandDate() {
+        global $timedate;
+        $timedate = TimeDate::getInstance();
+        $rand_date = $timedate->getNow();
         $month = $timedate->getNow()->format('n');
         if($month < 4)
         {
@@ -142,16 +160,8 @@ class SugarTestTimePeriodUtilities
 
 
         $year = $timedate->getNow()->format('Y');
-        $time = mt_rand();
-        $name = 'SugarAnnualTimePeriod' . $time;
-        $start_date->setDate($year, $month, 1);
-        $timeperiod = new AnnualTimePeriod($timedate->asDbDate($start_date),true);
-
-        $timeperiod->name = $name;
-        $timeperiod->time_period_type = "Annual";
-        $timeperiod->save();
-        self::$_createdTimePeriods[] = $timeperiod;
-        return $timeperiod;
+        $rand_date->setDate($year, $month, 1);
+        return $rand_date;
     }
 
     public static function addTimePeriod($timeperiod=NULL) {
