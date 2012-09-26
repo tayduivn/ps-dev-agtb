@@ -74,10 +74,29 @@ class ForecastsCommittedApi extends ModuleApi
 
         $args['user_id'] = $user_id;
 
-        $args['forecast_type'] = (isset($args['forecast_type'])) ? $args['forecast_type'] : (User::isManager($user_id)) ? 'Rollup' : 'Direct';
+        $args['forecast_type'] = (isset($args['forecast_type'])) ? $args['forecast_type'] : (User::isManager($user_id) ? 'Rollup' : 'Direct');
         $args['timeperiod_id'] = (isset($args['timeperiod_id'])) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
         $args['include_deleted'] = (isset($args['show_deleted']) && $args['show_deleted'] === true);
 
+        $obj = $this->getClass($args);
+        return $obj->process();
+    }
+
+
+    public function forecastsCommit($api, $args)
+    {
+        $obj = $this->getClass($args);
+        return $obj->save();
+    }
+
+    /**
+     * Get the Committed Class
+     *
+     * @param array $args
+     * @return SugarForecasting_Committed
+     */
+    protected function getClass($args)
+    {
         // base file and class name
         $file = 'include/SugarForecasting/Committed.php';
         $klass = 'SugarForecasting_Committed';
@@ -96,29 +115,8 @@ class ForecastsCommittedApi extends ModuleApi
 
         /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);
-        return $obj->process();
-    }
 
-
-    public function forecastsCommit($api, $args)
-    {
-        global $current_user;
-
-        $args['opp_count'] = (!isset($args['opp_count'])) ? 0 : $args['opp_count'];
-
-        $forecast = BeanFactory::getBean('Forecasts');
-        $forecast->user_id = $current_user->id;
-        $forecast->timeperiod_id = $args['timeperiod_id'];
-        $forecast->best_case = $args['best_case'];
-        $forecast->likely_case = $args['likely_case'];
-        $forecast->forecast_type = $args['forecast_type'];
-        $forecast->opp_count = $args['opp_count'];
-        if ($args['amount'] != 0 && $args['opp_count'] != 0) {
-            $forecast->opp_weigh_value = $args['amount'] / $args['opp_count'];
-        }
-        $forecast->save();
-
-        return $forecast->toArray(true);
+        return $obj;
     }
 
 }

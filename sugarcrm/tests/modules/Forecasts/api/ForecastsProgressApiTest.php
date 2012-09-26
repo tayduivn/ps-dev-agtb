@@ -28,7 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecastapi
  */
 class ForecastsProgressApiTest extends RestTestBase
 {
@@ -43,24 +42,13 @@ class ForecastsProgressApiTest extends RestTestBase
     protected static $quota;
     protected static $managerQuota;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
-        $forecastConfig = array (
-            'show_buckets' => 0,
-            'committed_probability' => 70,
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost')
-        );
-        $admin = BeanFactory::getBean('Administration');
-        foreach ($forecastConfig as $name => $value)
-        {
-            $admin->saveSetting('base', $name, json_encode($value));
-        }
     }
 
     public function setUp()
@@ -102,7 +90,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->likely_case = '18000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Negotiation/Review';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->start_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -115,7 +103,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->likely_case = '18000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Negotiation/Review';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->end_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -128,7 +116,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '20000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Closed Won';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->start_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -138,7 +126,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '10000';
         $opp->worst_case = '7000';
         $opp->sales_stage = 'Negotiation/Review';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->end_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -149,7 +137,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '30000';
         $opp->worst_case = '23000';
         $opp->sales_stage = 'Closed Won';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->start_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -160,7 +148,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $opp->best_case = '20000';
         $opp->worst_case = '15000';
         $opp->sales_stage = 'Closed Won';
-        $opp->timeperiod_id = self::$timeperiod->id;
+        $opp->date_closed = self::$timeperiod->end_date;
         $opp->save();
         $opportunities[] = $opp;
 
@@ -184,7 +172,6 @@ class ForecastsProgressApiTest extends RestTestBase
         $managerWorksheet->best_case = 62000;
         $managerWorksheet->likely_case = 55000;
         $managerWorksheet->worst_case = 50000;
-        $managerWorksheet->forecast = 1;
         $managerWorksheet->save();
 
         $repWorksheet = SugarTestWorksheetUtilities::createWorksheet();
@@ -196,28 +183,28 @@ class ForecastsProgressApiTest extends RestTestBase
         $repWorksheet->best_case = 82000;
         $repWorksheet->likely_case = 74000;
         $repWorksheet->worst_case = 65000;
-        $repWorksheet->forecast = 1;
         $repWorksheet->save();
         $GLOBALS['db']->commit();
     }
 
     public function tearDown()
     {
+        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductUtilities::removeAllCreatedProducts();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
     }
 
     public static function tearDownAfterClass()
     {
+        SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testProgress() {
         $url = 'Forecasts/progressRep?user_id=' . self::$user->id . '&timeperiod_id=' . self::$timeperiod->id;
@@ -232,6 +219,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testManagerProgress() {
         $url = 'Forecasts/progressManager?user_id=' . self::$manager->id . '&timeperiod_id=' . self::$timeperiod->id;
@@ -244,6 +232,7 @@ class ForecastsProgressApiTest extends RestTestBase
 
     /**
      * @group forecastapi
+     * @group forecasts
      */
     public function testProgressNewUser() {
         $newUser = SugarTestUserUtilities::createAnonymousUser();

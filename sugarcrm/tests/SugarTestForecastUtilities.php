@@ -176,19 +176,17 @@ class SugarTestForecastUtilities
 
                 $opp = SugarTestOpportunityUtilities::createOpportunity();
                 $opp->assigned_user_id = $user->id;
-                $opp->timeperiod_id = $config['timeperiod_id'];
                 $opp->amount = $opp_amount;
                 $opp->best_case = ($opp_amount + 200);
                 $opp->worst_case = ($opp_amount - 400);
-                $opp->forecast = $include;
                 $opp->probability = rand(50, 90);
-                $opp->commit_stage = 100;
+                $opp->commit_stage = ($include == 1) ? 'include' : 'exclude';
                 $opp->date_closed = $date_closed;
                 $opp->team_id = '1';
                 $opp->team_set_id = '1';
                 $opp->save();
 
-                if ($include) {
+                if ($include == 1) {
                     $forecast_likely_total += $opp->amount;
                     $forecast_best_total += $opp->best_case;
                     $forecast_worst_total += $opp->worst_case;
@@ -207,7 +205,6 @@ class SugarTestForecastUtilities
                     $worksheet->worst_case = $opp->worst_case;
                     $worksheet->op_probability = $opp->probability;
                     $worksheet->commit_stage = $opp->commit_stage;
-                    $worksheet->forecast = 1;
                     $worksheet->save();
 
                     $return['opp_worksheets'][] = $worksheet;
@@ -249,7 +246,6 @@ class SugarTestForecastUtilities
                 $worksheet->best_case = $forecast_best_total + 100;
                 $worksheet->likely_case = $forecast_likely_total + 100;
                 $worksheet->worst_case = $forecast_likely_total + 100;
-                $worksheet->forecast = 1;
                 $worksheet->save();
 
                 $return['worksheet'] = $worksheet;
@@ -296,9 +292,10 @@ class SugarTestForecastUtilities
     {
         if (!empty(self::$timeperiod)) {
             SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+            self::$timeperiod = null;
         }
         SugarTestForecastUtilities::removeAllCreatedForecasts();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
     }
@@ -325,5 +322,7 @@ class SugarTestForecastUtilities
                                             $user->getPreference('default_number_grouping_seperator')
          );
     }
+
+
 
 }

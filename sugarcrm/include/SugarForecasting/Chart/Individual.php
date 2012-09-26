@@ -68,7 +68,6 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
     public function __construct($args)
     {
         if (isset($args['category'])) {
-            $cat = "";
             if(is_array($args['category'])) {
                 $this->category = strtolower(array_shift($args['category']));
             } else {
@@ -115,8 +114,10 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         }
 
         foreach ($this->dataArray as $key => $val) {
-            if ($val['forecast'] == 1) continue;
-
+            if ($val['commit_stage'] == 'include')
+            {
+                continue;
+            }
             unset($this->dataArray[$key]);
         }
 
@@ -150,7 +151,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             ksort($this->group_by_labels);
         } else {
             // default to forecast, just on the off chance it's not set
-            $this->group_by = "forecast";
+            $this->group_by = "commit_stage";
             // here we only have a potential for two
 
             if (empty($this->category)) {
@@ -198,14 +199,14 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                     $label_name = $opp_strings['LBL_PROBABILITY'];
                     $value_key = array_search($data['probability'] . '%', $this->group_by_labels);
                     break;
-                case 'forecast':
+                case 'commit_stage':
                     // break left out should fall though to the default
                 default:
                     $label_name = $opp_strings['LBL_FORECAST'];
                     // if this is not empty it means we are only showing committed
                     if(!empty($this->category)) {
                         $value_key = 0;
-                    } else if($data['forecast'] == 1) {
+                    } else if($data['commit_stage'] == 'include') {
                         $value_key = 1;
                     }
                     break;

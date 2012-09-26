@@ -423,6 +423,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'bean_name'=>'User',
 		'source'=>'non-db',
 	),
+/* No assigned user
 	'assigned_user_link' =>
 	array (
 		'name' => 'assigned_user_link',
@@ -434,6 +435,7 @@ $dictionary['ProductTemplate'] = array('table' => 'product_templates',
 		'bean_name'=>'User',
 		'source'=>'non-db',
 	),
+*/
     'category_link' =>
     array (
 	    'name' => 'category_link',

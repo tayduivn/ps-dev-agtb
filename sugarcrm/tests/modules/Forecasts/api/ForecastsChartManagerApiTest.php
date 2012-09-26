@@ -28,7 +28,6 @@ require_once('tests/rest/RestTestBase.php');
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
  *
- * @group forecasts
  */
 class ForecastsChartManagerApiTest extends RestTestBase
 {
@@ -62,15 +61,15 @@ class ForecastsChartManagerApiTest extends RestTestBase
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         self::$user = SugarTestUserUtilities::createAnonymousUser();
 
         $rep = SugarTestUserUtilities::createAnonymousUser();
         $rep->reports_to_id = self::$user->id;
         $rep->save();
 
-        self::$timeperiod = new TimePeriod();
-        self::$timeperiod->start_date = "2012-01-01";
-        self::$timeperiod->end_date = "2012-03-31";
+        self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod("2012-01-01", "2012-03-31");
         self::$timeperiod->name = "Test";
         self::$timeperiod->save();
 
@@ -80,7 +79,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $managerOpp->amount = 1800;
         $managerOpp->likely_case = 1700;
         $managerOpp->best_case = 1900;
-        $managerOpp->forecast = -1;
         $managerOpp->probability = '85';
         $managerOpp->date_closed = '2012-01-30';
         $managerOpp->team_id = '1';
@@ -93,7 +91,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $repOpp->amount = 1300;
         $repOpp->likely_case = 1200;
         $repOpp->best_case = 1400;
-        $repOpp->forecast = -1;
         $repOpp->probability = '85';
         $repOpp->date_closed = '2012-01-30';
         $repOpp->team_id = '1';
@@ -145,7 +142,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         self::$managerWorksheet->best_case = 1550;
         self::$managerWorksheet->likely_case = 1250;
         self::$managerWorksheet->worst_case = 950;
-        self::$managerWorksheet->forecast = 1;
         self::$managerWorksheet->team_set_id = 1;
         self::$managerWorksheet->save();
 
@@ -157,7 +153,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         self::$repWorksheet->best_case = 1150;
         self::$repWorksheet->likely_case = 950;
         self::$repWorksheet->worst_case = 750;
-        self::$repWorksheet->forecast = 1;
         self::$repWorksheet->team_set_id = 1;
         self::$repWorksheet->save();
 
@@ -173,10 +168,10 @@ class ForecastsChartManagerApiTest extends RestTestBase
     {
         $userIds = SugarTestUserUtilities::getCreatedUserIds();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
-        $GLOBALS['db']->query('DELETE FROM timeperiods WHERE id ="' . self::$timeperiod->id . '";');
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         $GLOBALS['db']->query('DELETE FROM forecasts WHERE user_id IN (\'' . implode("', '", $userIds) . '\')');
 
         parent::tearDownAfterClass();
@@ -205,18 +200,33 @@ class ForecastsChartManagerApiTest extends RestTestBase
         return $restReply['reply'];
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testChartDataShouldContainTwoUsers()
     {
         $data = $this->runRestCommand();
         $this->assertEquals(2, count($data['values']));
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testPropertyValueNameContainsAdjusted()
     {
         $data = $this->runRestCommand();
         $this->assertContains('(Adjusted)', $data['properties'][0]['value_name']);
     }
 
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testGoalParetoLabelContainsAdjusted()
     {
         $data = $this->runRestCommand();
@@ -225,6 +235,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testManagerValueIsLikelyAdjustedValueFromWorksheet()
     {
@@ -234,6 +247,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testReporteeValueIsLikelyAdjustedValueFromWorksheet()
     {
@@ -243,6 +259,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testManagerValueIsBestAdjustedValueFromWorksheet()
     {
@@ -252,6 +271,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testReporteeValueIsBestAdjustedValueFromWorksheet()
     {
@@ -261,6 +283,9 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testManagerValueIsWorstAdjustedValueFromWorksheet()
     {
@@ -270,13 +295,21 @@ class ForecastsChartManagerApiTest extends RestTestBase
 
     /**
      * @depends testChartDataShouldContainTwoUsers
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
      */
     public function testReporteeValueIsWorstAdjustedValueFromWorksheet()
     {
         $data = $this->runRestCommand('worst');
         $this->assertEquals(self::$repWorksheet->worst_case, $data['values'][1]['values'][0]);
     }
-    
+
+    /**
+     * @group forecastapi
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testThirdReporteeValueZeroWithoutForecastRecord()
     {
 
@@ -292,7 +325,6 @@ class ForecastsChartManagerApiTest extends RestTestBase
         $repOpp->amount = 1800;
         $repOpp->likely_case = 1700;
         $repOpp->best_case = 1900;
-        $repOpp->forecast = -1;
         $repOpp->probability = '85';
         $repOpp->date_closed = '2012-01-30';
         $repOpp->team_id = '1';

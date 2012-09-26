@@ -27,6 +27,8 @@ class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
     }
@@ -38,12 +40,14 @@ class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        SugarTestHelper::tearDown();
     }
 
-    /*
+    /**
      * Test that the base_rate field is populated with rate
      * of currency_id
      *
+     * @group forecasts
      */
     public function testForecastRate() {
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();

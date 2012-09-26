@@ -6,9 +6,11 @@
 		<tr>
 			<td>{{str "LBL_QUOTA" "Forecasts"}}</td>
 			<td></td>
-			<td>{{formatNumber quota_amount}}</td>
+			<td>{{formatCurrency quota_amount "-99"}}</td>
 		</tr>
-		<tr>
+
+        {{#if show_projected_likely}}
+    	<tr>
 			<td>
 				{{#if quota_likely_above}}
 					{{str "LBL_DISTANCE_ABOVE_LIKELY_FROM_QUOTA" "Forecasts"}}
@@ -17,8 +19,11 @@
 				{{/if}}
 			</td>
 			<td>{{formatPercentage quota_likely_percent}}</td>
-			<td>{{formatNumber quota_likely_amount}}</td>
+			<td>{{formatCurrency quota_likely_amount "-99"}}</td>
 		</tr>
+		{{/if}}
+
+		{{#if show_projected_best}}
 		<tr>
 			<td>
 				{{#if quota_best_above}}
@@ -28,14 +33,17 @@
 				{{/if}}
 			</td>
 			<td>{{formatPercentage quota_best_percent}}</td>
-			<td>{{formatNumber quota_best_amount}}</td>
+			<td>{{formatCurrency quota_best_amount}}</td>
 		</tr>
+        {{/if}}
 
 		<tr>
 			<th>{{str "LBL_CLOSED" "Forecasts"}}</th>
 			<th></th>
-			<th>{{formatNumber closed_amount}}</th>
+			<th>{{formatCurrency closed_amount "-99"}}</th>
 		</tr>
+
+		{{#if show_projected_likely}}
 		<tr>
 			<td>
 				{{#if closed_likely_above}}
@@ -45,8 +53,11 @@
 				{{/if}}
 			</td>
 			<td>{{formatPercentage closed_likely_percent}}</td>
-			<td>{{formatNumber closed_likely_amount}}</td>
+			<td>{{formatCurrency closed_likely_amount "-99"}}</td>
 		</tr>
+		{{/if}}
+
+		{{#if show_projected_best}}
 		<tr>
 			<td>
 				{{#if closed_best_above}}
@@ -56,8 +67,10 @@
 				{{/if}}
 			</td>
 			<td>{{formatPercentage closed_best_percent}}</td>
-			<td>{{formatNumber closed_best_amount}}</td>
+			<td>{{formatCurrency closed_best_amount "-99"}}</td>
 		</tr>
+		{{/if}}
+
 	</tbody>
 	<tfoot>
 		<td>
@@ -66,7 +79,7 @@
 		</td>
 		<td>
 			<div>{{str "LBL_PIPELINE_REVENUE" "Forecasts"}}</div>
-			<div>{{formatNumber revenue}}</div>
+			<div>{{formatCurrency revenue "-99"}}</div>
 		</td>
 		<td>
 			<div>{{str "LBL_PIPELINE_SIZE" "Forecasts"}}</div>

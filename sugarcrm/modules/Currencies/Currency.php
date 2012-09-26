@@ -158,7 +158,7 @@ class Currency extends SugarBean
      *                 blank value for nothing found
      */
 	function retrieveIDBySymbol($symbol) {
-	 	$query = sprintf("SELECT id FROM currencies WHERE symbol='%s' AND deleted=0;",
+	 	$query = sprintf("SELECT id FROM currencies WHERE symbol='%s' AND deleted=0",
              $this->db->quote($symbol)
          );
 	 	$result = $this->db->query($query);
@@ -183,7 +183,7 @@ class Currency extends SugarBean
      *                blank value for nothing found
      */
     function retrieveIDByISO($ISO) {
-        $query = sprintf("SELECT id FROM currencies WHERE iso4217='%s' AND deleted=0;",
+        $query = sprintf("SELECT id FROM currencies WHERE iso4217='%s' AND deleted=0",
             $this->db->quote($ISO)
         );
         $result = $this->db->query($query);
@@ -223,7 +223,7 @@ class Currency extends SugarBean
      *                blank value for nothing found
      */
     function retrieveIDByName($name) {
-	 	$query = sprintf("select id from currencies where name='%s' and deleted=0;",
+	 	$query = sprintf("select id from currencies where name='%s' and deleted=0",
              $this->db->quote($name)
          );
 	 	$result = $this->db->query($query);
@@ -531,9 +531,10 @@ function format_place_symbol($amount, $symbol, $symbol_space) {
 }
 
 function unformat_number($string) {
-    // Just in case someone passes an already unformatted number through.
-    if ( !is_string($string) ) {
-        return $string;
+    // Just in case someone passes a number through,
+    // or if the string is a formatted number already
+    if ( !is_string($string) || preg_match('!^[+-]?\d+(\.\d+)?$!', $string) ) {
+        return (float)$string;
     }
 
 	static $currency = null;

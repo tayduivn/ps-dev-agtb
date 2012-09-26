@@ -1,4 +1,4 @@
-describe("sugarfields", function() {
+describe("int field", function() {
 
     describe("integer", function() {
         it("should format the value", function() {

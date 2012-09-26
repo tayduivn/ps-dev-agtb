@@ -75,22 +75,14 @@ class MetadataApi extends SugarApi {
     }
 
     public function getAllMetadata($api, $args) {
-        global $current_language, $app_strings, $current_user;
-        // get the currrent person object of interest
-        $apiPerson = $current_user;
-        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
-            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
-        }
+        global $current_language, $app_strings, $app_list_strings, $current_user;
 
         // asking for a specific language
         if (isset($args['lang']) && !empty($args['lang'])) {
-            $lang = $args['lang'];
-            $current_language = $lang;
-            $app_strings = return_application_language($lang);
-        // load prefs if set
-        } elseif (isset($apiPerson->preferred_language) && !empty($apiPerson->preferred_language)) {
-            $app_strings = return_application_language($apiPerson->preferred_language);
-            $current_language = $apiPerson->preferred_language;
+            $current_language = $args['lang'];
+            $app_strings = return_application_language($current_language);
+            $app_list_strings = return_app_list_strings_language($current_language);
+
         }
 
         // Default the type filter to everything
@@ -182,14 +174,15 @@ class MetadataApi extends SugarApi {
         }
 
         global $current_language, $app_strings, $app_list_strings;
-        $lang = isset($args['lang']) ? $args['lang'] : "en_us";
-        $current_language = $lang;
-        $app_strings = return_application_language($lang);
-        $app_list_strings = return_app_list_strings_language($lang);
+        if ( isset($args['lang']) ) {
+            $current_language = $args['lang'];
+            $app_strings = return_application_language($current_language);
+            $app_list_strings = return_app_list_strings_language($current_language);
+        }
 
 
         // Default the type filter to everything available to the public, no module info at this time
-        $this->typeFilter = array('fields','viewTemplates','appStrings','views', 'layouts', 'config', 'modules');
+        $this->typeFilter = array('fields','viewTemplates','app_strings','views', 'layouts', 'config', 'modules');
 
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -247,19 +240,22 @@ class MetadataApi extends SugarApi {
 
         $mm = $this->getMetadataManager();
 
-        $this->modules = array_keys(get_user_module_list($this->user));
-
-        $data['modules'] = array();
-        foreach ($this->modules as $modName) {
-            $modData = $mm->getModuleData($modName);
-            $data['modules'][$modName] = $modData;
-        }
-
 
         $data['module_list'] = $mm->getModuleList($this->platforms[0]);
         $data['full_module_list'] = $data['module_list'];
-        foreach($data['module_list'] as $module) {
+
+        $data['modules'] = array();
+
+        foreach($data['full_module_list'] as $module) {
             $bean = BeanFactory::newBean($module);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+
+            $modData = $mm->getModuleData($module);
+            $data['modules'][$module] = $modData;
+
             if (isset($data['modules'][$module]['fields'])) {
                 $fields = $data['modules'][$module]['fields'];
                 foreach($fields as $fieldName => $fieldDef) {
@@ -290,7 +286,13 @@ class MetadataApi extends SugarApi {
         }
 
         $data['acl'] = array();
-        foreach ($this->modules as $modName) {
+
+        foreach ($data['full_module_list'] as $modName) {
+            $bean = BeanFactory::newBean($modName);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
             $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
             // Modify the ACL's for portal, this is a hack until "create" becomes a real boy.
             if(isset($_SESSION['type'])&&$_SESSION['type']=='support_portal') {
@@ -319,6 +321,7 @@ class MetadataApi extends SugarApi {
                 $currency['status'] = $current->status;
                 $currency['symbol'] = $current->symbol;
                 $currency['rate'] = $current->conversion_rate;
+                $currency['name'] = $current->name;
                 $currency['date_entered'] = $current->date_entered;
                 $currency['date_modified'] = $current->date_modified;
                 $data['currencies'][$current->id] = $currency;
@@ -413,6 +416,21 @@ class MetadataApi extends SugarApi {
                 if (!in_array($chunk,$this->typeFilter)
                     || (isset($args[$chunk]) && $args[$chunk] == $data[$chunk]['_hash'])) {
                     unset($data[$chunk]);
+                }
+            }
+            
+            // Relationships are special, they are a baseChunk but also need to pay attention to modules
+            if (!empty($moduleFilter) && isset($data['relationships']) ) {
+                // We only want some modules, but we want the relationships
+                foreach ($data['relationships'] as $relName => $relData ) {
+                    if ( $relName == '_hash' ) {
+                        continue;
+                    }
+                    if (!in_array($relData['rhs_module'],$moduleFilter)
+                        && !in_array($relData['lhs_module'],$moduleFilter)) {
+                        unset($data['relationships'][$relName]);
+                    }
+                    else { $data['relationships'][$relName]['checked'] = 1; }
                 }
             }
 

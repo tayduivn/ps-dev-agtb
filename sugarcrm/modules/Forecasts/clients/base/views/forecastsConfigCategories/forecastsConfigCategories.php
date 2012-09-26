@@ -28,10 +28,10 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
             'label' => 'LBL_FORECASTS_CONFIG_CATEGORIES',
             'fields' => array(
                 array(
-                    'name' => 'categoryOptions',
+                    'name' => 'forecast_categories',
                     'type' => 'radioenum',
                     'label' => 'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS',
-                    'options' => 'FORECASTS_CONFIG_CATEGORY_OPTIONS_DOM',
+                    'options' => 'forecasts_config_category_options_dom',
                     'default' => false,
                     'enabled' => true,
                     'view' => 'edit',

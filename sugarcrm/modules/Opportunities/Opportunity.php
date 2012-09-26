@@ -53,6 +53,7 @@ class Opportunity extends SugarBean
 	var $currency_id;
     var $base_rate;
 	var $date_closed;
+    var $date_closed_timestamp;
 	var $next_step;
 	var $sales_stage;
 	var $probability;
@@ -88,7 +89,6 @@ class Opportunity extends SugarBean
     var $worst_case_base_currency;
     var $timeperiod_id;
 	var $commit_stage;
-	var $forecast = -1;
 //END SUGARCRM flav=pro ONLY
 
 	var $importable = true;
@@ -168,6 +168,13 @@ class Opportunity extends SugarBean
 		//BEGIN SUGARCRM flav=pro ONLY
 		$query .= getTeamSetNameJoin('opportunities');
 		//END SUGARCRM flav=pro ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        $query .= " LEFT JOIN timeperiods
+                        ON timeperiods.start_date_timestamp <= opportunities.date_closed_timestamp
+                        AND timeperiods.end_date_timestamp >= opportunities.date_closed_timestamp ";
+        //END SUGARCRM flav=pro ONLY
+
 		$query .= "LEFT JOIN $this->rel_account_table
                             ON opportunities.id=$this->rel_account_table.opportunity_id
                             LEFT JOIN accounts

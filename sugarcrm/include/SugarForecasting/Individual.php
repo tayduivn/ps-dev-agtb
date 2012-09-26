@@ -27,7 +27,7 @@
  */
 
 require_once('include/SugarForecasting/AbstractForecast.php');
-class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
+class SugarForecasting_Individual extends SugarForecasting_AbstractForecast implements SugarForecasting_ForecastSaveInterface
 {
     /**
      * Where we store the data we want to use
@@ -43,13 +43,6 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
      */
     public function process()
     {
-        $this->loadWorksheet();
-
-        return array_values($this->dataArray);
-    }
-
-    protected function loadWorksheet()
-    {
         global $current_user;
         $db = DBManagerFactory::getInstance();
 
@@ -59,17 +52,14 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             "o.probability, " .
             "o.commit_stage, " .
             "o.sales_stage, " .
-            "o.timeperiod_id, " .
             "o.currency_id, " .
             "o.name, " .
             "o.best_case, " .
             "o.worst_case, " .
-            "o.forecast, " .
             "o.base_rate, " .
             "o.assigned_user_id, " .
             "w.id worksheet_id, " .
             "w.user_id w_user_id, " .
-            "w.forecast w_forecast, " .
             "w.best_case w_best_case, " .
             "w.likely_case w_likely_case, " .
             "w.worst_case w_worst_case, " .
@@ -81,18 +71,27 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             "w.currency_id w_currency_id, " .
             "w.base_rate w_base_rate " .
             "from opportunities o " .
+            "left join timeperiods t ".
+            "on t.start_date_timestamp <= o.date_closed_timestamp ".
+            "and t.end_date_timestamp >= o.date_closed_timestamp ".
             "left join worksheet w " .
             "on o.id = w.related_id ";
+
         if ($this->getArg('user_id') == $current_user->id) {
             $sql .= "and w.date_modified = (select max(date_modified) from worksheet w2 " .
                 "where w2.user_id = o.assigned_user_id and related_id = o.id " .
-                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') ";
+                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') where ";
         } else {
-            $sql .= "and w.version = 1 ";
+            $sql .= "and w.version = 1 where ";
         }
 
-        $sql .= "where o.timeperiod_id = '" . $this->getArg('timeperiod_id') . "' " .
-            "and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
+        if(isset($this->args['id']))
+        {
+            $sql .= " o.id = '" . $this->getArg('id') . "' and ";
+        }
+
+        $sql .= " t.id =  '" . $this->getArg('timeperiod_id') . "' " .
+            " and o.assigned_user_id = '" . $this->getArg('user_id') . "' " .
             "and o.deleted = 0";
 
         $result = $db->query($sql);
@@ -111,15 +110,16 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
 
             if (isset($row["worksheet_id"])) {
                 $data['worksheet_id'] = $row["worksheet_id"];
-                $data['forecast'] = $row["w_forecast"];
                 $data['best_case'] = $row["w_best_case"];
+                $data['likely_case'] = $row["w_likely_case"];
                 $data['worst_case'] = $row["w_worst_case"];
                 $data['amount'] = $row["w_likely_case"];
                 $data['commit_stage'] = $row["w_commit_stage"];
                 $data['probability'] = $row["w_probability"];
                 $data['version'] = $row["w_version"];
             } else {
-                $data['forecast'] = $row["forecast"];
+                //Set default values to that of the opportunity's
+                $data['likely_case'] = $row["amount"];
                 $data['best_case'] = $row["best_case"];
                 $data['worst_case'] = $row["worst_case"];
                 $data['commit_stage'] = $row["commit_stage"];
@@ -127,5 +127,52 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast
             }
             $this->dataArray[] = $data;
         }
+
+        return array_values($this->dataArray);
+    }
+
+
+    /**
+     * Save the Individual Worksheet
+     *
+     * @return mixed
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function save()
+    {
+        require_once('modules/Forecasts/ForecastWorksheet.php');
+        require_once('include/SugarFields/SugarFieldHandler.php');
+        $seed = new ForecastWorksheet();
+        $seed->loadFromRow($this->args);
+        $sfh = new SugarFieldHandler();
+
+        foreach ($seed->field_defs as $properties)
+        {
+            $fieldName = $properties['name'];
+
+            if(!isset($this->args[$fieldName]))
+            {
+               continue;
+            }
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            if (!$seed->ACLFieldAccess($fieldName,'save') ) {
+                // No write access to this field, but they tried to edit it
+                global $app_strings;
+                throw new SugarApiException(string_format($app_strings['SUGAR_API_EXCEPTION_NOT_AUTHORIZED'], array($fieldName, $this->args['module'])));
+            }
+            //END SUGARCRM flav=pro ONLY
+
+            $type = !empty($properties['custom_type']) ? $properties['custom_type'] : $properties['type'];
+            $field = $sfh->getSugarField($type);
+
+            if($field != null)
+            {
+               $field->save($seed, $this->args, $fieldName, $properties);
+            }
+        }
+		$seed->setWorksheetArgs($this->args);
+        $seed->save();
+        return $seed->id;
     }
 }

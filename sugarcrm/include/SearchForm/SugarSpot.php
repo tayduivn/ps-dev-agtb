@@ -414,7 +414,7 @@ class SugarSpot
             $allowBlankSearch = false;
             // Add an extra search filter for my items
             // Verify the bean has assigned_user_id before we blindly assume it does
-            if (!empty($options['my_items']) && $options['my_items'] == true && isset($GLOBALS['dictionary'][$class]['fields']['assigned_user_id'])) {
+            if (!empty($options['my_items']) && $options['my_items'] == true && isset($seed->field_defs['assigned_user_id'])) {
                 if(!empty($custom_where)) {
                     $custom_where .= " AND ";
                 }
@@ -521,11 +521,22 @@ class SugarSpot
                 $orderBy = $options['orderBy'];
             }
 
+            $selectFields = '';
+            if (!empty($options['selectFields']) ) {
+                foreach ( $options['selectFields'] as $selectField ) {
+                    $selectFields .= $seed->table_name.".".$selectField." ".$selectField.", ";
+                }
+                $selectFields = rtrim($selectFields,', ');
+            }
+            
             if(empty($where_clauses))
             {
                 if ( $allowBlankSearch ) {
                     $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
                     
+                    if (!empty($selectFields)) {
+                        $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
+                    }
                     if(!empty($custom_select)) {
                         $ret_array['select'] .= $custom_select;
                     }
@@ -566,6 +577,10 @@ class SugarSpot
                     }
                     // Individual UNION's don't allow order by
                     $ret_array = $seed->create_new_list_query('', $clause, $allfields, $options, 0, '', true, $seed, true);
+                    if (!empty($selectFields)) {
+                        $ret_array_start['select'] = "SELECT DISTINCT ".$selectFields;
+                    }
+
                     if(!empty($custom_select)) {
                         $ret_array_start['select'] .= $custom_select;
                     }
@@ -599,6 +614,9 @@ class SugarSpot
 
                 $ret_array = $seed->create_new_list_query($orderBy, $where_clauses[0], $return_fields, $options, 0, '', true, $seed, true);
 
+                if (!empty($selectFields)) {
+                    $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
+                }
                 if(!empty($custom_select)) {
                     $ret_array['select'] .= $custom_select;
                 }

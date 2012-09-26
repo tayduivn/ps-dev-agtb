@@ -41,12 +41,15 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $beanFiles, $beanList, $current_user, $app_list_strings, $app_strings, $timedate;
-        $timedate = TimeDate::getInstance();
-        $app_list_strings = return_app_list_strings_language('en');
-        $app_strings = return_application_language('en');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setup('app_list_strings');
+        SugarTestHelper::setup('current_user');
+        global $timedate, $current_user;
 
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $timedate = TimeDate::getInstance();
+
         $current_user->user_name = 'employee0';
         $current_user->is_admin = 1;
         $current_user->save();
@@ -88,6 +91,7 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
@@ -96,6 +100,8 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * Here we call the mock Manager class.  Since the loadForecastValues is protected we override the function in our mock object.
+     * @group forecastapi
+     * @group forecasts
      */
     public function testReturnsMostRecentForecast()
     {
@@ -109,10 +115,8 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
         $found = false;
 
-        foreach($data as $user_name=>$entry)
-        {
-            if($entry['forecast_id'] == $this->forecast3->id)
-            {
+        foreach ($data as $user_name => $entry) {
+            if ($entry['forecast_id'] == $this->forecast3->id) {
                 $this->assertEquals(1234, $entry['best_case'], 'Failed asserting best_case is 1234');
                 $this->assertEquals(1234, $entry['likely_case'], 'Failed asserting likely_case is 1234');
                 $found = true;

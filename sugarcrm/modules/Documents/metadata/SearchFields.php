@@ -27,6 +27,14 @@ $searchFields['Documents'] =
 		'active_date'=> array('query_type'=>'default'),
 		'exp_date'=> array('query_type'=>'default'),
 		'assigned_user_id'=> array('query_type'=>'default'),
+		'filename' => array(
+    		    'query_type' => 'format',
+    		    'operator' => 'subquery',
+    		    'subquery' => 'SELECT document_revisions.id FROM document_revisions
+			           WHERE document_revisions.deleted=0
+				   AND document_revisions.filename LIKE \'{0}\'',
+                    'db_field' => array(0 => 'document_revision_id')
+                ),
         //BEGIN SUGARCRM flav=pro ONLY
 		'favorites_only' => array(
             'query_type'=>'format',

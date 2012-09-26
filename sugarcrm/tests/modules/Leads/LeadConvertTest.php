@@ -24,11 +24,14 @@
 
 require_once('modules/Leads/LeadConvert.php');
 
-class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
+class LeadConvertTest
+    //extends Sugar_PHPUnit_Framework_TestCase
 {
     private $lead;
 
     public function setUp() {
+
+        parent::setup();
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->lead->id = $this->lead->id;
         $this->modules = array(
@@ -76,11 +79,13 @@ class LeadConvertTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestQuoteUtilities::removeAllCreatedQuotes();
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
 
         unset($this->lead);
         unset($this->modules);
+
+        parent::tearDown();
     }
 
     /**

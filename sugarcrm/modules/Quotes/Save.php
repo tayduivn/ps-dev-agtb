@@ -129,14 +129,14 @@ if(isset($_REQUEST['duplicateSave']) && isset($_REQUEST['relate_id'])){
 		$pb->bundle_stage = $_REQUEST['bundle_stage'][$total_keys[$k]];
 		$pb->name = $_REQUEST['bundle_name'][$total_keys[$k]];
 
-		if(key_exists($pb->bundle_stage, $in_total_group_stages)){
+            // Bug 54931. Grand Total for custom groups too.
 			$focus->tax += $pb->tax;
 			$focus->shipping += $pb->shipping;
 			$focus->subtotal += $pb->subtotal;
 			$focus->deal_tot += $pb->deal_tot;
 			$focus->new_sub += $pb->new_sub;
 			$focus->total += $pb->total;
-		}
+
 		$product_bundels[$total_keys[$k]] = $pb->save();
 		if(substr_count($total_keys[$k], 'group_') > 0){
 		    // Base new index on last saved bundle's index +1

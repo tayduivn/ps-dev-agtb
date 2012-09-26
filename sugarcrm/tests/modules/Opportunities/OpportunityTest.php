@@ -24,23 +24,27 @@
 
 class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
-	}
+    }
 
     public function tearDown()
     {
-        SugarTestHelper::tearDown();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         //BEGIN SUGARCRM flav=pro ONLY
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         //END SUGARCRM flav=pro ONLY
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
@@ -73,7 +77,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * This test checks to see if we correctly set the timeperiod_id value of an Opportunity record
-     *
+     * @group forecasts
      */
     public function testOpportunitySaveSelectProperTimePeriod()
     {
@@ -82,7 +86,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         $tp = TimePeriod::retrieveFromDate('2009-02-15');
 
-        if(!($tp instanceof TimePeriod))
+        if(empty($tp))
         {
            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
         }
@@ -96,7 +100,69 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opp->date_closed = "2009-02-15";
         $opp->save();
 
-        $this->assertEquals($tp->id, $opp->timeperiod_id);
+        //check that the timeperiod covers the date closed timestamp
+        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
+        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
+    }
+
+    /**
+     * This test checks to see if we the opportunity is still included on the time period on the first day of the span
+     * @group forecasts
+     */
+    public function testOpportunitySaveFirstDayOfTimePeriod()
+    {
+        global $timedate;
+        $timedate->getNow();
+
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+
+        if(empty($tp))
+        {
+           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        }
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        //We are trying to simulate setting a timeperiod_id based on the date_closed
+        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
+        $opp = new Opportunity();
+        $opp->retrieve($opp->id);
+        $opp->date_closed = "2009-01-02";
+        $opp->save();
+
+        //check that the timeperiod covers the date closed timestamp
+        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
+        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
+    }
+
+    /**
+     *
+     * @group forecasts
+     */
+    public function testOpportunitySaveLastDayOfTimePeriod()
+    {
+        global $timedate;
+        $timedate->getNow();
+
+        $tp = TimePeriod::retrieveFromDate('2009-02-15');
+
+        if(empty($tp))
+        {
+           $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+        }
+
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+
+        //We are trying to simulate setting a timeperiod_id based on the date_closed
+        //so let's retrieve the Opportunity and then try to set the date_closed (BeanFactory::getBean will not work)
+        $opp = new Opportunity();
+        $opp->retrieve($opp->id);
+        $opp->date_closed = "2009-03-31";
+        $opp->save();
+
+        //check that the timeperiod covers the date closed timestamp
+        $this->assertLessThan($opp->date_closed_timestamp, $tp->start_date_timestamp);
+        $this->assertGreaterThanOrEqual($opp->date_closed_timestamp, $tp->end_date_timestamp);
     }
     //END SUGARCRM flav=pro ONLY
 
@@ -161,8 +227,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestProductUtilities::setCreatedProduct(array($product->id));
 
-        $expected = array($opp->name, $opp->amount, $opp->best_case, $opp->worst_case, $opp->date_closed, $opp->assigned_user_id);
-        $actual = array($product->name, $product->likely_case, $product->best_case, $product->worst_case, $product->date_closed, $product->assigned_user_id);
+        $expected = array($opp->name, $opp->amount, $opp->best_case, $opp->worst_case);
+        $actual = array($product->name, $product->likely_case, $product->best_case, $product->worst_case);
 
         $this->assertEquals($expected, $actual);
     }

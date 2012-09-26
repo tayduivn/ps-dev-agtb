@@ -103,8 +103,7 @@ class ViewQuickedit extends ViewAjax
     {	    
         // when the meeting or call is synched from external source, we do not want it to be quickeditable
         if ((($this->bean instanceOf Meeting) || ($this->bean instanceOf Call)) && !$this->bean->canEditRecord()) {
-            $msg = 'LBL_SYNCED_RECURRING_MSG_'.strtoupper(get_class($this->bean));
-            echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $GLOBALS['app_strings'][$msg], 'eval'=>true));
+            echo json_encode(array('title'=> $this->bean->name, 'url'=>'index.php?module=' . $this->bean->module_dir . '&action=DetailView&record=' . $this->bean->id ,'html'=> $GLOBALS['app_strings']['LBL_SYNCED_RECURRING_MSG'], 'eval'=>true));
             return;
         }
 
