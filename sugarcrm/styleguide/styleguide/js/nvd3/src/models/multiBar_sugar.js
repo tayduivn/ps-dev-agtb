@@ -80,11 +80,10 @@ nv.models.multiBar = function() {
             });
 
       x   .domain(d3.merge(seriesData).map(function(d) { return d.x }))
-          .rangeBands([0, availableWidth], .1);
+          .rangeBands([0, availableWidth], .3);
 
       y   .domain(yDomain || d3.extent(d3.merge(seriesData).map(function(d) { return d.y + (stacked ? d.y0 : 0) }).concat(forceY)))
           .range([availableHeight, 0]);
-
 
       // If scale's domain don't have a range, slightly adjust to make one... so a chart can show a single data point
       if (x.domain()[0] === x.domain()[1] || y.domain()[0] === y.domain()[1]) singlePoint = true;
@@ -147,14 +146,14 @@ nv.models.multiBar = function() {
           .remove();
       groups
           //.attr('class', function(d,i) { return 'nv-group nv-series-' + i })
-          .attr('class', function(d,i) { 
+          .attr('class', function(d,i) {
               return this.getAttribute('class') || (
                 'nv-group nv-series-' + i + (
-                  useClass 
-                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) ) 
+                  useClass
+                    ? ( ' '+ ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 ) )
                     : ''
                 )
-              ); 
+              );
           } )
           .classed('hover', function(d) { return d.hover })
           .attr('fill', function(d,i){ return this.getAttribute('fill') || fill(d,i) })
@@ -163,26 +162,25 @@ nv.models.multiBar = function() {
           .style('stroke-opacity', 1)
           .style('fill-opacity', .85);
 
-
       var bars = groups.selectAll('rect.nv-bar')
           .data(function(d) { return d.values });
 
       bars.exit().remove();
 
-      var barScalar = .7;
-
       var barsEnter = bars.enter().append('rect')
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
           .attr('x', function(d,i,j) {
-              return stacked ? x.rangeBand() * (1-barScalar)/2 : ( j * x.rangeBand() * barScalar / data.length )
+              return stacked ? 0 : ( j * x.rangeBand() * 1 / data.length )
           })
           .attr('y', function(d) { return y0(stacked ? d.y0 : 0) } )
           .attr('height', 0)
-          .attr('width', x.rangeBand() * barScalar / (stacked ? 1 : data.length) );
+          .attr('width', x.rangeBand() * 1 / (stacked ? 1 : data.length) );
 
       bars
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
-          .attr('transform', function(d,i) { return 'translate(' + x(getX(d,i)) + ',0)'; });
+          .attr('transform', function(d,i) {
+            return 'translate(' + x(getX(d,i)) + ',0)';
+          });
 
       //------------------------------------------------------------
 
@@ -215,7 +213,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + ( x.rangeBand() * barScalar * (stacked ? data.length / 2 : d.series + .5) / data.length ), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + ( x.rangeBand() * (stacked ? data.length / 2 : d.series + .5) / data.length ), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -227,7 +225,7 @@ nv.models.multiBar = function() {
               value: getY(d,i),
               point: d,
               series: data[d.series],
-              pos: [x(getX(d,i)) + (x.rangeBand() * barScalar * (stacked ? data.length / 2 : d.series + .5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
+              pos: [x(getX(d,i)) + (x.rangeBand() * (stacked ? data.length / 2 : d.series + .5) / data.length), y(getY(d,i) + (stacked ? d.y0 : 0))],  // TODO: Figure out why the value appears to be shifted
               pointIndex: i,
               seriesIndex: d.series,
               e: d3.event
@@ -248,9 +246,9 @@ nv.models.multiBar = function() {
             .each('end', function() {
               d3.transition(d3.select(this))
                 .attr('x', function(d,i) {
-                  return stacked ? x.rangeBand()* (1-barScalar)/2 : (d.series * x.rangeBand() * barScalar / data.length )
+                  return stacked ? 0 : (d.series * x.rangeBand() * 1 / data.length )
                 })
-                .attr('width', x.rangeBand() * barScalar / (stacked ? 1 : data.length) );
+                .attr('width', x.rangeBand() * 1 / (stacked ? 1 : data.length) );
             })
       }
       else
@@ -260,7 +258,7 @@ nv.models.multiBar = function() {
             .attr('x', function(d,i) {
               return d.series * x.rangeBand() / data.length
             })
-            .attr('width', x.rangeBand() * barScalar / data.length)
+            .attr('width', x.rangeBand() * 1 / data.length)
             .each('end', function() {
               d3.transition(d3.select(this))
                 .attr('y', function(d,i) {
