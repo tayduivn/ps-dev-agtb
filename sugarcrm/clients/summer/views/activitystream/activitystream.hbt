@@ -10,7 +10,6 @@
         <li class="showNone">None</li>
       </ul>
     </div>
-    </h4>
     <ul id="activitystream-pills" class="nav nav-pills" data-tour="tour-stream-filter">
           <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
           <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
