@@ -32,6 +32,15 @@ class SidecarView extends SugarView
 
         $this->ss->assign("configFile", $this->configFile);
 
+        $sugarSidecarPath = sugar_cached("include/javascript/sugar_sidecar.min.js");
+        $this->ss->assign("sugarSidecarPath", $sugarSidecarPath);
+        //If the files doesn't exist, it probably means the cache has been nuked and we need to rebuild.
+        if (!is_file($sugarSidecarPath))
+        {
+            $_REQUEST['root_directory'] = ".";
+            require_once("jssource/minify_utils.php");
+            ConcatenateFiles(".");
+        }
     }
 
     /**
@@ -66,9 +75,7 @@ class SidecarView extends SugarView
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'unsecureRoutes' => array('login', 'error'),
-            'clientID' => 'sugar',
-            'authStore'  => 'sugarAuthStore',
-            'keyValueStore' => 'sugarAuthStore'
+            'clientID' => 'sugar'
         );
         $configString = json_encode($sidecarConfig);
         $sidecarJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';

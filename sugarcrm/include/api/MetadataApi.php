@@ -248,10 +248,6 @@ class MetadataApi extends SugarApi {
 
         foreach($data['full_module_list'] as $module) {
             $bean = BeanFactory::newBean($module);
-            if (!$bean || !is_a($bean,'SugarBean') ) {
-                // There is no bean, we can't get data on this
-                continue;
-            }
 
             $modData = $mm->getModuleData($module);
             $data['modules'][$module] = $modData;

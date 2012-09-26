@@ -65,6 +65,8 @@ class SugarTestCurrencyUtilities
         {
             $currency->new_with_id = true;
             $currency->id = $id;
+        } else {
+            $currency->created_by = $GLOBALS['current_user']->id;
         }
         $currency->save();
         self::$_createdCurrencies[] = $currency;
@@ -99,7 +101,7 @@ class SugarTestCurrencyUtilities
             return true;
         $currency_ids = self::getCreatedCurrencyIds();
         $GLOBALS['db']->query(
-            sprintf("DELETE FROM currencies WHERE id IN ('%s');",
+            sprintf("DELETE FROM currencies WHERE id IN ('%s')",
             implode("','", $currency_ids))
         );
         self::$_createdCurrencies = array();
