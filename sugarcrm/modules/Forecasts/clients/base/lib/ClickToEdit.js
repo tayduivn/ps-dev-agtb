@@ -19,9 +19,11 @@
             case "numeric":
             case "float":
             case "currency":
-                return value.match(reg);
+                return !_.isNull(value.match(reg));
+                break;
             default:
                 return true;
+                break;
     	}
     };
 
@@ -78,7 +80,10 @@
                       '',
                       app.user.get('decimal_separator'));
                 },
-                onedit: function(settings, original){
+                onedit: function(settings, original) {
+                    if(_.isUndefined(settings.field.isValid)) {
+                        settings.field.isValid = true;
+                    }
                     // clear styling
                     $(this).css("background-color", "");
                     $(this).css("color", $.data(this, "color"));
@@ -92,7 +97,9 @@
                     }
 
                     // hold value for use later in case user enters a +/- percentage, or user enters an empty value
-                    settings.field.holder = $(original).html();
+                    if(settings.field.isValid) {
+                        settings.field.holder = $(original).html();
+                    }
                 },
                 callback: function(value, settings) {
                     // if canceled, do nothing
