@@ -137,7 +137,7 @@ class ForecastManagerWorksheet extends SugarBean
 	{
 		$id = null;
 		$sql = "select id from worksheet " .
-				"where timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
+				"where deleted = 0 and timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
 					"and user_id = '" . $this->args["current_user"] . "' " .
 					"and version = '" . $version . "' " .
 					"and related_id = '" . $this->args["user_id"] . "'";
