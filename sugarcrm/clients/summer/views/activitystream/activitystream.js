@@ -20,7 +20,10 @@
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
         'click .sayit .label a.close': 'removeTag',
         'click .showAnchor': 'showAnchor',
-        'click .icon-eye-open': 'previewRecord'
+        'click .icon-eye-open': 'previewRecord',
+        'click .showTimeline': 'showTimeline',
+        'click .showCalendar': 'showCalendar',
+        'click .showNone': 'showNone'        
     },
 
     initialize: function(options) {
@@ -72,6 +75,27 @@
         jQuery.event.props.push('dataTransfer');
     },
 
+    showTimeline: function(event) {
+        event.preventDefault();
+        $('#activitystream-timeline').show();        
+        $('#activitystream-calendar').hide();
+        this.$(event.currentTarget).closest('.btn-group').find('.btn').html('Timeline <p class="caret"></p>');
+    },
+
+    showCalendar: function(event) {
+        event.preventDefault();
+        $('#activitystream-timeline').hide();        
+        $('#activitystream-calendar').show();
+        this.$(event.currentTarget).closest('.btn-group').find('.btn').html('Calendar <p class="caret"></p>');        
+    },
+
+    showNone: function(event) {
+        event.preventDefault();
+        $('#activitystream-timeline').hide();        
+        $('#activitystream-calendar').hide();
+        this.$(event.currentTarget).closest('.btn-group').find('.btn').html('Choose <p class="caret"></p>');
+    },
+    
     showAnchor: function(event) {
         event.preventDefault();
         var myId = this.$(event.currentTarget).data('id');
@@ -481,6 +505,39 @@
         return events;
     },
 
+    _addCalendarEvent: function(model) {
+        var events = [], self = this;
+        
+        _.each(model.get('comments'), function(comment) {
+            if(comment.value) {
+                var event = {allDay:false};
+                event.start = new Date(comment.date_created);
+                event.title = comment.created_by_name + " commented: "+ comment.value;
+                events.push(event);
+            }
+            _.each(comment.notes, function(attachment) {
+                var event = {allDay:false};
+                event.start = new Date(attachment.date_entered);
+                event.title = attachment.created_by_name + " attached: " + attachment.filename;
+                events.push(event);
+            });
+        });
+
+        if(model.get("target_name") || self._parseTags(model.get("activity_data").value)) {
+            var event = {allDay:false};
+            event.start = new Date(model.get("date_created"));
+            event.title =  model.get("created_by_name") + " " + model.get("activity_type") + " " + (model.get("target_name") || self._parseTags(model.get("activity_data").value));
+            events.push(event);
+        }
+        _.each(model.get('notes'), function(attachment) {
+            var event = {allDay:false};
+            event.start = new Date(attachment.date_entered);
+            event.title = attachment.created_by_name + " attached: " + attachment.filename;
+            events.push(event);
+        });
+        return events;
+    },
+    
     previewRecord: function(event) {
         var self = this;
         var root = this.$(event.currentTarget).parent().parent().parent();
@@ -587,6 +644,25 @@
                 });
             }
         });
+        
+        // Construct the calendar data.
+        var calendar ={
+                width: '100%',
+                height:'400px',
+                header: {
+                    left: 'prev,next,today',
+                    center: 'title',
+                    right: 'month,basicWeek,basicDay'
+                },
+                editable: false
+        };        
+        objarrays = _.map(this.collection.models, this._addCalendarEvent);
+        calendar.events = _.flatten(objarrays);
+        
+        _.defer(function() {    		
+            $('#activitystream-calendar').fullCalendar(calendar);
+            $('#activitystream-calendar').hide();
+        });       
 
         return app.view.View.prototype._renderHtml.call(this);
     },

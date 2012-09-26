@@ -29,7 +29,9 @@ if (empty($_SESSION['authenticated_user_id'])) {
 <head>
     <meta http-equiv="x-ua-compatible" content="IE=8">
     <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
-
+    <link rel='stylesheet' type='text/css' href='lib/fullcalendar/fullcalendar.css' />
+    <link rel='stylesheet' type='text/css' href='lib/fullcalendar/fullcalendar.print.css' media='print' /> 
+       
     <script src="../sidecar/lib/jquery/jquery.min.js"></script>
     <script src="../sidecar/lib/jquery/jquery.iframe.transport.js"></script>
     <script src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
@@ -45,6 +47,7 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDhofIE96RHrdEd7mBRLaHeYoPrFcBakac&sensor=true"></script>
     <script src="lib/Crypto/Crypto.js"></script>
     <script src="lib/TimelineJS/js/storyjs-embed.js"></script>
+    <script type='text/javascript' src='lib/fullcalendar/fullcalendar.js'></script>    
     
     <!-- App Scripts -->
     <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
