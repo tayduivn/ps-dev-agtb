@@ -573,6 +573,9 @@
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
         var self = this;
+        if(!this.showMe()){
+        	return false;
+        }
 
         if (app.config.show_buckets == 1) { // buckets
 
