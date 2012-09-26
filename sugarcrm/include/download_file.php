@@ -319,7 +319,9 @@ class DownloadFile {
         clearstatcache();
         if (file_exists($filename)) {
             if( function_exists( 'mime_content_type' ) ) {
-                $mimetype = mime_content_type($filename);
+                // Suppressing warnings here since some versions of PHP choke on
+                // getting the mime type this way
+                $mimetype = @mime_content_type($filename);
             } elseif( function_exists( 'ext2mime' ) ) {
                 $mimetype = ext2mime($filename);
             }
