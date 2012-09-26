@@ -72,7 +72,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             "w.base_rate w_base_rate " .
             "from opportunities o " .
             "left join timeperiods t ".
-            "on t.start_date_timestamp < o.date_closed_timestamp ".
+            "on t.start_date_timestamp <= o.date_closed_timestamp ".
             "and t.end_date_timestamp >= o.date_closed_timestamp ".
             "left join worksheet w " .
             "on o.id = w.related_id ";
@@ -119,8 +119,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                 $data['version'] = $row["w_version"];
             } else {
                 //Set default values to that of the opportunity's
+                $data['likely_case'] = $row["amount"];
                 $data['best_case'] = $row["best_case"];
-                $data['likely_case'] = $row["likely_case"];
                 $data['worst_case'] = $row["worst_case"];
                 $data['commit_stage'] = $row["commit_stage"];
                 $data['probability'] = $row["probability"];

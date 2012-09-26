@@ -181,7 +181,7 @@ public static function getRelatedOpportunities($user_id, $timeperiod_id)
     $opps = array();
 
     $query = sprintf("SELECT o.id FROM opportunities o
-LEFT JOIN timeperiods tp ON tp.start_date_timestamp < o.date_closed_timestamp and tp.end_date_timestamp >= o.date_closed_timestamp
+LEFT JOIN timeperiods tp ON tp.start_date_timestamp <= o.date_closed_timestamp and tp.end_date_timestamp >= o.date_closed_timestamp
 WHERE tp.id = '%s' AND o.assigned_user_id = '%s' AND o.deleted = 0 AND o.sales_stage != '%s'", $timeperiod_id, $user_id, "Closed Lost");
 
     $result = $db->query($query, false, "Error fetching related opps for user");

@@ -81,7 +81,8 @@ class TimePeriod extends SugarBean {
             $date_start_datetime = $timedate->fromDbDate($this->start_date);
         } else if ($timedate->check_matching_format($this->start_date, $timedate->get_user_date_format())) {
             $date_start_datetime = $timedate->fromUserDate($this->start_date, true);
-         }
+        }
+
         $date_start_datetime->setTime(0,0,0);
         $this->start_date_timestamp = $date_start_datetime->getTimestamp();
 
@@ -91,7 +92,8 @@ class TimePeriod extends SugarBean {
             $date_close_datetime = $timedate->fromDbDate($this->end_date);
         } else if ($timedate->check_matching_format($this->end_date, $timedate->get_user_date_format())) {
             $date_close_datetime = $timedate->fromUserDate($this->end_date, true);
-         }
+        }
+
         $date_close_datetime->setTime(23,59,59);
         $this->end_date_timestamp = $date_close_datetime->getTimestamp();
 		return parent::save($check_notify);
