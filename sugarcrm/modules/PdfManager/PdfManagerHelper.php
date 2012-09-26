@@ -399,7 +399,7 @@ class PdfManagerHelper
     {
         $pdfManager = BeanFactory::newBean('PdfManager');
 
-        return $pdfManager->get_full_list('', 'base_module="' .  $GLOBALS['db']->quote($module) . '" AND published = "yes"');
+        return $pdfManager->get_full_list('', "base_module='" .  $GLOBALS['db']->quote($module) . "' AND published = 'yes'");
     }
 
     /**
