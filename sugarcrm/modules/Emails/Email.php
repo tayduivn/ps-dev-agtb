@@ -632,9 +632,11 @@ class Email extends SugarBean {
                         $note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
                         //END SUGARCRM flav=pro ONLY
                         $dest = "upload://{$note->id}";
+
                         if (!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
                             $GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
                         }
+
                         $note->save();
                     } else {
                         $note                             = new Note();
