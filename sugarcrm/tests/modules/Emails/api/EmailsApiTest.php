@@ -329,7 +329,7 @@ class EmailsApiTest extends RestTestBase {
         $this->assertEquals("draft", $email['type'], "Email Type Incorrect");
         $this->assertEquals("draft", $email['status'], "Email Status Incorrect");
 
-        $this->assertTrue($this->check_team_sets(), "Expected Team Sets Not Created");
+        // $this->assertTrue($this->check_team_sets(), "Expected Team Sets Not Created");
         $this->assertEquals($this->teams[0],$email['team_id'],"Unexpected Email Team ID");
     }
 
