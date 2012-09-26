@@ -525,263 +525,267 @@ class Email extends SugarBean {
         $subject = $this->name;
         $htmlBody = $this->description_html;
         $textBody = $this->description;
-        try {
-            $htmlBody = from_html($this->description_html);
-            $textBody = from_html($this->description);
-            //------------------- HANDLEBODY() ---------------------------------------------
-            if( (isset($_REQUEST['setEditor']) /* from Email EditView navigation */
-                && $_REQUEST['setEditor'] == 1
-                && trim($_REQUEST['description_html']) != '')
-                || trim($this->description_html) != '' /* from email templates */
-                    && $current_user->getPreference('email_editor_option', 'global') !== 'plain' //user preference is not set to plain text
-            ) {
-                $htmlBody = $this->decodeDuringSend($htmlBody);
-                $textBody = $this->decodeDuringSend($textBody);
 
-            } else {
-                $textBody = str_replace("&nbsp;", " ", $textBody);
-                $textBody = str_replace("</p>", "</p><br />", $textBody);
-                $textBody = strip_tags(br2nl($textBody));
-                $textBody = str_replace("&amp;", "&", $textBody);
-                $textBody = str_replace("&#39;", "'", $textBody);
-                $textBody = $this->decodeDuringSend($textBody);
-            }
+        //------------------- HANDLEBODY() ---------------------------------------------
+        if ((isset($_REQUEST['setEditor']) /* from Email EditView navigation */
+             && $_REQUEST['setEditor'] == 1
+             && trim($_REQUEST['description_html']) != '')
+            || trim($this->description_html) != '' /* from email templates */
+               && $current_user->getPreference('email_editor_option', 'global') !== 'plain' //user preference is not set to plain text
+        ) {
+            $htmlBody = $this->decodeDuringSend($htmlBody);
+            $textBody = $this->decodeDuringSend($textBody);
 
-            $mailConfig = null;
-            if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
-                $mailConfigs = MailConfigurationPeer::listMailConfigurations($current_user);
-                foreach($mailConfigs AS $mconfig) {
-                    if ($mconfig->config_id == $request["fromAccount"]) {
-                        $mailConfig = $mconfig;
-                        break;
-                    }
-                }
-            } else {
-                $mailConfig =  MailConfigurationPeer::getSystemMailConfiguration($current_user);
-            }
-            if (is_null($mailConfig)) {
-                throw new MailerException("No Valid Mail Configurations Found");
-            }
+        } else {
+            $textBody = str_replace("&nbsp;", " ", $textBody);
+            $textBody = str_replace("</p>", "</p><br />", $textBody);
+            $textBody = strip_tags(br2nl($textBody));
+            $textBody = str_replace("&amp;", "&", $textBody);
+            $textBody = str_replace("&#39;", "'", $textBody);
+            $textBody = $this->decodeDuringSend($textBody);
+        }
 
-            $mailer = MailerFactory::getMailer($mailConfig);
-            $mailer->setSubject($subject);
-            $mailer->setHtmlBody($htmlBody);
-            $mailer->setTextBody($textBody);
+        $mailConfig = null;
 
-            if (!empty($mailConfig->replyto_email)) {
-                $mailer->setHeader(
-                    EmailHeaders::ReplyTo,
-                    new EmailIdentity($mailConfig->replyto_email, $mailConfig->replyto_name)
-                );
-            }
+        if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
+            $mailConfigs = MailConfigurationPeer::listMailConfigurations($current_user);
 
-            foreach($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
-                if(empty($addr_arr['email'])) continue;
-                $mailer->addRecipientsTo( new EmailIdentity( $addr_arr['email'],  $addr_arr['display']) );
-            }
-
-            foreach($this->email2ParseAddresses($request['sendCc']) as $addr_arr) {
-                if(empty($addr_arr['email'])) continue;
-                $mailer->addRecipientsCc( new EmailIdentity( $addr_arr['email'],  $addr_arr['display']) );
-            }
-
-            foreach($this->email2ParseAddresses($request['sendBcc']) as $addr_arr) {
-                if(empty($addr_arr['email'])) continue;
-                $mailer->addRecipientsBcc( new EmailIdentity( $addr_arr['email'],  $addr_arr['display']) );
-            }
-
-            /* handle attachments */
-            if(!empty($request['attachments'])) {
-                $exAttachments = explode("::", $request['attachments']);
-
-                foreach($exAttachments as $file) {
-                    $file = trim(from_html($file));
-                    $file = str_replace("\\", "", $file);
-                    if(!empty($file)) {
-                        $fileGUID = substr($file, 0, 36);
-                        $fileLocation = $this->et->userCacheDir."/{$fileGUID}";
-                        $filename = substr($file, 36, strlen($file)); // strip GUID	for PHPMailer class to name outbound file
-
-                        // only save attachments if we're archiving or drafting
-                        if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
-                            $note = new Note();
-                            $note->id = create_guid();
-                            $note->new_with_id = true; // duplicating the note with files
-                            $note->parent_id = $this->id;
-                            $note->parent_type = $this->module_dir;
-                            $note->name = $filename;
-                            $note->filename = $filename;
-                            $note->file_mime_type = $this->email2GetMime($fileLocation);
-                            //BEGIN SUGARCRM flav=pro ONLY
-                            $note->team_id = (isset($_REQUEST['primaryteam']) ?  $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
-                            $noteTeamSet = new TeamSet();
-                            $noteteamIdsArray = (isset($_REQUEST['teamIds']) ?  explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
-                            $note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
-                            //END SUGARCRM flav=pro ONLY
-                            $dest = "upload://{$note->id}";
-                            if(!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
-                                $GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
-                            }
-                            $note->save();
-                        } else {
-                            $note = new Note();
-                            $note->disable_row_level_security=true;  // Workaround for User Security Issue - Forecast module
-                            $note->retrieve($fileGUID);
-                            //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
-                            //$note->x_file_path   = "upload/{$note->id}";
-                            //$note->x_file_exists = (bool) (!empty($note->id) && (file_exists($note->x_file_path)));
-                            //$note->x_mime_type   = $note->file_mime_type;
-                        }
-
-                        $attachment = Attachment::fromSugarBean($note);
-                        //print_r($attachment);
-                        $mailer->addAttachment($attachment);
-                    }
+            foreach ($mailConfigs AS $mconfig) {
+                if ($mconfig->config_id == $request["fromAccount"]) {
+                    $mailConfig = $mconfig;
+                    break;
                 }
             }
+        } else {
+            $mailConfig = MailConfigurationPeer::getSystemMailConfiguration($current_user);
+        }
 
-            /* handle sugar documents */
-            if(!empty($request['documents'])) {
-                $exDocs = explode("::", $request['documents']);
+        if (is_null($mailConfig)) {
+            throw new MailerException("No Valid Mail Configurations Found");
+        }
 
-                foreach($exDocs as $docId) {
-                    $docId = trim($docId);
-                    if(!empty($docId)) {
-                        $doc = new Document();
-                        $doc->retrieve($docId);
+        $mailer = MailerFactory::getMailer($mailConfig);
+        $mailer->setSubject($subject);
+        $mailer->setHtmlBody($htmlBody);
+        $mailer->setTextBody($textBody);
 
-                        $documentRevision = new DocumentRevision();
-                        $documentRevision->disable_row_level_security=true;  // Workaround for User Security Issue - Forecast module
-                        $documentRevision->retrieve($doc->document_revision_id);
-                        //$documentRevision->x_file_name   = $documentRevision->filename;
-                        //$documentRevision->x_file_path   = "upload/{$documentRevision->id}";
-                        //$documentRevision->x_file_exists = (bool) file_exists($documentRevision->x_file_path);
-                        //$documentRevision->x_mime_type   = $documentRevision->file_mime_type;
+        if (!empty($mailConfig->replyto_email)) {
+            $mailer->setHeader(
+                EmailHeaders::ReplyTo,
+                new EmailIdentity($mailConfig->replyto_email, $mailConfig->replyto_name)
+            );
+        }
 
-                        $filename = $documentRevision->filename;
-                        $fileLocation = "upload://{$documentRevision->id}";
+        foreach ($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
+            try {
+                $mailer->addRecipientsTo(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+            } catch (MailerException $me) {
+                //@todo alert when an invalid recipient is found, like an empty or non-string email address?
+                //@todo what sort of behavior should occur in these instances?
+            }
+        }
 
-                        if (empty($documentRevision->id) || !file_exists($fileLocation)) {
-                            throw new Exception("Revision Id Not Found");
+        foreach ($this->email2ParseAddresses($request['sendCc']) as $addr_arr) {
+            try {
+                $mailer->addRecipientsCc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+            } catch (MailerException $me) {
+                //@todo alert when an invalid recipient is found, like an empty or non-string email address?
+                //@todo what sort of behavior should occur in these instances?
+            }
+        }
+
+        foreach ($this->email2ParseAddresses($request['sendBcc']) as $addr_arr) {
+            try {
+                $mailer->addRecipientsBcc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+            } catch (MailerException $me) {
+                //@todo alert when an invalid recipient is found, like an empty or non-string email address?
+                //@todo what sort of behavior should occur in these instances?
+            }
+        }
+
+        /* handle attachments */
+        if (!empty($request['attachments'])) {
+            $exAttachments = explode("::", $request['attachments']);
+
+            foreach ($exAttachments as $file) {
+                $file = trim(from_html($file));
+                $file = str_replace("\\", "", $file);
+                if (!empty($file)) {
+                    $fileGUID     = substr($file, 0, 36);
+                    $fileLocation = $this->et->userCacheDir . "/{$fileGUID}";
+                    $filename     = substr($file, 36, strlen($file)); // strip GUID	for PHPMailer class to name outbound file
+
+                    // only save attachments if we're archiving or drafting
+                    if ((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
+                        $note                 = new Note();
+                        $note->id             = create_guid();
+                        $note->new_with_id    = true; // duplicating the note with files
+                        $note->parent_id      = $this->id;
+                        $note->parent_type    = $this->module_dir;
+                        $note->name           = $filename;
+                        $note->filename       = $filename;
+                        $note->file_mime_type = $this->email2GetMime($fileLocation);
+                        //BEGIN SUGARCRM flav=pro ONLY
+                        $note->team_id     = (isset($_REQUEST['primaryteam']) ? $_REQUEST['primaryteam'] : $current_user->getPrivateTeamID());
+                        $noteTeamSet       = new TeamSet();
+                        $noteteamIdsArray  = (isset($_REQUEST['teamIds']) ? explode(",", $_REQUEST['teamIds']) : array($current_user->getPrivateTeamID()));
+                        $note->team_set_id = $noteTeamSet->addTeams($noteteamIdsArray);
+                        //END SUGARCRM flav=pro ONLY
+                        $dest = "upload://{$note->id}";
+                        if (!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
+                            $GLOBALS['log']->debug("EMAIL 2.0: could not copy attachment file to $fileLocation => $dest");
                         }
-
-                        // only save attachments if we're archiving or drafting
-                        if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
-                            $note = new Note();
-                            $note->id = create_guid();
-                            $note->new_with_id = true; // duplicating the note with files
-                            $note->parent_id = $this->id;
-                            $note->parent_type = $this->module_dir;
-                            $note->name = $filename;
-                            $note->filename = $filename;
-                            $note->file_mime_type = $documentRevision->file_mime_type;
-                            //BEGIN SUGARCRM flav=pro ONLY
-                            $note->team_id = $this->team_id;
-                            $note->team_set_id = $this->team_set_id;
-                            //END SUGARCRM flav=pro ONLY
-                            $dest = "upload://{$note->id}";
-                            if(!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
-                                $GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
-                            }
-                            $note->save();
-                        }
-
-                        $attachment = Attachment::fromSugarBean($documentRevision);
-                        //print_r($attachment);
-                        $mailer->addAttachment($attachment);
+                        $note->save();
+                    } else {
+                        $note                             = new Note();
+                        $note->disable_row_level_security = true; // Workaround for User Security Issue - Forecast module
+                        $note->retrieve($fileGUID);
+                        //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
+                        //$note->x_file_path   = "upload/{$note->id}";
+                        //$note->x_file_exists = (bool) (!empty($note->id) && (file_exists($note->x_file_path)));
+                        //$note->x_mime_type   = $note->file_mime_type;
                     }
+
+                    $attachment = Attachment::fromSugarBean($note);
+                    //print_r($attachment);
+                    $mailer->addAttachment($attachment);
                 }
             }
+        }
 
+        /* handle sugar documents */
+        if (!empty($request['documents'])) {
+            $exDocs = explode("::", $request['documents']);
 
+            foreach ($exDocs as $docId) {
+                $docId = trim($docId);
+                if (!empty($docId)) {
+                    $doc = new Document();
+                    $doc->retrieve($docId);
 
-            /* handle template attachments */
-            if(!empty($request['templateAttachments'])) {
+                    $documentRevision                             = new DocumentRevision();
+                    $documentRevision->disable_row_level_security = true; // Workaround for User Security Issue - Forecast module
+                    $documentRevision->retrieve($doc->document_revision_id);
+                    //$documentRevision->x_file_name   = $documentRevision->filename;
+                    //$documentRevision->x_file_path   = "upload/{$documentRevision->id}";
+                    //$documentRevision->x_file_exists = (bool) file_exists($documentRevision->x_file_path);
+                    //$documentRevision->x_mime_type   = $documentRevision->file_mime_type;
 
-                $exNotes = explode("::", $request['templateAttachments']);
-                foreach($exNotes as $noteId) {
-                    $noteId = trim($noteId);
-                    if(!empty($noteId)) {
-                        $note = new Note();
-                        $note->retrieve($noteId);
-                        if (!empty($note->id)) {
-                            $filename = $note->filename;
-                            $fileLocation = "upload://{$note->id}";
-                            $mime_type = $note->file_mime_type;
-                            if (!$note->embed_flag) {
+                    $filename     = $documentRevision->filename;
+                    $fileLocation = "upload://{$documentRevision->id}";
 
+                    if (empty($documentRevision->id) || !file_exists($fileLocation)) {
+                        throw new Exception("Revision Id Not Found");
+                    }
 
-                                $attachment = Attachment::fromSugarBean($note);
-                                //print_r($attachment);
-                                $mailer->addAttachment($attachment);
+                    // only save attachments if we're archiving or drafting
+                    if ((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
+                        $note                 = new Note();
+                        $note->id             = create_guid();
+                        $note->new_with_id    = true; // duplicating the note with files
+                        $note->parent_id      = $this->id;
+                        $note->parent_type    = $this->module_dir;
+                        $note->name           = $filename;
+                        $note->filename       = $filename;
+                        $note->file_mime_type = $documentRevision->file_mime_type;
+                        //BEGIN SUGARCRM flav=pro ONLY
+                        $note->team_id     = $this->team_id;
+                        $note->team_set_id = $this->team_set_id;
+                        //END SUGARCRM flav=pro ONLY
+                        $dest = "upload://{$note->id}";
+                        if (!file_exists($fileLocation) || (!copy($fileLocation, $dest))) {
+                            $GLOBALS['log']->debug("EMAIL 2.0: could not copy SugarDocument revision file $fileLocation => $dest");
+                        }
+                        $note->save();
+                    }
 
-                                // $mail->AddAttachment($fileLocation,$filename, 'base64', $mime_type);
+                    $attachment = Attachment::fromSugarBean($documentRevision);
+                    //print_r($attachment);
+                    $mailer->addAttachment($attachment);
+                }
+            }
+        }
 
-                                // only save attachments if we're archiving or drafting
-                                if((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
+        /* handle template attachments */
+        if (!empty($request['templateAttachments'])) {
+            $exNotes = explode("::", $request['templateAttachments']);
 
-                                    if ($note->parent_id != $this->id)
-                                        $this->saveTempNoteAttachments($filename,$fileLocation, $mime_type);
-                                } // if
+            foreach ($exNotes as $noteId) {
+                $noteId = trim($noteId);
 
-                            } // if
-                        } else {
-                            //$fileLocation = $this->et->userCacheDir."/{$file}";
-                            $fileGUID = substr($noteId, 0, 36);
-                            $fileLocation = $this->et->userCacheDir."/{$fileGUID}";
-                            //$fileLocation = $this->et->userCacheDir."/{$noteId}";
-                            $filename = substr($noteId, 36, strlen($noteId)); // strip GUID	for PHPMailer class to name outbound file
+                if (!empty($noteId)) {
+                    $note = new Note();
+                    $note->retrieve($noteId);
 
-                            //If we are saving an email we were going to forward we need to save the attachments as well.
-                            if( (($this->type == 'draft') && !empty($this->id))
-                                || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1))
-                            {
-                                $mimeType = $this->email2GetMime($fileLocation);
-                                $this->saveTempNoteAttachments($filename,$fileLocation, $mimeType);
-                            } // if
+                    if (!empty($note->id)) {
+                        $filename     = $note->filename;
+                        $fileLocation = "upload://{$note->id}";
+                        $mime_type    = $note->file_mime_type;
 
-                            $note = new Note();
-                            $note->disable_row_level_security=true;  // Workaround for User Security Issue - Forecast module
-                            $note->retrieve($fileGUID);
-                            //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
-                            //$note->x_file_path   = "upload/{$note->id}";
-                            //$note->x_file_exists = (bool) (!empty($note->id) && (file_exists($note->x_file_path)));
-                            //$note->x_mime_type   = $note->file_mime_type;
-
+                        if (!$note->embed_flag) {
                             $attachment = Attachment::fromSugarBean($note);
                             //print_r($attachment);
                             $mailer->addAttachment($attachment);
 
-                            // $mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $this->email2GetMime($fileLocation));
-                        }
+                            // $mail->AddAttachment($fileLocation,$filename, 'base64', $mime_type);
+
+                            // only save attachments if we're archiving or drafting
+                            if ((($this->type == 'draft') && !empty($this->id)) || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
+                                if ($note->parent_id != $this->id) {
+                                    $this->saveTempNoteAttachments($filename, $fileLocation, $mime_type);
+                                }
+                            } // if
+                        } // if
+                    } else {
+                        //$fileLocation = $this->et->userCacheDir."/{$file}";
+                        $fileGUID     = substr($noteId, 0, 36);
+                        $fileLocation = $this->et->userCacheDir . "/{$fileGUID}";
+                        //$fileLocation = $this->et->userCacheDir."/{$noteId}";
+                        $filename = substr($noteId, 36, strlen($noteId)); // strip GUID	for PHPMailer class to name outbound file
+
+                        //If we are saving an email we were going to forward we need to save the attachments as well.
+                        if ((($this->type == 'draft') && !empty($this->id))
+                            || (isset($request['saveToSugar']) && $request['saveToSugar'] == 1)
+                        ) {
+                            $mimeType = $this->email2GetMime($fileLocation);
+                            $this->saveTempNoteAttachments($filename, $fileLocation, $mimeType);
+                        } // if
+
+                        $note                             = new Note();
+                        $note->disable_row_level_security = true; // Workaround for User Security Issue - Forecast module
+                        $note->retrieve($fileGUID);
+                        //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
+                        //$note->x_file_path   = "upload/{$note->id}";
+                        //$note->x_file_exists = (bool) (!empty($note->id) && (file_exists($note->x_file_path)));
+                        //$note->x_mime_type   = $note->file_mime_type;
+
+                        $attachment = Attachment::fromSugarBean($note);
+                        //print_r($attachment);
+                        $mailer->addAttachment($attachment);
+
+                        // $mail->AddAttachment($fileLocation,$locale->translateCharsetMIME(trim($filename), 'UTF-8', $OBCharset), 'base64', $this->email2GetMime($fileLocation));
                     }
                 }
             }
-
-
-
-           /**********************************************************************
-            * Final Touches
-            */
-           if($this->type == 'draft' && !isset($request['saveDraft'])) {
-                // sending a draft email
-                $this->type = 'out';
-                $this->status = 'sent';
-                $forceSave = true;
-            } elseif(isset($request['saveDraft'])) {
-                $this->type = 'draft';
-                $this->status = 'draft';
-                $forceSave = true;
-            }
-
-            if ($this->type != 'draft') {
-                $mailer->send();
-            }
-
-        } catch (Exception $e) {
-            throw($e);
         }
 
+        /**********************************************************************
+         * Final Touches
+         */
+        if ($this->type == 'draft' && !isset($request['saveDraft'])) {
+            // sending a draft email
+            $this->type   = 'out';
+            $this->status = 'sent';
+            $forceSave    = true;
+        } elseif (isset($request['saveDraft'])) {
+            $this->type   = 'draft';
+            $this->status = 'draft';
+            $forceSave    = true;
+        }
+
+        if ($this->type != 'draft') {
+            $mailer->send();
+        }
 
 		if ((!(empty($orignialId) || isset($request['saveDraft']) || ($this->type == 'draft' && $this->status == 'draft'))) &&
 			(($_REQUEST['composeType'] == 'reply') || ($_REQUEST['composeType'] == 'replyAll') || ($_REQUEST['composeType'] == 'replyCase')) && ($orignialId != $this->id)) {
