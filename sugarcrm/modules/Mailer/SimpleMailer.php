@@ -95,7 +95,7 @@ class SimpleMailer extends BaseMailer
         $mailer->SMTPSecure = $this->config->getCommunicationProtocol();
         $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
-        $mailer->Password   = from_html($this->config->getPassword());
+        $mailer->Password   = from_html($this->config->getPassword());  // perform HTML character translations
     }
 
     /**
@@ -148,6 +148,8 @@ class SimpleMailer extends BaseMailer
                             "UTF-8",
                             $this->config->getCharset()
                         );
+
+                        // perform HTML character translations on the From name
                         $value[1] = from_html($value[1]);
                     }
 
@@ -174,6 +176,8 @@ class SimpleMailer extends BaseMailer
                             "UTF-8",
                             $this->config->getCharset()
                         );
+
+                        // perform HTML character translations on the Reply-To name
                         $value[1] = from_html($value[1]);
                     }
 

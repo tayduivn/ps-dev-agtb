@@ -129,8 +129,12 @@ class MailConfigurationPeer
                 $mailConfiguration->display_name = "{$name} ({$addr})";
                 $mailConfiguration->personal     = (bool)($v->is_personal);
 
-                $mailConfiguration->replyto_name  = (!empty($storedOptions['reply_to_name']) ? $storedOptions['reply_to_name'] : $mailConfiguration->sender_name);
-                $mailConfiguration->replyto_email = (!empty($storedOptions['reply_to_addr']) ? $storedOptions['reply_to_addr'] : $mailConfiguration->sender_email);
+                $mailConfiguration->replyto_name  = (!empty($storedOptions['reply_to_name']) ?
+                    $storedOptions['reply_to_name'] :
+                    $mailConfiguration->sender_name);
+                $mailConfiguration->replyto_email = (!empty($storedOptions['reply_to_addr']) ?
+                    $storedOptions['reply_to_addr'] :
+                    $mailConfiguration->sender_email);
 
                 // turn the OutboundEmail object into a useable set of mail configurations
                 $oeAsArray                           = self::toArray($oe);
