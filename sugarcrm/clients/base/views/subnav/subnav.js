@@ -11,14 +11,9 @@
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
-
-        this.subnavModel = new Backbone.Model();
-        this.subnavModel.set({
-            meta: {
-                buttons: this.meta.buttons
-            }
-        });
-        this.context.set('subnavModel', this.subnavModel);
+        if (this.meta && this.meta.label) {
+            this.title = app.lang.get(this.meta.label);
+        }
     },
 
     /**
@@ -61,6 +56,16 @@
      * Only re-render the view. Do not push down the view below.
      */
     bindDataChange: function() {
-        this.subnavModel.on("change", this.app.view.View.prototype._render, this);
+        var self = this;
+        if (this.meta.field) {
+            this.model.on(
+                "change:"+this.meta.field,
+                function() {
+                    self.title = self.model.get(this.meta.field);
+                    self.render();
+                },
+                this
+          );
+        }
     }
 })
