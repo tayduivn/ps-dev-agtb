@@ -33,19 +33,13 @@ require_once('modules/Leads/LeadConvert.php');
 class LeadConvertApiTest extends RestTestBase
 {
     protected $lead;
-    protected static $user;
 
     public function setup()
     {
+        parent::setUp();
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
-        $this->user = SugarTestUserUtilities::createAnonymousUser();
-
-        //Create an anonymous user for login purposes/
-        $this->_user = $this->user ;
-        $GLOBALS['current_user'] = $this->_user;
-
         //createLead
         $this->lead = SugarTestLeadUtilities::createLead();
         $this->lead->save();
@@ -56,7 +50,9 @@ class LeadConvertApiTest extends RestTestBase
         SugarTestLeadUtilities::removeAllCreatedLeads();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+
+        parent::tearDown();
     }
 
     /**
@@ -123,7 +119,6 @@ class LeadConvertApiTest extends RestTestBase
         );
 
         $response = $this->_restCall("Leads/" . $this->lead->id . '/convert', json_encode($postData), "POST");
-
         $lead = new Lead();
         $lead->retrieve($this->lead->id);
 
@@ -156,11 +151,9 @@ class LeadConvertApiTest extends RestTestBase
                     'id' => $opp->id
                 ),
             )
-
         );
 
         $response = $this->_restCall("Leads/" . $this->lead->id . '/convert', json_encode($postData), "POST");
-
         $lead = new Lead();
         $lead->retrieve($this->lead->id);
 
