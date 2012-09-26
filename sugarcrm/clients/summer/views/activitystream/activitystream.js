@@ -500,40 +500,49 @@
         setTimeout(function() {
             $(".activitystream-post .sayit").focus();
         }, 300);
-
-        var paramStr = "";
-        if(this.opts.params != 'undefined') {
-            if(this.opts.params.filter != 'undefined') {
-                paramStr += '&filter='+this.opts.params.filter;
-            }
-            if(this.opts.params.offset != 'undefined') {
-                paramStr += '&offset='+this.opts.params.offset;
-            }
-            if(this.opts.params.max_num != 'undefined') {
-                paramStr += '&max_num='+this.opts.params.max_num;
-            }
-            if(this.opts.params.limit != 'undefined' ) {
-                paramStr += '&limit='+this.opts.params.limit;
-            }
-        }
-
+        
         if(this.collection.models.length > 0) {
-            setTimeout(function() {
+            var paramStr = 'oauth_token='+app.api.getOAuthToken();
+            if(this.opts.params != 'undefined') {
+                if(this.opts.params.filter != 'undefined') {
+                    paramStr += '&filter='+this.opts.params.filter;
+                }
+                if(this.opts.params.offset != 'undefined') {
+                    paramStr += '&offset='+this.opts.params.offset;
+                }
+                if(this.opts.params.max_num != 'undefined') {
+                    paramStr += '&max_num='+this.opts.params.max_num;
+                }
+                if(this.opts.params.limit != 'undefined' ) {
+                    paramStr += '&limit='+this.opts.params.limit;
+                }
+            }
+            paramStr += '&view=timeline';
+            var url = 'ActivityStream';
+            if(this.opts.params.module) {
+                url += '/' + this.opts.params.module;
+                if (this.opts.params.id) {
+                    url += "/" + this.opts.params.id;
+                }
+            }  
+
+            setTimeout(function() {            
                 createStoryJS({
                     type:       'timeline',
-                    width:      '100%',
+                    width:      '99%',
                     height:     '400',
                     start_at_end:true,
+                    hash_bookmark:      false,
                     js: 'lib/TimelineJS/js/timeline.js',
-                    source:     app.api.buildURL('ActivityStream')+"?oauth_token="+app.api.getOAuthToken()+paramStr+"&view=timeline",
+                    source:     app.api.buildURL(url)+"?"+paramStr,
                     embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
-                });
+                });                   
             }, 300);
         }
 
         return app.view.View.prototype._renderHtml.call(this);
     },
-
+    
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
