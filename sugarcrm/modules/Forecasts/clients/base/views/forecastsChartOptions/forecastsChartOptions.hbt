@@ -1,4 +1,4 @@
-<div class="chartOptions" style="display: none;">
+<div class="chartOptions">
     {{#each meta.panels}}
         <h4>{{str label "Forecasts"}}</h4>
         {{#each fields}}

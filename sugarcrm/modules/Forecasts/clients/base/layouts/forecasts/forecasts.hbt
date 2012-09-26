@@ -24,6 +24,7 @@
                     <div class="tab-pane active" id="overview">
                         <div class="thumbnail viz">
                             <div class="view-forecastsChart"></div>
+                            <div class="view-forecastsChartOptions"></div>
                         </div>
                         <div class="clearfix"></div>
                         <div class="block" id="guages">

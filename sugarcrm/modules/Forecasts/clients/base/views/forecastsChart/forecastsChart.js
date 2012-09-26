@@ -10,59 +10,8 @@
 
     chart: null,
 
-    chartRendered: false,
-    commitUpdate: false,
-
-    chartDataSet : [],
-    chartGroupByOptions : [],
-
-    defaultDataset: '',
-    defaultGroupBy: '',
-
     chartTitle: '',
     timeperiod_label: '',
-
-    /**
-     * events on the view to watch for
-     */
-    events : {
-        'click #forecastsChartDisplayOptions div.datasetOptions input[type=radio]' : 'changeDisplayOptions',
-        'click #forecastsChartDisplayOptions div.groupByOptions input[type=radio]' : 'changeGroupByOptions'
-    },
-
-    /**
-     * event handler to update which dataset is used.
-     */
-    changeDisplayOptions : function()
-    {
-        this.handleRenderOptions({dataset: this.getCheckedOptions('datasetOptions')})
-    },
-
-    /**
-     * Handle any group by changes
-     */
-    changeGroupByOptions: function()
-    {
-        this.handleRenderOptions({group_by:_.first(this.getCheckedOptions('groupByOptions'))});
-    },
-
-    /**
-     * find all the checkedOptions in a give option class
-     *
-     * @param {string}
-     * @return {Array}
-     */
-    getCheckedOptions : function(divClass)
-    {
-        var chkOptions = this.$el.find("div." + divClass + " input[type=radio]:checked");
-
-        var options = [];
-        _.each(chkOptions, function(o) {
-            options.push(o.value);
-        });
-
-        return options;
-    },
 
     /**
      * Override the _rerderHtml function
@@ -73,37 +22,17 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = app.metadata.data.app_list_strings.forecasts_chart_options_dataset || [];
-        this.chartGroupByOptions = app.metadata.data.app_list_strings.forecasts_chart_options_group || [];
-        this.defaultDataset = app.defaultSelections.dataset;
-        this.defaultGroupBy = app.defaultSelections.group_by;
-
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
-
         var values = {
             user_id: app.user.get('id'),
             display_manager : app.user.get('isManager'),
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
-            group_by : this.getCheckedOptions('groupByOptions'),
-            dataset : this.getCheckedOptions('datasetOptions'),
+            group_by : app.defaultSelections.group_by.id,
+            dataset : app.defaultSelections.dataset.id,
             category : app.defaultSelections.category
         };
 
+        app.view.View.prototype._renderHtml.call(this, ctx, options);
         this.handleRenderOptions(values);
-    },
-
-    _render : function() {
-        app.view.View.prototype._render.call(this);
-
-        this.toggleRepOptionsVisibility();
-    },
-
-    toggleRepOptionsVisibility : function() {
-        if(this.values.display_manager === true) {
-            this.$el.find('div.groupByOptions').hide();
-        } else {
-            this.$el.find('div.groupByOptions').show();
-        }
     },
 
     /**
@@ -111,21 +40,8 @@
      */
     bindDataChange:function () {
         var self = this;
-        this.context.forecasts.worksheetmanager.on('reset', function(){
-
-            if(self.commitUpdate && self.chartRendered) {
-                self.commitUpdate = false;
-                self.renderChart();
-            }
-        }, this);
-        this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
-            if(flag) {
-                self.commitUpdate = true;
-            }
-        }, this);
         this.context.forecasts.on('change:selectedUser', function (context, user) {
             self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
-            self.toggleRepOptionsVisibility();
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
             self.timeperiod_label = timePeriod.label;
@@ -135,13 +51,18 @@
             self.handleRenderOptions({group_by: groupBy});
         });
         this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
-            //self.handleRenderOptions({dataset: dataset});
+            self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
             if (app.config.show_buckets == 0) {
                 // TODO: this.
             } else {
                 self.handleRenderOptions({category:_.first(value)});
+            }
+        });
+        this.context.forecasts.on('change:updatedTotals', function(context, totals){
+            if(!_.isEmpty(self.chart)) {
+                self.updateChart();
             }
         });
     },
@@ -190,7 +111,7 @@
             },
             chartConfig = {
                 "orientation":"vertical",
-                "barType": this.values.display_manager ? "grouped" : "stacked",
+                "barType":"stacked",
                 "tip":"name",
                 "chartType":"barChart",
                 "imageExportType":"png",
@@ -231,7 +152,6 @@
         this.$el.find('h4').html(text);
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
-        this.chartRendered = true;
         return chart.chartObject;
     }
 })
