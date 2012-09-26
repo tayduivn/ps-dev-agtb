@@ -21,9 +21,7 @@
         'click .sayit .label a.close': 'removeTag',
         'click .showAnchor': 'showAnchor',
         'click .icon-eye-open': 'previewRecord',
-        'click .showTimeline': 'showTimeline',
-        'click .showCalendar': 'showCalendar',
-        'click .showNone': 'showNone'        
+        'click .toggleView': 'toggleView'        
     },
 
     initialize: function(options) {
@@ -75,25 +73,21 @@
         jQuery.event.props.push('dataTransfer');
     },
 
-    showTimeline: function(event) {
+    toggleView: function(event) {
         event.preventDefault();
-        $('#activitystream-timeline').show();        
-        $('#activitystream-calendar').hide();
-        this.$(event.currentTarget).closest('.btn-group').find('.btn').html('Timeline <p class="caret"></p>');
-    },
-
-    showCalendar: function(event) {
-        event.preventDefault();
-        $('#activitystream-timeline').hide();        
-        $('#activitystream-calendar').show();
-        this.$(event.currentTarget).closest('.btn-group').find('.btn').html('Calendar <p class="caret"></p>');        
-    },
-
-    showNone: function(event) {
-        event.preventDefault();
-        $('#activitystream-timeline').hide();        
-        $('#activitystream-calendar').hide();
-        this.$(event.currentTarget).closest('.btn-group').find('.btn').html('Choose <p class="caret"></p>');
+        var view = this.$(event.currentTarget).data('view');
+        if(view == 'timeline') {
+            $('#activitystream-timeline').show();        
+            $('#activitystream-calendar').hide();
+        }
+        else if(view == 'calendar') {
+            $('#activitystream-timeline').hide();        
+            $('#activitystream-calendar').show();
+        }
+        else {
+            $('#activitystream-timeline').hide();        
+            $('#activitystream-calendar').hide();        	
+        }
     },
     
     showAnchor: function(event) {
