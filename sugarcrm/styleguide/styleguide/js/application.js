@@ -74,7 +74,7 @@
       $('table').find('tr.message').remove();
       $('table').find(':checkbox').attr('checked', this.checked);
       $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7">You have selected 10 records. Do you want select <a href="">select all 300</a> records.</td></tr>');
-    })
+    });
 
     // timeout the alerts
     setTimeout( function (){$('.timeten').fadeOut().remove();}, 9000);
@@ -96,7 +96,7 @@
       		$(this).parent().parent().prev('.extend').addClass('hide');
       		$(this).html('. . .');
       		return false;
-    })
+    });
 
     // toggle more hide
     $('.newfilter').toggle(
@@ -106,7 +106,7 @@
       },
       function (e) {
       	$(this).parent().parent().parent().parent().find('.extend').addClass('hide');
-    })
+    });
 
     // toggle more hide
     $('.edit').toggle(
@@ -119,7 +119,7 @@
         $(this).removeClass('active');
       		$(this).parent().parent().parent().find('.extend').addClass('hide');
       		return false;
-    })
+    });
 
     $('.comment').toggle(
       function () {
@@ -143,7 +143,7 @@
         return false;
       },
       function (e) {
-        $(this).parent().parent().parent().find('.comment').show();      
+        $(this).parent().parent().parent().find('.comment').show();
         $(this).parent().prev('.extend').addClass('hide');
         $(this).html('2 more comments...');
         return false;
@@ -231,12 +231,12 @@
       $('.tooltip').remove();
   		$(this).parent().parent().remove();
   		return false;
-    })
-    
+    });
+
     // remove a dashlet
     $('.thumbnail').find('.remove').on('click', function (e) {
   		$(this).parent().parent().parent().parent().parent().remove();
-    })
+    });
 
     // remove a close item
     $('.folded').find('[data-toggle=tab]').on('click', function (e) {
@@ -272,15 +272,15 @@
     })
 
     // Select widget
-    $(".chzn-select").chosen({ disable_search_threshold: 5 })
-    $(".chzn-select-deselect").chosen({allow_single_deselect:true})
+    $(".chzn-select").chosen({ disable_search_threshold: 5 });
+    $(".chzn-select-deselect").chosen({allow_single_deselect:true});
 
     //popover
-    $("[rel=popover]").popover()
-    $("[rel=popoverTop]").popover({placement: "top"})
-    $("[rel=popoverBottom]").popover({placement: "bottom"})
-    $('#moduleActivity .form-search select').chosen()
-    $('#moduleActivity .form-search input').quicksearch('ul.results li')
+    $("[rel=popover]").popover();
+    $("[rel=popoverTop]").popover({placement: "top"});
+    $("[rel=popoverBottom]").popover({placement: "bottom"});
+    $('#moduleActivity .form-search select').chosen();
+    $('#moduleActivity .form-search input').quicksearch('ul.results li');
   })
 }(window.jQuery)
 
