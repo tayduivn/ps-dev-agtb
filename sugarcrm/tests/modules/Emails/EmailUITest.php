@@ -292,6 +292,8 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             //Delete the custom file created for testing
             unlink("custom/{$file}");
         }
+
+        unset($_REQUEST['qc_module']);
     }
 }
 
