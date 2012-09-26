@@ -305,7 +305,21 @@ class EmailsApi extends ModuleApi
             $result = $mailRecord->saveAsDraft();
         }
         else {
-            throw new SugarApiExceptionRequestMethodFailure("Invalid Status");
+            if (isset($GLOBALS["log"])) {
+                $logger = $GLOBALS["log"];
+                $logger->error("EmailsApi: Request Failed - Invalid Request - Property=Status : '" . $args["status"] . "'");
+            }
+            throw new SugarApiExceptionRequestMethodFailure("Invalid Status Property");
+        }
+
+        if (!isset($result['SUCCESS']) || !($result['SUCCESS'])) {
+            $eMessage = isset($result['ERROR_MESSAGE']) ? $result['ERROR_MESSAGE'] : 'Unknown Request Failure';
+            $eData    = isset($result['ERROR_DATA']) ? $result['ERROR_DATA'] : '';
+            if (isset($GLOBALS["log"])) {
+                $logger = $GLOBALS["log"];
+                $logger->error("EmailsApi: Request Failed - Message: " . $eMessage . "  Data: " . $eData);
+            }
+            throw new SugarApiExceptionRequestMethodFailure($eMessage);
         }
 
         if (isset($result["EMAIL"])) {

@@ -19,46 +19,29 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Mailer/EmbeddedImage.php";
+require_once "modules/Mailer/Attachment.php";
 
-class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
+class AttachmentTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @group mailer
      */
-    public function testFromSugarBean_ThrowsException() {
-        $mockNote = self::getMock("Note", array("Note"));
+    public function testFromSugarBean_BeanIsAccount_ThrowsException() {
+        $mockAccount = self::getMock("Account", array("Account"));
 
-        $mockNote->expects(self::any())
-            ->method("Note")
+        $mockAccount->expects(self::any())
+            ->method("Account")
             ->will(self::returnValue(true));
 
         self::setExpectedException("MailerException");
-        $actual = EmbeddedImage::fromSugarBean($mockNote);
+        $actual = Attachment::fromSugarBean($mockAccount);
     }
 
     /**
      * @group mailer
      */
-    public function testToArray() {
-        $expected      = array(
-            "path" => "path/to/somewhere",
-            "cid"  => "1234",
-            "name" => "abcd",
-        );
-        $embeddedImage = new EmbeddedImage($expected["path"], $expected["cid"], $expected["name"]);
-        $actual        = $embeddedImage->toArray();
-
-        $key = "path";
-        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
-        self::assertEquals($expected["path"], $actual["path"], "The paths don't match");
-
-        $key = "cid";
-        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
-        self::assertEquals($expected["cid"], $actual["cid"], "The CIDs don't match");
-
-        $key = "name";
-        self::assertArrayHasKey($key, $actual, "The '{$key}' key should have been added");
-        self::assertEquals($expected["name"], $actual["name"], "The names don't match");
+    public function testFromSugarBean_BeanIsNote_ThrowsException() {
+        // needs to be able to mock out is_file() and the properities id, filename/name, and file_mime_type
+        self::markTestIncomplete("This test has not been implemented yet.");
     }
 }

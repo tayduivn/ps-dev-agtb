@@ -42,6 +42,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group mailer
+     * @group functional
      */
     public function testGetMailer_ConfigSenderEmailIsInvalid_ThrowsException() {
         $mailConfig               = new MailConfiguration($GLOBALS["current_user"]);
@@ -67,13 +68,13 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testGetMailer_ModeIsDEFAULT_ReturnsSimpleMailer() {
+    public function testGetMailer_ModeIsAllCaps_ReturnsSugarMailer() {
         $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->mode             = "DEFAULT";
+        $mailConfig->mode             = strtoupper(MailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
         $mailConfig->sender_email     = "foo@bar.com";
         $mailConfig->mailerConfigData = $this->mockMailerConfig;
 
-        $expected = "SimpleMailer";
+        $expected = "SugarMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }

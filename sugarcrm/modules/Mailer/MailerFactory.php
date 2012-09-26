@@ -25,10 +25,12 @@ require_once "MailerException.php";                      // requires MailerExcep
                                                          // that type
 require_once "modules/Emails/MailConfigurationPeer.php"; // needs the constants that represent the modes
 require_once "modules/Emails/MailConfiguration.php";     // uses the properties to produce the expected mailer
-require_once "MailerConfiguration.php";                 // required if producing a base Mailer
-require_once "SmtpMailerConfiguration.php";              // required if producing an SMTP Mailer
+require_once "SmtpMailerConfiguration.php";              // required if producing an SMTP Mailer, also imports
+                                                         // MailerConfiguration
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
+require_once "SimpleMailer.php";                         // requires SimpleMailer in order to create a SimpleMailer
+require_once "SugarMailer.php";                          // requires SugarMailer in order to create a SugarMailer
 
 /**
  * Factory to create Mailers.

@@ -47,7 +47,7 @@ class MailerConfiguration
     }
 
     /**
-     * Set the mailer configuration to its default settings for this sending strategy.
+     * Sets the mailer configuration to its default settings for this sending strategy.
      *
      * @access public
      */
@@ -87,10 +87,22 @@ class MailerConfiguration
         return $this->hostname;
     }
 
+    /**
+     * Sets or overwrites the locale configuration.
+     *
+     * @access public
+     * @param Localization|null $locale Null is an acceptable value for the purposes of defaulting $this->locale to
+     *                                  null, but the setter should only be used publicly with a valid Localization
+     *                                  object.
+     */
     public function setLocale(Localization $locale = null) {
         $this->locale = $locale;
     }
 
+    /**
+     * @access public
+     * @return Localization|null Null if initialized but never set.
+     */
     public function getLocale() {
         return $this->locale;
     }

@@ -21,12 +21,18 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "SimpleMailer.php";
+require_once "SimpleMailer.php"; // requires SimpleMailer in order to extend it
 
+/**
+ * This class implements the additional SugarCRM-specific functionality that SimpleMailer lacks.
+ *
+ * @extends SimpleMailer
+ */
 class SugarMailer extends SimpleMailer
 {
-    private $includeDisclosure = false;
-    private $disclosureContent;
+    // private members
+    private $includeDisclosure = false; // true=append the disclosure to the message
+    private $disclosureContent;         // the content to disclose
 
     /**
      * @param MailerConfiguration
@@ -36,6 +42,14 @@ class SugarMailer extends SimpleMailer
         $this->retrieveDisclosureSettings();
     }
 
+    /**
+     * Adds the optional disclosure content to the message, as well as performs the same preparations that are
+     * inherited from SimpleMailer.
+     *
+     * @access protected
+     * @param string $body required
+     * @return string
+     */
     protected function prepareTextBody($body) {
         if ($this->includeDisclosure) {
             $body .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
@@ -47,8 +61,14 @@ class SugarMailer extends SimpleMailer
     }
 
     /**
-     * Handles any final updates to document prior to sending. Updates include Charset translation for all
-     * visual parts of the email abd optional inclusion of administrator-defined Disclosure Text
+     * Adds the optional disclosure content to the message, as well as performs the same preparations that are
+     * inherited from SimpleMailer. Additionally, converts to embedded images any inline images that are found
+     * locally on the server that hosts the application instance. This extra step is done to guarantee that locally
+     * referenced images can be seen by the recipient, whether the server is public or private.
+     *
+     * @access protected
+     * @param string $body required
+     * @return string
      */
     protected function prepareHtmlBody($body) {
         global $sugar_config;
@@ -88,7 +108,7 @@ class SugarMailer extends SimpleMailer
      * @param string $regex        Regular expression
      * @param string $localPrefix Prefix where local files are stored
      * @param bool   $object       Use attachment object
-     * @return string
+     * @return string The body with the applicable modifications.
      */
     protected function convertInlineImageToEmbeddedImage($body, $regex, $localPrefix, $object = false) {
         $i       = 0;
