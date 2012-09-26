@@ -192,7 +192,7 @@
     /**
      * Renders view
      */
-    _renderHtml:function (ctx, options) {
+    _render:function () {
         var self = this;
         var enableCommit = false;
         
@@ -202,7 +202,7 @@
         $("#view-sales-rep").hide();
         $("#view-manager").show();
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
+        app.view.View.prototype._render.call(this);
         
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
@@ -212,27 +212,33 @@
         var def = {};
         var name = '';
         var colWidth = '';
+        var _colIndex = 0;
 
         for( var i = 0; i < fields.length; i++ )  {
-            name = fields[i].name;
-            // explicitly looking for column "name" instead of the first column
-            // in case we add column rearranging
-            if(name == "name") {
-                colWidth = '40%';
-            } else {
-                colWidth = '10%';
+            if(fields[i].enabled) {
+                name = fields[i].name;
+                // explicitly looking for column "name" instead of the first column
+                // in case we add column rearranging
+                if(name == "name") {
+                    colWidth = '40%';
+                } else {
+                    colWidth = '10%';
+                }
+                def = {
+                    "sName": name,
+                    "aTargets": [ _colIndex ],
+                    "sWidth" : colWidth
+                    //"bSortable": false
+                };
+                _colIndex++;
+                columnDefs.push( def );
             }
-            def = {
-                "sName": name,
-                "aTargets": [ i ],
-                "sWidth" : colWidth
-            };
-            columnDefs.push( def );
         }
 
-        this.gTable = this.$(".view-forecastsWorksheetManager").dataTable(
+        this.gTable = this.$el.find(".worksheetManagerTable").dataTable(
             {
                 "bAutoWidth": false,
+                "aaSorting": [],
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
                 "bPaginate":false
