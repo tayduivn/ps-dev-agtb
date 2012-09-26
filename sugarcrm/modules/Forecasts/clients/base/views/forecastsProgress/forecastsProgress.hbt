@@ -88,7 +88,7 @@
 		{{#if show_projected_worst}}
 		<tr>
 			<td>
-				{{#if closed_best_above}}
+				{{#if closed_worst_above}}
 					{{str "LBL_DISTANCE_ABOVE_WORST_FROM_CLOSED" "Forecasts"}}
 				{{else}}
 					{{str "LBL_DISTANCE_LEFT_WORST_TO_CLOSED" "Forecasts"}}
