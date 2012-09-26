@@ -4926,7 +4926,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 			config.slider.content.width = current_width - (config.slider.content.padding *2);
 			
 			VMM.Lib.width($slides_items, (slides.length * config.slider.content.width));
-			
+			if(current_slide>=slides.length)current_slide=slides.length-1;
 			if (_from_start) {
 				VMM.Lib.css($slider_container, "left", slides[current_slide].leftpos());
 			}
@@ -5102,7 +5102,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 			for(i = 0; i < slides.length; i++) {
 				slides[i].enqueue = true;
 			}
-			
+			if(current_slide>=slides.length)current_slide=slides.length-1;
 			for(i = 0; i < config.preload; i++) {
 				if ( !((current_slide + i) > slides.length - 1)) {
 					slides[current_slide + i].show();
@@ -5351,6 +5351,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
 			
 			// Set current slide
 			current_slide	= n;
+			if(current_slide>=slides.length)current_slide=slides.length-1;
 			_pos			= slides[current_slide].leftpos();
 			
 			
@@ -7666,7 +7667,7 @@ if(typeof VMM.Timeline != 'undefined' && typeof VMM.Timeline.TimeNav == 'undefin
 				is_first	= false;
 			
 			current_marker = 	n;
-			
+			if(current_marker>=markers.length)current_marker=markers.length-1;
 			timenav_pos.left			= (config.width/2) - markers[current_marker].pos_left
 			timenav_pos.visible.left	= Math.abs(timenav_pos.left) - 100;
 			timenav_pos.visible.right	= Math.abs(timenav_pos.left) + config.width + 100;
