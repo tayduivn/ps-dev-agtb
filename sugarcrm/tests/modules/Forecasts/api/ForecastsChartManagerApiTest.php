@@ -87,6 +87,11 @@ class ForecastsChartManagerApiTest extends RestTestBase
         parent::tearDown();
     }
 
+    public function setUp()
+    {
+        $this->_user = self::$manager['user'];
+    }
+
     /**
      * Ignore the teardown so we don't remove users that might be needed.
      */
@@ -147,7 +152,16 @@ class ForecastsChartManagerApiTest extends RestTestBase
     {
         $data = $this->runRestCommand($dataset);
         $_field = $dataset . $field;
-        $this->assertEquals(self::$manager[$type]->$_field, $data['values'][0]['values'][$pos]);
+
+        // get the proper DataSet
+        $testData = array();
+        foreach($data['values'] as $data_value) {
+            if(strpos($data_value['label'], self::$manager['user']->name) !== false) {
+                $testData = $data_value;
+                break;
+            }
+        }
+        $this->assertEquals(self::$manager[$type]->$_field, $testData['values'][$pos]);
     }
 
     /**
@@ -161,7 +175,16 @@ class ForecastsChartManagerApiTest extends RestTestBase
     {
         $data = $this->runRestCommand($dataset);
         $_field = $dataset . $field;
-        $this->assertEquals(self::$rep[$type]->$_field, $data['values'][1]['values'][$pos]);
+
+        // get the proper DataSet
+        $testData = array();
+        foreach($data['values'] as $data_value) {
+            if(strpos($data_value['label'], self::$rep['user']->name) !== false) {
+                $testData = $data_value;
+                break;
+            }
+        }
+        $this->assertEquals(self::$rep[$type]->$_field, $testData['values'][$pos]);
     }
 
     /**
