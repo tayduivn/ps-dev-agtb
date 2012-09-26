@@ -114,6 +114,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $data['name'] = $row["name"];
             $data['currency_id'] = $row["currency_id"];
             $data['base_rate'] = $row["base_rate"];
+            $data['version'] = 1;
 
             if (isset($row["worksheet_id"])) {
             	//use the worksheet data if it exists
