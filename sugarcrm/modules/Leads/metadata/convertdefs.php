@@ -25,7 +25,51 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Contacts']['ConvertLead'] = array(
+$viewdefs['Leads']['Convert'] = array(
+    'Contacts' => array(
+        'copyData' => true,
+        'required' => true,
+        'relationship' => 'contact_leads', //TODO: verify if this is additional.
+        'view' => 'convert',
+        'context' => array(
+            'module' => 'Prospects'
+        ),
+        'fieldmapping' => array(
+
+        )
+    ),
+    'Accounts' =>array(
+        'copyData' => true,
+        'required' => true,
+        'relationship' => 'account_leads',
+        'view' => 'convert',
+        'context' => array(
+            'module' => 'ProspectLists'
+        ),
+        'fieldmapping' => array(
+
+        )
+        ),
+    'Opportunities' => array(
+        'copyData' => true,
+        'required' => true,
+        'relationship' => 'opportunity_leads',
+        'view' => 'convert',
+        'context' => array(
+            'module' => 'Leads'
+        ),
+        'fieldmapping' => array(
+
+        )
+     ),
+
+);
+
+
+
+
+
+/*
     'copyData' => true,
     'required' => true,
     'templateMeta' => array(
@@ -361,5 +405,5 @@ $viewdefs['Tasks']['ConvertLead'] = array(
     ),
 );
 
-
+*/
 ?>

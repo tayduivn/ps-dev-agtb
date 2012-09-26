@@ -273,7 +273,7 @@ class MetadataApi extends SugarApi {
         }
 
         foreach($data['modules'] as $moduleName => $moduleDef) {
-            if (!array_key_exists($moduleName, $data['full_module_list'])) {
+            if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
             }
         }
