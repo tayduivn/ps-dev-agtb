@@ -208,8 +208,8 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 						   "inner join worksheet w " .
 						   		"on w.user_id = u.id " .
 						   		"and w.timeperiod_id = '" . $args['timeperiod_id'] . "'" .
-						   		"and ((w.related_id = u.id and u2.id = u.id)" .
-						   			 "or(w.related_id = u2.id)) " .
+						   		"and ((w.related_id = u.id and u2.id = u.id) " .
+						   			 "or (w.related_id = u2.id)) " .
 						   "where u.id = '" . $args['user_id'] . "' " .
 						   		"and w.deleted = 0 ";
 
@@ -368,10 +368,10 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         }
 
         $sql = "select u.user_name, sum(amount) as amount from opportunities o left join timeperiods t
-        on t.start_date_timestamp < o.date_closed_timestamp and t.end_date_timestamp >= o.date_closed_timestamp
+        on t.start_date_timestamp <= o.date_closed_timestamp and t.end_date_timestamp >= o.date_closed_timestamp
 INNER JOIN users u ON o.assigned_user_id = u.id and (u.reports_to_id = '". $user_id. "' OR u.id = '". $user_id. "')
 where t.id = '" . $this->getArg('timeperiod_id') . "'
-GROUP BY u.id;";
+GROUP BY u.user_name";
 
         $db = DBManagerFactory::getInstance();
 
