@@ -25,7 +25,7 @@
 
 require_once('tests/rest/RestTestPortalBase.php');
 
-class RestTestPortalCreate extends RestTestPortalBase
+class RestPortalCreateTest extends RestTestPortalBase
 {
 
     /**
@@ -65,13 +65,15 @@ class RestTestPortalCreate extends RestTestPortalBase
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
         $this->_restLogin($this->contact->portal_name,'unittest');
+        $GLOBALS['db']->commit();
 
         // create case
         $caseReply = $this->_restCall("Cases/",
-            json_encode(array('name' => 'UNIT TEST Case')),
+                                      json_encode(array('name' => 'UNIT TEST Case','portal_visible'=>true)),
             'POST');
         $this->assertEquals(200,$caseReply['info']['http_code'],"HTTP Code");
         $this->assertEquals($caseReply['reply']['account_id'], $this->account->id);
+        $GLOBALS['db']->commit();
         $this->case = new aCase();
 
         $this->case->retrieve($caseReply['reply']['id']);
@@ -84,6 +86,7 @@ class RestTestPortalCreate extends RestTestPortalBase
             json_encode(array('name' => 'UNIT TEST Bug')),
             'POST');
         $this->assertEquals(200,$bugReply['info']['http_code'],"HTTP Code");
+        $GLOBALS['db']->commit();
         $this->bug = new Bug();
         $this->bug->retrieve($bugReply['reply']['id']);
         // Make sure new bug is cleaned up
@@ -103,6 +106,7 @@ class RestTestPortalCreate extends RestTestPortalBase
     {
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
+        $GLOBALS['db']->commit();
         $this->_restLogin($this->contact->portal_name,'unittest');
 
         // Remove the Account from Contact so this Contact can no longer create Cases
@@ -111,6 +115,7 @@ class RestTestPortalCreate extends RestTestPortalBase
         }
 
         // create case
+        $GLOBALS['db']->commit();
         $caseReply = $this->_restCall("Cases/",
             json_encode(array('name' => 'UNIT TEST Case')),
             'POST');
