@@ -4971,7 +4971,11 @@ class SugarBean
             if (!empty($listview_meta_file))
             {
                 require $listview_meta_file;
-                $listview_def = $listViewDefs[$this->module_name];
+                
+                if (!empty($listViewDefs[$this->module_name]))
+                {
+                    $listview_def = $listViewDefs[$this->module_name];
+                }
             }
             $module_name = $this->module_name;
         }

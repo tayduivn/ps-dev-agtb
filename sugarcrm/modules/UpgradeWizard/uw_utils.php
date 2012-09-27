@@ -3303,18 +3303,14 @@ function upgradeUserPreferences() {
             $current_user->savePreferencesToDB();
         }
 
+        $changed = false;
         if(!$current_user->getPreference('calendar_publish_key')) {
         	// set publish key if not set already
-        	$this->setPreference('calendar_publish_key', create_guid());
+        	$current_user->setPreference('calendar_publish_key', create_guid());
         	$changed = true;
         }
 
-
         //BEGIN SUGARCRM flav=pro ONLY
-        $changed = false;
-
-
-
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3391,14 +3387,14 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
                 $changed = true;
 		  } //if
-
-		  // we need to force save the changes to disk, otherwise we lose them.
-          if($changed)
-          {
-		    $current_user->savePreferencesToDB();
-          }
-
         //END SUGARCRM flav=pro ONLY
+
+        // we need to force save the changes to disk, otherwise we lose them.
+        if($changed)
+        {
+            $current_user->savePreferencesToDB();
+        }
+
 	} //while
 //BEGIN SUGARCRM flav=pro ONLY
 
