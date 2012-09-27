@@ -45,11 +45,9 @@
             switch(this.currentModule, this.viewType) {
                 case "ActivityStream", "dashboard":
                     app.router.navigate("#Accounts", {trigger: true});
-                    this.initPopover("Accounts", "list");
                     break;
                 case "Accounts", "list":
-                    // app.router.navigate("#Accounts/create", {trigger: true});
-                    // this.initPopover
+                    app.router.navigate("#Accounts/create", {trigger: true});
                     break;
                 case "Accounts", "newrecord":
                     break;
@@ -62,6 +60,11 @@
                 case "Opportunities", "list":
                     break;
              }
+
+            // get the new module and viewtype
+            this.currentModule = app.controller.layout.options.module;
+            this.viewType = app.controller.layout.options.name;
+            this.initPopover(this.currentModule, this.viewType);
         }
         else {
             var nextIndex = index + 1,
@@ -96,70 +99,36 @@
         this.bindClickEvents(self, $prevEl, prevIndex, prevObj, currentArray, data);
     },
     initPopover: function(module, viewType) {
-        var self = this,
-            tourData = {
-                "ActivityStream":{
-                    "dashboard": [
-                        {"id":"tour-navbar-Accounts", "title":"Accounts", "content":"Text for accounts navbar link", "placement":"bottom"},
-                        {"id":"tour-navbar-Contacts", "title":"Contacts", "content":"Text for contacts navbar link", "placement":"bottom"},
-                        {"id":"tour-navbar-Opportunities", "title":"Opportunities", "content":"This link will navigate to the Opportunities page, which outlines all deals in each sales stage (new, closed, won, lost, etc).", "placement":"bottom"},
-                        {"id":"tour-navbar-search", "title":"Global Search", "content":"Text for global search", "placement":"bottom"},
-                        {"id":"tour-navbar-user", "title":"User Menu", "content":"Text for navbar user menu", "placement":"bottom"},
-                        {"id":"tour-navbar-quickcreate", "title":"Quick Create Menu", "content":"Text for navbar quick create", "placement":"bottom"},
-                        {"id":"tour-ActivityStream-stream-filter", "title":"Activity Stream Filters", "content":"Text for activity stream filters", "placement":"right"},
-                        {"id":"tour-stream-timeline", "title":"Activity Stream Timeline", "content":"Text for activity stream timeline", "placement":"bottom"},
-                        {"id":"tour-stream-calendar", "title":"Activity Stream Calendar", "content":"Text for activity stream calendar", "placement":"bottom"},
-                        {"id":"tour-stream-post", "title":"Activity Stream Post", "content":"Text for activity stream post", "placement":"right"},
-                        {"id":"tour-agenda", "title":"Agenda Widget", "content":"Text for agenda", "placement":"left"},
-                        //{"id":"tour-recommended-contacts", "title":"Recommended Contacts", "content":"Text for recommended contacts", "placement":"left"},
-                        //{"id":"tour-recommended-invites", "title":"Recommended Invites", "content":"Text for recommended invites", "placement":"left"},
-                        {"id":"tour-instances", "title":"Your Summer Instances", "content":"Text for instance picker", "placement":"top"},
-                        {"id":"tour-todo", "title":"Todo List Widget", "content":"Text for todo widget", "placement":"top"}
-                    ]
-                },
-                "Accounts":{
-                    "list": [
-                        {"id":"tour-navbar-Accounts", "title":"Accounts", "content":"Text for accounts navbar link", "placement":"bottom"},
-                        {"id":"tour-Accounts-list-view", "title":"List of Companies", "content":"Text for accounts list view", "placement":"right"},
-                        {"id":"tour-Accounts-list-create", "title":"Create a Company", "content":"Text for accounts list create button", "placement":"bottom"},
-                        {"id":"tour-Accounts-list-search", "title":"Filter/Search Companies", "content":"Text for accounts list search/filter", "placement":"bottom"},
-                        {"id":"tour-countrychart", "title":"Sales Country Chart", "content":"Text for accounts country chart", "placement":"left"},
-                        {"id":"tour-Accounts-stream-filter", "title":"Accounts Activity Stream", "content":"Text for accounts activity stream", "placement":"left"}
-                    ],
-                    "newrecord": [
-                        {"id":"tour-accounts-record-businesscard", "content":"Text for accounts record business card", "placement":"top"},
-                        {"id":"tour-accounts-record-stream", "content":"Text for accounts record activity stream", "placement":"top"},
-                        {"id":"tour-accounts-record-todos", "content":"Text for accounts record related tasks", "placement":"top"},
-                        {"id":"tour-accounts-record-map", "content":"Text for company map", "placement":"top"}
-                    ],
-                    "record": [
-                        {"id":"tour-accounts-record-businesscard", "content":"Text for accounts record business card", "placement":"top"},
-                        {"id":"tour-accounts-record-stream", "content":"Text for accounts record activity stream", "placement":"top"},
-                        {"id":"tour-accounts-record-todos", "content":"Text for accounts record related tasks", "placement":"top"},
-                        {"id":"tour-accounts-record-map", "content":"Text for company map", "placement":"top"}
-                    ]
+        var self = this;
+
+        $.getJSON("../clients/summer/views/tour/data.json", null, function(tourData) {
+            if( tourData.error ) {
+                app.alert.show('retrieve_failed', {level: 'error', title:'Tour Failed', messages: 'Failed to retrieve tour data: '+ tourData.error, autoClose: false});
+                return;
+            }
+            else {
+                var list = tourData[module][viewType],
+                    firstObj = _.first(list),
+                    $currentEl = $("[data-tour='" + firstObj.id + "']");
+
+                if( $currentEl.length > 0 ) {
+                    var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a><a class="btn btn-primary tour-next">Next</a></div></div></div>';
+
+                    $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
+                        trigger: "manual", template: templateEl}).popover("show");
+
+                    self.fixPopoverPosition(firstObj.placement, firstObj.id);
+                    self.bindClickEvents(self, $currentEl, 0, firstObj, list, tourData);
+                    // return
                 }
-            },
-            list = tourData[module][viewType],
-            firstObj = _.first(list),
-            $currentEl = $("[data-tour='" + firstObj.id + "']");
-
-        if( $currentEl.length > 0 ) {
-            var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a><a class="btn btn-primary tour-next">Next</a></div></div></div>';
-
-            $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
-                               trigger: "manual", template: templateEl}).popover("show");
-
-            this.fixPopoverPosition(firstObj.placement, firstObj.id);
-            this.bindClickEvents(self, $currentEl, 0, firstObj, list, tourData);
-            // return
-        }
-        else
-        {
-            console.log("oops!");
-            // try next object in list
-            // if it works, return
-        }
+                else
+                {
+                    console.log("oops!");
+                    // try next object in list
+                    // if it works, return
+                }
+            }
+        });
     },
     fixPopoverPosition: function(currentPlacement, className) {
         var windowEl = $(window),
