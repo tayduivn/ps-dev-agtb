@@ -99,6 +99,14 @@ class Quarter544TimePeriod extends TimePeriod implements iTimePeriod {
     }
 
     /**
+     * removes related timeperiods
+     */
+    public function removeLeaves() {
+        $this->load_relationship('related_timeperiods');
+        $this->related_timeperiods->delete($this->id);
+    }
+
+    /**
      * loads the related time periods and returns the array
      *
      * @return mixed
@@ -123,7 +131,6 @@ class Quarter544TimePeriod extends TimePeriod implements iTimePeriod {
      * build leaves for the timeperiod by creating the specified types of timeperiods
      *
      * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
-     * @return mixed
      * @return mixed
      */
     public function buildLeaves($timePeriodType) {

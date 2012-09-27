@@ -55,19 +55,18 @@ class Quarter445TimePeriod extends TimePeriod implements iTimePeriod {
      */
     public function setStartDate($start_date = null) {
         $timedate = TimeDate::getInstance();
+
         //check start_date, put it to now if it's not passed in
         if(is_null($start_date)) {
-            $start_date = $timedate->getNow()->asDbDate();
+            $start_date = $timedate->asDbDate($timedate->getNow());
         }
-
-        $start_date = $timedate->fromDbDate($start_date);
+        $end_date = $timedate->fromDbDate($start_date);
 
         //set the start/end date
-        $this->start_date = $timedate->asUserDate($start_date);
-
-        $endDate = $start_date->modify('+13 week');
-        $endDate = $endDate->modify('-1 day');
-        $this->end_date = $timedate->asUserDate($endDate);
+        $this->start_date = $start_date;
+        $end_date = $end_date->modify('+13 week');
+        $end_date = $end_date->modify('-1 day');
+        $this->end_date = $timedate->asDbDate($end_date);
     }
 
     /**
@@ -86,15 +85,12 @@ class Quarter445TimePeriod extends TimePeriod implements iTimePeriod {
      * @return Quarter445TimePeriod
      */
     public function createNextTimePeriod() {
-        $nextPeriod = new Quarter445TimePeriod();
         $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromUserDate($this->start_date);
-        $nextEndDate = $timedate->fromUserDate($this->end_date);
-
-        $nextStartDate = $nextStartDate->modify('+13 week');
-        $nextEndDate = $nextEndDate->modify('+13 week');
-        $nextPeriod->start_date = $timedate->asUserDate($nextStartDate);
-        $nextPeriod->end_date = $timedate->asUserDate($nextEndDate);
+        $nextStartDate = $timedate->fromDbDate($this->end_date);
+        $nextStartDate = $nextStartDate->modify('+1 day');
+        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
+        $nextPeriod->is_leaf = $this->is_leaf;
         $nextPeriod->save();
 
         return $nextPeriod;
@@ -145,21 +141,40 @@ class Quarter445TimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * build leaves for the timeperiod by creating the specified types of timeperiods
      *
-     * @param string $timePeriodType
+     * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
      * @return mixed
      */
     public function buildLeaves($timePeriodType) {
         if($this->hasLeaves()) {
-            return;
+            throw new Exception("This TimePeriod already has leaves");
         }
 
-        switch($timePeriodType) {
-            case "Monthly":
-                break;
-            case "Weekly":
-                break;
-
+        if($this->is_leaf) {
+            throw new Exception("Leaf Time Periods cannot have leaves");
         }
+
+        $this->load_relationship('related_timeperiods');
+
+        //1st month
+        $leafPeriod = BeanFactory::newBean('MonthTimePeriods');
+        $leafPeriod->is_fiscal = true;
+        $leafPeriod->setStartDate($this->start_date, 4);
+        $leafPeriod->is_leaf = 1;
+        $leafPeriod->save();
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
+
+        //create second month leaf
+        $leafPeriod = $leafPeriod->createNextTimePeriod(4);
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
+
+        //create third month leaf, this one gets the extra week
+        $leafPeriod = $leafPeriod->createNextTimePeriod(5);
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
+
+        $this->save();
 
     }
 }
