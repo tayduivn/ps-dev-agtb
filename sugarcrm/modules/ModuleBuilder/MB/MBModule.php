@@ -289,11 +289,15 @@ class MBModule
             $this->saveConfig () ;
             $this->getVardefs () ;
             $this->mbvardefs->save ( $this->key_name ) ;
-            //           $this->mbrelationship->save ( $this->key_name ) ;
             $this->relationships->save () ;
             $this->copyMetaData () ;
             $this->copyDashlet () ;
             $this->copyViews() ;
+            // Bug 56675 - Clients directory not copied over
+            // When clients were split apart from metadata, there was no accounting
+            // for that here. This accounts for that
+            $this->copyClients();
+            // End bug 56675
             if (0 != strcmp ( $old_config_md5, $this->config_md5 ))
             {
                 $this->mblanguage->reload () ;
@@ -371,12 +375,15 @@ class MBModule
             						$this->key_name , strtolower ( $this->key_name ) , strtoupper ( $this->key_name ) );
         	mkdir_recursive ( $to ) ;
             $d = dir ( $from ) ;
+            
+            // Clean up to to make sure the path is clean
+            $to = rtrim($to, '/') . '/';
             while ( $e = $d->read () )
             {
                 if (substr ( $e, 0, 1 ) == '.')
                     continue ;
                 $nfrom = $from . '/' . $e ;
-                $nto = $to . '/' . str_replace ( 'm-n-', $this->key_name, $e ) ;
+                $nto = $to . str_replace ( 'm-n-', $this->key_name, $e ) ;
                 if (is_dir ( $nfrom ))
                 {
                     $this->copyMetaRecursive ( $nfrom, $nto, $overwrite ) ;
@@ -393,6 +400,22 @@ class MBModule
                 }
             }
 
+        }
+    }
+
+    /**
+     * Bug 56675
+     * 
+     * Copies the clients directory from the sugar object this module is based on.
+     * This method is inspired heavily by copyMetaData as at one time the client
+     * view defs were actually part of metadata.
+     */
+    public function copyClients() {
+        $templates = array_reverse($this->config['templates'], true);
+        foreach ($templates as $template => $a) {
+            if (file_exists(MB_TEMPLATES . '/' . $template . '/clients')) {
+                $this->copyMetaRecursive(MB_TEMPLATES . '/' . $template . '/clients', $this->path . '/clients/');
+            }
         }
     }
 
@@ -424,6 +447,9 @@ class MBModule
             $this->copyMetaRecursive ( $this->path . '/metadata/', $path . '/metadata/', true ) ;
             $this->copyMetaRecursive ( $this->path . '/Dashlets/' . $this->key_name . 'Dashlet/',
             						   $path . '/Dashlets/' . $this->key_name . 'Dashlet/', true ) ;
+            
+            // Add in clients directory building
+            $this->copyMetaRecursive($this->path . '/clients/', $path . '/clients/', true);
             $this->relationships->build ( $basepath ) ;
             $this->mblanguage->build ( $path ) ;
         }

@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=sales ONLY
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -34,13 +34,13 @@ require_once 'modules/ModuleBuilder/parsers/views/SidecarGridLayoutMetaDataParse
  * Accessor class, in the event the parsers public properties go protected, which
  * they are slated to do.
  */
-class Bug54939TestListParser extends SidecarListLayoutMetaDataParser {
+class Bug54901TestListParser extends SidecarListLayoutMetaDataParser {
     public function changeFieldType($field, $type) {
         $this->_fielddefs[$field]['type'] = $type;
     }
 }
 
-class Bug54939TestGridParser extends SidecarGridLayoutMetaDataParser {
+class Bug54901TestGridParser extends SidecarGridLayoutMetaDataParser {
     public function changeFieldType($field, $type) {
         $this->_fielddefs[$field]['type'] = $type;
     }
@@ -56,7 +56,7 @@ class Bug54939TestGridParser extends SidecarGridLayoutMetaDataParser {
     }
 }
 
-class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
+class Bug54901Test extends Sugar_PHPUnit_Framework_TestCase {
     public function setUp() {
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
@@ -67,29 +67,39 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
     {
         SugarTestHelper::tearDown();
     }
-
-    public function testClientIsSet() {
-        $grid = new Bug54939TestGridParser(MB_WIRELESSEDITVIEW, 'Bugs', '', MB_WIRELESS);
-        $this->assertNotEmpty($grid->client, 'Client was not set');
-        $this->assertEquals(MB_WIRELESS, $grid->client, 'Client was not properly set');
+    
+    public function testPortalListLayoutDoesNotIncludeInvalidFields() {
+        // Build the parser
+        $list = new Bug54901TestListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
+        
+        // Massage the field defs
+        $list->changeFieldType('resolution', 'iframe');
+        $list->changeFieldType('system_id', 'encrypt');
+        $list->changeFieldType('portal_viewable', 'relate');
+        
+        // Get our fields
+        $fields = $list->getAvailableFields();
+        
+        // Run the assertions
+        $this->assertArrayNotHasKey('resolution', $fields, 'The resolution field was not excluded');
+        $this->assertArrayNotHasKey('system_id', $fields, 'The system_id field was not excluded');
+        $this->assertArrayHasKey('portal_viewable', $fields, 'portal_viewable was excluded but a relate type should not be excluded');
+        $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
     }
     
-    //BEGIN SUGARCRM flav=ent ONLY
-    public function testPortalLayoutDoesNotIncludeInvalidFields() {
-        $list = new Bug54939TestListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
-        $list->changeFieldType('resolution', 'iframe');
-        // Relate SHOULD be clean on list
-        $list->changeFieldType('system_id', 'relate');
-        $fields = $list->getAvailableFields();
-        $this->assertArrayNotHasKey('resolution', $fields, 'The resolution field was not excluded');
-        $this->assertArrayHasKey('system_id', $fields, 'The system_id field was excluded');
-        $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
-
-        $grid = new Bug54939TestGridParser(MB_PORTALDETAILVIEW, 'Cases', '', MB_PORTAL);
+    public function testPortalDetailLayoutDoesNotIncludeInvalidFields() {
+        // Build the parser
+        $grid = new Bug54901TestGridParser(MB_PORTALDETAILVIEW, 'Cases', '', MB_PORTAL);
+        
+        // Massage the field defs
         $grid->changeFieldType('resolution', 'parent');
         $grid->changeFieldType('system_id', 'encrypt');
+        $grid->changeFieldType('work_log', 'relate');
+        
+        // Get our fields
         $fields = $grid->getAvailableFields();
 
+        // Run the assertions
         $available = $grid->isAvailableFieldName('resolution', $fields);
         $this->assertFalse($available, 'The resolution field was not excluded');
 
@@ -99,25 +109,27 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
         $available = $grid->isAvailableFieldName('work_log', $fields);
         $this->assertTrue($available, 'Work Log is showing as not available');
     }
-    //END SUGARCRM flav=ent ONLY
     
-    public function testMobileLayoutDoesIncludeInvalidPortalFields() {
-        $list = new Bug54939TestListParser(MB_WIRELESSLISTVIEW, 'Cases', '', MB_WIRELESS);
-        $list->changeFieldType('description', 'iframe');
-        $list->changeFieldType('work_log', 'relate');
-        $fields = $list->getAvailableFields();
-        $this->assertArrayHasKey('description', $fields, 'The resolution field was excluded');
-        $this->assertArrayHasKey('work_log', $fields, 'The work_log field was excluded');
-
-        $grid = new Bug54939TestGridParser(MB_WIRELESSDETAILVIEW, 'Cases', '', MB_WIRELESS);
-        $grid->changeFieldType('work_log', 'parent');
+    public function testPortalEditLayoutDoesNotIncludeInvalidFields() {
+        // Build the parser
+        $grid = new Bug54901TestGridParser(MB_PORTALEDITVIEW, 'Cases', '', MB_PORTAL);
+        
+        // Massage the field defs
+        $grid->changeFieldType('resolution', 'parent');
         $grid->changeFieldType('system_id', 'encrypt');
+        $grid->changeFieldType('work_log', 'relate');
+        
+        // Get our fields
         $fields = $grid->getAvailableFields();
 
-        $available = $grid->isAvailableFieldName('work_log', $fields);
-        $this->assertTrue($available, 'The work_log field was excluded');
+        // Run the assertions
+        $available = $grid->isAvailableFieldName('resolution', $fields);
+        $this->assertFalse($available, 'The resolution field was not excluded');
 
         $available = $grid->isAvailableFieldName('system_id', $fields);
-        $this->assertTrue($available, 'The system_id field was excluded');
+        $this->assertFalse($available, 'The system_id field was not excluded');
+
+        $available = $grid->isAvailableFieldName('work_log', $fields);
+        $this->assertFalse($available, 'The work_log field was not excluded after being changed to relate');
     }
 }
