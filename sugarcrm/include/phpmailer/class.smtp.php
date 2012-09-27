@@ -36,6 +36,12 @@
  */
 
 /**
+ * Modification information for LGPL compliance
+ * r56732 - 2012-09-26 14:08:00 -0700 (Wed, 26 Sep 2012) - rbacon
+ * - PHPMailer has a bug that allows an invalid connection to flood the server with errors in an infinite loop
+ */
+
+/**
  * SMTP is rfc 821 compliant and implements all the rfc 821 SMTP
  * commands except TURN which will always return a not implemented
  * error. SMTP also provides some utility methods for sending mail
