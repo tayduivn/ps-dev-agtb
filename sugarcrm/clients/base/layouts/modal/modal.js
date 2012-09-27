@@ -163,24 +163,34 @@
         this.layout.trigger(this.showEvent, params, callback);
     },
     show: function(params) {
-        var span = params.span,
+        var span = params ? params.span : null,
+            options = params ? params.options || {} : {},
             modal_container = this.$(".modal:first"),
             //Clean out previous span css class
             original_css = modal_container.attr("class").replace(/span\d+/g, "");
-        this._beforeShow(params.options);
+        this._beforeShow(options);
         modal_container.attr("class", original_css);
-        modal_container.modal(params.options ? params.options.modal : {});
         if(_.isNumber(span) && span > 0 && span <= 12) {
             modal_container.addClass('span' + span);
         }
-        modal_container.modal('show');
-        this._afterShow();
+        if(_.isFunction(this.$el.modal)) {
+            modal_container.modal(params.options ? params.options.modal : {});
+            modal_container.modal('show');
+        } else {
+            modal_container.show();
+        }
+        this._afterShow(options);
     },
     hide: function(event) {
         //restore back to the scroll position at the top
+        var modal_container = this.$(".modal:first");
         this._beforeHide(event);
         this.$(".modal-body:first").scrollTop(0);
-        this.$(".modal:first").modal('hide');
+        if(_.isFunction(this.$el.modal)) {
+            modal_container.modal('hide');
+        } else {
+            modal_container.hide();
+        }
         this._afterHide(event);
     },
     _beforeShow: function(options) {
