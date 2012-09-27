@@ -39,6 +39,9 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
+        //$sql = "DELETE FROM outbound_email";
+        //$GLOBALS['db']->query($sql);
+
         $sql = "DELETE FROM outbound_email where name like 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
         //printf("(DELETE) SQL: %s\n",$sql);
@@ -89,6 +92,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group mailer
+     * @group mailconfig01
      */
    function testListMailConfigurations_All_Success()
     {
@@ -135,7 +139,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         //print_r($mail_configs_expected);
 
         $configs = MailConfigurationPeer::listMailConfigurations(self::$current_user);
-        // print_r($configs);
+        //print_r($configs);
 
         $mail_configs_actual = array();
         if (is_array($configs)) {
@@ -159,6 +163,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group mailer
+     * @group mailconfig02
      */
     function testListMailConfigurations_SystemOnly_Success()
     {
