@@ -1,5 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,32 +21,26 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
-    'panels' => array(
-        array(
-            'label' => 'LBL_FORECASTS_CONFIG_VARIABLES',
-            'fields' => array(
-                array(
-                    'name' => 'sales_stage_lost',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE',
-                    'type' => 'enum',
-                    'multi' => true,
-                    'options' => 'sales_stage_dom',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'forecastsFilter',
-                ),
-                array(
-                    'name' => 'sales_stage_won',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE',
-                    'type' => 'enum',
-                    'multi' => true,
-                    'options' => 'sales_stage_dom',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'forecastsFilter',
-                ),
-            ),
-        ),
-    ),
-);
+
+require_once 'include/api/SugarApi/SugarApiException.php';
+
+class SugarApiExceptionTest extends Sugar_PHPUnit_Framework_TestCase
+{
+
+    public function setUp(){
+        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+    }
+
+    public function tearDown(){
+        unset($GLOBALS['app_strings']);
+    }
+
+    public function testTranslatedExceptionMessages() {
+        global $app_strings;
+        $ex = new SugarApiException();
+        $this->assertEquals($ex->getMessage(), $app_strings['EXCEPTION_UNKNOWN_EXCEPTION'],"Default error message");
+        $app_strings['EXCEPTION_TEST'] = "Hey {0}, How you doing?";
+        $ex = new SugarApiException('EXCEPTION_TEST', array('Matt'));
+        $this->assertEquals($ex->getMessage(), 'Hey Matt, How you doing?',"String formatting");
+    }
+}

@@ -94,8 +94,16 @@ function perform_save(&$focus){
         $product->best_case = $focus->best_case;
         $product->likely_case = $focus->amount;
         $product->worst_case = $focus->worst_case;
+        $product->cost_price = $focus->amount;
+        $product->quantity = 1;
+        $product->currency_id = $focus->currency_id;
+        $product->base_rate = $focus->base_rate;
+        $product->probability = $focus->probability;
+        $product->date_closed = $focus->date_closed;
+        $product->date_closed_timestamp = $focus->date_closed_timestamp;
         $product->assigned_user_id = $focus->assigned_user_id;
         $product->opportunity_id = $focus->id;
+        $product->commit_stage = $focus->commit_stage;
         $product->save();
     }
     //END SUGARCRM flav=pro ONLY

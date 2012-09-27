@@ -1,5 +1,4 @@
 <?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,32 +21,28 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
-    'panels' => array(
-        array(
-            'label' => 'LBL_FORECASTS_CONFIG_VARIABLES',
-            'fields' => array(
-                array(
-                    'name' => 'sales_stage_lost',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE',
-                    'type' => 'enum',
-                    'multi' => true,
-                    'options' => 'sales_stage_dom',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'forecastsFilter',
-                ),
-                array(
-                    'name' => 'sales_stage_won',
-                    'label' => 'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE',
-                    'type' => 'enum',
-                    'multi' => true,
-                    'options' => 'sales_stage_dom',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'forecastsFilter',
-                ),
-            ),
-        ),
-    ),
-);
+
+require_once("include/utils.php");
+
+class UtilsStringFormatTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    public function testArrayStringFormat() {
+        $output = string_format("I am {0} feet tall, my name is {1} and I like {2}",
+                                array(7,'Hans','finger puppets','Llama licks the world'));
+        $this->assertEquals('I am 7 feet tall, my name is Hans and I like finger puppets',
+                            $output,
+                            "String format failed to replace some variables.");
+    }
+
+    public function testAssocStringFormat() {
+        $output = string_format("I am {feetTall} feet tall, my name is {firstName} and I like {thingILike}",
+                                array('feetTall'=>7,
+                                      'firstName'=>'Hans',
+                                      'lastName'=>'Ironsmithson',
+                                      'thingILike'=>'finger puppets',
+                                      'thingIHate'=>'Llama licks the world'));
+        $this->assertEquals('I am 7 feet tall, my name is Hans and I like finger puppets',
+                            $output,
+                            "String format failed to replace some variables from an associative array");
+    }
+}

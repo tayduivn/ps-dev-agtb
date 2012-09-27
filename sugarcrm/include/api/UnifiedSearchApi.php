@@ -319,37 +319,44 @@ class UnifiedSearchApi extends SugarApi {
 
             $options['moduleList'] = $moduleList;
         }
+
         $options['moduleFilter'] = $options['moduleList'];
 
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
-        $returnedRecords = array();
-        foreach ( $results as $record ) {
-            // $record = BeanFactory::getBean($result->getModule(), $result->getId());
 
-            // if we cant' get the bean skip it
-            if($record === false)
-            {
-                continue;
+        $returnedRecords = array();
+
+        $total = 0;
+        if(is_object($results)) {
+            foreach ( $results as $result ) {
+                $record = BeanFactory::getBean($result->getModule(), $result->getId());
+
+                // if we cant' get the bean skip it
+                if($record === false)
+                {
+                    continue;
+                }
+                $module = $record->module_dir;
+                // Need to override the filter arg so that it looks like something formatBean expects
+                if ( !empty($options['fieldFilters'][$module]) ) {
+                    $moduleFields = $options['fieldFilters'][$module];
+                } else if ( !empty($options['fieldFilters']['_default']) ) {
+                    $moduleFields = $options['fieldFilters']['_default'];
+                } else {
+                    $moduleFields = array();
+                }
+                $moduleArgs['fields'] = implode(',',$moduleFields);
+                $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
+                $formattedRecord['_module'] = $module;
+                // The SQL based search engine doesn't know how to score records, so set it to 1
+                $formattedRecord['_score'] = $result->getScore();
+                $returnedRecords[] = $formattedRecord;
             }
-            $module = $record->module_dir;
-            // Need to override the filter arg so that it looks like something formatBean expects
-            if ( !empty($options['fieldFilters'][$module]) ) {
-                $moduleFields = $options['fieldFilters'][$module];
-            } else if ( !empty($options['fieldFilters']['_default']) ) {
-                $moduleFields = $options['fieldFilters']['_default'];
-            } else {
-                $moduleFields = array();
-            }
-            $moduleArgs['fields'] = implode(',',$moduleFields);
-            $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
-            $formattedRecord['_module'] = $module;
-            // The SQL based search engine doesn't know how to score records, so set it to 1
-            $formattedRecord['_score'] = $result->getScore();
-            $returnedRecords[] = $formattedRecord;
+            
+            $total = $results->getTotalHits();
+
         }
 
-
-        $total = $results->getTotalHits();
 
         if ( $total > ($options['limit'] + $options['offset']))
         {

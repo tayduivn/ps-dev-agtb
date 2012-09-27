@@ -119,4 +119,24 @@ describe("The forecasts manager worksheet", function(){
         });
 
     });
+
+    describe("Forecast Manager Worksheet Config functions tests", function() {
+        it("should test checkConfigForColumnVisibility passing in Null", function() {
+            var testVal = null;
+            expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
+        });
+        it("should test checkConfigForColumnVisibility passing in found key", function() {
+            var testVal = 'best_case';
+            view.context = {};
+            view.context.forecasts = {};
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
+            expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
+        });
+        it("should test checkConfigForColumnVisibility passing in random key not found", function() {
+            var testVal = 'abc9def!';
+            expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
+        });
+    });
 });

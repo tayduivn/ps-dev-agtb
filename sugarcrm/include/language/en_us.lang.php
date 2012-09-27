@@ -1910,9 +1910,9 @@ $app_list_strings = array (
         'probability' => 'Probability'
     ),
     'forecasts_chart_options_dataset' => array(
-        'likely' => 'Likely Case',
-        'best' => 'Best Case',
-        'worst' => 'Worst Case'
+        'likely' => 'Likely',
+        'best' => 'Best',
+        'worst' => 'Worst'
     ),
 );
 
@@ -2490,6 +2490,22 @@ $app_strings = array (
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
+
+    'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
+
+    // Default SugarApiException error messages
+    'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
+    'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
+    'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
+    'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
+    'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
+    'EXCEPTION_NOT_FOUND'               => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
+    'EXCEPTION_MISSING_PARAMTER'        => 'A required parameter in your request was missing.',
+    'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
+    'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
+    'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
+
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages

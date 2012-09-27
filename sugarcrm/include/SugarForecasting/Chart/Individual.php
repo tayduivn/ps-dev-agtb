@@ -78,6 +78,11 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             $this->group_by = strtolower($args['group_by']);
         }
         parent::__construct($args);
+
+        // the individual chart doesn't use the dataset an an arary yet
+        if (is_array($this->dataset)) {
+            $this->dataset = array_shift($this->dataset);
+        }
     }
 
     /**
