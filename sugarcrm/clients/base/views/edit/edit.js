@@ -29,20 +29,9 @@
     },
     _renderHtml: function() {
         app.view.View.prototype._renderHtml.call(this);
-        if (this.model.id) {
-            this.model.on("change", function() {
-                if (this.context.get('subnavModel')) {
-                    this.context.get('subnavModel').set({
-                        'title': app.lang.get('LBL_EDIT_BUTTON', this.module)
-                    });
-                }
-            }, this);
-        } else {
-            if (this.context.get('subnavModel')) {
-                this.context.get('subnavModel').set({
-                    'title': app.lang.get('LBL_NEW_FORM_TITLE', this.module)
-                });
-            }
+        // workaround because we use the same view for edit and create
+        if (!this.model.id) {
+            this.context.trigger('subnav:set:title', app.lang.get('LBL_NEW_FORM_TITLE', this.module));
         }
     },
 

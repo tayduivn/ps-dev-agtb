@@ -12,10 +12,13 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         if (this.meta && this.meta.label) {
-            this.title = app.lang.get(this.meta.label);
+            this.title = app.lang.get(this.meta.label, this.context.module);
         }
+        this.context.on("subnav:set:title",function(title){
+            this.title = title;
+            this.render();
+        }, this);
     },
-
     /**
      * Render and push down the view below
      * @private
