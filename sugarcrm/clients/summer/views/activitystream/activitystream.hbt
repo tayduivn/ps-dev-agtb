@@ -1,11 +1,11 @@
 <div class="block filtered tabbable tabs-left" id="moduleActivity">
   <div class="row">
     <div class="btn-group pull-left activitystream-header">
-        <a href="" class="btn toggleView" data-view="timeline">Timeline</a>
-        <a href="" class="btn toggleView" data-view="calendar">Calendar</a>
+        <a href="" class="btn toggleView" data-view="timeline" data-tour="tour-stream-timeline">Timeline</a>
+        <a href="" class="btn toggleView" data-view="calendar" data-tour="tour-stream-calendar">Calendar</a>
         <a href="" class="btn toggleView" data-view="none">None</a>
     </div>
-    <ul id="activitystream-pills" class="nav nav-pills" data-tour="tour-stream-filter">
+    <ul class="nav nav-pills activitystream-pills" data-tour="tour-{{module}}-stream-filter">
           <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
           <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
           {{#if opts.params.id}}
@@ -14,8 +14,8 @@
           {{/if}}
     </ul>
   </div>
-  <div id="activitystream-timeline"></div>  
-  <div id='activitystream-calendar'></div>  
+  <div id="activitystream-timeline"></div>
+  <div id='activitystream-calendar'></div>
   <div class="activitystream-post row omnibar">
       <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
         <img src="{{picture_url}}" alt="{{full_name}}">
