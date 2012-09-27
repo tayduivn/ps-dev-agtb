@@ -173,7 +173,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
                     $date = $timedate->fromDb($bean->$fieldName);
-                    $keyValues[$fieldName] = $timedate->asIso($date, array('stripTZColon' => true));
+                    $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                 }
                 
             }
@@ -377,7 +377,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             foreach ($options['moduleFilter'] as $mod) {
                 $fieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($mod);
                 foreach ($fieldDef as $fieldName => $def) {
-                    if (!in_array($fieldName, $fields)) {
+                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
                         $fields[] = $fieldName;
                     }
                 }
@@ -386,7 +387,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
             foreach ($allFieldDef as $fieldDef) {
                 foreach ($fieldDef as $fieldName => $def) {
-                    if (!in_array($fieldName, $fields)) {
+                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
                         $fields[] = $fieldName;
                     }
                 }

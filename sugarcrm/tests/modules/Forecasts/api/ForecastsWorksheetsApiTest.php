@@ -121,12 +121,34 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     public function tearDown()
     {
-        //SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
+        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
     }
 
     public static function tearDownAfterClass()
     {
         parent::tearDown();
+    }
+
+   /**
+     * @group forecastapi
+     * @group forecasts
+     */
+    public function testForecastWorksheets()
+    {
+    	$tempUser = $GLOBALS['current_user'] = $this->_user;
+    	
+    	// set the current user to salesrep
+        $this->_user = $this->reportee['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+        
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
+        $this->assertNotEmpty($response["reply"], "Rest reply is empty. Rep data should have been returned.");
+        
+        // set the current user back.
+        $this->_user = $tempUser;
+        $GLOBALS['current_user'] = $tempUser;
+        $this->authToken = "";
     }
 
 
@@ -137,25 +159,25 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     public function testForecastWorksheetSave()
     {
-        $this->repData["op_worksheets"][0]->best_case = $this->repData["op_worksheets"][0]->best_case + 100;
-        $this->repData["ops"][0]->probability = $this->repData["ops"][0]->probability + 10;
-        $this->repData["op_worksheets"][0]->likely_case = 123456; //Set this to something unique so we know of all the worksheet records, this is the one we want
-
+    	$response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
+    	
+        $best_case = $response["reply"][0]["best_case"] + 100;
+        $probability = $response["reply"][0]["probability"] + 10;
+        $id = $response["reply"][0]["id"];
         $returnBest = '';
         $returnProb = '';
-        $returnCommitStage = '';
 
         $postData = array(
-            "amount" => $this->repData["ops"][0]->amount,
-            "best_case" => $this->repData["op_worksheets"][0]->best_case,
-            "likely_case" => $this->repData["op_worksheets"][0]->likely_case,
-            "probability" => $this->repData["ops"][0]->probability,
-            "commit_stage" => $this->repData["ops"][0]->commit_stage,
-            "id" => $this->repData["ops"][0]->id,
-            "worksheet_id" => $this->repData["op_worksheets"][0]->id,
-            "timeperiod_id" => $this->timeperiod->id,
-            "current_user" => $this->repData["id"],
-            "assigned_user_id" => $this->repData["id"],
+            "best_case" => $best_case,
+            "likely_case" => $response["reply"][0]["likely_case"],
+            "probability" => $probability,
+            "commit_stage" => $response["reply"][0]["commit_stage"],
+            "id" => $id,
+            "worksheet_id" => $response["reply"][0]["worksheet_id"],
+            "product_id" => $response["reply"][0]["product_id"],
+            "timeperiod_id" => $this->timeperiod->id,            
+            "assigned_user_id" => $response["reply"][0]["assigned_user_id"],
+            "draft" => 0
         );
 
         $response = $this->_restCall("ForecastWorksheets/" . $this->repData["ops"][0]->id, json_encode($postData), "PUT");
@@ -169,34 +191,22 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         //loop through response and pick out the rows that correspond with ops[0]->id
         foreach ($response["reply"] as $record)
         {
-            if ($record["id"] == $this->repData["ops"][0]->id && $record["likely_case"] == "123456")
+            if ($record["id"] == $id)
             {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
-                $returnCommitStage = $record["commit_stage"];
                 break;
             }
         }
 
-        //check to see if the data to the Opportunity table was saved
-        $this->assertEquals($this->repData["ops"][0]->probability, $returnProb, "Opportunity data was not saved.");
+        //check to see if the data to the Worksheet table was saved
+        $this->assertEquals($probability, $returnProb, "Worksheet probability was not saved.");
+        $this->assertEquals($best_case, $returnBest, "Worksheet best_case was not saved.");
 
-        //check to see if the best_case in the Worksheet table was saved
-        $this->assertEquals($this->repData["op_worksheets"][0]->best_case, $returnBest, "Worksheet best_case was not saved.");
 
-        //check to see if the commit_stage in worksheet table was saved
-        $this->assertEquals($this->repData["op_worksheets"][0]->commit_stage, $returnCommitStage, "Worksheet commit_stage was not saved.");
     }
 
-    /**
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testForecastWorksheets()
-    {
-        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
-        $this->assertNotEmpty($response["reply"], "Rest reply is empty. Rep data should have been returned.");
-    }
+   
 
     /**
      * @group forecastapi
@@ -204,29 +214,34 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     public function testWorksheetVersionSave()
     {
-        $this->repData["op_worksheets"][0]->best_case = $this->repData["op_worksheets"][0]->best_case + 100;
-        $this->repData["ops"][0]->probability = $this->repData["ops"][0]->probability + 10;
-        $returnBest = '';
-        $returnProb = '';
-
-        $postData = array("amount" => $this->repData["ops"][0]->amount,
-            "best_case" => $this->repData["op_worksheets"][0]->best_case,
-            "likely_case" => $this->repData["op_worksheets"][0]->likely_case,
-            "commit_stage" => $this->repData["commit_stage"],
-            "probability" => $this->repData["ops"][0]->probability,
-            "id" => $this->repData["ops"][0]->id,
-            "worksheet_id" => $this->repData["op_worksheets"][0]->id,
-            "timeperiod_id" => $this->timeperiod->id,
-            "current_user" => $this->repData["id"],
-            "assigned_user_id" => $this->repData["id"],
-            "draft" => 1
-        );
-
-        // set the current user to salesrep
+    	$oldUser = $GLOBALS['current_user'];
+    	
+    	// set the current user to salesrep
         $this->_user = $this->reportee['user'];
         $GLOBALS['current_user'] = $this->_user;
         $this->authToken = "";
+        
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
+    	
+        $best_case = $response["reply"][0]["best_case"] + 100;
+        $probability = $response["reply"][0]["probability"] + 10;
+        $id = $response["reply"][0]["id"];
+        $returnBest = '';
+        $returnProb = '';
 
+        $postData = array(
+            "best_case" => $best_case,
+            "likely_case" => $response["reply"][0]["likely_case"],
+            "probability" => $probability,
+            "commit_stage" => $response["reply"][0]["commit_stage"],
+            "id" => $id,
+            "worksheet_id" => $response["reply"][0]["worksheet_id"],
+            "product_id" => $response["reply"][0]["product_id"],
+            "timeperiod_id" => $this->timeperiod->id,            
+            "assigned_user_id" => $response["reply"][0]["assigned_user_id"],
+            "draft" => 1
+        );     
+        
         $response = $this->_restCall("ForecastWorksheets/" . $this->repData["ops"][0]->id, json_encode($postData), "PUT");
 
         $db = DBManagerFactory::getInstance();
@@ -237,7 +252,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         //loop through response and pick out the rows that correspond with ops[0]->id
         foreach ($response["reply"] as $record) {
-            if ($record["id"] == $this->repData["ops"][0]->id) {
+            if ($record["id"] == $id) {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
@@ -249,14 +264,14 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         //Now, save as a regular version so things will be reset.
         $postData["draft"] = 0;
-        $response = $this->_restCall("ForecastWorksheets/" . $this->repData["ops"][0]->id, json_encode($postData), "PUT");
+        $response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
 
         // now get the data back to see if it was saved to all the proper tables.
         $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
 
         //loop through response and pick out the rows that correspond with ops[0]->id
         foreach ($response["reply"] as $record) {
-            if ($record["id"] == $this->repData["ops"][0]->id) {
+            if ($record["id"] == $id) {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
@@ -265,6 +280,11 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         //check to see if the live data comes back
         $this->assertEquals("1", $returnVersion, "Live Data was not returned.");
+        
+        // set the current user to original user
+        $this->_user = $oldUser;
+        $GLOBALS['current_user'] = $oldUser;
+        $this->authToken = "";
     }
 
     /**
@@ -274,30 +294,35 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     public function testWorksheetDraftVisibility()
     {
 
-        $this->repData["op_worksheets"][0]->best_case = $this->repData["op_worksheets"][0]->best_case + 100;
-        $this->repData["ops"][0]->probability = $this->repData["ops"][0]->probability + 10;
-        $returnBest = '';
-        $returnProb = '';
-
-        $postData = array("amount" => $this->repData["ops"][0]->amount,
-            "best_case" => $this->repData["op_worksheets"][0]->best_case,
-            "likely_case" => $this->repData["op_worksheets"][0]->likely_case,
-            "commit_stage" => $this->repData["commit_stage"],
-            "probability" => $this->repData["ops"][0]->probability,
-            "id" => $this->repData["ops"][0]->id,
-            "worksheet_id" => $this->repData["op_worksheets"][0]->id,
-            "timeperiod_id" => $this->timeperiod->id,
-            "current_user" => $this->repData["id"],
-            "assigned_user_id" => $this->repData["id"],
-            "draft" => 1
-        );
-
-        // set the current user to salesrep
+        $oldUser = $GLOBALS['current_user'];
+    	
+    	// set the current user to salesrep
         $this->_user = $this->reportee['user'];
         $GLOBALS['current_user'] = $this->_user;
         $this->authToken = "";
+        
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
 
-        $response = $this->_restCall("ForecastWorksheets/" . $this->repData["ops"][0]->id, json_encode($postData), "PUT");
+        $best_case = $response["reply"][0]["best_case"] + 100;
+        $probability = $response["reply"][0]["probability"] + 10;
+        $id = $response["reply"][0]["id"];
+        $returnBest = '';
+        $returnProb = '';
+
+        $postData = array(
+            "best_case" => $best_case,
+            "likely_case" => $response["reply"][0]["likely_case"],
+            "probability" => $probability,
+            "commit_stage" => $response["reply"][0]["commit_stage"],
+            "id" => $id,
+            "worksheet_id" => $response["reply"][0]["worksheet_id"],
+            "product_id" => $response["reply"][0]["product_id"],
+            "timeperiod_id" => $this->timeperiod->id,            
+            "assigned_user_id" => $response["reply"][0]["assigned_user_id"],
+            "draft" => 1
+        );     
+
+        $response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
 
         $db = DBManagerFactory::getInstance();
         $db->commit();
@@ -312,7 +337,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         //loop through response and pick out the rows that correspond with ops[0]->id
         foreach ($response["reply"] as $record) {
-            if ($record["id"] == $this->repData["ops"][0]->id) {
+            if ($record["id"] == $id) {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
@@ -329,7 +354,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         //Now, save as a regular version so things will be reset.
         $postData["draft"] = 0;
-        $response = $this->_restCall("ForecastWorksheets/" . $this->repData["ops"][0]->id, json_encode($postData), "PUT");
+        $response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
 
         $db->commit();
 
@@ -338,7 +363,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         //loop through response and pick out the rows that correspond with ops[0]->id
         foreach ($response["reply"] as $record) {
-            if ($record["id"] == $this->repData["ops"][0]->id) {
+            if ($record["id"] == $id) {
                 $returnBest = $record["best_case"];
                 $returnProb = $record["probability"];
                 $returnVersion = $record["version"];
@@ -347,5 +372,10 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         //check to see if the live data comes back
         $this->assertEquals("1", $returnVersion, "Live Data was not returned.");
+        
+        // set the current user to original user
+        $this->_user = $oldUser;
+        $GLOBALS['current_user'] = $oldUser;
+        $this->authToken = "";
     }
 }
