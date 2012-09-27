@@ -35,6 +35,7 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/nv.d3.css" />
     <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/sugar_colors.css" />
+    <link rel="stylesheet" type="text/css" href="lib/TimelineJS/css/timeline.css" />
 </head>
 <body>
 <div>
