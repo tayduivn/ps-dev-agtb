@@ -457,7 +457,9 @@ class SimpleMailer extends BaseMailer
             $subject   = $this->headers->getSubject(); // used for the document title
             $charset   = $this->config->getCharset();  // used for the document charset
             $language  = get_language_header();
-            $head      = <<<eoq
+
+            // prepend the document head and append the footer elements to the body
+            $body      = <<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" {$language}>
 <head>
@@ -465,8 +467,10 @@ class SimpleMailer extends BaseMailer
 <title>{$subject}</title>
 </head>
 <body>
+{$body}
+</body>
+</html>
 eoq;
-            $body = "{$head}{$body}</body></html>"; // prepend the document head and append the footer elements
         }
 
         return $body;
