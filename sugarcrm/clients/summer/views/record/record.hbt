@@ -1,7 +1,7 @@
 <div class="record">
     {{#if editable}}
     <div class="row-fluid record-button-bar">
-        <div class="btn-group pull-right">
+        <div class="btn-group pull-right" data-tour="tour-record-button-bar">
             <a class="btn btn-small record-save btn-success btn-disabled">Save</a>
             <a class="btn btn-small record-cancel btn-disabled">Cancel</a>
             <a class="btn btn-small record-edit">Edit</a>

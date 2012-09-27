@@ -33,8 +33,7 @@
 
         if( obj === _.last(currentArray) ) {
             // Conditions to end the tour
-            if( (this.fullTour && this.currentModule === "Opportunities" && this.viewType === "record") ||
-                !(this.fullTour) && (this.viewType === "record" || this.viewType === "dashboard" ) ) {
+            if( !(this.fullTour) || (this.fullTour && this.currentModule === "Opportunities" && this.viewType === "record") ) {
                 $("[data-tour='" + obj.id + "']").popover("hide");
                 this.endTour();
                 return;
@@ -77,7 +76,11 @@
 
             // show the next popover
             if( $nextEl.length > 0 ) {
-                $nextEl.popover({title: nextObj.title, content: nextObj.content, placement: nextObj.placement,
+                // If its not a full tour, don't instruct the user to take certain actions, this is done by
+                // overriding the content with custom "not full tour" content.
+                var popoverContent = !(this.fullTour) ? (nextObj["content_not_full"] || nextObj.content) : nextObj.content;
+
+                $nextEl.popover({title: nextObj.title, content: popoverContent, placement: nextObj.placement,
                                  trigger: "manual", template: templateEl}).popover("show");
 
                 this.fixPopoverPosition(nextObj.placement, nextObj.id);
