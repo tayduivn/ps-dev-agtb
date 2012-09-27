@@ -212,21 +212,21 @@
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
-                    self.setColumnVisibility('amount', value, self);
+                    self.setColumnVisibility(['amount'], value, self);
                 }
             });
 
             this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
-                    self.setColumnVisibility('best_case', value, self);
+                    self.setColumnVisibility(['best_case'], value, self);
                 }
             });
 
             this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
-                    self.setColumnVisibility('worst_case', value, self);
+                    self.setColumnVisibility(['worst_case'], value, self);
                 }
             });
 
@@ -240,16 +240,12 @@
     /**
      * Sets the visibility of a column or columns if array is passed in
      *
-     * @param cols {*} Array or String, the sName of the column to change
+     * @param cols {Array} the sName of the columns to change
      * @param value {*} int or Boolean, 1/true or 0/false to show the column
      * @param ctx {Object} the context of this view to have access to the checkForColumnsSetVisibility function
      */
     setColumnVisibility: function(cols, value, ctx) {
         var aoColumns = ctx.gTable.fnSettings().aoColumns;
-        if(!_.isArray(cols)) {
-            // make cols an array
-            cols = [cols]
-        }
 
         for(var i in cols) {
             var columnName = cols[i];
@@ -270,22 +266,16 @@
      */
     checkConfigForColumnVisibility: function(colKey) {
         var returnValue = null;
-        // check to see if it's in the map first
+        // Check and see if our keymap has the column
         if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
-            var configKey = this._tableColumnsConfigKeyMap[colKey];
-            returnValue = this.context.forecasts.config.get(configKey);
+            // if so get the value from config
+            returnValue = this.context.forecasts.config.get(this._tableColumnsConfigKeyMap[colKey]);
         }
 
-        //if returnValue is null, it did not have a config option to correlate to,
-        // so set it visible
-        if(_.isNull(returnValue)) {
-            returnValue = true;
-        } else {
-            // convert returnValue to boolean if it isnt null
-            returnValue = returnValue == 1;
-        }
-
-        return returnValue;
+        // if there was no value in the keymap, returnValue is null,
+        // in which case returnValue should be set to true because it doesn't correspond to a config setting
+        // so it should be shown
+        return _.isNull(returnValue) ? true : (returnValue == 1);
     },
 
     /**
