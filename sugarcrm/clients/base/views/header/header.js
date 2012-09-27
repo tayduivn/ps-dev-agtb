@@ -31,7 +31,7 @@
         self.setCurrentUserName();
         app.view.View.prototype._renderHtml.call(self);
         self.initMenu();
-        $(window).off("resize").on("resize", self.resizeMenu);
+        $(window).off("resize", self.resizeMenu).on("resize", self.resizeMenu);
         self.resizeMenu();
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
