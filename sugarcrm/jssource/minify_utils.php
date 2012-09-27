@@ -56,6 +56,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             $prefix.'tests/jssource/minify/test'    => true,
             $prefix.'portal2'                       => true,
             $prefix.'sidecar'                       => true,
+            $prefix.'styleguide'                    => true,
         );
 
         return $compress_exempt_files;
@@ -72,7 +73,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
      * @from_path root directory where processing should take place
      */
     function ConcatenateFiles($from_path){
-
         // Minifying the group files takes a long time sometimes.
         @ini_set('max_execution_time', 300);
         $js_groupings = array();
@@ -92,12 +92,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
             //process each group array
             foreach($fg as $loc=>$trgt){
-                $already_minified = FALSE;
-                $minified_loc = str_replace('.js', '-min.js', $loc);
-                if(is_file($minified_loc)) {
-                    $loc = $minified_loc;
-                    $already_minified = TRUE;
-                }
                 $relpath = $loc;
                 $loc = $from_path.'/'.$loc;
 
@@ -149,26 +143,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                             sugar_die("Creating $target_directory failed: please make sure {$base} is writable\n");
                         }
 
-                }
-                $files_opened[] = $trgt;
+                    }
+                    $files_opened[] = $trgt;
 
-                //make sure we have handles to both source and target file
-                if ($trgt_handle) {
-                        if($already_minified || isset($excludedFiles[dirname($loc)])) {
-                            $buffer = file_get_contents($loc);
-                        } else {
-                            $buffer = SugarMin::minify(file_get_contents($loc));
-                        }
-
+                    //make sure we have handles to both source and target file
+                    if ($trgt_handle) {
+                        $buffer = file_get_contents($loc);
                         $buffer .= "/* End of File $relpath */\n\n";
                         $num = fwrite($trgt_handle, $buffer);
 
-                        if( $num=== false){
+                        if( $num=== false ){
                          //log error, file did not get appended
                          echo "Error while concatenating file $loc to target file $trgt \n";
                         }
-                    //close file opened.
-                    fclose($trgt_handle);
+                        //close file opened.
+                        fclose($trgt_handle);
                     }
 
                 }
@@ -312,15 +301,27 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
                 //minify javascript
                 //$jMin = new JSMin($from_path,$to_path,$lic_arr);
-                $min_file = str_replace('.js', '-min.js', $from_path);
-                if(strpos($from_path, '-min.js') !== FALSE) {
+                if(strpos($from_path, '-min.js') !== FALSE || strpos($from_path, '.min.js') !== FALSE) {
                     $min_file = $from_path;
+                } else {
+                    $min_file = str_replace('.js', '-min.js', $from_path);
+                    if(!is_file($min_file)) {
+                        $min_file = str_replace('.js', '.min.js', $from_path);
+                    }
+                    // Bootstrap is funky with their semicolons.
+                    if(strpos($from_path, 'bootstrap') !== FALSE) {
+                        $min_file = $from_path;
+                    }
                 }
 
                 if(is_file($min_file)) {
                     $out = file_get_contents($min_file);
                 } else {
-                    $out = $lic_str . SugarMin::minify(file_get_contents($from_path));
+                    try {
+                        $out = $lic_str . SugarMin::minify(file_get_contents($from_path));
+                    } catch (RuntimeException  $e) {
+                        $out = file_get_contents($from_path);
+                    }
                 }
 
             	if(function_exists('sugar_fopen') && $fh = @sugar_fopen( $to_path, 'w' ) )

@@ -30,94 +30,11 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <meta http-equiv="x-ua-compatible" content="IE=8">
     <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
     <link rel='stylesheet' type='text/css' href='lib/fullcalendar/fullcalendar.css' />
-    <link rel='stylesheet' type='text/css' href='lib/fullcalendar/fullcalendar.print.css' media='print' /> 
-       
-    <script src="../sidecar/lib/jquery/jquery.min.js"></script>
-    <script src="../sidecar/lib/jquery/jquery.iframe.transport.js"></script>
-    <script src="../sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js"></script>
-    <script src="../sidecar/lib/backbone/underscore.js"></script>
-    <script src="../sidecar/lib/backbone/backbone.js"></script>
-    <script src="../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
-    <script src="../sidecar/lib/stash/stash.js"></script>
-    <script src="../sidecar/lib/async/async.js"></script>
-    <script src="../sidecar/lib/chosen/chosen.jquery.js"></script>
-    <script src="../sidecar/lib/sugar/sugar.searchahead.js"></script>
-    <script src="../sidecar/lib/sugar/sugar.timeago.js"></script>
-    <script src="lib/jquery/jquery.fancybox-1.3.4.js"></script>
-    <script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDhofIE96RHrdEd7mBRLaHeYoPrFcBakac&sensor=true"></script>
-    <script src="lib/Crypto/Crypto.js"></script>
-    <script src="lib/TimelineJS/js/storyjs-embed.js"></script>
-    <script type='text/javascript' src='lib/fullcalendar/fullcalendar.js'></script>    
-    
-    <!-- App Scripts -->
-    <script src='../sidecar/lib/sugarapi/sugarapi.js'></script>
-    <script src='../sidecar/src/app.js'></script>
-    <script src='../sidecar/src/utils/date.js'></script>
-    <script src='../sidecar/src/utils/utils.js'></script>
-    <script src='../sidecar/src/core/cache.js'></script>
-    <script src="../sidecar/src/core/events.js"></script>
-    <script src='../sidecar/src/core/error.js'></script>
-    <script src='error.js'></script>
-    <script src='sugarAuthStore.js'></script>
-    <script src='../sidecar/src/view/template.js'></script>
-    <script src='../sidecar/src/core/context.js'></script>
-    <script src='../sidecar/src/core/controller.js'></script>
-    <script src='../sidecar/src/core/router.js'></script>
-    <script src='../sidecar/src/core/language.js'></script>
-    <script src='../sidecar/src/core/metadata-manager.js'></script>
-    <script src='../sidecar/src/core/acl.js'></script>
-    <script src='../sidecar/src/core/user.js'></script>
-    <script src='user.js'></script>
-    <script src='../sidecar/src/utils/logger.js'></script>
-    <script src='config.js'></script>
-    <script src='../sidecar/src/data/bean.js'></script>
-    <script src='../sidecar/src/data/bean-collection.js'></script>
-    <script src='../sidecar/src/data/data-manager.js'></script>
-    <script src='../sidecar/src/data/validation.js'></script>
-    <script src='../sidecar/src/view/hbt-helpers.js'></script>
-    <script src='../sidecar/src/view/view-manager.js'></script>
-    <script src='../sidecar/src/view/component.js'></script>
-    <script src='../sidecar/src/view/view.js'></script>
-    <script src='../sidecar/src/view/field.js'></script>
-    <script src='../sidecar/src/view/layout.js'></script>
-    <script src='views/alert-view.js'></script>
-    <script src='../sidecar/src/view/alert.js'></script>
-    <script src='summer.js'></script>
-
+    <link rel='stylesheet' type='text/css' href='lib/fullcalendar/fullcalendar.print.css' media='print' />
     <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-
-    <!-- Styleguide scripts that are not useful yet -->
-    <script src="../styleguide/assets/js/bootstrap-transition.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-collapse.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-scrollspy.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-tab.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-typeahead.js"></script>
-    <script src="lib/twitterbootstrap/js/jquery.dataTables.js"></script>
-    <script src="lib/twitterbootstrap/js/wicked.js"></script>
-    <script src="../styleguide/styleguide/js/jquery.jeditable.js"></script>
-    <script src="lib/twitterbootstrap/js/editable.js"></script>
-
-    <!-- Styleguide scripts that need to be included -->
-    <script src="../styleguide/assets/js/bootstrap-button.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-tooltip.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-popover.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-dropdown.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-modal.js"></script>
-    <script src="../styleguide/assets/js/bootstrap-alert.js"></script>
-    <script src="summer-ui.js"></script>
-
-    <!-- D3 Graphing -->
-    <script src="../styleguide/styleguide/js/nvd3/lib/d3.v2.js"></script>
-    <script src="../styleguide/styleguide/js/nvd3/nv.d3.min.js"></script>
-    <script src="../styleguide/styleguide/js/nvd3/src/models/pie.js"></script>
-    <script src="../styleguide/styleguide/js/nvd3/src/models/pieChart.js"></script>
-    <script src="../styleguide/styleguide/js/nvd3/src/models/funnel.js"></script>
-    <script src="../styleguide/styleguide/js/nvd3/src/models/funnelChart.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/nv.d3.css">
-    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/sugar_colors.css">
-
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/nv.d3.css" />
+    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/sugar_colors.css" />
 </head>
 <body>
 <div>
@@ -131,6 +48,23 @@ if (empty($_SESSION['authenticated_user_id'])) {
     </div>
 </div>
 
+
+<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDhofIE96RHrdEd7mBRLaHeYoPrFcBakac&sensor=true"></script>
+<?php
+    $min_file = 'summer/summer.min.js';
+    if(file_exists("../cache/".$min_file)) {
+        echo "<script src=\"../cache/$min_file\"></script>\n";
+    } else {
+        require_once('../jssource/JSGroupings.php');
+        foreach($js_groupings as $group) {
+            foreach($group as $file => $min) {
+                if($min == $min_file) {
+                    echo "<script src=\"../$file\"></script>\n";
+                }
+            }
+        }
+    }
+?>
 <script language="javascript">
     var App, syncResult, view, layout, html;
 
