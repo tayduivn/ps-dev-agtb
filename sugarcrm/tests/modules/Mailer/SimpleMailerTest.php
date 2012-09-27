@@ -106,6 +106,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
+        // connectToHost should fail between transferConfigurations and transferHeaders
+
         $mockMailer->expects(self::never())
             ->method("transferHeaders");
 
@@ -172,7 +174,10 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::returnValue(true));
 
         $mockMailer->expects(self::once())
-            ->method("connectToHost");
+            ->method("connectToHost")
+            ->will(self::returnValue(true));
+
+        // transferHeaders should fail between connectToHost and transferRecipients
 
         $mockMailer->expects(self::never())
             ->method("transferRecipients");
@@ -232,13 +237,15 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("generateMailer")
             ->will(self::returnValue($mockPhpMailer));
 
-
         $mockMailer->expects(self::once())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
         $mockMailer->expects(self::once())
-            ->method("connectToHost");
+            ->method("connectToHost")
+            ->will(self::returnValue(true));
+
+        // transferHeaders should fail between connectToHost and transferRecipients
 
         $mockMailer->expects(self::never())
             ->method("transferRecipients");
@@ -256,32 +263,42 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSend_TransferBodyThrowsAnException() {
-        $this->mockMailer->expects(self::any())
+    public function testSend_NoMessageParts_TransferBodyThrowsMailerException() {
+        $mockMailer = self::getMock(
+            "SimpleMailer",
+            array(
+                 "transferConfigurations",
+                 "connectToHost",
+                 "transferHeaders",
+                 "transferRecipients",
+                 "transferAttachments",
+            ),
+            array($this->mockMailerConfig)
+        );
+
+        $mockMailer->expects(self::once())
             ->method("transferConfigurations")
             ->will(self::returnValue(true));
 
-        $this->mockMailer->expects(self::any())
+        $mockMailer->expects(self::once())
             ->method("connectToHost")
             ->will(self::returnValue(true));
 
-        $this->mockMailer->expects(self::any())
+        $mockMailer->expects(self::once())
             ->method("transferHeaders")
             ->will(self::returnValue(true));
 
-        $this->mockMailer->expects(self::any())
+        $mockMailer->expects(self::once())
             ->method("transferRecipients")
             ->will(self::returnValue(true));
 
-        $this->mockMailer->expects(self::any())
-            ->method("transferBody")
-            ->will(self::throwException(new MailerException()));
+        // transferBody should fail between transferRecipients and transferAttachments
 
-        $this->mockMailer->expects(self::never())
+        $mockMailer->expects(self::never())
             ->method("transferAttachments");
 
         self::setExpectedException("MailerException");
-        $this->mockMailer->send();
+        $mockMailer->send();
     }
 
     /**
@@ -317,8 +334,8 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
- * @group mailer
- */
+     * @group mailer
+     */
     public function testSend_PhpMailerSendThrowsAnException() {
         $mockPhpMailer = self::getMock("PHPMailer", array("Send"));
 
