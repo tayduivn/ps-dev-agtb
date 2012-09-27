@@ -373,22 +373,7 @@ class SimpleMailer extends BaseMailer
         $mailer->ClearAttachments();
 
         foreach ($this->attachments as $attachment) {
-            if ($attachment instanceof Attachment) {
-                // it's a normal file attachment
-                try {
-                    // transfer the attachment to PHPMailer so it can be attached correctly at send time
-                    $mailer->AddAttachment(
-                        $attachment->getPath(),
-                        $attachment->getName(),
-                        $attachment->getEncoding(),
-                        $attachment->getMimeType());
-                } catch (Exception $e) {
-                    throw new MailerException(
-                        "Failed to add the attachment at " . $attachment->getPath() . ": " . $e->getMessage(),
-                        MailerException::InvalidAttachment
-                    );
-                }
-            } elseif ($attachment instanceof EmbeddedImage) {
+            if ($attachment instanceof EmbeddedImage) {
                 // it's an embedded image
                 // transfer the image to PHPMailer so it can be embedded correctly at send time
                 if (!$mailer->AddEmbeddedImage(
@@ -403,8 +388,25 @@ class SimpleMailer extends BaseMailer
                         MailerException::InvalidAttachment
                     );
                 }
+            } elseif ($attachment instanceof Attachment) {
+                // it's a normal file attachment
+                try {
+                    // transfer the attachment to PHPMailer so it can be attached correctly at send time
+                    $mailer->AddAttachment(
+                        $attachment->getPath(),
+                        $attachment->getName(),
+                        $attachment->getEncoding(),
+                        $attachment->getMimeType());
+                } catch (Exception $e) {
+                    throw new MailerException(
+                        "Failed to add the attachment at " . $attachment->getPath() . ": " . $e->getMessage(),
+                        MailerException::InvalidAttachment
+                    );
+                }
             } else {
                 // oops!
+                // there really shouldn't be a way to get an attachment into the Mailer that isn't an Attachment
+                // or an EmbeddedImage, but it's probably best to verify it anyway
                 throw new MailerException("Invalid attachment type", MailerException::InvalidAttachment);
             }
         }
