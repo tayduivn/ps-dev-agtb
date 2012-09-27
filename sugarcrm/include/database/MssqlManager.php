@@ -1222,6 +1222,8 @@ class MssqlManager extends DBManager
                 return "DATEADD({$additional_parameters[1]},{$additional_parameters[0]},$string)";
             case 'add_time':
                 return "DATEADD(hh, {$additional_parameters[0]}, DATEADD(mi, {$additional_parameters[1]}, $string))";
+            case 'guid':
+                return "NEWID()";
         }
 
         return "$string";

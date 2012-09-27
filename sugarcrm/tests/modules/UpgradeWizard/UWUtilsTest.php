@@ -29,7 +29,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
 var $meeting;
 var $call;
-private $jobs = array();
+private $job;
 
     public static function setUpBeforeClass()
     {
@@ -92,10 +92,9 @@ function tearDown() {
 	$db->query($meetingsSql);
 	$db->query($callsSql);
 
-    if(!empty($this->jobs))
+    if(!empty($this->job))
     {
-        $jobs = implode("','", $this->jobs);
-        $db->query(sprintf("DELETE FROM job_queue WHERE id IN ('%s')", $jobs));
+        $db->query(sprintf("DELETE FROM job_queue WHERE id = '%s'", $this->job));
     }
 }
 
@@ -139,10 +138,10 @@ function testUpgradeDateTimeFields() {
         $product->opportunity_id = '';
         $product->save();
 
-        $this->jobs = createProductForOpp();
+        $this->job = createProductForOpp();
 
         $job = new SchedulersJob();
-        $job->retrieve_by_string_fields(array('data' => $opp->id));
+        $job->retrieve($this->job);
         $job->runnable_ran = true;
         $job->runnable_data = '';
         $job->runJob();
@@ -155,11 +154,36 @@ function testUpgradeDateTimeFields() {
         $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
         SugarTestProductUtilities::setCreatedProduct(array($product->id));
 
-        $this->assertEquals($opp->name, $product->name, "Product name doesn't equal to related opp's one");
-        $this->assertEquals($opp->amount, $product->likely_case, "Product likely_case doesn't equal to related opp's one");
-        $this->assertEquals($opp->best_case, $product->best_case, "Product best_case doesn't equal to related opp's one");
-        $this->assertEquals($opp->worst_case, $product->worst_case, "Product worst_case doesn't equal to related opp's one");
-        $this->assertEquals($opp->assigned_user_id, $product->expert_id, "Product expert_id doesn't equal to related opp's assigned_user_id");
+        $expected = array('name' => $opp->name,
+            'best_case' => $opp->amount,
+            'likely_case' => $opp->amount,
+            'worst_case' => $opp->amount,
+            'cost_price' => $opp->amount,
+            'quantity' => '1',
+            'currency_id' => $opp->currency_id,
+            'base_rate' => $opp->base_rate,
+            'probability' => $opp->probability,
+            'date_closed' => $opp->date_closed,
+            'date_closed_timestamp' => $opp->date_closed_timestamp,
+            'assigned_user_id' => $opp->assigned_user_id,
+            'opportunity_id' => $opp->id,
+            'commit_stage' => $opp->commit_stage);
+        $actual = array('name' => $product->name,
+            'best_case' => intval($product->best_case),
+            'likely_case' => intval($product->likely_case),
+            'worst_case' => intval($product->worst_case),
+            'cost_price' => intval($product->cost_price),
+            'quantity' => $product->quantity,
+            'currency_id' => $product->currency_id,
+            'base_rate' => $product->base_rate,
+            'probability' => $product->probability,
+            'date_closed' => $product->date_closed,
+            'date_closed_timestamp' => $product->date_closed_timestamp,
+            'assigned_user_id' => $product->assigned_user_id,
+            'opportunity_id' => $product->opportunity_id,
+            'commit_stage' => $product->commit_stage);
+
+        $this->assertEquals($expected, $actual, "Product info doesn't equal to related opp's one");
     }
 //END SUGARCRM flav=pro ONLY
 }

@@ -89,6 +89,13 @@ class Product extends SugarBean {
     var $best_case = 0;
     var $likely_case = 0;
     var $worst_case = 0;
+    var $base_rate = 1;
+    var $probability;
+    var $date_closed;
+    var $date_closed_timestamp;
+    var $commit_stage;
+    var $assigned_user_id;
+    var $opportunity_id;
     //END SUGARCRM flav=ent ONLY
 
 	// These are for related fields
@@ -118,7 +125,6 @@ class Product extends SugarBean {
 	var $new_schema = true;
 	var $importable = true;
 
-    var $expert_id;
     var $experts;
 
 	// This is used to retrieve related fields from form posts.
