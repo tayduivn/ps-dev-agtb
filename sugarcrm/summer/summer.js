@@ -22,6 +22,13 @@
             app.controller.loadView(opts);
         }
 
+        app.router.route(":module", "list", function(module) {
+            app.controller.loadView({
+                module: module,
+                layout: "records"
+            });
+        });
+
         app.router.route(":module/:id/:action", "record", recordHandler);
         app.router.route(":module/:id", "record", recordHandler);
 

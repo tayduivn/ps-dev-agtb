@@ -1,4 +1,4 @@
-<div class="block thumbnail list">
+<div class="block thumbnail">
   <h1>Emails with {{{this.email}}}</h1>
   <ul class="nav nav-pills actions">
       <li>

@@ -30,11 +30,9 @@
         }
 
         app.view.Layout.prototype.addComponent.call(this, component, def);
-        console.log("Adding component", component, def);
     },
 
     _placeComponent: function(component) {
-        console.log("Placing component", component, "." + component.meta.name);
         if (component.meta.name) {
             this.$("." + component.meta.name).append(component.$el);
         }
