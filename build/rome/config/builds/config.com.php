@@ -73,6 +73,7 @@ $config['blackList']['com'] = array(
 'sugarcrm/include/externalAPI/Facebook'=>1,
 'sugarcrm/include/externalAPI/Google'=>1,
 'sugarcrm/include/externalAPI/GoToMeeting'=>1,
+'sugarcrm/include/externalAPI/IBMSmartCloud'=>1,
 'sugarcrm/include/externalAPI/LotusLive'=>1,
 'sugarcrm/include/externalAPI/LotusLiveDirect'=>1,
 'sugarcrm/include/externalAPI/LotusLiveCastIron'=>1,
