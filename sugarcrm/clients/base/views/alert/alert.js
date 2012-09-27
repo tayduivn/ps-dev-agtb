@@ -36,7 +36,7 @@
                 },
                 template:"<div class=\"alert {{alertClass}} alert-block {{#if autoClose}}timeten{{/if}}\">" +
                     "<a class=\"close\" data-dismiss=\"alert\">x</a>{{#if title}}<strong>{{title}}</strong>{{/if}}" +
-                    "{{#each messages}}<p>{{this}}</p>{{/each}}</div>",
+                    "{{#each messages}}<p>{{{this}}}</p>{{/each}}</div>",
                 loadingTemplate:"<div class=\"alert {{alertClass}}\">" +
                     "<strong>{{title}}</strong>&hellip;<a class=\"close\" data-dismiss=\"alert\">x</a></div>",
                 initialize:function () {

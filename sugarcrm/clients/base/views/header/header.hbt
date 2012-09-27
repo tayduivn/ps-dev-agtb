@@ -4,11 +4,18 @@
             <div class="nav-collapse">
                 <ul class="nav" id="module_list">
                     <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
-                    {{#each module_list}}
-                    <li class="{{this}}{{#eq this ../currentModule}} active{{/eq}}">
-                        <a href="#{{this}}">{{str "LBL_MODULE_NAME" this}}</a>
+                    {{log module_list}}
+                    {{#eachOptions module_list}}
+
+                    <li class="{{key}}{{#eq key ../currentModule}} active{{/eq}}">
+                        <a href="#{{key}}">{{value}}</a>
                     </li>
-                    {{/each}}
+                    {{/eachOptions}}
+                    <li class="dropdown more">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        </ul>
+                    </li>
                 </ul>
                 <ul class="nav pull-right" id="userList">
                     <li class="divider-vertical"></li>

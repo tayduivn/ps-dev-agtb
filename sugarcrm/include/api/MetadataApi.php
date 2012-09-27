@@ -235,14 +235,22 @@ class MetadataApi extends SugarApi {
     }
 
     protected function loadMetadata($hashKey) {
+        global $current_user, $app_list_strings;
         // Start collecting data
         $data = array();
 
         $mm = $this->getMetadataManager();
 
 
-        $data['module_list'] = $mm->getModuleList($this->platforms[0]);
-        $data['full_module_list'] = $data['module_list'];
+        $data['full_module_list'] = $mm->getModuleList($this->platforms[0]);
+        //Trim the module list down to the ones to display
+        $moduleList = array();
+        foreach ( query_module_access_list($current_user) as $module ) {
+            if ( isset($data['full_module_list'][$module]) ) {
+                $moduleList[$module] = $app_list_strings['moduleList'][$module];
+            }
+        }
+        $data['module_list'] = $moduleList;
 
         $data['modules'] = array();
 
@@ -269,7 +277,7 @@ class MetadataApi extends SugarApi {
         }
 
         foreach($data['modules'] as $moduleName => $moduleDef) {
-            if (!array_key_exists($moduleName, $data['full_module_list'])) {
+            if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
             }
         }
