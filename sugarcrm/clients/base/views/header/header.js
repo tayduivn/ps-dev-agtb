@@ -136,7 +136,9 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.module_list = app.metadata.getModuleNames(true);
+        //TODO: sidecar needs a function to pull this list from user prefs
+        //The module list needs to be key:value pairs of module name and its translated label
+        this.module_list = SUGAR.App.metadata.data.module_list;
         this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 
