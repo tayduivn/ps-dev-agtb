@@ -47,10 +47,6 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $db = DBManagerFactory::getInstance();
-        //Make sure we remove any team with name or name_2 starting with "Test..."
-        $db->query("DELETE FROM teams WHERE name LIKE 'Test%' OR name_2 LIKE 'Test%'");
-
 		SugarTestHelper::setUp('app_list_strings');
 		SugarTestHelper::setUp('app_strings');
 		SugarTestHelper::setUp('current_user');
@@ -65,7 +61,6 @@ class Bug45709_53785_Test extends Sugar_PHPUnit_Framework_TestCase
     	$this->team->name_2 = 'Team';
     	$this->team->save();
         //END SUGARCRM flav=pro ONLY
-
     }
 
     public function tearDown()
