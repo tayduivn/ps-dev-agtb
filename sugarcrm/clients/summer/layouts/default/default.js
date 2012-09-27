@@ -9,11 +9,9 @@
 
         main = this;
 
-        console.log("Making a new default layout");
     },
 
     renderHtml: function() {
-        console.log("Renderin le html");
         this.$el.html(this.template(this));
     },
 
@@ -22,7 +20,6 @@
     },
 
     _placeComponent: function(component) {
-        console.log("Placing component");
         app.view.Layout.prototype._placeComponent.call(this, component);
     }
 })
