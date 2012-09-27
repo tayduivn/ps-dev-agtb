@@ -9,6 +9,7 @@
         this.context.on('quickcreate:highlightDuplicateFields', this.highlightDuplicateFields, this);
         this.context.on('quickcreate:clearHighlightDuplicateFields', this.clearHighlightDuplicateFields, this)
         this.model.on("error:validation", this.handleValidationError, this);
+        this.model.on("change", this.clearValidationError, this);
     },
 
     render: function() {

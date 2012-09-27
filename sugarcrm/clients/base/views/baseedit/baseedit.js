@@ -5,6 +5,35 @@
  * @extends View.View
  */
 ({
+    /**
+     * Resets the error messages for all fields that have been changed and sent on the models change event.
+     * @param {object} model that was changed.
+     * @param {object} object that holds the changed fields.
+     */
+    clearValidationError: function(model, fields) {
+        var self = this;
+        if(!_.isEmpty(fields.changes)){
+            _.each(fields.changes, function (num, key) {
+                debugger;
+                var field = self.getField(key);
+
+                if (field) {
+                    var controlGroup = field.$el.parents('.control-group:first');
+
+                    if (controlGroup) {
+                        controlGroup.removeClass("error");
+                        controlGroup.find('.add-on').remove();
+                        controlGroup.find('.help-block').html("");
+                    }
+                }
+            });
+        }
+    },
+
+    /**
+     * Highlights all fields that fails field validation during save.
+     * @param {object} Object containing the fields that failed validation.
+     */
     handleValidationError:function (errors) {
         var self = this;
 
