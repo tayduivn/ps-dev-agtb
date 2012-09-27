@@ -420,21 +420,19 @@ require_once('include/EditView/EditView2.php');
 	       				$function_name = $this->fieldDefs[$fvName]['function'];
 	       			}
 
-                    if(!empty($this->fieldDefs[$fvName]['function']['include'])  && file_exists($this->fieldDefs[$fvName]['function']['include']))
-                    {
-                        require_once($this->fieldDefs[$fvName]['function']['include']);
-                    }
-
-                    if(!empty($this->fieldDefs[$fvName]['function']['returns']) && $this->fieldDefs[$fvName]['function']['returns'] == 'html'){
-                        $value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
-                        $this->fieldDefs[$fvName]['value'] = $value;
-                    }else{
-                        if(!isset($function['params']) || !is_array($function['params'])) {
-                            $this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
-                        } else {
-                            $this->fieldDefs[$fvName]['options'] = call_user_func_array($function_name, $function['params']);
-                        }
-                    }
+					if(!empty($this->fieldDefs[$fvName]['function']['returns']) && $this->fieldDefs[$fvName]['function']['returns'] == 'html'){
+						if(!empty($this->fieldDefs[$fvName]['function']['include'])){
+								require_once($this->fieldDefs[$fvName]['function']['include']);
+						}
+						$value = call_user_func($function_name, $this->seed, $name, $value, $this->view);
+						$this->fieldDefs[$fvName]['value'] = $value;
+					}else{
+					    if(!isset($function['params']) || !is_array($function['params'])) {
+							$this->fieldDefs[$fvName]['options'] = call_user_func($function_name, $this->seed, $name, $value, $this->view);
+						} else {
+							$this->fieldDefs[$fvName]['options'] = call_user_func_array($function_name, $function['params']);
+						}
+					}
 	       	 	}
 	       	 	if(isset($this->fieldDefs[$name]['type']) && $this->fieldDefs[$fvName]['type'] == 'function'
                        && isset($this->fieldDefs[$fvName]['function_name']))
@@ -465,7 +463,7 @@ require_once('include/EditView/EditView2.php');
 
 	}
 
-	    /**
+	/**
      * Populate the searchFields from an array
      *
      * @param array $array array to search through
@@ -653,7 +651,7 @@ require_once('include/EditView/EditView2.php');
      public function generateSearchWhere($add_custom_fields = false, $module='') {
          global $timedate;
 
-         $db = DBManagerFactory::getInstance();
+         $db = $this->seed->db;
          $this->searchColumns = array () ;
          $values = $this->searchFields;
 
@@ -892,10 +890,10 @@ require_once('include/EditView/EditView2.php');
                             // The regular expression check is to circumvent special case YYYY-MM
                              $operator = '=';
                              if(preg_match('/^\d{4}.\d{1,2}$/', $field_value) != 0) { // preg_match returns number of matches
-                                $db_field = $db->convert($db_field, "date_format", array("%Y-%m"));
+                                $db_field = $this->seed->db->convert($db_field, "date_format", array("%Y-%m"));
                             } else {
                                 $field_value = $timedate->to_db_date($field_value, false);
-                                $db_field = $db->convert($db_field, "date_format", array("%Y-%m-%d"));
+                                $db_field = $this->seed->db->convert($db_field, "date_format", array("%Y-%m-%d"));
                             }
                          }
 
@@ -1035,7 +1033,7 @@ require_once('include/EditView/EditView2.php');
                                          if(!$first){
                                              $where .= $and_or;
                                          }
-                                         $where .= " {$db_field} $in ({$q} ".$db->quoted($field_value.'%').") ";
+                                         $where .= " {$db_field} $in ({$q} ".$this->seed->db->quoted($field_value.'%').") ";
                                          $first = false;
                                      }
                                  }elseif(!empty($parms['query_type']) && $parms['query_type'] == 'format'){
@@ -1044,48 +1042,50 @@ require_once('include/EditView/EditView2.php');
                                  } else {
                                      //Bug#37087: Re-write our sub-query to it is executed first and contents stored in a derived table to avoid mysql executing the query
                                      //outside in. Additional details: http://bugs.mysql.com/bug.php?id=9021
-                                     $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$db->quoted($field_value.'%').") {$field}_derived)";
+                                     $where .= "{$db_field} $in (select * from ({$parms['subquery']} ".$this->seed->db->quoted($field_value.'%').") {$field}_derived)";
                                  }
 
                                  break;
 
                              case 'like':
-                                 if($type == 'bool' && $field_value == 0) {
+                                 if($type == 'bool' && $field_value == 0)
+                                 {
                                      // Bug 43452 - FG - Added parenthesis surrounding the OR (without them the WHERE clause would be broken)
                                      $where .=  "( " . $db_field . " = '0' OR " . $db_field . " IS NULL )";
                                  }
-                                 else {
-                                     //check to see if this is coming from unified search or not
+                                 else
+                                 {
+                                     // check to see if this is coming from unified search or not
                                      $UnifiedSearch = !empty($parms['force_unifiedsearch']);
                                      if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'UnifiedSearch'){
                                          $UnifiedSearch = true;
                                      }
+                                     // If it is a unified search and if the search contains more then 1 word (contains space)
+                                     // and if it's the last element from db_field (so we do the concat only once, not for every db_field element)
+                                     // we concat the db_field array() (both original, and in reverse order) and search for the whole string in it
+                                     if ( $UnifiedSearch && strpos($field_value, ' ') !== false && strpos($db_field, $parms['db_field'][count($parms['db_field']) - 1]) !== false )
+                                     {
+                                         // Get the table name used for concat
+                                         $concat_table = explode('.', $db_field);
+                                         $concat_table = $concat_table[0];
+                                         // Get the fields for concatenating
+                                         $concat_fields = $parms['db_field'];
 
-                                     //check to see if this is a universal search OR the field has db_concat_fields set in vardefs, AND the field name is "last_name"
-                                     //BUG 45709: Tasks Advanced Search: Contact Name field does not return matches on full names
-                                     //Frank: Adding Surabhi's fix back which seem to have gone missing in CottonCandy merge
-                                     if(($UnifiedSearch || !empty($this->seed->field_name_map[$field]['db_concat_fields'])) && strpos($db_field, 'last_name') !== false){
-                                         //split the string value, and the db field name
-                                         $string = explode(' ', $field_value);
-                                         $column_name =  explode('.', $db_field);
-                                         //when a search is done with a space, we concatenate and search against the full name.
-                                         if(count($string)>1){
-                                             //add where clause against concatenated fields
-                                             $first_field = $parms['db_field'][0];
-                                             $second_field = $parms['db_field'][1];
-                                             $first_db_fields = explode('.', $first_field);
-                                             $second_db_fields = explode('.', $second_field);
-                                             if(count($first_db_fields)==2) $first_field = $first_db_fields[1];
-                                             if(count($second_db_fields)==2) $second_field = $second_db_fields[1];
-                                             $where .= $db->concat($column_name[0],array($first_field,$second_field)) . " LIKE ".$db->quoted($field_value.'%');
-                                             $where .= ' OR ' . $db->concat($column_name[0],array($second_field,$first_field)) . " LIKE ".$db->quoted($field_value.'%');
-                                         }else{
-                                             //no space was found, add normal where clause
-                                             $where .=  $db_field . " like ".$db->quoted(sql_like_string($field_value, $like_char));
+                                         // If db_fields (e.g. contacts.first_name) contain table name, need to remove it
+                                         for ($i = 0; $i < count($concat_fields); $i++)
+                                         {
+                                         	if (strpos($concat_fields[$i], $concat_table) !== false)
+                                         	{
+                                         		$concat_fields[$i] = substr($concat_fields[$i], strlen($concat_table) + 1);
+                                         	}
                                          }
 
-                                     }else {
-
+                                         // Concat the fields and search for the value
+                                         $where .= $this->seed->db->concat($concat_table, $concat_fields) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);
+                                         $where .= ' OR ' . $this->seed->db->concat($concat_table, array_reverse($concat_fields)) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);
+                                     }
+                                     else
+                                     {
                                          //Check if this is a first_name, last_name search
                                          if(isset($this->seed->field_name_map) && isset($this->seed->field_name_map[$db_field]))
                                          {
@@ -1107,7 +1107,7 @@ require_once('include/EditView/EditView2.php');
                                          }
 
                                          //field is not last name or this is not from global unified search, so do normal where clause
-                                         $where .=  $db_field . " like ".$db->quoted(sql_like_string($field_value, $like_char));
+                                         $where .=  $db_field . " like ".$this->seed->db->quoted(sql_like_string($field_value, $like_char));
                                      }
                                  }
                                  break;
@@ -1273,4 +1273,4 @@ require_once('include/EditView/EditView2.php');
 
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
      }
- }
+    }

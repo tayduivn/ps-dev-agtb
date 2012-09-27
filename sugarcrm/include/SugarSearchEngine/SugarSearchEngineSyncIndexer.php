@@ -27,82 +27,26 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/entryPoint.php');
-require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
-require_once('include/SugarQueue/SugarJobQueue.php');
-require_once('modules/SchedulersJobs/SchedulersJob.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineIndexerBase.php');
 
 /**
+ * Indexer job for Search to sync records
  * @api
  */
-class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
+class SugarSearchEngineSyncIndexer extends SugarSearchEngineIndexerBase
 {
-
-    /**
-     * @var SchedulersJob
-     */
-    private $schedulerJob;
-
-    /**
-     * @var \SugarSearchEngineAbstractBase
-     */
-    private $SSEngine;
-
-    /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
-     */
-    const MAX_BULK_THRESHOLD = 5000;
-
-    /**
-     * The max number of beans we process before starting to bulk insert so we dont hit memory issues.
-     */
-    const MAX_BULK_QUERY_THRESHOLD = 15000;
-
-    /**
-     * The max number of beans we delete at a time
-     */
-    const MAX_BULK_DELETE_THRESHOLD = 3000;
-
-    /**
-     * Number of time to postpone a job by so it's not executed twice during the same request.
-     */
-    const POSTPONE_JOB_TIME = 20;
-
-    /**
-     * The name of the queue table
-     */
-    const QUEUE_TABLE = 'fts_queue';
-
-    /**
-     * @var DBManager
-     */
-    protected $db;
-
-    /**
-     * @param SugarSearchEngineAqbstractBase $engine
-     */
-    public function __construct(SugarSearchEngineAbstractBase $engine = null)
-    {
-        if($engine != null)
-            $this->SSEngine = $engine;
-        else
-            $this->SSEngine = SugarSearchEngineFactory::getInstance();
-
-        $this->db = DBManagerFactory::getInstance('fts');
-    }
-
     /**
      * Remove existing FTS Consumers that may have been created by a previous scheduled index.
      *
      */
     public function removeExistingFTSSyncConsumer()
     {
-        $GLOBALS['log']->fatal("Removing existing FTS Sync Consumers");
+        $GLOBALS['log']->info("Removing existing FTS Sync Consumers");
 
         $jobBean = BeanFactory::getBean('SchedulersJobs');
 
-        $res = $GLOBALS['db']->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSSyncConsumer' AND deleted = 0");
-        while ($row = $GLOBALS['db']->fetchByAssoc($res))
+        $res = $this->db->query("SELECT id FROM {$jobBean->table_name} WHERE name like 'FTSSyncConsumer' AND deleted = 0");
+        while ($row = $this->db->fetchByAssoc($res))
         {
             $jobBean->mark_deleted($row['id']);
         }
@@ -115,7 +59,7 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
      */
     public function createJobQueueConsumer()
     {
-        $GLOBALS['log']->fatal("Creating FTS Job queue consumer to sync");
+        $GLOBALS['log']->info("Creating FTS Job queue consumer to sync");
 
         global $timedate;
         if (empty($timedate))
@@ -125,7 +69,6 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
 
         $job = new SchedulersJob();
         $job->requeue = 1;
-        $job->execute_time = $timedate->nowDb();
         $job->name = "FTSSyncConsumer";
         $job->target = "class::SugarSearchEngineSyncIndexer";
         $queue = new SugarJobQueue();
@@ -134,27 +77,16 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
         return $job->id;
     }
 
-    public function __get($name)
-    {
-        if($name == 'table_name')
-            return self::QUEUE_TABLE;
-        else
-            return $this->$name;
-    }
-
     /**
-     * Set the scheduler job that initiated the run call.
+     * Index records into search engine
      *
-     * @param SchedulersJob $job
+     * @param String module
+     * @param array fieldDefinitions
+     * @return integer number of indexed records, -1 if fails
      */
-    public function setJob(SchedulersJob $job)
-    {
-        $this->schedulerJob = $job;
-    }
-
     public function indexRecords($module, $fieldDefinitions)
     {
-        $GLOBALS['log']->fatal('Indexing for module '.$module);
+        $GLOBALS['log']->info('Indexing for module '.$module);
 
         $count = 0;
         $processedBeans = array();
@@ -180,8 +112,12 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
 
             if($count != 0 && $count % self::MAX_BULK_THRESHOLD == 0)
             {
-                $this->SSEngine->bulkInsert($docs);
-                $this->markBeansProcessed($processedBeans);
+                $ok = $this->SSEngine->bulkInsert($docs);
+                if ($ok) {
+                    $this->markBeansProcessed($processedBeans);
+                } else {
+                    return -1;
+                }
                 $docs = $processedBeans = array();
                 sugar_cache_reset();
                 if( function_exists('gc_collect_cycles') )
@@ -190,14 +126,17 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
                 $lastMemoryUsage = isset($lastMemoryUsage) ? $lastMemoryUsage : 0;
                 $currentMemUsage = memory_get_usage();
                 $totalMemUsage = $currentMemUsage - $lastMemoryUsage;
-                $GLOBALS['log']->fatal("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
+                $GLOBALS['log']->info("Flushing records, count: $count mem. usage:" .  memory_get_usage() . " , mem. delta: " . $totalMemUsage);
                 $lastMemoryUsage = $currentMemUsage;
             }
         }
 
         if(count($docs) > 0)
         {
-            $this->SSEngine->bulkInsert($docs);
+            $ok = $this->SSEngine->bulkInsert($docs);
+            if (!$ok) {
+                return -1;
+            }
         }
 
         $this->markBeansProcessed($processedBeans);
@@ -205,59 +144,6 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
         return $count;
     }
 
-
-
-    /**
-     * Generate the query necessary to retrieve FTS enabled fields for a bean.
-     *
-     * @param $module
-     * @param $fieldDefinitions
-     * @return string
-     */
-    protected function generateFTSQuery($module, $fieldDefinitions)
-    {
-        $queuTableName = self::QUEUE_TABLE;
-        $bean = BeanFactory::getBean($module, null);
-        $id = isset($fieldDefinitions['email1']) ? $bean->table_name.'.id' : 'id';
-        $selectFields = array($id,'team_id','team_set_id');
-        $ownerField = $bean->getOwnerField(true);
-        if (!empty($ownerField))
-        {
-            $selectFields[] = $ownerField;
-        }
-
-        foreach($fieldDefinitions as $value)
-        {
-            if(isset($value['name'])) {
-                if ($value['name'] == 'email1')
-                    continue;
-                $selectFields[] = $value['name'];
-            }
-        }
-
-        $ret_array['select'] = " SELECT " . implode(",", $selectFields);
-        $ret_array['from'] = " FROM {$bean->table_name} ";
-        $custom_join = FALSE;
-        if(isset($bean->custom_fields))
-        {
-            $custom_join = $bean->custom_fields->getJOIN();
-            if($custom_join)
-                $ret_array['select'] .= ' ' .$custom_join['select'];
-        }
-
-        if($custom_join)
-            $ret_array['from'] .= ' ' . $custom_join['join'];
-
-        $ret_array['from'] .= " INNER JOIN {$queuTableName} on {$queuTableName}.bean_id = {$bean->table_name}.id AND {$queuTableName}.processed = 0 ";
-        $ret_array['where'] = "WHERE {$bean->table_name}.deleted = 0";
-
-        if(isset($fieldDefinitions['email1'])) {
-            $ret_array['select'].= ", email_addresses.email_address email1";
-            $ret_array['from'].= " LEFT JOIN email_addr_bean_rel on {$bean->table_name}.id = email_addr_bean_rel.bean_id and email_addr_bean_rel.bean_module='{$module}' and email_addr_bean_rel.deleted=0 and email_addr_bean_rel.primary_address=1 LEFT JOIN email_addresses on email_addresses.id=email_addr_bean_rel.email_address_id ";
-        }
-
-        return  $ret_array['select'] . $ret_array['from'] . $ret_array['where'];
-    }
 
     /**
      * Check FTS server status and update cache file and notification.
@@ -273,12 +159,12 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
         {
             $GLOBALS['log']->debug('FTS Server is OK.');
             // server is ok
-            if (isSearchEngineDown())
+            if (SugarSearchEngineAbstractBase::isSearchEngineDown())
             {
                 $GLOBALS['log']->debug('Restoring FTS Server status.');
 
-                // remove cache/fts/fts_down
-                restoreSearchEngine();
+                // mark fts server as up
+                SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
 
                 // remove notification
                 $cfg = new Configurator();
@@ -290,13 +176,13 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
         }
         else
         {
-            $GLOBALS['log']->fatal('FTS Server is down?');
+            $GLOBALS['log']->info('FTS Server is down?');
             // server is down
-            if (!isSearchEngineDown())
+            if (!SugarSearchEngineAbstractBase::isSearchEngineDown())
             {
                 $GLOBALS['log']->fatal('Marking FTS Server as down.');
                 // fts is not marked as down, so mark it as down
-                searchEngineDown();
+                SugarSearchEngineAbstractBase::markSearchEngineStatus(true);
                 $this->createJobQueueConsumer();
             }
 
@@ -316,11 +202,11 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
         {
             // server is down, postpone the job
             $GLOBALS['log']->fatal('FTS Server is down, postponing the job.');
-            $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+            $this->schedulerJob->postponeJob('FTS down', self::POSTPONE_JOB_TIME);
             return true;
         }
 
-        $GLOBALS['log']->fatal("Going to sync records in fts queue...");
+        $GLOBALS['log']->info("Going to sync records in fts queue...");
 
         // Create the index on the server side
         $this->SSEngine->createIndex(false);
@@ -329,74 +215,39 @@ class SugarSearchEngineSyncIndexer implements RunnableSchedulerJob
         $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
         foreach ($allFieldDef as $module=>$fieldDefinitions) {
             $count = $this->indexRecords($module, $fieldDefinitions);
+            if ($count == -1) {
+                $GLOBALS['log']->fatal('FTS failed to index records, postponing job for next cron');
+                $this->schedulerJob->postponeJob('FTS failed to index', self::POSTPONE_JOB_TIME);
+                return true;
+            }
         }
 
         // check the fts queue to see if any records left, if no, then we are done, succeed the job
         // otherwise postpone the job so it can be invoked by the next cron
         $tableName = self::QUEUE_TABLE;
         $res = $this->db->query("SELECT count(*) as cnt FROM {$tableName} WHERE processed = 0");
-        if ($row = $GLOBALS['db']->fetchByAssoc($res))
+        if ($row = $this->db->fetchByAssoc($res))
         {
             $count = $row['cnt'];
             if( $count == 0)
             {
                 // If no items were processed we've exhausted the list and can therefore succeed job.
-                $GLOBALS['log']->fatal('succeed job');
+                $GLOBALS['log']->info('succeed job');
                 $this->schedulerJob->succeedJob();
 
                 //Remove any consumers that may be set to run
                 //$this->removeExistingFTSSyncConsumer();
-                $GLOBALS['log']->fatal("FTS Sync Indexing completed.");
+                $GLOBALS['log']->info("FTS Sync Indexing completed.");
             }
             else
             {
                 // Mark the job that as pending so we can be invoked later.
                 $GLOBALS['log']->info('FTS Sync Indexing partially done, postponing job for next cron');
-                $this->schedulerJob->postponeJob('', self::POSTPONE_JOB_TIME);
+                $this->schedulerJob->postponeJob('FTS indexing not completed', self::POSTPONE_JOB_TIME);
             }
         }
 
         return true;
-    }
-
-    /**
-     * Given a set of bean ids processed from the queue table, mark them as being processed.  We will
-     * throttle the update query as there is a limit on the size of records that can be passed to an in clause yet
-     * we don't want to update them individually for performance reasons.
-     *
-     * @param $beanIDs array of bean ids to delete
-     */
-    protected function markBeansProcessed($beanIDs)
-    {
-        $count = 0;
-        $deleteIDs = array();
-        foreach ($beanIDs as $beanID)
-        {
-            $deleteIDs[] = $beanID;
-            $count++;
-            if($count != 0 && $count % self::MAX_BULK_DELETE_THRESHOLD == 0)
-            {
-                $this->setBeanIDsProcessed($deleteIDs);
-                $deleteIDs = array();
-            }
-        }
-
-        if( count($deleteIDs) > 0)
-            $this->setBeanIDsProcessed($deleteIDs);
-    }
-
-    /**
-     * Internal function to mark records within queue table as processed.
-     *
-     * @param $deleteIDs
-     */
-    private function setBeanIDsProcessed($deleteIDs)
-    {
-        $tableName = self::QUEUE_TABLE;
-        $inClause = implode("','", $deleteIDs);
-        $query = "UPDATE $tableName SET processed = 1 WHERE bean_id in ('{$inClause}')";
-        $GLOBALS['log']->debug("MARK BEAN QUERY IS: $query");
-        $GLOBALS['db']->query($query);
     }
 
 }

@@ -8,7 +8,8 @@
         var self = this,
             createModel = this.context.get('createModel');
 
-        self.$('[name=save_button]').button().text(app.lang.get('LBL_LOADING'))
+        self.$('[name=save_button]').attr('data-loading-text', app.lang.get('LBL_LOADING'));
+        self.$('[name=save_button]').button('loading');
 
         // portal_flag is a required field for Notes
         createModel.set('portal_flag', true);

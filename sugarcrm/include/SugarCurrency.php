@@ -190,7 +190,7 @@ class SugarCurrency
             global $current_user;
             $user = $current_user;
         }
-        $currencyId = $user->getPreference('currency');
+        $currencyId = empty($user) ? -99 : $user->getPreference('currency');
         return self::_getCurrency($currencyId);
     }
 

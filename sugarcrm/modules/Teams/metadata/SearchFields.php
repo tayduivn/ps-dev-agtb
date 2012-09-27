@@ -21,6 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 $searchFields['Teams'] = 
 	array (
-		'name' => array( 'query_type'=>'default'),
-		);
+		'name' => array('query_type' => 'default', 'db_field' => array('name', 'name_2'), 'force_unifiedsearch' => true),
+	);
 ?>

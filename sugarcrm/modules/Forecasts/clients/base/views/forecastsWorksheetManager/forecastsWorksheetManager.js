@@ -13,7 +13,23 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
-    
+
+    /**
+     * Contains a list of column names from metadata and maps them to correct config param
+     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
+     *
+     * @property _tableColumnsConfigKeyMap
+     */
+    _tableColumnsConfigKeyMap: {
+        'likely_case': 'show_worksheet_likely',
+        'likely_adjusted': 'show_worksheet_likely',
+        'best_case': 'show_worksheet_best',
+        'best_adjusted': 'show_worksheet_best',
+        'worst_case': 'show_worksheet_worst',
+        'worst_adjusted': 'show_worksheet_worst'
+
+    },
+
     /**
      * Initialize the View
      *
@@ -103,6 +119,8 @@
         }
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
+            var self = this;
+
             this.context.forecasts.on("change:selectedUser",
                 function(context, selectedUser) {
                     this.updateWorksheetBySelectedUser(selectedUser);
@@ -129,13 +147,76 @@
             	}
             	
             }, this);
+
+            this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['likely_case', 'likely_adjusted'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['best_case', 'best_adjusted'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
+                }
+            });
+
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-            	worksheet.safeFetch();
+                worksheet.safeFetch();
             });
         }
     },
-    
+
+    /**
+     * Sets the visibility of a column or columns if array is passed in
+     *
+     * @param cols {Array} the sName of the columns to change
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     * @param ctx {Object} the context of this view to have access to the checkForColumnsSetVisibility function
+     */
+    setColumnVisibility: function(cols, value, ctx) {
+        var aoColumns = this.gTable.fnSettings().aoColumns;
+
+        for(var i in cols) {
+            var columnName = cols[i];
+            for(var k in aoColumns) {
+                if(aoColumns[k].sName == columnName)  {
+                    this.gTable.fnSetColumnVis(k, value == 1);
+                    break;
+                }
+            }
+        }
+    },
+
+    /**
+     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     *
+     * @param colKey {String} the column sName to check in the keymap
+     * @return {*} returns null if not found in the keymap, returns true/false if it did find it
+     */
+    checkConfigForColumnVisibility: function(colKey) {
+        var returnValue = null;
+        // Check and see if our keymap has the column
+        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
+            // if so get the value
+            returnValue = this.context.forecasts.config.get(this._tableColumnsConfigKeyMap[colKey]);
+        }
+
+        // if there was no value in the keymap, returnValue is null,
+        // in which case returnValue should be set to true because it doesn't correspond to a config setting
+        // so it should be shown
+        return _.isNull(returnValue) ? true : (returnValue == 1);
+    },
+
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
@@ -188,55 +269,48 @@
             field = new app.view.ClickToEditField(field, this);
         }
     },
-    
+
     /**
      * Renders view
      */
-    _renderHtml:function (ctx, options) {
+    _render:function () {
         var self = this;
         var enableCommit = false;
-        
+
         if(!this.showMe()){
         	return false;
         }
         $("#view-sales-rep").hide();
         $("#view-manager").show();
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
-        
+        app.view.View.prototype._render.call(this);
+
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
-        // define vars for use in loop, created outside loop
-        var def = {};
-        var name = '';
-        var colWidth = '';
+
+        var _colIndex = 0;
 
         for( var i = 0; i < fields.length; i++ )  {
-            name = fields[i].name;
-            // explicitly looking for column "name" instead of the first column
-            // in case we add column rearranging
-            if(name == "name") {
-                colWidth = '40%';
-            } else {
-                colWidth = '10%';
+            if(fields[i].enabled) {
+                // in case we add column rearranging
+                columnDefs.push( {
+                    "sName": fields[i].name,
+                    "aTargets": [ _colIndex++ ],
+                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%',
+                    "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
+                } );
             }
-            def = {
-                "sName": name,
-                "aTargets": [ i ],
-                "sWidth" : colWidth
-            };
-            columnDefs.push( def );
         }
 
-        this.gTable = this.$(".view-forecastsWorksheetManager").dataTable(
+        this.gTable = this.$el.find(".worksheetManagerTable").dataTable(
             {
                 "bAutoWidth": false,
+                "aaSorting": [],
                 "aoColumnDefs": columnDefs,
                 "bInfo":false,
                 "bPaginate":false
-
             }
         );
 
@@ -250,24 +324,23 @@
                 }
             });
         }
-        
+
         //see if anything in the model is a draft version
         _.each(this._collection.models, function(model, index){
         	if(model.get("version") == 0){
         		enableCommit = true;
         	}
         });
-        if(enableCommit){
+        if (enableCommit) {
         	self.context.forecasts.set({commitButtonEnabled: true});
-        }
-        else{
+        } else {
         	self.context.forecasts.set({commitButtonEnabled: false});
         }
-        
+
         this.calculateTotals();
         this.totalView.render();
     },
-    
+
     calculateTotals: function() {
         var self = this;
         var amount = 0;

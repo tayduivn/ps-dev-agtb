@@ -123,10 +123,10 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         $sales_stage_won = $this->getArg('sales_stage_won');
 
         //set user ids and timeperiods
-        $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
+        $query = "SELECT sum(o.amount * o.base_rate) AS amount FROM opportunities o INNER JOIN users u ";
         $query .= " ON o.assigned_user_id = u.id ";
         $query .= " left join timeperiods t ";
-        $query .= " ON t.start_date_timestamp < o.date_closed_timestamp ";
+        $query .= " ON t.start_date_timestamp <= o.date_closed_timestamp ";
         $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
         $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
         $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);
@@ -140,11 +140,10 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
 
         $result = $db->query($query);
 
-        while ($row = $db->fetchByAssoc($result)) {
-            $amountSum = $row["amount"];
-        }
+        $row = $db->fetchByAssoc($result);
+        $amountSum = $row["amount"];
 
-        return $amountSum;
+        return is_numeric($amountSum) ? $amountSum : 0;
     }
 
     /**
@@ -164,10 +163,10 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         $excluded_sales_stages_lost = $this->getArg('sales_stage_lost');
 
         //set user ids and timeperiods
-        $query = "SELECT sum(o.amount) AS amount FROM opportunities o INNER JOIN users u ";
+        $query = "SELECT sum(o.amount * o.base_rate) AS amount FROM opportunities o INNER JOIN users u ";
         $query .= " ON o.assigned_user_id = u.id";
         $query .= " left join timeperiods t ";
-        $query .= " ON t.start_date_timestamp < o.date_closed_timestamp ";
+        $query .= " ON t.start_date_timestamp <= o.date_closed_timestamp ";
         $query .= " AND t.end_date_timestamp >= o.date_closed_timestamp ";
         $query .= " WHERE t.id = " . $db->quoted($timeperiod_id);
         $query .= " AND o.deleted = 0 AND (u.reports_to_id = " . $db->quoted($user_id);
@@ -190,10 +189,9 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
 
         $result = $db->query($query);
 
-        while ($row = $db->fetchByAssoc($result)) {
-            $amountSum = $row["amount"];
-        }
+        $row = $db->fetchByAssoc($result);
+        $amountSum = $row["amount"];
 
-        return $amountSum;
+        return is_numeric($amountSum) ? $amountSum : 0;
     }
 }

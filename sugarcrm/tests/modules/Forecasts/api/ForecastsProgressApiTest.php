@@ -49,16 +49,6 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
-        $forecastConfig = array (
-            'show_buckets' => 0,
-            'sales_stage_won' => array('Closed Won'),
-            'sales_stage_lost' => array('Closed Lost')
-        );
-        $admin = BeanFactory::getBean('Administration');
-        foreach ($forecastConfig as $name => $value)
-        {
-            $admin->saveSetting('base', $name, json_encode($value));
-        }
     }
 
     public function setUp()
@@ -199,16 +189,16 @@ class ForecastsProgressApiTest extends RestTestBase
 
     public function tearDown()
     {
+        SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestProductUtilities::removeAllCreatedProducts();
-        SugarTestOpportunityUtilities::removeAllCreatedOpps();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
-        SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
     }
 
     public static function tearDownAfterClass()
     {
+        SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 

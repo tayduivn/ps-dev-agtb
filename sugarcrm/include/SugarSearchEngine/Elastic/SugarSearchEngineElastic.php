@@ -53,22 +53,54 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->_client = new Elastica_Client($this->_config);
     }
 
+    /**
+     * Check if this is an Elastic client exception, disable FTS if it is
+     * @param $e Exception
+     * @return boolean tru if it's an Elastic client exception, false otherwise
+     */
+    protected function checkException($e)
+    {
+        if ($e instanceof Elastica_Exception_Client)
+        {
+            $error = $e->getError();
+            switch ($error) {
+                case CURLE_UNSUPPORTED_PROTOCOL:
+                case CURLE_FAILED_INIT:
+                case CURLE_URL_MALFORMAT:
+                case CURLE_COULDNT_RESOLVE_PROXY:
+                case CURLE_COULDNT_RESOLVE_HOST:
+                case CURLE_COULDNT_CONNECT:
+                case CURLE_OPERATION_TIMEOUTED:
+                    $this->disableFTS();
+                    return true;
+            }
+        }
+        return false;
+    }
 
+    /**
+     * Either index single bean or add the record to be indexed into _documents for later batch indexing,
+     * depending on the $batch parameter
+     *
+     * @param $bean SugarBean object to be indexed
+     * @param $batch boolean whether to do batch index
+     */
     public function indexBean($bean, $batch = TRUE)
     {
         if(!$this->isModuleFtsEnabled($bean->module_dir) )
             return;
 
-        if(!$batch)
+        if(!$batch) {
+            if (self::isSearchEngineDown())
+            {
+                $this->addRecordsToQueue(array('bean_id'=>$bean->id, 'bean_module'=>get_class($bean)));
+                return;
+            }
             $this->indexSingleBean($bean);
+        }
         else
         {
             $GLOBALS['log']->info("Adding bean to doc list with id: {$bean->id}");
-
-            //Group our beans by index type for bulk insertion
-            $indexType = $this->getIndexType($bean);
-            if(! isset($this->_documents[$indexType]) )
-                $this->_documents = array();
 
             //Create and store our document index which will be bulk inserted later, do not store beans as they are heavy.
             $this->_documents[] = $this->createIndexDocument($bean);
@@ -91,6 +123,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return self::DEFAULT_INDEX_TYPE;
     }
 
+    /**
+     *
+     * @param SugarBean $bean
+     * @return String owner, or null if no owner found
+     */
     protected function getOwnerField($bean)
     {
         // when running full indexing, $bean may be a stdClass and not a SugarBean
@@ -136,7 +173,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                     // dates have to be in ISO-8601 without the : in the TZ
                     global $timedate;
                     $date = $timedate->fromDb($bean->$fieldName);
-                    $keyValues[$fieldName] = $timedate->asIso($date, array('stripTZColon' => true));
+                    $keyValues[$fieldName] = $timedate->asIso($date, null, array('stripTZColon' => true));
                 }
                 
             }
@@ -173,14 +210,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             return new Elastica_Document($bean->id, $keyValues, $this->getIndexType($bean));
     }
 
-
+    /**
+     * This indexes one single bean to Elastic Search engine
+     * @param SugarBean $bean
+     */
     protected function indexSingleBean($bean)
     {
-        if (isSearchEngineDown())
-        {
-            $this->addRecordsToQueue(array('bean_id'=>$bean->id, 'bean_module'=>get_class($bean)));
-            return;
-        }
         $GLOBALS['log']->info("Preforming single bean index");
         try
         {
@@ -208,7 +243,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function delete(SugarBean $bean)
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             return;
         }
@@ -235,11 +270,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function bulkInsert(array $docs)
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             $recordsToBeQueued = $this->getRecordsFromDocs($docs);
             $this->addRecordsToQueue($recordsToBeQueued);
-            return;
+            return false;
         }
 
         try
@@ -276,10 +311,17 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 $recordsToBeQueued = $this->getRecordsFromDocs($batchedDocs);
                 $this->addRecordsToQueue($recordsToBeQueued);
             }
+            return false;
         }
 
+        return true;
     }
 
+    /**
+     * Given an array of documents, this constructs an array of records that can be saved to FTS queue.
+     * @param SugarBean $bean
+     * @return array
+     */
     protected function getRecordsFromDocs($docs)
     {
         $records = array();
@@ -323,6 +365,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return array('valid' => $isValid, 'status' => $displayText);
     }
 
+    /**
+     * This function returns an array of fields that can be passed to search engine.
+     * @param Array $options
+     * @return Array array of fields
+     */
     protected function getSearchFields($options)
     {
         $fields = array();
@@ -330,7 +377,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             foreach ($options['moduleFilter'] as $mod) {
                 $fieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($mod);
                 foreach ($fieldDef as $fieldName => $def) {
-                    if (!in_array($fieldName, $fields)) {
+                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
                         $fields[] = $fieldName;
                     }
                 }
@@ -339,7 +387,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
             foreach ($allFieldDef as $fieldDef) {
                 foreach ($fieldDef as $fieldName => $def) {
-                    if (!in_array($fieldName, $fields)) {
+                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
                         $fields[] = $fieldName;
                     }
                 }
@@ -349,6 +398,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $fields;
     }
 
+    /**
+     * Given fields and options, this function constructs and returns a highlight array that can be passed to
+     * search engine.
+     * @param SugarBean $bean
+     * @param $searchFields
+     * @return Elastica_Document|null
+     */
     protected function constructHighlightArray($fields, $options)
     {
         if (isset($options['preTags']))
@@ -402,6 +458,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $highlighArray;
     }
 
+    /**
+     * This function determines whether we should append wildcard to search string.
+     *
+     * @param String $queryString
+     * @return Boolean
+     */
     protected function canAppendWildcard($queryString)
     {
         $queryString = trim(html_entity_decode($queryString, ENT_QUOTES));
@@ -443,6 +505,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
          {"term":{"team_set_id":"West"}}]
        }
     */
+    /**
+     * This function constructs and returns team filter for elasticsearch query.
+     *
+     * @return Elastica_Filter_Or
+     */
     protected function constructTeamFilter()
     {
         $teamIDS = TeamSet::getTeamSetIdsForUser($GLOBALS['current_user']->id);
@@ -456,6 +523,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $termFilter;
     }
 
+    /**
+     * This function constructs and returns type term filter for elasticsearch query.
+     *
+     * @return Elastica_Filter_Term
+     */
     protected function getTypeTermFilter($module)
     {
         $typeTermFilter = new Elastica_Filter_Term();
@@ -464,6 +536,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $typeTermFilter;
     }
 
+    /**
+     * This function constructs and returns owner term filter for elasticsearch query.
+     *
+     * @return Elastica_Filter_Term
+     */
     protected function getOwnerTermFilter()
     {
         $ownerTermFilter = new Elastica_Filter_Term();
@@ -472,6 +549,11 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $ownerTermFilter;
     }
 
+    /**
+     * This function constructs and returns module level filter for elasticsearch query.
+     *
+     * @return Elastica_Filter_And
+     */
     protected function constructModuleLevelFilter($module)
     {
         $requireOwner = ACLController::requireOwner($module, 'list');
@@ -526,8 +608,13 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return $moduleFilter;
     }
 
-    protected function constructMainFilter($finalTypes, $options)
-    {
+    /**
+     * This function constructs and returns main filter for elasticsearch query.
+     *
+     * @return Elastica_Filter_Or
+     */
+    protected function constructMainFilter($finalTypes)
+   {
         $mainFilter = new Elastica_Filter_Or();
         foreach ($finalTypes as $module)
         {
@@ -612,7 +699,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function search($queryString, $offset = 0, $limit = 20, $options = array())
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             return null;
         }
@@ -632,6 +719,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             if($queryString == '*')
             {
                 $queryObj = new Elastica_Query_MatchAll();
+
             }
             else
             {
@@ -746,6 +834,12 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         return str_replace("-", "", strtolower($teamSetID));
     }
 
+    /**
+     * This function loads the desired file/class from Elastic directory.
+     *
+     * @param $teamSetID
+     * @return mixed
+     */
     protected function loader($className)
     {
         // FIXME: convert to use autoloader
@@ -765,7 +859,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      */
     public function createIndex($recreate = false)
     {
-        if (isSearchEngineDown())
+        if (self::isSearchEngineDown())
         {
             return;
         }

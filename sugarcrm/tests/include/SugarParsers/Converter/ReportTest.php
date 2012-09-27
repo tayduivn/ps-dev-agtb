@@ -343,6 +343,7 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testMultipleFiltersConvert()
     {
+        $this->markTestSkipped('timeperiod_id has been removed... we would need to support a greater than / less than parameter with a join to timperiods');
         $this->filter = new SugarParsers_Filter(new Opportunity());
         $obj = json_decode('{ "$and" : [{"timeperiod_id":"abc123"}, {"assigned_user_link":{ "id" : {"$reports":"seed_chris_id"}}}] }');
         $this->filter->parse($obj);
@@ -423,7 +424,7 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAssignedUserLinkWithOrStatementInsideOfAndConverts()
     {
-
+        $this->markTestSkipped('timeperiod_id has been removed... we would need to support a greater than / less than parameter with a join to timperiods');
         $filter = array('$and' => array(
             'timeperiod_id' => array('$is' => 'hello world'),
             'assigned_user_link' => array('id' => array('$or' => array('$is' => 'seed_chris_id', '$reports' => 'seed_chris_id')))
@@ -480,7 +481,7 @@ class SugarParsers_Converter_ReportTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAssignedUserLinkWithOrStatementWithOutAndConverts()
     {
-
+        $this->markTestSkipped('timeperiod_id has been removed... we would need to support a greater than / less than parameter with a join to timperiods');
         $filter = array(
             'timeperiod_id' => array('$is' => 'hello world'),
             'assigned_user_link' => array('id' => array('$or' => array('$is' => 'seed_chris_id', '$reports' => 'seed_chris_id')))

@@ -41,12 +41,15 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        global $beanFiles, $beanList, $current_user, $app_list_strings, $app_strings, $timedate;
-        $timedate = TimeDate::getInstance();
-        $app_list_strings = return_app_list_strings_language('en');
-        $app_strings = return_application_language('en');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setup('app_list_strings');
+        SugarTestHelper::setup('current_user');
+        global $timedate, $current_user;
 
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $timedate = TimeDate::getInstance();
+
         $current_user->user_name = 'employee0';
         $current_user->is_admin = 1;
         $current_user->save();
@@ -88,6 +91,7 @@ class Bug54621Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+        SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
