@@ -47,6 +47,13 @@ class GoogleAPI extends SugarApi
                 'method' => 'recommend',
                 'shortHelp' => 'Recommended invites',
             ),
+            'docs' => array(
+                'reqType' => 'GET',
+                'path' => array('google','docs'),
+                'pathVars' => array('',''),
+                'method' => 'docs',
+                'shortHelp' => 'Show documents',
+            ),
         );
 
     }
@@ -66,7 +73,6 @@ class GoogleAPI extends SugarApi
         list($myfirst, $mydomain) = explode('@', $GLOBALS['current_user']->email1);
         return array("contacts" => $this->findContacts($mydomain));
     }
-
 
     protected function findContacts($excludeDomain = '', $limit = 5, $maxDepth = 200)
     {
@@ -108,6 +114,31 @@ class GoogleAPI extends SugarApi
         }
         shuffle($data);
         $data = array_slice($data, 0, $limit);
+        return $data;
+    }
+
+    public function docs($api, $args) {
+        $q = (!empty($args['q']))?$args['q']:'';
+        $limit = (!empty($args['limit']))?$args['limit']:5;
+        return array("docs" => $this->findDocuments($q, $limit));
+    }
+
+    protected function findDocuments($q = '', $limit = 5) {
+        $data = array();
+        $url = "https://www.googleapis.com/drive/v2/files?maxResults={$limit}&fields=items(alternateLink%2Ctitle)";
+        if(!empty($q)) {
+            $url .= '&q=fullText+contains+"'.urlencode($q).'"';
+        }
+        $res = $this->box->oauthGet($url);
+        $records = json_decode($res, TRUE);
+        if(!empty($records['items'])) {
+            foreach($records['items'] as $item) {
+                $data[] = array(
+                    'name' => $item['title'],
+                    'link' => $item['alternateLink'],
+                );
+            }
+        }
         return $data;
     }
 
