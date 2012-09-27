@@ -37,7 +37,7 @@ $viewdefs['ProspectLists']['base']['view']['detail'] = array(
             'fields' =>
             array(
                 'name',
-                array('name' => 'entry_count', 'label' => 'LBL_ENTRIES'),
+                array('name' => 'entry_count', 'label' => 'LBL_ENTRIES', 'css_class' => 'spacer'),
                 'description',
                 'list_type',
                 array(
@@ -50,17 +50,26 @@ $viewdefs['ProspectLists']['base']['view']['detail'] = array(
                 ),
 
                 'assigned_user_name',
-                 array (
-                    'name' => 'date_modified',
+                array (
+                    'name' => 'date_modified_group',
                     'label' => 'LBL_DATE_MODIFIED',
-                    'type' => 'combine',
-                    'format' => array(
-                        '%0 %1 %2',
-                        'date_modified',
-                        array('label' => 'LBL_BY'),
-                        'modified_by_name'
+                    'type' => 'fieldset',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                            'type' => 'datetimecombo'
+                        ),
+                        array(
+                            'type' => "label",
+                            'default_value' => 'LBL_BY',
+                            'css_class' => "spacer",
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
                     ),
                     'related_fields' => array(
+                        'date_modified',
                         'modified_by_name'
                     ),
                 ),
@@ -69,15 +78,24 @@ $viewdefs['ProspectLists']['base']['view']['detail'] = array(
                 'team_name',
                 //END SUGARCRM flav=pro ONLY
                 array (
-                    'name' => 'date_entered',
-                    'type' => 'combine',
-                    'format' => array(
-                        '%0 %1 %2',
-                        'date_entered',
-                        array('label' => 'LBL_BY'),
-                        'created_by_name'
+                    'name' => 'date_entered_group',
+                    'type' => 'fieldset',
+                    'fields' => array(
+                        array(
+                            'name' => 'date_modified',
+                            'type' => 'datetimecombo'
+                        ),
+                        array(
+                            'type' => "label",
+                            'default_value' => 'LBL_BY',
+                            'css_class' => 'spacer'
+                        ),
+                        array(
+                            'name' => 'modified_by_name',
+                        ),
                     ),
                     'related_fields' => array(
+                        'date_entered',
                         'created_by_name'
                     ),
                 ),
