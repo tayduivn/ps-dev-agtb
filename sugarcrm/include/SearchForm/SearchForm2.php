@@ -1274,4 +1274,3 @@ require_once('include/EditView/EditView2.php');
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );
      }
     }
-
