@@ -179,6 +179,8 @@ class SummerApi extends SugarApi {
         if(!isset($args['email'])) {
             throw new SugarApiExceptionMissingParameter('Email is missing.');
         }
-        return $this->box->getMails($args['email']);
+        $q = (!empty($args['q']))?$args['q']:'';
+        $limit = (!empty($args['limit']))?$args['limit']:5;
+        return $this->box->getMails($args['email'], $q, $limit);
     }
 }

@@ -12,7 +12,8 @@
             success: function(o) {
                 $("#"+self.guid).html("");
                 _.each(o.contacts, function(contact) {
-                    var el = $("<li />").html(contact.first_name+" "+contact.last_name+" <strong>&lt;"+contact.email+"&gt;</strong>");
+                    var el = $("<li />").html("<a>" +contact.first_name+" "+contact.last_name+"</a><strong>&lt;"+contact.email+"&gt;</strong>");
+
                     el.on("click", function() {
                         var m = app.data.createBean("Contacts");
                         m.set("first_name", contact.first_name);
