@@ -32,8 +32,8 @@
 	
 	SUGAR.EmailAddressWidget = function(module) {
 		if (!SUGAR.EmailAddressWidget.count[module]) SUGAR.EmailAddressWidget.count[module] = 0;
-        SUGAR.EmailAddressWidget.count[module]++;
-        this.count = SUGAR.EmailAddressWidget.count[module];
+		this.count = SUGAR.EmailAddressWidget.count[module];
+		SUGAR.EmailAddressWidget.count[module]++;
 		this.module = module;
 		this.id = this.module + this.count;
 		if (document.getElementById(module+'_email_widget_id'))
