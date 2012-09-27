@@ -405,6 +405,8 @@ class SimpleMailer extends BaseMailer
                 }
             } else {
                 // oops!
+                // there really shouldn't be a way to get an attachment into the Mailer that isn't an Attachment
+                // or an EmbeddedImage, but it's probably best to verify it anyway
                 throw new MailerException("Invalid attachment type", MailerException::InvalidAttachment);
             }
         }
