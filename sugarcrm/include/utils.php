@@ -3860,6 +3860,10 @@ function getPhpInfo($level=-1) {
 function string_format($format, $args){
 	$result = $format;
 
+    if ( !is_array($args) ) {
+        return;
+    }
+
     /** Bug47277 fix.
      * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
      * IN () fails and IN ('') works.
@@ -3875,9 +3879,13 @@ function string_format($format, $args){
     }
     /* End of fix */
 
-	for($i = 0; $i < count($args); $i++){
-		$result = str_replace('{'.$i.'}', $args[$i], $result);
-	}
+    $replaceArray = array();
+    foreach ( $args as $search => $replace ) {
+        $replaceArray['{'. $search .'}'] = $replace;
+    }
+
+    $result = str_replace(array_keys($replaceArray),array_values($replaceArray),$format);
+ 
 	return $result;
 }
 
