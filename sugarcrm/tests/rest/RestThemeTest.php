@@ -83,7 +83,7 @@ class RestThemeTest extends RestTestBase
         $restReply2 = $this->_restCall('css', json_encode($args2));
 
         // TEST the two generated css are different
-        $this->assertNotEquals($restReply1, $restReply2);
+        $this->assertNotEquals($restReply1['reply'], $restReply2['reply']);
     }
 
     /**
