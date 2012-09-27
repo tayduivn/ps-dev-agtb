@@ -1,7 +1,7 @@
-<div class="record">
+<div class="record" data-tour="tour-{{module}}-businesscard">
     {{#if editable}}
     <div class="row-fluid record-button-bar">
-        <div class="btn-group pull-right" data-tour="tour-record-button-bar">
+        <div class="btn-group pull-right" data-tour="tour-{{module}}-button-bar">
             <a class="btn btn-small record-save btn-success btn-disabled">Save</a>
             <a class="btn btn-small record-cancel btn-disabled">Cancel</a>
             <a class="btn btn-small record-edit">Edit</a>
@@ -25,7 +25,7 @@
                                     <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
                                     {{/if}}
                                     {{#if name}}
-                                        <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}">
+                                        <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
                                             {{field ../../../../../this}}
                                         </span>
                                     {{/if}}

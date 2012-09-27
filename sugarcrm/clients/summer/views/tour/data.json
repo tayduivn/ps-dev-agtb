@@ -25,10 +25,10 @@
             {"id":"tour-Accounts-list-create", "title":"Create a Company", "content":"Text for accounts list create button", "content_not_full":"This is alternate content if the tour is not full", "placement":"bottom"}
         ],
         "newrecord": [
-            {"id":"tour-Accounts-newrecord-businesscard", "title":"Create Company Form", "content":"Text for accounts record business card", "placement":"right"},
-            {"id":"tour-Accounts-newrecord-name", "title":"Company Name", "content":"Go ahead and type in a company name, for example, 'SugarCRM'", "placement":"right"},
-            {"id":"tour-Accounts-newrecord-imagesearch", "title":"Company Image", "content":"Clicking this image will aggregate Google Image search results for the company entered in the previous step.  Go ahead and select an avatar for this company.", "placement":"right"},
-            {"id":"tour-record-button-bar", "title":"Edit Panel", "content":"This panel is used to modify/delete a record. Hit 'Save' to create this company.", "placement":"bottom"}
+            {"id":"tour-Accounts-businesscard", "title":"Create Company Form", "content":"Text for accounts record business card", "placement":"right"},
+            {"id":"tour-Accounts-name", "title":"Company Name", "content":"Go ahead and type in a company name, for example, 'SugarCRM', then hit 'Next'.", "placement":"right"},
+            {"id":"tour-Accounts-img", "title":"Company Image", "content":"Clicking this image will aggregate Google Image search results for the company entered in the previous step.  Go ahead and select an avatar for this company.", "placement":"right"},
+            {"id":"tour-Accounts-button-bar", "title":"Edit Panel", "content":"This panel is used to modify/delete a record. Hit 'Save' to create this company.", "placement":"bottom"}
         ],
         "record": [
             {"id":"tour-Accounts-record-businesscard", "content":"Text for accounts record business card", "placement":"top"},
@@ -47,10 +47,10 @@
             {"id":"tour-Contacts-list-create", "title":"Create a Company", "content":"Text for accounts list create button", "placement":"bottom"}
         ],
         "newrecord": [
-            {"id":"tour-Contacts-newrecord-businesscard", "title":"Create Person Form", "content":"Text for accounts record business card", "placement":"right"},
-            {"id":"tour-Contacts-newrecord-name", "title":"Person's Name", "content":"Go ahead and type in a company name, for example, 'SugarCRM'", "placement":"right"},
-            {"id":"tour-Contacts-newrecord-imagesearch", "title":"Person's Image", "content":"Clicking this image will aggregate Google Image search results for the company entered in the previous step.  Go ahead and select an avatar for this company.", "placement":"right"},
-            {"id":"tour-record-button-bar", "title":"Edit Panel", "content":"This panel is used to modify/delete a record. Hit 'Save' to create this company.", "placement":"bottom"}
+            {"id":"tour-Contacts-businesscard", "title":"Create Person Form", "content":"Text for accounts record business card", "placement":"right"},
+            {"id":"tour-Contacts-name", "title":"Person's Name", "content":"Go ahead and type in a company name, for example, 'SugarCRM'", "placement":"right"},
+            {"id":"tour-Contacts-img", "title":"Person's Image", "content":"Clicking this image will aggregate Google Image search results for the company entered in the previous step.  Go ahead and select an avatar for this company.", "placement":"right"},
+            {"id":"tour-Contacts-button-bar", "title":"Edit Panel", "content":"This panel is used to modify/delete a record. Hit 'Save' to create this company.", "placement":"bottom"}
         ],
         "record": [
             {"id":"tour-Contacts-record-businesscard", "content":"Text for accounts record business card", "placement":"top"},
@@ -68,9 +68,9 @@
             {"id":"tour-Opportunities-list-create", "title":"Create a Deal", "content":"Text for accounts list create button", "placement":"bottom"}
         ],
         "newrecord": [
-            {"id":"tour-Opportunities-newrecord-businesscard", "title":"Create Deal Form", "content":"Text for accounts record business card", "placement":"right"},
-            {"id":"tour-Opportunities-newrecord-name", "title":"Deal Name", "content":"Go ahead and type in a company name, for example, 'SugarCRM'", "placement":"right"},
-            {"id":"tour-record-button-bar", "title":"Edit Panel", "content":"This panel is used to modify/delete a record. Hit 'Save' to create this company.", "placement":"bottom"}
+            {"id":"tour-Opportunities-businesscard", "title":"Create Deal Form", "content":"Text for accounts record business card", "placement":"right"},
+            {"id":"tour-Opportunities-name", "title":"Deal Name", "content":"Go ahead and type in a company name, for example, 'SugarCRM'", "placement":"right"},
+            {"id":"tour-Opportunities-button-bar", "title":"Edit Panel", "content":"This panel is used to modify/delete a record. Hit 'Save' to create this company.", "placement":"bottom"}
         ],
         "record": [
             {"id":"tour-Opportunities-record-businesscard", "content":"Text for accounts record business card", "placement":"top"},
