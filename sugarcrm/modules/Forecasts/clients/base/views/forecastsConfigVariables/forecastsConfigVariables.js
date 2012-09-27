@@ -34,7 +34,6 @@
          */
         field._updateSelections = function(event, input) {
             var fieldValue = this.model.get(this.name);
-            var selectElement = this.$el.find("select");
             var id;
 
             if (_.has(input, "selected")) {
