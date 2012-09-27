@@ -574,7 +574,7 @@ class BoxOfficeClient
         return false;
     }
 
-    protected $send_fields = array('from' => true, 'to'=> true, 'reply-to'=> true, 'subject' => true, 'message-id' => true, 'cc' => true);
+    protected $send_fields = array('from' => true, 'to'=> true, 'reply-to'=> true, 'subject' => true, 'message-id' => true, 'cc' => true, 'x-gm-thrid'=>true);
 
     /**
      * Filter message headers, return only ones that are in the list $send_fields
@@ -602,9 +602,11 @@ class BoxOfficeClient
     /**
      * Get all emails for email address for last month
      * @param string $email
+     * @param string $q (optional) additional string to query with
+     * @param int $limit (optional) number of results to return
      * @return array
      */
-    public function getMails($email)
+    public function getMails($email, $q='', $limit=5)
     {
         $imap = new Zend_Mail_Protocol_Imap('imap.gmail.com', '993', true);
         if(!$this->gmailAuth($imap)) {
@@ -613,12 +615,16 @@ class BoxOfficeClient
         $imap->select();
         $cutoff = new DateTime();
         $cutoff->modify("-1 month");
-        $res = $imap->search(array('X-GM-RAW', "\"after:{$cutoff->format('Y/m/d')} $email\""));
+        $searchTerm = $email;
+        if(!empty($q)){
+            $searchTerm .= " " . $q;
+        }
+        $res = $imap->search(array('X-GM-RAW', "\"after:{$cutoff->format('Y/m/d')} $searchTerm\""));
         if(empty($res)) return array();
         $messages = array();
         $storage = new Zend_Mail_Storage_Imap($imap);
-        if(count($res) > 10) {
-            array_splice($res, 0, -10);
+        if(count($res) > $limit) {
+            array_splice($res, 0, -1 * $limit);
         }
         foreach($res as $id) {
             $msg = $storage->getMessage($id);
