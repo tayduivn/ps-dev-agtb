@@ -127,7 +127,7 @@ class GoogleAPI extends SugarApi
         $data = array();
         $url = "https://www.googleapis.com/drive/v2/files?maxResults={$limit}&fields=items(alternateLink%2Ctitle)";
         if(!empty($q)) {
-            $url .= '&q=fullText+contains+"'.urlencode($q).'"';
+            $url .= '&q=fullText+contains+'.urlencode('"'.$q.'"');
         }
         $res = $this->box->oauthGet($url);
         $records = json_decode($res, TRUE);
