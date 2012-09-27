@@ -63,7 +63,7 @@
                 buttons = params.buttons || [],
                 message = params.message || '',
                 components = (params.components || []),
-                title = params.title + ''
+                title = params.title + '',
                 autoResize = params.autoResize || true;
             if(message && components.length == 0) {
                 components.push({view: 'modal-confirm', message: message});
