@@ -7,7 +7,9 @@
  *      'showEvent' => [event name] //corresponding trigger name (a single string or array of strings)
  *      ),
  * @trigger [event name] Create popup modal window and draws specified type of layout
- *      @params options - [Object] {
+ *      @params Parameters - [Object] {
+ *              span - [int] size of modal[1-12]
+ *              options - (Optional) 3rd party options goes here
  *              context - [Object] configured context attributes
  *                        i.e. { module:..., link:..., modelId:... }
  *                        {
@@ -60,6 +62,7 @@
         }
         options.layout.on(this.showEvent, function(params, callback) {
             var span = params.span || '',
+                options = params.options || {},
                 buttons = params.buttons || [],
                 message = params.message || '',
                 components = (params.components || []),
@@ -127,7 +130,7 @@
             self.context.off("modal:close");
             self.context.on("modal:close", self.hide, self);
 
-            self.show(span);
+            self.show({span: span, options: options});
             self.loadData();
             self.render();
         }, this);
@@ -160,26 +163,41 @@
     open: function(params, callback) {
         this.layout.trigger(this.showEvent, params, callback);
     },
-    show: function(span) {
-        var modal_container = this.$(".modal:first"),
+    show: function(params) {
+        var span = params.span,
+            modal_container = this.$(".modal:first"),
             //Clean out previous span css class
-            original_css = modal_container.attr("class").replace(/span\d+/g, ""),
-            modal_body = modal_container.find(".modal-body:first"),
-            modal_header = modal_container.find(".modal-header:first"),
-            maxHeight = _.max([$(window).height() - 300, 400]);
-
-        modal_body.css({'max-height' : 'none', 'height' : maxHeight});
-        modal_container.modal('show');
-        var top = -( (maxHeight + modal_header.height()) / 2);
-        modal_container.attr("class", original_css).css('margin-top', top);
-
+            original_css = modal_container.attr("class").replace(/span\d+/g, "");
+        this._beforeShow(params.options);
+        modal_container.attr("class", original_css);
+        modal_container.modal(params.options ? params.options.modal : {});
         if(_.isNumber(span) && span > 0 && span <= 12) {
             modal_container.addClass('span' + span);
         }
+        modal_container.modal('show');
+        this._afterShow();
     },
     hide: function(event) {
         //restore back to the scroll position at the top
+        this._beforeHide(event);
         this.$(".modal-body:first").scrollTop(0);
         this.$(".modal:first").modal('hide');
+        this._afterHide(event);
+    },
+    _beforeShow: function(options) {
+        //All 3rd party plugin goes here
+        return;
+    },
+    _afterShow: function(options) {
+        //All 3rd party plugin goes here
+        return;
+    },
+    _beforeHide: function(event) {
+        //All 3rd party plugin goes here
+        return;
+    },
+    _afterHide: function(event) {
+        //All 3rd party plugin goes here
+        return;
     }
 })
