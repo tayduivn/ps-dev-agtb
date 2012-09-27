@@ -330,9 +330,7 @@ class SugarFieldRelate extends SugarFieldBase {
                         // add this as a new record in that bean, then relate
                         if ( isset($relatedFieldDef['db_concat_fields'])
                                 && is_array($relatedFieldDef['db_concat_fields']) ) {
-                            $relatedFieldParts = explode(' ',$value);
-                            foreach ($relatedFieldDef['db_concat_fields'] as $relatedField)
-                                $newbean->$relatedField = array_shift($relatedFieldParts);
+                            assignConcatenatedValue($newbean, $relatedFieldDef, $value);
                         }
                         else
                             $newbean->$vardef['rname'] = $value;
