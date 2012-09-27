@@ -1,8 +1,7 @@
-<div>
-    <div>
-        Main Bar
-    </div>
-    <div>
-        Sidebar
+<div class="row-fluid">
+    <div class="main-pane"></div>
+    <div class="side sidebar-content folded">
+        <div class="side-pane"></div>
+        <div class="preview-pane hide"></div>
     </div>
 </div>

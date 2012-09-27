@@ -2,16 +2,15 @@
 
 class SideBarLayout {
 
-    protected $containers = array('top' => array(), 'bottom' => array(), 'main' => array(), 'side' => array());
+    protected $containers = array('top' => array(), 'bottom' => array(), 'main' => array(), 'side' => array(), 'preview' => array());
     protected $spans = array('main' => 8, 'side' => 4);
     protected $layout = array(
         'type' => 'simple',
-        'components' => array(
-            array('layout' => array('type' => 'default'))
-        ),
+        'components' => array(),
     );
 
-    public function __construct() {}
+    public function __construct() {
+    }
 
     public function push($section, $component, $index = -1) {
         $this->containers[$section] = $this->insert($this->containers[$section], $component, $index);
@@ -35,7 +34,7 @@ class SideBarLayout {
                     'type' => 'simple',
                     'span' => $this->spans['main'],
                     'components' => $this->containers['main'],
-                    'name' => "main",
+                    'name' => "main-pane",
                 ),
             );
         }
@@ -46,22 +45,27 @@ class SideBarLayout {
                 array(
                     'type' => 'simple',
                     'span' => $this->spans['side'],
-                    'components' => array(array(
-                        'layout' => array(
-                            'css_class' => 'sidebar-pane active',
-                            'components' => $this->containers['side'],
-                        ),
-                    )),
-                    'css_class' => 'sidebar-content folded',
-                    'name' => "sidebar",
+//                    'css_class' => 'sidebar-pane active',
+                    'components' => $this->containers['side'],
+                    'name' => "side-pane",
                 )
             );
         }
 
+        $this->push("preview", array("view" => "preview"));
+        $components[] = array(
+            'layout' => array(
+                'type' => 'simple',
+                'span' => $this->spans['side'],
+                'components' => $this->containers['preview'],
+                'name' => 'preview-pane',
+            )
+        );
+
         return array(
             'layout' =>
             array(
-                'type' => 'fluid',
+                'type' => 'default',
                 'components' => $components,
             ),
         );
@@ -81,7 +85,7 @@ class SideBarLayout {
                 'components' => $this->containers['main'],
             );
         } else {
-            $this->layout['components'][0]["layout"]['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
+            $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
         }
         return $this->layout;
     }

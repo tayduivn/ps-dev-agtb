@@ -6,23 +6,50 @@
         this.renderHtml();
 
         app.view.Layout.prototype.initialize.call(this, opts);
+        this.processDef();
 
         main = this;
 
         console.log("Making a new default layout");
+
+        this.context.on("togglePreview", function(model) { this.showPreview(); }, this);
+    },
+
+    processDef: function() {
+        this.$(".main-pane").addClass("span" + this.meta.components[0]["layout"].span);
+        this.$(".side").addClass("span" + this.meta.components[1]["layout"].span);
     },
 
     renderHtml: function() {
-        console.log("Renderin le html");
         this.$el.html(this.template(this));
     },
 
     addComponent: function(component, def) {
+        if (def.layout) {
+            def.layout.parentLayout = this;
+        }
+
         app.view.Layout.prototype.addComponent.call(this, component, def);
+        console.log("Adding component", component, def);
     },
 
     _placeComponent: function(component) {
-        console.log("Placing component");
-        app.view.Layout.prototype._placeComponent.call(this, component);
+        console.log("Placing component", component, "." + component.meta.name);
+        if (component.meta.name) {
+            this.$("." + component.meta.name).append(component.$el);
+        }
+    },
+
+    showPreview: function() {
+        this.togglePreview();
+    },
+
+    hidePreview: function() {
+        this.togglePreview();
+    },
+
+    togglePreview: function() {
+        this.$(".side-pane").toggleClass("hide");
+        this.$(".preview-pane").toggleClass("hide");
     }
 })

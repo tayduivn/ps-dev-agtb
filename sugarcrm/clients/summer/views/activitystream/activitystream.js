@@ -533,6 +533,9 @@
     },
     
     previewRecord: function(event) {
+        console.log("Previewing", this.context);
+        testing = this;
+
         var self = this;
         var root = this.$(event.currentTarget).parent().parent().parent();
         var hash = root.find("p a:last").attr("href").replace('#', '');
@@ -544,10 +547,10 @@
         model.set("id", id);
         model.fetch({
             success: function(model) {
-                console.log ("Done with model.", model, self.layout);
+                console.log ("Done with model.", model, self.layout.meta, self.context);
                 model.set("_module", module);
                 // Fire on parent layout .. works nicely for relatively simple page ;=)
-                self.layout.layout.layout.trigger("dashboard:preview", model);
+                self.context.trigger("togglePreview", model);
             }
         });
     },

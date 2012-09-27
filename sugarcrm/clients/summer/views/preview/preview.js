@@ -4,13 +4,15 @@
     },
 
     initialize: function(options) {
+        console.log("Creating preview");
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
+        this.context.on("togglePreview", this.togglePreview);
     },
 
     _render: function() {
-        this.layout.layout.layout.layout.off("dashboard:preview", null, this);
-        this.layout.layout.layout.layout.on("dashboard:preview", this.togglePreview, this);
+//        this.layout.layout.layout.layout.off("dashboard:preview", null, this);
+//        this.layout.layout.layout.layout.on("dashboard:preview", this.togglePreview, this);
 
         this.$el.parent().parent().addClass("container-fluid tab-content");
     },

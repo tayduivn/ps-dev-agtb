@@ -199,7 +199,7 @@
           {{#eq attributes.comments.length "0"}}
           <a class="comment reply" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
           {{/eq}}
-          <a data-toggle="tab" href="#file1"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+          <a data-toggle="tab"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
         </div>
       </li>
       {{/each}}

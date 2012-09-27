@@ -9,5 +9,5 @@ $layout->push('side',array('view'=>'agenda'));
 #$layout->push('side',array('view'=>'yelp'));
 $layout->push('side',array('view'=>'recommended_contacts'));
 $layout->push('side',array('view'=>'recommended_invites'));
-$layout->push('side',array('view'=>'preview'));
+//$layout->push('side',array('view'=>'preview'));
 $viewdefs['summer']['layout']['dashboard'] = $layout->getLayout();
