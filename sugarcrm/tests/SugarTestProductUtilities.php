@@ -71,7 +71,7 @@ class SugarTestProductUtilities
     {
         $product_ids = self::getCreatedProductIds();
         $GLOBALS['db']->query('DELETE FROM products WHERE id IN (\'' . implode("', '", $product_ids) . '\')');
-        $GLOBALS['db']->query('DELETE FROM products_audit WHERE parent_di IN (\'' . implode("', '", $product_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM products_audit WHERE parent_id IN (\'' . implode("', '", $product_ids) . '\')');
     }
         
     public static function getCreatedProductIds() 
