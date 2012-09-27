@@ -177,7 +177,7 @@
     open: function(params, callback) {
         this.layout.trigger(this.showEvent, params, callback);
     },
-    
+
     show: function(span) {
         var modal_container = this.$(".modal:first"),
             modal_body = this.$(".modal-body:first"),
@@ -187,6 +187,7 @@
 
         modal_container.css({'margin-top':'-99999px'}).show( "fast", function(){
 
+<<<<<<< HEAD
             var modalHeight = $(this).outerHeight();
 
             if ( winHeight < modalHeight )
@@ -204,6 +205,31 @@
                 modal_container.addClass('span' + span);
             }
 
+=======
+            if(_.isNumber(span) && span > 0 && span <= 12) {
+                modal_container.addClass('span' + span);
+            }
+
+            var modalHeight = $(this).outerHeight(),
+                modalBodyHeight = modal_body.outerHeight();
+
+            modal_body.css({'max-height':Math.max(winHeight - 100 - (modalHeight-modalBodyHeight),400),"overflow":"hidden"});
+
+            if ( winHeight < modalHeight )
+            {
+                if (winHeight-100 < 400)
+                {
+                    //$(document.body).css({'overflow':'auto'})
+                }
+                modal_container.hide().css( { 'margin-top':-( (winHeight - 100) / 2) } );
+            }
+            else
+            {
+                //modal_body.css({'max-height':winHeight - 100});
+                modal_container.hide().css( { 'margin-top':-( modalHeight / 2) } );
+            }
+
+>>>>>>> d9734a7d6af85ef9116ac299277f5a878e37fc49
             modal_container.modal();
         });
     },

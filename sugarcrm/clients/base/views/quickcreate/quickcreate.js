@@ -5,7 +5,8 @@
         this.context.on('quickcreate:edit', this.editExisting, this);
         this.context.on('quickcreate:restore', this.restoreModel, this);
         this.context.on('quickcreate:validateModel', this.validateModel, this);
-        this.context.on('quickcreate:highlightDuplicateFields', this);
+        this.context.on('quickcreate:highlightDuplicateFields', this.highlightDuplicateFields, this);
+        this.context.on('quickcreate:clearHighlightDuplicateFields', this.clearHighlightDuplicateFields, this)
         this.model.on("error:validation", this.handleValidationError, this);
     },
 
@@ -54,11 +55,6 @@
         app.view.View.prototype.render.call(this);
     },
 
-    // Overloaded functions
-    _renderHtml: function() { // Use original original
-        app.view.View.prototype._renderHtml.call(this);
-    },
-
     handleValidationError:function (errors) {
         var self = this;
 
@@ -92,22 +88,60 @@
     },
 
     /**
+     * Highlights all of the user keys that were used in the duplicate match.
+     * @param {array} List of user keys used in the module search
+     * @param {boolean} whether to turn on or off the warnings
+     */
+    highlightDuplicateFields: function(keys) {
+        var self = this,
+            cssName = 'warning';
+
+        _.each(keys, function (fieldName) {
+            var controlGroup, field;
+
+            field = self.getField(fieldName);
+             if (field) {
+                controlGroup = field.$el.parents('.control-group:first');
+                if (controlGroup) {
+                    controlGroup.addClass(cssName);
+                }
+            }
+        });
+    },
+
+    clearHighlightDuplicateFields: function() {
+         this.$('div .control-group.warning').removeClass('warning');
+    },
+
+    /**
      * Clears out field values
      */
     clear: function() {
         this.model.clear();
         this.model.set(this.model._defaults);
     },
-    
+
+    /**
+     * Make the specified record as the data to be edited, and merge the existing data.
+     * @param model
+     */
     editExisting: function(model) {
-        var origModel = this.storeModel();
+        var newTitle = this.app.lang.get('LBL_EDIT_BUTTON', this.module) + ' ' + this.module,
+            origAttributes = this.saveFormData();
+
         this.model.clear();
-        this.model.set(this.extendModel(model, origModel));
-        var newTitle = this.app.lang.get('LBL_EDIT_LEAD_TITLE', this.module);
+        this.model.set(this.extendModel(model, origAttributes));
+
         this.context.parent.trigger("modal:changetitle", newTitle);
     },
 
-    extendModel: function(newModel, oldModel) {
+    /**
+     * Merge the selected record with the data entered in the form
+     * @param newModel
+     * @param origAttributes
+     * @return {*}
+     */
+    extendModel: function(newModel, origAttributes) {
         var modelAttributes = newModel.previousAttributes();
 
         _.each(modelAttributes, function(value, key, list) {
@@ -116,21 +150,31 @@
             }
         });
 
-        return _.extend({}, oldModel, modelAttributes);
+        return _.extend({}, origAttributes, modelAttributes);
     },
-    
+
+    /**
+     * Restore to the original form state before edit selection
+     */
     restoreModel: function() {
-        if ( this.origModel ) {
-            this.model.clear();
-            this.model.set(this.origModel.toJSON());
-            var newTitle = this.app.lang.get('LBL_CREATE_LEAD_TITLE', this.module);
-            this.context.parent.trigger("modal:changetitle", newTitle);
+        var newTitle = this.app.lang.get('LBL_NEW_FORM_TITLE', this.module);
+        this.context.parent.trigger('modal:changetitle', newTitle);
+
+        this.context.trigger('quickcreate:resetDuplicateState');
+
+        this.model.clear();
+        if (this._origAttributes) {
+            this.model.set(this._origAttributes);
         }
     },
-    
-    storeModel: function() {
-        this.origModel = this.model.previousAttributes();
-        return this.origModel;
+
+    /**
+     * Save the data entered in the form
+     * @return {*}
+     */
+    saveFormData: function() {
+        this._origAttributes = this.model.previousAttributes();
+        return this._origAttributes;
     },
 
     /**
