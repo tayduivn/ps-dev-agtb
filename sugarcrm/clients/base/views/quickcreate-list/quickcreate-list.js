@@ -1,8 +1,10 @@
 ({
     extendsFrom:'ListView',
-    
+    gTable:'',
+
     events: {
-        "click .action-edit": "edit"
+        "click .action-edit": "edit",
+        "click .action-preview": "preview"
     },
     
     initialize: function(options) {
@@ -10,6 +12,23 @@
         this.context.off("quickcreate:list:toggle", null, this);
         this.context.on("quickcreate:list:toggle", this.toggleList, this);
         this.context.on("quickcreate:list:close", this.close, this);
+    },
+
+    /**
+     * Renders view
+     */
+    _render: function() {
+        var self = this;
+        app.view.View.prototype._render.call(this);
+
+        this.gTable = this.$('.quickcreateListTable').dataTable(
+            {
+                "bPaginate": false,
+                "bFilter": false,
+                "bInfo": false
+            }
+        );
+
     },
 
     /**
@@ -41,6 +60,36 @@
         this.context.trigger('quickcreate:alert:dismiss');
         this.context.trigger('quickcreate:list:close');
         this.context.trigger('quickcreate:clearHighlightDuplicateFields');
+    },
+
+    /**
+     * Handle selecting a record to preview
+     * @param e
+     */
+    preview: function(e) {
+        var $button = $(e.target);
+
+        if (_.isUndefined($button.data("popover"))) {
+            this.buildPreview($button);
+        }
+
+        $button.popover("toggle");
+    },
+
+    /**
+     * Build the preview popover
+     */
+    buildPreview: function($button) {
+        console.log('building preview');
+        var $parentRow = $button.closest("tr"),
+            recordId = $parentRow.data("record-id"),
+            model = this.collection.get(recordId);
+
+        $button.popover({
+            "title": model.get("name"),
+            "content": "test",
+            "trigger": "manual"
+        });
     },
 
     /**

@@ -44,7 +44,10 @@
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
+        <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
         <script src="styleguide/assets/js/bootstrap.min.js"></script>
+        <script src="styleguide/assets/js/bootstrap-tooltip.js"></script>
+        <script src="styleguide/assets/js/bootstrap-popover.js"></script>
     </head>
     <body>
     	<div id="sugarcrm">
