@@ -163,7 +163,7 @@ class MailConfigurationPeer
             $personal = true;
         }
 
-        if (!empty($system->mail_smtpserver)) {
+        if (!empty($system->id)) {
             $mailConfiguration               = new MailConfiguration($user);
             $mailConfiguration->config_id    = $system->id;
             $mailConfiguration->config_type  = 'system';
