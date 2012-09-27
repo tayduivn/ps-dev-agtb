@@ -143,7 +143,6 @@
         if(this.$('.modal:first').length == 0) {
             //TODO: Replace inline CSS with css property
             this.$el.append(
-                $('<div>', {'class' : 'span'}),
                 $('<div>', {'class' : 'modal hide'}).append(
                     this.$body
                 )
