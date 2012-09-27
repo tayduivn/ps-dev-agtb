@@ -63,7 +63,8 @@
                 buttons = params.buttons || [],
                 message = params.message || '',
                 components = (params.components || []),
-                title = params.title + '';
+                title = params.title + '',
+                autoResize = params.autoResize || true;
             if(message && components.length == 0) {
                 components.push({view: 'modal-confirm', message: message});
             }
@@ -124,24 +125,24 @@
                 callback(model);
                 self.hide();
             },this);
-            
+
             self.context.off("modal:close");
             self.context.on("modal:close", self.hide, self);
 
             self.context.off("modal:changetitle");
             self.context.on("modal:changetitle", self.changeTitle, self);
-            
-            self.show(span);
+
+            self.show(span,autoResize);
             self.loadData();
             self.render();
         }, this);
 
     },
-    
+
     getBodyComponents: function() {
         return _.rest(this._components, this._initComponentSize);
     },
-    
+
     _placeComponent: function(comp, def) {
         if(this.$('.modal:first').length == 0) {
             //TODO: Replace inline CSS with css property
@@ -165,7 +166,7 @@
             this.$('.modal:first').append(comp.el);
         }
     },
-    
+
     changeTitle: function(title) {
         var header_view = this.getComponent('modal-header');
         if (header_view) {
@@ -173,52 +174,61 @@
             header_view.render();
         }
     },
-    
+
     open: function(params, callback) {
         this.layout.trigger(this.showEvent, params, callback);
     },
 
-    show: function(span) {
-        var modal_container = this.$(".modal:first"),
-            modal_body = this.$(".modal-body:first"),
-            winHeight = $(window).height();
+    show: function(span,autoResize) {
+        var modal_container = this.$('.modal:first'),
+            self = this;
 
-        modal_body.css({'max-height':'none'});
-
-        modal_container.css({'margin-top':'-99999px'}).show( "fast", function(){
-
-            if(_.isNumber(span) && span > 0 && span <= 12) {
+        modal_container.css({ 'margin-top':'-99999px' }).show( 'fast', function() {
+            if (_.isNumber(span) && span > 0 && span <= 12) {
                 modal_container.addClass('span' + span);
             }
 
-            var modalHeight = $(this).outerHeight(),
-                modalBodyHeight = modal_body.outerHeight();
+            self.adjustSize(); // adjust modal size
 
-            modal_body.css({'max-height':Math.max(winHeight - 100 - (modalHeight-modalBodyHeight),400),"overflow":"hidden"});
-
-            if ( winHeight < modalHeight )
-            {
-                if (winHeight-100 < 400)
-                {
-                    //$(document.body).css({'overflow':'auto'})
-                }
-                modal_container.hide().css( { 'margin-top':-( (winHeight - 100) / 2) } );
+            if (autoResize) {
+                // add a watch on the modal height (depends on jquery.watch.js)
+                modal_container.watch( 'height', function(){
+                    self.adjustSize();
+                });
             }
-            else
-            {
-                //modal_body.css({'max-height':winHeight - 100});
-                modal_container.hide().css( { 'margin-top':-( modalHeight / 2) } );
-            }
-
-            modal_container.modal();
         });
     },
-    
+
+    adjustSize: function() {
+        var modal_container = this.$('.modal:first'), // the outer modal div, contains modal-header and modal-body
+            modal_body = this.$('.modal-body:first'), // the modal body, contains additional misc content divs, modal-content and modal-footer
+            modal_content = this.$('.modal-content:first'), // the main modal-content, adjust size reduces this div
+            winHeight = $(window).height() - 100, // reduce allowable window area by top and bottom padding
+            self = this;
+
+        modal_body.css({ 'max-height':'none' }); // reset modal-body height to allow for actual size calculation
+        modal_content.css({ 'max-height':'none' }); // reset modal-content height to allow for actual size calculation
+
+        var containerHeight = modal_container.outerHeight(), // calculate outer modal height
+            bodyHeight = modal_body.outerHeight(), // calculate modal-body height
+            contentHeight = modal_content.outerHeight(), // calculate modal-content height
+            bodyOffsetHeight = containerHeight - bodyHeight, // height of modal header plus modal footer
+            contentOffsetHeight = bodyHeight - contentHeight, // height of additional misc divs above modal-content
+            maxBodyHeight = winHeight - bodyOffsetHeight, // calculate maximum modal-body height to prevent view port overflow
+            maxContentHeight;
+
+        modal_body.css({ 'max-height':maxBodyHeight, 'overflow':'hidden' });
+
+        if ( containerHeight > winHeight ) { // if the overall modal height was calculated to be larger than the window
+            maxContentHeight = maxBodyHeight - contentOffsetHeight; // shorten the modal-content height to fit within the modal-body max height
+            modal_content.css({ 'max-height':maxContentHeight, 'overflow':'scroll' });
+        }
+
+        modal_container.css({ 'margin-top':-( modal_container.outerHeight() / 2) }).modal('show'); // center modal on window view port
+    },
+
     hide: function(event) {
-        //restore back to the scroll position at the top
-        this.$(".modal-body:first").scrollTop(0);
-        this.$el.removeClass("modal-open");
-        this.$(".modal:first").hide();
-        this.$el.children(".modal-backdrop").hide();
+        var modal_container = this.$('.modal:first');
+        modal_container.modal('hide');
     }
 })
