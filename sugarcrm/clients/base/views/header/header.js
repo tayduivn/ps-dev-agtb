@@ -34,6 +34,15 @@
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
+            throttleMillis: (app.config.requiredElapsed || 500),
+            throttle: function(callback, millis) {
+               if(!self.debounceFunction) {
+                    self.debounceFunction = _.debounce(function(){
+                        callback();
+                    }, millis || 500);
+                } 
+                self.debounceFunction();
+            },
             onEnterFn: function(hrefOrTerm, isHref) {
                 // if full href treat as user clicking link
                 if(isHref) {
