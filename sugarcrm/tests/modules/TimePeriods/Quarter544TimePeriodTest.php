@@ -35,7 +35,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     protected static $leaves;
 
     public static function setUpBeforeClass() {
-        self::$tp = SugarTestTimePeriodUtilities::createITimePeriod("Quarter");
+        self::$tp = SugarTestTimePeriodUtilities::createITimePeriod("Quarter544", true);
         self::$tp->buildLeaves('Month');
         self::$leaves = self::$tp->getLeaves();
 
@@ -75,16 +75,16 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $baseTimePeriod = self::$tp;
 
         $nextTimePeriod = $baseTimePeriod->createNextTimePeriod();
-        $nextTimePeriod->name = "SugarTestCreatedNextQuarterTimePeriod";
+        $nextTimePeriod->name = "SugarTestCreatedNextQuarter544TimePeriod";
         $nextTimePeriod->save();
         SugarTestTimePeriodUtilities::addTimePeriod($nextTimePeriod);
-        $nextTimePeriod = BeanFactory::getBean('QuarterTimePeriods', $nextTimePeriod->id);
+        $nextTimePeriod = BeanFactory::getBean('Quarter544TimePeriods', $nextTimePeriod->id);
 
         //next timeperiod (1 year from today)
         $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
-        $nextStartDate = $nextStartDate->modify("+3 month");
+        $nextStartDate = $nextStartDate->modify("+13 week");
         $nextEndDate = $timedate->fromDBDate($baseTimePeriod->start_date);
-        $nextEndDate = $nextEndDate->modify("+6 month");
+        $nextEndDate = $nextEndDate->modify("+26 week");
         $nextEndDate = $nextEndDate->modify("-1 day");
 
         $this->assertEquals($nextStartDate, $timedate->fromDBDate($nextTimePeriod->start_date));
@@ -108,9 +108,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //next timeperiod (1 year from today)
         $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
-        $nextStartDate = $nextStartDate->modify("+3 month");
+        $nextStartDate = $nextStartDate->modify("+13 week");
         $nextEndDate = $timedate->fromDBDate($baseTimePeriod->start_date);
-        $nextEndDate = $nextEndDate->modify("+6 month");
+        $nextEndDate = $nextEndDate->modify("+26 week");
         $nextEndDate = $nextEndDate->modify("-1 day");
 
         //todo make expected on the left
@@ -145,7 +145,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $baseTimePeriod = self::$tp;
         $startDate = $timedate->fromDbDate($baseTimePeriod->start_date);
         $endDate = $timedate->fromDbDate($baseTimePeriod->start_date);
-        $endDate = $endDate->modify("+1 month");
+        $endDate = $endDate->modify("+5 week");
         $endDate = $endDate->modify("-1 day");
         $startDate->setTime(0,0,0);
         $endDate->setTime(23,59,59);
@@ -166,8 +166,8 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $baseTimePeriod = self::$tp;
         $startDate = $timedate->fromDbDate($baseTimePeriod->start_date);
         $endDate = $timedate->fromDbDate($baseTimePeriod->start_date);
-        $startDate = $startDate->modify("+1 month");
-        $endDate = $endDate->modify("+2 month");
+        $startDate = $startDate->modify("+5 week");
+        $endDate = $endDate->modify("+9 week");
         $endDate = $endDate->modify("-1 day");
         $startDate->setTime(0,0,0);
         $endDate->setTime(23,59,59);
@@ -188,8 +188,8 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $baseTimePeriod = self::$tp;
         $startDate = $timedate->fromDbDate($baseTimePeriod->start_date);
         $endDate = $timedate->fromDbDate($baseTimePeriod->start_date);
-        $startDate = $startDate->modify("+2 month");
-        $endDate = $endDate->modify("+3 month");
+        $startDate = $startDate->modify("+9 week");
+        $endDate = $endDate->modify("+13 week");
         $endDate = $endDate->modify("-1 day");
         $startDate->setTime(0,0,0);
         $endDate->setTime(23,59,59);

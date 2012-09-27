@@ -67,7 +67,7 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
         $this->start_date = $start_date;
 
         if($this->is_fiscal) {
-            $end_date = $end_date->modify('+$week_count month');
+            $end_date = $end_date->modify('+'.$week_count.' week');
             $end_date = $end_date->modify('-1 day');
         } else {
             $end_date = $end_date->modify('+1 month');

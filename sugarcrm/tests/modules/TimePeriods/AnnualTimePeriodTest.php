@@ -37,8 +37,8 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     protected static $fiscalLeaves;
 
     public static function setUpBeforeClass() {
-        self::$calendarTP = SugarTestTimePeriodUtilities::createAnnualTimePeriod();
-        self::$fiscalTP = SugarTestTimePeriodUtilities::createAnnualFiscalTimePeriod();
+        self::$calendarTP = SugarTestTimePeriodUtilities::createITimePeriod("Annual", false);
+        self::$fiscalTP = SugarTestTimePeriodUtilities::createITimePeriod("Annual", true);
         self::$calendarTP->buildLeaves('Quarter');
         self::$calendarLeaves = self::$calendarTP->getLeaves();
         self::$fiscalTP->buildLeaves('Quarter544');

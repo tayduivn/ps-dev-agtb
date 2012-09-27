@@ -90,53 +90,22 @@ class SugarTestTimePeriodUtilities
         return $timeperiod;
     }
 
-    public static function createQuarterTimePeriod (){
+    /*
+     * magic tardis function
+     */
+    public static function createITimePeriod ($time_period_type, $is_fiscal=false){
 
         global $timedate;
         $timedate = TimeDate::getInstance();
         $time = mt_rand();
-        $name = 'SugarQuarterTimePeriod' . $time;
+        $name = 'Sugar'.$time_period_type.'TimePeriod' . $time;
         $start_date = self::getRandDate();
-        $timeperiod = new QuarterTimePeriod($timedate->asDbDate($start_date));
+        $timeperiod = BeanFactory::newBean($time_period_type."TimePeriods");
+        $timeperiod->is_fiscal = $is_fiscal;
+        $timeperiod->setStartDate($timedate->asDbDate($start_date));
 
         $timeperiod->name = $name;
-        $timeperiod->is_fiscal_year = 0;
         $timeperiod->is_leaf = 0;
-        $timeperiod->save();
-        self::$_createdTimePeriods[] = $timeperiod;
-        return $timeperiod;
-    }
-
-
-    public static function createAnnualTimePeriod (){
-
-        global $timedate;
-        $timedate = TimeDate::getInstance();
-        $time = mt_rand();
-        $name = 'SugarAnnualTimePeriod' . $time;
-        $start_date = self::getRandDate();
-        $timeperiod = new AnnualTimePeriod($timedate->asDbDate($start_date));
-
-        $timeperiod->name = $name;
-        $timeperiod->time_period_type = "Annual";
-        $timeperiod->is_fiscal_year = 0;
-        $timeperiod->is_leaf = 0;
-        $timeperiod->save();
-        self::$_createdTimePeriods[] = $timeperiod;
-        return $timeperiod;
-    }
-
-    public static function createAnnualFiscalTimePeriod (){
-        global $timedate;
-        $timedate = TimeDate::getInstance();
-
-        $time = mt_rand();
-        $name = 'SugarAnnualTimePeriod' . $time;
-        $start_date = self::getRandDate();
-        $timeperiod = new AnnualTimePeriod($timedate->asDbDate($start_date),true);
-
-        $timeperiod->name = $name;
-        $timeperiod->time_period_type = "Annual";
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;

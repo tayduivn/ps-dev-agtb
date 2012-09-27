@@ -91,9 +91,7 @@ class Quarter544TimePeriod extends TimePeriod implements iTimePeriod {
      * @return bool
      */
     public function hasLeaves() {
-        $this->load_relationship('related_timeperiods');
-
-        if(count($this->related_timeperiods))
+        if(count($this->getLeaves()))
             return true;
 
         return false;
@@ -124,21 +122,41 @@ class Quarter544TimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * build leaves for the timeperiod by creating the specified types of timeperiods
      *
-     * @param string $timePeriodType
+     * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
+     * @return mixed
      * @return mixed
      */
     public function buildLeaves($timePeriodType) {
         if($this->hasLeaves()) {
-            return;
+            throw new Exception("This TimePeriod already has leaves");
         }
 
-        switch($timePeriodType) {
-            case "Monthly":
-                break;
-            case "Weekly":
-                break;
-
+        if($this->is_leaf) {
+            throw new Exception("Leaf Time Periods cannot have leaves");
         }
+
+        $this->load_relationship('related_timeperiods');
+
+        //1st month leaf gets the extra week here
+        $leafPeriod = BeanFactory::newBean('MonthTimePeriods');
+        $leafPeriod->is_fiscal = true;
+        $leafPeriod->setStartDate($this->start_date, 5);
+        $leafPeriod->is_leaf = 1;
+        $leafPeriod->save();
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
+
+        //create second month leaf
+        $leafPeriod = $leafPeriod->createNextTimePeriod(4);
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
+
+        //create third month leaf
+        $leafPeriod = $leafPeriod->createNextTimePeriod(4);
+        $this->related_timeperiods->add($leafPeriod->id);
+        $leafPeriod->save();
+
+        $this->save();
 
     }
 }
