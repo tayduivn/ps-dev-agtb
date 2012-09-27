@@ -427,7 +427,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             $portalApiUser = $this->findPortalApiUser($client_id);
             if ( $portalApiUser == null ) {
                 // Can't login as a portal user if there is no API user
-                throw new SugarApiExceptionNotAuthorized('There is no portal user configured in the system or the portal is not enabled for this system.');
+                throw new SugarApiExceptionPortalNotConfigured();
             }
             // It's a portal user, log them in against the Contacts table
             $contact = BeanFactory::newBean('Contacts');
@@ -444,7 +444,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 if(!$sessionManager->canAddSession()){
                     //not able to add another session right now
                     $GLOBALS['log']->error("Unable to add new session");
-                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions',0,'too_many_concurrent_connections');
+                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions', null, null, 0, 'too_many_concurrent_connections');
                 }
                 //END SUGARCRM flav=pro ONLY
                 $this->contactBean = $contact;
