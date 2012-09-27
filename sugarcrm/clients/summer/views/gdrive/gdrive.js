@@ -26,6 +26,7 @@
         this.$el.find('.dataTables_filter').toggle();
 
     },
+
     filterDocuments: function(evt){
         var self = this;
         var term = self.$(evt.currentTarget).val();

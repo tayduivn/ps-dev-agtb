@@ -125,7 +125,7 @@ class GoogleAPI extends SugarApi
 
     protected function findDocuments($q = '', $limit = 5) {
         $data = array();
-        $url = "https://www.googleapis.com/drive/v2/files?maxResults={$limit}&fields=items(alternateLink%2Ctitle)";
+        $url = "https://www.googleapis.com/drive/v2/files?maxResults={$limit}&fields=items(id%2CembedLink%2CalternateLink%2Ctitle)";
         if(!empty($q)) {
             $url .= '&q=fullText+contains+'.urlencode('"'.$q.'"');
         }
@@ -134,8 +134,10 @@ class GoogleAPI extends SugarApi
         if(!empty($records['items'])) {
             foreach($records['items'] as $item) {
                 $data[] = array(
+                    'id' => $item['id'],
                     'name' => $item['title'],
-                    'link' => $item['alternateLink'],
+                    'editLink' => $item['alternateLink'],
+                    'previewLink' => $item['embedLink'],
                 );
             }
         }

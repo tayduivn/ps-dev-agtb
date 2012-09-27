@@ -10,7 +10,22 @@
   </div>
   {{#each docs}}
     <article class='row-fluid'>
-       <a href="{{{link}}}">{{name}}</a>
+      <a href="#gdrive-{{{id}}}" data-toggle="modal">{{name}}</a>
+      <div class="modal span12" style="display:none;" id="gdrive-{{id}}">
+        <div class="modal-header">
+          <a class="close" data-dismiss="modal">×</a>
+          <h3>Previewing "{{name}}"</h3>
+        </div>
+        <div class="modal-body">
+          <div class="modal-content">
+            <iframe style="min-height:500px;" seamless class="span12" src="{{{previewLink}}}"></iframe>
+          </div>
+          <div class="modal-footer">
+            <a href="#" data-dismiss="modal" class="btn btn-invisible btn-link">Close</a>
+            <a href="{{{editLink}}}" class="btn btn-primary" target="_blank">Edit Document</a>
+          </div>
+        </div>
+      </div>
     </article>
   {{/each}}
 </div>
