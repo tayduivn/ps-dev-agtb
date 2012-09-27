@@ -49,8 +49,6 @@ if (empty($_SESSION['authenticated_user_id'])) {
     </div>
 </div>
 
-
-<script src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDhofIE96RHrdEd7mBRLaHeYoPrFcBakac&sensor=true"></script>
 <?php
     $min_file = 'summer/summer.min.js';
     if(file_exists("../cache/".$min_file)) {
