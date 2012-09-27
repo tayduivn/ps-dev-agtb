@@ -239,16 +239,16 @@ class ActivityStream extends SugarBean {
         if(empty($options['view'])) {
             $options['view'] = 'list';
         }
-        
+
         // TimelineJS adds some garbage data to url
         if(strpos($options['view'], 'timeline') !== false) {
             $options['view'] = 'timeline';
         }
-        
+
         if(!in_array($options['view'], array('list', 'timeline'))) {
             return false;
         }
-        
+
         // Convert to int for security
         $start = isset($options['offset']) ? (int) $options['offset'] : 0;
         $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
@@ -260,10 +260,10 @@ class ActivityStream extends SugarBean {
         $from = 'activity_stream a, users u';
         $where = 'a.created_by = u.id AND a.deleted = 0';
         $limit = '';
-    
+
         if($targetModule == 'Users' && !empty($targetId)) {
             $where .= " AND (a.created_by = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['created_by']) ." OR (a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module'])." AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id'])."))";
-        }        
+        }
         else if(!empty($targetModule)) {
             $where .= " AND ((a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
@@ -287,7 +287,7 @@ class ActivityStream extends SugarBean {
             $limit = ' LIMIT '.$start. ', '.$numActivities;
         }
 
-        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
+        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ";
         $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
 
@@ -298,9 +298,11 @@ class ActivityStream extends SugarBean {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
                 $row['target_name'] = '';
                 if(!empty($row['target_id'])) {
-                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id'], array('disable_row_level_security'=>true));
+                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
                     if(!empty($bean)) {
                         $row['target_name'] = $bean->get_summary_text();
+                    } else {
+                        continue;
                     }
                 }
                 else if(!empty($row['target_module'])) {
@@ -319,6 +321,9 @@ class ActivityStream extends SugarBean {
                 $activities[] = $row;
                 $activityIds[] = $row['id'];
             }
+
+            $activities = array_slice($activities, $start, $numActivities);
+            $activityIds = array_slice($activityIds, $start, $numActivities);
 
             if(!empty($activityIds)) {
                 $comments = array();
@@ -365,9 +370,9 @@ class ActivityStream extends SugarBean {
     protected function getListViewData($activities, $options = array()) {
         $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
         $list = array('next_offset'=>$nextOffset,'records'=>$activities);
-        return $list;        
+        return $list;
     }
-    
+
     protected function getTimelineViewData($activities, $options = array()) {
         $timeline = array(
                 "headline"=>$options['filter'] == "all" ? "ALL Activities" : ($options['filter'] == "myactivities" ? "My Activities" : "My Favorities Activities") ,
@@ -392,33 +397,33 @@ class ActivityStream extends SugarBean {
                             "credit"=>"",
                             "caption"=>""));
         }
-        
+
         $timeline['date'] = $date;
         return array('timeline'=>$timeline);
-    }    
-    
+    }
+
     protected function getTimelineDate($activity) {
-        return date("m/d/Y H:i:s",strtotime($activity['date_created']));       
+        return date("m/d/Y H:i:s",strtotime($activity['date_created']));
     }
-    
+
     protected function getTimelineHeadline($activity) {
-        return '<a href="" data-id="'.$activity['id'].'" class="showAnchor">'.$activity['created_by_name'].' '.$activity['activity_type'].'</a>';        
+        return '<a href="" data-id="'.$activity['id'].'" class="showAnchor">'.$activity['created_by_name'].' '.$activity['activity_type'].'</a>';
     }
-    
+
     protected function getTimelineMedia($activity) {
-        return '<a href=#Users/'.$activity['created_by'].' class="avatar avatar42"><img src='.($activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg").'></a>'; 
+        return '<a href=#Users/'.$activity['created_by'].' class="avatar avatar42"><img src='.($activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg").'></a>';
     }
 
     protected function getTimelineThumbnail($activity) {
         return $activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg";
     }
-        
+
     protected function getTimelineText($activity) {
         $result = '';
-        
+
         switch ($activity['activity_type']) {
             case "posted":
-                $result = $activity['activity_data']['value']; 
+                $result = $activity['activity_data']['value'];
                 if(!empty($activity['target_module'])) {
                     if(!empty($activity['target_id'])) {
                         $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
@@ -443,24 +448,24 @@ class ActivityStream extends SugarBean {
                 }
                 if(!empty($activity['target_name'])) {
                     $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
-                }  
-                break;          
+                }
+                break;
             default:
                 break;
         }
-        
+
         $result .= '<br/>';
-                
+
         if(count($activity['notes']) > 0) {
             $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Attachments('.count($activity['notes']).')</a>';
         }
         if(count($activity['comments']) > 0) {
             $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Comments('.count($activity['comments']).')</a>';
         }
-        
+
         return $result;
     }
-    
+
     /**
      * Gets notes attached to posts or comments
      * @param string $parentType 'ActivityStream' or 'ActivityComments'
@@ -483,7 +488,7 @@ class ActivityStream extends SugarBean {
         return $notes;
 
     }
- 
+
     /**
      * @param $bean
      * @param $date
