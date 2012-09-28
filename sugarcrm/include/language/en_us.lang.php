@@ -3331,6 +3331,7 @@ $app_strings = array (
     'LBL_UPLOADING' => 'Uploading',
 
     //for portal
+    'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
