@@ -50,8 +50,6 @@
 <input type='button' class='button' name='fomulaSaveButton' id="fomulaSaveButton" value='{sugar_translate module="ModuleBuilder" label="LBL_BTN_SAVE"}'
 	onclick="if(SUGAR.expressions.saveCurrentExpression('{$target}', '{$returnType}'))SUGAR.expressions.closeFormulaBuilder()">
 </div>
-<script src="{sugar_getjspath file='include/javascript/jquery/markitup/jquery.markitup.js'}"></script>
-<script src="{sugar_getjspath file='include/javascript/jquery/markitup/sets/default/set.js'}"></script>
 <script src="{sugar_getjspath file='modules/ExpressionEngine/javascript/formulaBuilder.js'}"></script>
 <script type="text/javascript">
 ModuleBuilder.addToHead("{sugar_getjspath file='modules/ExpressionEngine/tpls/formulaBuilder.css'}", "css");
