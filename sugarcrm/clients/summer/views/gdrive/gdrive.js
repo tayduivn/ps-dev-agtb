@@ -1,7 +1,8 @@
 ({
     events: {
         'click .search': 'showSearch',
-        'keyup .dataTables_filter input': 'filterDocuments'
+        'keyup .dataTables_filter input': 'filterDocuments',
+        'click article > a': 'triggerModal'
     },
     initialize: function(o) {
         app.view.View.prototype.initialize.call(this, o);
@@ -25,6 +26,16 @@
     showSearch: function(){
         this.$el.find('.dataTables_filter').toggle();
 
+    },
+
+    triggerModal: function(e) {
+        var data = this.$(e.currentTarget).data();
+        var el = this.$("#gdrive-modal");
+        el.find(".modal-header h3").text("Previewing "+data.name);
+        el.find(".modal-body .modal-content iframe").attr("src", data.preview);
+        el.find(".modal-body .modal-footer #editLink").attr("href", data.edit);
+
+        el.modal();
     },
 
     filterDocuments: function(evt){
