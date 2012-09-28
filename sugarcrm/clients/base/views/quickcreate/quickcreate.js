@@ -15,11 +15,11 @@
 
         _.each(this.meta.panels, function(panel) {
             var columns = (panel.columns) || 2,
-                count = 0,
                 rows = [],
-                row = [];
+                row = [],
+                size = panel.fields.length;
 
-            _.each(panel.fields, function(field) {
+            _.each(panel.fields, function(field, index) {
                 var maxSpan;
 
                 if (_.isUndefined(panel.labels)) {
@@ -41,12 +41,10 @@
                 field.index = totalFieldCount;
                 row.push(field);
 
-                if (count % columns == columns - 1) {
+                if ((index % columns === columns - 1) || (index === size - 1)) {
                     rows.push(row);
                     row = [];
                 }
-
-                count++;
             }, this);
 
             panel.grid = rows;

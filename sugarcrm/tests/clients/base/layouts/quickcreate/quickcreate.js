@@ -1,58 +1,55 @@
 describe("Quickcreate", function() {
 
     beforeEach(function() {
-        SugarTest.loadHandlebarsTemplate('base', 'view', 'quickcreate-list');
-        SugarTest.loadHandlebarsTemplate('base', 'view', 'quickcreate');
-        SugarTest.loadHandlebarsTemplate('base', 'view', 'quickcreateactions');
+        SugarTest.loadViewHandlebarsTemplate('base', 'quickcreate-list');
+        SugarTest.loadViewHandlebarsTemplate('base', 'quickcreate');
+        SugarTest.loadViewHandlebarsTemplate('base', 'quickcreateactions');
+        SugarTest.loadViewHandlebarsTemplate('base', 'edit');
+        SugarTest.loadFieldHandlebarsTemplate('base', 'base', 'edit');
 
-        SugarTest.app.template.set(fixtures.metadata, true);
-
+        SugarTest.loadComponent('base', 'field', 'base');
+        SugarTest.loadComponent('base', 'view', 'edit');
         SugarTest.loadComponent('base', 'view', 'alert');
         SugarTest.loadComponent('base', 'view', 'quickcreate-alert');
         SugarTest.loadComponent('base', 'view', 'quickcreate-list');
         SugarTest.loadComponent('base', 'view', 'quickcreate');
         SugarTest.loadComponent('base', 'view', 'quickcreateactions');
-    });
 
-    var initializeLayout = function() {
-        var layout = SugarTest.createLayout('base', 'Leads', 'quickcreate', {
-            "type": "fluid",
-            "components": [
-                {"view":"quickcreate-alert"},
-                {"view":"quickcreate-list"},
-                {"view":"quickcreate"},
-                {"view":"quickcreateactions"}
-            ]
-        });
+        fixtures.metadata.views = fixtures.metadata.views || {};
+        fixtures.metadata.views['quickcreate-list'] = fixtures.metadata.views['quickcreate-list'] || {};
+        fixtures.metadata.views['quickcreate'] = fixtures.metadata.views['quickcreate'] || {};
+        fixtures.metadata.views['quickcreateactions'] = fixtures.metadata.views['quickcreateactions'] || {};
 
-        layout.getComponent('quickcreate-list').meta = {
+        fixtures.metadata.views['quickcreate-list'].meta = {
             panels: [{
                 fields: [{
-                    name: "name",
-                    label: "LBL_LIST_NAME",
-                    orderBy: "last_name"
+                    name: "first_name",
+                    orderBy: "first_name"
                 }, {
-                    name: "status",
-                    label: "LBL_LIST_STATUS"
+                    name: "last_name"
                 }, {
-                    name: "account_name",
-                    label: "LBL_LIST_ACCOUNT_NAME"
+                    name: "phone_work"
                 }]
             }]
         };
 
-        layout.getComponent('quickcreate').meta = {
+        fixtures.metadata.views['quickcreate'].meta = {
             type: "edit",
             panels: [{
-                fields: [
-                    "first_name",
-                    "last_name",
-                    "title"
-                ]
+                fields: [{
+                    name: "first_name",
+                    type: "text"
+                }, {
+                    name: "last_name",
+                    type: "text"
+                }, {
+                    name: "phone_work",
+                    type: "text"
+                }]
             }]
         };
 
-        layout.getComponent('quickcreateactions').meta = {
+        fixtures.metadata.views['quickcreateactions'].meta = {
             buttons: [{
                 name: "restore_button",
                 type: "button",
@@ -83,6 +80,20 @@ describe("Quickcreate", function() {
             }]
         };
 
+        SugarTest.app.metadata.set(fixtures.metadata, false);
+    });
+
+    var initializeLayout = function() {
+        var layout = SugarTest.createLayout('base', 'Contacts', 'quickcreate', {
+            "type": "fluid",
+            "components": [
+                {"view":"quickcreate-alert"},
+                {"view":"quickcreate-list"},
+                {"view":"quickcreate"},
+                {"view":"quickcreateactions"}
+            ]
+        });
+
         return layout;
     };
 
@@ -95,6 +106,12 @@ describe("Quickcreate", function() {
 
         afterEach(function() {
             delete layout;
+        });
+
+        it("should display three fields in the quickcreate form", function() {
+            layout.render();
+
+            expect(layout.$el.find('input').size()).toEqual(3);
         });
 
         it("should have four columns on the quickcreate-list table", function() {
@@ -337,6 +354,45 @@ describe("Quickcreate", function() {
 
             runs(function() {
                 expect(layout.$el.find('[name=save_button]').text()).toEqual('LBL_IGNORE_DUPLICATE_AND_SAVE');
+
+                isValidStub.restore();
+                fetchStub.restore();
+            });
+        });
+
+        it("should display an alert when duplicates are found", function() {
+            var flag = false,
+                restoreAndCallShowAlert = function(args) {
+                    alertShowStub.restore();
+                    layout.getComponent('quickcreate-alert').show(arguments);
+                },
+                isValidStub = sinon.stub(layout.model, 'isValid', function() {
+                    return true;
+                }),
+                fetchStub = sinon.stub(layout.collection, 'fetch', function(options) {
+                    layout.collection.push(new Backbone.Model({
+                        test: '123'
+                    }));
+                    options.success(layout.collection);
+                }),
+                alertShowStub = sinon.stub(layout.getComponent('quickcreate-alert'), 'show', function() {
+                    flag = true;
+                    restoreAndCallShowAlert(arguments);
+                });
+
+            layout.render();
+
+            runs(function() {
+                layout.$el.find('[name=save_button]').click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'show should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(alertShowStub.calledOnce).toBeTruthy();
+                expect(layout.$el.find('.alert').size()).toEqual(1);
 
                 isValidStub.restore();
                 fetchStub.restore();
