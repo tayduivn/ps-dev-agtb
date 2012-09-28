@@ -3912,10 +3912,10 @@ protected function checkQuery($sql, $object_name = false)
 		}
 		else {
 			$whereClause = ltrim($whereClause);
-			if (strtoupper(substr($whereClause, 1, 5)) == 'WHERE' ) {   // remove WHERE
+			if (strtoupper(substr($whereClause, 0, 5)) == 'WHERE' ) {   // remove WHERE
 				$whereClause = substr($whereClause, 6);
             }
-            if (strtoupper(substr($whereClause, 1, 4)) != 'AND ' ) {  // Add AND
+            if (strtoupper(substr($whereClause, 0, 4)) != 'AND ' ) {  // Add AND
                 $whereClause = "AND $whereClause";
             }
             $whereClause .= ' ';  // make sure there is a trailing blank
@@ -3927,9 +3927,9 @@ protected function checkQuery($sql, $object_name = false)
 		$fieldsBottom = "";
 		$delimiter = "";
 		foreach ($tokens as $token) {
-			if (trim($token) == 'level') {
-	            $fieldsTop = $fieldsTop . $delimiter . " 1 as level";
-		        $fieldsBottom = $fieldsBottom . $delimiter . " sg.level + 1";
+			if (trim($token) == '_level') {
+	            $fieldsTop = $fieldsTop . $delimiter . " 1 as _level";
+		        $fieldsBottom = $fieldsBottom . $delimiter . " sg._level + 1 as _level";
                 $delimiter = ",";
 			}
 			else {
