@@ -1,10 +1,10 @@
 <div class="subnav subnav-fixed">
 <div class="btn-toolbar pull-left">
-<h1>{{subnavModel.attributes.title}}</h1>
+<h1>{{title}}</h1>
 </div>
 <div class="btn-toolbar pull-right">
 <div>
-{{#each subnavModel.attributes.meta.buttons}}
+{{#each meta.buttons}}
 {{field ../this}}
 {{/each}}
 </div>

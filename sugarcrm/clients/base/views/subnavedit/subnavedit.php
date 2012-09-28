@@ -46,4 +46,5 @@ $viewdefs['base']['view']['subnavedit'] = array(
             'css_class' => 'btn-primary',
         ),
     ),
+    'label'=>'LBL_EDIT_BUTTON',
 );

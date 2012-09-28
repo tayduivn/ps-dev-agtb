@@ -39,4 +39,5 @@ $viewdefs['base']['view']['subnavdetail'] = array(
             'css_class' => 'btn-primary',
         ),
     ),
+    'field' => 'name',
 );
