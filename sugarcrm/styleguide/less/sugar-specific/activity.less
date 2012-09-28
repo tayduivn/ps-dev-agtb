@@ -13,8 +13,8 @@
   padding: 10px;
 }
 
-#div.sayit.activitystream-comment-box .row {
-  margin: 0 10px;
+div.sayit.activitystream-comment-box {
+  margin: 0 5px;
   padding: 5px 8px;
   width: 79%;
 }
@@ -28,8 +28,8 @@
 
 .activitystream-pending-attachment {
 position: relative;
-width: 141px;
-border: 2px solid @grayLighter;
+width: 140px;
+border: 4px solid @grayLighter;
 background: @grayLighter;
 float: left;
 height: 141px;
@@ -37,13 +37,18 @@ font-size: 11px !important;
 overflow: hidden;
 margin: 5px 5px 5px 0;
 color: #767676;
-.close {
-  font-size: 16px;
-  line-height: 14px;  
-  padding: 0 2px;
-  margin-left: 5px;
+  .close {
+    font-size: 16px;
+    line-height: 14px;  
+    padding: 0 2px;
+    margin-left: 5px;
+  }
+  img {
+    margin-top: 4px;
   }
 }
+
+.loading.wide {padding: 0 0 0 20px;}
 
 .commented .control-group {margin-bottom: 0;}
 .block.tabs-left .nav-tabs li {
