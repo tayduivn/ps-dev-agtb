@@ -690,7 +690,7 @@
         var objarrays = _.map(this.collection.models, this._addTimelineEvent);
         timeline.timeline.date = _.flatten(objarrays);
 
-        //_.defer(function() {
+        _.defer(function() {
             if(timeline.timeline.date.length) {
                 createStoryJS({
                     type:       'timeline',
@@ -703,7 +703,7 @@
                 });
             }
             this.timelineRendered = true;
-        //});
+        });
     },
 
     _renderCalendar: function() {
@@ -739,9 +739,15 @@
                     $('html, body').animate({ scrollTop: $('#'+calEvent.id).offset().top - 50 }, 'slow');
                 }
         };
-
-        $('#activitystream-calendar').fullCalendar(calendar);
-        this.calendarRendered = true;
+        _.defer(function() {
+            if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
+                if($('#activitystream-calendar')) {
+                    $('#activitystream-calendar').html('');
+                    $('#activitystream-calendar').fullCalendar(calendar);
+                    this.calendarRendered = true;
+                }
+            }
+        });
     },
 
     bindDataChange: function() {
