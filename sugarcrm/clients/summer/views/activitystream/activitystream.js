@@ -738,8 +738,11 @@
                 }
         };
 
-        $('#activitystream-calendar').fullCalendar(calendar);
-        this.calendarRendered = true;
+        if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
+            $('#activitystream-calendar').html('');
+            $('#activitystream-calendar').fullCalendar(calendar);
+            this.calendarRendered = true;
+        }
     },
 
     bindDataChange: function() {
