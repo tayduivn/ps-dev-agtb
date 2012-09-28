@@ -169,8 +169,8 @@ function formSubmitCheck(){ldelim}if(check_form(\'EditView\')){ldelim}document.E
           ),
           array (
             'name' => 'add_parent_invitee',
-            'comment' => 'Link to add invitees',
-			'customCode' => '<a id="add_parent_invitee" style="color:#0B578F; text-decoration:underline; cursor:pointer" onclick="SugarWidgetSchedulerAttendees.formAddParent();">{$MOD.LBL_ADD_PARENT_INVITEE}</a>',
+    		'comment' => 'Link to add invitees',
+    		'customCode' => '<a id="add_parent_invitee" style="color:#0B578F; text-decoration:underline; cursor:pointer" onclick="SugarWidgetSchedulerAttendees.formAddParent();">{$MOD.LBL_ADD_PARENT_INVITEE}</a>',
           ),
         ),
         array (
