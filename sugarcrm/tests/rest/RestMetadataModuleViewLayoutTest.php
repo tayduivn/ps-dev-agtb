@@ -120,6 +120,15 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
     /**
      * @group rest
      */
+    public function testMetadataFavorites()
+    {
+        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['favoritesEnabled']),'No favoritesEnabled for the cases module');   
+    }
+
+    /**
+    * @group rest
+    */
     public function testMetadataModuleViews() {
         $filesToCheck = array('modules/Cases/clients/portal/views/edit/edit.php',
                               'custom/modules/Cases/clients/portal/views/edit/edit.php',
