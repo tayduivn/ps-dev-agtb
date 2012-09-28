@@ -312,7 +312,7 @@ describe("Quickcreate", function() {
             });
         });
 
-        it("should change the save button to Ignore Duplicate and Save when duplicates are found", function() {
+        it("should change the save button label and hide other save buttons when duplicates are found", function() {
             var flag = false,
                 isValidStub = sinon.stub(layout.model, 'isValid', function() {
                     return true;
@@ -323,20 +323,26 @@ describe("Quickcreate", function() {
                         test: '123'
                     }));
                     options.success(layout.collection);
-                });
+                }),
+                hide = sinon.spy($.fn, 'hide'),
+                isSaveAndNewHidden = false,
+                isSaveAndViewHidden = false;
 
             layout.render();
 
             runs(function() {
                 layout.$el.find('[name=save_button]').click();
             });
-
             waitsFor(function() {
                 return flag;
             }, 'fetch should have been called but timeout expired', 1000);
-
             runs(function() {
                 expect(layout.$el.find('[name=save_button]').text()).toEqual('LBL_IGNORE_DUPLICATE_AND_SAVE');
+                expect(hide).toHaveBeenCalled();
+                saveCreateSelector = _.filter(hide.thisValues, function(thisValue) { return thisValue.selector === "[name=save_create_button]" })
+                saveViewSelector = _.filter(hide.thisValues, function(thisValue) { return thisValue.selector === "[name=save_view_button]" })
+                expect(saveCreateSelector).toBeDefined();
+                expect(saveViewSelector).toBeDefined();
 
                 isValidStub.restore();
                 fetchStub.restore();

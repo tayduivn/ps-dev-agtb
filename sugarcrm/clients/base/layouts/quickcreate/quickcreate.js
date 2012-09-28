@@ -1,4 +1,9 @@
 ({
+    saveActions: {
+        SAVE_AND_CREATE: 'saveAndCreate',
+        SAVE_AND_VIEW: 'saveAndView'
+    },
+
     initialize: function(options) {
         app.view.Layout.prototype.initialize.call(this, options);
 
@@ -8,14 +13,35 @@
         this.context.on('quickcreate:saveAndCreate', this.saveAndCreate, this);
         this.context.on('quickcreate:saveAndView', this.saveAndView, this);
         this.context.on('quickcreate:resetDuplicateState', this.resetDuplicateState, this);
+
+        //keep track of what post-save action was chosen in case user chooses to ignore dupes
+        this.context.lastSaveAction = null;
+    },
+
+    /**
+     * Determine appropriate save action and execute it
+     * Default to saveAndClose
+     */
+    save: function() {
+        var self = this;
+        switch(self.context.lastSaveAction) {
+            case self.saveActions.SAVE_AND_CREATE:
+                self.saveAndCreate();
+                break;
+            case self.saveActions.SAVE_AND_VIEW:
+                self.saveAndView();
+                break;
+            default:
+                self.saveAndClose();
+        }
     },
 
     /**
      * Save and close quickcreate modal window
      */
-    save: function() {
+    saveAndClose: function() {
         var self = this;
-        this.initiateSave(function() {
+        self.initiateSave(function() {
             self.closeModal();
         });
     },
@@ -32,6 +58,7 @@
      */
     saveAndCreate: function() {
         var self = this;
+        self.context.lastSaveAction = this.saveActions.SAVE_AND_CREATE;
         this.initiateSave(function() {
             self.context.trigger('quickcreate:clear');
             self.resetDuplicateState();
@@ -43,6 +70,7 @@
      */
     saveAndView: function() {
         var self = this;
+        self.context.lastSaveAction = this.saveActions.SAVE_AND_VIEW;
         this.initiateSave(function() {
             self.closeModal();
             self.app.navigate(self.context, self.model, 'detail');
@@ -54,6 +82,8 @@
      * @param callback
      */
     initiateSave: function(callback) {
+        var self = this;
+
         this.context.trigger('quickcreate:alert:dismiss');
         this.context.trigger('quickcreate:list:close');
         async.waterfall([
@@ -65,6 +95,7 @@
                 console.log("Saving failed.");
                 //TODO: handle error
             } else {
+                self.context.lastSaveAction = null;
                 callback();
             }
         });
