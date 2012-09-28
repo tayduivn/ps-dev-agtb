@@ -23,7 +23,7 @@
     /**
      * Template to use when we are fetching the commit history
      */
-    commitLogLoadingTemplate : _.template('<div class="extend results"><article>Loading Commit History...</article></div>'),
+    commitLogLoadingTemplate : _.template('<div class="extend results"><article><%= loadingMessage %></article></div>'),
 
     /**
      * Handle Any Events
@@ -364,7 +364,7 @@
 
             var colspan = $(nTr).children('td').length;
 
-            self.gTable.fnOpen(nTr, this.commitLogLoadingTemplate() , 'details');
+            self.gTable.fnOpen(nTr, this.commitLogLoadingTemplate({'loadingMessage' : App.lang.get("LBL_LOADING_COMMIT_HISTORY", 'Forecasts')}) , 'details');
             $(nTr).next().children("td").attr("colspan", colspan);
 
             self.fetchUserCommitHistory(event, nTr);
