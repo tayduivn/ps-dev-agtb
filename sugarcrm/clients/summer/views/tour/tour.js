@@ -40,23 +40,23 @@
             }
 
             // If you're here, fulltour == true and viewtype == anything except record-opps OR
-            // fulltour == false, and viewtype == list
+            // fulltour == false, and viewtype == records
             switch(this.currentModule, this.viewType) {
                 case "ActivityStream", "dashboard":
                     app.router.navigate("#Accounts", {trigger: true});
                     break;
-                case "Accounts", "list":
+                case "Accounts", "records":
                     app.router.navigate("#Accounts/create", {trigger: true});
                     break;
                 case "Accounts", "newrecord":
                     break;
                 case "Accounts", "record":
                     break;
-                case "Contacts", "list":
+                case "Contacts", "records":
                     break;
                 case "Contacts", "record":
                     break;
-                case "Opportunities", "list":
+                case "Opportunities", "records":
                     break;
              }
 
