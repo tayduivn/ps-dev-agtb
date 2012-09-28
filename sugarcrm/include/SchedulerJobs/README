@@ -1,3 +1,3 @@
 This directory contains scheduler job definitions. If the job queue attempts to instantiate a class with the naming
 convention FooBarSchedulerJob and the class does not exist, the autoloader will look in custom/include/SchedulerJobs/
-and then this directory.
+and then include/SchedulerJobs for FooBarSchedulerJob.php.

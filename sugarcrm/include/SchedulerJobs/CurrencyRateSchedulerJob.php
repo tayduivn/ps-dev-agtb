@@ -56,8 +56,8 @@ class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
         // Each module that has currency rates in its model(s) *must* have a scheduler
         // job defined in order to update its rates when a currency rate is updated.
         $globPaths = array(
-            array('custom/modules/*/jobs/CustomRateUpdateSchedulerJob.php'),
-            array('modules/*/jobs/RateUpdateSchedulerJob.php'),
+            array('custom/modules/*/jobs/Custom*RateUpdateSchedulerJob.php'),
+            array('modules/*/jobs/*RateUpdateSchedulerJob.php'),
         );
 
         foreach ($globPaths as $entry)
@@ -70,50 +70,15 @@ class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
                 {
                     $jobClass = basename($jobFile,'.php');
                     require_once($jobFile);
-
+                    if(!class_exists($jobClass)) {
+                        $GLOBALS['log']->error(get_class($this).": unable to find class {$jobClass} for job file {$jobFile}");
+                        continue;
+                    }
+                    $updateRates = new $jobClass;
+                    $updateRates->run();
                 }
             }
         }
-        /*
-        $db = DBManagerFactory::getInstance();
-
-        $this->job->runnable_ran = true;
-        $this->job->runnable_data = $data;
-        $this->job->succeedJob();
-        $dataText = json_decode($data);
-        $excludeModules = $dataText->excludeModules;
-        $currencyId = $dataText->currencyId;
-        $currency = BeanFactory::getBean('Currencies', $currencyId);
-
-        $tables = $db->getTablesArray();
-        foreach($tables as $table) {
-            $columns = $db->get_columns($table);
-            if(isset($columns['base_rate']) && isset($columns['currency_id']))
-            {
-                if(!in_array($table, $excludeModules))
-                {
-                    $sql = sprintf("UPDATE %s SET base_rate = %s WHERE currency_id = '%s'", $table, $currency->conversion_rate, $currency->id);
-                    $db->query($sql);
-                }
-            }
-        }
-        */
-
-        /*
-        //This is probably more optimal, but not as generic
-        $tables = array('forecasts', 'worksheet', 'opportunities', 'quotas', 'quotes', 'forecast_schedule');
-
-        foreach($tables as $table)
-        {
-            if(!in_array($table, $excludeModules))
-            {
-                $sql = sprintf("UPDATE %s SET base_rate = %s WHERE currency_id = '%s'", $table, $currency->conversion_rate, $currency->id);
-                $db->query($sql);
-            }
-        }
-        */
-
-        //$db->commit();
     }
 
 }
