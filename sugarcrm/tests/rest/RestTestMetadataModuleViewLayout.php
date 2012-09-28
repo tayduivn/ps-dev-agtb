@@ -105,6 +105,11 @@ class RestTestMetadataModuleViewLayout extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']),'No ftsEnabled for the cases module');   
     }
 
+    public function testMetadataFavorites()
+    {
+        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['favoritesEnabled']),'No favoritesEnabled for the cases module');   
+    }
 
     public function testMetadataModuleViews() {
         $filesToCheck = array('modules/Cases/metadata/portal/views/edit.php',

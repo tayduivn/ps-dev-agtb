@@ -32,7 +32,7 @@ class SidecarListLayoutMetaDataParser extends ListLayoutMetaDataParser {
      */
     protected $invalidTypes = array(
         //BEGIN SUGARCRM flav=ent ONLY
-        'portal' => array('iframe', 'encrypt', 'html', 'relate',),
+        'portal' => array('iframe', 'encrypt', 'html',),
         //END SUGARCRM flav=ent ONLY
     );
             

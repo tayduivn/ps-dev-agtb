@@ -32,7 +32,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module'),
                 'method' => 'createRecord',
                 'shortHelp' => 'This method creates a new record of the specified type',
-                'longHelp' => 'include/api/html/module_new_help.html',
+                'longHelp' => 'include/api/help/module_new_help.html',
             ),
             'retrieve' => array(
                 'reqType' => 'GET',
@@ -40,7 +40,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module','record'),
                 'method' => 'retrieveRecord',
                 'shortHelp' => 'Returns a single record',
-                'longHelp' => 'include/api/html/module_retrieve_help.html',
+                'longHelp' => 'include/api/help/module_retrieve_help.html',
             ),
             'update' => array(
                 'reqType' => 'PUT',
@@ -48,7 +48,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module','record'),
                 'method' => 'updateRecord',
                 'shortHelp' => 'This method updates a record of the specified type',
-                'longHelp' => 'include/api/html/module_update_help.html',
+                'longHelp' => 'include/api/help/module_update_help.html',
             ),
             'delete' => array(
                 'reqType' => 'DELETE',
@@ -56,7 +56,7 @@ class ModuleApi extends SugarApi {
                 'pathVars' => array('module','record'),
                 'method' => 'deleteRecord',
                 'shortHelp' => 'This method deletes a record of the specified type',
-                'longHelp' => 'include/api/html/module_delete_help.html',
+                'longHelp' => 'include/api/help/module_delete_help.html',
             ),
         );
     }

@@ -8,7 +8,6 @@
  * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc. All Rights
  * Reserved. Contributor(s): ______________________________________..
  *********************************************************************************/
-//BEGIN SUGARCRM flav!=dce ONLY
 $defaultDashlets = array(
 						'MyCallsDashlet'=>'Calls', 
 						'MyMeetingsDashlet'=>'Meetings',
@@ -57,15 +56,7 @@ $defaultTrackingDashlets = array('TrackerDashlet'=>'Trackers',
 $defaultTrackingReportDashlets =  array(translate('DEFAULT_REPORT_TITLE_27', 'Reports')=>'Trackers');
 
 //END SUGARCRM flav=pro ONLY
-//END SUGARCRM flav!=dce ONLY
 
-//BEGIN SUGARCRM flav=dce ONLY
-$defaultdceDashlets = 		array('MyDCEActionsDashlet'=>'DCEActions',
-					        	  'DCEActionsByTypesDashlet'=>'DCEActions','MyDCEReportsDashlet');
-$defaultdceReportDashlets = array(translate('DEFAULT_REPORT_TITLE_33', 'Reports')=>'DCEActions',//Template Usage
-								  translate('DEFAULT_REPORT_TITLE_34', 'Reports')=>'DCEActions',//Sessions Per Day (Last 7 Days)
-							);
-//END SUGARCRM flav=dce ONLY
 											
 
 

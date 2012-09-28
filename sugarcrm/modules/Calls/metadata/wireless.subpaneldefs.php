@@ -28,9 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
-
  */
-// $Id: layout_defs.php 14538 2006-07-12 00:27:59Z awu $
 
 $layout_defs['Calls'] = array(
 	// list of what Subpanels to show in the DetailView 
@@ -41,14 +39,14 @@ $layout_defs['Calls'] = array(
 			'get_subpanel_data' => 'contacts',
 			'title_key' => 'LBL_CONTACTS_SUBPANEL_TITLE',		
 		),
-        //BEGIN SUGARCRM flav!=dce && flav!=sales ONLY
+        //BEGIN SUGARCRM flav!=sales ONLY
 		'leads' => array(
 			'order' => 30,
 			'module' => 'Leads',
 			'get_subpanel_data' => 'leads',
 			'title_key' => 'LBL_LEADS_SUBPANEL_TITLE',
 		),
-        //END SUGARCRM flav!=dce && flav!=sales ONLY
+        //END SUGARCRM flav!=sales ONLY
 	),
 );
 ?>
