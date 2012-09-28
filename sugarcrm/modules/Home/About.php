@@ -52,9 +52,6 @@ list-style-type: square;
 <!-- //BEGIN SUGARCRM flav=com && lic!=sub ONLY
 <h1><IMG src="include/images/sugar_md_open.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!--//END SUGARCRM flav=com && lic!=sub ONLY
-<!-- //BEGIN SUGARCRM flav=dce ONLY
-<h1><IMG src="include/images/sugar_md_dce.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
-<!-- //END SUGARCRM flav=dce ONLY
 <!-- //BEGIN SUGARCRM flav=ent && flav!=dev && flav!=ult ONLY
 <h1><IMG src="include/images/sugar_md_ent.png" alt="SugarCRM" width="425" height="30" ondblclick='abouter.display();'></h1>
 <!-- //END SUGARCRM flav=ent && flav!=dev && flav!=ult ONLY -->

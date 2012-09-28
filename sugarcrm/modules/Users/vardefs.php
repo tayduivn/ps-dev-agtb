@@ -790,52 +790,6 @@ $dictionary['User'] = array(
 		    'vname' => 'LBL_ASSIGNED_TO_USER',
 		    'source'=>'non-db',
 		  ),
-        //BEGIN SUGARCRM flav=dce ONLY
-        'dceinstance_role_fields' => array(
-            'name' => 'dceinstance_role_fields',
-            'rname' => 'id',
-            'relationship_fields' => array(
-                'id' => 'dceinstance_role_id',
-                'user_role' => 'dceinstance_role'
-            ) ,
-            'vname' => 'LBL_ACCOUNT_NAME',
-            'type' => 'relate',
-            'link' => 'dceinstances',
-            'link_type' => 'relationship_info',
-            'join_link_name' => 'dceinstances_users',
-            'join_primary' => false,
-            'source' => 'non-db',
-            'importable' => 'false',
-            'duplicate_merge' => 'disabled',
-            'studio' => false,
-        ) ,
-        'dceinstance_role_id' => array(
-            'name' => 'dceinstance_role_id',
-            'type' => 'varchar',
-            'source' => 'non-db',
-            'vname' => 'LBL_DCEINSTANCE_ROLE_ID',
-            'importable' => 'false',
-        ) ,
-        'dceinstance_role' => array(
-            'name' => 'dceinstance_role',
-            'type' => 'enum',
-            'source' => 'non-db',
-            'vname' => 'LBL_DCEINSTANCE_ROLE',
-            'options' => 'dceinstance_user_relationship_type_dom',
-            'importable' => 'false',
-            'massupdate' => false,
-        ) ,
-        'dceinstances' => array(
-            'name' => 'dceinstances',
-            'type' => 'link',
-            'relationship' => 'dceinstances_users',
-            'source' => 'non-db',
-            'module' => 'DCEInstances',
-            'bean_name' => 'DCEInstance',
-            'vname' => 'LBL_DCEINSTANCES',
-            'importable' => 'false',
-        ) ,
-        //END SUGARCRM flav=dce ONLY
 	 'oauth_tokens' =>
       array (
         'name' => 'oauth_tokens',

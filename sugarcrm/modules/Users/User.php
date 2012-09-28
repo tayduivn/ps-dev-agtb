@@ -29,9 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('include/SugarObjects/templates/person/Person.php');
 
-//BEGIN SUGARCRM flav=dce ONLY
-
-//END SUGARCRM flav=dce ONLY
 
 // User is used to store customer information.
 class User extends Person {
@@ -101,23 +98,12 @@ class User extends Person {
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = array ('reports_to_name'
-//BEGIN SUGARCRM flav=dce ONLY
-,'instance_id'
-//END SUGARCRM flav=dce ONLY
 	);
 
 	var $emailAddress;
 
 
 	var $new_schema = true;
-//BEGIN SUGARCRM flav=dce ONLY
-    var $relationship_fields = Array('instance_id'=>'dceinstances');
-	var $dceinstance_role;
-    var $dceinstance_rel_id;
-    var $instance_id;
-    var $dceinstance_role_id;
-    var $rel_dceinstance_table = "dceinstances_users";
-//END SUGARCRM flav=dce ONLY
 
 	function User() {
 		parent::Person();
