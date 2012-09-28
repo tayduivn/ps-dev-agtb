@@ -76,18 +76,18 @@
         event.preventDefault();
         var view = this.$(event.currentTarget).data('view');
         if(view == 'timeline') {
+            $('#activitystream-timeline').show();
+            $('#activitystream-calendar').hide();
             if(!this.timelineRendered) {
                 this._renderTimeline();
             }
-            $('#activitystream-timeline').show();
-            $('#activitystream-calendar').hide();
         }
         else if(view == 'calendar') {
+            $('#activitystream-calendar').show();
+            $('#activitystream-timeline').hide();
             if(!this.calendarRendered) {
                 this._renderCalendar();
             }
-            $('#activitystream-calendar').show();
-            $('#activitystream-timeline').hide();
         }
         else {
             $('#activitystream-timeline').hide();
