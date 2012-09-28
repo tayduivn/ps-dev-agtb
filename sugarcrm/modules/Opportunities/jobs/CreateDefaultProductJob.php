@@ -75,7 +75,7 @@ class CreateDefaultProductJob implements RunnableSchedulerJob {
                                     assigned_user_id,
                                     opportunity_id,
                                     commit_stage)
-                SELECT {$db->convert('', 'guid')},
+                SELECT {$db->getGuidSQL()},
                         name,
                         '{$now}',
                         '{$now}',
