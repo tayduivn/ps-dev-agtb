@@ -79,6 +79,7 @@
             if(this.timelineRendered) {
                 $('#activitystream-timeline').show();
             } else {
+                $('#activitystream-timeline').show();            	
                 this._renderTimeline();
             }
             $('#activitystream-calendar').hide();
@@ -87,6 +88,7 @@
             if(this.calendarRendered) {
                 $('#activitystream-calendar').show();
             } else {
+                $('#activitystream-calendar').show();            	
                 this._renderCalendar();
             }
             $('#activitystream-timeline').hide();
@@ -480,7 +482,7 @@
         if(model.get("target_name") || self._parseTags(model.get("activity_data").value)) {
             var event = {};
             event.startDate = parseDate(model.get("date_created"));
-            event.text = model.get("activity_type") + " by " + model.get("created_by_name");
+            event.text = '<a href="" data-id="'+model.get('id')+'" class="showAnchor">'+model.get("activity_type") + " by " + model.get("created_by_name")+'</a>';
             event.headline = model.get("target_name") || self._parseTags(model.get("activity_data").value);
             event.tag = model.get("activity_type");
             event.asset = {
@@ -688,7 +690,7 @@
         var objarrays = _.map(this.collection.models, this._addTimelineEvent);
         timeline.timeline.date = _.flatten(objarrays);
 
-        _.defer(function() {
+        //_.defer(function() {
             if(timeline.timeline.date.length) {
                 createStoryJS({
                     type:       'timeline',
@@ -701,7 +703,7 @@
                 });
             }
             this.timelineRendered = true;
-        });
+        //});
     },
 
     _renderCalendar: function() {
