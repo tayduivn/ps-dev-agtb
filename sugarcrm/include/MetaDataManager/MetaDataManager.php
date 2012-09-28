@@ -210,9 +210,7 @@ class MetaDataManager {
         $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
 
         $data['favoritesEnabled'] = $favoritesEnabled;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data["_hash"] = $md5;
+        $data["_hash"] = md5(serialize($data));
 
         return $data;
     }
@@ -246,9 +244,7 @@ class MetaDataManager {
             unset($data[$relKey]['relationships']);
         }
 
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data["_hash"] = $md5;
+        $data["_hash"] = md5(serialize($data));
 
         return $data;
     }
@@ -293,10 +289,15 @@ class MetaDataManager {
         $aclAction = new ACLAction();
         $aclField = new ACLField();
         $acls = $aclAction->getUserActions($userId);
+        $userObject = BeanFactory::getBean('Users',$userId);
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( isset($acls[$module]['module']) ) {
+        if ( is_admin($userObject) ) {
+            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+                $outputAcl[$action] = 'yes';
+            }
+        } else if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
 
             if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
