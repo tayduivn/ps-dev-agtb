@@ -25,6 +25,7 @@
         <td>{{formatCurrency likely_adjusted "-99"}}</td>
         <td>{{formatCurrency best_case "-99"}}</td>
         <td>{{formatCurrency best_adjusted "-99"}}</td>
+        <td>&nbsp;</td>
     </tr>
 </script>
 {/literal}
