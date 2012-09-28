@@ -76,6 +76,7 @@ class ModuleScanner{
 	private $blackList = array(
     'popen',
     'proc_open',
+	'error_log',
     'escapeshellarg',
     'escapeshellcmd',
     'proc_close',
