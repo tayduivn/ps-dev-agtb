@@ -60,30 +60,40 @@ class RestThemeTest extends RestTestBase
         $args1 = array(
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
-            'primary' => '#75c1d1',
-            'secondary' => '#192c47',
-            'primaryBtn' => '#f5b30a',
+            'BorderColor' => '#75c1d1',
+            'NavigationBar' => '#192c47',
+            'PrimaryButton' => '#f5b30a',
+            'preview' => 1,
         );
 
         $args2 = array(
             'platform' => $this->platformTest,
             'themeName' => $this->themeTest,
-            'primary' => '#aaaaaa',
-            'secondary' => '#aaaaaa',
-            'primaryBtn' => '#aaaaaa',
+            'BorderColor' => '#aaaaaa',
+            'NavigationBar' => '#aaaaaa',
+            'PrimaryButtor' => '#aaaaaa',
+            'preview' => 1,
         );
 
+        $getString = '?';
+        foreach ( $args1 as $k => $v ) {
+            $getString .= $k.'='.rawurlencode($v).'&';
+        }
         // TEST= GET bootstrap.css with a set of arguments
-        $restReply1 = $this->_restCall('css', json_encode($args1));
+        $restReply1 = $this->_restCall('css'.$getString);
 
         // TEST if the the response is not empty
-        $this->assertNotEmpty($restReply1);
+        $this->assertNotEmpty($restReply1['replyRaw']);
 
+        $getString = '?';
+        foreach ( $args2 as $k => $v ) {
+            $getString .= $k.'='.rawurlencode($v).'&';
+        }
         // TEST= GET bootstrap.css with another set of arguments
-        $restReply2 = $this->_restCall('css', json_encode($args2));
-
+        $restReply2 = $this->_restCall('css'.$getString);
+        
         // TEST the two generated css are different
-        $this->assertNotEquals($restReply1['reply'], $restReply2['reply']);
+        $this->assertNotEquals($restReply1['replyRaw'], $restReply2['replyRaw']);
     }
 
     /**
