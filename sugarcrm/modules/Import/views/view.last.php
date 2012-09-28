@@ -74,19 +74,14 @@ class ImportViewLast extends ImportView
         // Read the data if we successfully opened file 
         if ($fp !== false)
         {
-            // Load row (the status file should have one line)
-            $row = fgetcsv($fp, 8192);
-            // Use !empty to check if it returned NULL (bad $fp) or FALSE (any error)
-            while (!empty($row))
+            // Read rows 1 by 1 and add the info
+            while ($row = fgetcsv($fp, 8192))
             {
                 $count         += (int) $row[0];
                 $errorCount    += (int) $row[1];
                 $dupeCount     += (int) $row[2];
                 $createdCount  += (int) $row[3];
                 $updatedCount  += (int) $row[4];
-                
-                // Load next row (if any)
-                $row = fgetcsv($fp, 8192);
             }
             fclose($fp);
         }
