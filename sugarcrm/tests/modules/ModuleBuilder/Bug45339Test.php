@@ -58,7 +58,6 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->markTestIncomplete("Disabling this test because RecursiveDirectoryIterator::SKIP_DOTS is only available in PHP 5.3 and above.  Will work with dev to find a work-around.");
         SugarTestHelper::setUp('current_user', array(true, 1));
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
