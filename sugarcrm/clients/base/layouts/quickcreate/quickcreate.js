@@ -251,14 +251,14 @@
      * Retrieves the values for the user key fields and returns as an assoicative array
      * to either true or false.
      * @param {array} keys
-     * @return {array} Array of key/value pairs for fields and values.
+     * @return {object} object of key/value pairs for fields and values.
      */
     getFieldValuesForUserKeys: function(keys) {
-        var data = [],
+        var data = {},
             self = this;
 
         _.each(keys, function (key) {
-            data.push(self.model.get(self.formatFieldName(key)));
+            data[key] = ((!_.isEmpty(self.model.get(key))) ? self.model.get(key) : '');
         });
 
         return data;
