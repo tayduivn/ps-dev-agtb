@@ -65,7 +65,7 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         
         $configurator = new Configurator();
         $this->ss->assign('config', $configurator->config);
-        
+
         $enabled_modules = array();
         $disabled_modules = array();
         
@@ -79,7 +79,10 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         
         foreach ( $wireless_module_registry as $e => $def )
         {
-            $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
+            if (in_array($e, $GLOBALS['moduleList']))
+            {
+                $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
+            }
         }
         require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
         $browser = new StudioBrowser();
@@ -87,8 +90,10 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         
         foreach ( $browser->modules as $e => $def)
         {
-            if ( empty ( $enabled_modules [ $e ]))
+            if ( empty ( $enabled_modules [ $e ]) && in_array($e, $GLOBALS['moduleList']))
+            {
                 $disabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
+            }
         }
         
         natcasesort($enabled_modules);
