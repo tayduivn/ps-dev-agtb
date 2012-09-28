@@ -111,7 +111,7 @@ class SugarTestTimePeriodUtilities
         return $timeperiod;
     }
 
-    private static function getRandDate() {
+    protected static function getRandDate() {
         global $timedate;
         $timedate = TimeDate::getInstance();
         $rand_date = $timedate->getNow();
