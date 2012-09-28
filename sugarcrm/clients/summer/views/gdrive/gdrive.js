@@ -50,13 +50,16 @@
         self.lazyGetData(term);
     },
 
-
     getData: function(term) {
         if(this.term && term && this.term === term) return;
         this.term = term;
-        var url = '../rest/v10/google/docs';
+        var email = this.model.get("email1") || this.model.get('email2');
+        var url = '../rest/v10/google/docs?limit=5';
         if(this.term){
-            url += '?q=' + term + '&limit=20';
+            url += '&q=' + term;
+        }
+        if(email) {
+            url += '&email=' + email;
         }
         var self = this;
         app.api.call('GET', url, null, {

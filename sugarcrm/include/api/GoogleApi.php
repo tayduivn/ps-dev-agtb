@@ -122,15 +122,24 @@ class GoogleAPI extends SugarApi
     public function docs($api, $args) {
         $q = (!empty($args['q']))?$args['q']:'';
         $limit = (!empty($args['limit']))?$args['limit']:5;
-        return array("docs" => $this->findDocuments($q, $limit));
+        $email = (!empty($args['email']))?$args['email']:'';
+        return array("docs" => $this->findDocuments($email, $q, $limit));
     }
 
-    protected function findDocuments($q = '', $limit = 5) {
+    protected function findDocuments($email = '', $q = '', $limit = 5) {
         $data = array();
-        $url = "https://www.googleapis.com/drive/v2/files?maxResults={$limit}&fields=items(id%2CembedLink%2CalternateLink%2Ctitle)";
+        $url = "https://www.googleapis.com/drive/v2/files?maxResults={$limit}&fields=items(id%2CembedLink%2CalternateLink%2Ctitle)&q=";
+        $query = '';
         if(!empty($q)) {
-            $url .= '&q=fullText+contains+'.urlencode('"'.$q.'"');
+            $query .= 'fullText contains "'.$q.'"';
+            if(!empty($email)) {
+                $query .= ' AND ';
+            }
         }
+        if(!empty($email)) {
+            $query .= '("'.$email.'" in writers OR "'.$email.'" in owners OR "'.$email.'" in readers)';
+        }
+        $url .= urlencode($query);
         $res = $this->box->oauthGet($url);
         $records = json_decode($res, TRUE);
         if(!empty($records['items'])) {
