@@ -5602,13 +5602,13 @@ input[type=radio] { display:inline-block; }
   -moz-transition:all .2s linear;
   transition:all .2s linear;
 }
-.side > div, .side { width:inherit; }
+.side { width:inherit; }
 .container-fluid.contentflex {
   margin:0;
   padding:0;
 }
 .acomment .avatar { margin-right:10px; }
-.side > .side-pane.active {
+.side > .side-pane {
   top:48px;
   right:0;
   height:100%;
@@ -5620,7 +5620,7 @@ input[type=radio] { display:inline-block; }
   border-left:1px solid #cdcccb;
   display:block;
 }
-.side > .side-pane.active.hide { display:none; }
+.side > .side-pane.hide { display:none; }
 .side > .side-pane .preview-pane { display:none; }
 .side > .side-pane .block {
   width:90%;
