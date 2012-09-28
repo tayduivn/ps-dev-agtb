@@ -8,10 +8,6 @@
         app.view.Layout.prototype.initialize.call(this, opts);
         this.processDef();
 
-        main = this;
-
-        console.log("Making a new default layout");
-
         this.context.on("togglePreview", function(model) { this.showPreview(); }, this);
     },
 

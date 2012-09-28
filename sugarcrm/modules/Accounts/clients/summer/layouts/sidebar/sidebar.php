@@ -1,21 +1,10 @@
 <?php
-require_once('clients/summer/SideBarLayout.php');
-$layout = new SideBarLayout();
-$layout->push('main', array('view'=>'crunchbase'));
-$layout->push('main', array('view'=>'news'));
-$layout->push('main', array('view'=>'twitter'));
-$layout->push('main', array('view'=>'todo-list'));
-$layout->push('main', array('view'=>'maps'));
-
-
-//$layout->push('main', array('view'=>'facebook'));
-//$layout->push('main', array('view'=>'linkedin'));
-//$layout->push('main', array('view'=>'trends'));
-//$layout->push('main', array('view'=>'yelp'));
-
-
-
-
-
+require_once('clients/summer/GenericLayout.php');
+$layout = new GenericLayout();
+$layout->push(array('view'=>'crunchbase'));
+$layout->push(array('view'=>'news'));
+$layout->push(array('view'=>'twitter'));
+$layout->push(array('view'=>'todo-list'));
+$layout->push(array('view'=>'maps'));
 
 $viewdefs['Accounts']['summer']['layout']['sidebar'] = $layout->getLayout();

@@ -1,108 +1,45 @@
 <?php
 
+require_once('clients/summer/GenericLayout.php');
+
 class SideBarLayout {
 
-    protected $containers = array('top' => array(), 'bottom' => array(), 'main' => array(), 'side' => array(), 'preview' => array());
-    protected $spans = array('main' => 8, 'side' => 4);
-    protected $layout = array(
-        'type' => 'simple',
-        'components' => array(),
-    );
+    protected $mainPane;
+    protected $sidePane;
+    protected $previewPane;
+    protected $containers = array();
+    protected $layout;
+    protected $baseLayout;
 
     public function __construct() {
+        $this->layout = new GenericLayout("sidebar", "default");
+        $this->baseLayout = new GenericLayout("base");
+
+        $this->mainPane = $this->containers['main'] = new GenericLayout("main-pane");
+        $this->sidePane = $this->containers['side'] = new GenericLayout("side-pane");
+        $this->previewPane = $this->containers['preview'] = new GenericLayout("preview-pane");
+
+        $this->mainPane->set("span", 8);
+        $this->sidePane->set("span", 4);
     }
 
-    public function push($section, $component, $index = -1) {
-        $this->containers[$section] = $this->insert($this->containers[$section], $component, $index);
+    public function push($section, $component) {
+        if (isset($this->containers[$section])) {
+            $this->containers[$section]->push($component);
+        }
     }
 
     public function setSectionSpan($section, $span) {
-        $this->spans[$section] = $span;
-    }
-
-    protected function getMainLayout() {
-        $components = array();
-
-        if (empty($this->containers['main']) && empty($this->containers['side'])) {
-            return array();
-        }
-
-        if (!empty($this->containers['main'])) {
-            $components[] = array(
-                'layout' =>
-                array(
-                    'type' => 'simple',
-                    'span' => $this->spans['main'],
-                    'components' => $this->containers['main'],
-                    'name' => "main-pane",
-                ),
-            );
-        }
-
-        if (!empty($this->containers['side'])) {
-            $components[] = array(
-                'layout' =>
-                array(
-                    'type' => 'simple',
-                    'span' => $this->spans['side'],
-//                    'css_class' => 'sidebar-pane active',
-                    'components' => $this->containers['side'],
-                    'name' => "side-pane",
-                )
-            );
-        }
-
-        $this->push("preview", array("view" => "preview"));
-        $components[] = array(
-            'layout' => array(
-                'type' => 'simple',
-                'span' => $this->spans['side'],
-                'components' => $this->containers['preview'],
-                'name' => 'preview-pane',
-            )
-        );
-
-        return array(
-            'layout' =>
-            array(
-                'type' => 'default',
-                'components' => $components,
-            ),
-        );
+        $this->containers[$section]->set("span", $span);
     }
 
     public function getLayout() {
-        // No sidebar in layout, set to full width
-        if (empty($this->containers['side'])) {
-            $this->spans['main'] = 12;
-        }
+        $this->push("preview", array("view" => "preview"));
+        $this->layout->push(array("layout" => $this->mainPane->getLayout()));
+        $this->layout->push(array("layout" => $this->sidePane->getLayout()));
+        $this->layout->push(array("layout" => $this->previewPane->getLayout()));
 
-        // Only main
-        if (empty($this->containers['side']) && empty($this->containers['top']) && empty($this->containers['bottom'])) {
-            $this->layout = array(
-                'type' => 'simple',
-                'span' => $this->spans['main'],
-                'components' => $this->containers['main'],
-            );
-        } else {
-            $this->layout['components'] = array_merge($this->containers['top'], array($this->getMainLayout()), $this->containers['bottom']);
-        }
-        return $this->layout;
-    }
-
-    protected function insert($components, $component, $index = -1) {
-        if ($index == -1) {
-            $components[] = $component;
-            return $components;
-        } else {
-            if (isset($components[$index])) {
-                $start = array_slice($components, 0, $index);
-                $end = array_slice($components, $index);
-                return array_merge($start, array($component), $end);
-            }
-            $components[$index] = $component;
-
-            return $components;
-        }
+        $this->baseLayout->push($this->layout->getLayout(true));
+        return $this->baseLayout->getLayout();
     }
 }

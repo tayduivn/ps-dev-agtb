@@ -1,13 +1,11 @@
 <?php
 
-require_once('clients/summer/SideBarLayout.php');
-$layout = new SideBarLayout();
-//$layout->push('top', array('view'=>'subnav'));`
-
-$layout->push('main',array('view'=>'treemap'));
-$layout->push('main',array('view'=>'funnel'));
-$layout->push('main',array('view'=>'untouched'));
-$layout->push('main',array('view'=>'leaderboard'));
-$layout->push('main',array('view'=>'activitystream'));
+require_once('clients/summer/GenericLayout.php');
+$layout = new GenericLayout();
+$layout->push(array('view'=>'treemap'));
+$layout->push(array('view'=>'funnel'));
+$layout->push(array('view'=>'untouched'));
+$layout->push(array('view'=>'leaderboard'));
+$layout->push(array('view'=>'activitystream'));
 
 $viewdefs['Opportunities']['summer']['layout']['list-sidebar'] = $layout->getLayout();

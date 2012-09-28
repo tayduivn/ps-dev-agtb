@@ -1,27 +1,26 @@
 <?php
+
 class GenericLayout {
     public $layout = array("components" => array());
 
-    public function __construct($type = "simple", $name = null) {
+    public function __construct($name = null, $type = "simple") {
         $this->layout["type"] = $type;
         if ($name) {
             $this->layout["name"] = $name;
         }
+
+        $this->set("span", 12);
     }
 
     public function set($property, $value) {
         $this->layout[$property] = $value;
     }
 
-    public function insertComponents($components) {
-        $this->layout["components"][] = $components;
-    }
-
     public function push($component) {
-        $this->insertComponents($component);
+            $this->layout["components"][] = $component;
     }
 
-    public function getLayout() {
-        return $this->layout;
+    public function getLayout($wrap = false) {
+        return ($wrap) ? array("layout" => $this->layout) : $this->layout;
     }
 }

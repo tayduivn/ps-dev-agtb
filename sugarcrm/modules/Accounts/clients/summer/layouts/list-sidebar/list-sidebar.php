@@ -1,5 +1,7 @@
 <?php
-require_once('clients/summer/GenericLayout.php');
+
+require('clients/summer/GenericLayout.php');
+
 $layout = new GenericLayout();
 $layout->push(array('view'=>'countrychart', 'context'=>array('source'=>'SalesByCountry')));
 $layout->push(array('view'=>'activitystream'));
