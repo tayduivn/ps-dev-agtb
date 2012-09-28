@@ -27,6 +27,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 require_once('modules/TimePeriods/iTimePeriod.php');
+/**
+ * Implements the annual representation of a time period
+ * @api
+ */
 class MonthTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**

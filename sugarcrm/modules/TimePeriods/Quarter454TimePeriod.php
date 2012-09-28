@@ -28,6 +28,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/TimePeriods/iTimePeriod.php');
+/**
+ * Implements the fiscal quarter representation of a time period where the monthly
+ * leaves are split by the longest month occurring in the middle month
+ * @api
+ */
 class Quarter454TimePeriod extends TimePeriod implements iTimePeriod {
     /**
      * constructor override
@@ -151,19 +156,14 @@ class Quarter454TimePeriod extends TimePeriod implements iTimePeriod {
         $leafPeriod->is_leaf = 1;
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
-        $leafPeriod->save();
 
         //create second month leaf it gets the extra week
         $leafPeriod = $leafPeriod->createNextTimePeriod(5);
         $this->related_timeperiods->add($leafPeriod->id);
-        $leafPeriod->save();
 
         //create third month leaf
         $leafPeriod = $leafPeriod->createNextTimePeriod(4);
         $this->related_timeperiods->add($leafPeriod->id);
-        $leafPeriod->save();
-
-        $this->save();
 
     }
 }

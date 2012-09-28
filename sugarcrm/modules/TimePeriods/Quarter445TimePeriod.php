@@ -28,6 +28,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/TimePeriods/iTimePeriod.php');
+/**
+ * Implements the fiscal quarter representation of a time period where the monthly
+ * leaves are split by the longest month occurring at the end of the quarter
+ * @api
+ */
 class Quarter445TimePeriod extends TimePeriod implements iTimePeriod {
 
     /**

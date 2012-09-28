@@ -28,6 +28,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/TimePeriods/iTimePeriod.php');
+/**
+ * Implements the annual representation of a time period
+ * @api
+ */
 class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
@@ -188,7 +192,6 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         $leafPeriod->is_leaf = 1;
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
-        $leafPeriod->save();
 
         //loop the count to create the next n leaves to fill out the relationship
         for($i = 1; $i < $n; $i++) {
@@ -199,10 +202,7 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
                 $leafPeriod = $leafPeriod->createNextTimePeriod();
             }
             $this->related_timeperiods->add($leafPeriod->id);
-            $leafPeriod->save();
         }
-
-        $this->save();
 
     }
 }

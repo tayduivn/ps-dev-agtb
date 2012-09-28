@@ -28,6 +28,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/TimePeriods/iTimePeriod.php');
+/**
+ * Implements the calendar quarter representation of a time period where the monthly
+ * leaves are split by the calendar month
+ * @api
+ */
 class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
 
     /**
@@ -160,16 +165,11 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
         $leafPeriod->is_leaf = 1;
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
-        $leafPeriod->save();
 
         //loop the count to create the next n leaves to fill out the relationship
         for($i = 1; $i < $n; $i++) {
             $leafPeriod = $leafPeriod->createNextTimePeriod();
             $this->related_timeperiods->add($leafPeriod->id);
-            $leafPeriod->save();
         }
-
-        $this->save();
-
     }
 }

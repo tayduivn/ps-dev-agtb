@@ -26,31 +26,25 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * interface definition for granular sales time periods
+ */
+interface iTimePeriod
+{
+    public function getLengthInDays();
 
-/*********************************************************************************
+    public function getNextTimePeriod();
 
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
+    public function getPreviousTimePeriod();
 
-    interface iTimePeriod
-    {
-        public function getLengthInDays();
+    public function setStartDate($start_date=null);
 
-        public function getNextTimePeriod();
+    public function createNextTimePeriod();
 
-        public function getPreviousTimePeriod();
+    public function hasLeaves();
 
-        public function setStartDate($start_date=null);
+    public function getLeaves();
 
-        public function createNextTimePeriod();
-
-        public function hasLeaves();
-
-        public function getLeaves();
-
-        public function buildLeaves($timePeriodType);
-    }
+    public function buildLeaves($timePeriodType);
+}
 ?>

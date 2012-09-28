@@ -29,7 +29,7 @@
 
 require_once('modules/TimePeriods/TimePeriod.php');
 
-class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
+class Quarter454TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
     protected static $tp;
     protected static $leaves;
@@ -65,8 +65,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function testCreateNextTimePeriod()
+    public function testCreateNextTimePeriod()
     {
         global $app_strings;
 
@@ -94,8 +95,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function testGetNextPeriod()
+    public function testGetNextPeriod()
     {
 
         global $app_strings;
@@ -120,8 +122,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function testMonthLeavesCreated()
+    public function testMonthLeavesCreated()
     {
         global $app_strings;
 
@@ -135,8 +138,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function test1stMonthLeafBounds()
+    public function test1stMonthLeafBounds()
     {
         global $app_strings;
 
@@ -156,8 +160,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function test2ndMonthCalendarLeafBounds()
+    public function test2ndMonthCalendarLeafBounds()
     {
         global $app_strings;
 
@@ -178,8 +183,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function test3rdMonthCalendarLeafBounds()
+    public function test3rdMonthCalendarLeafBounds()
     {
         global $app_strings;
 
@@ -199,8 +205,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     }
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function testBuildLeavesAlreadyExistException()
+    public function testBuildLeavesAlreadyExistException()
     {
         global $app_strings;
         $exceptionThrown = false;
@@ -216,8 +223,9 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group forecasts
+     * @group timeperiods
      */
-    function testBuildLeavesOnLeafException()
+    public function testBuildLeavesOnLeafException()
     {
         global $app_strings;
         $exceptionThrown = false;
