@@ -87,11 +87,13 @@ class GoogleAPI extends SugarApi
                 $email = '';
                 $fname = $entry['gd$name']['gd$givenName']['$t'];
                 $lname = $entry['gd$name']['gd$familyName']['$t'];
-                foreach ($entry['gd$email'] as $e) {
+                if($entry['gd$email']) {
+                    foreach ($entry['gd$email'] as $e) {
 
-                    if ($e['primary']) {
-                        $email = $e['address'];
-                        break;
+                        if ($e['primary']) {
+                            $email = $e['address'];
+                            break;
+                        }
                     }
                 }
                 if (!empty($excludeDomain) && substr_count($email, $excludeDomain) == 1) continue;
