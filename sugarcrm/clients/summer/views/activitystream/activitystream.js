@@ -699,9 +699,8 @@
                 source: timeline,
                 embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
             });
+            this.timelineRendered = true;            
         }
-        this.timelineRendered = true;
-
     },
 
     _renderCalendar: function() {
