@@ -42,7 +42,8 @@
         }
 
         this.collection = app.data.createBeanCollection("ActivityStream");
-        this.collection.fetch(this.opts);
+        // By default, show all posts.
+        this.showAllActivities();
 
         // Fetch taggable entities.
         var url = app.api.buildURL("CustomReport/EntityList");
@@ -57,8 +58,6 @@
             self.entityList = o;
         }});
 
-        // By default, show all posts.
-        this.opts.params.filter = 'all';
 
         this.user_id = app.user.get('id');
         this.full_name = app.user.get('full_name');
@@ -231,20 +230,20 @@
         }});
     },
 
-    showAllActivities: function(event) {
+    showAllActivities: function() {
         this.opts.params.filter = 'all';
         this.opts.params.offset = 0;
         this.opts.params.limit = 20;
         this.collection.fetch(this.opts);
     },
 
-    showMyActivities: function(event) {
+    showMyActivities: function() {
         this.opts.params.filter = 'myactivities';
         this.opts.params.offset = 0;
         this.collection.fetch(this.opts);
     },
 
-    showFavoritesActivities: function(event) {
+    showFavoritesActivities: function() {
         this.opts.params.filter = 'favorites';
         this.opts.params.offset = 0;
         this.collection.fetch(this.opts);
