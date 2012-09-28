@@ -17,34 +17,6 @@
     isEditableWorksheet:false,
     _collection:{},
 
-
-    /**
-     * This function handles updating the totals calculation and calling the render function.  It takes the model entry
-     * that was updated by the toggle event and calls the Backbone save function on the model to invoke the REST APIs
-     * to handle persisting the changes
-     *
-     * @param model Backbone model entry that was affected by the toggle event
-     */
-    toggleIncludeInForecast:function(model)
-    {
-    	var self = this;
-        
-        var values = {};
-        values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
-		values["current_user"] = app.user.get('id');
-		values["isDirty"] = true;
-		
-		//If there is an id, add it to the URL
-        if(model.isNew())
-        {
-        	model.url = app.api.buildURL('ForecastWorksheets', 'create');
-        } else {
-        	model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":model.get('id')});
-        }
-        console.log("ToggleFcn");
-        model.set(values);
-    },
-
     /**
      * Initialize the View
      *
@@ -52,9 +24,9 @@
      * @param {Object} options
      */
     initialize:function (options) {
-
+    	
         var self = this;
-
+        
         this.viewModule = app.viewModule;
 
         //set expandable behavior to false by default
@@ -117,13 +89,18 @@
     _setUpCommitStage: function (field) {
     	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
     	var self = this;
-    	
-    	field.bindDomChange = function(){console.log("domChange");};  
-    	field.bindDataChange = function(){console.log("dataChange");};
     	    	
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
     		field.type = "bool";
+    		field.format = function(value){
+    			value = (value=="include") ? true : false;
+    	        return value
+    		};
+    		field.unformat = function(value){
+    			value = this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";
+    	        return value
+    		};
     	}
     	else{
     		field.type = "enum";
@@ -142,22 +119,16 @@
      * @protected
      */
     _renderField: function(field) {
-
         if(field.name == "commit_stage")
         {
             //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.isEditableWorksheet)
             {
                field = this._setUpCommitStage(field);
             }
         }
-
-        /*
-        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            field = this._setUpCommitStage(field);
-        }
-        */
+        
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -252,7 +223,7 @@
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
                 //field.enabled = (app.config.show_buckets == 1);
-                field.view = self.isEditableWorksheet ? 'edit' : 'default';
+                field.view = self.isEditableWorksheet ? self.name : 'default';
             }
         });
 

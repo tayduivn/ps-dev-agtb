@@ -64,10 +64,10 @@
     	if(field.name == "expected_commit_stage")
         {    		
             //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.editableWorksheet)
-            {
-               field = this._setForecastColumn(field);
+            {               
+               field = this._setUpCommitStage(field);
             }
         }
     	
@@ -88,7 +88,7 @@
         this._collection = this.context.forecasts.forecastschedule;
 
         if (this._collection) {
-            this._collection.on("change", function() {
+            /*this._collection.on("change", function() {
                 _.each(this._collection.models, function(model, index) {
 
                     if(model.hasChanged("expected_commit_stage") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
@@ -97,15 +97,26 @@
                     }
 
                 }, this);
-            }, this);
+            }, this);*/
         }
     },
+    
+    _setForecastColumn: function(fields) {
+        var self = this;
 
-    _setForecastColumn: function(field) {
+        _.each(fields, function(field) {
+            if (field.name == "expected_commit_stage") {                
+                field.viewName = self.editableWorksheet ? self.name : 'default';               
+            }
+        });
+
+    },
+
+    _setUpCommitStage: function(field) {
     	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
     	var self = this;
     	
-    	field.bindDomChange = function(){};
+    	//field.bindDomChange = function(){};
     	
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
@@ -118,16 +129,17 @@
     	
         return field;
     },
-
+    
     /**
      * Renders view
      *
      * @protected
      */
-    _renderHtml : function(ctx, options) {
+    _render: function() {
         this.editableWorksheet = this.isMyWorksheet();
-        //this._setForecastColumn(this.meta.panels[0].fields);
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
+        this._setForecastColumn(this.meta.panels[0].fields);
+        app.view.View.prototype._render.call(this);
+        return this;
     },
 
     /**
