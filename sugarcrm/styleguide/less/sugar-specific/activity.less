@@ -1,9 +1,29 @@
 /* activity and twitter
 -----------------*/
+#moduleActivity #activitystream-timeline {width: 96% !important; margin-left: 2%;}
+
 div.sayit.activitystream-comment-box {
   margin: 10px;
   padding: 5px 8px;
   width: 79%;
+  .activitystream-pending-attachment {
+  position: relative;
+  width: 150px;
+  border: 4px solid @grayLighter;
+  background: @grayLighter;
+  float: left;
+  height: 150px;
+  font-size: 11px !important;
+  overflow: hidden;
+  margin: 5px 5px 5px 0;
+  color: #767676;
+  .close {
+    font-size: 16px;
+    line-height: 14px;  
+    padding: 0 2px;
+    margin-left: 5px;
+    }
+  }
 }
 
 .commented .control-group {margin-bottom: 0;}
