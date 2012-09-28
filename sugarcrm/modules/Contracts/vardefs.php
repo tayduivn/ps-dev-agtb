@@ -121,7 +121,7 @@ $dictionary['Contract'] = array(
 
 		'account_id' => array (
 			'name' => 'account_id',
-			'vname' => 'LBL_ACCOUNT_NAME',
+			'vname' => 'LBL_ACCOUNT_ID',
 			'type' => 'id',
 			'audited' => true,
 			'reportable' => false,
@@ -309,6 +309,18 @@ $dictionary['Contract'] = array(
 			'vname' => 'LBL_NOTES',
 		),
 	),
+    'indices' => array(
+        array(
+            'name' => 'idx_contract_id_del',
+            'type' => 'index',
+            'fields' => array('id', 'deleted'),
+        ),
+        array(
+            'name' => 'idx_contract_name_del',
+            'type' => 'index',
+            'fields' => array('name', 'deleted'),
+        ),
+    ),
 	'relationships' => array(
 		'contracts_contract_types' => array(
 			'lhs_module' => 'Contracts',
