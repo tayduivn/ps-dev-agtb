@@ -9,7 +9,23 @@ article {
   border-bottom: 1px solid @grayLighter;
 }
 .side article {
+  padding: 0;
+}
+.side article a {
+  padding: 0;
+  display: block;
+}
+.side .block.padded ul {
+  padding: 0;
+  margin: -10px 0 0;
+  list-style: none;
+  li {
   padding: 10px;
+  border-bottom: 1px solid @grayLighter;
+  strong {
+    margin-left: 5px;
+    }
+  }
 }
 
 article .avatar {
