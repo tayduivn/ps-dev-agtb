@@ -24,13 +24,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
- * BaseRateSchedulerJob.php
+ * CurrencyRateSchedulerJob.php
  *
- * This class implements RunnableSchedulerJob and provides the support for modifying the base_column value for tables
- * when a currency rate has been updated.
+ * This class implements RunnableSchedulerJob and provides the support for
+ * updating currency rates per module.
  *
  */
-class BaseRateSchedulerJob implements RunnableSchedulerJob {
+class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
 
     protected $job;
 
@@ -52,6 +52,29 @@ class BaseRateSchedulerJob implements RunnableSchedulerJob {
      */
     public function run($data)
     {
+        // Searches across modules for rate update scheduler jobs and executes them.
+        // Each module that has currency rates in its model(s) *must* have a scheduler
+        // job defined in order to update its rates when a currency rate is updated.
+        $globPaths = array(
+            array('custom/modules/*/jobs/CustomRateUpdateSchedulerJob.php'),
+            array('modules/*/jobs/RateUpdateSchedulerJob.php'),
+        );
+
+        foreach ($globPaths as $entry)
+        {
+            $jobFiles = glob($entry, GLOB_NOSORT);
+
+            if(!empty($jobFiles))
+            {
+                foreach($jobFiles as $jobFile)
+                {
+                    $jobClass = basename($jobFile,'.php');
+                    require_once($jobFile);
+
+                }
+            }
+        }
+        /*
         $db = DBManagerFactory::getInstance();
 
         $this->job->runnable_ran = true;
@@ -74,6 +97,7 @@ class BaseRateSchedulerJob implements RunnableSchedulerJob {
                 }
             }
         }
+        */
 
         /*
         //This is probably more optimal, but not as generic
@@ -89,7 +113,7 @@ class BaseRateSchedulerJob implements RunnableSchedulerJob {
         }
         */
 
-        $db->commit();
+        //$db->commit();
     }
 
 }

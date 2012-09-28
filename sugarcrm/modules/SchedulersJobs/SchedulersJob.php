@@ -516,6 +516,9 @@ class SchedulersJob extends Basic
 		}
         else if ($exJob[0] == 'class')
         {
+            if(!class_exists($exJob[1])) {
+                // glob scan custom/modules/jobs/*.php, modules/jobs/*.php
+            }
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
             {

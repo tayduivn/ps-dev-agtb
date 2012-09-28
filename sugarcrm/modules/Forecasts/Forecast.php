@@ -29,8 +29,6 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarCurrency.php');
-
 // User is used to store Forecast information.
 class Forecast extends SugarBean
 {
@@ -281,7 +279,6 @@ class Forecast extends SugarBean
      */
     function save()
     {
-        require_once 'include/SugarCurrency.php';
         if(empty($this->currency_id)) {
             // use user preferences for currency
             $currency = SugarCurrency::getUserLocaleCurrency();

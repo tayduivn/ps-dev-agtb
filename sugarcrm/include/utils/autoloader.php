@@ -26,7 +26,7 @@ class SugarAutoLoader{
 		'Sugar_Smarty'=>'include/Sugar_Smarty.php',
 		'Javascript'=>'include/javascript/javascript.php',
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
-        'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
+        'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php'
 	);
 
 	public static $noAutoLoad = array(
@@ -76,34 +76,87 @@ class SugarAutoLoader{
             require_once($visibility);
             return true;
         }
+        $filePath = self::getFilepathForIncludeClass($class);
+        if (!empty($filePath))
+        {
+            require_once($filePath);
+            return true;
+        }
+        $filePath = self::getFilepathForSchedulerJobClass($class);
+        if (!empty($filePath))
+        {
+            require_once($filePath);
+            return true;
+        }
 
   		return false;
 	}
 
-	/**
-	 * Get filename for visibility class
-	 * @param string $class
-	 */
-	protected static function getVisibilityStrategy($class)
-	{
-	    if(substr($class, 0, 8) == 'SugarACL') {
-	        // ACL class
-	        if(file_exists("custom/data/acl/$class.php")) {
-	            return "custom/data/acl/$class.php";
-	        }
-	        if(file_exists("data/acl/$class.php")) {
-	            return "data/acl/$class.php";
-	        }
-	        return false;
-	    }
-	    if(file_exists("custom/data/visibility/$class.php")) {
-	        return "custom/data/visibility/$class.php";
-	    }
-	    if(file_exists("data/visibility/$class.php")) {
-	        return "data/visibility/$class.php";
-	    }
-	    return false;
-	}
+    /**
+     * getFilepathForSchedulerJobClass
+     *
+     * This class finds the file path for a scheduler job class
+     *
+     * @internal         filename must contain "SchedulerJob"
+     *                   searches file paths in this order:
+     *                   custom/include/SchedulerJobs/[ClassName].php
+     *                   include/SchedulerJobs/[ClassName].php
+     * @access protected
+     * @param $className the class name to find
+     * @return string    path to file, or false if none found
+     */
+    protected static function getFilepathForSchedulerJobClass($className)
+    {
+        if(strpos($className,'SchedulerJob') === false) {
+            return false;
+        }
+        $filePath = "custom/include/SchedulerJobs/{$className}.php";
+        if(file_exists($filePath)) {
+            return $filePath;
+        }
+        $filePath = "include/SchedulerJobs/{$className}.php";
+        if(file_exists($filePath)) {
+            return $filePath;
+        }
+        return false;
+    }
+
+
+    /**
+     * getFilepathForIncludeClass
+     *
+     * find the file path for a class defined under include/ directory
+     *
+     * @internal         searches in this order:
+     *                   include/[ClassName]/[ClassName].php
+     *                   include/[ClassName].php
+     * @access protected
+     * @param $className the class name to find
+     * @return string    path to file, or false if none found
+     */
+    protected static function getFilepathForIncludeClass($className)
+    {
+        if(empty($className)) {
+            return false;
+        }
+        $filePath = "custom/include/{$className}/{$className}.php";
+        if(file_exists($filePath)) {
+            return $filePath;
+        }
+        $filePath = "custom/include/{$className}.php";
+        if(file_exists($filePath)) {
+            return $filePath;
+        }
+        $filePath = "include/{$className}/{$className}.php";
+        if(file_exists($filePath)) {
+            return $filePath;
+        }
+        $filePath = "include/{$className}.php";
+        if(file_exists($filePath)) {
+            return $filePath;
+        }
+        return false;
+    }
 
     protected static function getFilenameForViewClass($class)
     {
@@ -171,7 +224,32 @@ class SugarAutoLoader{
         return false;
     }
 
-	public static function loadAll(){
+    /**
+     * Get filename for visibility class
+     * @param string $class
+     */
+    protected static function getVisibilityStrategy($class)
+    {
+        if(substr($class, 0, 8) == 'SugarACL') {
+            // ACL class
+            if(file_exists("custom/data/acl/$class.php")) {
+                return "custom/data/acl/$class.php";
+            }
+            if(file_exists("data/acl/$class.php")) {
+                return "data/acl/$class.php";
+            }
+            return false;
+        }
+        if(file_exists("custom/data/visibility/$class.php")) {
+            return "custom/data/visibility/$class.php";
+        }
+        if(file_exists("data/visibility/$class.php")) {
+            return "data/visibility/$class.php";
+        }
+        return false;
+    }
+
+    public static function loadAll(){
 		foreach(SugarAutoLoader::$map as $class=>$file){
 			require_once($file);
 		}

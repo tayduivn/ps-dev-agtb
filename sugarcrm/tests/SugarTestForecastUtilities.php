@@ -338,7 +338,6 @@ class SugarTestForecastUtilities
              return number_format($amount, 6, '.', '');
          }
 
-         require_once('include/SugarCurrency.php');
          return SugarCurrency::formatAmount($amount,
                                             $user->getPreference('currency'),
                                             $user->getPreference('default_currency_significant_digits'),

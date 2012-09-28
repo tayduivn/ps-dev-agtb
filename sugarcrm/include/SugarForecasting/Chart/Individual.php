@@ -26,7 +26,6 @@
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-require_once('include/SugarCurrency.php');
 require_once('include/SugarForecasting/Chart/AbstractChart.php');
 require_once('include/SugarForecasting/Individual.php');
 class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractChart

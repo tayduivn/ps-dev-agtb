@@ -76,7 +76,6 @@ function perform_save(&$focus){
 
 	//Store the base currency value
 	if(isset($focus->amount) && !number_empty($focus->amount)){
-        require_once 'include/SugarCurrency.php';
         $currency = new Currency();
 		$currency->retrieve($focus->currency_id);
 		$focus->amount_usdollar = SugarCurrency::convertAmountToBase($focus->amount,$currency->id);

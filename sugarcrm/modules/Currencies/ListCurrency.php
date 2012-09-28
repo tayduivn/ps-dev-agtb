@@ -52,8 +52,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
             {
 
                 $currency = new Currency();
+                $isUpdate = false;
                 if(isset($_POST['record']) && !empty($_POST['record'])){
-
+                   $isUpdate = true;
                    $currency->retrieve($_POST['record']);
                 }
                 $currency->name = $_POST['name'];
@@ -66,11 +67,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 $this->focus = $currency;
 
                 //Check if the conversion rates changed and, if so, update the rates with a scheduler job
-                if($previousConversionRate != $currency->conversion_rate)
+                if($isUpdate && $previousConversionRate != $currency->conversion_rate)
                 {
+                    /*
                     $globPaths = array(
-                        array('modules/*/jobs/*BaseRateSchedulerJob.php'),
-                        array('custom/modules/*/jobs/Custom*BaseRateSchedulerJob.php'),
+                        array('modules/* /jobs/*BaseRateSchedulerJob.php'),
+                        array('custom/modules/* /jobs/Custom*BaseRateSchedulerJob.php'),
                     );
 
                     //Keep track of which modules have a custom or module specific implementation
@@ -96,16 +98,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                             }
                         }
                     }
-
-                    require_once(get_custom_file_if_exists('modules/Currencies/jobs/BaseRateSchedulerJob.php'));
-                    $schedulerJob = new BaseRateSchedulerJob();
+                    */
 
                     global $timedate;
                     $job = new SchedulersJob();
-                    $job->name = "BaseRateSchedulerJob: " . $timedate->getNow()->asDb();
+                    $job->name = "CurrencyRateSchedulerJob: " . $timedate->getNow()->asDb();
                     $job->status = SchedulersJob::JOB_STATUS_QUEUED;
-                    $job->target = "class::BaseRateSchedulerJob";
-                    $job->data = json_encode($individualModules);
+                    $job->target = "class::CurrencyRateSchedulerJob";
                     $job->retry_count = 0;
                     $job->assigned_user_id = $current_user->id;
                     $job->save();

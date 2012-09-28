@@ -26,8 +26,6 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  * Description:
  ********************************************************************************/
 
-require_once('include/SugarCurrency.php');
-
 // Opportunity is used to store customer information.
 class Opportunity extends SugarBean
 {
@@ -423,7 +421,6 @@ class Opportunity extends SugarBean
 		// Bug 32581 - Make sure the currency_id is set to something
 		global $current_user, $app_list_strings;
 
-        require_once 'include/SugarCurrency.php';
         if(empty($this->currency_id)) {
             // use user preferences for currency
             $currency = SugarCurrency::getUserLocaleCurrency();

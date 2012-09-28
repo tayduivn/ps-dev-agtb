@@ -298,8 +298,6 @@ $beanFiles['vCal']          = 'modules/vCals/vCal.php';
 
 $beanFiles['Version']           = 'modules/Versions/Version.php';
 
-
-
 $beanFiles['Role']          = 'modules/Roles/Role.php';
 
 //BEGIN SUGARCRM flav!=sales ONLY

@@ -68,7 +68,6 @@ class ForecastSchedule extends SugarBean {
 	}
 
 	function save($check_notify = false){
-        require_once 'include/SugarCurrency.php';
         if(empty($this->currency_id)) {
             // use user preferences for currency
             $currency = SugarCurrency::getUserLocaleCurrency();

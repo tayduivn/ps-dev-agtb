@@ -152,8 +152,13 @@ class Localization {
 	 */
 	function loadCurrencies() {
 		// doing it dirty here
-		$db = DBManagerFactory::getInstance();
+        global $db;
+		//$db = DBManagerFactory::getInstance();
 		global $sugar_config;
+
+        if(empty($db)) {
+            return array();
+        }
 
         $load = sugar_cache_retrieve('currency_list');
         if ( !is_array($load) ) {
@@ -440,7 +445,6 @@ class Localization {
 	}
 
 	function getCurrencySymbol($user=null) {
-        require_once('include/SugarCurrency.php');
         $currencyId = $this->getPrecedentPreference('currency', $user);
         $currencyId = $currencyId ? $currencyId : '-99';
 		$currency = SugarCurrency::getCurrencyByID($currencyId);
