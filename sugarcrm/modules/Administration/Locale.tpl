@@ -111,7 +111,6 @@
 
 
 
-<!--//BEGIN SUGARCRM flav!=dce ONLY -->
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>
 		<th align="left" scope="row" colspan="4"><h4>{$MOD.LBL_LOCALE_DEFAULT_CURRENCY}</h4></th>
@@ -176,7 +175,6 @@
 </table>
 
 
-<!--//END SUGARCRM flav!=dce ONLY -->
 {if !empty($collationOptions)}
 <table width="100%" border="0" cellspacing="1" cellpadding="0" class="edit view">
 	<tr>

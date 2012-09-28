@@ -29,21 +29,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  // $Id: JotPadDashlet.en_us.lang.php 51719 2009-10-22 17:18:00Z mitani $
 
-//BEGIN SUGARCRM flav=dce ONLY
 $defaultText = "";
-<<<EOQ
-<b>Welcome to Sugar Data Center!</b><br /><br />
-
-Click <b>My Account</b> to set your preferences.<br>
-Click the <b>Question Mark</b> icon to access the Help page for each module.<br><br>
-
-For assistance with getting started, click the <b>Training</b> link to find out about training offered through <b>Sugar University</b>.<br />
-EOQ
-;
-//END SUGARCRM flav=dce ONLY
-//BEGIN SUGARCRM flav!=dce ONLY
-$defaultText = "";
-//END SUGARCRM flav!=dce ONLY
 $dashletStrings['JotPadDashlet'] = array('LBL_TITLE'            => 'JotPad',
                                          'LBL_DESCRIPTION'      => 'A dashlet to keep your notes',
                                          'LBL_SAVING'           => 'Saving JotPad ...',

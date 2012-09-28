@@ -45,7 +45,7 @@ class UnifiedSearchApi extends SugarApi {
     }
 
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
-    protected $defaultModuleLimit = 5; // How many records should we show if they don't pass up a limit
+    protected $defaultModuleLimit = 20; // How many records should we show if they don't pass up a limit
 
     /**
      * This function pulls all of the search-related options out of the $args array and returns a fully-populated array with either the defaults or the provided settings
