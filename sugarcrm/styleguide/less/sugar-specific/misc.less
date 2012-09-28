@@ -272,8 +272,22 @@ form.well {
   display: block;
   margin-bottom: 9px;
 }
-
-
 .width-auto {
   width: auto;
+}
+
+
+.record {
+    overflow-x: auto;
+    margin: 10px 20px;
+    .icon-pencil {
+        position: absolute;
+        top: 20px;
+        left: 2px;
+        z-index: 0;
+    }
+    input, select, textarea {
+      position: relative;
+      z-index: 1;
+    }
 }
