@@ -16,7 +16,7 @@
     save: function() {
         var self = this;
         this.initiateSave(function() {
-            self.closeModal()
+            self.closeModal();
         });
     },
 
