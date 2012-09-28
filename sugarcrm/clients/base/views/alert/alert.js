@@ -10,7 +10,7 @@
      * @method
      */
     show: function (options) {
-        var level, title, msg, thisAlert, autoClose, alertClass, ctx, AlertView;
+        var level, title, msg, thisAlert, autoClose, alertClass, ctx, AlertView, autoCloseAfter;
         if (!options) {
             return false;
         }
@@ -19,6 +19,7 @@
         title = options.title ? options.title : null;
         msg = (_.isString(options.messages)) ? [options.messages] : options.messages;
         autoClose = options.autoClose ? options.autoClose : false;
+        autoCloseAfter = options.autoCloseAfter ? options.autoCloseAfter : 9000;
 
         // "process" is the loading indicator .. I didn't name it ;=)
         alertClass = (level === "process" || level === "success" || level === "warning" || level === "info" || level === "error") ? "alert-" + level : "";
@@ -59,7 +60,7 @@
             if (autoClose) {
                 setTimeout(function () {
                     $('.timeten').fadeOut().remove();
-                }, 9000);
+                }, autoCloseAfter);
             }
             return thisAlert;
 

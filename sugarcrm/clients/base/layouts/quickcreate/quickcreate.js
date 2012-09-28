@@ -43,6 +43,7 @@
         var self = this;
         self.initiateSave(function() {
             self.closeModal();
+            self.context.trigger('quickcreate:alert:show:recordcreated', true);
         });
     },
 
@@ -62,6 +63,7 @@
         this.initiateSave(function() {
             self.context.trigger('quickcreate:clear');
             self.resetDuplicateState();
+            self.context.trigger('quickcreate:alert:show:recordcreated');
         });
     },
 
@@ -73,6 +75,7 @@
         self.context.lastSaveAction = this.saveActions.SAVE_AND_VIEW;
         this.initiateSave(function() {
             self.closeModal();
+            self.context.trigger('quickcreate:alert:show:recordcreated', true);
             self.app.navigate(self.context, self.model, 'detail');
         });
     },
@@ -134,6 +137,7 @@
                 }
             },
             error = function() {
+                self.context.trigger('quickcreate:alert:show:servererror');
                 callback(true);
             };
 
@@ -149,10 +153,12 @@
      * @param callback
      */
     createRecordWaterfall: function(callback) {
-        var success = function() {
+        var self = this,
+            success = function() {
                 callback(false);
             },
             error = function() {
+                self.context.trigger('quickcreate:alert:show:servererror');
                 callback(true);
             };
 
@@ -188,7 +194,7 @@
         // self.showDuplicateAlertMessage();
         this.skipDupCheck(true);
         this.context.trigger('quickcreate:actions:setButtonAsIgnoreDuplicate');
-        this.context.trigger('quickcreate:alert:show',collection.models.length);
+        this.context.trigger('quickcreate:alert:show:dupfound',collection.models.length);
         this.context.trigger('quickcreate:highlightDuplicateFields', keys);
     },
 
@@ -280,6 +286,8 @@
      * Close the modal window
      */
     closeModal: function() {
-        this.context.parent.trigger('modal:close');
+        if (this.context.parent) {
+            this.context.parent.trigger('modal:close');
+        }
     }
 })
