@@ -22,11 +22,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/api/ModuleApi.php');
-//require_once('modules/Mailer/SimpleMailer.php');
 require_once('modules/Emails/MailRecord.php');
 
 
-class EmailsApi extends ModuleApi
+class MailApi extends ModuleApi
 {
     public static $fields = array (
         "email_config"      => null,
@@ -52,53 +51,54 @@ class EmailsApi extends ModuleApi
         $api = array(
 
             /***/
+
             'listMail'     => array(
                 'reqType'   => 'GET',
-                'path'      => array('Emails'),
+                'path'      => array('Mail'),
                 'pathVars'  => array(''),
                 'method'    => 'notSupported',
                 'shortHelp' => 'List Mail Items',
-                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#listMail',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#listMail',
             ),
 
 
             'retrieveMail' => array(
                 'reqType'   => 'GET',
-                'path'      => array('Emails', '?'),
+                'path'      => array('Mail', '?'),
                 'pathVars'  => array('', 'email_id'),
                 'method'    => 'notSupported',
                 'shortHelp' => 'Retrieve Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#retrieveMail',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#retrieveMail',
             ),
 
 
             'deleteMail'     => array(
                 'reqType'   => 'DELETE',
-                'path'      => array('Emails', '?'),
+                'path'      => array('Mail', '?'),
                 'pathVars'  => array('', 'email_id'),
                 'method'    => 'notSupported',
                 'shortHelp' => 'Delete Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#updateMail',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#deleteMail',
+            ),
+
+            'updateMail'     => array(
+                'reqType'   => 'PUT',
+                'path'      => array('Mail', '?'),
+                'pathVars'  => array('', 'email_id'),
+                'method'    => 'notSupported',   // 'updateMail',
+                'shortHelp' => 'Update Mail Item',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#updateMail',
             ),
 
             /***/
 
             'createMail'     => array(
                 'reqType'   => 'POST',
-                'path'      => array('Emails'),
+                'path'      => array('Mail'),
                 'pathVars'  => array(''),
                 'method'    => 'createMail',
                 'shortHelp' => 'Create Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#createMail',
-            ),
-
-            'updateMail'     => array(
-                'reqType'   => 'PUT',
-                'path'      => array('Emails', '?'),
-                'pathVars'  => array('', 'email_id'),
-                'method'    => 'updateMail',
-                'shortHelp' => 'Update Mail Item',
-                'longHelp'  => 'include/api/html/modules/Emails/EmailsApi.html#updateMail',
+                'longHelp'  => 'include/api/html/modules/Emails/MailApi.html#createMail',
             ),
 
         );
@@ -107,71 +107,15 @@ class EmailsApi extends ModuleApi
     }
 
 
-    /**-----------
-    class SugarApiExceptionError extends SugarApiException
-    {
-    public $httpCode = 500;
-    public $errorLabel = 'fatal_error';
-    public $description = "A fatal error happened.";
-    }
-    class SugarApiExceptionNeedLogin extends SugarApiException
-    {
-    public $httpCode = 401;
-    public $errorLabel = 'need_login';
-    public $description = "The user needs to be logged in to perform this action";
-    }
-    class SugarApiExceptionNotAuthorized extends SugarApiException
-    {
-    public $httpCode = 403;
-    public $errorLabel = 'not_authorized';
-    public $description = "This action is not authorized for the current user.";
-    }
-    class SugarApiExceptionNoMethod extends SugarApiException
-    {
-    public $httpCode = 404;
-    public $errorLabel = 'no_method';
-    public $description = "Could not find a method for this path.";
-    }
-    class SugarApiExceptionNotFound extends SugarApiException
-    {
-    public $httpCode = 404;
-    public $errorLabel = 'not_found';
-    public $description = "Could not find a handler for this path.";
-    }
-    class SugarApiExceptionMissingParameter extends SugarApiException
-    {
-    public $httpCode = 412;
-    public $errorLabel = 'missing_parameter';
-    public $description = "A required parameter for this request is missing.";
-    }
-    class SugarApiExceptionInvalidParameter extends SugarApiException
-    {
-    public $httpCode = 412;
-    public $errorLabel = 'invalid_parameter';
-    public $description = "A parameter for this request is invalid.";
-    }
-    class SugarApiExceptionRequestMethodFailure extends SugarApiException
-    {
-    public $httpCode = 412;
-    public $errorLabel = 'request_failure';
-    public $description = "The requested method failed.";
-    }
-    class SugarApiExceptionRequestTooLarge extends SugarApiException
-    {
-    public $httpCode = 413;
-    public $errorLabel = 'request_too_large';
-    public $description = "The request is too large to process.";
-    }
 
-
-    ------ CREATE/POST Status Codes ----------
-    200 OK	The request was successful, the resource has been updated and the response body contains the representation.
-    201 CREATED	The request was successful, a new resource has been created and the response body contains the resource representation.
-    404 NOT FOUND	The resource has not been found.
-    428 PRECONDITION REQUIRED	The server was unable to update the resource due to edit conflict.
-    422 UNPROCESSABLE ENTITY	The data given in the POST or PUT failed validation. The response body contains validation error object.
-    -----***/
-
+    /**
+     * @param $api
+     * @param $args
+     * @return array
+     */
+    public function notSupported($api, $args) {
+        throw new SugarApiExceptionNotFound();
+    }
 
 
     /**
@@ -180,19 +124,7 @@ class EmailsApi extends ModuleApi
      * @return array
      */
     public function createMail($api, $args) {
-
         $result = $this->handleMail($api, $args);
-        /*
-        if ($result['SUCCESS']) {
-            $response = array_merge(
-                            array(
-                                     "id" => $result["EMAIL"]["id"],
-                                     "date_created" => $result["EMAIL"]["date_modified"],
-                                 ),
-                            $result
-                        );
-        }
-        */
         return $result;
     }
 
@@ -207,7 +139,7 @@ class EmailsApi extends ModuleApi
         $email = new Email();
 
         if(isset($args['email_id']) && !empty($args['email_id'])) {
-            if (!$email->retrieve($args['email_id'])) {
+            if ( (!$email->retrieve($args['email_id'])) || ($email->id != $args['email_id']) ) {
                 throw new SugarApiExceptionMissingParameter();
             }
             if ($email->status != 'draft') {
@@ -221,55 +153,6 @@ class EmailsApi extends ModuleApi
 
         return $result;
     }
-
-
-    /**
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function retrieveMail($api, $args) {
-        global $current_user;
-        $email = new Email();
-
-        if(isset($args['email_id']) && !empty($args['email_id'])) {
-            if (!$email->retrieve($args['email_id'])) {
-                throw new SugarApiExceptionMissingParameter();
-            }
-            if ($email->status != 'draft') {
-                throw new SugarApiExceptionRequestMethodFailure();
-            }
-        } else {
-            throw new SugarApiExceptionInvalidParameter();
-        }
-
-        $email->email2init();
-
-        $result = array(
-            "FUNCTION"   => "retrieveMail",
-            "ARGS"       => $args,
-            "EMAIL"      => $email->toArray(),
-        );
-
-        return $result;
-    }
-
-
-    /**
-     * @param $api
-     * @param $args
-     * @return array
-     */
-    public function notSupported($api, $args) {
-
-        throw new SugarApiExceptionNotFound();
-        // $result = array(
-        //    "ERROR"   => "Function Not Supported",
-        //    "ARGS"    => $args,
-        // );
-        // return $result;
-    }
-
 
 
     protected function handleMail($api, $args) {
@@ -307,7 +190,7 @@ class EmailsApi extends ModuleApi
         else {
             if (isset($GLOBALS["log"])) {
                 $logger = $GLOBALS["log"];
-                $logger->error("EmailsApi: Request Failed - Invalid Request - Property=Status : '" . $args["status"] . "'");
+                $logger->error("MailApi: Request Failed - Invalid Request - Property=Status : '" . $args["status"] . "'");
             }
             throw new SugarApiExceptionRequestMethodFailure("Invalid Status Property");
         }
@@ -317,7 +200,7 @@ class EmailsApi extends ModuleApi
             $eData    = isset($result['ERROR_DATA']) ? $result['ERROR_DATA'] : '';
             if (isset($GLOBALS["log"])) {
                 $logger = $GLOBALS["log"];
-                $logger->error("EmailsApi: Request Failed - Message: " . $eMessage . "  Data: " . $eData);
+                $logger->error("MailApi: Request Failed - Message: " . $eMessage . "  Data: " . $eData);
             }
             throw new SugarApiExceptionRequestMethodFailure($eMessage);
         }
