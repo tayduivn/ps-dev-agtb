@@ -83,8 +83,9 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromDbDate($this->end_date);
         $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = new QuarterTimePeriod($timedate->asDbDate($nextStartDate));
-        $nextPeriod->is_leaf = $this->is_leaf;
+        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $nextPeriod->is_fiscal = $this->is_fiscal;
+        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
         $nextPeriod->save();
 
         return $nextPeriod;

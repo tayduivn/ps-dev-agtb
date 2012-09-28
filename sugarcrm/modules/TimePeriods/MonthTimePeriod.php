@@ -93,12 +93,9 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
 
         $nextStartDate = $nextEndDate->modify('+1 day');
         $nextStartDate = $timedate->asDbDate($nextStartDate);
-        if($this->is_fiscal)
-        {
-            $nextPeriod = new MonthTimePeriod($nextStartDate, true, $week_length);
-        } else {
-            $nextPeriod = new MonthTimePeriod($nextStartDate, false);
-        }
+        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $nextPeriod->is_fiscal = $this->is_fiscal;
+        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate), $week_length);
         $nextPeriod->is_leaf = $this->is_leaf;
         $nextPeriod->save();
 

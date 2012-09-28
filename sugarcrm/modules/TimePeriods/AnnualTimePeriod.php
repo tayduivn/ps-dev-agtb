@@ -130,7 +130,9 @@ class AnnualTimePeriod extends TimePeriod implements iTimePeriod {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromDbDate($this->end_date);
         $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = new AnnualTimePeriod($timedate->asDbDate($nextStartDate), $this->is_fiscal);
+        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $nextPeriod->is_fiscal = $this->is_fiscal;
+        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
         $nextPeriod->save();
 
         return $nextPeriod;
