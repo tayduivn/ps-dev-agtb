@@ -390,32 +390,18 @@
             {
                 success : function(data) {
                     var commitDate = new Date(dataCommitDate),
-                        newestModel = {},
-                        oldestModel = {},
-                        len = data.length,
-                        outputLog = {};
+                        newestModel = new Backbone.Model(_.first(data)),
+                        // get everything that is left but the first item.
+                        otherModels = _.last(data, data.length-1),
+                        oldestModel = {};
 
-                    if(len == 1) {
-                        newestModel = new Backbone.Model(data[0]);
-                    } else {
-                        // using for because you can't break out of _.each
-                        for(var i = 0; i < len; i++) {
-                            var entry = data[i];
-
-                            //if first model, put it in newestModel
-                            if(i == 0) {
-                                newestModel = new Backbone.Model(entry);
-                                continue;
-                            }
-
-                            var entryDate = app.forecasts.utils.parseDBDate(entry.date_modified);
-
-                            // check for the first model equal to or past the forecast commit date
-                            // we want the last commit just before the whole forecast was committed
-                            if(entryDate <= commitDate) {
-                                oldestModel = new Backbone.Model(entry);
-                                break;
-                            }
+                    // using for because you can't break out of _.each
+                    for(var i = 0; i < otherModels.length; i++) {
+                        // check for the first model equal to or past the forecast commit date
+                        // we want the last commit just before the whole forecast was committed
+                        if(app.forecasts.utils.parseDBDate(otherModels[i].date_modified) <= commitDate) {
+                            oldestModel = new Backbone.Model(otherModels[i]);
+                            break;
                         }
                     }
 
