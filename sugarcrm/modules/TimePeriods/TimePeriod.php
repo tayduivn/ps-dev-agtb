@@ -69,7 +69,7 @@ class TimePeriod extends SugarBean {
 		$this->disable_row_level_security =true;
 	}
 
-	function save($check_notify = false){
+	public function save($check_notify = false){
 		//if (empty($this->id)) $this->parent_id = null;
 
         $timedate = TimeDate::getInstance();
@@ -101,7 +101,7 @@ class TimePeriod extends SugarBean {
 
 
 
-	function get_summary_text()
+	public function get_summary_text()
 	{
 		return "$this->name";
 	}
@@ -114,7 +114,7 @@ class TimePeriod extends SugarBean {
      * @param bool $deleted
      * @return null|SugarBean
      */
-    function retrieve($id, $encode=false, $deleted=true){
+    public function retrieve($id, $encode=false, $deleted=true){
         global $disable_date_format;
         $previous_disable_date_format = $disable_date_format;
         $disable_date_format = 1;
@@ -123,16 +123,16 @@ class TimePeriod extends SugarBean {
    		return $ret;
    	}
 
-	function is_authenticated()
+    public function is_authenticated()
 	{
 		return $this->authenticated;
 	}
 
-	function fill_in_additional_list_fields() {
+    public function fill_in_additional_list_fields() {
 		$this->fill_in_additional_detail_fields();
 	}
 
-	function fill_in_additional_detail_fields()
+    public function fill_in_additional_detail_fields()
 	{
 		if (isset($this->parent_id) && !empty($this->parent_id)) {
 		
@@ -149,7 +149,7 @@ class TimePeriod extends SugarBean {
 	}
 
 
-	function get_list_view_data(){
+    public function get_list_view_data(){
 
 		$timeperiod_fields = $this->get_list_view_array();		
 		$timeperiod_fields['FISCAL_YEAR'] = $this->fiscal_year;
@@ -160,11 +160,11 @@ class TimePeriod extends SugarBean {
 		return $timeperiod_fields;
 	}
 
-	function list_view_parse_additional_sections(&$list_form, $xTemplateSection){
+    public function list_view_parse_additional_sections(&$list_form, $xTemplateSection){
 		return $list_form;
 	}
 
-	function create_export_query($order_by, $where)
+    public function create_export_query($order_by, $where)
 	{
 		$query = "SELECT
 				timeperiods.*";
@@ -186,15 +186,16 @@ class TimePeriod extends SugarBean {
 	}
 
     /**
-     * creates a new AnnualTimePeriod to start to use
+     * creates a new timeperiod to start to use
      *
-     * @return AnnualTimePeriod
+     * @return mixed
      */
     public function createNextTimePeriod() {
         $timedate = TimeDate::getInstance();
         $nextStartDate = $timedate->fromUserDate($this->end_date);
         $nextStartDate = $nextStartDate->modify('+1 day');
         $nextPeriod = BeanFactory::newBean($this->time_period_type.'TimePeriods');
+        $nextPeriod->is_fiscal = $this->is_fiscal;
         $nextPeriod->setStartDate($timedate->asUserDate($nextStartDate));
         $nextPeriod->save();
 
@@ -204,7 +205,7 @@ class TimePeriod extends SugarBean {
 
 	//Fiscal year domain is stored in the timeperiods table, and not statically defined like the rest of the
 	//domains, This method builds the domain array.
-	static function get_fiscal_year_dom() {
+    public static function get_fiscal_year_dom() {
 
 		static $fiscal_years;
 
@@ -231,7 +232,7 @@ class TimePeriod extends SugarBean {
      * getTimePeriod
      * @param
      */
-    static function getTimePeriod($timedate=null)
+    public static function getTimePeriod($timedate=null)
     {
         global $app_strings;
         $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
@@ -280,7 +281,7 @@ class TimePeriod extends SugarBean {
      * Returns the current timeperiod name if a timeperiod entry is found
      *
      */
-    static function getCurrentName($timedate=null)
+    public static function getCurrentName($timedate=null)
     {
         global $app_strings;
         $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
@@ -303,7 +304,7 @@ class TimePeriod extends SugarBean {
      * Returns the current timeperiod name if a timeperiod entry is found
      *
      */
-    static function getCurrentId($timedate=null)
+    public static function getCurrentId($timedate=null)
     {
         static $currentId;
 
@@ -327,7 +328,7 @@ class TimePeriod extends SugarBean {
      * @param $timedate Optional TimeDate instance to calculate values off of
      * @return $ids Mixed array of id=>name value(s) depending on the current system date or timedate parameter (if supplied)
      */
-    static function getLastCurrentNextIds($timedate=null)
+    public static function getLastCurrentNextIds($timedate=null)
     {
         global $app_strings;
         $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
@@ -371,7 +372,7 @@ class TimePeriod extends SugarBean {
      * @static
      * @return array
      */
-    static function get_timeperiods_dom()
+    public static function get_timeperiods_dom()
     {
         static $timeperiods;
 
@@ -391,7 +392,7 @@ class TimePeriod extends SugarBean {
         return $timeperiods;
     }
 
-    static function get_not_fiscal_timeperiods_dom()
+    public static function get_not_fiscal_timeperiods_dom()
     {
         static $not_fiscal_timeperiods;
 
