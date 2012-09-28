@@ -561,7 +561,7 @@ class Email extends SugarBean {
         }
 
         if (is_null($mailConfig)) {
-            throw new MailerException("No Valid Mail Configurations Found");
+            throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
 
         $mailer = MailerFactory::getMailer($mailConfig);

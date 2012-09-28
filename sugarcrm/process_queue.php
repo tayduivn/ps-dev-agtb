@@ -36,6 +36,7 @@ require_once('modules/Reports/templates/templates_pdf.php');
 require_once('include/SugarPHPMailer.php');
 require_once('include/modules.php');
 require_once('config.php');
+require_once "modules/Mailer/MailerException.php";
 
 global $sugar_config, $current_language, $app_list_strings, $app_strings, $locale;
 $language = $sugar_config['default_language'];//here we'd better use English, because pdf coding problem.
@@ -93,16 +94,24 @@ foreach($reports_to_email as $schedule_info)
     // prevent invalid report from being processed
     if (!$reporter->is_definition_valid())
     {
-        $invalid_fields = $reporter->get_invalid_fields();
-
-        $message = string_format($mod_strings['ERR_REPORT_INVALID'], array(
-            $schedule_info['report_id'], implode(', ', $invalid_fields)
-        ));
+        $invalidFields = $reporter->get_invalid_fields();
+        $args          = array($schedule_info['report_id'], implode(', ', $invalidFields));
+        $message       = string_format($mod_strings['ERR_REPORT_INVALID'], $args);
 
         $GLOBALS['log']->fatal('-----> ' . $message);
 
-        require_once 'modules/Reports/utils.php';
-        notify_of_invalid_report($saved_report, $schedule_info['report_id'], $reporter);
+        try {
+            require_once 'modules/Reports/utils.php';
+
+            $reportOwner  = new User();
+            $reportOwner->retrieve($saved_report->assigned_user_id);
+
+            $reportsUtils = new ReportsUtilities();
+            $reportsUtils->sendNotificationOfInvalidReport($reportOwner, $message);
+        } catch (MailerException $me) {
+            //@todo consider logging the error at the very least
+        }
+
         continue;
     }
 
