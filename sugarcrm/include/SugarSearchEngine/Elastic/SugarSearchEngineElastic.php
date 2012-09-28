@@ -377,7 +377,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             foreach ($options['moduleFilter'] as $mod) {
                 $fieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsPerModule($mod);
                 foreach ($fieldDef as $fieldName => $def) {
-                    if (!in_array($fieldName, $fields)) {
+                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
                         $fields[] = $fieldName;
                     }
                 }
@@ -386,7 +387,8 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
             $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
             foreach ($allFieldDef as $fieldDef) {
                 foreach ($fieldDef as $fieldName => $def) {
-                    if (!in_array($fieldName, $fields)) {
+                    // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
                         $fields[] = $fieldName;
                     }
                 }
@@ -611,7 +613,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      *
      * @return Elastica_Filter_Or
      */
-    protected function constructMainFilter($finalTypes)
+    protected function constructMainFilter($finalTypes, $options = array())
    {
         $mainFilter = new Elastica_Filter_Or();
         foreach ($finalTypes as $module)
