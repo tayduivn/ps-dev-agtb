@@ -144,6 +144,7 @@ echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></sc
 <script src='sidecar/src/app.js'></script>
 <script src='sidecar/src/utils/utils.js'></script>
 <script src='sidecar/src/utils/date.js'></script>
+<script src='sidecar/src/utils/file.js'></script>
 <script src='sidecar/src/utils/currency.js'></script>
 <script src='sidecar/src/core/cache.js'></script>
 <script src='sidecar/src/core/events.js'></script>
