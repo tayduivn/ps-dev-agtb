@@ -389,8 +389,10 @@ function buildInstall($path){
                 }//fi
             }//foreach
             $relationshipsMetaFiles = $this->getCustomRelationshipsMetaFilesByModuleName($value, true, true);
-            if($relationshipsMetaFiles){
-                foreach ($relationshipsMetaFiles as $file) {
+            if($relationshipsMetaFiles)
+            {
+                foreach ($relationshipsMetaFiles as $file)
+                {
                     $installdefs['relationships'][] = array('meta_data' => str_replace('custom', '<basepath>', $file)); 
                 }
             }
@@ -720,7 +722,7 @@ function buildInstall($path){
      * TRUE - with all relationships files; 
      * @return array Paths.
      */
-    public function getExtensionsList($module, $includeRelationships = true)
+    protected function getExtensionsList($module, $includeRelationships = true)
     {
         if (BeanFactory::getBeanName($module) === false)
         {
@@ -863,7 +865,7 @@ function buildInstall($path){
      * @param bool $lhs Return relationships where $moduleName - left module in join.
      * @return mixed Array or false when module name is wrong.
      */
-    public function getCustomRelationshipsByModuleName($moduleName, $lhs = false)
+    protected function getCustomRelationshipsByModuleName($moduleName, $lhs = false)
     {
         if (BeanFactory::getBeanName($moduleName) === false)
         {
@@ -902,7 +904,7 @@ function buildInstall($path){
      * @param bool $metadataOnly Return only relationships metadata file.
      * @return array
      */
-    public function getCustomRelationshipsMetaFilesByModuleName($moduleName, $lhs = false, $metadataOnly = false)
+    protected function getCustomRelationshipsMetaFilesByModuleName($moduleName, $lhs = false, $metadataOnly = false)
     {
         
         $path = $metadataOnly ? 'custom/metadata/' : 'custom/';

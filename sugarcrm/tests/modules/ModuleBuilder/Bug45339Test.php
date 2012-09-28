@@ -77,7 +77,6 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $this->relationAccountContact = $relationAccountContact->addFromPost();
         $relationAccountContact->save();
         $relationAccountContact->build();
-        LanguageManager::clearLanguageCache($_REQUEST['view_module']);
 
         $_REQUEST['view_module'] = "Contacts";
         $_REQUEST['lhs_module'] = "Contacts";
@@ -89,7 +88,6 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $this->relationContactAccount = $relationContactAccount->addFromPost();
         $relationContactAccount->save();
         $relationContactAccount->build();
-        LanguageManager::clearLanguageCache($_REQUEST['view_module']);
 
         $this->mbPackage = new Bug45339MBPackageMock($this->packName);
     }
@@ -117,17 +115,17 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
     public function testGetCustomRelationshipsByModuleName()
     {
         /* @var $this->mbPackage MBPackage */
-        $accountsAllCustomRelationships = $this->mbPackage->getCustomRelationshipsByModuleName('Accounts');
+        $accountsAllCustomRelationships = $this->mbPackage->getCustomRelationshipsByModuleNameTest('Accounts');
         // Created in the Account module.
-        $accountsLhsCustomRelationships = $this->mbPackage->getCustomRelationshipsByModuleName('Accounts', true);
-        $wrongModuleName = $this->mbPackage->getCustomRelationshipsByModuleName('Wrong_module_name');
-        
+        $accountsLhsCustomRelationships = $this->mbPackage->getCustomRelationshipsByModuleNameTest('Accounts', true);
+        $wrongModuleName = $this->mbPackage->getCustomRelationshipsByModuleNameTest('Wrong_module_name');
+
         $this->assertArrayHasKey($this->relationAccountContact->getName(), $accountsAllCustomRelationships);
         $this->assertArrayHasKey($this->relationContactAccount->getName(), $accountsAllCustomRelationships);
 
         $this->assertArrayHasKey($this->relationAccountContact->getName(), $accountsLhsCustomRelationships);
         $this->assertArrayNotHasKey($this->relationContactAccount->getName(), $accountsLhsCustomRelationships);
-        
+
         $this->assertFalse($wrongModuleName); // check
     }
 
@@ -141,9 +139,9 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $contactAccountMetaPath = 'custom/metadata/' . $this->relationContactAccount->getName() . 'MetaData.php';
 
         /* @var $this->mbPackage MBPackage */
-        $accountsAllFiles = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleName('Accounts');
-        $accountsOnlyMetaFile = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleName('Accounts', true, true);
-        $wrongModuleName = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleName('Wrong_module_name');
+        $accountsAllFiles = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Accounts');
+        $accountsOnlyMetaFile = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Accounts', true, true);
+        $wrongModuleName = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Wrong_module_name');
 
         $this->assertContains($accountContactMetaPath, $accountsAllFiles);
         $this->assertContains($accountContactTablePath, $accountsAllFiles);
@@ -172,17 +170,16 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $relationLeadAccount = $deployedRelation->addFromPost();
         $deployedRelation->save();
         $deployedRelation->build();
-        LanguageManager::clearLanguageCache($_REQUEST['view_module']);
 
         $accountContactRelInAccountVardefExtensions = 'custom/Extension/modules/Accounts/Ext/Vardefs/' . $this->relationAccountContact->getName() . '_Accounts.php';
         $contactAccountRelInAccountVardefExtensions = 'custom/Extension/modules/Accounts/Ext/Vardefs/' . $this->relationContactAccount->getName() . '_Accounts.php';
         $leadAccountRelInAccountVardefExtensions = 'custom/Extension/modules/Accounts/Ext/Vardefs/' . $relationLeadAccount->getName() . '_Accounts.php';
 
         /* @var $this->mbPackage MBPackage */
-        $accountAllExtensions = $this->mbPackage->getExtensionsList('Accounts');
-        $accountExtContacts = $this->mbPackage->getExtensionsList('Accounts', array('Contacts'));
-        $accountExtWithWrongRelationship = $this->mbPackage->getExtensionsList('Accounts', array(''));
-        $wrongModuleName = $this->mbPackage->getExtensionsList('Wrong_module_name');
+        $accountAllExtensions = $this->mbPackage->getExtensionsListTest('Accounts');
+        $accountExtContacts = $this->mbPackage->getExtensionsListTest('Accounts', array('Contacts'));
+        $accountExtWithWrongRelationship = $this->mbPackage->getExtensionsListTest('Accounts', array(''));
+        $wrongModuleName = $this->mbPackage->getExtensionsListTest('Wrong_module_name');
 
         // Remove relationship
         $deployedRelation->delete($relationLeadAccount->getName());
@@ -212,17 +209,41 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $this->mbPackage->exportCustom(array('Accounts'), false, false);
         $installDefs = array();
         $packExtentionsPath = $this->mbPackage->getBuildDir() . '/Extension/modules';
+        $expected = 0;
 
         $this->mbPackage->getExtensionsManifestForPackageTest($this->mbPackage->getBuildDir(), $installDefs);
 
-        $recursiveIterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($packExtentionsPath, RecursiveDirectoryIterator::SKIP_DOTS));
+        $recursiveIterator = new RecursiveIteratorIterator(
+                        new RecursiveDirectoryIterator($packExtentionsPath),
+                        RecursiveIteratorIterator::SELF_FIRST
+        );
 
-        $expected = iterator_count($recursiveIterator);
-        
+        /* @var $fInfo SplFileInfo */
+        foreach (new RegexIterator($recursiveIterator, "/\.php$/i") as $fInfo)
+        {
+            if ($fInfo->isFile())
+            {
+                ++$expected;
+            }
+        }
+
         $this->mbPackage->delete();
         $this->mbPackage->deleteBuild();
 
         $this->assertEquals($expected, count($installDefs['copy']));
+    }
+
+    /**
+     * @group 45339
+     */
+    public function testCustomBuildInstall()
+    {
+        /* @var $this->mbPackage MBPackage */
+        $installDefString = $this->mbPackage->customBuildInstall(array('Accounts'), $this->mbPackage->getBuildDir());
+
+        eval($installDefString);
+
+        $this->assertArrayHasKey('relationships', $installdefs);
     }
 
 }
@@ -233,6 +254,21 @@ class Bug45339MBPackageMock extends MBPackage
     public function getExtensionsManifestForPackageTest($path, &$installdefs)
     {
         return $this->getExtensionsManifestForPackage($path, $installdefs);
+    }
+
+    public function getExtensionsListTest($module, $includeRelationships = true)
+    {
+        return $this->getExtensionsList($module, $includeRelationships);
+    }
+
+    public function getCustomRelationshipsMetaFilesByModuleNameTest($moduleName, $lhs = false, $metadataOnly = false)
+    {
+        return $this->getCustomRelationshipsMetaFilesByModuleName($moduleName, $lhs, $metadataOnly);
+    }
+
+    public function getCustomRelationshipsByModuleNameTest($moduleName, $lhs = false)
+    {
+        return $this->getCustomRelationshipsByModuleName($moduleName, $lhs);
     }
 
 }
