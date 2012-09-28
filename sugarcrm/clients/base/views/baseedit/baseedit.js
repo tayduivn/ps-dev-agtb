@@ -14,7 +14,6 @@
         var self = this;
         if(!_.isEmpty(fields.changes)){
             _.each(fields.changes, function (num, key) {
-                debugger;
                 var field = self.getField(key);
 
                 if (field) {
