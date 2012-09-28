@@ -276,15 +276,24 @@ form.well {
   width: auto;
 }
 
+.news-article {
+  padding: 10px;
+  border-bottom: 1px solid @grayLighter;
+  h5 {
+    padding: 10px 0 5px;
+  }
+}
 
+.record-cell {padding-left: 15px;}
 .record {
     overflow-x: auto;
-    margin: 10px 20px;
+    margin: 10px 20px 10px 5px;
     .icon-pencil {
         position: absolute;
         top: 20px;
-        left: 2px;
+        left: 0px;
         z-index: 0;
+        color: @grayLight;
     }
     input, select, textarea {
       position: relative;
