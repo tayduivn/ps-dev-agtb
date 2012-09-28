@@ -43,7 +43,7 @@ class SourceFactory{
 			require_once('include/connectors/ConnectorFactory.php');
 			ConnectorFactory::load($class, 'sources');
 			try{
-                if ( ! class_exists($instance) ) {
+                if ( ! class_exists($class) ) {
                     return null;
                 }
 				$instance = new $class();
