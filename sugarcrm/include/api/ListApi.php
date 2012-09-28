@@ -87,7 +87,12 @@ class ListApi extends SugarApi {
             $userFields = explode(",", $args["fields"]);
             
             foreach ( $userFields as $field ) {
+                //BEGIN SUGARCRM flav=pro ONLY
                 if ( !$seed->ACLFieldAccess($field,'list') || !isset($seed->field_defs[$field]) ) {
+                //END SUGARCRM flav=pro ONLY
+                //BEGIN SUGARCRM flav!=pro ONLY
+                if ( !isset($seed->field_defs[$field]) ) {
+                //END SUGARCRM flav=!pro ONLY
                     throw new SugarApiExceptionNotAuthorized('No access to view field: '.$field.' in module: '.$args['module']);
                 }
             }
