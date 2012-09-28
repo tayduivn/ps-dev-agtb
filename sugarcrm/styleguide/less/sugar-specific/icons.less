@@ -1,25 +1,14 @@
 /* Icons
 ------------------------- */
 [class^="icon-"] {
-  font-size: 15px;
-}
-.actions [class^="icon-"] {
-  .opacity(50);
-}
-.actions a [class^="icon-"] {color: @grayLight;}
-.actions a:hover [class^="icon-"] {color: @gray;}
-.actions a.active [class^="icon-"] {color: @grayDarker;}
-
-a [class^="icon-"] {
-  .opacity(80);
-}
-a:hover [class^="icon-"]{
-  .opacity(90);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
 }
 
-a.active [class^="icon-"]{
-  .opacity(100);
-}
+a [class^="icon-"] {color: @grayLight !important;}
+a:hover [class^="icon-"] {color: @gray !important;}
+a:active [class^="icon-"] {color: @black !important;}
+a.active [class^="icon-"] {color: @grayDarker !important;}
 
 table [class^="icon-star"] {
   margin: 0 16px
