@@ -47,26 +47,22 @@ class OpportunitiesSeedData {
  * @return array Array of Opportunities created
  */
 public static function populateSeedData($records, $app_list_strings, $accounts
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
     ,$products, $users
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=pro ONLY
 )
 {
     if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
        || empty($products) || empty($users)
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=pro ONLY
 
     )
     {
         return array();
     }
 
-    $timedate = TimeDate::getInstance();
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    $product = new Product();
-    //END SUGARCRM flav=ent ONLY
+    $opp_ids = array();
 
     while($records-- > 0)
     {
@@ -103,10 +99,10 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         // Create a linking table entry to assign an account to the opportunity.
         $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);        
 
-        $product_ids[] = $product->id;
+        $opp_ids[] = $opp->id;
     }
 
-    return $product_ids;
+    return $opp_ids;
 }
 
 }

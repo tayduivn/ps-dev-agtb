@@ -50,11 +50,6 @@
 						{sugar_action_menu id=$link_action_id params=$actionsLink}
 
                         { if $actionDisabledLink ne "" }<div class='selectActionsDisabled' id='select_actions_disabled_{$action_menu_location}'>{$actionDisabledLink}<span class='ab'></span></div>{/if}
-						<!--//BEGIN SUGARCRM flav=dce ONLY -->
-						{$DCEUpgradeLink}
-						{$DCEUpgradeButton}
-						{$DCEDryRunButton}
-						<!--//END SUGARCRM flav=dce ONLY -->
 						&nbsp;{$selectedObjectsSpan}		
 					</td>
 					<td  nowrap='nowrap' width='1%' align="right" class='paginationChangeButtons'>

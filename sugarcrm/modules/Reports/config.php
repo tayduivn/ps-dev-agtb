@@ -26,11 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: config.php 53116 2009-12-10 01:24:37Z mitani $
- ********************************************************************************/
 global $sugar_config;
-//global $modListHeader;
 global $app_list_strings;
 global $beanFiles;
 
@@ -95,13 +91,9 @@ function getAllowedReportModules(&$local_modListHeader, $skipCache = false) {
             $report_modules[$key] = $value;
         }
 
-//BEGIN SUGARCRM flav!=dce || flav!=sales ONLY
-
 		if($key=='Releases' || $key == 'CampaignLog') {
 			$report_modules[$key] = $value;
 		}
-
-//END SUGARCRM flav!=dce || flav!=sales ONLY
 
 	}
 

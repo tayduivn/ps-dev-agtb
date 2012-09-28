@@ -63,7 +63,7 @@ class SugarTestQuotaUtilities
     public static function removeAllCreatedQuotas()
     {
         $quota_ids = self::getCreatedQuotaIds();
-        $GLOBALS['db']->query('DELETE FROM quotes WHERE id IN (\'' . implode("', '", $quota_ids) . '\')');
+        $GLOBALS['db']->query('DELETE FROM quotas WHERE id IN (\'' . implode("', '", $quota_ids) . '\')');
     }
 
     public static function getCreatedQuotaIds()

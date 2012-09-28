@@ -802,9 +802,6 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
     WorksheetSeedData::populateSeedData();
 //END SUGARCRM flav=ent ONLY
 
-//BEGIN SUGARCRM flav=dce ONLY
-    include('install/seed_data/dceSeedData.php');
-//END SUGARCRM flav=dce ONLY
 
 //END SUGARCRM flav!=sales ONLY
 

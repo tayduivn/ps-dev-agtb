@@ -132,10 +132,9 @@ class UploadFile
 	{
 	    $fullname = "upload://$bean_id.$filename";
 	    if(file_exists($fullname)) {
-            if(!rename($fullname,  "upload://$bean_id")) {
-                $this->setError('fatal', "unable to rename file: $fullname => $bean_id");
+            if(rename($fullname,  "upload://$bean_id")) {
+                return true;
             }
-	        return true;
 	    }
 	    return false;
 	}
@@ -313,9 +312,13 @@ class UploadFile
 			$mime = mime_content_type( $_FILES_element['tmp_name'] );
 		} elseif( function_exists( 'ext2mime' ) ) {
 			$mime = ext2mime( $_FILES_element['name'] );
-		} else {
+		} 
+        
+        // Fallback in cases where mime was not successfully obtained
+        if (empty($mime)) {
 			$mime = ' application/octet-stream';
 		}
+        
 		return $mime;
 	}
 

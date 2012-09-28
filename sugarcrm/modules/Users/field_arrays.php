@@ -86,11 +86,6 @@ $fields_array['User'] = array (
 		'is_group'
 
 		//END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-
-        ,'dceinstance_role' 
-        ,'dceinstance_rel_id'
-    //END SUGARCRM flav=dce ONLY
 	),
 	'export_fields' => array(
 		'id',

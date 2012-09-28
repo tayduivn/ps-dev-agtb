@@ -204,6 +204,12 @@ class MetaDataManager {
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
+
+        $seed = BeanFactory::newBean($moduleName);
+        
+        $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
+
+        $data['favoritesEnabled'] = $favoritesEnabled;
         $md5 = serialize($data);
         $md5 = md5($md5);
         $data["_hash"] = $md5;

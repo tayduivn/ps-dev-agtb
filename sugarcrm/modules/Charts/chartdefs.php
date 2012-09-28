@@ -148,22 +148,6 @@ $chartDefs = array(
 						 ),
 		),
 	//END SUGARCRM flav=pro ONLY
-	//BEGIN SUGARCRM flav=dce ONLY
-    'dceactions_by_types'=>
-        array(  'type' => 'code',
-                'id' => 'Chart_dceactions_by_types',
-                'label' => 'DCE Actions By Types (Current Month)',
-                'chartUnits' => 'Action',              
-                'chartType' => 'group by chart',
-                'groupBy' => array( 'type' ),
-                'base_url'=> 
-                    array(  'module' => 'DCEActions',
-                            'action' => 'index',
-                            'query' => 'true',
-                            'searchFormTab' => 'advanced_search',
-                         ),                           
-             ),	
-     //END SUGARCRM flav=dce ONLY
 );
 
 if(file_exists('custom/Charts/chartDefs.ext.php')){

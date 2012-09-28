@@ -32,7 +32,7 @@ class RegisterLeadApi extends SugarApi {
                 'pathVars' => array('module'),
                 'method' => 'createLeadRecord',
                 'shortHelp' => 'This method registers leads',
-                'longHelp' => 'include/api/html/module_new_help.html',
+                'longHelp' => 'include/api/help/register_lead_help.html',
                 'noLoginRequired' => true,
             ),
         );
