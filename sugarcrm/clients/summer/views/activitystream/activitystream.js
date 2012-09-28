@@ -21,7 +21,7 @@
         'click .sayit .label a.close': 'removeTag',
         'click .showAnchor': 'showAnchor',
         'click .icon-eye-open': 'previewRecord',
-        'click .toggleView': 'toggleView'        
+        'click .toggleView': 'toggleView'
     },
 
     initialize: function(options) {
@@ -77,19 +77,27 @@
         event.preventDefault();
         var view = this.$(event.currentTarget).data('view');
         if(view == 'timeline') {
-            $('#activitystream-timeline').show();        
+            if(this.timelineRendered) {
+                $('#activitystream-timeline').show();
+            } else {
+                this._renderTimeline();
+            }
             $('#activitystream-calendar').hide();
         }
         else if(view == 'calendar') {
-            $('#activitystream-timeline').hide();        
-            $('#activitystream-calendar').show();
+            if(this.calendarRendered) {
+                $('#activitystream-calendar').show();
+            } else {
+                this._renderCalendar();
+            }
+            $('#activitystream-timeline').hide();
         }
         else {
-            $('#activitystream-timeline').hide();        
-            $('#activitystream-calendar').hide();        	
+            $('#activitystream-timeline').hide();
+            $('#activitystream-calendar').hide();
         }
     },
-    
+
     showAnchor: function(event) {
         event.preventDefault();
         var myId = this.$(event.currentTarget).data('id');
@@ -501,7 +509,7 @@
 
     _addCalendarEvent: function(model) {
         var events = [], self = this;
-        
+
         _.each(model.get('comments'), function(comment) {
             if(comment.value) {
                 var event = {allDay:false};
@@ -531,7 +539,7 @@
         });
         return events;
     },
-    
+
     previewRecord: function(event) {
         console.log("Previewing", this.context);
         testing = this;
@@ -618,6 +626,11 @@
             $(".activitystream-post .sayit").focus();
         });
 
+        return app.view.View.prototype._renderHtml.call(this);
+    },
+
+    _renderTimeline: function() {
+        var self = this;
         // Construct the timeline data.
         var timeline ={
             "timeline": {
@@ -640,8 +653,12 @@
                     embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
                 });
             }
+            this.timelineRendered = true;
         });
-        
+    },
+
+    _renderCalendar: function() {
+        var self = this;
         // Construct the calendar data.
         var calendar ={
                 width: '100%',
@@ -652,16 +669,14 @@
                     right: 'month,basicWeek,basicDay'
                 },
                 editable: false
-        };        
+        };
         objarrays = _.map(this.collection.models, this._addCalendarEvent);
         calendar.events = _.flatten(objarrays);
-        
-        _.defer(function() {    		
-            $('#activitystream-calendar').fullCalendar(calendar);
-            $('#activitystream-calendar').hide();
-        });       
 
-        return app.view.View.prototype._renderHtml.call(this);
+        _.defer(function() {
+            $('#activitystream-calendar').fullCalendar(calendar);
+            this.calendarRendered = true;
+        });
     },
 
     bindDataChange: function() {
