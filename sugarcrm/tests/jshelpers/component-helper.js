@@ -2,6 +2,9 @@
     var app = SUGAR.App;
     test.loadComponent = function(client, type, name) {
         SugarTest.loadFile("../clients/" + client + "/" + type + "s/" + name, name, "js", function(data) {
+            var typeKey = type + 's';
+            fixtures.metadata[typeKey][name] = fixtures.metadata[typeKey][name] || {};
+            fixtures.metadata[typeKey][name].controller = data;
             app.view.declareComponent(type, name, null, data, null, true);
         });
     };
@@ -12,11 +15,19 @@
         });
     };
 
-    test.loadHandlebarsTemplate = function(client, type, name) {
-        SugarTest.loadFile("../clients/" + client + "/" + type + "s/" + name, name, "hbt", function(data) {
-            fixtures.metadata.views[name] = {};
-            fixtures.metadata.views[name].templates = {};
+    test.loadViewHandlebarsTemplate = function(client, name) {
+        SugarTest.loadFile("../clients/" + client + "/views/" + name, name, "hbt", function(data) {
+            fixtures.metadata.views[name] = fixtures.metadata.views[name] || {};
+            fixtures.metadata.views[name].templates = fixtures.metadata.views[name].templates || {};
             fixtures.metadata.views[name].templates[name] = data;
+        });
+    };
+
+    test.loadFieldHandlebarsTemplate = function(client, type, name) {
+        SugarTest.loadFile("../clients/" + client + "/fields/" + type, name, "hbt", function(data) {
+            fixtures.metadata.fields[type] = fixtures.metadata.fields[type] || {};
+            fixtures.metadata.fields[type].templates = fixtures.metadata.fields[type].templates || {};
+            fixtures.metadata.fields[type].templates[name] = data;
         });
     };
 
