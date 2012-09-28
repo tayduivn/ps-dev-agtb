@@ -1,4 +1,5 @@
 ({
+    extendsFrom: 'BaseeditView',
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.context.on('quickcreate:clear', this.clear, this);
@@ -8,6 +9,7 @@
         this.context.on('quickcreate:highlightDuplicateFields', this.highlightDuplicateFields, this);
         this.context.on('quickcreate:clearHighlightDuplicateFields', this.clearHighlightDuplicateFields, this)
         this.model.on("error:validation", this.handleValidationError, this);
+        this.model.on("change", this.clearValidationError, this);
     },
 
     render: function() {
@@ -53,38 +55,6 @@
         }, this);
 
         app.view.View.prototype.render.call(this);
-    },
-
-    handleValidationError:function (errors) {
-        var self = this;
-
-        _.each(errors, function (fieldErrors, fieldName) {
-            //retrieve the field by name
-            var field = self.getField(fieldName);
-            var ftag = this.fieldTag || '';
-
-            if (field) {
-                var controlGroup = field.$el.parents('.control-group:first');
-
-                if (controlGroup) {
-                    controlGroup.addClass("error");
-                    controlGroup.find('.add-on').remove();
-                    controlGroup.find('.help-block').html("");
-
-                    if (field.$el.parent().parent().find('.input-append').length > 0) {
-                        field.$el.unwrap()
-                    }
-                    // Add error styling
-                    field.$el.wrap('<div class="input-append  '+ftag+'">');
-
-                    _.each(fieldErrors, function (errorContext, errorName) {
-                        controlGroup.find('.help-block').append(self.app.error.getErrorString(errorName, errorContext));
-                    });
-
-                    $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(controlGroup.find('.help-block'));
-                }
-            }
-        });
     },
 
     /**
