@@ -949,10 +949,15 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 $system_config = new Administration();
 $system_config->retrieveSettings();
 $GLOBALS['system_config'] = $system_config;
+$installerStrings = $GLOBALS['mod_strings'];
+$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
 include('modules/ModuleBuilder/parsers/parser.portalconfig.php');
 $portalConfig = new ParserModifyPortalConfig();
 $_REQUEST['appStatus'] = 'true';
+$_REQUEST['maxQueryResult'] = '20';
+$_REQUEST['fieldsToDisplay'] = '5';
 $portalConfig->handleSave();
+$GLOBALS['mod_strings']  = $installerStrings;
 //END SUGARCRM flav=ent ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
