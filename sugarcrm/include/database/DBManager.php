@@ -2854,7 +2854,9 @@ protected function checkQuery($sql, $object_name = false)
 			$values['after_value_string'] = $this->massageValue($changes['after'], $fieldDefs['after_value_string']);
 		}
 		$values['date_created'] = $this->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
-		$values['created_by'] = $this->massageValue($current_user->id, $fieldDefs['created_by']);
+		if(!empty($current_user->id)) {
+		    $values['created_by'] = $this->massageValue($current_user->id, $fieldDefs['created_by']);
+		}
 
 		$sql .= "(".implode(",", array_keys($values)).") ";
 		$sql .= "VALUES(".implode(",", $values).")";
@@ -2888,7 +2890,7 @@ protected function checkQuery($sql, $object_name = false)
 		$audit_fields=$bean->getAuditEnabledFieldDefinitions();
 
         $fetched_row = array();
-        if (is_array($bean->fetched_row)) 
+        if (is_array($bean->fetched_row))
         {
             $fetched_row = array_merge($bean->fetched_row, $bean->fetched_rel_row);
         }
@@ -3920,7 +3922,7 @@ protected function checkQuery($sql, $object_name = false)
             }
             $whereClause .= ' ';  // make sure there is a trailing blank
 		}
-		
+
         // compose level clause of query if Level is in the fieldList passed
 		$tokens = explode(',', $fields);
 		$fieldsTop = "";
@@ -3940,11 +3942,11 @@ protected function checkQuery($sql, $object_name = false)
 		}
 
         $sql = "WITH search_graph AS (
-                   SELECT $fieldsTop 
+                   SELECT $fieldsTop
                    FROM $tablename e
                    $startWith $whereClause
                  UNION ALL
-                   SELECT $fieldsBottom 
+                   SELECT $fieldsBottom
                    FROM $tablename e, search_graph sg
                    WHERE $connectWhere $whereClause
                 )
