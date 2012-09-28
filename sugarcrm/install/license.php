@@ -96,6 +96,8 @@ $out =<<<EOQ
           <tr>
             <td>
                 <input class="acceptButton" type="button" name="goto" value="{$mod_strings['LBL_BACK']}"  id="button_back_license" onclick="document.getElementById('form').submit();" />
+            </td>
+            <td>     
                 <input class="acceptButton" type="button" name="goto" value="{$mod_strings['LBL_NEXT']}" id="button_next" disabled="disabled" onclick="callSysCheck();"/>
                 <input type="hidden" name="goto" id='hidden_goto' value="{$mod_strings['LBL_BACK']}" />
             </td>
