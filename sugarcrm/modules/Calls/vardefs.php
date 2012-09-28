@@ -432,9 +432,9 @@ $dictionary['Call'] = array('table' => 'calls', 'comment' => 'A Call is an activ
   array(
 	'name' => 'add_parent_invitee',
 	'vname' => 'LBL_ADD_PARENT_INVITEE',
-    'type' => 'bool',
+    'type' => 'varchar',
 	'source' => 'non-db',
-	'comment' => 'Checkbox for adding related to records to the invitees',
+	'comment' => 'Helper field for Add To Parent link',
 	'massupdate' => false,
 	'reportable' => false,
 	'importable' => false,

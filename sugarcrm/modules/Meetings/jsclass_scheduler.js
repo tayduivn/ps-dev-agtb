@@ -435,47 +435,17 @@ SugarWidgetSchedulerAttendees.prototype.init = function() {
 	
 	$(document).ready(function()
 	{
-		// Add listeners on the checkbox for adding/deleting parent
-		$('#add_parent_invitee').click(function() 
-		{
-			// If it's checked, add the user to the invitees
-			if ($(this).is(':checked'))
-			{
-				// Only add parent if it's selected
-				if ($('#parent_id').val().length > 0)
-				{
-					SugarWidgetSchedulerAttendees.formAddParent();
-				}
-				// Otherwise just keep the checkbox unselected
-				else
-				{
-					$('#add_parent_invitee').prop("checked", false);
-				}
-			}
-			// If it's unchecked delete the user from the invitees
-			else
-			{
-				SugarWidgetScheduleRow.deleteRow($('#parent_id').val());
-			}
-		});
-		// Add listener for parent_type, so we can hide/unhide the checkbox
+		// Hide the link label
+		$('#add_parent_invitee_label').css('visibility', 'hidden');
+		
+		// Set visibility on load
+		SugarWidgetSchedulerAttendees.setAddParentLinkVisibility();
+		
+		// Add listener for parent_type, so we can hide/unhide the link
 		$('#parent_type').change(function()
 		{
-			parent_type = $('#parent_type option:selected').text();
-			if ($.inArray(parent_type, SugarWidgetSchedulerAttendees.allowedTypes) > -1)
-			{
-				$('#add_parent_invitee_label').css('visibility', 'visible');
-				$('#add_parent_invitee').parent().css('display', '');
-			}
-			else
-			{
-				$('#add_parent_invitee_label').css('visibility', 'hidden');
-				$('#add_parent_invitee').parent().css('display', 'none');
-				$('#add_parent_invitee').prop("checked", false);
-			}
+			SugarWidgetSchedulerAttendees.setAddParentLinkVisibility();
 		});
-		// Set the checkbox depending on whether the parent is in the invitees or not
-		SugarWidgetSchedulerAttendees.changeAddParentCheckbox();
 	});
 	
 	var form_name;
@@ -633,8 +603,6 @@ SugarWidgetSchedulerAttendees.prototype.display = function() {
 		GLOBAL_REGISTRY.focus.users_arr_hash[ GLOBAL_REGISTRY.focus.users_arr[i]['fields']['id']] =	GLOBAL_REGISTRY.focus.users_arr[i];
 		row.load(thetable);
 	}
-	
-	SugarWidgetSchedulerAttendees.changeAddParentCheckbox();
 }
 
 SugarWidgetSchedulerAttendees.form_add_attendee = function (list_row) {
@@ -644,9 +612,23 @@ SugarWidgetSchedulerAttendees.form_add_attendee = function (list_row) {
 	GLOBAL_REGISTRY.scheduler_attendees_obj.display();
 }
 
+// Function sets the visibility of the Add Parent Link
+SugarWidgetSchedulerAttendees.setAddParentLinkVisibility = function()
+{
+	parent_type = $('#parent_type option:selected').text();
+	if ($.inArray(parent_type, SugarWidgetSchedulerAttendees.allowedTypes) > -1)
+	{
+		$('#add_parent_invitee').parent().css('display', '');
+	}
+	else
+	{
+		$('#add_parent_invitee').parent().css('display', 'none');
+	}
+}
+
 // Function used to add the parent to the invitees
 SugarWidgetSchedulerAttendees.formAddParent = function()
-{
+{	
 	parent_id = $("#parent_id").val();
 	parent_name = $("#parent_name").val();
 	parent_type = $("#parent_type option:selected").text();
@@ -674,27 +656,6 @@ SugarWidgetSchedulerAttendees.formAddParent = function()
 			GLOBAL_REGISTRY.focus.users_arr[GLOBAL_REGISTRY.focus.users_arr.length] = invitee;
 			GLOBAL_REGISTRY.scheduler_attendees_obj.display();	
 		}
-	}
-}
-
-// Function sets the value of the checkbox depending if the selected parent is in the invitees list or not
-SugarWidgetSchedulerAttendees.changeAddParentCheckbox = function()
-{
-	parent_id = $("#parent_id").val();
-	parent_type = $("#parent_type option:selected").text();
-	
-	if (parent_id.length > 0 && $.inArray(parent_type, SugarWidgetSchedulerAttendees.allowedTypes) > -1)
-	{
-		checked = false;
-		for(var i = 0; i < GLOBAL_REGISTRY.focus.users_arr.length; i++)
-		{
-			if (GLOBAL_REGISTRY.focus.users_arr[i]['fields']['id'] == parent_id)
-			{
-				checked = true;
-				break;
-			}
-		}
-		$('#add_parent_invitee').prop("checked", checked);
 	}
 }
 
@@ -796,7 +757,7 @@ SugarWidgetScheduleRow.deleteRow = function(bean_id) {
 			GLOBAL_REGISTRY.focus.users_arr.splice(i,1);
 	     	//set first remove flag to true for processing in display() function
 			GLOBAL_REGISTRY.FIRST_REMOVE = true;
-			GLOBAL_REGISTRY.scheduler_attendees_obj.display();
+			GLOBAL_REGISTRY.container.root_widget.display();
 		}
 	}
 }

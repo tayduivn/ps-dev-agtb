@@ -139,6 +139,7 @@ function formSubmitCheck(){ldelim}var duration=true;if(typeof(isValidDuration)!=
           array (
             'name' => 'add_parent_invitee',
             'comment' => 'Link to add invitees',
+			'customCode' => '<a id="add_parent_invitee" style="color:#0B578F; text-decoration:underline; cursor:pointer" onclick="SugarWidgetSchedulerAttendees.formAddParent();">{$MOD.LBL_ADD_PARENT_INVITEE}</a>',
           ),
         ),
         array (
