@@ -25,15 +25,21 @@ require_once 'modules/ModuleBuilder/parsers/constants.php';
 
 class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     /**
-     * Invalid field types for various sidecar clients. Format should be 
-     * $client => array('type', 'type').
+     * Invalid field types for various sidecar clients. Format can be either
+     * $client => array('type', 'type') or 
+     * $client => array('edit' => array('type', 'type'), 'detail' => array('type', 'type'))
      * 
      * @var array
      * @protected
      */
     protected $invalidTypes = array(
         //BEGIN SUGARCRM flav=ent ONLY
-        'portal' => array('parent', 'parent_type', 'iframe', 'encrypt',),
+        'portal' => array(
+            // Detail support one set of fields...
+            'detail' => array('parent', 'parent_type', 'iframe', 'encrypt',),
+            // Edit supports another
+            'edit' => array('parent', 'parent_type', 'iframe', 'encrypt', 'relate',),
+        ),
         //END SUGARCRM flav=ent ONLY
     );
         
@@ -130,8 +136,8 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
     
     //BEGIN SUGARCRM flav=ent ONLY
     /**
-     * Validates portal only fields. Runs the field through a prelimiary check
-     * of type before passing the field on to the parent validator.
+     * Validates portal only fields. Runs the field through a preliminary check
+     * of view type and field type before passing the field on to the parent validator.
      * 
      * @param string $key The field
      * @param array $def Teh field def for this field
@@ -139,7 +145,15 @@ class SidecarGridLayoutMetaDataParser extends GridLayoutMetaDataParser {
      */
     public function isValidFieldPortal($key, $def) {
         if (isset($this->invalidTypes['portal'])) {
-            if (!isset($def['type']) || in_array($def['type'], $this->invalidTypes['portal'])) {
+            $view = $this->_view == MB_PORTALDETAILVIEW ? 'detail' : 'edit';
+            
+            if (isset($this->invalidTypes['portal'][$view])) {
+                $blacklist = $this->invalidTypes['portal'][$view];
+            } else {
+                $blacklist = $this->invalidTypes['portal'];
+            }
+            
+            if (!isset($def['type']) || in_array($def['type'], $blacklist)) {
                 return false;
             }
         } 

@@ -613,7 +613,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
      *
      * @return Elastica_Filter_Or
      */
-    protected function constructMainFilter($finalTypes)
+    protected function constructMainFilter($finalTypes, $options = array())
    {
         $mainFilter = new Elastica_Filter_Or();
         foreach ($finalTypes as $module)

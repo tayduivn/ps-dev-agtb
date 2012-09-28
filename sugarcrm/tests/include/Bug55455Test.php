@@ -1,5 +1,4 @@
 <?php
- if(!defined('sugarEntry'))define('sugarEntry', true);
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,49 +21,32 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-//change directories to where this file is located.
-chdir(dirname(__FILE__));
 
-require_once('include/entryPoint.php');
+require_once 'include/download_file.php';
+require_once 'include/upload_file.php';
 
-$sapi_type = php_sapi_name();
-if (substr($sapi_type, 0, 3) != 'cli') {
-    sugar_die("cron.php is CLI only.");
+class Bug55455Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    protected $_actualFile = 'upload/sugartestfile.txt';
+    protected $_mockFile   = 'thisfilenamedoesnotexist.doc';
+    
+    public function setUp()
+    {
+        sugar_file_put_contents($this->_actualFile, create_guid());
+    }
+    
+    public function tearDown()
+    {
+        unlink($this->_actualFile);
+    }
+    
+    public function testProperMimeTypeFetching()
+    {
+        $dl = new DownloadFile();
+        $mime = $dl->getMimeType($this->_actualFile);
+        $this->assertEquals('text/plain', $mime, "Returned mime type [$mime] was not text/plain");
+        
+        $mime = $dl->getMimeType($this->_mockFile);
+        $this->assertFalse($mime, "$mime should be (boolean) FALSE");
+    }
 }
-
-if(empty($current_language)) {
-	$current_language = $sugar_config['default_language'];
-}
-
-$app_list_strings = return_app_list_strings_language($current_language);
-$app_strings = return_application_language($current_language);
-
-global $current_user;
-$current_user = new User();
-$current_user->getSystemUser();
-
-$GLOBALS['log']->debug('--------------------------------------------> at cron.php <--------------------------------------------');
-$cron_driver = !empty($sugar_config['cron_class'])?$sugar_config['cron_class']:'SugarCronJobs';
-$GLOBALS['log']->debug("Using $cron_driver as CRON driver");
-
-if(file_exists("custom/include/SugarQueue/$cron_driver.php")) {
-   require_once "custom/include/SugarQueue/$cron_driver.php";
-} else {
-   require_once "include/SugarQueue/$cron_driver.php";
-}
-
-$jobq = new $cron_driver();
-$jobq->runCycle();
-
-$exit_on_cleanup = true;
-
-sugar_cleanup(false);
-// some jobs have annoying habit of calling sugar_cleanup(), and it can be called only once
-// but job results can be written to DB after job is finished, so we have to disconnect here again
-// just in case we couldn't call cleanup
-if(class_exists('DBManagerFactory')) {
-	$db = DBManagerFactory::getInstance();
-	$db->disconnect();
-}
-
-if($exit_on_cleanup) exit($jobq->runOk()?0:1);
