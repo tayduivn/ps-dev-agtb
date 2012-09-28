@@ -81,21 +81,24 @@
         if ( !this.$buttons ) {
             this.$buttons = {
                 save:        this.$("[name=save_button]"),
-//                saveAndNew:  this.$("[name=save_create_button]"),
-//                saveAndView: this.$("[name=save_view_button]"),
-//                cancel:      this.$("[name=cancel]"),
+                saveAndNew:  this.$("[name=save_create_button]"),
+                saveAndView: this.$("[name=save_view_button]"),
+                cancel:      this.$("[name=cancel]"),
                 undo:        this.$("[name=restore_button]")
             };
         }
-        
         var $buttons = this.$buttons;
 
         if ( options.duplicate === true ) {
             $buttons.save
                     .text(this.app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module));
+            $buttons.saveAndNew.hide();
+            $buttons.saveAndView.hide();
         } else {
             $buttons.save
                     .text(this.app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
+            $buttons.saveAndNew.show();
+            $buttons.saveAndView.show();
 
             if ( options.edit === true ) {
                 $buttons.undo.show();
