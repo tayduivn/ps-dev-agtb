@@ -686,8 +686,6 @@
         var objarrays = _.map(this.collection.models, this._addTimelineEvent);
         timeline.timeline.date = _.flatten(objarrays);
 
-            }
-        };
         //var objarrays = _.map(this.collection.models, this._addTimelineEvent);
         //timeline.timeline.date = _.flatten(objarrays);
 
