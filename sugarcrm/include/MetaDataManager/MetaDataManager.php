@@ -210,9 +210,10 @@ class MetaDataManager {
         
         $seed = BeanFactory::newBean($moduleName);
         
+        //BEGIN SUGARCRM flav=pro ONLY
         $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
-
         $data['favoritesEnabled'] = $favoritesEnabled;
+        //END SUGARCRM flav=pro ONLY
 
         $md5 = serialize($data);
         $md5 = md5($md5);
