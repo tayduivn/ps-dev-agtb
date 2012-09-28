@@ -74,6 +74,15 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'clickToEdit' => true,
                     'convertToBase'=> true,
                 ),
+
+                array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE',
+                    'default' => true,
+                    'enabled' => true,
+                    'convertToBase'=> true,
+                ),
             ),
         ),
     ),

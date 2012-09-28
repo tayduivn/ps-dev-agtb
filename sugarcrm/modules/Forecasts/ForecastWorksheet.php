@@ -54,7 +54,7 @@ class ForecastWorksheet extends SugarBean {
     function save($check_notify = false)
     {
     	$version = 1;
-
+		
     	if(isset($this->args["draft"]) && $this->args["draft"] == 1){
 			$version = 0;
 		}
@@ -62,13 +62,23 @@ class ForecastWorksheet extends SugarBean {
 		$worksheetID = $this->getWorksheetID($version);
     	if($version != 0)
     	{
+    		$product = BeanFactory::getBean('Products', $this->args["product_id"]);
+    		$product->probability = $this->probability;
+	        $product->best_case = $this->best_case;
+	        $product->likely_case = $this->likely_case;
+	        $product->worst_case = $this->args["worst_case"];
+	        $product->sales_stage = $this->sales_stage;
+	        $product->commit_stage = $this->commit_stage;
+    		$product->save();
+    		
+    		//leaving here for possible sugar logic hooks
 	        //Update the Opportunities bean
-	        $opp = BeanFactory::getBean('Opportunities', $this->id);
+	        /*$opp = BeanFactory::getBean('Opportunities', $this->id);
 	        $opp->probability = $this->probability;
 	        $opp->best_case = $this->best_case;
 	        $opp->sales_stage = $this->sales_stage;
 	        $opp->commit_stage = $this->commit_stage;
-	        $opp->save();
+	        $opp->save();*/
     	}
     	 
         //Update the Worksheet bean
@@ -77,11 +87,12 @@ class ForecastWorksheet extends SugarBean {
 		$worksheet->user_id = $this->assigned_user_id;
         $worksheet->best_case = $this->best_case;
         $worksheet->likely_case = $this->likely_case;
+        $worksheet->worst_case = $this->args["worst_case"];
         $worksheet->op_probability = $this->probability;
         $worksheet->commit_stage = $this->commit_stage;
         $worksheet->forecast_type = "Direct";
         $worksheet->related_forecast_type = "Product";
-        $worksheet->related_id = $this->id;
+        $worksheet->related_id = $this->args["product_id"];
         $worksheet->currency_id = $this->currency_id;
         $worksheet->base_rate = $this->base_rate;
         $worksheet->version = $version;
@@ -111,7 +122,7 @@ class ForecastWorksheet extends SugarBean {
 				"where timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
 					"and user_id = '" . $current_user->id . "' " .
 					"and version = '" . $version . "' " .
-					"and related_id = '" . $this->args["id"] . "'";
+					"and related_id = '" . $this->args["product_id"] . "'";
 		
 		$result = $GLOBALS['db']->query($sql);
 		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null){
