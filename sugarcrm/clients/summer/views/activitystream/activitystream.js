@@ -76,19 +76,17 @@
         event.preventDefault();
         var view = this.$(event.currentTarget).data('view');
         if(view == 'timeline') {
-            if(this.timelineRendered) {
-                $('#activitystream-timeline').show();
-            } else {
+            if(!this.timelineRendered) {
                 this._renderTimeline();
             }
+            $('#activitystream-timeline').show();
             $('#activitystream-calendar').hide();
         }
         else if(view == 'calendar') {
-            if(this.calendarRendered) {
-                $('#activitystream-calendar').show();
-            } else {
+            if(!this.calendarRendered) {
                 this._renderCalendar();
             }
+            $('#activitystream-calendar').show();
             $('#activitystream-timeline').hide();
         }
         else {
@@ -513,7 +511,7 @@
             var s = d.toDateString();
             return s;
         };
-        
+
         $.each(models, function(index, model) {
             var dateStr = getDate(model.get('date_created'));
             if(typeof counts[dateStr] != 'undefined') {
@@ -524,22 +522,22 @@
                 counts[dateStr].count = 1;
                 counts[dateStr].id = model.get('id');
                 counts[dateStr].start = new Date(model.get('date_created'));
-            }           
+            }
         });
-        
+
         $.each(counts, function(dateStr, data) {
             var event = {"allDay":true,"id":data.id};
             event.start = data.start;
             event.title = data.count + ' event(s)';
-            events.push(event);        
+            events.push(event);
         });
-        
+
         return events;
     },
-    
+
     _addCalendarWeekEvent: function(model) {
         var events = [];
-    	
+
         var event = {allDay:false};
         event.id = model.get('id');
         event.start = new Date(model.get("date_created"));
@@ -548,18 +546,18 @@
 
         return events;
     },
-    
+
     _addCalendarDayEvent: function(model) {
         var events = [], activityType = model.get('activity_type');
-    	
+
         var event = {allDay:false};
         event.id = model.get('id');
         event.start = new Date(model.get("date_created"));
         event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
-        
+
         switch (activityType) {
             case "posted":
-                event.title += model.get('activity_data').value; 
+                event.title += model.get('activity_data').value;
                 if(model.get('target_name')) {
                     event.title += "on " + model.get('target_name');
                 }
@@ -572,18 +570,18 @@
                 break;
             case "updated":
                 $.each(model.get('activity_data'), function(index, value) {
-                    if(index != 0) {
+                    if(index !== 0) {
                         event.title += ', ';
                     }
                     event.title += value.get('field_name');
                 });
                 event.title += " on "+model.get('target_name');
-                break;          
+                break;
             default:
                 break;
         }
-        
-        events.push(event);         
+
+        events.push(event);
         return events;
     },
 
@@ -688,20 +686,24 @@
         var objarrays = _.map(this.collection.models, this._addTimelineEvent);
         timeline.timeline.date = _.flatten(objarrays);
 
-        _.defer(function() {
-            if(timeline.timeline.date.length) {
-                createStoryJS({
-                    type:       'timeline',
-                    width:      '100%',
-                    height:     '400',
-                    start_at_end:true,
-                    js: 'lib/TimelineJS/js/timeline.js',
-                    source: timeline,
-                    embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
-                });
             }
-            this.timelineRendered = true;
-        });
+        };
+        //var objarrays = _.map(this.collection.models, this._addTimelineEvent);
+        //timeline.timeline.date = _.flatten(objarrays);
+
+        if(timeline.timeline.date.length) {
+            createStoryJS({
+                type:       'timeline',
+                width:      '100%',
+                height:     '400',
+                start_at_end:true,
+                js: 'lib/TimelineJS/js/timeline.js',
+                source: timeline,
+                embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
+            });
+        }
+        this.timelineRendered = true;
+
     },
 
     _renderCalendar: function() {
@@ -716,22 +718,22 @@
                 },
                 editable: false,
                 viewDisplay: function(view) {
-                    $('#activitystream-calendar').fullCalendar( 'refetchEvents' );    
+                    $('#activitystream-calendar').fullCalendar( 'refetchEvents' );
                 },
                 events: function(start, end, callback) {
-                    var events = [], view = $('#activitystream-calendar').fullCalendar('getView');
+                    var events = [], view = $('#activitystream-calendar').fullCalendar('getView'), objarrays;
                     if(view.name == 'month') {
                         events = self._addCalendarMonthEvent(self.collection.models);
                     }
                     else if(view.name == 'basicWeek') {
-                        var objarrays = _.map(self.collection.models, self._addCalendarWeekEvent);
-                        events = _.flatten(objarrays);                    	
+                        objarrays = _.map(self.collection.models, self._addCalendarWeekEvent);
+                        events = _.flatten(objarrays);
                     }
                     else {
-                        var objarrays = _.map(self.collection.models, self._addCalendarDayEvent);
-                        events = _.flatten(objarrays);	
+                        objarrays = _.map(self.collection.models, self._addCalendarDayEvent);
+                        events = _.flatten(objarrays);
                     }
-                    callback(events);	
+                    callback(events);
                 },
                 eventClick: function(calEvent, jsEvent, view) {
                     $('html, body').animate({ scrollTop: $('#'+calEvent.id).offset().top - 50 }, 'slow');
