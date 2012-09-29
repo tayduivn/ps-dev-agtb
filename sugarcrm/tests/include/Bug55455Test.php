@@ -42,10 +42,21 @@ class Bug55455Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testProperMimeTypeFetching()
     {
+        // Default expectation
+        $expect = 'text/plain';
+
+        // If the two functions that are used to collect mime data aren't available
+        if (!function_exists('mime_content_type') && !function_exists('ext2mime')) {
+            // Fall back to what the download class will fall back to
+            $expect = 'application/octet-stream';
+        }
+
+        // Test actual file
         $dl = new DownloadFile();
         $mime = $dl->getMimeType($this->_actualFile);
-        $this->assertEquals('text/plain', $mime, "Returned mime type [$mime] was not text/plain");
-        
+        $this->assertEquals($expect, $mime, "Returned mime type [$mime] was not '$expect'");
+
+        // Test non existent file
         $mime = $dl->getMimeType($this->_mockFile);
         $this->assertFalse($mime, "$mime should be (boolean) FALSE");
     }
