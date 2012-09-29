@@ -37,7 +37,7 @@
  */
 
        $js_groupings = array(
-            $summer = array(
+            $summer_js = array(
                 "sidecar/lib/jquery/jquery.min.js" => "summer/summer.min.js",
                 "sidecar/lib/jquery/jquery.iframe.transport.js" => "summer/summer.min.js",
                 "sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js" => "summer/summer.min.js",
@@ -108,6 +108,14 @@
                 "styleguide/styleguide/js/nvd3/src/models/pieChart.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/src/models/funnel.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/src/models/funnelChart.js" => "summer/summer.min.js",
+            ),
+
+            $summer_css = array(
+                "sidecar/lib/chosen/chosen.css" => "summer/summer.min.css",
+                "summer/lib/fullcalendar/fullcalendar.css" => "summer/summer.min.css",
+                "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer.min.css",
+                "styleguide/styleguide/css/nvd3/src/nv.d3.css" => "summer/summer.min.css",
+                "summer/lib/TimelineJS/css/timeline.css" => "summer/summer.min.css",
             ),
            $sugar_grp1 = array(
                 //scripts loaded on first page

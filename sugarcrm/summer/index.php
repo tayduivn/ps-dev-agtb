@@ -28,14 +28,22 @@ if (empty($_SESSION['authenticated_user_id'])) {
 <html>
 <head>
     <meta http-equiv="x-ua-compatible" content="IE=8">
-    <link rel="stylesheet" href="../sidecar/lib/chosen/chosen.css"/>
-    <link rel='stylesheet' type='text/css' href='lib/fullcalendar/fullcalendar.css' />
-    <link rel='stylesheet' type='text/css' href='lib/fullcalendar/fullcalendar.print.css' media='print' />
-    <link rel="stylesheet" href="../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/nv.d3.css" />
-    <link rel="stylesheet" type="text/css" href="../styleguide/styleguide/css/nvd3/src/sugar_colors.css" />
-    <link rel="stylesheet" type="text/css" href="lib/TimelineJS/css/timeline.css" />
+    <?php
+    $min_file = 'summer/summer.min.css';
+    if(file_exists("../cache/".$min_file)) {
+        echo "<link rel=\"stylesheet\" type=\"text/css\" src=\"../cache/$file\" />\n";
+    } else {
+        require_once('../jssource/JSGroupings.php');
+        foreach($js_groupings as $group) {
+            foreach($group as $file => $min) {
+                if($min == $min_file) {
+                    echo "<link rel=\"stylesheet\" type=\"text/css\" src=\"../$file\" />\n";
+                }
+            }
+        }
+    }
+    ?>
 </head>
 <body>
 <div>
