@@ -78,14 +78,14 @@
         if(view == 'timeline') {
             $('#activitystream-timeline').show();
             $('#activitystream-calendar').hide();
-            if(!this.timelineRendered) {
+            if($('#activitystream-timeline').html() === "") {
                 this._renderTimeline();
             }
         }
         else if(view == 'calendar') {
             $('#activitystream-calendar').show();
             $('#activitystream-timeline').hide();
-            if(!this.calendarRendered) {
+            if($('#activitystream-calendar').html() === "") {
                 this._renderCalendar();
             }
         }
@@ -698,8 +698,7 @@
                 js: 'lib/TimelineJS/js/timeline.js',
                 source: timeline,
                 embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
-            });
-            this.timelineRendered = true;            
+            });           
         }
     },
 
@@ -740,7 +739,6 @@
         if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
             $('#activitystream-calendar').html('');
             $('#activitystream-calendar').fullCalendar(calendar);
-            this.calendarRendered = true;
         }
     },
 
