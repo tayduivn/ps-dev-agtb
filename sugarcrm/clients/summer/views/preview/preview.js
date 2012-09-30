@@ -4,6 +4,8 @@
     },
 
     initialize: function(options) {
+        _.bindAll(this);
+
         console.log("Creating preview");
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
