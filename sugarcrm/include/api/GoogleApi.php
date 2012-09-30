@@ -90,7 +90,7 @@ class GoogleAPI extends SugarApi
                 if(!empty($entry['gd$email'])) {
                     foreach ($entry['gd$email'] as $e) {
 
-                        if ($e['primary']) {
+                        if (!empty($e['primary'])) {
                             $email = $e['address'];
                             break;
                         }
