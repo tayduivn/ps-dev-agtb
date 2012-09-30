@@ -47,13 +47,6 @@
 
         // Fetch taggable entities.
         var url = app.api.buildURL("CustomReport/EntityList");
-        if(this.opts.params.module) {
-            url += "?module=" + this.opts.params.module;
-            if (this.opts.params.id) {
-                url += "&id=" + this.opts.params.id;
-            }
-        }
-
         app.api.call('GET', url, null, {success: function(o) {
             self.entityList = o;
         }});
