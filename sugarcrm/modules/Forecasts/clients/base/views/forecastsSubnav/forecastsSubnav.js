@@ -126,20 +126,20 @@
      */
     _recursiveReplaceHTMLChars:function (data, self)
     {
-        _.each(data, function(entry) {
+        _.each(data, function(entry, index) {
 
            //Scan for the nodes with the data attribute.  These are the nodes we are interested in
            if(entry.data)
            {
-              entry.data = replaceHTMLChars(entry.data);
+              data[index].data = replaceHTMLChars(entry.data);
 
               if(entry.children)
               {
                   //For each children found (if any) then call _recursiveReplaceHTMLChars again.  Notice setting
                   //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
-                  _.each(entry.children, function(childEntry, index)
+                  _.each(entry.children, function(childEntry, index2)
                   {
-                      entry.children[index] = self._recursiveReplaceHTMLChars([childEntry]);
+                      entry.children[index2] = self._recursiveReplaceHTMLChars([childEntry]);
                   });
               }
            }
