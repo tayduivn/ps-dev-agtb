@@ -114,6 +114,41 @@
         this.jsTree.jstree('select_node', '#' + nodeId);
     },
 
+
+    /**
+     * Recursively step through the tree and for each node representing a tree node, run the data attribute through
+     * the replaceHTMLChars function.  This function supports n-levels of the tree hierarchy.
+     *
+     * @param data The data structure returned from the REST API Forecasts/reportees endpoint
+     * @param self A reference to the view's context so that we may recursively call _recursiveReplaceHTMLChars
+     * @return The modified data structure after all the parent and children nodes have been stepped through
+     * @private
+     */
+    _recursiveReplaceHTMLChars:function (data, self)
+    {
+        _.each(data, function(entry) {
+
+           //Scan for the nodes with the data attribute.  These are the nodes we are interested in
+           if(entry.data)
+           {
+              entry.data = replaceHTMLChars(entry.data);
+
+              if(entry.children)
+              {
+                  //For each children found (if any) then call _recursiveReplaceHTMLChars again.  Notice setting
+                  //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
+                  _.each(entry.children, function(childEntry, index)
+                  {
+                      entry.children[index] = self._recursiveReplaceHTMLChars([childEntry]);
+                  });
+              }
+           }
+        });
+
+        return data;
+    },
+
+
     /**
      * Renders JSTree
      */
@@ -139,7 +174,7 @@
                     data = [ data ];
                 }
 
-                treeData = data;
+                treeData = self._recursiveReplaceHTMLChars(data, self);
 
                 self.jsTree = $(".jstree-sugar").jstree({
                     "plugins":["json_data", "ui", "crrm", "types", "themes"],
