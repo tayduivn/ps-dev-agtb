@@ -78,14 +78,14 @@
         if(view == 'timeline') {
             $('#activitystream-timeline').show();
             $('#activitystream-calendar').hide();
-            if(!this.timelineRendered) {
+            if($('#activitystream-timeline').html() === "") {
                 this._renderTimeline();
             }
         }
         else if(view == 'calendar') {
             $('#activitystream-calendar').show();
             $('#activitystream-timeline').hide();
-            if(!this.calendarRendered) {
+            if($('#activitystream-calendar').html() === "") {
                 this._renderCalendar();
             }
         }
@@ -608,6 +608,15 @@
         });
     },
 
+    _focusOnPost: _.once(function() {
+        // Only focus on the home page. Change this when we have a home module.
+        if (this.module === "ActivityStream") {
+            _.defer(function() {
+                $(".activitystream-post .sayit").focus();
+            });
+        }
+    }),
+
     _renderHtml: function() {
         var self = this;
         _.each(this.collection.models, function(model) {
@@ -667,9 +676,7 @@
         }
 
         // Start the user focused in the activity stream input.
-        _.defer(function() {
-            $(".activitystream-post .sayit").focus();
-        });
+        this._focusOnPost();
 
         return app.view.View.prototype._renderHtml.call(this);
     },
@@ -699,7 +706,6 @@
                 source: timeline,
                 embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
             });
-            this.timelineRendered = true;            
         }
     },
 
@@ -740,7 +746,6 @@
         if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
             $('#activitystream-calendar').html('');
             $('#activitystream-calendar').fullCalendar(calendar);
-            this.calendarRendered = true;
         }
     },
 
