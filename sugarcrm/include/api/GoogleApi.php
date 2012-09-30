@@ -87,7 +87,7 @@ class GoogleAPI extends SugarApi
                 $email = '';
                 $fname = $entry['gd$name']['gd$givenName']['$t'];
                 $lname = $entry['gd$name']['gd$familyName']['$t'];
-                if($entry['gd$email']) {
+                if(!empty($entry['gd$email'])) {
                     foreach ($entry['gd$email'] as $e) {
 
                         if ($e['primary']) {
