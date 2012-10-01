@@ -6,7 +6,7 @@
                 <th> actions </th>
                 {{#each fields}}
                 <th role="columnheader" data-fieldname="{{name}}" data-orderby="{{orderBy}}">
-                    {{field ../../this null "list-header"}}
+                    {{field ../../this "" "list-header"}}
                 </th>
                 {{/each}}
             </tr>
