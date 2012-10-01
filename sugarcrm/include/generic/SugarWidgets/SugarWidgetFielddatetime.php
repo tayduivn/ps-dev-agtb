@@ -508,6 +508,26 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 	}
 
     /**
+     * For oracle we have to return order by string like group by string instead of return field alias
+     *
+     * @param array $layout_def definition of field
+     * @return string order by string for field
+     */
+    function queryOrderByMonth($layout_def)
+    {
+        $orderBy = $this->reporter->db->convert($this->_get_column_select($layout_def), "date_format", array('%Y-%m'));
+
+        if (empty($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a')
+        {
+            return $orderBy . " ASC\n";
+        }
+        else
+        {
+            return $orderBy . " DESC\n";
+        }
+    }
+
+    /**
      * Select addon datetime field for "day" field in reports
      *
      * @param $layout_def array definition of new field
@@ -583,11 +603,11 @@ class SugarWidgetFieldDateTime extends SugarWidgetReportField
 
         if (empty($layout_def['sort_dir']) || $layout_def['sort_dir'] == 'a')
         {
-            return $orderBy." ASC";
+            return $orderBy . " ASC\n";
         }
         else
         {
-            return $orderBy." DESC";
+            return $orderBy . " DESC\n";
         }
     }
 
