@@ -26,12 +26,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once('modules/TimePeriods/iTimePeriod.php');
+require_once('modules/TimePeriods/TimePeriodInterface.php');
 /**
  * Implements the annual representation of a time period
  * @api
  */
-class MonthTimePeriod extends TimePeriod implements iTimePeriod {
+class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
     /**
      * constructor override
@@ -95,7 +95,7 @@ class MonthTimePeriod extends TimePeriod implements iTimePeriod {
         $nextStartDate = $timedate->asDbDate($nextStartDate);
         $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
         $nextPeriod->is_fiscal = $this->is_fiscal;
-        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate), $week_length);
+        $nextPeriod->setStartDate($nextStartDate, $week_length);
         $nextPeriod->is_leaf = $this->is_leaf;
         $nextPeriod->save();
 

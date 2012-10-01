@@ -29,7 +29,7 @@
 /**
  * interface definition for granular sales time periods
  */
-interface iTimePeriod
+interface TimePeriodInterface
 {
     public function getLengthInDays();
 

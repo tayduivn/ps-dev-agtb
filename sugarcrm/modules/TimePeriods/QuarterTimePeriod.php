@@ -27,13 +27,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/TimePeriods/iTimePeriod.php');
+require_once('modules/TimePeriods/TimePeriodInterface.php');
 /**
  * Implements the calendar quarter representation of a time period where the monthly
  * leaves are split by the calendar month
  * @api
  */
-class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
+class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
     /**
      * constructor override
@@ -85,6 +85,7 @@ class QuarterTimePeriod extends TimePeriod implements iTimePeriod {
         $nextStartDate = $nextStartDate->modify('+1 day');
         $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
         $nextPeriod->is_fiscal = $this->is_fiscal;
+        $nextPeriod->is_leaf = $this->is_leaf;
         $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
         $nextPeriod->save();
 

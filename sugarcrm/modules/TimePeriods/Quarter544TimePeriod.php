@@ -27,13 +27,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/TimePeriods/iTimePeriod.php');
+require_once('modules/TimePeriods/TimePeriodInterface.php');
 /**
  * Implements the fiscal quarter representation of a time period where the monthly
  * leaves are split by the longest month occurring first
  * @api
  */
-class Quarter544TimePeriod extends TimePeriod implements iTimePeriod {
+class Quarter544TimePeriod extends TimePeriod implements TimePeriodInterface {
     /**
      * constructor override
      *
