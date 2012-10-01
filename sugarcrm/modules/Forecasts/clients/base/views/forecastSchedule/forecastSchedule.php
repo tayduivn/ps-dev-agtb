@@ -43,8 +43,7 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'options' => 'commit_stage_dom',
                     'label' => 'LBL_FORECAST',
                     'default' => true,
-                    'enabled' => true,
-                    'view' => 'forecastsWorksheet'
+                    'enabled' => true                    
                 ),
                 array(
                     'name' => 'expected_amount',
