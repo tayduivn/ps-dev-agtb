@@ -204,14 +204,8 @@ class TimePeriod extends SugarBean {
      */
     static function getTimePeriod($timedate=null)
     {
-        global $app_strings;
-        $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
         //get current timeperiod
-        $db = DBManagerFactory::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod_id = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-
+        $timeperiod_id = self::getCurrentId();
 
         if(!empty($timeperiod_id))
         {
@@ -230,11 +224,12 @@ class TimePeriod extends SugarBean {
      * @param $db_date String value of database date (ex: 2012-12-30)
      * @return bool|TimePeriod TimePeriod instance for corresponding database date; false if nothing found
      */
-    public static function retrieveFromDate($db_date) {
+    public static function retrieveFromDate($db_date)
+    {
         global $app_strings;
         $db = DBManagerFactory::getInstance();
         $db_date = $db->quote($db_date);
-        $timeperiod_id = $db->getOne("SELECT id FROM timeperiods WHERE start_date < '{$db_date}' AND end_date > '{$db_date}' and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db_date)));
+        $timeperiod_id = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= '{$db_date}' AND end_date >= '{$db_date}' and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($db_date)));
 
         if(!empty($timeperiod_id)) {
             return BeanFactory::getBean('TimePeriods', $timeperiod_id);
@@ -259,7 +254,7 @@ class TimePeriod extends SugarBean {
         $db = DBManagerFactory::getInstance();
         $queryDate = $timedate->getNow();
         $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
         $timeperiods = array();
         if(!empty($timeperiod))
         {
@@ -286,7 +281,7 @@ class TimePeriod extends SugarBean {
             $db = DBManagerFactory::getInstance();
             $queryDate = $timedate->getNow();
             $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
         }
         return $currentId;
     }
@@ -301,34 +296,55 @@ class TimePeriod extends SugarBean {
     static function getLastCurrentNextIds($timedate=null)
     {
         global $app_strings;
+
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if(empty($admin) || !is_object($admin))
+        {
+           display_stack_trace();
+        }
+
+        //Retrieve Forecasts_timeperiod_interval
+        $interval = isset($settings['timeperiod_interval']) ? $settings['timeperiod_interval'] : 'quarterly';
+
+        if ($interval == 'quarterly')
+        {
+            $toLast = '-3 month';
+            $toNext = '+6 month';
+        }
+        else if ($interval == 'yearly')
+        {
+            $toLast = '-12 month';
+            $toNext = '+24 month';
+        }
+
         $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
         $timeperiods = array();
 
         //get current timeperiod
-        $db = DBManagerFactory::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiod = self::getCurrentId();
 
         if(!empty($timeperiod))
         {
             $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
         }
 
-        //previous timeperiod (3 months ago)
-        $queryDate = $queryDate->modify('-3 month');
+        //previous timeperiod
+        $db = DBManagerFactory::getInstance();
+        $queryDate = $timedate->getNow()->modify($toLast);
         $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
         if(!empty($timeperiod))
         {
             $timeperiods[$timeperiod] = $app_strings['LBL_PREVIOUS_TIMEPERIOD'];
         }
 
-        //next timeperiod (3 months from today)
-        $queryDate = $queryDate->modify('+6 month');
+        //next timeperiod
+        $queryDate = $queryDate->modify($toNext);
         $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
 
         if(!empty($timeperiod))
         {
