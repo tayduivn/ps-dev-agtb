@@ -22,12 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-$beanList = array();
-$beanFiles = array();
-require('include/modules.php');
-$GLOBALS['beanList'] = $beanList;
-$GLOBALS['beanFiles'] = $beanFiles;
-
 /**
  * SugarTestCurrencyUtilities
  *
@@ -46,12 +40,12 @@ class SugarTestCurrencyUtilities
      *
      * This creates and returns a new currency object
      *
-     * @param $name the name of the currency
-     * @param $symbol the symbol for the currency
-     * @param $iso4217 the 3-letter ISO for the currency
-     * @param $conversion_rate the conversion rate from the US dollar
-     * @param $id the id for the currency record
-     * @return new currency object
+     * @param string $name the name of the currency
+     * @param string $symbol the symbol for the currency
+     * @param string $iso4217 the 3-letter ISO for the currency
+     * @param number $conversion_rate the conversion rate from the US dollar
+     * @param string $id the id for the currency record
+     * @return Currency
      */
     public static function createCurrency($name, $symbol, $iso4217, $conversion_rate, $id = null)
     {
@@ -78,8 +72,8 @@ class SugarTestCurrencyUtilities
      *
      * get an existing currency by its ISO
      *
-     * @param  $iso4217 the 3-letter ISO for the currency
-     * @return new currency object
+     * @param string $iso4217 the 3-letter ISO for the currency
+     * @return Currency
      */
     public static function getCurrencyByISO($iso4217)
     {

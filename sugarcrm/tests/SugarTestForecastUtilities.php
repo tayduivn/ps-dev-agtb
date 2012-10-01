@@ -128,7 +128,8 @@ class SugarTestForecastUtilities
             'createQuota' => true,
             'quota' => array(
                 'amount' => 2000
-            )
+            ),
+            'currency_id' => '-99'
         );
 
         $config = array_merge($default_config, $config);
@@ -137,6 +138,11 @@ class SugarTestForecastUtilities
         $return = array(
             'opportunities' => array(),
             'opportunities_total' => 0,
+            'included_opps_totals' => array(
+                'likely' => 0,
+                'best' => 0,
+                'worst' => 0,
+            ),
             'opp_worksheets' => array()
         );
 
@@ -184,6 +190,7 @@ class SugarTestForecastUtilities
                 $opp->date_closed = $date_closed;
                 $opp->team_id = '1';
                 $opp->team_set_id = '1';
+                $opp->currency_id = $config['currency_id'];
                 $opp->save();
                 
                 /*
@@ -191,6 +198,7 @@ class SugarTestForecastUtilities
                  * initially created, and thus missing stuff. We need to grab the product that is incomplete and finish
                  * setting it up.
                  */
+                /* @var $product Product */
                 $product = BeanFactory::getBean("Products");
 				$product->retrieve_by_string_fields(array("opportunity_id"=>$opp->id));
 				$product->name = $opp->name;
@@ -213,6 +221,11 @@ class SugarTestForecastUtilities
                     $forecast_likely_total += $opp->amount;
                     $forecast_best_total += $opp->best_case;
                     $forecast_worst_total += $opp->worst_case;
+
+                    $return['included_opps_totals']['likely'] += $opp->amount;
+                    $return['included_opps_totals']['best'] += $opp->best_case;
+                    $return['included_opps_totals']['worst'] += $opp->worst_case;
+
                 }
 
                 $return['opportunities_total'] += $opp_amount;
@@ -228,6 +241,7 @@ class SugarTestForecastUtilities
                     $worksheet->worst_case = $opp->worst_case;
                     $worksheet->op_probability = $opp->probability;
                     $worksheet->commit_stage = $opp->commit_stage;
+                    $worksheet->currency_id = $opp->currency_id;
                     $worksheet->save();
 
                     $return['opp_worksheets'][] = $worksheet;
@@ -244,6 +258,7 @@ class SugarTestForecastUtilities
                 $forecast->best_case = $forecast_best_total;
                 $forecast->worst_case = $forecast_worst_total;
                 $forecast->likely_case = $forecast_likely_total;
+                $forecast->currency_id = $config['currency_id'];
                 $forecast->save();
 
                 $return['forecast'] = $forecast;
@@ -252,9 +267,13 @@ class SugarTestForecastUtilities
             if ($config['createQuota'] === true) {
                 $quota = SugarTestQuotaUtilities::createQuota($config['quota']['amount']);
                 $quota->user_id = $user->id;
+                $quota->created_by = 1;
+                $quota->modified_user_id = 1;
                 $quota->quota_type = (empty($user->reports_to_id)) ? "Direct" : "Rollup";
                 $quota->timeperiod_id = $config['timeperiod_id'];
                 $quota->team_set_id = 1;
+                $quota->currency_id = $config['currency_id'];
+                $quota->committed = 1;
                 $quota->save();
 
                 $return['quota'] = $quota;
@@ -269,6 +288,7 @@ class SugarTestForecastUtilities
                 $worksheet->best_case = $forecast_best_total + 100;
                 $worksheet->likely_case = $forecast_likely_total + 100;
                 $worksheet->worst_case = $forecast_likely_total + 100;
+                $worksheet->currency_id = $config['currency_id'];
                 $worksheet->save();
 
                 $return['worksheet'] = $worksheet;

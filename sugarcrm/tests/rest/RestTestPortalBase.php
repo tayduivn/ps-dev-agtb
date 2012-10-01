@@ -61,8 +61,6 @@ class RestTestPortalBase extends RestTestBase {
         // A little bit destructive, but necessary.
         $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-        
         // Create the portal contact
         $this->contact = BeanFactory::newBean('Contacts');
         $this->contact->id = "UNIT-TEST-portalContact";
@@ -75,6 +73,8 @@ class RestTestPortalBase extends RestTestBase {
         $this->contact->portal_password = User::getPasswordHash("unittest");
         $this->contact->save();
         
+        $this->portalGuy = $this->contact;
+
         // Adding it to the contacts array makes sure it gets deleted when done
         $this->contacts[] = $this->contact;
         $GLOBALS['db']->commit();
