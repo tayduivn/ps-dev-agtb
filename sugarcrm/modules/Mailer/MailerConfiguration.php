@@ -34,7 +34,7 @@ class MailerConfiguration
     // protected members
     protected $hostname; // the hostname to use in Message-ID and Received headers and as default HELO string
                          // not the server hostname
-    protected $locale;
+    protected $locale;   // the Localiziation object necessary for performing character set translations
     protected $charset;  // the character set of the message
     protected $encoding; // the encoding of the message, which must be one of the valid encodings from Encoding
     protected $wordwrap; // number of characters per line before the message body wrap

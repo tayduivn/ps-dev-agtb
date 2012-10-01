@@ -56,9 +56,9 @@ class MailConfigurationPeer
         }
     }
 
-
     /**
      * @return MailConfiguration  System or User defined System-Override Mail Configuration
+     * @throws MailerException
      */
     public static function getSystemMailConfiguration(User $user, Localization $locale = null, $charset = null) {
         $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
@@ -68,12 +68,13 @@ class MailConfigurationPeer
                 return $mailConfiguration;
             }
         }
-        return null;
-    }
 
+        throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
+    }
 
     /**
      * @return array MailConfigurations
+     * @throws MailerException
      */
     public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null) {
         if (is_null($locale)) {
@@ -88,17 +89,17 @@ class MailConfigurationPeer
         $ret                = $user->getUsersNameAndEmail();
 
         if (empty($ret['email'])) {
-            $systemReturn = $user->getSystemDefaultNameAndEmail();
-            $ret['email'] = $systemReturn['email'];
-            $ret['name']  = from_html($systemReturn['name']);
+            $systemReturn          = $user->getSystemDefaultNameAndEmail();
+            $ret['email']          = $systemReturn['email'];
+            $ret['name']           = $systemReturn['name'];
             $system_replyToAddress = $ret['email'];
         } else {
-            $ret['name'] = from_html($ret['name']);
             $system_replyToAddress = '';
         }
 
-        $system_replyToName    = $ret['name'];
-        $replyTo = $user->emailAddress->getReplyToAddress($user, true);
+        $system_replyToName = $ret['name'];
+        $replyTo            = $user->emailAddress->getReplyToAddress($user, true);
+
         if (!empty($replyTo)) {
             $system_replyToAddress = $replyTo;
         }
@@ -113,13 +114,14 @@ class MailConfigurationPeer
             $storedOptions = unserialize(base64_decode($v->stored_options));
 
             $outbound_config_id = $storedOptions["outbound_email"];
-            $oe = null;
+            $oe                 = null;
+
             if (!empty($outbound_config_id)) {
                 $oe = new OutboundEmail();
                 $oe->retrieve($outbound_config_id);
             }
+
             if ($name != null && $addr != null && !empty($outbound_config_id) && !empty($oe) && ($outbound_config_id == $oe->id)) {
-                $name                            = from_html($name);
                 $mailConfiguration               = new MailConfiguration($user);
                 $mailConfiguration->config_id    = $outbound_config_id;
                 $mailConfiguration->config_type  = 'user';
@@ -163,37 +165,38 @@ class MailConfigurationPeer
             $personal = true;
         }
 
-        if (!empty($system->id)) {
-            $mailConfiguration               = new MailConfiguration($user);
-            $mailConfiguration->config_id    = $system->id;
-            $mailConfiguration->config_type  = 'system';
-            $mailConfiguration->sender_name  = "{$ret['name']}";
-            $mailConfiguration->sender_email = "{$ret['email']}";
-            $mailConfiguration->display_name = "{$ret['name']} ({$ret['email']})";
-            $mailConfiguration->personal     = $personal;
-
-            $mailConfiguration->replyto_name  = $system_replyToName;
-            $mailConfiguration->replyto_email = $system_replyToAddress;
-
-            // turn the OutboundEmail object into a useable set of mail configurations
-            $oe = new OutboundEmail();
-            $oe->retrieve($system->id);
-            $oeAsArray                           = self::toArray($oe);
-            $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
-            $mailConfiguration->config_name      = $oeAsArray['name'];
-            $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
-                $oeAsArray,
-                $mailConfiguration->mode,
-                $locale,
-                $charset
-            );
-
-            $mailConfigurations[] = $mailConfiguration;
+        if (empty($system->id)) {
+            throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
+
+        $mailConfiguration               = new MailConfiguration($user);
+        $mailConfiguration->config_id    = $system->id;
+        $mailConfiguration->config_type  = 'system';
+        $mailConfiguration->sender_name  = "{$ret['name']}";
+        $mailConfiguration->sender_email = "{$ret['email']}";
+        $mailConfiguration->display_name = "{$ret['name']} ({$ret['email']})";
+        $mailConfiguration->personal     = $personal;
+
+        $mailConfiguration->replyto_name  = $system_replyToName;
+        $mailConfiguration->replyto_email = $system_replyToAddress;
+
+        // turn the OutboundEmail object into a useable set of mail configurations
+        $oe = new OutboundEmail();
+        $oe->retrieve($system->id);
+        $oeAsArray                           = self::toArray($oe);
+        $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
+        $mailConfiguration->config_name      = $oeAsArray['name'];
+        $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
+            $oeAsArray,
+            $mailConfiguration->mode,
+            $locale,
+            $charset
+        );
+
+        $mailConfigurations[] = $mailConfiguration;
 
         return $mailConfigurations;
     }
-
 
     private static function buildMailerConfiguration($oe, $mode, Localization $locale, $charset) {
         $mailerConfig = null;
@@ -214,9 +217,9 @@ class MailConfigurationPeer
 
                 // determine the appropriate encryption layer for the sending strategy
                 if ($oe['mail_smtpssl'] === 1) {
-                    $mailerConfig->setCommunicationProtocol(SmtpMailerConfiguration::CommunicationProtocolSsl);
+                    $mailerConfig->setSecurityProtocol(SmtpMailerConfiguration::SecurityProtocolSsl);
                 } elseif ($oe['mail_smtpssl'] === 2) {
-                    $mailerConfig->setCommunicationProtocol(SmtpMailerConfiguration::CommunicationProtocolTls);
+                    $mailerConfig->setSecurityProtocol(SmtpMailerConfiguration::SecurityProtocolTls);
                 }
 
                 break;
@@ -230,7 +233,6 @@ class MailConfigurationPeer
 
         return $mailerConfig;
     }
-
 
     private static function toArray($obj, $scalarOnly=true) {
         $fields = get_object_vars($obj);

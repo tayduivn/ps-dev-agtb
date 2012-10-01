@@ -28,7 +28,7 @@
 
 require_once('tests/rest/RestTestBase.php');
 
-class EmailsApiTest extends RestTestBase {
+class MailApiTest extends RestTestBase {
     var $skip_mail_send=true;
 
     var $current_user;
@@ -144,7 +144,7 @@ class EmailsApiTest extends RestTestBase {
 
         $this->document->revision = '38';
         $this->document->filename = $this->document_file_name;
-        $this->document->document_name = 'EmailsAPI Unit Test Document';
+        $this->document->document_name = 'MailAPI Unit Test Document';
         $this->document->assigned_user_id = $current_user->id;
         $this->document->file_ext = 'pdf';
         $this->document->file_mime_type = "application/pdf";
@@ -179,13 +179,13 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emailsapi01
+     * @group mailapi01
      * @group mailer
      */
     public function testCreate_Draft_Success() {
         $this->input["status"] = "draft";
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
 
         $reply = $post_response['reply'];
 
@@ -211,7 +211,7 @@ class EmailsApiTest extends RestTestBase {
     }
 
     /**
-     * @group emailsapi02
+     * @group mailapi02
      * @group mailer
      */
     public function testCreate_Draft_WithRelationship_Success() {
@@ -222,7 +222,7 @@ class EmailsApiTest extends RestTestBase {
             "id"	=> "1234567890"
         );
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $reply = $post_response['reply'];
 
         $http_status = $post_response['info']['http_code'];
@@ -254,7 +254,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emailsapi03
+     * @group mailapi03
      * @group mailer
      */
     public function testCreate_Draft_WithAttachment_Success() {
@@ -266,7 +266,7 @@ class EmailsApiTest extends RestTestBase {
             )
         );
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $reply = $post_response['reply'];
 
         $http_status = $post_response['info']['http_code'];
@@ -292,7 +292,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emailsapi04
+     * @group mailapi04
      * @group mailer
      */
      public function testCreate_Draft_WithMultipleTeams_Success() {
@@ -304,7 +304,7 @@ class EmailsApiTest extends RestTestBase {
             "other"		=> array($this->teams[1], $this->teams[2])
         );
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $reply = $post_response['reply'];
         // print_r($reply);
 
@@ -334,7 +334,7 @@ class EmailsApiTest extends RestTestBase {
     }
 
     /**
-     * @group emailsapi05
+     * @group mailapi05
      * @group mailer
      */
     public function testCreate_Draft_WithSugarDocumentAttached_Success() {
@@ -346,7 +346,7 @@ class EmailsApiTest extends RestTestBase {
             )
         );
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $reply = $post_response['reply'];
         // print_r($reply);
 
@@ -372,7 +372,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emailsapi06
+     * @group mailapi06
      * @group mailer
      */
     public function testCreate_Ready_Success() {
@@ -385,7 +385,7 @@ class EmailsApiTest extends RestTestBase {
         $this->input["cc_addresses"] = null;
         $this->input["bcc_addresses"] = null;
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
@@ -411,7 +411,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emailsapi07
+     * @group mailapi07
      * @group mailer
      */
     public function testCreate_Ready_WithAttachment_Success() {
@@ -432,7 +432,7 @@ class EmailsApiTest extends RestTestBase {
 
         // printf("Current User = '%s' : '%s'\n\n",$this->current_user->id,  $this->current_user->name);
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
         if (isset($reply['error'])) {
             echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
@@ -456,7 +456,7 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emailsapi08
+     * @group mailapi08
      * @group mailer
      */
     public function testCreate_Ready_WithSugarDocumentAttached_Success() {
@@ -475,7 +475,7 @@ class EmailsApiTest extends RestTestBase {
         $this->input["cc_addresses"] = null;
         $this->input["bcc_addresses"] = null;
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $reply = $post_response['reply'];
         // print_r($reply);
 
@@ -501,13 +501,13 @@ class EmailsApiTest extends RestTestBase {
 
 
     /**
-     * @group emailsapi09
+     * @group mailapi09
      * @group mailer
      */
     public function testCreate_InvalidStatus() {
         $this->input["status"] = "bogus";
 
-        $post_response = $this->_restCall("/Emails/", json_encode($this->input), 'POST');
+        $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         // print_r($post_response);
 
         $this->assertEquals(412, $post_response['info']['http_code'], "Expected Request Failure Http Status Code");

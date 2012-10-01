@@ -29,8 +29,7 @@ require_once "SmtpMailerConfiguration.php";              // required if producin
                                                          // MailerConfiguration
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
-require_once "SimpleMailer.php";                         // requires SimpleMailer in order to create a SimpleMailer
-require_once "SugarMailer.php";                          // requires SugarMailer in order to create a SugarMailer
+require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
 
 /**
  * Factory to create Mailers.
@@ -43,23 +42,39 @@ class MailerFactory
     // configuration.
     // key = mode; value = mailer class
     protected static $modeToMailerMap = array(
-        MailConfigurationPeer::MODE_DEFAULT => array(
-            "path"  => ".",            // the path to the class file without trailing slash ("/")
-            "class" => "SimpleMailer", // the name of the class
+        MailConfigurationPeer::MODE_SMTP => array(
+            "path"  => ".",          // the path to the class file without trailing slash ("/")
+            "class" => "SmtpMailer", // the name of the class
         ),
-        MailConfigurationPeer::MODE_SMTP    => array(
-            "path"  => ".",
-            "class" => "SugarMailer",
-        ),
-        MailConfigurationPeer::MODE_WEB     => array(
+        MailConfigurationPeer::MODE_WEB  => array(
             "path"  => ".",
             "class" => "WebMailer",
         ),
     );
 
     /**
+     * In many cases, the correct Mailer is the one that is produced from the configuration associated with a
+     * particular user. This method makes the necessary calls to produce that Mailer, in order to obey the DRY
+     * principle.
+     *
+     * @param User $user required The user from which the mail configuration is retrieved.
+     * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
+    public static function getMailerForUser(User $user) {
+        // get the configuration that the Mailer needs
+        $mailConfiguration = MailConfigurationPeer::getSystemMailConfiguration($user);
+
+        // generate the Mailer
+        $mailer = self::getMailer($mailConfiguration);
+
+        return $mailer;
+    }
+
+    /**
      * Determines the correct Mailer to use based on the configuration that is provided to it and constructs and
-     * returns that object.
+     * returns that object. This method allows the caller to get a Mailer with a configuration that overrides the
+     * user's configuration.
      *
      * @static
      * @access public
@@ -71,7 +86,8 @@ class MailerFactory
     public static function getMailer(MailConfiguration $config) {
         // copy the config value becuase you don't want to modify the object by reassigning a public variable
         // in the case of mode being null
-        $mode = is_null($config->mode) ? "default" : strtolower($config->mode); // make sure it's lower case
+        $mode = is_null($config->mode) ? MailConfigurationPeer::MODE_SMTP : $config->mode;
+        $mode = strtolower($mode); // make sure it's lower case
 
         if (!MailConfigurationPeer::isValidMode($mode)) {
             throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);
