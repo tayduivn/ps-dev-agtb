@@ -32,13 +32,13 @@ if (empty($_SESSION['authenticated_user_id'])) {
     <?php
     $min_file = 'summer/summer.min.css';
     if(file_exists("../cache/".$min_file)) {
-        echo "<link rel=\"stylesheet\" type=\"text/css\" src=\"../cache/$min_file\" />\n";
+        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../cache/$min_file\" />\n";
     } else {
         require_once('../jssource/JSGroupings.php');
         foreach($js_groupings as $group) {
             foreach($group as $file => $min) {
                 if($min == $min_file) {
-                    echo "<link rel=\"stylesheet\" type=\"text/css\" src=\"../$file\" />\n";
+                    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../$file\" />\n";
                 }
             }
         }
