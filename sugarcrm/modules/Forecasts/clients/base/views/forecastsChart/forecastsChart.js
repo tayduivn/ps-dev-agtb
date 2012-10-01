@@ -84,7 +84,7 @@
             user_id: app.user.get('id'),
             display_manager : app.user.get('isManager'),
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
-            group_by : this.getCheckedOptions('groupByOptions'),
+            group_by : _.first(this.getCheckedOptions('groupByOptions')),
             dataset : this.getCheckedOptions('datasetOptions'),
             category : app.defaultSelections.category
         };
