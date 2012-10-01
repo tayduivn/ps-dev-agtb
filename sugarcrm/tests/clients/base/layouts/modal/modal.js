@@ -3,8 +3,6 @@ describe("Base.Layout.Modal", function() {
 
     beforeEach(function() {
         app = SugarTest.app;
-        app.controller = {};
-        //app.metadata.set(meta);
         context = app.context.getContext();
         if (!app.view.layouts.ModalLayout)
         {
@@ -47,7 +45,7 @@ describe("Base.Layout.Modal", function() {
     });
 
     it("should delegate triggers at contruction time", function(){
-        var definedTriggerName = 'app:layout:modal:open',
+        var definedTriggerName = 'app:layout:modal:open1',
             calledEventName = '',
             options = {
                 'meta' : {
@@ -61,11 +59,11 @@ describe("Base.Layout.Modal", function() {
                     }
                 }
             };
-        sinon.spy(options.layout, "on");
+        //sinon.spy(options.layout, "on");
         sinon.spy(context, "on");
+        sinon.spy(options.layout, "on");
         var layout = new ModalLayout(options);
         expect(calledEventName).toEqual(definedTriggerName);
-        expect(layout.showEvent).toBe(definedTriggerName);
         expect(options.layout.on).toHaveBeenCalledOnce();
         expect(options.layout.on.calledWith(definedTriggerName)).toBe(true);
     });
@@ -200,7 +198,8 @@ describe("Base.Layout.Modal", function() {
         var definedTriggerName = 'app:layout:modal:open',
             options = {
                 'meta' : {
-                    'showEvent' : definedTriggerName
+                    'showEvent' : definedTriggerName,
+                    'components' : [ { view: 'blah' }]
                 },
                 'context' : context,
                 'layout' : {
@@ -226,7 +225,8 @@ describe("Base.Layout.Modal", function() {
         var definedTriggerName = 'app:layout:modal:open',
             options = {
                 'meta' : {
-                    'showEvent' : definedTriggerName
+                    'showEvent' : definedTriggerName,
+                    'components' : [ { view: 'blah' }]
                 },
                 'context' : context,
                 'layout' : {

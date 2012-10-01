@@ -76,7 +76,6 @@
     },
     _placeComponent: function(comp, def) {
         if(this.$('.modal:first').length == 0) {
-            //TODO: Replace inline CSS with css property
             this.$el.append(
                 $('<div>', {'class' : 'modal hide'}).append(
                     this.$body
@@ -103,6 +102,7 @@
      */
     _buildComponentsBeforeShow : function(params, callback) {
         var self = this,
+            params = params || {},
             buttons = params.buttons || [],
             message = params.message || '',
             components = (params.components || this.metaComponents || []),
