@@ -35,7 +35,6 @@ $mod_strings = array (
 	// quick menu link labels
 	'LNK_NEW_CONTRACT' => 'Create Contract',
 	'LNK_CONTRACT_LIST' => 'View Contracts',
-    'LNK_IMPORT_CONTRACTS' => 'Import Contracts',
 
     // quick create label
     'LBL_NEW_FORM_TITLE' => 'New Contract',
@@ -43,7 +42,6 @@ $mod_strings = array (
 	// vardef labels
 	'LBL_CONTRACT_NAME' => 'Contract Name:',
 	'LBL_REFERENCE_CODE' => 'Reference Code:',
-    'LBL_ACCOUNT_ID' => 'Account ID',
 	'LBL_ACCOUNT_NAME' => 'Account Name:',
 	'LBL_OPPORTUNITY' => 'Opportunity',
 	'LBL_START_DATE' => 'Start Date:',

@@ -89,7 +89,6 @@ class Contract extends SugarBean {
 	var $rel_quote_table = 'contracts_quotes';
 	var $table_name = 'contracts';
 	var $object_name = 'Contract';
-    var $importable = true;
 	var $user_preferences;
 
 	var $encodeFields = array ();
