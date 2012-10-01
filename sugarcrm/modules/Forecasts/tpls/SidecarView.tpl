@@ -79,7 +79,6 @@
                     app.viewModule = {/literal}'{$module}';{literal}
                 app.AUTH_ACCESS_TOKEN = authAccessToken;
                 app.AUTH_REFRESH_TOKEN = authAccessToken;
-                //app.config.show_buckets = {/literal}'{$forecast_opportunity_buckets}' == '1'?true:false;{literal}
                 app.init({
                     el: "forecasts",
                     contentEl: ".content",
@@ -93,17 +92,6 @@
             }
             }));
 
-        /*
-        app.view.Field = app.view.Field.extend({
-            _render: function() {
-                if (this.def.type == 'bool' && (this.name == "forecast" || this.name == 'include_expected')) {
-                    this.options = this.options || {};
-                    this.options.viewName = this.view.isMyWorksheet() ? 'edit' : 'detail';
-                }
-                app.view.Field.__super__._render.call(this);
-            }
-        });
-        */
      })(SUGAR.App);
 
     //Call initForecast with the session id as token

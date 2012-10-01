@@ -342,15 +342,11 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
-    'time_period_dom' =>
-    array (
-      'Annually' => 'Annually',
-      'Quarterly' => 'Quarterly',
-      'Quarterly544' => 'Quarterly 5-4-4',
-      'Quarterly445' => 'Quarterly 4-4-5',
-      'Monthly' => 'Monthly',
-      'Weekly' => 'Weekly',
-    ),
+
+  'commit_stage_binary_dom' => array (
+    'include' => 'Include',
+    'pipeline' => 'Pipeline',
+  ),
   'commit_stage_dom' =>
   array (
     'include' => 'Include',
@@ -1772,10 +1768,6 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
-    'forecasts_filters_category' => array(
-        '1' => 'Committed',
-        '0' => 'Pipeline',
-    ),
     'forecasts_chart_options_group' => array(
         'forecast' => 'Included In Forecast',
         'sales_stage' => 'Sales Stage',
@@ -4290,7 +4282,7 @@ $app_strings ['documentation'] = array (
 );
 
 $app_list_strings['forecasts_config_category_options_dom'] = array(
-    'binary' => 'Two Categories',
+    'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
     'show_n_buckets' => 'N Categories',
 );
