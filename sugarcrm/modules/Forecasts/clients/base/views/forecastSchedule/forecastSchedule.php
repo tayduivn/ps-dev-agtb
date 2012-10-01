@@ -40,11 +40,10 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                 array(
                     'name' => 'expected_commit_stage',
                     'type' => 'enum',
-                    'view' => 'edit',
                     'options' => 'commit_stage_dom',
                     'label' => 'LBL_FORECAST',
                     'default' => true,
-                    'enabled' => true,
+                    'enabled' => true                    
                 ),
                 array(
                     'name' => 'expected_amount',

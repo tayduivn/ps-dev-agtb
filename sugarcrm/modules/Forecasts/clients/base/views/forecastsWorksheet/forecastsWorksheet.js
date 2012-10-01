@@ -30,32 +30,15 @@
     },
 
     /**
-     * This function handles updating the totals calculation and calling the render function.  It takes the model entry
-     * that was updated by the toggle event and calls the Backbone save function on the model to invoke the REST APIs
-     * to handle persisting the changes
-     *
-     * @param model Backbone model entry that was affected by the toggle event
-     */
-    toggleIncludeInForecast:function(model)
-    {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() {
-        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
-        	this.render(); 
-        }, this)});
-    },
-
-    /**
      * Initialize the View
      *
      * @constructor
      * @param {Object} options
      */
     initialize:function (options) {
-
+    	
         var self = this;
-
+        
         this.viewModule = app.viewModule;
 
         //set expandable behavior to false by default
@@ -105,16 +88,7 @@
         }
 
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        /*
-        var params = '';
-        _.each(args, function (value, key) {
-            params += '&' + key + '=' + encodeURIComponent(value);
-        });
-
-        if(params)
-        {
-            url += '?' + params.substr(1);
-        }*/
+        
         return url;
     },
 
@@ -125,11 +99,24 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-        field._save = function(event, input) {
-            this.model.set('commit_stage', input.selected);
-            this.view.context.set('selectedToggle', field);
-        };
-        field.events = _.extend({"change select": "_save"}, field.events);
+    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var self = this;
+    	    	
+    	//show_binary, show_buckets, show_n_buckets
+    	if(forecastCategories == "show_binary"){
+    		field.type = "bool";
+    		field.format = function(value){
+    			return (value=="include") ? true : false;    	        
+    		};
+    		field.unformat = function(value){
+    			return this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";    	        
+    		};
+    	}
+    	else{
+    		field.type = "enum";
+    		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+    	}  	
+    	
         return field;
     },
 
@@ -142,22 +129,16 @@
      * @protected
      */
     _renderField: function(field) {
-
         if(field.name == "commit_stage")
         {
             //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.isEditableWorksheet)
             {
                field = this._setUpCommitStage(field);
             }
         }
-
-        /*
-        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            field = this._setUpCommitStage(field);
-        }
-        */
+        
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -165,7 +146,7 @@
         }
 
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this);
+            new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
         }
     },
 
@@ -173,14 +154,7 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
-
-            this._collection.on("change", function() {
-                _.each(this._collection.models, function(element, index){
-                    if(element.hasChanged("commit_stage")) {
-                        this.toggleIncludeInForecast(element);
-                    }
-                }, this);
-            }, this);
+            
         }
 
         // listening for updates to context for selectedUser:change
@@ -322,7 +296,7 @@
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
                 //field.enabled = (app.config.show_buckets == 1);
-                field.view = self.isEditableWorksheet ? 'edit' : 'default';
+                field.view = self.isEditableWorksheet ? self.name : 'default';
             }
         });
 
