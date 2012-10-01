@@ -42,7 +42,8 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
         global $beanList, $beanFiles, $current_user;
         require('include/modules.php');
 
-        $GLOBALS['db']->preInstall();
+        $db = DBManagerFactory::getInstance();
+        $db->preInstall();
 
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         $current_user->user_name = 'employee0';
@@ -141,7 +142,12 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        $GLOBALS['db']->dropTableName('_hierarchy_return_set');
+        // _hierarchy_return_set used for mysql only
+        $db = DBManagerFactory::getInstance();
+        if ( $db instanceof MysqlManager )
+        {
+            $db->dropTableName('_hierarchy_return_set');
+        }
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
@@ -154,9 +160,10 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
     public function testForecastTree()
     {
         global $current_user;
-        $sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id, user_name, reports_to_id', false, "status = 'Active' and user_name like 'employee%'");
-        $result = $GLOBALS['db']->query($sql);
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+        $db = DBManagerFactory::getInstance();
+        $sql = $db->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id, user_name, reports_to_id', false, "status = 'Active' and user_name like 'employee%'");
+        $result = $db->query($sql);
+        while ($row = $db->fetchByAssoc($result)) {
             switch ($row['id']) {
                 case $this->employee1->id:
                 case $this->employee2->id:
@@ -173,17 +180,17 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
             }
         }
 
-        $result = $GLOBALS['db']->query("SELECT id, parent_id FROM product_categories WHERE deleted = 0");
+        $result = $db->query("SELECT id, parent_id FROM product_categories WHERE deleted = 0");
         $products = array();
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+        while ($row = $db->fetchByAssoc($result)) {
             if (!empty($row['parent_id'])) {
                 $products[$row['id']] = $row['parent_id'];
             }
         }
 
-        $sql = $GLOBALS['db']->getRecursiveSelectSQL('product_categories', 'id', 'parent_id', 'id, parent_id, assigned_user_id, name', false, "deleted = 0");
-        $result = $GLOBALS['db']->query($sql);
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+        $sql = $db->getRecursiveSelectSQL('product_categories', 'id', 'parent_id', 'id, parent_id, assigned_user_id, name', false, "deleted = 0");
+        $result = $db->query($sql);
+        while ($row = $db->fetchByAssoc($result)) {
             if (!empty($row['parent_id'])) {
                 $this->assertEquals($row['parent_id'], $products[$row['id']]);
             }
@@ -191,44 +198,50 @@ class HierarchyQueriesTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Finally test a reporting-like query we may encounter
         //This query gets the upstream users for employee4
-        $hierarchy_sql = $GLOBALS['db']->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id', true, "status = 'Active' AND id = '{$this->employee4->id}'");
-        $result = $GLOBALS['db']->query($hierarchy_sql);
+        $hierarchy_sql = $db->getRecursiveSelectSQL('users', 'id', 'reports_to_id', 'id,reports_to_id', true, "status = 'Active' AND id = '{$this->employee4->id}'");
+        $result = $db->query($hierarchy_sql);
         $hierarchy = array();
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+        while ($row = $db->fetchByAssoc($result)) {
             $hierarchy[] = $row['id'];
         }
 
         $hierarchy = "'" . implode("','", $hierarchy) . "'";
 
         //Would we really do it this way with an in clause substituted?
-        $sql = "SELECT IFNULL(opportunities.id,'') primaryid
-    ,IFNULL(opportunities.name,'') opportunities_name
-    ,opportunities.probability
-    ,opportunities.best_case
-    ,opportunities.worst_case
-    ,IFNULL(l1.id,'') l1_id
-    ,l1.user_name l1_user_name,IFNULL(l2.id,'') l2_id
-    ,l2.id l2_product_id,l2.quantity l2_quantity
+        $sql = "SELECT
+            ". $db->convert('opportunities.id', 'ifnull', array("''")) ." primaryid
+            ,". $db->convert('opportunities.name', 'ifnull', array("''")) ." opportunities_name
+            ,opportunities.probability, opportunities.best_case, opportunities.worst_case
+            ,". $db->convert('l1.id', 'ifnull', array("''")) ." l1_id
+            ,l1.user_name l1_user_name
+            ,". $db->convert('l2.id', 'ifnull', array("''")) ." l2_id
+            ,l2.id l2_product_id,l2.quantity l2_quantity
+            FROM opportunities
+            LEFT JOIN  users l1 ON opportunities.assigned_user_id=l1.id AND l1.deleted=0
+            LEFT JOIN  products l2 ON opportunities.id=l2.opportunity_id
+                AND l2.deleted=0
+                AND l2.team_set_id IN (
+                    SELECT  tst.team_set_id from team_sets_teams tst
+                    INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
+                        AND team_memberships.user_id in ({$hierarchy}) AND team_memberships.deleted=0
+                )
+            WHERE (((l1.id in ({$hierarchy})
+            )) AND opportunities.team_set_id IN (
+                SELECT tst.team_set_id
+                FROM team_sets_teams tst
+                INNER JOIN team_memberships team_memberships ON tst.team_id = team_memberships.team_id
+                    AND team_memberships.user_id in ({$hierarchy})
+                    AND team_memberships.deleted=0
+                )
+            ) AND  opportunities.deleted=0";
+        if ( $db instanceof MysqlManager )
+        {
+            $sql .= " LIMIT 0,100";
+        }
 
-    FROM opportunities
-    LEFT JOIN  users l1 ON opportunities.assigned_user_id=l1.id AND l1.deleted=0
-
-    LEFT JOIN  products l2 ON opportunities.id=l2.opportunity_id AND l2.deleted=0
-
-     AND l2.team_set_id IN (SELECT  tst.team_set_id from team_sets_teams
-                                        tst INNER JOIN team_memberships team_memberships ON tst.team_id =
-                                        team_memberships.team_id AND team_memberships.user_id in ({$hierarchy}) AND team_memberships.deleted=0)
-     WHERE (((l1.id in ({$hierarchy})
-    )) AND opportunities.team_set_id IN (SELECT tst.team_set_id FROM
-                                    team_sets_teams tst INNER JOIN team_memberships team_memberships ON
-                                    tst.team_id = team_memberships.team_id AND team_memberships.user_id in ({$hierarchy})
-                                    AND team_memberships.deleted=0))
-    AND  opportunities.deleted=0
-     LIMIT 0,100";
-
-        $result = $GLOBALS['db']->query($sql);
+        $result = $db->query($sql);
         $opportunities = 0;
-        while ($row = $GLOBALS['db']->fetchByAssoc($result)) {
+        while ($row = $db->fetchByAssoc($result)) {
             $opportunities++;
         }
 

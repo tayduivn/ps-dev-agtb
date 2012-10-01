@@ -40,11 +40,6 @@ $mod_strings = array (
 'LBL_UPDATE_TRACKER_SESSIONS' => 'Update tracker_sessions Table',
 'LBL_OOTB_SEND_EMAIL_REMINDERS'	=> 'Run Email Reminder Notifications',
 'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
-//BEGIN SUGARCRM flav=dce ONLY
-'LBL_OOTB_DCE_CLNUP'          => 'Close loop on completed DCE actions',
-'LBL_OOTB_DCE_REPORT'         => 'Create Action to gather daily reports',
-'LBL_OOTB_DCE_SALES_REPORT'   => 'Create weekly Sales Report Email',
-//END SUGARCRM flav=dce ONLY
 
 // List Labels
 'LBL_LIST_JOB_INTERVAL' => 'Interval:',
@@ -146,24 +141,15 @@ $mod_strings = array (
 'LBL_POLLMONITOREDINBOXES' => 'Check Inbound Mail Accounts',
 'LBL_PERFORMFULLFTSINDEX' => 'Full-text Search Index System',
 
-//BEGIN SUGARCRM flav!=dce ONLY
 'LBL_RUNMASSEMAILCAMPAIGN' => 'Run Nightly Mass Email Campaigns',
 'LBL_POLLMONITOREDINBOXESFORBOUNCEDCAMPAIGNEMAILS' => 'Run Nightly Process Bounced Campaign Emails',
-//END SUGARCRM flav!=dce ONLY
 'LBL_PRUNEDATABASE' => 'Prune Database on 1st of Month',
 'LBL_TRIMTRACKER' => 'Prune Tracker Tables',
 //BEGIN SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=dce ONLY
 'LBL_PROCESSWORKFLOW' => 'Process Workflow Tasks',
-//END SUGARCRM flav!=dce ONLY
 'LBL_PROCESSQUEUE' => 'Run Report Generation Scheduled Tasks',
 'LBL_UPDATETRACKERSESSIONS' => 'Update Tracker Session Tables',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-'LBL_DCEACTIONCLEANUP' => 'dceActionCleanup',
-'LBL_DCECREATEREPORTDATA' => 'dceCreateReportData',
-'LBL_DCECREATESALESREPORT' => 'dceCreateSalesReport',
-//END SUGARCRM flav=dce ONLY
 'LBL_SENDEMAILREMINDERS'=> 'Run Email Reminders Sending',
 //BEGIN SUGARCRM flav=int ONLY
 'LBL_TESTEMAIL' => 'testEmail',

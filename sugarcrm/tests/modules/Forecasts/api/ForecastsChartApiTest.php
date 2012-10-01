@@ -46,7 +46,8 @@ class ForecastsChartApiTest extends RestTestBase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('app_list_strings');
-        self::$user = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('current_user');
+        self::$user = $GLOBALS['current_user'];
 
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod("2012-01-01", "2012-03-31");
 

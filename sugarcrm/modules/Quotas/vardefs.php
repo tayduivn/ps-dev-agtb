@@ -78,7 +78,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		'source' => 'non-db',
 		'table' => 'users',
 	),
-             
+
     'timeperiod_id' =>
         array (
          'name' => 'timeperiod_id',

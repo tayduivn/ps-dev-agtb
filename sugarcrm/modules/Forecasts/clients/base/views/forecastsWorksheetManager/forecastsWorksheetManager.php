@@ -76,8 +76,34 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheetManager'] = array(
                     'enabled' => true,
                     'clickToEdit' => true,
                     'convertToBase'=> true,
-               ),
+                ),
 
+                array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE',
+                    'default' => true,
+                    'enabled' => true,
+                    'convertToBase'=> true,
+                ),
+
+                array(
+                    'name' => 'worst_adjusted',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE_VALUE',
+                    'default' => true,
+                    'enabled' => true,
+                    'clickToEdit' => true,
+                    'convertToBase'=> true,
+                ),
+
+                array(
+                    'name' => 'user_history_log',
+                    'type' => 'historyLog',
+                    'label' => '',
+                    'default' => true,
+                    'enabled' => true,
+               ),
             ),
         ),
     ),

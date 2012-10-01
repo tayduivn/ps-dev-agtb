@@ -57,7 +57,7 @@ class ModuleScannerTest extends Sugar_PHPUnit_Framework_TestCase
 	 */
 	public function testPHPFile($content, $is_php)
 	{
-        $ms = new MockModuleScanner();
+        $ms = new ModuleScanner();
 	    $this->assertEquals($is_php, $ms->isPHPFile($content), "Bad PHP file result");
 	}
 
@@ -120,12 +120,44 @@ EOQ;
 		$this->assertTrue(!empty($errors));
     }
 
-}
-
-class MockModuleScanner extends  ModuleScanner
-{
-    public function isPHPFile($contents) {
-        return parent::isPHPFile($contents);
+    /**
+     * Bug 56717 
+     * 
+     * When ModuleScanner is enabled, handle bars templates are invalidating published
+     * package installation.
+     * 
+     * @group bug56717
+     */
+    public function testBug56717ValidExtsAllowed() {
+        // Allowed file names
+        $allowed = array(
+            'php' => 'test.php',
+            'htm' => 'test.htm',
+            'xml' => 'test.xml',
+            'hbt' => 'test.hbt',
+        );
+        
+        // Disallowed file names
+        $notAllowed = array(
+            'docx' => 'test.docx',
+            'java' => 'test.java',
+            'phtm' => 'test.phtm',
+        );
+        
+        // Get our scanner
+        $ms = new ModuleScanner();
+        
+        // Test valid
+        foreach ($allowed as $ext => $file) {
+            $valid = $ms->isValidExtension($file);
+            $this->assertTrue($valid, "The $ext extension should be valid on $file but the ModuleScanner is saying it is not");
+        }
+        
+        // Test not valid
+        foreach ($notAllowed as $ext => $file) {
+            $valid = $ms->isValidExtension($file);
+            $this->assertFalse($valid, "The $ext extension should not be valid on $file but the ModuleScanner is saying it is");
+        }
     }
 }
 

@@ -228,6 +228,7 @@ $dictionary['Project'] = array(
     		'ignore_role'=>true,
 				'vname'=>'LBL_ACCOUNTS',
   		),
+//BEGIN SUGARCRM flav=pro ONLY      
 		'quotes' =>
   		array (
   			'name' => 'quotes',
@@ -237,6 +238,8 @@ $dictionary['Project'] = array(
     		'ignore_role'=>true,
 				'vname'=>'LBL_QUOTES',
   		),
+//END SUGARCRM flav=pro ONLY
+
 		'contacts' =>
   		array (
   			'name' => 'contacts',

@@ -194,6 +194,7 @@ class ForecastsProgressApiTest extends RestTestBase
         SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
     public static function tearDownAfterClass()

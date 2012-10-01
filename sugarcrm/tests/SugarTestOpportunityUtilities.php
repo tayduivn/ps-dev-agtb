@@ -103,14 +103,16 @@ class SugarTestOpportunityUtilities
         
         if (!empty($opportunity_ids))
         {
+            $GLOBALS['db']->query('DELETE FROM products_audit WHERE parent_id IN (SELECT id FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\'))');
         	$GLOBALS['db']->query('DELETE FROM products WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $opportunity_ids) . '\')');
+            $GLOBALS['db']->query('DELETE FROM opportunities_audit WHERE parent_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM opportunities_contacts WHERE opportunity_id IN (\'' . implode("', '", $opportunity_ids) . '\')');
         }
 
         if (self::$_createdAccount !== null && self::$_createdAccount->id)
         {
-            $GLOBALS['db']->query('DELETE FROM accounts WHERE id = \'' . self::$_createdAccount->id . '\''); 
+            $GLOBALS['db']->query('DELETE FROM accounts WHERE id = \'' . self::$_createdAccount->id . '\'');
         }
     }
     

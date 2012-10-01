@@ -46,39 +46,17 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     {
         global $app_strings;
 
-        $timeperiods = array();
+        $current = SugarTestTimePeriodUtilities::createTimePeriod();
         $timedate = TimeDate::getInstance();
-        //get current timeperiod
-        $db = DBManagerFactory::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        $endDate = $timedate->fromDbDate($current->start_date)->modify('-1 day')->asDbDate();
+        $last = SugarTestTimePeriodUtilities::createTimePeriod('2011-01-01', $endDate);
+        $startDate = $timedate->fromDbDate($current->end_date)->modify('+1 day')->asDbDate();
+        $next = SugarTestTimePeriodUtilities::createTimePeriod($startDate, '2020-01-01');
 
-        if (!empty($timeperiod)) {
-            $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
-        }
-
-        //previous timeperiod (3 months ago)
-        $queryDate = $queryDate->modify('-3 month');
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-
-        if (!empty($timeperiod)) {
-            $timeperiods[$timeperiod] = $app_strings['LBL_PREVIOUS_TIMEPERIOD'];
-        }
-
-        //next timeperiod (3 months from today)
-        $queryDate = $queryDate->modify('+6 month');
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT id FROM timeperiods WHERE start_date < {$date} AND end_date > {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-
-        if (!empty($timeperiod)) {
-            $timeperiods[$timeperiod] = $app_strings['LBL_NEXT_TIMEPERIOD'];
-        }
-
-        if (count($timeperiods) != 3) {
-            $this->markTestSkipped('Incomplete default timeperiods data');
-        }
+        $timeperiods = array();
+        $timeperiods[$current->id] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
+        $timeperiods[$last->id] = $app_strings['LBL_PREVIOUS_TIMEPERIOD'];
+        $timeperiods[$next->id] = $app_strings['LBL_NEXT_TIMEPERIOD'];
 
         $result = TimePeriod::getLastCurrentNextIds();
         $this->assertSame($timeperiods, $result);
@@ -90,16 +68,16 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetTimePeriodFromDbDateWithValidDate()
     {
         // get time period within 2009-02-15
-        $tp = TimePeriod::retrieveFromDate('2009-02-15');
-        if(empty($tp))
-        {
-            // create time period if it does not exist
-            $tp = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-            $expected_id = $tp->id;
-        } else {
-            $expected_id = $tp->id;
-        }
-        $this->assertEquals($expected_id, TimePeriod::retrieveFromDate('2009-02-15')->id);
+        $expected = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+
+        $result = TimePeriod::retrieveFromDate('2009-02-15');
+        $this->assertEquals($expected->id, $result->id);
+
+        $result = TimePeriod::retrieveFromDate('2009-01-01');
+        $this->assertEquals($expected->id, $result->id);
+
+        $result = TimePeriod::retrieveFromDate('2009-03-31');
+        $this->assertEquals($expected->id, $result->id);
 
     }
 
