@@ -1,12 +1,10 @@
 <div id="alert" class="alert-top"></div>
 <div id="core-module">
     <div id="forecasts" style="" >
-        <div class="row-fluid">
-            <div class="view-forecastsSubnav subnav" id="headerbar"></div>
-        </div>
         <div class="container-fluid">
             <div class="row-fluid">
                 <div class="span8">
+                    <div class="view-forecastsSubnav subnav" id="headerbar"></div>
                     <div class="view-forecastsCommitButtons"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-forecastsFilter"></div>
@@ -19,7 +17,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="span4 tab-content">
                     <div class="tab-pane active" id="overview">
                         <div class="thumbnail viz">
