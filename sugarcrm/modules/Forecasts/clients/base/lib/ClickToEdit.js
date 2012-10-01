@@ -120,7 +120,6 @@
                     	$(this).parent().append(invalid);                  	
                     	return value;
                     } try {
-                        debugger;
                         var orig = settings.field.holder;
                         // if the user entered a +/- percentage, re-calculate the value based on the percentage
                         if(_.include(settings.numberTypes, settings.field.type)) {
