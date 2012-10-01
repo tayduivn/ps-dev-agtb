@@ -76,23 +76,23 @@ class SmtpMailerConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testSetCommunicationProtocol_PassInAValidProtocol_CommunicationProtocolIsSet() {
+    public function testSetSecirutyProtocol_PassInAValidProtocol_SecurityProtocolIsSet() {
         $mailerConfig = new SmtpMailerConfiguration();
-        $expected     = SmtpMailerConfiguration::CommunicationProtocolSsl;
+        $expected     = SmtpMailerConfiguration::SecurityProtocolSsl;
 
-        $mailerConfig->setCommunicationProtocol($expected);
-        $actual = $mailerConfig->getCommunicationProtocol();
-        self::assertEquals($expected, $actual, "The communication protocol should have been set to {$expected}");
+        $mailerConfig->setSecurityProtocol($expected);
+        $actual = $mailerConfig->getSecurityProtocol();
+        self::assertEquals($expected, $actual, "The security protocol should have been set to {$expected}");
     }
 
     /**
      * @group mailer
      */
-    public function testSetCommunicationProtocol_PassInAnInvalidProtocol_ThrowsException() {
-        $mailerConfig          = new SmtpMailerConfiguration();
-        $communicationProtocol = "asdf"; // some asinine value that wouldn't actually be used
+    public function testSetSecurityProtocol_PassInAnInvalidProtocol_ThrowsException() {
+        $mailerConfig     = new SmtpMailerConfiguration();
+        $securityProtocol = "asdf"; // some asinine value that wouldn't actually be used
 
         self::setExpectedException("MailerException");
-        $mailerConfig->setCommunicationProtocol($communicationProtocol);
+        $mailerConfig->setSecurityProtocol($securityProtocol);
     }
 }

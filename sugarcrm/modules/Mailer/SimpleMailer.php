@@ -92,7 +92,7 @@ class SimpleMailer extends BaseMailer
         // transfer the SMTP configurations to PHPMailer
         $mailer->Host       = $this->config->getHost();
         $mailer->Port       = $this->config->getPort();
-        $mailer->SMTPSecure = $this->config->getCommunicationProtocol();
+        $mailer->SMTPSecure = $this->config->getSecurityProtocol();
         $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
         $mailer->Password   = from_html($this->config->getPassword());  // perform HTML character translations

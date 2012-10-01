@@ -217,9 +217,9 @@ class MailConfigurationPeer
 
                 // determine the appropriate encryption layer for the sending strategy
                 if ($oe['mail_smtpssl'] === 1) {
-                    $mailerConfig->setCommunicationProtocol(SmtpMailerConfiguration::CommunicationProtocolSsl);
+                    $mailerConfig->setSecurityProtocol(SmtpMailerConfiguration::SecurityProtocolSsl);
                 } elseif ($oe['mail_smtpssl'] === 2) {
-                    $mailerConfig->setCommunicationProtocol(SmtpMailerConfiguration::CommunicationProtocolTls);
+                    $mailerConfig->setSecurityProtocol(SmtpMailerConfiguration::SecurityProtocolTls);
                 }
 
                 break;
