@@ -52,7 +52,8 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase' => true
                 ),
                 array(
                     'name' => 'expected_best_case',
@@ -60,7 +61,8 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase' => true
                 ),
                 array(
                     'name' => 'expected_worst_case',
@@ -68,7 +70,8 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => false,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase' => true
                 ),
             ),
         ),
