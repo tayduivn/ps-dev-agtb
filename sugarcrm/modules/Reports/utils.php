@@ -63,7 +63,7 @@ class ReportsUtilities
 
         // set the subject of the email
         $mod_strings = return_module_language($this->language, "Reports");
-        $mailer->setHeader(EmailHeaders::Subject, $mod_strings["ERR_REPORT_INVALID_SUBJECT"]);
+        $mailer->setSubject($mod_strings["ERR_REPORT_INVALID_SUBJECT"]);
 
         // set the body of the email... looks to be plain-text only
         $mailer->setTextBody($message);
