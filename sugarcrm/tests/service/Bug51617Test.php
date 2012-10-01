@@ -23,6 +23,7 @@
  ********************************************************************************/
 
 require_once 'tests/service/SOAPTestCase.php';
+require_once 'modules/DynamicFields/FieldCases.php';
 
 class Bug51617Test extends SOAPTestCase
 {
@@ -88,6 +89,7 @@ class Bug51617Test extends SOAPTestCase
     public function tearDown()
     {
         $this->df->deleteField($this->field);
+        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->_account->id}'");
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
 
