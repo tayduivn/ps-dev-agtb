@@ -41,10 +41,12 @@ describe("Quickcreate", function() {
                     type: "text"
                 }, {
                     name: "last_name",
-                    type: "text"
+                    type: "text",
+                    duplicate_merge: "default"
                 }, {
                     name: "phone_work",
-                    type: "text"
+                    type: "text",
+                    duplicate_merge: "default"
                 }]
             }]
         };
@@ -331,6 +333,7 @@ describe("Quickcreate", function() {
 
         it("should change the save button label and hide other save buttons when duplicates are found", function() {
             var flag = false,
+                saveCreateSelector, saveViewSelector,
                 isValidStub = sinon.stub(layout.model, 'isValid', function() {
                     return true;
                 }),
@@ -341,9 +344,7 @@ describe("Quickcreate", function() {
                     }));
                     options.success(layout.collection);
                 }),
-                hide = sinon.spy($.fn, 'hide'),
-                isSaveAndNewHidden = false,
-                isSaveAndViewHidden = false;
+                hide = sinon.spy($.fn, 'hide');
 
             layout.render();
 
@@ -402,6 +403,56 @@ describe("Quickcreate", function() {
 
                 isValidStub.restore();
                 fetchStub.restore();
+            });
+        });
+
+        it("should highlight user key fields when duplicates are found", function() {
+            var flag = false,
+                isValidStub = sinon.stub(layout.model, 'isValid', function() {
+                    return true;
+                }),
+                fetchStub = sinon.stub(layout.collection, 'fetch', function(options) {
+                    layout.collection.push(new Backbone.Model({
+                        test: '123'
+                    }));
+                    options.success(layout.collection);
+                }),
+                quickcreateView = layout.getComponent('quickcreate'),
+                triggerStub = sinon.stub(layout.context, 'trigger', function(eventKey) {
+                    switch (eventKey) {
+                        case 'quickcreate:validateModel':
+                            quickcreateView.validateModel(arguments[1]);
+                            break;
+                        case 'quickcreate:highlightDuplicateFields':
+                            quickcreateView.highlightDuplicateFields(arguments[1], function() {
+                                flag = true;
+                            });
+                            break;
+                        case 'quickcreate:save':
+                            layout.save();
+                            break;
+                        default:
+//                            console.log(eventKey + ' event trigger ignored');
+                            break;
+                    }
+                });
+
+            layout.render();
+
+            runs(function() {
+                layout.$el.find('[name=save_button]').click();
+            });
+
+            waitsFor(function() {
+                return flag;
+            }, 'highlightDuplicateFields should have been called but timeout expired', 1000);
+
+            runs(function() {
+                expect(layout.getComponent('quickcreate').$el.find('.warning').size()).toEqual(2);
+
+                isValidStub.restore();
+                fetchStub.restore();
+                triggerStub.restore();
             });
         });
     });

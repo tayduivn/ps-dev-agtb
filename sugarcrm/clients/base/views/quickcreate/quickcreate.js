@@ -57,14 +57,15 @@
 
     /**
      * Highlights all of the user keys that were used in the duplicate match.
-     * @param {array} List of user keys used in the module search
+     * @param {object} List of user keys used in the module search
+     * @param {function} called after duplicate fields finish highlighting
      * @param {boolean} whether to turn on or off the warnings
      */
-    highlightDuplicateFields: function(keys) {
+    highlightDuplicateFields: function(keys, callback) {
         var self = this,
             cssName = 'warning';
 
-        _.each(keys, function (fieldName) {
+        _.each(keys, function (value, fieldName) {
             var controlGroup, field;
 
             field = self.getField(fieldName);
@@ -75,6 +76,10 @@
                 }
             }
         });
+
+        if (_.isFunction(callback)) {
+            callback();
+        }
     },
 
     clearHighlightDuplicateFields: function() {

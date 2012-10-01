@@ -191,7 +191,6 @@
      */
     handleDuplicateFound: function(collection, keys) {
         this.context.trigger('quickcreate:list:toggle', true);
-        // self.showDuplicateAlertMessage();
         this.skipDupCheck(true);
         this.context.trigger('quickcreate:actions:setButtonAsIgnoreDuplicate');
         this.context.trigger('quickcreate:alert:show:dupfound',collection.models.length);
