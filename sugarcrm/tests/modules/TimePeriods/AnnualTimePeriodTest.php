@@ -53,13 +53,13 @@ class AnnualTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::addTimePeriod(self::$fiscalLeaves[1]);
         SugarTestTimePeriodUtilities::addTimePeriod(self::$fiscalLeaves[2]);
         SugarTestTimePeriodUtilities::addTimePeriod(self::$fiscalLeaves[3]);
+        SugarTestHelper::setUp('app_strings');
         parent::setUpBeforeClass();
     }
 
 
     public function setUp()
     {
-        SugarTestHelper::setUp('app_strings');
     }
 
     public function tearDown()

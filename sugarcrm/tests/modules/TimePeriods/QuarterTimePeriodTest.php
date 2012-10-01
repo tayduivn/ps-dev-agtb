@@ -42,13 +42,13 @@ class QuarterTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::addTimePeriod(self::$leaves[0]);
         SugarTestTimePeriodUtilities::addTimePeriod(self::$leaves[1]);
         SugarTestTimePeriodUtilities::addTimePeriod(self::$leaves[2]);
+        SugarTestHelper::setUp('app_strings');
         parent::setUpBeforeClass();
     }
 
 
     public function setUp()
     {
-        SugarTestHelper::setUp('app_strings');
     }
 
     public function tearDown()
