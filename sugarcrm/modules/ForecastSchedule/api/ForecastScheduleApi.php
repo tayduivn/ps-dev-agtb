@@ -95,6 +95,7 @@ class ForecastScheduleApi extends ModuleApi {
         				 "expected_likely_case" => "0.0",
         				 "expected_worst_case" => "0.0",
         				 "expected_amount" => "0.0",
+                         "base_rate" => 1,
         				 "cascade_hierarchy" => 0,
         				 "status" => "Active",
         				 "user_id" => $user_id,
