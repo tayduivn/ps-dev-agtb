@@ -42,9 +42,25 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group mailer
+     */
+    public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSugarMailer() {
+        $expected = "SugarMailer";
+        $actual   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
+    }
+
+    /**
+     * @group mailer
+     */
+    public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException() {
+        self::markTestIncomplete("Not yet implemented; requires ability to remove all possible mail configurations for the user, including system configurations, or ability to mock them out");
+    }
+
+    /**
+     * @group mailer
      * @group functional
      */
-    public function testGetMailer_ConfigSenderEmailIsInvalid_ThrowsException() {
+    public function testGetMailer_ConfigSenderEmailIsInvalid_ThrowsMailerException() {
         $mailConfig               = new MailConfiguration($GLOBALS["current_user"]);
         $mailConfig->sender_email = 1234; // an invalid From email address
 

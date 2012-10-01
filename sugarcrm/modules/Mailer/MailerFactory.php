@@ -58,8 +58,28 @@ class MailerFactory
     );
 
     /**
+     * In many cases, the correct Mailer is the one that is produced from the configuration associated with a
+     * particular user. This method makes the necessary calls to produce that Mailer, in order to obey the DRY
+     * principle.
+     *
+     * @param User $user required The user from which the mail configuration is retrieved.
+     * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
+    public static function getMailerForUser(User $user) {
+        // get the configuration that the Mailer needs
+        $mailConfiguration = MailConfigurationPeer::getSystemMailConfiguration($user);
+
+        // generate the Mailer
+        $mailer = self::getMailer($mailConfiguration);
+
+        return $mailer;
+    }
+
+    /**
      * Determines the correct Mailer to use based on the configuration that is provided to it and constructs and
-     * returns that object.
+     * returns that object. This method allows the caller to get a Mailer with a configuration that overrides the
+     * user's configuration.
      *
      * @static
      * @access public
