@@ -53,24 +53,45 @@
                 return;
             }
 
-            switch(this.currentModule, this.viewType) {
-                case "ActivityStream", "dashboard":
-                    app.router.navigate("#Accounts", {trigger: true});
-                    break;
-                case "Accounts", "records":
-                    app.router.navigate("#Accounts/create", {trigger: true});
-                    break;
-                case "Accounts", "newrecord":
-                    break;
-                case "Accounts", "record":
-                    break;
-                case "Contacts", "records":
-                    break;
-                case "Contacts", "record":
-                    break;
-                case "Opportunities", "records":
-                    break;
+            // Routing conditions
+            if( this.currentModule === "ActivityStream" ) {
+                app.router.navigate("#Accounts", {trigger: true});
             }
+            else if( this.currentModule === "Accounts" ) {
+                switch( this.viewType ) {
+                    case "records":
+                        app.router.navigate("#Accounts/create", {trigger: true});
+                        break;
+                    case "newrecord":
+                        app.router.navigate("#Contacts", {trigger: true});
+                        break;
+                    case "record":
+                        break;
+                }
+            }
+            else if( this.currentModule === "Contacts" ) {
+                switch( this.viewType ) {
+                    case "records":
+                        app.router.navigate("#Contacts/create", {trigger: true});
+                        break;
+                    case "newrecord":
+                        app.router.navigate("#Opportunities", {trigger: true});
+                        break;
+                    case "record":
+                        break;
+                }
+            }
+            else if( this.currentModule === "Opportunities" ) {
+                switch( this.viewType ) {
+                    case "records":
+                        app.router.navigate("#Opportunities/create", {trigger: true});
+                        break;
+                    case "newrecord":
+                        this.endTour();
+                        return;
+                }
+            }
+
             // get the new module and viewtype
             this.currentModule = app.controller.layout.options.module;
             this.viewType = app.controller.layout.options.name;
