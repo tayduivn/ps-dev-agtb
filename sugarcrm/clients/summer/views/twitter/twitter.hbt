@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="../clients/summer/views/twitter/sprite.css" xmlns="http://www.w3.org/1999/html">
 <div class="block thumbnail padded">
     <div class="twitter-widget">
-        <h4>Tweets</h4>
+        <h4 data-tour="tour-{{module}}-tweets">Tweets</h4>
         {{#each tweets}}
         {{#if this.source}}
         <ul style="margin-left: 0px">

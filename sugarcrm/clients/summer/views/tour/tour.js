@@ -3,7 +3,19 @@
     },
     initialize: function(options) {
         var self = this;
+        //console.log("tour::init");
+        //console.log(this);
+        //console.log(options);
         app.view.View.prototype.initialize.call(this, options);
+
+        app.events.on("app:view:tour:change", function() {
+            if( this.tourMode ) {
+                console.log("from tour init");
+                this.currentModule = app.controller.layout.options.module;
+                this.viewType = app.controller.layout.options.name;
+                this.initPopover(this.currentModule, this.viewType);
+            }
+        });
     },
     startTour: function(module, viewType, fullTour) {
         this.tourMode = true;
@@ -18,7 +30,6 @@
             this.viewType = "dashboard";
             app.router.navigate("#", {trigger: true});
         }
-
         this.initPopover(this.currentModule, this.viewType);
     },
     endTour: function() {
@@ -32,15 +43,16 @@
         var self = this;
 
         if( obj === _.last(currentArray) ) {
+            if( $("[data-tour='" + obj.id + "']").length > 0 ) {
+                $("[data-tour='" + obj.id + "']").popover("hide");
+            }
+
             // Conditions to end the tour
             if( !(this.fullTour) || (this.fullTour && this.currentModule === "Opportunities" && this.viewType === "record") ) {
-                $("[data-tour='" + obj.id + "']").popover("hide");
                 this.endTour();
                 return;
             }
 
-            // If you're here, fulltour == true and viewtype == anything except record-opps OR
-            // fulltour == false, and viewtype == records
             switch(this.currentModule, this.viewType) {
                 case "ActivityStream", "dashboard":
                     app.router.navigate("#Accounts", {trigger: true});
@@ -58,8 +70,7 @@
                     break;
                 case "Opportunities", "records":
                     break;
-             }
-
+            }
             // get the new module and viewtype
             this.currentModule = app.controller.layout.options.module;
             this.viewType = app.controller.layout.options.name;
@@ -71,20 +82,27 @@
                 $nextEl = $("[data-tour='" + nextObj.id + "']"),
                 templateEl = '<div class="popover '+ nextObj.id + '"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a><a class="btn btn-primary tour-prev">Prev</a><a class="btn btn-primary tour-next">Next</a></div></div></div>';
 
-            // hide the current popover
-            $("[data-tour='" + obj.id + "']").popover("hide");
+            // hide the current popover, if it exists
+            if( $("[data-tour='" + obj.id + "']").length > 0 ) {
+                $("[data-tour='" + obj.id + "']").popover("hide");
+            }
 
-            // show the next popover
+            // show the next popover, if it exists
             if( $nextEl.length > 0 ) {
-                // If its not a full tour, don't instruct the user to take certain actions, this is done by
-                // overriding the content with custom "not full tour" content.
+                // If its not a full tour, don't instruct the user to take certain actions (e.g. click this button to
+                // create a new record), this is done by overriding the content with custom "not full tour" content.
                 var popoverContent = !(this.fullTour) ? (nextObj["content_not_full"] || nextObj.content) : nextObj.content;
 
-                $nextEl.popover({title: nextObj.title, content: popoverContent, placement: nextObj.placement,
-                                 trigger: "manual", template: templateEl}).popover("show");
+                this.scrollToEl($nextEl, function() {
+                    $nextEl.popover({title: nextObj.title, content: popoverContent, placement: nextObj.placement,
+                        trigger: "manual", template: templateEl}).popover("show");
 
-                this.fixPopoverPosition(nextObj.placement, nextObj.id);
-                this.bindClickEvents(self, $nextEl, nextIndex, nextObj, currentArray, data);
+                    self.fixPopoverPosition(nextObj.placement, nextObj.id);
+                    self.bindClickEvents(self, $nextEl, nextIndex, nextObj, currentArray, data);
+                });
+            }
+            else {
+                this.nextItem(nextIndex, nextObj, currentArray, data);
             }
         }
     },
@@ -96,10 +114,18 @@
             prevObj = currentArray[prevIndex],
             $prevEl = $("[data-tour='" + prevObj.id + "']");
 
-        $("[data-tour='" + obj.id + "']").popover("hide");
-        $prevEl.popover("show");
-
-        this.bindClickEvents(self, $prevEl, prevIndex, prevObj, currentArray, data);
+        if( $("[data-tour='" + obj.id + "']").length > 0 ) {
+            $("[data-tour='" + obj.id + "']").popover("hide");
+        }
+        if( $prevEl.length > 0 ) {
+            this.scrollToEl($prevEl, function() {
+                $prevEl.popover("show");
+                self.bindClickEvents(self, $prevEl, prevIndex, prevObj, currentArray, data);
+            });
+        }
+        else {
+            this.prevItem(prevIndex, prevObj, currentArray, data);
+        }
     },
     initPopover: function(module, viewType) {
         var self = this;
@@ -117,27 +143,68 @@
                 if( $currentEl.length > 0 ) {
                     var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a><a class="btn btn-primary tour-next">Next</a></div></div></div>';
 
-                    $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
-                        trigger: "manual", template: templateEl}).popover("show");
+                    self.scrollToEl($currentEl, function() {
+                        $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
+                            trigger: "manual", template: templateEl}).popover("show");
 
-                    self.fixPopoverPosition(firstObj.placement, firstObj.id);
-                    self.bindClickEvents(self, $currentEl, 0, firstObj, list, tourData);
-                    // return
+                        self.fixPopoverPosition(firstObj.placement, firstObj.id);
+                        self.bindClickEvents(self, $currentEl, 0, firstObj, list, tourData);
+                    });
                 }
                 else
                 {
-                    console.log("oops!");
-                    // try next object in list
-                    // if it works, return
+                    // The first item is not in the DOM, try the next one,
+                    // nextItem() will successively "try the next item" if
+                    // it can't keep finding the element in the DOM, until
+                    // it reaches the last item in tourData.
+                    self.nextItem(0, firstObj, list, tourData);
                 }
             }
         });
     },
+    scrollToEl: function($targetEl, callback) {
+        var viewportHeight = $(window).height(),
+            elTop = $targetEl.offset().top,
+            elHeight = $targetEl.height(),
+            headerHeight = 48,
+            footerHeight = 44,
+            // the header and footer cover elements on the page so we account for this
+            buffer = 55,
+            direction;
+
+        if( elTop + elHeight > window.pageYOffset + viewportHeight - footerHeight ) {
+            direction = "down";
+        }
+        // Make the buffer negative if we need to scroll up
+        else if( elTop + elHeight < window.pageYOffset + elHeight + headerHeight ) {
+            direction = "up";
+            buffer *= -1;
+        }
+        else
+        {
+            direction = "none";
+            if (callback && typeof(callback) === "function") {
+                callback();
+            }
+        }
+
+        if( direction !== "none" ) {
+            // scroll to element
+            $('body').animate({
+                scrollTop: elTop + buffer
+            }, function() {
+                if (callback && typeof(callback) === "function") {
+                    callback();
+                }
+            });
+        }
+    },
     fixPopoverPosition: function(currentPlacement, className) {
-        var windowEl = $(window),
+        var documentEl = $(document),
+            viewportEl = $(window),
             popoverEl = $("." + className).children(".popover-inner"),
-            viewportWidth = windowEl.width(),
-            viewportHeight = windowEl.height(),
+            viewportWidth = viewportEl.width(),
+            docHeight = documentEl.height(),
             popoverWidth = popoverEl.width(),
             popoverHeight = popoverEl.height(),
             xyOffset = popoverEl.offset(),
@@ -170,8 +237,8 @@
                     popoverEl.css("position", "relative");
                     popoverEl.css("top", topOffset);
                 }
-                else if( bottomPos > viewportHeight ) {
-                    var bottomOffset = (bottomPos - viewportHeight) + buffer;
+                else if( bottomPos > docHeight ) {
+                    var bottomOffset = (bottomPos - docHeight) + buffer;
                     popoverEl.css("position", "relative");
                     popoverEl.css("bottom", bottomOffset);
                 }

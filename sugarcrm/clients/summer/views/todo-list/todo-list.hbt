@@ -5,7 +5,7 @@
         <li class="todo-pills {{#if upcomingPillActive}}active{{/if}}"><a href="#todo-upcoming" onclick="javascript:return false;"><span class="badge todo-badge{{#eq this.collection.modelList.upcoming.length 0}} empty{{/eq}}">{{this.collection.modelList.upcoming.length}}</span><span class="todo-pill-text"> Upcoming</span></a></li>
         <li class="todo-pills {{#if allPillActive}}active{{/if}}"><a href="#todo-all" onclick="javascript:return false;"><span class="badge todo-badge{{#eq this.collection.models.length 0}} empty{{/eq}}">{{this.collection.models.length}}</span><span class="todo-pill-text"> All</span></a></li>
     </ul>
-    <h4 class="todo-list-header">Todo List</h4>
+    <h4 class="todo-list-header" data-tour="tour-{{module}}-todo-list">Todo List</h4>
     <div class="tabbable todo-list-view">
         <div class="todo-header">
             <div class="input-prepend">

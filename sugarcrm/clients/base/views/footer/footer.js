@@ -1,6 +1,6 @@
 ({
     events: {
-        'click #tour': 'systemTourModal',
+        'click .tour': 'systemTourModal',
         'click #print': 'print',
         'click #top': 'top',
         'click #languageList .dropdown-menu a' : 'setLanguage',
@@ -44,20 +44,11 @@
         }
     },
     startSystemTour: function(e) {
-        // Get the current module and view type (list, record, etc)
-        var currentModule = app.controller.layout.options.module,
-            viewType = app.controller.layout.options.name,
-            fullTour;
-
         // If "Full Tour" was clicked, relay this to startTour(),
         // to determine whether or not to route to the homepage
-        if( this.$(e.target).hasClass("tour-full-start") ) {
-            fullTour = true;
-        }
-        else {
-            fullTour = false;
-        }
-        //console.log("startSystemTour::fullTour", fullTour);
+        var fullTour = this.$(e.target).hasClass("tour-full-start") ? true: false,
+            currentModule = app.controller.layout.options.module,
+            viewType = app.controller.layout.options.name;
 
         this.$('.system-tour').modal('hide');
         app.view.views.TourView.prototype.startTour(currentModule, viewType, fullTour);
