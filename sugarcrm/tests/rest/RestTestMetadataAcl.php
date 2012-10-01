@@ -47,6 +47,37 @@ class RestTestMetadataAcl extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing.');
     }
 
+    public function testMetadataAclMultiUser() {
+        global $db;
+
+        $db->commit();
+        $restReply = $this->_restCall('metadata?type_filter=acl');
+
+        $this->assertTrue(isset($restReply['reply']['_hash']),'Hash is missing from the first run');
+        $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing in the first run');
+        $oldMd5 = md5(serialize($restReply['reply']['acl']));
+        
+        // Tear down the old user and set up a new one because the metadata cache hashes per-user
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        $this->_user = $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        
+        // Mark a user as an admin so that the ACL's change
+        $GLOBALS['current_user']->is_admin = true;
+        $GLOBALS['current_user']->save();
+        unset($this->authToken);
+        $db->commit();
+        $this->_restLogin();
+
+        $restReply = $this->_restCall('metadata?type_filter=acl');
+
+        $this->assertTrue(isset($restReply['reply']['_hash']),'Hash is missing from the second run');
+        $this->assertTrue(isset($restReply['reply']['acl']['Accounts']['_hash']),'Accounts module is missing in the second run');
+        $newMd5 = md5(serialize($restReply['reply']['acl']));
+        $this->assertNotEquals($oldMd5,$newMd5,"The md5's of the old and new ACL's are the same, the metadata cache strikes again!");
+        $this->assertEquals('yes',$restReply['reply']['acl']['Accounts']['admin'],"User is an admin, but doesn't have admin ACL access.");
+        
+    }
+
     //BEGIN SUGARCRM flav=pro ONLY
     public function testMetadataAclField() {
 

@@ -83,6 +83,7 @@ $user_demo_data->create_demo_data();
 $number_contacts = 200;
 $number_companies = 50;
 $number_leads = 200;
+$number_cases = 5;
 $large_scale_test = empty($sugar_config['large_scale_test']) ? false : $sugar_config['large_scale_test'];
 // If large scale test is set to true, increase the seed data.
 if($large_scale_test) {
@@ -215,6 +216,7 @@ for($i = 0; $i < $number_companies; $i++) {
 	$accounts[] = $account;
 
 	//BEGIN SUGARCRM flav!=sales ONLY
+    for($c = 0; $c < $number_cases; $c++) {
 	// Create a case for the account
 	$case = new aCase();
 	$case->account_id = $account->id;
@@ -227,8 +229,11 @@ for($i = 0; $i < $number_companies; $i++) {
 	$case->team_id = $account->team_id;
 	$case->team_set_id = $account->team_set_id;
 //END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+    $case->portal_viewable = 1;
+//END SUGARCRM flav=ent ONLY
 	$case->save();
-
+    }
 	// Create a bug for the account
 	$bug = new Bug();
 	$bug->account_id = $account->id;
@@ -241,6 +246,9 @@ for($i = 0; $i < $number_companies; $i++) {
 	$bug->team_id = $account->team_id;
 	$bug->team_set_id = $account->team_set_id;
 //END SUGARCRM flav=pro ONLY
+//BEGIN SUGARCRM flav=ent ONLY
+    $bug->portal_viewable = 1;
+//END SUGARCRM flav=ent ONLY
 	$bug->save();
 	//END SUGARCRM flav!=sales ONLY
 
@@ -309,6 +317,11 @@ for($i=0; $i<$number_contacts; $i++) {
 	$contact->emailAddress->addAddress(createEmailAddress(), false, false, false, true);
 	$assignedUser = new User();
 	$assignedUser->retrieve($contact->assigned_user_id);
+//BEGIN SUGARCRM flav=ent ONLY
+    $contact->portal_active = 1;
+    $contact->portal_name = $contact->first_name.$contact->last_name.$i;
+    $contact->portal_password = User::getPasswordHash($contact->first_name.$contact->last_name.$i);
+//END SUGARCRM flav=ent ONLY
 //BEGIN SUGARCRM flav=pro ONLY
 /* comment out the non-pro code
 for($i=0; $i<1000; $i++)
@@ -665,11 +678,14 @@ foreach($sugar_demodata['kbdocument_seed_data_kbtags'] as $v){
 foreach($sugar_demodata['kbdocument_seed_data'] as $v){
 	$kbdoc = new KBDocument();
 	$kbdoc->kbdocument_name = $v['name'];
-	$kbdoc->status_id = array_rand($app_list_strings['kbdocument_status_dom']);
+	$kbdoc->status_id = 'Published';
 	$kbdoc->team_id = 1;
 	$kbdoc->assigned_user_id = 'seed_will_id';
 	$kbdoc->active_date = $v['start_date'];
 	$kbdoc->exp_date = $v['exp_date'];
+//BEGIN SUGARCRM flav=ent ONLY
+    $kbdoc->is_external_article = 1;
+//END SUGARCRM flav=ent ONLY
 	$kbdoc->save();
 
 	$kbdocRevision = new KBDocumentRevision;
@@ -765,6 +781,22 @@ foreach($sugar_demodata['project_seed_data']['audit']['project_tasks'] as $v){
 
     $project_task_id_counter++;
 }
+//BEGIN SUGARCRM flav=ent ONLY
+//enable portal
+$system_config = new Administration();
+$system_config->retrieveSettings();
+$GLOBALS['system_config'] = $system_config;
+$installerStrings = $GLOBALS['mod_strings'];
+$GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'ModuleBuilder');
+include('modules/ModuleBuilder/parsers/parser.portalconfig.php');
+$portalConfig = new ParserModifyPortalConfig();
+$_REQUEST['appStatus'] = 'true';
+$_REQUEST['maxQueryResult'] = '20';
+$_REQUEST['fieldsToDisplay'] = '5';
+$portalConfig->handleSave();
+$GLOBALS['mod_strings']  = $installerStrings;
+//END SUGARCRM flav=ent ONLY
+
 //BEGIN SUGARCRM flav=pro ONLY
     include('install/seed_data/products_SeedData.php');
     include('install/seed_data/quotes_SeedData.php');

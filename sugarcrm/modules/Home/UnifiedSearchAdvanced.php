@@ -640,6 +640,7 @@ class UnifiedSearchAdvanced {
 		   return false;
 		}
 
+	    sugar_mkdir('custom/modules',null,true);
 	    if(!write_array_to_file("unified_search_modules_display", $unified_search_modules_display, 'custom/modules/unified_search_modules_display.php'))
 	    {
 	    	//Log error message and throw Exception
