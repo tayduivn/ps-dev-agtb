@@ -342,6 +342,12 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+
+  'commit_stage_binary_dom' => array (
+    'include' => 'Include',
+    'pipeline' => 'Pipeline',
+  ),
+
   'commit_stage_dom' =>
   array (
     'include' => 'Include',
@@ -1763,10 +1769,6 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
-    'forecasts_filters_category' => array(
-        '1' => 'Committed',
-        '0' => 'Pipeline',
-    ),
     'forecasts_chart_options_group' => array(
         'forecast' => 'Included In Forecast',
         'sales_stage' => 'Sales Stage',
@@ -2841,7 +2843,7 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.',
+    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 13, 14 </li><li>Safari 5.1</li><li>Google Chrome</li></ul>',
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -4281,7 +4283,7 @@ $app_strings ['documentation'] = array (
 );
 
 $app_list_strings['forecasts_config_category_options_dom'] = array(
-    'binary' => 'Two Categories',
+    'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
     'show_n_buckets' => 'N Categories',
 );

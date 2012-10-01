@@ -138,6 +138,7 @@ class ForecastScheduleApiTest extends RestTestBase
         $response = $this->_restCall("ForecastSchedule?timeperiod_id=bogustimperiodid&user_id=" . self::$manager->id);
         $schedule = $response['reply'][0];
         $this->assertNotEmpty($schedule['user_id']);
+        $this->assertNotEmpty($schedule['base_rate']);
         $this->assertArrayNotHasKey('id', $schedule, 'Assert entry does not have an id');
     }
 

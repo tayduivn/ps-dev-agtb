@@ -207,7 +207,7 @@ public static function setupForecastSettings()
         // used to indicate the available option for grouping opportunities
         'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_n_buckets'
         // used to reference the app_list_string entry to indicate the commit stage list to use
-        'buckets_dom' => 'commit_stage_dom', // options:  commit_stage_dom, commit_stage_extended_dom
+        'buckets_dom' => 'commit_stage_binary_dom', // options:  commit_stage_binary_dom, commit_stage_dom, commit_stage_extended_dom
         // the defined ranges the different buckets opportunites will fall in by default based on their probability
         'category_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
         //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won

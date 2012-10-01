@@ -384,6 +384,8 @@ array (
 			'source' => 'non-db',
 			'vname' => 'LBL_PROJECTS',
 		),
+//BEGIN SUGARCRM flav=pro ONLY
+
     'project_resource' => array(
         'name' => 'project_resource',
         'type' => 'link',
@@ -393,7 +395,6 @@ array (
     ),
 
 
-//BEGIN SUGARCRM flav=pro ONLY
 	'quotes' => array(
         'name' => 'quotes',
         'type' => 'link',

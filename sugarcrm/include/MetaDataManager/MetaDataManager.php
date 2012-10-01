@@ -194,7 +194,9 @@ class MetaDataManager {
      * returned in the case of no metadata.
      */
     public function getModuleData($moduleName) {
+        //BEGIN SUGARCRM flav=pro ONLY
         require_once('include/SugarSearchEngine/SugarSearchEngineMetadataHelper.php');
+        //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
 
         $data['fields'] = $vardefs['fields'];
@@ -203,16 +205,18 @@ class MetaDataManager {
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
         $data['config'] = $this->getModuleConfig($moduleName);
-        $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
+        //END SUGARCRM flav=pro ONLY
+        
         $seed = BeanFactory::newBean($moduleName);
         
+        //BEGIN SUGARCRM flav=pro ONLY
         $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
-
         $data['favoritesEnabled'] = $favoritesEnabled;
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data["_hash"] = $md5;
+        //END SUGARCRM flav=pro ONLY
+        $data["_hash"] = md5(serialize($data));
 
         return $data;
     }
@@ -246,9 +250,7 @@ class MetaDataManager {
             unset($data[$relKey]['relationships']);
         }
 
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data["_hash"] = $md5;
+        $data["_hash"] = md5(serialize($data));
 
         return $data;
     }
@@ -291,15 +293,22 @@ class MetaDataManager {
      */
     public function getAclForModule($module,$userId) {
         $aclAction = new ACLAction();
+        //BEGIN SUGARCRM flav=pro ONLY
         $aclField = new ACLField();
+        //END SUGARCRM flav=pro ONLY 
         $acls = $aclAction->getUserActions($userId);
+        $userObject = BeanFactory::getBean('Users',$userId);
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( isset($acls[$module]['module']) ) {
+        if ( is_admin($userObject) ) {
+            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+                $outputAcl[$action] = 'yes';
+            }
+        } else if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
 
-            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
                 $outputAcl['admin'] = 'yes';
                 $isAdmin = true;
             } else {
@@ -307,7 +316,7 @@ class MetaDataManager {
                 $isAdmin = false;
             }
 
-            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
                 $outputAcl['developer'] = 'yes';
             } else {
                 $outputAcl['developer'] = 'no';
@@ -336,8 +345,10 @@ class MetaDataManager {
                 $outputAcl['create'] = $outputAcl['edit'];
 
                 // Now time to dig through the fields
+                $fieldsAcl = array();
+                //BEGIN SUGARCRM flav=pro ONLY
                 $fieldsAcl = $aclField->loadUserFields($module,$obj,$userId,true);
-
+                //END SUGARCRM flav=pro ONLY
                 foreach ( $fieldsAcl as $field => $fieldAcl ) {
                     switch ( $fieldAcl ) {
                         case ACL_READ_WRITE:
@@ -646,40 +657,12 @@ class MetaDataManager {
      */
     public function getModuleList($platform = 'base') {
         if ( $platform == 'portal' ) {
-            // Apparently this list is not stored anywhere, the module builder just uses a very
-            // complicated setup to do this glob
-            $defaultPortalViewsPath = 'modules/*/clients/portal/views/*/*.php';
-            $defaultPortalLayoutsPath = 'modules/*/clients/portal/layouts/*/*.php';
-            $customPortalViewsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalViewsPath;
-            $customPortalLayoutsPath = MetaDataFiles::PATHCUSTOM . $defaultPortalLayoutsPath;
-
-            $portalFiles = glob($defaultPortalViewsPath);
-            $portalLayouts = glob($defaultPortalLayoutsPath);
-            if (is_array($portalLayouts)) {
-                $portalFiles = array_merge($portalFiles, $portalLayouts);
-            }
-
-            $customPortalViews = glob($customPortalViewsPath);
-            if (is_array($customPortalViews)) {
-                $portalFiles = array_merge($portalFiles, $customPortalViews);
-            }
-
-            $customPortalLayouts = glob($customPortalLayoutsPath);
-            if (is_array($customPortalLayouts)) {
-                $portalFiles = array_merge($portalFiles, $customPortalLayouts);
-            }
-
-            $portalModules = array();
-            foreach ( $portalFiles as $file ) {
-                // Grab the module name from the file path
-                preg_match('#modules/(.+)/clients#', $file, $fileParts);
-                
-                // And set it only if we haven't already
-                if (!empty($fileParts[1]) && empty($portalModules[$fileParts[1]])) {
-                    $portalModules[$fileParts[1]] = $fileParts[1];
-                }
-            }
-            $moduleList = array_keys($portalModules);
+            // Use SugarPortalBrowser to get the portal modules that would appear
+            // in Studio
+            require_once 'modules/ModuleBuilder/Module/SugarPortalBrowser.php';
+            $pb = new SugarPortalBrowser();
+            $pb->loadModules();
+            $moduleList = array_keys($pb->modules);
         } else if ( $platform == 'mobile' ) {
             // replicate the essential part of the behavior of the private loadMapping() method in SugarController
             foreach ( array ( '','custom/') as $prefix) {

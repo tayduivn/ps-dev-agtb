@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
+abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $authToken;
     protected $refreshToken;
@@ -36,11 +36,15 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['current_user'] = $this->_user;
         // call a commit for transactional dbs
         $GLOBALS['db']->commit();
-
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
     }
 
     public function tearDown()
     {
+        SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE id LIKE 'UNIT%'");
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE 'UNIT%'");
@@ -124,7 +128,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $httpReply = curl_exec($ch);
         $httpInfo = curl_getinfo($ch);
         $httpError = $httpReply === false ? curl_error($ch) : null;
-
+        $GLOBALS['db']->commit();
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
     
@@ -148,7 +152,7 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             $this->_restLogin();
         }
         
-        $urlBase = $GLOBALS['sugar_config']['site_url'].'/rest/v10/';
+        $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
         $filename = basename($args['filename']);
         $url = $urlBase . $urlPart;
         if ($passInQueryString) {
@@ -218,8 +222,13 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         return array('info' => array(), 'reply' => $reply, 'replyRaw' => $response, 'error' => null);
     }
     
-    public function testNothing()
+    protected function _clearMetadataCache()
     {
-
+        $metadataFiles = glob(sugar_cached('api/metadata/').'*');
+        if ( is_array($metadataFiles) ) {
+            foreach ( $metadataFiles as $metadataFile ) {
+                @unlink($metadataFile);
+            }
+        }
     }
 }
