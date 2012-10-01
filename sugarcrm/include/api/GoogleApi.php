@@ -99,7 +99,7 @@ class GoogleAPI extends SugarApi
                 if (!empty($excludeDomain) && substr_count($email, $excludeDomain) == 1) continue;
 
                 // TODO: Optimize this, somehow.
-                $res = $GLOBALS['db']->query("SELECT COUNT(id) as x FROM email_addresses WHERE email_address = '" . (string)$email[0] . "'");
+                $res = $GLOBALS['db']->query("SELECT COUNT(id) as x FROM email_addresses WHERE email_address = '" . $email . "'");
                 $row = $GLOBALS['db']->fetchByAssoc($res);
                 if ((int)$row['x'] > 0 || empty($email)) {
                     continue;
