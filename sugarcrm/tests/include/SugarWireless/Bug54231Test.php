@@ -57,7 +57,7 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 			'Opportunities' => 'Opportunity'
 		);
 
-        if (array_key_exists('app_list_strings', $GLOBALS) && array_key_exists('moduleList', $GLOBALS['app_list_strings'])) {
+        if (isset($GLOBALS['app_list_strings']) && isset($GLOBALS['app_list_strings']['moduleList'])) {
             $this->_app_list_strings_moduleList = $GLOBALS['app_list_strings']['moduleList'];
         }
 		$GLOBALS['app_list_strings']['moduleList'] = array(
