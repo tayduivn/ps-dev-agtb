@@ -445,15 +445,9 @@
 
     _addTimelineEvent: function(model) {
         var events = [], self = this;
-        var parseDate = function(datestring) {
-            var d = new Date(datestring);
-            var s = (d.getMonth()+1)+"/";
-            s += d.getDate() + "/";
-            s += d.getFullYear() + " ";
-            s += d.getHours() + ":";
-            s += d.getMinutes() + ":";
-            s += d.getSeconds();
-            return s;
+        var parseDate = function(dateString) {
+            var t = dateString.split(/[- :]/);
+            return t[1]+'/'+t[2]+'/'+t[0]+' '+t[3]+':'+t[4]+':'+t[5];
         };
 
         _.each(model.get('comments'), function(comment) {
