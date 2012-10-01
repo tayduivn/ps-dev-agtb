@@ -21,7 +21,7 @@
 
 describe("The forecasts subnav view", function(){
 
-    var app, view, data;
+    var app, view, data, replaceHTMLChars;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -32,6 +32,17 @@ describe("The forecasts subnav view", function(){
 
         beforeEach(function() {
 
+            //This is a global namespace function of window if loaded so we can stub it out; otherwise let's just create a similar function
+            if(typeof window.replaceHTMLChars == "function")
+            {
+                replaceHTMLChars = sinon.stub(window, "replaceHTMLChars", function(value) {
+                    return value.replace(/&#039;/gi,'\'');
+                });
+            } else {
+                replaceHTMLChars = function(value) {
+                    return value.replace(/&#039;/gi,'\'');
+                };
+            }
 
             data = [{
 
@@ -60,6 +71,7 @@ describe("The forecasts subnav view", function(){
 
         afterEach(function() {
             data = null;
+            replaceHTMLChars = null;
         });
 
         it("correctly encodes Jim and Sarah's name", function()
