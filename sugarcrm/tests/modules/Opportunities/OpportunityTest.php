@@ -239,6 +239,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     /*
      * This method tests that subsequent changes to an opportunity will also update the associated product's data
      * @group forecasts
+     * @group opportunities
+     * @group products
      * @bug 56433
      */
     public function testOpportunityChangesUpdateRelatedProduct()
