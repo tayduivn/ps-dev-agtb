@@ -35,6 +35,10 @@ class QuarterTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     protected static $leaves;
 
     public static function setUpBeforeClass() {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setup('app_list_strings');
         self::$tp = SugarTestTimePeriodUtilities::createITimePeriod("Quarter");
         self::$tp->buildLeaves('Month');
         self::$leaves = self::$tp->getLeaves();
@@ -42,7 +46,6 @@ class QuarterTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::addTimePeriod(self::$leaves[0]);
         SugarTestTimePeriodUtilities::addTimePeriod(self::$leaves[1]);
         SugarTestTimePeriodUtilities::addTimePeriod(self::$leaves[2]);
-        SugarTestHelper::setUp('app_strings');
         parent::setUpBeforeClass();
     }
 
