@@ -19,16 +19,16 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Mailer/SimpleMailer.php";
+require_once "modules/Mailer/SmtpMailer.php";
 
-class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
+class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @group mailer
      */
     public function testClearRecipients_ClearToAndBccButNotCc() {
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "clearRecipientsTo",
                  "clearRecipientsCc",
@@ -64,7 +64,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "generateMailer",
                  "transferConfigurations",
@@ -129,7 +129,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "generateMailer",
                  "transferConfigurations",
@@ -197,7 +197,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::returnValue(false));
 
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "generateMailer",
                  "transferConfigurations",
@@ -243,7 +243,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testSend_NoMessageParts_TransferBodyThrowsMailerException() {
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "transferConfigurations",
                  "connectToHost",
@@ -294,7 +294,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "generateMailer",
                  "transferConfigurations",
@@ -350,7 +350,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::returnValue(false));
 
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "generateMailer",
                  "transferConfigurations",
@@ -402,7 +402,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::throwException(new phpmailerException()));
 
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "generateMailer",
                  "transferConfigurations",
@@ -458,7 +458,7 @@ class SimpleMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::returnValue(true));
 
         $mockMailer = self::getMock(
-            "SimpleMailer",
+            "SmtpMailer",
             array(
                  "generateMailer",
                  "transferConfigurations",

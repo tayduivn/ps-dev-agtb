@@ -21,14 +21,14 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "SimpleMailer.php"; // requires SimpleMailer in order to extend it
+require_once "SmtpMailer.php"; // requires SmtpMailer in order to extend it
 
 /**
- * This class implements the additional SugarCRM-specific functionality that SimpleMailer lacks.
+ * This class implements the additional SugarCRM-specific functionality that SmtpMailer lacks.
  *
- * @extends SimpleMailer
+ * @extends SmtpMailer
  */
-class SugarMailer extends SimpleMailer
+class SugarMailer extends SmtpMailer
 {
     // private members
     private $includeDisclosure = false; // true=append the disclosure to the message
@@ -44,7 +44,7 @@ class SugarMailer extends SimpleMailer
 
     /**
      * Adds the optional disclosure content to the message, as well as performs the same preparations that are
-     * inherited from SimpleMailer.
+     * inherited from SmtpMailer.
      *
      * @access protected
      * @param string $body required
@@ -62,7 +62,7 @@ class SugarMailer extends SimpleMailer
 
     /**
      * Adds the optional disclosure content to the message, as well as performs the same preparations that are
-     * inherited from SimpleMailer. Additionally, converts to embedded images any inline images that are found
+     * inherited from SmtpMailer. Additionally, converts to embedded images any inline images that are found
      * locally on the server that hosts the application instance. This extra step is done to guarantee that locally
      * referenced images can be seen by the recipient, whether the server is public or private.
      *

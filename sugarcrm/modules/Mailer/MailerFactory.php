@@ -29,7 +29,7 @@ require_once "SmtpMailerConfiguration.php";              // required if producin
                                                          // MailerConfiguration
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
-require_once "SimpleMailer.php";                         // requires SimpleMailer in order to create a SimpleMailer
+require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
 require_once "SugarMailer.php";                          // requires SugarMailer in order to create a SugarMailer
 
 /**
@@ -45,7 +45,7 @@ class MailerFactory
     protected static $modeToMailerMap = array(
         MailConfigurationPeer::MODE_DEFAULT => array(
             "path"  => ".",            // the path to the class file without trailing slash ("/")
-            "class" => "SimpleMailer", // the name of the class
+            "class" => "SmtpMailer", // the name of the class
         ),
         MailConfigurationPeer::MODE_SMTP    => array(
             "path"  => ".",

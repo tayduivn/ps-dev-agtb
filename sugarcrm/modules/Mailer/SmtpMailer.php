@@ -33,7 +33,7 @@ require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMai
  *
  * @extends BaseMailer
  */
-class SimpleMailer extends BaseMailer
+class SmtpMailer extends BaseMailer
 {
     // constants used for documenting which mail transmission protocols are valid
     const MailTransmissionProtocolSmtp = "smtp";

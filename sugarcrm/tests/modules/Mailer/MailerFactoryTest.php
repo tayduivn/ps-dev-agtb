@@ -71,12 +71,12 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testGetMailer_NoMode_ReturnsSimpleMailer() {
+    public function testGetMailer_NoMode_ReturnsSmtpMailer() {
         $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
         $mailConfig->sender_email     = "foo@bar.com";
         $mailConfig->mailerConfigData = $this->mockMailerConfig;
 
-        $expected = "SimpleMailer";
+        $expected = "SmtpMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
