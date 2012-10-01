@@ -1,5 +1,5 @@
 describe("Base.Layout.Modal", function() {
-    var app, view, context, bean, ModalLayout, PopupLayout;
+    var app, view, context, ModalLayout, layout;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -37,11 +37,10 @@ describe("Base.Layout.Modal", function() {
 
     afterEach(function() {
         app.cache.cutAll();
+        app.view.reset();
         delete Handlebars.templates;
-    });
-
-    it("should exists", function() {
-        expect(app.view.layouts.ModalLayout).toBeDefined();
+        layout.context = null;
+        layout = null;
     });
 
     it("should delegate triggers at contruction time", function(){
@@ -62,7 +61,7 @@ describe("Base.Layout.Modal", function() {
         //sinon.spy(options.layout, "on");
         sinon.spy(context, "on");
         sinon.spy(options.layout, "on");
-        var layout = new ModalLayout(options);
+        layout = new ModalLayout(options);
         expect(calledEventName).toEqual(definedTriggerName);
         expect(options.layout.on).toHaveBeenCalledOnce();
         expect(options.layout.on.calledWith(definedTriggerName)).toBe(true);
@@ -85,7 +84,7 @@ describe("Base.Layout.Modal", function() {
             };
 
         sinon.spy(options.layout, "on");
-        var layout = new ModalLayout(options);
+        layout = new ModalLayout(options);
         expect(options.layout.on.calledWith('editpopup')).toBe(true);
         expect(options.layout.on.calledWith('detailpopup')).toBe(true);
 
@@ -106,7 +105,7 @@ describe("Base.Layout.Modal", function() {
                     }
                 }
             };
-        var layout = new ModalLayout(options);
+        layout = new ModalLayout(options);
         expect(layout.$(".modal").length).toEqual(1);
         expect(layout.$(".modal-body").length).toEqual(0);
         var comp = {
@@ -135,7 +134,7 @@ describe("Base.Layout.Modal", function() {
                 }
             },
             calledModule = 'Accounts';
-        var layout = new ModalLayout(options);
+        layout = new ModalLayout(options);
         var comp = {},
             def = {};
         layout._placeComponent(comp, def);
@@ -181,7 +180,7 @@ describe("Base.Layout.Modal", function() {
             },
             message = 'blahblah',
             title = 'poo title';
-        var layout = new ModalLayout(options);
+        layout = new ModalLayout(options);
         var comp = {},
             def = {};
         calledCaller.call(layout, {
@@ -207,7 +206,7 @@ describe("Base.Layout.Modal", function() {
                     }
                 }
             };
-        var layout = new ModalLayout(options);
+        layout = new ModalLayout(options);
         layout.show({span: 4});
         expect(layout.$(".modal").hasClass("span4")).toBe(true);
 
@@ -234,7 +233,7 @@ describe("Base.Layout.Modal", function() {
                     }
                 }
             };
-        var layout = new ModalLayout(options),
+        layout = new ModalLayout(options),
             showOptions = {'blah' : 'yeahhh'};
         sinon.spy(layout, "_beforeShow");
         sinon.spy(layout, "_afterShow");
