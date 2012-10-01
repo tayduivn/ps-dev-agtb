@@ -15,6 +15,14 @@
         	var el = this.$el.find(this.fieldTag);
         	var value = "";
         	var values = {};
+        	var moduleName = this.view.name;
+        	moduleName = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
+        	
+        	//if it's for the worksheets, rename the module name to match so the URL is 
+        	//generated correctly.
+        	if(moduleName == "ForecastsWorksheet"){
+        		moduleName = "ForecastWorksheets"
+        	}
         	
         	if(self.field.type == "bool"){
         		self.field.value = self.field.unformat();
@@ -24,13 +32,13 @@
             values["timeperiod_id"] = self.field.context.forecasts.get("selectedTimePeriod").id;
 			values["current_user"] = app.user.get('id');
 			values["isDirty"] = true;
-
-            //If there is an id, add it to the URL
+			
+			//If there is an id, add it to the URL
             if(self.field.model.isNew())
             {
-            	self.field.model.url = app.api.buildURL('ForecastWorksheets', 'create');
+            	self.field.model.url = app.api.buildURL(moduleName, 'create');
             } else {
-            	self.field.model.url = app.api.buildURL('ForecastWorksheets', 'update', {"id":self.field.model.get('id')});
+            	self.field.model.url = app.api.buildURL(moduleName, 'update', {"id":self.field.model.get('id')});
             }
             
             self.field.model.set(values);

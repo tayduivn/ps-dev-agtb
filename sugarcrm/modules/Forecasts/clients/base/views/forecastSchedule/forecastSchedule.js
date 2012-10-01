@@ -88,7 +88,8 @@
         this._collection = this.context.forecasts.forecastschedule;
 
         if (this._collection) {
-            /*this._collection.on("change", function() {
+            this._collection.on("change", function() {
+            	self.context.forecasts.set({commitButtonEnabled: true});
                 _.each(this._collection.models, function(model, index) {
 
                     if(model.hasChanged("expected_commit_stage") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
@@ -97,7 +98,7 @@
                     }
 
                 }, this);
-            }, this);*/
+            }, this);
         }
     },
     
@@ -121,6 +122,14 @@
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
     		field.type = "bool";
+    		field.format = function(value){
+    			value = (value=="include") ? true : false;
+    	        return value
+    		};
+    		field.unformat = function(value){
+    			value = this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";
+    	        return value
+    		};
     	}
     	else{
     		field.type = "enum";
