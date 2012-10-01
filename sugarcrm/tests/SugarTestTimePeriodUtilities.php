@@ -58,9 +58,9 @@ class SugarTestTimePeriodUtilities
         if($month < 4)
         {
             $month = 1;
-        } else if ($month < 8) {
+        } else if ($month < 7) {
             $month = 4;
-        } else if ($month < 11) {
+        } else if ($month < 10) {
             $month = 7;
         } else {
             $month = 10;
