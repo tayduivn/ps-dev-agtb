@@ -51,6 +51,7 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
     	}
 
 	public function setUp(){
+        SugarTestHelper::setUp('app_list_strings');
         $this->time_date = new TimeDate();
 		$_REQUEST['module'] = 'Calendar';
 		$_REQUEST['year'] = '2012';
@@ -68,7 +69,8 @@ class CalendarTest extends Sugar_PHPUnit_Framework_TestCase {
 			$GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting_id}'");
 			$GLOBALS['db']->query("DELETE FROM meetings_users WHERE meeting_id = '{$this->meeting_id}'");
 			unset($this->meeting_id);
-		}		
+		}
+        SugarTestHelper::tearDown();
 	}
 
 	public function testCalendarDate(){
