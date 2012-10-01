@@ -69,7 +69,8 @@ class vBasic{
 
 			if(substr_count($k, 'TZID=')){
 				$tz = explode('=', $k);
-				$timezone = @timezone_open($tz[1]);
+				// trim spaces and quotes since some clients quote timezones
+				$timezone = @timezone_open(trim($tz[1], '" '));
 				if(!$timezone) {
 				    $timezone = vTimeZone::guessTimezone($tz[1]);
 				}
@@ -420,6 +421,7 @@ class vCalendar extends vBasic{
 }
 
 class iCalendar {
+    public $data;
 	/**
 	 * parses a STRING represeting an iCalendar (vCalendar 2)
 	 * @param STRING $str - iCalendar formatted String
