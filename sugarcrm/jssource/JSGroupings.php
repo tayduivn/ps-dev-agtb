@@ -117,6 +117,20 @@
                 "styleguide/styleguide/css/nvd3/src/nv.d3.css" => "summer/summer.min.css",
                 "summer/lib/TimelineJS/css/timeline.css" => "summer/summer.min.css",
             ),
+
+            $summer_splash_js = array(
+                "sidecar/lib/jquery/jquery.min.js" => "summer/summer-splash.min.js",
+                "summer/lib/twitterbootstrap/js/bootstrap-alert.js" => "summer/summer-splash.min.js",
+                "sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js" => "summer/summer-splash.min.js",
+                "summer/splash/login.js" => "summer/summer-splash.min.js",
+            ),
+
+            $summer_splash_css = array(
+                "sidecar/lib/chosen/chosen.css" => "summer/summer-splash.min.css",
+                "summer/lib/twitterbootstrap/css/bootstrap.css" => "summer/summer-splash.min.css",
+                "sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css" => "summer/summer-splash.min.css",
+            ),
+
            $sugar_grp1 = array(
                 //scripts loaded on first page
                 'include/javascript/sugar_3.js'         => 'include/javascript/sugar_grp1.js',

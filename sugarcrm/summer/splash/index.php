@@ -35,16 +35,26 @@ if(!empty($_SESSION['gauth_data'])){
 <html>
 <head>
     <meta http-equiv="x-ua-compatible" content="IE=8">
-    <link rel="stylesheet" href="../../sidecar/lib/chosen/chosen.css"/>
     <!-- CSS -->
+    <?php
+    $min_file = 'summer/summer-splash.min.css';
+    if(file_exists("cache/".$min_file)) {
+        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../cache/$min_file\" />\n";
+    } else {
+        require_once('jssource/JSGroupings.php');
+        foreach($js_groupings as $group) {
+            foreach($group as $file => $min) {
+                if($min == $min_file) {
+                    echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../$file\" />\n";
+                }
+            }
+        }
+    }
+    ?>
     <link rel="stylesheet" href="../../sidecar/lib/chosen/chosen.css"/>
     <link rel="stylesheet" href="../lib/twitterbootstrap/css/bootstrap.css"/>
     <link rel="stylesheet" href="../../sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-    <script src="../../sidecar/lib/jquery/jquery.min.js"></script>
-    <script src="../lib/twitterbootstrap/js/bootstrap-alert.js"></script>
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-    <script src="../../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
-    <script src="login.js"></script>
     <style>
         body {
             -webkit-background-size: cover;
@@ -163,6 +173,21 @@ if(!empty($_SESSION['gauth_data'])){
 
 </div>
 </div>
+<?php
+    $min_file = 'summer/summer-splash.min.js';
+    if(file_exists("cache/".$min_file)) {
+        echo "<script src=\"../../cache/$min_file\"></script>\n";
+    } else {
+        require_once('jssource/JSGroupings.php');
+        foreach($js_groupings as $group) {
+            foreach($group as $file => $min) {
+                if($min == $min_file) {
+                    echo "<script src=\"../../$file\"></script>\n";
+                }
+            }
+        }
+    }
+?>
 <script>
     login.startup(<?php echo json_encode($settings) ?>);
 </script>
