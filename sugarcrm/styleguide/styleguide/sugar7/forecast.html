@@ -10,31 +10,10 @@
   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
   <![endif]-->
   <link href="../css/bootstrap.css" rel="stylesheet">
-  <link href="../css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+  <link href="../css/nv.d3.css" rel="stylesheet" type="text/css">
   <style type="text/css">
     #chart1 {
-      height: 300px;
-      min-width: 100px;
-      min-height: 100px;
-    /*
-      Minimum height and width is a good idea to prevent negative SVG dimensions...
-      For example width should be =< margin.left + margin.right + 1,
-      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
-    */
-    }
-    .nvd3 .nv-x.nv-axis text {
-      font-size: 10px;
-    }
-    .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
-      fill-opacity: 1;
-      stroke-opacity: 1;
-      stroke-width: 2;
-    }
-    .nv-quotaWrap line {
-      opacity: .8;
-      stroke: #444;
-      stroke-width: 3;
-      //stroke-dasharray: '20, 5';
+      border: none;
     }
   </style>
 </head>
@@ -217,12 +196,6 @@
   <!-- new D3 charting library files -->
   <script src="../js/nvd3/lib/d3.v2.min.js"></script>
   <script src="../js/nvd3/nv.d3.min.js"></script>
-  <script src="../js/nvd3/src/utils.js"></script>
-  <script src="../js/nvd3/src/models/legend.js"></script>
-  <script src="../js/nvd3/src/models/line.js"></script>
-  <script src="../js/nvd3/src/models/multiBar_sugar.js"></script>
-  <script src="../js/nvd3/src/models/multiBarChart_sugar.js"></script>
-
   <script src="../js/nvd3/data/forecasting_q1.js"></script>
   <script src="../js/nvd3/data/forecasting_q2.js"></script>
 
@@ -280,7 +253,15 @@
               .colorData( 'default' )
               //.colorFill( 'gradient' )
               .colorFill( 'default' )
-          ;
+              .tooltipBar( function(key, x, y, e, graph) {
+                return '<p>Stage: <b>' + key + '</b></p>' +
+                       '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
+                       '<p>Percent: <b>' +  x + '%</b></p>'
+                })
+              .tooltipLine( function(key, x, y, e, graph) {
+                  return '<p>Likely: <b>' + parseInt(y) + 'K</b></p>'
+                })
+            ;
 
         d3.select(this.el)
           .datum( chartData )

@@ -18,59 +18,8 @@
   <link href="css/bootstrap.css" rel="stylesheet">
   <link href="css/styleguide.css" rel="stylesheet">
   <link href="js/google-code-prettify/prettify.css" rel="stylesheet">
-  <link href="css/nvd3/src/nv.d3.css" rel="stylesheet" type="text/css">
+  <link href="css/nv.d3.css" rel="stylesheet" type="text/css">
 
-  <style type="text/css">
-    #gauge1, #gauge2, #gauge3, #gauge4, #gauge5, #gauge6, #gauge7, #gauge8 {
-      height: 300px;
-      min-width: 100px;
-      min-height: 100px;
-      padding: 10px;
-      border: 1px solid #ddd;
-    /*
-      Minimum height and width is a good idea to prevent negative SVG dimensions...
-      For example width should be =< margin.left + margin.right + 1,
-      of course 1 pixel for the entire chart would not be very useful, BUT should not have errors
-    */
-    }
-    .nvd3 .nv-x.nv-axis text {
-      font-size: 10px;
-    }
-    .nvd3.nv-line .nvd3.nv-scatter .nv-groups .nv-point {
-      fill-opacity: 1;
-      stroke-opacity: 1;
-      stroke-width: 2;
-    }
-    .nv-quotaWrap line {
-      opacity: .8;
-      stroke: #444;
-      stroke-width: 3;
-      //stroke-dasharray: '20, 5';
-    }
-    .nv-title {
-      margin: .2em .2em .2em .2em;
-      font-size: 1.4em;
-    }
-
-    .nv-arc-group {
-      fill: steelblue;
-    }
-
-    .nv-pointer {
-      fill: #888888;
-      stroke: #ffffff;
-    }
-
-    .nv-labels text {
-      font-weight: bold;
-      fill: #666;
-    }
-
-    .nv-odomText {
-      font-weight: bold;
-      fill: #000;
-    }
-  </style>
 </head>
 <body data-spy="scroll" data-target=".subnav" data-offset="50">
 
@@ -146,7 +95,7 @@
         <div class="span6">
           <h3>Standard Chart Colors</h3>
           <p>Using standard D3 chart colors is the default (Option 1 data).</p>
-<div id="gauge1">
+<div id="gauge1" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -163,7 +112,7 @@
         <div class="span6">
           <h3>Standad Chart Colors with Gradient Fill</h3>
           <p>It is possible to fill the chart shapes with a gradient using the active color palette.</p>
-<div id="gauge2">
+<div id="gauge2" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -185,7 +134,7 @@
         <div class="span6">
           <h3>Data-Defined Chart Colors</h3>
           <p>If colors are defined in the data, they are used instead of D3 colors (Option 2 data).</p>
-<div id="gauge3">
+<div id="gauge3" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -202,7 +151,7 @@
         <div class="span6">
           <h3>Data-Defined Chart Colors with Gradient Fill</h3>
           <p>It is possible to fill the chart shapes with a gradient using a graduated color palette.</p>
-<div id="gauge4">
+<div id="gauge4" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -223,7 +172,7 @@
         <div class="span6">
           <h3>Graduated Palette Chart Colors</h3>
           <p>It is also possible to use a graduated palette (any data option).</p>
-<div id="gauge5">
+<div id="gauge5" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -240,7 +189,7 @@
         <div class="span6">
           <h3>Graduated Palette Chart Colors with Gradient Fill</h3>
           <p>It is possible to fill the chart shapes with a gradient using a graduated color palette.</p>
-<div id="gauge6">
+<div id="gauge6" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -261,7 +210,7 @@
         <div class="span6">
           <h3>CSS Class Chart Colors</h3>
           <p>Chart colors can be defined using classes. The default classes in themes). If classes are not defined in data, they are assigned sequentially.</p>
-<div id="gauge7">
+<div id="gauge7" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -278,7 +227,7 @@
         <div class="span6">
           <h3>Data-Defined Chart Classes</h3>
           <p>It is possible to specify which chart class to use for use for a data series in the chart data (Option 3 data).</p>
-<div id="gauge8">
+<div id="gauge8" class="chart-container">
   <svg></svg>
 </div>
 <pre class="prettyprint linenums">
@@ -546,11 +495,6 @@
   <!-- new D3 charting library files -->
   <script src="js/nvd3/lib/d3.v2.js"></script>
   <script src="js/nvd3/nv.d3.min.js"></script>
-  <script src="js/nvd3/src/utils.js"></script>
-
-  <script src="js/nvd3/src/models/legend.js"></script>
-  <script src="js/nvd3/src/models/gauge.js"></script>
-  <script src="js/nvd3/src/models/gaugeChart.js"></script>
 
   <script>
     var gauge_data_1 = {
