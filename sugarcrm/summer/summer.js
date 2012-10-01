@@ -121,6 +121,34 @@
         return true;
     };
 
+    app.loadCss = function(callback) {
+        app.api.css(_app.config.platform, _app.config.themeName, {
+            success:function (rsp) {
+
+                if (_app.config.loadCss === "url") {
+                    var href = app.config.siteUrl + rsp.url;
+                    if(app.config.env != "prod" ) {
+                        href +=  "?t=" + new Date().getTime();
+                    }
+                    $("<link>")
+                        .attr({
+                            rel: "stylesheet",
+                            type: "text/css",
+                            href: href
+                        })
+                        .appendTo("head");
+                }
+                else {
+                    $("<style>").html(rsp.text).appendTo("head");
+                }
+
+                if (_.isFunction(callback)) {
+                    callback();
+                }
+            }
+        });
+    },
+
     app.view.Field = app.view.Field.extend({
         /**
          * Handles how validation errors are appended to the fields dom element
