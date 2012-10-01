@@ -707,7 +707,7 @@ class RenameModules
             array('name' => 'LNK_LIST', 'type' => 'plural'), //Module built modules, View <moduleName>
             array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LNK_CREATE', 'type' => 'singular'),
-            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular'),
+            array('name' => 'LBL_MODULE_NAME', 'type' => 'plural'),
             array('name' => 'LBL_NEW_FORM_TITLE', 'type' => 'singular'),
             array('name' => 'LBL_NEW_FORM_BTN', 'type' => 'singular'),
             array('name' => 'LNK_###MODULE_SINGULAR###_LIST', 'type' => 'plural'),

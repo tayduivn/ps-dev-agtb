@@ -32,11 +32,6 @@ function perform_save(&$focus){
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
-        if(empty($admin) || !is_object($admin))
-        {
-           display_stack_trace();
-        }
-
         //Retrieve Forecasts_category_ranges and json decode as an associative array
         $category_ranges = isset($settings['category_ranges']) ? $settings['category_ranges'] : array();
 
@@ -90,6 +85,15 @@ function perform_save(&$focus){
         $focus->new_with_id = true;
 
         $product = BeanFactory::getBean('Products');
+    } else {
+        //We still need to update the associated product with changes
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id'=>$focus->id));
+    }
+
+    //If $product is set then we need to copy values into it from the opportunity
+    if(isset($product))
+    {
         $product->name = $focus->name;
         $product->best_case = $focus->best_case;
         $product->likely_case = $focus->amount;

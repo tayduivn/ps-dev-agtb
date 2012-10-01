@@ -289,6 +289,17 @@ class KBDocument extends SugarBean {
         if(!$this->disable_row_level_security) {
             $this->addVisibilityWhere($where);
         }
+        $favorites = (!empty($params['favorites']))?$params['favorites']: 0;
+        if(!empty($favorites)){
+            $ret_array['select'] .= " , sfav.id is_favorite ";
+            if($favorites == 2){
+                $ret_array['from'] .= " INNER JOIN ";
+            }else{
+                $ret_array['from'] .= " LEFT JOIN ";
+            }
+
+        $ret_array['from'] .= " sugarfavorites sfav ON sfav.module ='{$this->module_dir}' AND sfav.record_id={$this->table_name}.id AND sfav.created_by='{$GLOBALS['current_user']->id}' AND sfav.deleted=0 ";
+        }
         //END SUGARCRM flav=pro ONLY
         if(!empty($where) && trim($where) != '') {
             // Strip leading AND or OR for bug 48173

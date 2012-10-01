@@ -138,6 +138,7 @@ $mod_strings = array (
     'LBL_DV_FORECAST_ROLLUP' => 'Forecast Rollup',
     'LBL_DV_TIMEPERIOD' => 'Time Period:',
     'LBL_DV_TIMPERIOD_DATES' => 'Date Range:',
+    'LBL_LOADING_COMMIT_HISTORY' => 'Loading Commit History...',
 
     //list view
     'LBL_LV_TIMPERIOD'=> 'Time period',
