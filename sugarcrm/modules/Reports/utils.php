@@ -61,12 +61,6 @@ class ReportsUtilities
         // generate the Mailer
         $mailer = MailerFactory::getMailer($mailConfiguration);
 
-        // set the sender of the email
-        $email               = new Email();
-        $systemEmailDefaults = $email->getSystemDefaultEmail();
-        $from                = new EmailIdentity($systemEmailDefaults["email"], $systemEmailDefaults["name"]);
-        $mailer->setHeader(EmailHeaders::From, $from);
-
         // set the subject of the email
         $mod_strings = return_module_language($this->language, "Reports");
         $mailer->setHeader(EmailHeaders::Subject, $mod_strings["ERR_REPORT_INVALID_SUBJECT"]);
