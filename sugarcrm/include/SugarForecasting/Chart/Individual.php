@@ -297,8 +297,6 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $quota_bean = BeanFactory::getBean('Quotas');
         $quota = $quota_bean->getCurrentUserQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'));
 
-        error_log(var_export($quota, true));
-
         return SugarCurrency::convertAmountToBase($quota['amount'], $quota['currency_id']);
     }
 
