@@ -43,8 +43,8 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSugarMailer() {
-        $expected = "SugarMailer";
+    public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
+        $expected = "SmtpMailer";
         $actual   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
@@ -84,13 +84,13 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
-    public function testGetMailer_ModeIsAllCaps_ReturnsSugarMailer() {
+    public function testGetMailer_ModeIsAllCaps_ReturnsSmtpMailer() {
         $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
         $mailConfig->mode             = strtoupper(MailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
         $mailConfig->sender_email     = "foo@bar.com";
         $mailConfig->mailerConfigData = $this->mockMailerConfig;
 
-        $expected = "SugarMailer";
+        $expected = "SmtpMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }

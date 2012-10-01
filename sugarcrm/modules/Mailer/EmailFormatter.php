@@ -21,56 +21,50 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "SmtpMailer.php"; // requires SmtpMailer in order to extend it
+require_once "EmbeddedImage.php";                         // needed for converting inline images to embedded images
+require_once "modules/Administration/Administration.php"; // needed for getting the disclosure settings
 
 /**
- * This class implements the additional SugarCRM-specific functionality that SmtpMailer lacks.
- *
- * @extends SmtpMailer
+ * This class implements the additional SugarCRM-specific email formatting that SmtpMailer lacks.
  */
-class SugarMailer extends SmtpMailer
+class EmailFormatter
 {
     // private members
     private $includeDisclosure = false; // true=append the disclosure to the message
     private $disclosureContent;         // the content to disclose
 
     /**
-     * @param MailerConfiguration
+     * @access public
      */
-    public function __construct(MailerConfiguration $mailerConfig) {
-        parent::__construct($mailerConfig);
+    public function __construct() {
         $this->retrieveDisclosureSettings();
     }
 
     /**
-     * Adds the optional disclosure content to the message, as well as performs the same preparations that are
-     * inherited from SmtpMailer.
+     * Adds the optional disclosure content to the message.
      *
-     * @access protected
+     * @access public
      * @param string $body required
      * @return string
      */
-    protected function prepareTextBody($body) {
+    public function formatTextBody($body) {
         if ($this->includeDisclosure) {
             $body .= "\r\r{$this->disclosureContent}"; //@todo why are we using /r?
         }
-
-        $body = parent::prepareTextBody($body);
 
         return $body;
     }
 
     /**
-     * Adds the optional disclosure content to the message, as well as performs the same preparations that are
-     * inherited from SmtpMailer. Additionally, converts to embedded images any inline images that are found
-     * locally on the server that hosts the application instance. This extra step is done to guarantee that locally
-     * referenced images can be seen by the recipient, whether the server is public or private.
+     * Adds the optional disclosure content to the message. Additionally, converts to embedded images any inline images
+     * that are found locally on the server that hosts the application instance. This extra step is done to guarantee
+     * that locally referenced images can be seen by the recipient, whether the server is public or private.
      *
-     * @access protected
+     * @access public
      * @param string $body required
-     * @return string
+     * @return array body=String with the applicable modifications. images=Array of EmbeddedImage objects.
      */
-    protected function prepareHtmlBody($body) {
+    public function formatHtmlBody($body) {
         global $sugar_config;
         $siteUrl = $sugar_config["site_url"];
 
@@ -82,37 +76,45 @@ class SugarMailer extends SmtpMailer
         $body = str_replace(sugar_cached("images/"), "cid:", $body);
 
         // replace any embeded images using cache/images for src url
-        $body = $this->convertInlineImageToEmbeddedImage(
+        $converted = $this->convertInlineImageToEmbeddedImage(
             $body,
             "(?:{$siteUrl})?/?cache/images/",
             sugar_cached("images/")
         );
+        $body   = $converted["body"];
+        $images = $converted["images"];
 
         // replace any embeded images using the secure entryPoint for src url
-        $body = $this->convertInlineImageToEmbeddedImage(
+        $converted = $this->convertInlineImageToEmbeddedImage(
             $body,
             "(?:{$siteUrl})?index.php[?]entryPoint=download&(?:amp;)?[^\"]+?id=",
             "upload://",
             true
         );
+        $body   = $converted["body"];
+        $images = array_merge($images, $converted["images"]);
 
-        $body = parent::prepareHtmlBody($body);
-
-        return $body;
+        return array(
+            "body"   => $body,
+            "images" => $images,
+        );
     }
 
     /**
      * Replace images with locations specified by regex with cid: images and attach needed files.
      *
+     * @access protected
      * @param string $body
-     * @param string $regex        Regular expression
+     * @param string $regex       Regular expression
      * @param string $localPrefix Prefix where local files are stored
-     * @param bool   $object       Use attachment object
-     * @return string The body with the applicable modifications.
+     * @param bool   $object      Use attachment object
+     * @return array body=String with the applicable modifications. images=Array of EmbeddedImage objects.
      */
     protected function convertInlineImageToEmbeddedImage($body, $regex, $localPrefix, $object = false) {
-        $i       = 0;
-        $foundImages = array();
+        $embeddedImages = array();
+        $i              = 0;
+        $foundImages    = array();
+
         preg_match_all("#<img[^>]*[\s]+src[^=]*=[\s]*[\"']($regex)(.+?)[\"']#si", $body, $foundImages);
 
         foreach ($foundImages[2] as $image) {
@@ -153,8 +155,7 @@ class SugarMailer extends SmtpMailer
                     $mimeType = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 }
 
-                $embeddedImage = new EmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
-                $this->addEmbeddedImage($embeddedImage);
+                $embeddedImages[] = new EmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
                 $i++;
             }
         }
@@ -165,17 +166,20 @@ class SugarMailer extends SmtpMailer
         // remove bad img line from outbound email
         $body = preg_replace('#<img[^>]+src[^=]*=\"\/([^>]*?[^>]*)>#sim', "", $body);
 
-        return $body;
+        return array(
+            "body"   => $body,
+            "images" => $embeddedImages,
+        );
     }
 
     /**
      * Retrieves settings from the administrator configuration indicating whether or not to include a disclosure
      * at the bottom of an email, and if so, the content to disclose.
      *
-     * @access private
+     * @access protected
      * @todo consider how this could become a merge field that is added prior to the Mailer getting created
      */
-    private function retrieveDisclosureSettings() {
+    protected function retrieveDisclosureSettings() {
         $admin = new Administration();
         $admin->retrieveSettings();
 

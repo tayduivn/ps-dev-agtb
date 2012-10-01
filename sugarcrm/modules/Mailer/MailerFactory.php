@@ -30,7 +30,6 @@ require_once "SmtpMailerConfiguration.php";              // required if producin
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
 require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
-require_once "SugarMailer.php";                          // requires SugarMailer in order to create a SugarMailer
 
 /**
  * Factory to create Mailers.
@@ -43,15 +42,11 @@ class MailerFactory
     // configuration.
     // key = mode; value = mailer class
     protected static $modeToMailerMap = array(
-        MailConfigurationPeer::MODE_DEFAULT => array(
-            "path"  => ".",            // the path to the class file without trailing slash ("/")
+        MailConfigurationPeer::MODE_SMTP => array(
+            "path"  => ".",          // the path to the class file without trailing slash ("/")
             "class" => "SmtpMailer", // the name of the class
         ),
-        MailConfigurationPeer::MODE_SMTP    => array(
-            "path"  => ".",
-            "class" => "SugarMailer",
-        ),
-        MailConfigurationPeer::MODE_WEB     => array(
+        MailConfigurationPeer::MODE_WEB  => array(
             "path"  => ".",
             "class" => "WebMailer",
         ),
@@ -91,7 +86,8 @@ class MailerFactory
     public static function getMailer(MailConfiguration $config) {
         // copy the config value becuase you don't want to modify the object by reassigning a public variable
         // in the case of mode being null
-        $mode = is_null($config->mode) ? "default" : strtolower($config->mode); // make sure it's lower case
+        $mode = is_null($config->mode) ? MailConfigurationPeer::MODE_SMTP : $config->mode;
+        $mode = strtolower($mode); // make sure it's lower case
 
         if (!MailConfigurationPeer::isValidMode($mode)) {
             throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);

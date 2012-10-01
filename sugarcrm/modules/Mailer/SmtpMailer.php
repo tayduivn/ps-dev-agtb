@@ -334,17 +334,11 @@ class SmtpMailer extends BaseMailer
         if ($hasText) {
             // perform character set translations on the plain-text body
             $textBody = $this->prepareTextBody($this->textBody);
-
-            // perform HTML character translations on the plain-text body
-            $textBody = from_html($textBody);
         }
 
         if ($hasHtml) {
             // perform character set translations HTML body
             $htmlBody = $this->prepareHtmlBody($this->htmlBody);
-
-            // perform HTML character translations on the HTML body
-            $htmlBody = from_html($htmlBody);
 
             // there is an HTML part so set up PHPMailer appropriately for sending a multi-part email
             $mailer->IsHTML(true);
@@ -423,7 +417,9 @@ class SmtpMailer extends BaseMailer
      * @return string The translated body.
      */
     protected function prepareTextBody($body) {
+        $body = $this->formatter->formatTextBody($body);
         $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
+        $body = from_html($body); // perform HTML character translations on the plain-text body
 
         return $body;
     }
@@ -437,8 +433,17 @@ class SmtpMailer extends BaseMailer
      * @return string The compliant and translated body.
      */
     protected function prepareHtmlBody($body) {
+        $formatted = $this->formatter->formatHtmlBody($body);
+        $body      = $formatted["body"];
+        $images    = $formatted["images"];
+
+        foreach ($images as $embeddedImage) {
+            $this->addEmbeddedImage($embeddedImage);
+        }
+
         $body = $this->forceRfcComplianceOnHtmlBody($body);
         $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
+        $body = from_html($body); // perform HTML character translations on the HTML body
 
         return $body;
     }
