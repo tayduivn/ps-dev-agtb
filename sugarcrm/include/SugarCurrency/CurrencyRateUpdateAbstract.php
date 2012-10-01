@@ -88,8 +88,13 @@ abstract class CurrencyRateUpdateAbstract
      * process the rate fields
      *
      * @access protected
+     * @param  string    $currencyId  the currency we are updating
+     * @return boolean   true on success
      */
-    protected function run() {
+    protected function run($currencyId) {
+        if(empty($currencyId)) {
+            return false;
+        }
         if(!$this->exclude) {
             // module excluded, silent exit
             return true;
@@ -116,7 +121,7 @@ abstract class CurrencyRateUpdateAbstract
                 // make sure column exists
                 if(empty($columns[$columnName]))
                 {
-                    $GLOBALS['log']->error("CurrencyRateUpdate: unknown table column: {$tableName},{$columnName}.");
+                    $GLOBALS['log']->error("CurrencyRateUpdate: unknown table column: {$columnName} on table {$tableName}.");
                     return false;
                 }
                 if(empty($columns['currency_id']))
@@ -124,9 +129,9 @@ abstract class CurrencyRateUpdateAbstract
                     $GLOBALS['log']->error("CurrencyRateUpdate: table {$tableName} must have currency_id column.");
                     return false;
                 }
-                if(!$this->doCustomProcess($tableName, $columnName)) {
+                if(!$this->doCustomProcess($tableName, $columnName, $currencyId)) {
                     // if no custom processing required, we do the standard update
-                    $this->updateRate($tableName, $columnName);
+                    $this->updateRate($tableName, $columnName, $currencyId);
                 }
                 if (empty($result)) {
                     return false;
@@ -134,7 +139,7 @@ abstract class CurrencyRateUpdateAbstract
             }
         }
         if($this->updateUsDollar) {
-            $this->updateUsDollarColumns();
+            $this->updateUsDollarColumns($currencyId);
         }
         return true;
     }
@@ -148,9 +153,10 @@ abstract class CurrencyRateUpdateAbstract
      * @access protected
      * @param  string $table
      * @param  string $column
+     * @param  string $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomProcess($table, $column) {
+    protected function doCustomProcess($table, $column, $currencyId) {
         return false;
     }
 
@@ -164,13 +170,16 @@ abstract class CurrencyRateUpdateAbstract
      * @access protected
      * @param  string $table
      * @param  string $column
+     * @param  string $currencyId
      * @return Object database result object
      */
-    protected function updateRate($table, $column) {
+    protected function updateRate($table, $column, $currencyId) {
         // setup SQL statement
-        $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate WHERE c.currency_id = t.currency_id",
+        $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate WHERE c.currency_id = '%s' and c.currency_id = t.currency_id",
             $table,
-            $column);
+            $column,
+            $this->db->escape($currencyId)
+        );
         // execute
         return $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
     }
@@ -183,9 +192,10 @@ abstract class CurrencyRateUpdateAbstract
      * the base_rate field for the rate calculations.
      *
      * @access protected
+     * @param  string    $currencyId
      * @return boolean true on success
      */
-    protected function updateUsDollarColumns() {
+    protected function updateUsDollarColumns($currencyId) {
         // loop through all the tables
         foreach($this->usDollarColumnDefinitions as $table_name=>$table_defs) {
             $columns = $this->db->get_columns($table_name);
@@ -197,10 +207,12 @@ abstract class CurrencyRateUpdateAbstract
                     continue;
                 }
                 // setup SQL statement
-                $query = sprintf("UPDATE %s t SET t.%s = t.base_rate*t.%s",
+                $query = sprintf("UPDATE %s t SET t.%s = t.base_rate*t.%s where t.currency_id = '%s'",
                     $table,
                     $usdollar_column,
-                    $amount_column);
+                    $amount_column,
+                    $currencyId
+                );
                 // execute
                 $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
             }

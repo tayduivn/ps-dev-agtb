@@ -56,6 +56,9 @@ class SugarCurrency
      * @return float   converted amount
      */
     public static function convertAmount( $amount, $fromId, $toId ) {
+        if($fromId == $toId) {
+            return $amount;
+        }
         $currency1 = self::_getCurrency($fromId);
         $currency2 = self::_getCurrency($toId);
         // NOTE: we always calculate in maximum precision, which the database defines to 6
@@ -190,7 +193,7 @@ class SugarCurrency
             global $current_user;
             $user = $current_user;
         }
-        $currencyId = empty($user) ? -99 : $user->getPreference('currency');
+        $currencyId = empty($user) ? '-99' : $user->getPreference('currency');
         return self::_getCurrency($currencyId);
     }
 

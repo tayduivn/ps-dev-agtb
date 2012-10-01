@@ -69,54 +69,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 //Check if the conversion rates changed and, if so, update the rates with a scheduler job
                 if($isUpdate && $previousConversionRate != $currency->conversion_rate)
                 {
-                    /*
-                    $globPaths = array(
-                        array('modules/* /jobs/*BaseRateSchedulerJob.php'),
-                        array('custom/modules/* /jobs/Custom*BaseRateSchedulerJob.php'),
-                    );
-
-                    //Keep track of which modules have a custom or module specific implementation
-                    $individualModules = array();
-                    $filesToRun = array();
-
-                    foreach ($globPaths as $entry)
-                    {
-                        $files = glob($entry, GLOB_NOSORT);
-
-                        if(!empty($files))
-                        {
-                            foreach($files as $jobFile)
-                            {
-                                //Store the module in first key and the name of the file in the second key
-                                preg_match('/modules\/([^\/]+?)\/jobs\/(.+?)\.php$/', $jobFile, $matches);
-                                if($matches[1] != 'Currencies')
-                                {
-                                   $individualModules[$matches[1]] = $matches[1];
-                                   $filesToRun[$jobFile] = $matches[1];
-                                }
-
-                            }
-                        }
-                    }
-                    */
-
                     global $timedate;
                     $job = new SchedulersJob();
                     $job->name = "CurrencyRateSchedulerJob: " . $timedate->getNow()->asDb();
                     $job->status = SchedulersJob::JOB_STATUS_QUEUED;
                     $job->target = "class::CurrencyRateSchedulerJob";
+                    $job->data = array('currency_id'=>$currency->id);
                     $job->retry_count = 0;
                     $job->assigned_user_id = $current_user->id;
                     $job->save();
-
-                    /*
-                    foreach($filesToRun as $file=>$name)
-                    {
-                        require_once($file);
-                        $schedulerJob = new $name();
-                        $schedulerJob->run();
-                    }
-                    */
                 }
             }
         }

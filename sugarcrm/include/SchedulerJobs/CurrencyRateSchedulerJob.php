@@ -75,7 +75,8 @@ class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
                         continue;
                     }
                     $updateRates = new $jobClass;
-                    $updateRates->run();
+                    $data = json_decode($this->job->data);
+                    $updateRates->run($data['currency_id']);
                 }
             }
         }

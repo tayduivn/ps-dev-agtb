@@ -429,6 +429,8 @@ class Opportunity extends SugarBean
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
         }
         $this->base_rate = $currency->conversion_rate;
+        // backward compatibility, amount_usdollar is deprecated
+        $this->amount_usdollar = $this->amount * $this->base_rate;
 
         //if probablity isn't set, set it based on the sales stage
 		if ( !isset($this->probability) && !empty($this->sales_stage) ) {

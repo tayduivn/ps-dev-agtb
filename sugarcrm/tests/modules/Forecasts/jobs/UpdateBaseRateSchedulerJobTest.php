@@ -25,9 +25,9 @@
  ********************************************************************************/
 
 require_once 'modules/SchedulersJobs/SchedulersJob.php';
-require_once('modules/Currencies/jobs/BaseRateSchedulerJob.php');
+require_once('include/SchedulerJobs/CurrencyRateSchedulerJob.php');
 
-class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
+class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $jobs = array();
     private $jobRan = FALSE;
@@ -57,23 +57,18 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
         $this->opportunity->currency_id = $this->currency->id;
-        $this->opportunity->amount_usdollar = $this->opportunity->amount_usdollar * $this->currency->conversion_rate;
-        $this->opportunity->base_rate = $this->currency->conversion_rate;
         $this->opportunity->save();
 
         $this->forecast = SugarTestForecastUtilities::createForecast($timeperiod, $current_user);
         $this->forecast->currency_id = $this->currency->id;
-        $this->forecast->base_rate = $this->currency->conversion_rate;
         $this->forecast->save();
 
         $this->forecastSchedule = SugarTestForecastScheduleUtilities::createForecastSchedule($timeperiod, $current_user);
         $this->forecastSchedule->currency_id = $this->currency->id;
-        $this->forecastSchedule->base_rate = $this->currency->conversion_rate;
         $this->forecastSchedule->save();
 
         $this->quota = SugarTestQuotaUtilities::createQuota(500);
         $this->quota->currency_id = $this->currency->id;
-        $this->quota->base_rate = $this->currency->conversion_rate;
         $this->quota->save();
 
         $this->jobRan = FALSE;
@@ -114,7 +109,7 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
      * @outputBuffering disabled
      * @group forecasts
      */
-    public function testBaseRateSchedulerJob()
+    public function testCurrencyRateSchedulerJob()
     {
         global $current_user;
         //Set opportunities to be excluded
@@ -127,9 +122,9 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $job = $this->createJob(
             array("name" => "UpdateBaseRateSchedulerJob",
                   "status" => SchedulersJob::JOB_STATUS_RUNNING,
-                  "target" => "class::MockBaseRateSchedulerJob",
+                  "target" => "class::CurrencyRateSchedulerJob",
                   "assigned_user_id" => $current_user->id,
-                  "data" => json_encode(array('excludeModules'=>$excludeModules, 'currencyId'=>$this->currency->id))
+                  "data" => json_encode(array('currency_id'=>$this->currency->id))
             )
         );
 
@@ -152,22 +147,4 @@ class UpdateBaseRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1.4, $forecastScheduleBaseRate, 'forecast_schedule.base_rate was not modified by BaseRateSchedulerJob');
     }
 
-}
-
-class MockBaseRateSchedulerJob extends BaseRateSchedulerJob
-{
-    public $job;
-
-    public function run($data)
-    {
-        $this->job->runnable_ran = true;
-        $this->job->runnable_data = $data;
-        $this->job->succeedJob();
-        parent::run($data);
-    }
-
-    public function setJob(SchedulersJob $job)
-    {
-        $this->job = $job;
-    }
 }
