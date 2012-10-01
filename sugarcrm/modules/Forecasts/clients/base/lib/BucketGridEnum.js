@@ -1,9 +1,9 @@
 (function(app) {
 
-    app.view.BucketGridEnum = function (field, view) {
+    app.view.BucketGridEnum = function (field, view, module) {
         this.field = field;
-        //this.field.def.options = app.config.buckets_dom || [];
         this.view = view;
+        this.moduleName = module;
         return this.render();
     };
 
@@ -15,15 +15,8 @@
         	var el = this.$el.find(this.fieldTag);
         	var value = "";
         	var values = {};
-        	var moduleName = this.view.name;
-        	moduleName = moduleName.charAt(0).toUpperCase() + moduleName.slice(1);
-        	
-        	//if it's for the worksheets, rename the module name to match so the URL is 
-        	//generated correctly.
-        	if(moduleName == "ForecastsWorksheet"){
-        		moduleName = "ForecastWorksheets"
-        	}
-        	
+        	var moduleName = this.moduleName;
+        	        	
         	if(self.field.type == "bool"){
         		self.field.value = self.field.unformat();
         		values[self.field.name] = self.field.value;

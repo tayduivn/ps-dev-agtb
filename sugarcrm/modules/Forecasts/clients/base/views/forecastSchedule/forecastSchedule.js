@@ -78,7 +78,7 @@
         }
 
         if (this.editableWorksheet === true && field.name == "expected_commit_stage") {
-            new app.view.BucketGridEnum(field, this);
+            new app.view.BucketGridEnum(field, this, "ForecastSchedule");
         }
      
     },

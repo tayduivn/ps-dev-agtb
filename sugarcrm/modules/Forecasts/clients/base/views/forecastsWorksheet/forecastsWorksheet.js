@@ -148,7 +148,7 @@
         }
 
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this);
+            new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
         }
     },
 
