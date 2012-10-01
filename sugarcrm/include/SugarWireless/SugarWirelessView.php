@@ -521,8 +521,7 @@ class SugarWirelessView extends SugarView
 	       	 	}
 
 	       	 	if(!$valueFormatted) {
-	       	 	   $this->bean->format_field($this->bean->field_defs[$name]);
-                   $value = isset($this->bean->$name) ? $this->bean->$name : '';
+	       	 	   $value = isset($this->bean->$name) ? $this->bean->$name : '';
 	       	 	}
 
 	            $field_defs[$name]['value'] = $value;

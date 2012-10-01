@@ -5307,14 +5307,21 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
         $temp_module_strings = return_module_language($current_language, $module);
         $temp_duplicate_array = array_diff_assoc($def, $select_array);
         $temp_duplicate_array = array_merge($temp_duplicate_array, array_intersect($select_array, $temp_duplicate_array));
+
         foreach ($temp_duplicate_array as $temp_key => $temp_value)
         {
-            if (empty($var_def[$temp_key]['vname']))
+            // Don't add duplicate relationships
+            if (!empty($var_def[$temp_key]['relationship']) && array_key_exists($var_def[$temp_key]['relationship'], $select_array))
             {
-                $select_array[$temp_key] = $temp_value;
                 continue;
             }
-            $select_array[$temp_key] = $temp_value.' ('.get_label($var_def[$temp_key]['vname'], $temp_module_strings).')';
+            $select_array[$temp_key] = $temp_value;
+        }
+        
+        // Add the relationship name for easier recognition
+        foreach ($select_array as $key => $value)
+        {
+            $select_array[$key] .= ' (' . $key . ')';
         }
     }
     asort($select_array);

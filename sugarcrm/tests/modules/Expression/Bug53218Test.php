@@ -1,4 +1,8 @@
 <?php
+<<<<<<< HEAD
+=======
+//FILE SUGARCRM flav=pro ONLY
+>>>>>>> 6_5_6
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -85,7 +89,7 @@ class Bug53218Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $_GET['opener_id']= 'rel_module';
         $expression = new Expression();
         $relations = $expression->get_selector_array('field', '', 'Products');
-        $this->assertContains('Users (Users)', $relations);
+        $this->assertContains('Users (products_users_1)', $relations);
         $this->assertContains('products_users_1', $relations);
     }
 	
@@ -100,7 +104,7 @@ class Bug53218Test extends Sugar_PHPUnit_Framework_OutputTestCase
         $field_defs = $temp_module->vardef_handler->module_object->field_defs;
         unset($field_defs['products_users_1_name']['vname']);
         $temp_select_array = getDuplicateRelationListWithTitle($temp_select_array, $field_defs, $temp_module->vardef_handler->module_object->module_dir);
-        $this->assertEquals('Users', $temp_select_array['products_users_1_name']);
+        $this->assertEquals('Users (products_users_1_name)', $temp_select_array['products_users_1_name']);
     }
 
 }

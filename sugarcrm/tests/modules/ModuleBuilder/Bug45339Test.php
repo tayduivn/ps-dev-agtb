@@ -270,4 +270,5 @@ class Bug45339MBPackageMock extends MBPackage
         return $this->getCustomRelationshipsByModuleName($moduleName, $lhs);
     }
 
+
 }

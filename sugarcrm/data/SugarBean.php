@@ -2920,8 +2920,8 @@ class SugarBean
                     }
                     $query_array = $parentbean->$related_field_name->getSubpanelQuery(array(), true);
                 }
-                $table_where = $this_subpanel->get_where();
-                $where_definition = $query_array['where'];
+                $table_where = preg_replace('/^\s*WHERE/i', '', $this_subpanel->get_where());
+                $where_definition = preg_replace('/^\s*WHERE/i', '', $query_array['where']);
 
                 if(!empty($table_where))
                 {
@@ -2943,7 +2943,6 @@ class SugarBean
 
 
 
-                $subwhere = str_replace('WHERE', '', $subwhere);
                 $list_fields = $this_subpanel->get_list_fields();
                 foreach($list_fields as $list_key=>$list_field)
                 {
@@ -4972,7 +4971,11 @@ class SugarBean
             if (!empty($listview_meta_file))
             {
                 require $listview_meta_file;
-                $listview_def = $listViewDefs[$this->module_name];
+                
+                if (!empty($listViewDefs[$this->module_name]))
+                {
+                    $listview_def = $listViewDefs[$this->module_name];
+                }
             }
             $module_name = $this->module_name;
         }

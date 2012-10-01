@@ -1387,7 +1387,6 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 #footer 
 {
-
     border-top:1px solid #ccc;
     background: rgb(255,255,255); /* Old browsers */
     background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(246,246,246,1) 47%, rgba(237,237,237,1) 100%); /* FF3.6+ */
@@ -1401,6 +1400,7 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
     bottom:0;
     width:100%;
     z-index:1;
+    text-align: center;
 }
 
 #footer img {
@@ -1485,11 +1485,11 @@ background-image:url(../../../../index.php?entryPoint=getImage&imageName=form-bu
 }
 
 #footer .copyright {
-	color: #ccc;
-	text-decoration: none;
-	font-size: 11px;	
-	padding-top: 10px;
-	float: left;
+    color: #A0A0A0;
+    text-decoration: none;
+    font-size: 11px;
+    padding-top: 10px;
+    display: block;
 }
 
 #themePicker, #langPicker 
@@ -6270,7 +6270,7 @@ input#sugar_spot_search:focus {
 #sugar_spot_search_results {
 
     box-shadow:0 1px 1px #999;
-    padding: 20px;
+    padding: 40px 20px 20px 20px;
     background:#fff;
     border-bottom-left-radius:4px;
     border-bottom-right-radius:4px;
