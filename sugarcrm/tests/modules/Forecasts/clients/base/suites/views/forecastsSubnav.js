@@ -32,12 +32,7 @@ describe("The forecasts subnav view", function(){
 
         beforeEach(function() {
 
-            //This is a global namespace function... I don't think I can stub this in sinon
-            /*
-            replaceHTMLChars = function(value) {
-                return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
-            };
-            */
+
             data = [{
 
                 attr : {
