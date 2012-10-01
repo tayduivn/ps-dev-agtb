@@ -50,6 +50,8 @@ class Bug54941Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->db = DBManagerFactory::getInstance();
+        $this->guid1 = create_guid();
+        $this->guid2 = create_guid();
 
 		// forecast schedule item insert
         $query = "
