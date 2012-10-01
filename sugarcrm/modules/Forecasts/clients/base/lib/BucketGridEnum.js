@@ -15,8 +15,8 @@
         	var el = this.$el.find(this.fieldTag);
         	var value = "";
         	var values = {};
-        	var moduleName = this.moduleName;
-        	        	
+        	var moduleName = self.moduleName;
+        	
         	if(self.field.type == "bool"){
         		self.field.value = self.field.unformat();
         		values[self.field.name] = self.field.value;

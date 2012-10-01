@@ -106,12 +106,10 @@
     	if(forecastCategories == "show_binary"){
     		field.type = "bool";
     		field.format = function(value){
-    			value = (value=="include") ? true : false;
-    	        return value
+    			return (value=="include") ? true : false;    	        
     		};
     		field.unformat = function(value){
-    			value = this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";
-    	        return value
+    			return this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";    	        
     		};
     	}
     	else{
