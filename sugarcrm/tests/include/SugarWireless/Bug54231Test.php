@@ -44,7 +44,6 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 	public function setUp()
 	{
 		global $current_user, $beanFiles, $beanList;
-        require('include/modules.php');
         SugarTestHelper::setUp('moduleList');
         SugarTestHelper::setUp('current_user');
 		
@@ -57,12 +56,14 @@ class Bug54231Test extends Sugar_PHPUnit_Framework_OutputTestCase
 		$GLOBALS['beanList'] = array(
 			'Opportunities' => 'Opportunity'
 		);
-		
-		$this->_app_list_strings_moduleList = $GLOBALS['app_list_strings']['moduleList'];
+
+        if (array_key_exists('app_list_strings', $GLOBALS) && array_key_exists('moduleList', $GLOBALS['app_list_strings'])) {
+            $this->_app_list_strings_moduleList = $GLOBALS['app_list_strings']['moduleList'];
+        }
 		$GLOBALS['app_list_strings']['moduleList'] = array(
 			'Opportunities' => 'Opportunities'
 		);
-		
+
 		$this->_view_object_map = array(
 			'wireless_module_registry' => array(
 				'Opportunities' => array(
