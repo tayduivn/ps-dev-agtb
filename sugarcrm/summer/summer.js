@@ -122,10 +122,10 @@
     };
 
     app.loadCss = function(callback) {
-        app.api.css(_app.config.platform, _app.config.themeName, {
+        app.api.css(app.config.platform, app.config.themeName, {
             success:function (rsp) {
 
-                if (_app.config.loadCss === "url") {
+                if (app.config.loadCss === "url") {
                     var href = app.config.siteUrl + rsp.url;
                     if(app.config.env != "prod" ) {
                         href +=  "?t=" + new Date().getTime();
