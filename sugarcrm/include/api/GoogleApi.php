@@ -129,15 +129,12 @@ class GoogleAPI extends SugarApi
     protected function findDocuments($email = '', $q = '', $limit = 5) {
         $data = array();
         $url = "https://www.googleapis.com/drive/v2/files?maxResults={$limit}&fields=items(id%2CembedLink%2CalternateLink%2Ctitle)&q=";
-        $query = '';
+        $query = '(mimeType != "application/vnd.google-apps.folder")';
         if(!empty($q)) {
-            $query .= 'fullText contains "'.$q.'"';
-            if(!empty($email)) {
-                $query .= ' AND ';
-            }
+            $query .= ' AND (fullText contains "'.$q.'")';
         }
         if(!empty($email)) {
-            $query .= '("'.$email.'" in writers OR "'.$email.'" in owners OR "'.$email.'" in readers)';
+            $query .= ' AND ("'.$email.'" in writers OR "'.$email.'" in owners OR "'.$email.'" in readers)';
         }
         $url .= urlencode($query);
         $res = $this->box->oauthGet($url);
