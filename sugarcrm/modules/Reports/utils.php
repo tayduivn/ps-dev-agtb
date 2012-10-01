@@ -51,15 +51,7 @@ class ReportsUtilities
      * @throws MailerException Allows exceptions to bubble up for the caller to report if desired.
      */
     public function sendNotificationOfInvalidReport($recipient, $message) {
-        // get the configuration that the Mailer needs
-        $mailConfiguration = MailConfigurationPeer::getSystemMailConfiguration($this->user);
-
-        if (is_null($mailConfiguration)) {
-            throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
-        }
-
-        // generate the Mailer
-        $mailer = MailerFactory::getMailer($mailConfiguration);
+        $mailer = MailerFactory::getMailerForUser($this->user);
 
         // set the subject of the email
         $mod_strings = return_module_language($this->language, "Reports");

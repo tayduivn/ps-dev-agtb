@@ -24,6 +24,15 @@ require_once "modules/Users/User.php";
 
 class ReportsUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    public function setUp() {
+        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
+    }
+
+    public function tearDown() {
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        unset($GLOBALS["current_user"]);
+    }
+
     /**
      * @group reports
      * @group mailer
