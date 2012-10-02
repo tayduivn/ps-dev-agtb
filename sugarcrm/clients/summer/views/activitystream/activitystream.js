@@ -455,7 +455,7 @@
                 var event = {};
                 event.tag = "commented";
                 event.startDate = parseDate(comment.date_created);
-                event.text = event.tag + " by " + comment.created_by_name;
+                event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + comment.created_by_name+'</a>';
                 event.headline = comment.value;
                 events.push(event);
             }
@@ -463,7 +463,7 @@
                 var event = {};
                 event.tag = "attached";
                 event.startDate = parseDate(attachment.date_entered);
-                event.text = event.tag + " by " + attachment.created_by_name;
+                event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + attachment.created_by_name+'</a>';
                 event.headline = attachment.filename;
                 events.push(event);
             });
@@ -472,11 +472,11 @@
         if(model.get("target_name") || self._parseTags(model.get("activity_data").value)) {
             var event = {};
             event.startDate = parseDate(model.get("date_created"));
-            event.text = model.get("activity_type") + " by " + model.get("created_by_name");
+            event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+model.get("activity_type") + " by " + model.get("created_by_name")+'</a>';
             event.headline = model.get("target_name") || self._parseTags(model.get("activity_data").value);
             event.tag = model.get("activity_type");
             event.asset = {
-                media: "<img src='"+model.get("created_by_picture_url")+"' />",
+                media: '<a href=\'#Users/'+model.get("created_by")+'\'><img src=\''+model.get("created_by_picture_url")+'\' /></a>',
                 caption: model.get("created_by_name")
             };
             events.push(event);
@@ -485,7 +485,7 @@
             var event = {};
             event.tag = "attached";
             event.startDate = parseDate(attachment.date_entered);
-            event.text = event.tag + " by " + attachment.created_by_name;
+            event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + attachment.created_by_name+'</a>';
             event.headline = attachment.filename;
             if(attachment.file_type == "image") {
                 event.asset = {
