@@ -131,7 +131,7 @@
     _renderField: function(field) {
         if(field.name == "commit_stage")
         {
-            //Set the field.def.options value based on app.config.buckets_dom (if set)
+            //Set the field.def.options value based on buckets_dom (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.isEditableWorksheet)
             {
@@ -295,7 +295,6 @@
 
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
-                //field.enabled = (app.config.show_buckets == 1);
                 field.view = self.isEditableWorksheet ? self.name : 'default';
             }
         });
@@ -630,7 +629,7 @@
         	return false;
         }
 
-        if (app.config.show_buckets == 1) { // buckets
+        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') { // buckets
 
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
@@ -646,7 +645,7 @@
                             returnVal = selectVal;
                         } else if(!editable) {
                             //Get the array for the bucket stages
-                            var buckets_dom = app.lang.getAppListStrings(app.config.buckets_dom || 'commit_stage_dom');
+                            var buckets_dom = app.lang.getAppListStrings(this.context.forecasts.config.get('buckets_dom') || 'commit_stage_dom');
                             _.each(params, function(filter)
                             {
                                 if(buckets_dom[filter] == selectVal)

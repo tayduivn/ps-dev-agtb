@@ -138,7 +138,7 @@
             //self.handleRenderOptions({dataset: dataset});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            if (app.config.show_buckets == 0) {
+            if (this.context.forecasts.config.get('forecasts_categories') == 'show_binary') {
                 // TODO: this.
             } else {
                 self.handleRenderOptions({category:_.first(value)});
