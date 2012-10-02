@@ -655,7 +655,16 @@ function isTime(timeStr) {
 function inRange(value, min, max) {
     if (typeof num_grp_sep != 'undefined' && typeof dec_sep != 'undefined')
        value = unformatNumberNoParse(value, num_grp_sep, dec_sep).toString();
-	return value >= min && value <= max;
+    var result = true;
+    if (typeof min == 'number' && value < min)
+    {
+        result = false;
+    }
+    if (typeof max == 'number' && value > max)
+    {
+        result = false;
+    }
+    return result;
 }
 
 function bothExist(item1, item2) {
@@ -1041,7 +1050,18 @@ function validate_form(formname, startsWith){
 								if(!inRange(trim(form[validate[formname][i][nameIndex]].value), validate[formname][i][minIndex], validate[formname][i][maxIndex])){
 									isError = true;
                                     var lbl_validate_range = SUGAR.language.get('app_strings', 'LBL_VALIDATE_RANGE');
-                                    add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + " value " + form[validate[formname][i][nameIndex]].value + " " + lbl_validate_range + " (" +validate[formname][i][minIndex] + " - " + validate[formname][i][maxIndex] +  ") ");
+                                    if (typeof validate[formname][i][minIndex] == 'number' && typeof validate[formname][i][maxIndex] == 'number')
+                                    {
+                                        add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + " value " + form[validate[formname][i][nameIndex]].value + " " + lbl_validate_range + " (" +validate[formname][i][minIndex] + " - " + validate[formname][i][maxIndex] +  ")");
+                                    }
+                                    else if (typeof validate[formname][i][minIndex] == 'number')
+                                    {
+                                        add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + " " + SUGAR.language.get('app_strings', 'MSG_SHOULD_BE') + ' ' + validate[formname][i][minIndex] + ' ' + SUGAR.language.get('app_strings', 'MSG_OR_GREATER'));
+                                    }
+                                    else if (typeof validate[formname][i][maxIndex] == 'number')
+                                    {
+                                        add_error_style(formname, validate[formname][i][nameIndex], validate[formname][i][msgIndex] + " " + SUGAR.language.get('app_strings', 'MSG_IS_MORE_THAN') + ' ' + validate[formname][i][maxIndex]);
+                                    }
 								}
 							break;
 							case 'isbefore':
