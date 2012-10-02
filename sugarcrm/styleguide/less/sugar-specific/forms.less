@@ -106,5 +106,7 @@ input[type=radio] {
     display:inline-block;
 }
 
-
-
+/* bug: 56864 */
+.btn-group > .btn.active {
+  z-index: 0;
+}
