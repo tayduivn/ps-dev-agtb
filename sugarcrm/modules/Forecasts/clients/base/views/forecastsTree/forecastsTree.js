@@ -50,7 +50,6 @@
         if(selectedUser.showOpps) {
             var nodeId = 'jstree_node_myopps_' + selectedUser.id;
             this.selectJSTreeNode(nodeId)
-
             // check before render if we're trying to re-render tree with a fresh root user
             // otherwise do not re-render tree
             // also make sure we're not re-rendering tree for a rep
@@ -92,11 +91,52 @@
         this.jsTree.jstree('select_node', '#' + nodeId);
     },
 
+
+    /**
+     * Recursively step through the tree and for each node representing a tree node, run the data attribute through
+     * the replaceHTMLChars function.  This function supports n-levels of the tree hierarchy.
+     *
+     * @param data The data structure returned from the REST API Forecasts/reportees endpoint
+     * @param self A reference to the view's context so that we may recursively call _recursiveReplaceHTMLChars
+     * @return The modified data structure after all the parent and children nodes have been stepped through
+     * @private
+     */
+    _recursiveReplaceHTMLChars:function (data, self)
+    {
+        _.each(data, function(entry, index) {
+
+           //Scan for the nodes with the data attribute.  These are the nodes we are interested in
+           if(entry.data)
+           {
+              data[index].data = replaceHTMLChars(entry.data);
+
+              if(entry.children)
+              {
+                  //For each children found (if any) then call _recursiveReplaceHTMLChars again.  Notice setting
+                  //childEntry to an Array.  This is crucial so that the beginning _.each loop runs correctly.
+                  _.each(entry.children, function(childEntry, index2)
+                  {
+                      entry.children[index2] = self._recursiveReplaceHTMLChars([childEntry]);
+                  });
+              }
+           }
+        });
+
+        return data;
+    },
+
+
     /**
      * Renders JSTree
      */
-    _renderHtml:function (ctx, options) {
 
+    /**
+     * Renders JSTree
+     * @param ctx
+     * @param options
+     * @protected
+     */
+    _renderHtml : function(ctx, options) {
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         var self = this;
@@ -111,7 +151,7 @@
                     data = [ data ];
                 }
 
-                treeData = data;
+                treeData = self._recursiveReplaceHTMLChars(data, self);
 
                 self.jsTree = $(".jstree-sugar").jstree({
                     "plugins":["json_data", "ui", "crrm", "types", "themes"],
@@ -134,31 +174,31 @@
                         }
                     }
                 }).on("select_node.jstree", function (event, data) {
-                    var jsData = data.inst.get_json();
-                    var nodeType = jsData[0].attr.rel;
-                    var userData = jsData[0].metadata;
-                    var contextUser = self.context.forecasts.get("selectedUser");
+                        var jsData = data.inst.get_json();
+                        var nodeType = jsData[0].attr.rel;
+                        var userData = jsData[0].metadata;
+                        var contextUser = self.context.forecasts.get("selectedUser");
 
-                    var showOpps = false;
+                        var showOpps = false;
 
-                    // if user clicked on a "My Opportunities" node
-                    // set this flag true
-                    if (nodeType == "my_opportunities" || nodeType == "rep") {
-                        showOpps = true
-                    }
+                        // if user clicked on a "My Opportunities" node
+                        // set this flag true
+                        if (nodeType == "my_opportunities" || nodeType == "rep") {
+                            showOpps = true
+                        }
 
-                    var selectedUser = {
-                        'id':userData.id,
-                        'full_name':userData.full_name,
-                        'first_name':userData.first_name,
-                        'last_name':userData.last_name,
-                        'isManager':(nodeType == 'rep') ? false : true,
-                        'showOpps':showOpps
-                    };
+                        var selectedUser = {
+                            'id':userData.id,
+                            'full_name':userData.full_name,
+                            'first_name':userData.first_name,
+                            'last_name':userData.last_name,
+                            'isManager':(nodeType == 'rep') ? false : true,
+                            'showOpps':showOpps
+                        };
 
-                    // update context with selected user which will trigger checkRender
-                    self.context.forecasts.set("selectedUser", selectedUser);
-                });
+                        // update context with selected user which will trigger checkRender
+                        self.context.forecasts.set("selectedUser", selectedUser);
+                    });
 
                 if (treeData) {
                     var showTree = false;
