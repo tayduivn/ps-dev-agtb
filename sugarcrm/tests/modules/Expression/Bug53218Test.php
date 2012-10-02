@@ -1,8 +1,5 @@
 <?php
-<<<<<<< HEAD
-=======
 //FILE SUGARCRM flav=pro ONLY
->>>>>>> 6_5_6
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
