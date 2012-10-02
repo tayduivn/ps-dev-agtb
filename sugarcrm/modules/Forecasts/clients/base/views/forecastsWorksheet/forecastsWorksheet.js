@@ -512,13 +512,13 @@
         }
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        app.config.sales_stage_won = app.config.sales_stage_won || [];
-        app.config.sales_stage_lost = app.config.sales_stage_lost || [];
+        var sales_stage_won_setting = this.context.forecasts.config.get('sales_stage_won') || [];
+        var sales_stage_lost_setting = this.context.forecasts.config.get('sales_stage_lost') || [];
 
         _.each(self._collection.models, function (model) {
 
-            var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
-            var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
+            var won = _.include(sales_stage_won_setting, model.get('sales_stage'));
+            var lost = _.include(sales_stage_lost_setting, model.get('sales_stage'));
             var amount = parseFloat(model.get('amount'));
             var commit_stage = model.get('commit_stage');
             var best = parseFloat(model.get('best_case'));
