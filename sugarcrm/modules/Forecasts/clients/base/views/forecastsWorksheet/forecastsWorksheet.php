@@ -56,7 +56,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 ),
 
                 array(
-                    'name' => 'amount',
+                    'name' => 'likely_case',
                     'label' => 'LBL_LIKELY_CASE',
                     'type' => 'currency',
                     'default' => true,
