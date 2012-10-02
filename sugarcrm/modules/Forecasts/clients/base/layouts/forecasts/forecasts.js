@@ -300,7 +300,7 @@
             }
 
             //add the components to the div
-            if (comp.name && this.$el.find(divName)[0]) {
+            if (compName && this.$el.find(divName)[0]) {
                 this.$el.find(divName).append(comp.$el);
             } else {
                 this.$el.append(comp.$el);
