@@ -278,12 +278,44 @@ $dictionary['User'] = array(
             'type' => 'varchar',
             'len' => '50',
         ) ,
+        'linkedin' =>
+        array (
+                'name' => 'linkedin',
+                'vname' => 'LBL_LINKEDIN',
+                'type' => 'varchar',
+                'len' => '100',
+                'comment' => 'The linkedin name of the user'
+        ),
+        'facebook' =>
+        array (
+                'name' => 'facebook',
+                'vname' => 'LBL_FACEBOOK',
+                'type' => 'varchar',
+                'len' => '100',
+                'comment' => 'The facebook name of the user'
+        ),
+        'twitter' =>
+        array (
+                'name' => 'twitter',
+                'vname' => 'LBL_TWITTER',
+                'type' => 'varchar',
+                'len' => '100',
+                'comment' => 'The twitter name of the user'
+        ),
+        'googleplus' =>
+        array (
+                'name' => 'googleplus',
+                'vname' => 'LBL_GOOGLEPLUS',
+                'type' => 'varchar',
+                'len' => '100',
+                'comment' => 'The google plus id of the user'
+        ),            
         'department' => array(
             'name' => 'department',
             'vname' => 'LBL_DEPARTMENT',
             'type' => 'varchar',
             'len' => '50',
-        ) ,
+        ) ,            
         'phone_home' => array(
             'name' => 'phone_home',
             'vname' => 'LBL_HOME_PHONE',

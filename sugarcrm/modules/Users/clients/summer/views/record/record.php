@@ -80,6 +80,10 @@ $viewdefs['Users']['summer']['view']['record'] = array(
                 'address_street',
                 array('fields' => array('address_city', 'address_state', 'address_postalcode')),
                 'address_country',
+                'linkedin',
+                'facebook',
+                'twitter',
+                'googleplus'                    
             ),
         )
     )

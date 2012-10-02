@@ -69,6 +69,10 @@ class User extends Person {
 	var $status;
 	var $title;
 	var $portal_only;
+	var $facebook;
+	var $linkedin;
+	var $twitter;
+	var $googleplus;
 	var $department;
 	var $authenticated = false;
 	var $error_string;
