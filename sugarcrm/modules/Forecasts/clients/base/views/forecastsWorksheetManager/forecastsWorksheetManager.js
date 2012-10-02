@@ -500,8 +500,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedCategory:function (params) {
-        // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        if (app.config.show_buckets == 1) {
+        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') {
             // TODO: this.
         } else {
             this.category = _.first(params);

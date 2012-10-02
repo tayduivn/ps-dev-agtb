@@ -63,7 +63,7 @@
     _renderField: function(field) {
     	if(field.name == "expected_commit_stage")
         { 
-            //Set the field.def.options value based on app.config.buckets_dom (if set)
+            //Set the field.def.options value based on buckets_dom setting (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.editableWorksheet)
             {               
