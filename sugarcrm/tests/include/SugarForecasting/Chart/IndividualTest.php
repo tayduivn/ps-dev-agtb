@@ -108,7 +108,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
 
         $expected = SugarCurrency::convertAmountToBase(self::$user['included_opps_totals'][$dataset], self::$currency->id);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals(floatVal($expected), floatVal($actual));
     }
 
     /**
@@ -154,7 +154,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         // convert the expected back to base
         $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
 
-        $this->assertEquals($expected, $data['values'][$chart_position]['goalmarkervalue'][1]);
+        $this->assertEquals(floatVal($expected), floatVal($data['values'][$chart_position]['goalmarkervalue'][1]));
     }
 
     /**
