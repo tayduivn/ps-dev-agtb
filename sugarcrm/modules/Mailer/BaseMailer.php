@@ -25,6 +25,7 @@ require_once "IMailer.php";              // requires IMailer in order to impleme
 require_once "MailerException.php";      // requires MailerException in order to throw exceptions of that type
 require_once "RecipientsCollection.php"; // stores recipients in a RecipientsCollection
 require_once "EmailHeaders.php";         // email headers are contained in an EmailHeaders object
+require_once "EmailFormatter.php";       // formatting methods needed for preparing the message parts appropriately
 
 /**
  * This class implements the basic functionality that is expected from a Mailer.
@@ -35,6 +36,7 @@ require_once "EmailHeaders.php";         // email headers are contained in an Em
 abstract class BaseMailer implements IMailer
 {
     // protected members
+    protected $formatter;
     protected $config;
     protected $headers;
     protected $recipients;
@@ -61,6 +63,7 @@ abstract class BaseMailer implements IMailer
         $this->clearAttachments();
         $this->clearHeaders();
 
+        $this->formatter  = new EmailFormatter();
         $this->recipients = new RecipientsCollection();
         $this->htmlBody   = null;
         $this->textBody   = null;
@@ -205,7 +208,7 @@ abstract class BaseMailer implements IMailer
      * @param string $body required
      */
     public function setTextBody($body) {
-        $this->textBody = trim($body);
+        $this->textBody = $body;
     }
 
     /**
@@ -258,7 +261,7 @@ abstract class BaseMailer implements IMailer
      */
     protected function hasMessagePart($part) {
         // the content is only valid if it's a string and it's not empty
-        if (is_string($part) && $part != "") {
+        if (is_string($part) && trim($part) != "") {
             return true;
         }
 

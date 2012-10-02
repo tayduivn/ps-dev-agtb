@@ -804,6 +804,13 @@ class SMTP {
    * @return string
    */
   private function get_lines() {
+
+    // Avoid infinite loop if we don't have a resource to read.
+    if (!is_resource($this->smtp_conn)) {
+        $GLOBALS['log']->warn('SMTP Connection is not a valid resource');
+        return "";
+    }
+
     $data = "";
     while(!feof($this->smtp_conn)) {
       $str = @fgets($this->smtp_conn,515);

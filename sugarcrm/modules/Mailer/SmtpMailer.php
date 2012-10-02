@@ -33,8 +33,11 @@ require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMai
  *
  * @extends BaseMailer
  */
-class SimpleMailer extends BaseMailer
+class SmtpMailer extends BaseMailer
 {
+    // constants used for documenting which mail transmission protocols are valid
+    const MailTransmissionProtocolSmtp = "smtp";
+
     /**
      * Performs the send of an email using PHPMailer (currently version 5.2.1).
      *
@@ -83,7 +86,7 @@ class SimpleMailer extends BaseMailer
         $mailer->SetLanguage();
 
         // transfer the basic configurations to PHPMailer
-        $mailer->Mailer   = MailConfigurationPeer::MODE_SMTP; // only use SMTP to send email with PHPMailer
+        $mailer->Mailer   = self::MailTransmissionProtocolSmtp; // only use SMTP to send email with PHPMailer
         $mailer->Hostname = $this->config->getHostname();
         $mailer->CharSet  = $this->config->getCharset();
         $mailer->Encoding = $this->config->getEncoding();
@@ -92,7 +95,7 @@ class SimpleMailer extends BaseMailer
         // transfer the SMTP configurations to PHPMailer
         $mailer->Host       = $this->config->getHost();
         $mailer->Port       = $this->config->getPort();
-        $mailer->SMTPSecure = $this->config->getCommunicationProtocol();
+        $mailer->SMTPSecure = $this->config->getSecurityProtocol();
         $mailer->SMTPAuth   = $this->config->isAuthenticationRequired();
         $mailer->Username   = $this->config->getUsername();
         $mailer->Password   = from_html($this->config->getPassword());  // perform HTML character translations
@@ -331,17 +334,11 @@ class SimpleMailer extends BaseMailer
         if ($hasText) {
             // perform character set translations on the plain-text body
             $textBody = $this->prepareTextBody($this->textBody);
-
-            // perform HTML character translations on the plain-text body
-            $textBody = from_html($textBody);
         }
 
         if ($hasHtml) {
             // perform character set translations HTML body
             $htmlBody = $this->prepareHtmlBody($this->htmlBody);
-
-            // perform HTML character translations on the HTML body
-            $htmlBody = from_html($htmlBody);
 
             // there is an HTML part so set up PHPMailer appropriately for sending a multi-part email
             $mailer->IsHTML(true);
@@ -420,7 +417,9 @@ class SimpleMailer extends BaseMailer
      * @return string The translated body.
      */
     protected function prepareTextBody($body) {
+        $body = $this->formatter->formatTextBody($body);
         $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
+        $body = from_html($body); // perform HTML character translations on the plain-text body
 
         return $body;
     }
@@ -434,8 +433,17 @@ class SimpleMailer extends BaseMailer
      * @return string The compliant and translated body.
      */
     protected function prepareHtmlBody($body) {
+        $formatted = $this->formatter->formatHtmlBody($body);
+        $body      = $formatted["body"];
+        $images    = $formatted["images"];
+
+        foreach ($images as $embeddedImage) {
+            $this->addEmbeddedImage($embeddedImage);
+        }
+
         $body = $this->forceRfcComplianceOnHtmlBody($body);
         $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
+        $body = from_html($body); // perform HTML character translations on the HTML body
 
         return $body;
     }
@@ -457,7 +465,9 @@ class SimpleMailer extends BaseMailer
             $subject   = $this->headers->getSubject(); // used for the document title
             $charset   = $this->config->getCharset();  // used for the document charset
             $language  = get_language_header();
-            $head      = <<<eoq
+
+            // prepend the document head and append the footer elements to the body
+            $body      = <<<eoq
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" {$language}>
 <head>
@@ -465,8 +475,10 @@ class SimpleMailer extends BaseMailer
 <title>{$subject}</title>
 </head>
 <body>
+{$body}
+</body>
+</html>
 eoq;
-            $body = "{$head}{$body}</body></html>"; // prepend the document head and append the footer elements
         }
 
         return $body;
