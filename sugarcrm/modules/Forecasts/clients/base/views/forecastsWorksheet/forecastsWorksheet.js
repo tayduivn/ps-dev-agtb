@@ -627,16 +627,17 @@
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
         var self = this;
-        if(!this.showMe()){
-        	return false;
-        }
-
         if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') { // buckets
 
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
+
+                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
+                            return true;
+                        }
+
                         var editable = self.isMyWorksheet();
                         var returnVal = null;
                         //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
@@ -667,6 +668,10 @@
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
+                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
+                            return true;
+                        }
+
                         var val = aData[0];
                         var jVal = $(val);
 
