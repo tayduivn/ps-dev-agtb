@@ -43,4 +43,63 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
         $this->addUsDollarColumnDefinition('opportunities','amount','amount_usdollar');
     }
 
+    /**
+     * doCustomUpdateRate
+     *
+     * Return true to skip updates for this module.
+     * Return false to do default update of base_rate column.
+     * To custom processing, do here and return true.
+     *
+     * @access protected
+     * @param  string $table
+     * @param  string $column
+     * @param  string $currencyId
+     * @return boolean true if custom processing was done
+     */
+    public function doCustomUpdateRate($table, $column, $currencyId) {
+        // setup SQL statement
+        $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate
+        WHERE t.sales_stage NOT LIKE 'Closed%%'
+        AND c.id = '%s' and c.id = t.currency_id",
+            $table,
+            $column,
+            $currencyId
+        );
+        // execute
+        $this->db->query($query, true, "OpportunitiesCurrencyRateUpdate query failed: {$query}");
+        return true;
+    }
+
+    /**
+     * doCustomUpdateUsDollarRate
+     *
+     * Return true to skip updates for this module.
+     * Return false to do default update of amount * base_rate = usdollar
+     * To custom processing, do here and return true.
+     *
+     * @access protected
+     * @param  string    $tableName
+     * @param  string    $usDollarColumn
+     * @param  string    $amountColumn
+     * @param  string    $currencyId
+     * @return boolean true if custom processing was done
+     */
+    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+        // setup SQL statement
+        $query = sprintf("UPDATE %s t SET t.%s = t.base_rate * t.%s
+            WHERE t.sales_stage NOT LIKE 'Closed%%'
+            AND t.currency_id = '%s'",
+            $tableName,
+            $usDollarColumn,
+            $amountColumn,
+            $currencyId
+        );
+        // execute
+        $result = $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
+        if(empty($result)) {
+            return false;
+        }
+        return true;
+    }
+
 }

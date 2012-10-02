@@ -130,7 +130,7 @@ abstract class CurrencyRateUpdateAbstract
                     $GLOBALS['log']->error("CurrencyRateUpdate: table {$tableName} must have currency_id column.");
                     return false;
                 }
-                if(!$result = $this->doCustomProcess($tableName, $columnName, $currencyId)) {
+                if(!$result = $this->doCustomUpdateRate($tableName, $columnName, $currencyId)) {
                     // if no custom processing required, we do the standard update
                     $result = $this->updateRate($tableName, $columnName, $currencyId);
                 }
@@ -140,7 +140,7 @@ abstract class CurrencyRateUpdateAbstract
             }
         }
         if($this->updateUsDollar) {
-            if(!$this->updateUsDollarColumns($currencyId)) {
+            if(!$this->processUsDollarColumns($currencyId)) {
                 return false;
             }
         }
@@ -148,10 +148,10 @@ abstract class CurrencyRateUpdateAbstract
     }
 
     /**
-     * doCustomProcess
+     * doCustomUpdateRate
      *
      * Override this method in your extended class
-     * to do specific tests and actions.
+     * to do custom tests and actions.
      *
      * @access protected
      * @param  string $table
@@ -159,7 +159,7 @@ abstract class CurrencyRateUpdateAbstract
      * @param  string $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomProcess($table, $column, $currencyId) {
+    protected function doCustomUpdateRate($table, $column, $currencyId) {
         return false;
     }
 
@@ -188,7 +188,7 @@ abstract class CurrencyRateUpdateAbstract
     }
 
     /**
-     * updateUsDollarColumns
+     * processUsDollarColumns
      *
      * automatically update *_usdollar fields for backward compatibility
      * with modules that still use this field. The *_usdollar fields use
@@ -198,7 +198,7 @@ abstract class CurrencyRateUpdateAbstract
      * @param  string    $currencyId
      * @return boolean true on success
      */
-    protected function updateUsDollarColumns($currencyId) {
+    protected function processUsDollarColumns($currencyId) {
         // loop through all the tables
         foreach($this->usDollarColumnDefinitions as $tableName=>$tableDefs) {
             $columns = $this->db->get_columns($tableName);
@@ -206,26 +206,66 @@ abstract class CurrencyRateUpdateAbstract
                 continue;
             }
             foreach($tableDefs as $amountColumn=>$usDollarColumn) {
-                if(!in_array($columns, $amountColumn) || !in_array($columns, $usDollarColumn) || !in_array($columns, 'base_rate')) {
+                if(empty($columns[$amountColumn]) || empty($columns[$usDollarColumn]) || empty($columns['base_rate'])) {
                     continue;
                 }
-                // setup SQL statement
-                $query = sprintf("UPDATE %s t SET t.%s = t.base_rate*t.%s where t.currency_id = '%s'",
-                    $tableName,
-                    $usDollarColumn,
-                    $amountColumn,
-                    $currencyId
-                );
-                // execute
-                $result = $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
-                if(empty($result)) {
-                    return false;
+                if(!$this->doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)) {
+                    if(!$this->doUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)) {
+                        return false;
+                    }
                 }
             }
         }
         return true;
     }
 
+    /**
+     * doCustomUpdateUsDollarRate
+     *
+     * Override this method in your extended class
+     * to do custom tests and actions.
+     *
+     * @access protected
+     * @param  string    $tableName
+     * @param  string    $usDollarColumn
+     * @param  string    $amountColumn
+     * @param  string    $currencyId
+     * @return boolean true if custom processing was done
+     */
+    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+        return false;
+    }
+
+
+    /**
+     * doUpdateUsDollarRate
+     *
+     * execute the standard sql query for updating rates.
+     * to use a specific query, override doCustomProcess()
+     * in your extended class and make your own.
+     *
+     * @access protected
+     * @param  string    $tableName
+     * @param  string    $usDollarColumn
+     * @param  string    $amountColumn
+     * @param  string    $currencyId
+     * @return boolean true on success
+     */
+    protected function doUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+        // setup SQL statement
+        $query = sprintf("UPDATE %s t SET t.%s = t.base_rate * t.%s where t.currency_id = '%s'",
+            $tableName,
+            $usDollarColumn,
+            $amountColumn,
+            $currencyId
+        );
+        // execute
+        $result = $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
+        if(empty($result)) {
+            return false;
+        }
+        return true;
+    }
 
     /*
      * setters/getters
@@ -283,7 +323,7 @@ abstract class CurrencyRateUpdateAbstract
     protected function addUsDollarColumnDefinition($table, $amountColumn, $usDollarColumn)
     {
         if(!is_array($this->usDollarColumnDefinitions[$table])) {
-            return false;
+            $this->usDollarColumnDefinitions[$table] = array();
         }
         $this->usDollarColumnDefinitions[$table][$amountColumn] = $usDollarColumn;
         return true;
