@@ -8,7 +8,7 @@
         app.view.Layout.prototype.initialize.call(this, options);
 
         this.context.on('quickcreate:cancel', this.cancel, this);
-        this.context.on('quickcreate:close', this.closeModal, this);
+        this.context.on('quickcreate:close', this.close, this);
         this.context.on('quickcreate:save', this.save, this);
         this.context.on('quickcreate:saveAndCreate', this.saveAndCreate, this);
         this.context.on('quickcreate:saveAndView', this.saveAndView, this);
@@ -42,7 +42,7 @@
     saveAndClose: function() {
         var self = this;
         self.initiateSave(function() {
-            self.closeModal();
+            self.close();
             self.context.trigger('quickcreate:alert:show:recordcreated', true);
         });
     },
@@ -51,7 +51,7 @@
      * Close quickcreate modal window
      */
     cancel: function() {
-        this.closeModal();
+        this.close();
     },
 
     /**
@@ -74,7 +74,7 @@
         var self = this;
         self.context.lastSaveAction = this.saveActions.SAVE_AND_VIEW;
         this.initiateSave(function() {
-            self.closeModal();
+            self.close();
             self.context.trigger('quickcreate:alert:show:recordcreated', true);
             self.app.navigate(self.context, self.model, 'detail');
         });
@@ -284,7 +284,7 @@
     /**
      * Close the modal window
      */
-    closeModal: function() {
+    close: function() {
         if (this.context.parent) {
             this.context.parent.trigger('modal:close');
         }

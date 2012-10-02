@@ -158,7 +158,7 @@ describe("Quickcreate", function() {
 
         it("should close modal when cancel button is clicked", function() {
             var flag = false,
-                stub = sinon.stub(layout, 'closeModal', function() {
+                stub = sinon.stub(layout, 'close', function() {
                     flag = true;
                 });
 
@@ -235,7 +235,7 @@ describe("Quickcreate", function() {
                 saveModelStub = sinon.stub(layout, 'saveModel', function(success) {
                     success();
                 }),
-                closeModalStub = sinon.stub(layout, 'closeModal', function() {
+                closeStub = sinon.stub(layout, 'close', function() {
                     flag = true;
                     return;
                 });
@@ -248,15 +248,15 @@ describe("Quickcreate", function() {
 
             waitsFor(function() {
                 return flag;
-            }, 'closeModal should have been called but timeout expired', 1000);
+            }, 'close should have been called but timeout expired', 1000);
 
             runs(function() {
-                expect(closeModalStub.calledOnce).toBeTruthy();
+                expect(closeStub.calledOnce).toBeTruthy();
 
                 saveModelStub.restore();
                 isValidStub.restore();
                 fetchStub.restore();
-                closeModalStub.restore();
+                closeStub.restore();
             });
         });
 
@@ -483,7 +483,7 @@ describe("Quickcreate", function() {
                 saveModelStub = sinon.stub(layout, 'saveModel', function(success) {
                     success();
                 }),
-                closeModalStub = sinon.stub(layout, 'closeModal', function() {
+                closeStub = sinon.stub(layout, 'close', function() {
                     flag = true;
                     return;
                 });
@@ -507,18 +507,18 @@ describe("Quickcreate", function() {
 
             waitsFor(function() {
                 return flag;
-            }, 'closeModal should have been called but timeout expired', 1000);
+            }, 'close should have been called but timeout expired', 1000);
 
             runs(function() {
                 expect(isValidStub.calledTwice).toBeTruthy();
                 expect(fetchStub.calledOnce).toBeTruthy();
                 expect(saveModelStub.calledOnce).toBeTruthy();
-                expect(closeModalStub.calledOnce).toBeTruthy();
+                expect(closeStub.calledOnce).toBeTruthy();
 
                 saveModelStub.restore();
                 isValidStub.restore();
                 fetchStub.restore();
-                closeModalStub.restore();
+                closeStub.restore();
             });
         });
     });
@@ -545,7 +545,7 @@ describe("Quickcreate", function() {
                 saveModelStub = sinon.stub(layout, 'saveModel', function(success) {
                     success();
                 }),
-                closeModalStub = sinon.stub(layout, 'closeModal', function() {
+                closeStub = sinon.stub(layout, 'close', function() {
                     return;
                 }),
                 clearStub = sinon.stub(layout.model, 'clear', function() {
@@ -564,13 +564,13 @@ describe("Quickcreate", function() {
 
             runs(function() {
                 expect(saveModelStub.calledOnce).toBeTruthy();
-                expect(closeModalStub.called).toBeFalsy();
+                expect(closeStub.called).toBeFalsy();
                 expect(clearStub.calledOnce).toBeTruthy();
 
                 saveModelStub.restore();
                 isValidStub.restore();
                 fetchStub.restore();
-                closeModalStub.restore();
+                closeStub.restore();
                 clearStub.restore();
             });
         });
@@ -598,7 +598,7 @@ describe("Quickcreate", function() {
                 saveModelStub = sinon.stub(layout, 'saveModel', function(success) {
                     success();
                 }),
-                closeModalStub = sinon.stub(layout, 'closeModal', function() {
+                closeStub = sinon.stub(layout, 'close', function() {
                     return;
                 }),
                 navigateStub = sinon.stub(SugarTest.app, 'navigate', function() {
@@ -617,13 +617,13 @@ describe("Quickcreate", function() {
 
             runs(function() {
                 expect(saveModelStub.calledOnce).toBeTruthy();
-                expect(closeModalStub.calledOnce).toBeTruthy();
+                expect(closeStub.calledOnce).toBeTruthy();
                 expect(navigateStub.calledOnce).toBeTruthy();
 
                 saveModelStub.restore();
                 isValidStub.restore();
                 fetchStub.restore();
-                closeModalStub.restore();
+                closeStub.restore();
                 navigateStub.restore();
             });
         });

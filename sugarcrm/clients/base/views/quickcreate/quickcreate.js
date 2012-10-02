@@ -11,7 +11,7 @@
         this.model.on("error:validation", this.handleValidationError, this);
         this.model.on("change", this.clearValidationError, this);
     },
-
+    
     render: function() {
         var totalFieldCount = 0;
 
@@ -53,6 +53,8 @@
         }, this);
 
         app.view.View.prototype.render.call(this);
+        
+        this.$(':input:first').focus();
     },
 
     /**
