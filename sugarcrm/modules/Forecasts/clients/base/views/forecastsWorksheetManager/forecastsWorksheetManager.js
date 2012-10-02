@@ -184,10 +184,12 @@
                     self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
                 }
             });
-
+            
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-                worksheet.safeFetch();
+                if(worksheet._collection.isDirty){
+                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
+                }            	
             });
         }
     },
@@ -500,8 +502,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedCategory:function (params) {
-        // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        if (app.config.show_buckets == 1) {
+        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') {
             // TODO: this.
         } else {
             this.category = _.first(params);

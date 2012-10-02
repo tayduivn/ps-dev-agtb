@@ -131,7 +131,7 @@
     _renderField: function(field) {
         if(field.name == "commit_stage")
         {
-            //Set the field.def.options value based on app.config.buckets_dom (if set)
+            //Set the field.def.options value based on buckets_dom (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.isEditableWorksheet)
             {
@@ -206,7 +206,9 @@
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-                worksheet.safeFetch();
+                if(worksheet._collection.isDirty){
+                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
+                }            	
             });
         }
     },
@@ -295,7 +297,6 @@
 
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
-                //field.enabled = (app.config.show_buckets == 1);
                 field.view = self.isEditableWorksheet ? self.name : 'default';
             }
         });
@@ -512,13 +513,13 @@
         }
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        app.config.sales_stage_won = app.config.sales_stage_won || [];
-        app.config.sales_stage_lost = app.config.sales_stage_lost || [];
+        var sales_stage_won_setting = this.context.forecasts.config.get('sales_stage_won') || [];
+        var sales_stage_lost_setting = this.context.forecasts.config.get('sales_stage_lost') || [];
 
         _.each(self._collection.models, function (model) {
 
-            var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
-            var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
+            var won = _.include(sales_stage_won_setting, model.get('sales_stage'));
+            var lost = _.include(sales_stage_lost_setting, model.get('sales_stage'));
             var amount = parseFloat(model.get('amount'));
             var commit_stage = model.get('commit_stage');
             var best = parseFloat(model.get('best_case'));
@@ -630,7 +631,7 @@
         	return false;
         }
 
-        if (app.config.show_buckets == 1) { // buckets
+        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') { // buckets
 
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
@@ -646,7 +647,7 @@
                             returnVal = selectVal;
                         } else if(!editable) {
                             //Get the array for the bucket stages
-                            var buckets_dom = app.lang.getAppListStrings(app.config.buckets_dom || 'commit_stage_dom');
+                            var buckets_dom = app.lang.getAppListStrings(this.context.forecasts.config.get('buckets_dom') || 'commit_stage_dom');
                             _.each(params, function(filter)
                             {
                                 if(buckets_dom[filter] == selectVal)
