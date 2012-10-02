@@ -278,7 +278,7 @@
                 title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
             };
 
-            if(app.user.get('isAdmin')) {
+            if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
                 params.components = [{layout:"forecastsConfig"}];
             } else {
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
