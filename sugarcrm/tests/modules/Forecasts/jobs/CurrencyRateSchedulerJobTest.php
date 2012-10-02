@@ -50,7 +50,7 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        //global $current_user;
+        global $current_user;
         $this->currency = SugarTestCurrencyUtilities::createCurrency('UpdateBaseRateSchedulerJob', 'UBRSJ', 'UBRSJ', 1.234);
 
         $this->opportunity = SugarTestOpportunityUtilities::createOpportunity();
@@ -90,7 +90,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @outputBuffering disabled
      * @group forecasts
      */
     public function testCurrencyRateSchedulerJob()
@@ -106,7 +105,6 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
             'class::CurrencyRateSchedulerJob',
             json_encode(array('currencyId'=>$this->currency->id)),
             $current_user);
-
 
         $job->runJob();
         $job->retrieve($job->id);

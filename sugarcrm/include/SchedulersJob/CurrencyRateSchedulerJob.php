@@ -71,7 +71,7 @@ class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
                     $jobClass = basename($jobFile,'.php');
                     require_once($jobFile);
                     if(!class_exists($jobClass)) {
-                        $GLOBALS['log']->error(get_class($this).": unable to find class {$jobClass} for job file {$jobFile}");
+                        $GLOBALS['log']->error(string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array(get_class($this),'uknown class: '.$jobClass)));
                         continue;
                     }
                     $jobObject = new $jobClass;

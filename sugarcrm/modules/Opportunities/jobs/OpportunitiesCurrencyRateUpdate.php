@@ -66,7 +66,7 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
             $currencyId
         );
         // execute
-        $this->db->query($query, true, "OpportunitiesCurrencyRateUpdate query failed: {$query}");
+        $this->db->query($query, true, string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurrencyRateUpdate',$query)));
         return true;
     }
 
@@ -95,7 +95,7 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
             $currencyId
         );
         // execute
-        $result = $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
+        $result = $this->db->query($query, true, string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('OpportunitiesCurrencyRateUpdate',$query)));
         if(empty($result)) {
             return false;
         }

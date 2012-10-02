@@ -106,7 +106,7 @@ abstract class CurrencyRateUpdateAbstract
         }
         $this->db = DBManagerFactory::getInstance();
         if(empty($this->db)) {
-            $GLOBALS['log']->error('CurrencyRateUpdate: unable to load database manager.');
+            $GLOBALS['log']->error(string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate','unable to load database manager')));
             return false;
         }
         $dbTables = $this->db->getTablesArray();
@@ -114,7 +114,7 @@ abstract class CurrencyRateUpdateAbstract
         foreach($this->rateColumnDefinitions as $tableName=>$tableColumns) {
             // make sure table exists
             if(!in_array($tableName,$dbTables)) {
-                $GLOBALS['log']->error("CurrencyRateUpdate: unknown table: {$tableName}.");
+                $GLOBALS['log']->error(string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate','unknown table')));
                 return false;
             }
             $columns = $this->db->get_columns($tableName);
@@ -122,12 +122,12 @@ abstract class CurrencyRateUpdateAbstract
                 // make sure column exists
                 if(empty($columns[$columnName]))
                 {
-                    $GLOBALS['log']->error("CurrencyRateUpdate: unknown table column: {$columnName} on table {$tableName}.");
+                    $GLOBALS['log']->error(string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate','unknown column')));
                     return false;
                 }
                 if(empty($columns['currency_id']))
                 {
-                    $GLOBALS['log']->error("CurrencyRateUpdate: table {$tableName} must have currency_id column.");
+                    $GLOBALS['log']->error(string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate','table must have currency_id column')));
                     return false;
                 }
                 if(!$result = $this->doCustomUpdateRate($tableName, $columnName, $currencyId)) {
@@ -167,7 +167,7 @@ abstract class CurrencyRateUpdateAbstract
      * updateRate
      *
      * execute the standard sql query for updating rates.
-     * to use a specific query, override doCustomProcess()
+     * to use a specific query, override doCustomUpdateRate()
      * in your extended class and make your own.
      *
      * @access protected
@@ -184,7 +184,7 @@ abstract class CurrencyRateUpdateAbstract
             $currencyId
         );
         // execute
-        return $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
+        return $this->db->query($query, true, string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate',$query)));
     }
 
     /**
@@ -241,7 +241,7 @@ abstract class CurrencyRateUpdateAbstract
      * doUpdateUsDollarRate
      *
      * execute the standard sql query for updating rates.
-     * to use a specific query, override doCustomProcess()
+     * to use a specific query, override doCustomUpdateUsDollarRate()
      * in your extended class and make your own.
      *
      * @access protected
@@ -260,7 +260,7 @@ abstract class CurrencyRateUpdateAbstract
             $currencyId
         );
         // execute
-        $result = $this->db->query($query, true, "CurrencyRateUpdate query failed: {$query}");
+        $result = $this->db->query($query, true, string_format($GLOBALS['app_strings']['ERR_DB_QUERY'],array('CurrencyRateUpdate',$query)));
         if(empty($result)) {
             return false;
         }

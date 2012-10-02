@@ -517,9 +517,8 @@ class SchedulersJob extends Basic
         else if ($exJob[0] == 'class')
         {
             if(!class_exists($exJob[1])) {
-                if(file_exists("include/SchedulersJob/{$exJob[1]}.php")) {
-                    require_once("include/SchedulersJob/{$exJob[1]}.php");
-                }
+                $filePath = get_custom_file_if_exists("include/SchedulersJob/{$exJob[1]}.php");
+                require_once($filePath);
             }
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
