@@ -522,61 +522,84 @@
         return events;
     },
 
-    _addCalendarWeekEvent: function(model) {
-        var events = [];
+    _addCalendarWeekEvent: function(models) {
+        var events = [], numEvents = 5;
         var getDate = function(dateString) {
             var t = dateString.split(/[- :]/);
             var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
             return d;
         };
-        var event = {allDay:false};
-        event.id = model.get('id');
-        event.start = getDate(model.get("date_created"));
-        event.title =  model.get("created_by_name") + " " + model.get("activity_type");
-        events.push(event);
+        $.each(models, function(index, model) {
+            if(events.length < numEvents) {
+                var event = {allDay:false};
+                event.id = model.get('id');
+                event.start = getDate(model.get("date_created"));
+                event.title =  model.get("created_by_name") + " " + model.get("activity_type") + "...";
+                events.push(event);
+            }
+            else if(events.length == numEvents) {
+                var event = {allDay:true};
+                event.id = model.get('id');
+                event.start = getDate(model.get("date_created"));
+                event.title = (models.length - numEvents)+" more event(s)";
+                events.push(event); 
+                return false;
+            }
+        });
 
         return events;
     },
 
-    _addCalendarDayEvent: function(model) {
-        var events = [], activityType = model.get('activity_type');
+    _addCalendarDayEvent: function(models) {
+        var events = [], numEvents = 5;
         var getDate = function(dateString) {
             var t = dateString.split(/[- :]/);
             var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
             return d;
         };
-        var event = {allDay:false};
-        event.id = model.get('id');
-        event.start = getDate(model.get("date_created"));
-        event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
-
-        switch (activityType) {
-            case "posted":
-                event.title += model.get('activity_data').value;
-                if(model.get('target_name')) {
-                    event.title += "on " + model.get('target_name');
+        $.each(models, function(index, model) { 
+            var activityType = model.get('activity_type');
+            var event = {allDay:false};
+            event.id = model.get('id');
+            event.start = getDate(model.get("date_created"));
+            if(events.length < numEvents) {
+                event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
+        
+                switch (activityType) {
+                    case "posted":
+                        event.title += model.get('activity_data').value;
+                        if(model.get('target_name')) {
+                            event.title += "on " + model.get('target_name');
+                        }
+                        break;
+                    case "created":
+                        event.title += model.get('target_name');
+                        break;
+                    case "related":
+                        event.title += model.get('activity_data').relate_name + " to " + model.get('target_name');
+                        break;
+                    case "updated":
+                        $.each(model.get('activity_data'), function(index, value) {
+                            if(index !== 0) {
+                                event.title += ', ';
+                            }
+                            event.title += value.get('field_name');
+                        });
+                        event.title += " on "+model.get('target_name');
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            case "created":
-                event.title += model.get('target_name');
-                break;
-            case "related":
-                event.title += model.get('activity_data').relate_name + " to " + model.get('target_name');
-                break;
-            case "updated":
-                $.each(model.get('activity_data'), function(index, value) {
-                    if(index !== 0) {
-                        event.title += ', ';
-                    }
-                    event.title += value.get('field_name');
-                });
-                event.title += " on "+model.get('target_name');
-                break;
-            default:
-                break;
-        }
+                events.push(event);            
+            }
+            else if(events.length == numEvents) {
+                event.allDay = true;
+                event.title = (models.length - numEvents)+" more event(s)";
+                events.push(event);            
+                return false;
+            }
+        });
 
-        events.push(event);
         return events;
     },
 
@@ -724,12 +747,10 @@
                         events = self._addCalendarMonthEvent(self.collection.models);
                     }
                     else if(view.name == 'basicWeek') {
-                        objarrays = _.map(self.collection.models, self._addCalendarWeekEvent);
-                        events = _.flatten(objarrays);
+                        events = self._addCalendarWeekEvent(self.collection.models);
                     }
                     else {
-                        objarrays = _.map(self.collection.models, self._addCalendarDayEvent);
-                        events = _.flatten(objarrays);
+                        events = self._addCalendarDayEvent(self.collection.models);
                     }
                     callback(events);
                 },
