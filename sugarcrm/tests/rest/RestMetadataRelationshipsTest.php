@@ -39,6 +39,7 @@ class RestMetadataRelationshipsTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetRelationships() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=relationships');
 
         $this->assertTrue(isset($restReply['reply']['relationships']['_hash']),'There is no relationship list');
@@ -51,6 +52,7 @@ class RestMetadataRelationshipsTest extends RestTestBase {
     public function testMetadataGetFilteredRelationships() {
         $moduleList = array('Accounts','Contacts','Cases');
 
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=relationships&module_filter='.implode(',',$moduleList));
 
         $this->assertTrue(isset($restReply['reply']['relationships']['_hash']),'There is no relationship list');
