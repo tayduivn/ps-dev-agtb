@@ -56,13 +56,11 @@ class Quarter544TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
-        SugarTestHelper::tearDown();
-
     }
 
     public static function tearDownAfterClass() {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-
+        SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
 
