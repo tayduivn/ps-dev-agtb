@@ -1,0 +1,30 @@
+<div class="btn-toolbar pull-left">
+    <h1>{{str_format "LBL_FORECAST_TITLE" "Forecasts" fullName}}</h1>
+    <div class="btn-group" id="forecastsTree" style="display: none">
+        <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
+            <span class="caret"></span>
+        </a>
+        <ul class="dropdown-menu carettop">
+            <li><div id="people" class="jstree-sugar" id="forecasts-jstree"></div></li>
+        </ul>
+    </div>
+</div>
+<div class="btn-toolbar pull-right">
+    <div class="btn-group">
+        <div class="dropdown">
+            <a href="#" data-toggle="dropdown" class="dropdown-toggle btn btn-success">{{str "LBL_ACTIONS" "Forecasts"}} <i class="icon caret"></i></a>
+            <ul class="dropdown-menu menu">
+                <li><a href="#">{{str "LBL_DUPLICATE" "Forecasts"}}</a></li>
+                <li><a href="#">{{str "LBL_SAVE" "Forecasts"}}</a></li>
+                <li class="divider"></li>
+                <li><a href="#">{{str "LBL_NOTE" "Forecasts"}}</a></li>
+                <li><a href="#">{{str "LBL_EMAIL" "Forecasts"}}</a></li>
+                <li><a href="#">{{str "LBL_PDF" "Forecasts"}}</a></li>
+                <li><a href="#">{{str "LBL_CSV" "Forecasts"}}</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="btn-group">
+        <a href="#" class="btn" id="forecastSettings"><span class="icon-cog"></span></a>
+    </div>
+</div>

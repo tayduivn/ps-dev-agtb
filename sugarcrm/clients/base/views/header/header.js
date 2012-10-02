@@ -18,6 +18,7 @@
      */
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
+        app.events.on("app:view:change", this.render, this);
         app.view.View.prototype.initialize.call(this, options);
     },
     _renderHtml: function() {
@@ -29,6 +30,9 @@
         self.setCreateTasksList();
         self.setCurrentUserName();
         app.view.View.prototype._renderHtml.call(self);
+        self.initMenu();
+        $(window).off("resize", self.resizeMenu).on("resize", self.resizeMenu);
+        self.resizeMenu();
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
         this.$('.search-query').searchahead({
@@ -96,12 +100,14 @@
      * When user clicks tab navigation in header
      */
     onModuleTabClicked: function(evt) {
-        evt.preventDefault();
-        evt.stopPropagation();
         var moduleHref = this.$(evt.currentTarget).attr('href');
-        this.$('#module_list li').removeClass('active');
-        this.$(evt.currentTarget).parent().addClass('active');
-        app.router.navigate(moduleHref, {trigger: true});
+        if(!moduleHref.match(/^javascript\:/g)) {
+            evt.preventDefault();
+            evt.stopPropagation();
+            this.$('#module_list li').removeClass('active');
+            this.$(evt.currentTarget).parent().addClass('active');
+            app.router.navigate(moduleHref, {trigger: true});
+        }
     },
     onCreateClicked: function(evt) {
         var moduleHref, hashModule;
@@ -139,7 +145,9 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.module_list = app.metadata.getModuleNames(true);
+        //TODO: sidecar needs a function to pull this list from user prefs
+        //The module list needs to be key:value pairs of module name and its translated label
+        this.module_list = SUGAR.App.metadata.data.module_list;
         this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 
@@ -148,6 +156,86 @@
      */
     clearSearch: function(evt) {
         this.$('.search-query').val('');
-    }
+    },
+    initMenu: function() {
+        var moduleList = this.$("#module_list"),
+            activeMenu = moduleList.find(".active");
+        if(activeMenu.length > 0 && activeMenu[0]._nextSibling) {
+            activeMenu[0]._nextSibling.before(activeMenu);
+        }
+        //restore back to the module list
+        this.$(".more").before(moduleList.find(".dropdown-menu").children());
+        this.$(".dropdown.open").toggleClass("open");
+        moduleList.find("." + app.controller.context.get("module")).addClass("active");
+    },
+    /**
+     * Resize the module list to fit the window resolution
+     */
+    resizeMenu: function () {
+        //TODO: ie Compatible, scrollable dropdown for low-res. window
+        //TODO: Theme Compatible, Filtered switching menu
+        var maxMenuWidth = this.$(".navbar-inner > .container-fluid").width() - 100 //100px: spacing for submegamenu, padding and border lines
+            - this.$("#userList").width() - this.$("#searchForm").width();
+        var currentModuleList = this.$("#module_list"),
+            menuItemsWidth = currentModuleList.width(),
+            menuItems = currentModuleList.children("li"),
+            menuLength = menuItems.length,
+            menuNode = currentModuleList.find(".more"),
+            moreMenuLength = menuNode.find(".dropdown-menu li").length,
+            dropdownNode = menuNode.find(".dropdown-menu"),
+            //TODO: User preferences maximum menu count
+            max_tabs = menuLength + moreMenuLength,
+            nextMenuNode = null;
 
+        if(menuItemsWidth > maxMenuWidth){ //Flip
+            menuNode = menuNode.prev();
+            //Move the overflooding menu item into the dropdown
+            //until the current menu item width exceeds the max. available width
+            //To avoid the race condition the loop lasts until all menu items iterates once.
+            while(menuItemsWidth >= maxMenuWidth && menuLength-- > 0){
+
+                if(menuNode.hasClass("active")){
+                    if(_.isUndefined(menuNode[0]._nextSibling)) {
+                        menuNode[0]._nextSibling = dropdownNode.children("li:first");
+                    }
+                    menuNode = menuNode.prev();
+                }
+                if(menuNode.hasClass("home")){
+                    menuNode = menuNode.prev();
+                }
+                if(menuNode.hasClass("more")){
+                    menuNode = menuNode.prev();
+                }
+
+                nextMenuNode = menuNode.prev();
+                dropdownNode.prepend(menuNode.attr("width", menuNode.width()));
+                menuItemsWidth = currentModuleList.width();
+                menuNode = nextMenuNode;
+
+            }
+        } else { //Expand
+            var insertNode = dropdownNode.children("li:first");
+            while(menuItemsWidth <= maxMenuWidth && (menuLength <= max_tabs)){
+                var menuNodeWidth = insertNode.width();
+                //If current proposing item exceeds the maxium availble width,
+                //it should skip the expanding job.
+                if (menuItemsWidth + menuNodeWidth > maxMenuWidth) {
+                    break;
+                }
+                menuLength++;
+
+                nextMenuNode = insertNode.next();
+
+                if(menuNode.prev().hasClass("active")) {
+                    menuNode = menuNode.prev();
+                    if(menuNode[0]._nextSibling && menuNode[0]._nextSibling.attr("class") == insertNode.attr("class")) {
+                        menuNode = menuNode.next();
+                    }
+                }
+                menuNode.before(insertNode);
+                menuItemsWidth = currentModuleList.width();
+                insertNode = nextMenuNode;
+            }
+        }
+    }
 })

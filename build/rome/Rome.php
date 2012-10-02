@@ -457,6 +457,9 @@ protected function getTags(){
 
 
 public function buildFile ($path, $startPath, $skipBuilds = array() ){
+    if(!$this->isFile($path)) {
+        $this->quickCopy($path, $skipBuilds);
+    } else {
 	    $this->file = $path;
 	    if(!empty($startPath))$this->startPath = $startPath ;
         //echo $path . "\n";
@@ -485,6 +488,7 @@ public function buildFile ($path, $startPath, $skipBuilds = array() ){
             }
         }
         $this->writeFiles($path, $skipBuilds);
+    }
 }
 
 
@@ -560,7 +564,7 @@ public function build($path, $skipBuilds=array()){
 	$d = dir($path);
 	while($e = $d->read()){
 		//don't change entryPoint.php
-		if(substr($e, 0, 1) == '.' && $e != '.htaccess')continue;
+		if(substr($e, 0, 1) == '.')continue;
 		if(!empty($this->config['skipDirs'][$e])) continue;
 		$next = $path . '/' . $e;
 		if(is_dir($next)){

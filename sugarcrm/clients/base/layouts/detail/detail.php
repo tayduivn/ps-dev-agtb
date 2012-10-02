@@ -4,7 +4,7 @@ $viewdefs['base']['layout']['detail'] = array(
     'components' =>
     array(
         0 => array(
-            'view' => 'subnav',
+            'view' => 'subnavdetail',
         ),
         1 => array(
             'layout' =>
@@ -48,6 +48,18 @@ $viewdefs['base']['layout']['detail'] = array(
                                     'view' => 'subdetail',
                                     'context' => array(
                                         'link' => 'notes',
+                                    ),
+                                ),
+                                1 => array(
+                                    'view' => 'subdetail',
+                                    'context' => array(
+                                        'link' => 'contacts',
+                                    ),
+                                ),
+                                2 => array(
+                                    'view' => 'subdetail',
+                                    'context' => array(
+                                        'link' => 'accounts',
                                     ),
                                 ),
                             ),

@@ -108,7 +108,83 @@ $dictionary['ForecastSchedule'] = array('table' => 'forecast_schedule',
     'type' => 'bool',
     'reportable'=>false,
     'comment' => 'Record deletion indicator',
-  ),  
+  ),
+
+    'currency_id' =>
+    array (
+        'name' => 'currency_id',
+        'vname' => 'LBL_CURRENCY',
+        'type' => 'id',
+        'required' => true,
+    ),
+    'base_rate' =>
+    array (
+        'name' => 'base_rate',
+        'vname' => 'LBL_CURRENCY_RATE',
+        'type' => 'double',
+        'required' => true,
+    ),
+
+        /*
+        * expected_base_case is used to store the value of the user's expected best case
+        */
+  'expected_best_case' =>
+   array (
+       'name' => 'expected_best_case',
+       'vname' => 'LBL_EXPECTED_BEST_CASE',
+       'dbType' => 'decimal',
+       'type' => 'currency',
+       'len' => '26,6',
+   ),
+
+  /*
+   * expected_likely_case is used to store the value of the user's expected likely case
+   */
+   'expected_likely_case' =>
+   array(
+       'name' => 'expected_likely_case',
+       'vname' => 'LBL_EXPECTED_LIKELY_CASE',
+       'dbType' => 'decimal',
+       'type' => 'currency',
+       'len' => '26,6',
+   ),
+
+  /*
+   * expected_worst_case is used to store the value of the user's expected worst case
+   */
+   'expected_worst_case' =>
+   array(
+       'name' => 'expected_worst_case',
+       'vname' => 'LBL_EXPECTED_WORST_CASE',
+       'dbType' => 'decimal',
+       'type' => 'currency',
+       'len' => '26,6',
+   ),
+
+  /*
+   * expected_amount is used to store the value of the user's expected amount
+   */
+   'expected_amount' =>
+   array(
+       'name' => 'expected_amount',
+       'vname' => 'LBL_EXPECTED_AMOUNT',
+       'dbType' => 'decimal',
+       'type' => 'currency',
+       'len' => '26,6',
+   ),
+
+    /*
+     * expected_commit_stage is used to specify forecast commit category (Include, Likely, Omit etc.)
+     */
+    'expected_commit_stage' =>
+    array (
+        'name' => 'expected_commit_stage',
+        'vname' => 'LBL_COMMIT_STAGE',
+        'type' => 'enum',
+        'options' => 'commit_stage_dom',
+        'len' => '20',
+    ),
+
  )
 , 'indices' => array (
        array('name' =>'forecastschedulepk', 'type' =>'primary', 'fields'=>array('id'))

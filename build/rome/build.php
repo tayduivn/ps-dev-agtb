@@ -36,13 +36,15 @@ if(!empty($config['cleanCache'])){
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/themes");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/blowfish");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/dashlets");
+        $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/api");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/javascript/sugar_grp1.js");
         $rome->remove($rome->getBuildDir() ."/$build/sugarcrm/cache/include/javascript/sugar_grp1_yui.js");
     }
 }
+
 if(!empty($config['base_dir'])){
 	$config['base_dir'] = realpath($config['base_dir']);
-	if(!empty($config['file'])){
+    if(!empty($config['file'])){
 		if(file_exists($config['file'])) {
 			$config['file'] = realpath($config['file']);
 		} else {
@@ -94,7 +96,7 @@ if(!empty($config['base_dir'])){
                 chdir($cwd);
             }
         }
-	}
+    }
 
 }else{
 	$rome->throwException("No Base Directory To Build From", true);

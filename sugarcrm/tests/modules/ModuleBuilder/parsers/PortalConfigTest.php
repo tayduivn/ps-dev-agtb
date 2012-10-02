@@ -1,5 +1,6 @@
 <?php
 //FILE SUGARCRM flav=ent ONLY
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -35,17 +36,16 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        //echo "Setup";
+        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
     }
 
     public function tearDown()
     {
-        //echo "TearDown";
         if (isset($this->user->id)) {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->user->id}'");
             $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '{$this->user->id}'");
         }
-        //unset($_SESSION['ACL']);
+        SugarTestHelper::tearDown();
     }
 
     public function test_PortalConfigParserHandleSaveConfig()

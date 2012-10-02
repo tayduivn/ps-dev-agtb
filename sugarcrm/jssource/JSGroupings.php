@@ -141,6 +141,7 @@
                 'include/javascript/quickCompose.js'    => 'include/javascript/sugar_grp1.js',
                 'include/javascript/yui/build/yuiloader/yuiloader-min.js' => 'include/javascript/sugar_grp1.js',
                 //HTML decode
+                'include/javascript/phpjs/license.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/get_html_translation_table.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/html_entity_decode.js' => 'include/javascript/sugar_grp1.js',
                 'include/javascript/phpjs/htmlentities.js' => 'include/javascript/sugar_grp1.js',
@@ -159,18 +160,19 @@
 			//bootstrap
             'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
             //jquery for moddule menus
-            'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hoverscroll.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hotkeys.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hotkeys.js'                => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.tipTip.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.tipTip.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.showLoading.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.dataTables.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.showLoading.js'            => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.dataTables.min.js'         => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.dataTables.customSort.js'  => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.chosen.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.jstree.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
 
 
 			),
@@ -239,9 +241,9 @@
 			),
 
             $sugar_grp_yui2 = array(
-            //YUI combination 2
-            'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
-            'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
+               //YUI combination 2
+               'include/javascript/yui/build/dragdrop/dragdrop-min.js'    => 'include/javascript/sugar_grp_yui2.js',
+               'include/javascript/yui/build/container/container-min.js'  => 'include/javascript/sugar_grp_yui2.js',
             ),
 
             //Grouping for emails module.
@@ -287,6 +289,20 @@
                 'include/javascript/jsclass_async.js'   => 'include/javascript/sugar_grp_jsolait.js',
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
+
+           $sugar_grp_sidecar = array(
+               'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-button.js'  => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-tooltip.js' => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-dropdown.js'=> 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-popover.js' => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-modal.js'   => 'include/javascript/sugar_sidecar.min.js',
+               'styleguide/assets/js/bootstrap-alert.js'   => 'include/javascript/sugar_sidecar.min.js',
+               'portal2/error.js'               => 'include/javascript/sugar_sidecar.min.js',
+               'portal2/views/alert-view.js'    => 'include/javascript/sugar_sidecar.min.js',
+               'include/javascript/jquery/jquery.popoverext.js'           => 'include/javascript/sugar_sidecar.min.js',
+               'include/javascript/jquery/jquery.effects.custombounce.js'           => 'include/javascript/sugar_sidecar.min.js',
+           ),
            //BEGIN SUGARCRM flav=ent ONLY
             $sugar_grp_portal2 = array(
                 'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'portal2/portal.min.js',

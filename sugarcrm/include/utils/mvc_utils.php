@@ -118,14 +118,6 @@ function ajaxBannedModules(){
         'DataSets',
         'ReportMaker',
         //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=dce ONLY
-        'DCEInstances',
-        'DCEClusters',
-        'DCEDataBases',
-        'DCETemplates',
-        'DCEActions',
-        'DCEReports',
-        //END SUGARCRM flav=dce ONLY
         "Administration",
         "ModuleBuilder",
         'Schedulers',

@@ -329,6 +329,7 @@ class UnifiedSearchApi extends SugarApi {
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
 
         $returnedRecords = array();
+
         $total = 0;
         if(is_object($results)) {
             foreach ( $results as $result ) {

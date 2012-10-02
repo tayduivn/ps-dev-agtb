@@ -27,6 +27,23 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class Worksheet extends SugarBean {
 
     var $id;
+    var $user_id;
+    var $timeperiod_id;
+    var $forecast_type;
+    var $related_id;
+    var $related_forecast_type;
+    var $currency_id;
+    var $base_rate;
+    var $best_case;
+    var $likely_case;
+    var $worst_case;
+    var $date_modified;
+    var $modified_user_id;
+    var $deleted;
+    var $commit_stage;
+    var $op_probability;
+    var $quota;
+    var $version;
 
     var $table_name = "worksheet";
 
@@ -41,13 +58,19 @@ class Worksheet extends SugarBean {
     var $new_schema = true;
     var $module_dir = 'Forecasts';
     function Worksheet() {
-        global $current_user;
         parent::SugarBean();
         $this->disable_row_level_security =true;
     }
 
     function save($check_notify = false){
-
+        require_once 'include/SugarCurrency.php';
+        if(!isset($this->id) || ($this->id == ""))
+        {
+        	$currency = SugarCurrency::getUserLocaleCurrency();
+            $this->currency_id = $currency->id;
+            $this->base_rate = $currency->conversion_rate;
+        }
+        
         parent::save($check_notify);
     }
 

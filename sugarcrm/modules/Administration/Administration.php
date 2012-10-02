@@ -46,15 +46,13 @@ class Administration extends SugarBean {
         'ldap',
         'captcha',
         'sugarpdf',
+        'base',
 
             //BEGIN SUGARCRM lic=sub ONLY
 
         'license',
 
             //END SUGARCRM lic=sub ONLY
-        //BEGIN SUGARCRM flav=dce ONLY
-        'dce',
-        //END SUGARCRM flav=dce ONLY
     );
     var $disable_custom_fields = true;
     var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'portal_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on');
@@ -181,8 +179,17 @@ class Administration extends SugarBean {
         $this->retrieveSettings(false, true);
     }
 
-    function saveSetting($category, $key, $value) {
-        $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}'");
+    /**
+     * @param string $category      Category for the config value
+     * @param string $key           Key for the config value
+     * @param string $value         Value of the config param
+     * @param string $platform      Which platform this belongs to (API use only, If platform is empty it will not be returned in the API calls)
+     * @return int                  Number of records Returned
+     */
+    public function saveSetting($category, $key, $value, $platform = '') {
+        // platform is always lower case
+        $platform = strtolower($platform);
+        $result = $this->db->query("SELECT count(*) AS the_count FROM config WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
         $row = $this->db->fetchByAssoc($result);
         $row_count = $row['the_count'];
 
@@ -190,17 +197,82 @@ class Administration extends SugarBean {
             $value = $this->encrpyt_before_save($value);
 
         if( $row_count == 0){
-            $result = $this->db->query("INSERT INTO config (value, category, name) VALUES ('$value','$category', '$key')");
+            $result = $this->db->query("INSERT INTO config (value, category, name, platform) VALUES ('$value','$category', '$key', '$platform')");
         }
         else{
-            $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}'");
+            $result = $this->db->query("UPDATE config SET value = '{$value}' WHERE category = '{$category}' AND name = '{$key}' AND platform = '{$platform}'");
         }
         sugar_cache_clear('admin_settings_cache');
+
+        // check to see if category is a module
+        if(!empty($platform)) {
+            // we have an api call so lets clear out the cache for the module + platform
+            global $moduleList;
+            if(in_array($category, $moduleList)) {
+                $cache_key = "ModuleConfig-" . $category;
+                if($platform != "base")  {
+                    $cache_key .= $platform;
+                }
+                sugar_cache_clear($cache_key);
+            }
+        }
+
         return $this->db->getAffectedRowCount($result);
+    }
+
+    /**
+     * Return the config for a specific module.
+     *
+     * @param string $module        The module we are wanting to get the config for
+     * @param string $platform      The platform we want to get the data back for
+     * @return array
+     */
+    public function getConfigForModule($module, $platform = 'base') {
+        // platform is always lower case
+        $platform = strtolower($platform);
+
+        $cache_key = "ModuleConfig-" . $module;
+        if($platform != "base")  {
+            $cache_key .= $platform;
+        }
+
+        // try and see if there is a cache for this
+        $moduleConfig = sugar_cache_retrieve($cache_key);
+
+        if(!empty($moduleConfig)) {
+            return $moduleConfig;
+        }
+
+        $sql = "SELECT name, value FROM config WHERE category = '{$module}'";
+        if($platform != "base") {
+            // if the platform is not base, we need to order it so the platform we are looking for overrides any base values
+            $sql .= "and platform in ('base', '{$platform}') ORDER BY CASE WHEN platform='base' THEN 0
+                        WHEN platform='{$platform}' THEN 1 ELSE 2 END ASC";
+        } else {
+            $sql .= " and platform = '{$platform}'";
+        }
+
+        $result = $this->db->query($sql);
+
+        $moduleConfig = array();
+        while($row = $this->db->fetchByAssoc($result)) {
+            $temp = json_decode(html_entity_decode(stripslashes($row['value'])), true);
+            if (is_null($temp)) {
+                $temp = $row['value'];
+            }
+
+            $moduleConfig[$row['name']] = $temp;
+        }
+
+        if(!empty($moduleConfig)) {
+            sugar_cache_put($cache_key, $moduleConfig);
+        }
+
+        return $moduleConfig;
     }
 
     function get_config_prefix($str) {
         return Array(substr($str, 0, strpos($str, "_")), substr($str, strpos($str, "_")+1));
     }
 }
-?>
+

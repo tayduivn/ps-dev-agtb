@@ -4,9 +4,8 @@
         {{#each fields}}
         <div class="row-fluid control-group">
             <div class="span2">{{str  this.label ../../this.model.module}}</div>
-            <div class="span10">
+            <div class="span10 controls">
             {{field ../../this}}
-            <p class="help-block"></p>
             </div>
         </div>
         {{/each}}

@@ -1,3 +1,0 @@
-{{#each listItems}}
-    <option value="{{this.id}}" {{this.selected}}>{{this.name}}</option>
-{{/each}}

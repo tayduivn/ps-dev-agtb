@@ -220,7 +220,6 @@ $_REQUEST['addTaskReminder'] = 'remind';
 
 
 define('SUGARCRM_INSTALL', 'SugarCRM_Install');
-define('DCE_INSTANCE', 'DCE_Instance');
 
 global $cwd;
 $cwd = getcwd(); // default to current, assumed to be in a valid SugarCRM root dir.
@@ -236,7 +235,6 @@ require_once('include/utils/zip_utils.php');
 require_once('include/utils/sugar_file_utils.php');
 require_once('include/SugarObjects/SugarConfig.php');
 global $sugar_config;
-$isDCEInstance = false;
 $errors = array();
 
 	require('config.php');
@@ -599,6 +597,15 @@ if($origVersion < '650' && function_exists('repairUpgradeHistoryTable'))
 {
     repairUpgradeHistoryTable();
 }
+
+//BEGIN SUGARCRM flav=PRO ONLY
+//setup forecast defualt settings
+if($origVersion < '670')
+{
+    require_once('modules/Forecasts/ForecastsSeedData.php');
+    ForecastsSeedData::setupForecastSettings();
+}
+//END SUGARCRM flav=PRO ONLY
 
 ///////////////////////////////////////////////////////////////////////////////
 ////	TAKE OUT TRASH

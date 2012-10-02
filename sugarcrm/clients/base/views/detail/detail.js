@@ -17,7 +17,7 @@
         if (fieldsArray.length > this.fieldsToDisplay) {
             _.each(fieldsArray, function(field, i) {
                 if (i > this.fieldsToDisplay - 1) {
-                    $(field).parent().parent().parent().hide();
+                    $(field).parent().parent().hide();
                 }
             }, this);
             this.$(".more").removeClass("hide");
@@ -28,8 +28,7 @@
         var that = this;
         _.each(fieldsArray, function(field, i) {
             if (i > that.fieldsToDisplay - 1) {
-                $(field).parent().parent().parent().toggle();
-                console.log($(field).parent().parent().parent());
+                $(field).parent().parent().toggle();
             }
         });
         this.$(".less").toggleClass("hide");
@@ -38,14 +37,7 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                if (this.context.get('subnavModel')) {
-                    this.context.get('subnavModel').set({
-                        'title': this.model.get('name'),
-                        'meta': this.meta
-                    });
-                    this.model.isNotEmpty = true;
-                    this.render();
-                }
+                this.render();
             }, this);
         }
     }

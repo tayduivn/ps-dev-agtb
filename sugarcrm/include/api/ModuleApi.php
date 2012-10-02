@@ -21,6 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('data/BeanFactory.php');
+require_once('include/api/SugarApi/SugarApi.php');
 
 class ModuleApi extends SugarApi {
     public function registerApiRest() {

@@ -293,6 +293,17 @@ class SugarBean
      * set to true if dependent fields updated
      */
     protected $is_updated_dependent_fields = false;
+
+    /**
+     * This method has been moved into the __construct() method to follow php standards
+     *
+     * @see __construct()
+     * @deprecated
+     */
+    function SugarBean()
+    {
+        self::__construct();
+    }
 	
     /**
      * Constructor for the bean, it performs following tasks:
@@ -304,7 +315,7 @@ class SugarBean
      * All implementing classes  must call this constructor using the parent::SugarBean() class.
      *
      */
-    function SugarBean()
+    public function __construct()
     {
         global  $dictionary, $current_user;
         static $loaded_defs = array();
@@ -1423,25 +1434,6 @@ class SugarBean
             if(!$this->db->tableExists($this->table_name))
             {
                 $this->db->createTable($this);
-//BEGIN SUGARCRM flav=dce ONLY
-                if($GLOBALS['sugar_flavor']=='DCE'){
-                    global $DCEbeanList, $beanFiles;
-                    foreach($DCEbeanList as $module=>$class){
-                        if(isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
-                            require_once($beanFiles[$class]);
-                            $mod = new $class();
-                            if($this->module_dir === $mod->module_dir){
-                                if($this->bean_implements('ACL')){
-                                    ACLAction::addActions($this->module_dir);
-                                }
-                                if($this->bean_implements('DCEACL')){
-                                    ACLAction::addActions($this->module_dir, 'DCE');
-                                }
-                            }
-                        }
-                    }
-                }else{
-//END SUGARCRM flav=dce ONLY
                     if($this->bean_implements('ACL')){
                         if(!empty($this->acltype)){
                             ACLAction::addActions($this->getACLCategory(), $this->acltype);
@@ -1449,9 +1441,6 @@ class SugarBean
                             ACLAction::addActions($this->getACLCategory());
                         }
                     }
-//BEGIN SUGARCRM flav=dce ONLY
-                }
-//END SUGARCRM flav=dce ONLY
             }
             else
             {
@@ -5194,6 +5183,7 @@ class SugarBean
             $this->updateDependentField();
         }
 		$this->is_updated_dependent_fields = true;
+
     }
 	//END SUGARCRM flav=pro ONLY
     /**
@@ -5943,22 +5933,6 @@ class SugarBean
                 return ACLController::checkAccess($this->module_dir,'export', $is_owner, $this->acltype);
             case 'import':
                 return ACLController::checkAccess($this->module_dir,'import', true, $this->acltype);
-//BEGIN SUGARCRM flav=dce ONLY
-            case 'upgrade':
-                return ACLController::checkAccess($this->module_dir, 'upgrade', true, 'DCE');
-            case 'archive':
-                return ACLController::checkAccess($this->module_dir, 'archive', true, 'DCE');
-            case 'clone':
-                return ACLController::checkAccess($this->module_dir, 'clone', true, 'DCE');
-            case 'convert':
-                return ACLController::checkAccess($this->module_dir, 'convert', true, 'DCE');
-            case 'deploy':
-                return ACLController::checkAccess($this->module_dir, 'deploy', true, 'DCE');
-            case 'recover':
-                return ACLController::checkAccess($this->module_dir, 'recover', true, 'DCE');
-            case 'support_user':
-                return ACLController::checkAccess($this->module_dir, 'support_user', true, 'DCE');
-//END SUGARCRM flav=dce ONLY
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;

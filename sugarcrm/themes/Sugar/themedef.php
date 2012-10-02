@@ -31,7 +31,7 @@ $themedef = array(
     'name'  => "Pacific",
     'description' => "Pacific",
     'version' => array(
-        'regex_matches' => array('6\.*.*'),
+        'regex_matches' => array('[6|7]\.*.*'),
         ),
     'group_tabs' => true,
     );

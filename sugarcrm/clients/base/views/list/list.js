@@ -20,10 +20,21 @@
         this.layout.on("list:paginate:success", this.render, this);
         this.layout.off("list:filter:toggled", null, this);
         this.layout.on("list:filter:toggled", this.filterToggled, this);
+        this.layout.off("list:alert:show", null, this);
+        this.layout.on("list:alert:show", this.showAlert, this);
+        this.layout.off("list:alert:hide", null, this);
+        this.layout.on("list:alert:hide", this.hideAlert, this);
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+    },
+    showAlert: function(message) {
+        this.$(".alert .container").html(message);
+        this.$(".alert").removeClass("hide");
+    },
+    hideAlert: function() {
+        this.$(".alert").addClass("hide");
     },
     filterToggled:function (isOpened) {
         this.filterOpened = isOpened;
@@ -36,6 +47,7 @@
             },
             fields:this.collection.fields || {}
         }
+        //TODO: This should be handled automagically by the collection by checking its own tie to the context
         if (this.context.get('link')) {
             options.relate = true;
         }

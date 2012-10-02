@@ -26,7 +26,7 @@
         this.layout.on("list:filter:toggled", this.filterToggled, this);
     },        
     filterToggled: function(isOpened) {
-        this.context.set('filterOpened') = isOpened;
+        this.context.set('filterOpened', isOpened);
     },
     showMoreRecords: function(evt) {
         var self = this, options;

@@ -54,15 +54,7 @@
         if (self.context.get('subnavModel')) {
             fullName = data.name ? data.full_name : data.first_name +' '+data.last_name;
             self.context.get('subnavModel').set({
-                'title': fullName,
-                'meta': self.meta
-            });
-            
-            // Bypass subnav click handler
-            $('.save-profile').on('click', function(e) {
-                e.stopPropagation();
-                e.preventDefault();
-                self.saveModel();
+                'title': fullName
             });
         }
     },

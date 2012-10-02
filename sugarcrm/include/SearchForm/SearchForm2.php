@@ -463,7 +463,7 @@ require_once('include/EditView/EditView2.php');
 
 	}
 
-	    /**
+	/**
      * Populate the searchFields from an array
      *
      * @param array $array array to search through
@@ -1062,7 +1062,7 @@ require_once('include/EditView/EditView2.php');
                                      }
                                      // If it is a unified search and if the search contains more then 1 word (contains space)
                                      // and if it's the last element from db_field (so we do the concat only once, not for every db_field element)
-                                     // we concat the db_field array() (both original, and in reverse order) and search for the whole string in it  
+                                     // we concat the db_field array() (both original, and in reverse order) and search for the whole string in it
                                      if ( $UnifiedSearch && strpos($field_value, ' ') !== false && strpos($db_field, $parms['db_field'][count($parms['db_field']) - 1]) !== false )
                                      {
                                          // Get the table name used for concat
@@ -1070,7 +1070,7 @@ require_once('include/EditView/EditView2.php');
                                          $concat_table = $concat_table[0];
                                          // Get the fields for concatenating
                                          $concat_fields = $parms['db_field'];
-                                         
+
                                          // If db_fields (e.g. contacts.first_name) contain table name, need to remove it
                                          for ($i = 0; $i < count($concat_fields); $i++)
                                          {
@@ -1079,7 +1079,7 @@ require_once('include/EditView/EditView2.php');
                                          		$concat_fields[$i] = substr($concat_fields[$i], strlen($concat_table) + 1);
                                          	}
                                          }
-                                         
+
                                          // Concat the fields and search for the value
                                          $where .= $this->seed->db->concat($concat_table, $concat_fields) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);
                                          $where .= ' OR ' . $this->seed->db->concat($concat_table, array_reverse($concat_fields)) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);

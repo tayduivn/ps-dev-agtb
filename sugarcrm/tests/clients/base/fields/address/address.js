@@ -11,6 +11,7 @@ describe("address field", function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
+        field.model = null;
         field = null;
         Address = null;
     });

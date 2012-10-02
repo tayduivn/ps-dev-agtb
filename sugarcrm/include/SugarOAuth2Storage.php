@@ -77,8 +77,9 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 
         // Find the Portal API user
         // FIXME: What to do if they have more than one portal user?
+        $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1'));
         $portalApiUser = $portalApiUser->retrieve_by_string_fields(array('portal_only'=>'1','status'=>'Active'));
-        
+
         if ($portalApiUser != null) {
             $this->portalApiUser = $portalApiUser;
             return $this->portalApiUser;
@@ -403,7 +404,6 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
         }
 
         if ( $clientInfo['client_type'] != 'support_portal' ) {
-            die('blah');
             // Is just a regular Sugar User
             $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
             $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true));

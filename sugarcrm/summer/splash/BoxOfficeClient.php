@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=free ONLY
 require_once 'summer/splash/lib/BoxOfficeMail/BoxOfficeMail.php';
 require_once 'Zend/Http/Client.php';
 require_once 'Zend/Mail/Protocol/Imap.php';
@@ -36,7 +37,12 @@ class BoxOfficeClient
         if (empty($session_id)) session_start();
 
         // FIXME: should be moved to REST API
-        include __DIR__.'/config.php';
+        //HACK
+        if (file_exists(__DIR__.'/config.php')) {
+            include __DIR__.'/config.php';
+        }
+
+        $config = "";
         $this->config = $config;
         // FIXME
         $this->loginUrl = $config['top_url']."summer/splash/";

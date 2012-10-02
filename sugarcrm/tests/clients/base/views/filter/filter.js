@@ -10,12 +10,14 @@ describe("Filter View", function() {
         app = SUGAR.App;
     });
 
+
     afterEach(function() {
         app.cache.cutAll();
         app.view.reset();
         delete Handlebars.templates;
         view = null;
     });
+
 
     describe("filter", function() {
         it("should return a set of search fields for a given module", function() {
@@ -26,4 +28,5 @@ describe("Filter View", function() {
             stub.restore();
         });
     });
+
 });

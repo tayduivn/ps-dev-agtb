@@ -162,14 +162,19 @@ class MetadataApi extends SugarApi {
         // right now we are getting the config only for the portal
         // Added an isset check for platform because with no platform set it was
         // erroring out. -- rgonzalez
-        if(isset($args['platform']) && $args['platform'] == 'portal') {
 
+        if(isset($args['platform'])) {
+            //temporary replace 'forecasts' w/ 'base'
+            //as forecast settings store in db w/ prefix 'base_'
+            $args['platform'] = 'forecasts' ? 'base' : $args['platform'];
+            $prefix = "{$args['platform']}_";
             $admin = new Administration();
-            $admin->retrieveSettings();
+            $category = $args['platform'];
+            $admin->retrieveSettings($category, true);
             foreach($admin->settings AS $setting_name => $setting_value) {
-                if(stristr($setting_name, 'portal_')) {
-                    $key = str_replace('portal_', '', $setting_name);
-                    $configs[$key] = json_decode(html_entity_decode($setting_value));
+                if(stristr($setting_name, $prefix)) {
+                    $key = str_replace($prefix, '', $setting_name);
+                    $configs[$key] = json_decode(html_entity_decode($setting_value)) ? json_decode(html_entity_decode($setting_value)) : $setting_value;
                 }
             }
         }
@@ -183,7 +188,7 @@ class MetadataApi extends SugarApi {
 
 
         // Default the type filter to everything available to the public, no module info at this time
-        $this->typeFilter = array('fields','view_templates','app_strings','views', 'layouts', 'config');
+        $this->typeFilter = array('fields','viewTemplates','app_strings','views', 'layouts', 'config', 'modules');
 
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -226,6 +231,8 @@ class MetadataApi extends SugarApi {
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
         $data['config'] = $configs;
+        $data['modules'] = array(
+            "Login" => array("fields" => array()));
         $data["_hash"] = md5(serialize($data));
 
         $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config');
@@ -234,23 +241,27 @@ class MetadataApi extends SugarApi {
     }
 
     protected function loadMetadata($hashKey) {
+        global $current_user, $app_list_strings;
         // Start collecting data
         $data = array();
 
         $mm = $this->getMetadataManager();
 
 
-        $data['module_list'] = $mm->getModuleList($this->platforms[0]);
-        $data['full_module_list'] = $data['module_list'];
+        $data['full_module_list'] = $mm->getModuleList($this->platforms[0]);
+        //Trim the module list down to the ones to display
+        $moduleList = array();
+        foreach ( query_module_access_list($current_user) as $module ) {
+            if ( isset($data['full_module_list'][$module]) ) {
+                $moduleList[$module] = $app_list_strings['moduleList'][$module];
+            }
+        }
+        $data['module_list'] = $moduleList;
 
         $data['modules'] = array();
 
         foreach($data['full_module_list'] as $module) {
             $bean = BeanFactory::newBean($module);
-            if (!$bean || !is_a($bean,'SugarBean') ) {
-                // There is no bean, we can't get data on this
-                continue;
-            }
 
             $modData = $mm->getModuleData($module);
             $data['modules'][$module] = $modData;
@@ -272,7 +283,7 @@ class MetadataApi extends SugarApi {
         }
 
         foreach($data['modules'] as $moduleName => $moduleDef) {
-            if (!array_key_exists($moduleName, $data['full_module_list'])) {
+            if (!array_key_exists($moduleName, $data['full_module_list']) && array_key_exists($moduleName, $data['modules'])) {
                 unset($data['modules'][$moduleName]);
             }
         }

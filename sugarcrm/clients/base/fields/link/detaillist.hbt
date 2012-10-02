@@ -1,3 +1,0 @@
-{{#each listItems}}
-    <a href="#{{this.module}}/{{this.id}}">{{this.name}}</a>, 
-{{/each}}

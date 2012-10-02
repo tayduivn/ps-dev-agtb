@@ -318,6 +318,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         }
 		//END SUGARCRM flav=pro ONLY
         $fields = $aItem->get_list_view_data();
+
         //BEGIN SUGARCRM flav=pro ONLY
         $aItem->ACLFilterFieldList($fields);
         //END SUGARCRM flav=pro ONLY
@@ -1747,7 +1748,8 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 	                $cell_width = empty($widget_args['width']) ? '' : $widget_args['width'];
 	                $this->xTemplate->assign('HEADER_CELL', $widget_contents);
 	                static $count;
-	            if(!isset($count))$count = 0; else $count++;
+                    $count = !isset($count) ? 0 : $count++;
+
 	                $this->xTemplate->assign('CELL_COUNT', $count);
 	                $this->xTemplate->assign('CELL_WIDTH', $cell_width);
 	                $this->xTemplate->parse('dyn_list_view.header_cell');

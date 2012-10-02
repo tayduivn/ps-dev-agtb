@@ -1,0 +1,9 @@
+<div class="modal-header header">
+    <div class="buttons pull-right">
+        <a href="javascript:void(0);" class="close" data-dismiss="modal" data-original-title="Close"><i class="icon-remove icon-sm"></i></a>
+        {{#each buttons}}
+        {{field ../this}}
+        {{/each}}
+    </div>
+    <h3 class="title">{{str title module}}</h3>
+</div>

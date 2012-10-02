@@ -137,7 +137,6 @@ class MysqlManager extends DBManager
 	    "collation" => true,
 	    "create_db" => true,
 	    "disable_keys" => true,
-        "recursive_query" => true,
 	);
 
 	/**
@@ -1380,14 +1379,6 @@ class MysqlManager extends DBManager
 		$this->query("CREATE DATABASE `$dbname` CHARACTER SET utf8 COLLATE utf8_general_ci", true);
 	}
 
-	public function preInstall()
-	{
-        // Not being called anyway.
-		//$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT CHARACTER SET utf8", true);
-		//$db->query("ALTER DATABASE `{$setup_db_database_name}` DEFAULT COLLATE utf8_general_ci", true);
-        $this->createRecursiveQuerySPs();
-	}
-
 	/**
 	 * Drop a database
 	 * @param string $dbname
@@ -1614,7 +1605,7 @@ class MysqlManager extends DBManager
         // figure you may want to manipulate these in PHP so they are in the most convenient form for
         // use in the stored procedure.
 
-        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '$fields')";
+        $sql = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$this->quote($startWith)}', '$level', '{$this->quote($fields)}')";
         return $sql;
     }
 
@@ -1634,9 +1625,9 @@ class MysqlManager extends DBManager
      * I.e. generate a unique Sugar id in a sub select of an insert statement.
      * @return string
      */
-
-	public function getGuidSQL()
+    public function getGuidSQL()
     {
       	return 'UUID()';
     }
+
 }

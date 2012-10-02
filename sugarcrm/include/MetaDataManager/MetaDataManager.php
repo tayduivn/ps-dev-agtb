@@ -118,6 +118,10 @@ class MetaDataManager {
     {
         require_once('include/SubPanel/SubPanelDefinitions.php');
         $parent_bean = BeanFactory::getBean($moduleName);
+        //Hack to allow the SubPanelDefinitions class to check the correct module dir
+        if (!$parent_bean){
+            $parent_bean = (object) array('module_dir' => $moduleName);
+        }
 
         $spd = new SubPanelDefinitions($parent_bean);
         $layout_defs = $spd->layout_defs;
@@ -199,24 +203,40 @@ class MetaDataManager {
         //END SUGARCRM flav=pro ONLY
         $vardefs = $this->getVarDef($moduleName);
 
-        $data['fields'] = $vardefs['fields'];
+        $data['fields'] = isset($vardefs['fields']) ? $vardefs['fields'] : array();
         $data['views'] = $this->getModuleViews($moduleName);
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
+        $data['config'] = $this->getModuleConfig($moduleName);
+
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
         
-        $seed = BeanFactory::newBean($moduleName);
-        
         //BEGIN SUGARCRM flav=pro ONLY
-        $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
-        $data['favoritesEnabled'] = $favoritesEnabled;
+        $seed = BeanFactory::newBean($moduleName);
+        if ($seed !== false) {
+            $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
+            $data['favoritesEnabled'] = $favoritesEnabled;
+
+        }
         //END SUGARCRM flav=pro ONLY
         $data["_hash"] = md5(serialize($data));
 
         return $data;
+    }
+
+    /**
+     * Get the config for a specific module from the Administration Layer
+     *
+     * @param string $moduleName        The Module we want the data back for.
+     * @return array
+     */
+    public function getModuleConfig($moduleName) {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        return $admin->getConfigForModule($moduleName, $this->platforms[0]);
     }
 
     /**
@@ -247,27 +267,31 @@ class MetaDataManager {
      * @param $moduleName The name of the module to collect vardef information about.
      * @return array The vardef's $dictonary array.
      */
-    public function getVarDef($moduleName) {
-
+    public function getVarDef($moduleName)
+    {
         require_once("data/BeanFactory.php");
         $obj = BeanFactory::getObjectName($moduleName);
 
-        require_once("include/SugarObjects/VardefManager.php");
-        global $dictionary;
-        VardefManager::loadVardef($moduleName, $obj);
-        if ( isset($dictionary[$obj]) ) {
-            $data = $dictionary[$obj];
+        $data = false;
+        if ($obj) {
+            require_once("include/SugarObjects/VardefManager.php");
+            global $dictionary;
+            VardefManager::loadVardef($moduleName, $obj);
+            if (isset($dictionary[$obj])) {
+                $data = $dictionary[$obj];
+            }
+
+            // vardefs are missing something, for consistancy let's populate some arrays
+            if (!isset($data['fields'])) {
+                $data['fields'] = array();
+            }
+            if (!isset($data['relationships'])) {
+                $data['relationships'] = array();
+            }
+
+            return $data;
         }
 
-        // vardefs are missing something, for consistancy let's populate some arrays
-        if (!isset($data['fields']) ) {
-            $data['fields'] = array();
-        }
-        if (!isset($data['relationships'])) {
-            $data['relationships'] = array();
-        }
-
-        return $data;
     }
 
     /**
