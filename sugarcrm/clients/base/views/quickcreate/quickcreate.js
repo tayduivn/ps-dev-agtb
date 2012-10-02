@@ -17,11 +17,11 @@
 
         _.each(this.meta.panels, function(panel) {
             var columns = (panel.columns) || 2,
-                count = 0,
                 rows = [],
-                row = [];
+                row = [],
+                size = panel.fields.length;
 
-            _.each(panel.fields, function(field) {
+            _.each(panel.fields, function(field, index) {
                 var maxSpan;
 
                 if (_.isUndefined(panel.labels)) {
@@ -43,12 +43,10 @@
                 field.index = totalFieldCount;
                 row.push(field);
 
-                if (count % columns == columns - 1) {
+                if ((index % columns === columns - 1) || (index === size - 1)) {
                     rows.push(row);
                     row = [];
                 }
-
-                count++;
             }, this);
 
             panel.grid = rows;
@@ -59,14 +57,15 @@
 
     /**
      * Highlights all of the user keys that were used in the duplicate match.
-     * @param {array} List of user keys used in the module search
+     * @param {object} List of user keys used in the module search
+     * @param {function} called after duplicate fields finish highlighting
      * @param {boolean} whether to turn on or off the warnings
      */
-    highlightDuplicateFields: function(keys) {
+    highlightDuplicateFields: function(keys, callback) {
         var self = this,
             cssName = 'warning';
 
-        _.each(keys, function (fieldName) {
+        _.each(keys, function (value, fieldName) {
             var controlGroup, field;
 
             field = self.getField(fieldName);
@@ -77,6 +76,10 @@
                 }
             }
         });
+
+        if (_.isFunction(callback)) {
+            callback();
+        }
     },
 
     clearHighlightDuplicateFields: function() {
