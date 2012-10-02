@@ -83,9 +83,9 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $data = $obj->process();
 
         $expected = SugarCurrency::convertAmountToBase(self::$user['quota']->amount, self::$user['quota']->currency_id);
-        $actual = $data['values'][0]['goalmarkervalue'][0];
+        $actual = doubleval($data['values'][0]['goalmarkervalue'][0]);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertsame($expected, $actual);
     }
 
     /**
@@ -107,8 +107,9 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         }
 
         $expected = SugarCurrency::convertAmountToBase(self::$user['included_opps_totals'][$dataset], self::$currency->id);
+        $actual = doubleval($actual);
 
-        $this->assertEquals(floatVal($expected), floatVal($actual));
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -153,8 +154,9 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
 
         // convert the expected back to base
         $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
+        $actual = doubleval($data['values'][$chart_position]['goalmarkervalue'][1]);
 
-        $this->assertEquals(floatVal($expected), floatVal($data['values'][$chart_position]['goalmarkervalue'][1]));
+        $this->assertSame($expected, $actual);
     }
 
     /**
