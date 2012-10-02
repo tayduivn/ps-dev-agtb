@@ -112,10 +112,24 @@
     bindDataChange:function () {
         var self = this;
         this.context.forecasts.worksheetmanager.on('reset', function(){
-
             if(self.commitUpdate && self.chartRendered) {
                 self.commitUpdate = false;
                 self.renderChart();
+            }
+        }, this);
+        this.context.forecasts.worksheet.on('reset', function() {
+            if(self.commitUpdate && self.chartRendered) {
+                self.renderChart();
+            }
+        }, this);
+        this.context.forecasts.worksheetmanager.on('change', function(context){
+            if(!self.commitUpdate) {
+                self.commitUpdate = true;
+            }
+        }, this);
+        this.context.forecasts.worksheet.on('change', function(context){
+            if(!self.commitUpdate) {
+                self.commitUpdate = true;
             }
         }, this);
         this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
