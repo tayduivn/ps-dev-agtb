@@ -134,15 +134,8 @@
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
             self.handleRenderOptions({group_by: groupBy});
         });
-        this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
-            //self.handleRenderOptions({dataset: dataset});
-        });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            if (this.context.forecasts.config.get('forecasts_categories') == 'show_binary') {
-                // TODO: this.
-            } else {
-                self.handleRenderOptions({category:_.first(value)});
-            }
+            self.handleRenderOptions({category:_.first(value)});
         });
     },
 
