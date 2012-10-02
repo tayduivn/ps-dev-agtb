@@ -7,8 +7,6 @@
     <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
     <script type="text/javascript" src='../sidecar/lib/sugarapi/sugarapi.js'></script>
     <script type="text/javascript" src='../sidecar/minified/sidecar.min.js'></script>
-    <script type="text/javascript" src="../include/javascript/sugar_3.js"></script>
-
 <?php
 // For sugar7 the plan is to generate a /sugarcrm/config.js .. in the meantime fallback to sidecar config.js
 if (file_exists('../config.js')) {
