@@ -104,7 +104,6 @@ class SugarApplication
             }
 
             header('Location: ' . $this->getUnauthenticatedHomeUrl(true));
-
             exit ();
         }
 

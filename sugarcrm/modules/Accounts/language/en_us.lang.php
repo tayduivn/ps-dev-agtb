@@ -160,6 +160,7 @@ $mod_strings = array (
 	//BEGIN SUGARCRM flav!=sales ONLY
 	'LBL_CAMPAIGNS' =>'Campaigns',
 	//END SUGARCRM flav!=sales ONLY
+    'LNK_CREATE' => 'Create Company',
 	'LNK_ACCOUNT_LIST' => 'View Accounts',
 	'LNK_NEW_ACCOUNT' => 'Create Account',
 	'LNK_IMPORT_ACCOUNTS' => 'Import Accounts',
@@ -187,5 +188,6 @@ $mod_strings = array (
     'LBL_EXPORT_ASSIGNED_USER_NAME' => 'Assigned User Name',
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
+    'LBL_FILENAME' => 'Attachment',
 );
 ?>

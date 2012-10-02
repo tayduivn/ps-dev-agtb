@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.as
  ********************************************************************************/
-$dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
+$dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'activity_enabled'=>true, 'unified_search' => true, 'full_text_search' => true, 'unified_search_default_enabled' => true, 'duplicate_merge'=>true,
   'comment' => 'Accounts are organizations or entities that are the target of selling, support, and marketing activities, or have already purchased products or services',
   'fields' => array (
 
@@ -448,7 +448,7 @@ $dictionary['Account'] = array('table' => 'accounts', 'audited'=>true, 'unified_
     ,'account_calls' => array('lhs_module'=> 'Accounts', 'lhs_table'=> 'accounts', 'lhs_key' => 'id',
                               'rhs_module'=> 'Calls', 'rhs_table'=> 'calls', 'rhs_key' => 'parent_id',
                               'relationship_type'=>'one-to-many', 'relationship_role_column'=>'parent_type',
-                              'relationship_role_column_value'=>'Accounts')
+                              'relationship_role_column_value'=>'Accounts')       
 
 /*,'accounts_emails' => array(
     'rhs_module'        => 'Emails',

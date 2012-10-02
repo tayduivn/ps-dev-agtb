@@ -2484,6 +2484,7 @@ $app_strings = array (
     'LBL_FILTER_MENU_BY' => 'Filter Menu By',
     'LBL_VCARD' => 'vCard',
     'LBL_EMPTY_VCARD' => 'Please select a vCard file',
+    'LBL_IMAGE' => 'Image',
     'LBL_IMPORT_VCARD' => 'Import vCard:',
     'LBL_IMPORT_VCARD_BUTTON_KEY' => 'I',
     'LBL_IMPORT_VCARD_BUTTON_LABEL' => 'Import vCard',
@@ -3332,6 +3333,7 @@ $app_strings = array (
     'LBL_TIME_AGO_DAYS' => '{{this}} days ago',
     'LBL_TIME_AGO_YEAR' => 'over a year ago',
     'LBL_TIME_RELATIVE' => 'Posted {{relativetime}} on {{date}} at {{time}}',
+    'LBL_LAST_TOUCHED' => 'Last touched {{relativetime}} on {{date}} at {{time}}',
     'LBL_LISTVIEW_NO_RECORDS' => 'No records were found at this time.',
     'LBL_DETAILVIEW_NO_RECORDS' => 'This record could not be rendered at this time.',
     'LBL_REFINE_LIST' => 'Refine list',
@@ -3426,6 +3428,8 @@ $app_strings = array (
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
     'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
+
+    'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
@@ -4319,6 +4323,16 @@ $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
     'middle' => 'Middle',
     'last' => 'Last'
 );
+
+if(class_exists('BoxOfficeClient')){
+$app_list_strings['sales_stage_dom']= array(
+    'Prospecting'=>'New',
+    'Qualification'=>'Engaged',
+    'Closed Won'=>'Won',
+    'Closed Lost'=>'Lost',
+);
+}
+
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (
 		'yes' => 'Yes' ,

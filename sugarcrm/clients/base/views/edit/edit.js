@@ -33,6 +33,51 @@
             fieldsToValidate: this.getFields(this.module)
         });
     },
+    checkFileFieldsAndProcessUpload : function(model, callbacks) {
+
+        callbacks = callbacks || {};
+
+        //check if there are attachments
+        var $files = _.filter($(":file"), function(file) {
+            var $file = $(file);
+            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
+        });
+        var filesToUpload = $files.length;
+
+        //process attachment uploads
+        if (filesToUpload > 0) {
+            app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
+
+            //field by field
+            for (var file in $files) {
+                var $file = $($files[file]),
+                    fileField = $file.attr("name");
+                model.uploadFile(fileField, $file, {
+                    field: fileField,
+                    success: function() {
+                        filesToUpload--;
+                        if (filesToUpload===0) {
+                            app.alert.dismiss('upload');
+                            if (callbacks.success) callbacks.success();
+                        }
+                    },
+                    error: function(error) {
+                        filesToUpload--;
+                        if (filesToUpload===0) {
+                            app.alert.dismiss('upload');
+                        }
+                        var errors = {};
+                        errors[error.responseText] = {};
+                        model.trigger('error:validation:' + this.field, errors);
+                        model.trigger('error:validation');
+                    }
+                });
+            }
+        }
+        else {
+            if (callbacks.success) callbacks.success();
+        }
+    },
     _renderHtml: function() {
         app.view.View.prototype._renderHtml.call(this);
         // workaround because we use the same view for edit and create

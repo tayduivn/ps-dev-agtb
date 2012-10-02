@@ -1,9 +1,14 @@
 ({
     events: {
-        'click #tour': 'systemTour',
+        'click .tour': 'systemTourModal',
         'click #print': 'print',
         'click #top': 'top',
-        'click #languageList .dropdown-menu a' : 'setLanguage'
+        'click #languageList .dropdown-menu a' : 'setLanguage',
+        'click #instance': 'instanceMenu',
+        'click #invite': 'invite',
+        'click #instancesContainer': 'ignore',
+        'click .tour-module-start': 'startSystemTour',
+        'click .tour-full-start': 'startSystemTour'
     },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
@@ -29,10 +34,24 @@
         if (app.config && app.config.logoURL) {
             this.logoURL=app.config.logoURL;
         }
+        this.instance_name = app.user.get('instance_name');
         app.view.View.prototype._renderHtml.call(this);
     },
-    systemTour: function() {
-        this.$('#systemTour').modal('show');
+    systemTourModal: function() {
+        // check to make sure you're not already touring the system
+        if( app.view.views.TourView.prototype.tourMode !== true ) {
+            this.$('.system-tour').modal('show');
+        }
+    },
+    startSystemTour: function(e) {
+        // If "Full Tour" was clicked, relay this to startTour(),
+        // to determine whether or not to route to the homepage
+        var fullTour = this.$(e.target).hasClass("tour-full-start") ? true: false,
+            currentModule = app.controller.layout.options.module,
+            viewType = app.controller.layout.options.name;
+
+        this.$('.system-tour').modal('hide');
+        app.view.views.TourView.prototype.startTour(currentModule, viewType, fullTour);
     },
     print: function() {
         window.print();
@@ -46,5 +65,61 @@
             langKey = $li.data("lang-key");
         app.alert.show('language', {level: 'warning', title: 'LBL_LOADING_LANGUAGE', autoclose: false});
         app.lang.setLanguage(langKey, function() { app.alert.dismiss('language'); });
-    }
+    },
+    instanceMenu: function(e) {
+    	var self=this;
+    	App.api.call('GET', '../rest/v10/summer/office', null, {
+    		success: function(o) {
+    			//console.log(o);
+    			$("#instanceList").html("");
+    			$("#instanceList")
+    			for(i=0; i<o.instances.length; i++) {
+    				$("#instanceList").append("<li><a class=\"instance\" data-id=\""+o.instances[i].id+"\" href=\"#\" rel=\"tooltip\" title=\"Switch to this instance\">"+o.instances[i].name+"</a></li>");
+    			}
+    			$(".instance").click(self.selectInstance);
+    			$("#usersList").html("");
+    			$("#usersList")
+    			for(i=0; i<o.users.length; i++) {
+    				$("#usersList").append("<li>"+o.users[i].first_name+" "+o.users[i].last_name+", last login: " + o.users[i].login_time+"</li>");
+    			}
+    		}
+    	});
+    },
+    invite: function(e) {
+    	email = $("#inviteemail").val();
+    	if(!email) {
+    		return;
+    	}
+    	var self = this;
+    	App.api.call('create', '../rest/v10/summer/invite', {email: email}, {
+    		success: function(o) {
+    			$("#inviteemail").val('');
+    			app.alert.show('invited', {level: 'info', title:'Invited', messages: 'Invite sent to '+email, autoClose: true});
+    		}
+    	});
+    },
+    selectInstance: function(e) {
+    	var id = $(this).data('id');
+    	var curr_id = app.user.get('instance_id');
+    	if(id == curr_id) {
+    		app.alert.show('already_there', {level: 'info', title:'You\'re here', messages: 'You are already using this instance', autoClose: true});
+            return;
+    	}
+    	App.api.call('create', '../rest/v10/summer/logout', null, {
+    		success: function(o) {
+    	    	$.getJSON('splash/rest/instances/' + id, null, function(o) {
+    	    			if(o.error) {
+    	    				app.alert.show('switch_failed', {level: 'error', title:'Failed', messages: 'Failed to switch instances: '+o.error, autoClose: false});
+    	    				return;
+    	    			}
+    	    			if(o.url) {
+    	    				window.location.href = o.url;
+    	    			}
+    	    		});
+    		}
+    	});
+    },
+    ignore: function(e) {
+    	e.stopPropagation();
+    },
 })

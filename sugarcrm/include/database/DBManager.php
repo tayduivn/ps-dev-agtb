@@ -2884,10 +2884,10 @@ protected function checkQuery($sql, $object_name = false)
      * @param SugarBean $bean Sugarbean instance that was changed
      * @return array
      */
-	public function getDataChanges(SugarBean &$bean)
+	public function getDataChanges(SugarBean &$bean, $for = 'audit')
 	{
 		$changed_values=array();
-		$audit_fields=$bean->getAuditEnabledFieldDefinitions();
+		$fields= $for == 'audit' ? $bean->getAuditEnabledFieldDefinitions() : $bean->getActivityEnabledFieldDefinitions();
 
         $fetched_row = array();
         if (is_array($bean->fetched_row))

@@ -207,18 +207,18 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	 */
 	public function getAccessToken($oauth_token)
     {
-        if ( session_id() != '' ) {
-            // There is already a session, let's see if it's the same one
-            if ( session_id() != $oauth_token ) {
+        if(empty($oauth_token) || session_id() !=  $oauth_token){
+            if(session_id()) {
                 // Oh, we are in trouble, we have a session and it's the wrong one.
                 // Let's close this session and start a new one with the correct ID.
                 session_write_close();
             }
+            // Disable cookies
+            ini_set("session.use_cookies",false);
+            session_id($oauth_token);
+            session_start();
         }
-        session_id($oauth_token);
-        // Disable cookies
-        ini_set("session.use_cookies",false);
-        session_start();
+
         if ( isset($_SESSION['oauth2']) ) {
             return $_SESSION['oauth2'];
         } else if ( !empty($_SESSION['authenticated_user_id']) ) {

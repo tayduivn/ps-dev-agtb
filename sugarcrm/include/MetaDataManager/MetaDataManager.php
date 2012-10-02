@@ -685,7 +685,11 @@ class MetaDataManager {
             $moduleList = array_keys($wireless_module_registry);
         } else {
             // Loading a standard module list
-            $moduleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $moduleList = array_keys($controller->get_user_tabs($this->user));
+            $moduleList[] = 'ActivityStream';
+            $moduleList[] = 'Users';            
         }
 
         $oldModuleList = $moduleList;

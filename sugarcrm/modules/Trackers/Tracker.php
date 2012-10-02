@@ -95,15 +95,20 @@ class Tracker extends SugarBean
 	        } else {
 	           $history_max_viewed = (!empty($GLOBALS['sugar_config']['history_max_viewed']))? $GLOBALS['sugar_config']['history_max_viewed'] : 50;
 	        }
-	         
+
 	        $query = 'SELECT item_id, item_summary, module_name, id FROM ' . $this->table_name . ' WHERE id = (SELECT MAX(id) as id FROM ' . $this->table_name . ' WHERE user_id = \'' . $user_id . '\' AND deleted = 0 AND visible = 1' . $module_query . ')';
 	        $result = $this->db->limitQuery($query,0,$history_max_viewed,true,$query);
 	        while(($row = $this->db->fetchByAssoc($result))) {
 	               $breadCrumb->push($row);
 	        }
-        }     
-
-        $list = $breadCrumb->getBreadCrumbList($modules);
+        }
+        $list = array();
+        // TODO: PHP 5.4.7 returns an incomplete class.
+        if(get_class($breadCrumb) == 'BreadCrumbStack') {
+            $list = $breadCrumb->getBreadCrumbList($modules);
+        } else {
+            $GLOBALS['log']->info('Tracker: $breadCrumb is not a BreadCrumbStack.');
+        }
         $GLOBALS['log']->info("Tracker: retrieving ".count($list)." items");
         return $list;
     }
