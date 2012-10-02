@@ -214,11 +214,13 @@ class MetaDataManager {
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
         
-        $seed = BeanFactory::newBean($moduleName);
-        
         //BEGIN SUGARCRM flav=pro ONLY
-        $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
-        $data['favoritesEnabled'] = $favoritesEnabled;
+        $seed = BeanFactory::newBean($moduleName);
+        if ($seed !== false) {
+            $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
+            $data['favoritesEnabled'] = $favoritesEnabled;
+
+        }
         //END SUGARCRM flav=pro ONLY
         $data["_hash"] = md5(serialize($data));
 
