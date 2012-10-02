@@ -62,7 +62,7 @@
      */
     _renderField: function(field) {
     	if(field.name == "expected_commit_stage")
-        { 
+        {
             //Set the field.def.options value based on buckets_dom setting (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.editableWorksheet)
@@ -106,13 +106,13 @@
         var self = this;
 
         _.each(fields, function(field) {
-            if (field.name == "expected_commit_stage") {                
-                field.viewName = self.editableWorksheet ? self.name : 'default';
+            if (field.name == "expected_commit_stage") {
+                field.view = self.editableWorksheet ? self.name : 'detail';
                 var forecastCategories = self.context.forecasts.config.get("forecast_categories");
                 
                 //show_binary, show_buckets, show_n_buckets
             	if(forecastCategories == "show_binary"){
-            		         		
+
             		_.each(self.meta.panels[0].fields, function(meta){
             			if(meta.name == "expected_commit_stage"){
             				meta.type="bool";
@@ -127,7 +127,7 @@
     _setUpCommitStage: function(field) {
     	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
     	var self = this;
-    	   	
+
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
     		field.type = "bool";
