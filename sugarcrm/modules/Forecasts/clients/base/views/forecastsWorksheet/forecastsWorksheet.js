@@ -104,12 +104,12 @@
     	    	
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
-    		field.type = "bool";
+            field.type = "bool";
     		field.format = function(value){
     			return (value=="include") ? true : false;    	        
     		};
     		field.unformat = function(value){
-    			return this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";    	        
+    			return this.$el.find(".checkbox:checked") ? "include" : "exclude";
     		};
     	}
     	else{
@@ -133,9 +133,10 @@
         {
             //Set the field.def.options value based on buckets_dom (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-            if(this.isEditableWorksheet)
+            field = this._setUpCommitStage(field);
+            if(!this.isEditableWorksheet)
             {
-               field = this._setUpCommitStage(field);
+                field.view = 'detail';
             }
         }
         
@@ -297,7 +298,7 @@
 
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
-                field.view = self.isEditableWorksheet ? self.name : 'default';
+                field.view = self.isEditableWorksheet ? self.name : 'detail';
             }
         });
 
