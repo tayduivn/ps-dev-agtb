@@ -1,5 +1,60 @@
 /* activity and twitter
 -----------------*/
+#moduleActivity #activitystream-timeline {
+  width: 96% !important;
+  margin: 0 2% !important;
+}
+
+#activitystream-calendar {
+  margin: 0 10px;
+}
+
+#moduleActivity .row {
+  padding: 10px;
+}
+
+div.sayit.activitystream-comment-box {
+  margin: 0 10px !important;
+  padding: 5px 8px !important;
+  width: 79% !important;
+}
+.activitystream-post.omnibar {
+  padding-left: 80px !important;
+}
+.activitystream-post .avatar42 img {
+  position: absolute !important;
+  left: 20px !important;
+}
+
+.activitystream-pending-attachment {
+position: relative;
+width: 140px;
+border: 4px solid @grayLighter;
+background: @grayLighter;
+float: left;
+height: 141px;
+font-size: 11px !important;
+overflow: hidden;
+margin: 5px 5px 5px 0;
+color: #767676;
+  .close {
+    font-size: 16px;
+    line-height: 14px;  
+    padding: 0 2px;
+    margin-left: 5px;
+  }
+  img {
+    margin-top: 4px;
+  }
+}
+
+.loading.wide {padding: 0 0 0 20px;}
+
+.commented .control-group {margin-bottom: 0;}
+.block.tabs-left .nav-tabs li {
+  padding: 0 0 0 20px;
+}
+.omnibar.row {margin: 0;}
 
 article {
   position: relative;
@@ -7,6 +62,28 @@ article {
   padding: 10px 30px 10px 10px;
   line-height: @baseLineHeight;
   border-bottom: 1px solid @grayLighter;
+}
+.side article {
+  padding: 0;
+}
+.side article a {
+  padding: 10px;
+  display: block;
+}
+.side .block.padded ul {
+  padding: 0;
+  margin: -10px 0 0;
+  list-style: none;
+  li {
+  padding: 10px;
+  border-bottom: 1px solid @grayLighter;
+  strong {
+    margin-left: 5px;
+    }
+  }
+}
+ul.unstyled, ol.unstyled {
+  margin: 0 !important;
 }
 
 article .avatar {
@@ -25,9 +102,7 @@ article p {
 article p:last-child {
 	margin: 0;
 }
-article:nth-child(even) {
-	background-color: @grayLighter;
-}
+
 .results article:first-child {
   .box-shadow(~"inset 0 4px 6px rgba(0,0,0,.6)");
 }

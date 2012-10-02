@@ -46,14 +46,14 @@
     $("th:contains('Subject')").css("width","50%");
     $("th:contains('Modified'),th:contains('Created'),th:contains('Number'),th:contains('ID'),th:contains('input'),th:contains('cog')").css("width","1%");
     $("th:contains('Opportunity'),th:contains('Name')").css("width","30%");
-    $(".folded th:contains('Opportunity'),th:contains('Name')").css("width","70%");
+    $(".side th:contains('Opportunity'),th:contains('Name')").css("width","70%");
 
     // keybinding
     $(document).keyup( function (e){
         if(e.keyCode === 27) {
           $(".alert-top").remove();
         }
-      })
+    });
 
     // add tipsies to grid for scaffolding (styleguide only)
     if ($('#grid-system').length) {
@@ -74,7 +74,7 @@
       $('table').find('tr.alert').remove();
       $('table').find(':checkbox').attr('checked', this.checked);
       $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="">select all 300</a> records.</td></tr>');
-    })
+    });
 
 
     // timeout the alerts
@@ -88,39 +88,40 @@
 
     // toggle more hide
     $('.more').toggle(
-      function (e) {
-    		$(this).parent().parent().prev('.extend').removeClass('hide');
-    		$(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
-    		return false;
+      function () {
+        $(this).parent().parent().prev('.extend').removeClass('hide');
+        $(this).html('Less &nbsp;<i class="icon-caret-up"></i>');
+        return false;
       },
-      function (e) {
-      		$(this).parent().parent().prev('.extend').addClass('hide');
-      		$(this).html('. . .');
-      		return false;
+      function () {
+        $(this).parent().parent().prev('.extend').addClass('hide');
+        $(this).html('. . .');
+        return false;
     });
 
     // toggle more hide
     $('.newfilter').toggle(
-      function (e) {
-    		$(this).parent().parent().parent().parent().find('.extend').removeClass('hide');
-    		$(this).dropdown('toggle');
+      function () {
+        $(this).parent().parent().parent().parent().find('.extend').removeClass('hide');
+        $(this).dropdown('toggle');
       },
-      function (e) {
-      	$(this).parent().parent().parent().parent().find('.extend').addClass('hide');
+      function () {
+        $(this).parent().parent().parent().parent().find('.extend').addClass('hide');
     });
 
     // toggle more hide
     $('.edit').toggle(
-      function (e) {
+      function () {
         $(this).addClass('active');
-    		$(this).parent().parent().parent().find('.extend').removeClass('hide');
-    		return false;
+        $(this).parent().parent().parent().find('.extend').removeClass('hide');
+        return false;
       },
-      function (e) {
+      function () {
         $(this).removeClass('active');
-      		$(this).parent().parent().parent().find('.extend').addClass('hide');
-      		return false;
-    });
+        $(this).parent().parent().parent().find('.extend').addClass('hide');
+        return false;
+      }
+    );
 
     $('.comment').toggle(
       function () {
@@ -138,12 +139,12 @@
 
     // toggle more hide
     $('.commented .more').toggle(
-      function (e) {
+      function () {
         $(this).parent().parent().parent().find('.comment').hide();
         $(this).parent().prev('.extend').removeClass('hide');
         return false;
       },
-      function (e) {
+      function () {
         $(this).parent().parent().parent().find('.comment').show();
         $(this).parent().prev('.extend').addClass('hide');
         $(this).html('2 more comments...');
@@ -183,22 +184,22 @@
       function () {
         $('span.editble').remove();
       }
-    )
-
+    );
 
 
     $(".omnibar").toggle(
-      function (e) {
-   		$(this).addClass('active');
-   		$(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>');
-   		$('.sayit').html('');
-   		return false;
+      function () {
+        $(this).addClass('active');
+        $(this).append('<div class="inputactions span10"><a href=""><i class="icon-tag"></i></a> <a href=""><i class="icon-paper-clip"></i></a> <input type="submit" class="pull-right btn btn-primary"><span class="pull-right"><a href="" class="btn btn-invisible btn-link">Send to Everyone</a> &nbsp;</div>');
+        $('.sayit').html('');
+        return false;
       },
-      function (e) {
+      function () {
         $(this).removeClass('active');
         $('.inputactions').remove();
-      		return false;
-    })
+        return false;
+      }
+    );
 
     $('.addme').on('click',
       function () {
@@ -207,7 +208,7 @@
           function () {
             $(this).parent('.filtered-body').remove();
             return false;
-        })
+        });
         $(this).parent().after('<div class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></div>');
         $('.addme').on('click',
           function () {
@@ -216,61 +217,61 @@
               function () {
                 $(this).parent('.filtered-body').remove();
                 return false;
-            })
+            });
             $(this).parent().after('<div class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></div>');
             return false;
-        })
+        });
         return false;
-    })
+    });
 
-    $('.actions').find('a[data-toggle=tab]').on('click', function (e) {
+    $('.actions').find('a[data-toggle=tab]').on('click', function () {
       $('.nav-tabs').find('li').removeClass('on');
-  		$(this).parent().parent().addClass('on');
-    })
+      $(this).parent().parent().addClass('on');
+    });
 
-    $('.actions').find('a.remove').on('click', function (e) {
+    $('.actions').find('a.remove').on('click', function () {
       $('.tooltip').remove();
-  		$(this).parent().parent().remove();
-  		return false;
+      $(this).parent().parent().remove();
+      return false;
     });
 
     // remove a dashlet
-    $('.thumbnail').find('.remove').on('click', function (e) {
-  		$(this).parent().parent().parent().parent().parent().remove();
+    $('.thumbnail').find('.remove').on('click', function () {
+      $(this).parent().parent().parent().parent().parent().remove();
     });
 
     // remove a close item
-    $('.folded').find('[data-toggle=tab]').on('click', function (e) {
-			$('.nav-tabs').find('li').removeClass('on');
-    })
+    $('.side').find('[data-toggle=tab]').on('click', function () {
+      $('.nav-tabs').find('li').removeClass('on');
+    });
 
     // toggle module search (needs tap logic for mobile)
-  	$('.addit').on('click', function () {
-  	    $(this).toggleClass('active');
-  	    $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
-  	    return false;
-  	})
+    $('.addit').on('click', function () {
+      $(this).toggleClass('active');
+      $(this).parent().parent().parent().find('.form-addit').toggleClass('hide');
+      return false;
+    });
 
-  	$('.search').on('click', function () {
-  	    $(this).toggleClass('active');
-  	    $(this).parent().parent().parent().find('.dataTables_filter').toggle(
-  	      function () {
-  	        $(this).find('input').focus();
-    	  });
-    	  $(this).parent().parent().parent().find('.form-search').toggle(
-  	      function () {
-  	        $(this).find('input').focus();
-    	  });
-  	    $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
-  	    return false;
-  	})
+    $('.search').on('click', function () {
+      $(this).toggleClass('active');
+      $(this).parent().parent().parent().find('.dataTables_filter').toggle(
+        function () {
+          $(this).find('input').focus();
+      });
+      $(this).parent().parent().parent().find('.form-search').toggle(
+        function () {
+          $(this).find('input').focus();
+      });
+      $(this).parent().parent().parent().find('.form-search').toggleClass('hide');
+      return false;
+    });
 
     $('table.datatable').dataTable({
       "bPaginate": false,
       "bFilter": true,
       "bInfo": false,
       "bAutoWidth": false
-    })
+    });
 
     // Select widget
     $(".chzn-select").chosen({ disable_search_threshold: 5 });
@@ -282,6 +283,6 @@
     $("[rel=popoverBottom]").popover({placement: "bottom"});
     $('#moduleActivity .form-search select').chosen();
     $('#moduleActivity .form-search input').quicksearch('ul.results li');
-  })
-}(window.jQuery)
+  });
+}(window.jQuery);
 

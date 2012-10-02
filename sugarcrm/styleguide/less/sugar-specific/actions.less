@@ -19,9 +19,13 @@ tr:hover td {
   top: 3px !important;
 }
 
-.form-search .actions, .thumbnail .actions {
+.form-search .actions {
   right: 10px !important;
   top: 8px !important;
+}
+.thumbnail .actions {
+  right: 2px !important;
+  top: 2px !important;
 }
 
 .form-search .actions {
@@ -29,7 +33,7 @@ tr:hover td {
   top: 0 !important;
 }
 
-.folded > .sidebar-pane.active .thumbnail .dropdown-menu li {
+.side > .side-pane.active .thumbnail .dropdown-menu li {
   margin: 0;
 }
 
@@ -46,4 +50,39 @@ tr:hover td {
 
 .drawerTrig {
   color: @grayLight;
+}
+
+
+.block.tabs-left .nav-tabs li .actions {
+  display: block;
+  top: -2px;
+  font-size: 13px;
+  font-weight: normal;
+  text-shadow: 0 1px 0 rgba(255,255,255,.7);
+}
+.block.tabs-left .nav-tabs li .actions a i {
+  padding: 4px;
+  color: @grayLight;
+}
+
+.block.tabs-left .nav-tabs li.on .actions .icon-eye-open {
+  color: @grayDark;
+  .opacity(100);
+  background: @grayLight;
+  text-shadow: none;
+  .border-radius(4px);
+  padding-right: 100px;
+  margin-right: -96px;
+}
+
+.span2 .block .actions {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.block .actions, article .actions, .subnav .actions {
+  position: absolute;
+  top: -5px;
+  right: 0;
 }

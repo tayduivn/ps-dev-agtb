@@ -42,7 +42,7 @@
   }
 
 
-.folded > div, .folded {
+.side {
     width: inherit;
 }
 
@@ -52,24 +52,23 @@
 }
 .acomment .avatar {margin-right: 10px;}
 
-.folded > .sidebar-pane {
-  display: none;
-  &.active {
+.side > .side-pane {
     top: 48px;
     right: 0;
     height: 100%;
-    width: inherit;
     position: absolute;
+    width: inherit;
     background-image: url('@{textureSecondary}');
-    padding-top: 40px;
     padding: 20px 1.1%;
     border-left: 1px solid @grayLight;
     display: block;
     &.hide {
       display: none;
     }
-  }
 
+.preview-pane {
+  display: none;
+}
 
   .block {
     width: 90%;
@@ -80,7 +79,7 @@
   }
 }
 
-.folded [data-toggle="tab"].actions {top: 0; color: @gray;}
+.side [data-toggle="tab"].actions {top: 0; color: @gray;}
 
 //55231: fix detail listing view on notes
 //6062ae3b6ab9bac3f9d6f4742e316f5fac0d5b51
