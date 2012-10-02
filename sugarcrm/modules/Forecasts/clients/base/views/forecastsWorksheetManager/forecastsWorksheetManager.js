@@ -188,7 +188,7 @@
             var worksheet = this;
             $(window).bind("beforeunload",function(){
                 if(worksheet._collection.isDirty){
-                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts")
+                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }            	
             });
         }
