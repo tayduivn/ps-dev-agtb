@@ -493,10 +493,10 @@
 
     _addCalendarMonthEvent: function(models) {
         var events = [], counts = {};
-        var getDate = function(datestring) {
-            var d = new Date(datestring);
-            var s = d.toDateString();
-            return s;
+        var getDate = function(dateString) {
+            var t = dateString.split(/[- :]/);
+            var d = new Date(t[0], t[1]-1, t[2]);
+            return d.toDateString();
         };
 
         $.each(models, function(index, model) {
@@ -508,7 +508,7 @@
                 counts[dateStr] = {};
                 counts[dateStr].count = 1;
                 counts[dateStr].id = model.get('id');
-                counts[dateStr].start = new Date(model.get('date_created'));
+                counts[dateStr].start = new Date(dateStr);
             }
         });
 
@@ -524,10 +524,14 @@
 
     _addCalendarWeekEvent: function(model) {
         var events = [];
-
+        var getDate = function(dateString) {
+            var t = dateString.split(/[- :]/);
+            var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+            return d;
+        };
         var event = {allDay:false};
         event.id = model.get('id');
-        event.start = new Date(model.get("date_created"));
+        event.start = getDate(model.get("date_created"));
         event.title =  model.get("created_by_name") + " " + model.get("activity_type");
         events.push(event);
 
@@ -536,10 +540,14 @@
 
     _addCalendarDayEvent: function(model) {
         var events = [], activityType = model.get('activity_type');
-
+        var getDate = function(dateString) {
+            var t = dateString.split(/[- :]/);
+            var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
+            return d;
+        };
         var event = {allDay:false};
         event.id = model.get('id');
-        event.start = new Date(model.get("date_created"));
+        event.start = getDate(model.get("date_created"));
         event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
 
         switch (activityType) {
