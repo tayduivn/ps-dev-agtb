@@ -664,7 +664,7 @@
                 );
         } else {  // not buckets
             // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(_.first(params) == "1") {//committed
+            if(_.first(params) == "include") {//committed
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
