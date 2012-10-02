@@ -4288,17 +4288,24 @@ $app_list_strings['forecasts_config_category_options_dom'] = array(
     'show_n_buckets' => 'N Categories',
 );
 $app_list_strings['forecasts_timeperiod_types_dom'] = array(
-    'fiscal' => 'Fiscal Year',
+    //BEGIN SUGARCRM flav=ent ONLY
+    //'fiscal' => 'Fiscal Year',
+    //END SUGARCRM flav=ent ONLY
     'chronological' => 'Date Based Year',
 );
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
-    'yearly' => 'Yearly',
-    'quarterly' => 'Quarterly',
+    'Annual' => 'Yearly',
+    'Quarter' => 'Quarterly',
 );
 $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
-    'first' => 'First',
-    'middle' => 'Middle',
-    'last' => 'Last'
+    //TODO: fix for pro version
+    //BEGIN SUGARCRM flav=ent ONLY
+    //'first' => 'First',
+    //'middle' => 'Middle',
+    //'last' => 'Last'
+    //END SUGARCRM flav=ent ONLY
+    'Quarter' => 'Quarterly',
+
 );
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (
