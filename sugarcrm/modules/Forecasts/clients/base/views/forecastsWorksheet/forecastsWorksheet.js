@@ -206,7 +206,9 @@
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-                worksheet.safeFetch();
+                if(worksheet._collection.isDirty){
+                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
+                }            	
             });
         }
     },
