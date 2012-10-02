@@ -40,11 +40,10 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                 array(
                     'name' => 'expected_commit_stage',
                     'type' => 'enum',
-                    'view' => 'edit',
                     'options' => 'commit_stage_dom',
                     'label' => 'LBL_FORECAST',
                     'default' => true,
-                    'enabled' => true,
+                    'enabled' => true                    
                 ),
                 array(
                     'name' => 'expected_amount',
@@ -52,7 +51,8 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase' => true
                 ),
                 array(
                     'name' => 'expected_best_case',
@@ -60,7 +60,8 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => true,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase' => true
                 ),
                 array(
                     'name' => 'expected_worst_case',
@@ -68,7 +69,8 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'type' => 'currency',
                     'default' => true,
                     'enabled' => false,
-                    'clickToEdit' => true
+                    'clickToEdit' => true,
+                    'convertToBase' => true
                 ),
             ),
         ),

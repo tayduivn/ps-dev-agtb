@@ -87,18 +87,14 @@ class FileApi extends SugarApi {
      * @return array
      */
     public function saveFilePut($api, $args) {
-        // Snag the headers up front so we can get our file type, file name, etc
-        $headers = getallheaders();
-        $headerslower = array_change_key_case($headers);
-
         // Mime type, set to null for grabbing it later if not sent
-        $filetype = isset($headerslower['content-type']) ? $headerslower['content-type'] : null;
+        $filetype = isset($_SERVER['HTTP_CONTENT_TYPE']) ? $_SERVER['HTTP_CONTENT_TYPE'] : null;
 
         // Set the filename, first from the passed args then from the request itself
         if (isset($args['filename'])) {
             $filename = $args['filename'];
         } else {
-            $filename = isset($headerslower['filename']) ? $headerslower['filename'] : create_guid();
+            $filename = isset($_SERVER['HTTP_FILENAME']) ? $_SERVER['HTTP_FILENAME'] : create_guid();
         }
 
         // Create a temp name for our file to begin mocking the $_FILES array
@@ -347,7 +343,7 @@ class FileApi extends SugarApi {
         try {
             $download->getFile($bean, $field);
         } catch (Exception $e) {
-            throw new SugarApiExceptionNotFound($e->getMessage(), 0, $e);
+            throw new SugarApiExceptionNotFound($e->getMessage(), null, null, 0, $e);
         }
     }
 

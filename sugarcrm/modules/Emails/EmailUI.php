@@ -1446,7 +1446,7 @@ eoq;
 		$EditView = new EditView();
 		$EditView->ss = new Sugar_Smarty();
 		//MFH BUG#20283 - checks for custom quickcreate fields
-		$EditView->setup($_REQUEST['qc_module'], $focus, 'custom/modules/'.$focus->module_dir.'/metadata/editviewdefs.php', 'include/EditView/EditView.tpl');
+		$EditView->setup($_REQUEST['qc_module'], $focus, get_custom_file_if_exists('modules/'.$focus->module_dir.'/metadata/editviewdefs.php'), 'include/EditView/EditView.tpl');
 		$EditView->process();
 		$EditView->render();
 

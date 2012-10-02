@@ -134,15 +134,6 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-
-    'DCEDataBases' => 'Databases',
-    'DCEClusters' => 'Clusters',
-    'DCEInstances' => 'Instances',
-    'DCETemplates' => 'Templates',
-    'DCEActions' => 'Actions',
-    'DCEReports'=>'DCE Reports',
-//END SUGARCRM flav=dce ONLY
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
@@ -351,6 +342,12 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+
+  'commit_stage_binary_dom' => array (
+    'include' => 'Include',
+    'pipeline' => 'Pipeline',
+  ),
+
   'commit_stage_dom' =>
   array (
     'include' => 'Include',
@@ -612,7 +609,6 @@ $app_list_strings = array (
 
   'record_type_display_notes' =>
   array (
-//BEGIN SUGARCRM flav!=dce ONLY
     'Accounts' => 'Account',
     'Contacts' => 'Contact',
     'Opportunities' => 'Opportunity',
@@ -636,19 +632,10 @@ $app_list_strings = array (
 
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
-//END SUGARCRM flav!=dce ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-    'Accounts' => 'Account',
-    'Contacts' => 'Contact',
-    'Cases' => 'Case',
-    'Emails' => 'Email',
-    'DCEInstances' => 'Instance',
-//END SUGARCRM flav=dce ONLY
   ),
 
   'parent_type_display' =>
   array (
-//BEGIN SUGARCRM flav!=dce ONLY
     'Accounts' => 'Account',
     'Contacts' => 'Contact',
     'Tasks' => 'Task',
@@ -673,15 +660,6 @@ $app_list_strings = array (
     'Prospects' => 'Target',
     //END SUGARCRM flav!=sales ONLY
 
-//END SUGARCRM flav!=dce ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-
-    'Accounts' => 'Account',
-    'Contacts' => 'Contact',
-    'Cases' => 'Case',
-    'Tasks' => 'Task',
-    'DCEInstances' => 'Instance',
-//END SUGARCRM flav=dce ONLY
   ),
 
   //BEGIN SUGARCRM flav=pro ONLY
@@ -1706,106 +1684,6 @@ $app_list_strings = array (
         'hbar'  => 'Horizontal Bar',
     ),
     //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    'server_status_list' => array (
-      'active' => 'Active',
-      'maintenance' => 'Maintenance',
-      'rebooting' => 'Rebooting',
-    ),
-    'instance_status_list' => array (
-      'new' => 'New',
-      'live' => 'Live',
-      'in_progress' => 'In Progress',
-      'archived' => 'Archived',
-    ),
-    'action_status_list' => array (
-      'queued' => 'Queued',
-      'started' => 'Started',
-      'pending' => 'Pending',
-      'suspended' => 'Suspended',
-      'completed' => 'Completed',
-      'done' => 'Done',
-      'failed' => 'Failed',
-    ),
-    'action_priority_list' => array (
-      '3' => 'Urgent',
-      '2' => 'High',
-      '1' => 'Medium',
-      '0' => 'Low',
-    ),
-    'action_type_list' => array (
-      'create' => 'Create',
-      'convert' => 'Convert',
-      'clone' => 'Clone',
-      'recover' => 'Recover',
-      'archive' => 'Archive',
-      'delete' => 'Delete',
-      'toggle_on' => 'Enable Support User',
-      'toggle_off' => 'Disable Support User',
-      'upgrade_live' => 'Upgrade Live',
-      'upgrade_test' => 'Upgrade Test',
-      'key' => 'Update Key',
-      'report' => 'DCE Report',
-    ),
-    'status_list' => array (
-        'active' => 'Active',
-        'innactive' => 'Innactive',
-        'pending_approval' => 'Pending Approval',
-        'dummy' => 'Place Holder',
-    ),
-    'production_duration_default_key' => '365',
-    'production_duration_list' => array (
-        '365' => '1 year',
-    ),
-    'production_extended_duration_default_key' => '0',
-    'production_extended_duration_list' => array (
-        '0' => '',
-        '365' => '1 year',
-    ),
-    'convert_status_list' => array (
-        'no' => 'Not Converted',
-        'yes' => 'Converted',
-        'error' => 'Could Not Convert',
-    ),
-
-    'evaluation_duration_default_key' => '30',
-    'evaluation_duration_list' => array (
-        '15' => '15 days',
-        '30' => '30 days',
-    ),
-    'evaluation_extended_duration_default_key' => '0',
-    'evaluation_extended_duration_list' => array (
-        '0' => '',
-        '15' => '15 days',
-        '30' => '30 days',
-    ),
-    'instance_type_list' => array (
-        'evaluation' => 'Evaluation',
-        'production' => 'Production',
-    ),
-    'url_format_list' => array (
-        'URL/Instance_Name' => '(URL)/(Instance Name)',
-        'Instance_Name.URL' => '(Instance Name).(URL)',
-    ),
-  //Note:  do not translate dceinstance_contact_relationship_type_default_key
-//       it is the key for the default dceinstance_contact_relationship_type_dom value
-  'dceinstance_contact_relationship_type_default_key' => 'Primary Decision Maker',
-  'dceinstance_contact_relationship_type_dom' =>
-  array (
-    '' => '',
-    'Primary Decision Maker' => 'Primary Decision Maker',
-    'Technical Decision Maker' => 'Technical Decision Maker',
-  ),
-  //Note:  do not translate dceinstance_user_relationship_type_default_key
-//       it is the key for the default dceinstance_user_relationship_type_dom value
-  'dceinstance_user_relationship_type_default_key' => 'Sales Rep',
-  'dceinstance_user_relationship_type_dom' =>
-  array (
-    '' => '',
-    'Sales Rep' => 'Sales Rep',
-    'Support Rep' => 'Support Rep',
-  ),
-//END SUGARCRM flav=dce ONLY
     'release_status_dom' =>
     array (
         'Active' => 'Active',
@@ -1891,19 +1769,15 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
-    'forecasts_filters_category' => array(
-        '1' => 'Committed',
-        '0' => 'Pipeline',
-    ),
     'forecasts_chart_options_group' => array(
         'forecast' => 'Included In Forecast',
         'sales_stage' => 'Sales Stage',
         'probability' => 'Probability'
     ),
     'forecasts_chart_options_dataset' => array(
-        'likely' => 'Likely Case',
-        'best' => 'Best Case',
-        'worst' => 'Worst Case'
+        'likely' => 'Likely',
+        'best' => 'Best',
+        'worst' => 'Worst'
     ),
 );
 
@@ -2482,6 +2356,22 @@ $app_strings = array (
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
 
+    'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
+
+    // Default SugarApiException error messages
+    'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
+    'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
+    'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
+    'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
+    'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
+    'EXCEPTION_NOT_FOUND'               => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
+    'EXCEPTION_MISSING_PARAMTER'        => 'A required parameter in your request was missing.',
+    'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
+    'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
+    'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
+
+
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
@@ -2525,13 +2415,8 @@ $app_strings = array (
     'LBL_BILL_TO_ACCOUNT'=>'Bill to Account',
     'LBL_BILL_TO_CONTACT'=>'Bill to Contact',
     'LBL_BILLING_ADDRESS'=>'Billing Address',
-//BEGIN SUGARCRM flav=dce ONLY
-    'LBL_BROWSER_TITLE' => 'Sugar DCE',
-//END SUGARCRM flav=dce ONLY
     'LBL_QUICK_CREATE_TITLE' => 'Quick Create',
-//BEGIN SUGARCRM flav!=dce ONLY
     'LBL_BROWSER_TITLE' => 'SugarCRM - Commercial Open Source CRM',
-//END SUGARCRM flav!=dce ONLY
     'LBL_BUGS'=>'Bugs',
     'LBL_BY' => 'by',
     'LBL_CALLS'=>'Calls',
@@ -2898,9 +2783,6 @@ $app_strings = array (
     'LBL_TABGROUP_SALES' => 'Sales',
     'LBL_TABGROUP_SUPPORT' => 'Support',
     'LBL_TABGROUP_TOOLS' => 'Tools',
-//BEGIN SUGARCRM flav=dce ONLY
-    'LBL_TABGROUP_DCE' => 'DCE',
-//END SUGARCRM flav=dce ONLY
     'LBL_TASKS'=>'Tasks',
     'LBL_TEAMS_LINK'=>'Teams',
     'LBL_THEME_COLOR'=>'Color',
@@ -2980,7 +2862,7 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.',
+    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 13, 14 </li><li>Safari 5.1</li><li>Google Chrome</li></ul>',
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -3214,22 +3096,6 @@ $app_strings = array (
     'LBL_PLUGIN_LOTUS_DESC' => 'Integrate Sugar with Lotus Notes.',
      //END SUGARCRM flav=ent ONLY
 
-    //BEGIN SUGARCRM flav=dce ONLY
-    //DCE
-    'LBL_DCEDEPLOY_LABEL' => 'Deploy',
-    'LBL_DCEDELETE_LABEL' => 'Delete',
-    'LBL_DCEUPGRADE_LABEL' => 'Upgrade',
-    'LBL_DCEARCHIVE_BUTTON' => 'Archive',
-    'LBL_DCECLONE_BUTTON' => 'Clone',
-    'LBL_DCERECOVER_BUTTON' => 'Recover',
-    'LBL_DCESUPPORTUSER_ENABLE_BUTTON' => 'Enable Support User',
-    'LBL_DCESUPPORTUSER_DISABLE_BUTTON' => 'Disable Support User',
-    'LBL_DCECONVERTINSTANCE_BUTTON' => 'Convert Instance',
-    'LBL_DCETEMPLATE_CONVERT' => 'Convert Template',
-    'LBL_DCERESTARTEMAIL_LABEL' => 'Resend Email',
-    'LBL_DCERESTARTACTION_LABEL' => 'Restart Action',
-    'LNK_DCEUPGRADE_SEARCH' => 'Upgrade Search',
-    //END SUGARCRM flav=dce ONLY
 
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'is not before',
@@ -3486,6 +3352,7 @@ $app_strings = array (
     'LBL_UPLOADING' => 'Uploading',
 
     //for portal
+    'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
@@ -4435,7 +4302,7 @@ $app_strings ['documentation'] = array (
 );
 
 $app_list_strings['forecasts_config_category_options_dom'] = array(
-    'binary' => 'Two Categories',
+    'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
     'show_n_buckets' => 'N Categories',
 );

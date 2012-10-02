@@ -107,7 +107,8 @@ class ForecastScheduleApiTest extends RestTestBase
 
     /**
      * This method is to test the retrieval function from the /ForecastSchedule REST endpoint
-     * @outputBuffering disabled
+     * @group forecasts
+     *
      */
     public function testForecastSchedule()
     {
@@ -130,21 +131,49 @@ class ForecastScheduleApiTest extends RestTestBase
 
     /**
      * This method is to test that a default (no-id) entry is returned when no-record is found
+     * @group forecasts
      *
      */
     public function testDefaultForecastSchedule()
     {
-        global $current_user;
         $response = $this->_restCall("ForecastSchedule?timeperiod_id=bogustimperiodid&user_id=" . self::$manager->id);
         $schedule = $response['reply'][0];
         $this->assertNotEmpty($schedule['user_id']);
+        $this->assertNotEmpty($schedule['base_rate']);
         $this->assertArrayNotHasKey('id', $schedule, 'Assert entry does not have an id');
     }
 
 
     /**
+     * This method is to test that a default (no-id) entry is returned when no-record is found and that the currency_id
+     * and base_rate values are correctly set to the user's preferences
+     * @group forecasts
+     */
+    public function testDefaultForecastScheduleCreatesCorrectCurrency()
+    {
+        $currency = SugarTestCurrencyUtilities::createCurrency('foo', 'foo', 'foo', 1.2);
+        self::$manager->setPreference('currency', $currency->id);
+        self::$manager->save();
+
+        $db = DBManagerFactory::getInstance();
+        $db->commit();
+
+        $response = $this->_restCall("ForecastSchedule?timeperiod_id=bogustimperiodid2&user_id=" . self::$manager->id);
+        $schedule = $response['reply'][0];
+        $this->assertNotEmpty($schedule['user_id']);
+        $this->assertNotEmpty($schedule['base_rate']);
+        $this->assertNotEmpty($schedule['currency_id']);
+        $this->assertEquals($currency->id, $schedule['currency_id'], 'currency_id does not match expected id: ' . $currency->id);
+        $this->assertEquals($currency->conversion_rate, $schedule['base_rate'], 'base_rate does not match expected base_rate: ' . $currency->conversion_rate);
+        $this->assertArrayNotHasKey('id', $schedule, 'Assert entry does not have an id');
+
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+    }
+
+
+    /**
      * This method is to test the save function from the /ForecastSchedule REST endpoint to update an entry
-     * @outputBuffering disabled
+     * @group forecasts
      */
     public function testForecastScheduleSave()
     {

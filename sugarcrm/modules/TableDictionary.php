@@ -129,13 +129,6 @@ include("metadata/linked_documentsMetaData.php");
 //BEGIN SUGARCRM flav=pro ONLY
 include("metadata/sessionHistoryMetaData.php");
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-include("metadata/dceinstances_contactsMetaData.php");
-include("metadata/dceinstances_usersMetaData.php");
-include("metadata/contacts_dceclustersMetaData.php");
-include("metadata/users_dceclustersMetaData.php");
-include("metadata/dceinstances_casesMetaData.php");
-//END SUGARCRM flav=dce ONLY
 
 // Documents, so we can start replacing Notes as the primary way to attach something to something else.
 include("metadata/documents_accountsMetaData.php");

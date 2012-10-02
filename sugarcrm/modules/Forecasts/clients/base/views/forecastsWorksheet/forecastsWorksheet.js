@@ -17,22 +17,16 @@
     isEditableWorksheet:false,
     _collection:{},
 
-
     /**
-     * This function handles updating the totals calculation and calling the render function.  It takes the model entry
-     * that was updated by the toggle event and calls the Backbone save function on the model to invoke the REST APIs
-     * to handle persisting the changes
+     * Contains a list of column names from metadata and maps them to correct config param
+     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
      *
-     * @param model Backbone model entry that was affected by the toggle event
+     * @property _tableColumnsConfigKeyMap
      */
-    toggleIncludeInForecast:function(model)
-    {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() {
-        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
-        	this.render(); 
-        }, this)});
+    _tableColumnsConfigKeyMap: {
+        'amount': 'show_worksheet_likely',
+        'best_case': 'show_worksheet_best',
+        'worst_case': 'show_worksheet_worst',
     },
 
     /**
@@ -42,9 +36,9 @@
      * @param {Object} options
      */
     initialize:function (options) {
-
+    	
         var self = this;
-
+        
         this.viewModule = app.viewModule;
 
         //set expandable behavior to false by default
@@ -94,16 +88,7 @@
         }
 
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        /*
-        var params = '';
-        _.each(args, function (value, key) {
-            params += '&' + key + '=' + encodeURIComponent(value);
-        });
-
-        if(params)
-        {
-            url += '?' + params.substr(1);
-        }*/
+        
         return url;
     },
 
@@ -114,11 +99,24 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-        field._save = function(event, input) {
-            this.model.set('commit_stage', input.selected);
-            this.view.context.set('selectedToggle', field);
-        };
-        field.events = _.extend({"change select": "_save"}, field.events);
+    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var self = this;
+    	    	
+    	//show_binary, show_buckets, show_n_buckets
+    	if(forecastCategories == "show_binary"){
+    		field.type = "bool";
+    		field.format = function(value){
+    			return (value=="include") ? true : false;    	        
+    		};
+    		field.unformat = function(value){
+    			return this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";    	        
+    		};
+    	}
+    	else{
+    		field.type = "enum";
+    		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+    	}  	
+    	
         return field;
     },
 
@@ -131,22 +129,16 @@
      * @protected
      */
     _renderField: function(field) {
-
         if(field.name == "commit_stage")
         {
             //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
+            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.isEditableWorksheet)
             {
                field = this._setUpCommitStage(field);
             }
         }
-
-        /*
-        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            field = this._setUpCommitStage(field);
-        }
-        */
+        
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -154,7 +146,7 @@
         }
 
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this);
+            new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
         }
     },
 
@@ -162,14 +154,7 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
-
-            this._collection.on("change", function() {
-                _.each(this._collection.models, function(element, index){
-                    if(element.hasChanged("commit_stage")) {
-                        this.toggleIncludeInForecast(element);
-                    }
-                }, this);
-            }, this);
+            
         }
 
         // listening for updates to context for selectedUser:change
@@ -197,13 +182,76 @@
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
             }, this);
+
+            this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['amount'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['best_case'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['worst_case'], value, self);
+                }
+            });
+
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-            	worksheet.safeFetch();
+                worksheet.safeFetch();
             });
         }
     },
-    
+
+    /**
+     * Sets the visibility of a column or columns if array is passed in
+     *
+     * @param cols {Array} the sName of the columns to change
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     * @param ctx {Object} the context of this view to have access to the checkForColumnsSetVisibility function
+     */
+    setColumnVisibility: function(cols, value, ctx) {
+        var aoColumns = ctx.gTable.fnSettings().aoColumns;
+
+        for(var i in cols) {
+            var columnName = cols[i];
+            for(var k in aoColumns) {
+                if(aoColumns[k].sName == columnName)  {
+                    this.gTable.fnSetColumnVis(k, value == 1);
+                    break;
+                }
+            }
+        }
+    },
+
+    /**
+     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     *
+     * @param colKey {String} the column sName to check in the keymap
+     * @return {*} returns null if not found in the keymap, returns true/false if it did find it
+     */
+    checkConfigForColumnVisibility: function(colKey) {
+        var returnValue = null;
+        // Check and see if our keymap has the column
+        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
+            // if so get the value from config
+            returnValue = this.context.forecasts.config.get(this._tableColumnsConfigKeyMap[colKey]);
+        }
+
+        // if there was no value in the keymap, returnValue is null,
+        // in which case returnValue should be set to true because it doesn't correspond to a config setting
+        // so it should be shown
+        return _.isNull(returnValue) ? true : (returnValue == 1);
+    },
+
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
@@ -248,7 +296,7 @@
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
                 //field.enabled = (app.config.show_buckets == 1);
-                field.view = self.isEditableWorksheet ? 'edit' : 'default';
+                field.view = self.isEditableWorksheet ? self.name : 'default';
             }
         });
 
@@ -280,7 +328,13 @@
 
         _.each(fields, function(field, key){
             var name = field.name;
-            var fieldDef = { "sName": name, "aTargets": [ key ] };
+
+            var fieldDef = {
+                "sName": name,
+                "aTargets": [ key ],
+                "bVisible" : self.checkConfigForColumnVisibility(field.name)
+            };
+
             if(typeof(field.type) != "undefined" && field.type == "bool"){
             	fieldDef["sSortDataType"] = "dom-checkbox";
             }
@@ -342,7 +396,6 @@
 
         return this;
     },
-
 
     /**
      * Creates the "included totals" and "overall totals" subviews for the worksheet

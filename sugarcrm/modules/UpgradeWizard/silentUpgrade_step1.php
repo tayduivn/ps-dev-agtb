@@ -389,7 +389,6 @@ $_REQUEST['addTaskReminder'] = 'remind';
 
 
 define('SUGARCRM_INSTALL', 'SugarCRM_Install');
-define('DCE_INSTANCE', 'DCE_Instance');
 
 global $cwd;
 $cwd = getcwd(); // default to current, assumed to be in a valid SugarCRM root dir.
@@ -418,17 +417,13 @@ echo "********************************************************************\n";
 echo "\n";
 
 global $sugar_config;
-$isDCEInstance = false;
 $errors = array();
 
 
-if($upgradeType != constant('DCE_INSTANCE')) {
-
-	ini_set('error_reporting',1);
-	require_once('include/entryPoint.php');
-	require_once('include/SugarLogger/SugarLogger.php');
-	require_once('include/utils/zip_utils.php');
-
+ini_set('error_reporting',1);
+require_once('include/entryPoint.php');
+require_once('include/SugarLogger/SugarLogger.php');
+require_once('include/utils/zip_utils.php');
 
 if(!function_exists('sugar_cached'))
 {
@@ -569,8 +564,8 @@ if($configOptions['db_type'] == 'mysql'){
 	//Change the db wait_timeout for this session
 	$now_timeout = $db->getOne("select @@wait_timeout");
 	logThis('Wait Timeout before change ***** '.$now_timeout , $path);
-	$db->query("set wait_timeout=28800");	
-	$now_timeout = $db->getOne("select @@wait_timeout");	
+	$db->query("set wait_timeout=28800");
+	$now_timeout = $db->getOne("select @@wait_timeout");
 	logThis('Wait Timeout after change ***** '.$now_timeout , $path);
 }
 
@@ -719,8 +714,8 @@ if(!didThisStepRunBefore('commit')){
 	 		$skippedFiles = $split['skippedFiles'];
 			set_upgrade_progress('commit','in_progress','commitCopyNewFiles','done');
 	 }
-    
-    // 6.6 metadata enhancements for portal and wireless, should only be 
+
+    // 6.6 metadata enhancements for portal and wireless, should only be
     // handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
     // handled AFTER inclusion of the upgrade package files
     if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
@@ -729,27 +724,27 @@ if(!didThisStepRunBefore('commit')){
                 set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
                 logThis('Preparing to upgrade metadata to 6.6.0 compatibility through the silent upgrader ...');
                 require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
-                
+
                 // Get the sidecar metadata upgrader
                 $smdUpgrader = new SidecarMetaDataUpgrader();
-                
+
                 // Run the upgrader
                 $smdUpgrader->upgrade();
-                
+
                 // Log failures if any
                 $failures = $smdUpgrader->getFailures();
                 if (!empty($failures)) {
                     logThis(count($failures) . ' metadata files failed to upgrade through the silent upgrader:');
                     logThis(print_r($failures, true));
                 }
-                    
+
                 // Reset the progress
                 set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','done');
             }
         }
     }
     // END sidecar metadata updates
-    
+
 	require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
 	$new_sugar_version = getUpgradeVersion();
     $origVersion = substr(preg_replace("/[^0-9]/", "", $sugar_version),0,3);
@@ -1086,9 +1081,6 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 		}
 		echo "FAILED\n";
 	}
-
-
-}
 
 
 /**

@@ -47,26 +47,22 @@ class OpportunitiesSeedData {
  * @return array Array of Opportunities created
  */
 public static function populateSeedData($records, $app_list_strings, $accounts
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
     ,$products, $users
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=pro ONLY
 )
 {
     if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
-//BEGIN SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=pro ONLY
        || empty($products) || empty($users)
-//END SUGARCRM flav=ent ONLY
+//END SUGARCRM flav=pro ONLY
 
     )
     {
         return array();
     }
 
-    $timedate = TimeDate::getInstance();
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    $product = new Product();
-    //END SUGARCRM flav=ent ONLY
+    $opp_ids = array();
 
     while($records-- > 0)
     {
@@ -98,45 +94,15 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $probability = array("10", "70", "40", "60");
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
-        //BEGIN SUGARCRM flav=pro ONLY
-        $opp->worst_case = $opp->amount * .8;
-        $opp->best_case = $opp->amount * 1.2;
-        //END SUGARCRM flav=pro ONLY
+        
         $opp->save();
         // Create a linking table entry to assign an account to the opportunity.
-        $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
+        $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);        
 
-        //BEGIN SUGARCRM flav=ent ONLY
-        $count = mt_rand(1, 3);
-        $line_item_count = $count;
-
-        while($line_item_count-- >= 0)
-        {
-            //Get a random product_line_data entry
-            $key = array_rand($products);
-            $prod = $products[$key];
-
-            //Get a random user entry
-            $key = array_rand($users);
-            $user = $users[$key];
-
-            $product->id = null;
-            $product->product_id = $prod->id;
-            $product->opportunity_id = $opp->id;
-            $product->created_by = $opp->assigned_user_id;
-            $product->modified_user_id = $opp->assigned_user_id;
-            $product->date_entered = $timedate->asDb($timedate->getNow());
-            $product->date_modified = $prod->date_entered;
-            $product->name = $prod->name;
-            $product->expert_id = $user['id'];
-            $product->save();
-        }
-        //END SUGARCRM flav=ent ONLY
-
-        $product_ids[] = $product->id;
+        $opp_ids[] = $opp->id;
     }
 
-    return $product_ids;
+    return $opp_ids;
 }
 
 }

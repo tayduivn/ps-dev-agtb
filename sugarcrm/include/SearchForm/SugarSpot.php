@@ -548,6 +548,17 @@ class SugarSpot
                             $ret_array['where'] .= " AND ";
                         }
 
+                        // If there are no where clauses but there is a custom
+                        // where but there is no return array where clause add 
+                        // an AND, otherwise you will get a situation where there
+                        // is a where condition without an adjoining clause. This
+                        // happens in Unified Search where there is team security
+                        // added to the query.
+                        // - rgonzalez
+                        if (stripos($ret_array['where'], 'where') === false) {
+                            $ret_array['where'] .= ' AND ';
+                        }
+                        
                         $ret_array['where'] .= $custom_where;
                     }
                    

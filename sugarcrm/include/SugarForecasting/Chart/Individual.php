@@ -78,6 +78,11 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             $this->group_by = strtolower($args['group_by']);
         }
         parent::__construct($args);
+
+        // the individual chart doesn't use the dataset an an arary yet
+        if (is_array($this->dataset)) {
+            $this->dataset = array_shift($this->dataset);
+        }
     }
 
     /**
@@ -219,7 +224,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
             }
 
             // Bug 56330: if the dataset_key doesn't exist default to 0
-            $dataset_value = (isset($data[$dataset_key])) ? $data[$dataset_key] : 0;
+            $dataset_value = (isset($data[$dataset_key])) ? SugarCurrency::convertAmountToBase($data[$dataset_key], $data['currency_id']) : 0;
 
             // put the values in to their proper locations and add to any that are already there
             $this->values[$month_value_key]['values'][$value_key] += number_format($dataset_value, 2, '.', '');
@@ -292,7 +297,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         $quota_bean = BeanFactory::getBean('Quotas');
         $quota = $quota_bean->getCurrentUserQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'));
 
-        return $quota['amount'];
+        return SugarCurrency::convertAmountToBase($quota['amount'], $quota['currency_id']);
     }
 
 
