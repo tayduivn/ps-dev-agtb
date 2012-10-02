@@ -49,6 +49,7 @@ class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
      * This method implements the run function of RunnableSchedulerJob and handles processing a SchedulersJob
      *
      * @param Mixed $data parameter passed in from the job_queue.data column when a SchedulerJob is run
+     * @return bool true on success, false on error
      */
     public function run($data)
     {
@@ -56,10 +57,9 @@ class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
         // Each module that has currency rates in its model(s) *must* have a scheduler
         // job defined in order to update its rates when a currency rate is updated.
         $globPaths = array(
-            array('custom/modules/*/jobs/Custom*RateUpdateSchedulerJob.php'),
-            array('modules/*/jobs/*RateUpdateSchedulerJob.php'),
+            'custom/modules/*/jobs/Custom*CurrencyRateUpdate.php',
+            'modules/*/jobs/*CurrencyRateUpdate.php'
         );
-
         foreach ($globPaths as $entry)
         {
             $jobFiles = glob($entry, GLOB_NOSORT);
@@ -74,12 +74,18 @@ class CurrencyRateSchedulerJob implements RunnableSchedulerJob {
                         $GLOBALS['log']->error(get_class($this).": unable to find class {$jobClass} for job file {$jobFile}");
                         continue;
                     }
-                    $updateRates = new $jobClass;
+                    $jobObject = new $jobClass;
                     $data = json_decode($this->job->data);
-                    $updateRates->run($data['currency_id']);
+                    $result = $jobObject->run($data);
+                    {
+                        if(!$result) {
+                            return false;
+                        }
+                    }
                 }
             }
         }
+        return true;
     }
 
 }

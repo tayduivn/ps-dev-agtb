@@ -517,13 +517,22 @@ class SchedulersJob extends Basic
         else if ($exJob[0] == 'class')
         {
             if(!class_exists($exJob[1])) {
-                // glob scan custom/modules/jobs/*.php, modules/jobs/*.php
+                if(file_exists("include/SchedulersJob/{$exJob[1]}.php")) {
+                    require_once("include/SchedulersJob/{$exJob[1]}.php");
+                }
             }
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
             {
                 $tmpJob->setJob($this);
-                return $tmpJob->run($this->data);
+                $result = $tmpJob->run($this->data);
+                if($result) {
+                    $this->resolveJob(self::JOB_SUCCESS);
+                    return true;
+                }  else {
+                    $this->resolveJob(self::JOB_FAILURE);
+                    return false;
+                }
             }
             else {
                 $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));

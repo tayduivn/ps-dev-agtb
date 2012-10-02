@@ -34,9 +34,9 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
     /**
      * constructor
      *
-     * @access protected
+     * @access public
      */
-    protected function __construct() {
+    public function __construct() {
         // set rate field definitions
         $this->addRateColumnDefinition('opportunities','base_rate');
         // set usdollar field definitions
