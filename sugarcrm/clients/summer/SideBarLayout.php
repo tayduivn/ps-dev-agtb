@@ -1,7 +1,5 @@
 <?php
 
-require_once('clients/summer/GenericLayout.php');
-
 class SideBarLayout {
 
     protected $mainPane;

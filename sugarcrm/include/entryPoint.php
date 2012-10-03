@@ -172,6 +172,12 @@ require_once('include/SugarCache/SugarCache.php');
 require('modules/Currencies/Currency.php');
 require_once('include/MVC/SugarApplication.php');
 
+//BEGIN SUGARCRM flav=free ONLY
+require_once('clients/summer/GenericLayout.php');
+require_once('clients/summer/SideBarLayout.php');
+require_once('clients/summer/TabbedLayout.php');
+//END SUGARCRM flav=free ONLY
+
 require_once('include/upload_file.php');
 UploadStream::register();
 //

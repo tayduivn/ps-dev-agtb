@@ -1,5 +1,4 @@
 <?php
-require_once('clients/summer/SideBarLayout.php');
 
 class TabbedLayout extends SideBarLayout {
     public function TabbedLayout() {
