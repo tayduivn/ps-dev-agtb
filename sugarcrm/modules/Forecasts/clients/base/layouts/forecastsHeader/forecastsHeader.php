@@ -22,24 +22,23 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['view']['forecastsConfigGeneral'] = array(
-    'panels' => array(
+$viewdefs['Forecasts']['base']['layout']['forecastsHeader'] = array(
+    'type' => 'forecastsHeader',
+    'name' => 'forecastsHeader',
+    'components' => array(
         array(
-            'buttons' => array(
-                array(
-                    'name' => 'ok_button',
-                    'type' => 'button',
-                    'css_class' => 'btn-primary pull-right',
-                    'label' => 'LBL_EMAIL_OK',
-                    'primary' => true,
-                ),
-                array(
-                    'name' => 'close_button',
-                    'type' => 'button',
-                    'css_class' => 'btn-invisible btn-link',
-                    'label' => 'LBL_EMAIL_CANCEL',
-                    'primary' => false,
-                ),
+            'view' => 'forecastsTitle',
+        ),
+        array(
+            'view' => 'forecastsTree',
+        ),
+        array(
+            'view' => 'forecastsCommitButtons',
+        ),
+        array(
+            'layout' => array(
+                'type' => 'modal',
+                'showEvent' => 'modal:forecastsConfig:open',
             ),
         ),
     ),

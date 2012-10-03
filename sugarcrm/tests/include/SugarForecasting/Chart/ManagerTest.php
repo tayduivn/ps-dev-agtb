@@ -95,12 +95,12 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $data = $obj->process();
 
         // get the quota from the first record
-        $actual = $data['values'][0]['goalmarkervalue'][0];
+        $actual = doubleval($data['values'][0]['goalmarkervalue'][0]);
         $expected = $this->users['manager']['quota']->amount + $this->users['reportee']['quota']->amount;
 
         $expected = SugarCurrency::convertAmountToBase($expected, $this->currency->id);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -127,10 +127,10 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         $field = $dataset . '_case';
 
-        $actual = $testData['values'][$position];
+        $actual = doubleval($testData['values'][$position]);
         $expected = SugarCurrency::convertAmountToBase($this->users[$user][$type]->$field, $this->users[$user][$type]->currency_id);
 
-        $this->assertEquals($expected, $actual);
+        $this->assertSame($expected, $actual);
     }
 
     /**
@@ -183,8 +183,9 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         }
 
         $expected = SugarCurrency::convertAmountToBase($expected, $this->currency->id);
+        $actual = doubleval($data['goalmarkervalue'][$chart_position+1]);
 
-        $this->assertEquals($expected, $data['goalmarkervalue'][$chart_position+1]);
+        $this->assertSame($expected, $actual);
 
     }
 

@@ -4,8 +4,7 @@
         <div class="container-fluid" id="contentflex">
             <div class="row-fluid">
                 <div class="span8">
-                    <div class="view-forecastsSubnav subnav" id="headerbar"></div>
-                    <div class="view-forecastsCommitButtons"></div>
+                    <div class="view-forecastsHeader"></div>
                     <div class="view-forecastsCommitted"></div>
                     <div class="view-forecastsFilter"></div>
                     <div>
