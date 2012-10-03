@@ -45,6 +45,7 @@ public static function populateSeedData()
     $timedate->tzUser($now); // use local TZ to calculate dates
     $timeperiods=array();
 
+
     $timeperiod1 = new TimePeriod();
     $year = $timedate->getNow()->format('Y');
     $timeperiod1->name = "Year ".$year;
@@ -52,7 +53,6 @@ public static function populateSeedData()
     $timeperiod1->end_date = $timedate->asDbDate($now->get_day_end(31, 12, $year));
     $timeperiod1->is_fiscal_year =1;
     $fiscal_year_id=$timeperiod1->save();
-
     //create a time period record for the first quarter.
     $timeperiod2 = new TimePeriod();
     $timeperiod2->name = "Q1 ".$year;
