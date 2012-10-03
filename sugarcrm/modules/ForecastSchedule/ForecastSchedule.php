@@ -43,6 +43,7 @@ class ForecastSchedule extends SugarBean {
 	var $date_modified;
     var $currency_id;
     var $base_rate;
+    var $expected_commit_stage;
     var $expected_best_case;
     var $expected_likely_case;
     var $expected_worst_case;

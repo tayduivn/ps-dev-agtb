@@ -6,9 +6,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             'view' => 'forecastsFilter',
         ),
         array(
-            'view' => 'forecastsTree',
-        ),
-        array(
             'view' => 'forecastsChart',
         ),
         array(
@@ -45,16 +42,13 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
 
         ),
         array(
-            'view' => 'forecastsSubnav',
-        ),
-        array(
-            'view' => 'forecastsCommitButtons',
-        ),
-        array(
             'layout' => array(
                 'type' => 'modal',
                 'showEvent' => 'modal:forecastsConfig:open',
             ),
+        ),
+        array(
+            'layout' => 'forecastsHeader'
         ),
     ),
 );

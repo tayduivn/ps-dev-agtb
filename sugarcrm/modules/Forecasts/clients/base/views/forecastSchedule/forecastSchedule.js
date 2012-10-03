@@ -61,19 +61,26 @@
      * @protected
      */
     _renderField: function(field) {
-
-        app.view.View.prototype._renderField.call(this, field);
-
-        if(this.editableWorksheet === true)
+    	if(field.name == "expected_commit_stage")
         {
-            if (field.def.clickToEdit === true) {
-                new app.view.ClickToEditField(field, this);
-            }
-
-            if (field.name == "expected_commit_stage") {
-                new app.view.BucketGridEnum(field, this);
+            //Set the field.def.options value based on buckets_dom setting (if set)
+            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+            if(this.editableWorksheet)
+            {               
+               field = this._setUpCommitStage(field);
             }
         }
+    	
+    	app.view.View.prototype._renderField.call(this, field);
+        
+    	if (this.editableWorksheet === true && field.def.clickToEdit === true) {
+            new app.view.ClickToEditField(field, this);
+        }
+
+        if (this.editableWorksheet === true && field.name == "expected_commit_stage") {
+            new app.view.BucketGridEnum(field, this, "ForecastSchedule");
+        }
+     
     },
 
     bindDataChange: function(params) {
@@ -82,41 +89,73 @@
 
         if (this._collection) {
             this._collection.on("change", function() {
+            	self.context.forecasts.set({commitButtonEnabled: true});
                 _.each(this._collection.models, function(model, index) {
-
                     if(model.hasChanged("expected_commit_stage") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
                        this._collection.url = this.url;
                        model.save();
+                       self.context.forecasts.set('expectedOpportunities', model);
                     }
-
                 }, this);
             }, this);
         }
     },
-
+    
     _setForecastColumn: function(fields) {
         var self = this;
 
         _.each(fields, function(field) {
             if (field.name == "expected_commit_stage") {
-                field.enabled = app.config.show_buckets != 0;
-                field.options = app.config.buckets_dom || 'commit_stage_dom';
-                field.view = (self.editableWorksheet === true) ? 'edit' : 'default';
+                field.view = self.editableWorksheet ? self.name : 'detail';
+                var forecastCategories = self.context.forecasts.config.get("forecast_categories");
+                
+                //show_binary, show_buckets, show_n_buckets
+            	if(forecastCategories == "show_binary"){
+
+            		_.each(self.meta.panels[0].fields, function(meta){
+            			if(meta.name == "expected_commit_stage"){
+            				meta.type="bool";
+            			}
+            		});	          		            		
+            	}
             }
         });
 
-        return app.config.show_buckets;
     },
 
+    _setUpCommitStage: function(field) {
+    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var self = this;
+
+    	//show_binary, show_buckets, show_n_buckets
+    	if(forecastCategories == "show_binary"){
+    		field.type = "bool";
+    					
+    		field.format = function(value){
+    			return value == "include";
+    		};
+    		field.unformat = function(value){
+    			return this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";
+    		};
+    	}
+    	else{
+    		field.type = "enum";
+    		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+    	}  	
+    	
+        return field;
+    },
+    
     /**
      * Renders view
      *
      * @protected
      */
-    _renderHtml : function(ctx, options) {
+    _render: function() {
         this.editableWorksheet = this.isMyWorksheet();
         this._setForecastColumn(this.meta.panels[0].fields);
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
+        app.view.View.prototype._render.call(this);
+        return this;
     },
 
     /**

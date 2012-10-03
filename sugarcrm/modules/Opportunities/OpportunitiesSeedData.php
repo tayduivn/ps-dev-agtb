@@ -91,7 +91,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $amount = array("10000", "25000", "50000", "75000");
         $key = array_rand($amount);
         $opp->amount = $amount[$key];
-        $probability = array("10", "70", "40", "60");
+        $probability = array("10", "40", "70", "90");
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
         

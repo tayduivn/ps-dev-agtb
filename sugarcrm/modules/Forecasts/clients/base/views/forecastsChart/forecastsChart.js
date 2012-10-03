@@ -84,7 +84,7 @@
             user_id: app.user.get('id'),
             display_manager : app.user.get('isManager'),
             timeperiod_id : app.defaultSelections.timeperiod_id.id,
-            group_by : this.getCheckedOptions('groupByOptions'),
+            group_by : _.first(this.getCheckedOptions('groupByOptions')),
             dataset : this.getCheckedOptions('datasetOptions'),
             category : app.defaultSelections.category
         };
@@ -112,10 +112,24 @@
     bindDataChange:function () {
         var self = this;
         this.context.forecasts.worksheetmanager.on('reset', function(){
-
             if(self.commitUpdate && self.chartRendered) {
                 self.commitUpdate = false;
                 self.renderChart();
+            }
+        }, this);
+        this.context.forecasts.worksheet.on('reset', function() {
+            if(self.commitUpdate && self.chartRendered) {
+                self.renderChart();
+            }
+        }, this);
+        this.context.forecasts.worksheetmanager.on('change', function(context){
+            if(!self.commitUpdate) {
+                self.commitUpdate = true;
+            }
+        }, this);
+        this.context.forecasts.worksheet.on('change', function(context){
+            if(!self.commitUpdate) {
+                self.commitUpdate = true;
             }
         }, this);
         this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
@@ -134,15 +148,8 @@
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
             self.handleRenderOptions({group_by: groupBy});
         });
-        this.context.forecasts.on('change:selectedDataSet', function (context, dataset) {
-            //self.handleRenderOptions({dataset: dataset});
-        });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            if (app.config.show_buckets == 0) {
-                // TODO: this.
-            } else {
-                self.handleRenderOptions({category:_.first(value)});
-            }
+            self.handleRenderOptions({category:_.first(value)});
         });
     },
 

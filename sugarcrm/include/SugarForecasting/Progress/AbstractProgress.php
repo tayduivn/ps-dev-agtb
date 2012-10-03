@@ -40,10 +40,10 @@ abstract class SugarForecasting_Progress_AbstractProgress extends SugarForecasti
     public function loadConfigArgs() {
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
-        $admin->retrieveSettings();
+        $settings = $admin->getConfigForModule('Forecasts');
 
         // decode and json decode the settings from the administration to set the sales stages for closed won and closed lost
-        $this->setArg('sales_stage_won', json_decode(html_entity_decode($admin->settings["Forecasts_sales_stage_won"])));
-        $this->setArg('sales_stage_lost', json_decode(html_entity_decode($admin->settings["Forecasts_sales_stage_lost"])));
+        $this->setArg('sales_stage_won', $settings["sales_stage_won"]);
+        $this->setArg('sales_stage_lost', $settings["sales_stage_lost"]);
     }
 }

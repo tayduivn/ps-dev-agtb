@@ -774,6 +774,7 @@ $dictionary['User'] = array(
             'source' => 'non-db',
             'vname' => 'LBL_EMAILS'
         ),
+//BEGIN SUGARCRM flav=pro ONLY        
         'holidays' => array(
             'name' => 'holidays',
             'type' => 'link',
@@ -782,6 +783,8 @@ $dictionary['User'] = array(
             'side' => 'right',
             'vname' => 'LBL_HOLIDAYS',
         ) ,
+//END SUGARCRM flav=pro ONLY
+
        'eapm' =>
 		  array (
 		    'name' => 'eapm',
@@ -802,6 +805,7 @@ $dictionary['User'] = array(
         'source'=>'non-db',
         'side' => 'left',
       ),
+//BEGIN SUGARCRM flav=pro ONLY      
         'project_resource'=>
 		array (
 			'name' => 'project_resource',
@@ -837,14 +841,17 @@ $dictionary['User'] = array(
             'link_type'=>'one',
             'vname'=>'LBL_WORKSHEETS',
         ),
-        'preferred_language' =>
-        array(
-             'name' => 'preferred_language',
-             'type' => 'enum',
-             'default' => 'en_us',
-             'vname' => 'LBL_PREFERRED_LANGUAGE',
-             'options' => 'available_language_dom',
-        ),
+//END SUGARCRM flav=pro ONLY
+
+    'preferred_language' =>
+      array(
+         'name' => 'preferred_language',
+         'type' => 'enum',
+         'default' => 'en_us',
+         'vname' => 'LBL_PREFERRED_LANGUAGE',
+         'options' => 'available_language_dom',
+      ),
+
     ) ,
     'indices' => array(
         array(

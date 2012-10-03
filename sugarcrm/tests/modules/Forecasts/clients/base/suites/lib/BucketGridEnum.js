@@ -43,12 +43,11 @@ describe("ClickToEdit", function(){
         field = {};
     });
 
-    it("should add the mouseenter and mouseleave events", function() {
+    it("should add the change event", function() {
         expect(field.events).not.toBeDefined();
-        new app.view.BucketGridEnum(field, view);
+        new app.view.BucketGridEnum(field, view, 'ForecastWorksheet');
         expect(field.events).toBeDefined();
-        expect(field.events.mouseenter).toBeDefined();
-        expect(field.events.mouseleave).toBeDefined();
+        expect(field.events.change).toBeDefined();
     });
 
 });

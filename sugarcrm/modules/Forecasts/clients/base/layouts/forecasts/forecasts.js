@@ -278,7 +278,7 @@
                 title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
             };
 
-            if(app.user.get('isAdmin')) {
+            if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
                 params.components = [{layout:"forecastsConfig"}];
             } else {
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
@@ -300,7 +300,7 @@
             }
 
             //add the components to the div
-            if (comp.name && this.$el.find(divName)[0]) {
+            if (compName && this.$el.find(divName)[0]) {
                 this.$el.find(divName).append(comp.$el);
             } else {
                 this.$el.append(comp.$el);

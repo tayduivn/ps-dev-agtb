@@ -62,23 +62,27 @@ class ForecastWorksheet extends SugarBean {
 		$worksheetID = $this->getWorksheetID($version);
     	if($version != 0)
     	{
-    		$product = BeanFactory::getBean('Products', $this->args["product_id"]);
+    		//leaving here until we figure out what to do in 6.8
+    		/*$product = BeanFactory::getBean('Products', $this->args["product_id"]);
     		$product->probability = $this->probability;
 	        $product->best_case = $this->best_case;
 	        $product->likely_case = $this->likely_case;
 	        $product->worst_case = $this->args["worst_case"];
 	        $product->sales_stage = $this->sales_stage;
 	        $product->commit_stage = $this->commit_stage;
-    		$product->save();
+    		$product->save();*/
     		
-    		//leaving here for possible sugar logic hooks
-	        //Update the Opportunities bean
-	        /*$opp = BeanFactory::getBean('Opportunities', $this->id);
+    		
+	        //Update the Opportunities bean -- should update the product line item as well through SaveOverload.php
+	        $opp = BeanFactory::getBean('Opportunities', $this->id);
 	        $opp->probability = $this->probability;
 	        $opp->best_case = $this->best_case;
+	        $opp->amount = $this->likely_case;
 	        $opp->sales_stage = $this->sales_stage;
 	        $opp->commit_stage = $this->commit_stage;
-	        $opp->save();*/
+	        $opp->worst_case = $this->args["worst_case"];
+	        $opp->commit_stage = $this->commit_stage;
+	        $opp->save();
     	}
     	 
         //Update the Worksheet bean
