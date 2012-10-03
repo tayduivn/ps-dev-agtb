@@ -477,19 +477,15 @@ function get_file_mime_type($file, $default = false)
         // Suppressing warnings since some versions of PHP are choking on
         // getting the mime type by reading the file contents even though the 
         // file is readable
-        if (mime_is_detectable_by_finfo())
-        {
+        if (mime_is_detectable_by_finfo()) {
             $finfo = finfo_open(FILEINFO_MIME_TYPE);
-            if ($finfo)
-            {
+            if ($finfo) {
                 $mime = @finfo_file($finfo, $file);
                 finfo_close($finfo);
             }
-        } else 
-        {
+        } else  {
             // Fall back to our regular way of doing it
-            if (function_exists('mime_content_type')) 
-            {
+            if (function_exists('mime_content_type')) {
                 $mime = @mime_content_type($file);
             } elseif (function_exists('ext2mime')) {
                 $mime = @ext2mime($file);
