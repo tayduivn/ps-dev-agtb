@@ -20,7 +20,8 @@
      */
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
-        "click a[id=save_draft]" : "triggerSaveDraft"
+        "click a[id=save_draft]" : "triggerSaveDraft",
+        "click a[id=forecastSettings]" : "triggerConfigModal"
     },
 
     initialize: function (options) {
@@ -138,6 +139,21 @@
     		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
+    },
+
+    /**
+     * Triggers the event expected by the modal layout to show the config panels
+     */
+    triggerConfigModal: function() {
+        var params = {
+            title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
+            components: [{layout:"forecastsConfig"}]
+        };
+        var callback = function(){};
+
+        if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
+            this.layout.trigger("modal:forecastsConfig:open", params, callback);
+        }
     },
 
     /**
