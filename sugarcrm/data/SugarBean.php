@@ -1985,8 +1985,8 @@ class SugarBean
             // if LHSModule and RHSModule are same module use left link to add new item b/s of:
             // $rel_id and $rel_link are not emty - request is from subpanel
             // $rel_link contains relationship name - checked by call load_relationship
-            $this->load_relationship($rel_link);
-            if ( !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
+            $isRelationshipLoaded = $this->load_relationship($rel_link);
+            if ($isRelationshipLoaded && !empty($this->$rel_link) && $this->$rel_link->getRelationshipObject() && $this->$rel_link->getRelationshipObject()->getLHSModule() == $this->$rel_link->getRelationshipObject()->getRHSModule() )
             {
                 $new_rel_link = $this->$rel_link->getRelationshipObject()->getLHSLink();
             }
