@@ -106,7 +106,7 @@
     	if(forecastCategories == "show_binary"){
             field.type = "bool";
     		field.format = function(value){
-    			return (value=="include") ? true : false;
+    			return value == "include";
     		};
     		field.unformat = function(value){
     			return this.$el.find(".checkbox").attr('checked') ? "include" : "exclude";
