@@ -9,6 +9,11 @@
      * Used to determine whether or not the Commit button is enabled
      */
     commitButtonEnabled: false,
+
+    /**
+     * Used to determine whether the config setting cog button is displayed
+     */
+    showConfigButton: false,
             
     /**
      * Adds event listener to elements
@@ -16,6 +21,11 @@
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft"
+    },
+
+    initialize: function (options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this.showConfigButton = (app.metadata.getAcls()['Forecasts'].admin == "yes");
     },
 
     /**
