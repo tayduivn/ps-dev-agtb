@@ -32,7 +32,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('modules/SchedulersJobs/SchedulersJob.php');
 
 /**
- * Class to run a job which should create related product for every old opp
+ * Class to run a job which should upgrade every old opp
+ * with commit stage, date_closed_timestamp, best/worst cases and related product
  */
 class UpdateOppsJob implements RunnableSchedulerJob {
 

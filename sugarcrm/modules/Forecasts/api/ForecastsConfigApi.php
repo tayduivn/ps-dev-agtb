@@ -100,6 +100,22 @@ class ForecastsConfigApi extends ModuleApi {
                 $admin->saveSetting('Forecasts', $name, $value, 'base');
             }
         }
+        if (!empty($args['module'])) {
+            $data = $adminBean->getConfigForModule($args['module']);
+            // check if this is first time Forecasts setup
+            if ($data['is_setup'] == '1')
+            {
+                $admin->saveSetting('Forecasts', 'is_setup', '0', 'base');
+                $db = DBManagerFactory::getInstance();
+                $upgraded = $db->getOne("SELECT id FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
+                // check if we need to upgrade opps which had been created upon previous versions
+                if ($upgraded)
+                {
+                    require_once ('modules/UpgradeWizard/uw_utils.php');
+                    updateOpps();
+                }
+            }
+        }
     }
 
 }

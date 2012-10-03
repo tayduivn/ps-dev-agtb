@@ -123,38 +123,20 @@ function testUpgradeDateTimeFields() {
      * @global type $current_user
 	 * @group forecasts
      */
-    function testCreateProductForOpp()
+    function testUpdateOppsJob()
     {
-        global $current_user;
+        global $db, $current_user;
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->assigned_user_id = $current_user->id;
         $opp->save();
 
-        //unset opportunity_id in the product which was automatically created during opp save
-        $product = BeanFactory::getBean('Products');
-        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-        SugarTestProductUtilities::setCreatedProduct(array($product->id));
-        $product->opportunity_id = '';
-        $product->save();
+        $exp_opp = array('commit_stage' => $opp->commit_stage,
+                        'best_case' => $opp->best_case,
+                        'worst_case' => $opp->worst_case,
+                        'date_closed_timestamp' => substr($opp->date_closed_timestamp, 0, -2));
 
-        $this->job = createProductForOpp();
-
-        $job = new SchedulersJob();
-        $job->retrieve($this->job);
-        $job->runnable_ran = true;
-        $job->runnable_data = '';
-        $job->runJob();
-
-        $this->assertTrue($job->runnable_ran);
-        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
-        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
-
-        $product = BeanFactory::getBean('Products');
-        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-        SugarTestProductUtilities::setCreatedProduct(array($product->id));
-
-        $expected = array('name' => $opp->name,
+        $exp_product = array('name' => $opp->name,
             'best_case' => $opp->amount,
             'likely_case' => $opp->amount,
             'worst_case' => $opp->amount,
@@ -168,11 +150,46 @@ function testUpgradeDateTimeFields() {
             'assigned_user_id' => $opp->assigned_user_id,
             'opportunity_id' => $opp->id,
             'commit_stage' => $opp->commit_stage);
-        $actual = array('name' => $product->name,
-            'best_case' => intval($product->best_case),
-            'likely_case' => intval($product->likely_case),
-            'worst_case' => intval($product->worst_case),
-            'cost_price' => intval($product->cost_price),
+
+        //unset commit_stage, date_closed_timestamp, best/worst cases
+        $db->query("UPDATE opportunities SET commit_stage = '', date_closed_timestamp = '', best_case = '', worst_case = '' WHERE id = '{$opp->id}'");
+
+        //unset opportunity_id in the product which was automatically created during opp save
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+        $product->opportunity_id = '';
+        $product->save();
+
+        $this->job = updateOpps();
+
+        $job = new SchedulersJob();
+        $job->retrieve($this->job);
+        $job->runnable_ran = true;
+        $job->runnable_data = '';
+        $job->runJob();
+
+        $updated_opp = $opp->retrieve();
+        $act_opp = array('commit_stage' => $opp->commit_stage,
+                        'best_case' => intval($opp->best_case),
+                        'worst_case' => intval($opp->worst_case),
+                        'date_closed_timestamp' => substr($opp->date_closed_timestamp, 0, -2));
+
+        $this->assertEquals($exp_opp, $act_opp, "New forecasts fields hasn't been updated during upgrade process");
+
+        $this->assertTrue($job->runnable_ran);
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+
+        $act_product = array('name' => $product->name,
+            'best_case' => $product->best_case,
+            'likely_case' => $product->likely_case,
+            'worst_case' => $product->worst_case,
+            'cost_price' => $product->cost_price,
             'quantity' => $product->quantity,
             'currency_id' => $product->currency_id,
             'base_rate' => $product->base_rate,
@@ -183,7 +200,7 @@ function testUpgradeDateTimeFields() {
             'opportunity_id' => $product->opportunity_id,
             'commit_stage' => $product->commit_stage);
 
-        $this->assertEquals($expected, $actual, "Product info doesn't equal to related opp's one");
+        $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
     }
 //END SUGARCRM flav=pro ONLY
 }
