@@ -1,0 +1,7 @@
+<div class="block thumbnail padded">
+    <h4 data-tour="tour-recommended-contacts">Recommended Experts:</h4>
+    <ul id="{{this.guid}}">
+    </ul>
+    <input class="find">
+    <button class="btn recommendme">Recommend Me</button>
+</div>
