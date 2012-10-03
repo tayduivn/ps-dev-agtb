@@ -98,6 +98,19 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group forecasts
+     * @group forecastschart
+     */
+    public function testQuotaLabelContainsBaseCurrencySymbol()
+    {
+        $obj = new SugarForecasting_Chart_Manager(self::$args);
+        $data = $obj->process();
+
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $this->assertStringStartsWith($base_currency->symbol, $data['values'][0]['goalmarkervaluelabel'][0]);
+    }
+
+    /**
      * @dataProvider dataProviderDatasets
      * @group forecasts
      * @group forecastschart
