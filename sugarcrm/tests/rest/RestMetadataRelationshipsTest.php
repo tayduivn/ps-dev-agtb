@@ -52,10 +52,11 @@ class RestMetadataRelationshipsTest extends RestTestBase {
     public function testMetadataGetFilteredRelationships() {
         $moduleList = array('Accounts','Contacts','Cases');
 
+        $GLOBALS['db']->commit();
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=relationships&module_filter='.implode(',',$moduleList));
 
-        $this->assertTrue(isset($restReply['reply']['relationships']['_hash']),'There is no filtered relationship list');
+        $this->assertTrue(isset($restReply['reply']['relationships']['_hash']),'There is no filtered relationship list, reply looked like: '.var_export($restReply['replyRaw'],true));
         $this->assertTrue(isset($restReply['reply']['relationships']['opportunities_contacts']),'There is no opportunities contacts relationship in the filtered list');
 
         foreach ( $restReply['reply']['relationships'] as $relName => $relData ) {

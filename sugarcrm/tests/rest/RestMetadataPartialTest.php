@@ -42,7 +42,7 @@ class RestMetadataPartialTest extends RestTestBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?only_hash=true');
 
-        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module hash is missing. Reply looked like: '.var_export($restReply['replyRaw'],true));
         $this->assertFalse(isset($restReply['reply']['modules']['Accounts']['fields']),'Account module has fields.');
     }
     
