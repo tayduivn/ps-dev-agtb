@@ -22,40 +22,39 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class ForecastWorksheet extends SugarBean {
 
-    var $id;
-    var $worksheet_id;
-    var $currency_id;
-    var $base_rate;
-    var $args;
-    var $name;
-    var $commit_stage;
-    var $probability;
-    var $best_case;
-    var $likely_case;
-    var $worst_case;
-    var $sales_stage;
-    var $assigned_user_id;    
-    var $object_name = 'ForecastWorksheet';
-    var $module_dir = 'Forecasts';
-    var $table_name = 'opportunities';
-    var $disable_custom_fields = true;
-
-    function __construct() {
-        parent::__construct();
-    }
+    public $id;
+    public $worksheet_id;
+    public $timeperiod_id;
+    public $currency_id;
+    public $base_rate;
+    public $args;
+    public $name;
+    public $commit_stage;
+    public $probability;
+    public $best_case;
+    public $likely_case;
+    public $worst_case;
+    public $sales_stage;
+    public $product_id;
+    public $assigned_user_id;
+    public $draft;
+    public $object_name = 'ForecastWorksheet';
+    public $module_dir = 'Forecasts';
+    public $table_name = 'opportunities';
+    public $disable_custom_fields = true;
 
     /**
      * Override save here to handle saving to the real tables.  Currently forecast is mapped to opportunities
      * and likely_case, worst_case and best_case go to both worksheets and opportunities.
      *
      *
-     * @param bool $check_notify
+     * @param bool $check_notify        Should we send the notifications
+     * @return string                   SugarGUID for the Worksheet that was modified or created
      */
-    function save($check_notify = false)
+    public function save($check_notify = false)
     {
     	$version = 1;
-		
-    	if(isset($this->args["draft"]) && $this->args["draft"] == 1){
+    	if(isset($this->draft) && $this->draft == 1){
 			$version = 0;
 		}
 		
@@ -80,27 +79,29 @@ class ForecastWorksheet extends SugarBean {
 	        $opp->amount = $this->likely_case;
 	        $opp->sales_stage = $this->sales_stage;
 	        $opp->commit_stage = $this->commit_stage;
-	        $opp->worst_case = $this->args["worst_case"];
+	        $opp->worst_case = $this->worst_case;
 	        $opp->commit_stage = $this->commit_stage;
-	        $opp->save();
+	        $opp->save($check_notify);
     	}
     	 
         //Update the Worksheet bean
 		$worksheet  = BeanFactory::getBean('Worksheet', $worksheetID);
-		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
+		$worksheet->timeperiod_id = $this->timeperiod_id;
 		$worksheet->user_id = $this->assigned_user_id;
         $worksheet->best_case = $this->best_case;
         $worksheet->likely_case = $this->likely_case;
-        $worksheet->worst_case = $this->args["worst_case"];
+        $worksheet->worst_case = $this->worst_case;
         $worksheet->op_probability = $this->probability;
         $worksheet->commit_stage = $this->commit_stage;
         $worksheet->forecast_type = "Direct";
         $worksheet->related_forecast_type = "Product";
-        $worksheet->related_id = $this->args["product_id"];
+        $worksheet->related_id = $this->product_id;
         $worksheet->currency_id = $this->currency_id;
         $worksheet->base_rate = $this->base_rate;
         $worksheet->version = $version;
-        $worksheet->save();
+        $worksheet->save($check_notify);
+
+        //return $worksheet->id;
     }
     
     /**
@@ -109,30 +110,35 @@ class ForecastWorksheet extends SugarBean {
      */
 	public function setWorksheetArgs($args)
 	{
+        // save the args variable
 		$this->args = $args;
+
+        // loop though the args and assign them to the corresponding key on the object
+        foreach($args as $arg_key => $arg) {
+            $this->$arg_key = $arg;
+        }
 	}
 	
 	/**
 	 * Finds the id of the correct version row to update
 	 * 
 	 * @param int version
-	 * @return uuid ID of row, null if not found.
+	 * @return string  SugarGUID of row, null if not found.
 	 */
 	protected function getWorksheetID($version)
 	{
         global $current_user;
-		$id = null;
 		$sql = "select id from worksheet " .
-				"where timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
+				"where timeperiod_id = '" . $this->timeperiod_id . "' " .
 					"and user_id = '" . $current_user->id . "' " .
 					"and version = '" . $version . "' " .
-					"and related_id = '" . $this->args["product_id"] . "'";
-		
-		$result = $GLOBALS['db']->query($sql);
-		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null){
-			$id = $row['id'];
-		}
-		return $id;
+					"and related_id = '" . $this->product_id . "'";
+
+        $db = DBManagerFactory::getInstance();
+        $id = $db->getOne($sql);
+
+        return ($id === false) ? null : $id;
+
 	}
 
 }
