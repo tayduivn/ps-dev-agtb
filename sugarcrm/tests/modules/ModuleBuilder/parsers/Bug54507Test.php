@@ -58,17 +58,17 @@ class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
         $parser = ParserFactory::getParser($view, $this->editModule, null, null, MB_PORTAL);
         $fielddefs = $parser->getFieldDefs();
 
-        $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release'], $view);
-        $this->assertTrue($test, 'fixed_in_release should be a valid available field in Bugs Portal Edit View');
-
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_name'], $view);
-        $this->assertFalse($test, 'fixed_in_release_name should not be a valid available field in Bugs Portal Edit View');
+        $this->assertFalse($test, 'fixed_in_release_name should be a valid available field in Bugs Portal Edit View');
+
+        $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release'], $view);
+        $this->assertFalse($test, 'fixed_in_release should not be a valid available field in Bugs Portal Edit View');
 
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_link'], $view);
         $this->assertFalse($test, 'fixed_in_release_link should not be a valid available field in Bugs Portal Edit View');
 
         $test = AbstractMetaDataParser::validField($fielddefs['found_in_release'], $view);
-        $this->assertTrue($test, 'found_in_release should be a valid available field in Bugs Portal Edit View');
+        $this->assertFalse($test, 'found_in_release should be a valid available field in Bugs Portal Edit View');
 
         $test = AbstractMetaDataParser::validField($fielddefs['release_name'], $view);
         $this->assertFalse($test, 'release_name should not be a valid available field in Bugs Portal Edit View');
@@ -83,20 +83,20 @@ class Bug54507Test extends Sugar_PHPUnit_Framework_TestCase {
         $parser = ParserFactory::getParser($view, $this->editModule, null, null, MB_PORTAL);
         $fielddefs = $parser->getFieldDefs();
 
-        $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release'], $view);
-        $this->assertTrue($test, 'fixed_in_release should be a valid available field in Bugs Portal Detail View');
-
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_name'], $view);
-        $this->assertFalse($test, 'fixed_in_release_name should not be a valid available field in Bugs Portal Detail View');
+        $this->assertTrue($test, 'fixed_in_release_name should be a valid available field in Bugs Portal Detail View');
+
+        $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release'], $view);
+        $this->assertFalse($test, 'fixed_in_release should not be a valid available field in Bugs Portal Detail View');
 
         $test = AbstractMetaDataParser::validField($fielddefs['fixed_in_release_link'], $view);
         $this->assertFalse($test, 'fixed_in_release_link should not be a valid available field in Bugs Portal Detail View');
 
         $test = AbstractMetaDataParser::validField($fielddefs['found_in_release'], $view);
-        $this->assertTrue($test, 'found_in_release should be a valid available field in Bugs Portal Detail View');
+        $this->assertFalse($test, 'found_in_release should not be a valid available field in Bugs Portal Detail View');
 
         $test = AbstractMetaDataParser::validField($fielddefs['release_name'], $view);
-        $this->assertFalse($test, 'release_name should not be a valid available field in Bugs Portal Detail View');
+        $this->assertTrue($test, 'release_name should be a valid available field in Bugs Portal Detail View');
 
         $test = AbstractMetaDataParser::validField($fielddefs['release_link'], $view);
         $this->assertFalse($test, 'release_link should not be a valid available field in Bugs Portal Detail View');
