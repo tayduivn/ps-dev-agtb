@@ -2,18 +2,29 @@
 .layout_Leads .modal .dataTables_filter {
     height: 166px;
     overflow-y: scroll;
-    border-bottom: 3px solid #E8E8E8;
+    border-bottom: 3px solid @gray;
+    background-color: @warningBackground;
+}
+.layout_Leads .modal .alert.alert-warning.alert-block {
+    border-radius: 0;
+    margin-bottom: 0;
 }
 
-::-webkit-scrollbar-track-piece{
+.layout_Leads .modal .dataTables_filter::-webkit-scrollbar-track-piece,
+.layout_Leads .card2.modal-content::-webkit-scrollbar-track-piece
+{
     background-color:#fff;
     -webkit-border-radius:0;
 }
-::-webkit-scrollbar{
+.layout_Leads .modal .dataTables_filter::-webkit-scrollbar,
+.layout_Leads .card2.modal-content::-webkit-scrollbar
+{
     width:8px;
     height:8px;
 }
-::-webkit-scrollbar-thumb{
+.layout_Leads .modal .dataTables_filter::-webkit-scrollbar-thumb,
+.layout_Leads .card2.modal-content::-webkit-scrollbar-thumb
+{
     height:50px;
     background-color:#999;
     -webkit-border-radius:4px;
@@ -21,8 +32,25 @@
     outline-offset:-2px;
     border: 2px solid #fff;
 }
-::-webkit-scrollbar-thumb:hover{
+.layout_Leads .modal .dataTables_filter::-webkit-scrollbar-thumb:hover,
+.layout_Leads .card2.modal-content::-webkit-scrollbar-thumb:hover
+{
     height:50px;
     background-color:#9f9f9f;
     -webkit-border-radius:4px;
+}
+
+.layout_Leads .modal .table-striped {
+  tbody {
+    tr:nth-child(odd) td,
+    tr:nth-child(odd) th {
+      background-color: lighten( @warningBackground, 3%);
+    }
+  }
+}
+.layout_Leads .modal .table {
+  tbody tr:hover td,
+  tbody tr:hover th {
+    background-color: darken(@warningBackground, 5%);
+  }
 }
