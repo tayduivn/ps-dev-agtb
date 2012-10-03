@@ -457,6 +457,10 @@
                 event.startDate = parseDate(comment.date_created);
                 event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + comment.created_by_name+'</a>';
                 event.headline = comment.value;
+                event.asset = {
+                        media: '<a href=\'#Users/'+comment.created_by+'\'><img src=\''+comment.created_by_picture_url+'\' /></a>',
+                        caption: comment.created_by_name
+                    };                
                 events.push(event);
             }
             _.each(comment.notes, function(attachment) {
