@@ -163,6 +163,15 @@
             	}
 
             }, this);
+            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
+            	if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
+            		var model = this.context.forecasts.worksheetmanager;
+            		model.url = this.createURL();
+            		this.safeFetch(false);
+            		this.context.forecasts.set({checkDirtyWorksheetFlag: false});
+            	}
+
+            }, this);
 
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
@@ -239,8 +248,9 @@
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
+     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
-    safeFetch: function(){
+    safeFetch: function(fetch = true){
     	var collection = this._collection;
     	var self = this;
     	if(collection.isDirty){
@@ -257,7 +267,9 @@
     			collection.isDirty = false;
 				$.when(!collection.isDirty).then(function(){
 	    			self.context.forecasts.set({reloadCommitButton: true});
-	    			collection.fetch();
+	    			if(fetch){
+	    				collection.fetch();
+	    			}
     		});
 
 		}
@@ -265,12 +277,18 @@
     			//ignore, fetch still
     			collection.isDirty = false;
     			self.context.forecasts.set({reloadCommitButton: true});
-    			collection.fetch();
+    			if(fetch){
+    				collection.fetch();
+    			}
+    			
     		}
     	}
     	else{
     		//no changes, fetch like normal.
-    		collection.fetch();
+    		if(fetch){
+    			collection.fetch();
+    		}
+    		
     	}
     },
 
@@ -301,6 +319,7 @@
         }
         $("#view-sales-rep").hide();
         $("#view-manager").show();
+        this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         app.view.View.prototype._render.call(this);
 
