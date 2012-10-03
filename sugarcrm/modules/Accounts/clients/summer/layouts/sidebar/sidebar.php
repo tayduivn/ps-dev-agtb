@@ -1,5 +1,5 @@
 <?php
-require_once('clients/summer/GenericLayout.php');
+
 $layout = new GenericLayout();
 $layout->push(array('view'=>'crunchbase'));
 $layout->push(array('view'=>'news'));

@@ -1,5 +1,5 @@
 <?php
-require_once('clients/summer/GenericLayout.php');
+
 $layout = new GenericLayout();
 $layout->push(array('view'=>'todo-list'));
 //$layout->push(array('view'=>'attachments'));
