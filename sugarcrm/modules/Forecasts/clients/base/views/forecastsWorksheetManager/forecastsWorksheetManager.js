@@ -314,12 +314,32 @@
         for( var i = 0; i < fields.length; i++ )  {
             if(fields[i].enabled) {
                 // in case we add column rearranging
-                columnDefs.push( {
+                var fieldDef = {
                     "sName": fields[i].name,
                     "aTargets": [ _colIndex++ ],
                     "sWidth" : (fields[i].name == "name") ? '40%' : '10%',
                     "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
-                } );
+                };
+
+                //Apply sorting for the worksheet
+                if(typeof(fields[i].type) != "undefined")
+                {
+                    switch(fields[i].type)
+                    {
+                        case "bool":
+                            fieldDef["sSortDataType"] = "dom-checkbox";
+                            fieldDef["sType"] = "string";
+                            break;
+
+                        case "int":
+                        case "currency":
+                            fieldDef["sSortDataType"] = "dom-number";
+                            fieldDef["sType"] = "numeric";
+                            break;
+                    }
+                }
+
+                columnDefs.push(fieldDef);
             }
         }
 
