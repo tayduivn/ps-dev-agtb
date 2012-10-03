@@ -22,6 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once("include/SugarQueue/SugarJobQueue.php");
+
 /**
  * SugarTestJobQueueUtilities
  *
@@ -47,14 +49,14 @@ class SugarTestJobQueueUtilities
      */
     public static function createJob($name, $target, $data, $user)
     {
-        $job = new SchedulersJob();
+        $job = BeanFactory::getBean('SchedulersJobs');
         $job->name = $name;
-        $job->status = SchedulersJob::JOB_STATUS_QUEUED;
         $job->target = $target;
         $job->data = $data;
         $job->retry_count = 0;
         $job->assigned_user_id = $user->id;
-        $job->save();
+        $jobQueue = new SugarJobQueue();
+        $jobQueue->submitJob($job);
         self::$_createdJobs[] = $job->id;
         return $job;
     }
