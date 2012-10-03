@@ -91,12 +91,11 @@
             this._collection.on("change", function() {
             	self.context.forecasts.set({commitButtonEnabled: true});
                 _.each(this._collection.models, function(model, index) {
-
                     if(model.hasChanged("expected_commit_stage") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
                        this._collection.url = this.url;
                        model.save();
+                       self.context.forecasts.set('expectedOpportunities', model);
                     }
-
                 }, this);
             }, this);
         }
@@ -133,7 +132,7 @@
     		field.type = "bool";
     					
     		field.format = function(value){
-    			return (value=="include") ? true : false;
+    			return value == "include";
     		};
     		field.unformat = function(value){
     			return this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";

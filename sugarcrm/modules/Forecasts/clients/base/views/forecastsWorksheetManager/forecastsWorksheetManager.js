@@ -326,11 +326,6 @@
                 {
                     switch(fields[i].type)
                     {
-                        case "bool":
-                            fieldDef["sSortDataType"] = "dom-checkbox";
-                            fieldDef["sType"] = "string";
-                            break;
-
                         case "int":
                         case "currency":
                             fieldDef["sSortDataType"] = "dom-number";

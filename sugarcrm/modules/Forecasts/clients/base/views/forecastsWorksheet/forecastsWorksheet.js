@@ -109,7 +109,7 @@
     			return value == "include";
     		};
     		field.unformat = function(value){
-    			return this.$el.find(".checkbox").attr('checked') ? "include" : "exclude";
+    			return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
     		};
     	}
     	else{
@@ -173,6 +173,9 @@
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
+            	this.calculateTotals();
+            }, this);
+            this.context.forecasts.on("change:expectedOpportunities", function() {
             	this.calculateTotals();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
@@ -344,9 +347,10 @@
                 {
                     switch(field.type)
                     {
+                        case "enum":
                         case "bool":
                             fieldDef["sSortDataType"] = "dom-checkbox";
-                            fieldDef["sType"] = "string";
+                            fieldDef["sType"] = "numeric";
                             break;
 
                         case "int":
@@ -594,7 +598,7 @@
                    var worst_base = worst * base_rate;
 
                    //If commit_stage is include then we count the forecast schedule model
-                   if(model.get('commit_stage') === 'include')
+                   if(model.get('expected_commit_stage') == 'include')
                    {
                         includedAmount += amount_base;
                         includedBest += best_base;
