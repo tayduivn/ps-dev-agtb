@@ -329,19 +329,37 @@
         var columnKeys = {};
 
         _.each(fields, function(field, key){
-            var name = field.name;
+            if(field.enabled)
+            {
+                var name = field.name;
 
-            var fieldDef = {
-                "sName": name,
-                "aTargets": [ key ],
-                "bVisible" : self.checkConfigForColumnVisibility(field.name)
-            };
+                var fieldDef = {
+                    "sName": name,
+                    "aTargets": [ key ],
+                    "bVisible" : self.checkConfigForColumnVisibility(field.name)
+                };
 
-            if(typeof(field.type) != "undefined" && field.type == "bool"){
-            	fieldDef["sSortDataType"] = "dom-checkbox";
+                //Apply sorting for the worksheet
+                if(typeof(field.type) != "undefined")
+                {
+                    switch(field.type)
+                    {
+                        case "bool":
+                            fieldDef["sSortDataType"] = "dom-checkbox";
+                            fieldDef["sType"] = "string";
+                            break;
+
+                        case "int":
+                        case "currency":
+                            fieldDef["sSortDataType"] = "dom-number";
+                            fieldDef["sType"] = "numeric";
+                            break;
+                    }
+                }
+
+                columnDefs.push(fieldDef);
+                columnKeys[name] = key;
             }
-            columnDefs.push(fieldDef);
-            columnKeys[name] = key;
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
