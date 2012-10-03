@@ -64,6 +64,9 @@ class RestMetadataModuleListTest extends RestTestBase {
         }
         // Set the tabs back to what they were
         if ( isset($this->defaultTabs[0]) ) {
+            require_once('modules/MySettings/TabController.php');
+            $tabs = new TabController();
+
             $tabs->set_system_tabs($this->defaultTabs[0]);
             $GLOBALS['db']->commit();
         }
