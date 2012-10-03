@@ -273,7 +273,8 @@ $mod_strings = array (
     'LBL_TOUR_REFERENCE_1' => 'You can always reference our',
     'LBL_TOUR_REFERENCE_2' => 'through the "Support" link under the profile tab.',
     'LNK_TOUR_DOCUMENTATION' => 'documentation',
-    'LBL_TOUR_CALENDAR_URL' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.  <br/>{0}Retrieve your new shared calendar URL.</a>',
+    'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
+    'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.</a>',
 
 );
 
