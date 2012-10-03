@@ -111,10 +111,36 @@ function populateFromPost($prefix, &$focus, $skipRetrieve=false) {
 			$focus->$field = $value;
 		}
 	}
-
+    populateFromPostACL($focus);
 	return $focus;
 }
 
+/**
+ * If current user have not permit to change field function replace default value
+ *
+ * @param SugarBean $focus
+ */
+function populateFromPostACL(SugarBean $focus)
+{
+    require_once('include/EditView/EditView2.php');
+    $insert = !isset($focus->id) || $focus->new_with_id;
+    $isOwner = $focus->isOwner($GLOBALS['current_user']->id);
+    $EditView = new EditView();
+    $EditView->setup($focus->module_name);
+    $EditView->createFocus();
+    $defaultBean = $EditView->focus;
+
+    foreach (array_keys($focus->field_defs) as $field) {
+        $fieldAccess = ACLField::hasAccess($field, $focus->module_dir, $GLOBALS['current_user']->id, $isOwner);
+        if (!in_array($fieldAccess, array(2, 4))) {
+            if ($insert) {
+                $focus->$field = $defaultBean->$field;
+            } else {
+                unset($focus->$field);
+            }
+        }
+    }
+}
 
 function add_hidden_elements($key, $value) {
 
