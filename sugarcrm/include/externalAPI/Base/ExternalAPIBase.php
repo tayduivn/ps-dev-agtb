@@ -243,6 +243,6 @@ abstract class ExternalAPIBase implements ExternalAPIPlugin
      */
     public function isMimeDetectionAvailable()
 	{
-	    return ( function_exists('mime_content_type') || function_exists( 'ext2mime' ) );
+	    return mime_is_detectable();
 	}
 }
