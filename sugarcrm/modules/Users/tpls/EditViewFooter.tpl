@@ -583,3 +583,12 @@ onUserEditView();
         </td>
     </tr>
 </table>
+
+{if $scroll_to_cal}
+    <script>{literal}
+        //click on the 4th tab and scroll to the calendar_options div after the tabs have rendered
+        setTimeout("document.getElementById('tab4').click()",2500);
+        setTimeout("document.getElementById('calendar_options').scrollIntoView()",3000);
+    {/literal}
+    </script>
+{/if}

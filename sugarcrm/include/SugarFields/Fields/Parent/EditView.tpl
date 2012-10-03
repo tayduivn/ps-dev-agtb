@@ -13,13 +13,13 @@
  * may be subject to applicable fees and any use of the Software without first
  * paying applicable fees is strictly prohibited.  You do not have the right to
  * remove SugarCRM copyrights from the source code or user interface.
- * 
+ *
  * All copies of the Covered Code must include on each user interface screen:
  *  (i) the "Powered by SugarCRM" logo and
  *  (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for
  * requirements.
- * 
+ *
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
@@ -40,10 +40,10 @@ onchange='document.{$form_name}.{{sugarvar key='name'}}.value="";document.{$form
 	{assign var="keepParent" value = 1}
 {/if}
 <input type="text" name="{{sugarvar key='name'}}" id="{{sugarvar key='name'}}" class="sqsEnabled" tabindex="{{$tabindex}}"
-    size="{{$displayParams.size}}" {if $keepParent}value="{{sugarvar key='value'}}"{/if} autocomplete="off"><input type="hidden" name="{{sugarvar memberName='vardef.id_name' key='name'}}" id="{{sugarvar memberName='vardef.id_name' key='name'}}"  
+    size="{{$displayParams.size}}" {if $keepParent}value="{{sugarvar key='value'}}"{/if} autocomplete="off"><input type="hidden" name="{{sugarvar memberName='vardef.id_name' key='name'}}" id="{{sugarvar memberName='vardef.id_name' key='name'}}"
 {if $keepParent}value="{{sugarvar memberName='vardef.id_name' key='value'}}"{/if}>
 <span class="id-ff multiple">
-<button type="button" name="btn_{{sugarvar key='name'}}" id="btn_{{sugarvar key='name'}}" tabindex="{{$tabindex}}"	
+<button type="button" name="btn_{{sugarvar key='name'}}" id="btn_{{sugarvar key='name'}}" tabindex="{{$tabindex}}"
 title="{sugar_translate label="{{$displayParams.accessKeySelectTitle}}"}" class="button firstChild" value="{sugar_translate label="{{$displayParams.accessKeySelectLabel}}"}"
 onclick='open_popup(document.{$form_name}.parent_type.value, 600, 400, "", true, false, {{$displayParams.popupData}}, "single", true);' {{if isset($displayParams.javascript.btn)}}{{$displayParams.javascript.btn}}{{/if}}><img src="{sugar_getimagepath file="id-ff-select.png"}"></button>{{if empty($displayParams.selectOnly)}}<button type="button" name="btn_clr_{{sugarvar key='name'}}" id="btn_clr_{{sugarvar key='name'}}" tabindex="{{$tabindex}}" title="{sugar_translate label="{{$displayParams.accessKeyClearTitle}}"}" class="button lastChild" onclick="this.form.{{sugarvar key='name'}}.value = ''; this.form.{{sugarvar memberName='vardef.id_name' key='name'}}.value = '';" value="{sugar_translate label="{{$displayParams.accessKeyClearLabel}}"}" {{if isset($displayParams.javascript.btn_clear)}}{{$displayParams.javascript.btn_clear}}{{/if}}><img src="{sugar_getimagepath file="id-ff-clear.png"}"></button>
 </span>
