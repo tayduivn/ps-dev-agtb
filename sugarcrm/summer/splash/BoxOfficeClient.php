@@ -40,9 +40,10 @@ class BoxOfficeClient
         //HACK
         if (file_exists(__DIR__.'/config.php')) {
             include __DIR__.'/config.php';
+        } else {
+            $config = array();
         }
 
-        $config = "";
         $this->config = $config;
         // FIXME
         $this->loginUrl = $config['top_url']."summer/splash/";
