@@ -661,7 +661,7 @@
 
                 comment.created_by_picture_url = (comment.created_by_picture) ? app.api.buildFileURL({
                     module: 'Users',
-                    id: model.get('created_by'),
+                    id: comment.created_by,
                     field: 'picture'
                 }) : "../clients/summer/views/imagesearch/anonymous.jpg";
 
