@@ -106,10 +106,10 @@
     	if(forecastCategories == "show_binary"){
             field.type = "bool";
     		field.format = function(value){
-    			return (value=="include") ? true : false;    	        
+    			return value == "include";
     		};
     		field.unformat = function(value){
-    			return this.$el.find(".checkbox:checked") ? "include" : "exclude";
+    			return this.$el.find(".checkbox").attr('checked') ? "include" : "exclude";
     		};
     	}
     	else{
@@ -487,8 +487,10 @@
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
+        var includedWorst = 0;
         var overallAmount = 0;
         var overallBest = 0;
+        var overallWorst = 0;
         var includedCount = 0;
         var lostCount = 0;
         var lostAmount = 0;
@@ -500,6 +502,7 @@
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
                 'best_case' : includedBest,
+                'worst_case' : includedWorst,
                 'timeperiod_id' : self.timePeriod,
                 'lost_count' : lostCount,
                 'lost_amount' : lostAmount,
@@ -521,12 +524,14 @@
 
             var won = _.include(sales_stage_won_setting, model.get('sales_stage'));
             var lost = _.include(sales_stage_lost_setting, model.get('sales_stage'));
-            var amount = parseFloat(model.get('amount'));
+            var amount = parseFloat(model.get('likely_case'));
             var commit_stage = model.get('commit_stage');
             var best = parseFloat(model.get('best_case'));
+            var worst = parseFloat(model.get('worst_case'));
             var base_rate = parseFloat(model.get('base_rate'));
             var amount_base = amount * base_rate;
             var best_base = best * base_rate;
+            var worst_base = worst * base_rate;
 
             if(won)
             {
@@ -540,11 +545,13 @@
             if(commit_stage === 'include') {
                 includedAmount += amount_base;
                 includedBest += best_base;
+                includedWorst += worst_base;
                 includedCount++;
             }
 
             overallAmount += amount_base;
             overallBest += best_base;
+            overallWorst += worst_base;
         });
 
         //Now see if we need to add the expected opportunity amounts
@@ -555,24 +562,30 @@
                {
                    var amount = model.get('expected_amount');
                    var best = model.get('expected_best_case');
+                   var worst = model.get('expected_worst_case');
                    var base_rate = parseFloat(model.get('base_rate'));
 
+
                    //Check for null condition and, if so, set to 0
-                    amount = amount != null ? parseFloat(amount) : 0;
-                    best = best != null ? parseFloat(best) : 0;
+                   amount = amount != null ? parseFloat(amount) : 0;
+                   best = best != null ? parseFloat(best) : 0;
+                   worst = worst != null ? parseFloat(worst) : 0;
 
                    var amount_base = amount * base_rate;
                    var best_base = best * base_rate;
+                   var worst_base = worst * base_rate;
 
                    //If commit_stage is include then we count the forecast schedule model
                    if(model.get('commit_stage') === 'include')
                    {
                         includedAmount += amount_base;
                         includedBest += best_base;
+                        includedWorst += worst_base;
                    }
 
                    overallAmount += amount_base;
                    overallBest += best_base;
+                   overallWorst += worst_base;
                }
            });
         }
@@ -580,18 +593,21 @@
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
+            includedWorst : includedWorst,
             includedCount : includedCount
         });
         self.includedModel.change();
 
         self.overallModel.set({
             overallAmount : overallAmount,
-            overallBest : overallBest
+            overallBest : overallBest,
+            overallWorst : overallWorst
         });
         self.overallModel.change();
 
         var totals = {
             'best_case' : includedBest,
+            'worst_case' : includedWorst,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,
             'lost_amount' : lostAmount,
