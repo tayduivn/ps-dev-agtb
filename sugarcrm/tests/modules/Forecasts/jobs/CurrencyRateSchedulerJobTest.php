@@ -25,7 +25,6 @@
  ********************************************************************************/
 
 require_once 'modules/SchedulersJobs/SchedulersJob.php';
-require_once('include/SchedulersJob/CurrencyRateSchedulerJob.php');
 
 class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -102,7 +101,7 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 
         $job = SugarTestJobQueueUtilities::createJob(
             'TestJobQueue',
-            'class::CurrencyRateSchedulerJob',
+            'class::SugarJobUpdateCurrencyRates',
             json_encode(array('currencyId'=>$this->currency->id)),
             $current_user);
 

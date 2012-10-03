@@ -1,5 +1,6 @@
 <?php
-/*********************************************************************************
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
@@ -18,23 +19,38 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-class SugarAutoLoader{
+class SugarAutoLoader
+{
 
-	public static $map = array(
+    /**
+     * @var array  statically mapped classes
+     */
+    public static $map = array(
 		'XTemplate'=>'XTemplate/xtpl.php',
 		'ListView'=>'include/ListView/ListView.php',
 		'Sugar_Smarty'=>'include/Sugar_Smarty.php',
 		'Javascript'=>'include/javascript/javascript.php',
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
-        'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php'
+        'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
+        'SugarCurrency' => 'include/SugarCurrency/SugarCurrency.php'
 	);
 
-	public static $noAutoLoad = array(
+    /**
+     * @var array
+     */
+    public static $noAutoLoad = array(
 		'Tracker'=>true,
 	);
 
-	public static $moduleMap = array();
+    /**
+     * @var array
+     */
+    public static $moduleMap = array();
 
+    /**
+     * @param $class  the class to be autoloaded
+     * @return bool   true on successfully autoloaded class
+     */
     public static function autoload($class)
 	{
 		$uclass = ucfirst($class);
@@ -76,12 +92,6 @@ class SugarAutoLoader{
             require_once($visibility);
             return true;
         }
-        $filePath = self::getFilepathForIncludeClass($class);
-        if (!empty($filePath))
-        {
-            require_once($filePath);
-            return true;
-        }
         $filePath = self::getFilepathForSchedulerJobClass($class);
         if (!empty($filePath))
         {
@@ -107,57 +117,19 @@ class SugarAutoLoader{
      */
     protected static function getFilepathForSchedulerJobClass($className)
     {
-        if(strpos($className,'SchedulerJob') === false) {
-            return false;
-        }
-        $filePath = "custom/include/SchedulerJobs/{$className}.php";
-        if(file_exists($filePath)) {
-            return $filePath;
-        }
-        $filePath = "include/SchedulerJobs/{$className}.php";
-        if(file_exists($filePath)) {
-            return $filePath;
+        if(strpos($className,'SugarJob') === 0) {
+            $filePath = get_custom_file_if_exists("include/SugarQueue/jobs/{$className}.php");
+            if(file_exists($filePath)) {
+                return $filePath;
+            }
         }
         return false;
     }
-
 
     /**
-     * getFilepathForIncludeClass
-     *
-     * find the file path for a class defined under include/ directory
-     *
-     * @internal         searches in this order:
-     *                   include/[ClassName]/[ClassName].php
-     *                   include/[ClassName].php
-     * @access protected
-     * @param $className the class name to find
-     * @return string    path to file, or false if none found
+     * @param $class
+     * @return string
      */
-    protected static function getFilepathForIncludeClass($className)
-    {
-        if(empty($className)) {
-            return false;
-        }
-        $filePath = "custom/include/{$className}/{$className}.php";
-        if(file_exists($filePath)) {
-            return $filePath;
-        }
-        $filePath = "custom/include/{$className}.php";
-        if(file_exists($filePath)) {
-            return $filePath;
-        }
-        $filePath = "include/{$className}/{$className}.php";
-        if(file_exists($filePath)) {
-            return $filePath;
-        }
-        $filePath = "include/{$className}.php";
-        if(file_exists($filePath)) {
-            return $filePath;
-        }
-        return false;
-    }
-
     protected static function getFilenameForViewClass($class)
     {
         $module = false;
@@ -173,18 +145,16 @@ class SugarAutoLoader{
             $view = strtolower(substr($class, 4));
             if ($module)
             {
-                $modulepath = "modules/$module/views/view.$view.php";
-                if (file_exists("custom/$modulepath"))
-                    return "custom/$modulepath";
-                if (file_exists($modulepath))
-                    return $modulepath;
-            } else {
-                $basepath = "include/MVC/View/views/view.$view.php";
-                if (file_exists("custom/$basepath")){
-                    return "custom/$basepath";
+                $modulePath = "modules/$module/views/view.$view.php";
+                $filePath = get_custom_file_if_exists($modulePath);
+                if(file_exists($filePath)) {
+                    return $filePath;
                 }
-                if (file_exists($basepath)) {
-                    return $basepath;
+            } else {
+                $basePath = "include/MVC/View/views/view.$view.php";
+                $filePath = get_custom_file_if_exists($basePath);
+                if(file_exists($filePath)) {
+                    return $filePath;
                 }
             }
         }
@@ -192,6 +162,7 @@ class SugarAutoLoader{
 
     /**
      * getFilenameForSugarWidget
+     *
      * This method attempts to autoload classes starting with name "SugarWidget".  It first checks for the file
      * in custom/include/generic/SugarWidgets directory and if not found defaults to include/generic/SugarWidgets.
      * This method is used so that we can easily customize and extend these SugarWidget classes.
@@ -203,22 +174,18 @@ class SugarAutoLoader{
     protected static function getFilenameForSugarWidget($class)
     {
         //Only bother to check if the class name starts with SugarWidget
-        if(strpos($class, 'SugarWidget') !== false)
-        {
-            if(strpos($class, 'SugarWidgetField') !== false)
-            {
+        if(strpos($class, 'SugarWidget') !== false) {
+            if(strpos($class, 'SugarWidgetField') !== false) {
                 //We need to lowercase the portion after SugarWidgetField
                 $name = substr($class, 16);
-                if(!empty($name))
-                {
+                if(!empty($name)) {
                     $class = 'SugarWidgetField' . strtolower($name);
                 }
             }
 
-            $file = get_custom_file_if_exists("include/generic/SugarWidgets/{$class}.php");
-            if(file_exists($file))
-            {
-               return $file;
+            $filePath = get_custom_file_if_exists("include/generic/SugarWidgets/{$class}.php");
+            if(file_exists($filePath)) {
+               return $filePath;
             }
         }
         return false;
@@ -227,33 +194,35 @@ class SugarAutoLoader{
     /**
      * Get filename for visibility class
      * @param string $class
+     * @return bool|string path to class file, or false on fail
      */
     protected static function getVisibilityStrategy($class)
     {
         if(substr($class, 0, 8) == 'SugarACL') {
             // ACL class
-            if(file_exists("custom/data/acl/$class.php")) {
-                return "custom/data/acl/$class.php";
-            }
-            if(file_exists("data/acl/$class.php")) {
-                return "data/acl/$class.php";
+            $filePath = get_custom_file_if_exists("data/acl/$class.php");
+            if(file_exists($filePath)) {
+                return $filePath;
             }
             return false;
         }
-        if(file_exists("custom/data/visibility/$class.php")) {
-            return "custom/data/visibility/$class.php";
-        }
-        if(file_exists("data/visibility/$class.php")) {
-            return "data/visibility/$class.php";
+        $filePath = get_custom_file_if_exists("data/visibility/$class.php");
+        if(file_exists($filePath)) {
+            return $filePath;
         }
         return false;
     }
 
+    /**
+     * Question: what does this method do?
+     * 1) $files is not used
+     * 2) statically mapped files are required twice
+     * 3) no implementations found of this method
+     */
     public static function loadAll(){
 		foreach(SugarAutoLoader::$map as $class=>$file){
 			require_once($file);
 		}
-
 		if(isset($GLOBALS['beanFiles'])){
 			$files = $GLOBALS['beanFiles'];
 		}else{
@@ -263,7 +232,6 @@ class SugarAutoLoader{
 		foreach(SugarAutoLoader::$map as $class=>$file){
 			require_once($file);
 		}
-
 	}
 }
 ?>

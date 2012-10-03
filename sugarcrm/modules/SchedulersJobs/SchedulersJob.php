@@ -516,10 +516,7 @@ class SchedulersJob extends Basic
 		}
         else if ($exJob[0] == 'class')
         {
-            if(!class_exists($exJob[1])) {
-                $filePath = get_custom_file_if_exists("include/SchedulersJob/{$exJob[1]}.php");
-                require_once($filePath);
-            }
+            // autoloader will look for this class and include it
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
             {

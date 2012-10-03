@@ -70,14 +70,19 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                 if($isUpdate && $previousConversionRate != $currency->conversion_rate)
                 {
                     global $timedate;
-                    $job = new SchedulersJob();
+                    // use bean factory here
+                    $job = BeanFactory::getBean('SchedulersJobs');
+                    //$job = new SchedulersJob();
                     $job->name = "CurrencyRateSchedulerJob: " . $timedate->getNow()->asDb();
-                    $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+                    //$job->status = SchedulersJob::JOB_STATUS_QUEUED;
+                    // class name must end in SchedulerJob to be found by autoloader
                     $job->target = "class::CurrencyRateSchedulerJob";
                     $job->data = array('currency_id'=>$currency->id);
                     $job->retry_count = 0;
                     $job->assigned_user_id = $current_user->id;
-                    $job->save();
+                    //$job->save();
+                    $jobQueue = new SugarJobQueue();
+                    $jobQueue->submitJob($job);
                 }
             }
         }
