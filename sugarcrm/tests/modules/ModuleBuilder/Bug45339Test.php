@@ -133,9 +133,18 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetCustomRelationshipsMetaFilesByModuleName()
     {
-        $accountContactMetaPath = 'custom/metadata/' . $this->relationAccountContact->getName() . 'MetaData.php';
-        $accountContactTablePath = 'custom/Extension/application/Ext/TableDictionary/' . $this->relationAccountContact->getName() . '.php';
-        $contactAccountMetaPath = 'custom/metadata/' . $this->relationContactAccount->getName() . 'MetaData.php';
+        $accountContactMetaPath = sprintf(
+                'custom%1$smetadata%1$s' . $this->relationAccountContact->getName() . 'MetaData.php',
+                DIRECTORY_SEPARATOR
+        );
+        $accountContactTablePath = sprintf(
+                'custom%1$sExtension%1$sapplication%1$sExt%1$sTableDictionary%1$s' . $this->relationAccountContact->getName() . '.php',
+                DIRECTORY_SEPARATOR
+        );
+        $contactAccountMetaPath = sprintf(
+                'custom%1$smetadata%1$s' . $this->relationContactAccount->getName() . 'MetaData.php',
+                DIRECTORY_SEPARATOR
+        );
 
         /* @var $this->mbPackage MBPackage */
         $accountsAllFiles = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Accounts');
@@ -170,9 +179,18 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         $deployedRelation->save();
         $deployedRelation->build();
 
-        $accountContactRelInAccountVardefExtensions = 'custom/Extension/modules/Accounts/Ext/Vardefs/' . $this->relationAccountContact->getName() . '_Accounts.php';
-        $contactAccountRelInAccountVardefExtensions = 'custom/Extension/modules/Accounts/Ext/Vardefs/' . $this->relationContactAccount->getName() . '_Accounts.php';
-        $leadAccountRelInAccountVardefExtensions = 'custom/Extension/modules/Accounts/Ext/Vardefs/' . $relationLeadAccount->getName() . '_Accounts.php';
+        $accountContactRelInAccountVardefExtensions = sprintf(
+                'custom%1$sExtension%1$smodules%1$sAccounts%1$sExt%1$sVardefs%1$s' . $this->relationAccountContact->getName() . '_Accounts.php',
+                DIRECTORY_SEPARATOR
+        );
+        $contactAccountRelInAccountVardefExtensions = sprintf(
+                'custom%1$sExtension%1$smodules%1$sAccounts%1$sExt%1$sVardefs%1$s' . $this->relationContactAccount->getName() . '_Accounts.php',
+                DIRECTORY_SEPARATOR
+        );
+        $leadAccountRelInAccountVardefExtensions = sprintf(
+                'custom%1$sExtension%1$smodules%1$sAccounts%1$sExt%1$sVardefs%1$s' . $relationLeadAccount->getName() . '_Accounts.php',
+                DIRECTORY_SEPARATOR
+        );
 
         /* @var $this->mbPackage MBPackage */
         $accountAllExtensions = $this->mbPackage->getExtensionsListTest('Accounts');
@@ -207,7 +225,7 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         /* @var $this->mbPackage MBPackage */
         $this->mbPackage->exportCustom(array('Accounts'), false, false);
         $installDefs = array();
-        $packExtentionsPath = $this->mbPackage->getBuildDir() . '/Extension/modules';
+        $packExtentionsPath = $this->mbPackage->getBuildDir() . DIRECTORY_SEPARATOR . 'Extension' . DIRECTORY_SEPARATOR . 'modules';
         $expected = 0;
 
         $this->mbPackage->getExtensionsManifestForPackageTest($this->mbPackage->getBuildDir(), $installDefs);
@@ -238,10 +256,14 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
     public function testCustomBuildInstall()
     {
         /* @var $this->mbPackage MBPackage */
+        $this->mbPackage->exportCustom(array('Accounts'), false, false);
         $installDefString = $this->mbPackage->customBuildInstall(array('Accounts'), $this->mbPackage->getBuildDir());
 
         eval($installDefString);
 
+        $this->mbPackage->delete();
+        $this->mbPackage->deleteBuild();
+        
         $this->assertArrayHasKey('relationships', $installdefs);
     }
 

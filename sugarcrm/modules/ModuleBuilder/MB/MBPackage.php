@@ -219,7 +219,7 @@ function buildInstall($path){
     }
     
     function getBuildDir(){
-        return MB_PACKAGE_BUILD . '/' . $this->name;
+        return MB_PACKAGE_BUILD . DIRECTORY_SEPARATOR . $this->name;
     }
     
     function getZipDir(){
@@ -397,7 +397,7 @@ function buildInstall($path){
                 }
             }
         }//foreach
-        if (is_dir("$path/Extension"))
+        if (is_dir($path . DIRECTORY_SEPARATOR . 'Extension'))
         {
             $this->getExtensionsManifestForPackage($path, $installdefs);
         }
@@ -406,10 +406,10 @@ function buildInstall($path){
     
     private function getLanguageManifestForModule($module, &$installdefs)
     {
-    	$lang_path = 'custom/modules/' . $module . '/language';
+    	$lang_path = 'custom' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'language';
         foreach(scandir($lang_path) as $langFile)
         {
-	        if(substr($langFile, 0, 1) != '.' && is_file($lang_path . '/' . $langFile)){
+	        if(substr($langFile, 0, 1) != '.' && is_file($lang_path . DIRECTORY_SEPARATOR . $langFile)){
 	            $lang = substr($langFile, 0, strpos($langFile, '.'));
 	            $installdefs['language'][] = array(
 	                'from'=> '<basepath>/SugarModules/modules/' . $module . '/language/'. $langFile,
@@ -494,7 +494,7 @@ function buildInstall($path){
     protected function getExtensionsManifestForPackage($path, &$installdefs)
     {
         $installdefs['copy'] = array();
-        $generalPath = '/Extension/modules';
+        $generalPath = DIRECTORY_SEPARATOR . 'Extension' . DIRECTORY_SEPARATOR . 'modules';
 
         $recursiveIterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator($path . $generalPath),
@@ -731,7 +731,7 @@ function buildInstall($path){
         
         $result = array();
         $includeMask = false;
-        $extPath = 'custom/Extension/modules/' . $module . '/Ext';
+        $extPath = sprintf('custom%1$sExtension%1$smodules%1$s' . $module . '%1$sExt', DIRECTORY_SEPARATOR);
 
         if (is_array($includeRelationships))
         {
@@ -907,7 +907,9 @@ function buildInstall($path){
     protected function getCustomRelationshipsMetaFilesByModuleName($moduleName, $lhs = false, $metadataOnly = false)
     {
         
-        $path = $metadataOnly ? 'custom/metadata/' : 'custom/';
+        $path = $metadataOnly ?
+                'custom' . DIRECTORY_SEPARATOR . 'metadata' . DIRECTORY_SEPARATOR :
+                'custom' . DIRECTORY_SEPARATOR;
         $result = array();
 
         $relationships = $this->getCustomRelationshipsByModuleName($moduleName, $lhs);
