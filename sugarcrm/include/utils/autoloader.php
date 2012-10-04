@@ -27,6 +27,7 @@ class SugarAutoLoader{
 		'Javascript'=>'include/javascript/javascript.php',
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
         'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
+        'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
 	);
 
 	public static $noAutoLoad = array(
