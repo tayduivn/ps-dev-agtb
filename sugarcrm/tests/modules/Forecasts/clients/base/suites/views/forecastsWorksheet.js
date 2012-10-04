@@ -309,6 +309,15 @@ describe("The forecasts worksheet", function(){
     		view.bindDataChange();
     	});
     	
+    	afterEach(function(){
+    		view._collection.on.restore();
+    		view.context.forecasts.on.restore();
+    		view.context.forecasts.worksheet.on.restore();
+    		view.context.forecasts.config.on.restore();
+    		delete view.context;
+    		view.context = {};
+    	});
+    	
     	it("_collection.on should have been called with reset", function(){
     		expect(view._collection.on).toHaveBeenCalledWith("reset");
     	});
