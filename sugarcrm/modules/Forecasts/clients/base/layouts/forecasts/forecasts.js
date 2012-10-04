@@ -46,6 +46,22 @@
                 selectedGroupBy : defaultSelections.group_by,
                 selectedDataSet: defaultSelections.dataset,
                 selectedUser : defaultSelections.selectedUser,
+                
+                /**
+                 * boolean to see fire the dirty check for switching between manager and rep worksheets of the same user
+                 */
+                checkDirtyWorksheetFlag: false,
+                
+                /**
+                 * boolean to reload the active worksheet
+                 */
+                reloadWorksheetFlag: false,
+                
+                /**
+                 * The active worksheet
+                 */
+                currentWorksheet: "",
+                
 
                 /**
                  * used across Forecasts to contain sales rep worksheet totals
