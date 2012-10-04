@@ -863,6 +863,7 @@ function handleSugarConfig() {
     //BEGIN SUGARCRM flav=ent ONLY
     handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
+    handleBaseConfig();
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
@@ -901,12 +902,44 @@ function handlePortalConfig()
         'clientID' => 'support_portal',
         'maxSearchQueryResult'=>'5'
     );
-    $configString = json_encode($portalConfig);
-    $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
+    $filePath = 'portal2/config.js';
+    writeJSConfig($portalConfig,$filePath);
 
 }
 //END SUGARCRM flav=ent ONLY
+function handleBaseConfig() {
+    $filePath = 'config.js';
+    if (!isset($sugar_config)) {
+        global $sugar_config;
+    }
+
+    $sidecarConfig = array(
+        'appId' => 'SugarCRM',
+        'env' => 'dev',
+        'platform' => 'base',
+        'additionalComponents' => array(
+            'header' => array(
+                'target' => '#header'
+            ),
+            'footer' => array(
+                'target' => '#footer'
+            ),
+            'alert' => array(
+                'target' => '#alert'
+            )
+        ),
+        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+        'unsecureRoutes' => array('login', 'error'),
+        'clientID' => 'sugar'
+    );
+    writeJSConfig($sidecarConfig,$filePath);
+}
+
+function writeJSConfig($config, $path) {
+    $configString = json_encode($config);
+    $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+    sugar_file_put_contents($path, $JSConfig);
+}
 
 /**
  * (re)write the .htaccess file to prevent browser access to the log file
