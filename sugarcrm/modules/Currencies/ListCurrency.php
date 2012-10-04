@@ -19,7 +19,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
  ********************************************************************************/
- 
+
+require_once('include/SugarQueue/SugarJobQueue.php');
+
  class ListCurrency{
 	var $focus = null;
 	var $list = null;
@@ -74,7 +76,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                     $job = BeanFactory::getBean('SchedulersJobs');
                     $job->name = "SugarJobUpdateCurrencyRates: " . $timedate->getNow()->asDb();
                     $job->target = "class::SugarJobUpdateCurrencyRates";
-                    $job->data = array('currencyId'=>$currency->id);
+                    $job->data = $currency->id;
                     $job->retry_count = 0;
                     $job->assigned_user_id = $current_user->id;
                     $jobQueue = new SugarJobQueue();

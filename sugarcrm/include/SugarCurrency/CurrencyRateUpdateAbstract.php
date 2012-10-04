@@ -88,11 +88,10 @@ abstract class CurrencyRateUpdateAbstract
      * run the job to process the rate fields
      *
      * @access public
-     * @param  object    $data   data object
+     * @param  object    $currencyId
      * @return boolean   true on success
      */
-    public function run($data) {
-        $currencyId = !empty($data->currencyId) ? $data->currencyId : null;
+    public function run($currencyId) {
         if(empty($currencyId)) {
             return false;
         }
@@ -278,7 +277,7 @@ abstract class CurrencyRateUpdateAbstract
 
     protected function addRateColumnDefinition($table, $column)
     {
-        if(!is_array($this->rateColumnDefinitions[$table])) {
+        if(!isset($this->rateColumnDefinitions[$table])) {
             $this->rateColumnDefinitions[$table] = array();
         }
         if(in_array($column, $this->rateColumnDefinitions[$table])) {
@@ -289,7 +288,7 @@ abstract class CurrencyRateUpdateAbstract
     }
 
     protected function removeRateColumnDefinition($table, $column) {
-        if(!is_array($this->rateColumnDefinitions[$table])) {
+        if(!isset($this->rateColumnDefinitions[$table])) {
             $this->rateColumnDefinitions[$table] = array();
         }
         if(!in_array($column, $this->rateColumnDefinitions[$table])) {
@@ -322,7 +321,7 @@ abstract class CurrencyRateUpdateAbstract
 
     protected function addUsDollarColumnDefinition($table, $amountColumn, $usDollarColumn)
     {
-        if(!is_array($this->usDollarColumnDefinitions[$table])) {
+        if(!isset($this->usDollarColumnDefinitions[$table])) {
             $this->usDollarColumnDefinitions[$table] = array();
         }
         $this->usDollarColumnDefinitions[$table][$amountColumn] = $usDollarColumn;
@@ -330,7 +329,7 @@ abstract class CurrencyRateUpdateAbstract
     }
 
     protected function removeUsDollarColumnDefinition($table, $amountColumn) {
-        if(!is_array($this->usDollarColumnDefinitions[$table])) {
+        if(!isset($this->usDollarColumnDefinitions[$table])) {
             return false;
         }
         unset($this->usDollarColumnDefinitions[$table][$amountColumn]);

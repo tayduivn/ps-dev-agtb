@@ -32,7 +32,7 @@ class SugarAutoLoader
 		'Javascript'=>'include/javascript/javascript.php',
         'SugarSearchEngineFullIndexer'=>'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php',
         'SugarSearchEngineSyncIndexer'=>'include/SugarSearchEngine/SugarSearchEngineSyncIndexer.php',
-        'SugarCurrency' => 'include/SugarCurrency/SugarCurrency.php'
+        'SugarCurrency'=>'include/SugarCurrency/SugarCurrency.php',
 	);
 
     /**
@@ -107,10 +107,6 @@ class SugarAutoLoader
      *
      * This class finds the file path for a scheduler job class
      *
-     * @internal         filename must contain "SchedulerJob"
-     *                   searches file paths in this order:
-     *                   custom/include/SchedulerJobs/[ClassName].php
-     *                   include/SchedulerJobs/[ClassName].php
      * @access protected
      * @param $className the class name to find
      * @return string    path to file, or false if none found

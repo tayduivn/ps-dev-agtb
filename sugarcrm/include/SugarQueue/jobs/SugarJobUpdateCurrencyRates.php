@@ -74,13 +74,8 @@ class SugarJobUpdateCurrencyRates implements RunnableSchedulerJob {
                         continue;
                     }
                     $jobObject = new $jobClass;
-                    $data = json_decode($this->job->data);
-                    $result = $jobObject->run($data);
-                    {
-                        if(!$result) {
-                            return false;
-                        }
-                    }
+                    $data = $this->job->data;
+                    $jobObject->run($data);
                 }
             }
         }
