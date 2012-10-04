@@ -19,13 +19,13 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts subnav view", function(){
+describe("The forecasts tree view", function(){
 
     var app, view, data, replaceHTMLChars;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsSubnav", "forecastsSubnav", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsTree", "forecastsTree", "js", function(d) { return eval(d); });
     });
 
     describe("_recursiveReplaceHTMLChars", function() {

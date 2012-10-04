@@ -104,12 +104,12 @@
     	    	
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
-    		field.type = "bool";
+            field.type = "bool";
     		field.format = function(value){
-    			return (value=="include") ? true : false;    	        
+    			return value == "include";
     		};
     		field.unformat = function(value){
-    			return this.$el.find(".checkbox").prop("checked") ? "include" : "exclude";    	        
+    			return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
     		};
     	}
     	else{
@@ -133,9 +133,10 @@
         {
             //Set the field.def.options value based on buckets_dom (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-            if(this.isEditableWorksheet)
+            field = this._setUpCommitStage(field);
+            if(!this.isEditableWorksheet)
             {
-               field = this._setUpCommitStage(field);
+                field.view = 'detail';
             }
         }
         
@@ -172,6 +173,9 @@
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
+            	this.calculateTotals();
+            }, this);
+            this.context.forecasts.on("change:expectedOpportunities", function() {
             	this.calculateTotals();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
@@ -297,7 +301,7 @@
 
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
-                field.view = self.isEditableWorksheet ? self.name : 'default';
+                field.view = self.isEditableWorksheet ? self.name : 'detail';
             }
         });
 
@@ -328,19 +332,38 @@
         var columnKeys = {};
 
         _.each(fields, function(field, key){
-            var name = field.name;
+            if(field.enabled)
+            {
+                var name = field.name;
 
-            var fieldDef = {
-                "sName": name,
-                "aTargets": [ key ],
-                "bVisible" : self.checkConfigForColumnVisibility(field.name)
-            };
+                var fieldDef = {
+                    "sName": name,
+                    "aTargets": [ key ],
+                    "bVisible" : self.checkConfigForColumnVisibility(field.name)
+                };
 
-            if(typeof(field.type) != "undefined" && field.type == "bool"){
-            	fieldDef["sSortDataType"] = "dom-checkbox";
+                //Apply sorting for the worksheet
+                if(typeof(field.type) != "undefined")
+                {
+                    switch(field.type)
+                    {
+                        case "enum":
+                        case "bool":
+                            fieldDef["sSortDataType"] = "dom-checkbox";
+                            fieldDef["sType"] = "numeric";
+                            break;
+
+                        case "int":
+                        case "currency":
+                            fieldDef["sSortDataType"] = "dom-number";
+                            fieldDef["sType"] = "numeric";
+                            break;
+                    }
+                }
+
+                columnDefs.push(fieldDef);
+                columnKeys[name] = key;
             }
-            columnDefs.push(fieldDef);
-            columnKeys[name] = key;
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
@@ -486,8 +509,10 @@
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
+        var includedWorst = 0;
         var overallAmount = 0;
         var overallBest = 0;
+        var overallWorst = 0;
         var includedCount = 0;
         var lostCount = 0;
         var lostAmount = 0;
@@ -499,6 +524,7 @@
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
                 'best_case' : includedBest,
+                'worst_case' : includedWorst,
                 'timeperiod_id' : self.timePeriod,
                 'lost_count' : lostCount,
                 'lost_amount' : lostAmount,
@@ -520,12 +546,14 @@
 
             var won = _.include(sales_stage_won_setting, model.get('sales_stage'));
             var lost = _.include(sales_stage_lost_setting, model.get('sales_stage'));
-            var amount = parseFloat(model.get('amount'));
+            var amount = parseFloat(model.get('likely_case'));
             var commit_stage = model.get('commit_stage');
             var best = parseFloat(model.get('best_case'));
+            var worst = parseFloat(model.get('worst_case'));
             var base_rate = parseFloat(model.get('base_rate'));
             var amount_base = amount * base_rate;
             var best_base = best * base_rate;
+            var worst_base = worst * base_rate;
 
             if(won)
             {
@@ -539,11 +567,13 @@
             if(commit_stage === 'include') {
                 includedAmount += amount_base;
                 includedBest += best_base;
+                includedWorst += worst_base;
                 includedCount++;
             }
 
             overallAmount += amount_base;
             overallBest += best_base;
+            overallWorst += worst_base;
         });
 
         //Now see if we need to add the expected opportunity amounts
@@ -554,24 +584,30 @@
                {
                    var amount = model.get('expected_amount');
                    var best = model.get('expected_best_case');
+                   var worst = model.get('expected_worst_case');
                    var base_rate = parseFloat(model.get('base_rate'));
 
+
                    //Check for null condition and, if so, set to 0
-                    amount = amount != null ? parseFloat(amount) : 0;
-                    best = best != null ? parseFloat(best) : 0;
+                   amount = amount != null ? parseFloat(amount) : 0;
+                   best = best != null ? parseFloat(best) : 0;
+                   worst = worst != null ? parseFloat(worst) : 0;
 
                    var amount_base = amount * base_rate;
                    var best_base = best * base_rate;
+                   var worst_base = worst * base_rate;
 
                    //If commit_stage is include then we count the forecast schedule model
-                   if(model.get('commit_stage') === 'include')
+                   if(model.get('expected_commit_stage') == 'include')
                    {
                         includedAmount += amount_base;
                         includedBest += best_base;
+                        includedWorst += worst_base;
                    }
 
                    overallAmount += amount_base;
                    overallBest += best_base;
+                   overallWorst += worst_base;
                }
            });
         }
@@ -579,18 +615,21 @@
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
+            includedWorst : includedWorst,
             includedCount : includedCount
         });
         self.includedModel.change();
 
         self.overallModel.set({
             overallAmount : overallAmount,
-            overallBest : overallBest
+            overallBest : overallBest,
+            overallWorst : overallWorst
         });
         self.overallModel.change();
 
         var totals = {
             'best_case' : includedBest,
+            'worst_case' : includedWorst,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,
             'lost_amount' : lostAmount,
@@ -627,16 +666,17 @@
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
         var self = this;
-        if(!this.showMe()){
-        	return false;
-        }
-
         if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') { // buckets
 
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
+
+                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
+                            return true;
+                        }
+
                         var editable = self.isMyWorksheet();
                         var returnVal = null;
                         //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
@@ -663,10 +703,14 @@
                 );
         } else {  // not buckets
             // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(_.first(params) == "1") {//committed
+            if(_.first(params) == "include") {//committed
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
+                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
+                            return true;
+                        }
+
                         var val = aData[0];
                         var jVal = $(val);
 

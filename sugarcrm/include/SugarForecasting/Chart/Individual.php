@@ -175,8 +175,9 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected function formatDataForChart()
     {
-        global $current_user, $current_language;
-        $currency_id = $current_user->getPreference('currency');
+        global $current_language;
+        // since we are converting everything to base currency, we need to get the base currency id for the formatting
+        $currency_id = -99;
 
         // get the language strings for the modules that we need
         $forecast_strings = return_module_language($current_language, 'Forecasts');
