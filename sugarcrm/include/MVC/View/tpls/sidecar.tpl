@@ -39,7 +39,7 @@
         <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
 
         <!-- App Scripts -->
-        <script src='sidecar/minified/sidecar.js'></script>
+        <script src='sidecar/minified/sidecar.min.js'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
