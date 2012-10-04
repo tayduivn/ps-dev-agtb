@@ -159,9 +159,6 @@ $mod_strings = array (
   'LBL_HOME_PAGE_3_NAME' => 'Support',
   'LBL_HOME_PAGE_6_NAME' => 'Marketing',//bug 16510, separate the support and marketing page from each other
   'LBL_HOME_PAGE_4_NAME' => 'Tracker',
-//BEGIN SUGARCRM flav=dce ONLY
-  'LBL_HOME_PAGE_5_NAME' => 'DCE',
-//END SUGARCRM flav=dce ONLY
   'LBL_CLOSE_SITEMAP' =>'Close',
 
   'LBL_SEARCH' => 'Search',
@@ -244,11 +241,6 @@ $mod_strings = array (
   'LBL_SOURCE_PHPJS' => 'php.js - Use PHP functions in JavaScript',
   'LBL_SOURCE_PHPSQL' => 'PHP SQL Parser',
   'LBL_SOURCE_HTMLPURIFIER' => 'HTML Purifier - A standards-compliant HTML filtering library.',
-//BEGIN SUGARCRM flav=dce ONLY
-  'LNK_NEW_DCEINSTANCE' => 'Create Instance',
-  'LNK_NEW_DCECLUSTER' => 'Create Cluster',
-  'LNK_NEW_DCETEMPLATE' => 'Create Template',
-//END SUGARCRM flav=dce ONLY
 
   'LBL_DASHLET_TITLE' => 'My Sites',
   'LBL_DASHLET_OPT_TITLE' => 'Title',

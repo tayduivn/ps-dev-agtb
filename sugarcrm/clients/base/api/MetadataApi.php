@@ -168,6 +168,27 @@ class MetadataApi extends SugarApi {
 
     // this is the function for the endpoint of the public metadata api.
     public function getPublicMetadata($api, $args) {
+        $configs = array();
+
+        // right now we are getting the config only for the portal
+        // Added an isset check for platform because with no platform set it was
+        // erroring out. -- rgonzalez
+
+        if(isset($args['platform'])) {
+            //temporary replace 'forecasts' w/ 'base'
+            //as forecast settings store in db w/ prefix 'base_'
+            $category = $args['platform'] == 'forecasts' ? 'base' : $args['platform'];
+            $prefix = "{$category}_";
+            $admin = new Administration();
+            $admin->retrieveSettings($category, true);
+            foreach($admin->settings AS $setting_name => $setting_value) {
+                if(stristr($setting_name, $prefix)) {
+                    $key = str_replace($prefix, '', $setting_name);
+                    $configs[$key] = json_decode(html_entity_decode($setting_value)) ? json_decode(html_entity_decode($setting_value)) : $setting_value;
+                }
+            }
+        }
+
         global $current_language, $app_strings, $app_list_strings;
         if ( isset($args['lang']) ) {
             $current_language = $args['lang'];

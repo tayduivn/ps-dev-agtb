@@ -33,7 +33,7 @@ require_once ('modules/Forecasts/Common.php');
 require_once ('modules/Forecasts/ForecastDirectReports.php');
 
 require_once ('include/JSON.php');
-global $theme, $mod_strings;
+global $theme, $mod_strings, $current_language;
 
 
 global $href_string;
@@ -134,7 +134,7 @@ function get_worksheet_defintion($user_id, $forecast_type, $timeperiod_id, $allo
         //assign the qota amount.
         $lv->ss->assign("QUOTA_VALUE", $seedForecastOpportunities->get_quota());
         global $listViewDefs;
-		include ('modules/Forecasts/metadata/OpportunityForecastlistviewdefs.php');
+		include ('modules/Forecasts/metadata/listviewdefs.php');
 		$lv->displayColumns = $listViewDefs['ForecastOpportunities'];
 
 		//disable some features.
@@ -479,5 +479,3 @@ function buildExportLink($forecast_type) {
 
     return $buttons;
 }
-
-?>

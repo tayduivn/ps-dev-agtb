@@ -46,14 +46,5 @@ $mod_strings = array (
 'LBL_ACTION_ACCESS'=>'Access',
 'LBL_ACTION_ADMIN'=>'Access Type',
 'LBL_ACCESS_DEFAULT'=>'Not Set',
-//BEGIN SUGARCRM flav=dce ONLY
-'LBL_ACTION_DEPLOY'=>'Deploy',
-'LBL_ACTION_UPGRADE'=>'Upgrade',
-'LBL_ACTION_CONVERT'=>'Convert',
-'LBL_ACTION_ARCHIVE'=>'Archive',
-'LBL_ACTION_CLONE'=>'Clone',
-'LBL_ACTION_RECOVER'=>'Recover',
-'LBL_ACTION_SUPPORT_USER'=>'Support User',
-//END SUGARCRM flav=dce ONLY
 )
 ?>

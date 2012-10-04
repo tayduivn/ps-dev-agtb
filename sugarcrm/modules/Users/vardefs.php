@@ -25,7 +25,13 @@ $dictionary['User'] = array(
         'id' => array(
             'name' => 'id',
             'vname' => 'LBL_ID',
+            //BEGIN SUGARCRM flav=pro ONLY
+            'type' => 'user_name',
+            'dbType' => 'id',
+            //END SUGARCRM flav=pro ONLY
+            //BEGIN SUGARCRM flav!=pro ONLY
             'type' => 'id',
+            //END SUGARCRM flav!=pro ONLY
             'required' => true,
         ) ,
         'user_name' => array(
@@ -787,52 +793,6 @@ $dictionary['User'] = array(
 		    'vname' => 'LBL_ASSIGNED_TO_USER',
 		    'source'=>'non-db',
 		  ),
-        //BEGIN SUGARCRM flav=dce ONLY
-        'dceinstance_role_fields' => array(
-            'name' => 'dceinstance_role_fields',
-            'rname' => 'id',
-            'relationship_fields' => array(
-                'id' => 'dceinstance_role_id',
-                'user_role' => 'dceinstance_role'
-            ) ,
-            'vname' => 'LBL_ACCOUNT_NAME',
-            'type' => 'relate',
-            'link' => 'dceinstances',
-            'link_type' => 'relationship_info',
-            'join_link_name' => 'dceinstances_users',
-            'join_primary' => false,
-            'source' => 'non-db',
-            'importable' => 'false',
-            'duplicate_merge' => 'disabled',
-            'studio' => false,
-        ) ,
-        'dceinstance_role_id' => array(
-            'name' => 'dceinstance_role_id',
-            'type' => 'varchar',
-            'source' => 'non-db',
-            'vname' => 'LBL_DCEINSTANCE_ROLE_ID',
-            'importable' => 'false',
-        ) ,
-        'dceinstance_role' => array(
-            'name' => 'dceinstance_role',
-            'type' => 'enum',
-            'source' => 'non-db',
-            'vname' => 'LBL_DCEINSTANCE_ROLE',
-            'options' => 'dceinstance_user_relationship_type_dom',
-            'importable' => 'false',
-            'massupdate' => false,
-        ) ,
-        'dceinstances' => array(
-            'name' => 'dceinstances',
-            'type' => 'link',
-            'relationship' => 'dceinstances_users',
-            'source' => 'non-db',
-            'module' => 'DCEInstances',
-            'bean_name' => 'DCEInstance',
-            'vname' => 'LBL_DCEINSTANCES',
-            'importable' => 'false',
-        ) ,
-        //END SUGARCRM flav=dce ONLY
 	 'oauth_tokens' =>
       array (
         'name' => 'oauth_tokens',
@@ -854,6 +814,33 @@ $dictionary['User'] = array(
 			'source' => 'non-db',
 			'vname' => 'LBL_PROJECTS',
 		),
+        'quotas' =>
+        array (
+            'name' => 'quotas',
+            'type' => 'link',
+            'relationship' => 'users_quotas',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_QUOTAS',
+        ),
+        'forecasts' =>
+        array (
+            'name' => 'forecasts',
+            'type' => 'link',
+            'relationship' => 'users_forecasts',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_FORECASTS',
+        ),
+        'worksheets' =>
+        array (
+            'name' => 'worksheets',
+            'type' => 'link',
+            'relationship' => 'users_worksheets',
+            'source'=>'non-db',
+            'link_type'=>'one',
+            'vname'=>'LBL_WORKSHEETS',
+        ),
 //END SUGARCRM flav=pro ONLY
 
     'preferred_language' =>
@@ -864,6 +851,7 @@ $dictionary['User'] = array(
          'vname' => 'LBL_PREFERRED_LANGUAGE',
          'options' => 'available_language_dom',
       ),
+
     ) ,
     'indices' => array(
         array(
@@ -887,6 +875,11 @@ $dictionary['User'] = array(
                 'id'
             )
         ) ,
+        array(
+			'name' => 'idx_users_reports_to_id',
+			'type' => 'index',
+			'fields' => array('reports_to_id', 'id')
+		),
      //BEGIN SUGARCRM flav=pro ONLY
 		array(
 			'name' => 'idx_users_tmst_id',
@@ -948,6 +941,41 @@ $dictionary['User'] = array(
 	            'join_key_lhs'      => 'team_set_id',
 	            'join_key_rhs'      => 'team_id',
 			),
+        'users_forecasts' => array(
+            'rhs_module'		=> 'Forecasts',
+            'rhs_table'			=> 'forecasts',
+            'rhs_key'			=> 'user_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'forecast_type',
+            'relationship_role_column_value'=>'Rollup'
+        ),
+
+        'users_quotas' => array(
+            'rhs_module'		=> 'Quotas',
+            'rhs_table'			=> 'quotas',
+            'rhs_key'			=> 'user_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'quota_type',
+            'relationship_role_column_value'=>'Direct'
+        ),
+
+        'users_worksheets' => array(
+            'rhs_module'		=> 'Worksheet',
+            'rhs_table'			=> 'worksheet',
+            'rhs_key'			=> 'related_id',
+            'lhs_module'		=> 'Users',
+            'lhs_table'			=> 'users',
+            'lhs_key'			=> 'id',
+            'relationship_type'	=> 'one-to-many',
+            'relationship_role_column'=>'related_forecast_type',
+            'relationship_role_column_value'=>'Direct'
+        ),
         'users_team_sets' => array (
             'lhs_module'        => 'Teams',
             'lhs_table'         => 'teams',

@@ -64,19 +64,19 @@ r53119 - 2009-12-09 19:23:33 -0800 (Wed, 09 Dec 2009) - mitani - fixes tags for 
 
 r53116 - 2009-12-09 17:24:37 -0800 (Wed, 09 Dec 2009) - mitani - Merge Kobe into Windex Revision 51633 to 53087
 
-r52448 - 2009-11-13 02:21:35 -0800 (Fri, 13 Nov 2009) - mitani - Fixes issues with quick create buttons, removes buttons from the top of the quick create form for productivity bar, aligns navigation buttons with other buttons on detail and edit views fixes an issue with calls edit view still calling on leads 
+r52448 - 2009-11-13 02:21:35 -0800 (Fri, 13 Nov 2009) - mitani - Fixes issues with quick create buttons, removes buttons from the top of the quick create form for productivity bar, aligns navigation buttons with other buttons on detail and edit views fixes an issue with calls edit view still calling on leads
 
-r52277 - 2009-11-06 12:41:42 -0800 (Fri, 06 Nov 2009) - mitani - Updates the Productivity Bar  UI and adds Spot :) 
+r52277 - 2009-11-06 12:41:42 -0800 (Fri, 06 Nov 2009) - mitani - Updates the Productivity Bar  UI and adds Spot :)
 
 r52120 - 2009-11-02 14:45:24 -0800 (Mon, 02 Nov 2009) - clee - Fixed errors with default connector buttons/hover buttons not appearing in default install for sales edition.
 
-r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system 
+r51719 - 2009-10-22 10:18:00 -0700 (Thu, 22 Oct 2009) - mitani - Converted to Build 3  tags and updated the build system
 
 r51634 - 2009-10-19 13:32:22 -0700 (Mon, 19 Oct 2009) - mitani - Windex is the branch for Sugar Sales 1.0 development
 
 r50375 - 2009-08-24 18:07:43 -0700 (Mon, 24 Aug 2009) - dwong - branch kobe2 from tokyo r50372
 
-r48227 - 2009-06-08 14:59:16 -0700 (Mon, 08 Jun 2009) - tyoung - 23828: replaced the PHP mechanism to calculate the subpanel name based on the module name, which failed as a result of the switch from module-based subpanel names to relationship-based names, which a javascript mechanism embedded in the two affected methods in SubpanelUtils - inlineSave() and cancelCreate(). 
+r48227 - 2009-06-08 14:59:16 -0700 (Mon, 08 Jun 2009) - tyoung - 23828: replaced the PHP mechanism to calculate the subpanel name based on the module name, which failed as a result of the switch from module-based subpanel names to relationship-based names, which a javascript mechanism embedded in the two affected methods in SubpanelUtils - inlineSave() and cancelCreate().
 The new mechanism works out from the save or cancel button, respectively, until it encounters a subpanel (marked by a new CSS class 'quickcreate'). It then uses that subpanel name in later operations. This mechanism is now reliable for relationship-based subpanel names. Furthermore, it does not require modifications to the method-chain. To fix this issue by passing the subpanel name along the method-chain would require changing the method signature of the smarty method, sugar_button, which would be very broad-ranging.
 
 r45148 - 2009-03-16 07:43:29 -0700 (Mon, 16 Mar 2009) - clee - Bug:28522
@@ -115,7 +115,7 @@ r41336 - 2008-11-04 15:00:45 -0800 (Tue, 04 Nov 2008) - awu - merging Milan code
 r39146 - 2008-08-26 17:16:04 -0700 (Tue, 26 Aug 2008) - awu - Merging pre_5_1_0 to trunk
 
 r38393 - 2008-07-29 12:44:00 -0700 (Tue, 29 Jul 2008) - Collin Lee - Bug:23873
-Spoke with Ran more about this issue. It turns out the "Select" button was not the only button that needed to have a unique id. All subpanel and subpanel quick create buttons where no unique id exists for the element are candidates for change. Modified sugar widget subpanel classes to use a unique id for "Create" and "Select" buttons. Modified function.sugar_button.php to uniquely identify subpanel buttons as well.   
+Spoke with Ran more about this issue. It turns out the "Select" button was not the only button that needed to have a unique id. All subpanel and subpanel quick create buttons where no unique id exists for the element are candidates for change. Modified sugar widget subpanel classes to use a unique id for "Create" and "Select" buttons. Modified function.sugar_button.php to uniquely identify subpanel buttons as well.
 
 r37505 - 2008-07-02 10:12:55 -0700 (Wed, 02 Jul 2008) - roger - bug: 23283 - buttons in EditView were grouped together without spacing.
 
@@ -176,12 +176,12 @@ Fixed include/Smarty/plugins/function.sugar_button.php
 r28643 - 2007-10-22 13:58:23 -0700 (Mon, 22 Oct 2007) - majed - bug #16757
 fixes duplicate so it returns to the detail view of the new record instead of the index page
 
-r28573 - 2007-10-21 01:24:14 -0700 (Sun, 21 Oct 2007) - majed - adds support for metadata driven quick creates and adds the ability to create from subpanels for any module 
+r28573 - 2007-10-21 01:24:14 -0700 (Sun, 21 Oct 2007) - majed - adds support for metadata driven quick creates and adds the ability to create from subpanels for any module
 bug # 16541
 
-r28324 - 2007-10-17 16:24:57 -0700 (Wed, 17 Oct 2007) - majed - bug #13311 fixes delete button showing up when it shouldn't in most scenarios some places the button may be disabled instead of disappearing and in worst case it should display you do not have access if you don't 
+r28324 - 2007-10-17 16:24:57 -0700 (Wed, 17 Oct 2007) - majed - bug #13311 fixes delete button showing up when it shouldn't in most scenarios some places the button may be disabled instead of disappearing and in worst case it should display you do not have access if you don't
 
-r28178 - 2007-10-15 16:56:47 -0700 (Mon, 15 Oct 2007) - majed - Checkin to add first side quick create for meta data driven ui. 
+r28178 - 2007-10-15 16:56:47 -0700 (Mon, 15 Oct 2007) - majed - Checkin to add first side quick create for meta data driven ui.
 
 r25427 - 2007-08-11 13:52:09 -0700 (Sat, 11 Aug 2007) - clee - Added empty id check so we do not show the audit button when creating a new record.
 
@@ -350,21 +350,6 @@ function smarty_function_sugar_button($params, &$smarty)
                 $output = '<input title="{$APP.LBL_FULL_FORM_BUTTON_TITLE}" class="button" onclick="'.$js_form.' disableOnUnloadEditView(_form); _form.return_action.value=\'DetailView\'; _form.action.value=\'EditView\'; if(typeof(_form.to_pdf)!=\'undefined\') _form.to_pdf.value=\'0\';" type="submit" name="' . $params['module'] . '_subpanel_full_form_button" id="' . $params['module'] . '_subpanel_full_form_button" value="{$APP.LBL_FULL_FORM_BUTTON_LABEL}"> ';
                 $output .= '<input type="hidden" name="full_form" value="full_form">';
             break;
-			case "DCMENUCANCEL":
-                $output = '<input title="{$APP.LBL_CANCEL_BUTTON_TITLE}" accessKey="{$APP.LBL_CANCEL_BUTTON_KEY}" class="button" onclick="javascript:lastLoadedMenu=undefined;DCMenu.closeOverlay();return false;" type="submit" name="' . $params['module'] . '_dcmenu_cancel_button" id="' . $params['module'] . '_dcmenu_cancel_button" value="{$APP.LBL_CANCEL_BUTTON_LABEL}"> ';
-            break;
-			case "DCMENUSAVE":
-                            if ($view == 'QuickCreate') {
-                                $view = "form_DCQuickCreate_{$module}";
-                            } else if ($view == 'EditView') {
-                                $view = "form_DCEditView_{$module}";
-                            }
-				$output = '{if $bean->aclAccess("save")}<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" class="button primary" onclick="'.$js_form.' _form.action.value=\'Save\';if(check_form(\''.$view.'\'))return DCMenu.save(_form.id, \'' . $params['module'] . '_subpanel_save_button\');return false;" type="submit" name="' . $params['module'] . '_dcmenu_save_button" id="' . $params['module'] . '_dcmenu_save_button" value="{$APP.LBL_SAVE_BUTTON_LABEL}">{/if} ';
-            break;
-			case "DCMENUFULLFORM":
-                $output = '<input title="{$APP.LBL_FULL_FORM_BUTTON_TITLE}" accessKey="{$APP.LBL_FULL_FORM_BUTTON_KEY}" class="button" onclick="'.$js_form.' disableOnUnloadEditView(_form); _form.return_action.value=\'DetailView\'; _form.action.value=\'EditView\'; _form.return_module.value=\'' . $params['module'] . '\';_form.return_id.value=_form.record.value;if(typeof(_form.to_pdf)!=\'undefined\') _form.to_pdf.value=\'0\';SUGAR.ajaxUI.submitForm(_form,null,true);DCMenu.closeOverlay();" type="button" name="' . $params['module'] . '_subpanel_full_form_button" id="' . $params['module'] . '_subpanel_full_form_button" value="{$APP.LBL_FULL_FORM_BUTTON_LABEL}"> ';
-                $output .= '<input type="hidden" name="full_form" value="full_form">';
-            break;
 			case "POPUPSAVE":
 				$view = ($view == 'QuickCreate') ? "form_QuickCreate_{$module}" : $view;
 				$output = '{if $bean->aclAccess("save")}<input title="{$APP.LBL_SAVE_BUTTON_TITLE}" accessKey="{$APP.LBL_SAVE_BUTTON_KEY}" '
@@ -429,7 +414,7 @@ function smarty_function_sugar_button($params, &$smarty)
                     $smarty->trigger_error("sugar_button: missing required param (record)");
                 }
                 $record = $params['record'];
-                
+
                 require_once 'modules/PdfManager/PdfManagerHelper.php';
                 $pdfManagerList = PdfManagerHelper::getPublishedTemplatesForModule($module);
                 //quote legacy templates
@@ -437,7 +422,7 @@ function smarty_function_sugar_button($params, &$smarty)
                     require_once 'modules/Quotes/Layouts.php';
                     $tplLayouts = get_layouts();
                 }
-                
+
                 $output = '';
                 if (!empty($pdfManagerList) || !empty($tplLayouts)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
@@ -447,12 +432,12 @@ function smarty_function_sugar_button($params, &$smarty)
                             if (!empty($pdfManagerList)) {
                             foreach($pdfManagerList as $pdfTemplate){
                                 $urlParams = array(
-                                    'module' => $module,                                    
+                                    'module' => $module,
                                     'record' => $record,
                                     'action' => 'sugarpdf',
                                     'sugarpdf' => 'pdfmanager',
                                     'pdf_template_id' => $pdfTemplate->id,
-                                    
+
                                 );
                                 $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfview" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
                                                         'items' => array(),
@@ -463,19 +448,19 @@ function smarty_function_sugar_button($params, &$smarty)
                             if($module == "Quotes") {
                                 foreach($tplLayouts as $sugarpdf=>$path) {
                                     $urlParams = array(
-                                        'module' => $module,                                    
+                                        'module' => $module,
                                         'record' => $record,
                                         'action' => 'sugarpdf',
                                         'sugarpdf' => $sugarpdf,
                                         'email_action' => '',
-                                        
+
                                     );
                                     $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $GLOBALS['app_strings']['LBL_EXISTING'].'_'.$path . '</a>',
                                                             'items' => array(),
                                                         );
                                 }
                             }
-                            
+
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
                             $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
                                                                             'items'                 => $pdfItems,
@@ -490,26 +475,26 @@ function smarty_function_sugar_button($params, &$smarty)
                                 function display_pdf_list(el) {
                                     var menu = \'';
                                 if (!empty($pdfManagerList)) {
-                                foreach($pdfManagerList as $pdfTemplate){   
+                                foreach($pdfManagerList as $pdfTemplate){
                                     $urlParams = array(
-                                        'module' => $module,                                    
+                                        'module' => $module,
                                         'record' => $record,
                                         'action' => 'sugarpdf',
                                         'sugarpdf' => 'pdfmanager',
                                         'pdf_template_id' => $pdfTemplate->id,
-                                        
-                                    );                                
+
+                                    );
                                     $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>' ;
                                 }
                                 }
-                                
+
                                 //quote legacy templates
                                 if($module == "Quotes") {
                                     require_once 'modules/Quotes/Layouts.php';
                                     $tplLayouts = get_layouts();
                                     foreach($tplLayouts as $sugarpdf=>$path) {
                                         $urlParams = array(
-                                            'module' => $module,                                    
+                                            'module' => $module,
                                             'record' => $record,
                                             'action' => 'sugarpdf',
                                             'sugarpdf' => $sugarpdf,
@@ -518,13 +503,13 @@ function smarty_function_sugar_button($params, &$smarty)
                                         $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $path . '</a>' ;
                                     }
                                 }
-                                
+
                                 $output .= '\';
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
                             </script>
                             <a onclick="display_pdf_list(this);" />' . translate('LBL_PDF_VIEW') . '</a>
-                          ';               
+                          ';
                         }
                     }
                 break;
@@ -533,7 +518,7 @@ function smarty_function_sugar_button($params, &$smarty)
                 break;
             case "REALPDFEMAIL":
                 $output = '';
-                
+
                 global $current_user, $sugar_config;
                 $userPref = $current_user->getPreference('email_link_type');
                 $defaultPref = $sugar_config['email_default_client'];
@@ -547,7 +532,7 @@ function smarty_function_sugar_button($params, &$smarty)
                     $smarty->trigger_error("sugar_button: missing required param (record)");
                 }
                 $record = $params['record'];
-                
+
                 require_once 'modules/PdfManager/PdfManagerHelper.php';
                 $pdfManagerList = PdfManagerHelper::getPublishedTemplatesForModule($module);
                     //quote legacy templates
@@ -555,7 +540,7 @@ function smarty_function_sugar_button($params, &$smarty)
                         require_once 'modules/Quotes/Layouts.php';
                         $tplLayouts = get_layouts();
                     }
-                    
+
                     if (!empty($pdfManagerList) || !empty($tplLayouts)) {
                     if(SugarThemeRegistry::current()->name != "Classic") {
                         $output = '
@@ -564,38 +549,38 @@ function smarty_function_sugar_button($params, &$smarty)
                                 if (!empty($pdfManagerList)) {
                             foreach($pdfManagerList as $pdfTemplate){
                                 $urlParams = array(
-                                    'module' => $module,                                    
+                                    'module' => $module,
                                     'record' => $record,
                                     'action' => 'sugarpdf',
                                     'sugarpdf' => 'pdfmanager',
                                     'pdf_template_id' => $pdfTemplate->id,
                                     'to_email' => "1",
-                                    
+
                                 );
-                                
+
                                 $pdfItems[] = array(    'html'  =>  '<a id="'.$pdfTemplate->name.'_pdfemail" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>',
                                                         'items' => array(),
                                                     );
                             }
                                 }
-                                
+
                                 //quote legacy templates
                                 if($module == "Quotes") {
                                     foreach($tplLayouts as $sugarpdf=>$path) {
                                         $urlParams = array(
-                                            'module' => $module,                                    
+                                            'module' => $module,
                                             'record' => $record,
                                             'action' => 'sugarpdf',
                                             'sugarpdf' => $sugarpdf,
                                             'email_action' => 'EmailLayout',
-                                            
+
                                         );
                                         $pdfItems[] = array(    'html'  =>  '<a href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $GLOBALS['app_strings']['LBL_EXISTING'].'_'.$path . '</a>',
                                                                 'items' => array(),
                                                             );
                                     }
                                 }
-                                
+
                             require_once('include/Smarty/plugins/function.sugar_menu.php');
                             $output .= smarty_function_sugar_menu(array(    'id'                    => "pdfview_action_menu",
                                                                             'items'                 => $pdfItems,
@@ -604,24 +589,24 @@ function smarty_function_sugar_button($params, &$smarty)
                                                                             'submenuHtmlOptions'    => array(),
                                                                         )
                                                                     , $smarty);
-                        
+
                     } else {
                         $output = '
                             <script language="javascript">
                                 function display_pdf_email_list(el) {
                                     var menu = \'';
                                     if (!empty($pdfManagerList)) {
-                                foreach($pdfManagerList as $pdfTemplate){   
+                                foreach($pdfManagerList as $pdfTemplate){
                                     $urlParams = array(
-                                        'module' => $module,                                    
+                                        'module' => $module,
                                         'record' => $record,
                                         'action' => 'sugarpdf',
                                         'sugarpdf' => 'pdfmanager',
                                         'pdf_template_id' => $pdfTemplate->id,
                                         'to_email' => "1",
-                                        
+
                                     );
-                                    
+
                                     $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $pdfTemplate->name . '</a>' ;
                                 }
                                     }
@@ -631,23 +616,23 @@ function smarty_function_sugar_button($params, &$smarty)
                                         $tplLayouts = get_layouts();
                                         foreach($tplLayouts as $sugarpdf=>$path) {
                                             $urlParams = array(
-                                                'module' => $module,                                    
+                                                'module' => $module,
                                                 'record' => $record,
                                                 'action' => 'sugarpdf',
                                                 'sugarpdf' => $sugarpdf,
                                                 'email_action' => 'EmailLayout',
-                                                
+
                                             );
                                             $output .= '<a style="width: 150px" class="menuItem" onmouseover="hiliteItem(this,\\\'yes\\\');" onmouseout="unhiliteItem(this);" onclick="" href="index.php?' . http_build_query($urlParams, '', '&') . '">' . $sugarpdf . '</a>' ;
                                         }
                                     }
-                                    
+
                                 $output .= '\';
                                 SUGAR.util.showHelpTips(el,menu);
                                 }
                             </script>
                                 <a onclick="display_pdf_email_list(this);" />' . translate('LBL_PDF_EMAIL') . '</a>
-                          ';                   
+                          ';
                     }
                 }
                 }

@@ -57,6 +57,7 @@ $app_list_strings = array (
     'ProductTypes' => 'Product Types',
     'ProductTemplates' => 'Product Catalog',
   //END SUGARCRM flav=pro ONLY
+
   //BEGIN SUGARCRM flav=pro || flav=sales ONLY
     'Reports' => 'Reports',
     'Reports_1'=>'Reports',
@@ -64,6 +65,8 @@ $app_list_strings = array (
   //BEGIN SUGARCRM flav=pro ONLY
     'Forecasts' => 'Forecasts',
     'ForecastSchedule'=>'Forecast Schedule',
+    'ForecastWorksheets' => 'Forecast Worksheets',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheets',
     'MergeRecords'=>'Merge Records',
     'Quotas' => 'Quotas',
     'Teams' => 'Teams',
@@ -101,6 +104,7 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
     'WorkFlow' => 'Workflow Definitions',
     'EAPM' => 'External Accounts',
+    'Worksheet' => 'Worksheet',
 //END SUGARCRM flav=pro ONLY
     'Users' => 'Users',
     'Employees' => 'Employees',
@@ -130,15 +134,6 @@ $app_list_strings = array (
 //BEGIN SUGARCRM flav=pro ONLY
 	'PdfManager' => 'PDF Manager',
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-
-    'DCEDataBases' => 'Databases',
-    'DCEClusters' => 'Clusters',
-    'DCEInstances' => 'Instances',
-    'DCETemplates' => 'Templates',
-    'DCEActions' => 'Actions',
-    'DCEReports'=>'DCE Reports',
-//END SUGARCRM flav=dce ONLY
 
     'OAuthKeys' => 'OAuth Consumer Keys',
     'OAuthTokens' => 'OAuth Tokens',
@@ -169,6 +164,8 @@ $app_list_strings = array (
     'Products' => 'Product',
     'Reports' => 'Report',
     'Forecasts' => 'Forecast',
+    'ForecastWorksheets' => 'Forecast Worksheet',
+    'ForecastManagerWorksheets' => 'Forecast Manager Worksheet',
     'ForecastSchedule'=>'Forecast Schedule',
     'Quotas' => 'Quota',
     'Teams' => 'Team',
@@ -345,6 +342,27 @@ $app_list_strings = array (
     'Closed Won' => 'Closed Won',
     'Closed Lost' => 'Closed Lost',
   ),
+
+  'commit_stage_binary_dom' => array (
+    'include' => 'Include',
+    'pipeline' => 'Pipeline',
+  ),
+  'commit_stage_dom' =>
+  array (
+    'include' => 'Include',
+    'exclude' => 'Exclude',
+    'upside'  => 'Upside',
+  ),
+
+  //The n-option for commit_stage dropdowns
+  'commit_stage_expanded_dom' =>
+  array (
+    'include' => 'Include',
+    'exclude' => 'Exclude',
+    'stretch' => 'Stretch',
+    'risk' => 'Risk',
+  ),
+
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
     'Negotiation' => 'Negotiation',
@@ -590,7 +608,6 @@ $app_list_strings = array (
 
   'record_type_display_notes' =>
   array (
-//BEGIN SUGARCRM flav!=dce ONLY
     'Accounts' => 'Account',
     'Contacts' => 'Contact',
     'Opportunities' => 'Opportunity',
@@ -614,19 +631,10 @@ $app_list_strings = array (
 
     'Meetings' => 'Meeting',
     'Calls' => 'Call',
-//END SUGARCRM flav!=dce ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-    'Accounts' => 'Account',
-    'Contacts' => 'Contact',
-    'Cases' => 'Case',
-    'Emails' => 'Email',
-    'DCEInstances' => 'Instance',
-//END SUGARCRM flav=dce ONLY
   ),
 
   'parent_type_display' =>
   array (
-//BEGIN SUGARCRM flav!=dce ONLY
     'Accounts' => 'Account',
     'Contacts' => 'Contact',
     'Tasks' => 'Task',
@@ -651,15 +659,6 @@ $app_list_strings = array (
     'Prospects' => 'Target',
     //END SUGARCRM flav!=sales ONLY
 
-//END SUGARCRM flav!=dce ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-
-    'Accounts' => 'Account',
-    'Contacts' => 'Contact',
-    'Cases' => 'Case',
-    'Tasks' => 'Task',
-    'DCEInstances' => 'Instance',
-//END SUGARCRM flav=dce ONLY
   ),
 
   //BEGIN SUGARCRM flav=pro ONLY
@@ -1684,106 +1683,6 @@ $app_list_strings = array (
         'hbar'  => 'Horizontal Bar',
     ),
     //END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    'server_status_list' => array (
-      'active' => 'Active',
-      'maintenance' => 'Maintenance',
-      'rebooting' => 'Rebooting',
-    ),
-    'instance_status_list' => array (
-      'new' => 'New',
-      'live' => 'Live',
-      'in_progress' => 'In Progress',
-      'archived' => 'Archived',
-    ),
-    'action_status_list' => array (
-      'queued' => 'Queued',
-      'started' => 'Started',
-      'pending' => 'Pending',
-      'suspended' => 'Suspended',
-      'completed' => 'Completed',
-      'done' => 'Done',
-      'failed' => 'Failed',
-    ),
-    'action_priority_list' => array (
-      '3' => 'Urgent',
-      '2' => 'High',
-      '1' => 'Medium',
-      '0' => 'Low',
-    ),
-    'action_type_list' => array (
-      'create' => 'Create',
-      'convert' => 'Convert',
-      'clone' => 'Clone',
-      'recover' => 'Recover',
-      'archive' => 'Archive',
-      'delete' => 'Delete',
-      'toggle_on' => 'Enable Support User',
-      'toggle_off' => 'Disable Support User',
-      'upgrade_live' => 'Upgrade Live',
-      'upgrade_test' => 'Upgrade Test',
-      'key' => 'Update Key',
-      'report' => 'DCE Report',
-    ),
-    'status_list' => array (
-        'active' => 'Active',
-        'innactive' => 'Innactive',
-        'pending_approval' => 'Pending Approval',
-        'dummy' => 'Place Holder',
-    ),
-    'production_duration_default_key' => '365',
-    'production_duration_list' => array (
-        '365' => '1 year',
-    ),
-    'production_extended_duration_default_key' => '0',
-    'production_extended_duration_list' => array (
-        '0' => '',
-        '365' => '1 year',
-    ),
-    'convert_status_list' => array (
-        'no' => 'Not Converted',
-        'yes' => 'Converted',
-        'error' => 'Could Not Convert',
-    ),
-
-    'evaluation_duration_default_key' => '30',
-    'evaluation_duration_list' => array (
-        '15' => '15 days',
-        '30' => '30 days',
-    ),
-    'evaluation_extended_duration_default_key' => '0',
-    'evaluation_extended_duration_list' => array (
-        '0' => '',
-        '15' => '15 days',
-        '30' => '30 days',
-    ),
-    'instance_type_list' => array (
-        'evaluation' => 'Evaluation',
-        'production' => 'Production',
-    ),
-    'url_format_list' => array (
-        'URL/Instance_Name' => '(URL)/(Instance Name)',
-        'Instance_Name.URL' => '(Instance Name).(URL)',
-    ),
-  //Note:  do not translate dceinstance_contact_relationship_type_default_key
-//       it is the key for the default dceinstance_contact_relationship_type_dom value
-  'dceinstance_contact_relationship_type_default_key' => 'Primary Decision Maker',
-  'dceinstance_contact_relationship_type_dom' =>
-  array (
-    '' => '',
-    'Primary Decision Maker' => 'Primary Decision Maker',
-    'Technical Decision Maker' => 'Technical Decision Maker',
-  ),
-  //Note:  do not translate dceinstance_user_relationship_type_default_key
-//       it is the key for the default dceinstance_user_relationship_type_dom value
-  'dceinstance_user_relationship_type_default_key' => 'Sales Rep',
-  'dceinstance_user_relationship_type_dom' =>
-  array (
-    '' => '',
-    'Sales Rep' => 'Sales Rep',
-    'Support Rep' => 'Support Rep',
-  ),
-//END SUGARCRM flav=dce ONLY
     'release_status_dom' =>
     array (
         'Active' => 'Active',
@@ -1869,6 +1768,16 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+    'forecasts_chart_options_group' => array(
+        'forecast' => 'Included In Forecast',
+        'sales_stage' => 'Sales Stage',
+        'probability' => 'Probability'
+    ),
+    'forecasts_chart_options_dataset' => array(
+        'likely' => 'Likely',
+        'best' => 'Best',
+        'worst' => 'Worst'
+    ),
 );
 
 $app_strings = array (
@@ -2461,9 +2370,18 @@ $app_strings = array (
     'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
     'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
 
+
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
     'ERR_EXTERNAL_API_LOTUS_LIVE_CONFLICT' => 'A file with the same name already exists in the system.',
+
+    //Forecast specific error messages
+    'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
+    'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
+    'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
+    'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
+    'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
     //END SUGARCRM flav=pro ONLY
 
     'LBL_ACCOUNT'=>'Account',
@@ -2496,13 +2414,8 @@ $app_strings = array (
     'LBL_BILL_TO_ACCOUNT'=>'Bill to Account',
     'LBL_BILL_TO_CONTACT'=>'Bill to Contact',
     'LBL_BILLING_ADDRESS'=>'Billing Address',
-//BEGIN SUGARCRM flav=dce ONLY
-    'LBL_BROWSER_TITLE' => 'Sugar DCE',
-//END SUGARCRM flav=dce ONLY
     'LBL_QUICK_CREATE_TITLE' => 'Quick Create',
-//BEGIN SUGARCRM flav!=dce ONLY
     'LBL_BROWSER_TITLE' => 'SugarCRM - Commercial Open Source CRM',
-//END SUGARCRM flav!=dce ONLY
     'LBL_BUGS'=>'Bugs',
     'LBL_BY' => 'by',
     'LBL_CALLS'=>'Calls',
@@ -2850,9 +2763,6 @@ $app_strings = array (
     'LBL_TABGROUP_SALES' => 'Sales',
     'LBL_TABGROUP_SUPPORT' => 'Support',
     'LBL_TABGROUP_TOOLS' => 'Tools',
-//BEGIN SUGARCRM flav=dce ONLY
-    'LBL_TABGROUP_DCE' => 'DCE',
-//END SUGARCRM flav=dce ONLY
     'LBL_TASKS'=>'Tasks',
     'LBL_TEAMS_LINK'=>'Teams',
     'LBL_THEME_COLOR'=>'Color',
@@ -3025,6 +2935,7 @@ $app_strings = array (
     'LBL_REMOVE' => 'Remove',
     'LBL_TRAINING' => 'Support',
     'ERR_DATABASE_CONN_DROPPED'=>'Error executing a query. Possibly, your database dropped the connection. Please refresh this page, you may need to restart you web server.',
+    'ERR_DATABSE_RELATIONSHIP_QUERY'=>'Error setting {0} relationship: {1}',
     'ERR_MSSQL_DB_CONTEXT' =>'Changed database context to',
   'ERR_MSSQL_WARNING' =>'Warning:',
 
@@ -3165,22 +3076,6 @@ $app_strings = array (
     'LBL_PLUGIN_LOTUS_DESC' => 'Integrate Sugar with Lotus Notes.',
      //END SUGARCRM flav=ent ONLY
 
-    //BEGIN SUGARCRM flav=dce ONLY
-    //DCE
-    'LBL_DCEDEPLOY_LABEL' => 'Deploy',
-    'LBL_DCEDELETE_LABEL' => 'Delete',
-    'LBL_DCEUPGRADE_LABEL' => 'Upgrade',
-    'LBL_DCEARCHIVE_BUTTON' => 'Archive',
-    'LBL_DCECLONE_BUTTON' => 'Clone',
-    'LBL_DCERECOVER_BUTTON' => 'Recover',
-    'LBL_DCESUPPORTUSER_ENABLE_BUTTON' => 'Enable Support User',
-    'LBL_DCESUPPORTUSER_DISABLE_BUTTON' => 'Disable Support User',
-    'LBL_DCECONVERTINSTANCE_BUTTON' => 'Convert Instance',
-    'LBL_DCETEMPLATE_CONVERT' => 'Convert Template',
-    'LBL_DCERESTARTEMAIL_LABEL' => 'Resend Email',
-    'LBL_DCERESTARTACTION_LABEL' => 'Restart Action',
-    'LNK_DCEUPGRADE_SEARCH' => 'Upgrade Search',
-    //END SUGARCRM flav=dce ONLY
 
     //jc:#12287 - For javascript validation messages
     'MSG_IS_NOT_BEFORE' => 'is not before',
@@ -3423,6 +3318,10 @@ $app_strings = array (
     'LBL_SEARCH_BY' => 'Search by',
     'LBL_PREVIEW' => 'Preview',
     'LBL_STREAM_NO_RECORDS' => 'This record has no notes at this time. Please add a note by clicking on the add note link.',
+
+    //SugarApiExceptionNotAuthorized language string
+    'SUGAR_API_EXCEPTION_NOT_AUTHORIZED' => 'Not allowed to edit field {0} in module: {1}',
+
     'LBL_LOGIN_BUTTON_LABEL' => 'Log In',
     'LBL_TOUR' => 'Activity View Tour',
     'LNK_TOUR' => 'Tour',
@@ -3533,6 +3432,7 @@ $app_strings = array (
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
 );
+
 
 $app_list_strings['moduleList']['Library'] = 'Library';
 $app_list_strings['library_type'] = array('Books'=>'Book', 'Music'=>'Music', 'DVD'=>'DVD', 'Magazines'=>'Magazines');
@@ -4379,6 +4279,25 @@ $app_strings ['documentation'] = array (
 	'CORP' => '03_Sugar_Corporate',
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
+);
+
+$app_list_strings['forecasts_config_category_options_dom'] = array(
+    'show_binary' => 'Two Categories',
+    'show_buckets' => 'Three Categories',
+    'show_n_buckets' => 'N Categories',
+);
+$app_list_strings['forecasts_timeperiod_types_dom'] = array(
+    'fiscal' => 'Fiscal Year',
+    'chronological' => 'Date Based Year',
+);
+$app_list_strings['forecasts_timeperiod_options_dom'] = array(
+    'yearly' => 'Yearly',
+    'quarterly' => 'Quarterly',
+);
+$app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
+    'first' => 'First',
+    'middle' => 'Middle',
+    'last' => 'Last'
 );
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (

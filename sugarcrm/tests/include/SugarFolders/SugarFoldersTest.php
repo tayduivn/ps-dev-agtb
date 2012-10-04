@@ -35,28 +35,21 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function setUp()
     {
-        global $current_user, $currentModule;
-
         $this->_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user = $this->_user;
         $GLOBALS['current_user'] = $this->_user;
 		$this->folder = new SugarFolder();
 		$this->additionalFolders = array();
 		$this->emails = array();
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        if (empty($GLOBALS['current_language'])) {
-            $GLOBALS['current_language'] = 'en_us';
-        }
-        $GLOBALS['app_strings'] = return_application_language($GLOBALS['current_language']);
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_strings');
+        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
     }
 
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
 
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
         $this->_clearFolder($this->folder->id);
@@ -68,7 +61,6 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
             $GLOBALS['db']->query("DELETE FROM emails WHERE id='$emailID'");
 
         unset($this->folder);
-        unset($GLOBALS['mod_strings']);
     }
 
     /**
@@ -184,7 +176,6 @@ class SugarFoldersTest extends Sugar_PHPUnit_Framework_TestCase
      */
     function testGetUserFolders()
     {
-        $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], "Emails");
         require_once('modules/Emails/EmailUI.php');
         $emailUI = new EmailUI();
         $emailUI->preflightUser($GLOBALS['current_user']);

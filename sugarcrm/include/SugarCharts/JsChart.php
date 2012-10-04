@@ -250,10 +250,13 @@ class JsChart extends SugarChart {
 		$content = $this->tab("\"label\": [\n",1);
 		$labels = array();
 		$xml = new SimpleXMLElement($xmlstr);
-		foreach($xml->data->group[0]->subgroups->group as $group) {
-			$labels[] = $this->tab("\"".$this->processSpecialChars($group->title)."\"",2);
-		}
-		$content .= join(",\n",$labels)."\n";
+          if(isset($xml->data->group)) {
+            foreach($xml->data->group[0]->subgroups->group as $group) {
+                $labels[] = $this->tab("\"".$this->processSpecialChars($group->title)."\"",2);
+            }
+
+		    $content .= join(",\n",$labels)."\n";
+          }
 		$content .= $this->tab("],\n",1);
 		return $content;
 	}
@@ -525,8 +528,8 @@ class JsChart extends SugarChart {
 
 	}
 
-	function buildJson($xmlstr){
-		if($this->checkData($xmlstr)) {
+	function buildJson($xmlstr, $ignore_datacheck = false){
+		if($this->checkData($xmlstr) || $ignore_datacheck === true) {
 			$content = "{\n";
 			if ($this->chartType == "pie chart" || $this->chartType == "funnel chart 3D") {
 				$content .= $this->buildProperties($xmlstr);
@@ -558,6 +561,10 @@ class JsChart extends SugarChart {
 				$content .= $this->buildDataBarChartStacked($xmlstr);
 			}
 			$content .= "\n}";
+
+            // fix-up the json since it's not valid json for JS or PHP
+            $content = str_replace(array("\t", "\n", "'"), array("","",'"'), $content);
+
 			return $content;
 		} else {
 			return "No Data";

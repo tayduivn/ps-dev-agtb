@@ -27,7 +27,26 @@
  * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Reports/templates/templates_chart.php');
+
+require_once('include/SugarCharts/ChartDisplay.php');
+require_once('modules/Reports/Report.php');
+
+class ChartDisplayMock47148 extends ChartDisplay
+{
+    /**
+     * Overwrite this method to not actually run a report
+     */
+    public function setReporter(Report $reporter)
+    {
+        $this->reporter = $reporter;
+    }
+
+    public function get_row_remap($row)
+    {
+        return parent::get_row_remap($row);
+    }
+}
+
 /**
  * Bug47148Test.php
  * Reporter has a big problem with big numbers
@@ -35,11 +54,13 @@ require_once('modules/Reports/templates/templates_chart.php');
  */
 class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $_backup;
+    private $_backup = array();
 
     public function setUp()
     {
-        $this->_backup['do_thousands'] = $GLOBALS['do_thousands'];
+        global $beanFiles, $beanList;
+        require('include/modules.php');
+        $this->_backup['do_thousands'] = (isset($GLOBALS['do_thousands'])) ? $GLOBALS['do_thousands'] : false;
         $GLOBALS['do_thousands'] = true;
     }
 
@@ -64,7 +85,7 @@ class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
         $row['count'] = count($row['cells']);
 
         // define fake of report
-        $report = new stdClass();
+        $report = new Report();
         $report->chart_numerical_position = 0;
         $report->chart_header_row = array(
             0 => array(
@@ -77,7 +98,10 @@ class Bug47148Test extends Sugar_PHPUnit_Framework_TestCase
             'group_defs' => array()
         );
 
-        $actual = get_row_remap($row, $report);
+        $cdm = new ChartDisplayMock47148();
+        $cdm->setReporter($report);
+
+        $actual = $cdm->get_row_remap($row);
         $actual = $actual['numerical_value'] * 1000; // recovery of division by 1000 from get_row_remap function
         $actual = sprintf('%0.0f', $actual); // getting float as string
 

@@ -1,0 +1,11 @@
+{{#each meta.panels}}
+    {{#each ../_collection.models}}
+        {{#each ../fields}}
+            {{#if enabled}}
+                {{{expected_opportunity_column "start"}}}
+                    {{field ../../../../this ../../this}}
+                {{{expected_opportunity_column "end"}}}
+            {{/if}}
+        {{/each}}
+    {{/each}}
+{{/each}}

@@ -118,7 +118,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 						
 						for(i in currencyFields){
 							var field = currencyFields[i];
-							if(typeof(form[field]) != 'undefined'){
+							if(typeof(form[field]) != 'undefined' && form[field].value.length > 0){
 								form[field].value = unformatNumber(form[field].value, num_grp_sep, dec_sep);
 								fields.push(form[field]);
 							}

@@ -204,6 +204,8 @@ class MetaDataManager {
         $data['layouts'] = $this->getModuleLayouts($moduleName);
         $data['fieldTemplates'] = $this->getModuleFields($moduleName);
         $data['subpanels'] = $this->getSubpanelDefs($moduleName);
+        $data['config'] = $this->getModuleConfig($moduleName);
+
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
@@ -217,6 +219,18 @@ class MetaDataManager {
         $data["_hash"] = md5(serialize($data));
 
         return $data;
+    }
+
+    /**
+     * Get the config for a specific module from the Administration Layer
+     *
+     * @param string $moduleName        The Module we want the data back for.
+     * @return array
+     */
+    public function getModuleConfig($moduleName) {
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        return $admin->getConfigForModule($moduleName, $this->platforms[0]);
     }
 
     /**

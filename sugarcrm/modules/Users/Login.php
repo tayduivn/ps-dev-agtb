@@ -77,9 +77,6 @@ else {
     //BEGIN SUGARCRM flav=com && lic!=sub ONLY
     $login_image = '<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
     //END SUGARCRM flav=com && lic!=sub ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    $login_image = '<IMG src="include/images/sugar_md_dce.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=dce ONLY
     //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
     $login_image = '<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">';
     //END SUGARCRM flav=ent && flav!=dev ONLY

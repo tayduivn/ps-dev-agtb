@@ -33,10 +33,10 @@ require_once('include/api/SugarApiException.php');
 require_once 'include/SugarOAuth2/SugarOAuth2StorageInterface.php';
 
 /**
- * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to 
+ * Sugar OAuth2.0 Storage system, allows the OAuth2 library we are using to
  * store and retrieve data.
  * This class should only be used by the OAuth2 library and cannot be relied
- * on as a stable API for any other sources. 
+ * on as a stable API for any other sources.
  */
 class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, SugarOAuth2StorageInterface {
     /**
@@ -167,7 +167,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
     // BEGIN METHODS FROM IOAuth2Storage
 	/**
 	 * Make sure that the client credentials is valid.
-	 * 
+	 *
 	 * @param $client_id
 	 * Client identifier to be check with.
 	 * @param $client_secret
@@ -188,8 +188,8 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         if ($clientInfo === false) {
             return false;
         }
-        
-        if ( ( !empty($clientInfo['client_secret']) && $client_secret == $clientInfo['client_secret'] ) 
+
+        if ( ( !empty($clientInfo['client_secret']) && $client_secret == $clientInfo['client_secret'] )
              || (empty($clientInfo['client_secret']) && empty($client_secret)) ) {
             return true;
         } else {
@@ -455,67 +455,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 	 */
 	public function checkUserCredentials($client_id, $username, $password)
     {
-<<<<<<< HEAD:sugarcrm/include/SugarOAuth2/SugarOAuth2Storage.php
         return $this->getPlatformStore()->checkUserCredentials($this, $client_id, $username, $password);
-=======
-
-        $clientInfo = $this->getClientDetails($client_id);
-        if ( $clientInfo === false ) {
-            return false;
-        }
-
-        if ( $clientInfo['client_type'] != 'support_portal' ) {
-            // Is just a regular Sugar User
-            $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
-            $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true));
-            if ( $loginSuccess && !empty($auth->nextStep) ) {
-                // Set it here, and then load it in to the session on the next pass
-                // TODO: How do we pass the next required step to the client via the REST API?
-                $GLOBALS['nextStep'] = $auth->nextStep;
-            }
-            if ( $loginSuccess ) {
-                $userBean = BeanFactory::newBean('Users');
-                $userBean = $userBean->retrieve_by_string_fields(array('user_name'=>$username));
-                if ( $userBean == null ) {
-                    throw new SugarApiExceptionNeedLogin();
-                }
-                $this->userBean = $userBean;
-                return array('user_id' => $this->userBean->id);
-            } else {
-                throw new SugarApiExceptionNeedLogin();
-            }
-        } else {
-            $portalApiUser = $this->findPortalApiUser($client_id);
-            if ( $portalApiUser == null ) {
-                // Can't login as a portal user if there is no API user
-                throw new SugarApiExceptionPortalNotConfigured();
-            }
-            // It's a portal user, log them in against the Contacts table
-            $contact = BeanFactory::newBean('Contacts');
-            //BEGIN SUGARCRM flav=pro ONLY
-            $contact->disable_row_level_security = true;
-            //END SUGARCRM flav=pro ONLY
-            $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username,  'portal_active'=>'1', 'deleted'=>0) );
-            if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
-                $contact = null;
-            }
-            if ( !empty($contact) ) {
-                //BEGIN SUGARCRM flav=pro ONLY
-                $sessionManager = new SessionManager();
-                if(!$sessionManager->canAddSession()){
-                    //not able to add another session right now
-                    $GLOBALS['log']->error("Unable to add new session");
-                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions', null, null, 0, 'too_many_concurrent_connections');
-                }
-                //END SUGARCRM flav=pro ONLY
-                $this->contactBean = $contact;
-                return array('user_id'=>$contact->id);
-            } else {
-                throw new SugarApiExceptionNeedLogin();
-            }
-        }
-        
->>>>>>> upstream/toffee:sugarcrm/include/SugarOAuth2Storage.php
     }
     // END METHODS FROM IOAuth2GrantUser
 
@@ -600,16 +540,16 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
         }
         
         $token = BeanFactory::newBean('OAuthTokens');
-        
+
         $token->id = $refresh_token;
         $token->new_with_id = true;
         $token->consumer = $keyInfo['record_id'];
         $token->assigned_user_id = $user_id;
         $token->contact_id = $contact_id;
         $token->expire_ts = $expires;
-        
+
         $token->save();
-        
+
     }
 
 	/**

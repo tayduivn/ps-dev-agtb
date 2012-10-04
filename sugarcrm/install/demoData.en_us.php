@@ -21774,5 +21774,30 @@ $sugar_demodata['quotes_seed_data']['quotes'][1] = array(
 );
 //END Quotes demo data
 
+//BEGIN Opportunities demo data
+$sugar_demodata['opportunities_seed_data']['opportunities'][1] = array(
 
+    'bundle_data' => array(
+		0 => array (
+		    'bundle_name' => 'Mirrors',
+		    'bundle_stage' => 'Draft',
+		    'comment' => 'Reflective Mirrors',
+		    'products' => array (
+				1 => array('name'=>'Reflective Mirror Widget', 'quantity'=>'2'),
+			),
+		),
+
+
+        0 => array (
+      		    'bundle_name' => 'Mirrors',
+      		    'bundle_stage' => 'Draft',
+      		    'comment' => 'Reflective Mirrors',
+      		    'products' => array (
+      				1 => array('name'=>'Reflective Mirror Widget', 'quantity'=>'2'),
+      			),
+      	),
+
+	),
+);
+//END Opportunities demo data
 ?>

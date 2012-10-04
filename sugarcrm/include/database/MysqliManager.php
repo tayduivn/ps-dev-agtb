@@ -1,26 +1,34 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
- *not use this file except in compliance with the License. Under the terms of the license, You
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the
- *Software without first paying applicable fees is strictly prohibited.  You do not have the
- *right to remove SugarCRM copyrights from the source code or user interface.
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and
- * (ii) the SugarCRM copyright notice
- * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
- *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 /*********************************************************************************
-* $Id: MysqliManager.php 16822 2006-09-26 17:37:32Z ajay $
+
 * Description: This file handles the Data base functionality for the application.
 * It acts as the DB abstraction layer for the application. It depends on helper classes
 * which generate the necessary SQL. This sql is then passed to PEAR DB classes.
@@ -87,6 +95,16 @@ class MysqliManager extends MysqlManager
 	public $priority = 10;
 	public $label = 'LBL_MYSQLI';
 
+
+    /**
+     * Create DB Driver
+     */
+	public function __construct()
+	{
+        parent::__construct();
+        $this->capabilities["recursive_query"] = true;
+	}
+
 	/**
 	 * @see DBManager::$backendFunctions
 	 */
@@ -97,60 +115,77 @@ class MysqliManager extends MysqlManager
 		'affected_row_count' => 'mysqli_affected_rows',
 		);
 
-	/**
-	 * @see MysqlManager::query()
-	 */
-	public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
-	{
-		if(is_array($sql)) {
-			return $this->queryArray($sql, $dieOnError, $msg, $suppress);
+    public function query($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false)
+    {
+        $result = $this->queryMulti($sql, $dieOnError, $msg, $suppress, $keepResult, false);
+
+        return $result;
+    }
+
+
+
+    /**
+     * @see MysqlManager::query()
+     */
+    protected function queryMulti($sql, $dieOnError = false, $msg = '', $suppress = false, $keepResult = false, $multiquery = true)
+    {
+        if(is_array($sql)) {
+            return $this->queryArray($sql, $dieOnError, $msg, $suppress);    //queryArray does not support any return sets
+        }
+        static $queryMD5 = array();
+        $this->addDistinctClause($sql);
+
+        parent::countQuery($sql);
+        $GLOBALS['log']->info('Query:' . $sql);
+        $this->checkConnection();
+        $this->query_time = microtime(true);
+        $this->lastsql = $sql;
+
+        if ($multiquery) {
+            $query_result = $suppress?@mysqli_multi_query($this->database,$sql):mysqli_multi_query($this->database,$sql);
+            $result = mysqli_use_result($this->database);
+
+            // Clear any remaining recordsets
+            while (mysqli_next_result($this->database))  {
+                $tmp_result = mysqli_use_result($this->database);
+                mysqli_free_result($tmp_result);
+            }
         }
 
-		static $queryMD5 = array();
-		//BEGIN SUGARCRM flav=pro ONLY
-		$this->addDistinctClause($sql);
-		//END SUGARCRM flav=pro ONLY
+        else
+            $result = $suppress?@mysqli_query($this->database,$sql):mysqli_query($this->database,$sql);
+        $md5 = md5($sql);
 
-		parent::countQuery($sql);
-		$GLOBALS['log']->info('Query:' . $sql);
-		$this->checkConnection();
-		$this->query_time = microtime(true);
-		$this->lastsql = $sql;
-		$result = $suppress?@mysqli_query($this->database,$sql):mysqli_query($this->database,$sql);
-		$md5 = md5($sql);
+        if (empty($queryMD5[$md5]))
+            $queryMD5[$md5] = true;
 
-		if (empty($queryMD5[$md5]))
-			$queryMD5[$md5] = true;
+        $this->query_time = microtime(true) - $this->query_time;
+        $GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
 
-		$this->query_time = microtime(true) - $this->query_time;
-		$GLOBALS['log']->info('Query Execution Time:'.$this->query_time);
+        // This is some heavy duty debugging, leave commented out unless you need this:
+        /*
+          $bt = debug_backtrace();
+          for ( $i = count($bt) ; $i-- ; $i > 0 ) {
+              if ( strpos('MysqliManager.php',$bt[$i]['file']) === false ) {
+                  $line = $bt[$i];
+              }
+          }
 
-		// This is some heavy duty debugging, leave commented out unless you need this:
-		/*
-		$bt = debug_backtrace();
-		for ( $i = count($bt) ; $i-- ; $i > 0 ) {
-			if ( strpos('MysqliManager.php',$bt[$i]['file']) === false ) {
-				$line = $bt[$i];
-			}
-		}
+          $GLOBALS['log']->fatal("${line['file']}:${line['line']} ${line['function']} \nQuery: $sql\n");
+          */
 
-		$GLOBALS['log']->fatal("${line['file']}:${line['line']} ${line['function']} \nQuery: $sql\n");
-		*/
+        if($this->dump_slow_queries($sql)) {
+            $this->track_slow_queries($sql);
+        }
 
-		//BEGIN SUGARCRM flav=pro ONLY
-		if($this->dump_slow_queries($sql)) {
-		$this->track_slow_queries($sql);
-		}
-		//END SUGARCRM flav=pro ONLY
+        if($keepResult)
+            $this->lastResult = $result;
+        $this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
+        //echo "returning from queryMulti. Result was:  >" . print_r($result), "<  \n";
+        return $result;
+    }
 
-		if($keepResult)
-			$this->lastResult = $result;
-		$this->checkError($msg.' Query Failed: ' . $sql, $dieOnError);
-
-		return $result;
-	}
-
-	/**
+    /**
 	 * Returns the number of rows affected by the last query
 	 *
 	 * @return int
@@ -364,4 +399,173 @@ class MysqliManager extends MysqlManager
 	{
 		return function_exists("mysqli_connect") && empty($GLOBALS['sugar_config']['mysqli_disabled']);
 	}
+
+
+    /**
+     * Create or updates the stored procedures for the recursive query capabilities
+     * @return resource
+     */
+    public function createRecursiveQuerySPs()
+    {
+
+        $dropRecursiveQuerySPs_statement = "DROP PROCEDURE IF EXISTS _hierarchy";
+        $this->query($dropRecursiveQuerySPs_statement);
+
+        $createRecursiveQuerySPs_statement = "
+            CREATE PROCEDURE _hierarchy( p_tablename              VARCHAR(100)
+                                       , p_key_column             VARCHAR(100)
+                                       , p_parent_key_column      VARCHAR(100)
+                                       , p_mode                   VARCHAR(100)
+                                       , p_startWith              VARCHAR(250)
+                                       , p_level                  VARCHAR(100)    -- not used
+                                       , p_fields                 VARCHAR(250)
+                                       , p_where_clause           VARCHAR(250)
+                                       )
+            root:BEGIN
+
+               DECLARE _level             INT;
+               DECLARE _last_row_count    INT;
+
+               CREATE TEMPORARY TABLE IF NOT EXISTS _hierarchy_return_set (
+                      _id          VARCHAR(100)
+                    , _parent_id   VARCHAR(100)
+                    , _level       INT
+                    , INDEX(_id, _level)
+                    , INDEX(_parent_id, _level)
+               );
+
+               CREATE TEMPORARY TABLE  IF NOT EXISTS _hierarchy_current_set (
+                      _id          VARCHAR(100)
+                    , _parent_id   VARCHAR(100)
+                    , _level       INT
+               );
+
+               SET _level := 1;
+               TRUNCATE TABLE _hierarchy_return_set;
+               TRUNCATE TABLE _hierarchy_current_set;
+
+               -- cleanup WHERE clause
+               IF LENGTH(TRIM(p_where_clause)) = 0 THEN
+                  SET p_where_clause := NULL;
+               END IF;
+               IF p_where_clause IS NOT NULL THEN
+                  SET p_where_clause := LTRIM(p_where_clause);
+                  IF UPPER(SUBSTR(p_where_clause, 1, 5)) = 'WHERE' THEN  -- remove WHERE
+                     SET p_where_clause := LTRIM(SUBSTR(p_where_clause, 6));
+                  END IF;
+                  IF UPPER(SUBSTR(p_where_clause, 1, 4)) <> 'AND ' THEN -- Add AND
+                     SET p_where_clause := CONCAT('AND ', p_where_clause);
+                  END IF;
+               END IF;
+
+               -- Get StartWith records
+               SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set( _id, _parent_id, _level ) '
+                                 ,'     SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', _level
+                                 ,'       FROM  ', p_tablename
+                                 ,'      WHERE  ', p_startWith, ' '
+                                 , IFNULL( p_where_clause, '' )
+                                );
+               PREPARE stmt FROM @_sql;
+               EXECUTE stmt;
+               SET _last_row_count = ROW_COUNT();
+
+
+               -- Create the statement to get the next set of data
+               IF p_mode = 'D' THEN -- Down the tree
+
+                  SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
+                                     ,'            ( _id, _parent_id, _level )'
+                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'
+                                     ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
+                                     ,'     WHERE  t.', p_parent_key_column, ' = hrs._id '                -- The Parent - Child equijoin
+                                     ,'       AND  hrs._level = @_last_level  '
+                                     , IFNULL( p_where_clause, '' )
+                                     ,';'
+                                    );
+                  -- SELECT 'Down Tree Insert: ', @_sql;
+
+               ELSEIF p_mode = 'U' THEN
+                  SET @_sql = CONCAT( 'INSERT INTO  _hierarchy_current_set'
+                                     ,'            ( _id, _parent_id, _level )'
+                                     ,'    SELECT  ', p_key_column, ', ', p_parent_key_column, ', ', ' @_curr_level'
+                                     ,'      FROM  ', p_tableName, ' t, _hierarchy_return_set hrs '
+                                     ,'     WHERE  t.', p_key_column, ' = hrs._parent_id '                -- The Parent - Child equijoin
+                                     ,'       AND  hrs._level = @_last_level   '
+                                     , IFNULL( p_where_clause, '' )
+                                     ,';'
+                                    );
+
+                  -- SELECT 'Up Tree Insert: ', @_sql;
+
+               ELSE  -- Unknown mode, abort
+                  LEAVE root;
+               END IF;
+
+               PREPARE next_recs_stmt FROM @_sql;
+
+               -- loop recursively finding parents/children
+               WHILE  ( _last_row_count > 0)
+               DO
+                  SET _level = _level+1;
+
+                  INSERT INTO _hierarchy_return_set
+                       SELECT *
+                         FROM _hierarchy_current_set;
+
+                  TRUNCATE TABLE _hierarchy_current_set;
+
+                  SET @_last_level := _level-1;
+                  SET @_curr_level := _level;
+
+                  EXECUTE next_recs_stmt;
+                  SET _last_row_count := ROW_COUNT();
+
+               END WHILE;
+
+               INSERT INTO _hierarchy_return_set
+                    SELECT *
+                      FROM _hierarchy_current_set;
+
+            END;
+        ";
+        $this->query($createRecursiveQuerySPs_statement);
+        return true;
+    }
+
+
+    public function preInstall()
+    {
+        $this->createRecursiveQuerySPs();
+    }
+
+    /**
+     * Generates the a recursive SQL query or equivalent stored procedure implementation.
+     * The DBManager's default implementation is based on SQL-99's recursive common table expressions.
+     * Databases supporting recursive CTEs only need to set the recursive_query capability to true
+     * @param string    $tablename       table name
+     * @param string    $key             primary key field name
+     * @param string    $parent_key      foreign key field name self referencing the table
+     * @param string    $fields          list of fields that should be returned
+     * @param bool      $lineage         find the lineage, if false, find the children
+     * @param string    $startWith       identifies starting element(s) as in a where clause
+     * @param string    $level           when not null returns a field named as level which indicates the level/dept from the starting point
+     * @return string               Recursive SQL query or equivalent representation.
+     */
+    public function getRecursiveSelectSQL($tablename, $key, $parent_key, $fields, $lineage = false, $startWith = null, $level = null, $whereClause = null)
+    {
+        $mode = ($lineage) ? 'U' : 'D';
+        // First execute the stored procedure to load the _hierarchy_return_set with the hierarchy data
+        $startWith = is_null($startWith) ? '' : $this->quote($startWith);
+        $level = is_null($level) ? '' : $level;
+        $whereClause = is_null($whereClause) ? '' : $this->quote($whereClause);
+
+        $sql_sp = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$startWith}', '$level', '$fields', '{$whereClause}')";
+        $result = $this->queryMulti($sql_sp, false, false, false, true);
+
+        // Now build the sql to return that allows the caller to execute sql in a way to simulate the CTE of the other dbs,
+        // i.e. return sql that is a combination of the callers sql and a join against the temp hierarchy table
+        $sql = "SELECT $fields FROM _hierarchy_return_set hrs INNER JOIN $tablename t ON hrs._id = t." ."$key";
+        return $sql;
+    }
+
 }

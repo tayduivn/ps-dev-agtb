@@ -65,18 +65,19 @@
 			//bootstrap
             'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',			
             //jquery for moddule menus
-            'include/javascript/jquery/jquery.hoverIntent.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hoverscroll.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.hotkeys.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.hotkeys.js'                => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.superfish.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.tipTip.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.tipTip.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.sugarMenu.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.highLight.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.showLoading.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.dataTables.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.showLoading.js'            => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.dataTables.min.js'         => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.dataTables.customSort.js'  => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.chosen.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
-            'include/javascript/jquery/jquery.jstree.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
 
             
 			),

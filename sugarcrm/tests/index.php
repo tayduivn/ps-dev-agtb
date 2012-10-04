@@ -7,7 +7,6 @@
     <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
     <script type="text/javascript" src='../sidecar/lib/sugarapi/sugarapi.js'></script>
     <script type="text/javascript" src='../sidecar/minified/sidecar.min.js'></script>
-
 <?php
 // For sugar7 the plan is to generate a /sugarcrm/config.js .. in the meantime fallback to sidecar config.js
 if (file_exists('../config.js')) {
@@ -32,6 +31,7 @@ if (file_exists('../config.js')) {
     <script type="text/javascript" src='../sidecar/tests/fixtures/api.js'></script>
     <script type="text/javascript" src='../sidecar/tests/fixtures/metadata.js'></script>
     <script type="text/javascript" src='../sidecar/tests/fixtures/language.js'></script>
+    <script type="text/javascript" src='../tests/modules/Forecasts/fixtures/forecastsMetadata.js'></script>
 
     <!-- Begin test files -->
 <?php
@@ -41,6 +41,7 @@ if (file_exists('../config.js')) {
  */
 
     $exclude = array("jshelpers", "jssource", "PHPUnit", 'ci');
+
     $dirItr = new RecursiveDirectoryIterator('.');
     $itrItr = new RecursiveIteratorIterator($dirItr);
     foreach($itrItr as $path => $file) {
