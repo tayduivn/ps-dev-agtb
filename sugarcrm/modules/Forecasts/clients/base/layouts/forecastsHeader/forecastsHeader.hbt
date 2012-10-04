@@ -1,0 +1,5 @@
+<div id="headerbar">
+    <div class="view-forecastsTitle"></div>
+    <div class="view-forecastsTree"></div>
+    <div class="view-forecastsCommitButtons"></div>
+</div>

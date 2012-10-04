@@ -347,7 +347,6 @@ $app_list_strings = array (
     'include' => 'Include',
     'pipeline' => 'Pipeline',
   ),
-
   'commit_stage_dom' =>
   array (
     'include' => 'Include',

@@ -1,4 +1,4 @@
-<div class="topline thumbnail">
+<div class="topline">
     <div class="title">
         <div class="control-group datefilter">
             {{#with timeperiod}}
@@ -9,32 +9,34 @@
             {{/with}}
         </div>
     </div>
-    <div class="datapoint1">
+    <div class="clearfix"></div>
+    <div class="datapoint2">
         {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
         <h2 id="likely">{{likelyCase}}&nbsp;<span class="icon-sm committed_arrow{{likelyCaseCls}}"></span></h2>
     </div>
     <div class="divider"></div>
-    <div class="datapoint2">
+    <div class="datapoint1">
         {{str "LBL_BEST_CASE" "Forecasts"}}<br>
         <h2 id="best">{{bestCase}}&nbsp;<span class="icon-sm committed_arrow{{bestCaseCls}}"></span></h2>
     </div>
-    <hr>
 {{#if previousText.length}}
-<div class="log drawer">
-    <div class="title">
-    <strong>{{previousText}}</strong> {{previousDateEntered}}
-    </div>
-    <div class="datapoint1">
-    {{previousLikelyCase}}
-    </div>
-    <div class="divider"></div>
-    <div class="datapoint2">
-    {{previousBestCase}}
-    </div>
-    <div class="toggle">
-        <i id="show_hide_history_log" class="icon-chevron-down"></i>
-    </div>
-</div>
+    <div class="log drawer">
+        <div class="title pull-left">
+            <strong>{{previousText}}</strong> {{previousDateEntered}}
+        </div>
+        <div class="toggle pull-left">
+          <i id="show_hide_history_log" class="icon-caret-down icon-sm"></i>
+        </div>
+        <span class="datapoint1">
+            {{previousLikelyCase}}
+        </span>
+        <span class="divider"></span>
+        <span class="datapoint2">
+            {{previousBestCase}}
+        </span>
+        <div class="clearfix"></div>
+      </div>
+
 <div class="extend results hide" id="history_log_results">
 {{#each historyLog}}
    <article>

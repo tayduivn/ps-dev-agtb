@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -38,8 +39,11 @@ class Bug56789Test extends Sugar_PHPUnit_Framework_TestCase
     public function setUp()
     {
         // Regular setup stuff
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
+
         
         // Get the parser for wireless basic search
         $this->_parser = new SearchViewMetaDataParser('wireless_basic_search', $this->_testModule, '', $this->_testPlatform);

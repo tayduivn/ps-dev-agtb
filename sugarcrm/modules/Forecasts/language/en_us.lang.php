@@ -254,6 +254,7 @@ $mod_strings = array (
     'LBL_TOTAL' => 'Total',
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
+    'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
@@ -354,9 +355,4 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_LOST_STAGE' => 'Please select the Sales Stage that represent closed and lost opportunities:',
     'LBL_FORECASTS_CONFIG_VARIABLES_CLOSED_WON_STAGE' => 'Please select the Sales Stage that represent closed and won opportunities:',
     'LBL_FORECASTS_CONFIG_VARIABLES_FORMULA_DESC' => 'Therefore the pipeline formula will be:',
-
-    // general config
-    'LBL_FORECASTS_CONFIG_GENERAL' => 'General Forecasts Configuration',
-    'LBL_FORECASTS_CONFIG_SHOW_PRINT_BUTTON' => 'Display the "Print" button',
-
 );

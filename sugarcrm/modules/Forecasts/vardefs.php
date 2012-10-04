@@ -633,6 +633,7 @@ $dictionary['Worksheet'] =  array('table' => 'worksheet', 'fields' => array (
     'dbType' => 'double',
     'comment' => 'Worksheet Placeholder for the probability of closure',
     'validation' => array('type' => 'range', 'min' => 0, 'max' => 100),
+    'default' => '0'
   ),
   'quota' =>
 	array (

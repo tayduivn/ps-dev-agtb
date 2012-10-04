@@ -19,19 +19,30 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-describe("The forecasts subnav view", function(){
+describe("The forecasts tree view", function(){
 
-    var app, view, data;
+    var app, view, data, replaceHTMLChars;
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsSubnav", "forecastsSubnav", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsTree", "forecastsTree", "js", function(d) { return eval(d); });
     });
 
     describe("_recursiveReplaceHTMLChars", function() {
 
         beforeEach(function() {
 
+            //This is a global namespace function of window if loaded so we can stub it out; otherwise let's just create a similar function
+            if(typeof window.replaceHTMLChars == "function")
+            {
+                replaceHTMLChars = sinon.stub(window, "replaceHTMLChars", function(value) {
+                    return value.replace(/&#039;/gi,'\'');
+                });
+            } else {
+                replaceHTMLChars = function(value) {
+                    return value.replace(/&#039;/gi,'\'');
+                };
+            }
 
             data = [{
 
@@ -60,6 +71,7 @@ describe("The forecasts subnav view", function(){
 
         afterEach(function() {
             data = null;
+            replaceHTMLChars = null;
         });
 
         it("correctly encodes Jim and Sarah's name", function()

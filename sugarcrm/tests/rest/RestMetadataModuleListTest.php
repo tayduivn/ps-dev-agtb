@@ -80,6 +80,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $tabs = new TabController();
         $defaultTabs = $tabs->get_tabs_system();
         
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
@@ -91,7 +92,13 @@ class RestMetadataModuleListTest extends RestTestBase {
         foreach ( $enabledPortal as $module ) {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
         }
-        
+        // Bugs and KBDocuments are sometimes enabled, and they are fine, just not in the normal list
+        if ( isset($restModules['Bugs']) ) {
+            unset($restModules['Bugs']);
+        }
+        if ( isset($restModules['KBDocuments']) ) {
+            unset($restModules['KBDocuments']);
+        }
         // Although there are 4 OOTB portal modules, only 2 are enabled by default
         $this->assertEquals(2,count($restModules),'There are extra modules in the portal module list');
         // add module
@@ -100,6 +107,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         $tabs->set_system_tabs($newModuleList);
         $GLOBALS['db']->commit();
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
@@ -124,6 +132,7 @@ class RestMetadataModuleListTest extends RestTestBase {
             sugar_mkdir($dir, null, true);
         }
         sugar_file_put_contents($this->oppTestPath, "<?php\n\$viewdefs['Opportunities']['portal']['view']['list'] = array('test' => 'Testing');");
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
         $this->assertTrue(in_array('Opportunities',$restReply['reply']['module_list']),'The new Opportunities module did not appear in the portal list');
@@ -139,6 +148,7 @@ class RestMetadataModuleListTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetModuleListMobile() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
 
         foreach ( array ( '','custom/') as $prefix) {
@@ -167,6 +177,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         $enabledMobile = array('Accounts','Contacts','Opportunities');
 
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list on the second pass');
         $restModules = $restReply['reply']['module_list'];
@@ -184,6 +195,7 @@ class RestMetadataModuleListTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetModuleListBase() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list');
 
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no base module list');
@@ -205,6 +217,7 @@ class RestMetadataModuleListTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetFullModuleListBase() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=full_module_list');
         $this->assertArrayHasKey('full_module_list', $restReply['reply'], "Full Module List is missing from the reply");
         $fullRestModules = $restReply['reply']['full_module_list'];

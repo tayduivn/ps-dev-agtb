@@ -61,6 +61,9 @@ describe("The forecasts worksheet totals calculation test", function(){
                         }
                 }
             };
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
             view.calculateTotals();
         });
     });
@@ -86,6 +89,9 @@ describe("The forecasts worksheet totals calculation test", function(){
                         }
                 }
             };
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
             view.calculateTotals();
         });
     });
@@ -111,17 +117,15 @@ describe("The forecasts worksheet totals calculation test", function(){
                         }
                 }
             };
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
             view.calculateTotals();
         });
     });
 
 
     describe("calculate excluded sales stages correctly", function() {
-
-        beforeEach(function() {
-            app.config.sales_stage_won = ['Closed Won'];
-            app.config.sales_stage_lost = ['Closed Lost'];
-        });
 
         it("should calculate the closed_opp_count and closed_amount values", function() {
             //Expected opportunities model
@@ -146,17 +150,15 @@ describe("The forecasts worksheet totals calculation test", function(){
                         }
                 }
             };
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
             view.calculateTotals();
         });
     })
 
 
     describe("calculate custom won and lost stages correctly", function() {
-
-        beforeEach(function() {
-            app.config.sales_stage_won = ['Won Custom'];
-            app.config.sales_stage_lost = ['Lost Custom'];
-        });
 
         it("should calculate the correct values for custom sales stages", function() {
             //Expected opportunities model
@@ -181,17 +183,17 @@ describe("The forecasts worksheet totals calculation test", function(){
                         }
                 }
             };
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
+            view.context.forecasts.config.set('sales_stage_won', ['Won Custom']);
+            view.context.forecasts.config.set('sales_stage_lost', ['Lost Custom']);
             view.calculateTotals();
         });
     })
 
 
     describe("calculate multiple custom won and lost stages correctly", function() {
-
-        beforeEach(function() {
-            app.config.sales_stage_won = ['Won Custom', 'Closed Won'];
-            app.config.sales_stage_lost = ['Lost Custom', 'Closed Lost'];
-        });
 
         it("should calculate the correct values for multiple custom sales stages", function() {
             //Expected opportunities model
@@ -216,6 +218,11 @@ describe("The forecasts worksheet totals calculation test", function(){
                         }
                 }
             };
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
+            view.context.forecasts.config.set('sales_stage_won', ['Won Custom', 'Closed Won']);
+            view.context.forecasts.config.set('sales_stage_lost', ['Lost Custom', 'Closed Lost']);
             view.calculateTotals();
         });
     })
