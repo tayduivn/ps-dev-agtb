@@ -166,7 +166,7 @@ class MetadataApi extends SugarApi {
         if(isset($args['platform'])) {
             //temporary replace 'forecasts' w/ 'base'
             //as forecast settings store in db w/ prefix 'base_'
-            $args['platform'] = 'forecasts' ? 'base' : $args['platform'];
+            $args['platform'] = ($args['platform'] == 'forecasts' ? 'base' : $args['platform']);
             $prefix = "{$args['platform']}_";
             $admin = new Administration();
             $category = $args['platform'];
@@ -348,7 +348,7 @@ class MetadataApi extends SugarApi {
                 $data['acl']['Accounts']['access'] = 'no';
                 $data['acl']['Cases']['access'] = 'no';
             }
-        
+
         }
 
         // remove the disabled modules from the module list
@@ -428,7 +428,7 @@ class MetadataApi extends SugarApi {
                     unset($data[$chunk]);
                 }
             }
-            
+
             // Relationships are special, they are a baseChunk but also need to pay attention to modules
             if (!empty($moduleFilter) && isset($data['relationships']) ) {
                 // We only want some modules, but we want the relationships
