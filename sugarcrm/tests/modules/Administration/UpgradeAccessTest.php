@@ -23,12 +23,12 @@
  ********************************************************************************/
 
 /**
- * UpgradeHistoryTest.php
+ * UpgradeAccessTest.php
  *
  * This file tests the code run when UpgradeAccess.php is invoked.
  */
 
-class UpgradeHistoryTest extends Sugar_PHPUnit_Framework_TestCase
+class UpgradeAccessTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
 public function setUp()
