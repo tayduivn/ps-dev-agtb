@@ -74,7 +74,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
                     $job = BeanFactory::getBean('SchedulersJobs');
                     $job->name = "SugarJobUpdateCurrencyRates: " . $timedate->getNow()->asDb();
                     $job->target = "class::SugarJobUpdateCurrencyRates";
-                    $job->data = array('currency_id'=>$currency->id);
+                    $job->data = array('currencyId'=>$currency->id);
                     $job->retry_count = 0;
                     $job->assigned_user_id = $current_user->id;
                     $jobQueue = new SugarJobQueue();
@@ -85,9 +85,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		
 	}
 		
-	function handleUpdate(){
+	function handleUpdate() {
 		global $current_user;
-			if($current_user->is_admin){
+			if($current_user->is_admin) {
 				if(isset($_POST['id']) && !empty($_POST['id'])&&isset($_POST['name']) && !empty($_POST['name']) && isset($_POST['rate']) && !empty($_POST['rate']) && isset($_POST['symbol']) && !empty($_POST['symbol'])){
 			$ids = $_POST['id'];
 			$names= $_POST['name'];

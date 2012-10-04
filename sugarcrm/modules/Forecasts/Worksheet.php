@@ -67,7 +67,6 @@ class Worksheet extends SugarBean {
      * @return String|void
      */
     public function save($check_notify = false){
-        require_once 'include/SugarCurrency.php';
         if(empty($this->id) || $this->new_with_id == true) {
         	$currency = SugarCurrency::getUserLocaleCurrency();
             $this->currency_id = $currency->id;
