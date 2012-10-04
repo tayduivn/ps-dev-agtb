@@ -1768,6 +1768,7 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+    //BEGIN SUGARCRM flav=pro ONLY
     'forecasts_chart_options_group' => array(
         'forecast' => 'Included In Forecast',
         'sales_stage' => 'Sales Stage',
@@ -1778,6 +1779,7 @@ $app_list_strings = array (
         'best' => 'Best',
         'worst' => 'Worst'
     ),
+    //END SUGARCRM flav=pro ONLY
 );
 
 $app_strings = array (
@@ -4280,7 +4282,7 @@ $app_strings ['documentation'] = array (
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
 );
-
+//BEGIN SUGARCRM flav=pro ONLY
 $app_list_strings['forecasts_config_category_options_dom'] = array(
     'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
@@ -4299,6 +4301,7 @@ $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
     'middle' => 'Middle',
     'last' => 'Last'
 );
+//END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (
 		'yes' => 'Yes' ,
