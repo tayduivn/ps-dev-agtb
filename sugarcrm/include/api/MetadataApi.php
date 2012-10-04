@@ -139,9 +139,16 @@ class MetadataApi extends SugarApi {
             }
         }
 
-        //If we failed to load the metadat from cache, load it now the hard way.
+        //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
             $data = $this->loadMetadata($hashKey);
+            
+            // Bug 56911 - Notes metadata is needed for portal
+            // Remove forcefully added Notes module to portal requests since we only
+            // need the metadata but do NOT need it in the module list
+            if (isset($args['platform']) && $args['platform'] == 'portal') {
+                unset($data['module_list']['Notes']);
+            }
         }
 
         //If we had to generate a new hash, create the etag with the new hash
