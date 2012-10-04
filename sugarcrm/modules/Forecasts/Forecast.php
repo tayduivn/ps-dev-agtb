@@ -29,8 +29,6 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarCurrency.php');
-
 // User is used to store Forecast information.
 class Forecast extends SugarBean
 {
@@ -281,8 +279,6 @@ class Forecast extends SugarBean
      */
     public function save($check_notify = false)
     {
-        require_once 'include/SugarCurrency.php';
-
         // set the currency for the forecast to always be the base currency
         // since the committed end point only gets send the data as the
         // base currency format
