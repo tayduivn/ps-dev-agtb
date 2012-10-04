@@ -116,7 +116,8 @@ class RestMetadataModuleListTest extends RestTestBase {
         $tabs->set_system_tabs($newModuleList);
         $GLOBALS['db']->commit();
         // Do this to load the tab list into cache
-        $tabs->get_tabs_system();
+        $moduleListFromSystem = $tabs->get_tabs_system();
+        $this->assertEquals(count($newModuleList),count($moduleListFromSystem),"The get_tabs_system() is returning an incorrect number of modules, changing the tab list failed, it is: ".var_export($moduleListFromSystem,true));
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
