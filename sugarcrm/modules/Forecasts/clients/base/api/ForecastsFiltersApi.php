@@ -20,68 +20,57 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/ModuleApi.php');
-require_once('modules/Forecasts/api/ForecastsChartApi.php');
+require_once('clients/base/api/ModuleApi.php');
 
-class ForecastsWorksheetManagerApi extends ForecastsChartApi
+class ForecastsFiltersApi extends ModuleApi
 {
 
     public function registerApiRest()
     {
+        $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi = array(
-            'forecastManagerWorksheet' => array(
+            'timeperiod' => array(
                 'reqType' => 'GET',
-                'path' => array('ForecastManagerWorksheets'),
+                'path' => array('Forecasts', 'timeperiod'),
                 'pathVars' => array('', ''),
-                'method' => 'forecastManagerWorksheet',
-                'shortHelp' => 'Returns a collection of ForecastManagerWorksheet models',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManager',
+                'method' => 'timeperiod',
+                'shortHelp' => 'forecast timeperiod',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#timeperiod',
             ),
-            'forecastManagerWorksheetSave' => array(
-                'reqType' => 'PUT',
-                'path' => array('ForecastManagerWorksheets', '?'),
-                'pathVars' => array('module', 'record'),
-                'method' => 'forecastManagerWorksheetSave',
-                'shortHelp' => 'Update a ForecastManagerWorksheet model',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManagerSave',
+            'reportees' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'reportees', '?'),
+                'pathVars' => array('', '', 'user_id'),
+                'method' => 'getReportees',
+                'shortHelp' => 'Gets reportees to a user by id',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#reportees',
             )
         );
         return $parentApi;
     }
 
-    public function forecastManagerWorksheet($api, $args)
-    {
-        // Load up a seed bean
-        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
-        $seed = new ForecastManagerWorksheet();
-
-        if (!$seed->ACLAccess('list')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
-        }
-
-        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-
-        $obj = $this->getClass($args);
-        return $obj->process();
-    }
-
-
-    public function forecastManagerWorksheetSave($api, $args)
-    {
-        $obj = $this->getClass($args);
-        return $obj->save();
-    }
-
     /**
-     * @param $args
-     * @return SugarForecasting_Manager
+     * Return the dom of the current timeperiods.
+     *
+     * //TODO, move this logic to store the values in a custom language file that contains the timeperiods for the Forecast module
+     *
+     * @param array $api
+     * @param array $args
+     * @return array
      */
-    protected function getClass($args)
+    public function timeperiod($api, $args)
     {
+        return TimePeriod::get_not_fiscal_timeperiods_dom();
+    }
+
+    public function getReportees($api, $args)
+    {
+        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
+
         // base file and class name
-        $file = 'include/SugarForecasting/Manager.php';
-        $klass = 'SugarForecasting_Manager';
+        $file = 'include/SugarForecasting/ReportingUsers.php';
+        $klass = 'SugarForecasting_ReportingUsers';
 
         // check for a custom file exists
         $include_file = get_custom_file_if_exists($file);
@@ -97,7 +86,7 @@ class ForecastsWorksheetManagerApi extends ForecastsChartApi
 
         /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);
-        return $obj;
+        return $obj->process();
     }
 
 }

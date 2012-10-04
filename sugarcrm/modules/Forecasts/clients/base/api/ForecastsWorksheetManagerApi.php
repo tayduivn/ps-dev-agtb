@@ -20,56 +20,68 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/ChartApi.php');
+require_once('clients/base/api/ModuleApi.php');
+require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
 
-class ForecastsChartApi extends ChartApi
+class ForecastsWorksheetManagerApi extends ForecastsChartApi
 {
-    /**
-     * Rest Api Registration Method
-     *
-     * @return array
-     */
+
     public function registerApiRest()
     {
+        //Extend with test method
         $parentApi = array(
-            'forecasts_chart' => array(
+            'forecastManagerWorksheet' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts', 'chart'),
+                'path' => array('ForecastManagerWorksheets'),
                 'pathVars' => array('', ''),
-                'method' => 'chart',
-                'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module',
-                'longHelp' => 'modules/Forecasts/api/help/ForecastChartApi.html',
+                'method' => 'forecastManagerWorksheet',
+                'shortHelp' => 'Returns a collection of ForecastManagerWorksheet models',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManager',
             ),
+            'forecastManagerWorksheetSave' => array(
+                'reqType' => 'PUT',
+                'path' => array('ForecastManagerWorksheets', '?'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'forecastManagerWorksheetSave',
+                'shortHelp' => 'Update a ForecastManagerWorksheet model',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetManagerApi.html#forecastWorksheetManagerSave',
+            )
         );
         return $parentApi;
     }
 
-    /**
-     * Build out the chart for the sales rep view in the forecast module
-     *
-     * @param ServiceBase $api      The Api Class
-     * @param array $args           Service Call Arguments
-     * @return mixed
-     */
-    public function chart($api, $args)
+    public function forecastManagerWorksheet($api, $args)
     {
-        global $current_user;
+        // Load up a seed bean
+        require_once('modules/Forecasts/ForecastManagerWorksheet.php');
+        $seed = new ForecastManagerWorksheet();
+
+        if (!$seed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
+        }
 
         $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
-        $args['group_by'] = !isset($args['group_by']) ? "forecast" : $args['group_by'];
+
+        $obj = $this->getClass($args);
+        return $obj->process();
+    }
 
 
-        // default to the Individual Code
-        $file = 'include/SugarForecasting/Chart/Individual.php';
-        $klass = 'SugarForecasting_Chart_Individual';
+    public function forecastManagerWorksheetSave($api, $args)
+    {
+        $obj = $this->getClass($args);
+        return $obj->save();
+    }
 
-        // test to see if we need to display the manager
-        if((isset($args['display_manager']) && $args['display_manager'] == 'true')) {
-            // we have a manager view, pull in the manager classes
-            $file = 'include/SugarForecasting/Chart/Manager.php';
-            $klass = 'SugarForecasting_Chart_Manager';
-        }
+    /**
+     * @param $args
+     * @return SugarForecasting_Manager
+     */
+    protected function getClass($args)
+    {
+        // base file and class name
+        $file = 'include/SugarForecasting/Manager.php';
+        $klass = 'SugarForecasting_Manager';
 
         // check for a custom file exists
         $include_file = get_custom_file_if_exists($file);
@@ -83,8 +95,9 @@ class ForecastsChartApi extends ChartApi
         require_once($include_file);
         // create the lass
 
-        /* @var $obj SugarForecasting_Chart_AbstractChart */
+        /* @var $obj SugarForecasting_AbstractForecast */
         $obj = new $klass($args);
-        return $obj->process();
+        return $obj;
     }
+
 }

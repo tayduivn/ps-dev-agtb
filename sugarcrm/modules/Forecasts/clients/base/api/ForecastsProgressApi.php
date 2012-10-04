@@ -22,7 +22,7 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/ModuleApi.php');
+require_once('clients/base/api/ModuleApi.php');
 
 require_once('modules/Forecasts/ForecastOpportunities.php');
 
@@ -76,7 +76,7 @@ class ForecastsProgressApi extends ModuleApi
 				'pathVars'  => array('', ''),
 				'method'    => 'progressRep',
 				'shortHelp' => 'Progress Rep data',
-                'longHelp' => 'modules/Forecasts/api/help/ForecastProgressApi.html#progressRep',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressApi.html#progressRep',
 			),
             'progressManager' => array(
                 'reqType'   => 'GET',
@@ -84,7 +84,7 @@ class ForecastsProgressApi extends ModuleApi
                 'pathVars'  => array('', ''),
                 'method'    => 'progressManager',
                 'shortHelp' => 'Progress Manager data',
-                 'longHelp' => 'modules/Forecasts/api/help/ForecastProgressApi.html#progressRep',
+                 'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastProgressApi.html#progressRep',
          	)
         );
 		return $parentApi;

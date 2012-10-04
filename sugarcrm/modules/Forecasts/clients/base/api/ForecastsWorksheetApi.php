@@ -20,86 +20,86 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/ModuleApi.php');
+require_once('clients/base/api/ModuleApi.php');
 
-class ForecastsCommittedApi extends ModuleApi
+class ForecastsWorksheetApi extends ModuleApi
 {
 
     public function registerApiRest()
     {
-        $parentApi = parent::registerApiRest();
+        //Extend with test method
         $parentApi = array(
-            'forecastsCommitted' => array(
+            'forecastWorksheet' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts', 'committed'),
+                'path' => array('ForecastWorksheets'),
                 'pathVars' => array('', ''),
-                'method' => 'forecastsCommitted',
-                'shortHelp' => 'A list of forecasts entries matching filter criteria',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommitted',
+                'method' => 'forecastWorksheet',
+                'shortHelp' => 'Returns a collection of ForecastWorksheet models',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
             ),
-            'forecastsCommit' => array(
-                'reqType' => 'POST',
-                'path' => array('Forecasts', 'committed'),
-                'pathVars' => array('', ''),
-                'method' => 'forecastsCommit',
-                'shortHelp' => 'Commit a forecast',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommit',
+            'forecastWorksheetSave' => array(
+                'reqType' => 'PUT',
+                'path' => array('ForecastWorksheets', '?'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'forecastWorksheetSave',
+                'shortHelp' => 'Updates a ForecastWorksheet model',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
             )
         );
         return $parentApi;
     }
 
+
     /**
-     * forecastsCommitted
+     * This method handles the /ForecastsWorksheet REST endpoint and returns an Array of worksheet data Array entries
      *
-     * @param $api
-     * @param $args
-     * @return array
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return Array of worksheet data entries
+     * @throws SugarApiExceptionNotAuthorized
      */
-    public function forecastsCommitted($api, $args)
+    public function forecastWorksheet($api, $args)
     {
-        global $current_user, $mod_strings, $current_language;
-        $mod_strings = return_module_language($current_language, 'Forecasts');
+        // Load up a seed bean
+        require_once('modules/Forecasts/ForecastWorksheet.php');
+        $seed = new ForecastWorksheet();
 
-        $db = DBManagerFactory::getInstance();
-
-        $user_id = $current_user->id;
-        if (isset($args['user_id']) && $args['user_id'] != $current_user->id) {
-            $user_id = $args['user_id'];
-            if (!User::isManager($current_user->id)) {
-                $GLOBALS['log']->error(string_format($mod_strings['LBL_ERROR_NOT_MANAGER'], array($current_user->id, $user_id)));
-                return array();
-            }
+        if (!$seed->ACLAccess('list')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
         }
 
-        $args['user_id'] = $user_id;
+        global $current_user;
 
-        $args['forecast_type'] = (isset($args['forecast_type'])) ? $args['forecast_type'] : (User::isManager($user_id) ? 'Rollup' : 'Direct');
-        $args['timeperiod_id'] = (isset($args['timeperiod_id'])) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $args['include_deleted'] = (isset($args['show_deleted']) && $args['show_deleted'] === true);
+        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
 
         $obj = $this->getClass($args);
         return $obj->process();
     }
 
-
-    public function forecastsCommit($api, $args)
+    /**
+     * This method handles saving data for the /ForecastsWorksheet REST endpoint
+     *
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return Array of worksheet data entries
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    public function forecastWorksheetSave($api, $args)
     {
         $obj = $this->getClass($args);
         return $obj->save();
     }
 
     /**
-     * Get the Committed Class
-     *
-     * @param array $args
-     * @return SugarForecasting_Committed
+     * @param $args
+     * @return SugarForecasting_Individual
      */
     protected function getClass($args)
     {
         // base file and class name
-        $file = 'include/SugarForecasting/Committed.php';
-        $klass = 'SugarForecasting_Committed';
+        $file = 'include/SugarForecasting/Individual.php';
+        $klass = 'SugarForecasting_Individual';
 
         // check for a custom file exists
         $include_file = get_custom_file_if_exists($file);
@@ -118,5 +118,4 @@ class ForecastsCommittedApi extends ModuleApi
 
         return $obj;
     }
-
 }

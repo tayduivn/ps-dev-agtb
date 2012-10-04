@@ -20,57 +20,56 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('include/api/ModuleApi.php');
+require_once('clients/base/api/ChartApi.php');
 
-class ForecastsFiltersApi extends ModuleApi
+class ForecastsChartApi extends ChartApi
 {
-
+    /**
+     * Rest Api Registration Method
+     *
+     * @return array
+     */
     public function registerApiRest()
     {
-        $parentApi = parent::registerApiRest();
-        //Extend with test method
         $parentApi = array(
-            'timeperiod' => array(
+            'forecasts_chart' => array(
                 'reqType' => 'GET',
-                'path' => array('Forecasts', 'timeperiod'),
+                'path' => array('Forecasts', 'chart'),
                 'pathVars' => array('', ''),
-                'method' => 'timeperiod',
-                'shortHelp' => 'forecast timeperiod',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#timeperiod',
+                'method' => 'chart',
+                'shortHelp' => 'Retrieve the Chart data for the given data in the Forecast Module',
+                'longHelp' => 'modules/Forecasts/clients/base/api/help/ForecastChartApi.html',
             ),
-            'reportees' => array(
-                'reqType' => 'GET',
-                'path' => array('Forecasts', 'reportees', '?'),
-                'pathVars' => array('', '', 'user_id'),
-                'method' => 'getReportees',
-                'shortHelp' => 'Gets reportees to a user by id',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastFiltersApi.html#reportees',
-            )
         );
         return $parentApi;
     }
 
     /**
-     * Return the dom of the current timeperiods.
+     * Build out the chart for the sales rep view in the forecast module
      *
-     * //TODO, move this logic to store the values in a custom language file that contains the timeperiods for the Forecast module
-     *
-     * @param array $api
-     * @param array $args
-     * @return array
+     * @param ServiceBase $api      The Api Class
+     * @param array $args           Service Call Arguments
+     * @return mixed
      */
-    public function timeperiod($api, $args)
+    public function chart($api, $args)
     {
-        return TimePeriod::get_not_fiscal_timeperiods_dom();
-    }
+        global $current_user;
 
-    public function getReportees($api, $args)
-    {
-        $args['user_id'] = isset($args["user_id"]) ? $args["user_id"] : $GLOBALS["current_user"]->id;
+        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
+        $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
+        $args['group_by'] = !isset($args['group_by']) ? "forecast" : $args['group_by'];
 
-        // base file and class name
-        $file = 'include/SugarForecasting/ReportingUsers.php';
-        $klass = 'SugarForecasting_ReportingUsers';
+
+        // default to the Individual Code
+        $file = 'include/SugarForecasting/Chart/Individual.php';
+        $klass = 'SugarForecasting_Chart_Individual';
+
+        // test to see if we need to display the manager
+        if((isset($args['display_manager']) && $args['display_manager'] == 'true')) {
+            // we have a manager view, pull in the manager classes
+            $file = 'include/SugarForecasting/Chart/Manager.php';
+            $klass = 'SugarForecasting_Chart_Manager';
+        }
 
         // check for a custom file exists
         $include_file = get_custom_file_if_exists($file);
@@ -84,9 +83,8 @@ class ForecastsFiltersApi extends ModuleApi
         require_once($include_file);
         // create the lass
 
-        /* @var $obj SugarForecasting_AbstractForecast */
+        /* @var $obj SugarForecasting_Chart_AbstractChart */
         $obj = new $klass($args);
         return $obj->process();
     }
-
 }

@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/Users/User.php');
-require_once('include/api/CurrentUserApi.php');
+require_once('clients/base/api/CurrentUserApi.php');
 
 class ForecastsCurrentUserApi extends CurrentUserApi {
     public function registerApiRest() {
