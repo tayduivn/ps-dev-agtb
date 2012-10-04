@@ -86,7 +86,7 @@ class MetadataApi extends SugarApi {
         }
 
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','acl','module_list', 'views', 'layouts','relationships');
+        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','acl','module_list', 'views', 'layouts','relationships','currencies');
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -97,8 +97,12 @@ class MetadataApi extends SugarApi {
 
         $moduleFilter = array();
         if (!empty($args['module_filter'])) {
-            // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
-            $modules = str_getcsv($args['module_filter'],',','');
+            if ( function_exists('str_getcsv') ) {
+                // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
+                $modules = str_getcsv($args['module_filter'],',','');
+            } else {
+                $modules = explode(",", $args['module_filter']);
+            }
             if ( $modules != false ) {
                 $moduleFilter = $modules;
             }
@@ -120,7 +124,11 @@ class MetadataApi extends SugarApi {
 
         $data = array();
 
-        $hashKey = "metadata:" . implode(",", $this->platforms) . ":hash";
+        $userHashKey = '_PUBLIC_';
+        if ( isset($GLOBALS['current_user']->id) ) {
+            $userHashKey = $GLOBALS['current_user']->id;
+        }
+        $hashKey = "metadata:" . implode(",", $this->platforms) . $userHashKey . ":hash";
         //First check if the hash is cached so we don't have to load the metadata manually to calculate it
         $hash = sugar_cache_retrieve($hashKey);
         //If it was, check if the client has the same version cached
@@ -128,22 +136,31 @@ class MetadataApi extends SugarApi {
             generateETagHeader($hash);
             //If we got here without dying, the client doesn't have the metadata cached.
             //First check if we have the metadata contents cached in a file
-            $cacheFile = sugar_cached("api/metadata/$hash");
+            $cacheFile = sugar_cached("api/metadata/{$hash}.php");
             if (file_exists($cacheFile)) {
                 //$data will be populated by the include
                 include($cacheFile);
             }
         }
 
-        //If we failed to load the metadat from cache, load it now the hard way.
-        if (empty($data))
+        //If we failed to load the metadata from cache, load it now the hard way.
+        if (empty($data)) {
             $data = $this->loadMetadata($hashKey);
+            
+            // Bug 56911 - Notes metadata is needed for portal
+            // Remove forcefully added Notes module to portal requests since we only
+            // need the metadata but do NOT need it in the module list
+            if (isset($args['platform']) && $args['platform'] == 'portal') {
+                unset($data['module_list']['Notes']);
+            }
+        }
 
         //If we had to generate a new hash, create the etag with the new hash
-        if (empty($hash))
+        if (empty($hash)) {
             generateETagHeader($data['_hash']);
+        }
 
-        $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships');
+        $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies');
         $perModuleChunks = array('modules','mod_strings','acl');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
@@ -202,8 +219,6 @@ class MetadataApi extends SugarApi {
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
         $data['config'] = $this->getConfigs();
-        $md5 = serialize($data);
-        $md5 = md5($md5);
         $data["_hash"] = md5(serialize($data));
 
         $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config');
@@ -322,8 +337,8 @@ class MetadataApi extends SugarApi {
         $data["_hash"] = $hash;
 
         //Cache the result to the filesystem
-        $cacheFile = sugar_cached("api/metadata/$hash");
-        create_cache_directory("api/metadata/$hash");
+        $cacheFile = sugar_cached("api/metadata/{$hash}.php");
+        create_cache_directory("api/metadata/{$hash}.php");
         write_array_to_file("data", $data, $cacheFile);
 
         //Cache the hash in sugar_cache so we don't have to hit the filesystem for etag comparisons

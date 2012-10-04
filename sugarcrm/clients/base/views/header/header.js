@@ -29,12 +29,20 @@
         self.setCreateTasksList();
         self.setCurrentUserName();
         app.view.View.prototype._renderHtml.call(self);
-
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
+            throttleMillis: (app.config.requiredElapsed || 500),
+            throttle: function(callback, millis) {
+               if(!self.debounceFunction) {
+                    self.debounceFunction = _.debounce(function(){
+                        callback();
+                    }, millis || 500);
+                } 
+                self.debounceFunction();
+            },
             onEnterFn: function(hrefOrTerm, isHref) {
                 // if full href treat as user clicking link
                 if(isHref) {
@@ -55,10 +63,9 @@
         var plugin = this, mlist, params;
         mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
-
         app.api.search(params, {
             success:function(data) {
-                data.module_list = app.metadata.getModuleNames(true);
+                data.module_list = app.metadata.getModuleNames(true,"create");
                 plugin.provide(data);
             },
             error:function(error) {
@@ -122,18 +129,7 @@
         try {
             singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
             if(singularModules) {
-                _.each(self.module_list, function(loadedModule) {
-
-                    // Continue on Leads, Notes, or KBDocuments, but for all others:
-                    // check access to create and push to list
-                    if(loadedModule === 'Leads' || loadedModule === 'Notes' || loadedModule === 'KBDocuments') {
-                        app.logger.debug("Not a module user can create so not putting in dropdown. Skipping: "+loadedModule);
-                    } else {
-                        if(app.acl.hasAccess('create', loadedModule)) {
-                            self.createListLabels.push(loadedModule);
-                        }
-                    }
-                });
+                self.createListLabels = this.creatableModuleList;
             }
         } catch(e) {
             return;
@@ -144,6 +140,7 @@
         this.createListLabels = [];
         this.currentModule = this.module;
         this.module_list = app.metadata.getModuleNames(true);
+        this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 
     /**

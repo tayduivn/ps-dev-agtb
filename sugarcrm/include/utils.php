@@ -1071,6 +1071,7 @@ function _mergeCustomAppListStrings($file , $app_list_strings){
 
         // FG - bug 45525 - Specific codelists must NOT be overwritten
 	$exemptDropdowns[] = "moduleList";
+	$exemptDropdowns[] = "moduleListSingular";
         $exemptDropdowns[] = "parent_type_display";
         $exemptDropdowns[] = "record_type_display";
         $exemptDropdowns[] = "record_type_display_notes";
@@ -3859,6 +3860,10 @@ function getPhpInfo($level=-1) {
 function string_format($format, $args){
 	$result = $format;
 
+    if ( !is_array($args) ) {
+        return;
+    }
+
     /** Bug47277 fix.
      * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
      * IN () fails and IN ('') works.
@@ -3874,9 +3879,13 @@ function string_format($format, $args){
     }
     /* End of fix */
 
-	for($i = 0; $i < count($args); $i++){
-		$result = str_replace('{'.$i.'}', $args[$i], $result);
-	}
+    $replaceArray = array();
+    foreach ( $args as $search => $replace ) {
+        $replaceArray['{'. $search .'}'] = $replace;
+    }
+
+    $result = str_replace(array_keys($replaceArray),array_values($replaceArray),$format);
+ 
 	return $result;
 }
 
@@ -4153,7 +4162,7 @@ function getTrackerSubstring($name) {
 		$chopped = $name;
 	}
 
-	return to_html($chopped);
+	return $chopped;
 }
 function generate_search_where ($field_list=array(),$values=array(),&$bean,$add_custom_fields=false,$module='') {
 	$where_clauses= array();
@@ -4273,6 +4282,18 @@ function rebuildConfigFile($sugar_config, $sugar_version) {
 	else {
 		return false;
 	}
+}
+
+/**
+ * Loads clean configuration, not overridden by config_override.php
+ *
+ * @return array
+ */
+function loadCleanConfig()
+{
+    $sugar_config = array();
+    require 'config.php';
+    return $sugar_config;
 }
 
 /**
@@ -5240,52 +5261,6 @@ function generateETagHeader($etag){
 			die();
 		}
 	}
-}
-
-
-/**
- * isSearchEngineDown
- *
- * This function checks the existence of a cache file
- *
- * @return boolean true if file found, false otherwise
- */
-function isSearchEngineDown()
-{
-    $cacheDir = empty($GLOBALS['sugar_config']['cache_dir']) ? 'cache/' : $GLOBALS['sugar_config']['cache_dir'];
-    if (file_exists($cacheDir.'fts/fts_down'))
-    {
-        return true;
-    }
-    return false;
-}
-
-/**
- * searchEngineDown
- *
- * This function creates a cache file to indicate search engine is down
- *
- */
-function searchEngineDown()
-{
-    $cacheDir = create_cache_directory('fts/');
-    sugar_touch($cacheDir.'/fts_down');
-}
-
-/**
- * restoreSearchEngine
- *
- * This function removes the cache file to indicate search engine has been restored
- *
- */
-function restoreSearchEngine()
-{
-    $cacheDir = empty($GLOBALS['sugar_config']['cache_dir']) ? 'cache/' : $GLOBALS['sugar_config']['cache_dir'];
-    $down_file = $cacheDir.'fts/fts_down';
-    if (file_exists($down_file))
-    {
-        unlink($down_file);
-    }
 }
 
 /**

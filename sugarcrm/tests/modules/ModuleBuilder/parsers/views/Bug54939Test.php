@@ -78,10 +78,11 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
     public function testPortalLayoutDoesNotIncludeInvalidFields() {
         $list = new Bug54939TestListParser(MB_PORTALLISTVIEW, 'Cases', '', MB_PORTAL);
         $list->changeFieldType('resolution', 'iframe');
+        // Relate SHOULD be clean on list
         $list->changeFieldType('system_id', 'relate');
         $fields = $list->getAvailableFields();
         $this->assertArrayNotHasKey('resolution', $fields, 'The resolution field was not excluded');
-        $this->assertArrayNotHasKey('system_id', $fields, 'The system_id field was not excluded');
+        $this->assertArrayHasKey('system_id', $fields, 'The system_id field was excluded');
         $this->assertArrayHasKey('description', $fields, 'Description is showing as not available');
 
         $grid = new Bug54939TestGridParser(MB_PORTALDETAILVIEW, 'Cases', '', MB_PORTAL);
@@ -106,7 +107,7 @@ class Bug54939Test extends Sugar_PHPUnit_Framework_TestCase {
         $list->changeFieldType('work_log', 'relate');
         $fields = $list->getAvailableFields();
         $this->assertArrayHasKey('description', $fields, 'The resolution field was excluded');
-        $this->assertArrayHasKey('work_log', $fields, 'The system_id field was excluded');
+        $this->assertArrayHasKey('work_log', $fields, 'The work_log field was excluded');
 
         $grid = new Bug54939TestGridParser(MB_WIRELESSDETAILVIEW, 'Cases', '', MB_WIRELESS);
         $grid->changeFieldType('work_log', 'parent');

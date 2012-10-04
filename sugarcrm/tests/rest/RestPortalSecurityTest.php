@@ -108,9 +108,9 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             $kbdoc = new KBDocument();
             $kbdoc->kbdocument_name = "KBDocument ".($i+1)." - ".create_guid();
             $kbdoc->body = 'This is a document for the unit test system';
-            $startDate = new DateTime();
+            $startDate = new SugarDateTime();
             $startDate->modify('-7 weeks');
-            $endDate = new DateTime();
+            $endDate = new SugarDateTime();
             $endDate->modify('+7 weeks');
             $kbdoc->active_date = $startDate->format('Y-m-d');
             $kbdoc->exp_date = $endDate->format('Y-m-d');
@@ -463,9 +463,9 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         foreach ( $restReply['reply']['records'] as $kbdoc ) {
             $this->assertEquals('1',$kbdoc['is_external_article']);
             $this->assertEquals('Published',$kbdoc['status_id']);
-            $startTime = DateTime::createFromFormat('Y-m-d',$kbdoc['active_date'])->getTimestamp();
+            $startTime = SugarDateTime::createFromFormat('Y-m-d',$kbdoc['active_date'])->getTimestamp();
             $this->assertLessThan(time(),$startTime,"Current date is less than: ".$kbdoc['active_date']);
-            $endTime = DateTime::createFromFormat('Y-m-d',$kbdoc['exp_date'])->getTimestamp();
+            $endTime = SugarDateTime::createFromFormat('Y-m-d',$kbdoc['exp_date'])->getTimestamp();
             $this->assertGreaterThan(time(),$endTime,"Current date is after: ".$kbdoc['exp_date']);
         }
         // Should not be able to fetch some of the records, let's test that.

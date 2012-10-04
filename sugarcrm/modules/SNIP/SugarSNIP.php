@@ -233,7 +233,8 @@ class SugarSNIP
         $snipuser = $this->getSnipUser();
         $request = array (
                         'user' => $snipuser->user_name,
-                        'password' => '', //$snipuser->authenticate_id,
+        // still get the hash because of old instances, see bug 56376
+                        'password' => $snipuser->user_hash
         );
         $consumer = $this->getSnipConsumer();
         if(!empty($consumer)) {

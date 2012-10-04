@@ -207,9 +207,14 @@ class MetaDataManager {
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data["_hash"] = $md5;
+        
+        $seed = BeanFactory::newBean($moduleName);
+        
+        //BEGIN SUGARCRM flav=pro ONLY
+        $favoritesEnabled = ($seed->isFavoritesEnabled() !== false) ? true : false;
+        $data['favoritesEnabled'] = $favoritesEnabled;
+        //END SUGARCRM flav=pro ONLY
+        $data["_hash"] = md5(serialize($data));
 
         return $data;
     }
@@ -231,9 +236,7 @@ class MetaDataManager {
             unset($data[$relKey]['relationships']);
         }
 
-        $md5 = serialize($data);
-        $md5 = md5($md5);
-        $data["_hash"] = $md5;
+        $data["_hash"] = md5(serialize($data));
 
         return $data;
     }
@@ -280,13 +283,18 @@ class MetaDataManager {
         $aclField = new ACLField();
         //END SUGARCRM flav=pro ONLY 
         $acls = $aclAction->getUserActions($userId);
+        $userObject = BeanFactory::getBean('Users',$userId);
         $obj = BeanFactory::getObjectName($module);
 
         $outputAcl = array('fields'=>array());
-        if ( isset($acls[$module]['module']) ) {
+        if ( is_admin($userObject) ) {
+            foreach ( array('admin','developer','access','view','list','edit','delete','import','export','massupdate') as $action ) {
+                $outputAcl[$action] = 'yes';
+            }
+        } else if ( isset($acls[$module]['module']) ) {
             $moduleAcl = $acls[$module]['module'];
 
-            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
                 $outputAcl['admin'] = 'yes';
                 $isAdmin = true;
             } else {
@@ -294,7 +302,7 @@ class MetaDataManager {
                 $isAdmin = false;
             }
 
-            if ( ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV) ) {
+            if ( isset($moduleAcl['admin']) && isset($moduleAcl['admin']['aclaccess']) && (($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_DEV) || ($moduleAcl['admin']['aclaccess'] == ACL_ALLOW_ADMIN_DEV)) ) {
                 $outputAcl['developer'] = 'yes';
             } else {
                 $outputAcl['developer'] = 'no';
@@ -642,6 +650,9 @@ class MetaDataManager {
             $pb = new SugarPortalBrowser();
             $pb->loadModules();
             $moduleList = array_keys($pb->modules);
+            
+            // Bug 56911 - Notes metadata is needed for portal
+            $moduleList[] = "Notes";
         } else if ( $platform == 'mobile' ) {
             // replicate the essential part of the behavior of the private loadMapping() method in SugarController
             foreach ( array ( '','custom/') as $prefix) {

@@ -1607,8 +1607,13 @@
 			var module_name = CAL.get("current_module").value;
 			
 			if(CAL.view == 'shared'){
-				user_name = cell.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("user_name");
-				user_id = cell.parentNode.parentNode.parentNode.parentNode.parentNode.getAttribute("user_id");
+				// Pick the div that contains 2 custom attributes we
+				// use for storing values in case of 'shared' view
+				parentWithUserValues = $('div[user_id][user_name]'); 
+				// Pull out the values
+				user_name = parentWithUserValues.attr('user_name');
+				user_id = parentWithUserValues.attr('user_id');
+				
 				CAL.GR_update_user(user_id);
 			}else{
 				user_id = CAL.current_user_id;
@@ -1655,8 +1660,12 @@
 									if(res.access == 'yes'){
 										
 										if(typeof res.limit_error != "undefined"){
-											var alert_msg = CAL.lbl_repeat_limit_error;
-											alert(alert_msg.replace("\$limit",res.limit));
+											var limitErrorMsg = CAL.lbl_repeat_limit_error;
+											var module = $("#current_module").val()
+											var moduleTitle = SUGAR.language.get('app_list_strings', 'moduleListSingular')[module].toLowerCase();
+											limitErrorMsg = limitErrorMsg.replace("\$limit", res.limit).replace("\$moduleTitle", moduleTitle);
+											alert(limitErrorMsg);
+											
 											CAL.get("title-cal-edit").innerHTML = CAL.lbl_edit;											
 											ajaxStatus.hideStatus();											
 											CAL.enable_buttons();
@@ -1956,28 +1965,30 @@
 		if (CAL.view == 'year') {
 			return;
 		}
-		
-		var day_width;
-		var cal_width = document.getElementById("cal-width-helper").offsetWidth;
-		
-		if (CAL.print) {
+
+        var container_width   = document.getElementById("cal-width-helper").offsetWidth;
+        var left_column_width = 53;
+        var scroll_padding    = 0;
+
+        if (CAL.print) {
             if (CAL.view == "day")
-			    cal_width = 720;
+                container_width = 720;
             else
-                cal_width = 800;
-		}
-			
-		var left_width = 80;
-		if(CAL.style == "basic"){
-			if(CAL.view != "month"){
-				left_width = 20;
-			}else
-				left_width = 60;		
-		}						
-		
+                container_width = 800;
+        }
+        else {
+            var is_scrollable = document.getElementById("cal-scrollable");
+            if (is_scrollable) {
+                scroll_padding = 30;
+            }
+        }
+
+        var data_width = container_width - left_column_width - scroll_padding;
+
+        var num_columns;
 		if(CAL.view == "day"){
-			day_width = parseInt((cal_width - left_width - 10));	
-			if(typeof control_call == "undefined" || !control_call){
+            num_columns = 1;
+            if(typeof control_call == "undefined" || !control_call){
 				setTimeout(function(){
 					CAL.fit_grid(true);
 					setTimeout(function(){
@@ -1985,24 +1996,37 @@
 					},100);					
 				},100);
 			}
-		}else{							
-			day_width = parseInt((cal_width - left_width) / 7);
-		}			
-			
-		var nodes = CAL.query("#cal-grid div.col");
-		CAL.each(nodes, function(i,v){		
-			nodes[i].style.width = day_width + "px";
-		});
-		
-		var nodes = CAL.query("#cal-grid .cal-basic .act_item");	
-		CAL.each(nodes, function(i,v){	
-			var days = nodes[i].getAttribute('days');	
-			nodes[i].style.width = (day_width * days - 1) + "px";
-		});
-		document.getElementById("cal-grid").style.visibility = "";
+		}else{
+            num_columns = 7;
+		}
 
-	}
-	
+        var columns_width = CAL.calculate_columns_width(data_width, num_columns);
+        var cell_nodes = CAL.query("#cal-grid div.col");
+        CAL.each(cell_nodes, function(i)
+        {
+            cell_nodes[i].style.width = columns_width[i % num_columns] + "px";
+        });
+
+        document.getElementById("cal-grid").style.visibility = "";
+    };
+
+    CAL.calculate_columns_width = function(width, count)
+    {
+        var result    = [];
+        var integer   = Math.floor(width / count);
+        var remainder = width - count * integer;
+        var dispensed = 0;
+        for (var i = 1, value; i <= count; i++)
+        {
+            value = integer;
+            if (dispensed * count < i * remainder) {
+                value++;
+                dispensed++;
+            }
+            result.push(value);
+        }
+        return result;
+    };
 
 	YAHOO.util.DDCAL = function(id, sGroup, config){ 
 		this.cont = config.cont; 

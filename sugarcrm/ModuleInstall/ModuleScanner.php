@@ -55,7 +55,8 @@ class ModuleScanner{
 	private $blackListExempt = array();
 	private $classBlackListExempt = array();
 
-	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml');
+    // Bug 56717 - adding hbt extension to the whitelist - rgonzalez
+	private $validExt = array('png', 'gif', 'jpg', 'css', 'js', 'php', 'txt', 'html', 'htm', 'tpl', 'pdf', 'md5', 'xml', 'hbt');
 	private $classBlackList = array(
         // Class names specified here must be in lowercase as the implementation
         // of the tokenizer converts all tokens to lowercase.
@@ -76,16 +77,14 @@ class ModuleScanner{
 	private $blackList = array(
     'popen',
     'proc_open',
+	'error_log',
     'escapeshellarg',
     'escapeshellcmd',
     'proc_close',
     'proc_get_status',
     'proc_nice',
-    'basename',
 	'passthru',
     'clearstatcache',
-    'delete',
-    'dirname',
     'disk_free_space',
     'disk_total_space',
     'diskfreespace',
@@ -157,8 +156,10 @@ class ModuleScanner{
 	'linkinfo',
 	'lstat',
 	'mkdir',
+    'mkdir_recursive',
 	'parse_ini_file',
 	'rmdir',
+    'rmdir_recursive',
 	'stat',
 	'tempnam',
 	'touch',
@@ -171,6 +172,7 @@ class ModuleScanner{
 
 	//mutliple files per function call
 	'copy',
+    'copy_recursive',
 	'link',
 	'rename',
 	'symlink',
@@ -426,7 +428,7 @@ class ModuleScanner{
 	/**
 	 *Ensures that a file has a valid extension
 	 */
-	private function isValidExtension($file){
+	public function isValidExtension($file){
 		$file = strtolower($file);
 
 		$extPos = strrpos($file, '.');

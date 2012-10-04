@@ -25,6 +25,7 @@
 require_once('tests/rest/RestTestBase.php');
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('modules/SugarFavorites/SugarFavorites.php');
+require_once('include/SugarSearchEngine/SugarSearchEngineAbstractBase.php');
 //END SUGARCRM flav=pro ONLY
 
 class RestListTest extends RestTestBase {
@@ -38,7 +39,10 @@ class RestListTest extends RestTestBase {
         $this->bugs = array();
         $this->files = array();
         // set the FTS engine as down and make sure the config removes FTS
-        searchEngineDown();
+        
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarSearchEngineAbstractBase::markSearchEngineStatus();
+        //END SUGARCRM flav=pro ONLY
         $this->config_file_override = '';
         if(file_exists('config_override.php'))
             $this->config_file_override = file_get_contents('config_override.php');
@@ -51,7 +55,10 @@ class RestListTest extends RestTestBase {
     public function tearDown()
     {
         // restore FTS and config override
-        restoreSearchEngine();
+        //BEGIN SUGARCRM flav=pro ONLY
+        SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
+        //END SUGARCRM flav=pro ONLY
+        
         file_put_contents('config_override.php', $this->config_file_override);
 
         $accountIds = array();
@@ -232,6 +239,9 @@ class RestListTest extends RestTestBase {
      * @group rest
      */
     public function testCaseSearch() {
+        // This global only needs to be set for this test
+        SugarTestHelper::setUp('mod_strings', array('Administration'));
+        
         // Cases searches not only by fields in the module, but by the related account_name so it caused some extra problems so it gets some extra tests.
         // Make sure there is at least one page of cases
         for ( $i = 0 ; $i < 40 ; $i++ ) {

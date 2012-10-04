@@ -148,7 +148,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
             
             $errorLabel = 'no_error';
-        } catch ( Exception $e ) {
+        } catch ( SugarApiException $e ) {
             $errorLabel = $e->errorLabel;
         }
 

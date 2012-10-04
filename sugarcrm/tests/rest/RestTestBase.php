@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
+abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $authToken;
     protected $refreshToken;
@@ -81,6 +81,10 @@ class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
 
     protected function _restCall($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
+        // Since this is going in to a new DB connection, we have to commit anything we have
+        // lying around in an open transaction.
+        $GLOBALS['db']->commit();
+
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
         if ( empty($this->authToken) ) {
             $this->_restLogin();

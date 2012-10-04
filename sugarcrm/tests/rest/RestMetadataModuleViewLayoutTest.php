@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -51,6 +52,7 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataSugarFields() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['views']),'No views for the cases module');
@@ -84,16 +86,19 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         
         // Make sure we get it when we ask for portal
         sugar_file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Standard Dir');\n");
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the portal layout");
 
         // Make sure we get the custom file
         sugar_file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['layout']['edit'] = array('unit_test'=>'Custom Dir');\n");
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the custom portal layout");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['layouts']['edit']['meta']['unit_test'],"Didn't get the portal layout");
     }
@@ -103,6 +108,7 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
      */
     public function testMetadataSubPanels()
     {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['subpanels']),'No subpanels for the cases module');   
     }
@@ -112,6 +118,7 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
      */
     public function testMetadataFTS()
     {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
         $this->assertTrue(isset($restReply['reply']['modules']['Cases']['ftsEnabled']),'No ftsEnabled for the cases module');   
     }
@@ -119,6 +126,16 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
     /**
      * @group rest
      */
+    public function testMetadataFavorites()
+    {
+        $this->_clearMetadataCache();
+        $restReply = $this->_restCall('metadata?typeFilter=modules&platform=portal');
+        $this->assertTrue(isset($restReply['reply']['modules']['Cases']['favoritesEnabled']),'No favoritesEnabled for the cases module');   
+    }
+
+    /**
+    * @group rest
+    */
     public function testMetadataModuleViews() {
         $filesToCheck = array('modules/Cases/clients/portal/views/edit/edit.php',
                               'custom/modules/Cases/clients/portal/views/edit/edit.php',
@@ -144,16 +161,19 @@ class RestMetadataModuleViewLayoutTest extends RestTestBase {
         
         // Make sure we get it when we ask for portal
         sugar_file_put_contents($filesToCheck[0],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Standard Dir');\n");
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the portal view");
 
         // Make sure we get the custom file
         sugar_file_put_contents($filesToCheck[1],'<'."?php\n\$viewdefs['Cases']['portal']['view']['edit'] = array('unit_test'=>'Custom Dir');\n");
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Custom Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the custom portal view");
 
         // Make sure it flops back to the standard file
         unlink($filesToCheck[1]);
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Standard Dir',$restReply['reply']['modules']['Cases']['views']['edit']['meta']['unit_test'],"Didn't get the portal view");
     }

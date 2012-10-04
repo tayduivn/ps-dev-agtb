@@ -132,10 +132,9 @@ class UploadFile
 	{
 	    $fullname = "upload://$bean_id.$filename";
 	    if(file_exists($fullname)) {
-            if(!rename($fullname,  "upload://$bean_id")) {
-                $this->setError('fatal', "unable to rename file: $fullname => $bean_id");
+            if(rename($fullname,  "upload://$bean_id")) {
+                return true;
             }
-	        return true;
 	    }
 	    return false;
 	}
@@ -281,17 +280,7 @@ class UploadFile
 	 * @return string MIME type
 	 */
 	function getMimeSoap($filename){
-
-		if( function_exists( 'ext2mime' ) )
-		{
-			$mime = ext2mime($filename);
-		}
-		else
-		{
-			$mime = ' application/octet-stream';
-		}
-		return $mime;
-
+        return get_file_mime_type($filename, 'application/octet-stream');
 	}
 
 	/**
@@ -309,13 +298,11 @@ class UploadFile
 
 		if( $_FILES_element['type'] && !$recheckMime) {
 			$mime = $_FILES_element['type'];
-		} elseif( function_exists( 'mime_content_type' ) ) {
-			$mime = mime_content_type( $_FILES_element['tmp_name'] );
-		} elseif( function_exists( 'ext2mime' ) ) {
-			$mime = ext2mime( $_FILES_element['name'] );
 		} else {
-			$mime = ' application/octet-stream';
-		}
+            // Try to get the mime type, using application/octet-stream as a default
+            $mime = get_file_mime_type($_FILES_element['tmp_name'], 'application/octet-stream');
+        } 
+        
 		return $mime;
 	}
 

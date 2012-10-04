@@ -2444,6 +2444,22 @@ $app_strings = array (
     'ERR_NO_DB' => 'Could not connect to the database. Please refer to sugarcrm.log for details.',
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
+    'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
+
+    'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
+
+    // Default SugarApiException error messages
+    'EXCEPTION_UNKNOWN_EXCEPTION'       => 'Your request failed due to an unknown exception.',
+    'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
+    'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
+    'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
+    'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
+    'EXCEPTION_NOT_FOUND'               => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
+    'EXCEPTION_MISSING_PARAMTER'        => 'A required parameter in your request was missing.',
+    'EXCEPTION_INVALID_PARAMETER'       => 'A parameter in your request was invalid.',
+    'EXCEPTION_REQUEST_FAILURE'         => 'Your request failed to complete.',
+    'EXCEPTION_REQUEST_TOO_LARGE'       => 'Your request is too large to process.',
 
     //BEGIN SUGARCRM flav=pro ONLY
     //Lotus Live specific error messages
@@ -2879,6 +2895,7 @@ $app_strings = array (
     'LNK_GET_LATEST_TOOLTIP'=>'Replace with latest version',
     'LNK_HELP' => 'Help',
     'LNK_CREATE' => 'Create',
+    'LNK_CREATE_WHEN_EMPTY' => 'Create a record now.',
     'LNK_LIST_END' => 'End',
     'LNK_LIST_NEXT' => 'Next',
     'LNK_LIST_PREVIOUS' => 'Previous',
@@ -2915,7 +2932,7 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<b>Warning:</b> Your browser version is no longer supported or you are using an unsupported browser.',
+    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 14, 15 </li><li>Safari 6</li><li>Google Chrome 22 (or latest version)</li></ul>',
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -3416,6 +3433,7 @@ $app_strings = array (
     'LBL_UPLOADING' => 'Uploading',
 
     //for portal
+    'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
     'LBL_PORTAL_SIGNUP_TITLE' => 'Thank you for signing up!',
@@ -3473,13 +3491,13 @@ $app_strings = array (
     'LBL_PORTAL_REQUEST_TIMEOUT' => 'The request timed out.',
     'LBL_PORTAL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
     'LBL_PORTAL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
-    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: 401 Unauthorized',
+    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: Unauthorized',
     'LBL_PORTAL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
-    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: 403 Forbidden',
+    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: Forbidden',
     'LBL_PORTAL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
-    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: 405 Method Not Allowed',
+    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: Method Not Allowed',
     'LBL_PORTAL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
-    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: 412',
+    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: ',
     'LBL_PORTAL_MIN_MODULES' => 'At minimum, you need to have the Cases, Bugs or Knowledge Base module enabled to use this application.',
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
