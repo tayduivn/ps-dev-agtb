@@ -166,7 +166,7 @@ SUGAR.isUnsupportedIE = function (){
 
 SUGAR.isSupportedBrowser = function(){
     var supportedBrowsers = {
-        msie : {min:9, max:10},
+        msie : {min:9},
         safari : {min:500},
         mozilla : {min:13},
         chrome : {min:500}

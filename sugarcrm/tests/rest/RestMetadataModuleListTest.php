@@ -301,4 +301,17 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         return $data;
     }
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group rest
+     * @group Bug56911
+     */
+    public function testPortalMetadataModulesContainsNotes()
+    {
+        // Get the metadata for portal 
+        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
+        $this->assertArrayHasKey('modules', $restReply['reply'], "The modules index is missing from the response");
+        $this->assertArrayHasKey('Notes', $restReply['reply']['modules'], 'Notes was not returned in the modules metadata as expected');        
+    }
+    //END SUGARCRM flav=ent ONLY
 }
