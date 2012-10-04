@@ -431,7 +431,7 @@ class MssqlManager extends DBManager
                         preg_match('/^(.*)(ORDER BY)(.*)$/is',$matches[3], $orderByMatch);
                         if (!empty($orderByMatch[3])) {
                             $selectPart = array();
-                            preg_match('/^(.*?)(FROM .*)$/isU', $matches[2], $selectPart);
+                            preg_match('/^(.*)(\bFROM .*)$/isU', $matches[2], $selectPart);
                             $newSQL = "SELECT TOP $count * FROM
                                 (
                                     " . $matches[1] . $selectPart[1] . ", ROW_NUMBER()
