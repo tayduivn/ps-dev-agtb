@@ -99,27 +99,26 @@
          * @param {Object} errors hash of validation errors
          */
         handleEmailValidationError: function(emailErrorsArray) {
-            var self = this, emails;
-            this.$el.find('.control-group.email').removeClass("error");
-            emails = this.$el.find('.existing .email');
-            
+           var emailFields = this.$el.find('input.existing');
+
             // Remove any and all previous exclamation then add back per field error
-            $(emails).removeClass("error").find('.add-on').remove();
+            this.$('.error').removeClass('error');
+            this.$('.add-on').remove();
 
             // For each error add to error help block
             _.each(emailErrorsArray, function(emailWithError, i) {
 
-                // For each of our "sub-email" fields
-                _.each(emails, function(e) {
-                    var emailFieldValue = $(e).data('emailaddress');
+                // For each of our "email" fields
+                _.each(emailFields, function(e) {
 
-                    // if we're on an email sub field where error occured, add error help block
-                    if(emailFieldValue === emailWithError) {
+                var emailFieldValue = $(e).val();
+
+                    // if we're on an email field where error occured, display error
+                   if(emailFieldValue === emailWithError) {
                         
-                        // First remove in case already there and then add back. Note add-on and help-block are adjacent
-                        $(e).addClass("error").find('.row-fluid .help-block').remove().find('add-on').remove();
-                        $(e).find('.row-fluid')
-                            .append('<span class="add-on"><i class="icon-exclamation-sign"></i></span><p class="help-block">'+app.error.getErrorString('email', [emailFieldValue])+'</p>');
+                        // Add color, exclamation and help block
+                        $(e).closest('.control-group').addClass("error");
+                        $(e).after('<span class="add-on"><i class="icon-exclamation-sign"></i></span><p class="help-block">'+app.error.getErrorString('email', [emailFieldValue])+'</p>');
                     }
                 });
             });
@@ -136,10 +135,11 @@
          */
         handleValidationError: function(errors) {
             var self = this;
+            errors = errors || {};
 
             // Email is special case as each input email is a sort of field within the one email 
             // field itself; and we need to append errors directly beneath said sub-fields
-            if(self.type==='email') {
+            if(self.type==='email' && errors.email) {
                 self.handleEmailValidationError(errors.email);
                 return;
             }
@@ -158,7 +158,7 @@
 
 
             // Add error styling
-            this.$el.wrap('<div class="input-append  '+ftag+'">');
+            this.$el.wrap('<div class="input-append '+ftag+'">');
             // For each error add to error help block
             _.each(errors, function(errorContext, errorName) {
                 self.$('.help-block').append(app.error.getErrorString(errorName, errorContext));
