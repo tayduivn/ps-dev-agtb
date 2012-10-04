@@ -193,7 +193,9 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadWorksheetAdjustedValuesForUser($user, $dataKey, $worksheetKey)
     {
-        $obj = new MockSugarForecasting_Manager($this->args);
+        $args = $this->args;
+        $args['user_id'] = $this->users[$user]['user']->id;
+        $obj = new MockSugarForecasting_Manager($args);
         $obj->loadUsers();
         $obj->loadWorksheetAdjustedValues();
 
