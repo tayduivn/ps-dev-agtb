@@ -137,6 +137,17 @@ function rmdir_recursive( $path ){
     return( $status );
 }
 
+/**
+ * Recursively scans a directory for text files (HTML and text only) and returns 
+ * the result as an array.
+ * 
+ * DEPRECATED. WILL BE REMOVED IN 6.7 -rgonzalez
+ * 
+ * @deprecated
+ * @param $the_dir
+ * @param $the_array
+ * @return mixed
+ */
 function findTextFiles( $the_dir, $the_array ){
     if(!is_dir($the_dir)) {
 		return $the_array;
@@ -151,7 +162,8 @@ function findTextFiles( $the_dir, $the_array ){
             $the_array = findTextFiles( "$the_dir/$f", $the_array );
         }
         else {
-            switch( mime_content_type( "$the_dir/$f" ) ){
+            $mime = get_file_mime_type("$the_dir/$f");
+            switch($mime){
                 // we take action on these cases
                 case "text/html":
                 case "text/plain":
@@ -166,7 +178,7 @@ function findTextFiles( $the_dir, $the_array ){
                 case "text/rtf":
                     break;
                 default:
-                    $GLOBALS['log']->info( "no type handler for $the_dir/$f with mime_content_type: " . mime_content_type( "$the_dir/$f" ) . "\n" );
+                    $GLOBALS['log']->info( "no type handler for $the_dir/$f with get_file_mime_type: $mime\n" );
             }
         }
     }

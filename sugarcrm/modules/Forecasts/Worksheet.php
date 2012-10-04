@@ -20,73 +20,81 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-
-// User is used to store Forecast information.
+/**
+ * Stores Temporary Forecasts Information for a given user
+ */
 class Worksheet extends SugarBean {
 
-    var $id;
-    var $user_id;
-    var $timeperiod_id;
-    var $forecast_type;
-    var $related_id;
-    var $related_forecast_type;
-    var $currency_id;
-    var $base_rate;
-    var $best_case;
-    var $likely_case;
-    var $worst_case;
-    var $date_modified;
-    var $modified_user_id;
-    var $deleted;
-    var $commit_stage;
-    var $op_probability;
-    var $quota;
-    var $version;
+    public $id;
+    public $user_id;
+    public $timeperiod_id;
+    public $forecast_type;
+    public $related_id;
+    public $related_forecast_type;
+    public $currency_id;
+    public $base_rate;
+    public $best_case;
+    public $likely_case;
+    public $worst_case;
+    public $date_modified;
+    public $modified_user_id;
+    public $deleted;
+    public $commit_stage;
+    public $op_probability;
+    public $quota;
+    public $version;
 
-    var $table_name = "worksheet";
+    public $table_name = "worksheet";
 
-    var $object_name = "Worksheet";
-    var $disable_custom_fields = true;
+    public $object_name = "Worksheet";
+    public $disable_custom_fields = true;
 
     // This is used to retrieve related fields from form posts.
-    var $additional_column_fields = Array('');
+    public $additional_column_fields = Array('');
 
-
-
-    var $new_schema = true;
-    var $module_dir = 'Forecasts';
-    function Worksheet() {
-        parent::SugarBean();
-        $this->disable_row_level_security =true;
+    public $new_schema = true;
+    public $module_dir = 'Forecasts';
+    
+    public function __construct() {
+        parent::__construct();
+        $this->disable_row_level_security = true;
     }
 
-    function save($check_notify = false){
-        if(!isset($this->id) || ($this->id == ""))
-        {
+    /**
+     * Save method
+     * 
+     * @param bool $check_notify
+     * @return String|void
+     */
+    public function save($check_notify = false){
+        require_once 'include/SugarCurrency.php';
+        if(empty($this->id) || $this->new_with_id == true) {
         	$currency = SugarCurrency::getUserLocaleCurrency();
             $this->currency_id = $currency->id;
             $this->base_rate = $currency->conversion_rate;
         }
         
-        parent::save($check_notify);
+        return parent::save($check_notify);
     }
 
-    function get_summary_text() {
-        return "$this->id";
+    /**
+     * Get the Summary text For this bean.
+     * 
+     * @return string
+     */
+    public function get_summary_text() {
+        return $this->id;
     }
 
-    function retrieve($id, $encode=false, $deleted=true){
-        $ret = parent::retrieve($id, $encode, $deleted);
-
-        return $ret;
-    }
-
-    function is_authenticated()
+    /**
+     * Not sure what what method does as it's not used anywhere in the code.
+     * 
+     * @deprecated
+     * @return mixed
+     */
+    public function is_authenticated()
     {
         return $this->authenticated;
     }
 
 }
-?>

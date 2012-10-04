@@ -23,14 +23,23 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
+class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var Currency
+     */
+    protected $currency;
+
     public function setUp()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        SugarTestHelper::setUp('current_user');
+
+        $this->currency = SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+
+        $GLOBALS['current_user']->setPreference('currency', $this->currency->id);
     }
 
     public function tearDown()
@@ -44,20 +53,17 @@ class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test that the base_rate field is populated with rate
-     * of currency_id
+     * Test to make sure that the forecast always saves with the base currency instead of the users currency
      *
      * @group forecasts
      */
-    public function testForecastRate() {
+    public function testForecastCurrencyIdEqualsBaseCurrencyId() {
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
         $forecast = SugarTestForecastUtilities::createForecast($timeperiod, $GLOBALS['current_user']);
-        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
-        $forecast->currency_id = $currency->id;
         $forecast->save();
-        $this->assertEquals(
-            sprintf('%.6f',$forecast->base_rate),
-            sprintf('%.6f',$currency->conversion_rate)
-        );
+
+        // get the base currency
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $this->assertEquals($base_currency->id, $forecast->currency_id);
     }
 }

@@ -20,6 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * @param Opportunity $focus        The Current Opportunity we are working with
+ */
 function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
     global $app_list_strings, $timedate, $current_language;
@@ -78,21 +81,18 @@ function perform_save(&$focus){
 
     //BEGIN SUGARCRM flav=pro ONLY
     //We create a related product entry for any new opportunity so that we may forecast on products
-    if (empty($focus->id))
-    {
+    // create an empty product module
+    $product = BeanFactory::getBean('Products');
+    if (empty($focus->id)) {
         $focus->id = create_guid();
         $focus->new_with_id = true;
-
-        $product = BeanFactory::getBean('Products');
     } else {
         //We still need to update the associated product with changes
-        $product = BeanFactory::getBean('Products');
         $product->retrieve_by_string_fields(array('opportunity_id'=>$focus->id));
     }
 
     //If $product is set then we need to copy values into it from the opportunity
-    if(isset($product))
-    {
+    if(isset($product)) {
         $product->name = $focus->name;
         $product->best_case = $focus->best_case;
         $product->likely_case = $focus->amount;
@@ -111,4 +111,3 @@ function perform_save(&$focus){
     }
     //END SUGARCRM flav=pro ONLY
 }
-?>
