@@ -1,6 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
-
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -24,42 +22,62 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Forecasts/WorksheetSeedData.php');
+/**
+ * UpgradeHistoryTest.php
+ *
+ * This file tests the code run when UpgradeAccess.php is invoked.
+ */
 
-class WorksheetSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
+class UpgradeHistoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    private $createdWorksheets;
-
-    function setUp()
+public function setUp()
+{
+    if(!file_exists('.htaccess'))
     {
-        global $beanFiles, $beanList, $current_user, $app_list_strings;
-        require('include/modules.php');
-        $app_list_strings = return_app_list_strings_language('en_us');
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
-        $current_user->is_admin = 1;
-        $current_user->save();
-        $GLOBALS['db']->query("UPDATE worksheet SET deleted = 1");
-    }
-
-    function tearDown()
-    {
+        $this->markTestSkipped('This may be an instance that does not support the use of .htaccess files');
         return;
-        foreach ($this->createdWorksheets as $id) {
-            $GLOBALS['db']->query("DELETE FROM worksheet WHERE id = '{$id}'");
-        }
-        $GLOBALS['db']->query("UPDATE worksheet SET deleted = 0");
     }
 
-    /**
-     * @group forecasts
-     * @group worksheet
-     * @gropu seeddata
-     */
-    function testPopulateSeedData()
+    if(!is_writable('.htaccess'))
     {
-        $this->createdWorksheets = WorksheetSeedData::populateSeedData();
+        $this->markTestSkipped('Cannot write to .htaccess file.');
+        return;
     }
 
+    //Create a backup file just in case things go wrong
+    file_put_contents('.htaccess_test.bak', file_get_contents('.htaccess'));
+
+    SugarTestHelper::setUp('mod_strings', array('Administration'));
+}
+
+
+public function tearDown()
+{
+    //Restore .htaccess from .htaccess_test.bak
+    if(file_exists('.htaccess_test.bak'))
+    {
+        file_put_contents('.htaccess', file_get_contents('.htaccess_test.bak'));
+        unlink('.htaccess_test.bak');
+    }
+    SugarTestHelper::tearDown();
+}
+
+
+/**
+ * This function tests to see the UpgradeAccess file correctly builds the .htaccess file when run.
+ * In particular, the mod rewrite rule for rest URLs should be created.
+ *
+ */
+public function testUpgradeAccessCreatesRewriteRule()
+{
+    require('modules/Administration/UpgradeAccess.php');
+    $contents = file_get_contents('.htaccess');
+
+    preg_match('/RewriteRule \^rest\/\(\.\*\)\$ api\/rest.php\?\_\_sugar\_url=\$1 \[L\,QSA\]/', $contents, $matches);
+    $this->assertNotEmpty($matches, 'Could not find RewriteRule');
+    $this->assertEquals(1, count($matches), 'Duplicate blocks were created for the RewriteRule');
+    $this->assertTrue(strpos($contents, '<FilesMatch') !== false, 'Code outside of restrictions was not copied over');
+}
 
 }
