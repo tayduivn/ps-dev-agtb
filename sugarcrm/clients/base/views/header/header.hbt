@@ -4,7 +4,6 @@
             <div class="nav-collapse">
                 <ul class="nav" id="module_list">
                     <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
-                    {{log module_list}}
                     {{#eachOptions module_list}}
 
                     <li class="{{key}}{{#eq key ../currentModule}} active{{/eq}}">
