@@ -80,7 +80,7 @@ abstract class CurrencyRateUpdateAbstract
      *
      * @access protected
      */
-    protected function __construct() {}
+    public function __construct() {}
 
     /**
      * run
