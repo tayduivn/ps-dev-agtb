@@ -29,8 +29,12 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
  * updating currency rates per module.
  *
  */
-class SugarJobUpdateCurrencyRates implements RunnableSchedulerJob {
+class SugarJobUpdateCurrencyRates implements RunnableSchedulerJob
+{
 
+    /**
+     * @var $job the job object
+     */
     protected $job;
 
     /**

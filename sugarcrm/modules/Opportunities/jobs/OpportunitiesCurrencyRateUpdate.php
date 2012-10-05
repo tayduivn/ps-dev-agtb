@@ -36,7 +36,8 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      *
      * @access public
      */
-    public function __construct() {
+    public function __construct()
+    {
         // set rate field definitions
         $this->addRateColumnDefinition('opportunities','base_rate');
         // set usdollar field definitions
@@ -56,7 +57,8 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * @param  string $currencyId
      * @return boolean true if custom processing was done
      */
-    public function doCustomUpdateRate($table, $column, $currencyId) {
+    public function doCustomUpdateRate($table, $column, $currencyId)
+    {
         // setup SQL statement
         $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate
         WHERE t.sales_stage NOT LIKE 'Closed%%'
@@ -84,7 +86,8 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * @param  string    $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
+    {
         // setup SQL statement
         $query = sprintf("UPDATE %s t SET t.%s = t.base_rate * t.%s
             WHERE t.sales_stage NOT LIKE 'Closed%%'

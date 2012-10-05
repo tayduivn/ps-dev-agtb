@@ -36,7 +36,8 @@ class WorksheetCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      *
      * @access public
      */
-    public function __construct() {
+    public function __construct()
+    {
         // set rate field definitions
         $this->addRateColumnDefinition('worksheet','base_rate');
         // set usdollar field definitions
@@ -56,7 +57,8 @@ class WorksheetCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * @param  string $currencyId
      * @return boolean true if custom processing was done
      */
-    public function doCustomUpdateRate($table, $column, $currencyId) {
+    public function doCustomUpdateRate($table, $column, $currencyId)
+    {
         return false;
     }
 
@@ -74,7 +76,8 @@ class WorksheetCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * @param  string    $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
+    {
         return false;
     }
 

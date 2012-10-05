@@ -1,4 +1,5 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -37,7 +38,8 @@ class QuotasCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      *
      * @access public
      */
-    public function __construct() {
+    public function __construct()
+    {
         // set rate field definitions
         $this->addRateColumnDefinition('quotas','base_rate');
         // set usdollar field definitions
@@ -57,7 +59,8 @@ class QuotasCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * @param  string $currencyId
      * @return boolean true if custom processing was done
      */
-    public function doCustomUpdateRate($table, $column, $currencyId) {
+    public function doCustomUpdateRate($table, $column, $currencyId)
+    {
         return false;
     }
 
@@ -75,7 +78,8 @@ class QuotasCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * @param  string    $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
+    {
         return false;
     }
 

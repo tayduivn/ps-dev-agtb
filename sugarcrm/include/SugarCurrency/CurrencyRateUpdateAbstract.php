@@ -1,11 +1,11 @@
 <?php
-/*********************************************************************************
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
  *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
  *not use this file except in compliance with the License. Under the terms of the license, You
  *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
  *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
  *of a third party.  Use of the Software may be subject to applicable fees and any use of the
@@ -91,7 +91,8 @@ abstract class CurrencyRateUpdateAbstract
      * @param  object    $currencyId
      * @return boolean   true on success
      */
-    public function run($currencyId) {
+    public function run($currencyId)
+    {
         if(empty($currencyId)) {
             return false;
         }
@@ -158,7 +159,8 @@ abstract class CurrencyRateUpdateAbstract
      * @param  string $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomUpdateRate($table, $column, $currencyId) {
+    protected function doCustomUpdateRate($table, $column, $currencyId)
+    {
         return false;
     }
 
@@ -175,7 +177,8 @@ abstract class CurrencyRateUpdateAbstract
      * @param  string $currencyId
      * @return Object database result object
      */
-    protected function updateRate($table, $column, $currencyId) {
+    protected function updateRate($table, $column, $currencyId)
+    {
         // setup SQL statement
         $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate WHERE c.id = '%s' and c.id = t.currency_id",
             $table,
@@ -197,7 +200,8 @@ abstract class CurrencyRateUpdateAbstract
      * @param  string    $currencyId
      * @return boolean true on success
      */
-    protected function processUsDollarColumns($currencyId) {
+    protected function processUsDollarColumns($currencyId)
+    {
         // loop through all the tables
         foreach($this->usDollarColumnDefinitions as $tableName=>$tableDefs) {
             $columns = $this->db->get_columns($tableName);
@@ -231,7 +235,8 @@ abstract class CurrencyRateUpdateAbstract
      * @param  string    $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
+    {
         return false;
     }
 
@@ -250,7 +255,8 @@ abstract class CurrencyRateUpdateAbstract
      * @param  string    $currencyId
      * @return boolean true on success
      */
-    protected function doUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId) {
+    protected function doUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
+    {
         // setup SQL statement
         $query = sprintf("UPDATE %s t SET t.%s = t.base_rate * t.%s where t.currency_id = '%s'",
             $tableName,
@@ -270,11 +276,20 @@ abstract class CurrencyRateUpdateAbstract
      * setters/getters
      */
 
+    /**
+     * @param $table
+     * @return array
+     */
     protected function getRateColumnDefinitions($table)
     {
         return $this->rateColumnDefinitions[$table];
     }
 
+    /**
+     * @param $table
+     * @param $column
+     * @return bool
+     */
     protected function addRateColumnDefinition($table, $column)
     {
         if(!isset($this->rateColumnDefinitions[$table])) {
@@ -287,7 +302,13 @@ abstract class CurrencyRateUpdateAbstract
         return true;
     }
 
-    protected function removeRateColumnDefinition($table, $column) {
+    /**
+     * @param $table
+     * @param $column
+     * @return bool
+     */
+    protected function removeRateColumnDefinition($table, $column)
+    {
         if(!isset($this->rateColumnDefinitions[$table])) {
             $this->rateColumnDefinitions[$table] = array();
         }
@@ -301,11 +322,18 @@ abstract class CurrencyRateUpdateAbstract
         return true;
     }
 
+    /**
+     * @return bool
+     */
     protected function getExclude()
     {
         return $this->exclude;
     }
 
+    /**
+     * @param $exclude
+     * @return bool
+     */
     protected function setExclude($exclude)
     {
         if(!is_bool($exclude)) {
@@ -314,11 +342,21 @@ abstract class CurrencyRateUpdateAbstract
         $this->exclude = $exclude;
     }
 
+    /**
+     * @param $table
+     * @return array
+     */
     protected function getUsDollarColumnDefinitions($table)
     {
         return $this->usDollarColumnDefinitions[$table];
     }
 
+    /**
+     * @param $table
+     * @param $amountColumn
+     * @param $usDollarColumn
+     * @return bool
+     */
     protected function addUsDollarColumnDefinition($table, $amountColumn, $usDollarColumn)
     {
         if(!isset($this->usDollarColumnDefinitions[$table])) {
@@ -328,7 +366,13 @@ abstract class CurrencyRateUpdateAbstract
         return true;
     }
 
-    protected function removeUsDollarColumnDefinition($table, $amountColumn) {
+    /**
+     * @param $table
+     * @param $amountColumn
+     * @return bool
+     */
+    protected function removeUsDollarColumnDefinition($table, $amountColumn)
+    {
         if(!isset($this->usDollarColumnDefinitions[$table])) {
             return false;
         }
