@@ -10,7 +10,8 @@
 
     events: {
         'click [name=show_more_button]': 'showMoreRecords',
-        'click .search': 'showSearch'
+        'click .search': 'showSearch',
+        'click .quickcreate': 'showQuickCreate'
     },
     _renderHtml: function() {
         if (app.acl.hasAccess('create', this.module)) {
@@ -57,6 +58,38 @@
         this.$('.search').toggleClass('active');
         this.layout.trigger("list:search:toggle");
     },
+    showQuickCreate: function() {
+        var hasModalLayout =false;
+
+        _.each(this.layout._components, function(component, index, list){
+            if(component.options && component.options.name && component.options.name === 'quickcreatemodal') {
+                hasModalLayout = true;
+            }
+        });
+
+        if (!hasModalLayout) {
+            var modalLayout = app.view.createLayout({
+                context: this.context,
+                name: 'quickcreatemodal',
+                type : 'modal',
+                module: this.context.get("module"),
+                layout: this.layout,
+                meta: {
+                    showEvent : 'modal:quickcreate:open'
+                }
+            })
+
+            this.layout.addComponent(modalLayout,{});
+        }
+
+        this.layout.trigger("modal:quickcreate:open", {
+            span: 12,
+            context: { module: this.module },
+            components: [ { layout: 'quickcreate' } ],
+            title: app.lang.get('LBL_NEW_FORM_TITLE', this.module)
+        });
+    },
+
     getSearchOptions: function() {
         var collection, options, previousTerms, term = '';
         collection = this.context.get('collection');

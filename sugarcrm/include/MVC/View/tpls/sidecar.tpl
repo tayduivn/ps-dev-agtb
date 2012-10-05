@@ -31,21 +31,24 @@
 <html>
     <head>
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
+        <!-- CSS -->
+        <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
+        <link rel="stylesheet" href="styleguide/styleguide/css/bootstrap.css"/>
+        <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
+        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
 
         <!-- App Scripts -->
         <script src='sidecar/minified/sidecar.min.js'></script>
-        <script src='{$sugarSidecarPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js"></script>
         <script src="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.js"></script>
-
-        <!-- CSS -->
-        <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="include/javascript/twitterbootstrap/css/bootstrap.css"/>
-        <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
-        <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
-        <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
+        <script src="include/javascript/jquery/jquery.watch.js"></script>
+        <script src="include/javascript/jquery/jquery.dataTables.min.js"></script>
+        <script src="styleguide/assets/js/bootstrap.min.js"></script>
+        <script src="styleguide/assets/js/bootstrap-tooltip.js"></script>
+        <script src="styleguide/assets/js/bootstrap-popover.js"></script>
     </head>
     <body>
     	<div id="sugarcrm">
