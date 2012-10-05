@@ -331,10 +331,16 @@ $app_list_strings = array (
   ),
   'sales_stage_dom' =>
   array (
-    'New' => 'New',
-    'Engaged' => 'Engaged',
-    'Lost' => 'Lost',
-    'Won' => 'Won',
+    'Prospecting' => 'Prospecting',
+    'Qualification' => 'Qualification',
+    'Needs Analysis' => 'Needs Analysis',
+    'Value Proposition' => 'Value Proposition',
+    'Id. Decision Makers' => 'Id. Decision Makers',
+    'Perception Analysis' => 'Perception Analysis',
+    'Proposal/Price Quote' => 'Proposal/Price Quote',
+    'Negotiation/Review' => 'Negotiation/Review',
+    'Closed Won' => 'Closed Won',
+    'Closed Lost' => 'Closed Lost',
   ),
 
   'commit_stage_binary_dom' => array (
@@ -4318,14 +4324,14 @@ $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
     'last' => 'Last'
 );
 
-if(class_exists('BoxOfficeClient')){
-$app_list_strings['sales_stage_dom']= array(
+//BEGIN SUGARCRM flav=free ONLY
+$app_list_strings['sales_stage_dom'] = array(
     'Prospecting'=>'New',
     'Qualification'=>'Engaged',
     'Closed Won'=>'Won',
     'Closed Lost'=>'Lost',
 );
-}
+//END SUGARCRM flav=free ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (
