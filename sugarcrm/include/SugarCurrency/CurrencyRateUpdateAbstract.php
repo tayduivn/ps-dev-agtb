@@ -78,7 +78,7 @@ abstract class CurrencyRateUpdateAbstract
     /**
      * constructor
      *
-     * @access protected
+     * @access public
      */
     public function __construct() {}
 
