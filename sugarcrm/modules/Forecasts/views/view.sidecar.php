@@ -84,8 +84,8 @@ class ForecastsViewSidecar extends SidecarView
         // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
         $admin = BeanFactory::getBean("Administration");
         $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
-        $show_buckets = ($forecastsSettings['forecast_categories'] == 'show_binary') ? false : true;
-        $defaultSelections["category"] = $show_buckets ? array("100") : array("1");
+
+        $defaultSelections["category"] = array("include");
         $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';
 

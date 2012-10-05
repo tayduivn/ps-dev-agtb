@@ -49,6 +49,7 @@ class RestMetadataAclTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataAclBasic() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
@@ -59,6 +60,7 @@ class RestMetadataAclTest extends RestTestBase {
         global $db;
 
         $db->commit();
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Hash is missing from the first run');
@@ -76,6 +78,7 @@ class RestMetadataAclTest extends RestTestBase {
         $db->commit();
         $this->_restLogin();
 
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Hash is missing from the second run');
@@ -108,6 +111,7 @@ class RestMetadataAclTest extends RestTestBase {
         
         // Need to re-login so it fetches a new set of ACL's
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
@@ -122,6 +126,7 @@ class RestMetadataAclTest extends RestTestBase {
 
         // Need to re-login so it fetches a new set of ACL's
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
@@ -158,6 +163,7 @@ class RestMetadataAclTest extends RestTestBase {
 
         // Need to re-login so it fetches a new set of ACL's
         $this->_restLogin($this->_user->user_name,$this->_user->user_name);
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=acl');
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');

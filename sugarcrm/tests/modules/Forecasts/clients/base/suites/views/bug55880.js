@@ -21,7 +21,7 @@
 
 describe("Bug 55880", function() {
     var app, view, field, _renderClickToEditStub, _renderFieldStub, _renderFieldSpy;
-    var _setForecastColumnStub, _renderHtmlStub, _isMyWorksheetStub;
+    var _setForecastColumnStub, _renderStub, _isMyWorksheetStub;
 
     describe("Expected opportunities fields", function (){
         beforeEach(function() {
@@ -33,6 +33,7 @@ describe("Bug 55880", function() {
             _renderFieldSpy = sinon.spy(view, "_renderField");
 
             field = {
+                name:'expected_best_case',
                 viewName:'worksheet',
                 def:{
                     clickToEdit:true
@@ -64,26 +65,26 @@ describe("Bug 55880", function() {
         describe("editableWorksheet property", function () {
             beforeEach(function() {
                 _setForecastColumnStub = new sinon.stub(view, "_setForecastColumn");
-                _renderHtmlStub = new sinon.stub(app.view.View.prototype, "_renderHtml");
+                _renderStub = new sinon.stub(app.view.View.prototype, "_render");
                 view.meta = {};
                 view.meta.panels = new Array({fields:{}});
             });
 
             afterEach(function () {
                 _setForecastColumnStub.restore();
-                _renderHtmlStub.restore();
+                _renderStub.restore();
                 _isMyWorksheetStub.restore();
             });
 
             it("should be set to true for a user's own worksheet", function () {
                 _isMyWorksheetStub = new sinon.stub(view, "isMyWorksheet", function () { return true; });
-                view._renderHtml({}, {});
+                view._render();
                 expect(_isMyWorksheetStub).toHaveBeenCalled();
                 expect(view.editableWorksheet).toBeTruthy();
             });
             it("should be set to false for worksheet that does not belong to the user", function () {
                 _isMyWorksheetStub = new sinon.stub(view, "isMyWorksheet", function () { return false; });
-                view._renderHtml({}, {});
+                view._render();
                 expect(_isMyWorksheetStub).toHaveBeenCalled();
                 expect(view.editableWorksheet).toBeFalsy();
             });
