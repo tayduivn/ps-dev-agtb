@@ -443,6 +443,9 @@
             forecastData.best_case = self.totals.best_case;
             forecastData.likely_case = self.totals.amount;
         }
+
+        forecastData.currency_id = -99; //Always default to the base currency
+        forecastData.base_rate = 1; //Base rate is always 1
         forecastData.timeperiod_id = self.timePeriodId;
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;
