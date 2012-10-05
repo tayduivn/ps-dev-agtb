@@ -51,7 +51,7 @@ class WorksheetCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * Return false to do default update of base_rate column.
      * To custom processing, do here and return true.
      *
-     * @access protected
+     * @access public
      * @param  string $table
      * @param  string $column
      * @param  string $currencyId
@@ -69,14 +69,14 @@ class WorksheetCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      * Return false to do default update of amount * base_rate = usdollar
      * To custom processing, do here and return true.
      *
-     * @access protected
+     * @access public
      * @param  string    $tableName
      * @param  string    $usDollarColumn
      * @param  string    $amountColumn
      * @param  string    $currencyId
      * @return boolean true if custom processing was done
      */
-    protected function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
+    public function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
     {
         return false;
     }
