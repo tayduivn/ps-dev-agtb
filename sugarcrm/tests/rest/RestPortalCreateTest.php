@@ -71,31 +71,31 @@ class RestPortalCreateTest extends RestTestPortalBase
         $caseReply = $this->_restCall("Cases/",
                                       json_encode(array('name' => 'UNIT TEST Case','portal_visible'=>true)),
             'POST');
-        $this->assertEquals(200,$caseReply['info']['http_code'],"HTTP Code");
-        $this->assertEquals($caseReply['reply']['account_id'], $this->account->id);
+        $this->assertEquals(200,$caseReply['info']['http_code'],"HTTP Code was not a 200 - #1");
+        $this->assertEquals($caseReply['reply']['account_id'], $this->account->id, "Case create did not contain account id of creator");
         $GLOBALS['db']->commit();
         $this->case = new aCase();
 
         $this->case->retrieve($caseReply['reply']['id']);
         $relates = $this->case->get_linked_beans('contacts', 'Contact');
-        $this->assertEquals($relates[0]->id, $this->contact->id);
+        $this->assertEquals($relates[0]->id, $this->contact->id, "The contact id does not match the first related contact for the created case");
         // Make sure new case is cleaned up
         $this->cases[] = $this->case;
         // create bug
         $bugReply = $this->_restCall("Bugs/",
             json_encode(array('name' => 'UNIT TEST Bug')),
             'POST');
-        $this->assertEquals(200,$bugReply['info']['http_code'],"HTTP Code");
+        $this->assertEquals(200,$bugReply['info']['http_code'],"HTTP Code was not a 200 - #2");
         $GLOBALS['db']->commit();
         $this->bug = new Bug();
         $this->bug->retrieve($bugReply['reply']['id']);
         // Make sure new bug is cleaned up
         $this->bugs[] = $this->bug;
         $relates = $this->bug->get_linked_beans('contacts', 'Contact');
-        $this->assertEquals($relates[0]->id, $this->contact->id);
+        $this->assertEquals($relates[0]->id, $this->contact->id, "The contact id does not match the first related contact for the created case - #2");
 
         $relatesAccounts = $this->bug->get_linked_beans('accounts', 'Account');
-        $this->assertEquals($relatesAccounts[0]->id, $this->account->id);
+        $this->assertEquals($relatesAccounts[0]->id, $this->account->id, "The account id does not match the first related account for the created case");
     }
 
     /**

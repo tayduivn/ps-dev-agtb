@@ -97,8 +97,12 @@ class MetadataApi extends SugarApi {
 
         $moduleFilter = array();
         if (!empty($args['module_filter'])) {
-            // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
-            $modules = str_getcsv($args['module_filter'],',','');
+            if ( function_exists('str_getcsv') ) {
+                // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
+                $modules = str_getcsv($args['module_filter'],',','');
+            } else {
+                $modules = explode(",", $args['module_filter']);
+            }
             if ( $modules != false ) {
                 $moduleFilter = $modules;
             }

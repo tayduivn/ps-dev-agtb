@@ -444,7 +444,6 @@ class Localization {
 	}
 
 	function getCurrencySymbol($user=null) {
-        require_once('include/SugarCurrency.php');
         $currencyId = $this->getPrecedentPreference('currency', $user);
         $currencyId = $currencyId ? $currencyId : '-99';
 		$currency = SugarCurrency::getCurrencyByID($currencyId);

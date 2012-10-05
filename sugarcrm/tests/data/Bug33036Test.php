@@ -72,6 +72,7 @@ class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
         $this->obj->account_name = $test_account_name;
         $changes = $this->obj->db->getDataChanges($this->obj);
         
+        $this->assertTrue(isset($changes['account_name']),"The account name was not in the list of changes");
         $this->assertEquals($changes['account_name']['after'], $test_account_name);
         
         SugarTestAccountUtilities::removeAllCreatedAccounts();
