@@ -18,6 +18,7 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+/*
 describe("The forecastCommitted view", function(){
 
     var app, view, committedSaveFunction;
@@ -81,3 +82,4 @@ describe("The forecastCommitted view", function(){
 
     });
 });
+*/
