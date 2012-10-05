@@ -182,9 +182,18 @@
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		var model = this.context.forecasts.worksheet;
             		model.url = this.createURL();
-            		this.safeFetch();
+            		this.safeFetch(true);
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
+            }, this);
+            this.context.forecasts.on("change:checkDirtyWorksheetFlag", function(){
+            	if(this.context.forecasts.get('checkDirtyWorksheetFlag') && !this.showMe()){
+            		var model = this.context.forecasts.worksheet;
+            		model.url = this.createURL();
+            		this.safeFetch(false);
+            		this.context.forecasts.set({checkDirtyWorksheetFlag: false});
+            	}
+
             }, this);
 
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
@@ -261,8 +270,14 @@
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
+     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
-    safeFetch: function(){
+    safeFetch: function(fetch){
+
+        if(typeof fetch == 'undefined')
+        {
+            fetch = true;
+        }
     	var collection = this._collection; 
     	var self = this;
     	if(collection.isDirty){
@@ -279,7 +294,9 @@
     			collection.isDirty = false;
 				$.when(!collection.isDirty).then(function(){
 	    			self.context.forecasts.set({reloadCommitButton: true});
-	    			collection.fetch();
+	    			if(fetch){
+	    				collection.fetch();
+	    			}
     		});
 			
 		}
@@ -287,12 +304,16 @@
     			//ignore, fetch still
     			collection.isDirty = false;
     			self.context.forecasts.set({reloadCommitButton: true});
-    			collection.fetch();
+    			if(fetch){
+    				collection.fetch();
+    			}
     		}
     	}
     	else{
     		//no changes, fetch like normal.
-    		collection.fetch();	
+    		if(fetch){
+				collection.fetch();
+			}	
     	}    	
     },
 
@@ -319,6 +340,7 @@
         }
         $("#view-sales-rep").show();
         $("#view-manager").hide();
+        this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
         this._setForecastColumn(this.meta.panels[0].fields);
@@ -655,7 +677,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this.safeFetch();
+        this.safeFetch(true);
     },
 
     /**
@@ -758,7 +780,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this.safeFetch();
+        this.safeFetch(true);
     },
 
     /**
