@@ -53,17 +53,20 @@ class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test to make sure that the forecast always saves with the base currency instead of the users currency
+     * Test that the base_rate field is populated with rate
+     * of currency_id
      *
      * @group forecasts
      */
-    public function testForecastCurrencyIdEqualsBaseCurrencyId() {
+    public function testForecastRate() {
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
         $forecast = SugarTestForecastUtilities::createForecast($timeperiod, $GLOBALS['current_user']);
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        $forecast->currency_id = $currency->id;
         $forecast->save();
-
-        // get the base currency
-        $base_currency = SugarCurrency::getBaseCurrency();
-        $this->assertEquals($base_currency->id, $forecast->currency_id);
+        $this->assertEquals(
+            sprintf('%.6f',$forecast->base_rate),
+            sprintf('%.6f',$currency->conversion_rate)
+        );
     }
 }
