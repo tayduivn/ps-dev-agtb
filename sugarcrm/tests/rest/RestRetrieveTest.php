@@ -34,7 +34,9 @@ class RestRetrieveTest extends RestTestBase {
     {
         if ( isset($this->account_id) ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account->id}'");
+            }
         }
         parent::tearDown();
     }

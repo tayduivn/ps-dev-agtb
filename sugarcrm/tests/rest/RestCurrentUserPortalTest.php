@@ -95,9 +95,13 @@ class RestCurrentUserPortalTest extends RestTestBase {
         $contactIds = "('".implode("','",$contactIds)."')";
 
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
+        if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
+        if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
 
 
