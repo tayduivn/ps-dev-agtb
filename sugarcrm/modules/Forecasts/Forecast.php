@@ -290,7 +290,7 @@ class Forecast extends SugarBean
         }
         $this->base_rate = $currency->conversion_rate;
 
-        parent::save();
+        parent::save($check_notify);
     }
 }
 function getTimePeriodsDropDownForForecasts(){
