@@ -150,26 +150,6 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
     }
 
     /**
-     * @dataProvider dataProviderDatasets
-     * @param string $dataset
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testChartValuesLabelsContainBaseCurrencySymbol($dataset)
-    {
-        $args = self::$args;
-        $args['dataset'] = $dataset;
-        $obj = new SugarForecasting_Chart_Individual($args);
-        $data = $obj->process();
-
-        $base_currency = SugarCurrency::getBaseCurrency();
-
-        foreach($data['values'] as $value) {
-            $this->assertStringStartsWith($base_currency->symbol, $value['gvaluelabel']);
-        }
-    }
-
-    /**
      * @dataProvider dataProviderParetoData
      * @param string $dataset
      * @param integer $chart_position
@@ -214,25 +194,6 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $actual = doubleval($data['values'][$chart_position]['goalmarkervalue'][1]);
 
         $this->assertEquals($expected, $actual, null, 2);
-    }
-
-    /**
-     * @dataProvider dataProviderParetoData
-     * @param string $dataset
-     * @param integer $chart_position
-     * @group forecasts
-     * @group forecastschart
-     */
-    public function testChartParetoLineLabelContainsBaseCurrencySymbol($dataset, $chart_position)
-    {
-        $args = self::$args;
-        $args['dataset'] = $dataset;
-        $obj = new MockSugarForecasting_Chart_Individual($args);
-        $data = $obj->process();
-
-        $base_currency = SugarCurrency::getBaseCurrency();
-
-        $this->assertStringStartsWith($base_currency->symbol, $data['values'][$chart_position]['goalmarkervaluelabel'][1]);
     }
 
     /**
