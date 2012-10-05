@@ -90,8 +90,8 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
         $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
         $unit_cost = array("10", "20", "30", "50", "80");
-        $key = array_rand($amount);
-        $opp->amount = $amount[$key*$rand_units];
+        $key = array_rand($unit_cost);
+        $opp->amount = $amount[$key]*$rand_units;
         $probability = array("10", "70", "40", "60");
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
