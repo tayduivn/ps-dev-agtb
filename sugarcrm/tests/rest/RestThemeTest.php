@@ -136,10 +136,10 @@ class RestThemeTest extends RestTestBase
         $this->_user->save();
         $GLOBALS['db']->commit();
         // TEST the boostrap.css file has been created
-        $this->assertTrue(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), "Created bootstrap file does not exist");
+        $this->assertTrue(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Created bootstrap file does not exist");
 
         // TEST the boostrap.css file is not empty
-        $this->assertTrue(filesize('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css') > 0, "Created file has no contents");
+        $this->assertTrue(filesize(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')) > 0, "Created file has no contents");
         $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
 
         // TEST we have updated the variables in variables.less
@@ -184,13 +184,13 @@ class RestThemeTest extends RestTestBase
         $this->_user->save();
         $GLOBALS['db']->commit();
         // TEST boostrap.css file has been created
-        $this->assertEquals(file_exists('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'), true);
+        $this->assertEquals(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), true, "Bootstrap file was not reset");
 
         // TEST boostrap.css file is not empty
-        $this->assertNotEmpty(file_get_contents('cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css'));
+        $this->assertNotEmpty(file_get_contents(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Bootstrap.css is empty");
 
         // TEST variables.less file is not empty
-        $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'));
+        $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'),"Variables.less is not empty");
 
         // TEST variables.less generated in the custom folder is the same as the default theme
         $defaultTheme = new SidecarTheme($args['platform'], 'default');
