@@ -57,7 +57,14 @@ class SugarBean
      */
     var $db;
 
-	/**
+    /**
+     * Unique object identifier
+     *
+     * @var string
+     */
+    public $id;
+
+    /**
 	 * When createing a bean, you can specify a value in the id column as
 	 * long as that value is unique.  During save, if the system finds an
 	 * id, it assumes it is an update.  Setting new_with_id to true will
