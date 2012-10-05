@@ -22,8 +22,6 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/SugarCurrency.php';
-
 /**
  * SugarCurrencyTest
  *

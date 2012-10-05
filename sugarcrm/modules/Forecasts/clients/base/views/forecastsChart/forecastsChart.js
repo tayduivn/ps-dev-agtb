@@ -73,8 +73,8 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = app.metadata.data.app_list_strings.forecasts_chart_options_dataset || [];
-        this.chartGroupByOptions = app.metadata.data.app_list_strings.forecasts_chart_options_group || [];
+        this.chartDataSet = app.metadata.getStrings('app_list_strings').forecasts_chart_options_dataset || [];
+        this.chartGroupByOptions = app.metadata.getStrings('app_list_strings').forecasts_chart_options_group || [];
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
 

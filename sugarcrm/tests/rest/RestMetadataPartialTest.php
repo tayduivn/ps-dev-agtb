@@ -39,9 +39,10 @@ class RestMetadataPartialTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetHashes() {
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?only_hash=true');
 
-        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module hash is missing.');
+        $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module hash is missing. Reply looked like: '.var_export($restReply['replyRaw'],true));
         $this->assertFalse(isset($restReply['reply']['modules']['Accounts']['fields']),'Account module has fields.');
     }
     
@@ -50,6 +51,7 @@ class RestMetadataPartialTest extends RestTestBase {
      */
     public function testMetadataPartialGetModules() {
         // Fetch just the hashes
+        $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?only_hash=true&type_filter=modules&module_filter=Accounts');
         
         $this->assertTrue(isset($restReply['reply']['modules']['Accounts']['_hash']),'Account module only hash is missing.');
@@ -63,6 +65,7 @@ class RestMetadataPartialTest extends RestTestBase {
         // Mess up the hashes
         $badHashes = array('modules' => array('Accounts'=>'BAD HASH, NO SOUP FOR YOU'));
 
+        $this->_clearMetadataCache();
         $restReply3 = $this->_restCall('metadata?type_filter=modules&module_filter=Accounts',json_encode($badHashes));
         
         $this->assertTrue(isset($restReply3['reply']['modules']['Accounts']['fields']),'Account module fields were not returned when the hashes didn\'t match.');
