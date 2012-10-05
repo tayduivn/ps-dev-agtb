@@ -64,7 +64,8 @@ class SidecarView extends SugarView
             'platform' => 'base',
             'additionalComponents' => array(
                 'header' => array(
-                    'target' => '#header'
+                    'target' => '#header',
+                    'layout' => 'header'
                 ),
                 'footer' => array(
                     'target' => '#footer'
