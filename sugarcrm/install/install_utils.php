@@ -860,85 +860,15 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
+    include('ModuleInstall/ModuleInstaller.php');
+    $modInstaller = new ModuleInstaller();
     //BEGIN SUGARCRM flav=ent ONLY
-    handlePortalConfig();
+    $modInstaller->handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
-    handleBaseConfig();
+    $modInstaller->handleBaseConfig();
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
-}
-
-//BEGIN SUGARCRM flav=ent ONLY
-/**
- * handles portal config creation
- */
-function handlePortalConfig()
-{
-    if (!isset($sugar_config)) {
-        global $sugar_config;
-    }
-
-    $portalConfig = array(
-        'appId' => 'SupportPortal',
-        'appStatus' => 'offline',
-        'env' => 'dev',
-        'platform' => 'portal',
-        'additionalComponents' => array(
-            'header' => array(
-                'target' => '#header'
-            ),
-            'footer' => array(
-                'target' => '#footer'
-            ),
-            'alert' => array(
-                'target' => '#alert'
-            )
-        ),
-        'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
-        'siteUrl' => $sugar_config['site_url'],
-        'unsecureRoutes' => array('signup', 'error'),
-        'loadCss' => 'url',
-        'clientID' => 'support_portal',
-        'maxSearchQueryResult'=>'5'
-    );
-    $filePath = 'portal2/config.js';
-    writeJSConfig($portalConfig,$filePath);
-
-}
-//END SUGARCRM flav=ent ONLY
-function handleBaseConfig() {
-    $filePath = 'config.js';
-    if (!isset($sugar_config)) {
-        global $sugar_config;
-    }
-
-    $sidecarConfig = array(
-        'appId' => 'SugarCRM',
-        'env' => 'dev',
-        'platform' => 'base',
-        'additionalComponents' => array(
-            'header' => array(
-                'target' => '#header'
-            ),
-            'footer' => array(
-                'target' => '#footer'
-            ),
-            'alert' => array(
-                'target' => '#alert'
-            )
-        ),
-        'serverUrl' => $sugar_config['site_url'].'/rest/v10',
-        'unsecureRoutes' => array('login', 'error'),
-        'clientID' => 'sugar'
-    );
-    writeJSConfig($sidecarConfig,$filePath);
-}
-
-function writeJSConfig($config, $path) {
-    $configString = json_encode($config);
-    $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-    sugar_file_put_contents($path, $JSConfig);
 }
 
 /**

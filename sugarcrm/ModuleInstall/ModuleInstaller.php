@@ -2354,6 +2354,79 @@ private function dir_file_count($path){
         sugar_die("Unknown method ModuleInstaller::$name called");
     }
 
+
+//BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * handles portal config creation
+     */
+    public function handlePortalConfig()
+    {
+        if (!isset($sugar_config)) {
+            global $sugar_config;
+        }
+
+        $portalConfig = array(
+            'appId' => 'SupportPortal',
+            'appStatus' => 'offline',
+            'env' => 'dev',
+            'platform' => 'portal',
+            'additionalComponents' => array(
+                'header' => array(
+                    'target' => '#header'
+                ),
+                'footer' => array(
+                    'target' => '#footer'
+                ),
+                'alert' => array(
+                    'target' => '#alert'
+                )
+            ),
+            'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
+            'siteUrl' => $sugar_config['site_url'],
+            'unsecureRoutes' => array('signup', 'error'),
+            'loadCss' => 'url',
+            'clientID' => 'support_portal',
+            'maxSearchQueryResult'=>'5'
+        );
+        $filePath = 'portal2/config.js';
+        $this->writeJSConfig($portalConfig,$filePath);
+
+    }
+//END SUGARCRM flav=ent ONLY
+    public function handleBaseConfig() {
+        $filePath = 'config.js';
+        if (!isset($sugar_config)) {
+            global $sugar_config;
+        }
+
+        $sidecarConfig = array(
+            'appId' => 'SugarCRM',
+            'env' => 'dev',
+            'platform' => 'base',
+            'additionalComponents' => array(
+                'header' => array(
+                    'target' => '#header'
+                ),
+                'footer' => array(
+                    'target' => '#footer'
+                ),
+                'alert' => array(
+                    'target' => '#alert'
+                )
+            ),
+            'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+            'unsecureRoutes' => array('login', 'error'),
+            'clientID' => 'sugar'
+        );
+        $this->writeJSConfig($sidecarConfig,$filePath);
+    }
+
+    public function writeJSConfig($config, $path) {
+        $configString = json_encode($config);
+        $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
+        sugar_file_put_contents($path, $JSConfig);
+    }
+
 }
 
     function UpdateSystemTabs($action, $installed_modules){
