@@ -2,6 +2,19 @@
     fieldTag: "select",
     _render: function() {
         this.app.view.Field.prototype._render.call(this);
+
+        //After rendering the dropdown, the selected value should be the value set in the model,
+        //or the default value. The default value fallbacks to the first option if no other is selected.
+        //The chosen plugin displays it correclty, but the value is not set to the select and the model.
+        //Below the workaround to save this option to the model manually.
+        if (_.isUndefined(this.value)) {
+            var optionsObject = _.keys(app.lang.getAppListStrings(this.def.options));
+            var defaultValue = _.first(optionsObject);
+            if (defaultValue) {
+                this.$(this.fieldTag).val(defaultValue);
+                this.model.set(this.name, defaultValue);
+            }
+        }
         this.$(this.fieldTag).chosen();
         this.$(".chzn-container").addClass("tleft");
         return this;
