@@ -151,13 +151,15 @@ class Localization {
 	 * wrapper for whatever currency system we implement
 	 */
 	function loadCurrencies() {
-		// doing it dirty here
-		global $db;
+		// trying to use DBManagerFactory here fails in install.php,
+        // so leaving this as global $db.
+        //$db = DBManagerFactory::getInstance();
+        global $db;
 		global $sugar_config;
 
-		if(empty($db)) {
-			return array();
-		}
+        if(empty($db)) {
+            return array();
+        }
 
         $load = sugar_cache_retrieve('currency_list');
         if ( !is_array($load) ) {
@@ -166,7 +168,7 @@ class Localization {
 				'name'		=> $sugar_config['default_currency_name'],
 				'symbol'	=> $sugar_config['default_currency_symbol'],
 				'conversion_rate' => 1
-				);
+		    );
 
             $q = "SELECT id, name, symbol, conversion_rate FROM currencies WHERE status = 'Active' and deleted = 0";
             $r = $db->query($q);

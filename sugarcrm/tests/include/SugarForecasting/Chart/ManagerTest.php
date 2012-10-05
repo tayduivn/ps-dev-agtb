@@ -167,6 +167,32 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @dataProvider dataProviderDatasets
+     * @group forecasts
+     * @group forecastschart
+     */
+    public function testChartValuesLabelsContainsBaseCurrencySymbol($user, $type, $dataset, $position)
+    {
+        $args = self::$args;
+        $args['dataset'] = $dataset;
+
+        $obj = new SugarForecasting_Chart_Manager($args);
+        $data = $obj->process();
+
+        // get the proper DataSet
+        $testData = array();
+        foreach($data['values'] as $data_value) {
+            if(strpos($data_value['label'], self::$users[$user]['user']->name) !== false) {
+                $testData = $data_value;
+                break;
+            }
+        }
+
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $this->assertStringStartsWith($base_currency->symbol, $testData['valuelabels'][$position]);
+    }
+
+    /**
      * @group forecasts
      * @group forecastschart
      */
@@ -219,6 +245,32 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $actual = doubleval($data['goalmarkervalue'][$chart_position+1]);
 
         $this->assertEquals($expected, $actual, null, 2);
+
+    }
+
+    /**
+     * @depends testLoadUsersReturnsTwoUsersForCurrentUser
+     * @dataProvider dataProviderParetoValues
+     * @group forecastschart
+     * @group forecasts
+     *
+     * @param $type
+     * @param $dataset
+     * @param $chart_position
+     * @param $user_position
+     */
+    public function testChartParetoLinesLabelsContainsBaseCurrencySymbol($type, $dataset, $chart_position, $user_position)
+    {
+        $args = self::$args;
+        $args['dataset'] = $dataset;
+
+        $obj = new SugarForecasting_Chart_Manager($args);
+        $data = $obj->process();
+
+        $data = $data['values'][$user_position];
+
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $this->assertStringStartsWith($base_currency->symbol, $data['goalmarkervaluelabel'][$chart_position+1]);
 
     }
 
