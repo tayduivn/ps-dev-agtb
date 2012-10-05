@@ -26,20 +26,20 @@ class ContactsSummerApi extends ListApi
     {
         $data = $this->getOpportunities($api, $args);
         $return = array(
-            'Won' => array('amount_usdollar' => 0, 'count' => 0),
-            'Lost' => array('amount_usdollar' => 0, 'count' => 0),
-            'Active' => array('amount_usdollar' => 0, 'count' => 0)
+            'won' => array('amount_usdollar' => 0, 'count' => 0),
+            'lost' => array('amount_usdollar' => 0, 'count' => 0),
+            'active' => array('amount_usdollar' => 0, 'count' => 0)
         );
         foreach ($data as $record) {
             switch($record['sales_stage']) {
                 case "Closed Lost":
-                    $status = 'Lost';
+                    $status = 'lost';
                     break;
                 case "Closed Won":
-                    $status = 'Won';
+                    $status = 'won';
                     break;
                 default:
-                    $status = 'Active';
+                    $status = 'active';
                     break;
             }
             $return[$status]['amount_usdollar'] += $record['amount_usdollar'];
