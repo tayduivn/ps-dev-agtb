@@ -55,6 +55,24 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'edit'
                 ),
                 array(
+                    'name' => 'timeperiod_start_month',
+                    'type' => 'enum',
+                    'options' => 'forecasts_timeperiod_month_options_dom',
+                    'label' => 'LBL_FORECASTS_CONFIG_START_MONTH',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit'
+                ),
+                array(
+                    'name' => 'timeperiod_start_day',
+                    'type' => 'enum',
+                    'options' => 'forecasts_timeperiod_day_options_dom',
+                    'label' => 'LBL_FORECASTS_CONFIG_START_DAY',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'edit'
+                ),
+                array(
                     'name' => 'timeperiods_shown_forward',
                     'type' => 'int',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',

@@ -17,8 +17,10 @@ if(!_.has(fixtures.metadata.modules, 'Forecasts')) {
 fixtures.metadata.modules.Forecasts.config = {
     "is_setup":1,
     "timeperiod_type":"fiscal",
-    "timeperiod_interval":"yearly",
-    "timeperiod_leaf_interval":"first",
+    "timeperiod_interval":"Annual",
+    "timeperiod_leaf_interval":"Quarter",
+    "timeperiod_start_month":"July",
+    "timeperiod_start_day":"1",
     "timeperiods_shown_forward":4,
     "timeperiods_shown_backward":4,
     "forecast_categories":"show_binary",
