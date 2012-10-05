@@ -141,6 +141,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'enable_range_search' => true,
     //'calculated' => true,
     //'formula' => 'rollupSum($products, "list_price")',
+    'validation' => array('type' => 'range', 'min' => 0)
   ),
   'base_rate' =>
   array (
@@ -161,6 +162,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'audited'=>true,
     'comment' => 'Formatted amount of the opportunity',
     'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'editview'=>false, 'detailview'=>false, 'quickcreate'=>false,),
+    'validation' => array('type' => 'range', 'min' => 0)
   ),
   'currency_id' =>
   array (
@@ -264,6 +266,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
+    'validation' => array('type' => 'range', 'min' => 0)
   ),
   'worst_case' =>
   array (
@@ -272,6 +275,7 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'dbType' => 'currency',
     'type' => 'currency',
     'len' => '26,6',
+    'validation' => array('type' => 'range', 'min' => 0)
   ),
   'primary_quote_id' =>
   array (

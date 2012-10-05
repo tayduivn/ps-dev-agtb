@@ -169,7 +169,6 @@ class MetadataApi extends SugarApi {
             $args['platform'] = ($args['platform'] == 'forecasts' ? 'base' : $args['platform']);
             $prefix = "{$args['platform']}_";
             $admin = new Administration();
-            $category = $args['platform'];
             $admin->retrieveSettings($category, true);
             foreach($admin->settings AS $setting_name => $setting_value) {
                 if(stristr($setting_name, $prefix)) {
