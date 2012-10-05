@@ -331,16 +331,10 @@ $app_list_strings = array (
   ),
   'sales_stage_dom' =>
   array (
-    'Prospecting' => 'Prospecting',
-    'Qualification' => 'Qualification',
-    'Needs Analysis' => 'Needs Analysis',
-    'Value Proposition' => 'Value Proposition',
-    'Id. Decision Makers' => 'Id. Decision Makers',
-    'Perception Analysis' => 'Perception Analysis',
-    'Proposal/Price Quote' => 'Proposal/Price Quote',
-    'Negotiation/Review' => 'Negotiation/Review',
-    'Closed Won' => 'Closed Won',
-    'Closed Lost' => 'Closed Lost',
+    'New' => 'New',
+    'Engaged' => 'Engaged',
+    'Lost' => 'Lost',
+    'Won' => 'Won',
   ),
 
   'commit_stage_binary_dom' => array (
@@ -3374,7 +3368,7 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
     'LBL_PORTAL_LOADING' => 'Loading',
     'LBL_PORTAL_SAVING' => 'Saving',
-    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
+    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available',
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
 
     //for portal system tour
@@ -3426,7 +3420,7 @@ $app_strings = array (
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
-    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.',
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
