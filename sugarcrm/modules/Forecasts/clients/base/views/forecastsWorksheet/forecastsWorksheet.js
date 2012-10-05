@@ -273,6 +273,11 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
+
+        if(typeof fetch == 'undefined')
+        {
+            fetch = true;
+        }
     	var collection = this._collection; 
     	var self = this;
     	if(collection.isDirty){
