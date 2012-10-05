@@ -25,13 +25,25 @@ class AccountsSummerApi extends ListApi
     public function opportunityStats($api, $args)
     {
         $data = $this->getOpportunities($api, $args);
-        $return = array();
+        $return = array(
+            'Won' => array('amount_usdollar' => 0, 'count' => 0),
+            'Lost' => array('amount_usdollar' => 0, 'count' => 0),
+            'Active' => array('amount_usdollar' => 0, 'count' => 0)
+        );
         foreach ($data as $record) {
-            if (!isset($return[$record['sales_stage']])) {
-                $return[$record['sales_stage']] = array('amount_usdollar' => 0, 'count' => 0);
+            switch($record['sales_stage']) {
+                case "Closed Lost":
+                    $status = 'Lost';
+                    break;
+                case "Closed Won":
+                    $status = 'Won';
+                    break;
+                default:
+                    $status = 'Active';
+                    break;
             }
-            $return[$record['sales_stage']]['amount_usdollar'] += $record['amount_usdollar'];
-            $return[$record['sales_stage']]['count']++;
+            $return[$status]['amount_usdollar'] += $record['amount_usdollar'];
+            $return[$status]['count']++;
         }
         return $return;
     }
