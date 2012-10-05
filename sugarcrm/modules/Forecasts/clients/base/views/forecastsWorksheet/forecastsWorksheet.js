@@ -182,7 +182,7 @@
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		var model = this.context.forecasts.worksheet;
             		model.url = this.createURL();
-            		this.safeFetch();
+            		this.safeFetch(true);
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
             }, this);
@@ -272,7 +272,7 @@
      * of saving their work before the sheet is fetched.
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
-    safeFetch: function(fetch = true){
+    safeFetch: function(fetch){
     	var collection = this._collection; 
     	var self = this;
     	if(collection.isDirty){
@@ -672,7 +672,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this.safeFetch();
+        this.safeFetch(true);
     },
 
     /**
@@ -775,7 +775,7 @@
         	return false;
         }
         this._collection.url = this.createURL();
-        this.safeFetch();
+        this.safeFetch(true);
     },
 
     /**

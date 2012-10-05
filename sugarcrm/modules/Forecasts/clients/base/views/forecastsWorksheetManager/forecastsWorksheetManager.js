@@ -123,7 +123,7 @@
         }
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
-        this.safeFetch();
+        this.safeFetch(true);
     },
 
     bindDataChange: function() {
@@ -250,7 +250,7 @@
      * of saving their work before the sheet is fetched.
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
-    safeFetch: function(fetch = true){
+    safeFetch: function(fetch){
     	var collection = this._collection;
     	var self = this;
     	if(collection.isDirty){
@@ -547,7 +547,7 @@
             return false;
         }
         model.url = this.createURL();
-        this.safeFetch();
+        this.safeFetch(true);
     },
 
     /**
@@ -562,7 +562,7 @@
         	return false;
         }
         model.url = this.createURL();
-        this.safeFetch();
+        this.safeFetch(true);
     },
 
     createURL:function() {
