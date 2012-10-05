@@ -66,7 +66,10 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                 array(
                     'name' => 'timeperiod_start_day',
                     'type' => 'enum',
-                    'options' => 'forecasts_timeperiod_day_options_dom',
+                    /*
+                    This is an enum field, however the 'options' string is set dynamically in the view (which is why it
+                    is missing here), since the dropdown shown to the user depends on a config setting
+                    */
                     'label' => 'LBL_FORECASTS_CONFIG_START_DAY',
                     'default' => false,
                     'enabled' => true,
