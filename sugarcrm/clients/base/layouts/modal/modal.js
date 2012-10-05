@@ -7,7 +7,9 @@
  *      'showEvent' => [event name] //corresponding trigger name (a single string or array of strings)
  *      ),
  * @trigger [event name] Create popup modal window and draws specified type of layout
- *      @params options - [Object] {
+ *      @params Parameters - [Object] {
+ *              span - [int] size of modal[1-12]
+ *              options - (Optional) 3rd party options goes here
  *              context - [Object] configured context attributes
  *                        i.e. { module:..., link:..., modelId:... }
  *                        {
@@ -34,131 +36,56 @@
  *     this.view.layout.trigger([event name], ...)
  */
 ({
-    components: [
+    baseComponents: [
         { 'view' : 'modal-header' }
     ],
     initialize: function(options) {
         var self = this,
             showEvent = options.meta.showEvent;
-        options.meta = {
-            'components': this.components
-        };
+
+
+        this.metaComponents = options.meta.components;
+        options.meta.components = this.baseComponents;
         app.view.Layout.prototype.initialize.call(this, options);
         if(_.isArray(showEvent)) {
             //Bind the multiple event handler names
             _.each(showEvent, function(evt, index) {
-                if(index == 0) {
-                    self.showEvent = evt;
-                } else {
-                    options.layout.on(evt, function(params, callback){
-                        self.open(params, callback);
-                    }, self);
-                }
+                self._bindShowEvent(evt);
             });
         } else {
-            self.showEvent = showEvent;
+            self._bindShowEvent(showEvent);
         }
-        options.layout.on(this.showEvent, function(params, callback) {
-            var span = params.span || '',
-                buttons = params.buttons || [],
-                message = params.message || '',
-                components = (params.components || []),
-                title = params.title + '',
-                autoResize = params.autoResize || true;
-            if(message && components.length == 0) {
-                components.push({view: 'modal-confirm', message: message});
-            }
-            //stops for empty component elements
-            if(components.length == 0) return;
-
-            //set title and buttons for modal-header
-            var header_view = self.getComponent('modal-header');
-            if(header_view) {
-                header_view.setTitle(title);
-                header_view.setButton(buttons);
-            }
-
-            //if previous modal-body exists, remove it.
-            if(self._initComponentSize) {
-                for(var i = 0; i < self._components.length; i++) {
-                    self._components[self._components.length - 1].$el.remove();
-                    self.removeComponent(self._components.length - 1);
-                }
-            } else {
-                self._initComponentSize = self._components.length;
-            }
-            _.each(components, function(def) {
-                def = _.extend(def, {bodyComponent: true});
-                var context = self.context,
-                    module = self.context.get('module');
-
-                if(params.context) {
-                    if(params.context.link) {
-                        context = self.context.getChildContext(params.context);
-                    } else {
-                        context = app.context.getContext(params.context);
-                        context.parent = self.context;
-                    }
-                    context.prepare();
-                    module = context.get("module");
-                }
-                if (def.view) {
-                    self.addComponent(app.view.createView({
-                        context: context,
-                        name: def.view,
-                        message: def.message,
-                        module: module,
-                        layout: self
-                    }), def);
-                }
-                else if(def.layout) {
-                    self.addComponent(app.view.createLayout({
-                        name: def.layout,
-                        module: module,
-                        context: context
-                    }), def);
-                }
-            });
-
-            self.context.off("modal:callback");
-            self.context.on("modal:callback", function(model) {
-                callback(model);
-                self.hide();
-            },this);
-
-            self.context.off("modal:close");
-            self.context.on("modal:close", self.hide, self);
-
-            self.context.off("modal:changetitle");
-            self.context.on("modal:changetitle", self.changeTitle, self);
-
-            self.show(span,autoResize);
-            self.loadData();
-            self.render();
-        }, this);
-
     },
-
+    _bindShowEvent : function(event, delegate){
+        var self = this;
+        if (_.isObject(event))
+        {
+            delegate = event.delegate;
+            event = event.event;
+        }
+        if (delegate){
+            self.layout.events = self.layout.events || {};
+            self.layout.events[event] = function(params, callback){self.show(params, callback)};
+            self.layout.delegateEvents();
+        } else {
+            self.layout.on(event, function(params, callback){self.show(params, callback);}, self);
+        }
+    },
     getBodyComponents: function() {
         return _.rest(this._components, this._initComponentSize);
     },
-
     _placeComponent: function(comp, def) {
         if(this.$('.modal:first').length == 0) {
-            //TODO: Replace inline CSS with css property
             this.$el.append(
-                $('<div>', {'class': 'row-fluid'}).append(
-                    $('<div>', {'class' : 'modal hide'}).append(
-                        this.$body
-                    )
-                ),
-                $("<div>", {'class': 'modal-backdrop hide'})
+                $('<div>', {'class' : 'modal hide'}).append(
+                    this.$body
+                )
             );
         }
 
         if(def.bodyComponent) {
             if(_.isUndefined(this.$body)) {
-                this.$body = $('<div>', {'class' : 'modal-body'}).css('overflow-y', 'auto');
+                this.$body = $('<div>', {'class' : 'modal-body'});
                 this.$('.modal:first').append(this.$body);
             }
             this.$body.append(comp.el);
@@ -167,68 +94,138 @@
         }
     },
 
-    changeTitle: function(title) {
-        var header_view = this.getComponent('modal-header');
-        if (header_view) {
-            header_view.setTitle(title);
-            header_view.render();
+    /**
+     *
+     * @param params
+     * @param callback
+     * @private
+     */
+    _buildComponentsBeforeShow : function(params, callback) {
+        var self = this,
+            params = params || {},
+            buttons = params.buttons || [],
+            message = params.message || '',
+            components = (params.components || this.metaComponents || []),
+            title = (params.title || this.meta.title) + '';
+        if(message && components.length == 0) {
+            components.push({view: 'modal-confirm', message: message});
         }
-    },
+        //stops for empty component elements
+        if(components.length == 0) {
+            app.logger.error("Unable to display modal dialog: no components or message");
+            return false;
+        }
 
-    open: function(params, callback) {
-        this.layout.trigger(this.showEvent, params, callback);
-    },
+        //set title and buttons for modal-header
+        var header_view = self.getComponent('modal-header');
+        if(header_view) {
+            header_view.setTitle(title);
+            header_view.setButton(buttons);
+        }
 
-    show: function(span,autoResize) {
-        var modal_container = this.$('.modal:first'),
-            self = this;
-
-        modal_container.css({ 'margin-top':'-99999px' }).show( 'fast', function() {
-            if (_.isNumber(span) && span > 0 && span <= 12) {
-                modal_container.addClass('span' + span);
+        //if previous modal-body exists, remove it.
+        if(self._initComponentSize) {
+            for(var i = 0; i < self._components.length; i++) {
+                self._components[self._components.length - 1].$el.remove();
+                self.removeComponent(self._components.length - 1);
             }
+        } else {
+            self._initComponentSize = self._components.length;
+        }
+        _.each(components, function(def) {
+            def = _.extend(def, {bodyComponent: true});
+            var context = self.context,
+                module = self.context.get('module');
 
-            self.adjustSize(); // adjust modal size
-
-            if (autoResize) {
-                // add a watch on the modal height (depends on jquery.watch.js)
-                modal_container.watch( 'height', function(){
-                    self.adjustSize();
-                });
+            if(params.context) {
+                if(params.context.link) {
+                    context = self.context.getChildContext(params.context);
+                } else {
+                    context = app.context.getContext(params.context);
+                    context.parent = self.context;
+                }
+                context.prepare();
+                module = context.get("module");
+            }
+            if (def.view) {
+                self.addComponent(app.view.createView({
+                    context: context,
+                    name: def.view,
+                    message: def.message,
+                    module: module,
+                    layout: self
+                }), def);
+            }
+            else if(def.layout) {
+                self.addComponent(app.view.createLayout({
+                    name: def.layout,
+                    module: module,
+                    context: context
+                }), def);
             }
         });
+
+        self.context.off("modal:callback");
+        self.context.on("modal:callback", function(model) {
+            callback(model);
+            self.hide();
+        },self);
+        self.context.off("modal:close");
+        self.context.on("modal:close", self.hide, self);
+
+
     },
 
-    adjustSize: function() {
-        var modal_container = this.$('.modal:first'), // the outer modal div, contains modal-header and modal-body
-            modal_body = this.$('.modal-body:first'), // the modal body, contains additional misc content divs, modal-content and modal-footer
-            modal_content = this.$('.modal-content:first'), // the main modal-content, adjust size reduces this div
-            winHeight = $(window).height() - 100, // reduce allowable window area by top and bottom padding
-            self = this;
-
-        modal_body.css({ 'max-height':'none' }); // reset modal-body height to allow for actual size calculation
-        modal_content.css({ 'max-height':'none' }); // reset modal-content height to allow for actual size calculation
-
-        var containerHeight = modal_container.outerHeight(), // calculate outer modal height
-            bodyHeight = modal_body.outerHeight(), // calculate modal-body height
-            contentHeight = modal_content.outerHeight(), // calculate modal-content height
-            bodyOffsetHeight = containerHeight - bodyHeight, // height of modal header plus modal footer
-            contentOffsetHeight = bodyHeight - contentHeight, // height of additional misc divs above modal-content
-            maxBodyHeight = winHeight - bodyOffsetHeight, // calculate maximum modal-body height to prevent view port overflow
-            maxContentHeight;
-
-        modal_body.css({ 'max-height':maxBodyHeight, 'overflow':'hidden' });
-
-        if ( containerHeight > winHeight ) { // if the overall modal height was calculated to be larger than the window
-            maxContentHeight = maxBodyHeight - contentOffsetHeight; // shorten the modal-content height to fit within the modal-body max height
-            modal_content.css({ 'max-height':maxContentHeight, 'overflow':'scroll' });
+    show: function(params, callback) {
+        if (this._buildComponentsBeforeShow(params, callback) === false)
+            return false;
+        this.loadData();
+        this.render();
+        var span = params ? params.span : null,
+            options = params ? params.options || {} : {},
+            modal_container = this.$(".modal:first"),
+            //Clean out previous span css class
+            original_css = modal_container.attr("class").replace(/span\d+/g, "");
+        this._beforeShow(options);
+        modal_container.attr("class", original_css);
+        if(_.isNumber(span) && span > 0 && span <= 12) {
+            modal_container.addClass('span' + span);
         }
-
-        modal_container.css({ 'margin-top':-( modal_container.outerHeight() / 2) }).modal('show'); // center modal on window view port
+        if(_.isFunction(this.$el.modal)) {
+            modal_container.modal(params.options ? params.options.modal : {});
+            modal_container.modal('show');
+        } else {
+            modal_container.show();
+        }
+        this._afterShow(options);
+        return true;
     },
-
     hide: function(event) {
-        var modal_container = this.$('.modal:first');
-        modal_container.modal('hide');
+        //restore back to the scroll position at the top
+        var modal_container = this.$(".modal:first");
+        this._beforeHide(event);
+        this.$(".modal-body:first").scrollTop(0);
+        if(_.isFunction(this.$el.modal)) {
+            modal_container.modal('hide');
+        } else {
+            modal_container.hide();
+        }
+        this._afterHide(event);
+    },
+    _beforeShow: function(options) {
+        //All 3rd party plugin goes here
+        return;
+    },
+    _afterShow: function(options) {
+        //All 3rd party plugin goes here
+        return;
+    },
+    _beforeHide: function(event) {
+        //All 3rd party plugin goes here
+        return;
+    },
+    _afterHide: function(event) {
+        //All 3rd party plugin goes here
+        return;
     }
 })

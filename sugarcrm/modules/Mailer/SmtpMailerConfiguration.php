@@ -30,18 +30,18 @@ require_once "MailerConfiguration.php"; // requires MailerConfiguration in order
  */
 class SmtpMailerConfiguration extends MailerConfiguration
 {
-    // constants used for documenting which communication protocol configurations are valid
-    const CommunicationProtocolNone = "";
-    const CommunicationProtocolSsl  = "ssl";
-    const CommunicationProtocolTls  = "tls";
+    // constants used for documenting which security protocol configurations are valid
+    const SecurityProtocolNone = "";
+    const SecurityProtocolSsl  = "ssl";
+    const SecurityProtocolTls  = "tls";
 
     // private members
-    private $host;                  // the hostname of the SMTP server to use
-    private $port;                  // the SMTP port to use on the server
-    private $communicationProtocol; // the SMTP connection prefix ("", "ssl" or "tls")
-    private $authenticate;          // true=require authentication on the SMTP server
-    private $username;              // the username to use if authenticate=true
-    private $password;              // the password to use if authenticate=true
+    private $host;             // the hostname of the SMTP server to use
+    private $port;             // the SMTP port to use on the server
+    private $securityProtocol; // the SMTP connection prefix ("", "ssl" or "tls")
+    private $authenticate;     // true=require authentication on the SMTP server
+    private $username;         // the username to use if authenticate=true
+    private $password;         // the password to use if authenticate=true
 
     /**
      * Extends the default configurations for this sending strategy. Adds default SMTP configurations needed to send
@@ -54,7 +54,7 @@ class SmtpMailerConfiguration extends MailerConfiguration
 
         $this->setHost();
         $this->setPort();
-        $this->setCommunicationProtocol();
+        $this->setSecurityProtocol();
         $this->setAuthenticationRequirement();
         $this->setUsername();
         $this->setPassword();
@@ -122,31 +122,31 @@ class SmtpMailerConfiguration extends MailerConfiguration
     }
 
     /**
-     * Sets or overwrites the communication protocol configuration.
+     * Sets or overwrites the security protocol configuration.
      *
      * @access public
-     * @param string $communicationProtocol required
+     * @param string $securityProtocol required
      * @throws MailerException
      */
-    public function setCommunicationProtocol($communicationProtocol = self::CommunicationProtocolNone) {
-        if (!self::isValidCommunicationProtocol($communicationProtocol)) {
+    public function setSecurityProtocol($securityProtocol = self::SecurityProtocolNone) {
+        if (!self::isValidSecurityProtocol($securityProtocol)) {
             throw new MailerException(
-                "Invalid Configuration: communication protocol is invalid",
+                "Invalid Configuration: security protocol is invalid",
                 MailerException::InvalidConfiguration
             );
         }
 
-        $this->communicationProtocol = $communicationProtocol;
+        $this->securityProtocol = $securityProtocol;
     }
 
     /**
-     * Returns the communication protocol configuration.
+     * Returns the security protocol configuration.
      *
      * @access public
      * @return string
      */
-    public function getCommunicationProtocol() {
-        return $this->communicationProtocol;
+    public function getSecurityProtocol() {
+        return $this->securityProtocol;
     }
 
     /**
@@ -234,19 +234,19 @@ class SmtpMailerConfiguration extends MailerConfiguration
     }
 
     /**
-     * Returns true/false indicating whether or not $communicationProtocol is a valid, known communication protocol for
+     * Returns true/false indicating whether or not $securityProtocol is a valid, known security protocol for
      * the context of a Mailer.
      *
      * @static
      * @access public
-     * @param string $communicationProtocol required
+     * @param string $securityProtocol required
      * @return bool
      */
-    public static function isValidCommunicationProtocol($communicationProtocol) {
-        switch ($communicationProtocol) {
-            case self::CommunicationProtocolNone:
-            case self::CommunicationProtocolSsl:
-            case self::CommunicationProtocolTls:
+    public static function isValidSecurityProtocol($securityProtocol) {
+        switch ($securityProtocol) {
+            case self::SecurityProtocolNone:
+            case self::SecurityProtocolSsl:
+            case self::SecurityProtocolTls:
                 return true;
                 break;
             default:

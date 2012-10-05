@@ -127,7 +127,7 @@ function make_sugar_config(&$sugar_config)
     'default_theme' => empty($default_theme) ? 'Sugar5' : $default_theme,
     //END SUGARCRM flav=com ONLY
 	//BEGIN SUGARCRM flav!=com ONLY
-    'default_theme' => empty($default_theme) ? 'Sugar' : $default_theme,
+    'default_theme' => empty($default_theme) ? 'RacerX' : $default_theme,
     //END SUGARCRM flav!=com ONLY
     'default_time_format' => empty($defaultTimeFormat) ? 'h:ia' : $defaultTimeFormat,
 	'default_user_is_admin' => empty($default_user_is_admin) ? false : $default_user_is_admin,
@@ -3853,6 +3853,10 @@ function getPhpInfo($level=-1) {
 function string_format($format, $args){
 	$result = $format;
 
+    if ( !is_array($args) ) {
+        return;
+    }
+
     /** Bug47277 fix.
      * If args array has only one argument, and it's empty, so empty single quotes are used '' . That's because
      * IN () fails and IN ('') works.
@@ -3868,9 +3872,13 @@ function string_format($format, $args){
     }
     /* End of fix */
 
-	for($i = 0; $i < count($args); $i++){
-		$result = str_replace('{'.$i.'}', $args[$i], $result);
-	}
+    $replaceArray = array();
+    foreach ( $args as $search => $replace ) {
+        $replaceArray['{'. $search .'}'] = $replace;
+    }
+
+    $result = str_replace(array_keys($replaceArray),array_values($replaceArray),$format);
+ 
 	return $result;
 }
 

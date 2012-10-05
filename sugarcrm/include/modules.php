@@ -27,7 +27,6 @@ $moduleList = array();
 // this list defines the modules shown in the top tab list of the app
 //the order of this list is the default order displayed - do not change the order unless it is on purpose
 $moduleList[] = 'Home';
-//BEGIN SUGARCRM flav!=dce ONLY
 $moduleList[] = 'Calendar';
 $moduleList[] = 'Calls';
 $moduleList[] = 'Meetings';
@@ -64,20 +63,6 @@ $moduleList[] = 'Cases';
 $moduleList[] = 'Project';
 $moduleList[] = 'Bugs';
 //END SUGARCRM flav!=sales ONLY
-
-//END SUGARCRM flav!=dce ONLY
-
-//BEGIN SUGARCRM flav=dce ONLY
-$moduleList[] = 'Accounts';
-$moduleList[] = 'Contacts';
-$moduleList[] = 'DCEClusters';
-$moduleList[] = 'DCETemplates';
-$moduleList[] = 'DCEInstances';
-$moduleList[] = 'DCEActions';
-$moduleList[] = 'Emails';
-$moduleList[] = 'Cases';
-$moduleList[] = 'Reports';
-//END SUGARCRM flav=dce ONLY
 
 // this list defines all of the module names and bean names in the app
 // to create a new module's bean class, add the bean definition here
@@ -184,6 +169,12 @@ $beanList['Shippers']       = 'Shipper';
 $beanList['TaxRates']       = 'TaxRate';
 $beanList['TeamNotices']        = 'TeamNotice';
 $beanList['TimePeriods']    = 'TimePeriod';
+$beanList['AnnualTimePeriods'] = 'AnnualTimePeriod';
+$beanList['QuarterTimePeriods']    = 'QuarterTimePeriod';
+$beanList['Quarter544TimePeriods']    = 'Quarter544TimePeriod';
+$beanList['Quarter445TimePeriods']    = 'Quarter445TimePeriod';
+$beanList['Quarter454TimePeriods']    = 'Quarter454TimePeriod';
+$beanList['MonthTimePeriods']    = 'MonthTimePeriod';
 $beanList['Forecasts']  = 'Forecast';
 $beanList['ForecastWorksheets']  = 'ForecastWorksheet';
 $beanList['ForecastManagerWorksheets']  = 'ForecastManagerWorksheet';
@@ -218,31 +209,6 @@ $beanList['ReportMaker']  = 'ReportMaker';
 //$beanList['QueryBuilder']  = 'QueryBuilder';
 //END SUGARCRM flav=int ONLY
 
-
-//BEGIN SUGARCRM flav=dce ONLY
-$beanList['DCEInstances'] = 'DCEInstance';
-$beanList['DCEClusters'] = 'DCECluster';
-$beanList['DCEDataBases'] = 'DCEDataBase';
-$beanList['DCETemplates'] = 'DCETemplate';
-$beanList['DCEActions'] = 'DCEAction';
-$beanList['DCEReports'] = 'DCEReport';
-// For ACL Action table
-$DCEbeanList['DCEInstances'] = 'DCEInstance';
-$DCEbeanList['DCEClusters'] = 'DCECluster';
-$DCEbeanList['DCEDataBases'] = 'DCEDataBase';
-$DCEbeanList['DCETemplates'] = 'DCETemplate';
-$DCEbeanList['DCEActions'] = 'DCEAction';
-$DCEbeanList['DCEReports'] = 'DCEReport';
-$DCEbeanList['Contacts']       = 'Contact';
-$DCEbeanList['Accounts']       = 'Account';
-$DCEbeanList['Cases']          = 'aCase';
-$DCEbeanList['Emails']         = 'Email';
-$DCEbeanList['EmailTemplates']     = 'EmailTemplate';
-$DCEbeanList['Notes']          = 'Note';
-$DCEbeanList['Tasks']          = 'Task';
-$DCEbeanList['Reports']        = 'SavedReport';
-$DCEbeanList['Reports_1']      = 'SavedReport';
-//END SUGARCRM flav=dce ONLY
 
 // this list defines all of the files that contain the SugarBean class definitions from $beanList
 // to create a new module's bean class, add the file definition here
@@ -346,6 +312,12 @@ $beanFiles['ProductBundle']     = 'modules/ProductBundles/ProductBundle.php';
 $beanFiles['Shipper']       = 'modules/Shippers/Shipper.php';
 $beanFiles['TaxRate']       = 'modules/TaxRates/TaxRate.php';
 $beanFiles['TimePeriod']        = 'modules/TimePeriods/TimePeriod.php';
+$beanFiles['AnnualTimePeriod']        = 'modules/TimePeriods/AnnualTimePeriod.php';
+$beanFiles['QuarterTimePeriod']    = 'modules/TimePeriods/QuarterTimePeriod.php';
+$beanFiles['Quarter544TimePeriod']    = 'modules/TimePeriods/Quarter544TimePeriod.php';
+$beanFiles['Quarter454TimePeriod']    = 'modules/TimePeriods/Quarter454TimePeriod.php';
+$beanFiles['Quarter445TimePeriod']    = 'modules/TimePeriods/Quarter445TimePeriod.php';
+$beanFiles['MonthTimePeriod']    = 'modules/TimePeriods/MonthTimePeriod.php';
 $beanFiles['Forecast']      = 'modules/Forecasts/Forecast.php';
 $beanFiles['ForecastWorksheet'] = 'modules/Forecasts/ForecastWorksheet.php';
 $beanFiles['ForecastManagerWorksheet'] = 'modules/Forecasts/ForecastManagerWorksheet.php';
@@ -387,15 +359,6 @@ $beanFiles['ReportMaker']= 'modules/ReportMaker/ReportMaker.php';
 //$beanList['Library']= 'Library';
 //$beanFiles['Library'] = 'modules/Library/Library.php';
 
-//BEGIN SUGARCRM flav=dce ONLY
-$beanFiles['DCEAction']    = 'modules/DCEActions/DCEAction.php';
-$beanFiles['DCEInstance']  = 'modules/DCEInstances/DCEInstance.php';
-$beanFiles['DCETemplate']  = 'modules/DCETemplates/DCETemplate.php';
-$beanFiles['DCECluster']   = 'modules/DCEClusters/DCECluster.php';
-$beanFiles['DCEDataBase']   = 'modules/DCEDataBases/DCEDataBase.php';
-$beanFiles['DCECronSchedule']   = 'modules/DCEInstances/DCECronSchedule.php';
-$beanFiles['DCEReport']    = 'modules/DCEReports/DCEReport.php';
-//END SUGARCRM flav=dce ONLY
 $beanFiles['Configurator']          = 'modules/Configurator/Configurator.php';
 
 // added these lists for security settings for tabs
@@ -423,12 +386,7 @@ $modInvisList = array('Administration', 'Currencies', 'CustomFields', 'Connector
     //BEGIN SUGARCRM flav!=sales ONLY
     'DocumentRevisions',
     //END SUGARCRM flav!=sales ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    'DCEDataBases',
-    //END SUGARCRM flav=dce ONLY
-    //BEGIN SUGARCRM flav!=dce ONLY
     'ProjectTask',
-    //END SUGARCRM flav!=dce ONLY
     //BEGIN SUGARCRM flav=sales ONLY
     'Emails',
     //END SUGARCRM flav=sales ONLY
@@ -484,7 +442,6 @@ $modInvisList[] = 'Studio';
 $modInvisList[] = 'Connectors';
 
 $report_include_modules = array();
-//BEGIN SUGARCRM flav!=dce ONLY
 $report_include_modules['Currencies']='Currency';
 //add prospects
 $report_include_modules['Prospects']='Prospect';
@@ -494,7 +451,6 @@ $report_include_modules['ProductTypes'] = 'ProductType';
 //BEGIN SUGARCRM flav=pro ONLY
 $report_include_modules['Contracts']='Contract';
 //END SUGARCRM flav=pro ONLY
-//END SUGARCRM flav!=dce ONLY
 //add Tracker modules
 
 //BEGIN SUGARCRM flav!=sales ONLY
@@ -510,10 +466,6 @@ $report_include_modules['TrackerQueries']   = 'TrackerQuery';
 $report_include_modules['Worksheet']    = 'Worksheet';
 $report_include_modules['Quotas']    = 'Quota';
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-$report_include_modules['DCEReports']   = 'DCEReport';
-$report_include_modules['DCEDataBases']   = 'DCEDataBase';
-//END SUGARCRM flav=dce ONLY
 
 $beanList['SugarFeed'] = 'SugarFeed';
 $beanFiles['SugarFeed'] = 'modules/SugarFeed/SugarFeed.php';
@@ -576,6 +528,9 @@ $modules_exempt_from_availability_check['SugarFollowing'] = 'SugarFollowing';
 $modInvisList[] = 'SugarFollowing';
 //END SUGARCRM flav=following ONLY
 
+$beanList['ActivityStream'] = 'ActivityStream';
+$beanFiles['ActivityStream'] = 'modules/ActivityStream/ActivityStream.php';
+$modInvisList[] = 'ActivityStream';
 
 //Object list is only here to correct for modules that break
 //the bean class name == dictionary entry/object name convention

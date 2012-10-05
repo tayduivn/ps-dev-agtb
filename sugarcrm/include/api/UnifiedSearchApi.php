@@ -45,7 +45,7 @@ class UnifiedSearchApi extends SugarApi {
     }
 
     protected $defaultLimit = 20; // How many records should we show if they don't pass up a limit
-    protected $defaultModuleLimit = 5; // How many records should we show if they don't pass up a limit
+    protected $defaultModuleLimit = 20; // How many records should we show if they don't pass up a limit
 
     /**
      * This function pulls all of the search-related options out of the $args array and returns a fully-populated array with either the defaults or the provided settings
@@ -165,6 +165,10 @@ class UnifiedSearchApi extends SugarApi {
         if ( !empty($args['my_items']) ) {
             // TODO: When the real filters get in, change it so that this is just described as an additional filter.
             $options['my_items'] = $args['my_items'];
+        }
+        $options['untouched'] = false;
+        if(isset($args['untouched'])){
+            $options['untouched'] = (int)$args['untouched'];
         }
 
         $fieldFilters = array();
@@ -319,37 +323,44 @@ class UnifiedSearchApi extends SugarApi {
 
             $options['moduleList'] = $moduleList;
         }
+
         $options['moduleFilter'] = $options['moduleList'];
 
         $results = $searchEngine->search($options['query'], $options['offset'], $options['limit'], $options);        
-        $returnedRecords = array();
-        foreach ( $results as $record ) {
-            // $record = BeanFactory::getBean($result->getModule(), $result->getId());
 
-            // if we cant' get the bean skip it
-            if($record === false)
-            {
-                continue;
+        $returnedRecords = array();
+
+        $total = 0;
+        if(is_object($results)) {
+            foreach ( $results as $result ) {
+                $record = BeanFactory::getBean($result->getModule(), $result->getId());
+
+                // if we cant' get the bean skip it
+                if($record === false)
+                {
+                    continue;
+                }
+                $module = $record->module_dir;
+                // Need to override the filter arg so that it looks like something formatBean expects
+                if ( !empty($options['fieldFilters'][$module]) ) {
+                    $moduleFields = $options['fieldFilters'][$module];
+                } else if ( !empty($options['fieldFilters']['_default']) ) {
+                    $moduleFields = $options['fieldFilters']['_default'];
+                } else {
+                    $moduleFields = array();
+                }
+                $moduleArgs['fields'] = implode(',',$moduleFields);
+                $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
+                $formattedRecord['_module'] = $module;
+                // The SQL based search engine doesn't know how to score records, so set it to 1
+                $formattedRecord['_score'] = $result->getScore();
+                $returnedRecords[] = $formattedRecord;
             }
-            $module = $record->module_dir;
-            // Need to override the filter arg so that it looks like something formatBean expects
-            if ( !empty($options['fieldFilters'][$module]) ) {
-                $moduleFields = $options['fieldFilters'][$module];
-            } else if ( !empty($options['fieldFilters']['_default']) ) {
-                $moduleFields = $options['fieldFilters']['_default'];
-            } else {
-                $moduleFields = array();
-            }
-            $moduleArgs['fields'] = implode(',',$moduleFields);
-            $formattedRecord = $this->formatBean($api,$moduleArgs,$record);
-            $formattedRecord['_module'] = $module;
-            // The SQL based search engine doesn't know how to score records, so set it to 1
-            $formattedRecord['_score'] = $result->getScore();
-            $returnedRecords[] = $formattedRecord;
+            
+            $total = $results->getTotalHits();
+
         }
 
-
-        $total = $results->getTotalHits();
 
         if ( $total > ($options['limit'] + $options['offset']))
         {
@@ -383,6 +394,7 @@ class UnifiedSearchApi extends SugarApi {
             'return_beans'=>true,
             'my_items'=>$options['my_items'],
             'favorites'=>$options['favorites'],
+            'untouched'=>$options['untouched'],
             'orderBy'=>$options['orderBy'],
             'fields'=>$options['fieldFilters'],
             'selectFields'=>$options['selectFields'],

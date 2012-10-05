@@ -638,6 +638,7 @@ class SubPanelDefinitions
 		}
 
 		ksort ( $this->_visible_tabs_array ) ;
+        $this->_visible_tabs_array = array_intersect($this->_visible_tabs_array, $GLOBALS['moduleList']);
 		return $this->_visible_tabs_array ;
 	}
 
@@ -790,7 +791,6 @@ class SubPanelDefinitions
 	 * retrieve hidden subpanels
 	 */
 	function get_hidden_subpanels(){
-		global $moduleList;
 
 		//create variable as static to minimize queries
 		static $hidden_subpanels = null;
@@ -822,16 +822,9 @@ class SubPanelDefinitions
 					}
 
 
-				}else{
-					//no settings found, return empty
-					return $hidden_subpanels;
-				}
-			}
-			else
-			{	//no settings found, return empty
-				return $hidden_subpanels;
-			}
-		}
+                }
+            }
+        }
 
 		return $hidden_subpanels;
 	}

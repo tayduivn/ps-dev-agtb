@@ -171,6 +171,7 @@ $mod_strings = array (
     'LBL_TEAM_ID' => 'Team ID:',
     //END SUGARCRM flav=pro ONLY
     'LBL_TITLE' => 'Title:',
+    'LNK_CREATE' => 'Create Person',
     'LNK_CONTACT_LIST' => 'View Contacts',
     'LNK_IMPORT_VCARD' => 'Create Contact From vCard',
     'LNK_NEW_ACCOUNT' => 'Create Account',
@@ -231,12 +232,6 @@ $mod_strings = array (
     'LBL_CONTACT_EDIT_PASSWORD' => 'Password',
 	//END SUGARCRM flav=pro ONLY
 	'LBL_CHECKOUT_DATE'=>'Checkout Date',
-    //BEGIN SUGARCRM flav=dce ONLY
-    'LBL_CONTACT_DCEINST_FORM_TITLE' => 'Contact-Instance:',
-    'LBL_DCEINST_NAME' => 'Instance Name:',
-    'LBL_DCEINSTANCES' => 'Instances',
-    'LBL_DCEINSTANCE_ROLE' => 'Instance Role',
-    //END SUGARCRM flav=dce ONLY
     'LBL_CONTACTS_SUBPANEL_TITLE' => 'Contacts',
     'LBL_PROJECT_SUBPANEL_TITLE' => 'Projects',
     //BEGIN SUGARCRM flav!=sales ONLY
@@ -260,6 +255,7 @@ $mod_strings = array (
     'LBL_EXPORT_PHONE_MOBILE' => 'Mobile Phone',
     // SNIP
     'LBL_CONTACT_HISTORY_SUBPANEL_TITLE' => 'Related Contacts\' Emails',
-    'LBL_USER_SYNC' => 'User Sync'
+    'LBL_USER_SYNC' => 'User Sync',
+    'LBL_FILENAME' => 'Attachment',
 )
 ?>

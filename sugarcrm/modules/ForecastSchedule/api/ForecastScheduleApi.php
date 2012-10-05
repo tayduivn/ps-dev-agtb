@@ -90,14 +90,20 @@ class ForecastScheduleApi extends ModuleApi {
             $data[] = $row;
         }
 
-		if(empty($data)){
+		if(empty($data))
+        {
+           require_once('include/SugarCurrency.php');
+           $currency = SugarCurrency::getCurrencyByID($current_user->getPreference('currency'));
+
 		   $data[] = array("expected_best_case" => "0.0",
         				 "expected_likely_case" => "0.0",
         				 "expected_worst_case" => "0.0",
         				 "expected_amount" => "0.0",
+                         "base_rate" => $currency->conversion_rate,
         				 "cascade_hierarchy" => 0,
         				 "status" => "Active",
         				 "user_id" => $user_id,
+                         "currency_id" => $currency->id,
         				 "timeperiod_id" => $timeperiod_id);
 		}
 

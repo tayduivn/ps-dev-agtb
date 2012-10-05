@@ -20,6 +20,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/**
+ * @param Opportunity $focus        The Current Opportunity we are working with
+ */
 function perform_save(&$focus){
     //BEGIN SUGARCRM flav=pro ONLY
     global $app_list_strings, $timedate, $current_language;
@@ -31,11 +34,6 @@ function perform_save(&$focus){
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
-
-        if(empty($admin) || !is_object($admin))
-        {
-           display_stack_trace();
-        }
 
         //Retrieve Forecasts_category_ranges and json decode as an associative array
         $category_ranges = isset($settings['category_ranges']) ? $settings['category_ranges'] : array();
@@ -84,20 +82,33 @@ function perform_save(&$focus){
 
     //BEGIN SUGARCRM flav=pro ONLY
     //We create a related product entry for any new opportunity so that we may forecast on products
-    if (empty($focus->id))
-    {
+    // create an empty product module
+    $product = BeanFactory::getBean('Products');
+    if (empty($focus->id)) {
         $focus->id = create_guid();
         $focus->new_with_id = true;
+    } else {
+        //We still need to update the associated product with changes
+        $product->retrieve_by_string_fields(array('opportunity_id'=>$focus->id));
+    }
 
-        $product = BeanFactory::getBean('Products');
+    //If $product is set then we need to copy values into it from the opportunity
+    if(isset($product)) {
         $product->name = $focus->name;
         $product->best_case = $focus->best_case;
         $product->likely_case = $focus->amount;
         $product->worst_case = $focus->worst_case;
+        $product->cost_price = $focus->amount;
+        $product->quantity = 1;
+        $product->currency_id = $focus->currency_id;
+        $product->base_rate = $focus->base_rate;
+        $product->probability = $focus->probability;
+        $product->date_closed = $focus->date_closed;
+        $product->date_closed_timestamp = $focus->date_closed_timestamp;
         $product->assigned_user_id = $focus->assigned_user_id;
         $product->opportunity_id = $focus->id;
+        $product->commit_stage = $focus->commit_stage;
         $product->save();
     }
     //END SUGARCRM flav=pro ONLY
 }
-?>

@@ -52,6 +52,10 @@
 <script type="text/javascript" src='{sugar_getjspath file ='modules/ModuleBuilder/javascript/JSTransaction.js'}' ></script>
 <script type="text/javascript" src='{sugar_getjspath file ='include/javascript/tiny_mce/tiny_mce.js'}' ></script>
 
+<!-- Formula builder and dependency manager -->
+<script src="{sugar_getjspath file='include/javascript/jquery/markitup/jquery.markitup.js'}"></script>
+<script src="{sugar_getjspath file='include/javascript/jquery/markitup/sets/default/set.js'}"></script>
+
 {* //BEGIN SUGARCRM flav=ent ONLY *}
 <script src='sidecar/minified/sidecar.min.js'></script>
 <script language="javascript">

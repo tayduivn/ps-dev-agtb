@@ -20,6 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 // $Id: TableDictionary.php 53116 2009-12-10 01:24:37Z mitani $
+include("metadata/activity_commentsMetaData.php");
 //BEGIN SUGARCRM flav!=sales ONLY
 include("metadata/accounts_bugsMetaData.php");
 include("metadata/accounts_casesMetaData.php");
@@ -129,13 +130,6 @@ include("metadata/linked_documentsMetaData.php");
 //BEGIN SUGARCRM flav=pro ONLY
 include("metadata/sessionHistoryMetaData.php");
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-include("metadata/dceinstances_contactsMetaData.php");
-include("metadata/dceinstances_usersMetaData.php");
-include("metadata/contacts_dceclustersMetaData.php");
-include("metadata/users_dceclustersMetaData.php");
-include("metadata/dceinstances_casesMetaData.php");
-//END SUGARCRM flav=dce ONLY
 
 // Documents, so we can start replacing Notes as the primary way to attach something to something else.
 include("metadata/documents_accountsMetaData.php");

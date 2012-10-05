@@ -44,7 +44,7 @@ describe("Base.Layout.Modal", function() {
     });
 
     it("should delegate triggers at contruction time", function(){
-        var definedTriggerName = 'app:layout:modal:open',
+        var definedTriggerName = 'app:layout:modal:open1',
             calledEventName = '',
             options = {
                 'meta' : {
@@ -58,12 +58,13 @@ describe("Base.Layout.Modal", function() {
                     }
                 }
             };
+        //sinon.spy(options.layout, "on");
+        sinon.spy(context, "on");
         sinon.spy(options.layout, "on");
         layout = new ModalLayout(options);
         expect(calledEventName).toEqual(definedTriggerName);
-        expect(layout.showEvent).toBe(definedTriggerName);
         expect(options.layout.on).toHaveBeenCalledOnce();
-        expect(options.layout.on.calledWith(calledEventName)).toBe(true);
+        expect(options.layout.on.calledWith(definedTriggerName)).toBe(true);
     });
 
     it("should delegate multiple trigger names for showevent", function(){
@@ -106,7 +107,6 @@ describe("Base.Layout.Modal", function() {
             };
         layout = new ModalLayout(options);
         expect(layout.$(".modal").length).toEqual(1);
-        expect(layout.$(".modal-backdrop").length).toEqual(1);
         expect(layout.$(".modal-body").length).toEqual(0);
         var comp = {
             el: 'foo container'
@@ -197,7 +197,8 @@ describe("Base.Layout.Modal", function() {
         var definedTriggerName = 'app:layout:modal:open',
             options = {
                 'meta' : {
-                    'showEvent' : definedTriggerName
+                    'showEvent' : definedTriggerName,
+                    'components' : [ { view: 'blah' }]
                 },
                 'context' : context,
                 'layout' : {
@@ -206,10 +207,10 @@ describe("Base.Layout.Modal", function() {
                 }
             };
         layout = new ModalLayout(options);
-        layout.show(4);
+        layout.show({span: 4});
         expect(layout.$(".modal").hasClass("span4")).toBe(true);
 
-        layout.show(5);
+        layout.show({span: 5});
         expect(layout.$(".modal").hasClass("span4")).toBe(false);
         expect(layout.$(".modal").hasClass("span5")).toBe(true);
 
@@ -218,4 +219,37 @@ describe("Base.Layout.Modal", function() {
         expect(layout.$(".modal").hasClass("span5")).toBe(false);
     });
 
+
+    it("should invoke before/after while modal is showing and hiding", function() {
+        var definedTriggerName = 'app:layout:modal:open',
+            options = {
+                'meta' : {
+                    'showEvent' : definedTriggerName,
+                    'components' : [ { view: 'blah' }]
+                },
+                'context' : context,
+                'layout' : {
+                    on: function(event, caller) {
+                    }
+                }
+            };
+        layout = new ModalLayout(options),
+            showOptions = {'blah' : 'yeahhh'};
+        sinon.spy(layout, "_beforeShow");
+        sinon.spy(layout, "_afterShow");
+        sinon.spy(layout, "_beforeHide");
+        sinon.spy(layout, "_afterHide");
+
+        layout.show({options: showOptions});
+        expect(layout._beforeShow).toHaveBeenCalledOnce();
+        expect(layout._beforeShow.calledWith(showOptions)).toBe(true);
+        expect(layout._afterShow).toHaveBeenCalledOnce();
+        expect(layout._afterShow.calledWith(showOptions)).toBe(true);
+        expect(layout._beforeHide).not.toHaveBeenCalledOnce();
+        expect(layout._afterHide).not.toHaveBeenCalledOnce();
+        layout.hide();
+        expect(layout._beforeHide).toHaveBeenCalledOnce();
+        expect(layout._afterHide).toHaveBeenCalledOnce();
+
+    });
 });

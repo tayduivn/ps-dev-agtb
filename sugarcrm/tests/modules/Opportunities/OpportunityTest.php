@@ -39,6 +39,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
         //BEGIN SUGARCRM flav=pro ONLY
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
+        SugarTestProductUtilities::removeAllCreatedProducts();
         //END SUGARCRM flav=pro ONLY
     }
 
@@ -136,7 +137,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     *
+     * This test checks to ensure that opportunities created with a date_closed value have a date_closed_timestamp
+     * value that correctly falls within range of the timeperiod for that period.
      * @group forecasts
      */
     public function testOpportunitySaveLastDayOfTimePeriod()
@@ -167,9 +169,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     //END SUGARCRM flav=pro ONLY
 
     /*
-     * Test that the base_rate field is populated with rate
-     * of currency_id
-     *
+     * Test that the base_rate field is populated with rate of currency_id
+     * @group forecasts
      */
     public function testCurrencyRate() {
         $opportunity = SugarTestOpportunityUtilities::createOpportunity();
@@ -192,6 +193,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     /*
      * Test that base currency exchange rates from EUR are working properly.
+     * @group forecasts
      */
     public function testBaseCurrencyAmounts()
     {
@@ -218,6 +220,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
     /*
      * This method tests that a product record is created for new opportunity and that the necessary opportunity
      * field values are mapped to the product record
+     * @group forecasts
      */
     public function testProductEntryWasCreated()
     {
@@ -231,6 +234,31 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $actual = array($product->name, $product->likely_case, $product->best_case, $product->worst_case);
 
         $this->assertEquals($expected, $actual);
+    }
+
+
+    /*
+     * This method tests that subsequent changes to an opportunity will also update the associated product's data
+     * @group forecasts
+     * @group opportunities
+     * @group products
+     * @bug 56433
+     */
+    public function testOpportunityChangesUpdateRelatedProduct()
+    {
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+
+        //Now we change the opportunity's values again
+        $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
+        $opp->currency_id = $currency->id;
+        $opp->save();
+
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        $this->assertEquals($opp->currency_id, $product->currency_id, 'The opportunity and product currency_id values differ');
     }
     //END SUGARCRM flav=pro ONLY
 }

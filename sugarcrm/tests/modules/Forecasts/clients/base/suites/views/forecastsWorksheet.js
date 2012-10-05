@@ -174,44 +174,20 @@ describe("The forecasts worksheet", function(){
         });
     });
 
-    describe("forecast column", function() {
-        beforeEach(function(){
-            field = [
-                {
-                    name: 'forecast',
-                    enabled: true
-                },
-                {
-                    name: 'commit_stage',
-                    enabled: true
-                }
-            ]
-        });
-
-        /*
-        it("should be the 'forecasts' field if show_buckets is false", function() {
-            app.config.show_buckets = 0;
-            var unused = view._setForecastColumn(field);
-            expect(unused).toEqual(field[1]);
-            expect(field[0].enabled).toBeTruthy();
-            expect(field[1].enabled).toBeFalsy();
-        });
-
-        it("should be the 'commit_stage' field if show_buckets is true", function() {
-            app.config.show_buckets = 1;
-            var unused = view._setForecastColumn(field);
-            expect(unused).toEqual(field[0]);
-            expect(field[0].enabled).toBeFalsy();
-            expect(field[1].enabled).toBeTruthy();
-        });
-        */
-
-    });
-
     describe("commit_stage fields", function() {
 
         beforeEach(function() {
             view.isEditableWorksheet = true;
+
+            var model = new Backbone.Model();
+
+            context = { forecasts : {
+                            config : model,
+                            on : function() {}
+                      }
+            };
+
+            view.context = context;
             _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
             _renderFieldStub = sinon.stub(app.view.View.prototype, "_renderField");
             field = {
@@ -231,17 +207,17 @@ describe("The forecasts worksheet", function(){
             _renderFieldStub.restore();
         });
 
-        it("should have a save handler", function() {
-            expect(field._save).not.toBeDefined();
-            field = view._setUpCommitStage(field);
-            expect(field._save).toBeDefined();
-        })
+        it("should have format and unformat handlers on field when config is set to forecast_categories show_binary", function() {
+            sinon.stub(view.context.forecasts.config, "get", function(key) {
+                return "show_binary";
+            });
 
-        it("should respond to change events on the select", function(){
+            expect(field.format).not.toBeDefined();
+            expect(field.unformat).not.toBeDefined();
             field = view._setUpCommitStage(field);
-            expect(field.events["change select"]).toBeDefined();
-            expect(field.events["change select"]).toEqual("_save");
-        });
+            expect(field.format).toBeDefined();
+            expect(field.unformat).toBeDefined();
+        })
 
         it("should be rendered on a user's own worksheet", function() {
             testMethodStub = sinon.stub(view, "isMyWorksheet", function() {
@@ -266,4 +242,25 @@ describe("The forecasts worksheet", function(){
             testMethodStub.restore();
         });
     })
+
+    describe("Forecast Worksheet Config functions tests", function() {
+        it("should test checkConfigForColumnVisibility passing in Null", function() {
+            var testVal = null;
+            expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
+        });
+        it("should test checkConfigForColumnVisibility passing in found key", function() {
+            var testVal = 'best_case';
+            // have to build the context.forecasts.config model
+            view.context = {};
+            view.context.forecasts = {};
+            view.context.forecasts.config = new (Backbone.Model.extend({
+                "defaults": fixtures.metadata.modules.Forecasts.config
+            }));
+            expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
+        });
+        it("should test checkConfigForColumnVisibility passing in random key not found", function() {
+            var testVal = 'abc9def!';
+            expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
+        });
+    });
 });

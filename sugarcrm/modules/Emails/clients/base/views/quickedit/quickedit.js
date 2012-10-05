@@ -21,7 +21,7 @@
         var SaveModel = Backbone.Model.extend({
             sync: function (method, model, options) {
                 this.hydrateFromEditModel();
-                var myURL = app.api.buildURL('Emails');
+                var myURL = app.api.buildURL('Mail');
                 return app.api.call(method, myURL, model, options);
             },
             

@@ -9,14 +9,9 @@
     filterOpened: false,
 
     events: {
-        'click [name=show_more_button]': 'showMoreRecords',
-        'click .search': 'showSearch',
-        'click .quickcreate': 'showQuickCreate'
+        'click [name=show_more_button]': 'showMoreRecords'
     },
     _renderHtml: function() {
-        if (app.acl.hasAccess('create', this.module)) {
-            this.context.set('isCreateEnabled', true);
-        }
 
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
@@ -31,7 +26,7 @@
         this.layout.on("list:filter:toggled", this.filterToggled, this);
     },        
     filterToggled: function(isOpened) {
-        this.filterOpened = isOpened;
+        this.context.set('filterOpened', isOpened);
     },
     showMoreRecords: function(evt) {
         var self = this, options;
@@ -39,7 +34,7 @@
         
 
         // If in "search mode" (the search filter is toggled open) set q:term param
-        options = self.filterOpened ? self.getSearchOptions() : {};
+        options = this.context.get('filterOpened') ? self.getSearchOptions() : {};
 
         // Indicates records will be added to those already loaded in to view
         options.add = true;
@@ -53,43 +48,6 @@
         options.limit = this.limit;
         this.collection.paginate(options);
     },
-    showSearch: function() {
-        // Toggle on search filter and off the pagination buttons
-        this.$('.search').toggleClass('active');
-        this.layout.trigger("list:search:toggle");
-    },
-    showQuickCreate: function() {
-        var hasModalLayout =false;
-
-        _.each(this.layout._components, function(component, index, list){
-            if(component.options && component.options.name && component.options.name === 'quickcreatemodal') {
-                hasModalLayout = true;
-            }
-        });
-
-        if (!hasModalLayout) {
-            var modalLayout = app.view.createLayout({
-                context: this.context,
-                name: 'quickcreatemodal',
-                type : 'modal',
-                module: this.context.get("module"),
-                layout: this.layout,
-                meta: {
-                    showEvent : 'modal:quickcreate:open'
-                }
-            })
-
-            this.layout.addComponent(modalLayout,{});
-        }
-
-        this.layout.trigger("modal:quickcreate:open", {
-            span: 12,
-            context: { module: this.module },
-            components: [ { layout: 'quickcreate' } ],
-            title: app.lang.get('LBL_NEW_FORM_TITLE', this.module)
-        });
-    },
-
     getSearchOptions: function() {
         var collection, options, previousTerms, term = '';
         collection = this.context.get('collection');

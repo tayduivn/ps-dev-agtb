@@ -207,18 +207,18 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
 	 */
 	public function getAccessToken($oauth_token)
     {
-        if ( session_id() != '' ) {
-            // There is already a session, let's see if it's the same one
-            if ( session_id() != $oauth_token ) {
+        if(empty($oauth_token) || session_id() !=  $oauth_token){
+            if(session_id()) {
                 // Oh, we are in trouble, we have a session and it's the wrong one.
                 // Let's close this session and start a new one with the correct ID.
                 session_write_close();
             }
+            // Disable cookies
+            ini_set("session.use_cookies",false);
+            session_id($oauth_token);
+            session_start();
         }
-        session_id($oauth_token);
-        // Disable cookies
-        ini_set("session.use_cookies",false);
-        session_start();
+
         if ( isset($_SESSION['oauth2']) ) {
             return $_SESSION['oauth2'];
         } else if ( !empty($_SESSION['authenticated_user_id']) ) {
@@ -427,7 +427,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             $portalApiUser = $this->findPortalApiUser($client_id);
             if ( $portalApiUser == null ) {
                 // Can't login as a portal user if there is no API user
-                throw new SugarApiExceptionNotAuthorized('There is no portal user configured in the system or the portal is not enabled for this system.');
+                throw new SugarApiExceptionPortalNotConfigured();
             }
             // It's a portal user, log them in against the Contacts table
             $contact = BeanFactory::newBean('Contacts');
@@ -444,7 +444,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
                 if(!$sessionManager->canAddSession()){
                     //not able to add another session right now
                     $GLOBALS['log']->error("Unable to add new session");
-                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions',0,'too_many_concurrent_connections');
+                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions', null, null, 0, 'too_many_concurrent_connections');
                 }
                 //END SUGARCRM flav=pro ONLY
                 $this->contactBean = $contact;

@@ -13,7 +13,41 @@
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
     _collection:{},
-    
+
+
+    /**
+     * Template to use wen updating the likelyCase on the committed bar
+     */
+    commitLogTemplate : _.template('<article><%= text %><br><date><%= text2 %></date></article>'),
+
+    /**
+     * Template to use when we are fetching the commit history
+     */
+    commitLogLoadingTemplate : _.template('<div class="extend results"><article><%= loadingMessage %></article></div>'),
+
+    /**
+     * Handle Any Events
+     */
+    events:{
+        'click a[rel=historyLog] i.icon-exclamation-sign':'displayHistoryLog'
+    },
+
+    /**
+     * Contains a list of column names from metadata and maps them to correct config param
+     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
+     *
+     * @property _tableColumnsConfigKeyMap
+     */
+    _tableColumnsConfigKeyMap: {
+        'likely_case': 'show_worksheet_likely',
+        'likely_adjusted': 'show_worksheet_likely',
+        'best_case': 'show_worksheet_best',
+        'best_adjusted': 'show_worksheet_best',
+        'worst_case': 'show_worksheet_worst',
+        'worst_adjusted': 'show_worksheet_worst'
+
+    },
+
     /**
      * Initialize the View
      *
@@ -23,9 +57,7 @@
     initialize:function (options) {
         this.viewModule = app.viewModule;
         var self = this;
-        //set expandable behavior to false by default
-        this.isExpandableRows = false;
-        
+
         app.view.View.prototype.initialize.call(this, options);
 
         //set up base selected user
@@ -36,7 +68,7 @@
         this._collection = this.context.forecasts.worksheetmanager;
         this._collection.url = this.createURL();
         this._collection.isDirty = false;
-    	
+
     	//Setup total subview
     	var TotalModel = Backbone.Model.extend({
 
@@ -103,6 +135,8 @@
         }
         // listening for updates to context for selectedUser:change
         if (this.context.forecasts) {
+            var self = this;
+
             this.context.forecasts.on("change:selectedUser",
                 function(context, selectedUser) {
                     this.updateWorksheetBySelectedUser(selectedUser);
@@ -120,28 +154,94 @@
                 this.totalView.render();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
-            	
+
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		var model = this.context.forecasts.worksheetmanager;
             		model.url = this.createURL();
             		this.safeFetch();
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
-            	
+
             }, this);
+
+            this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['likely_case', 'likely_adjusted'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['best_case', 'best_adjusted'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
+                }
+            });
+            
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-            	worksheet.safeFetch();
+                if(worksheet._collection.isDirty){
+                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
+                }            	
             });
         }
     },
-    
+
+
+    /**
+     * Sets the visibility of a column or columns if array is passed in
+     *
+     * @param cols {Array} the sName of the columns to change
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     * @param ctx {Object} the context of this view to have access to the checkForColumnsSetVisibility function
+     */
+    setColumnVisibility: function(cols, value, ctx) {
+        var aoColumns = this.gTable.fnSettings().aoColumns;
+
+        for(var i in cols) {
+            var columnName = cols[i];
+            for(var k in aoColumns) {
+                if(aoColumns[k].sName == columnName)  {
+                    this.gTable.fnSetColumnVis(k, value == 1);
+                    break;
+                }
+            }
+        }
+    },
+
+    /**
+     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     *
+     * @param colKey {String} the column sName to check in the keymap
+     * @return {*} returns null if not found in the keymap, returns true/false if it did find it
+     */
+    checkConfigForColumnVisibility: function(colKey) {
+        var returnValue = null;
+        // Check and see if our keymap has the column
+        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
+            // if so get the value
+            returnValue = this.context.forecasts.config.get(this._tableColumnsConfigKeyMap[colKey]);
+        }
+
+        // if there was no value in the keymap, returnValue is null,
+        // in which case returnValue should be set to true because it doesn't correspond to a config setting
+        // so it should be shown
+        return _.isNull(returnValue) ? true : (returnValue == 1);
+    },
+
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
      */
     safeFetch: function(){
-    	var collection = this._collection; 
+    	var collection = this._collection;
     	var self = this;
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
@@ -152,14 +252,14 @@
         				model.set({draft: 1}, {silent:true});
         				model.save();
         				model.set({isDirty: false}, {silent:true});
-        			}  
+        			}
 				});
     			collection.isDirty = false;
 				$.when(!collection.isDirty).then(function(){
 	    			self.context.forecasts.set({reloadCommitButton: true});
 	    			collection.fetch();
     		});
-			
+
 		}
     		else{
     			//ignore, fetch still
@@ -170,8 +270,8 @@
     	}
     	else{
     		//no changes, fetch like normal.
-    		collection.fetch();	
-    	}    	
+    		collection.fetch();
+    	}
     },
 
     /**
@@ -214,11 +314,27 @@
         for( var i = 0; i < fields.length; i++ )  {
             if(fields[i].enabled) {
                 // in case we add column rearranging
-                columnDefs.push( {
+                var fieldDef = {
                     "sName": fields[i].name,
                     "aTargets": [ _colIndex++ ],
-                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%'
-                } );
+                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%',
+                    "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
+                };
+
+                //Apply sorting for the worksheet
+                if(typeof(fields[i].type) != "undefined")
+                {
+                    switch(fields[i].type)
+                    {
+                        case "int":
+                        case "currency":
+                            fieldDef["sSortDataType"] = "dom-number";
+                            fieldDef["sType"] = "numeric";
+                            break;
+                    }
+                }
+
+                columnDefs.push(fieldDef);
             }
         }
 
@@ -231,17 +347,6 @@
                 "bPaginate":false
             }
         );
-
-        // if isExpandable, add expandable row behavior
-        if (this.isExpandableRows) {
-            $('.worksheetManagerTable tr').on('click', function () {
-                if (self.gTable.fnIsOpen(this)) {
-                    self.gTable.fnClose(this);
-                } else {
-                    self.gTable.fnOpen(this, self.formatAdditionalDetails(this), 'details');
-                }
-            });
-        }
 
         //see if anything in the model is a draft version
         _.each(this._collection.models, function(model, index){
@@ -259,7 +364,76 @@
         this.totalView.render();
     },
 
-    calculateTotals: function() {
+    /**
+     * Handle the click event from a history log icon click.
+     *
+     * @param event
+     */
+    displayHistoryLog:function (event) {
+        var self = this;
+        var nTr = _.first($(event.target).parents('tr'));
+        // test to see if it's open
+        if (self.gTable.fnIsOpen(nTr)) {
+            // if it's open, close it
+            self.gTable.fnClose(nTr);
+        } else {
+            //Open this row
+
+            var colspan = $(nTr).children('td').length;
+
+            self.gTable.fnOpen(nTr, this.commitLogLoadingTemplate({'loadingMessage' : App.lang.get("LBL_LOADING_COMMIT_HISTORY", 'Forecasts')}) , 'details');
+            $(nTr).next().children("td").attr("colspan", colspan);
+
+            self.fetchUserCommitHistory(event, nTr);
+        }
+    },
+
+    /**
+     * Event handler when popoverIcon is clicked,
+     * @param event
+     * @return {*}
+     */
+    fetchUserCommitHistory: function(event, nTr) {
+        var options = {
+            timeperiod_id : this.timePeriod,
+            user_id : $(event.target).attr('data-uid')
+        };
+
+        var dataCommitDate = $(event.target).attr('data-commitdate');
+
+        return app.api.call('read',
+             app.api.buildURL('Forecasts', 'committed', null, options),
+            null,
+            {
+                success : function(data) {
+                    var commitDate = new Date(dataCommitDate),
+                        newestModel = new Backbone.Model(_.first(data)),
+                        // get everything that is left but the first item.
+                        otherModels = _.last(data, data.length-1),
+                        oldestModel = {};
+
+                    // using for because you can't break out of _.each
+                    for(var i = 0; i < otherModels.length; i++) {
+                        // check for the first model equal to or past the forecast commit date
+                        // we want the last commit just before the whole forecast was committed
+                        if(app.forecasts.utils.parseDBDate(otherModels[i].date_modified) <= commitDate) {
+                            oldestModel = new Backbone.Model(otherModels[i]);
+                            break;
+                        }
+                    }
+
+                    // create the history log
+                    outputLog = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                    // update the div that was created earlier and set the html to what was the commit log
+                    $(nTr).next().children("td").children("div").html(this.commitLogTemplate(outputLog));
+                }
+            },
+            { context : this }
+        );
+    },
+
+
+    calculateTotals:function () {
         var self = this;
         var amount = 0;
         var quota = 0;
@@ -297,7 +471,6 @@
            likely_adjusted 	+= parseFloat(model.get('likely_adjusted')) * base_rate;
            worst_case       += parseFloat(model.get('worst_case')) * base_rate;
            worst_adjusted 	+= parseFloat(model.get('worst_adjusted')) * base_rate;
-                
         });
 
         self.totalModel.set({
@@ -310,7 +483,7 @@
             worst_case : worst_case,
             worst_adjusted : worst_adjusted
         });
-        
+
         //in case this is needed later..
         var totals = {
             'amount' : amount,
@@ -325,19 +498,16 @@
 
         this.context.forecasts.set("updatedManagerTotals", totals);
     },
-    
-    
+
     /**
      * Determines if this Worksheet should be rendered
      */
     showMe: function(){
     	var selectedUser = this.selectedUser;
     	this.show = false;
-    	
     	if(!selectedUser.showOpps && selectedUser.isManager){
     		this.show = true;
     	}
-    	
     	return this.show;
     },
 
@@ -347,8 +517,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedCategory:function (params) {
-        // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        if (app.config.show_buckets == 1) {
+        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') {
             // TODO: this.
         } else {
             this.category = _.first(params);

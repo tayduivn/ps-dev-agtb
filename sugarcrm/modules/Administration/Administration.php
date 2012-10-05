@@ -53,9 +53,6 @@ class Administration extends SugarBean {
         'license',
 
             //END SUGARCRM lic=sub ONLY
-        //BEGIN SUGARCRM flav=dce ONLY
-        'dce',
-        //END SUGARCRM flav=dce ONLY
     );
     var $disable_custom_fields = true;
     var $checkbox_fields = Array("notify_send_by_default", "mail_smtpauth_req", "notify_on", 'portal_on', 'skypeout_on', 'system_mailmerge_on', 'proxy_auth', 'proxy_on', 'system_ldap_enabled','captcha_on');

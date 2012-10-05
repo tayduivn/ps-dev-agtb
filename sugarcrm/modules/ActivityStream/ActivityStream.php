@@ -1,0 +1,508 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/*********************************************************************************
+ * The contents of this file are subject to the SugarCRM Master Subscription
+ * Agreement ("License") which can be viewed at
+ * http://www.sugarcrm.com/crm/master-subscription-agreement
+ * By installing or using this file, You have unconditionally agreed to the
+ * terms and conditions of the License, and You may not use this file except in
+ * compliance with the License.  Under the terms of the license, You shall not,
+ * among other things: 1) sublicense, resell, rent, lease, redistribute, assign
+ * or otherwise transfer Your rights to the Software, and 2) use the Software
+ * for timesharing or service bureau purposes such as hosting the Software for
+ * commercial gain and/or for the benefit of a third party.  Use of the Software
+ * may be subject to applicable fees and any use of the Software without first
+ * paying applicable fees is strictly prohibited.  You do not have the right to
+ * remove SugarCRM copyrights from the source code or user interface.
+ *
+ * All copies of the Covered Code must include on each user interface screen:
+ *  (i) the "Powered by SugarCRM" logo and
+ *  (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for
+ * requirements.
+ *
+ * Your Warranty, Limitations of liability and Indemnity are expressly stated
+ * in the License.  Please refer to the License for the specific language
+ * governing these rights and limitations under the License.  Portions created
+ * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+
+include_once("include/Link2Tag.php");
+
+/**
+ * "Activity Stream" prototype using mysql.
+ * It doesn't support 'related' activities yet.
+ *
+ */
+class ActivityStream extends SugarBean {
+    // activity types
+    const ACTIVITY_TYPE_CREATE = 'created';
+    const ACTIVITY_TYPE_RELATE = 'related';
+    const ACTIVITY_TYPE_UPDATE = 'updated';
+    const ACTIVITY_TYPE_POST = 'posted';
+
+
+    // common vars for sugar bean
+    public $table_name = 'activity_stream';
+    public $object_name = 'ActivityStream';
+    public $module_dir = 'ActivityStream';
+    public $new_schema = true;
+
+    // db fields
+    public $id;
+    public $target_id;
+    public $target_module;
+    public $activity_type;
+    public $activity_data;
+    public $created_by;
+    public $date_created;
+    public $deleted;
+
+    /**
+     * Constructor
+     */
+    public function ActivityStream() {
+        parent::SugarBean();
+    }
+
+    /**
+     * Creates a new comment for this activity
+     * @param string $text comment text
+     * @return bool query result
+     */
+    public function addComment($text) {
+        global $current_user, $dictionary;
+        $fieldDefs = $dictionary['ActivityComments']['fields'];
+        $tableName = $dictionary['ActivityComments']['table'];
+
+        $values = array();
+        $id = create_guid();
+        $values['id'] = $this->db->massageValue($id, $fieldDefs['id']);
+        $values['activity_id']= $this->db->massageValue($this->id, $fieldDefs['activity_id']);
+        $text = strip_tags($text);
+        $values['value']= $this->db->massageValue(Link2Tag::convert($text), $fieldDefs['value']);
+        $values['date_created'] = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_created'] );
+        $values['created_by'] = $this->db->massageValue($current_user->id, $fieldDefs['created_by']);
+
+        $sql = "INSERT INTO ".$tableName;
+        $sql .= "(".implode(",", array_keys($values)).") ";
+        $sql .= "VALUES(".implode(",", $values).")";
+        return $this->db->query($sql,true) ? $id : false;
+    }
+
+    /**
+     * Deletes a comment made by current user
+     * @param string $commentId
+     * @return bool query restult
+     */
+    public function deleteComment($commentId) {
+        global $current_user, $dictionary;
+        $tableName = $dictionary['ActivityComments']['table'];
+        $sql = "UPDATE ".$tableName." SET deleted = 1 WHERE id = '".$commentId."' AND created_by = '".$current_user->id."'";
+        return $this->db->query($sql,true);
+    }
+
+    /**
+     * Creates new activity. For update, it may create multiple activity records, one for each changed field
+     *
+     * @param $bean Sugarbean instance that was affected
+     * @param string $activityType 'create', 'update', or 'delete'
+     * @return bool query result or false
+     *
+     */
+    public function addUpdate($bean) {
+        global $current_language;
+
+        $dataChanges = $GLOBALS['db']->getDataChanges($bean, 'activity');
+        $dataChanges = array_values($dataChanges);
+        $fieldDefs = $bean->getFieldDefinitions();
+        $mod_strings = return_module_language($current_language, $bean->module_dir);
+
+        foreach($dataChanges as &$dataChange) {
+            $fieldName = get_label($fieldDefs[$dataChange['field_name']]['vname'], $mod_strings);
+            $dataChange['field_name'] = str_replace(":","",$fieldName);
+        }
+
+        return $this->addActivity($bean, self::ACTIVITY_TYPE_UPDATE, $dataChanges);
+    }
+
+    /**
+     * Creates new post.
+     *
+     * @param string $post_body
+     * @param string $targetModule module name
+     * @param string $targetId bean id
+     * @param string $text posted text
+     * @return bool query result or false
+     *
+     */
+    public function addPost($targetModule, $targetId, $text) {
+        // This combination is not supportable
+        if(empty($targetModule) && !empty($targetId)) {
+            $GLOBALS['log']->debug("target_module cannot be empty when target_id is empty for activity post.");
+            return false;
+        }
+
+        $bean = null;
+        // Make sure targetModule and targetId are valid
+        if(!empty($targetModule)) {
+            $bean = BeanFactory::getBean($targetModule);
+
+            if(empty($bean)) {
+                $GLOBALS['log']->debug("target_module is invalid for activity post.");
+                return false;
+            }
+
+            if(!empty($targetId) && !$bean->retrieve($targetId)) {
+                $GLOBALS['log']->debug("target_id is invalid for activity post.");
+                return false;
+            }
+        }
+
+        $text = strip_tags($text);
+        $activityData = array('value'=>Link2Tag::convert($text));
+        return $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
+    }
+
+    /**
+     * Deletes a post made by current user
+     * @param string $postId
+     * @return bool query restult
+     */
+    public function deletePost($postId) {
+        global $current_user;
+        $sql = "UPDATE ".$this->getTableName()." SET deleted = 1 WHERE id = '".$postId."' AND created_by = '".$current_user->id."' AND activity_type = '".self::ACTIVITY_TYPE_POST."'";
+        // Should we also delete comments or attachments for this post???
+        return $this->db->query($sql,true);
+    }
+
+    /**
+     * Creates a new relationship activity record.
+     *
+     * @param SugarBean $lhs
+     * @param SugarBean $rhs
+     * @return bool query result or false
+     */
+    public function addRelate($lhs, $rhs) {
+        $activityData = array('relate_to'=>$rhs->module_dir, 'relate_id'=>$rhs->id, 'relate_name'=>$rhs->get_summary_text());
+        return $this->addActivity($lhs, self::ACTIVITY_TYPE_RELATE, $activityData);
+    }
+
+    /**
+     * Creates a new record activity.
+     *
+     * @param SugarBean $bean
+     * @return bool query result or false
+     */
+    public function addCreate($bean) {
+        $activityData = array();
+        return $this->addActivity($bean, self::ACTIVITY_TYPE_CREATE, $activityData);
+    }
+
+    /**
+     * Creates a new activity record.
+     * @param SugarBean $bean
+     * @param string $activityType
+     * @param array $activityData
+     * @return bool query result
+     */
+    protected function addActivity($bean, $activityType, $activityData = array()) {
+        global $current_user;
+        $this->target_id = !empty($bean) ? $bean->id : '';
+        $this->target_module = !empty($bean) ? $bean->module_name : '';
+        $this->activity_data = json_encode($activityData);
+        $this->activity_type = $activityType;
+        $this->date_created = TimeDate::getInstance()->nowDb();
+        $this->created_by = $current_user->id;
+        $this->updateLastActivityDate($bean, $this->date_created);
+        return $this->save();
+    }
+
+    /**
+     * Returns an array of activities for a bean
+     * @param string $targetModule module name
+     * @param string $targetId bean id
+     * @param array $options offset, limit, num_comments ( 0: no comments; -1:all comments)
+     * @return array
+     */
+    public function getActivities($targetModule, $targetId, $options = array()) {
+        global $dictionary, $current_language, $current_user;
+        $tableName = $dictionary['ActivityStream']['table'];
+        $fieldDefs = $dictionary['ActivityStream']['fields'];
+
+        // This combination is not supportable
+        if(empty($targetModule) && !empty($targetId)) {
+            $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
+            return false;
+        }
+
+        if(empty($options['view'])) {
+            $options['view'] = 'list';
+        }
+
+        // TimelineJS adds some garbage data to url
+        if(strpos($options['view'], 'timeline') !== false) {
+            $options['view'] = 'timeline';
+        }
+
+        if(!in_array($options['view'], array('list', 'timeline'))) {
+            return false;
+        }
+
+        // Convert to int for security
+        $start = isset($options['offset']) ? (int) $options['offset'] : 0;
+        $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
+        $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1;
+        $filter = isset($options['filter']) ? $options['filter'] : 'all';
+        $activities = array();
+
+        $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name, u.picture as created_by_picture';
+        $from = 'activity_stream a, users u';
+        $where = 'a.created_by = u.id AND a.deleted = 0';
+        $limit = '';
+
+        if($targetModule == 'Users' && !empty($targetId)) {
+            $where .= " AND (a.created_by = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['created_by']) ." OR (a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module'])." AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id'])."))";
+        }
+        else if(!empty($targetModule)) {
+            $where .= " AND ((a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
+            if(!empty($targetId)) {
+                $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
+                $post_tag_header = "@[".$targetModule.":".$targetId;
+                $where .= ") OR (a.activity_data LIKE '%".$post_tag_header."%'";
+                $where .= ") OR (a.id IN (SELECT activity_id FROM activity_comments where value LIKE '%".$post_tag_header."%')";
+            }
+            $where .= "))";
+        }
+
+        if($filter == 'myactivities') {
+            $where .= " AND a.created_by = '".$current_user->id."'";
+        }
+        else if($filter == 'favorites') {
+            $from .= ", sugarfavorites f";
+            $where .= " AND a.target_module = f.module AND a.target_id = f.record_id AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
+        }
+
+        if($numActivities > 0) {
+            $limit = ' LIMIT '.$start. ', '.$numActivities;
+        }
+
+        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ";
+        $GLOBALS['log']->debug("Activity query: $sql");
+        $result = $GLOBALS['db']->query($sql);
+
+        if(!empty($result)) {
+            $activityIds = array();
+
+            while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
+                $row['target_name'] = '';
+                if(!empty($row['target_id'])) {
+                    $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
+                    if(!empty($bean)) {
+                        $row['target_name'] = $bean->get_summary_text();
+                    } else {
+                        continue;
+                    }
+                }
+                else if(!empty($row['target_module'])) {
+                    $bean = BeanFactory::getBean($row['target_module']);
+                    if(!empty($bean->module_dir)) {
+                        $mod_strings = return_module_language($current_language, $bean->module_dir);
+                        if(!empty($mod_strings['LBL_MODULE_NAME'])) {
+                            $row['target_name'] = $mod_strings['LBL_MODULE_NAME'];
+                        }
+                    }
+                }
+                $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                unset($row['first_name']);
+                unset($row['last_name']);
+
+                $activities[] = $row;
+                $activityIds[] = $row['id'];
+            }
+
+            $activities = array_slice($activities, $start, $numActivities);
+            $activityIds = array_slice($activityIds, $start, $numActivities);
+
+            if(!empty($activityIds)) {
+                $comments = array();
+                $commentNotes = array();
+
+                if($numComments != 0) {
+                    $fieldDefs = $dictionary['ActivityComments']['fields'];
+                    $tableName = $dictionary['ActivityComments']['table'];
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.deleted = 0 AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $result = $GLOBALS['db']->query($sql);
+
+                    if(!empty($result)) {
+                        $commentIds = array();
+                        while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                            $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                            unset($row['first_name']);
+                            unset($row['last_name']);
+                            $row['value'] = from_html($row['value']);
+                            $comments[$row['activity_id']][] = $row;
+                            $commentIds[] = $row['id'];
+                        }
+                        if(!empty($commentIds)) {
+                            $commentNotes = $this->getNotes('ActivityComments', $commentIds);
+                        }
+                    }
+                }
+
+                $activityNotes = $this->getNotes('ActivityStream', $activityIds);
+
+                foreach($activities as &$activity) {
+                    $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array();
+                    foreach($activity['comments'] as &$comment) {
+                        $comment['notes'] = isset($commentNotes[$comment['id']]) ? $commentNotes[$comment['id']] : array();
+                    }
+                    $activity['notes'] = isset($activityNotes[$activity['id']]) ? $activityNotes[$activity['id']] : array();
+                }
+            }
+        }
+
+        $getViewData = "get".ucfirst($options['view'])."ViewData";
+        return $this->$getViewData($activities, $options);
+    }
+
+    protected function getListViewData($activities, $options = array()) {
+        $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
+        $list = array('next_offset'=>$nextOffset,'records'=>$activities);
+        return $list;
+    }
+
+    protected function getTimelineViewData($activities, $options = array()) {
+        $timeline = array(
+                "headline"=>$options['filter'] == "all" ? "ALL Activities" : ($options['filter'] == "myactivities" ? "My Activities" : "My Favorities Activities") ,
+                "type"=>"default",
+                "text"=>"",
+                "startDate"=>$this->getTimelineDate($activities[0]),
+                "asset"=> array(
+                        "media"=>"",
+                        "credit"=>"",
+                        "caption"=>""));
+        $date = array();
+        foreach($activities as $activity) {
+            $date[] = array(
+                    "startDate"=>$this->getTimelineDate($activity),
+                    //"endDate"=>date("Y,m,d",strtotime($activity['date_created'])+24*3600),
+                    "headline"=>$this->getTimelineHeadline($activity),
+                    "text"=>$this->getTimelineText($activity),
+                    "tag"=>"",
+                    "asset"=> array(
+                            "media"=>$this->getTimelineMedia($activity),
+                            "thumbnail"=>$this->getTimelineThumbnail($activity),
+                            "credit"=>"",
+                            "caption"=>""));
+        }
+
+        $timeline['date'] = $date;
+        return array('timeline'=>$timeline);
+    }
+
+    protected function getTimelineDate($activity) {
+        return date("m/d/Y H:i:s",strtotime($activity['date_created']));
+    }
+
+    protected function getTimelineHeadline($activity) {
+        return '<a href="" data-id="'.$activity['id'].'" class="showAnchor">'.$activity['created_by_name'].' '.$activity['activity_type'].'</a>';
+    }
+
+    protected function getTimelineMedia($activity) {
+        return '<a href=#Users/'.$activity['created_by'].' class="avatar avatar42"><img src='.($activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg").'></a>';
+    }
+
+    protected function getTimelineThumbnail($activity) {
+        return $activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg";
+    }
+
+    protected function getTimelineText($activity) {
+        $result = '';
+
+        switch ($activity['activity_type']) {
+            case "posted":
+                $result = $activity['activity_data']['value'];
+                if(!empty($activity['target_module'])) {
+                    if(!empty($activity['target_id'])) {
+                        $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                    }
+                    else {
+                        $result .= ' on <a href="#'.$activity['target_module'].'">'.$activity['target_name'].'</a>';
+                    }
+                }
+                break;
+            case "created":
+                $result = '<a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                break;
+            case "related":
+                $result = '<a href="#'.$activity['activity_data']['relate_to'].'/'.$activity['activity_data']['relate_id'].'">'.$activity['activity_data']['relate_name'].'</a> to <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                break;
+            case "updated":
+                foreach($activity['activity_data'] as $i =>$update) {
+                    if($i != 0) {
+                        $result .= ', ';
+                    }
+                    $result .= '<a href="#" rel="tooltip" title="Was: '.$update['before'].'<br>Now: '.$update['after'].'">'.$update['field_name'].'</a>';
+                }
+                if(!empty($activity['target_name'])) {
+                    $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
+                }
+                break;
+            default:
+                break;
+        }
+
+        $result .= '<br/>';
+
+        if(count($activity['notes']) > 0) {
+            $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Attachments('.count($activity['notes']).')</a>';
+        }
+        if(count($activity['comments']) > 0) {
+            $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Comments('.count($activity['comments']).')</a>';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Gets notes attached to posts or comments
+     * @param string $parentType 'ActivityStream' or 'ActivityComments'
+     * @param array $parentIds activity or comment ids
+     * @return array
+     */
+    protected function getNotes($parentType, $parentIds) {
+        $notes = array();
+        $sql = "SELECT n.id,n.parent_type,n.parent_id,n.name,n.description,n.created_by,n.date_entered,n.file_mime_type,n.filename,u.first_name, u.last_name FROM notes n, users u WHERE n.parent_type='".$parentType."' and parent_id in ('".implode("','",$parentIds)."') AND n.created_by = u.id AND n.deleted = 0 ORDER BY n.file_mime_type, n.date_entered ASC";
+        $result = $GLOBALS['db']->query($sql);
+
+        if(!empty($result)) {
+            while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
+                $row['created_by_name'] = return_name($row, 'first_name', 'last_name');
+                unset($row['first_name']);
+                unset($row['last_name']);
+                $notes[$row['parent_id']][] = $row;
+            }
+        }
+        return $notes;
+
+    }
+
+    /**
+     * @param $bean
+     * @param $date
+     */
+    protected function updateLastActivityDate($bean, $date){
+        if(!empty($bean) && $bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date='" . $date .  "' WHERE id= '{$bean->id}'");
+    }
+
+    /**
+     * This function will remove our video or image tags so we need to disable it.
+     * @see SugarBean::cleanBean()
+     */
+    function cleanBean() {
+    }
+}
+
+?>

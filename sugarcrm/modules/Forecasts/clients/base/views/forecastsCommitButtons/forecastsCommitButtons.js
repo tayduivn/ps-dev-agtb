@@ -9,13 +9,24 @@
      * Used to determine whether or not the Commit button is enabled
      */
     commitButtonEnabled: false,
+
+    /**
+     * Used to determine whether the config setting cog button is displayed
+     */
+    showConfigButton: false,
             
     /**
      * Adds event listener to elements
      */
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
-        "click a[id=save_draft]" : "triggerSaveDraft"
+        "click a[id=save_draft]" : "triggerSaveDraft",
+        "click a[id=forecastSettings]" : "triggerConfigModal"
+    },
+
+    initialize: function (options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this.showConfigButton = (app.metadata.getAcls()['Forecasts'].admin == "yes");
     },
 
     /**
@@ -128,6 +139,21 @@
     		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
+    },
+
+    /**
+     * Triggers the event expected by the modal layout to show the config panels
+     */
+    triggerConfigModal: function() {
+        var params = {
+            title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
+            components: [{layout:"forecastsConfig"}]
+        };
+        var callback = function(){};
+
+        if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
+            this.layout.trigger("modal:forecastsConfig:open", params, callback);
+        }
     },
 
     /**

@@ -603,7 +603,65 @@ class SugarBean
     {
         return $this->getTableName().'_audit';
     }
-
+    /**
+     * Return true if activity is enabled for this object
+     * You would set the activity flag in the implemting module's vardef file.
+     *
+     * @return boolean
+     *
+     * Internal function, do not override.
+     */
+    function isActivityEnabled()
+    {
+        global $dictionary;
+        if (isset($dictionary[$this->getObjectName()]['activity_enabled']))
+        {
+            return $dictionary[$this->getObjectName()]['activity_enabled'];
+        }
+        else
+        {
+            return false;
+        }
+    }
+    
+    /**
+     * Returns a list of fields with their definitions that have the activity_enabled property set to true.
+     * Before calling this function, check whether activity has been enabled for the table/module or not.
+     * You would set the activity flag in the implemting module's vardef file.
+     *
+     * @return an array of
+     * @see isActivityEnabled
+     *
+     * Internal function, do not override.
+     */
+    function getActivityEnabledFieldDefinitions()
+    {
+        if (!isset($this->activity_enabled_fields))
+        {
+            $this->activity_enabled_fields=array();
+            foreach ($this->field_defs as $field => $properties)
+            {
+                $field_type = '';
+                if (isset($properties['type'])) {
+                    $field_type=$properties['type'];
+                } else {
+                    if (isset($properties['dbType']))
+                        $field_type=$properties['dbType'];
+                    else if(isset($properties['data_type']))
+                        $field_type=$properties['data_type'];
+                    else
+                        $field_type=$properties['dbtype'];
+                }                
+                if ($field != 'modified_user_id' && !empty($field_type) && $field_type != 'datetime') // other date types? exceptions?
+                {
+                    $this->activity_enabled_fields[$field]=$properties;
+                }
+            }
+    
+        }
+        return $this->activity_enabled_fields;
+    }
+    
     /**
      * Returns the name of the custom table.
      * Custom table's name is based on implementing class' table name.
@@ -1376,25 +1434,6 @@ class SugarBean
             if(!$this->db->tableExists($this->table_name))
             {
                 $this->db->createTable($this);
-//BEGIN SUGARCRM flav=dce ONLY
-                if($GLOBALS['sugar_flavor']=='DCE'){
-                    global $DCEbeanList, $beanFiles;
-                    foreach($DCEbeanList as $module=>$class){
-                        if(isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
-                            require_once($beanFiles[$class]);
-                            $mod = new $class();
-                            if($this->module_dir === $mod->module_dir){
-                                if($this->bean_implements('ACL')){
-                                    ACLAction::addActions($this->module_dir);
-                                }
-                                if($this->bean_implements('DCEACL')){
-                                    ACLAction::addActions($this->module_dir, 'DCE');
-                                }
-                            }
-                        }
-                    }
-                }else{
-//END SUGARCRM flav=dce ONLY
                     if($this->bean_implements('ACL')){
                         if(!empty($this->acltype)){
                             ACLAction::addActions($this->getACLCategory(), $this->acltype);
@@ -1402,9 +1441,6 @@ class SugarBean
                             ACLAction::addActions($this->getACLCategory());
                         }
                     }
-//BEGIN SUGARCRM flav=dce ONLY
-                }
-//END SUGARCRM flav=dce ONLY
             }
             else
             {
@@ -1522,6 +1558,10 @@ class SugarBean
 		if(empty($this->date_modified) || $this->update_date_modified)
 		{
 			$this->date_modified = $GLOBALS['timedate']->nowDb();
+
+            if(!empty($this->field_defs['last_activity_date'])){
+                $this->last_activity_date = $this->date_modified;
+            }
 		}
 
         $this->_checkOptimisticLocking($action, $isUpdate);
@@ -1536,6 +1576,7 @@ class SugarBean
                 $this->modified_user_id = $current_user->id;
                 $this->modified_by_name = $current_user->user_name;
             }
+
         }
         if ($this->deleted != 1)
             $this->deleted = 0;
@@ -1616,6 +1657,12 @@ class SugarBean
         // use the db independent query generator
         $this->preprocess_fields_on_save();
 
+        // create activity if enabled
+        if ($this->isActivityEnabled()) {
+            $activity = new ActivityStream();
+            $isUpdate ? $activity->addUpdate($this) : $activity->addCreate($this);
+        }
+                
         //construct the SQL to create the audit record if auditing is enabled.
         $dataChanges=array();
         if ($this->is_AuditEnabled()) {
@@ -5886,22 +5933,6 @@ class SugarBean
                 return ACLController::checkAccess($this->module_dir,'export', $is_owner, $this->acltype);
             case 'import':
                 return ACLController::checkAccess($this->module_dir,'import', true, $this->acltype);
-//BEGIN SUGARCRM flav=dce ONLY
-            case 'upgrade':
-                return ACLController::checkAccess($this->module_dir, 'upgrade', true, 'DCE');
-            case 'archive':
-                return ACLController::checkAccess($this->module_dir, 'archive', true, 'DCE');
-            case 'clone':
-                return ACLController::checkAccess($this->module_dir, 'clone', true, 'DCE');
-            case 'convert':
-                return ACLController::checkAccess($this->module_dir, 'convert', true, 'DCE');
-            case 'deploy':
-                return ACLController::checkAccess($this->module_dir, 'deploy', true, 'DCE');
-            case 'recover':
-                return ACLController::checkAccess($this->module_dir, 'recover', true, 'DCE');
-            case 'support_user':
-                return ACLController::checkAccess($this->module_dir, 'support_user', true, 'DCE');
-//END SUGARCRM flav=dce ONLY
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;

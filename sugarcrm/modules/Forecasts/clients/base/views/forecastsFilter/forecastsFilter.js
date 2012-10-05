@@ -53,10 +53,9 @@
      */
     _renderField: function(field) {
         if (field.name == 'category') {
-            var showBuckets = app.config.show_buckets == 1;
-            field.def.options = showBuckets ? (app.config.buckets_dom || 'commit_stage_dom') : 'forecasts_filters_category';
-            field.def.value = showBuckets ? '100' : '1'; // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            field.def.multi = showBuckets;
+            var categorySetting = this.context.forecasts.config.get('forecast_categories');
+            field.def.options = this.context.forecasts.config.get('buckets_dom');
+            field.def.multi = (categorySetting == 'show_binary')?false:true;
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);

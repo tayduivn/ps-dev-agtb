@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -26,6 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
+
 
 /**
  * SugarTestTimePeriodUtilities.php
@@ -58,9 +58,9 @@ class SugarTestTimePeriodUtilities
         if($month < 4)
         {
             $month = 1;
-        } else if ($month < 8) {
+        } else if ($month < 7) {
             $month = 4;
-        } else if ($month < 11) {
+        } else if ($month < 10) {
             $month = 7;
         } else {
             $month = 10;
@@ -88,6 +88,56 @@ class SugarTestTimePeriodUtilities
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;
+    }
+
+    /*
+     * magic tardis function
+     */
+    public static function createITimePeriod ($time_period_type, $is_fiscal=false){
+
+        global $timedate;
+        $timedate = TimeDate::getInstance();
+        $time = mt_rand();
+        $name = 'Sugar'.$time_period_type.'TimePeriod' . $time;
+        $start_date = self::getRandDate();
+        $timeperiod = BeanFactory::newBean($time_period_type."TimePeriods");
+        $timeperiod->is_fiscal = $is_fiscal;
+        $timeperiod->setStartDate($timedate->asDbDate($start_date));
+
+        $timeperiod->name = $name;
+        $timeperiod->is_leaf = 0;
+        $timeperiod->save();
+        self::$_createdTimePeriods[] = $timeperiod;
+        return $timeperiod;
+    }
+
+    protected static function getRandDate() {
+        global $timedate;
+        $timedate = TimeDate::getInstance();
+        $rand_date = $timedate->getNow();
+        $month = $timedate->getNow()->format('n');
+        if($month < 4)
+        {
+            $month = 1;
+        } else if ($month < 8) {
+            $month = 4;
+        } else if ($month < 11) {
+            $month = 7;
+        } else {
+            $month = 10;
+        }
+
+
+        $year = $timedate->getNow()->format('Y');
+        $rand_date->setDate($year, $month, 1);
+        return $rand_date;
+    }
+
+    public static function addTimePeriod($timeperiod=NULL) {
+        if(is_null($timeperiod)) {
+            return;
+        }
+        self::$_createdTimePeriods[] = $timeperiod;
     }
 
     /**

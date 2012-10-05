@@ -26,6 +26,15 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestTestPortalBase extends RestTestBase {
+
+    protected $accounts = array();
+    protected $contacts = array();
+    protected $opps = array();
+    protected $cases = array();
+    protected $bugs = array();
+    protected $notes = array();
+    protected $kbdocs = array();
+
     public function setUp()
     {
         global $db;
@@ -52,15 +61,6 @@ class RestTestPortalBase extends RestTestBase {
         // A little bit destructive, but necessary.
         $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
-        $GLOBALS['app_list_strings'] = return_app_list_strings_language('en_us');
-        $this->accounts = array();
-        $this->contacts = array();
-        $this->opps = array();
-        $this->cases = array();
-        $this->bugs = array();
-        $this->notes = array();
-        $this->kbdocs = array();
-        
         // Create the portal contact
         $this->contact = BeanFactory::newBean('Contacts');
         $this->contact->id = "UNIT-TEST-portalContact";
@@ -73,6 +73,8 @@ class RestTestPortalBase extends RestTestBase {
         $this->contact->portal_password = User::getPasswordHash("unittest");
         $this->contact->save();
         
+        $this->portalGuy = $this->contact;
+
         // Adding it to the contacts array makes sure it gets deleted when done
         $this->contacts[] = $this->contact;
         $GLOBALS['db']->commit();

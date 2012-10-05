@@ -25,17 +25,6 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Forecasts']['base']['view']['forecastsConfigGeneral'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_GENERAL',
-            'fields' => array(
-                array(
-                    'name' => 'show_print_button',
-                    'type' => 'bool',
-                    'label' => 'LBL_FORECASTS_CONFIG_SHOW_PRINT_BUTTON',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'edit',
-                ),
-            ),
             'buttons' => array(
                 array(
                     'name' => 'ok_button',

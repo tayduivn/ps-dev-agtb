@@ -56,7 +56,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                 ),
 
                 array(
-                    'name' => 'amount',
+                    'name' => 'likely_case',
                     'label' => 'LBL_LIKELY_CASE',
                     'type' => 'currency',
                     'default' => true,
@@ -72,6 +72,15 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'default' => true,
                     'enabled' => true,
                     'clickToEdit' => true,
+                    'convertToBase'=> true,
+                ),
+
+                array(
+                    'name' => 'worst_case',
+                    'type' => 'currency',
+                    'label' => 'LBL_WORST_CASE',
+                    'default' => true,
+                    'enabled' => true,
                     'convertToBase'=> true,
                 ),
             ),

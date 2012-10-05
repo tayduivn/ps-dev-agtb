@@ -37,7 +37,6 @@
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                this.model.isNotEmpty = true;
                 this.render();
             }, this);
         }

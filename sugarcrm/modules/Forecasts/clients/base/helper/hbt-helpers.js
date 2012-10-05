@@ -81,11 +81,16 @@
      *
      */
     Handlebars.registerHelper("expected_opportunity_column", function(tag) {
+    	
         if(this.name == 'expected_commit_stage')
         {
-           return tag == 'start' ? '<td><div style="font-weight: normal; width: 100%; text-align: center;">' : '</div></td>';
+        	var center = "";
+        	if(this.type == "bool"){
+        		center = "text-align:center;";
+        	}
+        	return tag == 'start' ? '<td><div style="font-weight: normal; width: 100%;' + center + '">' : '</div></td>';
         } else if (this.name == 'expected_amount') {
-           return tag == 'start' ? ('<th colspan="4" style="text-align: right;"><i>' + app.lang.get('LBL_EXPECTED_OPPORTUNITIES', 'Forecasts') + '</i></th><th>') : '</th>';
+        	return tag == 'start' ? ('<th colspan="4" style="text-align: right;"><i>' + app.lang.get('LBL_EXPECTED_OPPORTUNITIES', 'Forecasts') + '</i></th><th>') : '</th>';
         }
         return tag == 'start' ? '<th>' : '</th>';
     });

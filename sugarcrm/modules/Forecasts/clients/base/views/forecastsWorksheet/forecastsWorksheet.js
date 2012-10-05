@@ -17,22 +17,16 @@
     isEditableWorksheet:false,
     _collection:{},
 
-
     /**
-     * This function handles updating the totals calculation and calling the render function.  It takes the model entry
-     * that was updated by the toggle event and calls the Backbone save function on the model to invoke the REST APIs
-     * to handle persisting the changes
+     * Contains a list of column names from metadata and maps them to correct config param
+     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
      *
-     * @param model Backbone model entry that was affected by the toggle event
+     * @property _tableColumnsConfigKeyMap
      */
-    toggleIncludeInForecast:function(model)
-    {
-        var self = this;
-        self._collection.url = self.url;
-        model.save(null, { success:_.bind(function() {
-        	this.aaSorting = this.gTable.fnSettings()["aaSorting"];
-        	this.render(); 
-        }, this)});
+    _tableColumnsConfigKeyMap: {
+        'amount': 'show_worksheet_likely',
+        'best_case': 'show_worksheet_best',
+        'worst_case': 'show_worksheet_worst',
     },
 
     /**
@@ -42,9 +36,9 @@
      * @param {Object} options
      */
     initialize:function (options) {
-
+    	
         var self = this;
-
+        
         this.viewModule = app.viewModule;
 
         //set expandable behavior to false by default
@@ -94,16 +88,7 @@
         }
 
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        /*
-        var params = '';
-        _.each(args, function (value, key) {
-            params += '&' + key + '=' + encodeURIComponent(value);
-        });
-
-        if(params)
-        {
-            url += '?' + params.substr(1);
-        }*/
+        
         return url;
     },
 
@@ -114,11 +99,24 @@
      * @private
      */
     _setUpCommitStage: function (field) {
-        field._save = function(event, input) {
-            this.model.set('commit_stage', input.selected);
-            this.view.context.set('selectedToggle', field);
-        };
-        field.events = _.extend({"change select": "_save"}, field.events);
+    	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
+    	var self = this;
+    	    	
+    	//show_binary, show_buckets, show_n_buckets
+    	if(forecastCategories == "show_binary"){
+            field.type = "bool";
+    		field.format = function(value){
+    			return value == "include";
+    		};
+    		field.unformat = function(value){
+    			return this.$el.find(".checkbox").prop('checked') ? "include" : "exclude";
+    		};
+    	}
+    	else{
+    		field.type = "enum";
+    		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+    	}  	
+    	
         return field;
     },
 
@@ -131,22 +129,17 @@
      * @protected
      */
     _renderField: function(field) {
-
         if(field.name == "commit_stage")
         {
-            //Set the field.def.options value based on app.config.buckets_dom (if set)
-            field.def.options = app.config.buckets_dom || 'commit_stage_dom';
-            if(this.isEditableWorksheet)
+            //Set the field.def.options value based on buckets_dom (if set)
+            field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
+            field = this._setUpCommitStage(field);
+            if(!this.isEditableWorksheet)
             {
-               field = this._setUpCommitStage(field);
+                field.view = 'detail';
             }
         }
-
-        /*
-        if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            field = this._setUpCommitStage(field);
-        }
-        */
+        
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -154,7 +147,7 @@
         }
 
         if (this.isEditableWorksheet === true && field.name == "commit_stage") {
-            new app.view.BucketGridEnum(field, this);
+            new app.view.BucketGridEnum(field, this, "ForecastWorksheets");
         }
     },
 
@@ -162,14 +155,7 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
-
-            this._collection.on("change", function() {
-                _.each(this._collection.models, function(element, index){
-                    if(element.hasChanged("commit_stage")) {
-                        this.toggleIncludeInForecast(element);
-                    }
-                }, this);
-            }, this);
+            
         }
 
         // listening for updates to context for selectedUser:change
@@ -189,6 +175,9 @@
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
             }, this);
+            this.context.forecasts.on("change:expectedOpportunities", function() {
+            	this.calculateTotals();
+            }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		var model = this.context.forecasts.worksheet;
@@ -197,13 +186,78 @@
             		this.context.forecasts.set({reloadWorksheetFlag: false});
             	}
             }, this);
+
+            this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['amount'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_best', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['best_case'], value, self);
+                }
+            });
+
+            this.context.forecasts.config.on('change:show_worksheet_worst', function(context, value) {
+                // only trigger if this component is rendered
+                if(!_.isEmpty(self.el.innerHTML)) {
+                    self.setColumnVisibility(['worst_case'], value, self);
+                }
+            });
+
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-            	worksheet.safeFetch();
+                if(worksheet._collection.isDirty){
+                	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
+                }            	
             });
         }
     },
-    
+
+    /**
+     * Sets the visibility of a column or columns if array is passed in
+     *
+     * @param cols {Array} the sName of the columns to change
+     * @param value {*} int or Boolean, 1/true or 0/false to show the column
+     * @param ctx {Object} the context of this view to have access to the checkForColumnsSetVisibility function
+     */
+    setColumnVisibility: function(cols, value, ctx) {
+        var aoColumns = ctx.gTable.fnSettings().aoColumns;
+
+        for(var i in cols) {
+            var columnName = cols[i];
+            for(var k in aoColumns) {
+                if(aoColumns[k].sName == columnName)  {
+                    this.gTable.fnSetColumnVis(k, value == 1);
+                    break;
+                }
+            }
+        }
+    },
+
+    /**
+     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     *
+     * @param colKey {String} the column sName to check in the keymap
+     * @return {*} returns null if not found in the keymap, returns true/false if it did find it
+     */
+    checkConfigForColumnVisibility: function(colKey) {
+        var returnValue = null;
+        // Check and see if our keymap has the column
+        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
+            // if so get the value from config
+            returnValue = this.context.forecasts.config.get(this._tableColumnsConfigKeyMap[colKey]);
+        }
+
+        // if there was no value in the keymap, returnValue is null,
+        // in which case returnValue should be set to true because it doesn't correspond to a config setting
+        // so it should be shown
+        return _.isNull(returnValue) ? true : (returnValue == 1);
+    },
+
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
@@ -247,8 +301,7 @@
 
         _.each(fields, function(field) {
             if (field.name == "commit_stage") {
-                //field.enabled = (app.config.show_buckets == 1);
-                field.view = self.isEditableWorksheet ? 'edit' : 'default';
+                field.view = self.isEditableWorksheet ? self.name : 'detail';
             }
         });
 
@@ -279,13 +332,38 @@
         var columnKeys = {};
 
         _.each(fields, function(field, key){
-            var name = field.name;
-            var fieldDef = { "sName": name, "aTargets": [ key ] };
-            if(typeof(field.type) != "undefined" && field.type == "bool"){
-            	fieldDef["sSortDataType"] = "dom-checkbox";
+            if(field.enabled)
+            {
+                var name = field.name;
+
+                var fieldDef = {
+                    "sName": name,
+                    "aTargets": [ key ],
+                    "bVisible" : self.checkConfigForColumnVisibility(field.name)
+                };
+
+                //Apply sorting for the worksheet
+                if(typeof(field.type) != "undefined")
+                {
+                    switch(field.type)
+                    {
+                        case "enum":
+                        case "bool":
+                            fieldDef["sSortDataType"] = "dom-checkbox";
+                            fieldDef["sType"] = "numeric";
+                            break;
+
+                        case "int":
+                        case "currency":
+                            fieldDef["sSortDataType"] = "dom-number";
+                            fieldDef["sType"] = "numeric";
+                            break;
+                    }
+                }
+
+                columnDefs.push(fieldDef);
+                columnKeys[name] = key;
             }
-            columnDefs.push(fieldDef);
-            columnKeys[name] = key;
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
@@ -342,7 +420,6 @@
 
         return this;
     },
-
 
     /**
      * Creates the "included totals" and "overall totals" subviews for the worksheet
@@ -432,8 +509,10 @@
         var self = this;
         var includedAmount = 0;
         var includedBest = 0;
+        var includedWorst = 0;
         var overallAmount = 0;
         var overallBest = 0;
+        var overallWorst = 0;
         var includedCount = 0;
         var lostCount = 0;
         var lostAmount = 0;
@@ -445,6 +524,7 @@
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
                 'best_case' : includedBest,
+                'worst_case' : includedWorst,
                 'timeperiod_id' : self.timePeriod,
                 'lost_count' : lostCount,
                 'lost_amount' : lostAmount,
@@ -459,19 +539,21 @@
         }
 
         //Get the excluded_sales_stage property.  Default to empty array if not set
-        app.config.sales_stage_won = app.config.sales_stage_won || [];
-        app.config.sales_stage_lost = app.config.sales_stage_lost || [];
+        var sales_stage_won_setting = this.context.forecasts.config.get('sales_stage_won') || [];
+        var sales_stage_lost_setting = this.context.forecasts.config.get('sales_stage_lost') || [];
 
         _.each(self._collection.models, function (model) {
 
-            var won = app.config.sales_stage_won.indexOf(model.get('sales_stage')) !== -1;
-            var lost = app.config.sales_stage_lost.indexOf(model.get('sales_stage')) !== -1;
-            var amount = parseFloat(model.get('amount'));
+            var won = _.include(sales_stage_won_setting, model.get('sales_stage'));
+            var lost = _.include(sales_stage_lost_setting, model.get('sales_stage'));
+            var amount = parseFloat(model.get('likely_case'));
             var commit_stage = model.get('commit_stage');
             var best = parseFloat(model.get('best_case'));
+            var worst = parseFloat(model.get('worst_case'));
             var base_rate = parseFloat(model.get('base_rate'));
             var amount_base = amount * base_rate;
             var best_base = best * base_rate;
+            var worst_base = worst * base_rate;
 
             if(won)
             {
@@ -485,11 +567,13 @@
             if(commit_stage === 'include') {
                 includedAmount += amount_base;
                 includedBest += best_base;
+                includedWorst += worst_base;
                 includedCount++;
             }
 
             overallAmount += amount_base;
             overallBest += best_base;
+            overallWorst += worst_base;
         });
 
         //Now see if we need to add the expected opportunity amounts
@@ -500,24 +584,30 @@
                {
                    var amount = model.get('expected_amount');
                    var best = model.get('expected_best_case');
+                   var worst = model.get('expected_worst_case');
                    var base_rate = parseFloat(model.get('base_rate'));
 
+
                    //Check for null condition and, if so, set to 0
-                    amount = amount != null ? parseFloat(amount) : 0;
-                    best = best != null ? parseFloat(best) : 0;
+                   amount = amount != null ? parseFloat(amount) : 0;
+                   best = best != null ? parseFloat(best) : 0;
+                   worst = worst != null ? parseFloat(worst) : 0;
 
                    var amount_base = amount * base_rate;
                    var best_base = best * base_rate;
+                   var worst_base = worst * base_rate;
 
                    //If commit_stage is include then we count the forecast schedule model
-                   if(model.get('commit_stage') === 'include')
+                   if(model.get('expected_commit_stage') == 'include')
                    {
                         includedAmount += amount_base;
                         includedBest += best_base;
+                        includedWorst += worst_base;
                    }
 
                    overallAmount += amount_base;
                    overallBest += best_base;
+                   overallWorst += worst_base;
                }
            });
         }
@@ -525,18 +615,21 @@
         self.includedModel.set({
             includedAmount : includedAmount,
             includedBest : includedBest,
+            includedWorst : includedWorst,
             includedCount : includedCount
         });
         self.includedModel.change();
 
         self.overallModel.set({
             overallAmount : overallAmount,
-            overallBest : overallBest
+            overallBest : overallBest,
+            overallWorst : overallWorst
         });
         self.overallModel.change();
 
         var totals = {
             'best_case' : includedBest,
+            'worst_case' : includedWorst,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,
             'lost_amount' : lostAmount,
@@ -573,16 +666,17 @@
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
         var self = this;
-        if(!this.showMe()){
-        	return false;
-        }
-
-        if (app.config.show_buckets == 1) { // buckets
+        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') { // buckets
 
              $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
              $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
+
+                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
+                            return true;
+                        }
+
                         var editable = self.isMyWorksheet();
                         var returnVal = null;
                         //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
@@ -593,7 +687,7 @@
                             returnVal = selectVal;
                         } else if(!editable) {
                             //Get the array for the bucket stages
-                            var buckets_dom = app.lang.getAppListStrings(app.config.buckets_dom || 'commit_stage_dom');
+                            var buckets_dom = app.lang.getAppListStrings(this.context.forecasts.config.get('buckets_dom') || 'commit_stage_dom');
                             _.each(params, function(filter)
                             {
                                 if(buckets_dom[filter] == selectVal)
@@ -609,10 +703,14 @@
                 );
         } else {  // not buckets
             // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(_.first(params) == "1") {//committed
+            if(_.first(params) == "include") {//committed
                 $.fn.dataTableExt.afnFiltering.push (
                     function(oSettings, aData, iDataIndex)
                     {
+                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
+                            return true;
+                        }
+
                         var val = aData[0];
                         var jVal = $(val);
 

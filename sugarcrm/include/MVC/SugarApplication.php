@@ -104,7 +104,6 @@ class SugarApplication
             }
 
             header('Location: ' . $this->getUnauthenticatedHomeUrl(true));
-
             exit ();
         }
 
@@ -774,25 +773,21 @@ class SugarApplication
             'wlsave', 'quicksave'
         );
 
-    /**
-     * Modules that modify data and thus require referrers for all actions
-     */
-    private $modifyModules
-        = array(
-            'Administration' => true,
-            'UpgradeWizard' => true,
-            'Configurator' => true,
-            'Studio' => true,
-            'ModuleBuilder' => true,
-            'Emails' => true,
-            'DCETemplates' => true,
-            'DCEInstances' => true,
-            'DCEActions' => true,
-            'Trackers' => array('trackersettings'),
-            'SugarFavorites' => array('tag'),
-            'Import' => array('last', 'undo'),
-            'Users' => array('changepassword', "generatepassword"),
-        );
+	/**
+	 * Modules that modify data and thus require referrers for all actions
+	 */
+	private $modifyModules = array(
+		'Administration' => true,
+		'UpgradeWizard' => true,
+		'Configurator' => true,
+		'Studio' => true,
+		'ModuleBuilder' => true,
+		'Emails' => true,
+	    'Trackers' => array('trackersettings'),
+	    'SugarFavorites' => array('tag'),
+	    'Import' => array('last', 'undo'),
+	    'Users' => array('changepassword', "generatepassword"),
+	);
 
     protected function isModifyAction()
     {

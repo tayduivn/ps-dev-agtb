@@ -72,9 +72,17 @@
                   if(settings.field.type !== 'currency') {
                       return value;
                   }
+
+                  // run a safety check here.  we can't always be assurred that the model contains a value
+                  var fieldValue = settings.field.model.get(settings.field.name);
+                  if(fieldValue == null)
+                  {
+                     return 0;
+                  }
+
                   // format for currency editing, mimic excel
                   return app.utils.formatNumber(
-                      settings.field.model.get(settings.field.name),
+                      fieldValue,
                       app.user.get('decimal_precision'),
                       app.user.get('decimal_precision'),
                       '',
@@ -119,8 +127,7 @@
                     	
                     	$(this).parent().append(invalid);                  	
                     	return value;
-                    }
-                    try{
+                    } try {
                         var orig = settings.field.holder;
                         // if the user entered a +/- percentage, re-calculate the value based on the percentage
                         if(_.include(settings.numberTypes, settings.field.type)) {
@@ -128,7 +135,7 @@
                             if(parts)
                             {
                                 // use original number to apply calculations
-                                orig = app.currency.unformatAmountLocale(orig);
+                                orig = settings.field.model.get(settings.field.name);
                                 value = eval(orig + parts[1] + "(" + parts[2] / 100 + "*" + orig +")");
                             }
                         }

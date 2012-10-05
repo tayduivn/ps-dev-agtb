@@ -1,0 +1,27 @@
+<form name='{{name}}'>
+    <div class="container welcome subhead">
+        <div class="row">
+            <div class="span4 offset4 thumbnail">
+                <div class="modal-header tcenter">
+                    <h2 class="brand" {{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
+                </div>
+                {{#each meta.panels}}
+                <div class="modal-body tcenter">
+                    {{#each fields}}
+                    <div>{{field ../../this ../../model}}</div>
+                    {{/each}}
+                    <p class="help-block">
+                        <a rel="popoverTop" data-content="{{str "LBL_PORTAL_LOGIN_FORGOTPASSWORD"}}"
+                           data-original-title="{{str "LBL_PORTAL_LOGIN_FORGOTPASSWORD_TITLE"}}">{{str "LNK_PORTAL_LOGIN_FORGOTPASSWORD"}}</a>
+                    </p>
+                </div>
+                {{/each}}
+                <div class="modal-footer">
+                    {{#each meta.buttons}}
+                    {{field ../this ../model}}
+                    {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

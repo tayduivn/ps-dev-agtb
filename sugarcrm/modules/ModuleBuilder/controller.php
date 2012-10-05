@@ -854,9 +854,14 @@ class ModuleBuilderController extends SugarController
 
     function action_searchViewSave()
     {
-        $packageName = (isset ($_REQUEST ['view_package'])) ? $_REQUEST ['view_package'] : null;
+        // Bug56789 - Without a client, the wrong viewdef file was getting picked up
         require_once 'modules/ModuleBuilder/parsers/views/SearchViewMetaDataParser.php';
-        $parser = new SearchViewMetaDataParser ($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName);
+        require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+        $packageName = (isset ($_REQUEST ['view_package'])) ? $_REQUEST ['view_package'] : null;
+        
+        // Bug 56789 - Set the client from the view to ensure the proper viewdef file
+        $client = MetaDataFiles::getClientByView($_REQUEST['view']);
+        $parser = new SearchViewMetaDataParser($_REQUEST ['view'], $_REQUEST ['view_module'], $packageName, $client);
         $parser->handleSave();
 
 
