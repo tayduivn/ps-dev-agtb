@@ -1,7 +1,5 @@
 <?php
 
-require_once('clients/summer/SideBarLayout.php');
-
 $layout = new SideBarLayout();
 $layout->push('main',array('view'=>'activitystream'));
 $layout->push('side',array('view'=>'agenda'));
