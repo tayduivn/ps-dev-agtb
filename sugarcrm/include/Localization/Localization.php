@@ -151,9 +151,10 @@ class Localization {
 	 * wrapper for whatever currency system we implement
 	 */
 	function loadCurrencies() {
-		// doing it dirty here
+		// trying to use DBManagerFactory here fails in install.php,
+        // so leaving this as global $db.
+        //$db = DBManagerFactory::getInstance();
         global $db;
-		//$db = DBManagerFactory::getInstance();
 		global $sugar_config;
 
         if(empty($db)) {
