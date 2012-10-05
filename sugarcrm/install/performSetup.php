@@ -313,11 +313,11 @@ echo "<br>";
 
   //END SUGARCRM lic=sub ONLY
 
-    //BEGIN SUGARCRM flav=PRO ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     //Intall forecasts configuration
     require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::setupForecastSettings();
-    //END SUGARCRM flav=PRO ONLY
+    //END SUGARCRM flav=pro ONLY
 
     installerHook('pre_createUsers');
     if ($new_tables) {
