@@ -27,7 +27,7 @@ require_once 'tests/rest/RestTestPortalBase.php';
 class RestMetadataModuleListPortalTest extends RestTestPortalBase {
     public $createdStudioFile = false;
     public $unitTestFiles = array();
-    public $oppTestPath ='modules/Opportunities/clients/portal/views/list/list.php';
+    public $oppTestPath ='modules/Accounts/clients/portal/views/list/list.php';
 
     public function setUp()
     {
@@ -36,8 +36,8 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         SugarTestHelper::setup('mod_strings', array('ModuleBuilder'));
         
         $this->unitTestFiles[] = $this->oppTestPath;
-        if (!file_exists('modules/Opportunities/metadata/studio.php')) {
-            sugar_file_put_contents('modules/Opportunities/metadata/studio.php', '<?php' . "\n\$time = time();");
+        if (!file_exists('modules/Accounts/metadata/studio.php')) {
+            sugar_file_put_contents('modules/Accounts/metadata/studio.php', '<?php' . "\n\$time = time();");
             $this->createdStudioFile = true;
         }
 
@@ -45,8 +45,8 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
     
     public function tearDown()
     {
-        if ($this->createdStudioFile && file_exists('modules/Opportunities/metadata/studio.php')) {
-            unlink('modules/Opportunities/metadata/studio.php');
+        if ($this->createdStudioFile && file_exists('modules/Accounts/metadata/studio.php')) {
+            unlink('modules/Accounts/metadata/studio.php');
         }
 
         foreach($this->unitTestFiles as $unitTestFile ) {
@@ -140,11 +140,11 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         if (is_dir($dir = dirname($this->oppTestPath)) === false) {
             sugar_mkdir($dir, null, true);
         }
-        sugar_file_put_contents($this->oppTestPath, "<?php\n\$viewdefs['Opportunities']['portal']['view']['list'] = array('test' => 'Testing');");
+        sugar_file_put_contents($this->oppTestPath, "<?php\n\$viewdefs['Accounts']['portal']['view']['list'] = array('test' => 'Testing');");
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
-        $this->assertTrue(in_array('Opportunities',$restReply['reply']['module_list']),'The new Opportunities module did not appear in the portal list');
+        $this->assertTrue(in_array('Accounts',$restReply['reply']['module_list']),'The new Accounts module did not appear in the portal list');
         
     }
 

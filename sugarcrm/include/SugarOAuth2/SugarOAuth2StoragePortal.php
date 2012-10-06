@@ -268,7 +268,7 @@ class SugarOAuth2StoragePortal extends SugarOAuth2StoragePlatform {
             if(!$sessionManager->canAddSession()) {
                 //not able to add another session right now
                 $GLOBALS['log']->error("Unable to add new session");
-                throw new SugarApiExceptionNeedLogin('Too many concurrent sessions',0,'too_many_concurrent_connections');
+                throw new SugarApiExceptionNeedLogin('too_many_concurrent_connections',array('Too many concurrent sessions'));
             }
             //END SUGARCRM flav=pro ONLY
             

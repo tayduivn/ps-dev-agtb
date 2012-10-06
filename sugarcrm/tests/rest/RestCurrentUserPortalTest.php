@@ -85,7 +85,7 @@ class RestCurrentUserPortalTest extends RestTestPortalBase {
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'fubar', 'old_password' => 'unittest')),
             'PUT');
-        print_r($reply);
+        
         $this->assertEquals($reply['reply']['valid'], true, "Part One");
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'newernew', 'old_password' => 'fubar')),

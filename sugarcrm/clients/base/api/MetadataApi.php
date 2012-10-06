@@ -147,13 +147,6 @@ class MetadataApi extends SugarApi {
         //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
             $data = $this->loadMetadata($hashKey);
-            
-            // Bug 56911 - Notes metadata is needed for portal
-            // Remove forcefully added Notes module to portal requests since we only
-            // need the metadata but do NOT need it in the module list
-            if (isset($args['platform']) && $args['platform'] == 'portal') {
-                unset($data['module_list']['Notes']);
-            }
         }
 
         //If we had to generate a new hash, create the etag with the new hash
@@ -334,20 +327,7 @@ class MetadataApi extends SugarApi {
         
         // Handle enforcement of acls for clients that do this (portal)
         $data['acl'] = $this->enforceModuleACLs($data['acl']);
-        
-        // remove the disabled modules from the module list
-        require_once("modules/MySettings/TabController.php");
-        $controller = new TabController();
-        $tabs = $controller->get_tabs_system();
-
-        if (isset($tabs[1])) {
-            foreach($data['module_list'] as $moduleKey => $moduleName){
-                if (in_array($moduleName,$tabs[1])) {
-                    unset($data['module_list'][$moduleKey]);
-                }
-            }
-        }
-
+        $data['module_list'] = $this->cleanUpModuleList($data['module_list']);
         $data['fields']  = $mm->getSugarClientFiles('field');
         $data['views']   = $mm->getSugarClientFiles('view');
         $data['layouts'] = $mm->getSugarClientFiles('layout');
@@ -516,5 +496,28 @@ class MetadataApi extends SugarApi {
 
         $moduleList['_hash'] = md5(serialize($moduleList));
         return $moduleList;
+    }
+
+    /**
+     * Cleans up the module list for any modules that should not be on it
+     * 
+     * @param array $module_list The module list array
+     * @return array
+     */
+    protected function cleanUpModuleList($module_list) {
+        // remove the disabled modules from the module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $tabs = $controller->get_tabs_system();
+
+        if (isset($tabs[1])) {
+            foreach($module_list as $moduleKey => $moduleName){
+                if (in_array($moduleName,$tabs[1])) {
+                    unset($module_list[$moduleKey]);
+                }
+            }
+        }
+        
+        return $module_list;
     }
 }

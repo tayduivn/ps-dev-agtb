@@ -171,7 +171,7 @@ class CurrentUserApi extends SugarApi {
      * @param string $passwordToVerify
      * @return User
      */
-    private function getUserIfPassword($passwordToVerify) {
+    protected function getUserIfPassword($passwordToVerify) {
         $user = BeanFactory::getBean('Users', $GLOBALS['current_user']->id); 
         $currentPassword = $user->user_hash;
         if (User::checkPassword($passwordToVerify, $currentPassword)) {
