@@ -291,16 +291,15 @@ describe("The forecasts worksheet", function(){
     describe("Forecasts worksheet bindings ", function(){
     	beforeEach(function(){
     		view.context = {
-    				forecasts:{
-    					on: function(event, fcn){},
-    					worksheet:{
-    						on: function(event, fcn){}
-    					},
-    					config:{
-        					on: function(event, fcn){}
-        				} 
-    				},
-    				   				
+                forecasts:{
+                    on: function(event, fcn){},
+                    worksheet:{
+                        on: function(event, fcn){}
+                    },
+                    config:{
+                        on: function(event, fcn){}
+                    }
+                }
     		};
     		view._collection.on = function(){};
     		
