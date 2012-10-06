@@ -25,7 +25,13 @@ describe("The forecasts manager worksheet", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheetManager", "forecastsWorksheetManager", "js", function(d) { return eval(d); });
+        view.context = {};
+        view.context.forecasts = {};
+        view.context.forecasts.config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
         var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
     });
 
@@ -121,6 +127,14 @@ describe("The forecasts manager worksheet", function(){
     });
 
     describe("Forecast Manager Worksheet Config functions tests", function() {
+        beforeEach(function() {
+            // Add a faux layout emulating
+            // modules/Forecasts/clients/base/layouts/forecasts/forecasts.js
+            view.layout = {};
+            view.layout.tableColumnsConfigKeyMapManager = {
+                'best_case':'show_worksheet_best'
+            };
+        });
         it("should test checkConfigForColumnVisibility passing in Null", function() {
             var testVal = null;
             expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
