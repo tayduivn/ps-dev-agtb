@@ -277,20 +277,22 @@ abstract class CurrencyRateUpdateAbstract
      */
 
     /**
+     * @access public
      * @param $table
      * @return array
      */
-    protected function getRateColumnDefinitions($table)
+    public function getRateColumnDefinitions($table)
     {
         return $this->rateColumnDefinitions[$table];
     }
 
     /**
+     * @access public
      * @param $table
      * @param $column
      * @return bool
      */
-    protected function addRateColumnDefinition($table, $column)
+    public function addRateColumnDefinition($table, $column)
     {
         if(!isset($this->rateColumnDefinitions[$table])) {
             $this->rateColumnDefinitions[$table] = array();
@@ -303,12 +305,12 @@ abstract class CurrencyRateUpdateAbstract
     }
 
     /**
+     * @access public
      * @param $table
      * @param $column
      * @return bool
      */
-    /*
-    protected function removeRateColumnDefinition($table, $column)
+    public function removeRateColumnDefinition($table, $column)
     {
         if(!isset($this->rateColumnDefinitions[$table])) {
             $this->rateColumnDefinitions[$table] = array();
@@ -316,27 +318,28 @@ abstract class CurrencyRateUpdateAbstract
         if(!in_array($column, $this->rateColumnDefinitions[$table])) {
             return true;
         }
-        // remove element from array
-        array_filter($this->rateColumnDefinitions[$table], function($a) use($column) {
-            return $a !== $column;
-        });
+        // remove value
+        $this->rateColumnDefinitions[$table] = array_diff($this->rateColumnDefinitions[$table], array($column));
+        // reindex array
+        $this->rateColumnDefinitions[$table] = array_values($this->rateColumnDefinitions[$table]);
         return true;
     }
-    */
 
     /**
+     * @access public
      * @return bool
      */
-    protected function getExclude()
+    public function getExclude()
     {
         return $this->exclude;
     }
 
     /**
+     * @access public
      * @param $exclude
      * @return bool
      */
-    protected function setExclude($exclude)
+    public function setExclude($exclude)
     {
         if(!is_bool($exclude)) {
             return false;
@@ -345,21 +348,23 @@ abstract class CurrencyRateUpdateAbstract
     }
 
     /**
+     * @access public
      * @param $table
      * @return array
      */
-    protected function getUsDollarColumnDefinitions($table)
+    public function getUsDollarColumnDefinitions($table)
     {
         return $this->usDollarColumnDefinitions[$table];
     }
 
     /**
+     * @access public
      * @param $table
      * @param $amountColumn
      * @param $usDollarColumn
      * @return bool
      */
-    protected function addUsDollarColumnDefinition($table, $amountColumn, $usDollarColumn)
+    public function addUsDollarColumnDefinition($table, $amountColumn, $usDollarColumn)
     {
         if(!isset($this->usDollarColumnDefinitions[$table])) {
             $this->usDollarColumnDefinitions[$table] = array();
@@ -369,11 +374,12 @@ abstract class CurrencyRateUpdateAbstract
     }
 
     /**
+     * @access public
      * @param $table
      * @param $amountColumn
      * @return bool
      */
-    protected function removeUsDollarColumnDefinition($table, $amountColumn)
+    public function removeUsDollarColumnDefinition($table, $amountColumn)
     {
         if(!isset($this->usDollarColumnDefinitions[$table])) {
             return false;
