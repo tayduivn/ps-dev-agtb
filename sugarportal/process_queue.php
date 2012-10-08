@@ -95,6 +95,10 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
     $GLOBALS["log"]->debug("-----> Generating Mailer");
     $mailer = MailerFactory::getMailerForUser($current_user);
 
+    // set the subject of the email
+    $subject = empty($reporter->report_def["report_name"]) ? "Report" : $reporter->report_def["report_name"];
+    $mailer->setSubject($subject);
+
     // add the recipient...
 
     // first get all email addresses known for this recipient
@@ -107,9 +111,8 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
     // get the recipient name that accompanies the email address
     $recipientName = empty($user->first_name) ? $user->last_name : "{$user->first_name} {$user->last_name}";
 
-    $mail->AddAddress($recipientEmailAddress, $recipientName);
+    $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-    $mail->Subject  = empty($reporter->report_def["report_name"]) ? "Report" : $reporter->report_def["report_name"];
     $cr             = array("\r", "\n");
     $attachmentName = str_replace(" ", "_", str_replace($cr, "", $mail->Subject) . ".pdf");
 
