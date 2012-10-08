@@ -673,6 +673,9 @@ class MetaDataManager {
             $pb = new SugarPortalBrowser();
             $pb->loadModules();
             $moduleList = array_keys($pb->modules);
+            
+            // Bug 56911 - Notes metadata is needed for portal
+            $moduleList[] = "Notes";
         } else if ( $platform == 'mobile' ) {
             // replicate the essential part of the behavior of the private loadMapping() method in SugarController
             foreach ( array ( '','custom/') as $prefix) {

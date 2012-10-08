@@ -25,7 +25,13 @@ describe("The forecasts manager worksheet", function(){
 
     beforeEach(function() {
         app = SugarTest.app;
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsWorksheetManager", "forecastsWorksheetManager", "js", function(d) { return eval(d); });
+        view.context = {};
+        view.context.forecasts = {};
+        view.context.forecasts.config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
         var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
     });
 
@@ -121,6 +127,14 @@ describe("The forecasts manager worksheet", function(){
     });
 
     describe("Forecast Manager Worksheet Config functions tests", function() {
+        beforeEach(function() {
+            // Add a faux layout emulating
+            // modules/Forecasts/clients/base/layouts/forecasts/forecasts.js
+            view.layout = {};
+            view.layout.tableColumnsConfigKeyMapManager = {
+                'best_case':'show_worksheet_best'
+            };
+        });
         it("should test checkConfigForColumnVisibility passing in Null", function() {
             var testVal = null;
             expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
@@ -138,5 +152,100 @@ describe("The forecasts manager worksheet", function(){
             var testVal = 'abc9def!';
             expect(view.checkConfigForColumnVisibility(testVal)).toBe(true);
         });
+    });
+    
+    describe("Forecast Manager Worksheet _collection.fetch", function(){
+    	beforeEach(function(){    		  		
+    		view._collection.fetch = function(){};
+    	});
+    	 
+    	afterEach(function(){
+    	
+    	});
+    	
+    	it("should not have been called with safeFetch(false) ", function(){
+    		sinon.spy(view._collection, "fetch");
+    		view.safeFetch(false);
+    		expect(view._collection.fetch).not.toHaveBeenCalled();
+    	});
+    	
+    	it("should have been called with safeFetch(true) ", function(){
+    		sinon.spy(view._collection, "fetch");
+    		view.safeFetch();
+    		expect(view._collection.fetch).toHaveBeenCalled();
+    	});
+    });
+    
+    describe("Forecasts manager worksheet bindings ", function(){
+    	beforeEach(function(){
+    		view.context = {
+    				forecasts:{
+    					on: function(event, fcn){},
+    					worksheetmanager:{
+    						on: function(event, fcn){}
+    					},
+    					config:{
+        					on: function(event, fcn){}
+        				} 
+    				},
+    				   				
+    		};
+    		view._collection.on = function(){};
+    		
+    		sinon.spy(view._collection, "on");
+    		sinon.spy(view.context.forecasts, "on");
+    		sinon.spy(view.context.forecasts.worksheetmanager, "on");
+    		sinon.spy(view.context.forecasts.config, "on");
+    		view.bindDataChange();
+    	});
+    	
+    	afterEach(function(){
+    		view._collection.on.restore();
+    		view.context.forecasts.on.restore();
+    		view.context.forecasts.worksheetmanager.on.restore();
+    		view.context.forecasts.config.on.restore();
+    		delete view.context;
+    		view.context = {};
+    	});
+    	
+    	it("_collection.on should have been called with reset", function(){
+    		expect(view._collection.on).toHaveBeenCalledWith("reset");
+    	});
+    	
+    	it("forecasts.on should have been called with selectedUser", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedUser");
+    	});
+    	
+    	it("forecasts.on should have been called with selectedTimePeriod", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedTimePeriod");
+    	});
+    	
+    	it("forecasts.on should have been called with selectedCategory", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedCategory");
+    	});
+    	
+    	it("forecasts.worksheet.on should have been called with change", function(){
+    		expect(view.context.forecasts.worksheetmanager.on).toHaveBeenCalledWith("change");
+    	});
+    	
+    	it("forecasts.on should have been called with reloadWorksheetFlag", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:reloadWorksheetFlag");
+    	});
+    	
+    	it("forecasts.on should have been called with checkDirtyWorksheetFlag", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:checkDirtyWorksheetFlag");
+    	});
+    	
+    	it("forecasts.config.on should have been called with show_worksheet_likely", function(){
+    		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_likely");
+    	});
+    	
+    	it("forecasts.config.on should have been called with show_worksheet_best", function(){
+    		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_best");
+    	});
+    	
+    	it("forecasts.config.on should have been called with show_worksheet_worst", function(){
+    		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_worst");
+    	});
     });
 });

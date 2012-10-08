@@ -62,6 +62,14 @@ class RestMetadataModuleListTest extends RestTestBase {
         if (file_exists($this->oppTestPath)) {
             unlink($this->oppTestPath);
         }
+        // Set the tabs back to what they were
+        if ( isset($this->defaultTabs[0]) ) {
+            require_once('modules/MySettings/TabController.php');
+            $tabs = new TabController();
+
+            $tabs->set_system_tabs($this->defaultTabs[0]);
+            $GLOBALS['db']->commit();
+        }
         //END SUGARCRM flav=ent ONLY
         
         if ($this->createdStudioFile && file_exists('modules/Opportunities/metadata/studio.php')) {
@@ -78,7 +86,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         // Setup the tab controller here and get the default tabs for setting and resetting
         require_once('modules/MySettings/TabController.php');
         $tabs = new TabController();
-        $defaultTabs = $tabs->get_tabs_system();
+        $this->defaultTabs = $tabs->get_tabs_system();
         
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
@@ -107,6 +115,9 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         $tabs->set_system_tabs($newModuleList);
         $GLOBALS['db']->commit();
+        // Do this to load the tab list into cache
+        $moduleListFromSystem = $tabs->get_tabs_system();
+        $this->assertEquals(count($newModuleList),count($moduleListFromSystem[0]),"The get_tabs_system() is returning an incorrect number of modules, changing the tab list failed, it is: ".var_export($moduleListFromSystem[0],true));
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
@@ -127,6 +138,8 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         $tabs->set_system_tabs($newModuleList);
         $GLOBALS['db']->commit();
+        // Do this to load the tab list into cache
+        $tabs->get_tabs_system();
         // Now add an extra file and make sure it gets picked up
         if (is_dir($dir = dirname($this->oppTestPath)) === false) {
             sugar_mkdir($dir, null, true);
@@ -137,9 +150,6 @@ class RestMetadataModuleListTest extends RestTestBase {
 
         $this->assertTrue(in_array('Opportunities',$restReply['reply']['module_list']),'The new Opportunities module did not appear in the portal list');
         
-        // Set the tabs back to what they were
-        $tabs->set_system_tabs($defaultTabs[0]);
-        $GLOBALS['db']->commit();
     }
     //END SUGARCRM flav=ent ONLY
     
@@ -292,4 +302,17 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         return $data;
     }
+    //BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group rest
+     * @group Bug56911
+     */
+    public function testPortalMetadataModulesContainsNotes()
+    {
+        // Get the metadata for portal 
+        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
+        $this->assertArrayHasKey('modules', $restReply['reply'], "The modules index is missing from the response");
+        $this->assertArrayHasKey('Notes', $restReply['reply']['modules'], 'Notes was not returned in the modules metadata as expected');        
+    }
+    //END SUGARCRM flav=ent ONLY
 }

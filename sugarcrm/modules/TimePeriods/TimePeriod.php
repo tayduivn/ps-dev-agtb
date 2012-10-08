@@ -492,12 +492,9 @@ class TimePeriod extends SugarBean {
      *
      * @return mixed
      */
-    public function getLengthInDays() {
-        $timedate = TimeDate::getInstance();
-        $startDate = $timedate->fromDBDate($this->start_date);
-        $endDate = $timedate->fromDBDate($this->end_date);
-        $diff = $startDate->diff($endDate);
-        return $diff->days + 1;
+    public function getLengthInDays()
+    {
+        return ceil(($this->end_date_timestamp - $this->start_date_timestamp) / 86400);
     }
 }
 

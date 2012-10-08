@@ -29,8 +29,6 @@ if ( !defined('sugarEntry') || !sugarEntry ) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-require_once('include/SugarCurrency.php');
-
 // User is used to store Forecast information.
 class Forecast extends SugarBean
 {
@@ -279,9 +277,10 @@ class Forecast extends SugarBean
     /*
      * save forecast to database
      */
-    function save()
+    public function save($check_notify = false)
     {
-        require_once 'include/SugarCurrency.php';
+        // set the currency for the forecast to always be the base currency
+        // since the committed end point only sends the data as the base currency format
         if(empty($this->currency_id)) {
             // use user preferences for currency
             $currency = SugarCurrency::getUserLocaleCurrency();
@@ -291,7 +290,7 @@ class Forecast extends SugarBean
         }
         $this->base_rate = $currency->conversion_rate;
 
-        parent::save();
+        parent::save($check_notify);
     }
 }
 function getTimePeriodsDropDownForForecasts(){

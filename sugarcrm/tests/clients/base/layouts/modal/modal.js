@@ -64,7 +64,7 @@ describe("Base.Layout.Modal", function() {
         layout = new ModalLayout(options);
         expect(calledEventName).toEqual(definedTriggerName);
         expect(options.layout.on).toHaveBeenCalledOnce();
-        expect(options.layout.on.calledWith(definedTriggerName)).toBe(true);
+        expect(options.layout.on.calledWith(calledEventName)).toBe(true);
     });
 
     it("should delegate multiple trigger names for showevent", function(){
@@ -208,6 +208,7 @@ describe("Base.Layout.Modal", function() {
             };
         layout = new ModalLayout(options);
         layout.show({span: 4});
+
         expect(layout.$(".modal").hasClass("span4")).toBe(true);
 
         layout.show({span: 5});

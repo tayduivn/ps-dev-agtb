@@ -43,7 +43,8 @@ class SugarForecasting_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setup('mod_strings', array('Forecasts'));
+        SugarTestHelper::setUp('mod_strings', array('Forecasts'));
+        SugarTestHelper::setUp('current_user');
 
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
         self::$args['timeperiod_id'] = $timeperiod->id;

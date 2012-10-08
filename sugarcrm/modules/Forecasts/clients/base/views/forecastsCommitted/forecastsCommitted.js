@@ -205,7 +205,7 @@
             this.$el.find('div[id=history_log_results]').removeClass('hide');
             if(this.showMoreLog) {
                 this.$el.find('div[id=more_log_results]').removeClass('hide');
-                this.$el.find('div[id=more]').html('<p><span class=" icon-minus-sign">&nbsp;' + App.lang.get('LBL_LESS', 'Forecasts') + '</span></p><br />');
+                this.$el.find('div[id=more]').html('<p><span class=" icon-minus-sign">&nbsp;' + app.lang.get('LBL_LESS', 'Forecasts') + '</span></p><br />');
             }
         }
     },
@@ -374,22 +374,21 @@
             if(count == 0)
             {
                 previousModel = model;
-                var hb = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
+                var hb = Handlebars.compile(app.lang.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
                 var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
                 if (dateEntered == 'Invalid Date') {
                     dateEntered = previousModel.get('date_entered');
                 }
-                self.previousText = hb({'likely_case' : App.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'))});
+                self.previousText = hb({'likely_case' : app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'))});
                 self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
                 self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
             } else {
                 if(count == 1)
                 {
-                    self.previousText = Handlebars.compile(SUGAR.language.get('Forecasts', 'LBL_PREVIOUS_COMMIT'));
                     self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
                     self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
                     dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
-                    self.previousDateEntered = App.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
+                    self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
                 }
                 self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
                 previousModel = model;
@@ -443,6 +442,9 @@
             forecastData.best_case = self.totals.best_case;
             forecastData.likely_case = self.totals.amount;
         }
+
+        forecastData.currency_id = -99; //Always default to the base currency
+        forecastData.base_rate = 1; //Base rate is always 1
         forecastData.timeperiod_id = self.timePeriodId;
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;

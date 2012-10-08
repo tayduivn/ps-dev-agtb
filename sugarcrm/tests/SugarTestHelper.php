@@ -112,6 +112,7 @@ require_once 'SugarTestMergeUtilities.php';
 require_once 'SugarTestTaskUtilities.php';
 require_once 'SugarTestCurrencyUtilities.php';
 require_once 'SugarTestOpportunityUtilities.php';
+require_once 'SugarTestJobQueueUtilities.php';
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestForecastUtilities.php';
