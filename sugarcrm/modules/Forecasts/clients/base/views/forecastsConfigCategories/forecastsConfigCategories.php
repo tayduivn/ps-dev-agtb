@@ -44,7 +44,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
                     'options' => array(
                         'show_binary' => 'commit_stage_binary_dom',
                         'show_buckets' => 'commit_stage_dom',
+//BEGIN SUGARCRM flav=ent ONLY
                         'show_n_buckets' => 'commit_stage_extended_dom'
+//END SUGARCRM flav=ent ONLY
                     )
                 )
             )
