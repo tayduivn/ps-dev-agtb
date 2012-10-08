@@ -117,35 +117,14 @@ foreach ($reports_to_email as $schedule_info) {
     $GLOBALS['log']->debug('-----> Reporter Handling PDF output');
     $report_filename = template_handle_pdf($reporter, false);
 
-    $GLOBALS['log']->debug('-----> Generating SugarPHPMailer');
+    $GLOBALS['log']->debug('-----> Generating Mailer');
+    $mailer = MailerFactory::getMailerForUser($current_user);
+
     $mail = new SugarPHPMailer();
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
 
     $mail->AddAddress($recipientEmailAddress, $locale->translateCharsetMIME(trim($recipientName), 'UTF-8', $OBCharset));
 
-    $admin = new Administration();
-    $admin->retrieveSettings();
-
-    if ($admin->settings['mail_sendtype'] == "SMTP") {
-        $mail->Mailer = "smtp";
-        $mail->Host   = $admin->settings['mail_smtpserver'];
-        $mail->Port   = $admin->settings['mail_smtpport'];
-
-        if ($admin->settings['mail_smtpauth_req']) {
-            $mail->SMTPAuth = TRUE;
-            $mail->Username = $admin->settings['mail_smtpuser'];
-            $mail->Password = $admin->settings['mail_smtppass'];
-        }
-        if ($admin->settings['mail_smtpssl'] == 1) {
-            $mail->SMTPSecure = 'ssl';
-        } else if ($admin->settings['mail_smtpssl'] == 2) {
-            $mail->SMTPSecure = 'tls';
-        }
-    } else
-        $mail->Mailer = 'sendmail';
-
-    $mail->From      = $admin->settings['notify_fromaddress'];
-    $mail->FromName  = empty($admin->settings['notify_fromname']) ? ' ' : $admin->settings['notify_fromname'];
     $mail->Subject   = empty($saved_report->name) ? 'Report' : $saved_report->name;
     $cr              = array("\r", "\n");
     $attachment_name = str_replace(' ', '_', str_replace($cr, '', $mail->Subject) . '.pdf');
