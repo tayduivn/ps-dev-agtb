@@ -731,13 +731,9 @@ class MetaDataManager {
         $cstmName = 'Custom'.$name;
         $class = false;
         if(class_exists($cstmName)) {
-            $class = $cstmName;
+            $class = new $cstmName($args);
         } elseif (class_exists($name)) {
-            $class = $name;
-        }
-        if($class) {
-            $reflector = new ReflectionClass($class);
-            $class = $reflector->newInstanceArgs($args);
+            $class = new $name($args);
         }
         return $class;
     }

@@ -3,10 +3,12 @@
 class GenericLayout {
     public $layout = array("components" => array());
 
-    public function __construct($name = null, $type = "simple") {
-        $this->layout["type"] = $type;
+    public function __construct($params) {
+        $defaults = array("name" => null, "type" => "simple");
+        $args = array_merge($defaults, $params);
+        $this->layout["type"] = $args['type'];
         if ($name) {
-            $this->layout["name"] = $name;
+            $this->layout["name"] = $args['name'];
         }
 
         $this->set("span", 12);
