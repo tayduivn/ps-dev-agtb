@@ -86,7 +86,6 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
 
     $GLOBALS["log"]->debug("-----> Reporter settings attributes");
     $reporter->layout_manager->setAttribute("no_sort", 1);
-    $module_for_lang = $reporter->module;
     $mod_strings     = return_module_language($language, "Reports");
 
     $GLOBALS["log"]->debug("-----> Reporter Handling PDF output");
