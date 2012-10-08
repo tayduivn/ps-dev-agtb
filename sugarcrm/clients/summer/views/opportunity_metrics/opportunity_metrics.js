@@ -1,6 +1,8 @@
 ({
     initialize: function(options) {
         console.log("opps_metrics::init");
+        this.dataReady = false;
+        this.zeroCurrency = app.currency.formatAmountLocale(0);
         this.collections = {};
         app.view.View.prototype.initialize.call(this,options);
     },
@@ -23,6 +25,7 @@
             });
 
             self.collections = data;
+            self.dataReady = true;
             self.render();
         }});
     }

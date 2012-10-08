@@ -40,21 +40,40 @@
     <div class="opportunity-metrics-widget">
         <h4 data-tour="tour-opportunity-metrics">Opportunity Metrics</h4>
         <div class="opportunity-metrics-wrapper">
-            <div class="opportunity-metric">
-                <h6 class="opportunity-metric-description">{{this.collections.won.count}} deals won for</h6>
-                <h6 class="deal-amount-metric won">{{this.collections.won.amount_usdollar}} <i class="icon-caret-up"></i>
-                </h6>
-            </div>
-            <div class="opportunity-metric">
-                <h6 class="opportunity-metric-description">{{this.collections.lost.count}} deals lost for</h6>
-                <h6 class="deal-amount-metric lost">{{this.collections.lost.amount_usdollar}} <i class="icon-caret-down"></i>
-                </h6>
-            </div>
-            <div class="opportunity-metric">
-                <h6 class="opportunity-metric-description">{{this.collections.active.count}} deals active for</h6>
-                <h6 class="deal-amount-metric active">{{this.collections.active.amount_usdollar}} <i class="icon-minus"></i>
-                </h6>
-            </div>
+            {{#if dataReady}}
+                <div class="opportunity-metric">
+                    <h6 class="opportunity-metric-description">{{this.collections.won.count}} deals won for</h6>
+                    <h6 class="deal-amount-metric won">{{this.collections.won.amount_usdollar}} <i class="icon-caret-up"></i>
+                    </h6>
+                </div>
+                <div class="opportunity-metric">
+                    <h6 class="opportunity-metric-description">{{this.collections.lost.count}} deals lost for</h6>
+                    <h6 class="deal-amount-metric lost">{{this.collections.lost.amount_usdollar}} <i class="icon-caret-down"></i>
+                    </h6>
+                </div>
+                <div class="opportunity-metric">
+                    <h6 class="opportunity-metric-description">{{this.collections.active.count}} deals active for</h6>
+                    <h6 class="deal-amount-metric active">{{this.collections.active.amount_usdollar}} <i class="icon-minus"></i>
+                    </h6>
+                </div>
+            {{else}}
+                <div class="opportunity-metric">
+                    <h6 class="opportunity-metric-description">0 deals won for</h6>
+                    <h6 class="deal-amount-metric won">{{zeroCurrency}} <i class="icon-caret-up"></i>
+                    </h6>
+                </div>
+                <div class="opportunity-metric">
+                    <h6 class="opportunity-metric-description">0 deals lost for</h6>
+                    <h6 class="deal-amount-metric lost">{{zeroCurrency}} <i class="icon-caret-down"></i>
+                    </h6>
+                </div>
+                <div class="opportunity-metric">
+                    <h6 class="opportunity-metric-description">0 deals active for</h6>
+                    <h6 class="deal-amount-metric active">{{zeroCurrency}} <i class="icon-minus"></i>
+                    </h6>
+                </div>
+            {{/if}}
+
         </div>
     </div>
 </div>
