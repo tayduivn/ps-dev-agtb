@@ -120,12 +120,14 @@ foreach ($reports_to_email as $schedule_info) {
     $GLOBALS['log']->debug('-----> Generating Mailer');
     $mailer = MailerFactory::getMailerForUser($current_user);
 
+    $subject = empty($saved_report->name) ? "Report" : $saved_report->name;
+    $mailer->setSubject($subject);
+
     $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
     $mail = new SugarPHPMailer();
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
 
-    $mail->Subject   = empty($saved_report->name) ? 'Report' : $saved_report->name;
     $cr              = array("\r", "\n");
     $attachment_name = str_replace(' ', '_', str_replace($cr, '', $mail->Subject) . '.pdf');
     $mail->AddAttachment($report_filename, $locale->translateCharsetMIME(trim($attachment_name), 'UTF-8', $OBCharset), 'base64', 'application/pdf');
