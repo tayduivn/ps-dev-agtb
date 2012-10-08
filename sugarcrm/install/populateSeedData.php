@@ -825,14 +825,16 @@ $GLOBALS['mod_strings']  = $installerStrings;
         $contact->set_relationship('opportunities_contacts', array('contact_id'=>$contact->id ,'opportunity_id'=> $opportunity_ids[$opportunity_key], 'contact_role'=>$app_list_strings['opportunity_relationship_type_default_key']), false);
     }
 
-//BEGIN SUGARCRM flav=ent ONLY
+    //BEGIN SUGARCRM flav=pro ONLY
     require_once('modules/Forecasts/ForecastsSeedData.php');
     ForecastsSeedData::populateSeedData($timeperiods);
-
-    include('install/seed_data/entreport_SeedData.php');
     require_once('modules/Forecasts/WorksheetSeedData.php');
     WorksheetSeedData::populateSeedData();
-//END SUGARCRM flav=ent ONLY
+    //END SUGARCRM flav=pro ONLY
+
+    //BEGIN SUGARCRM flav=ent ONLY
+    include('install/seed_data/entreport_SeedData.php');
+    //END SUGARCRM flav=ent ONLY
 
 
 //END SUGARCRM flav!=sales ONLY

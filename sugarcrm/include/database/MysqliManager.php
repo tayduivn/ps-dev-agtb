@@ -555,16 +555,17 @@ class MysqliManager extends MysqlManager
     {
         $mode = ($lineage) ? 'U' : 'D';
         // First execute the stored procedure to load the _hierarchy_return_set with the hierarchy data
+
         $startWith = is_null($startWith) ? '' : $this->quote($startWith);
         $level = is_null($level) ? '' : $level;
         $whereClause = is_null($whereClause) ? '' : $this->quote($whereClause);
-
         $sql_sp = "CALL _hierarchy('$tablename', '$key', '$parent_key', '$mode', '{$startWith}', '$level', '$fields', '{$whereClause}')";
         $result = $this->queryMulti($sql_sp, false, false, false, true);
 
         // Now build the sql to return that allows the caller to execute sql in a way to simulate the CTE of the other dbs,
         // i.e. return sql that is a combination of the callers sql and a join against the temp hierarchy table
         $sql = "SELECT $fields FROM _hierarchy_return_set hrs INNER JOIN $tablename t ON hrs._id = t." ."$key";
+        $sql = "$sql ORDER BY hrs._id DESC";  // try and mimic other DB return orders for consistancy. breaks unit test otherwise
         return $sql;
     }
 

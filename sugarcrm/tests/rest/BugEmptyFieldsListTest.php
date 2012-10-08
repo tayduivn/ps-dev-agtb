@@ -36,7 +36,9 @@ class BugEmptyFieldsListTest extends RestTestBase {
     {
         foreach ( $this->accounts as $account ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$account->id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$account->id}'");
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$account->id}'");
+            }
         }
         
         parent::tearDown();
