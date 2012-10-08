@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*
  * LICENSE: The contents of this file are subject to the SugarCRM Professional
  * End User License Agreement("License") which can be viewed at
@@ -64,22 +64,15 @@ foreach($reports_to_email as $schedule_info)
 	$user = new User();
 	$user->retrieve($schedule_info['user_id']);
 	
-	$current_user = $user;
+	$current_user = $user; // this changes the global $current_user
 	
 	$modListHeader = query_module_access_list($current_user);
 	$report_modules = getAllowedReportModules($modListHeader);
 
-	if(empty($user->email1)) {
-		if(empty($user->email2)) {
-			$address = '';
-		} else {
-			$address = $user->email2;
-		}
-	} else {
-		$address = $user->email1;
-	}
-
-	$name = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+    $recipientEmailAddresses = array($user->email1, $user->email2);
+    $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+    $recipientEmailAddress   = array_shift($recipientEmailAddresses);
+	$recipientName           = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
 
 	$theme = $sugar_config['default_theme'];
 	$saved_report = new SavedReport();
@@ -126,8 +119,8 @@ foreach($reports_to_email as $schedule_info)
 	$mail = new SugarPHPMailer();
     global $locale;
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-	
-	$mail->AddAddress($address, $locale->translateCharsetMIME(trim($name), 'UTF-8', $OBCharset));
+
+	$mail->AddAddress($recipientEmailAddress, $locale->translateCharsetMIME(trim($recipientName), 'UTF-8', $OBCharset));
 
 	$admin = new Administration();
 	$admin->retrieveSettings();
@@ -161,18 +154,18 @@ foreach($reports_to_email as $schedule_info)
 	$mail->AddAttachment($report_filename, $locale->translateCharsetMIME(trim($attachment_name), 'UTF-8', $OBCharset), 'base64', 'application/pdf');
 
 	$body = $mod_strings['LBL_HELLO'];
-	if($name != '') {
-		$body .= " $name";
+	if($recipientName != '') {
+		$body .= " $recipientName";
 	}
 	$body .= ",\n\n";
 	$body .= 	$mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO']. $saved_report->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
 				 . $saved_report->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
 	$mail->Body = $body;
 
-	if($address == '') {
-		$GLOBALS['log']->info("No email address for $name");
+	if($recipientEmailAddress == '') {
+		$GLOBALS['log']->info("No email address for $recipientName");
 	} else {
-		$GLOBALS['log']->debug('-----> Sending PDF via Email to [ '.$address.' ]');
+		$GLOBALS['log']->debug('-----> Sending PDF via Email to [ '.$recipientEmailAddress.' ]');
 		
 	$mail->prepForOutbound();
 		
