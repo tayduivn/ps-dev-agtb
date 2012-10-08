@@ -47,8 +47,8 @@ $language         = $sugar_config['default_language']; // here we'd better use E
 $app_list_strings = return_app_list_strings_language($language);
 $app_strings      = return_application_language($language);
 
-$report_schedule  = new ReportSchedule();
-$reports_to_email = $report_schedule->get_reports_to_email();
+$reportSchedule = new ReportSchedule();
+$reportsToEmail = $reportSchedule->get_reports_to_email();
 
 //BEGIN SUGARCRM flav=ent ONLY
 //Process Enterprise Schedule reports via CSV
@@ -60,39 +60,39 @@ global $report_modules,
        $modListHeader,
        $current_user;
 
-foreach ($reports_to_email as $schedule_info) {
-    $GLOBALS['log']->debug('-----> in Reports foreach() loop');
+foreach ($reportsToEmail as $scheduleInfo) {
+    $GLOBALS["log"]->debug("-----> in Reports foreach() loop");
 
     $user = new User();
-    $user->retrieve($schedule_info['user_id']);
+    $user->retrieve($scheduleInfo['user_id']);
 
     $current_user = $user; // this changes the global $current_user
 
     $modListHeader  = query_module_access_list($current_user);
     $report_modules = getAllowedReportModules($modListHeader);
 
-    $theme        = $sugar_config['default_theme'];
-    $saved_report = new SavedReport();
-    $saved_report->retrieve($schedule_info['report_id']);
+    $theme       = $sugar_config['default_theme'];
+    $savedReport = new SavedReport();
+    $savedReport->retrieve($scheduleInfo['report_id']);
 
-    $GLOBALS['log']->debug('-----> Generating Reporter');
-    $reporter = new Report(html_entity_decode($saved_report->content));
+    $GLOBALS["log"]->debug("-----> Generating Reporter");
+    $reporter = new Report(html_entity_decode($savedReport->content));
 
     $mod_strings = return_module_language($current_language, 'Reports');
 
     // prevent invalid report from being processed
     if (!$reporter->is_definition_valid()) {
         $invalidFields = $reporter->get_invalid_fields();
-        $args          = array($schedule_info['report_id'], implode(', ', $invalidFields));
+        $args          = array($scheduleInfo['report_id'], implode(', ', $invalidFields));
         $message       = string_format($mod_strings['ERR_REPORT_INVALID'], $args);
 
-        $GLOBALS['log']->fatal('-----> ' . $message);
+        $GLOBALS["log"]->fatal("-----> {$message}");
 
         try {
             require_once 'modules/Reports/utils.php';
 
             $reportOwner = new User();
-            $reportOwner->retrieve($saved_report->assigned_user_id);
+            $reportOwner->retrieve($savedReport->assigned_user_id);
 
             $reportsUtils = new ReportsUtilities();
             $reportsUtils->sendNotificationOfInvalidReport($reportOwner, $message);
@@ -100,19 +100,19 @@ foreach ($reports_to_email as $schedule_info) {
             //@todo consider logging the error at the very least
         }
     } else {
-        $GLOBALS['log']->debug('-----> Reporter settings attributes');
+        $GLOBALS["log"]->debug("-----> Reporter settings attributes");
         $reporter->layout_manager->setAttribute("no_sort", 1);
         $module_for_lang = $reporter->module;
 
-        $GLOBALS['log']->debug('-----> Reporter Handling PDF output');
-        $report_filename = template_handle_pdf($reporter, false);
+        $GLOBALS["log"]->debug("-----> Reporter Handling PDF output");
+        $reportFilename = template_handle_pdf($reporter, false);
 
         try {
-            $GLOBALS['log']->debug('-----> Generating Mailer');
+            $GLOBALS["log"]->debug("-----> Generating Mailer");
             $mailer = MailerFactory::getMailerForUser($current_user);
 
             // set the subject of the email
-            $subject = empty($saved_report->name) ? "Report" : $saved_report->name;
+            $subject = empty($savedReport->name) ? "Report" : $savedReport->name;
             $mailer->setSubject($subject);
 
             // add the recipient...
@@ -133,7 +133,7 @@ foreach ($reports_to_email as $schedule_info) {
             $charsToRemove  = array("\r", "\n");
             $attachmentName = str_replace($charsToRemove, "", $subject); // remove these characters from the attachment name
             $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf"); // replace spaces with the underscores
-            $attachment     = new Attachment($report_filename, $attachmentName, Encoding::Base64, "application/pdf");
+            $attachment     = new Attachment($reportFilename, $attachmentName, Encoding::Base64, "application/pdf");
             $mailer->addAttachment($attachment);
 
             // set the body of the email
@@ -145,9 +145,9 @@ foreach ($reports_to_email as $schedule_info) {
 
             $body .= ",\n\n" .
                      $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
-                     $saved_report->date_entered .
-                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"].
-                     $saved_report->name .
+                     $savedReport->date_entered .
+                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"] .
+                     $savedReport->name .
                      $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
 
             $mailer->setTextBody($body); // looks to be plain-text only
@@ -155,11 +155,11 @@ foreach ($reports_to_email as $schedule_info) {
             $GLOBALS["log"]->debug("-----> Sending PDF via Email to [ {$recipientEmailAddress} ]");
             $mailer->send();
 
-            $GLOBALS['log']->debug("-----> Send successful");
-            $report_schedule->update_next_run_time(
-                $schedule_info["id"],
-                $schedule_info["next_run"],
-                $schedule_info["time_interval"]
+            $GLOBALS["log"]->debug("-----> Send successful");
+            $reportSchedule->update_next_run_time(
+                $scheduleInfo["id"],
+                $scheduleInfo["next_run"],
+                $scheduleInfo["time_interval"]
             );
         } catch (MailerException $me) {
             switch ($me->getCode()) {
@@ -172,8 +172,8 @@ foreach ($reports_to_email as $schedule_info) {
             }
         }
 
-        $GLOBALS['log']->debug('-----> Removing temporary PDF file');
-        unlink($report_filename);
+        $GLOBALS["log"]->debug("-----> Removing temporary PDF file");
+        unlink($reportFilename);
     }
 }
 
