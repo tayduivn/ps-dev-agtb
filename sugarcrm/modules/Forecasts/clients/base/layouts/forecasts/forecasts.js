@@ -311,6 +311,16 @@
             var compName = comp.name || comp.meta.name,
                 divName = ".view-" + compName;
 
+            // Certain views in forecasts are controlled by other views
+            // If there is a sub-view (eg: a view creates another view and manually renders it in)
+            // then we can set placeInLayout => false and we create all the models and such
+            // from the rest of metadata, but we just dont place it into the html of the layout
+            // as another view will be handling that
+            if(_.has(comp, 'meta') && !_.isUndefined(comp.meta) &&
+                _.has(comp.meta, 'placeInLayout') && comp.meta.placeInLayout == false) {
+                return;
+            }
+
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");
             }

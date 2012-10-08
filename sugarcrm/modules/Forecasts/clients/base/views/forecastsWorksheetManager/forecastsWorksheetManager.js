@@ -5,7 +5,7 @@
  * @extends View.View
  */
 ({
-	url: 'rest/v10/ForecastManagerWorksheets',
+    url: 'rest/v10/ForecastManagerWorksheets',
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -33,22 +33,6 @@
     },
 
     /**
-     * Contains a list of column names from metadata and maps them to correct config param
-     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
-     *
-     * @property _tableColumnsConfigKeyMap
-     */
-    _tableColumnsConfigKeyMap: {
-        'likely_case': 'show_worksheet_likely',
-        'likely_adjusted': 'show_worksheet_likely',
-        'best_case': 'show_worksheet_best',
-        'best_adjusted': 'show_worksheet_best',
-        'worst_case': 'show_worksheet_worst',
-        'worst_adjusted': 'show_worksheet_worst'
-
-    },
-
-    /**
      * Initialize the View
      *
      * @constructor
@@ -69,46 +53,18 @@
         this._collection.url = this.createURL();
         this._collection.isDirty = false;
 
-    	//Setup total subview
-    	var TotalModel = Backbone.Model.extend({
-
-        });
-
-        this.totalModel = new TotalModel(
+        this.totalModel = new (Backbone.Model.extend(
             {
                 amount : 0,
                 quota : 0,
                 best_case : 0,
                 best_adjusted : 0,
                 likely_case : 0,
-                likely_adjusted : 0
+                likely_adjusted : 0,
+                worst_case : 0,
+                worst_adjusted : 0
             }
-        );
-
-
-        var TotalView = Backbone.View.extend({
-            id : 'summaryManager',
-
-            tagName : 'tfoot',
-
-            /*initialize: function() {
-                self.context.on("change:selectedToggle", function(context, data) {
-                    self.refresh();
-                });
-            },*/
-
-            render: function() {
-                var self = this;
-                var source = $("#overall_manager_template").html();
-                var hb = Handlebars.compile(source);
-                $('#summaryManager').html(hb(self.model.toJSON()));
-                return this;
-            }
-        });
-
-        this.totalView = new TotalView({
-            model : this.totalModel
-        });
+        ));
     },
 
     /**
@@ -151,7 +107,6 @@
                 },this);
             this.context.forecasts.worksheetmanager.on("change", function() {
             	this.calculateTotals();
-                this.totalView.render();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
 
@@ -226,23 +181,13 @@
     },
 
     /**
-     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     * Checks if colKey is in the table config keymaps on the context
      *
      * @param colKey {String} the column sName to check in the keymap
      * @return {*} returns null if not found in the keymap, returns true/false if it did find it
      */
     checkConfigForColumnVisibility: function(colKey) {
-        var returnValue = null;
-        // Check and see if our keymap has the column
-        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
-            // if so get the value
-            returnValue = this.context.forecasts.config.get(this._tableColumnsConfigKeyMap[colKey]);
-        }
-
-        // if there was no value in the keymap, returnValue is null,
-        // in which case returnValue should be set to true because it doesn't correspond to a config setting
-        // so it should be shown
-        return _.isNull(returnValue) ? true : (returnValue == 1);
+        return app.forecasts.utils.getColumnVisFromKeyMap(colKey, this.name, this.context.forecasts.config);
     },
 
     /**
@@ -385,7 +330,6 @@
         }
 
         this.calculateTotals();
-        this.totalView.render();
     },
 
     /**
@@ -458,28 +402,30 @@
 
 
     calculateTotals:function () {
-        var self = this;
-        var amount = 0;
-        var quota = 0;
-        var best_case = 0;
-        var best_adjusted = 0;
-        var likely_case = 0;
-        var likely_adjusted = 0;
-        var worst_adjusted = 0;
-        var worst_case = 0;
+        var self = this,
+            amount = 0,
+            quota = 0,
+            best_case = 0,
+            best_adjusted = 0,
+            likely_case = 0,
+            likely_adjusted = 0,
+            worst_adjusted = 0,
+            worst_case = 0;
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
-        	this.context.forecasts.set("updatedManagerTotals", {
-                'amount' : amount,
-                'quota' : quota,
-                'best_case' : best_case,
-                'best_adjusted' : best_adjusted,
-                'likely_case' : likely_case,
-                'likely_adjusted' : likely_adjusted,
-                'worst_adjusted' : worst_adjusted,
-                'worst_case' : worst_case
-            });
+            this.context.forecasts.set({
+                updatedManagerTotals : {
+                    'amount' : amount,
+                    'quota' : quota,
+                    'best_case' : best_case,
+                    'best_adjusted' : best_adjusted,
+                    'likely_case' : likely_case,
+                    'likely_adjusted' : likely_adjusted,
+                    'worst_adjusted' : worst_adjusted,
+                    'worst_case' : worst_case
+                }
+            }, {silent:true});
             return false;
         }
 
