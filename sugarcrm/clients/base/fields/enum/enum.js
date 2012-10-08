@@ -16,7 +16,7 @@
         }
 
         var chosenOptions = {};
-        if (_.indexOf(optionsKeys, "") == 0) {
+        if (_.indexOf(optionsKeys, "") !== -1) {
             chosenOptions.allow_single_deselect = true;
         }
 
