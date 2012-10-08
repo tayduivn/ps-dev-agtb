@@ -3,7 +3,6 @@
     editMode: false,
 
     initialize: function(options) {
-        test = this;
         var extraEvents = {
             "click .record-edit": "toggleEdit",
             "click .record-edit-link-wrapper": "handleEdit",
@@ -21,11 +20,10 @@
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
-            if (true || this.editMode) {
-                this.$(".record-save-prompt").show();
+            if (this.editMode || this.editAllMode) {
+                this.previousModelState = this.model.previousAttributes();
+                this.$(".record-save-btns-bar").show();
             }
-
-            this.previousModelState = this.model.previousAttributes();
         }, this);
 
         if (this.context.get("create") === true) {
@@ -306,6 +304,7 @@
         if (currFieldParent[0] == targetParent[0]) {
             return;
         }
+
         field.$el.find("input").trigger("change");
         self.toggleCell(field, cell, true);
     },
@@ -325,8 +324,6 @@
                 this.toggleCell(field, cell, true);
                 this.handleEdit(null, nextCell);
             }
-
-
         } else if (e.which == 27) { // If esc
             this.toggleCell(field, cell, true);
         }

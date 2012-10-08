@@ -11,6 +11,8 @@
     },
 
     render: function() {
+        if (!this.model) { return; }
+
         this.profile = this.model.get("img") || this.profile;
         app.view.Field.prototype.render.call(this);
     },

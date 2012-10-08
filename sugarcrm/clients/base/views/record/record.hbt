@@ -2,10 +2,12 @@
     {{#if editable}}
     <div class="row-fluid record-button-bar">
         <div class="btn-group pull-right" data-tour="tour-{{module}}-button-bar">
-            <a class="btn btn-small record-save btn-success btn-disabled">Save</a>
-            <a class="btn btn-small record-cancel btn-disabled">Cancel</a>
             <a class="btn btn-small record-edit">Edit</a>
             <a class="btn btn-small record-delete" data-toggle="modal" href="#delete-confirmation">Delete</a>
+        </div>
+        <div class="btn-group pull-right record-save-btns-bar hide">
+            <a class="btn btn-small record-save btn-primary btn-disabled record-changed">Save</a>
+            <a class="btn btn-small record-cancel btn-disabled record-changed">Cancel</a>
         </div>
     </div>
     {{/if}}
