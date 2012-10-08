@@ -33,7 +33,6 @@ $modListHeader = array();
 require_once('modules/Reports/SavedReport.php');
 require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
-require_once('include/SugarPHPMailer.php');
 require_once('include/modules.php');
 require_once('config.php');
 require_once "modules/Mailer/MailerException.php";
