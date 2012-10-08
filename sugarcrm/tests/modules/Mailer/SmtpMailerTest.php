@@ -283,6 +283,14 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSend_PHPMailerAddAttachmentThrowsException_TransferAttachmentsThrowsMailerException() {
+        $mockLocale = self::getMock("Localization", array("translateCharset"));
+        $mockLocale->expects(self::any())
+            ->method("translateCharset")
+            ->will(self::returnValue("foobar")); // the filename that Localization::translateCharset will return
+
+        $mailerConfiguration = new SmtpMailerConfiguration();
+        $mailerConfiguration->setLocale($mockLocale);
+
         $mockPhpMailer = self::getMock(
             "PHPMailer",
             array("AddAttachment"),
@@ -303,7 +311,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
             ),
-            array(new SmtpMailerConfiguration())
+            array($mailerConfiguration)
         );
 
         $attachment = new Attachment("/foo/bar.txt");
@@ -339,6 +347,14 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSend_PHPMailerAddEmbeddedImageReturnsFalse_TransferAttachmentsThrowsMailerException() {
+        $mockLocale = self::getMock("Localization", array("translateCharset"));
+        $mockLocale->expects(self::any())
+            ->method("translateCharset")
+            ->will(self::returnValue("foobar")); // the filename that Localization::translateCharset will return
+
+        $mailerConfiguration = new SmtpMailerConfiguration();
+        $mailerConfiguration->setLocale($mockLocale);
+
         $mockPhpMailer = self::getMock(
             "PHPMailer",
             array("AddEmbeddedImage"),
@@ -359,7 +375,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferBody",
             ),
-            array(new SmtpMailerConfiguration())
+            array($mailerConfiguration)
         );
 
         $embeddedImage = new EmbeddedImage("/foo/bar.txt", "foobar");
