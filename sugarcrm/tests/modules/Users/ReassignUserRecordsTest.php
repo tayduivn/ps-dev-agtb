@@ -58,6 +58,13 @@ class ReassignUserRecordsTest extends Sugar_PHPUnit_Framework_OutputTestCase {
         SugarTestHelper::tearDown();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestNotificationUtilities::removeAllCreatedNotifications();
+        unset($_SESSION['reassignRecords']);
+        unset($_POST['module']);
+        unset($_POST['action']);
+        unset($_POST['fromuser']);
+        unset($_POST['touser']);
+        unset($_POST['moudules']);
+        unset($_POST['steponesubmit']);
     }
 
     /**
