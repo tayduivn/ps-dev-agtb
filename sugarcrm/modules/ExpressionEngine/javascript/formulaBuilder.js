@@ -668,17 +668,29 @@ SUGAR.expressions.GridToolTip = {
      */
 
     //Insert the wrapper html
-    if($("#fb_ac_wrapper").length == 0){
+    if($("#fb_ac_wrapper").length == 0)
+    {
+        // Find the max z-index and use it for the autocomplete popup
+        var maxZ = Math.max.apply(
+                null,
+                // Apply a function to all elements of body to return z-index
+                $.map(
+                    $('body > *'),
+                    function(element, index)
+                    {
+                        return parseInt($(element).css('z-index')) || 1;	
+                    }
+                )
+            );
         $("body").append(
-            "<input id='fb_ac_input' style='display:none;z-index:50;position:relative'>" +
+            "<input id='fb_ac_input' style='display: none; z-index: " + maxZ + "; position: relative'>" +
             "<div id='fb_ac_wrapper' style='position: absolute;'>" +
                 "<div id='fb_ac_spacer'></div>" +
             "</div>"
         )
-        $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput"});
+        $("#fb_ac_wrapper").position({ my: "left top", at: "left top", of: "#formulaInput"});
     }
-
-
+    
     var fb_ac_open = false;
     /**
      * Gets the index of the first character in the current formula component (function or variable)
