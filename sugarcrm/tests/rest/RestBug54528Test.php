@@ -65,21 +65,29 @@ class RestBug54528Test extends RestTestPortalBase {
     {
         if ( isset($this->bug_id) ) {
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id = '{$this->bug_id}'");
-            $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id = '{$this->bug_id}'");
+            if ($GLOBALS['db']->tableExists('bugs_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c = '{$this->bug_id}'");
+            }
         }
         if (isset($this->case_id)) {
             $GLOBALS['db']->query("DELETE FROM cases WHERE id = '{$this->case_id}'");
-            $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id = '{$this->case_id}'");
+            if ($GLOBALS['db']->tableExists('cases_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c = '{$this->case_id}'");
+            }
         } 
         if(isset($this->account->id))
         {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");            
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account->id}'");
+            }
         } 
         if(isset($this->contact->id))
         {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
-            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$this->contact->id}'");            
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '{$this->contact->id}'");
+            }
         } 
         parent::tearDown();
         

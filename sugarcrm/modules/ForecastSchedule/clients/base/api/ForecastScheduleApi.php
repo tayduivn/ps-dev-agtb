@@ -92,7 +92,6 @@ class ForecastScheduleApi extends ModuleApi {
 
 		if(empty($data))
         {
-           require_once('include/SugarCurrency.php');
            $currency = SugarCurrency::getCurrencyByID($current_user->getPreference('currency'));
 
 		   $data[] = array("expected_best_case" => "0.0",

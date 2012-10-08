@@ -89,10 +89,11 @@ class Bug51617Test extends SOAPTestCase
     public function tearDown()
     {
         $this->df->deleteField($this->field);
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->_account->id}'");
+        if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->_account->id}'");
+        }
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-        unset($GLOBALS['current_user']);
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
 

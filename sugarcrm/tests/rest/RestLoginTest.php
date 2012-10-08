@@ -41,11 +41,15 @@ class RestLoginTest extends RestTestBase
         $GLOBALS['db']->query("DELETE FROM oauth_tokens WHERE consumer LIKE '_unit_%'");
         if ( isset($this->contact->id) ) {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '".$this->contact->id."'");
-            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '".$this->contact->id."'");
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '".$this->contact->id."'");
+            }
         }
         if ( isset($this->apiuser->id) ) {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '".$this->apiuser->id."'");
-            $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '".$this->apiuser->id."'");
+            if ($GLOBALS['db']->tableExists('users_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '".$this->apiuser->id."'");
+            }
         }
         $GLOBALS['db']->commit();
     }

@@ -124,5 +124,22 @@ describe("The forecasts layout controller", function(){
             layout._placeComponent(testComp);
             expect(layout.$el.children().last()[0]).toEqual(testComp.$el[0]);
         });
+
+        it("should not place components that have placeInLayout set to false in their view metadata", function() {
+            var name = "testComp",
+                testEl = '<div id="test">' + name + '</div>',
+                testComp = {
+                    meta: {
+                        name:name,
+                        placeInLayout: false
+                    },
+                    $el: $(testEl)
+                };
+
+            layout.$el = $('<div class="outer"></div>');
+            layout._placeComponent(testComp);
+            // component should not be placed so html() should be an empty string
+            expect(layout.$el.html()).toBe('');
+        });
     });
 });

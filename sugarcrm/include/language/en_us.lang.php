@@ -1768,6 +1768,7 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+    //BEGIN SUGARCRM flav=pro ONLY
     'forecasts_chart_options_group' => array(
         'forecast' => 'Included In Forecast',
         'sales_stage' => 'Sales Stage',
@@ -1778,6 +1779,7 @@ $app_list_strings = array (
         'best' => 'Best',
         'worst' => 'Worst'
     ),
+    //END SUGARCRM flav=pro ONLY
 );
 
 $app_strings = array (
@@ -2354,6 +2356,7 @@ $app_strings = array (
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
+    'ERR_DB_QUERY' => '{0}: query failed: {1}',
 
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
 
@@ -2855,6 +2858,7 @@ $app_strings = array (
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
     'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
     'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
+    'ERROR_DATETIME' => 'Error. This field requires a valid date.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
@@ -4280,7 +4284,7 @@ $app_strings ['documentation'] = array (
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
 );
-
+//BEGIN SUGARCRM flav=pro ONLY
 $app_list_strings['forecasts_config_category_options_dom'] = array(
     'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
@@ -4299,6 +4303,7 @@ $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
     'middle' => 'Middle',
     'last' => 'Last'
 );
+//END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (
 		'yes' => 'Yes' ,

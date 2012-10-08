@@ -30,6 +30,7 @@
  * view uses the /ForecastSchedule REST endpoint to retrieve and save data.
  */
 $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
+    'placeInLayout' => false,
     'panels' =>
     array(
         0 =>
@@ -68,7 +69,7 @@ $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
                     'label' => 'LBL_EXPECTED_WORST_CASE',
                     'type' => 'currency',
                     'default' => true,
-                    'enabled' => false,
+                    'enabled' => true,
                     'clickToEdit' => true,
                     'convertToBase' => true
                 ),

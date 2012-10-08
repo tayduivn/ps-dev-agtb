@@ -105,11 +105,17 @@ class RestThemeTest extends RestTestBase
         $restReply = $this->_restCall('theme?platform=' . $this->platformTest);
 
         // TEST we get a hash of variables
+        $this->assertEquals(array('name' => 'BorderColor', 'value' => '#E61718'), $restReply['reply']['hex'][0]);
+        $this->assertEquals(array('name' => 'NavigationBar', 'value' => '#000000'), $restReply['reply']['hex'][1]);
+        $this->assertEquals(array('name' => 'PrimaryButton', 'value' => '#177EE5'), $restReply['reply']['hex'][2]);
+
+        /*
         $this->assertEquals($restReply['reply']['hex'], array(
             0 => array('name' => 'BorderColor', 'value' => '#E61718'),
             1 => array('name' => 'NavigationBar', 'value' => '#000000'),
             2 => array('name' => 'PrimaryButton', 'value' => '#177EE5'),
         ));
+        */
     }
 
     /**

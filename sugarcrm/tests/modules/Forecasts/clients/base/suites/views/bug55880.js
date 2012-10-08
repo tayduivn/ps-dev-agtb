@@ -20,12 +20,53 @@
  ********************************************************************************/
 
 describe("Bug 55880", function() {
-    var app, view, field, _renderClickToEditStub, _renderFieldStub, _renderFieldSpy;
-    var _setForecastColumnStub, _renderStub, _isMyWorksheetStub;
+    var app,
+        view,
+        layout,
+        field,
+        _renderClickToEditStub,
+        _renderFieldStub,
+        _renderFieldSpy,
+        _setForecastColumnStub,
+        _renderStub,
+        _isMyWorksheetStub;
 
     describe("Expected opportunities fields", function (){
         beforeEach(function() {
             app = SugarTest.app;
+
+            // Set up context.forecasts for the view
+            metadata = fixtures.metadata;
+            app.viewModule = "";
+            app.initData = {};
+            app.defaultSelections = {
+                timeperiod_id: {},
+                group_by: {},
+                dataset: {},
+                selectedUser: {}
+            };
+            SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/forecasts", "forecasts", "js", function(d) { return eval(d); });
+            var options = {
+                context: {
+                    forecasts: {
+                        set: function() {}
+                    }
+                }
+            };
+            stubs = new Array();
+            stubs.push(sinon.stub(app.metadata, "getLayout", function(layout){
+                return {
+                    forecasts: {
+                        meta: {
+                            components: {}
+                        }
+                    },
+                    componentsMeta: {}
+                };
+            }));
+            stubs.push(sinon.stub(app.view.layouts.ForecastsLayout.prototype, "initialize", function (options) {}));
+            layout = new app.view.layouts.ForecastsLayout(options);
+
             view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastSchedule", "forecastSchedule", "js", function(d) { return eval(d); });
             var cte = SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ClickToEdit", "js", function(d) { return eval(d); });
             _renderClickToEditStub = sinon.stub(app.view, "ClickToEditField");
@@ -44,6 +85,10 @@ describe("Bug 55880", function() {
         afterEach(function () {
             _renderClickToEditStub.restore();
             _renderFieldStub.restore();
+            // restore the local stubs
+            _.each(stubs, function(stub) {
+                stub.restore();
+            });
         });
 
         it("should be click to editable on a user's own worksheet.", function () {
@@ -68,6 +113,12 @@ describe("Bug 55880", function() {
                 _renderStub = new sinon.stub(app.view.View.prototype, "_render");
                 view.meta = {};
                 view.meta.panels = new Array({fields:{}});
+                view.context = {};
+                view.context.forecasts = new (Backbone.Model.extend({
+                    "defaults" : {
+                        "currentWorksheet" : "worksheet"
+                    }
+                }));
             });
 
             afterEach(function () {
