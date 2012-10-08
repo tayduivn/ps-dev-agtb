@@ -72,15 +72,9 @@ foreach ($reports_to_email as $schedule_info) {
     $modListHeader  = query_module_access_list($current_user);
     $report_modules = getAllowedReportModules($modListHeader);
 
-    $recipientEmailAddresses = array($user->email1, $user->email2);
-    $recipientEmailAddresses = array_filter($recipientEmailAddresses);
-    $recipientEmailAddress   = array_shift($recipientEmailAddresses);
-    $recipientName           = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
-
     $theme        = $sugar_config['default_theme'];
     $saved_report = new SavedReport();
     $saved_report->retrieve($schedule_info['report_id']);
-
 
     $GLOBALS['log']->debug('-----> Generating Reporter');
     $reporter = new Report(html_entity_decode($saved_report->content));
@@ -125,7 +119,18 @@ foreach ($reports_to_email as $schedule_info) {
         $subject = empty($saved_report->name) ? "Report" : $saved_report->name;
         $mailer->setSubject($subject);
 
-        // add the recipient
+        // add the recipient...
+
+        // first get all email addresses known for this recipient
+        $recipientEmailAddresses = array($user->email1, $user->email2);
+        $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+
+        // then retrieve first non-empty email address
+        $recipientEmailAddress = array_shift($recipientEmailAddresses);
+
+        // get the recipient name that accompanies the email address
+        $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+
         $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
         // attach the report, using the subject as the name of the attachment
