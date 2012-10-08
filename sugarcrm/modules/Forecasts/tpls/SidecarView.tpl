@@ -2,34 +2,6 @@
 <script type='text/javascript' src='include/SugarCharts/Jit/js/Jit/jit.js'></script>
 <script type='text/javascript' src='include/SugarCharts/Jit/js/sugarCharts.js'></script>
 
-{literal}
-
-
-<script id="included_template" type="text/x-handlebars-template">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
-    <th>{{formatCurrency includedAmount "-99"}}</th>
-    <th>{{formatCurrency includedBest "-99"}}</th>
-</script>
-
-<script id="overall_template" type="text/x-handlebars-template">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
-    <th>{{formatCurrency overallAmount "-99"}}</th>
-    <th>{{formatCurrency overallBest "-99"}}</th>
-</script>
-
-<script id="overall_manager_template" type="text/x-handlebars-template">
-    <tr>
-        <td>{{str "LBL_TOTAL" "Forecasts"}}</td>
-        <td>{{formatCurrency quota "-99"}}</td>
-        <td>{{formatCurrency likely_case "-99"}}</td>
-        <td>{{formatCurrency likely_adjusted "-99"}}</td>
-        <td>{{formatCurrency best_case "-99"}}</td>
-        <td>{{formatCurrency best_adjusted "-99"}}</td>
-        <td>&nbsp;</td>
-    </tr>
-</script>
-{/literal}
-
 <div class="content"></div>
 <footer>
     <div class="row-fluid">

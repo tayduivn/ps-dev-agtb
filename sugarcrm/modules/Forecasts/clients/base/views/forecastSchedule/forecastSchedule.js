@@ -14,6 +14,15 @@
     timePeriodId: null,
     editableWorksheet: false,
     _collection:{},
+    fieldsMeta: {},
+    show_worksheet_likely: false,
+    show_worksheet_best: false,
+    show_worksheet_worst: false,
+    expected_amount_field: {},
+    expected_best_case_field: {},
+    expected_worst_case_field: {},
+    expected_commit_stage_field: {},
+    isBinary: true,
 
     /**
      * Initialize the View
@@ -27,6 +36,19 @@
         this.timePeriodId = options.timeperiod_id ? options.timeperiod_id : app.defaultSelections.timeperiod_id.id;
         this._collection = this.context.forecasts.forecastschedule;
         this._collection.url = this.createURL();
+        this.fieldsMeta = _.first(this.meta.panels).fields;
+
+        // get the config values to determine whether a field should be shown or not.
+        _.each(['show_worksheet_likely', 'show_worksheet_best', 'show_worksheet_worst'], function(item) {
+            this[item] = options.context.forecasts.config.get(item);
+        }, this);
+
+        // sets this.<array_item>_field to the corresponding field metadata, which gets used by the template to render these fields later.
+        _.each(['expected_amount', 'expected_best_case', 'expected_worst_case', 'expected_commit_stage'], function(item) {
+            this[item + '_field'] = function(fieldName, fieldMeta) {
+                return _.find(fieldMeta, function(field) { return field.name == this; }, fieldName);
+            }(item, this.fieldsMeta);
+        }, this);
     },
 
     createURL : function() {
@@ -44,11 +66,11 @@
         this._collection.url = this.createURL();
         var self = this;
         this._collection.fetch({success : function() { 
-        		self.render();
-        		if(_.isFunction(callback)){
-        			callback();
-        		}
-        	}});
+            self.render();
+            if(_.isFunction(callback)){
+                callback();
+            }
+        }});
     },
 
 
@@ -98,9 +120,17 @@
                     }
                 }, this);
             }, this);
+
+            // listen for any of the show_worksheet_ config settings, and listen for the worksheet to re-render
+            this.context.forecasts.config.on('change:show_worksheet_likely change:show_worksheet_best change:show_worksheet_worst', function(context, value) {
+                self.show_worksheet_likely = context.get('show_worksheet_likely') == 1;
+                self.show_worksheet_best = context.get('show_worksheet_best') == 1;
+                self.show_worksheet_worst = context.get('show_worksheet_worst') == 1;
+                self._render();
+            });
         }
     },
-    
+
     _setForecastColumn: function(fields) {
         var self = this;
 
@@ -108,19 +138,15 @@
             if (field.name == "expected_commit_stage") {
                 field.view = self.editableWorksheet ? self.name : 'detail';
                 var forecastCategories = self.context.forecasts.config.get("forecast_categories");
-                
-                //show_binary, show_buckets, show_n_buckets
-            	if(forecastCategories == "show_binary"){
 
-            		_.each(self.meta.panels[0].fields, function(meta){
-            			if(meta.name == "expected_commit_stage"){
-            				meta.type="bool";
-            			}
-            		});	          		            		
-            	}
+                //show_binary, show_buckets, show_n_buckets
+                if(forecastCategories == "show_binary"){
+                    field.type = 'bool';
+                }
+            } else {
+                field.enabled = app.forecasts.utils.getColumnVisFromKeyMap(field.name, self.name, self.context.forecasts.config);
             }
         });
-
     },
 
     _setUpCommitStage: function(field) {
@@ -129,6 +155,7 @@
 
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
+            this.isBinary = true;
     		field.type = "bool";
     					
     		field.format = function(value){
@@ -139,6 +166,7 @@
     		};
     	}
     	else{
+            this.isBinary = false;
     		field.type = "enum";
     		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
     	}  	
@@ -152,9 +180,11 @@
      * @protected
      */
     _render: function() {
-        this.editableWorksheet = this.isMyWorksheet();
-        this._setForecastColumn(this.meta.panels[0].fields);
-        app.view.View.prototype._render.call(this);
+        if(this.context.forecasts.get('currentWorksheet') == 'worksheet') {
+            this.editableWorksheet = this.isMyWorksheet();
+            this._setForecastColumn(this.fieldsMeta);
+            app.view.View.prototype._render.call(this);
+        }
         return this;
     },
 

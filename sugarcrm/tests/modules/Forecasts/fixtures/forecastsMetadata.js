@@ -39,9 +39,9 @@ fixtures.metadata.modules.Forecasts.config = {
     "sales_stage_lost":["Closed Lost"],
     "show_worksheet_likely":1,
     "show_worksheet_best":1,
-    "show_worksheet_worst":"",
+    "show_worksheet_worst":1,
     "show_projected_likely":1,
     "show_projected_best":1,
-    "show_projected_worst":"",
+    "show_projected_worst":1,
     "show_print_button":1
 }
