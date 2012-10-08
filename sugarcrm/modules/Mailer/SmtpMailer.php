@@ -372,11 +372,19 @@ class SmtpMailer extends BaseMailer
         foreach ($this->attachments as $attachment) {
             if ($attachment instanceof EmbeddedImage) {
                 // it's an embedded image
+
+                // perform character set and HTML character translations on the file name
+                $name = $this->formatter->translateCharacters(
+                    $attachment->getName(),
+                    $this->config->getLocale(),
+                    $this->config->getCharset()
+                );
+
                 // transfer the image to PHPMailer so it can be embedded correctly at send time
                 if (!$mailer->AddEmbeddedImage(
                     $attachment->getPath(),
                     $attachment->getCid(),
-                    $attachment->getName(),
+                    $name,
                     $attachment->getEncoding(),
                     $attachment->getMimeType())
                 ) {
@@ -388,10 +396,17 @@ class SmtpMailer extends BaseMailer
             } elseif ($attachment instanceof Attachment) {
                 // it's a normal file attachment
                 try {
+                    // perform character set and HTML character translations on the file name
+                    $name = $this->formatter->translateCharacters(
+                        $attachment->getName(),
+                        $this->config->getLocale(),
+                        $this->config->getCharset()
+                    );
+
                     // transfer the attachment to PHPMailer so it can be attached correctly at send time
                     $mailer->AddAttachment(
                         $attachment->getPath(),
-                        $attachment->getName(),
+                        $name,
                         $attachment->getEncoding(),
                         $attachment->getMimeType());
                 } catch (Exception $e) {
