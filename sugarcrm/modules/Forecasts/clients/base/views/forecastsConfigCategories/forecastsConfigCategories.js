@@ -4,14 +4,17 @@
     category_ranges_field: {},
 
     initialize: function(options) {
-        var fields;
         app.view.View.prototype.initialize.call(this, options);
-        fields = _.first(this.meta.panels).fields;
 
-        // TODO - refactor this to use more functional approach as it is repetitive and can be reduced.
-        this.forecast_categories_field = _.find(fields, function(field) { return field.name == 'forecast_categories'; });
-        this.buckets_dom_field = _.find(fields, function(field) { return field.name == 'buckets_dom'; });
-        this.category_ranges_field = _.find(fields, function(field) { return field.name == 'category_ranges'; });
+        // sets this.<array_item>_field to the corresponding field metadata, which gets used by the template to render these fields later.
+        _.each(['forecast_categories', 'buckets_dom', 'category_ranges'], function(item){
+            var fields = _.first(this.meta.panels).fields;
+
+            this[item + '_field'] = function(fieldName, fieldMeta) {
+                return _.find(fieldMeta, function(field) { return field.name == this; }, fieldName);
+            }(item, fields);
+
+        }, this);
 
     },
 
@@ -29,3 +32,7 @@
             view.model.set(this.name, this.value);
             view.model.set(view.buckets_dom_field.name, view.buckets_dom_field.options[this.value]);
 
+        });
+
+    }
+})
