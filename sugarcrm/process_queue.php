@@ -35,7 +35,7 @@ require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
 require_once('include/modules.php');
 require_once('config.php');
-require_once "modules/Mailer/MailerException.php";
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 global $sugar_config,
        $current_language,
