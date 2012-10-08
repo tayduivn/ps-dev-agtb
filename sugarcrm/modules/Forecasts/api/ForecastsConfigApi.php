@@ -103,9 +103,9 @@ class ForecastsConfigApi extends ModuleApi {
         if (!empty($args['module'])) {
             $data = $adminBean->getConfigForModule($args['module']);
             // check if this is first time Forecasts setup
-            if ($data['is_setup'] == '1')
+            if ($data['is_setup'] == '0')
             {
-                $admin->saveSetting('Forecasts', 'is_setup', '0', 'base');
+                $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
                 $db = DBManagerFactory::getInstance();
                 $upgraded = $db->getOne("SELECT id FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
                 // check if we need to upgrade opps which had been created upon previous versions
