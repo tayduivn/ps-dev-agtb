@@ -1,6 +1,6 @@
 <?php
 
-$layout = new GenericLayout();
+$layout = MetaDataManager::getLayout('GenericLayout');
 $layout->push(array('view'=>'twitter'));
 $layout->push(array('view'=>'maps'));
 $layout->push(array('view'=>'opportunity_metrics'));

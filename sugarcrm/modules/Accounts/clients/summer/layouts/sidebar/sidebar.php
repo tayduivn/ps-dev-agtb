@@ -1,6 +1,6 @@
 <?php
 
-$layout = new GenericLayout();
+$layout = MetaDataManager::getLayout('GenericLayout');
 $layout->push(array('view'=>'crunchbase'));
 $layout->push(array('view'=>'news'));
 $layout->push(array('view'=>'opportunity_metrics'));

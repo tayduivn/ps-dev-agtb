@@ -1,7 +1,7 @@
 <?php
 
 
-$layout = new GenericLayout();
+$layout = MetaDataManager::getLayout('GenericLayout');
 $layout->push(array('view'=>'list-top'));
 $layout->push(array('view'=>'filter'));
 $layout->push(array('view'=>'list'));
