@@ -42,6 +42,7 @@ require_once("include/SugarPHPMailer.php");
 require_once("log4php/LoggerManager.php");
 require_once("modules/ACL/ACLController.php");
 require_once("include/utils.php");
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 clean_special_arguments();
 // cn: set php.ini settings at entry points
