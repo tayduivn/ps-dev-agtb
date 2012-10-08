@@ -99,84 +99,82 @@ foreach ($reports_to_email as $schedule_info) {
         } catch (MailerException $me) {
             //@todo consider logging the error at the very least
         }
+    } else {
+        $GLOBALS['log']->debug('-----> Reporter settings attributes');
+        $reporter->layout_manager->setAttribute("no_sort", 1);
+        $module_for_lang = $reporter->module;
 
-        continue;
-    }
+        $GLOBALS['log']->debug('-----> Reporter Handling PDF output');
+        $report_filename = template_handle_pdf($reporter, false);
 
-    $GLOBALS['log']->debug('-----> Reporter settings attributes');
-    $reporter->layout_manager->setAttribute("no_sort", 1);
-    $module_for_lang = $reporter->module;
+        try {
+            $GLOBALS['log']->debug('-----> Generating Mailer');
+            $mailer = MailerFactory::getMailerForUser($current_user);
 
-    $GLOBALS['log']->debug('-----> Reporter Handling PDF output');
-    $report_filename = template_handle_pdf($reporter, false);
+            // set the subject of the email
+            $subject = empty($saved_report->name) ? "Report" : $saved_report->name;
+            $mailer->setSubject($subject);
 
-    try {
-        $GLOBALS['log']->debug('-----> Generating Mailer');
-        $mailer = MailerFactory::getMailerForUser($current_user);
+            // add the recipient...
 
-        // set the subject of the email
-        $subject = empty($saved_report->name) ? "Report" : $saved_report->name;
-        $mailer->setSubject($subject);
+            // first get all email addresses known for this recipient
+            $recipientEmailAddresses = array($user->email1, $user->email2);
+            $recipientEmailAddresses = array_filter($recipientEmailAddresses);
 
-        // add the recipient...
+            // then retrieve first non-empty email address
+            $recipientEmailAddress = array_shift($recipientEmailAddresses);
 
-        // first get all email addresses known for this recipient
-        $recipientEmailAddresses = array($user->email1, $user->email2);
-        $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+            // get the recipient name that accompanies the email address
+            $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
 
-        // then retrieve first non-empty email address
-        $recipientEmailAddress = array_shift($recipientEmailAddresses);
+            $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-        // get the recipient name that accompanies the email address
-        $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+            // attach the report, using the subject as the name of the attachment
+            $charsToRemove  = array("\r", "\n");
+            $attachmentName = str_replace($charsToRemove, "", $subject); // remove these characters from the attachment name
+            $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf"); // replace spaces with the underscores
+            $attachment     = new Attachment($report_filename, $attachmentName, Encoding::Base64, "application/pdf");
+            $mailer->addAttachment($attachment);
 
-        $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
+            // set the body of the email
+            $body = $mod_strings["LBL_HELLO"];
 
-        // attach the report, using the subject as the name of the attachment
-        $charsToRemove  = array("\r", "\n");
-        $attachmentName = str_replace($charsToRemove, "", $subject); // remove these characters from the attachment name
-        $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf"); // replace spaces with the underscores
-        $attachment     = new Attachment($report_filename, $attachmentName, Encoding::Base64, "application/pdf");
-        $mailer->addAttachment($attachment);
+            if ($recipientName != "") {
+                $body .= " {$recipientName}";
+            }
 
-        // set the body of the email
-        $body = $mod_strings["LBL_HELLO"];
+            $body .= ",\n\n" .
+                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
+                     $saved_report->date_entered .
+                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"].
+                     $saved_report->name .
+                     $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
 
-        if ($recipientName != "") {
-            $body .= " {$recipientName}";
+            $mailer->setTextBody($body); // looks to be plain-text only
+
+            $GLOBALS["log"]->debug("-----> Sending PDF via Email to [ {$recipientEmailAddress} ]");
+            $mailer->send();
+
+            $GLOBALS['log']->debug("-----> Send successful");
+            $report_schedule->update_next_run_time(
+                $schedule_info["id"],
+                $schedule_info["next_run"],
+                $schedule_info["time_interval"]
+            );
+        } catch (MailerException $me) {
+            switch ($me->getCode()) {
+                case MailerException::InvalidEmailAddress:
+                    $GLOBALS["log"]->info("No email address for {$recipientName}");
+                    break;
+                default:
+                    $GLOBALS["log"]->fatal("Mail error: " . $me->getMessage());
+                    break;
+            }
         }
 
-        $body .= ",\n\n" .
-                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
-                 $saved_report->date_entered .
-                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"].
-                 $saved_report->name .
-                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
-
-        $mailer->setTextBody($body); // looks to be plain-text only
-
-        $GLOBALS["log"]->debug("-----> Sending PDF via Email to [ {$recipientEmailAddress} ]");
-        $mailer->send();
-
-        $GLOBALS['log']->debug("-----> Send successful");
-        $report_schedule->update_next_run_time(
-            $schedule_info["id"],
-            $schedule_info["next_run"],
-            $schedule_info["time_interval"]
-        );
-    } catch (MailerException $me) {
-        switch ($me->getCode()) {
-            case MailerException::InvalidEmailAddress:
-                $GLOBALS["log"]->info("No email address for {$recipientName}");
-                break;
-            default:
-                $GLOBALS["log"]->fatal("Mail error: " . $me->getMessage());
-                break;
-        }
+        $GLOBALS['log']->debug('-----> Removing temporary PDF file');
+        unlink($report_filename);
     }
-
-    $GLOBALS['log']->debug('-----> Removing temporary PDF file');
-    unlink($report_filename);
 }
 
 sugar_cleanup(false); // continue script execution so that if run from Scheduler, job status will be set back to "Active"
