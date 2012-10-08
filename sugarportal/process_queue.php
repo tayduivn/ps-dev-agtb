@@ -92,8 +92,8 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
     $GLOBALS["log"]->debug("-----> Reporter Handling PDF output");
     $reportFilename = template_handle_pdf($reporter, false);
 
-    $GLOBALS["log"]->debug("-----> Generating SugarPHPMailer");
-    $mail = new SugarPHPMailer();
+    $GLOBALS["log"]->debug("-----> Generating Mailer");
+    $mailer = MailerFactory::getMailerForUser($current_user);
 
     // add the recipient...
 
@@ -109,25 +109,6 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
 
     $mail->AddAddress($recipientEmailAddress, $recipientName);
 
-    $admin = new Administration();
-    $admin->retrieveSettings();
-
-    if ($admin->settings["mail_sendtype"] == "SMTP") {
-        $mail->Mailer = "smtp";
-        $mail->Host   = $admin->settings["mail_smtpserver"];
-        $mail->Port   = $admin->settings["mail_smtpport"];
-
-        if ($admin->settings["mail_smtpauth_req"]) {
-            $mail->SMTPAuth = TRUE;
-            $mail->Username = $admin->settings["mail_smtpuser"];
-            $mail->Password = $admin->settings["mail_smtppass"];
-        }
-    } else {
-        $mail->Mailer = "sendmail";
-    }
-
-    $mail->From     = $admin->settings["notify_fromaddress"];
-    $mail->FromName = empty($admin->settings["notify_fromname"]) ? " " : $admin->settings["notify_fromname"];
     $mail->Subject  = empty($reporter->report_def["report_name"]) ? "Report" : $reporter->report_def["report_name"];
     $cr             = array("\r", "\n");
     $attachmentName = str_replace(" ", "_", str_replace($cr, "", $mail->Subject) . ".pdf");
