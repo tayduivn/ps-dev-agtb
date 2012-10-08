@@ -115,9 +115,7 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
     /**
      * getClosedStages
      *
-     * Return true to skip updates for this module.
-     * Return false to do default update of amount * base_rate = usdollar
-     * To custom processing, do here and return true.
+     * Return an array of closed stage names from the admin bean.
      *
      * @access protected
      * @return array array of closed stage values
