@@ -33,7 +33,7 @@ require_once 'include/api/vCardApi.php';
 /*
  * Tests vCard Rest api.
  */
-class vCardApiTest extends Sugar_PHPUnit_Framework_TestCase
+class vCardApiTest extends Sugar_PHPUnit_Framework_OutputTestCase
 {
     public function setUp(){
         SugarTestHelper::setUp('current_user');
