@@ -77,18 +77,6 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
     $modListHeader  = query_module_access_list($current_user);
     $report_modules = getAllowedReportModules($modListHeader);
 
-    if (empty($user->email1)) {
-        if (empty($user->email2)) {
-            $recipientEmailAddress = "";
-        } else {
-            $recipientEmailAddress = $user->email2;
-        }
-    } else {
-        $recipientEmailAddress = $user->email1;
-    }
-
-    $recipientName = empty($user->first_name) ? $user->last_name : $user->first_name . " " . $user->last_name;
-
     $theme       = $sugar_config["default_theme"];
     $savedReport = new SavedReport();
     $savedReport->retrieve($scheduleInfo["report_id"]);
@@ -106,6 +94,19 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
 
     $GLOBALS["log"]->debug("-----> Generating SugarPHPMailer");
     $mail = new SugarPHPMailer();
+
+    // add the recipient...
+
+    // first get all email addresses known for this recipient
+    $recipientEmailAddresses = array($user->email1, $user->email2);
+    $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+
+    // then retrieve first non-empty email address
+    $recipientEmailAddress = array_shift($recipientEmailAddresses);
+
+    // get the recipient name that accompanies the email address
+    $recipientName = empty($user->first_name) ? $user->last_name : "{$user->first_name} {$user->last_name}";
+
     $mail->AddAddress($recipientEmailAddress, $recipientName);
 
     $admin = new Administration();
