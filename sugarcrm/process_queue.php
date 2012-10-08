@@ -132,17 +132,24 @@ foreach ($reports_to_email as $schedule_info) {
     $attachment     = new Attachment($report_filename, $attachmentName, Encoding::Base64, "application/pdf");
     $mailer->addAttachment($attachment);
 
+    // set the body of the email
+    $body = $mod_strings["LBL_HELLO"];
+
+    if ($recipientName != "") {
+        $body .= " {$recipientName}";
+    }
+
+    $body .= ",\n\n" .
+             $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
+             $saved_report->date_entered .
+             $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"].
+             $saved_report->name .
+             $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
+
+    $mailer->setTextBody($body); // looks to be plain-text only
+
     $mail = new SugarPHPMailer();
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-
-    $body = $mod_strings['LBL_HELLO'];
-    if ($recipientName != '') {
-        $body .= " $recipientName";
-    }
-    $body .= ",\n\n";
-    $body .= $mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO'] . $saved_report->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
-             . $saved_report->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
-    $mail->Body = $body;
 
     if ($recipientEmailAddress == '') {
         $GLOBALS['log']->info("No email address for $recipientName");
