@@ -32,7 +32,7 @@ describe("Header View", function() {
         app.config.displayModules = _.toArray(result);
         delete result._hash;
         view.setModuleInfo();
-        expect(view.module_list).toEqual(_.toArray(result));
+        expect(_.values(view.module_list)).toEqual(_.toArray(result));
         app.config.displayModules = originalModuleList;
     });
 
@@ -46,7 +46,7 @@ describe("Header View", function() {
         view.setModuleInfo();
         view.setCreateTasksList();
 
-        expect(view.createListLabels.length).toEqual(2);
+        expect(view.createListLabels.length).toEqual(_.values(view.module_list).length);
         expect(hasAccessStub).toHaveBeenCalled();
         hasAccessStub.restore();
     });
