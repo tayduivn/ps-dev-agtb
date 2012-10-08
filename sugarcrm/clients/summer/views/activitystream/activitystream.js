@@ -430,6 +430,9 @@
     },
 
     _parseTags: function(text) {
+        if(!text || text.length === 0) {
+            return text;
+        }
         var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
         return text.replace(pattern, function(str, module, id, text) {
             return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
@@ -453,7 +456,7 @@
                 event.asset = {
                         media: '<a href=\'#Users/'+comment.created_by+'\'><img src=\''+comment.created_by_picture_url+'\' /></a>',
                         caption: comment.created_by_name
-                    };                
+                    };
                 events.push(event);
             }
             _.each(comment.notes, function(attachment) {
@@ -498,8 +501,10 @@
     _addCalendarMonthEvent: function(models) {
         var events = [], counts = {};
         var getDate = function(dateString) {
-            var t = dateString.split(/[- :]/);
-            var d = new Date(t[0], t[1]-1, t[2]);
+            var d = app.date.parse(dateString, app.date.guessFormat(dateString));
+            d.setHours(0);
+            d.setMinutes(0);
+            d.setSeconds(0);
             return d.toDateString();
         };
 
@@ -528,25 +533,21 @@
 
     _addCalendarWeekEvent: function(models) {
         var events = [], numEvents = 5;
-        var getDate = function(dateString) {
-            var t = dateString.split(/[- :]/);
-            var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
-            return d;
-        };
+
         $.each(models, function(index, model) {
             if(events.length < numEvents) {
                 var event = {allDay:false};
                 event.id = model.get('id');
-                event.start = getDate(model.get("date_created"));
+                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
                 event.title =  model.get("created_by_name") + " " + model.get("activity_type") + "...";
                 events.push(event);
             }
             else if(events.length == numEvents) {
                 var event = {allDay:true};
                 event.id = model.get('id');
-                event.start = getDate(model.get("date_created"));
+                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
                 event.title = (models.length - numEvents)+" more event(s)";
-                events.push(event); 
+                events.push(event);
                 return false;
             }
         });
@@ -556,19 +557,15 @@
 
     _addCalendarDayEvent: function(models) {
         var events = [], numEvents = 5;
-        var getDate = function(dateString) {
-            var t = dateString.split(/[- :]/);
-            var d = new Date(t[0], t[1]-1, t[2], t[3], t[4], t[5]);
-            return d;
-        };
-        $.each(models, function(index, model) { 
+
+        $.each(models, function(index, model) {
             var activityType = model.get('activity_type');
             var event = {allDay:false};
             event.id = model.get('id');
-            event.start = getDate(model.get("date_created"));
+            event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
             if(events.length < numEvents) {
                 event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
-        
+
                 switch (activityType) {
                     case "posted":
                         event.title += model.get('activity_data').value;
@@ -587,19 +584,19 @@
                             if(index !== 0) {
                                 event.title += ', ';
                             }
-                            event.title += value.get('field_name');
+                            event.title += value.field_name;
                         });
                         event.title += " on "+model.get('target_name');
                         break;
                     default:
                         break;
                 }
-                events.push(event);            
+                events.push(event);
             }
             else if(events.length == numEvents) {
                 event.allDay = true;
                 event.title = (models.length - numEvents)+" more event(s)";
-                events.push(event);            
+                events.push(event);
                 return false;
             }
         });
