@@ -39,20 +39,22 @@
             //trash the current options
             $('option', timeperiod_start_day).remove();
             if(_.has(input, "selected")) {
-                var current_date = new Date();
-                selected_month = input.selected;
-                current_date.setMonth(selected_month);
-                current_date.setDate(0);
-                timeperiod_start_day.append('<option value=""></option>');
-                var days = current_date.getDate();
-                for(var i = 1; i <= days; i++) {
-                    timeperiod_start_day.append('<option value="'+i+'">'+i+'</option>');
-                }
+                timeperiod_start_day.append(this._buildDaysOptions(input.selected));
                 timeperiod_start_day.trigger('liszt:updated');
 
             }
             this.model.set('timeperiods_start_month', selected_month);
-        }
+        };
+
+        field._buildDaysOptions = function(selected_month) {
+            var option_html
+            var current_date = new Date();
+            current_date.setMonth(selected_month);
+            current_date.setDate(0);
+            option_html = '<option value=""></option>';
+            var days = current_date.getDate();
+            return option_html;
+        };
         return field;
     },
 
