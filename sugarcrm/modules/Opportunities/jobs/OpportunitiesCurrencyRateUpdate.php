@@ -59,12 +59,15 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function doCustomUpdateRate($table, $column, $currencyId)
     {
+        $stages = $this->getClosedStages();
+
         // setup SQL statement
         $query = sprintf("UPDATE currencies c, %s t SET t.%s = c.conversion_rate
-        WHERE t.sales_stage NOT LIKE 'Closed%%'
+        WHERE t.sales_stage NOT IN ('%s')
         AND c.id = '%s' and c.id = t.currency_id",
             $table,
             $column,
+            implode("','",$stages),
             $currencyId
         );
         // execute
@@ -88,13 +91,17 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
      */
     public function doCustomUpdateUsDollarRate($tableName, $usDollarColumn, $amountColumn, $currencyId)
     {
+
+        $stages = $this->getClosedStages();
+
         // setup SQL statement
         $query = sprintf("UPDATE %s t SET t.%s = t.base_rate * t.%s
-            WHERE t.sales_stage NOT LIKE 'Closed%%'
+            WHERE t.sales_stage NOT IN ('%s')
             AND t.currency_id = '%s'",
             $tableName,
             $usDollarColumn,
             $amountColumn,
+            implode("','",$stages),
             $currencyId
         );
         // execute
@@ -104,5 +111,33 @@ class OpportunitiesCurrencyRateUpdate extends CurrencyRateUpdateAbstract
         }
         return true;
     }
+
+    /**
+     * getClosedStages
+     *
+     * Return true to skip updates for this module.
+     * Return false to do default update of amount * base_rate = usdollar
+     * To custom processing, do here and return true.
+     *
+     * @access protected
+     * @return array array of closed stage values
+     */
+    protected function getClosedStages()
+    {
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        // get all possible closed stages
+        $stages = array_merge(
+            (array)$settings['sales_stage_won'],
+            (array)$settings['sales_stage_lost']
+        );
+        // db quote values
+        foreach($stages as $stage_key => $stage_value) {
+            $stages[$stage_key] = $this->db->quote($stage_value);
+        }
+        return $stages;
+    }
+
 
 }
