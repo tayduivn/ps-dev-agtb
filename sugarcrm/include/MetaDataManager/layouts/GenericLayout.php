@@ -7,7 +7,7 @@ class GenericLayout {
         $defaults = array("name" => null, "type" => "simple");
         $args = array_merge($defaults, $params);
         $this->layout["type"] = $args['type'];
-        if ($name) {
+        if ($args['name']) {
             $this->layout["name"] = $args['name'];
         }
 

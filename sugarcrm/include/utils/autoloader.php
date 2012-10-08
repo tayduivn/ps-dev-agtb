@@ -107,38 +107,10 @@ class SugarAutoLoader
   		return false;
 	}
 
-	/**
-	 * Get filename for visibility class
-	 * @param string $class
-	 */
-	protected static function getVisibilityStrategy($class)
-	{
-	    if(substr($class, 0, 8) == 'SugarACL') {
-	        // ACL class
-	        if(file_exists("custom/data/acl/$class.php")) {
-	            return "custom/data/acl/$class.php";
-	        }
-	        if(file_exists("data/acl/$class.php")) {
-	            return "data/acl/$class.php";
-	        }
-	        return false;
-	    }
-	    if(file_exists("custom/data/visibility/$class.php")) {
-	        return "custom/data/visibility/$class.php";
-	    }
-	    if(file_exists("data/visibility/$class.php")) {
-	        return "data/visibility/$class.php";
-	    }
-	    return false;
-	}
-
     protected static function getFilenameForLayoutClass($class)
     {
         if(substr($class, -6) == "Layout") {
-            $filename = "include/MetaDataManager/layouts/$class.php";
-            if(file_exists("custom/".$filename)) {
-                return "custom/".$filename;
-            }
+            $filename = get_custom_file_if_exists("include/MetaDataManager/layouts/$class.php");
             if(file_exists($filename)) {
                 return $filename;
             }
