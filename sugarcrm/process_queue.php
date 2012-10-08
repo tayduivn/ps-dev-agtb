@@ -120,10 +120,10 @@ foreach ($reports_to_email as $schedule_info) {
     $GLOBALS['log']->debug('-----> Generating Mailer');
     $mailer = MailerFactory::getMailerForUser($current_user);
 
+    $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
+
     $mail = new SugarPHPMailer();
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-
-    $mail->AddAddress($recipientEmailAddress, $locale->translateCharsetMIME(trim($recipientName), 'UTF-8', $OBCharset));
 
     $mail->Subject   = empty($saved_report->name) ? 'Report' : $saved_report->name;
     $cr              = array("\r", "\n");
