@@ -30,6 +30,7 @@
  * view uses the /ForecastSchedule REST endpoint to retrieve and save data.
  */
 $viewdefs['Forecasts']['base']['view']['forecastSchedule'] = array(
+    'placeInLayout' => false,
     'panels' =>
     array(
         0 =>

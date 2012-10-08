@@ -1,2 +1,4 @@
 <?php
-$viewdefs['Forecasts']['base']['view']['forecastsWorksheetTotals'] = array();
+$viewdefs['Forecasts']['base']['view']['forecastsWorksheetTotals'] = array(
+    'placeInLayout' => false
+);
