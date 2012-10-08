@@ -179,10 +179,12 @@ describe("The expected opportunities view tests", function(){
             var collection = new Backbone.Collection([forecastSchedule]);
             view._collection = collection;
 
-            context = { forecasts : {
-                            forecastschedule : collection,
-                            on : function() {}
-                      }
+            context = {
+                forecasts : {
+                    forecastschedule : collection,
+                    on : function() {},
+                    config : new Backbone.Model()
+                }
             };
 
             view.context = context;
