@@ -117,54 +117,60 @@ foreach ($reports_to_email as $schedule_info) {
     $GLOBALS['log']->debug('-----> Reporter Handling PDF output');
     $report_filename = template_handle_pdf($reporter, false);
 
-    $GLOBALS['log']->debug('-----> Generating Mailer');
-    $mailer = MailerFactory::getMailerForUser($current_user);
+    try {
+        $GLOBALS['log']->debug('-----> Generating Mailer');
+        $mailer = MailerFactory::getMailerForUser($current_user);
 
-    $subject = empty($saved_report->name) ? "Report" : $saved_report->name;
-    $mailer->setSubject($subject);
+        // set the subject of the email
+        $subject = empty($saved_report->name) ? "Report" : $saved_report->name;
+        $mailer->setSubject($subject);
 
-    $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
+        // add the recipient
+        $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-    // attach the report, using the subject as the name of the attachment
-    $charsToRemove  = array("\r", "\n");
-    $attachmentName = str_replace($charsToRemove, "", $subject); // remove these characters from the attachment name
-    $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf"); // replace spaces with the underscores
-    $attachment     = new Attachment($report_filename, $attachmentName, Encoding::Base64, "application/pdf");
-    $mailer->addAttachment($attachment);
+        // attach the report, using the subject as the name of the attachment
+        $charsToRemove  = array("\r", "\n");
+        $attachmentName = str_replace($charsToRemove, "", $subject); // remove these characters from the attachment name
+        $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf"); // replace spaces with the underscores
+        $attachment     = new Attachment($report_filename, $attachmentName, Encoding::Base64, "application/pdf");
+        $mailer->addAttachment($attachment);
 
-    // set the body of the email
-    $body = $mod_strings["LBL_HELLO"];
+        // set the body of the email
+        $body = $mod_strings["LBL_HELLO"];
 
-    if ($recipientName != "") {
-        $body .= " {$recipientName}";
-    }
+        if ($recipientName != "") {
+            $body .= " {$recipientName}";
+        }
 
-    $body .= ",\n\n" .
-             $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
-             $saved_report->date_entered .
-             $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"].
-             $saved_report->name .
-             $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
+        $body .= ",\n\n" .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
+                 $saved_report->date_entered .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"].
+                 $saved_report->name .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
 
-    $mailer->setTextBody($body); // looks to be plain-text only
+        $mailer->setTextBody($body); // looks to be plain-text only
 
-    $mail = new SugarPHPMailer();
-    $OBCharset = $locale->getPrecedentPreference('default_email_charset');
+        $GLOBALS["log"]->debug("-----> Sending PDF via Email to [ {$recipientEmailAddress} ]");
+        $mailer->send();
 
-    if ($recipientEmailAddress == '') {
-        $GLOBALS['log']->info("No email address for $recipientName");
-    } else {
-        $GLOBALS['log']->debug('-----> Sending PDF via Email to [ ' . $recipientEmailAddress . ' ]');
-
-        $mail->prepForOutbound();
-
-        if ($mail->Send()) {
-            $GLOBALS['log']->debug('-----> Send successful');
-            $report_schedule->update_next_run_time($schedule_info['id'], $schedule_info['next_run'], $schedule_info['time_interval']);
-        } else {
-            $GLOBALS['log']->fatal("Mail error: $mail->ErrorInfo");
+        $GLOBALS['log']->debug("-----> Send successful");
+        $report_schedule->update_next_run_time(
+            $schedule_info["id"],
+            $schedule_info["next_run"],
+            $schedule_info["time_interval"]
+        );
+    } catch (MailerException $me) {
+        switch ($me->getCode()) {
+            case MailerException::InvalidEmailAddress:
+                $GLOBALS["log"]->info("No email address for {$recipientName}");
+                break;
+            default:
+                $GLOBALS["log"]->fatal("Mail error: " . $me->getMessage());
+                break;
         }
     }
+
     $GLOBALS['log']->debug('-----> Removing temporary PDF file');
     unlink($report_filename);
 }
