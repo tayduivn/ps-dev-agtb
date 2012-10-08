@@ -212,7 +212,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      * @group forecastapi
      * @group forecasts
      */
-    public function testWorksheetVersionSave()
+    public function testWorksheetCommitSave()
     {
     	$oldUser = $GLOBALS['current_user'];
     	
@@ -239,14 +239,19 @@ class ForecastsWorksheetsApiTest extends RestTestBase
             "product_id" => $response["reply"][0]["product_id"],
             "timeperiod_id" => $this->timeperiod->id,            
             "assigned_user_id" => $response["reply"][0]["assigned_user_id"],
-            "draft" => 1
+            "draft" => 0
         );     
         
         $response = $this->_restCall("ForecastWorksheets/" . $this->repData["ops"][0]->id, json_encode($postData), "PUT");
 
         $db = DBManagerFactory::getInstance();
         $db->commit();
-
+		
+		// set the current user to Manager
+        $this->_user = $this->manager['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+        
         // now get the data back to see if it was saved to all the proper tables.
         $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
 
@@ -260,27 +265,9 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         }
 
         //check to see if the draft data comes back
-        $this->assertEquals("0", $returnVersion, "Draft Data was not returned.");
+        $this->assertEquals($best_case, $returnBest, "Committed Data was not returned.");
+        $this->assertEquals($probability, $returnProb, "Committed Data was not returned.");
 
-        //Now, save as a regular version so things will be reset.
-        $postData["draft"] = 0;
-        $response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
-
-        // now get the data back to see if it was saved to all the proper tables.
-        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
-
-        //loop through response and pick out the rows that correspond with ops[0]->id
-        foreach ($response["reply"] as $record) {
-            if ($record["id"] == $id) {
-                $returnBest = $record["best_case"];
-                $returnProb = $record["probability"];
-                $returnVersion = $record["version"];
-            }
-        }
-
-        //check to see if the live data comes back
-        $this->assertEquals("1", $returnVersion, "Live Data was not returned.");
-        
         // set the current user to original user
         $this->_user = $oldUser;
         $GLOBALS['current_user'] = $oldUser;
@@ -291,7 +278,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      * @group forecastapi
      * @group forecasts
      */
-    public function testWorksheetDraftVisibility()
+    public function testWorksheetCommitVisibility()
     {
 
         $oldUser = $GLOBALS['current_user'];
@@ -345,34 +332,9 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         }
 
         //check to see if the live data comes back
-        $this->assertEquals("1", $returnVersion, "Live Data was not returned for Manager.");
+        $this->assertEquals($best_case - 100, $returnBest, "Committed Data was not returned.");
+        $this->assertEquals($probability - 10, $returnProb, "Committed Data was not returned.");
 
-        // set the current user to salesrep
-        $this->_user = $this->reportee['user'];
-        $GLOBALS['current_user'] = $this->_user;
-        $this->authToken = "";
-
-        //Now, save as a regular version so things will be reset.
-        $postData["draft"] = 0;
-        $response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
-
-        $db->commit();
-
-        // now get the data back to see if it was saved to all the proper tables.
-        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
-
-        //loop through response and pick out the rows that correspond with ops[0]->id
-        foreach ($response["reply"] as $record) {
-            if ($record["id"] == $id) {
-                $returnBest = $record["best_case"];
-                $returnProb = $record["probability"];
-                $returnVersion = $record["version"];
-            }
-        }
-
-        //check to see if the live data comes back
-        $this->assertEquals("1", $returnVersion, "Live Data was not returned.");
-        
         // set the current user to original user
         $this->_user = $oldUser;
         $GLOBALS['current_user'] = $oldUser;

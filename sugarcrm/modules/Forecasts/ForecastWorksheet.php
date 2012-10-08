@@ -58,48 +58,49 @@ class ForecastWorksheet extends SugarBean {
 			$version = 0;
 		}
 		
-		$worksheetID = $this->getWorksheetID($version);
-    	if($version != 0)
+		
+    	
+		//leaving here until we figure out what to do in 6.8
+		/*$product = BeanFactory::getBean('Products', $this->args["product_id"]);
+		$product->probability = $this->probability;
+        $product->best_case = $this->best_case;
+        $product->likely_case = $this->likely_case;
+        $product->worst_case = $this->args["worst_case"];
+        $product->sales_stage = $this->sales_stage;
+        $product->commit_stage = $this->commit_stage;
+		$product->save();*/
+		
+		
+        //Update the Opportunities bean -- should update the product line item as well through SaveOverload.php
+        $opp = BeanFactory::getBean('Opportunities', $this->id);
+        $opp->probability = $this->probability;
+        $opp->best_case = $this->best_case;
+        $opp->amount = $this->likely_case;
+        $opp->sales_stage = $this->sales_stage;
+        $opp->commit_stage = $this->commit_stage;
+        $opp->worst_case = $this->worst_case;
+        $opp->commit_stage = $this->commit_stage;
+        $opp->save($check_notify);
+    	
+    	if($version == 1)
     	{
-    		//leaving here until we figure out what to do in 6.8
-    		/*$product = BeanFactory::getBean('Products', $this->args["product_id"]);
-    		$product->probability = $this->probability;
-	        $product->best_case = $this->best_case;
-	        $product->likely_case = $this->likely_case;
-	        $product->worst_case = $this->args["worst_case"];
-	        $product->sales_stage = $this->sales_stage;
-	        $product->commit_stage = $this->commit_stage;
-    		$product->save();*/
-    		
-    		
-	        //Update the Opportunities bean -- should update the product line item as well through SaveOverload.php
-	        $opp = BeanFactory::getBean('Opportunities', $this->id);
-	        $opp->probability = $this->probability;
-	        $opp->best_case = $this->best_case;
-	        $opp->amount = $this->likely_case;
-	        $opp->sales_stage = $this->sales_stage;
-	        $opp->commit_stage = $this->commit_stage;
-	        $opp->worst_case = $this->worst_case;
-	        $opp->commit_stage = $this->commit_stage;
-	        $opp->save($check_notify);
+	        //Update the Worksheet bean
+			$worksheet  = BeanFactory::getBean('Worksheet', $this->worksheet_id);
+			$worksheet->timeperiod_id = $this->timeperiod_id;
+			$worksheet->user_id = $this->assigned_user_id;
+	        $worksheet->best_case = $this->best_case;
+	        $worksheet->likely_case = $this->likely_case;
+	        $worksheet->worst_case = $this->worst_case;
+	        $worksheet->op_probability = $this->probability;
+	        $worksheet->commit_stage = $this->commit_stage;
+	        $worksheet->forecast_type = "Direct";
+	        $worksheet->related_forecast_type = "Product";
+	        $worksheet->related_id = $this->product_id;
+	        $worksheet->currency_id = $this->currency_id;
+	        $worksheet->base_rate = $this->base_rate;
+	        $worksheet->version = $version;
+	        $worksheet->save($check_notify);
     	}
-    	 
-        //Update the Worksheet bean
-		$worksheet  = BeanFactory::getBean('Worksheet', $worksheetID);
-		$worksheet->timeperiod_id = $this->timeperiod_id;
-		$worksheet->user_id = $this->assigned_user_id;
-        $worksheet->best_case = $this->best_case;
-        $worksheet->likely_case = $this->likely_case;
-        $worksheet->worst_case = $this->worst_case;
-        $worksheet->op_probability = $this->probability;
-        $worksheet->commit_stage = $this->commit_stage;
-        $worksheet->forecast_type = "Direct";
-        $worksheet->related_forecast_type = "Product";
-        $worksheet->related_id = $this->product_id;
-        $worksheet->currency_id = $this->currency_id;
-        $worksheet->base_rate = $this->base_rate;
-        $worksheet->version = $version;
-        $worksheet->save($check_notify);
 
         //return $worksheet->id;
     }
@@ -118,28 +119,5 @@ class ForecastWorksheet extends SugarBean {
             $this->$arg_key = $arg;
         }
 	}
-	
-	/**
-	 * Finds the id of the correct version row to update
-	 * 
-	 * @param int version
-	 * @return string  SugarGUID of row, null if not found.
-	 */
-	protected function getWorksheetID($version)
-	{
-        global $current_user;
-		$sql = "select id from worksheet " .
-				"where timeperiod_id = '" . $this->timeperiod_id . "' " .
-					"and user_id = '" . $current_user->id . "' " .
-					"and version = '" . $version . "' " .
-					"and related_id = '" . $this->product_id . "'";
-
-        $db = DBManagerFactory::getInstance();
-        $id = $db->getOne($sql);
-
-        return ($id === false) ? null : $id;
-
-	}
-
 }
 

@@ -82,12 +82,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         	   	"left join worksheet w " .
         	   	"on p.id = w.related_id "; 
 
-        if ($this->getArg('user_id') == $current_user->id) {
-            $sql .= "and w.date_modified = (select max(date_modified) from worksheet w2 " .
-                "where w2.user_id = p.assigned_user_id and related_id = p.id " .
-                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') ";
-        } else {
-            $sql .= "and w.version = 1 ";
+        if ($this->getArg('user_id') != $current_user->id) {
+        	   $sql .= "and w.version = 1 ";
         }
         
 		$sql .= "where p.deleted = 0 " .
@@ -108,7 +104,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $data['base_rate'] = $row["base_rate"];
             $data['version'] = 1;
 
-            if (isset($row["worksheet_id"])) {
+            if (isset($row["worksheet_id"]) && $this->getArg('user_id') != $current_user->id) {
             	//use the worksheet data if it exists
                 $data['worksheet_id'] = $row["worksheet_id"];
                 $data['best_case'] = $row["w_best_case"];
