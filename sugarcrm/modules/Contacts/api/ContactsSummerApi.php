@@ -24,7 +24,8 @@ class ContactsSummerApi extends ListApi
 
     public function opportunityStats($api, $args)
     {
-        $data = $this->getOpportunities($api, $args);
+        $account = $this->getAccountBean($api, $args);
+        $data = $this->getAccountRelationship($api, $args, $account, 'opportunities', null);
         $return = array(
             'won' => array('amount_usdollar' => 0, 'count' => 0),
             'lost' => array('amount_usdollar' => 0, 'count' => 0),
@@ -48,7 +49,7 @@ class ContactsSummerApi extends ListApi
         return $return;
     }
 
-    protected function getOpportunities($api, $args, $limit = 5)
+    protected function getAccountBean($api, $args)
     {
         // Load up the bean
         $record = BeanFactory::getBean($args['module'], $args['record']);
@@ -63,6 +64,7 @@ class ContactsSummerApi extends ListApi
         if (!$record->load_relationship('accounts')) {
             throw new SugarApiExceptionNotFound('Could not find a relationship name accounts');
         }
+
         // Figure out what is on the other side of this relationship, check permissions
         $linkModuleName = $record->accounts->getRelatedModuleName();
         $linkSeed = BeanFactory::newBean($linkModuleName);
@@ -71,12 +73,7 @@ class ContactsSummerApi extends ListApi
         }
 
         $accounts = $record->accounts->query(array());
-        $rowCount = 1;
-
-        $accountData = array();
-        $data['records'] = array();
         foreach ($accounts['rows'] as $accountId => $value) {
-            $rowCount++;
             $account = BeanFactory::getBean('Accounts', $accountId);
             if (empty($account)) {
                 throw new SugarApiExceptionNotFound('Could not find parent record '.$accountId.' in module Accounts');
@@ -84,32 +81,41 @@ class ContactsSummerApi extends ListApi
             if (!$account->ACLAccess('view')) {
                 throw new SugarApiExceptionNotAuthorized('No access to view records for module: Accounts');
             }
-            // Load up the relationship
-            if (!$account->load_relationship('opportunities')) {
-                // The relationship did not load, I'm guessing it doesn't exist
-                throw new SugarApiExceptionNotFound('Could not find a relationship name opportunities');
-            }
-            // Figure out what is on the other side of this relationship, check permissions
-            $linkModuleName2 = $account->opportunities->getRelatedModuleName();
-            $linkSeed2 = BeanFactory::newBean($linkModuleName2);
-            if (!$linkSeed2->ACLAccess('view')) {
-                throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$linkModuleName2);
-            }
 
-            $opportunities = $account->opportunities->query(array());
-            $rowCount = 1;
+            // Only one account, so we can return inside the loop.
+            return $account;
+        }
+    }
 
-            $data['records'] = array();
-            foreach ($opportunities['rows'] as $opportunityId => $value) {
-                $rowCount++;
-                $opportunity = BeanFactory::getBean('Opportunities', $opportunityId);
-                $data['records'][] = $this->formatBean($api, $args, $opportunity);
-                if (!is_null($limit) && $rowCount == $limit) {
-                    // We have hit our limit.
-                    break;
-                }
+    protected function getAccountRelationship($api, $args, $account, $relationship, $limit = 5, $query = array())
+    {
+        // Load up the relationship
+        if (!$account->load_relationship($relationship)) {
+            // The relationship did not load, I'm guessing it doesn't exist
+            throw new SugarApiExceptionNotFound('Could not find a relationship name ' . $relationship);
+        }
+        // Figure out what is on the other side of this relationship, check permissions
+        $linkModuleName = $account->$relationship->getRelatedModuleName();
+        $linkSeed = BeanFactory::newBean($linkModuleName);
+        if (!$linkSeed->ACLAccess('view')) {
+            throw new SugarApiExceptionNotAuthorized('No access to view records for module: '.$linkModuleName);
+        }
+
+        $relationshipData = $account->$relationship->query($query);
+        $rowCount = 1;
+
+        $data = array();
+        foreach ($relationshipData['rows'] as $id => $value) {
+            $rowCount++;
+            $bean = BeanFactory::getBean(ucfirst($relationship), $id);
+            $data[] = $this->formatBean($api, $args, $bean);
+            if (!is_null($limit) && $rowCount == $limit) {
+                // We have hit our limit.
+                break;
             }
         }
-        return $data['records'];
+        return $data;
     }
+
+
 }
