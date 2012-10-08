@@ -430,11 +430,13 @@ class MssqlManager extends DBManager
                         $orderByMatch = array();
                         preg_match('/^(.*)(ORDER BY)(.*)$/is',$matches[3], $orderByMatch);
                         if (!empty($orderByMatch[3])) {
+                            $selectPart = array();
+                            preg_match('/^(.*)(\bFROM .*)$/isU', $matches[2], $selectPart);
                             $newSQL = "SELECT TOP $count * FROM
                                 (
-                                    " . $matches[1] . " ROW_NUMBER()
-                                    OVER (ORDER BY " . $this->returnOrderBy($sql, $orderByMatch[3]) . ") AS row_number,
-                                    " . $matches[2] . $orderByMatch[1]. "
+                                    " . $matches[1] . $selectPart[1] . ", ROW_NUMBER()
+                                    OVER (ORDER BY " . $this->returnOrderBy($sql, $orderByMatch[3]) . ") AS row_number
+                                    " . $selectPart[2] . $orderByMatch[1]. "
                                 ) AS a
                                 WHERE row_number > $start";
                         }
