@@ -30,6 +30,7 @@
 require_once 'modules/KBDocuments/KBDocument.php';
 require_once 'include/api/SugarApi/ApiHelper.php';
 require_once 'include/api/SugarApi/RestService.php';
+require_once('data/SugarBeanApiHelper.php');
 
 class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -43,6 +44,16 @@ class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['mod_strings'] = return_module_language($GLOBALS['current_language'], 'KBDocuments');
         $this->_api = new RestService();
         SugarTestHelper::setUp('beanList');
+
+        //create the KBDocument record
+        $this->_kb = new KBDocument();
+        $this->_kb->description = 'This is a unit test for the kb document api helper';
+        $this->_kb->kbdocument_name = 'KBUnitTest API Helper';
+        $this->_kb->status = 'In Review';
+        $this->_kb->assigned_user_id = $GLOBALS['current_user']->id;
+        //bug56843 - test approver name is filled automatically
+        $this->_kb->kbdoc_approver_id = $GLOBALS['current_user']->id;
+        $this->_kb->save();
     }
 
     public function tearDown()
@@ -60,15 +71,17 @@ class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    public function testApiHelper() {
-        //create the KBDocument record
-        $this->_kb = new KBDocument();
-        $this->_kb->description = 'This is a unit test for the kb document api helper';
-        $this->_kb->kbdocument_name = 'KBUnitTest API Helper';
-        $this->_kb->status = 'In Review';
-        $this->_kb->assigned_user_id = $GLOBALS['current_user']->id;
-        $this->_kb->save();
+    public function testKBDocApproverNameApiHelper() {
+        //bug 56834 - the api doesn't return kbdoc_approver_name
+        $data = SugarBeanApiHelper::formatForApi($this->_kb);
+        $this->assertFalse(isset($data['kbdoc_approver_name']));
 
+        //test approver name has been filled
+        $data = ApiHelper::getHelper($this->_api,$this->_kb)->formatForApi($this->_kb);
+        $this->assertEquals($data['kbdoc_approver_name'],$GLOBALS['current_user']->name);
+    }
+
+    public function testAttachmentListApiHelper() {
 
         $data = ApiHelper::getHelper($this->_api,$this->_kb)->formatForApi($this->_kb);
 
