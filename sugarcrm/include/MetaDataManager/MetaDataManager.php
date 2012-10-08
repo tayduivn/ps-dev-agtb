@@ -213,7 +213,7 @@ class MetaDataManager {
         //BEGIN SUGARCRM flav=pro ONLY
         $data['ftsEnabled'] = SugarSearchEngineMetadataHelper::isModuleFtsEnabled($moduleName);
         //END SUGARCRM flav=pro ONLY
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         $seed = BeanFactory::newBean($moduleName);
         if ($seed !== false) {
@@ -305,7 +305,7 @@ class MetaDataManager {
         $aclAction = new ACLAction();
         //BEGIN SUGARCRM flav=pro ONLY
         $aclField = new ACLField();
-        //END SUGARCRM flav=pro ONLY 
+        //END SUGARCRM flav=pro ONLY
         $acls = $aclAction->getUserActions($userId);
         $userObject = BeanFactory::getBean('Users',$userId);
         $obj = BeanFactory::getObjectName($module);
@@ -552,7 +552,7 @@ class MetaDataManager {
             $filename = $m[3];
             $file = rtrim($dir, '/') . '/' . $filename . '.php';
             if (file_exists($file)) {
-                // Changed from require_once to require so we can actually get 
+                // Changed from require_once to require so we can actually get
                 // these on multiple requests for them
                 require $file;
 
@@ -561,13 +561,13 @@ class MetaDataManager {
                 if (!empty($module)) {
                     if (isset($searchdefs[$module])) {
                         $meta[$filename] = $searchdefs[$module];
-                    } 
+                    }
                     else if (isset($viewdefs[$module][$platform][$type][$filename]))
                     {
                         $meta[$filename] = $viewdefs[$module][$platform][$type][$filename];
                     }
                 }
-                else if (isset($viewdefs[$platform][$type][$filename])) 
+                else if (isset($viewdefs[$platform][$type][$filename]))
                 {
                     $meta[$filename] = $viewdefs[$platform][$type][$filename];
                 }
@@ -689,7 +689,7 @@ class MetaDataManager {
             $controller = new TabController();
             $moduleList = array_keys($controller->get_user_tabs($this->user));
             $moduleList[] = 'ActivityStream';
-            $moduleList[] = 'Users';            
+            $moduleList[] = 'Users';
         }
 
         $oldModuleList = $moduleList;
@@ -718,5 +718,27 @@ class MetaDataManager {
         }
 
         return array_keys($platforms);
+    }
+
+    /*
+     * Factory for layouts.
+     *
+     * @param string $name - Name of the layout.
+     * @param array $args Arguments passed in to the constructor.
+     * @return class The instantiated version of the layout.
+     */
+    public static function getLayout($name, array $args = array()) {
+        $cstmName = 'Custom'.$name;
+        $class = false;
+        if(class_exists($cstmName)) {
+            $class = $cstmName;
+        } elseif (class_exists($name)) {
+            $class = $name;
+        }
+        if($class) {
+            $reflector = new ReflectionClass($class);
+            $class = $reflector->newInstanceArgs($args);
+        }
+        return $class;
     }
 }
