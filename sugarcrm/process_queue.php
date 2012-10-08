@@ -102,7 +102,6 @@ foreach ($reportsToEmail as $scheduleInfo) {
     } else {
         $GLOBALS["log"]->debug("-----> Reporter settings attributes");
         $reporter->layout_manager->setAttribute("no_sort", 1);
-        $module_for_lang = $reporter->module;
 
         $GLOBALS["log"]->debug("-----> Reporter Handling PDF output");
         $reportFilename = template_handle_pdf($reporter, false);
