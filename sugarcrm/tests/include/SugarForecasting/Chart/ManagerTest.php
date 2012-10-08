@@ -122,7 +122,6 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         $obj = new SugarForecasting_Chart_Manager($args);
         $data = $obj->process();
-
         // get the proper DataSet
         $testData = array();
         foreach($data['values'] as $data_value) {

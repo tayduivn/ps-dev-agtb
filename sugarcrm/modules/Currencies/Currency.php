@@ -39,7 +39,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * This is the Currency module for obtaining and manipulating
  * currency objects. Note that a lot of currency utility functions
  * such as conversion and formatting are now implemented in the
- * SugarCurrency.php class.
+ * SugarCurrency utility class.
  *
  */
 class Currency extends SugarBean

@@ -21,7 +21,6 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
 require_once 'modules/SchedulersJobs/SchedulersJob.php';
 require_once 'tests/SugarTestUserUtilities.php';
 require_once 'tests/SugarTestAccountUtilities.php';
@@ -101,6 +100,7 @@ class TestRunnableJob implements RunnableSchedulerJob
         $this->job->runnable_ran = true;
         $this->job->runnable_data = $data;
         $this->job->succeedJob();
+        return $this->job->resolution;
     }
 
     public function setJob(SchedulersJob $job)

@@ -337,6 +337,7 @@ class Opportunity extends SugarBean
 
 		$currency = new Currency();
 		$currency->retrieve($toid);
+
 		foreach ( $fromid as $f ) {
 			if ( !empty($idequals) ) {
 				$idequals .= ' or ';
@@ -349,14 +350,6 @@ class Opportunity extends SugarBean
 			$result = $this->db->query($query);
 			
 			while ( $row = $this->db->fetchByAssoc($result) ) {
-                /*
-				$query = "update opportunities set currency_id='"
-                    . $currency->id . "', amount_usdollar='"
-                    . $currency->convertToDollar($row['amount'])
-                    . "' where id='"
-                    . $row['id']
-                    . "';";
-                */
                 $query = sprintf("update opportunities set currency_id='%s',
                     amount_usdollar='%s',
                     base_rate='%s'
@@ -436,6 +429,8 @@ class Opportunity extends SugarBean
             $currency = SugarCurrency::getCurrencyByID($this->currency_id);
         }
         $this->base_rate = $currency->conversion_rate;
+        // backward compatibility, amount_usdollar is deprecated
+        $this->amount_usdollar = $this->amount * $this->base_rate;
 
         //if probablity isn't set, set it based on the sales stage
 		if ( !isset($this->probability) && !empty($this->sales_stage) ) {
