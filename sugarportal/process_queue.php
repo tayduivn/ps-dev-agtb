@@ -113,10 +113,12 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
 
     $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-    $cr             = array("\r", "\n");
-    $attachmentName = str_replace(" ", "_", str_replace($cr, "", $mail->Subject) . ".pdf");
-
-    $mail->AddAttachment($reportFilename, $attachmentName, "base64", "application/pdf");
+    // attach the report, using the subject as the name of the attachment
+    $charsToRemove  = array("\r", "\n");
+    $attachmentName = str_replace($charsToRemove, "", $subject); // remove these characters from the attachment name
+    $attachmentName = str_replace(" ", "_", "{$attachmentName}.pdf"); // replace spaces with the underscores
+    $attachment     = new Attachment($reportFilename, $attachmentName, Encoding::Base64, "application/pdf");
+    $mailer->addAttachment($attachment);
 
     $body = $mod_strings["LBL_HELLO"];
 
