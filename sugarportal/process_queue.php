@@ -120,6 +120,7 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
     $attachment     = new Attachment($reportFilename, $attachmentName, Encoding::Base64, "application/pdf");
     $mailer->addAttachment($attachment);
 
+    // set the body of the email
     $body = $mod_strings["LBL_HELLO"];
 
     if ($recipientName != "") {
@@ -132,7 +133,8 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
              $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"] .
              $reporter->report_def["report_name"] .
              $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
-    $mail->Body = $body;
+
+    $mailer->setTextBody($body); // looks to be plain-text only
 
     if ($recipientEmailAddress == "") {
         $GLOBALS["log"]->info("No email address for {$recipientName}");
