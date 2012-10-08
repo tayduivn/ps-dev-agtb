@@ -61,47 +61,78 @@ class RestListTest extends RestTestBase {
         
         file_put_contents('config_override.php', $this->config_file_override);
 
-        $accountIds = array();
-        foreach ( $this->accounts as $account ) {
-            $accountIds[] = $account->id;
+        // Cleaning up after ourselves, but only if there is cleanup to do
+        // Accounts clean up
+        if (count($this->accounts)) {
+            $accountIds = array();
+            foreach ( $this->accounts as $account ) {
+                $accountIds[] = $account->id;
+            }
+            $accountIds = "('".implode("','",$accountIds)."')";
+            $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
+            }
         }
-        $accountIds = "('".implode("','",$accountIds)."')";
-        $oppIds = array();
-        foreach ( $this->opps as $opp ) {
-            $oppIds[] = $opp->id;
+        
+        // Opportunities clean up
+        if (count($this->opps)) {
+            $oppIds = array();
+            foreach ( $this->opps as $opp ) {
+                $oppIds[] = $opp->id;
+            }
+            $oppIds = "('".implode("','",$oppIds)."')";
+            $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
+            $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
+            $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");            
+            if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
+            }
         }
-        $oppIds = "('".implode("','",$oppIds)."')";
-        $contactIds = array();
-        foreach ( $this->contacts as $contact ) {
-            $contactIds[] = $contact->id;
+        
+        // Contacts cleanup
+        if (count($this->contacts)) {
+            $contactIds = array();
+            foreach ( $this->contacts as $contact ) {
+                $contactIds[] = $contact->id;
+            }
+            $contactIds = "('".implode("','",$contactIds)."')";
+            
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
+            $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
+            }
         }
-        $contactIds = "('".implode("','",$contactIds)."')";
-        $caseIds = array();
-        foreach ( $this->cases as $aCase ) {
-            $caseIds[] = $aCase->id;
+        
+        // Cases cleanup
+        if (count($this->cases)) {
+            $caseIds = array();
+            foreach ( $this->cases as $aCase ) {
+                $caseIds[] = $aCase->id;
+            }
+            $caseIds = "('".implode("','",$caseIds)."')";
+            
+            $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
+            $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
+            if ($GLOBALS['db']->tableExists('cases_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
+            }
         }
-        $caseIds = "('".implode("','",$caseIds)."')";
 
-        $bugIds = array();
-        foreach( $this->bugs AS $bug ) {
-            $bugIds[] = $bug->id;
+        // Bugs cleanup
+        if (count($this->bugs)) {
+            $bugIds = array();
+            foreach( $this->bugs AS $bug ) {
+                $bugIds[] = $bug->id;
+            }
+            $bugIds = "('" . implode( "','", $bugIds) . "')";
+            $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
+            if ($GLOBALS['db']->tableExists('bugs_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
+            }
         }
-        $bugIds = "('" . implode( "','", $bugIds) . "')";
-
-        $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
-        $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
-        $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
-        $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c IN {$caseIds}");
-        $GLOBALS['db']->query("DELETE FROM bugs WHERE id IN {$bugIds}");
-        $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
+        
         //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         //END SUGARCRM flav=pro ONLY

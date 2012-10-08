@@ -68,7 +68,7 @@ class Bug33036Test extends Sugar_PHPUnit_Framework_TestCase
         $this->obj->account_id = $account->id;
         $this->obj->save();
         
-        $this->obj->retrieve();
+        $this->obj->retrieve($this->obj->id);
         $this->obj->account_name = $test_account_name;
         $changes = $this->obj->db->getDataChanges($this->obj);
         

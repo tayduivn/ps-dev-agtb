@@ -307,6 +307,7 @@ abstract class CurrencyRateUpdateAbstract
      * @param $column
      * @return bool
      */
+    /*
     protected function removeRateColumnDefinition($table, $column)
     {
         if(!isset($this->rateColumnDefinitions[$table])) {
@@ -321,6 +322,7 @@ abstract class CurrencyRateUpdateAbstract
         });
         return true;
     }
+    */
 
     /**
      * @return bool
