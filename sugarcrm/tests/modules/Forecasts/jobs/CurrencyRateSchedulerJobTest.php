@@ -25,6 +25,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once 'modules/SchedulersJobs/SchedulersJob.php';
+require_once 'include/SugarCurrency/CurrencyRateUpdateAbstract.php';
 
 class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -128,5 +129,41 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('1', $forecastBaseRate, 'forecasts.base_rate was modified by CurrencyRateSchedulerJob');
         $this->assertEquals('2.345', $forecastScheduleBaseRate, 'forecast_schedule.base_rate not modified by CurrencyRateSchedulerJob');
     }
+
+    /**
+     * @group forecasts
+     */
+    public function testCurrencyRateDefinitions()
+    {
+        $test = new UpdateRateTest();
+        $test->addRateColumnDefinition('foo','bar');
+        $test->addRateColumnDefinition('foo','baz');
+        $test->addRateColumnDefinition('foo','biz');
+        $rates = $test->getRateColumnDefinitions('foo');
+        $this->assertEquals(array('bar','baz','biz'),$rates);
+        $test->removeRateColumnDefinition('foo','baz');
+        $rates = $test->getRateColumnDefinitions('foo');
+        $this->assertEquals(array('bar','biz'),$rates);
+
+        $test->addUsDollarColumnDefinition('foo','bar','bar_usdollar');
+        $test->addUsDollarColumnDefinition('foo','baz','baz_usdollar');
+        $test->addUsDollarColumnDefinition('foo','biz','biz_usdollar');
+        $rates = $test->getUsDollarColumnDefinitions('foo');
+        $this->assertEquals(array(
+            'bar'=>'bar_usdollar',
+            'baz'=>'baz_usdollar',
+            'biz'=>'biz_usdollar'
+        ),$rates);
+        $test->removeUsDollarColumnDefinition('foo','baz');
+        $rates = $test->getUsDollarColumnDefinitions('foo');
+        $this->assertEquals(array(
+            'bar'=>'bar_usdollar',
+            'biz'=>'biz_usdollar'
+        ),$rates);
+    }
+
+}
+
+class UpdateRateTest extends CurrencyRateUpdateAbstract {
 
 }
