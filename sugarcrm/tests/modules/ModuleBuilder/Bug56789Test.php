@@ -43,7 +43,6 @@ class Bug56789Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
-
         
         // Get the parser for wireless basic search
         $this->_parser = new SearchViewMetaDataParser('wireless_basic_search', $this->_testModule, '', $this->_testPlatform);

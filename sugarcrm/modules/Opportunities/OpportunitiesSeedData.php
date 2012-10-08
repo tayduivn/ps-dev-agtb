@@ -30,28 +30,29 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class OpportunitiesSeedData {
 
-    /**
-     * populateSeedData
-     *
-     * This is a static function to create Opportunities.
-     *
-     * @static
-     * @param $records Integer value indicating the number of Opportunities to create
-     * @param $app_list_strings Array of application language strings
-     * @param $accounts Array of Account instances to randomly build data against
-     //BEGIN SUGARCRM flav=pro ONLY
-     * @param $timeperiods Array of Timeperiods to create timeperiod seed data off of
-     * @param $products Array of Product instances to randomly build data against
-     * @param $users Array of User instances to randomly build data against
-     //END SUGARCRM flav=pro ONLY
-     * @return array Array of Opportunities created
-     */
-    public static function populateSeedData($records, $app_list_strings, $accounts
-    //BEGIN SUGARCRM flav=pro ONLY
-        ,$products, $users
-    //END SUGARCRM flav=pro ONLY
-    )
-    {
+    static private $_ranges;
+/**
+ * populateSeedData
+ *
+ * This is a static function to create Opportunities.
+ *
+ * @static
+ * @param $records Integer value indicating the number of Opportunities to create
+ * @param $app_list_strings Array of application language strings
+ * @param $accounts Array of Account instances to randomly build data against
+ //BEGIN SUGARCRM flav=pro ONLY
+ * @param $timeperiods Array of Timeperiods to create timeperiod seed data off of
+ * @param $products Array of Product instances to randomly build data against
+ * @param $users Array of User instances to randomly build data against
+ //END SUGARCRM flav=pro ONLY
+ * @return array Array of Opportunities created
+ */
+public static function populateSeedData($records, $app_list_strings, $accounts
+//BEGIN SUGARCRM flav=pro ONLY
+    ,$products, $users
+//END SUGARCRM flav=pro ONLY
+)
+{ 
         if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
     //BEGIN SUGARCRM flav=pro ONLY
            || empty($products) || empty($users)
@@ -84,15 +85,15 @@ class OpportunitiesSeedData {
             $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
 
             // If the deal is already done, make the date closed occur in the past.
-            $opp->date_closed = ($opp->sales_stage == "Won" || $opp->sales_stage == "Lost")
-                ? create_past_date()
-                : create_date();
+            $opp->date_closed = ($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
+                ? self::createPastDate()
+                : self::createDate();
 
             $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
             $unit_cost = array("10", "20", "30", "50", "80");
             $key = array_rand($unit_cost);
             $opp->amount = $unit_cost[$key]*$rand_units;
-            $probability = array("10", "70", "40", "60");
+            $probability = array("10", "40", "70", "90");
             $key = array_rand($probability);
             $opp->probability = $probability[$key];
 
@@ -106,4 +107,91 @@ class OpportunitiesSeedData {
         return $opp_ids;
     }
 
+    /**
+     * @static creates range of probability for the months
+     * @param int $total_months - total count of months
+     * @return mixed
+     */
+    private static function getRanges($total_months = 12)
+    {
+        if ( self::$_ranges === null )
+        {
+            self::$_ranges = array();
+            for ($i = $total_months; $i >= 0; $i--)
+            {
+                // define priority for month,
+                self::$_ranges[$total_months-$i] = ( $total_months-$i > 6 )
+                    ? self::$_ranges[$total_months-$i] = pow(6, 2) + $i
+                    :  self::$_ranges[$total_months-$i] = pow($i, 2) + 1;
+                // increase probability for current quarters
+                self::$_ranges[$total_months-$i] = $total_months-$i == 0 ? self::$_ranges[$total_months-$i]*2.5 : self::$_ranges[$total_months-$i];
+                self::$_ranges[$total_months-$i] = $total_months-$i == 1 ? self::$_ranges[$total_months-$i]*2 : self::$_ranges[$total_months-$i];
+                self::$_ranges[$total_months-$i] = $total_months-$i == 2 ? self::$_ranges[$total_months-$i]*1.5 : self::$_ranges[$total_months-$i];
+            }
+        }
+        return self::$_ranges;
+    }
+
+    /**
+     * @static return month delta as random value using range of probability, 0 - current month, 1 next/previos month...
+     * @param int $total_months - total count of months
+     * @return int
+     */
+    public static function getMonthDeltaFromRange($total_months = 12)
+    {
+        $ranges = self::getRanges($total_months);
+        asort($ranges,SORT_NUMERIC );
+        $x = mt_rand (1, array_sum($ranges) );
+        foreach ($ranges as $key => $y)
+        {
+            $x -= $y;
+            if ( $x <= 0 )
+            {
+                break;
+            }
+        }
+        return $key;
+    }
+
+    /**
+     * @static generates date
+     * @param null $monthDelta - offset from current date in months to create date, 0 - current month, 1 - next month
+     * @return string
+     */
+    public static function createDate($monthDelta = null)
+    {
+        global $timedate;
+        $monthDelta = $monthDelta === null ? self::getMonthDeltaFromRange() : $monthDelta;
+
+        $now = $timedate->getNow(true);
+        $now->modify("+$monthDelta month");
+        // random day from now to end of month
+        $day = mt_rand($now->day, $now->days_in_month);
+        return $timedate->asDbDate($now->get_day_begin($day));
+    }
+
+    /**
+     * @static generate past date
+     * @param null $monthDelta - offset from current date in months to create past date, 0 - current month, 1 - previous month
+     * @return string
+     */
+    public static function createPastDate($monthDelta = null)
+    {
+        global $timedate;
+        $monthDelta = $monthDelta === null ? self::getMonthDeltaFromRange() : $monthDelta;
+
+        $now = $timedate->getNow(true);
+        $now->modify("-$monthDelta month");
+
+        if ( $monthDelta == 0 && $now->day == 1 ) {
+            $now->modify("-1 day");
+            $day = $now->day;
+        }
+        else
+        {
+            // random day from start of month to now
+            $day =  mt_rand(1, $now->day);
+        }
+        return $timedate->asDbDate($now->get_day_begin($day));
+    }
 }

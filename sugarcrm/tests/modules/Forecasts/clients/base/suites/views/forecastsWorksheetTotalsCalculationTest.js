@@ -45,7 +45,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the included values based on forecast value along with expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({commit_stage : 'include', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({expected_commit_stage : 'include', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
@@ -73,7 +73,7 @@ describe("The forecasts worksheet totals calculation test", function(){
 
         it("should calculate the included values based on forecast value without expected opportunities", function() {
             //Expected opportunities model
-            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
+            var expectedModel = new Backbone.Model({expected_commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});

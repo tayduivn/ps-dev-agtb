@@ -275,17 +275,7 @@ class UploadFile
 	 * @return string MIME type
 	 */
 	function getMimeSoap($filename){
-
-		if( function_exists( 'ext2mime' ) )
-		{
-			$mime = ext2mime($filename);
-		}
-		else
-		{
-			$mime = ' application/octet-stream';
-		}
-		return $mime;
-
+        return get_file_mime_type($filename, 'application/octet-stream');
 	}
 
 	/**
@@ -303,16 +293,10 @@ class UploadFile
 
 		if( $_FILES_element['type'] && !$recheckMime) {
 			$mime = $_FILES_element['type'];
-		} elseif( function_exists( 'mime_content_type' ) ) {
-			$mime = mime_content_type( $_FILES_element['tmp_name'] );
-		} elseif( function_exists( 'ext2mime' ) ) {
-			$mime = ext2mime( $_FILES_element['name'] );
-		} 
-        
-        // Fallback in cases where mime was not successfully obtained
-        if (empty($mime)) {
-			$mime = ' application/octet-stream';
-		}
+		} else {
+            // Try to get the mime type, using application/octet-stream as a default
+            $mime = get_file_mime_type($_FILES_element['tmp_name'], 'application/octet-stream');
+        } 
         
 		return $mime;
 	}

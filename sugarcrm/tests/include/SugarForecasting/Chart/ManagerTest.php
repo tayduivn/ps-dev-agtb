@@ -94,7 +94,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
 
-        $this->assertSame($expected, $actual);
+        $this->assertEquals($expected, $actual, null, 2);
     }
 
     /**
@@ -122,7 +122,6 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         $obj = new SugarForecasting_Chart_Manager($args);
         $data = $obj->process();
-
         // get the proper DataSet
         $testData = array();
         foreach($data['values'] as $data_value) {
@@ -137,7 +136,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $actual = doubleval($testData['values'][$position]);
         $expected = SugarCurrency::convertAmountToBase(self::$users[$user][$type]->$field, self::$users[$user][$type]->currency_id);
 
-        $this->assertSame($expected, $actual);
+        $this->assertEquals($expected, $actual, null, 2);
     }
 
     /**
@@ -218,7 +217,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
         $actual = doubleval($data['goalmarkervalue'][$chart_position+1]);
 
-        $this->assertSame($expected, $actual);
+        $this->assertEquals($expected, $actual, null, 2);
 
     }
 

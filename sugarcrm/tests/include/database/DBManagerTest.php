@@ -62,11 +62,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             $this->_db = DBManagerFactory::getInstance();
         }
 
-        if($this->_db->tableExists('testRecursive_'))
-        {
-            $this->_db->query('DELETE FROM testRecursive_');
-        }
-
         $this->created = array();
 
     }
@@ -2237,7 +2232,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
             return $tableName;
             $this->_db->dropTableName($tableName);
         }
-//        $this->createTableParams($tableName, $params, array());
         $this->_db->createTableParams($tableName, $params, $indexes);
 
 
@@ -2273,8 +2267,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRecursiveQuery($startId, $startDbLevel, $nrchildren)
     {
-        $this->markTestIncomplete('Mark as incomplete for now');
-
         $idCurrent = $startId;
         $levels = $startDbLevel;
         $this->_db->preInstall();
@@ -2292,6 +2284,7 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         while($row = $this->_db->fetchByAssoc($result))
         {
+
             $this->assertEquals($idCurrent, $row['id'], "Incorrect id found");
             if(!empty($row['parent_id'])) $idCurrent = $row['parent_id'];
             $this->assertEquals($levels--, $row['db_level'], "Incorrect level found");
@@ -2361,7 +2354,6 @@ class DBManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRecursiveQueryMultiHierarchy()
     {
-        $this->markTestIncomplete('Mark as incomplete for now');
         $this->_db->preInstall();
 
         // Setup test data
