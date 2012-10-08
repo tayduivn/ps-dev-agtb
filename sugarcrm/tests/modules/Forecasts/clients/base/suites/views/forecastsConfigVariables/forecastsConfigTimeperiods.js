@@ -88,7 +88,10 @@ describe("The forecastsConfigTimeperiods view", function(){
                     },
                     set: function(key, value) {}
                 },
-                name: 'timeperiod_start_month'
+                name: 'timeperiod_start_month',
+                def: {
+                    options: {}
+                }
             }
             dayField = {
                 model: {
@@ -97,7 +100,10 @@ describe("The forecastsConfigTimeperiods view", function(){
                     },
                     set: function(key, value) {}
                 },
-                name: 'timeperiod_start_day'
+                name: 'timeperiod_start_day',
+                def: {
+                    options: {}
+                }
             }
             monthField = view._setUpTimeperiodStartMonthBind(monthField);
             dayField = view._setUpTimeperiodStartDayBind(dayField);

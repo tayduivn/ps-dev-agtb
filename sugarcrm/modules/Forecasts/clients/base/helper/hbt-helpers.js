@@ -43,6 +43,15 @@
         debugger;
     });
 
+    /**
+     * log some crap
+     * @method consoleLogger
+     * @param Mixed args anything to dump to console
+     */
+    Handlebars.registerHelper("consoleLog", function(param) {
+       console.log(param);
+    });
+
 
     // todo:  putting in here, for now.  This should go back into core sidecar once we merge back into toffee
     /**

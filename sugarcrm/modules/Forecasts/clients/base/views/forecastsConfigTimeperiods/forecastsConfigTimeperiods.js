@@ -26,6 +26,8 @@
         field.events = _.extend({"change select":  "_updateDaysForMonth"}, field.events);
         field.bindDomChange = function() {};
 
+        field.def.options = app.lang.getAppListStrings(field.def.options);
+
         /**
          * function that uses the selected month to key in and determine how many days to file into the date chooser for timeperiods
          * @param event
@@ -39,11 +41,12 @@
             //trash the current options
             $('option', timeperiod_start_day).remove();
             if(_.has(input, "selected")) {
+                selected_month = input.selected;
                 timeperiod_start_day.append(this._buildDaysOptions(input.selected));
                 timeperiod_start_day.trigger('liszt:updated');
-
             }
-            this.model.set('timeperiods_start_month', selected_month);
+            this.def.value = selected_month;
+            this.model.set(this.name, selected_month);
         };
 
         field._buildDaysOptions = function(selected_month) {
@@ -53,8 +56,18 @@
             current_date.setDate(0);
             option_html = '<option value=""></option>';
             var days = current_date.getDate();
+            for (var i = 1; i <= days; i++) {
+                option_html += '<option value="' + i + '"';
+                if(i == this.model.get('timeperiods_start_day')) {
+                    option_html += ' selected ';
+                }
+                option_html += '>' + i + '</option>';
+            }
             return option_html;
         };
+        // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
+        //field.def.value = this.model.get(field.name)+'';
+        field.def.value = this.model.get(field.name);
         return field;
     },
 
@@ -65,6 +78,20 @@
      * @private
      */
     _setUpTimeperiodStartDayBind: function(field) {
+
+        // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
+        field.def.value = this.model.get(field.name);
+
+        //build the day options based on the initially selected month
+        var current_date = new Date();
+        current_date.setMonth(this.model.get('timeperiod_start_month'));
+        current_date.setDate(0);
+        field.def.options = {};
+        var days = current_date.getDate();
+        for (var i = 1; i <= days; i++) {
+            field.def.options[i] = i;
+        }
+
         // ensure selected day functions like it should
         field.events = _.extend({"change select":  "_updateDays"}, field.events);
         field.bindDomChange = function() {};
@@ -81,8 +108,12 @@
             if(_.has(input, "selected")) {
                selected_day = input.selected;
             }
-            this.model.set('timeperiods_start_day', selected_day);
+            this.def.value = selected_day;
+            this.model.set(this.name, selected_day);
         }
+
+        //set up initial days field based on selected month
+        //field.def.options = "forecasts_timeperiod_month_options_dom";
         return field;
 
     }
