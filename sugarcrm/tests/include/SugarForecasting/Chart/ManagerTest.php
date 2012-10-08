@@ -26,14 +26,14 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     /**
      * @var array
      */
-    protected $args = array();
+    protected static $args = array();
 
-    protected $users = array();
+    protected static $users = array();
 
     /**
      * @var Currency
      */
-    protected $currency;
+    protected static $currency;
 
     public static function setUpBeforeClass()
     {
@@ -42,47 +42,41 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setup('mod_strings', array('manager', 'Forecasts'));
+        SugarTestHelper::setup('current_user');
+        
+        $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
+
+        self::$args['timeperiod_id'] = $timeperiod->id;
+
+        self::$currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
+
+        SugarTestForecastUtilities::setTimePeriod($timeperiod);
+
+        self::$users['manager'] = SugarTestForecastUtilities::createForecastUser(array(
+            'timeperiod_id' => $timeperiod->id,
+            'currency_id' => self::$currency->id
+        ));
+
+        global $current_user;
+        $current_user = self::$users['manager']['user'];
+        $current_user->setPreference('currency', self::$currency->id);
+
+        $config = array(
+            'timeperiod_id' => $timeperiod->id,
+            'currency_id' => self::$currency->id,
+            'user' =>
+            array('manager', 'reports_to' => self::$users['manager']['user']->id)
+        );
+        self::$users['reportee'] = SugarTestForecastUtilities::createForecastUser($config);
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
-        parent::tearDown();
-    }
-
-    public function setUp()
-    {
-        $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
-
-        $this->args['timeperiod_id'] = $timeperiod->id;
-
-        $this->currency = SugarTestCurrencyUtilities::createCurrency('Yen','¥','YEN',78.87);
-
-        SugarTestForecastUtilities::setTimePeriod($timeperiod);
-
-        $this->users['manager'] = SugarTestForecastUtilities::createForecastUser(array(
-            'timeperiod_id' => $timeperiod->id,
-            'currency_id' => $this->currency->id
-        ));
-
-        global $current_user;
-        $current_user = $this->users['manager']['user'];
-
-        $config = array(
-            'timeperiod_id' => $timeperiod->id,
-            'currency_id' => $this->currency->id,
-            'user' =>
-            array('manager', 'reports_to' => $this->users['manager']['user']->id)
-        );
-        $this->users['reportee'] = SugarTestForecastUtilities::createForecastUser($config);
-
-    }
-
-    public function tearDown()
-    {
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        parent::tearDown();
     }
 
     /**
@@ -91,16 +85,29 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testQuotaConvertedToBase()
     {
-        $obj = new SugarForecasting_Chart_Manager($this->args);
+        $obj = new SugarForecasting_Chart_Manager(self::$args);
         $data = $obj->process();
 
         // get the quota from the first record
         $actual = doubleval($data['values'][0]['goalmarkervalue'][0]);
-        $expected = $this->users['manager']['quota']->amount + $this->users['reportee']['quota']->amount;
+        $expected = self::$users['manager']['quota']->amount + self::$users['reportee']['quota']->amount;
 
-        $expected = SugarCurrency::convertAmountToBase($expected, $this->currency->id);
+        $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
 
-        $this->assertSame($expected, $actual);
+        $this->assertEquals($expected, $actual, null, 2);
+    }
+
+    /**
+     * @group forecasts
+     * @group forecastschart
+     */
+    public function testQuotaLabelContainsBaseCurrencySymbol()
+    {
+        $obj = new SugarForecasting_Chart_Manager(self::$args);
+        $data = $obj->process();
+
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $this->assertStringStartsWith($base_currency->symbol, $data['values'][0]['goalmarkervaluelabel'][0]);
     }
 
     /**
@@ -110,16 +117,15 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testChartValuesConvertedToBase($user, $type, $dataset, $position)
     {
-        $args = $this->args;
+        $args = self::$args;
         $args['dataset'] = $dataset;
 
         $obj = new SugarForecasting_Chart_Manager($args);
         $data = $obj->process();
-
         // get the proper DataSet
         $testData = array();
         foreach($data['values'] as $data_value) {
-            if(strpos($data_value['label'], $this->users[$user]['user']->name) !== false) {
+            if(strpos($data_value['label'], self::$users[$user]['user']->name) !== false) {
                 $testData = $data_value;
                 break;
             }
@@ -128,9 +134,35 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $field = $dataset . '_case';
 
         $actual = doubleval($testData['values'][$position]);
-        $expected = SugarCurrency::convertAmountToBase($this->users[$user][$type]->$field, $this->users[$user][$type]->currency_id);
+        $expected = SugarCurrency::convertAmountToBase(self::$users[$user][$type]->$field, self::$users[$user][$type]->currency_id);
 
-        $this->assertSame($expected, $actual);
+        $this->assertEquals($expected, $actual, null, 2);
+    }
+
+    /**
+     * @dataProvider dataProviderDatasets
+     * @group forecasts
+     * @group forecastschart
+     */
+    public function testChartValuesLabelsContainsBaseCurrencySymbol($user, $type, $dataset, $position)
+    {
+        $args = self::$args;
+        $args['dataset'] = $dataset;
+
+        $obj = new SugarForecasting_Chart_Manager($args);
+        $data = $obj->process();
+
+        // get the proper DataSet
+        $testData = array();
+        foreach($data['values'] as $data_value) {
+            if(strpos($data_value['label'], self::$users[$user]['user']->name) !== false) {
+                $testData = $data_value;
+                break;
+            }
+        }
+
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $this->assertStringStartsWith($base_currency->symbol, $testData['valuelabels'][$position]);
     }
 
     /**
@@ -139,7 +171,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testLoadUsersReturnsTwoUsersForCurrentUser()
     {
-        $obj = new SugarForecasting_Chart_Manager($this->args);
+        $obj = new SugarForecasting_Chart_Manager(self::$args);
         $data = $obj->process();
 
         $this->assertEquals(2, count($data['values']));
@@ -158,7 +190,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
      */
     public function testChartParetoLinesConvertedToBase($type, $dataset, $chart_position, $user_position)
     {
-        $args = $this->args;
+        $args = self::$args;
         $args['dataset'] = $dataset;
 
         $obj = new SugarForecasting_Chart_Manager($args);
@@ -170,22 +202,48 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $expected = 0;
         if($user_position == 0) {
             // find the user in the current position
-            foreach($this->users as $user) {
+            foreach(self::$users as $user) {
                 if(strpos($data['label'], $user['user']->name) !== false) {
                     $expected = $user[$type]-> $field;
                     break;
                 }
             }
         } else {
-            foreach($this->users as $user) {
+            foreach(self::$users as $user) {
                 $expected += $user[$type]->$field;
             }
         }
 
-        $expected = SugarCurrency::convertAmountToBase($expected, $this->currency->id);
+        $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
         $actual = doubleval($data['goalmarkervalue'][$chart_position+1]);
 
-        $this->assertSame($expected, $actual);
+        $this->assertEquals($expected, $actual, null, 2);
+
+    }
+
+    /**
+     * @depends testLoadUsersReturnsTwoUsersForCurrentUser
+     * @dataProvider dataProviderParetoValues
+     * @group forecastschart
+     * @group forecasts
+     *
+     * @param $type
+     * @param $dataset
+     * @param $chart_position
+     * @param $user_position
+     */
+    public function testChartParetoLinesLabelsContainsBaseCurrencySymbol($type, $dataset, $chart_position, $user_position)
+    {
+        $args = self::$args;
+        $args['dataset'] = $dataset;
+
+        $obj = new SugarForecasting_Chart_Manager($args);
+        $data = $obj->process();
+
+        $data = $data['values'][$user_position];
+
+        $base_currency = SugarCurrency::getBaseCurrency();
+        $this->assertStringStartsWith($base_currency->symbol, $data['goalmarkervaluelabel'][$chart_position+1]);
 
     }
 

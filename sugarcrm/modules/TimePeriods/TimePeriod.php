@@ -47,13 +47,15 @@ class TimePeriod extends SugarBean {
 	var $deleted;
 	var $fiscal_year;
 	var $is_fiscal_year;
+    var $is_fiscal;
 	//end time period stored fields.
 	var $table_name = "timeperiods";
 	var $fiscal_year_checked;
 	var $module_dir = 'TimePeriods';
+    var $time_period_type = 'Annually';
 	var $object_name = "TimePeriod";
 	var $user_preferences;
-
+    var $is_leaf;
 	var $encodeFields = Array("name");
 
 	// This is used to retrieve related fields from form posts.
@@ -62,12 +64,12 @@ class TimePeriod extends SugarBean {
 	
 	var $new_schema = true;
 
-	function TimePeriod() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->disable_row_level_security =true;
 	}
 
-	function save($check_notify = false){
+	public function save($check_notify = false){
 		//if (empty($this->id)) $this->parent_id = null;
 
         $timedate = TimeDate::getInstance();
@@ -94,32 +96,43 @@ class TimePeriod extends SugarBean {
 
         $date_close_datetime->setTime(23,59,59);
         $this->end_date_timestamp = $date_close_datetime->getTimestamp();
-		return parent::save($check_notify);		
+		return parent::save($check_notify);
 	}
 
 
 
-	function get_summary_text()
+	public function get_summary_text()
 	{
 		return "$this->name";
 	}
 
-	
-	function retrieve($id, $encode=false, $deleted=true){
-		$ret = parent::retrieve($id, $encode, $deleted);
-		return $ret;
-	}
+    /**
+     * custom override of retrieve function to disable the date formatting and reset it again after the bean has been retrieved.
+     *
+     * @param string $id
+     * @param bool $encode
+     * @param bool $deleted
+     * @return null|SugarBean
+     */
+    public function retrieve($id, $encode=false, $deleted=true){
+        global $disable_date_format;
+        $previous_disable_date_format = $disable_date_format;
+        $disable_date_format = 1;
+   		$ret = parent::retrieve($id, $encode, $deleted);
+        $disable_date_format = $previous_disable_date_format;
+   		return $ret;
+   	}
 
-	function is_authenticated()
+    public function is_authenticated()
 	{
 		return $this->authenticated;
 	}
 
-	function fill_in_additional_list_fields() {
+    public function fill_in_additional_list_fields() {
 		$this->fill_in_additional_detail_fields();
 	}
 
-	function fill_in_additional_detail_fields()
+    public function fill_in_additional_detail_fields()
 	{
 		if (isset($this->parent_id) && !empty($this->parent_id)) {
 		
@@ -136,7 +149,7 @@ class TimePeriod extends SugarBean {
 	}
 
 
-	function get_list_view_data(){
+    public function get_list_view_data(){
 
 		$timeperiod_fields = $this->get_list_view_array();		
 		$timeperiod_fields['FISCAL_YEAR'] = $this->fiscal_year;
@@ -147,11 +160,11 @@ class TimePeriod extends SugarBean {
 		return $timeperiod_fields;
 	}
 
-	function list_view_parse_additional_sections(&$list_form, $xTemplateSection){
+    public function list_view_parse_additional_sections(&$list_form, $xTemplateSection){
 		return $list_form;
 	}
 
-	function create_export_query($order_by, $where)
+    public function create_export_query($order_by, $where)
 	{
 		$query = "SELECT
 				timeperiods.*";
@@ -172,10 +185,27 @@ class TimePeriod extends SugarBean {
 		return $query;
 	}
 
+    /**
+     * creates a new timeperiod to start to use
+     *
+     * @return mixed
+     */
+    public function createNextTimePeriod() {
+        $timedate = TimeDate::getInstance();
+        $nextStartDate = $timedate->fromUserDate($this->end_date);
+        $nextStartDate = $nextStartDate->modify('+1 day');
+        $nextPeriod = BeanFactory::newBean($this->time_period_type.'TimePeriods');
+        $nextPeriod->is_fiscal = $this->is_fiscal;
+        $nextPeriod->setStartDate($timedate->asUserDate($nextStartDate));
+        $nextPeriod->save();
+
+        return $nextPeriod;
+    }
+
 
 	//Fiscal year domain is stored in the timeperiods table, and not statically defined like the rest of the
 	//domains, This method builds the domain array.
-	static function get_fiscal_year_dom() {
+    public static function get_fiscal_year_dom() {
 
 		static $fiscal_years;
 
@@ -202,7 +232,7 @@ class TimePeriod extends SugarBean {
      * getTimePeriod
      * @param
      */
-    static function getTimePeriod($timedate=null)
+    public static function getTimePeriod($timedate=null)
     {
         //get current timeperiod
         $timeperiod_id = self::getCurrentId();
@@ -246,7 +276,7 @@ class TimePeriod extends SugarBean {
      * Returns the current timeperiod name if a timeperiod entry is found
      *
      */
-    static function getCurrentName($timedate=null)
+    public static function getCurrentName($timedate=null)
     {
         global $app_strings;
         $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
@@ -269,7 +299,7 @@ class TimePeriod extends SugarBean {
      * Returns the current timeperiod name if a timeperiod entry is found
      *
      */
-    static function getCurrentId($timedate=null)
+    public static function getCurrentId($timedate=null)
     {
         static $currentId;
 
@@ -293,7 +323,7 @@ class TimePeriod extends SugarBean {
      * @param $timedate Optional TimeDate instance to calculate values off of
      * @return $ids Mixed array of id=>name value(s) depending on the current system date or timedate parameter (if supplied)
      */
-    static function getLastCurrentNextIds($timedate=null)
+    public static function getLastCurrentNextIds($timedate=null)
     {
         global $app_strings;
 
@@ -358,7 +388,7 @@ class TimePeriod extends SugarBean {
      * @static
      * @return array
      */
-    static function get_timeperiods_dom()
+    public static function get_timeperiods_dom()
     {
         static $timeperiods;
 
@@ -378,7 +408,7 @@ class TimePeriod extends SugarBean {
         return $timeperiods;
     }
 
-    static function get_not_fiscal_timeperiods_dom()
+    public static function get_not_fiscal_timeperiods_dom()
     {
         static $not_fiscal_timeperiods;
 
@@ -396,6 +426,75 @@ class TimePeriod extends SugarBean {
             }
         }
         return $not_fiscal_timeperiods;
+    }
+
+    /**
+     * Takes the current time period and finds the next one that is in the db of the same type.  If none exists it returns null
+     *
+     * @return mixed
+     */
+    public function getNextTimePeriod() {
+        $timedate = TimeDate::getInstance();
+
+        $query = "select id, time_period_type from timeperiods where ";
+        $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0";
+
+        $queryDate = $timedate->fromDbDate($this->end_date);
+        $queryDate = $queryDate->modify('+1 day');
+        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
+
+        $query .= " AND start_date = {$queryDate}";
+
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row == null) {
+            return $this->createNextTimePeriod();
+        }
+
+        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
+
+    }
+
+
+    /**
+     * Grabs the time period previous of this one and returns it.  If none is found, it returns null
+     *
+     * @return null|SugarBean
+     */
+    public function getPreviousTimePeriod() {
+        $db = DBManagerFactory::getInstance();
+        $timedate = TimeDate::getInstance();
+
+        $query = "select id from timeperiods where ";
+        $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
+        $query .= " AND deleted = 0";
+
+        $queryDate = $timedate->fromDbDate($this->end_date);
+        $queryDate = $queryDate->modify('-1 day');
+        $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
+
+        $query .= " AND end_date = {$queryDate}";
+
+        $result = $this->db->query($query);
+        $row = $this->db->fetchByAssoc($result);
+
+        if($row == null) {
+            return null;
+        }
+
+        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
+    }
+
+    /**
+     * subtracts the end from the start date to return the date length in days
+     *
+     * @return mixed
+     */
+    public function getLengthInDays()
+    {
+        return ceil(($this->end_date_timestamp - $this->start_date_timestamp) / 86400);
     }
 }
 

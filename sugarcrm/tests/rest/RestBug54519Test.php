@@ -34,7 +34,9 @@ class RestBug54519Test extends RestTestBase {
     {
         if ( isset($this->account_id) ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account_id}'");
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account_id}'");
+            }
             $GLOBALS['db']->commit();
         }
         parent::tearDown();

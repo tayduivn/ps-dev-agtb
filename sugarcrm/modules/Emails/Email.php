@@ -319,17 +319,7 @@ class Email extends SugarBean {
 	 * @return string MIME-type
 	 */
 	function email2GetMime($fileLocation) {
-	    if(!is_readable($fileLocation)) {
-	        return 'application/octet-stream';
-	    }
-		if(function_exists('mime_content_type')) {
-			$mime = mime_content_type($fileLocation);
-		} elseif(function_exists('ext2mime')) {
-			$mime = ext2mime($fileLocation);
-		} else {
-			$mime = 'application/octet-stream';
-		}
-		return $mime;
+	    return get_file_mime_type($fileLocation, 'application/octet-stream');
 	}
 
 

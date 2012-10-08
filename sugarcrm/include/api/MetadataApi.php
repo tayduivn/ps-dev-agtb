@@ -97,8 +97,12 @@ class MetadataApi extends SugarApi {
 
         $moduleFilter = array();
         if (!empty($args['module_filter'])) {
-            // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
-            $modules = str_getcsv($args['module_filter'],',','');
+            if ( function_exists('str_getcsv') ) {
+                // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
+                $modules = str_getcsv($args['module_filter'],',','');
+            } else {
+                $modules = explode(",", $args['module_filter']);
+            }
             if ( $modules != false ) {
                 $moduleFilter = $modules;
             }
@@ -139,9 +143,16 @@ class MetadataApi extends SugarApi {
             }
         }
 
-        //If we failed to load the metadat from cache, load it now the hard way.
+        //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
             $data = $this->loadMetadata($hashKey);
+            
+            // Bug 56911 - Notes metadata is needed for portal
+            // Remove forcefully added Notes module to portal requests since we only
+            // need the metadata but do NOT need it in the module list
+            if (isset($args['platform']) && $args['platform'] == 'portal') {
+                unset($data['module_list']['Notes']);
+            }
         }
 
         //If we had to generate a new hash, create the etag with the new hash
@@ -166,10 +177,9 @@ class MetadataApi extends SugarApi {
         if(isset($args['platform'])) {
             //temporary replace 'forecasts' w/ 'base'
             //as forecast settings store in db w/ prefix 'base_'
-            $args['platform'] = 'forecasts' ? 'base' : $args['platform'];
-            $prefix = "{$args['platform']}_";
+            $category = $args['platform'] == 'forecasts' ? 'base' : $args['platform'];
+            $prefix = "{$category}_";
             $admin = new Administration();
-            $category = $args['platform'];
             $admin->retrieveSettings($category, true);
             foreach($admin->settings AS $setting_name => $setting_value) {
                 if(stristr($setting_name, $prefix)) {

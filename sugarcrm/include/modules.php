@@ -169,6 +169,12 @@ $beanList['Shippers']       = 'Shipper';
 $beanList['TaxRates']       = 'TaxRate';
 $beanList['TeamNotices']        = 'TeamNotice';
 $beanList['TimePeriods']    = 'TimePeriod';
+$beanList['AnnualTimePeriods'] = 'AnnualTimePeriod';
+$beanList['QuarterTimePeriods']    = 'QuarterTimePeriod';
+$beanList['Quarter544TimePeriods']    = 'Quarter544TimePeriod';
+$beanList['Quarter445TimePeriods']    = 'Quarter445TimePeriod';
+$beanList['Quarter454TimePeriods']    = 'Quarter454TimePeriod';
+$beanList['MonthTimePeriods']    = 'MonthTimePeriod';
 $beanList['Forecasts']  = 'Forecast';
 $beanList['ForecastWorksheets']  = 'ForecastWorksheet';
 $beanList['ForecastManagerWorksheets']  = 'ForecastManagerWorksheet';
@@ -258,8 +264,6 @@ $beanFiles['vCal']          = 'modules/vCals/vCal.php';
 
 $beanFiles['Version']           = 'modules/Versions/Version.php';
 
-
-
 $beanFiles['Role']          = 'modules/Roles/Role.php';
 
 //BEGIN SUGARCRM flav!=sales ONLY
@@ -306,6 +310,12 @@ $beanFiles['ProductBundle']     = 'modules/ProductBundles/ProductBundle.php';
 $beanFiles['Shipper']       = 'modules/Shippers/Shipper.php';
 $beanFiles['TaxRate']       = 'modules/TaxRates/TaxRate.php';
 $beanFiles['TimePeriod']        = 'modules/TimePeriods/TimePeriod.php';
+$beanFiles['AnnualTimePeriod']        = 'modules/TimePeriods/AnnualTimePeriod.php';
+$beanFiles['QuarterTimePeriod']    = 'modules/TimePeriods/QuarterTimePeriod.php';
+$beanFiles['Quarter544TimePeriod']    = 'modules/TimePeriods/Quarter544TimePeriod.php';
+$beanFiles['Quarter454TimePeriod']    = 'modules/TimePeriods/Quarter454TimePeriod.php';
+$beanFiles['Quarter445TimePeriod']    = 'modules/TimePeriods/Quarter445TimePeriod.php';
+$beanFiles['MonthTimePeriod']    = 'modules/TimePeriods/MonthTimePeriod.php';
 $beanFiles['Forecast']      = 'modules/Forecasts/Forecast.php';
 $beanFiles['ForecastWorksheet'] = 'modules/Forecasts/ForecastWorksheet.php';
 $beanFiles['ForecastManagerWorksheet'] = 'modules/Forecasts/ForecastManagerWorksheet.php';

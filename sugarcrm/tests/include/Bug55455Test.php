@@ -24,6 +24,7 @@
 
 require_once 'include/download_file.php';
 require_once 'include/upload_file.php';
+require_once 'include/utils/file_utils.php';
 
 class Bug55455Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -42,21 +43,14 @@ class Bug55455Test extends Sugar_PHPUnit_Framework_TestCase
     
     public function testProperMimeTypeFetching()
     {
-        // Default expectation
-        $expect = 'text/plain';
-
-        // If the two functions that are used to collect mime data aren't available
-        if (!function_exists('mime_content_type') && !function_exists('ext2mime')) {
-            // Fall back to what the download class will fall back to
-            $expect = 'application/octet-stream';
-        }
-
-        // Test actual file
+        // This test is a *little* loose since not all servers are the same. 
+        // Additionally, in some odd cases, PHP errors on finfo and mime_content_type
+        // calls and, when this happens, the mime getter will return application/octet-stream
         $dl = new DownloadFile();
-        $mime = $dl->getMimeType($this->_actualFile);
-        $this->assertEquals($expect, $mime, "Returned mime type [$mime] was not '$expect'");
+        $actual = $dl->getMimeType($this->_actualFile);
+        $expected = mime_is_detectable() ? 'text/plain' : 'application/octet-stream';
+        $this->assertEquals($expected, $actual, "Returned mime type [$actual] was not $expected");
 
-        // Test non existent file
         $mime = $dl->getMimeType($this->_mockFile);
         $this->assertFalse($mime, "$mime should be (boolean) FALSE");
     }

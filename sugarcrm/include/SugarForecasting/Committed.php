@@ -119,6 +119,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->likely_case = $args['likely_case'];
         $forecast->forecast_type = $args['forecast_type'];
         $forecast->opp_count = $args['opp_count'];
+        $forecast->currency_id = $args['currency_id'];
+        $forecast->base_rate = $args['base_rate'];
+
         if ($args['amount'] != 0 && $args['opp_count'] != 0) {
             $forecast->opp_weigh_value = $args['amount'] / $args['opp_count'];
         }

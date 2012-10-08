@@ -23,14 +23,23 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class ForecastTests extends Sugar_PHPUnit_Framework_TestCase
+class ForecastTest extends Sugar_PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @var Currency
+     */
+    protected $currency;
+
     public function setUp()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        SugarTestHelper::setUp('current_user');
+
+        $this->currency = SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+
+        $GLOBALS['current_user']->setPreference('currency', $this->currency->id);
     }
 
     public function tearDown()
