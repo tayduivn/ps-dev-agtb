@@ -1,6 +1,5 @@
 ({
     initialize: function(options) {
-        console.log("opps_metrics::init");
         this.dataReady = false;
         this.zeroCurrency = app.currency.formatAmountLocale(0);
         this.collections = {};

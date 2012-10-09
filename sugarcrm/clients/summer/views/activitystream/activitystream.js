@@ -68,23 +68,22 @@
     toggleView: function(event) {
         event.preventDefault();
         var view = this.$(event.currentTarget).data('view');
-        if(view == 'timeline') {
-            $('#activitystream-timeline').show();
-            $('#activitystream-calendar').hide();
-            if($('#activitystream-timeline').html() === "") {
+
+        if (view == 'timeline') {
+            this.$('#activitystream-timeline').show();
+            this.$('#activitystream-calendar').hide();
+            if (this.$('#activitystream-timeline').html() === "") {
                 this._renderTimeline();
             }
-        }
-        else if(view == 'calendar') {
-            $('#activitystream-calendar').show();
-            $('#activitystream-timeline').hide();
-            if($('#activitystream-calendar').html() === "") {
+        } else if(view == 'calendar') {
+            this.$('#activitystream-calendar').show();
+            this.$('#activitystream-timeline').hide();
+            if (this.$('#activitystream-calendar').html() === "") {
                 this._renderCalendar();
             }
-        }
-        else {
-            $('#activitystream-timeline').hide();
-            $('#activitystream-calendar').hide();
+        } else {
+            this.$('#activitystream-timeline').hide();
+            this.$('#activitystream-calendar').hide();
         }
     },
 
@@ -605,21 +604,17 @@
     },
 
     previewRecord: function(event) {
-        console.log("Previewing", this.context);
-        testing = this;
-
-        var self = this;
-        var root = this.$(event.currentTarget).parent().parent().parent();
-        var hash = root.find("p a:last").attr("href").replace('#', '');
-        var arr = hash.split('/');
-        var module = arr[0], id = arr[1];
+        var self = this,
+            root = this.$(event.currentTarget).parent().parent().parent(),
+            hash = root.find("p a:last").attr("href").replace('#', ''),
+            arr = hash.split('/'),
+            module = arr[0], id = arr[1],
+            model = app.data.createBean(module);
 
         // Grab model corresponding to preview icon clicked
-        var model = App.data.createBean(module);
         model.set("id", id);
         model.fetch({
             success: function(model) {
-                console.log ("Done with model.", model, self.layout.meta, self.context);
                 model.set("_module", module);
                 // Fire on parent layout .. works nicely for relatively simple page ;=)
                 self.context.trigger("togglePreview", model);

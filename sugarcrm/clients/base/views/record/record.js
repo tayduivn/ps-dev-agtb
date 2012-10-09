@@ -30,6 +30,8 @@
             this.model.isNotEmpty = true;
             this.editable = true;
         }
+
+        test = this;
     },
 
     render: function() {
@@ -40,6 +42,10 @@
                 count = 0,
                 rows = [],
                 row = [];
+
+            if (panel.hide) {
+                this.hide = true;
+            }
 
             _.each(panel.fields, function(field) {
                 var maxSpan;
