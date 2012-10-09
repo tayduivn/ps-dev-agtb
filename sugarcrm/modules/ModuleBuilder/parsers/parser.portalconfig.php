@@ -97,7 +97,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         }
 
         foreach ($portalConfig as $fieldKey => $fieldValue) {
-            $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue));
+            $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support');
         }
 
         // Clear the Contacts file b/c portal flag affects rendering
