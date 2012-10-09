@@ -26,9 +26,7 @@
                             <div class="view-forecastsChart"></div>
                         </div>
                         <div class="clearfix"></div>
-                        <div class="block" id="guages">
-                            <div class="view-forecastsProgress"></div>
-                        </div>
+                        <div class="view-forecastsProgress"></div>
                     </div>
                 </div>
             </div>
