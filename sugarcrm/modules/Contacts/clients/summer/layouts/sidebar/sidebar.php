@@ -3,6 +3,8 @@
 $layout = MetaDataManager::getLayout('GenericLayout');
 $layout->push(array('view'=>'twitter'));
 $layout->push(array('view'=>'maps'));
+$layout->push(array('view'=>'influencers'));
+$layout->push(array('view'=>'interactions'));
 $layout->push(array('view'=>'opportunity_metrics'));
 $layout->push(array('view'=>'todo-list'));
 $layout->push(array('view'=>'gmail'));
