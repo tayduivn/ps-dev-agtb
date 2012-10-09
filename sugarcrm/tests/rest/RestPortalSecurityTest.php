@@ -27,6 +27,17 @@
 require_once('tests/rest/RestTestPortalBase.php');
 
 class RestPortalSecurityTest extends RestTestPortalBase {
+    // TODO XXX: refactor this test class
+    // TODO XXX: Break the tests in this class up so that they only test 1 aspect
+    // TODO XXX: Remove the environment setup from the tests themselves and move it into setup and teardown
+    // The tests in this class are way too long an encompass way too much functionality.
+    // Also consider the running time. This class in itself takes more than 25 seconds to complete on my
+    // MacBook pro but only has 3 tests and 155 assertion. Try to reduce the number of text fixtures that
+    // need to get created and the number of REST calls that need to be made.
+    // Also considering rewriting this test so that it doesn't require HTTP requests, but runs direclty against
+    // the API implementation classes.
+
+
     public function setUp()
     {
         parent::setUp();
