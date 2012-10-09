@@ -43,64 +43,63 @@ $language         = $sugar_config['default_language'];
 $app_list_strings = return_app_list_strings_language($language);
 $app_strings      = return_application_language($language);
 
-$report_schedule = new ReportSchedule();
+$reportSchedule = new ReportSchedule();
 
 // Process Enterprise Schedule reports via CSV
-$reports_to_email_ent = $report_schedule->get_ent_reports_to_email("", "ent");
+$reportsToEmailEnt = $reportSchedule->get_ent_reports_to_email("", "ent");
 
 global $report_modules,
        $modListHeader,
        $locale;
 
-foreach ($reports_to_email_ent as $schedule_id => $schedule_info) {
+foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
     $user = new User();
-    $user->retrieve($schedule_info['user_id']);
+    $user->retrieve($scheduleInfo['user_id']);
 
-    $current_user   = $user;
+    $current_user   = $user; // should this be the global $current_user? global $current_user isn't referenced
     $modListHeader  = query_module_access_list($current_user);
     $report_modules = getAllowedReportModules($modListHeader);
 
     if (empty($user->email1)) {
         if (empty($user->email2)) {
-            $address = '';
+            $recipientEmailAddress = '';
         } else {
-            $address = $user->email2;
+            $recipientEmailAddress = $user->email2;
         }
     } else {
-        $address = $user->email1;
+        $recipientEmailAddress = $user->email1;
     }
 
-    $name = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+    $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
 
-    // Aquire the enterprise report to be sent
-    $report_object = new ReportMaker();
-    $report_object->retrieve($schedule_info['report_id']);
+    // Acquire the enterprise report to be sent
+    $reportMaker = new ReportMaker();
+    $reportMaker->retrieve($scheduleInfo['report_id']);
     $mod_strings = return_module_language($language, 'Reports');
-
 
     // Process data sets into CSV files
 
     // loop through data sets;
-    $data_set_array  = $report_object->get_data_sets();
-    $temp_file_array = array();
+    $dataSets  = $reportMaker->get_data_sets();
+    $tempFiles = array();
 
-    foreach ($data_set_array as $key => $data_set_object) {
-        $csv_output = $data_set_object->export_csv();
+    foreach ($dataSets as $key => $dataSet) {
+        $csv_output = $dataSet->export_csv();
 
-        $filenamestamp = $data_set_object->name . '_' . $user->user_name;
+        $filenamestamp = $dataSet->name . '_' . $user->user_name;
         $filenamestamp .= '_' . date(translate('LBL_CSV_TIMESTAMP', 'Reports'), time());
 
-        $filename = str_replace(' ', '_', $report_object->name . $filenamestamp . ".csv");
+        $filename = str_replace(' ', '_', $reportMaker->name . $filenamestamp . ".csv");
         $fp       = sugar_fopen(sugar_cached('csv/') . $filename, 'w');
         fwrite($fp, $csv_output);
         fclose($fp);
 
-        $temp_file_array[$filename] = $filename;
+        $tempFiles[$filename] = $filename;
     }
 
     $mail      = new PHPMailer();
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-    $mail->AddAddress($address, $locale->translateCharsetMIME(trim($name), 'UTF-8', $OBCharset));
+    $mail->AddAddress($recipientEmailAddress, $locale->translateCharsetMIME(trim($recipientName), 'UTF-8', $OBCharset));
 
     $admin = new Administration();
     $admin->retrieveSettings();
@@ -125,44 +124,44 @@ foreach ($reports_to_email_ent as $schedule_id => $schedule_info) {
 
     $mail->From     = $admin->settings['notify_fromaddress'];
     $mail->FromName = empty($admin->settings['notify_fromname']) ? ' ' : $admin->settings['notify_fromname'];
-    $mail->Subject  = empty($report_object->name) ? 'Report' : $report_object->name;
+    $mail->Subject  = empty($reportMaker->name) ? 'Report' : $reportMaker->name;
 
-    $temp_count = 0;
+    $tempCount = 0;
 
-    foreach ($temp_file_array as $filename) {
-        $file_path       = sugar_cached('csv/') . $filename;
-        $attachment_name = $mail->Subject . '_' . $temp_count . '.csv';
-        $mail->AddAttachment($file_path, $attachment_name, 'base64', 'application/csv');
-        $temp_count++;
+    foreach ($tempFiles as $filename) {
+        $filePath       = sugar_cached('csv/') . $filename;
+        $attachment_name = $mail->Subject . '_' . $tempCount . '.csv';
+        $mail->AddAttachment($filePath, $attachment_name, 'base64', 'application/csv');
+        $tempCount++;
     }
 
     $body = $mod_strings['LBL_HELLO'];
 
-    if ($name != '') {
-        $body .= " $name";
+    if ($recipientName != '') {
+        $body .= " $recipientName";
     }
 
     $body .= ",\n\n";
-    $body .= $mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO'] . $report_object->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
-             . $report_object->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
+    $body .= $mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO'] . $reportMaker->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
+             . $reportMaker->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
     $mail->Body = $body;
 
-    if ($address == '') {
-        $GLOBALS['log']->info("No email address for $name");
+    if ($recipientEmailAddress == '') {
+        $GLOBALS['log']->info("No email address for $recipientName");
     } else {
         if ($mail->Send()) {
-            $report_schedule->update_next_run_time($schedule_info['id'],
-                                                   $schedule_info['next_run'],
-                                                   $schedule_info['time_interval']);
+            $reportSchedule->update_next_run_time($scheduleInfo['id'],
+                                                   $scheduleInfo['next_run'],
+                                                   $scheduleInfo['time_interval']);
         } else {
             $GLOBALS['log']->error("Mail error: $mail->ErrorInfo");
         }
     }
 
     // need unlink for loop
-    foreach ($temp_file_array as $filename) {
+    foreach ($tempFiles as $filename) {
         //only un rem if we need to remove cvs and we can't just stream it
-        $file_path = sugar_cached('csv/') . $filename;
-        unlink($file_path);
+        $filePath = sugar_cached('csv/') . $filename;
+        unlink($filePath);
     }
 }
