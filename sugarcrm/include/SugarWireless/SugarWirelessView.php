@@ -107,6 +107,9 @@ class SugarWirelessView extends SugarView
             // Special case wireless search
             if (preg_match('#wireless_(.+)_search#', $view)) {
                 $filename = $metadataPath . 'search.php';
+                if (!file_exists($filename)) {
+                    $filename = $metadataPath . 'searchdefs.php';
+                }
             } else {
                 $wireless = strpos($view, 'wireless') !== false;
                 $viewType = str_replace('wireless', '', $view);
