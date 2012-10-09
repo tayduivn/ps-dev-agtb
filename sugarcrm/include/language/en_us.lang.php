@@ -3435,7 +3435,7 @@ $app_strings = array (
     // for nomad mobile
     'LBL_RELATED_MODULE' => 'Related {{this}}',
     'LBL_RELATED_MODULE_PLURAL' => 'Related {{this}}',
-    'LBL_CREATE' => 'Create {{this}}',
+    'LBL_CREATE_MODULE' => 'Create {{this}}',
     'LBL_EDIT' => 'Edit {{this}}',
     'LBL_ASSOC' => 'Associate {{this}}',
     'LBL_ASSIGN' => 'Assign {{this}}',
