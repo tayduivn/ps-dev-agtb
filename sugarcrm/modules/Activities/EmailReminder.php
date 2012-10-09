@@ -28,6 +28,7 @@ require_once("modules/Calls/Call.php");
 require_once("modules/Users/User.php");
 require_once("modules/Contacts/Contact.php");
 require_once("modules/Leads/Lead.php");
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 /**
  * Class for sending email reminders of meetings and call to invitees
@@ -103,58 +104,62 @@ class EmailReminder
     /**
      * send reminders
      * @param SugarBean $bean
-     * @param Administration $admin
+     * @param Administration $admin *use is deprecated*
      * @param array $recipients
      * @return boolean
      */
     protected function sendReminders(SugarBean $bean, Administration $admin, $recipients) {
+        $current_language = $_SESSION['authenticated_user_language'];
+
         if (empty($_SESSION['authenticated_user_language'])) {
             $current_language = $GLOBALS['sugar_config']['default_language'];
-        } else {
-            $current_language = $_SESSION['authenticated_user_language'];
         }
 
         $user = new User();
         $user->retrieve($bean->created_by);
-            
-        $OBCharset = $GLOBALS['locale']->getPrecedentPreference('default_email_charset');
-        require_once("include/SugarPHPMailer.php");
-        $mail = new SugarPHPMailer();
-        $mail->setMailerForSystem();
-        
-        $from_address = $user->emailAddress->getReplyToAddress($user);
-        $from_address = !empty($from_address) ? $from_address : $admin->settings['notify_fromaddress'];
-        $mail->From = $from_address;
-        $from_name = !empty($user->full_name) ? $user->full_name : $admin->settings['notify_fromname'];
-        $mail->FromName = $from_name;
-        
+
         $xtpl = new XTemplate(get_notify_template_file($current_language));
         $xtpl = $this->setReminderBody($xtpl, $bean, $user);
-        
-        $template_name = $GLOBALS['beanList'][$bean->module_dir].'Reminder';
+
+        $template_name = "{$GLOBALS["beanList"][$bean->module_dir]}Reminder";
         $xtpl->parse($template_name);
-        $xtpl->parse($template_name . "_Subject");
-        
-        $mail->Body = from_html(trim($xtpl->text($template_name)));
-        $mail->Subject = from_html($xtpl->text($template_name . "_Subject"));
+        $xtpl->parse("{$template_name}_Subject");
 
-        $oe = new OutboundEmail();
-        $oe = $oe->getSystemMailerSettings();
+        $method = "unknown";
 
-        if (empty($oe->mail_smtpserver)) {
-            $GLOBALS['log']->fatal("Email Reminder: error sending email, system smtp server is not set");
+        try {
+            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $method = $mailer->getMailTransmissionProtocol();
+
+            // set the subject of the email
+            $subject = $xtpl->text("{$template_name}_Subject");
+            $mailer->setSubject($subject);
+
+            // set the body of the email... looks to be plain-text only
+            $textBody = trim($xtpl->text($template_name));
+            $mailer->setTextBody($textBody);
+
+            foreach ($recipients as $recipient) {
+                // reuse the mailer, but process one send per recipient
+                $mailer->clearRecipients();
+                $mailer->addRecipientsTo(new EmailIdentity($recipient["email"], $recipient["name"]));
+                $mailer->send();
+            }
+        } catch (MailerException $me) {
+            $message = $me->getMessage();
+
+            switch ($me->getCode()) {
+                case MailerException::FailedToConnectToRemoteServer:
+                    $GLOBALS["log"]->fatal("Email Reminder: error sending email, system smtp server is not set");
+                    break;
+                default:
+                    $GLOBALS["log"]->fatal("Email Reminder: error sending e-mail (method: {$method}), (error: {$message})");
+                    break;
+            }
+
             return false;
         }
 
-        foreach ($recipients as $r) {
-            $mail->ClearAddresses();
-            $mail->AddAddress($r['email'],$GLOBALS['locale']->translateCharsetMIME(trim($r['name']), 'UTF-8', $OBCharset));    
-            $mail->prepForOutbound();
-            if (!$mail->Send()) {
-                $GLOBALS['log']->fatal("Email Reminder: error sending e-mail (method: {$mail->Mailer}), (error: {$mail->ErrorInfo})");
-            }
-        }
-    
         return true;
     }
     
