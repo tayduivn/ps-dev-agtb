@@ -113,8 +113,11 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
             return;
         }
 
+        $method = "unknown";
+
         try {
             $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $method = $mailer->getMailTransmissionProtocol();
 
             $mailer->setHeader(EmailHeaders::From, new EmailIdentity("no-reply@sugarcrm.com", "Sugar Authentication"));
 
@@ -142,7 +145,6 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
 
             $GLOBALS["log"]->info("Notifications: e-mail successfully sent");
         } catch (MailerException $me) {
-            $method  = $mailer->getMailTransmissionProtocol();
             $message = $me->getMessage();
             $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
