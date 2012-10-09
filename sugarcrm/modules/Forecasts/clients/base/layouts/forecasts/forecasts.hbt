@@ -1,6 +1,6 @@
 <div id="alert" class="alert-top"></div>
 <div id="core-module">
-    <div id="forecasts" style="">
+    <div id="forecasts">
         <div class="container-fluid" id="contentflex">
             <div class="row-fluid">
                 <div class="span8">
