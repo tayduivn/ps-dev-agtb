@@ -4295,18 +4295,31 @@ $app_list_strings['forecasts_config_category_options_dom'] = array(
 //BEGIN SUGARCRM flav=pro ONLY
 );
 $app_list_strings['forecasts_timeperiod_types_dom'] = array(
-    'fiscal' => 'Fiscal Year',
     'chronological' => 'Date Based Year',
 );
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
-    'yearly' => 'Yearly',
-    'quarterly' => 'Quarterly',
+    'Annual' => 'Yearly',
+    'Quarter' => 'Quarterly',
 );
 $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
-    'first' => 'First',
-    'middle' => 'Middle',
-    'last' => 'Last'
+    'Quarter' => 'Quarterly',
+
 );
+$app_list_strings['forecasts_timeperiod_month_options_dom'] = array(
+   			'' => '',
+   			'1' => 'January',
+   			'2' => 'February',
+   			'3' => 'March',
+   			'4' => 'April',
+   			'5' => 'May',
+   			'6' => 'June',
+   			'7' => 'July',
+   			'8' => 'August',
+   			'9' => 'September',
+   			'10' => 'October',
+   			'11' => 'November',
+   			'12' => 'December',
+   		);
 
 $app_list_strings ['pdfmanager_yes_no_list'] = array (
     'yes' => 'Yes' ,
