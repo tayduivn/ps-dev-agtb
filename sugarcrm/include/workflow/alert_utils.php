@@ -374,96 +374,80 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $alert_shell_array, $check_for_bridge = false) {
     require_once("include/SugarPHPMailer.php");
-    $mail_object = new SugarPHPMailer;
+    $mailer = new SugarPHPMailer;
 
     global $locale;
-    $OBCharset     = $locale->getPrecedentPreference('default_email_charset');
-    $invite_person = false;
+    $OBCharset    = $locale->getPrecedentPreference('default_email_charset');
+    $invitePerson = false;
 
-    //Handle inviting users/contacts to meetings/calls
+    // Handle inviting users/contacts to meetings/calls
     if ($focus->module_dir == "Calls" || $focus->module_dir == "Meetings") {
-
         if ($check_for_bridge == true && !empty($focus->bridge_object)) {
-
-            $invite_person = true;
+            // we are inviting people
+            $invitePerson = true;
             $users_arr     = array();
             $contacts_arr  = array();
-            //end if we are inviting people
         }
-        //end if calls or meetings
     }
 
-
-    //Use system defaults the go here
-
     if ($alert_shell_array['source_type'] == "System Default") {
-
-        get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array);
-
-        //end if system default
-    } elseif ($alert_shell_array['source_type'] == "Custom Template" && $invite_person == true) {
-        //If you are using a custom template and this is a meeting/call child invite go here too
-
-        get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array);
-
+        get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
+    } elseif ($alert_shell_array['source_type'] == "Custom Template" && $invitePerson == true) {
+        // you are using a custom template and this is a meeting/call child invite
+        get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } else {
         $mail_objects = array();
+
         foreach ($address_array['to'] as $key => $user_info_array) {
-            $mail_object->AddAddress($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-            if ($invite_person == true) {
+            $mailer->AddAddress($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+
+            if ($invitePerson == true) {
                 populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
             }
-
         }
 
         foreach ($address_array['cc'] as $key => $user_info_array) {
-            $mail_object->AddCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-            if ($invite_person == true) {
+            $mailer->AddCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+
+            if ($invitePerson == true) {
                 populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
             }
         }
 
         foreach ($address_array['bcc'] as $key => $user_info_array) {
-            $mail_object->AddBCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-            if ($invite_person == true) {
+            $mailer->AddBCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+
+            if ($invitePerson == true) {
                 populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
             }
         }
 
-
-        if ($invite_person == true) {
-            //Handle inviting users/contacts to meetings/calls
+        if ($invitePerson == true) {
+            // Handle inviting users/contacts to meetings/calls
             if (!empty($address_array['invite_only'])) {
                 foreach ($address_array['invite_only'] as $key => $user_info_array) {
                     populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
                 }
             }
 
-            //use the user_arr & contact_arr to add these people to the meeting
+            // use the user_arr & contact_arr to add these people to the meeting
             $focus->users_arr    = $users_arr;
             $focus->contacts_arr = $contacts_arr;
 
-
             invite_people($focus);
-
         }
 
-        //fill in the mail object with all the administrative settings and configurations
-        setup_mail_object($mail_object, $admin);
-        $error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array);
-        $mail_object->prepForOutbound();
+        // fill in the mail object with all the administrative settings and configurations
+        setup_mail_object($mailer, $admin);
+        $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
+        $mailer->prepForOutbound();
 
         if ($error == false) {
-            if (!$mail_object->Send()) {
-                $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$mail_object->Mailer}), (error: {$mail_object->ErrorInfo})");
+            if (!$mailer->Send()) {
+                $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$mailer->Mailer}), (error: {$mailer->ErrorInfo})");
             }
-            //end if error is false
         }
-
-        //end if else use system defaults or not
     }
-
-//end function send_workflow_alert
 }
 
 
