@@ -437,12 +437,12 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
                 invite_people($focus);
             }
 
-            // fill in the mail object with all the administrative settings and configurations
-            $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
-
-            if ($error == false) {
-                $mailer->send();
+            // add the message content to the mailer
+            if(!create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array)) {
+                throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
             }
+
+            $mailer->send();
         } catch (MailerException $me) {
             $message = $me->getMessage();
             $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
