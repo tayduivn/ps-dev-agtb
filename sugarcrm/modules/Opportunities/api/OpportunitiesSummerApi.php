@@ -26,6 +26,23 @@ class OpportunitiesSummerApi extends ListApi
                 'shortHelp' => '',
                 'longHelp' => '',
             ),
+            'expert' => array(
+                'reqType' => 'GET',
+                'path' => array('Opportunities','?', 'expert'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'recommendExpert',
+                'shortHelp' => 'Recommend users to help with a particular record',
+                'longHelp' => 'Test',
+            ),
+            'expertTypeahead' => array(
+                'reqType' => 'GET',
+                'path' => array('Opportunities','?', 'expertTypeahead'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'recommendExpertTypeahead',
+                'shortHelp' => 'Typeahead provider for recommended users',
+                'longHelp' => '',
+            ),
+
         );
     }
 
@@ -68,14 +85,59 @@ class OpportunitiesSummerApi extends ListApi
         return $data;
     }
 
+    public function recommendExpert($api, $args)
+    {
+        $args['title'] = empty($args['title'])? '' : $args['title'];
+        $data = $this->getInteractionsByUser($api, $args);
+        $sortCallback = function($a, $b) {
+            return $a['interaction_count'] - $b['interaction_count'];
+        };
+        $filterCallback1 = function($a) use($args) {
+            return $args['title'] == $a['title'];
+        };
+        $filtered = array_filter($data, $filterCallback1);
+        if(count($filtered) == 0) {
+            $filtered = $data;
+        }
+        $filterCallback2 = function($a) {
+            return $a['interaction_count'] !== 0;
+        };
+        $filtered = array_filter($filtered, $filterCallback2);
+        if(count($filtered) == 0) {
+            $filtered = $data;
+        }
+        usort($filtered, $sortCallback);
+        return array_shift($filtered);
+    }
+
+    public function recommendExpertTypeahead($api, $args)
+    {
+        // TODO: Use employee_status instead of first name.
+        $data = array();
+        $seed = BeanFactory::getBean("Users");
+        $result = $seed->get_list();
+        foreach ($result['list'] as $bean) {
+            if(!empty($bean->title) && !empty($bean->first_name)) {
+                if(empty($data[$bean->title])) {
+                    $data[$bean->title] = array();
+                }
+                $data[$bean->title][] = $bean;
+            }
+        }
+        return array_keys($data);
+    }
+
 
     public function influencers($api, $args)
     {
+        $data = $this->getInteractionsByUser($api, $args);
+        return $data;
+    }
+
+    protected function getInteractionsByUser($api, $args) {
         $account = $this->getAccountBean($api, $args);
         $relationships = array('calls' => 0, 'meetings' => 0);
         $data = array();
-        //$calls = $this->getAccountRelationship($api, $args, $account, 'calls', null);
-        //$meetings = $this->getAccountRelationship($api, $args, $account, 'meetings', null);
         foreach($relationships as $relationship => $ignore) {
             // Load up the relationship
             if (!$account->load_relationship($relationship)) {
@@ -101,13 +163,14 @@ class OpportunitiesSummerApi extends ListApi
                 foreach($userData['rows'] as $userId => $user) {
                     if(empty($data[$userId])) {
                         $userBean = BeanFactory::getBean('Users', $userId);
-                        _ppl($userId);
                         if($userBean) {
                             $data[$userId] = array_merge($this->formatBean($api, $args, $userBean), $relationships);
                             $data[$userId][$relationship]++;
+                            $data[$userId]['interaction_count'] = 1;
                         }
                     } else {
                         $data[$userId][$relationship]++;
+                        $data[$userId]['interaction_count']++;
                     }
                 }
             }
