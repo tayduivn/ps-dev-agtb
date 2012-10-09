@@ -18,25 +18,12 @@
     _collection:{},
 
     /**
-     * Contains a list of column names from metadata and maps them to correct config param
-     * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
-     *
-     * @property _tableColumnsConfigKeyMap
-     */
-    _tableColumnsConfigKeyMap: {
-        'amount': 'show_worksheet_likely',
-        'best_case': 'show_worksheet_best',
-        'worst_case': 'show_worksheet_worst',
-    },
-
-    /**
      * Initialize the View
      *
      * @constructor
      * @param {Object} options
      */
     initialize:function (options) {
-    	
         var self = this;
         
         this.viewModule = app.viewModule;
@@ -47,32 +34,13 @@
         app.view.View.prototype.initialize.call(this, options);
         this._collection = this.context.forecasts.worksheet;
 
-
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
-
-        //Create a Backbone.Model instance to represent the included amounts
-        this.includedModel = new Backbone.Model(
-            {
-                includedAmount : 0,
-                includedBest : 0,
-                includedCount : 0
-            }
-        );
-
-        //Create a Backbone.Model instance to represent the overall amounts
-        self.overallModel = new Backbone.Model(
-            {
-                overallAmount : 0,
-                overallBest : 0
-            }
-        )
 
         // INIT tree with logged-in user       
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
         this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
         this._collection.url = this.createURL();
-
     },
 
     createURL:function() {
@@ -131,7 +99,7 @@
     _renderField: function(field) {
         if(field.name == "commit_stage")
         {
-            //Set the field.def.options value based on buckets_dom (if set)
+            //Set the field.def.options value based on app.config.buckets_dom (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             field = this._setUpCommitStage(field);
             if(!this.isEditableWorksheet)
@@ -199,7 +167,7 @@
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
-                    self.setColumnVisibility(['amount'], value, self);
+                    self.setColumnVisibility(['likely_case'], value, self);
                 }
             });
 
@@ -248,23 +216,13 @@
     },
 
     /**
-     * Checks if colKey exists in the _tableColumnsConfigKeyMap and if so, checks the value on config model
+     * Checks if colKey is in the table config keymaps on the context
      *
      * @param colKey {String} the column sName to check in the keymap
      * @return {*} returns null if not found in the keymap, returns true/false if it did find it
      */
     checkConfigForColumnVisibility: function(colKey) {
-        var returnValue = null;
-        // Check and see if our keymap has the column
-        if(_.has(this._tableColumnsConfigKeyMap, colKey)) {
-            // if so get the value from config
-            returnValue = this.context.forecasts.config.get(this._tableColumnsConfigKeyMap[colKey]);
-        }
-
-        // if there was no value in the keymap, returnValue is null,
-        // in which case returnValue should be set to true because it doesn't correspond to a config setting
-        // so it should be shown
-        return _.isNull(returnValue) ? true : (returnValue == 1);
+        return app.forecasts.utils.getColumnVisFromKeyMap(colKey, this.name, this.context.forecasts.config);
     },
 
     /**
@@ -338,8 +296,8 @@
         if(!this.showMe()){
         	return false;
         }
-        $("#view-sales-rep").show();
-        $("#view-manager").hide();
+        $("#view-sales-rep").addClass('show').removeClass('hide');
+        $("#view-manager").addClass('hide').removeClass('show');
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
@@ -417,9 +375,6 @@
         $("#expected_opportunities").remove();
         view.fetchCollection(function(){
         	self.calculateTotals.call(self);
-            self.createSubViews.call(self);
-            self.includedView.render.call(self);
-            self.overallView.render.call(self);
         });
         $("#summary").prepend(view.$el);
 
@@ -440,64 +395,11 @@
         	self.context.forecasts.set({commitButtonEnabled: false});
         }
 
+        // Trigger event letting other components know worksheet finished rendering
+        self.context.forecasts.trigger("forecasts:worksheet:render");
+
         return this;
     },
-
-    /**
-     * Creates the "included totals" and "overall totals" subviews for the worksheet
-     */
-    createSubViews: function() {
-        var self = this;
-
-        var IncludedView = Backbone.View.extend({
-            id : 'included_totals',
-            tagName : 'tr',
-
-            initialize: function() {
-                _.bindAll(this, 'render');
-                //self._collection.bind('change', self.render);
-                this.model.bind('change', this.render);
-            },
-
-            render: function() {
-                var self = this;
-                var source = $("#included_template").html();
-                var hb = Handlebars.compile(source);
-                $('#included_totals').html(hb(self.model.toJSON()));
-                return this;
-            }
-        });
-
-        this.includedView = new IncludedView({
-            model : self.includedModel
-        });
-
-
-        var OverallView = Backbone.View.extend({
-            id : 'overall_totals',
-            tagName : 'tr',
-
-            initialize: function() {
-                _.bindAll(this, 'render');
-                //self._collection.bind('change', self.render);
-                this.model.bind('change', this.render);
-            },
-
-            render: function() {
-                var self = this;
-                var source = $("#overall_template").html();
-                var hb = Handlebars.compile(source);
-                $('#overall_totals').html(hb(self.model.toJSON()));
-                return this;
-            }
-        });
-
-        this.overallView = new OverallView({
-            model : self.overallModel
-        });
-    },
-
-
 
     /**
      * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
@@ -527,36 +429,39 @@
      * @param selectedUser
      */
     calculateTotals: function() {
-
-        var self = this;
-        var includedAmount = 0;
-        var includedBest = 0;
-        var includedWorst = 0;
-        var overallAmount = 0;
-        var overallBest = 0;
-        var overallWorst = 0;
-        var includedCount = 0;
-        var lostCount = 0;
-        var lostAmount = 0;
-        var wonCount = 0;
-        var wonAmount = 0;
-        var totalCount = 0;
+        var self = this,
+            includedAmount = 0,
+            includedBest = 0,
+            includedWorst = 0,
+            overallAmount = 0,
+            overallBest = 0,
+            overallWorst = 0,
+            includedCount = 0,
+            lostCount = 0,
+            lostAmount = 0,
+            wonCount = 0,
+            wonAmount = 0,
+            totalCount = 0;
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
         	this.context.forecasts.set("updatedTotals", {
-                'best_case' : includedBest,
-                'worst_case' : includedWorst,
-                'timeperiod_id' : self.timePeriod,
-                'lost_count' : lostCount,
-                'lost_amount' : lostAmount,
-                'won_count' : wonCount,
-                'won_amount' : wonAmount,
-                'included_opp_count' : includedCount,
-                'total_opp_count' : totalCount,
-                'amount' : includedAmount,
-                'overall_amount' : overallAmount
-            });
+                updatedTotals : {
+                    'amount' : includedAmount,
+                    'best_case' : includedBest,
+                    'worst_case' : includedWorst,
+                    'overall_amount' : overallAmount,
+                    'overall_best' : overallBest,
+                    'overall_worst' : overallWorst,
+                    'timeperiod_id' : self.timePeriod,
+                    'lost_count' : lostCount,
+                    'lost_amount' : lostAmount,
+                    'won_count' : wonCount,
+                    'won_amount' : wonAmount,
+                    'included_opp_count' : includedCount,
+                    'total_opp_count' : totalCount
+                }
+            }, {silent:true});
             return false;
         }
 
@@ -565,20 +470,18 @@
         var sales_stage_lost_setting = this.context.forecasts.config.get('sales_stage_lost') || [];
 
         _.each(self._collection.models, function (model) {
+            var won = _.include(sales_stage_won_setting, model.get('sales_stage'))
+                lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
+                amount = parseFloat(model.get('amount')),
+                commit_stage = model.get('commit_stage'),
+                best = parseFloat(model.get('best_case')),
+                base_rate = parseFloat(model.get('base_rate')),
+                worst = parseFloat(model.get('worst_case')),
+                worst_base = worst * base_rate,
+                amount_base = amount * base_rate,
+                best_base = best * base_rate;
 
-            var won = _.include(sales_stage_won_setting, model.get('sales_stage'));
-            var lost = _.include(sales_stage_lost_setting, model.get('sales_stage'));
-            var amount = parseFloat(model.get('likely_case'));
-            var commit_stage = model.get('commit_stage');
-            var best = parseFloat(model.get('best_case'));
-            var worst = parseFloat(model.get('worst_case'));
-            var base_rate = parseFloat(model.get('base_rate'));
-            var amount_base = amount * base_rate;
-            var best_base = best * base_rate;
-            var worst_base = worst * base_rate;
-
-            if(won)
-            {
+            if(won) {
                 wonAmount += amount_base;
                 wonCount++;
             } else if(lost) {
@@ -601,66 +504,53 @@
         //Now see if we need to add the expected opportunity amounts
         if(this.context.forecasts.forecastschedule.models)
         {
-           _.each(this.context.forecasts.forecastschedule.models, function(model) {
-               if(model.get('status') == 'Active')
-               {
-                   var amount = model.get('expected_amount');
-                   var best = model.get('expected_best_case');
-                   var worst = model.get('expected_worst_case');
-                   var base_rate = parseFloat(model.get('base_rate'));
+            _.each(this.context.forecasts.forecastschedule.models, function(model) {
+                if(model.get('status') == 'Active')
+                {
+                    var amount = model.get('expected_amount'),
+                        best = model.get('expected_best_case'),
+                        worst = model.get('expected_worst_case'),
+                        base_rate = parseFloat(model.get('base_rate'));
 
 
-                   //Check for null condition and, if so, set to 0
-                   amount = amount != null ? parseFloat(amount) : 0;
-                   best = best != null ? parseFloat(best) : 0;
-                   worst = worst != null ? parseFloat(worst) : 0;
+                    //Check for null condition and, if so, set to 0
+                    amount = amount != null ? parseFloat(amount) : 0;
+                    best = best != null ? parseFloat(best) : 0;
+                    worst = worst != null ? parseFloat(worst) : 0;
 
-                   var amount_base = amount * base_rate;
-                   var best_base = best * base_rate;
-                   var worst_base = worst * base_rate;
+                    var amount_base = amount * base_rate,
+                        best_base = best * base_rate,
+                        worst_base = worst * base_rate;
 
-                   //If commit_stage is include then we count the forecast schedule model
-                   if(model.get('expected_commit_stage') == 'include')
-                   {
+                    //If commit_stage is include then we count the forecast schedule model
+                    if(model.get('expected_commit_stage') == 'include')
+                    {
                         includedAmount += amount_base;
                         includedBest += best_base;
                         includedWorst += worst_base;
-                   }
+                    }
 
-                   overallAmount += amount_base;
-                   overallBest += best_base;
-                   overallWorst += worst_base;
-               }
-           });
+                    overallAmount += amount_base;
+                    overallBest += best_base;
+                    overallWorst += worst_base;
+                }
+            });
         }
 
-        self.includedModel.set({
-            includedAmount : includedAmount,
-            includedBest : includedBest,
-            includedWorst : includedWorst,
-            includedCount : includedCount
-        });
-        self.includedModel.change();
-
-        self.overallModel.set({
-            overallAmount : overallAmount,
-            overallBest : overallBest,
-            overallWorst : overallWorst
-        });
-        self.overallModel.change();
-
         var totals = {
+            'amount' : includedAmount,
             'best_case' : includedBest,
             'worst_case' : includedWorst,
+            'overall_amount' : overallAmount,
+            'overall_best' : overallBest,
+            'overall_worst' : overallWorst,
             'timeperiod_id' : self.timePeriod,
             'lost_count' : lostCount,
             'lost_amount' : lostAmount,
             'won_count' : wonCount,
             'won_amount' : wonAmount,
             'included_opp_count' : includedCount,
-            'total_opp_count' : self._collection.models.length,
-            'amount' : includedAmount,
-            'overall_amount' : overallAmount
+            'total_opp_count' : self._collection.models.length
         };
 
         this.context.forecasts.set("updatedTotals", totals);

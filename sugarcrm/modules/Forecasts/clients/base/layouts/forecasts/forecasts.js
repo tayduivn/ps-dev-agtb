@@ -21,7 +21,7 @@
 
         initialize: function(options) {
 
-            this.componentsMeta = app.metadata.getLayout("Forecasts").forecasts.meta.components;
+            this.componentsMeta = options.meta.components;
 
             options.context = _.extend(options.context, this.initializeAllModels());
 
@@ -141,17 +141,21 @@
          * @return {Object} new instance of the main model, which contains instances of the sub-models for each view
          * as defined in metadata.
          */
-        initializeAllModels: function() {
+        initializeAllModels: function(existingModel) {
             var self = this,
                 componentsMetadata = this.componentsMeta,
                 module = app.viewModule.toLowerCase(),
-                models = {};
+                models = {},
+                existingModel = existingModel || {};
 
-            // creates the context.forecasts topmost model
-            models[module] = app.data.createBean(module);
-
-            // creates the config model as a special case
-            self.namespace(models, module);
+            // creates the context.forecasts topmost model, if it's not already set on the models
+            if(_.isUndefined(existingModel[module])) {
+                models[module] = app.data.createBean(module);
+                // creates the config model as a special case
+                self.namespace(models, module);
+            } else {
+                models[module] = existingModel[module];
+            }
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
                 var name,
@@ -310,6 +314,16 @@
         _placeComponent: function(comp) {
             var compName = comp.name || comp.meta.name,
                 divName = ".view-" + compName;
+
+            // Certain views in forecasts are controlled by other views
+            // If there is a sub-view (eg: a view creates another view and manually renders it in)
+            // then we can set placeInLayout => false and we create all the models and such
+            // from the rest of metadata, but we just dont place it into the html of the layout
+            // as another view will be handling that
+            if(_.has(comp, 'meta') && !_.isUndefined(comp.meta) &&
+                _.has(comp.meta, 'placeInLayout') && comp.meta.placeInLayout == false) {
+                return;
+            }
 
             if (!this.$el.children()[0]) {
                 this.$el.addClass("complex-layout");

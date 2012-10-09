@@ -193,7 +193,9 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testLoadWorksheetAdjustedValuesForUser($user, $dataKey, $worksheetKey)
     {
-        $obj = new MockSugarForecasting_Manager($this->args);
+        $args = $this->args;
+        $args['user_id'] = $this->users[$user]['user']->id;
+        $obj = new MockSugarForecasting_Manager($args);
         $obj->loadUsers();
         $obj->loadWorksheetAdjustedValues();
 
@@ -248,6 +250,13 @@ class SugarForecasting_ManagerTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($this->users[$user]['worksheet']->$worksheetKey, $dataArray[$this->users[$user]['user']->user_name][$dataKey]);
     }
+
+    public function testForecastsHaveCurrencyValues()
+    {
+        $this->assertEquals('-99', $this->users['reportee']['forecast']->currency_id);
+        $this->assertEquals('1', $this->users['reportee']['forecast']->base_rate);
+    }
+
 }
 
 class MockSugarForecasting_Manager extends SugarForecasting_Manager

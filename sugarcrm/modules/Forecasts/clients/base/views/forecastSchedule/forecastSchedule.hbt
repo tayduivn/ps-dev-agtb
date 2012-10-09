@@ -1,11 +1,29 @@
-{{#each meta.panels}}
-    {{#each ../_collection.models}}
-        {{#each ../fields}}
+{{#each _collection.models}}
+    {{#with ../expected_commit_stage_field}}
+        {{#if enabled}}
+            <td><div style="font-weight: normal; width: 100%;" class="{{#if ../../../isBinary}}tcenter{{/if}}">{{field ../../../this ../../this }}</div></td>
+        {{/if}}
+    {{/with}}
+    <th colspan="4" class="tright"><i>{{str "LBL_EXPECTED_OPPORTUNITIES" "Forecasts"}}</i></th>
+    {{#if ../show_worksheet_likely}}
+        {{#with ../../expected_amount_field}}
             {{#if enabled}}
-                {{{expected_opportunity_column "start"}}}
-                    {{field ../../../../this ../../this}}
-                {{{expected_opportunity_column "end"}}}
+                <th>{{field ../../../../this ../../../this}}</th>
             {{/if}}
-        {{/each}}
-    {{/each}}
+        {{/with}}
+    {{/if}}
+    {{#if ../show_worksheet_best}}
+        {{#with ../../expected_best_case_field}}
+            {{#if enabled}}
+                <th>{{field ../../../../this ../../../this}}</th>
+            {{/if}}
+        {{/with}}
+    {{/if}}
+    {{#if ../show_worksheet_worst}}
+        {{#with ../../expected_worst_case_field}}
+            {{#if enabled}}
+                <th>{{field ../../../../this ../../../this}}</th>
+            {{/if}}
+        {{/with}}
+    {{/if}}
 {{/each}}
