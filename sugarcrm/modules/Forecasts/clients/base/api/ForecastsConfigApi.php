@@ -102,4 +102,5 @@ class ForecastsConfigApi extends ModuleApi {
         }
     }
 
+
 }

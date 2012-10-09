@@ -12,12 +12,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             'view' => 'forecastsProgress',
         ),
         array(
-            'view' => 'forecastsCommitted',
-            'collection' => array(
-                'name' => 'Committed'
-            ),
-        ),
-        array(
             'view' => 'forecastsWorksheet',
             'contextCollection' => array(
                 'module' => 'ForecastWorksheets',
@@ -51,7 +45,22 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             ),
         ),
         array(
-            'layout' => 'forecastsHeader'
+            'view' => 'forecastsTitle',
+        ),
+        array(
+            'view' => 'forecastsTree',
+        ),
+        array(
+            'view' => 'forecastsCommitButtons',
+        ),
+        array(
+            'layout' => array(
+                'type' => 'modal',
+                'showEvent' => 'modal:forecastsConfig:open',
+            ),
+        ),
+        array(
+            'layout' => 'forecastsInfo'
         ),
     ),
 );
