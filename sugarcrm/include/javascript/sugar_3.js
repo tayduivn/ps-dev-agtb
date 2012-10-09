@@ -1143,10 +1143,16 @@ function isFieldTypeExceptFromEmptyCheck(fieldType)
     return results;
 }
 //BEGIN SUGARCRM flav=pro ONLY
-function isFieldHidden(field)
+function isFieldHidden(field, type)
 {
     var Dom = YAHOO.util.Dom;
 	var td = Dom.getAncestorByTagName(field, 'TD');
+
+    // For 'date' field type html representation differ from others ( td.vis_action_hidden > table > td > input[name])
+    if (type == 'date') {
+        td = Dom.getAncestorByTagName(td, 'TD');
+    }
+
 	return Dom.hasClass(td, 'vis_action_hidden');
 }
 //END SUGARCRM flav=pro ONLY
@@ -1192,7 +1198,7 @@ function validate_form(formname, startsWith){
 					if(validate[formname][i][requiredIndex]
 						&& !isFieldTypeExceptFromEmptyCheck(validate[formname][i][typeIndex])
 						//BEGIN SUGARCRM flav=pro ONLY
-						&& !isFieldHidden(form[validate[formname][i][nameIndex]])
+						&& !isFieldHidden(form[validate[formname][i][nameIndex]], validate[formname][i][typeIndex])
 						//END SUGARCRM flav=pro ONLY
 					){
 						if(typeof form[validate[formname][i][nameIndex]] == 'undefined' || trim(form[validate[formname][i][nameIndex]].value) == ""){
