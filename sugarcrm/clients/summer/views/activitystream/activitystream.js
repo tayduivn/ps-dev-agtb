@@ -25,7 +25,9 @@
     },
 
     initialize: function(options) {
-        var self = this;
+        var self = this,
+            url = app.api.buildURL("CustomReport/EntityList");
+
         this.opts = {params: {}};
         this.collection = {};
 
@@ -33,6 +35,7 @@
         app.view.View.prototype.initialize.call(this, options);
 
         // Check to see if we need to make a related activity stream.
+        // Currently the "Home" module is dubbed ActivityStreem
         if (this.module !== "ActivityStream") {
             if (this.context.get("modelId")) {
                 this.opts = { params: { module: this.module, id: this.context.get("modelId") }};
@@ -42,20 +45,18 @@
         }
 
         this.collection = app.data.createBeanCollection("ActivityStream");
+
         // By default, show all posts.
         this.showAllActivities();
 
         // Fetch taggable entities.
-        var url = app.api.buildURL("CustomReport/EntityList");
         app.api.call('GET', url, null, {success: function(o) {
             self.entityList = o;
         }});
 
-
         this.user_id = app.user.get('id');
         this.full_name = app.user.get('full_name');
-        var picture = app.user.get('picture');
-        this.picture_url = (picture) ? app.api.buildFileURL({
+        this.picture_url = (app.user.get('picture')) ? app.api.buildFileURL({
             module: 'Users',
             id: app.user.get('id'),
             field: 'picture'
@@ -66,8 +67,8 @@
     },
 
     toggleView: function(event) {
-        event.preventDefault();
         var view = this.$(event.currentTarget).data('view');
+        event.preventDefault();
 
         if (view == 'timeline') {
             this.$('#activitystream-timeline').show();
@@ -88,8 +89,9 @@
     },
 
     showAnchor: function(event) {
-        event.preventDefault();
         var myId = this.$(event.currentTarget).data('id');
+
+        event.preventDefault();
         $('html, body').animate({ scrollTop: $('#'+myId).offset().top - 50 }, 'slow');
     },
 
