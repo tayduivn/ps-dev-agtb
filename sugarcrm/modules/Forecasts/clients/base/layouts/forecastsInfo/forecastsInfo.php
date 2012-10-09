@@ -1,3 +1,5 @@
+<?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -20,42 +22,21 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
-(function (app) {
-
-    app.view.layouts.ForecastsHeaderLayout = app.view.Layout.extend({
-
-        fullName: "",
-
-        initialize:function (options) {
-            app.view.Layout.prototype.initialize.call(this, options);
-
-            // grab current app user model locally
-            var currentUser = app.user;
-
-            this.fullName = currentUser.get('full_name');
-        },
-
-        /**
-         * Add a view (or layout) to this layout.
-         * @param {View.Layout/View.View} comp Component to add
-         */
-        _placeComponent: function(comp) {
-            var compName = comp.name || comp.meta.name,
-                divName = ".view-" + compName;
-
-            if (!this.$el.children()[0]) {
-                this.$el.addClass("complex-layout");
-            }
-
-            //add the components to the div
-            if (compName && this.$el.find(divName)[0]) {
-                this.$el.find(divName).append(comp.$el);
-            } else {
-                this.$el.append(comp.$el);
-            }
-        }
-
-    });
-
-})(SUGAR.App)
+$viewdefs['Forecasts']['base']['layout']['forecastsInfo'] = array(
+    'type' => 'forecastsInfo',
+    'name' => 'forecastsInfo',
+    'components' => array(
+        array(
+            'view' => 'forecastsTimeperiod',
+        ),
+        array(
+            'view' => 'forecastsCommitted',
+            'collection' => array(
+                'name' => 'Committed'
+            ),
+        ),
+        array(
+            'view' => 'forecastsCommitLog',
+        ),
+    ),
+);
