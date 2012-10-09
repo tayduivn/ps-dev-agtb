@@ -109,21 +109,21 @@ class EmailReminder
      * @return boolean
      */
     protected function sendReminders(SugarBean $bean, Administration $admin, $recipients) {
-        $current_language = $_SESSION['authenticated_user_language'];
+        $currentLanguage = $_SESSION["authenticated_user_language"];
 
-        if (empty($_SESSION['authenticated_user_language'])) {
-            $current_language = $GLOBALS['sugar_config']['default_language'];
+        if (empty($_SESSION["authenticated_user_language"])) {
+            $currentLanguage = $GLOBALS["sugar_config"]["default_language"];
         }
 
         $user = new User();
         $user->retrieve($bean->created_by);
 
-        $xtpl = new XTemplate(get_notify_template_file($current_language));
+        $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
         $xtpl = $this->setReminderBody($xtpl, $bean, $user);
 
-        $template_name = "{$GLOBALS["beanList"][$bean->module_dir]}Reminder";
-        $xtpl->parse($template_name);
-        $xtpl->parse("{$template_name}_Subject");
+        $templateName = "{$GLOBALS["beanList"][$bean->module_dir]}Reminder";
+        $xtpl->parse($templateName);
+        $xtpl->parse("{$templateName}_Subject");
 
         $method = "unknown";
 
@@ -132,11 +132,11 @@ class EmailReminder
             $method = $mailer->getMailTransmissionProtocol();
 
             // set the subject of the email
-            $subject = $xtpl->text("{$template_name}_Subject");
+            $subject = $xtpl->text("{$templateName}_Subject");
             $mailer->setSubject($subject);
 
             // set the body of the email... looks to be plain-text only
-            $textBody = trim($xtpl->text($template_name));
+            $textBody = trim($xtpl->text($templateName));
             $mailer->setTextBody($textBody);
 
             foreach ($recipients as $recipient) {
