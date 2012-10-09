@@ -613,6 +613,12 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         
         $this->assertEquals(self::$managerData2["best_adjusted"] - 100, $best_adjusted, "Draft version was returned");
         
+        //Now, save as a regular version so things will be reset.
+        $postData["draft"] = 0;
+        $response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerData2["user_id"], json_encode($postData), "PUT");
+
+        $db->commit();
+        
         // set the current user to original user
         $this->_user = $oldUser;
         $GLOBALS["current_user"] = $oldUser;
@@ -663,7 +669,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
                              "timeperiod_id" =>$response["reply"][$index]["timeperiod_id"],
                              "draft" => 0
                         );
-        $response = $this->_restCall("ForecastManagerWorksheets/" .  $response["reply"][$index]["id"], json_encode($postData), "PUT");
+        $response = $this->_restCall("ForecastManagerWorksheets/" .  $response["reply"][$index]["user_id"], json_encode($postData), "PUT");
 						
 		// now get the data back to see if it was saved to all the proper tables.
 		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);	
@@ -704,7 +710,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         
         $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager2["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);
      	
-     	$GLOBALS["log"]->fatal($response['reply']);
         $newQuota = 4000;
         $postData = array(	 "amount" => $response["reply"][1]["amount"],
 							 "quota" => $newQuota,
@@ -727,13 +732,11 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
                              "draft" => 0
                         );
         
-        $response = $this->_restCall("ForecastManagerWorksheets/" .  $response["reply"][1]["id"], json_encode($postData), "PUT");
+        $response = $this->_restCall("ForecastManagerWorksheets/" .  $response["reply"][1]["user_id"], json_encode($postData), "PUT");
         
         // now get the data back to see if it was saved to all the proper tables.
 		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager2["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);
 		
-		$GLOBALS["log"]->fatal($response['reply']);
-			
 		$GLOBALS['current_user'] = $this->_user;
 		//check to see if the Quota was auto calculated
 		foreach($response["reply"] as $record)
