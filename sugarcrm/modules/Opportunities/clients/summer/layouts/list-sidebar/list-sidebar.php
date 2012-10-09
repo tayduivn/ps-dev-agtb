@@ -1,7 +1,6 @@
 <?php
 
-require_once('clients/summer/GenericLayout.php');
-$layout = new GenericLayout();
+$layout = MetaDataManager::getLayout('GenericLayout');
 $layout->push(array('view'=>'treemap'));
 $layout->push(array('view'=>'funnel'));
 $layout->push(array('view'=>'untouched'));

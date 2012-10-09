@@ -3377,7 +3377,7 @@ $app_strings = array (
     'LBL_PORTAL_LOGIN_PASSWORD' => 'Password',
     'LBL_PORTAL_LOADING' => 'Loading',
     'LBL_PORTAL_SAVING' => 'Saving',
-    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
+    'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available',
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
 
     //for portal system tour
@@ -3429,7 +3429,7 @@ $app_strings = array (
     'LBL_CONTACT_EDIT_PASSWORD_LNK_TEXT' => 'Change Password',
     'LBL_PORTAL_PASSWORDS_MUST_MATCH' => 'The passwords must match.',
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
-    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
+    'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.',
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
 
     'LBL_PREFERRED_LANGUAGE' => 'Language Preference:',
@@ -4328,14 +4328,14 @@ $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
 );
 //END SUGARCRM flav=pro ONLY
 
-if(class_exists('BoxOfficeClient')){
-$app_list_strings['sales_stage_dom']= array(
+//BEGIN SUGARCRM flav=free ONLY
+$app_list_strings['sales_stage_dom'] = array(
     'Prospecting'=>'New',
     'Qualification'=>'Engaged',
     'Closed Won'=>'Won',
     'Closed Lost'=>'Lost',
 );
-}
+//END SUGARCRM flav=free ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
 	$app_list_strings ['pdfmanager_yes_no_list'] = array (

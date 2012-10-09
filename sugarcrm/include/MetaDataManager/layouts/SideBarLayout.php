@@ -1,7 +1,5 @@
 <?php
 
-require_once('clients/summer/GenericLayout.php');
-
 class SideBarLayout {
 
     protected $mainPane;
@@ -12,12 +10,12 @@ class SideBarLayout {
     protected $baseLayout;
 
     public function __construct() {
-        $this->layout = new GenericLayout("sidebar", "default");
-        $this->baseLayout = new GenericLayout("base");
+        $this->layout = MetaDataManager::getLayout('GenericLayout', array('name' => 'sidebar', 'type' => 'default'));
+        $this->baseLayout = MetaDataManager::getLayout('GenericLayout', array('name' => 'base'));;
 
-        $this->mainPane = $this->containers['main'] = new GenericLayout("main-pane");
-        $this->sidePane = $this->containers['side'] = new GenericLayout("side-pane");
-        $this->previewPane = $this->containers['preview'] = new GenericLayout("preview-pane");
+        $this->mainPane = $this->containers['main'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'main-pane'));
+        $this->sidePane = $this->containers['side'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'side-pane'));
+        $this->previewPane = $this->containers['preview'] = MetaDataManager::getLayout('GenericLayout', array('name' => 'preview-pane'));
 
         $this->mainPane->set("span", 8);
         $this->sidePane->set("span", 4);
