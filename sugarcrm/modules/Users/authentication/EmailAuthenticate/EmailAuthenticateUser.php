@@ -101,7 +101,6 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
 	    $result = $GLOBALS['db']->query("SELECT email1, email2, first_name, last_name FROM users WHERE id='$user_id'");
 	    $row = $GLOBALS['db']->fetchByAssoc($result);
 
-	    global $sugar_config;
 	    if(empty($row['email1']) && empty($row['email2'])){
 
 	        $_SESSION['login_error'] = 'Please contact an administrator to setup up your email address associated to this account';
