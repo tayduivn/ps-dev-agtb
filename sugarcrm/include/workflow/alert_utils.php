@@ -373,11 +373,6 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 
 
 function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $alert_shell_array, $check_for_bridge = false) {
-    require_once("include/SugarPHPMailer.php");
-    $mailer = new SugarPHPMailer;
-
-    global $locale;
-    $OBCharset    = $locale->getPrecedentPreference('default_email_charset');
     $invitePerson = false;
 
     $users    = array();
@@ -390,6 +385,8 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             $invitePerson = true;
         }
     }
+
+    $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
 
     if ($alert_shell_array['source_type'] == "System Default") {
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
