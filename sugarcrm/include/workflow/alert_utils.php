@@ -615,46 +615,45 @@ function compile_rel_user_info($target_object, $user_meta_array, &$address_array
 
 /////////////////////////////////////////Parsing Custom Templates//////////
 
-function fill_mail_object(& $mail_object, & $focus, $template_id, $source_field, $notify_user_id=""){
+function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $notify_user_id = "") {
+    $template                             = new EmailTemplate();
+    $template->disable_row_level_security = true;
 
+    if (isset($template_id) && $template_id != "") {
+        $template->retrieve($template_id);
+    }
 
+    if ($template->id = "") {
+        return true;
+    }
 
-	$template_object = new EmailTemplate();
-	$template_object->disable_row_level_security = true;
+    if ($template->from_address != "" && $template->from_name != "") {
+        $mail_object->setHeader(EmailHeaders::From, new EmailIdentity($template->from_address, $template->from_name));
+    } else {
+        //@todo need to be able to set the From address and From name separately
+        if ($template->from_name != '') {
+            //$mail_object->FromName = $template->from_name;
+        }
 
-	if(isset($template_id) && $template_id!="") {
- 	  $template_object->retrieve($template_id);
-	}
+        if ($template->from_address != '') {
+            //$mail_object->From = $template->from_address;
+        }
+    }
 
-	if($template_object->id=""){
-		return true;
+    if (empty($template->body)) {
+        $template->body = strip_tags(from_html($template->body_html));
+    }
 
-	}
+    if (!empty($template->body_html)) {
+        $mail_object->setHtmlBody(parse_alert_template($focus, $template->body_html, $notify_user_id));
+        $mail_object->setTextBody(trim(parse_alert_template($focus, $template->body, $notify_user_id)));
+    } else {
+        $mail_object->setTextBody(from_html(trim(parse_alert_template($focus, $template->body, $notify_user_id))));
+    }
 
-	if($template_object->from_name != ''){
-		$mail_object->FromName = $template_object->from_name;
-	}
+    $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id));
 
-	if($template_object->from_address != ''){
-		$mail_object->From = $template_object->from_address;
-	}
-
-	 if ( empty($template_object->body)){
-		$template_object->body = strip_tags(from_html($template_object->body_html));
- 	}
- 	if(!empty($template_object->body_html)){
-		$mail_object->IsHTML(true);
-		$mail_object->Body = from_html(parse_alert_template($focus, $template_object->body_html, $notify_user_id), true);
-		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id)));
- 	}
- 	else{
- 		$mail_object->AltBody = from_html(trim(parse_alert_template($focus, $template_object->body, $notify_user_id)));
- 	}
- 	$mail_object->Subject = from_html(parse_alert_template($focus, $template_object->subject, $notify_user_id));
-
-		return false;
-
-//end function fill_mail_object;
+    return false;
 }
 
 function parse_alert_template($focus, $target_body, $notify_user_id=""){
