@@ -14,7 +14,7 @@ $viewdefs['Notes']['portal']['view']['activity'] = array(
     array(
         0 =>
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'default',
             'fields' =>
             array(
                 0 =>

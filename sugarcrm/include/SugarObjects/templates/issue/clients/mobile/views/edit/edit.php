@@ -39,7 +39,7 @@ $viewdefs[$module_name]['mobile']['view']['edit'] = array(
 
 	'panels' => array (
     	array (
-            'label' => 'LBL_PANEL_1',
+            'label' => 'default',
             'fields' => array(
                 array(
                     'name' => $_object_name . '_number',

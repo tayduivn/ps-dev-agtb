@@ -37,7 +37,7 @@ $viewdefs['Cases']['mobile']['view']['detail'] = array(
     ),
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'default',
             'fields' => array(
                 array(
                     'name' => 'case_number',

@@ -124,7 +124,7 @@ class Bug55154Test extends Sugar_PHPUnit_Framework_TestCase {
         
         // Currently rendered fields
         $fields = $parser->getLayout();
-        $test = $this->_fieldNameFoundInFields($this->testField, $fields['LBL_PANEL_1']);
+        $test = $this->_fieldNameFoundInFields($this->testField, $fields['default']);
         $this->assertFalse($test, "$this->testField should not be in default fields");
         
         // Fields that can be added to a layout
@@ -140,7 +140,7 @@ class Bug55154Test extends Sugar_PHPUnit_Framework_TestCase {
         
         // Currently rendered fields
         $fields = $parser->getLayout();
-        $test = $this->_fieldNameFoundInFields($this->testField, $fields['LBL_PANEL_1']);
+        $test = $this->_fieldNameFoundInFields($this->testField, $fields['default']);
         $this->assertFalse($test, "$this->testField should not be default fields");
         
         // Fields that can be added to a layout

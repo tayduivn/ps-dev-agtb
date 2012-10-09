@@ -37,7 +37,7 @@ $viewdefs['PdfManager']['mobile']['view']['edit'] = array(
 
     'panels' => array (
         array (
-            'label' => 'LBL_PANEL_1',
+            'label' => 'default',
             'fields' => array(
                 'name',
                 'assigned_user_name',
