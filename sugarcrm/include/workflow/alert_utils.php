@@ -640,15 +640,12 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
         }
     }
 
-    if (empty($template->body)) {
-        $template->body = strip_tags(from_html($template->body_html));
+    if (!empty($template->body)) {
+        $mail_object->setTextBody(trim(parse_alert_template($focus, $template->body, $notify_user_id)));
     }
 
     if (!empty($template->body_html)) {
         $mail_object->setHtmlBody(parse_alert_template($focus, $template->body_html, $notify_user_id));
-        $mail_object->setTextBody(trim(parse_alert_template($focus, $template->body, $notify_user_id)));
-    } else {
-        $mail_object->setTextBody(from_html(trim(parse_alert_template($focus, $template->body, $notify_user_id))));
     }
 
     $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id));
