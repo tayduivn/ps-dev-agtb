@@ -748,8 +748,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         	break;
         }
         
-        //Since the manager has no overall quota assigned to him from an uber_manager, his total should be recalculated
-        //to zero on updating a reportee.
+        //Since we set Manager2 to have a overall quota of 5000 in the testForecastWorksheetQuotaRecalc test, the recalc
+        //should subtract the rep value of 4000 from 5000, giving us 1000 for manager2's direct
 		$this->assertEquals(5000 - $newQuota, $quota, "Quota data was not auto calculated.");
         
 		// set the current user to original user
