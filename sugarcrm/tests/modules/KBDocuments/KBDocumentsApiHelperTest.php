@@ -71,7 +71,7 @@ class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
         }
     }
 
-    public function testKBDocApproverNameApiHelper() {
+    public function testBug56834ApiHelper() {
         //bug 56834 - the api doesn't return kbdoc_approver_name
         $data = SugarBeanApiHelper::formatForApi($this->_kb);
         $this->assertFalse(isset($data['kbdoc_approver_name']));
