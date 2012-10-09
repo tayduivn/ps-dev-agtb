@@ -1,9 +1,17 @@
 <?php
 $viewdefs['base']['layout']['header'] = array(
-    'type' => 'fluid',
     'components' => array(
         array(
-            'view' => 'header'
+            'view' => 'modulelist',
+        ),
+        array(
+            'view' => 'createactions',
+        ),
+        array(
+            'view' => 'profileactions',
+        ),
+        array(
+            'view' => 'globalsearch',
         ),
     ),
 );
