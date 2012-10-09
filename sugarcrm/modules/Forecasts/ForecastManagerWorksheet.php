@@ -250,13 +250,22 @@ class ForecastManagerWorksheet extends SugarBean
 	 		$newTotal = 0;
 	 	}
 	 	
+	 	$GLOBALS["log"]->fatal("<------");
+	 	$GLOBALS["log"]->fatal($reporteeTotal);
+	 	$GLOBALS["log"]->fatal($managerQuota);
+	 	$GLOBALS["log"]->fatal($managerAmount);
+	 	$GLOBALS["log"]->fatal($newTotal);
+	 	
 	 	//save Manager quota
 		$quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
 		$quota->user_id = $userId;
 		$quota->timeperiod_id = $this->args["timeperiod_id"];
 		$quota->quota_type = "Direct";
 		$quota->amount = $newTotal;
-		$quota->save();		
+		$quota->save();
+		$GLOBALS["log"]->fatal("Quota ID: " . $quota->id);	
+		$GLOBALS["log"]->fatal("------>");
+	 	
 	  }
 
 
