@@ -70,6 +70,9 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 
         // set the default data timeperiod to the set timeperiod
         $this->defaultData['timeperiod_id'] = $this->getArg('timeperiod_id');
+        // set currency to current user prefs
+        $this->dataArray[$user_name]['currency_id'] = SugarCurrency::getUserLocaleCurrency()->id;
+        $this->dataArray[$user_name]['base_rate'] = SugarCurrency::getUserLocaleCurrency()->conversion_rate;
     }
 
     /**
@@ -309,10 +312,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                                     AND user_id = '" . $id .  "'
                                     AND deleted = 0 ORDER BY date_modified DESC";
             $result = $db->limitQuery($forecast_query, 0, 1);
-
-            // set to current user prefs for new worksheet entries
-            $this->dataArray[$user_name]['currency_id'] = SugarCurrency::getUserLocaleCurrency()->id;
-            $this->dataArray[$user_name]['base_rate'] = SugarCurrency::getUserLocaleCurrency()->conversion_rate;
 
             while($row=$db->fetchByAssoc($result)) {
                 $this->dataArray[$user_name]['best_case'] = $row['best_case'];
