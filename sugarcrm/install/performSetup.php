@@ -680,7 +680,7 @@ FP;
         $enabled_tabs[] = 'KBDocuments';
         $enabled_tabs[] = 'Bugs';
     }
-    //BEGIN SUGARCRM flav=ent ONLY
+    //END SUGARCRM flav=ent ONLY
     installerHook('pre_setSystemTabs');
     require_once('modules/MySettings/TabController.php');
     $tabs = new TabController();
