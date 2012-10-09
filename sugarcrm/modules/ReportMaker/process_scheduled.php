@@ -72,14 +72,11 @@ foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
     $tempFiles = array();
 
     foreach ($dataSets as $key => $dataSet) {
-        $csv_output = $dataSet->export_csv();
-
-        $filenamestamp = $dataSet->name . '_' . $user->user_name;
-        $filenamestamp .= '_' . date(translate('LBL_CSV_TIMESTAMP', 'Reports'), time());
-
-        $filename = str_replace(' ', '_', $reportMaker->name . $filenamestamp . ".csv");
-        $fp       = sugar_fopen(sugar_cached('csv/') . $filename, 'w');
-        fwrite($fp, $csv_output);
+        $csv           = $dataSet->export_csv();
+        $filenamestamp = "{$dataSet->name}_{$user->user_name}_" . date(translate("LBL_CSV_TIMESTAMP", "Reports"), time());
+        $filename      = str_replace(" ", "_", "{$reportMaker->name}{$filenamestamp}.csv");
+        $fp            = sugar_fopen(sugar_cached("csv/") . $filename, "w");
+        fwrite($fp, $csv);
         fclose($fp);
 
         $tempFiles[$filename] = $filename;
