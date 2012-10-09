@@ -397,7 +397,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         // you are using a custom template and this is a meeting/call child invite
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } else {
-        foreach ($address_array['to'] as $key => $user_info_array) {
+        foreach ($address_array['to'] as $user_info_array) {
             $mailer->AddAddress($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
@@ -405,7 +405,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             }
         }
 
-        foreach ($address_array['cc'] as $key => $user_info_array) {
+        foreach ($address_array['cc'] as $user_info_array) {
             $mailer->AddCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
@@ -413,7 +413,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             }
         }
 
-        foreach ($address_array['bcc'] as $key => $user_info_array) {
+        foreach ($address_array['bcc'] as $user_info_array) {
             $mailer->AddBCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
