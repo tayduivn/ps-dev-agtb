@@ -142,16 +142,7 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
             $message = $me->getMessage();
             $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
-
-	    if (empty($_SESSION['authenticated_user_language'])) {
-			$current_language = $sugar_config['default_language'];
-		}
-		else {
-			$current_language = $_SESSION['authenticated_user_language'];
-		}
 	}
-
-
 }
 
 ?>
