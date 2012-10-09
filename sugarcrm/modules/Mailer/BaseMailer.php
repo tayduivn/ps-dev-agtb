@@ -80,7 +80,8 @@ abstract class BaseMailer implements IMailer
      * @return string
      */
     public function getMailTransmissionProtocol() {
-        return self::MailTransmissionProtocol;
+        $class = get_class($this);
+        return $class::MailTransmissionProtocol;
     }
 
     /**
