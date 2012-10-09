@@ -108,10 +108,6 @@ $mod_strings = array (
 	'LBL_ADDRESS_STREET'				=> 'Address Street',
 	'LBL_ADDRESS'						=> 'Address',
 	'LBL_ADMIN_USER'					=> 'System Administrator User',
-    'LBL_LINKEDIN'=>'Linkedin Member Account',
-    'LBL_FACEBOOK' => 'Facebook Account',
-    'LBL_TWITTER' => 'Twitter Account',
-    'LBL_GOOGLEPLUS' => 'Google Plus ID',
 	//BEGIN SUGARCRM flav=com || flav=sales ONLY
 
 	'LBL_ADMIN_DESC'					=> 'User can access the Administration page all records.',
