@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class TemplateDateTest extends Sugar_PHPUnit_Framework_TestCase
+class TemplateDateTimeTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
     public function setUp()
