@@ -434,7 +434,6 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         }
 
         // fill in the mail object with all the administrative settings and configurations
-        setup_mail_object($mailer, $admin);
         $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
         $mailer->prepForOutbound();
 
@@ -446,10 +445,12 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
     }
 }
 
-
-function setup_mail_object(& $mail_object, & $admin){
-	global $sugar_version, $sugar_config, $app_list_strings, $current_user;
-
+/**
+ * @deprecated 7.0
+ * @param $mail_object
+ * @param $admin
+ */
+function setup_mail_object(&$mail_object, &$admin) {
 	if ($admin->settings['mail_sendtype'] == "SMTP") {
 		$mail_object->Mailer = "smtp";
 		$mail_object->Host = $admin->settings['mail_smtpserver'];
@@ -475,13 +476,11 @@ function setup_mail_object(& $mail_object, & $admin){
 		}
 	//end if sendtype is SMTP
 	} else {
-        $mail_object->Mailer = 'sendmail';                
+        $mail_object->Mailer = 'sendmail';
     }
 
 	$mail_object->From = $admin->settings['notify_fromaddress'];
 	$mail_object->FromName = (empty($admin->settings['notify_fromname'])) ? "" : $admin->settings['notify_fromname'];
-
-//end function setup_mail_object
 }
 
 
