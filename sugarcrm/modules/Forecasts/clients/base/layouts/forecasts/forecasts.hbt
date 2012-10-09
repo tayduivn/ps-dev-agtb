@@ -12,10 +12,10 @@
                     <div class="view-forecastsInfo"></div>
                     <div class="view-forecastsFilter"></div>
                     <div>
-                        <div id="view-sales-rep" style="display:none">
+                        <div id="view-sales-rep" class="hide">
                             <div class="view-forecastsWorksheet"></div>
                         </div>
-                        <div id="view-manager" style="display:none">
+                        <div id="view-manager" class="hide">
                             <div class="view-forecastsWorksheetManager"></div>
                         </div>
                     </div>

@@ -296,8 +296,8 @@
         if(!this.showMe()){
         	return false;
         }
-        $("#view-sales-rep").show();
-        $("#view-manager").hide();
+        $("#view-sales-rep").addClass('show').removeClass('hide');
+        $("#view-manager").addClass('hide').removeClass('show');
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
