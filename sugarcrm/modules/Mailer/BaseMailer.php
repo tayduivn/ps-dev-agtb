@@ -35,6 +35,9 @@ require_once "EmailFormatter.php";       // formatting methods needed for prepar
  */
 abstract class BaseMailer implements IMailer
 {
+    // constants
+    const MailTransmissionProtocol = ""; // there is no protocol by default; all derived classes must set this
+
     // protected members
     protected $formatter;
     protected $config;
@@ -67,6 +70,17 @@ abstract class BaseMailer implements IMailer
         $this->recipients = new RecipientsCollection();
         $this->htmlBody   = null;
         $this->textBody   = null;
+    }
+
+    /**
+     * Returns the value stored in the constant MailTransmissionProtocol, which represents the method by which email
+     * is sent for this strategy.
+     *
+     * @access public
+     * @return string
+     */
+    public function getMailTransmissionProtocol() {
+        return self::MailTransmissionProtocol;
     }
 
     /**

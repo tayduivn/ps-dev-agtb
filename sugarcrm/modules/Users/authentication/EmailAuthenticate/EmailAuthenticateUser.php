@@ -142,8 +142,7 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
 
             $GLOBALS["log"]->info("Notifications: e-mail successfully sent");
         } catch (MailerException $me) {
-            //@todo need to get the mailer type
-            $method  = "smtp";
+            $method  = $mailer->getMailTransmissionProtocol();
             $message = $me->getMessage();
             $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
