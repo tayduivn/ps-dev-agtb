@@ -392,55 +392,60 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         // you are using a custom template and this is a meeting/call child invite
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } else {
-        $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $method = "unknown";
 
-        foreach ($address_array['to'] as $userInfo) {
-            $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
+        try {
+            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $method = $mailer->getMailTransmissionProtocol();
 
-            if ($invitePerson == true) {
-                populate_usr_con_arrays($userInfo, $users, $contacts);
-            }
-        }
+            foreach ($address_array['to'] as $userInfo) {
+                $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-        foreach ($address_array['cc'] as $userInfo) {
-            $mailer->addRecipientsCc(new EmailIdentity($userInfo['address'], $userInfo['name']));
-
-            if ($invitePerson == true) {
-                populate_usr_con_arrays($userInfo, $users, $contacts);
-            }
-        }
-
-        foreach ($address_array['bcc'] as $userInfo) {
-            $mailer->addRecipientsBcc(new EmailIdentity($userInfo['address'], $userInfo['name']));
-
-            if ($invitePerson == true) {
-                populate_usr_con_arrays($userInfo, $users, $contacts);
-            }
-        }
-
-        if ($invitePerson == true) {
-            // Handle inviting users/contacts to meetings/calls
-            if (!empty($address_array['invite_only'])) {
-                foreach ($address_array['invite_only'] as $userInfo) {
+                if ($invitePerson == true) {
                     populate_usr_con_arrays($userInfo, $users, $contacts);
                 }
             }
 
-            // use the user_arr & contact_arr to add these people to the meeting
-            $focus->users_arr    = $users;
-            $focus->contacts_arr = $contacts;
+            foreach ($address_array['cc'] as $userInfo) {
+                $mailer->addRecipientsCc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-            invite_people($focus);
-        }
-
-        // fill in the mail object with all the administrative settings and configurations
-        $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
-        $mailer->prepForOutbound();
-
-        if ($error == false) {
-            if (!$mailer->Send()) {
-                $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$mailer->Mailer}), (error: {$mailer->ErrorInfo})");
+                if ($invitePerson == true) {
+                    populate_usr_con_arrays($userInfo, $users, $contacts);
+                }
             }
+
+            foreach ($address_array['bcc'] as $userInfo) {
+                $mailer->addRecipientsBcc(new EmailIdentity($userInfo['address'], $userInfo['name']));
+
+                if ($invitePerson == true) {
+                    populate_usr_con_arrays($userInfo, $users, $contacts);
+                }
+            }
+
+            if ($invitePerson == true) {
+                // Handle inviting users/contacts to meetings/calls
+                if (!empty($address_array['invite_only'])) {
+                    foreach ($address_array['invite_only'] as $userInfo) {
+                        populate_usr_con_arrays($userInfo, $users, $contacts);
+                    }
+                }
+
+                // use the user_arr & contact_arr to add these people to the meeting
+                $focus->users_arr    = $users;
+                $focus->contacts_arr = $contacts;
+
+                invite_people($focus);
+            }
+
+            // fill in the mail object with all the administrative settings and configurations
+            $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
+
+            if ($error == false) {
+                $mailer->send();
+            }
+        } catch (MailerException $me) {
+            $message = $me->getMessage();
+            $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
     }
 }
@@ -484,28 +489,25 @@ function setup_mail_object(&$mail_object, &$admin) {
 }
 
 
-function create_email_body(& $focus, & $mail_object, & $admin, $alert_msg, $alert_shell_array, $notify_user_id=""){
-	global $current_language;
-	$mod_strings = return_module_language($current_language, 'WorkFlow');
-	if($alert_shell_array['source_type']=="Custom Template"){
-		//use custom template
-		$error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id);
-		return $error;
-	//use custom template
-	}
-	if($alert_shell_array['source_type']=="Normal Message"){
-		//use standard message
-		$mail_object->Body = from_html(trim($alert_msg));
-		$mail_object->AltBody = from_html(trim($alert_msg));
-		$mail_object->Subject = from_html(($mod_strings['LBL_ALERT_SUBJECT']));
-		return false;
-	//end if else use custom
-	}
+function create_email_body(&$focus, &$mail_object, &$admin, $alert_msg, $alert_shell_array, $notify_user_id = "") {
+    global $current_language;
+    $modStrings = return_module_language($current_language, 'WorkFlow');
 
+    if ($alert_shell_array['source_type'] == "Custom Template") {
+        // use custom template
+        $error = fill_mail_object($mail_object, $focus, $alert_msg, "body_html", $notify_user_id);
+        return $error;
+    }
 
-	return false;
+    if ($alert_shell_array['source_type'] == "Normal Message") {
+        //use standard message
+        $textBody = trim($alert_msg);
+        $mail_object->setTextBody($textBody); // looks to be plain-text only
+        $mail_object->setSubject($modStrings['LBL_ALERT_SUBJECT']);
+        return false;
+    }
 
-//end function create_email_body
+    return false;
 }
 
 function get_related_array(& $focus, & $user_meta_array, & $address_array){
