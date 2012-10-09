@@ -34,6 +34,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *
  */
 require_once('modules/Users/authentication/SugarAuthenticate/SugarAuthenticateUser.php');
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+
 class EmailAuthenticateUser extends SugarAuthenticateUser {
     var $passwordLength = 4;
 
@@ -105,6 +107,41 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
 	        $_SESSION['login_error'] = 'Please contact an administrator to setup up your email address associated to this account';
 	       return;
 	    }
+
+        try {
+            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+
+            $mailer->setHeader(EmailHeaders::From, new EmailIdentity("no-reply@sugarcrm.com", "Sugar Authentication"));
+
+            // set the subject of the email
+            $mailer->setSubject("Sugar Token");
+
+            // add the recipient...
+
+            // first get all email addresses known for this recipient
+            $recipientEmailAddresses = array($row['email1'], $row["email2"]);
+            $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+
+            // then retrieve first non-empty email address
+            $recipientEmailAddress = array_shift($recipientEmailAddresses);
+
+            // get the recipient name that accompanies the email address
+            $recipientName = "{$row["first_name"]} {$row["last_name"]}";
+
+            $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
+
+            // set the body of the email... looks to be plain-text only
+            $mailer->setTextBody("Your sugar session authentication token  is: {$password}");
+
+            $mailer->send();
+
+            $GLOBALS["log"]->info("Notifications: e-mail successfully sent");
+        } catch (MailerException $me) {
+            //@todo need to get the mailer type
+            $method  = "smtp";
+            $message = $me->getMessage();
+            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+        }
 
 	    require_once("include/SugarPHPMailer.php");
 		global $locale;
