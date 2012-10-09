@@ -143,34 +143,12 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
             $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
 
-	    require_once("include/SugarPHPMailer.php");
-		global $locale;
-        $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-        $notify_mail = new SugarPHPMailer();
-		$notify_mail->CharSet = $sugar_config['default_charset'];
-		$notify_mail->AddAddress(((!empty($row['email1']))?$row['email1']: $row['email2']),$locale->translateCharsetMIME(trim($row['first_name'] . ' ' . $row['last_name']), 'UTF-8', $OBCharset));
-
-		if (empty($_SESSION['authenticated_user_language'])) {
+	    if (empty($_SESSION['authenticated_user_language'])) {
 			$current_language = $sugar_config['default_language'];
 		}
 		else {
 			$current_language = $_SESSION['authenticated_user_language'];
 		}
-        $notify_mail->Subject = 'Sugar Token';
-        $notify_mail->Body = 'Your sugar session authentication token  is: ' . $password;
-        $notify_mail->setMailerForSystem();
-        $notify_mail->From = 'no-reply@sugarcrm.com';
-        $notify_mail->FromName = 'Sugar Authentication';
-
-        if(!$notify_mail->Send()) {
-            $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
-        }
-        else {
-            $GLOBALS['log']->info("Notifications: e-mail successfully sent");
-        }
-
-
-
 	}
 
 
