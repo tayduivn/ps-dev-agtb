@@ -255,7 +255,7 @@ class RestService extends ServiceBase {
         }
         header("HTTP/1.1 {$httpError}");
 
-        $GLOBALS['log']->error('An exception happened: ('.$errorLabel.')'.$message);
+        $GLOBALS['log']->error('An exception happened: ( '.$httpError.': '.$errorLabel.')'.$message);
 
         $reply = $message;
         $crazyEncoding = false;

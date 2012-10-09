@@ -1768,6 +1768,7 @@ $app_list_strings = array (
         'move' => 'Move',
         'donothing' => 'Do Nothing'
   ),
+    //BEGIN SUGARCRM flav=pro ONLY
     'forecasts_chart_options_group' => array(
         'forecast' => 'Included In Forecast',
         'sales_stage' => 'Sales Stage',
@@ -1778,6 +1779,7 @@ $app_list_strings = array (
         'best' => 'Best',
         'worst' => 'Worst'
     ),
+    //END SUGARCRM flav=pro ONLY
 );
 
 $app_strings = array (
@@ -2354,6 +2356,7 @@ $app_strings = array (
     'ERR_DB_FAIL' => 'Database failure. Please refer to sugarcrm.log for details.',
     'ERR_EXTERNAL_API_403' => 'Permission Denied. File type is not supported.',
     'ERR_DB_VERSION' => 'Sugar CRM {0} Files May Only Be Used With A Sugar CRM {1} Database.',
+    'ERR_DB_QUERY' => '{0}: query failed: {1}',
 
     'EXCEPTION_CREATE_MODULE_NOT_AUTHORIZED' => 'You are not authorized to create {moduleName}. Contact your administrator if you need access.',
 
@@ -2862,7 +2865,7 @@ $app_strings = array (
     'ERROR_FULLY_EXPIRED'=> "Your company's license for SugarCRM has expired for more than 7 days and needs to be brought up to date. Only admins may login.",
     'ERROR_LICENSE_EXPIRED'=> "Your company's license for SugarCRM needs to be updated. Only admins may login",
     'ERROR_LICENSE_VALIDATION'=> "Your company's license for SugarCRM needs to be validated. Only admins may login",
-    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 13, 14 </li><li>Safari 5.1</li><li>Google Chrome</li></ul>',
+    'WARN_BROWSER_VERSION_WARNING' => '<p><b>Warning:</b>The browser or browser version you are using is not supported.</p><p>The following browser versions are recommended</p><ul><li>Internet Explorer 9</li><li>Mozilla Firefox 14, 15 </li><li>Safari 6</li><li>Google Chrome 22 (or latest version)</li></ul>',
     'WARN_LICENSE_SEATS'=>  "Warning: The number of active users is already the maximum number of licenses allowed.",
     'WARN_LICENSE_SEATS_MAXED'=>  "Warning: The number of active users exceeds the maximum number of licenses allowed.",
     'WARN_ONLY_ADMINS'=> "Only admins may log in.",
@@ -2875,6 +2878,7 @@ $app_strings = array (
     'ERROR_FIELD_REQUIRED' => 'Error. This field is required.',
     'ERROR_MINVALUE' => 'Error. This minimum value of this field is {{this}}.',
     'ERROR_MAXVALUE' => 'Error. This maximum value of this field is {{this}}.',
+    'ERROR_DATETIME' => 'Error. This field requires a valid date.',
     'ERROR_NO_BEAN' => 'Failed to get bean.',
     'LBL_DUP_MERGE'=>'Find Duplicates',
     'LBL_MANAGE_SUBSCRIPTIONS'=>'Manage Subscriptions',
@@ -3411,13 +3415,13 @@ $app_strings = array (
     'LBL_PORTAL_REQUEST_TIMEOUT' => 'The request timed out.',
     'LBL_PORTAL_REQUEST_TIMEOUT_TITLE' => 'Request timeout',
     'LBL_PORTAL_UNAUTHORIZED' =>'We\'re sorry, but it appears you are unauthorized to access this resource.',
-    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: 401 Unauthorized',
+    'LBL_PORTAL_UNAUTHORIZED_TITLE' =>'HTTP Error: Unauthorized',
     'LBL_PORTAL_RESOURCE_UNAVAILABLE' => 'Resource not available.',
-    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: 403 Forbidden',
+    'LBL_PORTAL_RESOURCE_UNAVAILABLE_TITLE' => 'HTTP Error: Forbidden',
     'LBL_PORTAL_METHOD_NOT_ALLOWED' => 'HTTP method not allowed for this resource. Please contact technical support.',
-    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: 405 Method Not Allowed',
+    'LBL_PORTAL_METHOD_NOT_ALLOWED_TITLE' => 'HTTP Error: Method Not Allowed',
     'LBL_PORTAL_PRECONDITION_MISSING' => 'Request failure, or, missing/invalid parameter. Please contact technical support',
-    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: 412',
+    'LBL_PORTAL_PRECONDITION_MISSING_TITLE' => 'HTTP Error: ',
     'LBL_PORTAL_MIN_MODULES' => 'At minimum, you need to have the Cases, Bugs or Knowledge Base module enabled to use this application.',
     'LBL_PORTAL_ERROR' => 'Error',
     'LBL_PORTAL_ROUTE_ERROR'=>'Issue loading module. Please try again later or contact support.',
@@ -4309,7 +4313,7 @@ $app_strings ['documentation'] = array (
 	'PRO' => '04_Sugar_Professional',
 	'COM' => '05_Sugar_Community_Edition'
 );
-
+//BEGIN SUGARCRM flav=pro ONLY
 $app_list_strings['forecasts_config_category_options_dom'] = array(
     'show_binary' => 'Two Categories',
     'show_buckets' => 'Three Categories',
@@ -4328,6 +4332,7 @@ $app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
     'middle' => 'Middle',
     'last' => 'Last'
 );
+//END SUGARCRM flav=pro ONLY
 
 if(class_exists('BoxOfficeClient')){
 $app_list_strings['sales_stage_dom']= array(

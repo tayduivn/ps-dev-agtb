@@ -19,11 +19,13 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         ),
         array(
             'view' => 'forecastsWorksheet',
-
             'contextCollection' => array(
                 'module' => 'ForecastWorksheets',
                 'name' => 'Worksheet'
             ),
+        ),
+        array(
+            'view' => 'forecastsWorksheetTotals'
         ),
         array(
             'view' => 'forecastSchedule',
@@ -34,12 +36,13 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         ),
         array(
             'view' => 'forecastsWorksheetManager',
-
             'contextCollection' => array(
                 'module' => 'ForecastManagerWorksheets',
                 'name' => 'WorksheetManager'
             ),
-
+        ),
+        array(
+            'view' => 'forecastsWorksheetManagerTotals'
         ),
         array(
             'layout' => array(

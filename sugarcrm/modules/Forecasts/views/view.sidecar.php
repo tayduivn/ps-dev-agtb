@@ -135,7 +135,7 @@ class ForecastsViewSidecar extends SidecarView
 echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></script>
 <script src='sidecar/lib/backbone/underscore.js'></script>
 <script src='sidecar/lib/backbone/backbone.js'></script>
-<script src='sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js'></script>
+<script src='sidecar/lib/handlebars/handlebars-1.0.rc.1.js'></script>
 <script src='sidecar/lib/stash/stash.js'></script>
 <script src='sidecar/lib/async/async.js'></script>
 <script src='sidecar/lib/chosen/chosen.jquery.js'></script>

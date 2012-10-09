@@ -29,9 +29,10 @@ class Bug53053Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         if ( count($this->contactsToClean) > 0) {
-            foreach($this->contactsToClean as $contactId) {
-                $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$contactId}'");
-                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$contactId}'");
+            $list = "'" . implode("','", $this->contactsToClean) . "'";
+            $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN ($list)");
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN ($list)");
             }
         }
 
