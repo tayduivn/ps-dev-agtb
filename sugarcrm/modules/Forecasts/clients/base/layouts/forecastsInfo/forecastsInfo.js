@@ -1,5 +1,3 @@
-<?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,24 +20,38 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['layout']['forecastsHeader'] = array(
-    'type' => 'forecastsHeader',
-    'name' => 'forecastsHeader',
-    'components' => array(
-        array(
-            'view' => 'forecastsTitle',
-        ),
-        array(
-            'view' => 'forecastsTree',
-        ),
-        array(
-            'view' => 'forecastsCommitButtons',
-        ),
-        array(
-            'layout' => array(
-                'type' => 'modal',
-                'showEvent' => 'modal:forecastsConfig:open',
-            ),
-        ),
-    ),
-);
+
+(function (app) {
+
+    app.view.layouts.ForecastsInfoLayout = app.view.layouts.ForecastsLayout.extend({
+
+        /**
+         * Holds the metadata for each of the components used in forecasts
+         */
+        componentsMeta: {},
+
+        initialize:function (options) {
+            this.componentsMeta = options.meta.components;
+
+            options.context = _.extend(options.context, this.initializeAllModels(options.context));
+            app.view.Layout.prototype.initialize.call(this, options);
+        },
+
+        /**
+         * Dropping in to _render to insert some code to display the config wizard for a user's first run on forecasts.  The render process itself is unchanged.
+         *
+         * @return {*}
+         * @private
+         */
+        _render: function () {
+
+            this.loadData();
+
+            app.view.Layout.prototype._render.call(this);
+
+            return this;
+        }
+
+    });
+
+})(SUGAR.App)
