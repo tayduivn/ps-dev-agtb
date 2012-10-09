@@ -386,14 +386,14 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         }
     }
 
-    $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
-
     if ($alert_shell_array['source_type'] == "System Default") {
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } elseif ($alert_shell_array['source_type'] == "Custom Template" && $invitePerson == true) {
         // you are using a custom template and this is a meeting/call child invite
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } else {
+        $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+
         foreach ($address_array['to'] as $userInfo) {
             $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
