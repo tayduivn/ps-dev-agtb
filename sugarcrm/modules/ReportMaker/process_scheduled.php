@@ -35,7 +35,7 @@ $modListHeader = array();
 
 require_once('modules/Reports/schedule/ReportSchedule.php');
 require_once('modules/Reports/templates/templates_pdf.php');
-require_once("modules/Mailer/lib/phpmailer/class.phpmailer.php");
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 global $sugar_config;
 
@@ -97,64 +97,56 @@ foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
         $tempFiles[$filename] = $filename;
     }
 
-    $mail      = new PHPMailer();
-    $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-    $mail->AddAddress($recipientEmailAddress, $locale->translateCharsetMIME(trim($recipientName), 'UTF-8', $OBCharset));
+    try {
+        $mailer = MailerFactory::getMailerForUser($current_user);
 
-    $admin = new Administration();
-    $admin->retrieveSettings();
+        // set the subject of the email
+        $subject = empty($reportMaker->name) ? "Report" : $reportMaker->name;
+        $mailer->setSubject($subject);
 
-    if ($admin->settings['mail_sendtype'] == "SMTP") {
-        $mail->Mailer = "smtp";
-        $mail->Host   = $admin->settings['mail_smtpserver'];
-        $mail->Port   = $admin->settings['mail_smtpport'];
+        // add the recipient
+        $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-        if ($admin->settings['mail_smtpauth_req']) {
-            $mail->SMTPAuth = TRUE;
-            $mail->Username = $admin->settings['mail_smtpuser'];
-            $mail->Password = $admin->settings['mail_smtppass'];
+        // add the attachments
+        $tempCount = 0;
+
+        foreach ($tempFiles as $filename) {
+            $filePath       = sugar_cached("csv/") . $filename;
+            $attachmentName = "{$subject}_{$tempCount}.csv";
+            $attachment     = new Attachment($filePath, $attachmentName, Encoding::Base64, "application/csv");
+            $mailer->addAttachment($attachment);
+            $tempCount++;
         }
 
-        if ($admin->settings['mail_smtpssl'] == 1) {
-            $mail->SMTPSecure = 'ssl';
-        } elseif ($admin->settings['mail_smtpssl'] == 2) {
-            $mail->SMTPSecure = 'tls';
+        // set the body of the email
+        $body = $mod_strings["LBL_HELLO"];
+
+        if ($recipientName != "") {
+            $body .= " {$recipientName}";
         }
-    }
 
-    $mail->From     = $admin->settings['notify_fromaddress'];
-    $mail->FromName = empty($admin->settings['notify_fromname']) ? ' ' : $admin->settings['notify_fromname'];
-    $mail->Subject  = empty($reportMaker->name) ? 'Report' : $reportMaker->name;
+        $body .= ",\n\n" .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_INTRO"] .
+                 $reportMaker->date_entered .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY1"] .
+                 $reportMaker->name .
+                 $mod_strings["LBL_SCHEDULED_REPORT_MSG_BODY2"];
 
-    $tempCount = 0;
+        $mailer->setTextBody($body); // looks to be plain-text only
 
-    foreach ($tempFiles as $filename) {
-        $filePath       = sugar_cached('csv/') . $filename;
-        $attachment_name = $mail->Subject . '_' . $tempCount . '.csv';
-        $mail->AddAttachment($filePath, $attachment_name, 'base64', 'application/csv');
-        $tempCount++;
-    }
+        $mailer->send();
 
-    $body = $mod_strings['LBL_HELLO'];
-
-    if ($recipientName != '') {
-        $body .= " $recipientName";
-    }
-
-    $body .= ",\n\n";
-    $body .= $mod_strings['LBL_SCHEDULED_REPORT_MSG_INTRO'] . $reportMaker->date_entered . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY1']
-             . $reportMaker->name . $mod_strings['LBL_SCHEDULED_REPORT_MSG_BODY2'];
-    $mail->Body = $body;
-
-    if ($recipientEmailAddress == '') {
-        $GLOBALS['log']->info("No email address for $recipientName");
-    } else {
-        if ($mail->Send()) {
-            $reportSchedule->update_next_run_time($scheduleInfo['id'],
-                                                   $scheduleInfo['next_run'],
-                                                   $scheduleInfo['time_interval']);
-        } else {
-            $GLOBALS['log']->error("Mail error: $mail->ErrorInfo");
+        $reportSchedule->update_next_run_time($scheduleInfo["id"],
+                                              $scheduleInfo["next_run"],
+                                              $scheduleInfo["time_interval"]);
+    } catch (MailerException $me) {
+        switch ($me->getCode()) {
+            case MailerException::InvalidEmailAddress:
+                $GLOBALS["log"]->info("No email address for {$recipientName}");
+                break;
+            default:
+                $GLOBALS["log"]->fatal("Mail error: " . $me->getMessage());
+                break;
         }
     }
 
