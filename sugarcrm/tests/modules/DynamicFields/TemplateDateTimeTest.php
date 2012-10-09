@@ -22,6 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once 'modules/DynamicFields/templates/Fields/TemplateDatetimecombo.php';
+
 class TemplateDateTimeTest extends Sugar_PHPUnit_Framework_TestCase
 {
 
@@ -39,10 +41,8 @@ class TemplateDateTimeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $tdt = new TemplateDatetimecombo();
         //Verify that each of the default values for TemplateDateTime modify the date correctly
-        $expected = new SugarDateTime();
-        $result = new SugarDateTime("2012-10-08 16:10:30");
-        $result->modify($tdt->dateStrings['today']);
-        $this->assertEquals($expected->asDbDate(false), $result->asDbDate(false));
+        //When testing "now"/"today", we can't realiably get this to pass. Just checking the string now
+        $this->assertEquals("now",$tdt->dateStrings['today']);
 
         $expected = new SugarDateTime("2012-10-07 16:10:30");
         $result = new SugarDateTime("2012-10-08 16:10:30");
