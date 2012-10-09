@@ -1,0 +1,243 @@
+/* for DC menu */
+
+.dcmenuFloat{
+  padding:0px;
+  position: fixed;
+  top: 0;
+  width:100%;
+}
+
+.dcmenu{
+  .inner {
+    height: 44px;
+    min-width: 950px;
+    padding-right: 20px;
+    #gradient > .vertical(@navbarBackgroundHighlight, @navbarBackground);
+    @shadow: 0 1px 3px rgba(0,0,0,.25), inset 0 -1px 0 rgba(0,0,0,.1), 0 4px 0 @red;
+    .box-shadow(@shadow);
+  }
+}
+
+#ie8GradientFix{
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#20517c', endColorstr='#0d3a62');
+}
+#dcmenu ul.clickMenu { filter:none; }
+
+#dcboxtitle{
+  background-color:#000000;
+  border-left:2px solid blue;
+  border-right:2px solid blue;
+  color:blue;
+  height:50px;
+  padding:0px 10px 0px;
+
+}
+
+#dcboxbody{
+  height:110%;
+  font-size:6px !important;
+  min-width: 750px\9; /* ie hack, width must be defined or else it goes off the screen */
+  *width: 750px;
+}
+
+#dcboxbody.sugar_spot_search{
+  min-width:320px\9;
+  width: 320px\9; /* ie hack, width must be defined or else it goes off the screen */
+
+}
+
+#dcboxbody div.buttons {
+
+}
+#dcboxbody .hd #dctitle {
+  float: left;
+  height: 38px
+}
+
+#dcboxbody .hd .close {
+  position: absolute;
+  right: 10px;
+  top:0px;
+}
+
+#dcmenushortcuts{
+  width:130px;
+  height:30px;
+  position:relative;
+  top:-2px;
+  float:left;
+  background-image:url('@{baseUrl}/img/shortcutgrade.png');
+  color:white;
+  font-weight:bolder;
+  font-size:16px;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+#dcmenuitems img.icon,#dcmenuSugarCube img.icon, #glblSearchBtn img.icon {
+  border:0px;
+}
+
+#glblSearchBtn {
+
+}
+#glblSearchBtn .searchIconLink {
+
+}
+#glblSearchBtn .searchicon {
+  position: relative;
+  right:2px;
+}
+
+#dcmenuwrap{
+  margin-left: auto;
+  margin-right: auto;
+  width:100%;
+}
+
+span.dcmenuitem{
+  height:100%;
+  color:black;
+}
+span.dcmenuitem:hover{
+  color:blue;
+}
+
+
+#dcmenuSugarCube{
+  float: right;
+  padding: 0px 0px 0 2px;
+  height: 43px;
+}
+
+#dcmenuUserIcon {
+  float: left;
+  padding: 0px 0px 0 2px;
+  height: 43px;
+}
+
+#dcmenuSugarCube:hover {
+  background-color:  @grayDark;
+}
+
+#notifDivider {
+  float: right;
+  margin-right: 0px;
+}
+
+#dcmenuUserIcon a{
+  width: 36px;
+  height: 43px;
+  background-repeat:no-repeat;
+  margin: 0 0 0 0;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  cursor:default;
+}
+
+#dcmenuSugarCube.none a.notice
+{
+  cursor: default;
+}
+#dcmenuSugarCube .dc_notif_icon, #dcmenuUserIcon .dc_notif_icon{
+  width:24px;
+  height:24px;
+  border:0px;
+  padding:0px;
+  background-position: center center;
+  display: inline-block;
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  margin: 9px 5px 0px 5px;
+  border-radius: 2px;
+}
+
+#dcmenuSugarCube .notifCount{
+  font-weight:bold;
+  font-size:11px !important;
+  color:#FFFFFF;
+  position: relative;
+  text-align: center;
+  background-color: #CC0000;
+  border-radius: 2px;
+  width: 16px;
+  cursor: pointer;
+  padding: 1px;
+  width: 24px;
+  height:18px;
+  padding-top:6px;
+  top:8px;
+  margin:0px 5px;
+}
+
+
+#dcmenuContainer
+{
+  margin: 0 0 0 0;
+  padding: 0;
+  height: 44px;
+  float: left;
+}
+
+#dcmenuContainer ul
+{
+  border: 0;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  text-align: center;
+}
+
+#dcmenuContainer ul li
+{
+  display: block;
+  float: left;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+
+#dcmenuContainer ul li a
+{
+
+  width: 50px;
+  height: 43px;
+/*background-image:url('@{baseUrl}/img/dcMenuIconBarCenter.png');*/
+  background-repeat:repeat-x;
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+  color: #f5d7b4;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+#dcmenuContainer ul li a:hover
+{
+/*background-image:url('@{baseUrl}/img/dcMenuIconBarCenterHover.png');*/
+  background-repeat:repeat-x;
+  top: -2px;
+  position: relative;
+}
+
+#dcmenuContainer a:active
+{
+}
+
+#dcmenuContainer li#active a
+{
+}
+
+#dcmenuSearchDiv {
+  float:right;
+  height: 26px;
+  width: 275px;
+  position:relative;
+}

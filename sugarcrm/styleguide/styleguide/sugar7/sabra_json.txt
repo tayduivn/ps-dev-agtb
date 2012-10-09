@@ -3,50 +3,54 @@
     [
 
       "opp1",
-      "<a href='opportunity_plato.html'>Mark Gibson</a> <a href=\"\" rel=\"clickoverBottom\" data-title=\"Changes by Mark Gibson <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>\" data-content=\"Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST<hr>Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST\" class='pull-right'><i class=\"icon-exclamation-sign label label-warn\"></i></a>",
+      "<a href='opportunity_plato.html'>Mark Gibson</a>",
       "2012-01-01",
       200000,
+      5000000000,
       50000,
-      50000,
-      60000,
+      6000000000,
       50000 ,
-      "opp1 row details"
+      "",
+      "mark"
     ],
     [
 
       "opp2",
-      "<a href='opportunity_plato.html'>James Joplin</a> <a href=\"\" rel=\"clickoverBottom\" data-title=\"Changes by James Joplin <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>\" data-content=\"Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST<hr>Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST\" class='pull-right'><i class=\"icon-exclamation-sign label label-warn\"></i></a>",
+      "<a href='opportunity_plato.html'>James Joplin</a>",
       "2012-02-01",
       100000,
       50000,
       50000,
       65000,
       50000,
-      "opp2 row details"
+      "<article> Updated forecast best up <i class=\"icon-arrow-up\"></i> $10,000 to $125,000 and likely <i class=\"icon-arrow-down\"></i> down $1,000 to $105,000<br><date>1 day ago on 2012/03/02 at 1:15 PM EST</date></article><article>Updated forecast best up <i class=\"icon-arrow-up\"></i> $10,000 to $125,000 and likely <i class=\"icon-arrow-down\"></i> down $1,000 to $105,000<br><date>1 day ago on 2012/03/02 at 1:15 PM EST</date> </article>",
+      "mark"
     ],
     [
 
       "opp3",
-      "<a href='opportunity_plato.html'>Terrance Li</a> <a href=\"\" rel=\"clickoverBottom\" data-title=\"Changes by Terrance Li <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>\" data-content=\"Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST<hr>Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST\" class='pull-right'><i class=\"icon-exclamation-sign label label-warn\"></i></a>",
+      "<a href='opportunity_plato.html'>Terrance Li</a>",
       "2012-03-01",
       200000,
       200000,
       50000,
       90000,
       90000  ,
-      "opp3 row details"
+      "",
+      "mark"
     ],
     [
 
       "opp4",
-      "<a href='opportunity_plato.html'>Amy McCray</a> <a href=\"\" rel=\"clickoverBottom\" data-title=\"Changes by Amy McCray <a href='#' class='close' data-dismiss='clickover'><i class='icon-remove icon-sm'></i></a>\" data-content=\"Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST<hr>Updated forecast likely up $10,000 to $105,000 <br>1 month ago on 2012/02/02 12:15 EST\" class='pull-right'><i class=\"icon-exclamation-sign label label-warn\"></i></a>",
+      "<a href='opportunity_plato.html'>Amy McCray</a>",
       "2012-03-01",
       100000,
       50000,
       50000,
       50000,
       50000,
-      "opp4 row details"
+      "",
+      "mark"
     ],
     [
 
@@ -58,7 +62,8 @@
       10000,
       10000,
       10000,
-      "opp5 row details"
+      "",
+      "mark"
     ]
   ]
 }

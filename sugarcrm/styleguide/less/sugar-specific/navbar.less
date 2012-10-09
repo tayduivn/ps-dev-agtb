@@ -22,44 +22,29 @@
   padding: 0 1px;
 }
 
-.headerbar {
+#contentflex #headerbar {
     height: 60px;
     z-index: 1000;
-    background: @grayLighter;
-    padding: 0 5px 0 0;
-        
+    border-bottom: 1px solid darken(@grayLighter,5%);
     h1 {
         float: left;
         margin-top: 12px;
         margin-left: 20px;
     }
-    
+
     .btn {
         margin: 7px 8px 0 0;
     }
-    .btn-group.pull-left {
-        margin-right: 8px;
-    }
-    .btn-group .btn {
-        margin: 7px 0 0 -1px;
-    }
-    
+
     .dropdown-toggle {
         .box-shadow(none);
     }
-    
-    .dropdown-menu.carettop {
-        .caret-top(10px,9px,auto,auto);
-    }
-    
+
     .span12 {
         margin-left: 0px;
     }
 
 }
-
-.main-pane  {margin: 0;}
-
 
 /* Tweak navbar brand link to be super sleek
 -------------------------------------------------- */
@@ -68,7 +53,7 @@
   float: left;
   height: 19px;
   width: 56px;
-  margin-left: -24px;
+  margin-left: -20px;
   z-index: 2000;
   display: block;
   -webkit-transition: all .2s linear;
@@ -89,7 +74,7 @@
   text-decoration: none;
 }
 
-.navbar .dropdown-menu li, 
+.navbar .dropdown-menu li,
 .navbar .dropdown-menu li.divider {
   padding: 0;
 }
@@ -135,6 +120,11 @@
   height: 24px;
   .border-radii(0px,0px,3px,3px);
 }
+//temp fix for sidecar
+#dcmenu.navbar .advanced.dropdown-toggle {
+  right: 0px;
+  top: -12px;
+}
 .navbar .advanced .caret {
   margin-top: 10px;
 }
@@ -150,24 +140,23 @@
 
 //avatar
 .avatar img {
-	.border-radius(2px);
+  .border-radius(3px);
 }
 .avatar.thumbnail {padding: 3px;}
 
 .navbar .avatar, li li .avatar, .avatar img  {
-  height: 28px;
-  width: 28px;
+  height: 24px;
+  width: 24px;
 }
 .avatar32 img {
   height: 32px;
   width: 32px;
 }
 .avatar68 img {
-position: absolute;
-top: 46px;
-right: 0;
-z-index: 1;
-
+  position: absolute;
+  top: 46px;
+  right: 0;
+  z-index: 1;
   height: 92px;
   width: 92px;
 }
@@ -181,18 +170,18 @@ z-index: 1;
 }
 .navbar .avatar {
   margin-right: 10px;
-	margin-top: -3px;
-	float: left;
-	.border-radius(3px);
-	height: 24px;
+  margin-top: -3px;
+  float: left;
+  .border-radius(3px);
+  height: 24px;
   width: 24px;
   @shadow: 1px 1px 0 rgba(0,0,0,.6), -1px -1px 0 rgba(0,0,0,.6);
   .box-shadow(@shadow);
 }
 
 .navbar form .btn {
-	margin-left: -11px;
-	line-height: 16px;
+  margin-left: -11px;
+  line-height: 16px;
 }
 
 .logo {
@@ -210,28 +199,28 @@ z-index: 1;
 
 
 .tabbar .active {
-	position: relative;
+  position: relative;
 }
 
 .tabbar .active:after, .tabbar .active:before {
-	border: solid transparent;
-	content: ' ';
-	height: 0;
-	left: 100%;
-	position: absolute;
-	width: 0;
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  left: 100%;
+  position: absolute;
+  width: 0;
 }
 
 .tabbar .active:after {
-	border-width: 7px;
-	border-bottom-color: #fff;
-	top: 12px;
+  border-width: 7px;
+  border-bottom-color: #fff;
+  top: 12px;
 }
 
 .tabbar .active:before {
-	border-width: 7px;
-	border-bottom-color: #aaa;
-	top: 10px;
+  border-width: 7px;
+  border-bottom-color: #aaa;
+  top: 10px;
 }
 .subnav .control-group {
   margin: 0;
@@ -261,12 +250,12 @@ textarea[readonly] {
 
 /* blocks */
 .block {
-	margin-bottom: 20px;
+  margin-bottom: 20px;
   position: relative;
-	display: block;
+  display: block;
 }
 .span2 .block {
-	padding-right: 10px;
+  padding-right: 10px;
 }
 .block:first-child {border-top: none;}
 
@@ -289,7 +278,7 @@ textarea[readonly] {
   border: none;
   padding: 4px;
   margin: 0 0 0 -4px;
-} 
+}
 .block.tabs-left {
   border: none;
 }
@@ -302,7 +291,7 @@ textarea[readonly] {
 .block.thumbnail .nav-tabs {margin: 0; border: none;}
 
 .block.thumbnail .nav-tabs li, .block.tabs-left .nav-tabs li{
-  border-bottom: 1px solid @grayLighter;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
   margin-bottom: 10px;
 }
 
@@ -311,7 +300,7 @@ textarea[readonly] {
 }
 
 .block.tabs-left .nav-tabs li li .avatar img {
-  margin: 3px 10px 0 0;
+  margin: 3px 0 0;
 }
 
 .block.tabs-left .nav-tabs li li{
@@ -322,19 +311,14 @@ textarea[readonly] {
 }
 .block.tabs-left .nav-tabs .commented {
   background: @grayLighter;
-  margin: 10px 10px 10px 50px;
+  margin: 10px 0 10px 50px;
 }
 .commented li {
   border-top: 1px solid @white !important;
 }
-.commented li .span10 {display: inline;}
-
-.acomment {margin: 0; padding: 0;}
-.acomment .control-group {padding: 0; margin: 0;}
-.acomment .btn {margin-left: 10px;}
 
 .block.tabs-left .nav-tabs li li p {
-  margin: 0 0 0 36px;
+  margin: 0 0 10px 36px;
 }
 
 .block.tabs-left .nav-tabs > li > a:hover, .block.tabs-left .nav-tabs > li > a {
@@ -353,7 +337,37 @@ textarea[readonly] {
 
 .row-fluid > #charts.span12 {margin-left: 0 !important;}
 h4 i {color: @grayLight;}
+.drawerTrig.pull-right {
+  .border-radius(0 2px 2px 0);
+  position: relative;
+}
 
+.drawerTrig.pull-left {
+  .border-radius(2px);
+  margin-right: 0;
+  padding: 4px 4px 0 4px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.block.tabs-left .nav-tabs li .actions {
+  display: block;
+  top: -2px;
+}
+.block.tabs-left .nav-tabs li .actions a i {
+  padding: 4px;
+}
+
+.block.tabs-left .nav-tabs li.on .actions .icon-eye-open {
+  color: @grayDark;
+  .opacity(100);
+  background: @grayLight;
+  text-shadow: none;
+  .border-radius(4px);
+  padding-right: 100px;
+  margin-right: -96px;
+}
 
 .block .nav-tabs li {
   list-style: none;
@@ -364,6 +378,17 @@ h4 i {color: @grayLight;}
   font-weight: 600;
   border-bottom: 1px solid @grayLight;
   margin-bottom: 10px;
+}
+
+.span2 .block .actions {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+.block .actions, article .actions, .subnav .actions {
+  position: absolute;
+  top: -5px;
+  right: 0;
 }
 
 .thumbnail .table {
@@ -418,7 +443,7 @@ position: relative;
 //55160: preview items should be split into separate lines
 //37a9b82e1792f1dafe2359d435bd6130c22136e3
 .card2 {
-  margin: 0;
+  margin: 0 0 20px;
   &>span[sfuuid] {
     display:block;
     clear:left;
@@ -431,11 +456,12 @@ position: relative;
   padding: 8px 0 0;
 }
 
+#folded .card2 .row-fluid [class*="span"] {padding: 0 0 10px 0;}
 .card2 .extend + .row-fluid, .card2 span:last-child .row-fluid {
   border-bottom: none;
 }
 
-.card2 .input-append .add-on {  
+.card2 .input-append .add-on {
   margin-top: -2px;
 }
 
@@ -460,35 +486,39 @@ article:hover .actions,  tr:hover .actions {
 }
 
 .divleft {
-	border-left: 1px solid darken(@grayLighter, 4%);
-	padding-left: 2%;
-	margin-right: -2.3%;
+  border-left: 1px solid darken(@grayLighter, 4%);
+  padding-left: 2%;
+  margin-right: -2.3%;
 }
 .divleft .block {
-	margin-right: 15px;
+  margin-right: 15px;
 }
 .bordered {
- border-right: @btnBorder 1px solid;
- margin-right: -10px;
+  border-right: @btnBorder 1px solid;
+  margin-right: -10px;
 }
 #drawer {
-	position: relative;
+  position: relative;
 }
 #thedrawer {
-	background: @black;
-	position: fixed;
-	z-index: 1020;
-	top: 46px;
-	left: 52px;
-	height: 100%;
-	padding: 20px;
+  background: @black;
+  position: fixed;
+  z-index: 1020;
+  top: 46px;
+  left: 52px;
+  height: 100%;
+  padding: 20px;
   #gradient > .vertical(lighten(@black, 20%), lighten(@black, 15%));
   @shadow: inset 0 -1px 1px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.1);
-  .box-shadow(@shadow);	
+  .box-shadow(@shadow);
 }
 #thedrawer h4
 {
 color: @white;
+}
+
+.search-query {
+  .border-radius(4px);
 }
 
 .block ul.list ul {
@@ -508,7 +538,9 @@ color: @white;
 
 #guages .row-fluid  {
   padding: 10px 0 0;
-  border-bottom: 1px solid @grayLight;
+  border-bottom: 1px solid darken(@grayLighter, 5%);
+  margin: 0 3%;
+  width: 94%
 }
 #guages, #guages h4  {
   border-bottom: 3px solid @grayLight;
@@ -517,171 +549,9 @@ color: @white;
 #guages {
   margin-bottom: 10px;
 }
-#guages .row-fluid  {
-  padding: 10px 0 0;
-  border-bottom: 1px solid darken(@grayLighter, 5%);
-  margin: 0 3%;
-  width: 94%
-}
-#guages, #guages h4  {
-  border-bottom: 3px solid darken(@grayLighter, 5%);
-  margin: 0;
-}
-#guages {
-  margin-bottom: 10px;
-}
-.topline {
-    position: relative;
-    .control-group.filter {
-        background-color: @grayLighter;
-        padding: 5px 5px 0px 5px;
-        margin-bottom: 0px;
-        border-bottom: 1px solid darken(@grayLighter,5%);
-        position: relative;
-        .indicator {
-            position: absolute;
-            top: 6px;
-            right: 0;
-            padding-right: 15px;
-
-            .caret {
-                margin-top: 7px;
-                margin-left: 5px;
-            }
-        }
-    }
-
-    .control-group.datefilter {
-        float: left;
-        .chzn-single span {
-            font-size: 22px;
-        }
-
-        .chzn-single {
-            border: 0px none;
-            background-image: none;
-            background-color: transparent;
-            .box-shadow(none);
-            padding-left: 0px;
-        }
-
-        .chzn-single:focus {
-            .box-shadow(none);
-            border: 0 none;
-        }
-
-        .chzn-container-single .chzn-single div {
-            right: 22px;
-        }
-
-        .chzn-container-single .chzn-search {
-            display: none;
-        }
-
-        select {
-            width: 160px;
-        }
-    }
-
-    select {
-        width: 130px;
-    }
-}
-.results {position: relative;
-  margin: 0 -22px 0 0;
-  padding: 0;
-}
-.data2 {font-size: 12px;}
-.topline h2 {
-  padding: 0 5px 0 0 !important;
-  font-size: 20px;
-  line-height: 28px;
-    display: inline;
-}
-.topline .btn {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-.topline .title {
-  padding: 10px 20px;
-}
-.topline .datapoint1 {
-  position: absolute;
-  right: 150px;
-  top: 20px;
-  width: 120px;
-}
-.topline .datapoint2 {
-  position: absolute;
-  right: 20px;
-  top: 20px;
-  width: 120px;
-}
-.topline .log .title {
-  padding: 0px 20px 10px;
-}
-.topline .log .datapoint1 {
-  position: absolute;
-  right: 150px;
-  top: 0;
-  width: 120px;
-}
-.topline .log .datapoint2 {
-  position: absolute;
-  right: 20px;
-  top: 0;
-  width: 120px;
-}
-
-.topline > div.divider {
-  border-right: 1px solid darken(@grayLighter,5%);
-  height: 100px;
-  width: 1px;
-  position: absolute;
-  right: 161px;
-  top: 0;
-}
-.topline .log {
-  position: relative;
-  overflow: hidden;
-  border-bottom: 1px solid darken(@grayLighter,5%);
-  color: lighten(@gray, 20%); !important;
-}
-
-.topline .extend {
-  background-color: darken(@gray, 10%);
-  background-color: darken(@gray, 15%) e("\9");
-  background-image: none;
-  color: @grayLighter !important;
-  text-shadow: 0 1px 1px rgba(0,0,0,.75);
-  outline: 0;
-  .box-shadow(~"inset 0 1px 3px rgba(0,0,0,.5)");
-}
-
-.topline .row-fluid {
-  margin: 0;  
-  padding: 0;
-}
-.topline hr {
-  margin: 8px 0 -1px;
-  padding: 0;
-  border-top: 2px solid @grayLight;
-}
-.topline table {
-  margin: 0;
-}
-
-.topline .icon-arrow-down:before {
-    color: @red;
-}
-
-.topline .icon-arrow-up:before {
-    color: @green;
-}
 
 #riskPreview .progress {
-    position: relative;
+  position: relative;
 }
 
 #riskPreview .progress, #riskPreview .progress .bar  {
@@ -696,3 +566,74 @@ color: @white;
   top: 8px;
   font-weight: normal;
 }
+
+
+// Navbar updates in sidecar removed
+/*
+
+// Navbar search
+.navbar-search {
+  position: relative;
+  float: left;
+  margin-top: 8px;
+  margin-bottom: 0;
+  .search-query {
+    padding: 4px 9px;
+    #font > .sans-serif(13px, normal, 1);
+    color: @grayLighter;
+    background: @white;
+    border: 1px solid #111;
+    @shadow: inset 0 1px 2px rgba(0,0,0,.1), 0 1px 0px rgba(255,255,255,.15);
+    .box-shadow(@shadow);
+    .transition(none);
+
+  // Placeholder text gets special styles; can't be bundled together though for some reason
+    .placeholder(@grayLighter);
+
+  // Hover states
+    &:hover {
+      color: @white;
+      background-color: @grayLight;
+      background-color: rgba(255,255,255,.5);
+    }
+  // Focus states (we use .focused since IE7-8 and down doesn't support :focus)
+    &:focus,
+    &.focused {
+      color: @grayDark;
+      text-shadow: 0 1px 0 @white;
+      background-color: @white;
+      border: 1px solid @gray;
+      outline: 0;
+    }
+  }
+}
+
+.navbar {
+  .btn,
+  .btn-group {
+    margin: 0 10px 0; // make buttons vertically centered in navbar
+  }
+  .btn-group .btn {
+    margin-top: 0; // then undo the margin here so we don't accidentally double it
+  }
+
+  .advanced .btn {
+    line-height: 19px;
+    height: 18px;
+    margin-right: 0px;
+  }
+}
+
+#profileThumb {
+  max-width: 24px; max-height: 24px;
+  margin-right: 10px;
+  float: left;
+  margin-top: 10px;
+  margin-left: 20px;
+}
+
+#searchDivider {
+  float: right;
+  margin: 0px;
+}
+*/

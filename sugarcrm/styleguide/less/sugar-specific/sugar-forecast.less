@@ -1,0 +1,154 @@
+/* Typography
+--------------*/
+h1 {font-size: 26px !important;}
+
+
+
+/* Tables
+--------------*/
+table th { white-space: nowrap; }
+table.datatable tbody td { white-space: nowrap; }
+
+
+
+/* Activity Stream
+--------------*/
+#dashboard  #folded .tab-pane.active {
+  background-color: @grayLighter;
+  border-left: 1px solid darken(@grayLighter, 4%);
+}
+#folded .tab-pane.active {
+  top: 48px;
+  background-color: @grayLighter;
+  padding: 20px 0;
+  border-left: 1px solid darken(@grayLighter, 4%);
+}
+
+
+
+/* Editable
+--------------*/
+.card2 div [class^="span"]  {position: relative;}
+.card2 .icon-pencil {position: absolute; left: -16px; top: 0px; padding: 0 2px !important;.opacity(60);}
+
+.card2 form, .card2 input, .card2 select, .card2 textarea {
+  margin: -5px 0 0 -2px !important;
+}
+
+
+
+/* Misc
+-------------------------------------------------- */
+.modal-body .tab-content {
+  overflow: auto;
+  height: 310px;
+}
+.modal-body textarea {text-align: left}
+
+
+
+/* Icons
+------------------------- */
+.navbar a [class^="icon-"] {
+  color: @white !important;
+    font-size: 14px;
+}
+.navbar .advanced {
+  position: absolute;
+  right: 2px;
+  top: -2px;
+}
+.navbar .advanced .dropdown-menu {
+  right: 35px;
+}
+
+.navbar .nav > li > a.btn {
+  padding: 4px 8px;
+  margin-top: 8px;
+}
+
+
+
+/* CSS for forecasts subnav
+------------------------- */
+#headerbar h1 {
+    float:left;
+    margin-right:5px;
+    margin-left:12px;
+}
+
+#folded {
+    background-image: url('@{baseUrl}/img/light_toast.png');
+    margin-left: 0px;
+    width: 34.04%;
+
+    .viz {
+        padding-top: 0px;
+    }
+
+    .block h4 {
+        padding: 7px 80px 7px 10px;
+    }
+}
+
+#overview {
+    background-image: url('@{baseUrl}/img/light_toast.png');
+    border-left:3px solid #cdcccb;
+}
+
+/* Bug 55601 - fix for IE9 so that tree menu is properly rendered */
+.view-forecastsSubnav {
+    z-index: auto;
+}
+
+/* Buttons
+------------------------- */
+.btn-invisible {
+    background:none;
+    border:1px solid transparent;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+}
+.btn-invisible:hover {
+    border:1px solid #d0cfce;
+    *border:0;
+    border-top-color:#c1bfbe;
+}
+
+#forecastsCommitButtons {
+    float:right;
+    padding:15px 0px;
+}
+
+a#save_draft {
+    margin-right: 8px;
+}
+
+.label, .badge {
+    font-size:10.152px;
+    line-height:12px;
+    color:#000;
+    vertical-align:baseline;
+    white-space:nowrap;
+    background-color:#cdcccb;
+    height:12px;
+    display:inline-block;
+}
+.label {
+    padding:1px 4px 2px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border-radius:3px;
+}
+.badge {
+    padding:1px 9px 2px;
+    -webkit-border-radius:9px;
+    -moz-border-radius:9px;
+    border-radius:9px;
+}
+a.label:hover, a.badge:hover {
+    color:#fff;
+    text-decoration:none;
+    cursor:pointer;
+}
