@@ -128,6 +128,16 @@ class UndeployedMetaDataImplementation extends AbstractMetaDataImplementation im
 		}
 		$this->_originalViewdefs = $layout ;
 		$this->_fielddefs = $fielddefs ;
+        
+        // Bug 56675 - Panel defs needed for undeployed modules as well
+        // Set the panel defs (the old field defs)
+        $this->setPanelDefsFromViewDefs();
+
+        // Make sure the paneldefs are proper if there are any
+        if (is_array($this->_paneldefs) && !is_numeric(key($this->_paneldefs))) {
+            $this->_paneldefs = array($this->_paneldefs);
+        }
+                
         $this->_history = new History ( $this->getFileName ( $view, $moduleName, $packageName, MB_HISTORYMETADATALOCATION ) ) ;
     }
 
