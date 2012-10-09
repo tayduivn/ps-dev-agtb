@@ -64,15 +64,18 @@ class ForecastsConfigApi extends ModuleApi {
     }
 
     /**
-     * Returns the config settings for the forecasts module
+     * Returns the config settings for the given module
      * @param $api
-     * @param $args
+     * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function config($api, $args) {
         $this->requireArgs($args,array('module'));
         $adminBean = BeanFactory::getBean("Administration");
+
+        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
+
         if (!empty($args['module'])) {
-            $data = $adminBean->getConfigForModule($args['module']);
+            $data = $adminBean->getConfigForModule($args['module'], $platform);
         } else {
             return;
         }
@@ -81,23 +84,27 @@ class ForecastsConfigApi extends ModuleApi {
     }
 
     /**
-     * Save function for the forecast config settings
+     * Save function for the config settings for a given module.
      * @param $api
-     * @param $args
+     * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function configSave($api, $args) {
         $this->requireArgs($args,array('module'));
         $admin = BeanFactory::getBean('Administration');
 
+        $module = $args['module'];
+        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
+
         // these are not part of the config values, so unset
         unset($args['module']);
+        unset($args['platform']);
         unset($args['__sugar_url']);
 
         foreach ($args as $name => $value) {
             if(is_array($value)) {
-                $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
+                $admin->saveSetting($module, $name, json_encode($value), $platform);
             } else {
-                $admin->saveSetting('Forecasts', $name, $value, 'base');
+                $admin->saveSetting($module, $name, $value, $platform);
             }
         }
     }
