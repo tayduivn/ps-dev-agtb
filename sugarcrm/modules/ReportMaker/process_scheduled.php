@@ -82,6 +82,18 @@ foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
         $tempFiles[$filename] = $filename;
     }
 
+    // get the recipient data...
+
+    // first get all email addresses known for this recipient
+    $recipientEmailAddresses = array($user->email1, $user->email2);
+    $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+
+    // then retrieve first non-empty email address
+    $recipientEmailAddress = array_shift($recipientEmailAddresses);
+
+    // get the recipient name that accompanies the email address
+    $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
+
     try {
         $mailer = MailerFactory::getMailerForUser($current_user);
 
@@ -89,18 +101,7 @@ foreach ($reportsToEmailEnt as $scheduleId => $scheduleInfo) {
         $subject = empty($reportMaker->name) ? "Report" : $reportMaker->name;
         $mailer->setSubject($subject);
 
-        // add the recipient...
-
-        // first get all email addresses known for this recipient
-        $recipientEmailAddresses = array($user->email1, $user->email2);
-        $recipientEmailAddresses = array_filter($recipientEmailAddresses);
-
-        // then retrieve first non-empty email address
-        $recipientEmailAddress = array_shift($recipientEmailAddresses);
-
-        // get the recipient name that accompanies the email address
-        $recipientName = $locale->getLocaleFormattedName($user->first_name, $user->last_name);
-
+        // add the recipient
         $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
         // add the attachments
