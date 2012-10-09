@@ -91,6 +91,18 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
     $GLOBALS["log"]->debug("-----> Reporter Handling PDF output");
     $reportFilename = template_handle_pdf($reporter, false);
 
+    // get the recipient's data...
+
+    // first get all email addresses known for this recipient
+    $recipientEmailAddresses = array($user->email1, $user->email2);
+    $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+
+    // then retrieve first non-empty email address
+    $recipientEmailAddress = array_shift($recipientEmailAddresses);
+
+    // get the recipient name that accompanies the email address
+    $recipientName = empty($user->first_name) ? $user->last_name : "{$user->first_name} {$user->last_name}";
+
     try {
         $GLOBALS["log"]->debug("-----> Generating Mailer");
         $mailer = MailerFactory::getMailerForUser($current_user);
@@ -99,18 +111,7 @@ foreach ($reportsToEmail as $scheduleId => $scheduleInfo) {
         $subject = empty($reporter->report_def["report_name"]) ? "Report" : $reporter->report_def["report_name"];
         $mailer->setSubject($subject);
 
-        // add the recipient...
-
-        // first get all email addresses known for this recipient
-        $recipientEmailAddresses = array($user->email1, $user->email2);
-        $recipientEmailAddresses = array_filter($recipientEmailAddresses);
-
-        // then retrieve first non-empty email address
-        $recipientEmailAddress = array_shift($recipientEmailAddresses);
-
-        // get the recipient name that accompanies the email address
-        $recipientName = empty($user->first_name) ? $user->last_name : "{$user->first_name} {$user->last_name}";
-
+        // add the recipient
         $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
         // attach the report, using the subject as the name of the attachment
