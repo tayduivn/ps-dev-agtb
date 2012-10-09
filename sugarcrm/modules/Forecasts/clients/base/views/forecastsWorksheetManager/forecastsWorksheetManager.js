@@ -325,10 +325,8 @@
         });
         if (enableCommit) {
         	self.context.forecasts.set({commitButtonEnabled: true});
-        } else {
-        	self.context.forecasts.set({commitButtonEnabled: false});
         }
-
+        
         this.calculateTotals();
     },
 

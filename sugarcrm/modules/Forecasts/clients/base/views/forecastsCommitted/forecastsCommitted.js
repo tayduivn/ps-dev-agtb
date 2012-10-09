@@ -213,6 +213,10 @@
                 likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
                 likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
             }
+            
+            if(best.bestCaseCls != '' || likely.likelyCaseCls != ''){
+            	self.context.forecasts.set({commitButtonEnabled: true});
+            }
 
             self.bestCaseCls = best.bestCaseCls;
             self.bestCase = best.bestCase;
