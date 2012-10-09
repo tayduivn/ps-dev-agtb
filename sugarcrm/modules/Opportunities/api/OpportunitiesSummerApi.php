@@ -5,30 +5,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'include/api/ListApi.php';
 require_once 'data/BeanFactory.php';
 
-class ContactsSummerApi extends ListApi
+class OpportunitiesSummerApi extends ListApi
 {
     public function registerApiRest()
     {
         return array(
-            'opportunity_stats' => array(
-                'reqType' => 'GET',
-                'path' => array('Contacts','?', 'opportunity_stats'),
-                'pathVars' => array('module', 'record'),
-                'method' => 'opportunityStats',
-                'shortHelp' => 'Get opportunity statistics for current record',
-                'longHelp' => '',
-            ),
-            'interactions' => array(
-                'reqType' => 'GET',
-                'path' => array('Contacts','?', 'interactions'),
-                'pathVars' => array('module', 'record'),
-                'method' => 'interactions',
-                'shortHelp' => '',
-                'longHelp' => '',
-            ),
             'influencers' => array(
                 'reqType' => 'GET',
-                'path' => array('Contacts','?', 'influencers'),
+                'path' => array('Opportunities','?', 'influencers'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'influencers',
                 'shortHelp' => '',
@@ -42,6 +26,8 @@ class ContactsSummerApi extends ListApi
         $account = $this->getAccountBean($api, $args);
         $relationships = array('calls' => 0, 'meetings' => 0);
         $data = array();
+        //$calls = $this->getAccountRelationship($api, $args, $account, 'calls', null);
+        //$meetings = $this->getAccountRelationship($api, $args, $account, 'meetings', null);
         foreach($relationships as $relationship => $ignore) {
             // Load up the relationship
             if (!$account->load_relationship($relationship)) {
@@ -80,81 +66,6 @@ class ContactsSummerApi extends ListApi
         }
         return array_values($data);
     }
-
-    public function interactions($api, $args)
-    {
-        $record = $this->getBean($api, $args);
-        $account = $this->getAccountBean($api, $args);
-        $box = BoxOfficeClient::getInstance();
-        $data = array('calls' => array(),'meetings' => array(),'emails' => array());
-
-        // Limit here so that we still get the full count for interactions.
-        $limit = 5;
-
-        $email = $record->email1;
-        if(empty($email)) {
-            $email = $record->email2;
-        }
-
-        $emails = array();
-        if(!empty($email)) {
-            $emails = $box->getMails($email);
-        }
-        $data['emails'] = array('count' => count($emails), 'data' => array());
-        $i = 0;
-        while($i < $limit && isset($emails[$i])) {
-            $data['emails']['data'][] = $emails[$i];
-            $i++;
-        }
-
-        $calls = $this->getAccountRelationship($api, $args, $account, 'calls', null);
-        $meetings = $this->getAccountRelationship($api, $args, $account, 'meetings', null);
-
-        $data['calls'] = array('count' => count($calls), 'data' => array());
-        $i = 0;
-        while($i < $limit && isset($calls[$i])) {
-            $data['calls']['data'][] = $calls[$i];
-            $i++;
-        }
-
-        $data['meetings'] = array('count' => count($meetings), 'data' => array());
-        $i = 0;
-        while($i < $limit && isset($meetings[$i])) {
-            $data['meetings']['data'][] = $meetings[$i];
-            $i++;
-        }
-
-        return $data;
-    }
-
-
-    public function opportunityStats($api, $args)
-    {
-        $account = $this->getAccountBean($api, $args);
-        $data = $this->getAccountRelationship($api, $args, $account, 'opportunities', null);
-        $return = array(
-            'won' => array('amount_usdollar' => 0, 'count' => 0),
-            'lost' => array('amount_usdollar' => 0, 'count' => 0),
-            'active' => array('amount_usdollar' => 0, 'count' => 0)
-        );
-        foreach ($data as $record) {
-            switch($record['sales_stage']) {
-                case "Closed Lost":
-                    $status = 'lost';
-                    break;
-                case "Closed Won":
-                    $status = 'won';
-                    break;
-                default:
-                    $status = 'active';
-                    break;
-            }
-            $return[$status]['amount_usdollar'] += $record['amount_usdollar'];
-            $return[$status]['count']++;
-        }
-        return $return;
-    }
-
 
     protected function getBean($api, $args)
     {
