@@ -395,7 +395,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } else {
         foreach ($address_array['to'] as $userInfo) {
-            $mailer->AddAddress($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
+            $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
             if ($invitePerson == true) {
                 populate_usr_con_arrays($userInfo, $users, $contacts);
@@ -403,7 +403,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         }
 
         foreach ($address_array['cc'] as $userInfo) {
-            $mailer->AddCC($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
+            $mailer->addRecipientsCc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
             if ($invitePerson == true) {
                 populate_usr_con_arrays($userInfo, $users, $contacts);
@@ -411,7 +411,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         }
 
         foreach ($address_array['bcc'] as $userInfo) {
-            $mailer->AddBCC($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
+            $mailer->addRecipientsBcc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
             if ($invitePerson == true) {
                 populate_usr_con_arrays($userInfo, $users, $contacts);
