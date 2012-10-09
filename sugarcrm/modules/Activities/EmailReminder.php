@@ -107,22 +107,13 @@ class EmailReminder
      * @param array $recipients
      * @return boolean
      */
-    protected function sendReminders(SugarBean $bean, Administration $admin, $recipients)
-    {
-        
-        if ( empty($_SESSION['authenticated_user_language']) ) {
+    protected function sendReminders(SugarBean $bean, Administration $admin, $recipients) {
+        if (empty($_SESSION['authenticated_user_language'])) {
             $current_language = $GLOBALS['sugar_config']['default_language'];
-        }else{
+        } else {
             $current_language = $_SESSION['authenticated_user_language'];
-        }            
-                
-                if ( !empty($bean->created_by) ) {
-            $user_id = $bean->created_by;
-        }else if ( !empty($bean->assigned_user_id) ) {
-            $user_id = $bean->assigned_user_id;
-        }else {
-            $user_id = $GLOBLAS['current_user']->id;
         }
+
         $user = new User();
         $user->retrieve($bean->created_by);
             
@@ -145,20 +136,21 @@ class EmailReminder
         $xtpl->parse($template_name . "_Subject");
         
         $mail->Body = from_html(trim($xtpl->text($template_name)));
-               $mail->Subject = from_html($xtpl->text($template_name . "_Subject"));
-               
-               $oe = new OutboundEmail();
+        $mail->Subject = from_html($xtpl->text($template_name . "_Subject"));
+
+        $oe = new OutboundEmail();
         $oe = $oe->getSystemMailerSettings();
-        if ( empty($oe->mail_smtpserver) ) {
+
+        if (empty($oe->mail_smtpserver)) {
             $GLOBALS['log']->fatal("Email Reminder: error sending email, system smtp server is not set");
-            return;
+            return false;
         }
 
-        foreach($recipients as $r ) {
+        foreach ($recipients as $r) {
             $mail->ClearAddresses();
             $mail->AddAddress($r['email'],$GLOBALS['locale']->translateCharsetMIME(trim($r['name']), 'UTF-8', $OBCharset));    
             $mail->prepForOutbound();
-            if ( !$mail->Send() ) {
+            if (!$mail->Send()) {
                 $GLOBALS['log']->fatal("Email Reminder: error sending e-mail (method: {$mail->Mailer}), (error: {$mail->ErrorInfo})");
             }
         }
