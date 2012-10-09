@@ -310,6 +310,10 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                                     AND deleted = 0 ORDER BY date_modified DESC";
             $result = $db->limitQuery($forecast_query, 0, 1);
 
+            // set to current user prefs for new worksheet entries
+            $this->dataArray[$user_name]['currency_id'] = SugarCurrency::getUserLocaleCurrency()->id;
+            $this->dataArray[$user_name]['base_rate'] = SugarCurrency::getUserLocaleCurrency()->conversion_rate;
+
             while($row=$db->fetchByAssoc($result)) {
                 $this->dataArray[$user_name]['best_case'] = $row['best_case'];
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
