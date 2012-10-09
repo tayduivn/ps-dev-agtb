@@ -380,13 +380,14 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
     $OBCharset    = $locale->getPrecedentPreference('default_email_charset');
     $invitePerson = false;
 
+    $users    = array();
+    $contacts = array();
+
     // Handle inviting users/contacts to meetings/calls
     if ($focus->module_dir == "Calls" || $focus->module_dir == "Meetings") {
         if ($check_for_bridge == true && !empty($focus->bridge_object)) {
             // we are inviting people
             $invitePerson = true;
-            $users_arr     = array();
-            $contacts_arr  = array();
         }
     }
 
@@ -400,7 +401,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             $mailer->AddAddress($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
-                populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+                populate_usr_con_arrays($user_info_array, $users, $contacts);
             }
         }
 
@@ -408,7 +409,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             $mailer->AddCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
-                populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+                populate_usr_con_arrays($user_info_array, $users, $contacts);
             }
         }
 
@@ -416,7 +417,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             $mailer->AddBCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
-                populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+                populate_usr_con_arrays($user_info_array, $users, $contacts);
             }
         }
 
@@ -424,13 +425,13 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             // Handle inviting users/contacts to meetings/calls
             if (!empty($address_array['invite_only'])) {
                 foreach ($address_array['invite_only'] as $key => $user_info_array) {
-                    populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+                    populate_usr_con_arrays($user_info_array, $users, $contacts);
                 }
             }
 
             // use the user_arr & contact_arr to add these people to the meeting
-            $focus->users_arr    = $users_arr;
-            $focus->contacts_arr = $contacts_arr;
+            $focus->users_arr    = $users;
+            $focus->contacts_arr = $contacts;
 
             invite_people($focus);
         }
