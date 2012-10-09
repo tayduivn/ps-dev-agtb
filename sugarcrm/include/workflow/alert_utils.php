@@ -397,35 +397,35 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         // you are using a custom template and this is a meeting/call child invite
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } else {
-        foreach ($address_array['to'] as $user_info_array) {
-            $mailer->AddAddress($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+        foreach ($address_array['to'] as $userInfo) {
+            $mailer->AddAddress($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
-                populate_usr_con_arrays($user_info_array, $users, $contacts);
+                populate_usr_con_arrays($userInfo, $users, $contacts);
             }
         }
 
-        foreach ($address_array['cc'] as $user_info_array) {
-            $mailer->AddCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+        foreach ($address_array['cc'] as $userInfo) {
+            $mailer->AddCC($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
-                populate_usr_con_arrays($user_info_array, $users, $contacts);
+                populate_usr_con_arrays($userInfo, $users, $contacts);
             }
         }
 
-        foreach ($address_array['bcc'] as $user_info_array) {
-            $mailer->AddBCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+        foreach ($address_array['bcc'] as $userInfo) {
+            $mailer->AddBCC($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
 
             if ($invitePerson == true) {
-                populate_usr_con_arrays($user_info_array, $users, $contacts);
+                populate_usr_con_arrays($userInfo, $users, $contacts);
             }
         }
 
         if ($invitePerson == true) {
             // Handle inviting users/contacts to meetings/calls
             if (!empty($address_array['invite_only'])) {
-                foreach ($address_array['invite_only'] as $key => $user_info_array) {
-                    populate_usr_con_arrays($user_info_array, $users, $contacts);
+                foreach ($address_array['invite_only'] as $userInfo) {
+                    populate_usr_con_arrays($userInfo, $users, $contacts);
                 }
             }
 
