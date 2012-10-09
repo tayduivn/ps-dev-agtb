@@ -65,7 +65,7 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         // Current layout
         $layout = $parser->getLayout();
         $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on mobile edit views");
-        $this->assertArrayHasKey('default', $layout, "'default' was not found as the default panel label on mobile edit views");
+        $this->assertArrayHasKey('LBL_PANEL_DEFAULT', $layout, "'LBL_PANEL_DEFAULT' was not found as the default panel label on mobile edit views");
     }
     
     /**
@@ -79,7 +79,7 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         // Current layout
         $layout = $parser->getLayout();
         $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on mobile detail views");
-        $this->assertArrayHasKey('default', $layout, "'default' was not found as the default panel label on mobile detail views");
+        $this->assertArrayHasKey('LBL_PANEL_DEFAULT', $layout, "'LBL_PANEL_DEFAULT' was not found as the default panel label on mobile detail views");
     }
     
     /**
@@ -95,7 +95,7 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($paneldefs, "Panel defs are empty for mobile list view");
         $this->assertTrue(is_array($paneldefs), "Panel defs for mobile list view are not an array");
         $this->assertTrue(isset($paneldefs[0]['label']), "There is no label for mobile list view defs");
-        $this->assertEquals($paneldefs[0]['label'], 'default', "Expected mobile list view panel label to be 'default' but got '{$paneldefs[0]['label']}'");
+        $this->assertEquals($paneldefs[0]['label'], 'LBL_PANEL_DEFAULT', "Expected mobile list view panel label to be 'LBL_PANEL_DEFAULT' but got '{$paneldefs[0]['label']}'");
     }
         
     //BEGIN SUGARCRM flav=ent ONLY
@@ -110,7 +110,7 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         // Current layout
         $layout = $parser->getLayout();
         $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on portal edit views");
-        $this->assertArrayHasKey('default', $layout, "'default' was not found as the default panel label on portal edit views");
+        $this->assertArrayHasKey('LBL_PANEL_DEFAULT', $layout, "'LBL_PANEL_DEFAULT' was not found as the default panel label on portal edit views");
     }
 
     public function testPortalDetailViewLabelIsCorrect()
@@ -121,7 +121,7 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         // Current layout
         $layout = $parser->getLayout();
         $this->assertArrayNotHasKey('LBL_PANEL_1', $layout, "Layout still shows LBL_PANEL_1 as the default label on portal detail views");
-        $this->assertArrayHasKey('default', $layout, "'default' was not found as the default panel label on portal detail views");
+        $this->assertArrayHasKey('LBL_PANEL_DEFAULT', $layout, "'LBL_PANEL_DEFAULT' was not found as the default panel label on portal detail views");
     }
 
     /**
@@ -145,7 +145,7 @@ class Bug56838Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertNotEmpty($paneldefs, "Panel defs are empty for portal list view");
         $this->assertTrue(is_array($paneldefs), "Panel defs for portal list view are not an array");
         $this->assertTrue(isset($paneldefs[0]['label']), "There is no label for portal list view defs");
-        $this->assertEquals($paneldefs[0]['label'], 'default', "Expected portal list view panel label to be 'default' but got '{$paneldefs[0]['label']}'");
+        $this->assertEquals($paneldefs[0]['label'], 'LBL_PANEL_DEFAULT', "Expected portal list view panel label to be 'LBL_PANEL_DEFAULT' but got '{$paneldefs[0]['label']}'");
     }
     //END SUGARCRM flav=ent ONLY
 }

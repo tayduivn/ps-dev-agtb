@@ -32,7 +32,7 @@ $OBJECT_NAME = '<_object_name>';
 $viewdefs[$module_name]['mobile']['view']['list'] = array(
     'panels' => array(
         array(
-            'label' => 'default',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
                     'name' => 'document_name',

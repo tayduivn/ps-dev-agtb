@@ -30,7 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Cases']['mobile']['view']['list'] = array(
     'panels' => array(
         array(
-            'label' => 'default',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
                     'name' => 'case_number',

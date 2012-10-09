@@ -32,7 +32,7 @@ $viewdefs['Bugs']['portal']['view']['list'] = array(
     array(
         0 =>
         array(
-            'label' => 'default',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' =>
             array(
                 array(
