@@ -624,7 +624,7 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
     }
 
     if ($template->id = "") {
-        return true;
+        return true; // true=encountered an error
     }
 
     if ($template->from_address != "" && $template->from_name != "") {
@@ -650,7 +650,7 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
 
     $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id));
 
-    return false;
+    return false; // false=success
 }
 
 function parse_alert_template($focus, $target_body, $notify_user_id=""){
