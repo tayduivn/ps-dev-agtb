@@ -150,7 +150,6 @@ nv.models.scatter = function() {
           })
         );
 
-
         if (clipVoronoi) {
           defsEnter.append('clipPath').attr('id', 'nv-points-clip-' + id);
 
@@ -260,8 +259,8 @@ nv.models.scatter = function() {
           .attr('class', function(d,i) { return 'nv-group nv-series-' + i })
           .classed('hover', function(d) { return d.hover });
       d3.transition(groups)
-          .style('fill', function(d,i) { return color(d, i) })
-          .style('stroke', function(d,i) { return color(d, i) })
+          .attr('fill', function(d,i) { return this.getAttribute('fill') || color(d, i) })
+          .attr('stroke', function(d,i) { return this.getAttribute('stroke') || color(d, i) })
           .style('stroke-opacity', 1)
           .style('fill-opacity', .5);
 

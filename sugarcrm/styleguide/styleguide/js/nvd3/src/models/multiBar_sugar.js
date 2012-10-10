@@ -170,11 +170,11 @@ nv.models.multiBar = function() {
       var barsEnter = bars.enter().append('rect')
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
           .attr('x', function(d,i,j) {
-              return stacked ? 0 : ( j * x.rangeBand() * 1 / data.length )
+              return stacked ? 0 : ( j * x.rangeBand()  / data.length )
           })
           .attr('y', function(d) { return y0(stacked ? d.y0 : 0) } )
           .attr('height', 0)
-          .attr('width', x.rangeBand() * 1 / (stacked ? 1 : data.length) );
+          .attr('width', x.rangeBand() / (stacked ? 1 : data.length) );
 
       bars
           .attr('class', function(d,i) { return getY(d,i) < 0 ? 'nv-bar negative' : 'nv-bar positive'})
@@ -245,10 +245,8 @@ nv.models.multiBar = function() {
             })
             .each('end', function() {
               d3.transition(d3.select(this))
-                .attr('x', function(d,i) {
-                  return stacked ? 0 : (d.series * x.rangeBand() * 1 / data.length )
-                })
-                .attr('width', x.rangeBand() * 1 / (stacked ? 1 : data.length) );
+                .attr('x', 0)
+                .attr('width', x.rangeBand() );
             })
       }
       else
@@ -258,7 +256,7 @@ nv.models.multiBar = function() {
             .attr('x', function(d,i) {
               return d.series * x.rangeBand() / data.length
             })
-            .attr('width', x.rangeBand() * 1 / data.length)
+            .attr('width', x.rangeBand() / data.length)
             .each('end', function() {
               d3.transition(d3.select(this))
                 .attr('y', function(d,i) {

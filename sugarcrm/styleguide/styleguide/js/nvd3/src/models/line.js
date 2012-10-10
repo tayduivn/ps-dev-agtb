@@ -75,11 +75,10 @@ nv.models.line = function() {
       //------------------------------------------------------------
 
 
-
-
       scatter
         .width(availableWidth)
         .height(availableHeight)
+        .id(chart.id())
 
       var scatterWrap = wrap.select('.nv-scatterWrap');
           //.datum(data); // Data automatically trickles down from the wrap
@@ -102,7 +101,6 @@ nv.models.line = function() {
 
 
 
-
       var groups = wrap.select('.nv-groups').selectAll('.nv-group')
           .data(function(d) { return d }, function(d) { return d.key });
       groups.enter().append('g')
@@ -115,8 +113,8 @@ nv.models.line = function() {
       groups
           .attr('class', function(d,i) { return 'nv-group nv-series-' + i })
           .classed('hover', function(d) { return d.hover })
-          .style('fill', function(d,i){ return color(d, i) })
-          .style('stroke', function(d,i){ return color(d, i)});
+          .attr('fill', function(d,i){ return this.getAttribute('fill') || color(d,i); })
+          .attr('stroke', function(d,i){ return this.getAttribute('stroke') || color(d,i); });
       d3.transition(groups)
           .style('stroke-opacity', 1)
           .style('fill-opacity', .5);

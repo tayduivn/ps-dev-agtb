@@ -1,5 +1,5 @@
 
-nv.models.legend = function() {
+nv.models.paretoLegend = function() {
 
   //============================================================
   // Public Variables with Default Settings
@@ -22,7 +22,6 @@ nv.models.legend = function() {
     selection.each(function(data) {
       var availableWidth = width - margin.left - margin.right,
           container = d3.select(this);
-
 
       //------------------------------------------------------------
       // Setup containers and skeleton of chart
@@ -52,23 +51,65 @@ nv.models.legend = function() {
           .on('dblclick', function(d,i) {
             dispatch.legendDblclick(d,i);
           });
-      seriesEnter.append('circle')
-          .attr('class', function(d,i) {
-            return this.getAttribute('class') || (
-              useClass
-                ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
-                : '' );
-            }
-          )
-          .attr('fill', function(d,i) { return color(d,i) })
-          .attr('stroke', function(d,i) { return color(d,i) })
-          .attr('stroke-width', 2)
-          .attr('r', 5);
-      seriesEnter.append('text')
+
+      if (data[0].type==='bar')
+      {
+        seriesEnter.append('rect')
+            .attr('class', function(d,i) {
+              return this.getAttribute('class') || (
+                useClass
+                  ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
+                  : '' );
+              }
+            )
+            .attr('fill', function(d,i) { return color(d,i) })
+            .attr('stroke', function(d,i) { return color(d,i) })
+            .attr('stroke-width', 0)
+            .attr('width', 10)
+            .attr('height', 10)
+            .attr('transform', 'translate(-5,-5)');
+        seriesEnter.append('text')
           .text(getKey)
           .attr('text-anchor', 'start')
-          .attr('dy', '.32em')
+          .attr('dy', '.36em')
           .attr('dx', '8');
+      }
+      else
+      {
+        seriesEnter.append('circle')
+            .attr('class', function(d,i) {
+              return this.getAttribute('class') || (
+                useClass
+                  ? ( d.class || 'nv-fill' + (i%20>9?'':'0') + i%20 )
+                  : '' );
+              }
+            )
+            .attr('fill', function(d,i) { return color(d,i) })
+            .attr('stroke', function(d,i) { return color(d,i) })
+            .attr('stroke-width', 0)
+            .attr('r', 4)
+            .attr('transform', 'translate(8,0)');
+        seriesEnter.append('line')
+            .attr('class', function(d,i) {
+              return this.getAttribute('class') || (
+                useClass
+                  ? ( d.class || 'nv-stroke' + (i%10>9?'':'0') + i%10 )
+                  : '' );
+              }
+            )
+            .attr('stroke', function(d,i) { return color(d,i) })
+            .attr('stroke-width', 2)
+            .attr('x0',0)
+            .attr('x1',16)
+            .attr('y0',0)
+            .attr('y1',0);
+        seriesEnter.append('text')
+          .text(getKey)
+          .attr('text-anchor', 'start')
+          .attr('dy', '.36em')
+          .attr('dx', '20');
+      }
+
       series.classed('disabled', function(d) { return d.disabled });
       series.exit().remove();
 
