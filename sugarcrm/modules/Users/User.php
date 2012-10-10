@@ -2091,17 +2091,17 @@ EOQ;
             'message' => ''
         );
 
-        $emailTemp                             = new EmailTemplate();
-        $emailTemp->disable_row_level_security = true;
+        $emailTemplate                             = new EmailTemplate();
+        $emailTemplate->disable_row_level_security = true;
 
-        if ($emailTemp->retrieve($templateId) == '') {
+        if ($emailTemplate->retrieve($templateId) == '') {
             $result['message'] = $mod_strings['LBL_EMAIL_TEMPLATE_MISSING'];
             return $result;
         }
 
         //replace instance variables in email templates
-        $htmlBody = $emailTemp->body_html;
-        $body     = $emailTemp->body;
+        $htmlBody = $emailTemplate->body_html;
+        $body     = $emailTemplate->body;
 
         if (isset($additionalData['link']) && $additionalData['link'] == true) {
             $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], $htmlBody);
@@ -2119,8 +2119,8 @@ EOQ;
         $htmlBody             = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
         $body                 = str_replace('$contact_user_user_name', $this->user_name, $body);
         $body                 = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
-        $emailTemp->body_html = $htmlBody;
-        $emailTemp->body      = $body;
+        $emailTemplate->body_html = $htmlBody;
+        $emailTemplate->body      = $body;
 
         $itemail = $this->emailAddress->getPrimaryAddress($this);
         //retrieve IT Admin Email
@@ -2129,12 +2129,12 @@ EOQ;
         try {
             $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
 
-            $mailer->setSubject($emailTemp->subject);
+            $mailer->setSubject($emailTemplate->subject);
 
-            $mailer->setTextBody($emailTemp->body);
+            $mailer->setTextBody($emailTemplate->body);
 
-            if ($emailTemp->text_only != 1) {
-                $mailer->setHtmlBody($emailTemp->body_html);
+            if ($emailTemplate->text_only != 1) {
+                $mailer->setHtmlBody($emailTemplate->body_html);
             }
 
             $hasRecipients = false;
@@ -2153,21 +2153,21 @@ EOQ;
                 $mailer->send();
                 $result["status"] = true;
 
-                $emailObj = new Email();
-                $emailObj->team_id          = 1;
-                $emailObj->to_addrs         = '';
-                $emailObj->type             = 'archived';
-                $emailObj->deleted          = '0';
-                $emailObj->name             = $emailTemp->subject;
-                $emailObj->description      = $emailTemp->body;
-                $emailObj->description_html = $emailTemp->body_html;
-                $emailObj->from_addr        = $mailer->getFrom()->getEmail();
-                $emailObj->parent_type      = 'User';
-                $emailObj->date_sent        = TimeDate::getInstance()->nowDb();
-                $emailObj->modified_user_id = '1';
-                $emailObj->created_by       = '1';
-                $emailObj->status           = 'sent';
-                $emailObj->save();
+                $email = new Email();
+                $email->team_id          = 1;
+                $email->to_addrs         = '';
+                $email->type             = 'archived';
+                $email->deleted          = '0';
+                $email->name             = $emailTemplate->subject;
+                $email->description      = $emailTemplate->body;
+                $email->description_html = $emailTemplate->body_html;
+                $email->from_addr        = $mailer->getFrom()->getEmail();
+                $email->parent_type      = 'User';
+                $email->date_sent        = TimeDate::getInstance()->nowDb();
+                $email->modified_user_id = '1';
+                $email->created_by       = '1';
+                $email->status           = 'sent';
+                $email->save();
 
                 if (!isset($additionalData['link']) || $additionalData['link'] == false) {
                     $this->setNewPassword($additionalData['password'], '1');
