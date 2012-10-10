@@ -963,47 +963,54 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
     $users    = array();
     $contacts = array();
 
-    //TO: Addresses
-    foreach ($address_array['to'] as $userInfo) {
-        $method = "unknown";
+    $method = "unknown";
 
-        try {
-            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
-            $method = $mailer->getMailTransmissionProtocol();
+    try {
+        $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $method = $mailer->getMailTransmissionProtocol();
 
-            $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
+        //TO: Addresses
+        foreach ($address_array['to'] as $userInfo) {
+            try {
+                // reuse the mailer, but process one send per recipient
+                $mailer->clearRecipients();
+                $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-            $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
+                $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
-            if ($possible_invitee == true) {
-                $userInfo['notify_user']->new_assigned_user_name =
-                    "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
+                if ($possible_invitee == true) {
+                    $userInfo['notify_user']->new_assigned_user_name =
+                        "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
 
-                $error = false; // true=encountered an error; false=no errors
+                    $error = false; // true=encountered an error; false=no errors
 
-                if ($type == "Default") {
-                    $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
-                } else {
-                    $error = create_email_body(
-                        $focus,
-                        $mailer,
-                        $admin,
-                        $alert_msg,
-                        $alert_shell_array,
-                        $userInfo['notify_user']->id
-                    );
+                    if ($type == "Default") {
+                        $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
+                    } else {
+                        $error = create_email_body(
+                            $focus,
+                            $mailer,
+                            $admin,
+                            $alert_msg,
+                            $alert_shell_array,
+                            $userInfo['notify_user']->id
+                        );
+                    }
+
+                    if ($error) {
+                        throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
+                    }
+
+                    $mailer->send();
                 }
-
-                if ($error) {
-                    throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
-                }
-
-                $mailer->send();
+            } catch (MailerException $me) {
+                $message = $me->getMessage();
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
             }
-        } catch (MailerException $me) {
-            $message = $me->getMessage();
-            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
+    } catch (MailerException $me) {
+        $message = $me->getMessage();
+        $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
     }
 
     //CC: Addresses
