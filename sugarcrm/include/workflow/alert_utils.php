@@ -1019,7 +1019,7 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 $error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, $user_info_array['notify_user']->id);
             }
 
-            send_mail_object($mail_object, $error);]
+            send_mail_object($mail_object, $error);
         }
     }
 
