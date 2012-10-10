@@ -347,8 +347,12 @@ class MetadataApi extends SugarApi {
                 // This user has no accounts, modify their ACL's so that they match up with enforcement
                 $data['acl']['Accounts']['access'] = 'no';
                 $data['acl']['Cases']['access'] = 'no';
+                foreach ($data['module_list'] as $moduleIndex=>$moduleKey) {
+                    if ($moduleKey == 'Cases') {
+                        unset($data['module_list'][$moduleIndex]);
+                    }
+                }
             }
-        
         }
 
         // remove the disabled modules from the module list
