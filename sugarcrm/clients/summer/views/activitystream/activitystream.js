@@ -502,7 +502,7 @@
     _addCalendarMonthEvent: function(models) {
         var events = [], counts = {};
         var getDate = function(dateString) {
-            var d = app.date.parse(dateString, app.date.guessFormat(dateString));
+            var d = app.date.parse(dateString, 'Y-m-d H:i:s');
             d.setHours(0);
             d.setMinutes(0);
             d.setSeconds(0);
@@ -533,20 +533,20 @@
     },
 
     _addCalendarWeekEvent: function(models) {
-        var events = [], numEvents = 5;
+        var events = [], numEvents = 5, dateFormat = 'Y-m-d H:i:s';
 
         $.each(models, function(index, model) {
             if(events.length < numEvents) {
                 var event = {allDay:false};
                 event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+                event.start = app.date.parse(model.get("date_created"), dateFormat);
                 event.title =  model.get("created_by_name") + " " + model.get("activity_type") + "...";
                 events.push(event);
             }
             else if(events.length == numEvents) {
                 var event = {allDay:true};
                 event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+                event.start = app.date.parse(model.get("date_created"), dateFormat);
                 event.title = (models.length - numEvents)+" more event(s)";
                 events.push(event);
                 return false;
@@ -563,7 +563,7 @@
             var activityType = model.get('activity_type');
             var event = {allDay:false};
             event.id = model.get('id');
-            event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+            event.start = app.date.parse(model.get("date_created"), 'Y-m-d H:i:s');
             if(events.length < numEvents) {
                 event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
 
