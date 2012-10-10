@@ -339,6 +339,7 @@ class SugarTestForecastUtilities
         }
         SugarTestForecastUtilities::removeAllCreatedForecasts();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestQuotaUtilities::setCreatedUserIds(SugarTestUserUtilities::getCreatedUserIds());
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestWorksheetUtilities::removeAllCreatedWorksheets();
     }

@@ -169,7 +169,6 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
     public static function tearDownAfterClass()
     {
-    	sleep(10);
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         parent::tearDown();
     }
@@ -625,8 +624,9 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $this->authToken = "";
     }
     
-    /**
+     /**
      * @group forecastapi
+     * @group forecasts
      */
      public function testForecastWorksheetQuotaRecalc()
      {
@@ -697,6 +697,7 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
      /**
       * @depends testForecastWorksheetQuotaRecalc
       * @group forecastapi
+      * @group forecasts
      */
      public function testForecastWorksheetQuotaRecalcReps()
      {

@@ -391,10 +391,7 @@
         if(enableCommit){
         	self.context.forecasts.set({commitButtonEnabled: true});
         }
-        else{
-        	self.context.forecasts.set({commitButtonEnabled: false});
-        }
-
+        
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:render");
 

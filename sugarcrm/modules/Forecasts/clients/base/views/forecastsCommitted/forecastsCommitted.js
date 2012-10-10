@@ -214,7 +214,8 @@
                 likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
             }
             
-            if(best.bestCaseCls != '' || likely.likelyCaseCls != ''){
+            if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
+            {
             	self.context.forecasts.set({commitButtonEnabled: true});
             }
 

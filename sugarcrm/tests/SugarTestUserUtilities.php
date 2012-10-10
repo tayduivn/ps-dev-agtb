@@ -71,7 +71,6 @@ class SugarTestUserUtilities
             $GLOBALS['db']->query('DELETE FROM users WHERE id IN (\'' . implode("', '", $user_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM user_preferences WHERE assigned_user_id IN (\'' . implode("', '", $user_ids) . '\')');
             //BEGIN SUGARCRM flav=pro ONLY
-            $GLOBALS['db']->query('DELETE FROM quotas WHERE user_id IN (\'' . implode("', '", $user_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM teams WHERE associated_user_id IN (\'' . implode("', '", $user_ids) . '\')');
             $GLOBALS['db']->query('DELETE FROM team_memberships WHERE user_id IN (\'' . implode("', '", $user_ids) . '\')');
             //END SUGARCRM flav=pro ONLY
