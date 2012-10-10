@@ -83,12 +83,6 @@ $credits = array(
             'description' => 'English (UK) Language Pack by Provident CRM',
             'website' => 'www.providentcrm.com',
         ),
-        'et_EE' => array(
-            'name' => 'Estonian Language Pack (Discontinued with the 6.5.6 release)',
-            'author' => 'Keynote',
-            'description' => 'Estonian Language Pack by Keynote',
-            'website' => 'www.keynote.ee',
-        ),
 
         'fr_FR' => array(
             'name' => 'French Language Pack',
@@ -102,6 +96,13 @@ $credits = array(
             'author' => 'Kinamu',
             'description' => 'German Language Pack by Kinamu',
             'website' => 'www.kinamu.com',
+        ),
+
+        'el_EL' => array(
+            'name' => 'Greek Language Pack',
+            'author' => 'Qualisys',
+            'description' => 'Greek Language Pack by Qualisys',
+            'website' => 'www.qualisys.gr',
         ),
 
         'he_IL' => array(
@@ -128,6 +129,12 @@ $credits = array(
             'author' => 'OSSCRM',
             'description' => 'Japanese Language Pack by OSSCRM',
             'website' => 'www.osscrm.com',
+        ),
+        'ko_KR' => array(
+            'name' => 'Korean Language Pack',
+            'author' => 'Bhea Knowledge Technologies Ltd',
+            'description' => 'Korean Language Pack by Bhea Knowledge Technologies Ltd',
+            'website' => 'www.bhea.co.in',
         ),
         'lv_LV' => array(
             'name' => 'Latvian Language Pack',
@@ -186,6 +193,13 @@ $credits = array(
             'author' => 'PS Tech',
             'description' => 'Serbian Language Pack by PS Tech',
             'website' => 'pstech.rs',
+        ),
+
+        'sk_SK' => array(
+            'name' => 'Slovak Language Pack',
+            'author' => 'Open IT',
+            'description' => 'Slovak Language Pack by Open IT',
+            'website' => 'www.openit.sk',
         ),
 
         'es_ES' => array(
