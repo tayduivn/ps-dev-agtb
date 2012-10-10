@@ -228,8 +228,6 @@ public static function setupForecastSettings()
         'show_projected_best' => true,
         // whether or not to show the worst total in the forecasts projected view
         'show_projected_worst' => false,
-        // whether or not to show the print button on the forecasts module
-        'show_print_button' => true,
     );
 
     $admin = BeanFactory::getBean('Administration');
