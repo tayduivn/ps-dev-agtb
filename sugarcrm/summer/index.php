@@ -28,7 +28,6 @@ if (empty($_SESSION['authenticated_user_id'])) {
 <html>
 <head>
     <meta http-equiv="x-ua-compatible" content="IE=8">
-    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" type="text/css" />
     <?php
     $min_file = 'summer/summer.min.css';
     if(file_exists("../cache/".$min_file)) {
