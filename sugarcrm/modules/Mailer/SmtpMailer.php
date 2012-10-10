@@ -326,6 +326,8 @@ class SmtpMailer extends BaseMailer
             throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
         }
 
+        $textBody = null; // initialize it so that it's available for use later in the method
+
         if ($hasText) {
             // perform character set translations on the plain-text body
             $textBody = $this->prepareTextBody($this->textBody);
