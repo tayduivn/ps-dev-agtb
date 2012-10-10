@@ -119,6 +119,20 @@ class UserDemoData {
 		$u->picture = $this->_copy_user_image($id);
 
 		$u->save();
+
+        if($id == "seed_jim_id") {
+            // add to Sales Administrator Role
+            $acl_roles = new ACLRole();
+            $arrRoles = $acl_roles->getAllRoles(true);
+
+            foreach($arrRoles as $role) {
+                if($role['name'] == "Sales Administrator") {
+                    $u->load_relationship('aclroles');
+                    $u->aclroles->add($role['id']);
+                    break;
+                }
+            }
+        }
 	}
 
 	/**
