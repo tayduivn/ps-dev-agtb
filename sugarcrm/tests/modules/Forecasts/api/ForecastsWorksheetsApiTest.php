@@ -282,6 +282,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     {
 
         $oldUser = $GLOBALS['current_user'];
+    	$db = DBManagerFactory::getInstance();
     	
     	// set the current user to salesrep
         $this->_user = $this->reportee['user'];
@@ -289,7 +290,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $this->authToken = "";
         
         $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
-
+	
         $best_case = $response["reply"][0]["best_case"] + 100;
         $probability = $response["reply"][0]["probability"] + 10;
         $id = $response["reply"][0]["id"];
@@ -297,21 +298,30 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $returnProb = '';
 
         $postData = array(
-            "best_case" => $best_case,
+            "best_case" => $response["reply"][0]["best_case"],
             "likely_case" => $response["reply"][0]["likely_case"],
-            "probability" => $probability,
+            "probability" => $response["reply"][0]["probability"],
             "commit_stage" => $response["reply"][0]["commit_stage"],
             "id" => $id,
             "worksheet_id" => $response["reply"][0]["worksheet_id"],
             "product_id" => $response["reply"][0]["product_id"],
             "timeperiod_id" => $this->timeperiod->id,            
             "assigned_user_id" => $response["reply"][0]["assigned_user_id"],
-            "draft" => 1
+            "draft" => 0
         );     
-
+		
+		//Make sure we have a "committed" row in the db.
         $response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
-
-        $db = DBManagerFactory::getInstance();
+		
+		$db->commit();
+		
+		$postData["draft"] = 1;
+		$postData["best_case"] = $best_case;
+		$postData["probability"] = $probability;
+		
+		//now change things so we can see if the manager gets the comitted row.
+		$response = $this->_restCall("ForecastWorksheets/" . $id, json_encode($postData), "PUT");
+       
         $db->commit();
 
         // set the current user to Manager

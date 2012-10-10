@@ -92,35 +92,35 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
 
         while (($row = $db->fetchByAssoc($result)) != null) {
             $data = array();
-            $data['id'] = $row["opp_id"];
-            $data['product_id'] = $row["product_id"];
-            $data['date_closed'] = $row["date_closed"];
-            $data['sales_stage'] = $row["sales_stage"];
-            $data['assigned_user_id'] = $row["assigned_user_id"];
-            $data['amount'] = $row["likely_case"];
-            $data['worksheet_id'] = "";
-            $data['name'] = $row["name"];
-            $data['currency_id'] = $row["currency_id"];
-            $data['base_rate'] = $row["base_rate"];
-            $data['version'] = 1;
+            $data["id"] = $row["opp_id"];
+            $data["product_id"] = $row["product_id"];
+            $data["date_closed"] = $row["date_closed"];
+            $data["sales_stage"] = $row["sales_stage"];
+            $data["assigned_user_id"] = $row["assigned_user_id"];
+            $data["amount"] = $row["likely_case"];
+            $data["worksheet_id"] = "";
+            $data["name"] = $row["name"];
+            $data["currency_id"] = $row["currency_id"];
+            $data["base_rate"] = $row["base_rate"];
+            $data["version"] = 1;
+            $data["worksheet_id"] = $row["worksheet_id"];
 
-            if (isset($row["worksheet_id"]) && $this->getArg('user_id') != $current_user->id) {
+            if (isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id) {
             	//use the worksheet data if it exists
-                $data['worksheet_id'] = $row["worksheet_id"];
-                $data['best_case'] = $row["w_best_case"];
-                $data['likely_case'] = $row["w_likely_case"];
-                $data['worst_case'] = $row["w_worst_case"];
-                $data['amount'] = $row["w_likely_case"];
-                $data['commit_stage'] = $row["w_commit_stage"];
-                $data['probability'] = $row["w_probability"];
-                $data['version'] = $row["w_version"];
+                $data["best_case"] = $row["w_best_case"];
+                $data["likely_case"] = $row["w_likely_case"];
+                $data["worst_case"] = $row["w_worst_case"];
+                $data["amount"] = $row["w_likely_case"];
+                $data["commit_stage"] = $row["w_commit_stage"];
+                $data["probability"] = $row["w_probability"];
+                $data["version"] = $row["w_version"];
             } else {
-                //Set default values to that of the product's
-                $data['best_case'] = $row["best_case"];
-                $data['likely_case'] = $row["likely_case"];
-                $data['worst_case'] = $row["worst_case"];
-                $data['commit_stage'] = $row["commit_stage"];
-                $data['probability'] = $row["probability"];
+                //Set default values to that of the product"s
+                $data["best_case"] = $row["best_case"];
+                $data["likely_case"] = $row["likely_case"];
+                $data["worst_case"] = $row["worst_case"];
+                $data["commit_stage"] = $row["commit_stage"];
+                $data["probability"] = $row["probability"];
             }
             $this->dataArray[] = $data;
         }
