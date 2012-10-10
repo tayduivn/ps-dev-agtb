@@ -90,6 +90,7 @@ class ViewPortalConfig extends SugarView
         $smarty->assign('userList', $userList);
         $smarty->assign('welcome', $GLOBALS['mod_strings']['LBL_SYNCP_WELCOME']);
         $smarty->assign('mod', $GLOBALS['mod_strings']);
+        $smarty->assign('siteURL', $GLOBALS['sugar_config']['site_url']);
         if (isset($_REQUEST['label']))
         {
             $smarty->assign('label',$_REQUEST['label']);

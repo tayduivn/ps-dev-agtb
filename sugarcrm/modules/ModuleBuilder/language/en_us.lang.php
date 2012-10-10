@@ -622,6 +622,7 @@ $mod_strings = array(
     'LBL_PORTAL_CONFIGURE' => 'Configure Portal',
     'LBL_PORTAL_THEME' => 'Theme Portal',
     'LBL_PORTAL_ENABLE' => 'Enable',
+    'LBL_PORTAL_SITE_URL' => 'Your portal site is available at:',
     'LBL_PORTAL_APP_NAME' => 'Application Name',
     'LBL_PORTAL_LOGO_URL' => 'Logo URL',
     'LBL_PORTAL_LIST_NUMBER' => 'Number of records to display on list',
