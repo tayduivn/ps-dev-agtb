@@ -287,13 +287,11 @@ class ActivityStream extends SugarBean {
             $limit = ' LIMIT '.$start. ', '.$numActivities;
         }
 
-        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ";
+        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
         $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
 
         if(!empty($result)) {
-            $activityIds = array();
-
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
                 $row['target_name'] = '';
@@ -302,7 +300,9 @@ class ActivityStream extends SugarBean {
                     if(!empty($bean)) {
                         $row['target_name'] = $bean->get_summary_text();
                     } else {
-                        continue;
+                        // We don't have access to the target.
+                        // TODO: Don't hardcode this string.
+                        $row['target_name'] = 'a record';
                     }
                 }
                 else if(!empty($row['target_module'])) {
@@ -318,21 +318,18 @@ class ActivityStream extends SugarBean {
                 unset($row['first_name']);
                 unset($row['last_name']);
 
-                $activities[] = $row;
-                $activityIds[] = $row['id'];
+                $activities[$row['id']] = $row;
             }
 
-            $activities = array_slice($activities, $start, $numActivities);
-            $activityIds = array_slice($activityIds, $start, $numActivities);
-
-            if(!empty($activityIds)) {
+            if(!empty($activities)) {
                 $comments = array();
                 $commentNotes = array();
 
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];
-                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.deleted = 0 AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $activityIds = implode("','",array_keys($activities));
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".$activityIds."') AND c.deleted = 0 AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
 
                     if(!empty($result)) {
@@ -351,7 +348,7 @@ class ActivityStream extends SugarBean {
                     }
                 }
 
-                $activityNotes = $this->getNotes('ActivityStream', $activityIds);
+                $activityNotes = $this->getNotes('ActivityStream', array_keys($activities));
 
                 foreach($activities as &$activity) {
                     $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array();
@@ -364,7 +361,7 @@ class ActivityStream extends SugarBean {
         }
 
         $getViewData = "get".ucfirst($options['view'])."ViewData";
-        return $this->$getViewData($activities, $options);
+        return $this->$getViewData(array_values($activities), $options);
     }
 
     protected function getListViewData($activities, $options = array()) {
