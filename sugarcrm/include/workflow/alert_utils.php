@@ -1048,29 +1048,49 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
             }
         }
+
+        //BCC: Addresses
+        foreach ($address_array['bcc'] as $userInfo) {
+            try {
+                // reuse the mailer, but process one send per recipient
+                $mailer->clearRecipients();
+                $mailer->addRecipientsBcc(new EmailIdentity($userInfo['address'], $userInfo['name']));
+
+                $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
+
+                if ($possible_invitee == true) {
+                    $userInfo['notify_user']->new_assigned_user_name =
+                        "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
+
+                    $error = false; // true=encountered an error; false=no errors
+
+                    if ($type == "Default") {
+                        $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
+                    } else {
+                        $error = create_email_body(
+                            $focus,
+                            $mailer,
+                            $admin,
+                            $alert_msg,
+                            $alert_shell_array,
+                            $userInfo['notify_user']->id
+                        );
+                    }
+
+                    if ($error) {
+                        throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
+                    }
+
+                    $mailer->send();
+                }
+            } catch (MailerException $me) {
+                $message = $me->getMessage();
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+            }
+        }
     } catch (MailerException $me) {
         $message = $me->getMessage();
         $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
-    }
-
-    //BCC: Addresses
-    foreach ($address_array['bcc'] as $userInfo) {
-        $mailer = new SugarPHPMailer;
-        $mailer->AddBCC($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
-
-        $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
-
-        if ($possible_invitee == true) {
-            setup_mail_object($mailer, $admin);
-            $userInfo['notify_user']->new_assigned_user_name = $userInfo['notify_user']->first_name . ' ' . $userInfo['notify_user']->last_name;
-            if ($type == "Default") {
-                $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
-            } else {
-                $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array, $userInfo['notify_user']->id);
-            }
-
-            send_mail_object($mailer, $error);
-        }
     }
 
     if ($invite_person == true) {
