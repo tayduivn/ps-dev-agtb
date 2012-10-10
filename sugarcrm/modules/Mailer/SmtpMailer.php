@@ -145,15 +145,12 @@ class SmtpMailer extends BaseMailer
             switch ($key) {
                 case EmailHeaders::From:
                     if (!empty($value[1])) {
-                        // perform character set translations on the name in the From header
-                        $value[1] = $this->config->getLocale()->translateCharset(
+                        // perform character set and HTML character translations on the From name
+                        $value[1] = $this->formatter->translateCharacters(
                             $value[1],
-                            "UTF-8",
+                            $this->config->getLocale(),
                             $this->config->getCharset()
                         );
-
-                        // perform HTML character translations on the From name
-                        $value[1] = from_html($value[1]);
                     }
 
                     // set PHPMailer's From so that PHPMailer can correctly construct the From header at send time
@@ -173,15 +170,12 @@ class SmtpMailer extends BaseMailer
                     $mailer->ClearReplyTos();
 
                     if (!empty($value[1])) {
-                        // perform character set translations on the name in the Reply-To header
-                        $value[1] = $this->config->getLocale()->translateCharset(
+                        // perform character set and HTML character translations on the Reply-To name
+                        $value[1] = $this->formatter->translateCharacters(
                             $value[1],
-                            "UTF-8",
+                            $this->config->getLocale(),
                             $this->config->getCharset()
                         );
-
-                        // perform HTML character translations on the Reply-To name
-                        $value[1] = from_html($value[1]);
                     }
 
                     // set PHPMailer's ReplyTo so that PHPMailer can correctly construct the Reply-To header at send
@@ -222,11 +216,12 @@ class SmtpMailer extends BaseMailer
                     $mailer->ConfirmReadingTo = $value;
                     break;
                 case EmailHeaders::Subject:
-                    // perform character set translations on the subject
-                    $value = $this->config->getLocale()->translateCharset($value, "UTF-8", $this->config->getCharset());
-
-                    // perform HTML character translations on the subject
-                    $value = from_html($value);
+                    // perform character set and HTML character translations on the subject
+                    $value = $this->formatter->translateCharacters(
+                        $value,
+                        $this->config->getLocale(),
+                        $this->config->getCharset()
+                    );
 
                     // set PHPMailer's Subject so that PHPMailer can correctly construct the Subject header at send time
                     $mailer->Subject = $value;
@@ -372,11 +367,19 @@ class SmtpMailer extends BaseMailer
         foreach ($this->attachments as $attachment) {
             if ($attachment instanceof EmbeddedImage) {
                 // it's an embedded image
+
+                // perform character set and HTML character translations on the file name
+                $name = $this->formatter->translateCharacters(
+                    $attachment->getName(),
+                    $this->config->getLocale(),
+                    $this->config->getCharset()
+                );
+
                 // transfer the image to PHPMailer so it can be embedded correctly at send time
                 if (!$mailer->AddEmbeddedImage(
                     $attachment->getPath(),
                     $attachment->getCid(),
-                    $attachment->getName(),
+                    $name,
                     $attachment->getEncoding(),
                     $attachment->getMimeType())
                 ) {
@@ -388,10 +391,17 @@ class SmtpMailer extends BaseMailer
             } elseif ($attachment instanceof Attachment) {
                 // it's a normal file attachment
                 try {
+                    // perform character set and HTML character translations on the file name
+                    $name = $this->formatter->translateCharacters(
+                        $attachment->getName(),
+                        $this->config->getLocale(),
+                        $this->config->getCharset()
+                    );
+
                     // transfer the attachment to PHPMailer so it can be attached correctly at send time
                     $mailer->AddAttachment(
                         $attachment->getPath(),
-                        $attachment->getName(),
+                        $name,
                         $attachment->getEncoding(),
                         $attachment->getMimeType());
                 } catch (Exception $e) {
@@ -418,8 +428,9 @@ class SmtpMailer extends BaseMailer
      */
     protected function prepareTextBody($body) {
         $body = $this->formatter->formatTextBody($body);
-        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
-        $body = from_html($body); // perform HTML character translations on the plain-text body
+
+        // perform character set and HTML character translations on the plain-text body
+        $body = $this->formatter->translateCharacters($body, $this->config->getLocale(), $this->config->getCharset());
 
         return $body;
     }
@@ -442,8 +453,9 @@ class SmtpMailer extends BaseMailer
         }
 
         $body = $this->forceRfcComplianceOnHtmlBody($body);
-        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
-        $body = from_html($body); // perform HTML character translations on the HTML body
+
+        // perform character set and HTML character translations on the HTML body
+        $body = $this->formatter->translateCharacters($body, $this->config->getLocale(), $this->config->getCharset());
 
         return $body;
     }
