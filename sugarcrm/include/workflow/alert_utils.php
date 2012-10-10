@@ -330,8 +330,12 @@ function get_user_alert_details(& $focus, $user_meta_array, & $address_array){
 	}
 
 
-	function create_alert_email($notify_user)
-	{
+/**
+ * @deprecated 7.0
+ * @param $notify_user
+ * @return mixed
+ */
+function create_alert_email($notify_user) {
 		global $sugar_version, $sugar_config, $app_list_strings, $current_user;
 
 		if (empty($_SESSION['authenticated_user_language'])) {
