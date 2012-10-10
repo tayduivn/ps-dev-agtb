@@ -1,0 +1,236 @@
+<?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+/********************************************************************************
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
+ * All copies of the Covered Code must include on each user interface screen:
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
+ * in the same form as they appear in the distribution.  See full license for requirements.
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
+ *to the License for the specific language governing these rights and limitations under the License.
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
+ ********************************************************************************/
+
+require_once('include/api/ApiHelper.php');
+
+abstract class SugarApi {
+    /**
+     * Handles validation of required arguments for a request
+     *
+     * @param array $args
+     * @param array $requiredFields
+     * @throws SugarApiExceptionMissingParameter
+     */
+    function requireArgs(&$args,$requiredFields = array()) {
+        foreach ( $requiredFields as $fieldName ) {
+            if ( !isset($args[$fieldName]) ) {
+                throw new SugarApiExceptionMissingParameter('Missing parameter: '.$fieldName);
+            }
+        }
+    }
+
+    /**
+     * Fetches data from the $args array and formats the bean with those parameters
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the formatted data is returned
+     * @param $args array The arguments array passed in from the API, will check this for the 'fields' argument to only return the requested fields
+     * @param $bean SugarBean The fully loaded bean to format
+     * @return array An array version of the SugarBean with only the requested fields (also filtered by ACL)
+     */
+    protected function formatBean(ServiceBase $api, $args, SugarBean $bean) {
+
+        if ( !empty($args['fields']) ) {
+            $fieldList = explode(',',$args['fields']);
+            if ( ! in_array('date_modified',$fieldList ) ) {
+                $fieldList[] = 'date_modified';
+            }
+            if ( ! in_array('id',$fieldList ) ) {
+                $fieldList[] = 'id';
+            }
+        } else {
+            $fieldList = array();
+        }
+        
+        $data = ApiHelper::getHelper($api,$bean)->formatForApi($bean,$fieldList);
+
+        // if data is an array or object we need to decode each element, if not just decode data and pass it back
+        if(is_array($data) || is_object($data)) {
+            $this->htmlDecodeReturn($data);
+        }
+        elseif(!empty($data)) {
+            // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
+            $data = html_entity_decode($data, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
+        }
+
+        return $data;
+    }
+
+    protected function formatBeans(ServiceBase $api, $args, $beans)
+    {
+        $ret = array();
+        foreach($beans as $bean){
+            $ret[] = $this->formatBean($api, $args, $bean);
+        }
+        return $ret;
+    }
+    /**
+     * Recursively runs html entity decode for the reply
+     * @param $data array The bean the API is returning
+     */
+    protected function htmlDecodeReturn(&$data) {
+        foreach($data AS $key => $value) {
+            if(is_array($value) && !empty($value)) {
+                $this->htmlDecodeReturn($value);
+            }
+            elseif(!empty($data) && !empty($value)) {
+                // USE ENT_QUOTES TO REMOVE BOTH SINGLE AND DOUBLE QUOTES, WITHOUT THIS IT WILL NOT CONVERT THEM
+                $data[$key] = html_entity_decode($value, ENT_COMPAT|ENT_QUOTES, 'UTF-8');
+            }
+            else {
+                $data[$key] = $value;
+            }
+        }
+    }
+
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the bean is retrieved
+     * @param $args array The arguments array passed in from the API
+     * @param $aclToCheck string What kind of ACL to verify when loading a bean. Supports: view,edit,create,import,export
+     * @return SugarBean The loaded bean
+     */
+    protected function loadBean(ServiceBase $api, $args, $aclToCheck = 'read') {
+
+        $bean = BeanFactory::getBean($args['module'],$args['record']);
+
+        if ( $bean == FALSE ) {
+            // Couldn't load the bean
+            throw new SugarApiExceptionNotFound('Could not find record: '.$args['record'].' in module: '.$args['module']);
+        }
+
+        if (!$bean->ACLAccess($aclToCheck)) {
+            throw new SugarApiExceptionNotAuthorized('No access to '.$aclToCheck.' records for module: '.$args['module']);
+        }
+
+        return $bean;
+    }
+
+    /**
+     * Fetches data from the $args array and updates the bean with that data
+     * @param $bean SugarBean The bean to be updated
+     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
+     * @param $args array The arguments array passed in from the API
+     * @return id Bean id
+     */
+    protected function updateBean(SugarBean $bean,ServiceBase $api, $args) {
+
+        $errors = ApiHelper::getHelper($api,$bean)->populateFromApi($bean,$args);
+        if ( $errors !== true ) {
+            // There were validation errors.
+            throw new SugarApiExceptionInvalidParameter('There were validation errors on the submitted data. Record was not saved.');
+        }
+
+        $bean->save();
+
+        /*
+         * Refresh the bean with the latest data.
+         * This is necessary due to BeanFactory caching.
+         * Calling retrieve causes a cache refresh to occur.
+         */
+
+        $id = $bean->id;
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(isset($args['my_favorite'])) {
+            $this->toggleFavorites($bean->module_dir, $id, $args['my_favorite']);
+        }
+        //END SUGARCRM flav=pro ONLY
+
+        $bean->retrieve($id);
+        /*
+         * Even though the bean is refreshed above, return only the id
+         * This allows loadBean to be run to handle formatting and ACL
+         */
+        return $id;
+    }
+
+    //BEGIN SUGARCRM flav=pro ONLY
+
+
+    /**
+     * Toggle Favorites
+     * @param type $module 
+     * @param type $id 
+     * @param type $favorite 
+     * @return bool
+     */
+
+    protected function toggleFavorites($module, $record, $favorite)
+    {
+        if($favorite == "false" || $favorite == "0") {
+            $favorite = false;
+        }
+
+        $favorite = (bool) $favorite;
+
+        $fav_id = SugarFavorites::generateGUID($module,$record);
+
+        $fav = new SugarFavorites();
+        
+        // get it even if its deleted
+        $fav->retrieve($fav_id, true, false);
+
+        // already exists
+        if(!empty($fav->id)) {
+            $deleted = ($favorite) ? 0 : 1;
+            $fav->toggleExistingFavorite($fav_id, $deleted);
+            return true;
+        }
+
+        if($favorite) {
+            $fav = new SugarFavorites();
+            $fav->id = $fav_id;            
+            $fav->new_with_id = true;
+            $fav->module = $module;
+            $fav->record_id = $record;
+            $fav->created_by = $GLOBALS['current_user']->id;
+            $fav->assigned_user_id = $GLOBALS['current_user']->id;    
+            $fave->deleted = 0;
+            $fav->save();
+            return true;
+        }
+        
+        return true;
+
+        
+    }
+
+    //END SUGARCRM flav=pro ONLY
+
+
+    /**
+     * Verifies field level access for a bean and field for the logged in user
+     *
+     * @param SugarBean $bean The bean to check on
+     * @param string $field The field to check on
+     * @param string $action The action to check permission on
+     * @param array $context ACL context
+     * @throws SugarApiExceptionNotAuthorized
+     */
+    protected function verifyFieldAccess(SugarBean $bean, $field, $action = 'access', $context = array()) {
+        //BEGIN SUGARCRM flav=pro ONLY
+        if (!$bean->ACLFieldAccess($field, $action, $context)) {
+            // @TODO Localize this exception message
+            throw new SugarApiExceptionNotAuthorized('Not allowed to ' . $action . ' ' . $field . ' field in ' . $bean->object_name . ' module.');
+        }
+        //END SUGARCRM flav=pro ONLY
+    }
+}

@@ -71,15 +71,7 @@ class SugarBeanApiHelper
             $field = $sfh->getSugarField($type);
             
             if ( $field != null && isset($bean->$fieldName) ) {
-                if ( method_exists($field,'apiFormatField') ) {
-                    $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
-                } else {
-                    if ( isset($bean->$fieldName) ) {
-                        $data[$fieldName] = $bean->$fieldName;
-                    } else {
-                        $data[$fieldName] = '';
-                    }
-                }
+                 $field->apiFormatField($data, $bean, $options, $fieldName, $properties);
             }
         }
 
