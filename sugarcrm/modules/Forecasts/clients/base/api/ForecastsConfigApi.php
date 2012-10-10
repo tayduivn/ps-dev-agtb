@@ -31,24 +31,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function configSave($api, $args) {
-        $this->requireArgs($args,array('module'));
-        $admin = BeanFactory::getBean('Administration');
-
-        $module = $args['module'];
-        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
-
-        // these are not part of the config values, so unset
-        unset($args['module']);
-        unset($args['platform']);
-        unset($args['__sugar_url']);
-
-        foreach ($args as $name => $value) {
-            if(is_array($value)) {
-                $admin->saveSetting($module, $name, json_encode($value), $platform);
-            } else {
-                $admin->saveSetting($module, $name, $value, $platform);
-            }
-        }
+        parent::configSave($api, $args);
     }
 
 
