@@ -1,5 +1,6 @@
 /* Misc
 -------------------------------------------------- */
+
 .modal-body .tab-content {
   overflow: auto;
   height: 310px;
@@ -20,6 +21,81 @@
 .main-pane .vcard2 {
   z-index: 0;
   position: relative;
+}
+
+body {overflow: hidden;}
+.main-pane, .side-pane, .preview-pane {
+height: 100%;
+overflow-y: auto;
+overflow-x: hidden;
+position: absolute !important;
+top: 47px;
+}
+
+.container-fluid.contentflex, .main-pane {
+  margin: 0;
+  padding: 0;
+}
+.acomment .avatar {margin-right: 10px;}
+
+.side > .side-pane, .side > .preview-pane {
+    top: 48px;
+    right: 0;
+    height: 100%;
+    margin-top: 0 !important;
+    position: absolute;
+    width: inherit;
+    background-image: url('@{textureSecondary}');
+    padding: 20px 1%;
+    display: block;
+    &.hide {
+      display: none;
+    }
+
+  .preview-pane {
+    display: none;
+    }
+
+  .block {
+    width: 90%;
+    margin-left: 5%;
+    span.label {
+      margin: 0 10px 0 0;
+    }
+  }
+}
+
+
+.side > .side-pane, .side > .preview-pane {
+  .box-shadow(~"inset -1px 2px 20px rgba(0,0,0,.2),inset 1px 0 0 rgba(0,0,0,.1)");
+}
+
+.preview-pane .card2 {
+  margin: 10px;
+  .span4 {
+    text-align: right;
+  }
+  .span8 {
+    font-weight: bold;
+  }
+}
+
+.more, .less {
+  margin: 0 20px 20px;
+}
+
+.commented .avatar {margin-right: 10px !important;}
+
+.headerpane {
+    height: 60px;
+    z-index: 1000;
+    padding: 0 10px 0 0;
+    border-bottom: 1px solid @grayLight;
+    margin: 0 -10px 20px;
+    h3 {
+      font-weight: normal;
+      color: @gray;
+    }
 }
 
 .login {
@@ -59,8 +135,6 @@
   .box-shadow(~"inset -1px 2px 20px rgba(0,0,0,.2),inset 1px 0 0 rgba(0,0,0,.1)");
 }
 
-.results .actions {right: 10px;}
-.results .actions a:hover {text-decoration: none;}
 .drag:hover {
   cursor: move;
 }
@@ -184,7 +258,7 @@ z-index: 1000;
   .box-shadow(@shadow);
   font-weight: 600;
   border-bottom: 2px solid @grayLight;
-  padding: 7px 80px 7px 10px;
+  padding: 7px 80px 7px 10px !important;
 }
 .thumbnail h4 a, .thumbnail h1 a {
   color: @textColor;
