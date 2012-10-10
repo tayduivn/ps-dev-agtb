@@ -294,15 +294,14 @@ class ActivityStream extends SugarBean {
         if(!empty($result)) {
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
-                $row['target_name'] = '';
                 if(!empty($row['target_id'])) {
                     $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
                     if(!empty($bean)) {
                         $row['target_name'] = $bean->get_summary_text();
                     } else {
                         // We don't have access to the target.
-                        // TODO: Don't hardcode this string.
-                        $row['target_name'] = 'a record';
+                        unset($row['target_module']);
+                        unset($row['target_id']);
                     }
                 }
                 else if(!empty($row['target_module'])) {
