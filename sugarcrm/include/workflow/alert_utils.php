@@ -443,7 +443,10 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             }
 
             // add the message content to the mailer
-            if(!create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array)) {
+            // return: true=encountered an error; false=no errors
+            $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array);
+
+            if ($error) {
                 throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
             }
 
