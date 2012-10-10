@@ -77,6 +77,14 @@ interface IMailer
     public function setSubject($subject);
 
     /**
+     * Returns the EmailIdentity currently representing the From header.
+     *
+     * @access public
+     * @return EmailIdentity
+     */
+    public function getFrom();
+
+    /**
      * Restores the email headers to a fresh EmailHeaders object.
      *
      * @abstract
