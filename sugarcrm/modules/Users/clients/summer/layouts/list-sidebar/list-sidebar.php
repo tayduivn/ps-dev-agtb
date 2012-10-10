@@ -1,5 +1,5 @@
 <?php
-require_once('clients/summer/SideBarLayout.php');
-$layout = new SideBarLayout();
-$layout->push('main',array('view'=>'activitystream'));
+
+$layout = MetaDataManager::getLayout('GenericLayout');
+$layout->push(array('view'=>'activitystream'));
 $viewdefs['Users']['summer']['layout']['list-sidebar'] = $layout->getLayout();

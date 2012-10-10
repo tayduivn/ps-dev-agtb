@@ -40,9 +40,10 @@ class BoxOfficeClient
         //HACK
         if (file_exists(__DIR__.'/config.php')) {
             include __DIR__.'/config.php';
+        } else {
+            $config = array();
         }
 
-        $config = "";
         $this->config = $config;
         // FIXME
         $this->loginUrl = $config['top_url']."summer/splash/";
@@ -570,8 +571,10 @@ class BoxOfficeClient
         if ($tokens[0] == 'OK') {
         	return true;
         } else if ($tokens[0] == 'NO'){
+            // Get rid of last element (which is an array).
+            array_pop($tokens);
             $line = join(' ', $tokens);
-            if(strpos($line, "Invalid credentials") !== false) {
+            if(strpos($line, "Invalid credentials") !== false && $retry) {
                 // bad token, refresh & retry
                 $this->refreshToken();
                 return $this->gmailAuth($imap, false);
@@ -612,20 +615,26 @@ class BoxOfficeClient
      * @param int $limit (optional) number of results to return
      * @return array
      */
-    public function getMails($email, $q='', $limit=5)
+    public function getMails($email = '', $q='', $time = "-1 month", $limit=5)
     {
-        $imap = new Zend_Mail_Protocol_Imap('imap.gmail.com', '993', true);
+        $imap = new Zend_Mail_Protocol_Imap('imap.gmail.com', '993', 'SSL');
         if(!$this->gmailAuth($imap)) {
             return array();
         }
         $imap->select();
-        $cutoff = new DateTime();
-        $cutoff->modify("-1 month");
-        $searchTerm = $email;
+        $searchTerm = "";
+        if($time) {
+            $cutoff = new DateTime();
+            $cutoff->modify($time);
+            $searchTerm .= " after:".$cutoff->format('Y/m/d');
+        }
+        if(!empty($email)){
+            $searchTerm .= " (to:" . $email . " OR from: " . $email . ")";
+        }
         if(!empty($q)){
             $searchTerm .= " " . $q;
         }
-        $res = $imap->search(array('X-GM-RAW', "\"after:{$cutoff->format('Y/m/d')} $searchTerm\""));
+        $res = $imap->search(array('X-GM-RAW', "\"$searchTerm\""));
         if(empty($res)) return array();
         $messages = array();
         $storage = new Zend_Mail_Storage_Imap($imap);

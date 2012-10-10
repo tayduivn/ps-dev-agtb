@@ -68,23 +68,22 @@
     toggleView: function(event) {
         event.preventDefault();
         var view = this.$(event.currentTarget).data('view');
-        if(view == 'timeline') {
-            $('#activitystream-timeline').show();
-            $('#activitystream-calendar').hide();
-            if($('#activitystream-timeline').html() === "") {
+
+        if (view == 'timeline') {
+            this.$('#activitystream-timeline').show();
+            this.$('#activitystream-calendar').hide();
+            if (this.$('#activitystream-timeline').html() === "") {
                 this._renderTimeline();
             }
-        }
-        else if(view == 'calendar') {
-            $('#activitystream-calendar').show();
-            $('#activitystream-timeline').hide();
-            if($('#activitystream-calendar').html() === "") {
+        } else if(view == 'calendar') {
+            this.$('#activitystream-calendar').show();
+            this.$('#activitystream-timeline').hide();
+            if (this.$('#activitystream-calendar').html() === "") {
                 this._renderCalendar();
             }
-        }
-        else {
-            $('#activitystream-timeline').hide();
-            $('#activitystream-calendar').hide();
+        } else {
+            this.$('#activitystream-timeline').hide();
+            this.$('#activitystream-calendar').hide();
         }
     },
 
@@ -430,6 +429,9 @@
     },
 
     _parseTags: function(text) {
+        if(!text || text.length === 0) {
+            return text;
+        }
         var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
         return text.replace(pattern, function(str, module, id, text) {
             return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
@@ -448,15 +450,19 @@
                 var event = {};
                 event.tag = "commented";
                 event.startDate = parseDate(comment.date_created);
-                event.text = event.tag + " by " + comment.created_by_name;
+                event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + comment.created_by_name+'</a>';
                 event.headline = comment.value;
+                event.asset = {
+                        media: '<a href=\'#Users/'+comment.created_by+'\'><img src=\''+comment.created_by_picture_url+'\' /></a>',
+                        caption: comment.created_by_name
+                    };
                 events.push(event);
             }
             _.each(comment.notes, function(attachment) {
                 var event = {};
                 event.tag = "attached";
                 event.startDate = parseDate(attachment.date_entered);
-                event.text = event.tag + " by " + attachment.created_by_name;
+                event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + attachment.created_by_name+'</a>';
                 event.headline = attachment.filename;
                 events.push(event);
             });
@@ -465,11 +471,11 @@
         if(model.get("target_name") || self._parseTags(model.get("activity_data").value)) {
             var event = {};
             event.startDate = parseDate(model.get("date_created"));
-            event.text = model.get("activity_type") + " by " + model.get("created_by_name");
+            event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+model.get("activity_type") + " by " + model.get("created_by_name")+'</a>';
             event.headline = model.get("target_name") || self._parseTags(model.get("activity_data").value);
             event.tag = model.get("activity_type");
             event.asset = {
-                media: "<img src='"+model.get("created_by_picture_url")+"' />",
+                media: '<a href=\'#Users/'+model.get("created_by")+'\'><img src=\''+model.get("created_by_picture_url")+'\' /></a>',
                 caption: model.get("created_by_name")
             };
             events.push(event);
@@ -478,7 +484,7 @@
             var event = {};
             event.tag = "attached";
             event.startDate = parseDate(attachment.date_entered);
-            event.text = event.tag + " by " + attachment.created_by_name;
+            event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + attachment.created_by_name+'</a>';
             event.headline = attachment.filename;
             if(attachment.file_type == "image") {
                 event.asset = {
@@ -493,10 +499,12 @@
 
     _addCalendarMonthEvent: function(models) {
         var events = [], counts = {};
-        var getDate = function(datestring) {
-            var d = new Date(datestring);
-            var s = d.toDateString();
-            return s;
+        var getDate = function(dateString) {
+            var d = app.date.parse(dateString, app.date.guessFormat(dateString));
+            d.setHours(0);
+            d.setMinutes(0);
+            d.setSeconds(0);
+            return d.toDateString();
         };
 
         $.each(models, function(index, model) {
@@ -508,7 +516,7 @@
                 counts[dateStr] = {};
                 counts[dateStr].count = 1;
                 counts[dateStr].id = model.get('id');
-                counts[dateStr].start = new Date(model.get('date_created'));
+                counts[dateStr].start = new Date(dateStr);
             }
         });
 
@@ -522,72 +530,91 @@
         return events;
     },
 
-    _addCalendarWeekEvent: function(model) {
-        var events = [];
+    _addCalendarWeekEvent: function(models) {
+        var events = [], numEvents = 5;
 
-        var event = {allDay:false};
-        event.id = model.get('id');
-        event.start = new Date(model.get("date_created"));
-        event.title =  model.get("created_by_name") + " " + model.get("activity_type");
-        events.push(event);
+        $.each(models, function(index, model) {
+            if(events.length < numEvents) {
+                var event = {allDay:false};
+                event.id = model.get('id');
+                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+                event.title =  model.get("created_by_name") + " " + model.get("activity_type") + "...";
+                events.push(event);
+            }
+            else if(events.length == numEvents) {
+                var event = {allDay:true};
+                event.id = model.get('id');
+                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+                event.title = (models.length - numEvents)+" more event(s)";
+                events.push(event);
+                return false;
+            }
+        });
 
         return events;
     },
 
-    _addCalendarDayEvent: function(model) {
-        var events = [], activityType = model.get('activity_type');
+    _addCalendarDayEvent: function(models) {
+        var events = [], numEvents = 5;
 
-        var event = {allDay:false};
-        event.id = model.get('id');
-        event.start = new Date(model.get("date_created"));
-        event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
+        $.each(models, function(index, model) {
+            var activityType = model.get('activity_type');
+            var event = {allDay:false};
+            event.id = model.get('id');
+            event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+            if(events.length < numEvents) {
+                event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
 
-        switch (activityType) {
-            case "posted":
-                event.title += model.get('activity_data').value;
-                if(model.get('target_name')) {
-                    event.title += "on " + model.get('target_name');
+                switch (activityType) {
+                    case "posted":
+                        event.title += model.get('activity_data').value;
+                        if(model.get('target_name')) {
+                            event.title += "on " + model.get('target_name');
+                        }
+                        break;
+                    case "created":
+                        event.title += model.get('target_name');
+                        break;
+                    case "related":
+                        event.title += model.get('activity_data').relate_name + " to " + model.get('target_name');
+                        break;
+                    case "updated":
+                        $.each(model.get('activity_data'), function(index, value) {
+                            if(index !== 0) {
+                                event.title += ', ';
+                            }
+                            event.title += value.field_name;
+                        });
+                        event.title += " on "+model.get('target_name');
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            case "created":
-                event.title += model.get('target_name');
-                break;
-            case "related":
-                event.title += model.get('activity_data').relate_name + " to " + model.get('target_name');
-                break;
-            case "updated":
-                $.each(model.get('activity_data'), function(index, value) {
-                    if(index !== 0) {
-                        event.title += ', ';
-                    }
-                    event.title += value.get('field_name');
-                });
-                event.title += " on "+model.get('target_name');
-                break;
-            default:
-                break;
-        }
+                events.push(event);
+            }
+            else if(events.length == numEvents) {
+                event.allDay = true;
+                event.title = (models.length - numEvents)+" more event(s)";
+                events.push(event);
+                return false;
+            }
+        });
 
-        events.push(event);
         return events;
     },
 
     previewRecord: function(event) {
-        console.log("Previewing", this.context);
-        testing = this;
-
-        var self = this;
-        var root = this.$(event.currentTarget).parent().parent().parent();
-        var hash = root.find("p a:last").attr("href").replace('#', '');
-        var arr = hash.split('/');
-        var module = arr[0], id = arr[1];
+        var self = this,
+            root = this.$(event.currentTarget).parent().parent().parent(),
+            hash = root.find("p a:last").attr("href").replace('#', ''),
+            arr = hash.split('/'),
+            module = arr[0], id = arr[1],
+            model = app.data.createBean(module);
 
         // Grab model corresponding to preview icon clicked
-        var model = App.data.createBean(module);
         model.set("id", id);
         model.fetch({
             success: function(model) {
-                console.log ("Done with model.", model, self.layout.meta, self.context);
                 model.set("_module", module);
                 // Fire on parent layout .. works nicely for relatively simple page ;=)
                 self.context.trigger("togglePreview", model);
@@ -632,7 +659,7 @@
 
                 comment.created_by_picture_url = (comment.created_by_picture) ? app.api.buildFileURL({
                     module: 'Users',
-                    id: model.get('created_by'),
+                    id: comment.created_by,
                     field: 'picture'
                 }) : "../clients/summer/views/imagesearch/anonymous.jpg";
 
@@ -716,12 +743,10 @@
                         events = self._addCalendarMonthEvent(self.collection.models);
                     }
                     else if(view.name == 'basicWeek') {
-                        objarrays = _.map(self.collection.models, self._addCalendarWeekEvent);
-                        events = _.flatten(objarrays);
+                        events = self._addCalendarWeekEvent(self.collection.models);
                     }
                     else {
-                        objarrays = _.map(self.collection.models, self._addCalendarDayEvent);
-                        events = _.flatten(objarrays);
+                        events = self._addCalendarDayEvent(self.collection.models);
                     }
                     callback(events);
                 },

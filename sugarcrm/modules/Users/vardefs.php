@@ -289,7 +289,7 @@ $dictionary['User'] = array(
             'vname' => 'LBL_DEPARTMENT',
             'type' => 'varchar',
             'len' => '50',
-        ) ,
+        ) ,            
         'phone_home' => array(
             'name' => 'phone_home',
             'vname' => 'LBL_HOME_PHONE',

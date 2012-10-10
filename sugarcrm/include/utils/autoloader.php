@@ -92,6 +92,11 @@ class SugarAutoLoader
             require_once($visibility);
             return true;
         }
+        $layout = self::getFilenameForLayoutClass($class);
+        if (!empty($layout)) {
+            require_once($layout);
+            return true;
+        }
         $filePath = self::getFilepathForSchedulerJobClass($class);
         if (!empty($filePath))
         {
@@ -102,6 +107,16 @@ class SugarAutoLoader
   		return false;
 	}
 
+    protected static function getFilenameForLayoutClass($class)
+    {
+        if(substr($class, -6) == "Layout") {
+            $filename = get_custom_file_if_exists("include/MetaDataManager/layouts/$class.php");
+            if(file_exists($filename)) {
+                return $filename;
+            }
+        }
+        return false;
+    }
     /**
      * getFilepathForSchedulerJobClass
      *
