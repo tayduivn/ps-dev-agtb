@@ -976,9 +976,9 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 $mailer->clearRecipients();
                 $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-                $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
+                $possibleInvitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
-                if ($possible_invitee == true) {
+                if ($possibleInvitee == true) {
                     $userInfo['notify_user']->new_assigned_user_name =
                         "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
 
@@ -1016,9 +1016,9 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 $mailer->clearRecipients();
                 $mailer->addRecipientsCc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-                $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
+                $possibleInvitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
-                if ($possible_invitee == true) {
+                if ($possibleInvitee == true) {
                     $userInfo['notify_user']->new_assigned_user_name =
                         "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
 
@@ -1056,9 +1056,9 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 $mailer->clearRecipients();
                 $mailer->addRecipientsBcc(new EmailIdentity($userInfo['address'], $userInfo['name']));
 
-                $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
+                $possibleInvitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
-                if ($possible_invitee == true) {
+                if ($possibleInvitee == true) {
                     $userInfo['notify_user']->new_assigned_user_name =
                         "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
 
