@@ -45,7 +45,7 @@
         <tr>
             <td>&nbsp;</td>
             <td colspan='1' nowrap>
-                {$mod.LBL_PORTAL_SITE_URL} <a href="{$siteURL}/portal">{$siteURL}/portal</a>
+                {$mod.LBL_PORTAL_SITE_URL} <a href="{$siteURL}/portal" target="_blank">{$siteURL}/portal</a>
             </td>
         </tr>
         {/if}
