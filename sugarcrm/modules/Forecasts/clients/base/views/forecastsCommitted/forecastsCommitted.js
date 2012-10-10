@@ -192,13 +192,27 @@
             var best = {};
             var likely = {};
             // get the last committed value
-            var previousCommit = (this._collection.models != undefined) ? _.first(this._collection.models) : [];
-            if(_.isEmpty(previousCommit) || this.runningFetch == true) {
-                self.savedTotal = totals;
-                return;
+            var previousCommit = null;
+            if(!_.isEmpty(this._collection.models))
+            {
+               previousCommit = _.first(this._collection.models);
+            } else {
+               var hasTotals = !_.isNull(self.totals);
+               previousCommit = new Backbone.Model({
+                    best_case : (hasTotals ? self.totals.best_case : 0),
+                    likely_case : (hasTotals ? self.totals.amount : 0),
+                    worst_case : (hasTotals ? self.totals.worst_case : 0)
+               });
             }
 
-            if(!_.isEmpty(self.savedTotal)) self.savedTotal = null;
+            if(this.runningFetch == true) {
+               self.savedTotal = totals;
+               return;
+            } else if (!_.isEmpty(self.savedTotal)) {
+                //This line is needed since we need to clean up savedTotals if it has something and you are processing a set of totals.
+                //The reason for this is that the method gets called again once the reset is done on the collection if one is ran.
+                self.savedTotal = null;
+            }
 
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                 // management view

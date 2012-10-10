@@ -81,16 +81,18 @@
                 var yearDiff = oldestModelDate.getYear() - newestModelDate.getYear();
                 var monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
 
+                //Format the date according to the user date and time preferences
+                newestModelDate = app.date.format(newestModelDate, app.user.get('datepref') + ' ' + app.user.get('timepref'));
                 if(yearDiff == 0 && monthsDiff < 2)
                 {
-                    args = [newestModelDate.toString()];
+                    args = [newestModelDate];
                     text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
                 } else {
-                    args = [monthsDiff, newestModelDate.toString()];
+                    args = [monthsDiff, newestModelDate];
                     text2 = hb({'key' : 'LBL_COMMITTED_MONTHS_AGO', 'module' : 'Forecasts', 'args' : args});
                 }
             } else {
-                args = [newestModelDate.toString()];
+                args = [newestModelDate];
                 text2 = hb({'key' : 'LBL_COMMITTED_THIS_MONTH', 'module' : 'Forecasts', 'args' : args});
             }
 

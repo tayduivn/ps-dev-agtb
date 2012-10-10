@@ -1,4 +1,4 @@
-{{#if historyLog.length}}
+{{#if previousDateEntered}}
 <div class="log drawer">
     <div class="title pull-left">
         <strong>{{str "LBL_PREVIOUS_COMMIT" "Forecasts"}}:</strong> {{previousDateEntered}}
@@ -8,7 +8,9 @@
     </div>
     <div class="clearfix"></div>
 </div>
+{{/if}}
 
+{{#if historyLog.length}}
 <div class="extend results hide" id="history_log_results">
     {{#each historyLog}}
     <article>

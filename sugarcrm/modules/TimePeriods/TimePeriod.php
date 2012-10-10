@@ -336,14 +336,14 @@ class TimePeriod extends SugarBean {
         }
 
         //Retrieve Forecasts_timeperiod_interval
-        $interval = isset($settings['timeperiod_interval']) ? $settings['timeperiod_interval'] : 'quarterly';
+        $interval = isset($settings['timeperiod_interval']) ? $settings['timeperiod_interval'] : 'Quarter';
 
-        if ($interval == 'quarterly')
+        if ($interval == 'Quarter')
         {
             $toLast = '-3 month';
             $toNext = '+6 month';
         }
-        else if ($interval == 'yearly')
+        else if ($interval == 'Annual')
         {
             $toLast = '-12 month';
             $toNext = '+24 month';
