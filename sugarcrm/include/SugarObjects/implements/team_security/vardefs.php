@@ -100,9 +100,10 @@ $vardefs = array(
 			'custom_type' => 'teamset',
             'studio' => array(
                    //BEGIN SUGARCRM flav=pro ONLY
-                   // Bug 56832 - Exclude list and detail from portal
+                   // Bug 56832 - Exclude list/detail/edit view from portal
                    'portallistview' => false,
                    'portaldetailview' => false,
+                   'portaleditview' => false,
                    //END SUGARCRM flav=pro ONLY
                ), // don't show in studio fields list
 		),
