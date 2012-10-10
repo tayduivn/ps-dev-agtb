@@ -114,6 +114,16 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
+     * Returns the EmailIdentity currently representing the From header.
+     *
+     * @access public
+     * @return EmailIdentity
+     */
+    public function getFrom() {
+        return $this->headers->getFrom();
+    }
+
+    /**
      * Restores the email headers to a fresh EmailHeaders object.
      *
      * @access public
