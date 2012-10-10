@@ -89,15 +89,12 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
 
 
     /**
-     * Sends the users password to the email address or sends
+     * Sends the users password to the email address.
      *
-     * @param unknown_type $user_id
-     * @param unknown_type $password
+     * @param string $user_id
+     * @param string $password
      */
-    function sendEmailPassword($user_id, $password) {
-        global $sugar_config,
-               $locale;
-
+    public function sendEmailPassword($user_id, $password) {
         $result = $GLOBALS['db']->query("SELECT email1, email2, first_name, last_name FROM users WHERE id='$user_id'");
         $row    = $GLOBALS['db']->fetchByAssoc($result);
 
@@ -106,22 +103,43 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
             return;
         }
 
-        require_once("include/SugarPHPMailer.php");
-        $OBCharset            = $locale->getPrecedentPreference('default_email_charset');
-        $notify_mail          = new SugarPHPMailer();
-        $notify_mail->CharSet = $sugar_config['default_charset'];
-        $notify_mail->AddAddress(((!empty($row['email1'])) ? $row['email1'] : $row['email2']), $locale->translateCharsetMIME(trim($row['first_name'] . ' ' . $row['last_name']), 'UTF-8', $OBCharset));
+        $method = "unknown";
 
-        $notify_mail->Subject = 'Sugar Token';
-        $notify_mail->Body    = 'Your sugar session authentication token  is: ' . $password;
-        $notify_mail->setMailerForSystem();
-        $notify_mail->From     = 'no-reply@sugarcrm.com';
-        $notify_mail->FromName = 'Sugar Authentication';
+        try {
+            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $method = $mailer->getMailTransmissionProtocol();
 
-        if (!$notify_mail->Send()) {
-            $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
-        } else {
-            $GLOBALS['log']->info("Notifications: e-mail successfully sent");
+            // add the recipient...
+
+            // first get all email addresses known for this recipient
+            $recipientEmailAddresses = array($row["email1"], $row["email2"]);
+            $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+
+            // then retrieve first non-empty email address
+            $recipientEmailAddress = array_shift($recipientEmailAddresses);
+
+            // get the recipient name that accompanies the email address
+            $recipientName = "{$row["first_name"]} {$row["last_name"]}";
+
+            $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
+
+            // override the From header; requires setting the Sender to match the true sender
+            $from = $mailer->getFrom();
+            $mailer->setHeader(EmailHeaders::Sender, $from);
+            $mailer->setHeader(EmailHeaders::From, new EmailIdentity("no-reply@sugarcrm.com", "Sugar Authentication"));
+
+            // set the subject
+            $mailer->setSubject("Sugar Token");
+
+            // set the body of the email... looks to be plain-text only
+            $mailer->setTextBody("Your sugar session authentication token  is: {$password}");
+
+            $mailer->send();
+
+            $GLOBALS["log"]->info("Notifications: e-mail successfully sent");
+        } catch (MailerException $me) {
+            $message = $me->getMessage();
+            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
     }
 }
