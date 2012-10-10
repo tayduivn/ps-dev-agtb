@@ -23,8 +23,8 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
-require_once('include/api/SugarApi/SugarApi.php');
-require_once('include/api/ThemeApi.php');
+require_once('include/api/SugarApi.php');
+require_once('clients/base/api/ThemeApi.php');
 
 class RestThemeTest extends RestTestBase
 {
