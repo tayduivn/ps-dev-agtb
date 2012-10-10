@@ -123,7 +123,13 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
-            
+            this._collection.on("change", function() {
+                _.each(this._collection.models, function(element){
+                    if(element.hasChanged("commit_stage")) {
+                        this._render();
+                    }
+                }, this);
+            }, this);
         }
 
         // listening for updates to context for selectedUser:change
