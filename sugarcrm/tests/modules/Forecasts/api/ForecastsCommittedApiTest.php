@@ -105,6 +105,6 @@ class ForecastsCommittedApiTest extends RestTestBase
     public function testForecastsCommitted()
     {
         $response = $this->_restCall("Forecasts/committed");
-        $this->assertNotEmpty($response["reply"], "Rest reply is empty. Default manager data should have been returned.");
+        $this->assertEmpty($response["reply"], "Rest reply is not empty. No default manager data should have been returned.");
     }
 }
