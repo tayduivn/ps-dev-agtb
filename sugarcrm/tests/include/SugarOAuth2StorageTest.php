@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once('include/SugarOAuth2Storage.php');
+require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 require_once('tests/rest/RestTestPortalBase.php');
 
 class SugarOAuth2StorageTest extends RestTestPortalBase
@@ -132,6 +132,11 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         // For some reason this really wants a remote address set
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        
+        // SESSION platform needs to be set because it is expected for portal
+        // storage. This is usually set in the API before any calls to storage,
+        // OR it is set by the storage once it reads the platform type
+        $_SESSION['platform'] = 'portal';        
 
         // First login should work.
         $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
@@ -149,7 +154,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
             
             $errorLabel = 'no_error';
         } catch ( SugarApiException $e ) {
-            $errorLabel = $e->errorLabel;
+            $errorLabel = $e->messageLabel;
         }
 
         // We need to make sure this errored out here
