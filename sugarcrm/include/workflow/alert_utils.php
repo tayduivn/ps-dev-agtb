@@ -1139,11 +1139,11 @@ function get_system_default_body(&$mail_object, $focus, &$notify_user) {
     $xtpl->parse($templateName);
     $xtpl->parse("{$templateName}_Subject");
 
-    $messageParts['body']    = from_html(trim($xtpl->text($templateName)));
-    $messageParts['subject'] = from_html($xtpl->text("{$templateName}_Subject"));
+    $subject = $xtpl->text("{$templateName}_Subject");
+    $mail_object->setSubject($subject);
 
-    $mail_object->Body    = $messageParts['body'];
-    $mail_object->Subject = $messageParts['subject'];
+    $textBody = trim($xtpl->text($templateName));
+    $mail_object->setTextBody($textBody); // looks to be plain-text only
 
     return false; // false=no errors
 }
