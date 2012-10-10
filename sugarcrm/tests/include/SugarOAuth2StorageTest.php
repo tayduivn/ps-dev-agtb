@@ -28,6 +28,12 @@ require_once('tests/rest/RestTestPortalBase.php');
 
 class SugarOAuth2StorageTest extends RestTestPortalBase
 {
+    public static function setUpBeforeClass()
+    {
+        $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'support_portal'");
+        parent::setUpBeforeClass();
+    }
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
