@@ -26,6 +26,20 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group mailer
      */
+    public function testGetMailTransmissionProtocol_ReturnsSmtp() {
+        $mailer   = new SmtpMailer(new SmtpMailerConfiguration());
+        $expected = SmtpMailer::MailTransmissionProtocol;
+        $actual   = $mailer->getMailTransmissionProtocol();
+        self::assertEquals(
+            $expected,
+            $actual,
+            "The SmtpMailer should have {$expected} for its mail transmission protocol"
+        );
+    }
+
+    /**
+     * @group mailer
+     */
     public function testClearRecipients_ClearToAndBccButNotCc() {
         $mockMailer = self::getMock(
             "SmtpMailer",

@@ -35,8 +35,8 @@ require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMai
  */
 class SmtpMailer extends BaseMailer
 {
-    // constants used for documenting which mail transmission protocols are valid
-    const MailTransmissionProtocolSmtp = "smtp";
+    // constants
+    const MailTransmissionProtocol = "smtp"; // only use SMTP to send email with PHPMailer
 
     /**
      * Performs the send of an email using PHPMailer (currently version 5.2.1).
@@ -86,7 +86,7 @@ class SmtpMailer extends BaseMailer
         $mailer->SetLanguage();
 
         // transfer the basic configurations to PHPMailer
-        $mailer->Mailer   = self::MailTransmissionProtocolSmtp; // only use SMTP to send email with PHPMailer
+        $mailer->Mailer   = self::MailTransmissionProtocol;
         $mailer->Hostname = $this->config->getHostname();
         $mailer->CharSet  = $this->config->getCharset();
         $mailer->Encoding = $this->config->getEncoding();
