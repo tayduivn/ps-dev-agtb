@@ -2140,12 +2140,7 @@ EOQ;
             $hasRecipients = false;
 
             if (!empty($itemail)) {
-                if ($hasRecipients) {
-                    $mailer->addRecipientsBcc($itemail);
-                } else {
-                    $mailer->addRecipientsTo($itemail);
-                }
-
+                $mailer->addRecipientsTo($itemail);
                 $hasRecipients = true;
             }
 
@@ -2172,6 +2167,8 @@ EOQ;
                 if (!isset($additionalData['link']) || $additionalData['link'] == false) {
                     $this->setNewPassword($additionalData['password'], '1');
                 }
+            } else {
+                //@todo throw an exception if no recipients? can PHPMailer raise this error for us?
             }
         } catch (MailerException $me) {
         }
