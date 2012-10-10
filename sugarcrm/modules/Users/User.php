@@ -2085,7 +2085,8 @@ EOQ;
                $current_user;
 
         $mod_strings = return_module_language('', 'Users');
-        $result      = array(
+
+        $result = array(
             'status'  => false,
             'message' => ''
         );
@@ -2127,22 +2128,56 @@ EOQ;
 
         try {
             $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+
+            $mailer->setSubject($emailTemp->subject);
+
+            $mailer->setTextBody($emailTemp->body);
+
+            if ($emailTemp->text_only != 1) {
+                $mailer->setHtmlBody($emailTemp->body_html);
+            }
+
+            $hasRecipients = false;
+
+            if (!empty($itemail)) {
+                if ($hasRecipients) {
+                    $mailer->addRecipientsBcc($itemail);
+                } else {
+                    $mailer->addRecipientsTo($itemail);
+                }
+
+                $hasRecipients = true;
+            }
+
+            if ($hasRecipients) {
+                $mailer->send();
+                $result["status"] = true;
+
+                $emailObj = new Email();
+                $emailObj->team_id          = 1;
+                $emailObj->to_addrs         = '';
+                $emailObj->type             = 'archived';
+                $emailObj->deleted          = '0';
+                $emailObj->name             = $emailTemp->subject;
+                $emailObj->description      = $emailTemp->body;
+                $emailObj->description_html = $emailTemp->body_html;
+                $emailObj->from_addr        = $mailer->getFrom()->getEmail();
+                $emailObj->parent_type      = 'User';
+                $emailObj->date_sent        = TimeDate::getInstance()->nowDb();
+                $emailObj->modified_user_id = '1';
+                $emailObj->created_by       = '1';
+                $emailObj->status           = 'sent';
+                $emailObj->save();
+
+                if (!isset($additionalData['link']) || $additionalData['link'] == false) {
+                    $this->setNewPassword($additionalData['password'], '1');
+                }
+            }
         } catch (MailerException $me) {
         }
 
         require_once('include/SugarPHPMailer.php');
         $mail = new SugarPHPMailer();
-
-        $mail->Subject = from_html($emailTemp->subject);
-
-        if ($emailTemp->text_only != 1) {
-            $mail->IsHTML(true);
-            $mail->Body    = from_html($emailTemp->body_html);
-            $mail->AltBody = from_html($emailTemp->body);
-        } else {
-            $mail->Body_html = from_html($emailTemp->body_html);
-            $mail->Body      = from_html($emailTemp->body);
-        }
 
         if ($mail->Body == '' && $current_user->is_admin) {
             global $app_strings;
@@ -2153,45 +2188,6 @@ EOQ;
         if ($mail->Mailer == 'smtp' && $mail->Host == '' && $current_user->is_admin) {
             $result['message'] = $mod_strings['ERR_SERVER_SMTP_EMPTY'];
             return $result;
-        }
-
-        $mail->prepForOutbound();
-        $hasRecipients = false;
-
-        if (!empty($itemail)) {
-            if ($hasRecipients) {
-                $mail->AddBCC($itemail);
-            } else {
-                $mail->AddAddress($itemail);
-            }
-
-            $hasRecipients = true;
-        }
-
-        if ($hasRecipients) {
-            $result['status'] = @$mail->Send();
-        }
-
-        if ($result['status'] == true) {
-            $emailObj = new Email();
-            $emailObj->team_id          = 1;
-            $emailObj->to_addrs         = '';
-            $emailObj->type             = 'archived';
-            $emailObj->deleted          = '0';
-            $emailObj->name             = $mail->Subject;
-            $emailObj->description      = $mail->Body;
-            $emailObj->description_html = null;
-            $emailObj->from_addr        = $mail->From;
-            $emailObj->parent_type      = 'User';
-            $emailObj->date_sent        = TimeDate::getInstance()->nowDb();
-            $emailObj->modified_user_id = '1';
-            $emailObj->created_by       = '1';
-            $emailObj->status           = 'sent';
-            $emailObj->save();
-
-            if (!isset($additionalData['link']) || $additionalData['link'] == false) {
-                $this->setNewPassword($additionalData['password'], '1');
-            }
         }
 
         return $result;
