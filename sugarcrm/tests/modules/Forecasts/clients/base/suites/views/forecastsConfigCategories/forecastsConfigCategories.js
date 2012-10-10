@@ -32,6 +32,10 @@ describe("The forecastsConfigCategories view", function(){
         delete app;
     });
 
+    it("should have a label parameter to hold the label from metadata for the template", function() {
+        expect(view.label).toBeDefined();
+    })
+
     it("should have a forecasts_categories_field parameter to hold the metadata for the field", function() {
         expect(view.forecast_categories_field).toBeDefined();
     });
@@ -44,13 +48,14 @@ describe("The forecastsConfigCategories view", function(){
         expect(view.category_ranges_field).toBeDefined();
     });
 
-    describe("field parameters", function() {
+    describe("view parameters", function() {
 
         beforeEach(function() {
             testStub = sinon.stub(app.view.View.prototype, "initialize");
             view.meta = {
                 panels : [
                     {
+                        label: 'testLabel',
                         fields: [
                             {
                                 name:'forecast_categories',
@@ -81,7 +86,15 @@ describe("The forecastsConfigCategories view", function(){
             testStub.restore();
         });
 
-        it("should get initialized to the field metadata they correspond to", function() {
+
+        it("for label should get initialized to the label string in metadata", function() {
+            var options = {};
+            view.initialize(options);
+            expect(testStub).toHaveBeenCalled();
+            expect(view.label).toEqual(_.first(view.meta.panels).label);
+        });
+
+        it("for fields should get initialized to the field metadata they correspond to", function() {
             var options = {},
                 fieldMeta = _.first(view.meta.panels).fields;
             view.initialize(options);
