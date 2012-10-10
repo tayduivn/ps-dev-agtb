@@ -51,7 +51,6 @@ if(!empty($_SESSION['gauth_data'])){
         }
     }
     ?>
-    <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet" type="text/css">
     <style>
         body {
             -webkit-background-size: cover;
