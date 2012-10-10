@@ -1,23 +1,23 @@
 <?php
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 /**
@@ -30,6 +30,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class OpportunitiesSeedData {
 
+    static private $_ranges;
 /**
  * populateSeedData
  *
@@ -51,58 +52,146 @@ public static function populateSeedData($records, $app_list_strings, $accounts
     ,$products, $users
 //END SUGARCRM flav=pro ONLY
 )
-{
-    if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
-//BEGIN SUGARCRM flav=pro ONLY
-       || empty($products) || empty($users)
-//END SUGARCRM flav=pro ONLY
+{ 
+        if(empty($accounts) || empty($app_list_strings) || (!is_int($records) || $records < 1)
+    //BEGIN SUGARCRM flav=pro ONLY
+           || empty($products) || empty($users)
+    //END SUGARCRM flav=pro ONLY
 
-    )
-    {
-        return array();
+        )
+        {
+            return array();
+        }
+
+        $opp_ids = array();
+
+        while($records-- > 0)
+        {
+            $key = array_rand($accounts);
+            $account = $accounts[$key];
+
+            //Create new opportunities
+            $opp = BeanFactory::getBean('Opportunities');
+            //BEGIN SUGARCRM flav=pro ONLY
+            $opp->team_id = $account->team_id;
+            $opp->team_set_id = $account->team_set_id;
+            //END SUGARCRM flav=pro ONLY
+
+            $opp->assigned_user_id = $account->assigned_user_id;
+            $opp->assigned_user_name = $account->assigned_user_name;
+            $rand_units = rand(1, 10)*1000;
+            $opp->name = substr($account->name." - ".($rand_units)." units", 0, 50);
+            $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
+            $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
+
+            // If the deal is already done, make the date closed occur in the past.
+            $opp->date_closed = ($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
+                ? self::createPastDate()
+                : self::createDate();
+
+            $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
+            $unit_cost = array("10", "20", "30", "50", "80");
+            $key = array_rand($unit_cost);
+            $opp->amount = $unit_cost[$key]*$rand_units;
+            $probability = array("10", "40", "70", "90");
+            $key = array_rand($probability);
+            $opp->probability = $probability[$key];
+
+            $opp->save();
+            // Create a linking table entry to assign an account to the opportunity.
+            $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
+
+            $opp_ids[] = $opp->id;
+        }
+
+        return $opp_ids;
     }
 
-    $opp_ids = array();
-
-    while($records-- > 0)
+    /**
+     * @static creates range of probability for the months
+     * @param int $total_months - total count of months
+     * @return mixed
+     */
+    private static function getRanges($total_months = 12)
     {
-        $key = array_rand($accounts);
-        $account = $accounts[$key];
-
-        //Create new opportunities
-        $opp = BeanFactory::getBean('Opportunities');
-        //BEGIN SUGARCRM flav=pro ONLY
-        $opp->team_id = $account->team_id;
-        $opp->team_set_id = $account->team_set_id;
-        //END SUGARCRM flav=pro ONLY
-
-        $opp->assigned_user_id = $account->assigned_user_id;
-        $opp->assigned_user_name = $account->assigned_user_name;
-        $opp->name = substr($account->name." - 1000 units", 0, 50);
-        $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
-        $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
-
-        // If the deal is already done, make the date closed occur in the past.
-        $opp->date_closed = ($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
-            ? create_past_date()
-            : create_date();
-        
-        $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
-        $amount = array("10000", "25000", "50000", "75000");
-        $key = array_rand($amount);
-        $opp->amount = $amount[$key];
-        $probability = array("10", "40", "70", "90");
-        $key = array_rand($probability);
-        $opp->probability = $probability[$key];
-        
-        $opp->save();
-        // Create a linking table entry to assign an account to the opportunity.
-        $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);        
-
-        $opp_ids[] = $opp->id;
+        if ( self::$_ranges === null )
+        {
+            self::$_ranges = array();
+            for ($i = $total_months; $i >= 0; $i--)
+            {
+                // define priority for month,
+                self::$_ranges[$total_months-$i] = ( $total_months-$i > 6 )
+                    ? self::$_ranges[$total_months-$i] = pow(6, 2) + $i
+                    :  self::$_ranges[$total_months-$i] = pow($i, 2) + 1;
+                // increase probability for current quarters
+                self::$_ranges[$total_months-$i] = $total_months-$i == 0 ? self::$_ranges[$total_months-$i]*2.5 : self::$_ranges[$total_months-$i];
+                self::$_ranges[$total_months-$i] = $total_months-$i == 1 ? self::$_ranges[$total_months-$i]*2 : self::$_ranges[$total_months-$i];
+                self::$_ranges[$total_months-$i] = $total_months-$i == 2 ? self::$_ranges[$total_months-$i]*1.5 : self::$_ranges[$total_months-$i];
+            }
+        }
+        return self::$_ranges;
     }
 
-    return $opp_ids;
-}
+    /**
+     * @static return month delta as random value using range of probability, 0 - current month, 1 next/previos month...
+     * @param int $total_months - total count of months
+     * @return int
+     */
+    public static function getMonthDeltaFromRange($total_months = 12)
+    {
+        $ranges = self::getRanges($total_months);
+        asort($ranges,SORT_NUMERIC );
+        $x = mt_rand (1, array_sum($ranges) );
+        foreach ($ranges as $key => $y)
+        {
+            $x -= $y;
+            if ( $x <= 0 )
+            {
+                break;
+            }
+        }
+        return $key;
+    }
 
+    /**
+     * @static generates date
+     * @param null $monthDelta - offset from current date in months to create date, 0 - current month, 1 - next month
+     * @return string
+     */
+    public static function createDate($monthDelta = null)
+    {
+        global $timedate;
+        $monthDelta = $monthDelta === null ? self::getMonthDeltaFromRange() : $monthDelta;
+
+        $now = $timedate->getNow(true);
+        $now->modify("+$monthDelta month");
+        // random day from now to end of month
+        $day = mt_rand($now->day, $now->days_in_month);
+        return $timedate->asDbDate($now->get_day_begin($day));
+    }
+
+    /**
+     * @static generate past date
+     * @param null $monthDelta - offset from current date in months to create past date, 0 - current month, 1 - previous month
+     * @return string
+     */
+    public static function createPastDate($monthDelta = null)
+    {
+        global $timedate;
+        $monthDelta = $monthDelta === null ? self::getMonthDeltaFromRange() : $monthDelta;
+
+        $now = $timedate->getNow(true);
+        $now->modify("-$monthDelta month");
+
+        if ( $monthDelta == 0 && $now->day == 1 ) {
+            $now->modify("-1 day");
+            $day = $now->day;
+        }
+        else
+        {
+            // random day from start of month to now
+            $day =  mt_rand(1, $now->day);
+        }
+        return $timedate->asDbDate($now->get_day_begin($day));
+    }
 }

@@ -1,1 +1,4 @@
-something here
+<div class="tabbable">
+    <ul class="nav nav-tabs related-tabs"></ul>
+    <div class="tab-content"></div>
+</div>

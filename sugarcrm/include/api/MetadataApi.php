@@ -97,8 +97,12 @@ class MetadataApi extends SugarApi {
 
         $moduleFilter = array();
         if (!empty($args['module_filter'])) {
-            // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
-            $modules = str_getcsv($args['module_filter'],',','');
+            if ( function_exists('str_getcsv') ) {
+                // Use str_getcsv here so that commas can be escaped, I pity the fool that has commas in his module names.
+                $modules = str_getcsv($args['module_filter'],',','');
+            } else {
+                $modules = explode(",", $args['module_filter']);
+            }
             if ( $modules != false ) {
                 $moduleFilter = $modules;
             }
@@ -139,9 +143,16 @@ class MetadataApi extends SugarApi {
             }
         }
 
-        //If we failed to load the metadat from cache, load it now the hard way.
+        //If we failed to load the metadata from cache, load it now the hard way.
         if (empty($data)) {
             $data = $this->loadMetadata($hashKey);
+            
+            // Bug 56911 - Notes metadata is needed for portal
+            // Remove forcefully added Notes module to portal requests since we only
+            // need the metadata but do NOT need it in the module list
+            if (isset($args['platform']) && $args['platform'] == 'portal') {
+                unset($data['module_list']['Notes']);
+            }
         }
 
         //If we had to generate a new hash, create the etag with the new hash
@@ -347,7 +358,7 @@ class MetadataApi extends SugarApi {
                 $data['acl']['Accounts']['access'] = 'no';
                 $data['acl']['Cases']['access'] = 'no';
             }
-        
+
         }
 
         // remove the disabled modules from the module list
@@ -427,7 +438,7 @@ class MetadataApi extends SugarApi {
                     unset($data[$chunk]);
                 }
             }
-            
+
             // Relationships are special, they are a baseChunk but also need to pay attention to modules
             if (!empty($moduleFilter) && isset($data['relationships']) ) {
                 // We only want some modules, but we want the relationships

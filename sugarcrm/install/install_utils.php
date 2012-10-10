@@ -860,53 +860,16 @@ function handleSugarConfig() {
        require_once('modules/UpgradeWizard/uw_utils.php');
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
+    include('ModuleInstall/ModuleInstaller.php');
+    $modInstaller = new ModuleInstaller();
     //BEGIN SUGARCRM flav=ent ONLY
-    handlePortalConfig();
+    $modInstaller->handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
+    $modInstaller->handleBaseConfig();
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;
 }
-
-//BEGIN SUGARCRM flav=ent ONLY
-/**
- * handles portal config creation
- */
-function handlePortalConfig()
-{
-    if (!isset($sugar_config)) {
-        global $sugar_config;
-    }
-
-    $portalConfig = array(
-        'appId' => 'SupportPortal',
-        'appStatus' => 'offline',
-        'env' => 'dev',
-        'platform' => 'portal',
-        'additionalComponents' => array(
-            'header' => array(
-                'target' => '#header'
-            ),
-            'footer' => array(
-                'target' => '#footer'
-            ),
-            'alert' => array(
-                'target' => '#alert'
-            )
-        ),
-        'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
-        'siteUrl' => $sugar_config['site_url'],
-        'unsecureRoutes' => array('signup', 'error'),
-        'loadCss' => 'url',
-        'clientID' => 'support_portal',
-        'maxSearchQueryResult'=>'5'
-    );
-    $configString = json_encode($portalConfig);
-    $portalJSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
-    sugar_file_put_contents('portal2/config.js', $portalJSConfig);
-
-}
-//END SUGARCRM flav=ent ONLY
 
 /**
  * (re)write the .htaccess file to prevent browser access to the log file
@@ -934,16 +897,16 @@ RedirectMatch 403 {$ignoreCase}/+upload
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
-//BEGIN SUGARCRM flav=ent ONLY
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+//BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
-</IfModule>
 //END SUGARCRM flav=ent ONLY
+</IfModule>
 # END SUGARCRM RESTRICTIONS
 EOQ;
 

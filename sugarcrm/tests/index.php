@@ -4,7 +4,7 @@
     <script type="text/javascript" src='../sidecar/lib/backbone/underscore.js'></script>
     <script type="text/javascript" src='../sidecar/lib/jquery/jquery.min.js'></script>
     <script type="text/javascript" src='../sidecar/lib/backbone/backbone.js'></script>
-    <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.0.beta.6.js"></script>
+    <script type="text/javascript" src="../sidecar/lib/handlebars/handlebars-1.0.rc.1.js"></script>
     <script type="text/javascript" src='../sidecar/lib/sugarapi/sugarapi.js'></script>
     <script type="text/javascript" src='../sidecar/minified/sidecar.min.js'></script>
 <?php

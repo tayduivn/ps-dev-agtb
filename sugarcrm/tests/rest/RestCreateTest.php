@@ -34,7 +34,9 @@ class RestCreateTest extends RestTestBase {
     {
         if ( isset($this->account_id) ) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account_id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account_id}'");
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account_id}'");
+            }
         }
         //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");

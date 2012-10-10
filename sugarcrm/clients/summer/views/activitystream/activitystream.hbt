@@ -5,7 +5,7 @@
         <a href="" rel="tooltip" title="Calendar" class="btn toggleView" data-view="calendar" data-tour="tour-stream-calendar"><i class="icon-calendar"></i></a>
         <a href="" rel="tooltip" title="List Only" class="btn toggleView" data-view="none" data-tour="tour-stream-list"><i class='icon-align-left'></i></a>
     </div>
-    <ul class="pull-right nav nav-pills activitystream-pills" data-tour="tour-{{module}}-stream-filter">
+    <ul class="pull-right nav nav-pills" data-tour="tour-{{module}}-stream-filter">
           <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
           <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
           {{#if opts.params.id}}
@@ -120,7 +120,7 @@
                 {{/if}}
                 <li>
                   <a href="#Users/{{this.created_by}}" class="pull-left avatar">
-                    <img src="{{created_by_picture_url}}" class="avatar" alt="{{this.created_by_name}}">
+                    <img src="{{this.created_by_picture_url}}" class="avatar" alt="{{this.created_by_name}}">
                   </a>
                   <p>
                     <a href="#Users/{{this.created_by}}">{{this.created_by_name}}</a> commented "{{{this.value}}}"<br>

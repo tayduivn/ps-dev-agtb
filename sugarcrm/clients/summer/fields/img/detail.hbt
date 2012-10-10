@@ -15,6 +15,6 @@
         </div>
     </div>
     <a data-toggle="modal" href="#imagesearch">
-        <img src="{{profile}}" style='width: 48px; height: 48px;' alt=""/>
+        <img src="{{profile}}" style='width: 64px; height: 64px;' alt=""/>
     </a>
 </div>

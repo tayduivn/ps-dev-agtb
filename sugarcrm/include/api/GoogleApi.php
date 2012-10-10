@@ -79,44 +79,42 @@ class GoogleAPI extends SugarApi
     {
         $data = array();
 
-
         $res = $this->box->oauthGet("https://www.google.com/m8/feeds/contacts/default/full/?max-results={$maxDepth}&alt=json&orderby=lastmodified");
         $records = json_decode($res, true);
-        if (!empty($records['feed']['entry'])) {
 
-            foreach ($records['feed']['entry'] as $entry) {
-                $email = '';
-                $fname = $entry['gd$name']['gd$givenName']['$t'];
-                $lname = $entry['gd$name']['gd$familyName']['$t'];
-                if(!empty($entry['gd$email'])) {
-                    foreach ($entry['gd$email'] as $e) {
+        foreach ($records['feed']['entry'] as $entry) {
+            $email = '';
+            $inv = array();
 
-                        if (!empty($e['primary'])) {
-                            $email = $e['address'];
-                            break;
-                        }
+            $inv['first_name'] = (isset($entry['gd$name']) && isset($entry['gd$name']['gd$givenName'])) ? (string)$entry['gd$name']['gd$givenName']['$t'] : '';
+            $inv['last_name'] = (isset($entry['gd$name']) && isset($entry['gd$name']['gd$familyName'])) ? (string)$entry['gd$name']['gd$familyName']['$t'] : '';
+
+            if(!empty($entry['gd$email'])) {
+                foreach ($entry['gd$email'] as $e) {
+                    if (!empty($e['primary'])) {
+                        $email = $e['address'];
+                        break;
                     }
                 }
-                if (!empty($excludeDomain) && substr_count($email, $excludeDomain) == 1) continue;
-
-                // TODO: Optimize this, somehow.
-                $res = $GLOBALS['db']->query("SELECT COUNT(id) as x FROM email_addresses WHERE email_address = '" . $email . "'");
-                $row = $GLOBALS['db']->fetchByAssoc($res);
-                if ((int)$row['x'] > 0 || empty($email)) {
-                    continue;
-                }
-                $inv = array("email" => (string)$email, 'first_name' => '', 'last_name' => '');
-                if (!empty($fname)) {
-                    $inv['first_name'] = (string)$fname;
-                }
-                if (!empty($lname)) {
-                    $inv['last_name'] = (string)$lname;
-                }
-                $data[] = $inv;
             }
+
+            if (!empty($excludeDomain) && substr_count($email, $excludeDomain) == 1) continue;
+
+            // TODO: Optimize this, somehow.
+            $res = $GLOBALS['db']->query("SELECT COUNT(id) as x FROM email_addresses WHERE email_address = '" . $email . "'");
+            $row = $GLOBALS['db']->fetchByAssoc($res);
+
+            if ((int)$row['x'] > 0 || empty($email)) {
+                continue;
+            }
+
+            $inv["email"] = (string)$email;
+            $data[] = $inv;
         }
+
         shuffle($data);
         $data = array_slice($data, 0, $limit);
+
         return $data;
     }
 

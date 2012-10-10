@@ -54,10 +54,42 @@ function tearDown()
     SugarTestAccountUtilities::removeAllCreatedAccounts();
     SugarTestProductUtilities::removeAllCreatedProducts();
     $GLOBALS['db']->query("UPDATE opportunities SET deleted = 0");
-    $ids = "('" . implode("','", $this->createdOpportunities) . "')";
-    $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN $ids");
-    $GLOBALS['db']->query("DELETE FROM products WHERE opportunity_id IN $ids");
+    if ( $this->createdOpportunities )
+    {
+        $ids = "('" . implode("','", $this->createdOpportunities) . "')";
+        $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN $ids");
+        $GLOBALS['db']->query("DELETE FROM products WHERE opportunity_id IN $ids");
+    }
 }
+
+    /**
+     * @group opportunities
+     */
+    public function testCreatePastDate()
+    {
+        $now = new DateTime();
+        for ($m = 0; $m < 24; $m++ )
+        {
+            $date = OpportunitiesSeedData::createPastDate($m);
+            $objDate = new DateTime($date);
+            $this->assertLessThan($now, $objDate);
+        }
+    }
+
+    /**
+     * @group opportunities
+     */
+    public function testCreateDate()
+    {
+        $now = new DateTime();
+        $now->setTime(0, 0, 0);
+        for ($m = 0; $m < 24; $m++ )
+        {
+            $date = OpportunitiesSeedData::createDate($m);
+            $objDate = new DateTime($date);
+            $this->assertGreaterThanOrEqual($now, $objDate);
+        }
+    }
 
 /**
  * @outputBuffering disabled
@@ -89,7 +121,7 @@ function testPopulateSeedData()
     if(count($products) < $total)
     {
        $count_products = count($products);
-       while($count_accounts++ < $total) {
+       while($count_products++ < $total) {
              $products[] = SugarTestProductUtilities::createProduct();
        }
     }

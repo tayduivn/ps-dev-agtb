@@ -30,12 +30,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Accounts']['summer']['view']['record'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '1',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-        ),
-    ),
     'buttons' =>
     array(
         array(
@@ -58,7 +52,7 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
-                array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
+                array('name' => 'name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
             )
         ),
         array(
@@ -87,11 +81,10 @@ $viewdefs['Accounts']['summer']['view']['record'] = array(
         array(
             'name' => 'panel_hidden',
             'hide' => true,
+            'labelsOnTop' => true,
+            'placeholders' => true,
             'fields' => array(
-                //'linkedin',
-                //'facebook',
                 'twitter',
-                //'googleplus'
             )
         )
     ),

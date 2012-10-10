@@ -1,4 +1,8 @@
 ({
+    events: {
+        "click .closeSubdetail": "hidePreview"
+    },
+
     initialize: function(opts) {
         // TODO: Fix this, right now app.template.getLayout does not retrieve the proper template because
         // it builds the wrong name.
