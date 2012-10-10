@@ -192,13 +192,23 @@
             var best = {};
             var likely = {};
             // get the last committed value
-            var previousCommit = (this._collection.models != undefined) ? _.first(this._collection.models) : [];
-            if(_.isEmpty(previousCommit) || this.runningFetch == true) {
-                self.savedTotal = totals;
-                return;
+            var previousCommit = null;
+            if(!_.isEmpty(this._collection.models))
+            {
+               previousCommit = _.first(this._collection.models);
+            } else {
+               var hasTotals = !_.isNull(self.totals);
+               previousCommit = new Backbone.Model({
+                    best_case : (hasTotals ? self.totals.best_case : 0),
+                    likely_case : (hasTotals ? self.totals.amount : 0),
+                    worst_case : (hasTotals ? self.totals.worst_case : 0)
+               });
             }
 
-            if(!_.isEmpty(self.savedTotal)) self.savedTotal = null;
+            if(this.runningFetch == true) {
+               self.savedTotal = totals;
+               return;
+            }
 
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
                 // management view

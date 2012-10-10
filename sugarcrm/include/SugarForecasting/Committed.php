@@ -69,30 +69,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $timedate = TimeDate::getInstance();
         while (($row = $db->fetchByAssoc($results))) {
             $row['date_entered'] = $timedate->asIso($timedate->fromDb($row['date_entered']), $current_user);
+            $row['date_modified'] = $timedate->asIso($timedate->fromDb($row['date_modified']), $current_user);
             $forecasts[] = $row;
-        }
-
-        if (empty($forecasts)) {
-            //bug #54756:
-            //Commit button does not get activated when changing best/likely numbers using inline editing for sales rep
-            //without default data previous_commit is undefined thus updateTotals() doesn't work
-            $forecasts[] = array(
-                'timeperiod_name' => '',
-                'start_date' => '',
-                'end_date' => '',
-                'id' => '',
-                'timeperiod_id' => $args['timeperiod_id'],
-                'forecast_type' => $args['forecast_type'],
-                'opp_count' => 0,
-                'opp_weigh_value' => 0,
-                'best_case' => 0,
-                'likely_case' => 0,
-                'worst_case' => 0,
-                'user_id' => $args['user_id'],
-                'date_entered' => '',
-                'date_modified' => '',
-                'deleted' => 0,
-            );
         }
 
         $this->dataArray = $forecasts;
@@ -126,6 +104,10 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
             $forecast->opp_weigh_value = $args['amount'] / $args['opp_count'];
         }
         $forecast->save();
+
+        global $timedate;
+        $forecast->date_entered = $timedate->asIso($timedate->fromDb($forecast->date_entered), $current_user);
+        $forecast->date_modified = $timedate->asIso($timedate->fromDb($forecast->date_modified), $current_user);
 
         return $forecast->toArray(true);
     }

@@ -21,19 +21,37 @@
 
 describe("The forecasts committed view", function () {
 
-    var app, view, testMethodStub, context, viewController, stubs = [], formatAmountLocaleStub;
+    var app, view, testMethodStub, context, totals, formatAmountLocaleStub, createHistoryLogStub;
+    var stubs = [];
 
-    beforeEach(function () {
+    beforeEach(function() {
         app = SugarTest.app;
-        viewController = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function (d) {
-            return d;
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function (d) {
+            return eval(d);
         });
+
         SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function (d) {
             return eval(d);
         });
+
         SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function (d) {
             return eval(d);
         });
+
+        formatAmountLocaleStub = sinon.stub(app.currency, "formatAmountLocale", function(value) {
+            return value;
+        });
+
+        stubs.push(formatAmountLocaleStub);
+
+        createHistoryLogStub = sinon.stub(app.forecasts.utils, "createHistoryLog", function(model, previousModel) {
+            return "createHistoryLog";
+        });
+
+        stubs.push(createHistoryLogStub);
+
+        view.render = function() {};
+
         context = app.context.getContext({
             url:"someurl",
             module:"Forecasts"
@@ -46,35 +64,37 @@ describe("The forecasts committed view", function () {
             selectedUser:{}
         };
 
-        var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case:100, likely_case:90, base_rate:1 });
-        var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case:110, likely_case:100, base_rate:1 });
-        var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case:120, likely_case:110, base_rate:1 });
-        var collection = new Backbone.Collection([model1, model2, model3]);
-        context.forecasts = new Backbone.Model();
-        context.forecasts.committed = collection;
+        view.selectedUser = {
+            isManager: false,
+            showOpps: true
+        };
 
-        view = SugarTest.createComponent("View", {
-            context:context,
-            name:"forecastsCommitted",
-            controller:viewController
-        });
-
-        formatAmountLocaleStub = sinon.stub(app.currency, "formatAmountLocale", function (value) {
-            return value;
-        });
     });
 
     afterEach(function () {
         _.each(stubs, function (stub) {
             stub.restore();
         });
-        formatAmountLocaleStub.restore();
+
+        delete totals;
+        delete view.selectedUser;
+        delete view.totals;
+        delete view._collection.models;
     });
 
+
     describe("test arrow directions for sales rep", function () {
+
+        beforeEach(function() {
+            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
+            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
+            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
+            view._collection = new Backbone.Collection([model1, model2, model3]);
+        });
+
         it("should show up for both", function () {
 
-            var totals = {
+            totals = {
                 'amount': 500,
                 'best_case':500,
                 'best_adjusted':550,
@@ -92,7 +112,7 @@ describe("The forecasts committed view", function () {
 
         it("should show down for both", function () {
 
-            var totals = {
+            totals = {
                 'best_case':1,
                 'best_adjusted':1,
                 'likely_case':1,
@@ -109,20 +129,17 @@ describe("The forecasts committed view", function () {
     });
 
     describe("test arrow directions for manager", function () {
-        beforeEach(function(){
-            view.selectedUser = {
-                isManager: true,
-                showOpps: false
-            }
-        });
 
-        afterEach(function(){
-            view.selectedUser = {}
+        beforeEach(function() {
+            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
+            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
+            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
+            view._collection = new Backbone.Collection([model1, model2, model3]);
         });
 
         it("should show up for both", function () {
 
-            var totals = {
+            totals = {
                 'amount': 500,
                 'best_case':500,
                 'best_adjusted':550,
@@ -140,7 +157,7 @@ describe("The forecasts committed view", function () {
 
         it("should show down for both", function () {
 
-            var totals = {
+            totals = {
                 'best_case':1,
                 'best_adjusted':1,
                 'likely_case':1,
@@ -155,5 +172,118 @@ describe("The forecasts committed view", function () {
             expect(view.likelyCaseCls).toContain('icon-arrow-down');
         });
     });
+
+    describe("updateTotals function without previous commit entries", function() {
+
+        beforeEach(function() {
+            totals = {
+                amount: 1000,
+                best_case: 1100,
+                worst_case: 900,
+                included_opp_count: 1,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 1000,
+                overall_best: 1100,
+                overall_worst: 900,
+                timeperiod_id: "abc",
+                total_opp_count: 1,
+                won_amount: 0,
+                won_count: 0
+            };
+
+            //Simulate the view having no models in the collection
+            view._collection.models = [];
+
+            //Simulate empty totals (no previous commit history)
+            view.totals = {
+                amount: 0,
+                best_case: 0,
+                worst_case: 0,
+                included_opp_count: 0,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 0,
+                overall_best: 0,
+                overall_worst: 0,
+                timeperiod_id: null,
+                total_opp_count: 0,
+                won_amount: 0,
+                won_count: 0
+            };
+        });
+
+        describe("test updateTotals function without a previousCommit entry", function() {
+            it("should correctly set the member variables used to render commit log section", function() {
+                view.updateTotals(totals);
+                expect(view.likelyCase).toEqual(1000);
+                expect(view.likelyCaseCls).toContain("icon-arrow-up font-green");
+                expect(view.bestCase).toEqual(1100);
+                expect(view.bestCaseCls).toContain("icon-arrow-up font-green");
+                expect(view.totals.amount).toEqual(1000);
+                expect(view.totals.best_case).toEqual(1100);
+                expect(view.totals.worst_case).toEqual(900);
+            });
+        });
+    });
+
+
+    describe("updateTotals function with previous commit entries", function() {
+
+         beforeEach(function() {
+             totals = {
+                 amount: 1000,
+                 best_case: 1100,
+                 worst_case: 900,
+                 included_opp_count: 1,
+                 lost_amount: 0,
+                 lost_count: 0,
+                 overall_amount: 1000,
+                 overall_best: 1100,
+                 overall_worst: 900,
+                 timeperiod_id: "abc",
+                 total_opp_count: 1,
+                 won_amount: 0,
+                 won_count: 0
+             };
+
+             //Simulate the view having one model in the collection
+             view._collection.models = [new Backbone.Model({
+                 likely_case : 900,
+                 best_case: 1000,
+                 worst_case: 800
+             })];
+
+             //Simulate previous commit history
+             view.totals = {
+                 amount: 900,
+                 best_case: 1000,
+                 worst_case: 800,
+                 included_opp_count: 1,
+                 lost_amount: 0,
+                 lost_count: 0,
+                 overall_amount: 900,
+                 overall_best: 1000,
+                 overall_worst: 800,
+                 timeperiod_id: "def",
+                 total_opp_count: 1,
+                 won_amount: 0,
+                 won_count: 0
+             };
+         });
+
+         describe("test updateTotals function with a previousCommit entry", function() {
+             it("should correctly set the member variables used to render commit log section", function() {
+                 view.updateTotals(totals);
+                 expect(view.likelyCase).toEqual(1000);
+                 expect(view.likelyCaseCls).toContain("icon-arrow-up font-green");
+                 expect(view.bestCase).toEqual(1100);
+                 expect(view.bestCaseCls).toContain("icon-arrow-up font-green");
+                 expect(view.totals.amount).toEqual(1000);
+                 expect(view.totals.best_case).toEqual(1100);
+                 expect(view.totals.worst_case).toEqual(900);
+             });
+         });
+     });
 
 });
