@@ -445,7 +445,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             $mailer->send();
         } catch (MailerException $me) {
             $message = $me->getMessage();
-            $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
     }
 }
@@ -507,7 +507,7 @@ function create_email_body(&$focus, &$mail_object, &$admin, $alert_msg, $alert_s
         return false;
     }
 
-    return false;
+    return false; // false=no errors
 }
 
 function get_related_array(& $focus, & $user_meta_array, & $address_array){
@@ -650,7 +650,7 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
 
     $mail_object->setSubject(parse_alert_template($focus, $template->subject, $notify_user_id));
 
-    return false; // false=success
+    return false; // false=no errors
 }
 
 function parse_alert_template($focus, $target_body, $notify_user_id=""){
@@ -965,21 +965,44 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
 
     //TO: Addresses
     foreach ($address_array['to'] as $userInfo) {
-        $mailer = new SugarPHPMailer;
-        $mailer->AddAddress($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
-        $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
+        $method = "unknown";
 
-        if ($possible_invitee == true) {
-            setup_mail_object($mailer, $admin);
-            $userInfo['notify_user']->new_assigned_user_name = $userInfo['notify_user']->first_name . ' ' . $userInfo['notify_user']->last_name;
+        try {
+            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $method = $mailer->getMailTransmissionProtocol();
 
-            if ($type == "Default") {
-                $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
-            } else {
-                $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array, $userInfo['notify_user']->id);
+            $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
+
+            $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
+
+            if ($possible_invitee == true) {
+                $userInfo['notify_user']->new_assigned_user_name =
+                    "{$userInfo['notify_user']->first_name} {$userInfo['notify_user']->last_name}";
+
+                $error = false; // true=encountered an error; false=no errors
+
+                if ($type == "Default") {
+                    $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
+                } else {
+                    $error = create_email_body(
+                        $focus,
+                        $mailer,
+                        $admin,
+                        $alert_msg,
+                        $alert_shell_array,
+                        $userInfo['notify_user']->id
+                    );
+                }
+
+                if ($error) {
+                    throw new MailerException("Failed to add message content", MailerException::InvalidMessageBody);
+                }
+
+                $mailer->send();
             }
-
-            send_mail_object($mailer, $error);
+        } catch (MailerException $me) {
+            $message = $me->getMessage();
+            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
         }
     }
 
@@ -1084,7 +1107,7 @@ function get_system_default_body(&$mail_object, $focus, & $notify_user){
 		$mail_object->Subject =  $mail_text_array['subject'];
 
 
-		return false;
+		return false; // false=no errors
 
 //end function get_system_default_body
 }
