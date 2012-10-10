@@ -347,7 +347,7 @@ class ACLAction  extends SugarBean{
 
     }
     /**
-    * function getUserAccessLevel($user_id, $category, $action,$type='module')
+    * static function getUserAccessLevel($user_id, $category, $action,$type='module')
     * returns the access level for a given category and action
     *
     * @param GUID  $user_id
@@ -356,7 +356,7 @@ class ACLAction  extends SugarBean{
     * @param STRING $type
     * @return INT (ACCESS LEVEL)
     */
-    function getUserAccessLevel($user_id, $category, $action,$type='module'){
+    static public function getUserAccessLevel($user_id, $category, $action,$type='module'){
         if(empty($_SESSION['ACL'][$user_id][$category][$type][$action])){
             ACLAction::getUserActions($user_id, false);
 
