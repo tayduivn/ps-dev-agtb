@@ -297,20 +297,8 @@ eoq;
         // 6.6 metadata enhancements for portal and wireless, should only be 
         // handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
         // handled AFTER inclusion of the upgrade package files
-        // We will need the manifest for this, so if it isn't set, get it
-        $upgrade_version = null;
-        if (isset($manifest['version'])) {
-            $upgrade_version = $manifest['version'];
-        } else {
-            // Get the manifest
-            require $unzip_dir . '/manifest.php';
-            if (isset($manifest['version'])) {
-                $upgrade_version = $manifest['version'];
-            }
-        }
-    
         if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
-            if (version_compare($sugar_version, '6.6.0') == -1 && ($upgrade_version === null || version_compare($upgrade_version, '6.6.0', '>='))) {
+            if (version_compare($sugar_version, '6.6.0') == -1) {
                 if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
                     set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
                     logThis('Preparing to upgrade mobile and portal metadata to 6.6.0 compatibility...');
