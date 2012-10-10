@@ -1,5 +1,5 @@
 <div class="modal-body">
-    <p>{{str label "Forecasts"}}</p>
+    <h2>{{str label "Forecasts"}}</h2>
     <p></p>
     {{#with forecast_categories_field}}
         {{#eachOptions options}}

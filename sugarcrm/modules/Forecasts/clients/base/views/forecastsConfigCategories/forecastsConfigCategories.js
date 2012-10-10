@@ -1,5 +1,10 @@
 ({
     /**
+     * used to hold the label string from metadata to get rendered in the template.
+     */
+    label: '',
+
+    /**
      * used to hold the metadata for the forecasts_categories field, used to manipulate and render out as the radio buttons
      * that correspond to the fieldset for each bucket type.
      */
@@ -24,6 +29,8 @@
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+
+        this.label = _.first(this.meta.panels).label;
 
         // sets this.<array_item>_field to the corresponding field metadata, which gets used by the template to render these fields later.
         _.each(['forecast_categories', 'buckets_dom', 'category_ranges'], function(item){
