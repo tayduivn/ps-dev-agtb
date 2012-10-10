@@ -1206,24 +1206,24 @@ function insert_default_settings(){
 
     //BEGIN SUGARCRM flav=pro ONLY
     // Forecasts settings
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'is_setup', '0' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'timeperiod_type', 'chronological' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'timeperiod_interval', 'quarterly' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'timeperiod_start_month', 'July' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'timeperiod_start_day', '1' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'timeperiods_shown_forward', 4 )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'timeperiods_shown_backward', 4 )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'forecast_categories', 'show_binary' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'buckets_dom', 'commit_stage_binary_dom' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'category_ranges', '{\"include\":{\"min\":70,\"max\":100},\"exclude\":{\"min\":0,\"max\":69}}' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'sales_stage_won', '[\"Closed Won\"]' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'sales_stage_lost', '[\"Closed Lost\"]' )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'show_worksheet_likely', 1 )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'show_worksheet_best', 1 )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'show_worksheet_worst', 0 )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'show_projected_likely', 1 )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'show_projected_best', 1 )" );
-    $db->query( "INSERT INTO config (category, name, value) VALUES ( 'Forecasts', 'show_projected_worst', 0 )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'is_setup', '0', 'base', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'timeperiod_type', 'chronological', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'timeperiod_interval', 'quarterly', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'timeperiod_start_month', 'July', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'timeperiod_start_day', '1', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'timeperiods_shown_forward', 4, 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'timeperiods_shown_backward', 4, 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'forecast_categories', 'show_binary', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'buckets_dom', 'commit_stage_binary_dom', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'category_ranges', '{\"include\":{\"min\":70,\"max\":100},\"exclude\":{\"min\":0,\"max\":69}}', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'sales_stage_won', '[\"Closed Won\"]', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'sales_stage_lost', '[\"Closed Lost\"]', 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'show_worksheet_likely', 1, 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'show_worksheet_best', 1, 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'show_worksheet_worst', 0, 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'show_projected_likely', 1, 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'show_projected_best', 1, 'base' )" );
+    $db->query( "INSERT INTO config (category, name, value, platform) VALUES ( 'Forecasts', 'show_projected_worst', 0, 'base' )" );
     //END SUGARCRM flav=pro ONLY
 
     //insert default tracker settings
