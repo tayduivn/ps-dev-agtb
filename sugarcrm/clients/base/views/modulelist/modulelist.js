@@ -9,7 +9,9 @@
 
         this.app.view.View.prototype.initialize.call(this, options);
 
-        this.layout.on("view:resize", this.resize, this);
+        if (this.layout) {
+            this.layout.on("view:resize", this.resize, this);
+        }
     },
 
     /**
