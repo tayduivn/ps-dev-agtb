@@ -33,6 +33,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 include_once('include/workflow/workflow_utils.php');
 include_once('include/workflow/field_utils.php');
 include_once('include/utils/expression_utils.php');
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 function process_workflow_alerts(& $target_module, $alert_user_array, $alert_shell_array, $check_for_bridge=false){
 
@@ -950,10 +951,6 @@ function populate_usr_con_arrays($user_info_array, & $users_arr, & $contacts_arr
 
 
 function get_invite_email($focus, $admin, $address_array, $invite_person, $alert_msg, $alert_shell_array) {
-    require_once("include/SugarPHPMailer.php");
-    global $locale;
-    $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-
     $type = "Custom";
 
     if ($alert_shell_array['source_type'] == "System Default") {
@@ -1160,7 +1157,11 @@ function get_system_default_body(&$mail_object, $focus, & $notify_user){
 }
 
 
-
+/**
+ * @deprecated 7.0
+ * @param $mail_object
+ * @param $error
+ */
 function send_mail_object(&$mail_object, $error){
 
 			if($error == false){
