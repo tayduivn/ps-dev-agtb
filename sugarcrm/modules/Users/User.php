@@ -2125,17 +2125,14 @@ EOQ;
         //retrieve IT Admin Email
         //_ppd( $emailTemp->body_html);
 
-        //retrieve email defaults
-        $emailObj = new Email();
-        $defaults = $emailObj->getSystemDefaultEmail();
+        try {
+            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        } catch (MailerException $me) {
+        }
 
         require_once('include/SugarPHPMailer.php');
         $mail = new SugarPHPMailer();
-        $mail->setMailerForSystem();
-        $mail->From     = $defaults['email'];
-        $mail->FromName = $defaults['name'];
-        $mail->ClearAllRecipients();
-        $mail->ClearReplyTos();
+
         $mail->Subject = from_html($emailTemp->subject);
 
         if ($emailTemp->text_only != 1) {
@@ -2176,6 +2173,7 @@ EOQ;
         }
 
         if ($result['status'] == true) {
+            $emailObj = new Email();
             $emailObj->team_id          = 1;
             $emailObj->to_addrs         = '';
             $emailObj->type             = 'archived';
