@@ -105,7 +105,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
         $forecast->save();
 
-        global $timedate;
+        $timedate = TimeDate::getInstance();
         $forecast->date_entered = $timedate->asIso($timedate->fromDb($forecast->date_entered), $current_user);
         $forecast->date_modified = $timedate->asIso($timedate->fromDb($forecast->date_modified), $current_user);
 

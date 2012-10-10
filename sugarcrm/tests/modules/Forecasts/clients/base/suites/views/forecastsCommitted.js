@@ -286,4 +286,62 @@ describe("The forecasts committed view", function () {
          });
      });
 
+
+    describe("non-empty savedTotal will be set to null", function() {
+        beforeEach(function() {
+            totals = {
+                amount: 1000,
+                best_case: 1100,
+                worst_case: 900,
+                included_opp_count: 1,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 1000,
+                overall_best: 1100,
+                overall_worst: 900,
+                timeperiod_id: "abc",
+                total_opp_count: 1,
+                won_amount: 0,
+                won_count: 0
+            };
+
+            //Simulate the view having one model in the collection
+            view._collection.models = [new Backbone.Model({
+                likely_case : 900,
+                best_case: 1000,
+                worst_case: 800
+            })];
+
+            //Simulate previous commit history
+            view.totals = {
+                amount: 900,
+                best_case: 1000,
+                worst_case: 800,
+                included_opp_count: 1,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 900,
+                overall_best: 1000,
+                overall_worst: 800,
+                timeperiod_id: "def",
+                total_opp_count: 1,
+                won_amount: 0,
+                won_count: 0
+            };
+
+            view.savedTotal = view.totals;
+        });
+
+        afterEach(function() {
+            delete view.savedTotal;
+        });
+
+        describe("test updateTotals function with set savedTotal", function() {
+            it("should set savedTotals to null", function() {
+                view.updateTotals(totals);
+                expect(view.savedTotal).toBeNull();
+            });
+        });
+    });
+
 });

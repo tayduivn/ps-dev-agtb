@@ -208,6 +208,10 @@
             if(this.runningFetch == true) {
                self.savedTotal = totals;
                return;
+            } else if (!_.isEmpty(self.savedTotal)) {
+                //This line is needed since we need to clean up savedTotals if it has something and you are processing a set of totals.
+                //The reason for this is that the method gets called again once the reset is done on the collection if one is ran.
+                self.savedTotal = null;
             }
 
             if(self.selectedUser.isManager == true && self.selectedUser.showOpps === false) {
