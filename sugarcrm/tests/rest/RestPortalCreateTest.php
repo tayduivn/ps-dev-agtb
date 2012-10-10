@@ -64,7 +64,14 @@ class RestPortalCreateTest extends RestTestPortalBase
     {
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
-        $this->_restLogin($this->contact->portal_name,'unittest');
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->contact->portal_name,
+            'password' => 'unittest',
+            'client_id' => 'support_portal',
+            'client_secret' => '',
+            'platform' => 'portal',
+        );
         $GLOBALS['db']->commit();
 
         // create case
