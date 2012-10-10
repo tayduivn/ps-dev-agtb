@@ -91,6 +91,23 @@ class Quarter544TimePeriod extends TimePeriod implements TimePeriodInterface {
     }
 
     /**
+     * creates a new Quarter544TimePeriod to keep past records
+     *
+     * @return Quarter544TimePeriod
+     */
+    public function createPreviousTimePeriod() {
+        $timedate = TimeDate::getInstance();
+        $previousStartDate = $timedate->fromDbDate($this->start_date);
+        $previousStartDate = $previousStartDate->modify('-13 week');
+        $previousPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $previousPeriod->is_fiscal = $this->is_fiscal;
+        $previousPeriod->setStartDate($timedate->asDbDate($previousStartDate));
+        $previousPeriod->save();
+
+        return $previousPeriod;
+    }
+
+    /**
      * loads related time periods and returns whether there are leaves populated.
      *
      * @return bool

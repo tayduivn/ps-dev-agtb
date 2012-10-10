@@ -103,6 +103,29 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
     }
 
     /**
+     * creates a new MonthTimePeriod to keep past records
+     *
+     * @param int $week_length denotes how many weeks should be included in month for a fiscal month
+     *
+     * @return MonthTimePeriod
+     */
+    public function createPreviousTimePeriod($week_length=4) {
+        $timedate = TimeDate::getInstance();
+        $previousStartDate = $timedate->fromDbDate($this->start_date);
+        if($this->is_fiscal) {
+            $previousStartDate = $previousStartDate->modify('-'.$week_count.' week');
+        } else {
+            $previousStartDate = $previousStartDate->modify('-1 month');
+        }
+        $previousPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $previousPeriod->is_fiscal = $this->is_fiscal;
+        $previousPeriod->setStartDate($timedate->asDbDate($previousStartDate));
+        $previousPeriod->save();
+
+        return $previousPeriod;
+    }
+
+    /**
      * loads related time periods and returns whether there are leaves populated.
      *
      * @return bool
