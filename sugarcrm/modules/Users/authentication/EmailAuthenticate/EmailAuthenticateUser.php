@@ -94,49 +94,40 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
      * @param unknown_type $user_id
      * @param unknown_type $password
      */
-    function sendEmailPassword($user_id, $password){
+    function sendEmailPassword($user_id, $password) {
+        global $sugar_config,
+               $locale;
 
-	    $result = $GLOBALS['db']->query("SELECT email1, email2, first_name, last_name FROM users WHERE id='$user_id'");
-	    $row = $GLOBALS['db']->fetchByAssoc($result);
+        $result = $GLOBALS['db']->query("SELECT email1, email2, first_name, last_name FROM users WHERE id='$user_id'");
+        $row    = $GLOBALS['db']->fetchByAssoc($result);
 
-	    global $sugar_config;
-	    if(empty($row['email1']) && empty($row['email2'])){
+        if (empty($row['email1']) && empty($row['email2'])) {
+            $_SESSION['login_error'] = 'Please contact an administrator to setup up your email address associated to this account';
+            return;
+        }
 
-	        $_SESSION['login_error'] = 'Please contact an administrator to setup up your email address associated to this account';
-	       return;
-	    }
+        require_once("include/SugarPHPMailer.php");
+        $OBCharset            = $locale->getPrecedentPreference('default_email_charset');
+        $notify_mail          = new SugarPHPMailer();
+        $notify_mail->CharSet = $sugar_config['default_charset'];
+        $notify_mail->AddAddress(((!empty($row['email1'])) ? $row['email1'] : $row['email2']), $locale->translateCharsetMIME(trim($row['first_name'] . ' ' . $row['last_name']), 'UTF-8', $OBCharset));
 
-	    require_once("include/SugarPHPMailer.php");
-		global $locale;
-        $OBCharset = $locale->getPrecedentPreference('default_email_charset');
-        $notify_mail = new SugarPHPMailer();
-		$notify_mail->CharSet = $sugar_config['default_charset'];
-		$notify_mail->AddAddress(((!empty($row['email1']))?$row['email1']: $row['email2']),$locale->translateCharsetMIME(trim($row['first_name'] . ' ' . $row['last_name']), 'UTF-8', $OBCharset));
+        if (empty($_SESSION['authenticated_user_language'])) {
+            $current_language = $sugar_config['default_language'];
+        } else {
+            $current_language = $_SESSION['authenticated_user_language'];
+        }
 
-		if (empty($_SESSION['authenticated_user_language'])) {
-			$current_language = $sugar_config['default_language'];
-		}
-		else {
-			$current_language = $_SESSION['authenticated_user_language'];
-		}
         $notify_mail->Subject = 'Sugar Token';
-        $notify_mail->Body = 'Your sugar session authentication token  is: ' . $password;
+        $notify_mail->Body    = 'Your sugar session authentication token  is: ' . $password;
         $notify_mail->setMailerForSystem();
-        $notify_mail->From = 'no-reply@sugarcrm.com';
+        $notify_mail->From     = 'no-reply@sugarcrm.com';
         $notify_mail->FromName = 'Sugar Authentication';
 
-        if(!$notify_mail->Send()) {
+        if (!$notify_mail->Send()) {
             $GLOBALS['log']->warn("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
-        }
-        else {
+        } else {
             $GLOBALS['log']->info("Notifications: e-mail successfully sent");
         }
-
-
-
-	}
-
-
+    }
 }
-
-?>
