@@ -1,8 +1,27 @@
 ({
+    /**
+     * used to hold the metadata for the forecasts_categories field, used to manipulate and render out as the radio buttons
+     * that correspond to the fieldset for each bucket type.
+     */
     forecast_categories_field: {},
+
+    /**
+     * Used to hold the buckets_dom field metadata, used to retrieve and set the proper bucket dropdowns based on the
+     * selection for the forecast_categories
+     */
     buckets_dom_field: {},
+
+    /**
+     * Used to hold the category_ranges field metadata, used for rendering the sliders that correspond to the range
+     * settings for each of the values contained in the selected buckets_dom dropdown definition.
+     */
     category_ranges_field: {},
 
+    /**
+     * Initializes the view, and then initializes up the parameters for the field metadata holder parameters that get
+     * used to render the fields in the view, since they are not rendered in a standard way.
+     * @param options
+     */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
@@ -21,13 +40,20 @@
     _renderHtml: function(ctx, options) {
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
-        // set up the event that happens when a bucket type radio is selected
-        // This should set the forecastCategory and buckets_dom field, as well as populate and display the range sliders appropriately.
+        this._addForecastCategorySelectionHandler();
+    },
+
+    /**
+     * Adds the selection event handler on the forecast category radio which sets on the model the value of the bucket selection, the
+     * correct dropdown list based on that selection, as well as opens up the element to show the range setting sliders
+     * @private
+     */
+    _addForecastCategorySelectionHandler: function (){
+
         this.$el.find(':radio[name="' + this.forecast_categories_field.name + '"]').change({
             view:this
         }, function(evt) {
             var view = evt.data.view;
-            var placeholder = view.$el.find('.'+this.value+'RangeElements');
 
             view.model.set(this.name, this.value);
             view.model.set(view.buckets_dom_field.name, view.buckets_dom_field.options[this.value]);
@@ -35,4 +61,5 @@
         });
 
     }
+
 })
