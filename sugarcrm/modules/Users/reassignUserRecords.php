@@ -331,8 +331,8 @@ else if(!isset($_GET['execute'])){
 			      "modified_user_id = '{$current_user->id}' ";
 		//BEGIN SUGARCRM flav=pro ONLY
         //make sure team_id and team_set_id columns are available
-        $tableColumns = $db->get_columns($object->table_name);
-		if(!empty($team_id) && isset($tableColumns['team_id']) && isset($tableColumns['team_set_id'])){
+		if(!empty($team_id) && isset($object->field_defs['team_id']))
+        {
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
 		//END SUGARCRM flav=pro ONLY
