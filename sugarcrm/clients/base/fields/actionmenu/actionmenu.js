@@ -126,9 +126,10 @@
     },
     getPlaceholder : function(){
         var ret = app.view.Field.prototype.getPlaceholder.call(this);
-        var self = this;
+        var self = this,
+            viewName = this.options.viewName || this.view.name;
 
-        if (!this.fields && this.options.viewName == 'list-header'){
+        if (!this.fields && viewName == 'list-header'){
             this.fields = [];
             var actionMenu = '<ul class="dropdown-menu">';
             _.each(this.def.buttons, function(fieldDef){
