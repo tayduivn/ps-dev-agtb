@@ -1111,18 +1111,17 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
 }
 
 function get_system_default_body(&$mail_object, $focus, &$notify_user) {
-    global $sugar_version, $sugar_config, $app_list_strings, $current_user;
+    global $sugar_version, $sugar_config, $current_user;
+
+    $currentLanguage = $_SESSION['authenticated_user_language'];
 
     if (empty($_SESSION['authenticated_user_language'])) {
-        $current_language = $sugar_config['default_language'];
-    } else {
-        $current_language = $_SESSION['authenticated_user_language'];
+        $currentLanguage = $sugar_config['default_language'];
     }
 
+    $xtpl = new XTemplate("include/language/{$currentLanguage}.notify_template.html");
 
-    $xtpl = new XTemplate("include/language/{$current_language}.notify_template.html");
-
-    $template_name = $focus->object_name;
+    $templateName = $focus->object_name;
 
     $focus->current_notify_user = $notify_user;
 
@@ -1130,22 +1129,21 @@ function get_system_default_body(&$mail_object, $focus, &$notify_user) {
         $xtpl = $focus->set_notification_body($xtpl, $focus);
     } else {
         $xtpl->assign("OBJECT", $focus->object_name);
-        $template_name = "Default";
+        $templateName = "Default";
     }
 
     $xtpl->assign("ASSIGNED_USER", $focus->new_assigned_user_name);
     $xtpl->assign("ASSIGNER", $current_user->user_name);
     $xtpl->assign("URL", "{$sugar_config['site_url']}/index.php?module={$focus->module_dir}&action=DetailView&record={$focus->id}");
     $xtpl->assign("SUGAR", "Sugar v{$sugar_version}");
-    $xtpl->parse($template_name);
-    $xtpl->parse($template_name . "_Subject");
+    $xtpl->parse($templateName);
+    $xtpl->parse("{$templateName}_Subject");
 
-    $mail_text_array['body']    = from_html(trim($xtpl->text($template_name)));
-    $mail_text_array['subject'] = from_html($xtpl->text($template_name . "_Subject"));
+    $messageParts['body']    = from_html(trim($xtpl->text($templateName)));
+    $messageParts['subject'] = from_html($xtpl->text("{$templateName}_Subject"));
 
-    $mail_object->Body    = $mail_text_array['body'];
-    $mail_object->Subject = $mail_text_array['subject'];
-
+    $mail_object->Body    = $messageParts['body'];
+    $mail_object->Subject = $messageParts['subject'];
 
     return false; // false=no errors
 }
