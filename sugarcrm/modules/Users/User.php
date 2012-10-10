@@ -2122,10 +2122,6 @@ EOQ;
         $emailTemplate->body_html = $htmlBody;
         $emailTemplate->body      = $body;
 
-        $itemail = $this->emailAddress->getPrimaryAddress($this);
-        //retrieve IT Admin Email
-        //_ppd( $emailTemp->body_html);
-
         try {
             $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
 
@@ -2137,14 +2133,11 @@ EOQ;
                 $mailer->setHtmlBody($emailTemplate->body_html);
             }
 
-            $hasRecipients = false;
+            $itemail = $this->emailAddress->getPrimaryAddress($this);
 
             if (!empty($itemail)) {
-                $mailer->addRecipientsTo($itemail);
-                $hasRecipients = true;
-            }
+                $mailer->addRecipientsTo(new EmailIdentity($itemail));
 
-            if ($hasRecipients) {
                 $mailer->send();
                 $result["status"] = true;
 
