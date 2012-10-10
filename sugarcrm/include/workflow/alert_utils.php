@@ -954,86 +954,86 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
     global $locale;
     $OBCharset = $locale->getPrecedentPreference('default_email_charset');
 
+    $type = "Custom";
+
     if ($alert_shell_array['source_type'] == "System Default") {
         $type = "Default";
-    } else {
-        $type = "Custom";
     }
 
-    $users_arr    = array();
-    $contacts_arr = array();
+    $users    = array();
+    $contacts = array();
 
     //TO: Addresses
-    foreach ($address_array['to'] as $key => $user_info_array) {
-        $mail_object = new SugarPHPMailer;
-        $mail_object->AddAddress($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
-        $possible_invitee = populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+    foreach ($address_array['to'] as $userInfo) {
+        $mailer = new SugarPHPMailer;
+        $mailer->AddAddress($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
+        $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
         if ($possible_invitee == true) {
-            setup_mail_object($mail_object, $admin);
-            $user_info_array['notify_user']->new_assigned_user_name = $user_info_array['notify_user']->first_name . ' ' . $user_info_array['notify_user']->last_name;
+            setup_mail_object($mailer, $admin);
+            $userInfo['notify_user']->new_assigned_user_name = $userInfo['notify_user']->first_name . ' ' . $userInfo['notify_user']->last_name;
 
             if ($type == "Default") {
-                $error = get_system_default_body($mail_object, $focus, $user_info_array['notify_user']);
+                $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
             } else {
-                $error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, $user_info_array['notify_user']->id);
+                $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array, $userInfo['notify_user']->id);
             }
 
-            send_mail_object($mail_object, $error);
+            send_mail_object($mailer, $error);
         }
     }
 
     //CC: Addresses
-    foreach ($address_array['cc'] as $key => $user_info_array) {
-        $mail_object = new SugarPHPMailer;
-        $mail_object->AddCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+    foreach ($address_array['cc'] as $userInfo) {
+        $mailer = new SugarPHPMailer;
+        $mailer->AddCC($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
 
-        $possible_invitee = populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+        $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
         if ($possible_invitee == true) {
-            setup_mail_object($mail_object, $admin);
-            $user_info_array['notify_user']->new_assigned_user_name = $user_info_array['notify_user']->first_name . ' ' . $user_info_array['notify_user']->last_name;
+            setup_mail_object($mailer, $admin);
+            $userInfo['notify_user']->new_assigned_user_name = $userInfo['notify_user']->first_name . ' ' . $userInfo['notify_user']->last_name;
             if ($type == "Default") {
-                $error = get_system_default_body($mail_object, $focus, $user_info_array['notify_user']);
+                $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
             } else {
-                $error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, $user_info_array['notify_user']->id);
+                $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array, $userInfo['notify_user']->id);
             }
 
-            send_mail_object($mail_object, $error);
+            send_mail_object($mailer, $error);
         }
     }
 
     //BCC: Addresses
-    foreach ($address_array['bcc'] as $key => $user_info_array) {
-        $mail_object = new SugarPHPMailer;
-        $mail_object->AddBCC($user_info_array['address'], $locale->translateCharsetMIME(trim($user_info_array['name']), 'UTF-8', $OBCharset));
+    foreach ($address_array['bcc'] as $userInfo) {
+        $mailer = new SugarPHPMailer;
+        $mailer->AddBCC($userInfo['address'], $locale->translateCharsetMIME(trim($userInfo['name']), 'UTF-8', $OBCharset));
 
-        $possible_invitee = populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+        $possible_invitee = populate_usr_con_arrays($userInfo, $users, $contacts);
 
         if ($possible_invitee == true) {
-            setup_mail_object($mail_object, $admin);
-            $user_info_array['notify_user']->new_assigned_user_name = $user_info_array['notify_user']->first_name . ' ' . $user_info_array['notify_user']->last_name;
+            setup_mail_object($mailer, $admin);
+            $userInfo['notify_user']->new_assigned_user_name = $userInfo['notify_user']->first_name . ' ' . $userInfo['notify_user']->last_name;
             if ($type == "Default") {
-                $error = get_system_default_body($mail_object, $focus, $user_info_array['notify_user']);
+                $error = get_system_default_body($mailer, $focus, $userInfo['notify_user']);
             } else {
-                $error = create_email_body($focus, $mail_object, $admin, $alert_msg, $alert_shell_array, $user_info_array['notify_user']->id);
+                $error = create_email_body($focus, $mailer, $admin, $alert_msg, $alert_shell_array, $userInfo['notify_user']->id);
             }
 
-            send_mail_object($mail_object, $error);
+            send_mail_object($mailer, $error);
         }
     }
 
     if ($invite_person == true) {
         //Handle inviting users/contacts to meetings/calls
         if (!empty($address_array['invite_only'])) {
-            foreach ($address_array['invite_only'] as $key => $user_info_array) {
-                populate_usr_con_arrays($user_info_array, $users_arr, $contacts_arr);
+            foreach ($address_array['invite_only'] as $userInfo) {
+                populate_usr_con_arrays($userInfo, $users, $contacts);
             }
         }
 
         //use the user_arr & contact_arr to add these people to the meeting
-        $focus->users_arr    = $users_arr;
-        $focus->contacts_arr = $contacts_arr;
+        $focus->users_arr    = $users;
+        $focus->contacts_arr = $contacts;
 
         invite_people($focus);
     }
