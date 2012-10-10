@@ -123,6 +123,7 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRebuildForecastingTimePeriods() {
 
+
     }
 
 }

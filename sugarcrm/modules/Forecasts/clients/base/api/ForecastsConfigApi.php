@@ -31,8 +31,45 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function configSave($api, $args) {
+        $admin = BeanFactory::getBean('Administration');
+
+        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
+
+        $priorForecastsSettings = $admin->getConfigForModule('Forecasts', $platform);
         parent::configSave($api, $args);
+        $currenForecaststSettings = $admin->getConfigForModule('Forecasts', $platform);
+
+        if($this->timePeriodSettingsChanged($priorForecastsSettings, $currenForecaststSettings)) {
+            TimePeriod::rebuildForecastingTimePeriods();
+        }
     }
 
+    /**
+     * compares two sets of forecasting settings to see if the primary timeperiods settings are the same
+     *
+     * @param $priorSettings
+     * @param $currentSettings
+     *
+     * @return boolean
+     */
+    private function timePeriodSettingsChanged($priorSettings, $currentSettings) {
+        if(isset($priorSettings, 'timeperiod_interval') && isset($currentSettings, 'timeperiod_interval') && $currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']) {
+            return true;
+        }
+        if(isset($priorSettings, 'timeperiod_type') && isset($currentSettings, 'timeperiod_type') && $currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']) {
+            return true;
+        }
+        if(isset($priorSettings, 'timeperiods_start_month') && isset($currentSettings, 'timeperiods_start_month') && $currentSettings['timeperiods_start_month'] != $priorSettings['timeperiods_start_month']) {
+            return true;
+        }
+        if(isset($priorSettings, 'timeperiods_start_day') && isset($currentSettings, 'timeperiods_start_day') && $currentSettings['timeperiods_start_day'] != $priorSettings['timeperiods_start_day']) {
+            return true;
+        }
+        if(isset($priorSettings, 'timeperiod_leaf_interval') && isset($currentSettings, 'timeperiod_leaf_interval') && $currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']) {
+            return true;
+        }
+
+        return false;
+    }
 
 }

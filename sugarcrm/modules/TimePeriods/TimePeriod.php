@@ -492,8 +492,68 @@ class TimePeriod extends SugarBean {
      *
      * @return void
      */
-    public function rebuildForecastingTimePeriods(){
+    public static function rebuildForecastingTimePeriods() {
+       //kill the old timeperiods first
+       self::deleteCurrentTimePeriods();
+       $db = DBManagerFactory::getInstance();
+       $timedate = TimeDate::getInstance();
+       $adminBean = BeanFactory::getBean("Administration");
 
+       //get forecast settings
+       $forecastSettings = $adminBean->getConfigForModule("Forecasts");
+
+       //determine today
+       $currentDate = $timedate->getNow();
+       $targetStartDate = $timedate->getNow();
+       //get settings and translate them from text
+       $targetMonth = intval($forecastSettings['timeperiods_start_month']);
+       $targetDay = intval($forecastSettings['timeperiods_start_day']);
+       $periodsBack = intval($forecastSettings['timeperiods_shown_backward']);
+       $periodsForward = intval($forecastSettings['timeperiods_shown_forward']);
+
+       //set the target date
+       $targetStartDate->setDate(intval($current->format("Y")), $targetMonth, $targetMonth);
+
+       //if the date has yet to occur this year, then we need to subtract one from the year to create the first time period
+       if($currentDate < $targetStartDate) {
+           $targetStartDate->setDate(intval($current->format("Y"))-1, $targetMonth, $targetMonth);
+       }
+
+       $currentTimePeriod = BeanFactory::newBean($forecastSettings['timeperiod_interval']."TimePeriods");
+       if($forecastSettings['timeperiod_type'] == 'chronological') {
+           $currentTimePeriod->is_fiscal = false;
+       } else {
+           $currentTimePeriod->is_fiscal = true;
+       }
+       $currentTimePeriod->setStartDate($targetStartDate->asDbDate());
+       $currentTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
+
+        //create the back periods
+       $priorTimePeriod = $currentTimePeriod;
+
+       for($i = 1; $i <= $periodsBack; $i++) {
+           $priorTimePeriod = $priorTimePeriod->createPreviousTimePeriod();
+           $priorTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
+       }
+
+       //create the forward periods
+
+       $forwardTimePeriod = $currentTimePeriod
+       for($i = 1; $i <= $periodsForward; $i++) {
+           $currentTimePeriod = $forwardTimePeriod->createNextTimePeriod();
+           $currentTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
+        }
+
+    }
+
+    /**
+     * reflags all current timeperiods as deleted
+     *
+     * @return void
+     */
+    protected static function deleteCurrentTimePeriods() {
+            $db = DBManagerFactory::getInstance();
+            $db->query('UPDATE timeperiods set deleted = 1 WHERE deleted=0');
     }
 
     /**
