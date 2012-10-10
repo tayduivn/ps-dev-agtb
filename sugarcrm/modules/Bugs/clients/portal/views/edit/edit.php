@@ -86,7 +86,7 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
         'panels' =>
         array(
             array(
-                'label' => 'default',
+                'label' => 'LBL_PANEL_DEFAULT',
                 'fields' =>
                 array(
                     array(

@@ -3533,6 +3533,7 @@ $app_strings = array (
 
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
+    'LBL_PANEL_DEFAULT' => 'Default',
 );
 
 $app_list_strings['moduleList']['Library'] = 'Library';
