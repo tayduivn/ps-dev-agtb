@@ -178,7 +178,13 @@ class MetadataApi extends SugarApi {
             foreach($admin->settings AS $setting_name => $setting_value) {
                 if(stristr($setting_name, $prefix)) {
                     $key = str_replace($prefix, '', $setting_name);
-                    $configs[$key] = json_decode(html_entity_decode($setting_value)) ? json_decode(html_entity_decode($setting_value)) : $setting_value;
+                    
+                    // Empty array was getting decoded as '[]' as tertiary was falsy .. this fixes
+                    $decoded = json_decode(html_entity_decode($setting_value));
+                    $configs[$key] = $setting_value; // set to fallback in case
+                    if (strcasecmp($setting_name, "null") == 0 || $decoded !== NULL) {
+                        $configs[$key] = $decoded;
+                    } 
                 }
             }
         }
