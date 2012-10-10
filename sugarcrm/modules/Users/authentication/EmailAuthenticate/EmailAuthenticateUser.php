@@ -100,46 +100,45 @@ class EmailAuthenticateUser extends SugarAuthenticateUser {
 
         if (empty($row['email1']) && empty($row['email2'])) {
             $_SESSION['login_error'] = 'Please contact an administrator to setup up your email address associated to this account';
-            return;
-        }
+        } else {
+            $method = "unknown";
 
-        $method = "unknown";
+            try {
+                $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+                $method = $mailer->getMailTransmissionProtocol();
 
-        try {
-            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
-            $method = $mailer->getMailTransmissionProtocol();
+                // add the recipient...
 
-            // add the recipient...
+                // first get all email addresses known for this recipient
+                $recipientEmailAddresses = array($row["email1"], $row["email2"]);
+                $recipientEmailAddresses = array_filter($recipientEmailAddresses);
 
-            // first get all email addresses known for this recipient
-            $recipientEmailAddresses = array($row["email1"], $row["email2"]);
-            $recipientEmailAddresses = array_filter($recipientEmailAddresses);
+                // then retrieve first non-empty email address
+                $recipientEmailAddress = array_shift($recipientEmailAddresses);
 
-            // then retrieve first non-empty email address
-            $recipientEmailAddress = array_shift($recipientEmailAddresses);
+                // get the recipient name that accompanies the email address
+                $recipientName = "{$row["first_name"]} {$row["last_name"]}";
 
-            // get the recipient name that accompanies the email address
-            $recipientName = "{$row["first_name"]} {$row["last_name"]}";
+                $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-            $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
+                // override the From header; requires setting the Sender to match the true sender
+                $from = $mailer->getFrom();
+                $mailer->setHeader(EmailHeaders::Sender, $from);
+                $mailer->setHeader(EmailHeaders::From, new EmailIdentity("no-reply@sugarcrm.com", "Sugar Authentication"));
 
-            // override the From header; requires setting the Sender to match the true sender
-            $from = $mailer->getFrom();
-            $mailer->setHeader(EmailHeaders::Sender, $from);
-            $mailer->setHeader(EmailHeaders::From, new EmailIdentity("no-reply@sugarcrm.com", "Sugar Authentication"));
+                // set the subject
+                $mailer->setSubject("Sugar Token");
 
-            // set the subject
-            $mailer->setSubject("Sugar Token");
+                // set the body of the email... looks to be plain-text only
+                $mailer->setTextBody("Your sugar session authentication token  is: {$password}");
 
-            // set the body of the email... looks to be plain-text only
-            $mailer->setTextBody("Your sugar session authentication token  is: {$password}");
+                $mailer->send();
 
-            $mailer->send();
-
-            $GLOBALS["log"]->info("Notifications: e-mail successfully sent");
-        } catch (MailerException $me) {
-            $message = $me->getMessage();
-            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+                $GLOBALS["log"]->info("Notifications: e-mail successfully sent");
+            } catch (MailerException $me) {
+                $message = $me->getMessage();
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+            }
         }
     }
 }
