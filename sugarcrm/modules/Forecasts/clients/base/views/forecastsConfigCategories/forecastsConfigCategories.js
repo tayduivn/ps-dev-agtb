@@ -105,7 +105,7 @@
                         setting;
 
                     ranges = view.model.get('category_ranges');
-                    setting = ranges[key];
+                    setting = ranges[key] || {};
 
                     setting[event.target.name] = event.target.value;
                     ranges[key] = setting;
