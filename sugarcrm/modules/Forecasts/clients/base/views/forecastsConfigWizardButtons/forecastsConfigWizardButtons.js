@@ -2,7 +2,7 @@
     /**
      * The Current Active Panel Index
      */
-    activePanel:0,
+    activePanel:-1,
 
     /**
      * This is a 0 base number, so 0 equals 1 panel
@@ -49,6 +49,7 @@
      * @param evt
      */
     next:function (evt) {
+        this.handleWizardStartScreen(evt);
         // only fire if the target is not disabled
         if ($(evt.target).hasClass('disabled') == false) {
             this.handleDirectionSwitch('next');
@@ -61,6 +62,7 @@
      */
     previous:function (evt) {
         // only fire if the target is not disabled
+        this.handleWizardStartScreen(evt);
         if ($(evt.target).hasClass('disabled') == false) {
             this.handleDirectionSwitch('previous');
         }
@@ -87,6 +89,15 @@
         }
     },
 
+    handleWizardStartScreen: function(evt) {
+        // see if the modal wizard start page is show, if it, hide it
+        var elParent = this.$el.parent();
+        if(elParent.find('.modal-wizard-start').hasClass('show')) {
+            elParent.find('.modal-wizard-start').toggleClass('hide show');
+            elParent.find('.modal-navigation').toggleClass('hide show');
+        }
+    },
+
     /**
      * Implement the wizard functionality for the previous and next buttons
      * @param way   Which way to move the wizard.
@@ -94,7 +105,7 @@
     handleDirectionSwitch:function (way) {
         // we need to know how many panels there are
         if (!_.isNumber(this.totalPanels)) {
-            this.panels = this.$el.parent().find('div.modal-content');
+            this.panels = this.$el.parent().find('div.modal-content').not('.modal-wizard-start');;
             this.totalPanels = this.panels.length - 1;
 
             this.navTabs = this.$el.parent().find('div.modal-navigation li');

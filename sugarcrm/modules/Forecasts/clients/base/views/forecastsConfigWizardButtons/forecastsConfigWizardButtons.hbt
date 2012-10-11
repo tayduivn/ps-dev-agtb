@@ -1,6 +1,6 @@
-<div class="modal-navigation">
+<div class="modal-navigation hide">
     <ul class="breadcrumb two">
-        <li class="active"><a href="#">Time Periods</a></li>
+        <li class="disabled"><a href="#">Time Periods</a></li>
         <li class="disabled"><a href="#">Categories</a></li>
         <li class="disabled"><a href="#">Range</a></li>
         <li class="disabled"><a href="#">Variables</a></li>

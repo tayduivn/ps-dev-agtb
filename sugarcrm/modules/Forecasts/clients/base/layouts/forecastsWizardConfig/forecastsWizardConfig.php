@@ -26,6 +26,9 @@ $viewdefs['Forecasts']['base']['layout']['forecastsWizardConfig'] = array(
     'type' => 'forecastsWizardConfig',
     'components' => array(
         array(
+            'view' => 'forecastsConfigWizardStart',
+        ),
+        array(
             'view' => 'forecastsConfigTimeperiods',
         ),
         array(
