@@ -1,9 +1,16 @@
 <div class="modal-body">
-{{#each meta.panels}}
-    <h2>{{str label "Forecasts"}}</h2>
-    {{#each fields}}
-        <label for="{{name}}">{{str label "Forecasts"}}</label>
-        {{field ../../this ../../model}}
-    {{/each}}
-{{/each}}
+    <p>{{str label "Forecasts"}}</p>
+    <p></p>
+    {{#with forecast_categories_field}}
+        {{#eachOptions options}}
+        <fieldset class="{{{key}}}Fields">
+            <p>
+                <input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}}>
+                <b>{{value}}</b>
+            </p>
+        </fieldset>
+
+        {{/eachOptions}}
+    {{/with}}
+
 </div>
