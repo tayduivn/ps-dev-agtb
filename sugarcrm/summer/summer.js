@@ -37,7 +37,8 @@
             app.controller.loadView({
                 layout: "dashboard",
                 module: "ActivityStream",
-                title: "My Dashboard"
+                title: "My Dashboard",
+                skipFetch: true
             });
         });
 
