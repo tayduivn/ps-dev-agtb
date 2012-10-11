@@ -134,7 +134,6 @@ class SugarTestForecastUtilities
 
         $config = array_merge($default_config, $config);
 
-
         $return = array(
             'opportunities' => array(),
             'opportunities_total' => 0,

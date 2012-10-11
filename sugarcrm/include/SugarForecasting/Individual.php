@@ -91,6 +91,15 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $result = $db->query($sql);
 
         while (($row = $db->fetchByAssoc($result)) != null) {
+        	
+        	/* if we are a manager looking at a reportee worksheet and they haven't committed anything yet 
+        	 * (no worksheet row), we don't want to add this row to the output.
+        	 */
+        	if(!isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id)
+        	{
+        		continue;
+        	}
+        	
             $data = array();
             $data["id"] = $row["opp_id"];
             $data["product_id"] = $row["product_id"];
