@@ -84,7 +84,7 @@ class MailerFactory
      * @throws MailerException
      */
     public static function getMailer(MailConfiguration $config) {
-        // copy the config value becuase you don't want to modify the object by reassigning a public variable
+        // copy the config value because you don't want to modify the object by reassigning a public variable
         // in the case of mode being null
         $mode = is_null($config->mode) ? MailConfigurationPeer::MODE_SMTP : $config->mode;
         $mode = strtolower($mode); // make sure it's lower case
