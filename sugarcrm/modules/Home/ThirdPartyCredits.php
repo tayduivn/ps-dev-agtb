@@ -78,9 +78,9 @@ $credits = array(
         ),
 
         'en_UK' => array(
-            'name' => 'UK English Language Pack',
+            'name' => 'English UK Language Pack',
             'author' => 'Provident CRM',
-            'description' => 'English (UK) Language Pack by Provident CRM',
+            'description' => 'English UK Language Pack by Provident CRM',
             'website' => 'www.providentcrm.com',
         ),
 
