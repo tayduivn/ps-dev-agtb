@@ -21,15 +21,30 @@
         'click [name=previous_button]' : 'previous'
     },
 
+    /**
+     * Handle the close button click, don't save anything
+     *
+     * //TODO: maybe add a dialog if something changed and you are closing the model
+     * @param evt
+     */
     close: function(evt) {
         this.layout.context.trigger("modal:close");
     },
 
+    /**
+     * Handle the OK button click.
+     * @param evt
+     */
     ok: function(evt) {
         this.model.save();
         this.layout.context.trigger("modal:close");
     },
 
+
+    /**
+     * Handle the next button click.  It's only handled if the button doesn't have the disabled class on it.
+     * @param evt
+     */
     next: function(evt) {
         // only fire if the target is not disabled
         if($(evt.target).hasClass('disabled') == false) {
@@ -37,6 +52,10 @@
         }
     },
 
+    /**
+     * Handle the previous button click.  It's only handled if the button doesn't have the disabled class on it.
+     * @param evt
+     */
     previous: function(evt) {
         // only fire if the target is not disabled
         if($(evt.target).hasClass('disabled') == false) {
@@ -44,6 +63,10 @@
         }
     },
 
+    /**
+     * Implement the wizard functionality for the previous and next buttons
+     * @param way   Which way to move the wizard.
+     */
     handleDirectionSwitch: function(way) {
         // we need to know how many panels there are
         if(!_.isNumber(self.totalPanels)) {
