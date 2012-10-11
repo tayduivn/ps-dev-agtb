@@ -1926,6 +1926,32 @@ class SugarBean
         return MailerFactory::getMailerForUser($GLOBALS["current_user"]);
     }
 
+    protected function getTemplateNameForNotificationEmail() {
+        global $beanList;
+
+        $templateName = null;
+
+        if ($this->module_dir == "Cases") {
+            $templateName = "Case"; //we should use Case, you can refer to the en_us.notify_template.html.
+        } else {
+            $templateName = $beanList[$this->module_dir]; //bug 20637, in workflow this->object_name = strange chars.
+        }
+
+        if (!in_array('set_notification_body', get_class_methods($this))) {
+            $templateName = "Default";
+        }
+
+        if (!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
+            $templateName = $beanList[$this->module_dir].'Special';
+        }
+
+        if ($this->special_notification) {
+            $templateName = $beanList[$this->module_dir].'Special';
+        }
+
+        return $templateName;
+    }
+
     /**
     * Handles sending out email notifications when items are first assigned to users
     *
@@ -1933,22 +1959,13 @@ class SugarBean
     * @param string $admin the admin user that sends out the notification
     */
     function send_assignment_notifications($notify_user, $admin) {
-        global $beanList;
-
         if (($this->object_name == 'Meeting' || $this->object_name == 'Call') || $notify_user->receive_notifications) {
             $this->current_notify_user = $notify_user;
 
-            $template_name = null;
-
-            if ($this->module_dir == "Cases") {
-                $template_name = "Case"; //we should use Case, you can refer to the en_us.notify_template.html.
-            } else {
-                $template_name = $beanList[$this->module_dir]; //bug 20637, in workflow this->object_name = strange chars.
-            }
-
-            $xtpl     = $this->createNotificationEmailTemplate($notify_user, $template_name);
-            $subject  = $xtpl->text($template_name . "_Subject");
-            $textBody = trim($xtpl->text($template_name));
+            $templateName = $this->getTemplateNameForNotificationEmail();
+            $xtpl         = $this->createNotificationEmailTemplate($notify_user, $templateName);
+            $subject      = $xtpl->text($templateName . "_Subject");
+            $textBody     = trim($xtpl->text($templateName));
 
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
@@ -1965,11 +1982,11 @@ class SugarBean
                 $mailer = $this->create_notification_email($notify_user);
                 $method = $mailer->getMailTransmissionProtocol();
 
-                $notify_address = $notify_user->emailAddress->getPrimaryAddress($notify_user);
-                $notify_name    = $notify_user->full_name;
+                $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
+                $recipientName         = $notify_user->full_name;
 
                 try {
-                    $mailer->addRecipientsTo(new EmailIdentity($notify_address, $notify_name));
+                    $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
                 } catch (MailerException $me) {
                     $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
                 }
@@ -1997,43 +2014,33 @@ class SugarBean
 
    /**
     * This function handles create the email notifications email.
-    * @param string $template_name the name of the template used for the email content
+    * @param string $templateName the name of the template used for the email content
     * @return XTemplate
     */
-    protected function createNotificationEmailTemplate($template_name) {
+    protected function createNotificationEmailTemplate($templateName) {
         global $sugar_config,
-               $beanList,
                $current_user,
                $sugar_version;
 
-        $current_language = $_SESSION['authenticated_user_language'];
+        $currentLanguage = $_SESSION['authenticated_user_language'];
 
-        if (empty($current_language)) {
-            $current_language = $sugar_config['default_language'];
+        if (empty($currentLanguage)) {
+            $currentLanguage = $sugar_config['default_language'];
         }
 
-        $xtpl = new XTemplate(get_notify_template_file($current_language));
+        $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
         if (in_array('set_notification_body', get_class_methods($this))) {
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
             $xtpl->assign("OBJECT", translate('LBL_MODULE_NAME'));
-            $template_name = "Default";
-        }
-
-        if (!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
-            $template_name = $beanList[$this->module_dir].'Special';
-        }
-
-        if ($this->special_notification) {
-            $template_name = $beanList[$this->module_dir].'Special';
         }
 
         $xtpl->assign("ASSIGNED_USER", $this->new_assigned_user_name);
         $xtpl->assign("ASSIGNER", $current_user->name);
 
         $parsedSiteUrl = parse_url($sugar_config['site_url']);
-        $host = $parsedSiteUrl['host'];
+        $host          = $parsedSiteUrl['host'];
 
         if (!isset($parsedSiteUrl['port'])) {
             $parsedSiteUrl['port'] = 80;
@@ -2045,8 +2052,8 @@ class SugarBean
 
         $xtpl->assign("URL", $cleanUrl."/index.php?module={$this->module_dir}&action=DetailView&record={$this->id}");
         $xtpl->assign("SUGAR", "Sugar v{$sugar_version}");
-        $xtpl->parse($template_name);
-        $xtpl->parse($template_name . "_Subject");
+        $xtpl->parse($templateName);
+        $xtpl->parse($templateName . "_Subject");
 
         return $xtpl;
     }

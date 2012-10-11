@@ -610,19 +610,19 @@ class Meeting extends SugarBean {
 	 * Redefine method to attach ics file to notification email
 	 */
 	public function create_notification_email($notify_user){
-		$notify_mail = parent::create_notification_email($notify_user);
+		$mailer = parent::create_notification_email($notify_user);
 
 		$path = SugarConfig::getInstance()->get('upload_dir','upload/') . $this->id;
 
 		require_once("modules/vCals/vCal.php");
 		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
 
-		if (file_put_contents($path,$content)){
+		if (file_put_contents($path, $content)) {
             $attachment = new Attachment($path, "meeting.ics", Encoding::Base64, "text/calendar");
-            $notify_mail->addAttachment($attachment);
+            $mailer->addAttachment($attachment);
 		}
 
-		return $notify_mail;
+		return $mailer;
 	}
 
 	/**
