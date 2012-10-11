@@ -2082,7 +2082,8 @@ EOQ;
      */
     public function sendEmailForPassword($templateId, array $additionalData = array()) {
         global $sugar_config,
-               $current_user;
+               $current_user,
+               $app_strings;
 
         $mod_strings = return_module_language('', 'Users');
 
@@ -2125,22 +2126,29 @@ EOQ;
         try {
             $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
 
+            // set the subject
             $mailer->setSubject($emailTemplate->subject);
 
+            // set the plain-text body
             $mailer->setTextBody($emailTemplate->body);
 
+            // set the HTML body
             if ($emailTemplate->text_only != 1) {
                 $mailer->setHtmlBody($emailTemplate->body_html);
             }
 
+            // get the recipient
             $itemail = $this->emailAddress->getPrimaryAddress($this);
 
             if (!empty($itemail)) {
+                // add the recipient
                 $mailer->addRecipientsTo(new EmailIdentity($itemail));
 
+                // if send doesn't raise an exception then set the result status to true
                 $mailer->send();
                 $result["status"] = true;
 
+                // save the email record
                 $email = new Email();
                 $email->team_id          = 1;
                 $email->to_addrs         = '';
@@ -2164,20 +2172,28 @@ EOQ;
                 //@todo throw an exception if no recipients? can PHPMailer raise this error for us?
             }
         } catch (MailerException $me) {
-        }
+            switch ($me->getCode()) {
+                case MailerException::FailedToConnectToRemoteServer:
+                    if ($current_user->is_admin) {
+                        // the smtp host may not be empty, but this is the best error message for now
+                        $result['message'] = $mod_strings['ERR_SERVER_SMTP_EMPTY'];
+                    } else {
+                        // status=failed to send, but no message is returned to non-admin users
+                    }
 
-        require_once('include/SugarPHPMailer.php');
-        $mail = new SugarPHPMailer();
+                    break;
+                case MailerException::InvalidMessageBody:
+                    if ($current_user->is_admin) {
+                        // both the plain-text and HTML parts are empty, but this is the best error message for now
+                        $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
+                    } else {
+                        // status=failed to send, but no message is returned to non-admin users
+                    }
 
-        if ($mail->Body == '' && $current_user->is_admin) {
-            global $app_strings;
-            $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
-            return $result;
-        }
-
-        if ($mail->Mailer == 'smtp' && $mail->Host == '' && $current_user->is_admin) {
-            $result['message'] = $mod_strings['ERR_SERVER_SMTP_EMPTY'];
-            return $result;
+                    break;
+                default:
+                    break;
+            }
         }
 
         return $result;
