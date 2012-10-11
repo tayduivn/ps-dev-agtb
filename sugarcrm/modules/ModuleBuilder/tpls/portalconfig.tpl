@@ -41,6 +41,14 @@
                 {$mod.LBL_PORTAL_ENABLE}
             </td>
         </tr>
+        {if $appStatus eq 'online'}
+        <tr>
+            <td>&nbsp;</td>
+            <td colspan='1' nowrap>
+                {$mod.LBL_PORTAL_SITE_URL} <a href="{$siteURL}/portal" target="_blank">{$siteURL}/portal</a>
+            </td>
+        </tr>
+        {/if}
         <tr>
             <td colspan='1' nowrap>
                 {$mod.LBL_PORTAL_LOGO_URL}: {sugar_help text=$mod.LBL_CONFIG_PORTAL_URL}
