@@ -147,7 +147,8 @@
     triggerConfigModal: function() {
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"forecastsWizardConfig"}]
+            components: [{layout:"forecastsWizardConfig"}],
+            span: 10
         };
         var callback = function(){};
 
