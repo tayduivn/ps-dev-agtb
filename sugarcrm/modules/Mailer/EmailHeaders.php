@@ -74,6 +74,47 @@ class EmailHeaders
     }
 
     /**
+     * Returns the value of a header.
+     *
+     * @access public
+     * @param string $key required Should look like the real header it represents.
+     * @return bool|EmailIdentity|int|null|string The value of the header.
+     */
+    public function getHeader($key) {
+        $value = null;
+
+        switch ($key) {
+            case self::MessageId:
+                $value = $this->getMessageId();
+                break;
+            case self::Priority:
+                $value = $this->getPriority();
+                break;
+            case self::DispositionNotificationTo:
+                $value = $this->getRequestConfirmation();
+                break;
+            case self::From:
+                $value = $this->getFrom();
+                break;
+            case self::ReplyTo:
+                $value = $this->getReplyTo();
+                break;
+            case self::Sender:
+                $value = $this->getSender();
+                break;
+            case self::Subject:
+                $value = $this->getSubject();
+                break;
+            default:
+                // it's not known, so it must be a custom header
+                $value = $this->getCustomHeader($key);
+                break;
+        }
+
+        return $value;
+    }
+
+    /**
      * Adds or replaces header values. Prevents adding of custom headers that are actually represented by the
      * reserved headers; will simply replace the values.
      *

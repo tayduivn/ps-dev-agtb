@@ -106,6 +106,17 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
+     * Returns the value currently representing the header.
+     *
+     * @access public
+     * @param string $key required Should look like the real header it represents.
+     * @return mixed Refer to EmailHeaders::getHeader to see the possible return types.
+     */
+    public function getHeader($key) {
+        return $this->headers->getHeader($key);
+    }
+
+    /**
      * Adds or replaces header values.
      *
      * @access public
@@ -126,16 +137,6 @@ abstract class BaseMailer implements IMailer
      */
     public function setSubject($subject) {
         $this->setHeader(EmailHeaders::Subject, $subject);
-    }
-
-    /**
-     * Returns the EmailIdentity currently representing the From header.
-     *
-     * @access public
-     * @return EmailIdentity
-     */
-    public function getFrom() {
-        return $this->headers->getFrom();
     }
 
     /**
