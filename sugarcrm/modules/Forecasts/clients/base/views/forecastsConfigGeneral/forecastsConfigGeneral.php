@@ -36,8 +36,22 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigGeneral'] = array(
                 array(
                     'name' => 'close_button',
                     'type' => 'button',
-                    'css_class' => 'btn-invisible btn-link',
+                    'css_class' => 'btn-invisible btn-link pull-left',
                     'label' => 'LBL_EMAIL_CANCEL',
+                    'primary' => false,
+                ),
+                array(
+                    'name' => 'next_button',
+                    'type' => 'button',
+                    'css_class' => 'btn-primary pull-right',
+                    'label' => 'LNK_LIST_NEXT',
+                    'primary' => true,
+                ),
+                array(
+                    'name' => 'previous_button',
+                    'type' => 'button',
+                    'css_class' => 'disabled pull-right',
+                    'label' => 'LNK_LIST_PREVIOUS',
                     'primary' => false,
                 ),
             ),
