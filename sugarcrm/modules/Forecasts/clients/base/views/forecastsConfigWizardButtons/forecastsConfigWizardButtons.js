@@ -93,7 +93,7 @@
      */
     handleDirectionSwitch:function (way) {
         // we need to know how many panels there are
-        if (!_.isNumber(self.totalPanels)) {
+        if (!_.isNumber(this.totalPanels)) {
             this.panels = this.$el.parent().find('div.modal-content');
             this.totalPanels = this.panels.length - 1;
 

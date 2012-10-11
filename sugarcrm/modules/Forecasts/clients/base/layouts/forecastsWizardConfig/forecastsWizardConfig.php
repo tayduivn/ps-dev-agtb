@@ -38,7 +38,7 @@ $viewdefs['Forecasts']['base']['layout']['forecastsWizardConfig'] = array(
             'view' => 'forecastsConfigVariables',
         ),
         array(
-            'view' => 'forecastsConfigModalButtons'
+            'view' => 'forecastsConfigWizardButtons'
         )
     ),
 );
