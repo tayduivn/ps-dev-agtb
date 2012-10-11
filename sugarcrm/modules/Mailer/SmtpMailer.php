@@ -86,7 +86,7 @@ class SmtpMailer extends BaseMailer
         $mailer->SetLanguage();
 
         // transfer the basic configurations to PHPMailer
-        $mailer->Mailer   = self::MailTransmissionProtocol;
+        $mailer->Mailer   = $this->getMailTransmissionProtocol();
         $mailer->Hostname = $this->config->getHostname();
         $mailer->CharSet  = $this->config->getCharset();
         $mailer->Encoding = $this->config->getEncoding();
