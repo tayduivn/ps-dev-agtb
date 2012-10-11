@@ -130,10 +130,9 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
 
                 $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
 
-                // override the From header; requires setting the Sender to match the true sender
-                $from = $mailer->getHeader(EmailHeaders::From)->getEmail();
-                $mailer->setHeader(EmailHeaders::Sender, $from);
-                $mailer->setHeader(EmailHeaders::From, new EmailIdentity("no-reply@sugarcrm.com", "Sugar Authentication"));
+                // override the From header
+                $from = new EmailIdentity("no-reply@sugarcrm.com", "Sugar Authentication");
+                $mailer->setHeader(EmailHeaders::From, $from);
 
                 // set the subject
                 $mailer->setSubject("Sugar Token");

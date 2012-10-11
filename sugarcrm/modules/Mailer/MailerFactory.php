@@ -129,7 +129,7 @@ class MailerFactory
 
     /**
      * Constructs and returns the Headers object to be used by the Mailer and takes care of initializing the From
-     * header.
+     * and Sender headers.
      *
      * @static
      * @access private
@@ -143,6 +143,7 @@ class MailerFactory
         $from    = new EmailIdentity($senderEmail, $senderName);
         $headers = new EmailHeaders();
         $headers->setHeader(EmailHeaders::From, $from);
+        $headers->setHeader(EmailHeaders::Sender, $from);
 
         return $headers;
     }
