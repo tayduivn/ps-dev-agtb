@@ -295,7 +295,8 @@
 
             // begin building params to pass to modal
             var params = {
-                title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
+                title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
+                span: 10
             };
 
             if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
