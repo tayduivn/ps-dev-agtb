@@ -322,89 +322,11 @@ class MetadataApi extends SugarApi {
     protected function loadMetadata($hashKey) {
         // Start collecting data
         $data = array();
-
         $mm = $this->getMetadataManager();
-        
-        $data['module_list'] = $this->getModuleList();
-        $data['full_module_list'] = $data['module_list'];
-
-        $data['modules'] = array();
-
-        foreach($data['full_module_list'] as $module) {
-            $bean = BeanFactory::newBean($module);
-            if (!$bean || !is_a($bean,'SugarBean') ) {
-                // There is no bean, we can't get data on this
-                continue;
-            }
-
-            $modData = $mm->getModuleData($module);
-            $data['modules'][$module] = $modData;
-
-            if (isset($data['modules'][$module]['fields'])) {
-                $fields = $data['modules'][$module]['fields'];
-                foreach($fields as $fieldName => $fieldDef) {
-                    if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
-                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
-                            $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
-                        }
-                    } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
-                        $bean->load_relationship($fieldDef['name']);
-                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                        $data['full_module_list'][$otherSide] = $otherSide;
-                    }
-                }
-            }
-        }
-
-        foreach($data['modules'] as $moduleName => $moduleDef) {
-            if (!array_key_exists($moduleName, $data['full_module_list'])) {
-                unset($data['modules'][$moduleName]);
-            }
-        }
-
-        $data['mod_strings'] = array();
-        foreach ($data['modules'] as $modName => $moduleDef) {
-            $modData = $mm->getModuleStrings($modName);
-            $data['mod_strings'][$modName] = $modData;
-            $data['mod_strings'][$modName]['_hash'] = md5(serialize($data['mod_strings'][$modName]));
-        }
-
-        $data['acl'] = array();
-
-        foreach ($data['full_module_list'] as $modName) {
-            $bean = BeanFactory::newBean($modName);
-            if (!$bean || !is_a($bean,'SugarBean') ) {
-                // There is no bean, we can't get data on this
-                continue;
-            }
-            $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
-            $data['acl'][$modName] = $this->verifyACLs($data['acl'][$modName]);
-        }
-
-        // populate available system currencies
-        $data['currencies'] = array();
-        require_once('modules/Currencies/ListCurrency.php');
-        $lcurrency = new ListCurrency();
-        $lcurrency->lookupCurrencies();
-        if(!empty($lcurrency->list))
-        {
-            foreach($lcurrency->list as $current)
-            {
-                $currency = array();
-                $currency['name'] = $current->name;
-                $currency['iso'] = $current->iso4217;
-                $currency['status'] = $current->status;
-                $currency['symbol'] = $current->symbol;
-                $currency['rate'] = $current->conversion_rate;
-                $currency['name'] = $current->name;
-                $currency['date_entered'] = $current->date_entered;
-                $currency['date_modified'] = $current->date_modified;
-                $data['currencies'][$current->id] = $currency;
-            }
-        }
-
-        // Handle enforcement of acls for clients that do this (portal)
-        $data['acl'] = $this->enforceModuleACLs($data['acl']);
+        $data = $this->populateModules($data);
+        $data['mod_strings'] = $this->getModStrings($data);
+        $data['acl'] = $this->getAcls($data['full_module_list']);
+        $data['currencies'] = $this->getSystemCurrencies();
         $data['module_list'] = $this->cleanUpModuleList($data['module_list']);
 
         if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
@@ -607,6 +529,115 @@ class MetadataApi extends SugarApi {
         return $moduleList;
     }
 
+
+    /**
+     * Gets full module list and data for each module. $data passed in will have
+     * full_module_list and modules properties added and populated. module_list
+     * must already be populated.
+     *
+     * @param array $data load metadata array
+     * @return array
+     */
+    public function populateModules($data) {
+        $mm = $this->getMetadataManager();
+        $data['module_list'] = $this->getModuleList();
+        $data['modules'] = array();
+        $data['full_module_list'] = $data['module_list'];
+        foreach($data['full_module_list'] as $module) {
+            $bean = BeanFactory::newBean($module);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+
+            $data['modules'][$module] = $mm->getModuleData($module);
+
+            if (isset($data['modules'][$module]['fields'])) {
+                $fields = $data['modules'][$module]['fields'];
+                foreach($fields as $fieldName => $fieldDef) {
+                    if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
+                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
+                            $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
+                        }
+                    } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
+                        $bean->load_relationship($fieldDef['name']);
+                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                        $data['full_module_list'][$otherSide] = $otherSide;
+                    }
+                }
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Gets mod strings
+     * 
+     * @param array $data The metadata array
+     * @return array
+     */
+    public function getModStrings($data) {
+        $mm = $this->getMetadataManager();
+        $data['mod_strings'] = array();
+        foreach ($data['modules'] as $modName => $moduleDef) {
+            $modData = $mm->getModuleStrings($modName);
+            $data['mod_strings'][$modName] = $modData;
+            $data['mod_strings'][$modName]['_hash'] = md5(serialize($data['mod_strings'][$modName]));
+        }
+        return $data;
+    }
+
+    /**
+     * Gets acls given full module list passed in.
+     * 
+     * @param array $fullModuleList The full list of modules
+     * @return array
+     */  
+    public function getAcls($fullModuleList) {
+        $mm = $this->getMetadataManager();
+        $acls = array();
+        foreach ($fullModuleList as $modName) {
+            $bean = BeanFactory::newBean($modName);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+            $acls[$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
+            $acls[$modName] = $this->verifyACLs($acls[$modName]);
+        }
+        // Handle enforcement of acls for clients that do this (portal)
+        $acls = $this->enforceModuleACLs($acls);
+
+        return $acls;
+    }
+
+    /**
+     * Gets currencies
+     * @return array
+     */  
+    public function getSystemCurrencies() {
+        $currencies = array();
+        require_once('modules/Currencies/ListCurrency.php');
+        $lcurrency = new ListCurrency();
+        $lcurrency->lookupCurrencies();
+        if(!empty($lcurrency->list))
+        {
+            foreach($lcurrency->list as $current)
+            {
+                $currency = array();
+                $currency['name'] = $current->name;
+                $currency['iso'] = $current->iso4217;
+                $currency['status'] = $current->status;
+                $currency['symbol'] = $current->symbol;
+                $currency['rate'] = $current->conversion_rate;
+                $currency['name'] = $current->name;
+                $currency['date_entered'] = $current->date_entered;
+                $currency['date_modified'] = $current->date_modified;
+                $currencies[$current->id] = $currency;
+            }
+        }
+        return $currencies;
+    }
     /**
      * Cleans up the module list for any modules that should not be on it
      * 
