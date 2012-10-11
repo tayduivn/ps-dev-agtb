@@ -1,3 +1,14 @@
+<div class="modal-navigation">
+    <ul class="breadcrumb two">
+        <li class="active"><a href="#">Time Periods</a></li>
+        <li class="disabled"><a href="#">Categories</a></li>
+        <li class="disabled"><a href="#">Range</a></li>
+        <li class="disabled"><a href="#">Variables</a></li>
+        <li class="disabled"><a href="#">Variables</a></li>
+        <li class="disabled"><a href="#">Variables</a></li>
+    </ul>
+</div>
+
 {{#each meta.panels}}
 <div class="modal-footer">
     {{#each buttons}}

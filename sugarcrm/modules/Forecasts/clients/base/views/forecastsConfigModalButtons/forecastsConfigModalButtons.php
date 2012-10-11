@@ -27,10 +27,10 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigModalButtons'] = array(
         array(
             'buttons' => array(
                 array(
-                    'name' => 'ok_button',
+                    'name' => 'save_button',
                     'type' => 'button',
                     'css_class' => 'btn-primary pull-right',
-                    'label' => 'LBL_EMAIL_OK',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
                     'primary' => true,
                 ),
                 array(
