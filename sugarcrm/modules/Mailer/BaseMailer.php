@@ -227,6 +227,10 @@ abstract class BaseMailer implements IMailer
         $this->recipients->clearBcc();
     }
 
+    public function getTextBody() {
+        return $this->textBody;
+    }
+
     /**
      * Sets the plain-text part of the email.
      *
@@ -235,6 +239,10 @@ abstract class BaseMailer implements IMailer
      */
     public function setTextBody($body) {
         $this->textBody = $body;
+    }
+
+    public function getHtmlBody() {
+        return $this->htmlBody;
     }
 
     /**

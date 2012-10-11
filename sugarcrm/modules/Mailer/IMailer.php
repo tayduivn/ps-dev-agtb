@@ -155,6 +155,8 @@ interface IMailer
      */
     public function clearRecipientsBcc();
 
+    public function getTextBody();
+
     /**
      * Sets the plain-text part of the email.
      *
@@ -163,6 +165,8 @@ interface IMailer
      * @param string $body required
      */
     public function setTextBody($body);
+
+    public function getHtmlBody();
 
     /**
      * Sets the HTML part of the email.
