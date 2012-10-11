@@ -23,7 +23,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once("modules/Mailer/MailerFactory.php");
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 require_once('include/SugarPHPMailer.php');
 require_once 'include/upload_file.php';

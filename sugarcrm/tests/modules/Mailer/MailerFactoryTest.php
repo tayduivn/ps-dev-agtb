@@ -19,9 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Mailer/MailerFactory.php";
-require_once "modules/Emails/MailConfiguration.php";
-require_once "modules/Mailer/SmtpMailerConfiguration.php";
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
