@@ -2145,7 +2145,7 @@ EOQ;
                 $email->name             = $emailTemplate->subject;
                 $email->description      = $emailTemplate->body;
                 $email->description_html = $htmlBody;
-                $email->from_addr        = $mailer->getFrom()->getEmail();
+                $email->from_addr        = $mailer->getHeader(EmailHeaders::From)->getEmail();
                 $email->parent_type      = 'User';
                 $email->date_sent        = TimeDate::getInstance()->nowDb();
                 $email->modified_user_id = '1';
