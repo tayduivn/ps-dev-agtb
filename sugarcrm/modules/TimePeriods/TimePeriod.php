@@ -488,6 +488,15 @@ class TimePeriod extends SugarBean {
     }
 
     /**
+     * Examines the config values and rebuilds the time periods based on the new settings
+     *
+     * @return void
+     */
+    public function rebuildForecastingTimePeriods(){
+
+    }
+
+    /**
      * subtracts the end from the start date to return the date length in days
      *
      * @return mixed

@@ -27,10 +27,25 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $foreastsConfigSettings = array(
+        array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_interval', 'value' => 'Annual', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_leaf_interval', 'value' => 'Quarter', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_start_month', 'value' => '7', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_start_day', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiods_shown_forward', 'value' => '4', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiods_shown_backward', 'value' => '4', 'platform' => 'base', 'category' => 'Forecasts'));
 
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
+        $db = DBManagerFactory::getInstance();
+        $db->query("DELETE FROM config where name = 'AdministrationTest'");
+        /* @var $admin Administration */
+        $admin = BeanFactory::getBean('Administration');
+        foreach($this->foreastsConfigSettings as $config){
+            $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
+        }
     }
 
     public function tearDown()
@@ -100,6 +115,13 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals($start_date_timestamp, $tp->start_date_timestamp, "start time stamps do not match");
         $this->assertEquals($end_date_timestamp, $tp->end_date_timestamp, "end time stamps do not match");
+
+    }
+
+    /**
+     * test that the forecasting
+     */
+    public function testRebuildForecastingTimePeriods() {
 
     }
 

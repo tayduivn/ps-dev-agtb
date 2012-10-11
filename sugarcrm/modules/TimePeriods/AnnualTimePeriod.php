@@ -139,6 +139,27 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
     }
 
     /**
+     * creates a new AnnualTimePeriod to keep past records
+     *
+     * @return AnnualTimePeriod
+     */
+    public function createPreviousTimePeriod() {
+        $timedate = TimeDate::getInstance();
+        $previousStartDate = $timedate->fromDbDate($this->start_date);
+        if($this->is_fiscal) {
+            $previousStartDate = $previousStartDate->modify('-52 week');
+        } else {
+            $previousStartDate = $previousStartDate->modify('-1 year');
+        }
+        $previousPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
+        $previousPeriod->is_fiscal = $this->is_fiscal;
+        $previousPeriod->setStartDate($timedate->asDbDate($previousStartDate));
+        $previousPeriod->save();
+
+        return $previousPeriod;
+    }
+
+    /**
      * build leaves for the timeperiod by creating the specified types of timeperiods
      *
      * @param string $timePeriodType

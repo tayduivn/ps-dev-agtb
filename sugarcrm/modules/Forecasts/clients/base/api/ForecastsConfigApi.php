@@ -20,68 +20,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('clients/base/api/ModuleApi.php');
+require_once('include/api/ConfigModuleApi.php');
 
-class ForecastsConfigApi extends ModuleApi {
+class ForecastsConfigApi extends ConfigModuleApi {
 
-    public function __construct()
-    {
-
-    }
-
-    public function registerApiRest()
-    {
-        $parentApi = parent::registerApiRest();
-        //Extend with test method
-        $parentApi= array (
-            'config' => array(
-                'reqType' => 'GET',
-                'path' => array('<module>','config'),
-                'pathVars' => array('module',''),
-                'method' => 'config',
-                'shortHelp' => 'forecasts config',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#config',
-                'noLoginRequired' => true,
-            ),
-            'configCreate' => array(
-                'reqType' => 'POST',
-                'path' => array('<module>','config'),
-                'pathVars' => array('module',''),
-                'method' => 'configSave',
-                'shortHelp' => 'create forecasts config',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#configCreate',
-            ),
-            'configUpdate' => array(
-                'reqType' => 'PUT',
-                'path' => array('<module>','config'),
-                'pathVars' => array('module',''),
-                'method' => 'configSave',
-                'shortHelp' => 'Update forecasts config',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastConfigApi.html#configUpdate',
-            ),
-        );
-        return $parentApi;
-    }
-
-    /**
-     * Returns the config settings for the given module
-     * @param $api
-     * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
-     */
-    public function config($api, $args) {
-        $this->requireArgs($args,array('module'));
-        $adminBean = BeanFactory::getBean("Administration");
-
-        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
-
-        if (!empty($args['module'])) {
-            $data = $adminBean->getConfigForModule($args['module'], $platform);
-        } else {
-            return;
-        }
-
-        return $data;
-    }
 
     /**
      * Save function for the config settings for a given module.
@@ -89,24 +31,7 @@ class ForecastsConfigApi extends ModuleApi {
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function configSave($api, $args) {
-        $this->requireArgs($args,array('module'));
-        $admin = BeanFactory::getBean('Administration');
-
-        $module = $args['module'];
-        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
-
-        // these are not part of the config values, so unset
-        unset($args['module']);
-        unset($args['platform']);
-        unset($args['__sugar_url']);
-
-        foreach ($args as $name => $value) {
-            if(is_array($value)) {
-                $admin->saveSetting($module, $name, json_encode($value), $platform);
-            } else {
-                $admin->saveSetting($module, $name, $value, $platform);
-            }
-        }
+        parent::configSave($api, $args);
     }
 
 
