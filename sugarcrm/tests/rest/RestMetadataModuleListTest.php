@@ -90,7 +90,8 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
-
+        // Adding the cache killer right here because it resolves cache issues on Windows
+        $this->_clearMetadataCache();
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
         $enabledPortal = array('Cases','Contacts');
