@@ -26,19 +26,19 @@ class OpportunitiesSummerApi extends ListApi
                 'shortHelp' => '',
                 'longHelp' => '',
             ),
-            'expert' => array(
+            'experts' => array(
                 'reqType' => 'GET',
-                'path' => array('Opportunities','?', 'expert'),
+                'path' => array('Opportunities','?', 'experts'),
                 'pathVars' => array('module', 'record'),
-                'method' => 'recommendExpert',
+                'method' => 'recommendExperts',
                 'shortHelp' => 'Recommend users to help with a particular record',
                 'longHelp' => 'Test',
             ),
-            'expertTypeahead' => array(
+            'expertsTypeahead' => array(
                 'reqType' => 'GET',
-                'path' => array('Opportunities','?', 'expertTypeahead'),
+                'path' => array('Opportunities','?', 'expertTsypeahead'),
                 'pathVars' => array('module', 'record'),
-                'method' => 'recommendExpertTypeahead',
+                'method' => 'recommendExpertsTypeahead',
                 'shortHelp' => 'Typeahead provider for recommended users',
                 'longHelp' => '',
             ),
@@ -92,9 +92,8 @@ class OpportunitiesSummerApi extends ListApi
         return $data;
     }
 
-    public function recommendExpert($api, $args)
+    public function recommendExperts($api, $args)
     {
-        $args['title'] = empty($args['title'])? '' : $args['title'];
         $data = $this->getInteractionsByUser($api, $args);
         $sortCallback = function($a, $b) {
             return $a['interaction_count'] - $b['interaction_count'];
@@ -102,7 +101,10 @@ class OpportunitiesSummerApi extends ListApi
         $filterCallback1 = function($a) use($args) {
             return $args['title'] == $a['title'];
         };
-        $filtered = array_filter($data, $filterCallback1);
+        $filtered = array();
+        if(!empty($args['title'])) {
+            $filtered = array_filter($data, $filterCallback1);
+        }
         if(count($filtered) == 0) {
             $filtered = $data;
         }
@@ -114,10 +116,10 @@ class OpportunitiesSummerApi extends ListApi
             $filtered = $data;
         }
         usort($filtered, $sortCallback);
-        return array_shift($filtered);
+        return array_slice($filtered, 0, 5);
     }
 
-    public function recommendExpertTypeahead($api, $args)
+    public function recommendExpertsTypeahead($api, $args)
     {
         // TODO: Use employee_status instead of first name.
         $data = array();
