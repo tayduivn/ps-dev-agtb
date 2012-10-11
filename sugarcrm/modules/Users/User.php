@@ -2081,8 +2081,7 @@ EOQ;
      * @return array status: true|false, message: error message, if status = false and message = '' it means that send method has returned false
      */
     public function sendEmailForPassword($templateId, array $additionalData = array()) {
-        global $sugar_config,
-               $current_user,
+        global $current_user,
                $app_strings;
 
         $mod_strings = return_module_language('', 'Users');
@@ -2100,28 +2099,19 @@ EOQ;
             return $result;
         }
 
-        //replace instance variables in email templates
-        $htmlBody = $emailTemplate->body_html;
-        $body     = $emailTemplate->body;
+        $emailTemplate->body = $this->replaceInstanceVariablesInEmailTemplates($emailTemplate->body, $additionalData);
 
-        if (isset($additionalData['link']) && $additionalData['link'] == true) {
-            $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], $htmlBody);
-            $body     = str_replace('$contact_user_link_guid', $additionalData['url'], $body);
-        } else {
-            $htmlBody = str_replace('$contact_user_user_hash', $additionalData['password'], $htmlBody);
-            $body     = str_replace('$contact_user_user_hash', $additionalData['password'], $body);
+        // in case the email is text-only and $emailTemplate->body_html is not empty, use a local variable for the HTML
+        // part to ignore the body_html property and prevent changing it on the EmailTemplate object
+        $htmlBody = null;
+
+        if ($emailTemplate->text_only != 1) {
+            $emailTemplate->body_html = $this->replaceInstanceVariablesInEmailTemplates(
+                $emailTemplate->body_html,
+                $additionalData
+            );
+            $htmlBody                 = $emailTemplate->body_html;
         }
-
-        // Bug 36833 - Add replacing of special value $instance_url
-        $htmlBody = str_replace('$config_site_url', $sugar_config['site_url'], $htmlBody);
-        $body     = str_replace('$config_site_url', $sugar_config['site_url'], $body);
-
-        $htmlBody                 = str_replace('$contact_user_user_name', $this->user_name, $htmlBody);
-        $htmlBody                 = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
-        $body                     = str_replace('$contact_user_user_name', $this->user_name, $body);
-        $body                     = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
-        $emailTemplate->body_html = $htmlBody;
-        $emailTemplate->body      = $body;
 
         try {
             $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
@@ -2132,12 +2122,10 @@ EOQ;
             // set the plain-text body
             $mailer->setTextBody($emailTemplate->body);
 
-            // set the HTML body
-            if ($emailTemplate->text_only != 1) {
-                $mailer->setHtmlBody($emailTemplate->body_html);
-            }
+            // set the HTML body... it will be null in the text-only case, but that's okay
+            $mailer->setHtmlBody($htmlBody);
 
-            // get the recipient
+            // get the recipient's email address
             $itemail = $this->emailAddress->getPrimaryAddress($this);
 
             if (!empty($itemail)) {
@@ -2156,7 +2144,7 @@ EOQ;
                 $email->deleted          = '0';
                 $email->name             = $emailTemplate->subject;
                 $email->description      = $emailTemplate->body;
-                $email->description_html = $emailTemplate->body_html;
+                $email->description_html = $htmlBody;
                 $email->from_addr        = $mailer->getFrom()->getEmail();
                 $email->parent_type      = 'User';
                 $email->date_sent        = TimeDate::getInstance()->nowDb();
@@ -2309,4 +2297,29 @@ EOQ;
         return $ids;
     }
     //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Replace instance variables in email templates for a particular message part.
+     *
+     * @param string $body                    required The plain-text or HTML part.
+     * @param array  $additionalData          Additional parameters: link, url, password.
+     * @return string
+     */
+    private function replaceInstanceVariablesInEmailTemplates($body, $additionalData = array()) {
+        global $sugar_config;
+
+        if (isset($additionalData['link']) && $additionalData['link'] == true) {
+            $body = str_replace('$contact_user_link_guid', $additionalData['url'], $body);
+        } else {
+            $body = str_replace('$contact_user_user_hash', $additionalData['password'], $body);
+        }
+
+        // Bug 36833 - Add replacing of special value $instance_url
+        $body = str_replace('$config_site_url', $sugar_config['site_url'], $body);
+
+        $body = str_replace('$contact_user_user_name', $this->user_name, $body);
+        $body = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
+
+        return $body;
+    }
 }
