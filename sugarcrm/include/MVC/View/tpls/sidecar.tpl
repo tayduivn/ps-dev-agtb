@@ -33,7 +33,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=8, IE=9, IE=10" >
 
         <!-- App Scripts -->
-        <script src='sidecar/minified/sidecar.min.js'></script>
+        <!-- <script src='sidecar/minified/sidecar.min.js'></script>  -->
+        <script src='sidecar/minified/sidecar.js'></script>
         <script src='{$sugarSidecarPath}'></script>
         <!-- <script src='sidecar/minified/sugar.min.js'></script> -->
         <script src='{$configFile}'></script>
@@ -67,6 +68,7 @@
                     </div>
                 </div>
                 <div id="footer"></div>
+                <div id="tourguide"></div>
 			</div>
 		</div>
         {literal}
