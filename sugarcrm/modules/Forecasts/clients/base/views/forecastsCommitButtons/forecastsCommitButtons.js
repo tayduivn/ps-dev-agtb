@@ -115,21 +115,24 @@
         if(!commitbtn.hasClass("disabled")){
     		var models = worksheet.models;
     		_.each(models, function(model, index){
-				var values = {};
-				modelCount++;
-                values["draft"] = 0;
-                values["isDirty"] = false;
-                values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
-    			values["current_user"] = app.user.get('id');
-    			model.set(values, {silent:true});
-				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
-				model.save({}, {success:function(){
-					saveCount++;
-					if(saveCount === modelCount){
-						self.context.forecasts.set({reloadWorksheetFlag: true});
-					}
-				}});
-				worksheet.isDirty = false;    			    			    				
+    			var isDirty = model.get("isDirty");
+    			if(model.get("version") == 0 || (typeof(isDirty) == "boolean" && isDirty)){
+    				var values = {};
+    				modelCount++;
+                    values["draft"] = 0;
+                    values["isDirty"] = false;
+                    values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
+        			values["current_user"] = app.user.get('id');
+        			model.set(values, {silent:true});
+    				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
+    				model.save({}, {success:function(){
+    					saveCount++;
+    					if(saveCount === modelCount){
+    						self.context.forecasts.set({reloadWorksheetFlag: true});
+    					}
+    				}});
+    				worksheet.isDirty = false;
+    			}    			    				
     		});
     		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
