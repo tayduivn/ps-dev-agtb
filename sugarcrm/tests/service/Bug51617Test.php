@@ -33,9 +33,9 @@ class Bug51617Test extends SOAPTestCase
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
 
-        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setup('current_user');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         $GLOBALS['current_user']->status = 'Active';
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
@@ -89,12 +89,13 @@ class Bug51617Test extends SOAPTestCase
     public function tearDown()
     {
         $this->df->deleteField($this->field);
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->_account->id}'");
+        if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->_account->id}'");
+        }
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
-
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        unset($GLOBALS['current_user']);
 
         parent::tearDown();
         $GLOBALS['db']->commit();
@@ -105,6 +106,9 @@ class Bug51617Test extends SOAPTestCase
         unset($soap_version_test_contactId);
     }
 
+    /**
+     * 
+     */
     public function testGetEntryListWithCustomField()
     {
         $this->_login();

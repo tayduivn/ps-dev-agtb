@@ -28,8 +28,10 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
 	
 	public function setUp()
 	{
-	    $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-	    
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+
+        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
 		global $sugar_demodata;
 		$sugar_demodata['company_name_array'] = array();
 		$query = 'SELECT * FROM accounts';
@@ -107,7 +109,9 @@ class QuotesSeedDataTest extends Sugar_PHPUnit_Framework_TestCase
         
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS['current_user']);
-	}
+        SugarTestHelper::tearDown();
+
+    }
 	
 	public function testCreateSeedQuotes() 
 	{

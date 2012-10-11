@@ -26,180 +26,6 @@ require_once 'tests/rest/RestTestBase.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
 class RestMetadataModuleListTest extends RestTestBase {
-    //BEGIN SUGARCRM flav=ent ONLY
-    public $oppTestPath ='modules/Opportunities/clients/portal/views/list/list.php';
-    //END SUGARCRM flav=ent ONLY    
-    public $unitTestFiles = array();
-    public $createdStudioFile = false;
-    
-    public function setUp()
-    {
-        parent::setUp();
-        // Portal test needs this one, tear down happens in parent
-        SugarTestHelper::setup('mod_strings', array('ModuleBuilder'));
-        
-        //BEGIN SUGARCRM flav=ent ONLY
-        $this->unitTestFiles[] = $this->oppTestPath;
-        if (!file_exists('modules/Opportunities/metadata/studio.php')) {
-            sugar_file_put_contents('modules/Opportunities/metadata/studio.php', '<?php' . "\n\$time = time();");
-            $this->createdStudioFile = true;
-        }
-        //END SUGARCRM flav=ent ONLY
-        //BEGIN SUGARCRM flav=pro ONLY
-        $this->unitTestFiles[] = 'custom/include/MVC/Controller/wireless_module_registry.php';
-        //END SUGARCRM flav=pro ONLY
-    }
-    
-    public function tearDown()
-    {
-        foreach($this->unitTestFiles as $unitTestFile ) {
-            if ( file_exists($unitTestFile) ) {
-                // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
-                unlink($unitTestFile);
-            }
-        }
-        //BEGIN SUGARCRM flav=ent ONLY
-        if (file_exists($this->oppTestPath)) {
-            unlink($this->oppTestPath);
-        }
-        // Set the tabs back to what they were
-        if ( isset($this->defaultTabs[0]) ) {
-            require_once('modules/MySettings/TabController.php');
-            $tabs = new TabController();
-
-            $tabs->set_system_tabs($this->defaultTabs[0]);
-            $GLOBALS['db']->commit();
-        }
-        //END SUGARCRM flav=ent ONLY
-        
-        if ($this->createdStudioFile && file_exists('modules/Opportunities/metadata/studio.php')) {
-            unlink('modules/Opportunities/metadata/studio.php');
-        }
-        parent::tearDown();
-    }
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * @group rest
-     */
-    public function testMetadataGetModuleListPortal() {
-        // Setup the tab controller here and get the default tabs for setting and resetting
-        require_once('modules/MySettings/TabController.php');
-        $tabs = new TabController();
-        $this->defaultTabs = $tabs->get_tabs_system();
-        
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
-
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
-        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
-        $enabledPortal = array('Cases','Contacts');
-        $restModules = $restReply['reply']['module_list'];
-
-        unset($restModules['_hash']);
-        foreach ( $enabledPortal as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
-        }
-        // Bugs and KBDocuments are sometimes enabled, and they are fine, just not in the normal list
-        if ( isset($restModules['Bugs']) ) {
-            unset($restModules['Bugs']);
-        }
-        if ( isset($restModules['KBDocuments']) ) {
-            unset($restModules['KBDocuments']);
-        }
-        // Although there are 4 OOTB portal modules, only 2 are enabled by default
-        $this->assertEquals(2,count($restModules),'There are extra modules in the portal module list');
-        // add module
-        
-        $newModuleList = array('Home','Accounts','Contacts','Opportunities','Bugs','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
-        
-        $tabs->set_system_tabs($newModuleList);
-        $GLOBALS['db']->commit();
-        // Do this to load the tab list into cache
-        $tabs->get_tabs_system();
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
-
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
-        // There should only be the following modules by default: Bugs, Cases, KBDocuments, Contacts
-        // And now 3 are enabled
-        $enabledPortal = array('Cases','Contacts', 'Bugs');
-        $restModules = $restReply['reply']['module_list'];
-
-        unset($restModules['_hash']);
-        foreach ( $enabledPortal as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the portal module list.');
-        }
-        $this->assertEquals(3,count($restModules),'There are extra modules in the portal module list');
-
-        // Set to include Opportunities
-        $newModuleList = array('Home','Accounts','Contacts','Opportunities','Leads','Calendar','Reports','Quotes','Documents','Emails','Campaigns','Calls','Meetings','Tasks','Notes','Forecasts','Cases','Prospects','ProspectLists');
-        
-        $tabs->set_system_tabs($newModuleList);
-        $GLOBALS['db']->commit();
-        // Do this to load the tab list into cache
-        $tabs->get_tabs_system();
-        // Now add an extra file and make sure it gets picked up
-        if (is_dir($dir = dirname($this->oppTestPath)) === false) {
-            sugar_mkdir($dir, null, true);
-        }
-        sugar_file_put_contents($this->oppTestPath, "<?php\n\$viewdefs['Opportunities']['portal']['view']['list'] = array('test' => 'Testing');");
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
-
-        $this->assertTrue(in_array('Opportunities',$restReply['reply']['module_list']),'The new Opportunities module did not appear in the portal list');
-        
-    }
-    //END SUGARCRM flav=ent ONLY
-    
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * @group rest
-     */
-    public function testMetadataGetModuleListMobile() {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
-
-        foreach ( array ( '','custom/') as $prefix) {
-            if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
-                require($prefix.'include/MVC/Controller/wireless_module_registry.php');
-            }
-        }
-        
-        // $wireless_module_registry is defined in the file loaded above
-        $enabledMobile = array_keys($wireless_module_registry);
-
-
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list');
-        $restModules = $restReply['reply']['module_list'];
-        unset($restModules['_hash']);
-        foreach ( $enabledMobile as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list.');
-        }
-        $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list');
-        
-        // Create a custom set of wireless modules to test if it is loading those properly
-        if ( !is_dir('custom/include/MVC/Controller/') ) {
-            mkdir('custom/include/MVC/Controller',0755,true);
-        }
-        file_put_contents('custom/include/MVC/Controller/wireless_module_registry.php','<'."?php\n".'$wireless_module_registry = array("Accounts"=>"Accounts","Contacts"=>"Contacts","Opportunities"=>"Opportunities");');
-        
-        $enabledMobile = array('Accounts','Contacts','Opportunities');
-
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list on the second pass');
-        $restModules = $restReply['reply']['module_list'];
-        unset($restModules['_hash']);
-        foreach ( $enabledMobile as $module ) {
-            $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list on the second pass');
-        }
-        $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list on the second pass');
-
-        
-    }
-    //END SUGARCRM flav=pro ONLY
-
     /**
      * @group rest
      */
@@ -262,7 +88,12 @@ class RestMetadataModuleListTest extends RestTestBase {
     protected function _getModuleListsLikeTheAPIDoes() {
         // Get the metadata manager
         $mm = new MetaDataManager($this->_user);
-        $data['module_list'] = $mm->getModuleList();
+        
+        // Get the api
+        require_once 'clients/base/api/MetadataApi.php';
+        $api = new MetadataApi();
+        
+        $data['module_list'] = $api->getModuleList();
         $data['full_module_list'] = $data['module_list'];
         
         $data['modules'] = array();
@@ -301,17 +132,4 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         return $data;
     }
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * @group rest
-     * @group Bug56911
-     */
-    public function testPortalMetadataModulesContainsNotes()
-    {
-        // Get the metadata for portal 
-        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
-        $this->assertArrayHasKey('modules', $restReply['reply'], "The modules index is missing from the response");
-        $this->assertArrayHasKey('Notes', $restReply['reply']['modules'], 'Notes was not returned in the modules metadata as expected');        
-    }
-    //END SUGARCRM flav=ent ONLY
 }

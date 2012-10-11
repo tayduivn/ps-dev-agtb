@@ -50,7 +50,7 @@ class Bug55455Test extends Sugar_PHPUnit_Framework_TestCase
         $actual = $dl->getMimeType($this->_actualFile);
         $expected = mime_is_detectable() ? 'text/plain' : 'application/octet-stream';
         $this->assertEquals($expected, $actual, "Returned mime type [$actual] was not $expected");
-        
+
         $mime = $dl->getMimeType($this->_mockFile);
         $this->assertFalse($mime, "$mime should be (boolean) FALSE");
     }

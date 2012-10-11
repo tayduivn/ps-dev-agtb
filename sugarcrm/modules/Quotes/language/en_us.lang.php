@@ -73,6 +73,7 @@ $mod_strings = array (
     'LBL_COUNTRY' => 'Country:',
     'LBL_CREATED_BY'=>'Created By',
     'LBL_CURRENCY' => 'Currency:',
+    'LBL_CURRENCY_RATE' => 'Currency Rate',
     'LBL_DATE_QUOTE_CLOSED' => 'Actual Close Date:',
     'LBL_DATE_QUOTE_EXPECTED_CLOSED' => 'Valid Until:',
     'LBL_DEFAULT_SUBPANEL_TITLE' => 'Quotes',

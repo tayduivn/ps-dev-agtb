@@ -23,53 +23,29 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('tests/rest/RestTestPortalBase.php');
 
-class RestCurrentUserPortalTest extends RestTestBase {
+class RestCurrentUserPortalTest extends RestTestPortalBase {
     public function setUp()
     {
         global $db;
 
         parent::setUp();
 
-        // Disable the other portal users
-        $this->oldPortal = array();
-        $ret = $db->query("SELECT id FROM users WHERE portal_only = '1' AND deleted = '0'");
-        while ( $row = $db->fetchByAssoc($ret) ) {
-            $this->oldPortal[] = $row['id'];
-        }
-        $db->query("UPDATE users SET deleted = '1' WHERE portal_only = '1'");
-
-        $this->_user->portal_only = '1';
-        $this->_user->save();
-
-        // A little bit destructive, but necessary.
-        $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
-
-        $this->accounts = array();
-        $this->contacts = array();
-
-        $account = new Account();
+        $account = BeanFactory::newBean('Accounts');
         $account->name = "UNIT TEST PortalMe";
         $account->billing_address_postalcode = "90210";
         $account->save();
         $this->accounts[] = $account;
 
-        $contact = new Contact();
-        $contact->first_name = "UNITTEST";
-        $contact->last_name = "PORTALME";
-        $contact->title = "UNITTEST";
-        $contact->save();
-        $this->contacts[] = $contact;
+        $this->contact->first_name = "UNITTEST";
+        $this->contact->last_name = "PORTALME";
+        $this->contact->title = "UNITTEST";
 
-        $contact->load_relationship('accounts');
-        $contact->accounts->add(array($this->accounts[0]));
-        $contact->portal_active = true;
-        $contact->portal_name = "unittestportal";
-        $contact->portal_password = User::getPasswordHash("unittest");
+        $this->contact->load_relationship('accounts');
+        $this->contact->accounts->add(array($this->accounts[0]));
         
-        $this->portalGuy = $contact;
-        $contact->save();
+        $this->contact->save();
         
         $GLOBALS['db']->commit();
     }
@@ -78,53 +54,8 @@ class RestCurrentUserPortalTest extends RestTestBase {
 
     public function tearDown()
     {
-        global $db;
-        // Re-enable the old portal users
-        $portalIds = "('".implode("','",$this->oldPortal)."')";
-        $db->query("UPDATE users SET deleted = '0' WHERE id IN {$portalIds}");
-
-        $accountIds = array();
-        foreach ( $this->accounts as $account ) {
-            $accountIds[] = $account->id;
-        }
-        $accountIds = "('".implode("','",$accountIds)."')";
-        $contactIds = array();
-        foreach ( $this->contacts as $contact ) {
-            $contactIds[] = $contact->id;
-        }
-        $contactIds = "('".implode("','",$contactIds)."')";
-
-        $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
-
-
         parent::tearDown();
     }
-
-    protected function _restLogin($username = '', $password = '')
-    {
-        $args = array(
-            'grant_type' => 'password',
-            'username' => 'unittestportal',
-            'password' => 'unittest',
-            'client_id' => 'support_portal',
-            'client_secret' => '',
-        );
-        
-        // Prevent an infinite loop, put a fake authtoken in here.
-        $this->authToken = 'LOGGING_IN';
-
-        $reply = $this->_restCall('oauth2/token',json_encode($args));
-        if ( empty($reply['reply']['access_token']) ) {
-            throw new Exception("Rest authentication failed, message looked like: ".$reply['replyRaw']);
-        }
-        $this->authToken = $reply['reply']['access_token'];
-        $this->refreshToken = $reply['reply']['refresh_token'];
-    }
-    
 
     /**
      * @group rest
@@ -154,16 +85,17 @@ class RestCurrentUserPortalTest extends RestTestBase {
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'fubar', 'old_password' => 'unittest')),
             'PUT');
-        $this->assertEquals($reply['reply']['valid'], true);
+        
+        $this->assertEquals($reply['reply']['valid'], true, "Part One");
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'newernew', 'old_password' => 'fubar')),
             'PUT');
-        $this->assertEquals($reply['reply']['valid'], true);
+        $this->assertEquals($reply['reply']['valid'], true, "Part Deux");
         // Now use an incorrect old_password .. this should return valid:false
         $reply = $this->_restCall("me/password",
             json_encode(array('new_password' => 'hello', 'old_password' => 'nope')),
             'PUT');
-        $this->assertEquals($reply['reply']['valid'], false);
+        $this->assertEquals($reply['reply']['valid'], false, "Part Three - With a Vengence");
     }
 
     /**

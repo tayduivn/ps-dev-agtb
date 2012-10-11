@@ -20,7 +20,8 @@
         app.alert.show('save_edit_view', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_SAVING')});
         this.model.save(null, {
             success:function () {
-                self.checkFileFieldsAndProcessUpload(self.model, {
+
+                app.file.checkFileFieldsAndProcessUpload(self.model, {
                     success: function () {
                         app.alert.dismiss('save_edit_view');
                         self.app.navigate(self.context, self.model, 'detail');

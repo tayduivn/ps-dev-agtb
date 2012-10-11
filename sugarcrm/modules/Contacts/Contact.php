@@ -137,24 +137,11 @@ class Contact extends Person {
 //BEGIN SUGARCRM flav=pro ONLY
 	,'quote_id'
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-    ,'instance_id'
-//END SUGARCRM flav=dce ONLY
 	);
 
 	var $relationship_fields = Array('account_id'=> 'accounts','bug_id' => 'bugs', 'call_id'=>'calls','case_id'=>'cases','email_id'=>'emails',
 								'meeting_id'=>'meetings','note_id'=>'notes','task_id'=>'tasks', 'opportunity_id'=>'opportunities', 'contacts_users_id' => 'user_sync'
-//BEGIN SUGARCRM flav=dce ONLY
-                                ,'instance_id'=>'dceinstances'
-//END SUGARCRM flav=dce ONLY
 								);
-//BEGIN SUGARCRM flav=dce ONLY
-    var $dceinstance_role;
-    var $dceinstance_rel_id;
-    var $instance_id;
-    var $dceinstance_role_id;
-    var $rel_dceinstance_table = "dceinstances_contacts";
-//END SUGARCRM flav=dce ONLY
 
 	function Contact() {
 		parent::Person();

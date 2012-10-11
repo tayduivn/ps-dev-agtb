@@ -79,14 +79,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 		'table' => 'users',
 	),
 
-	'timeperiod_id' =>
-	array (
-	  'name' => 'timeperiod_id',
-	  'vname' => 'LBL_TIMEPERIOD_ID',
-	  'type' => 'id',
-	  'required' => true,
-	  'reportable' => false,
-	),
+    'timeperiod_id' =>
+        array (
+         'name' => 'timeperiod_id',
+         'vname' => 'LBL_TIMEPERIOD_ID',
+         'type' => 'enum',
+         'dbType' => 'id',
+         'function' => 'getTimePeriodsDropDownForQuotas',
+         'reportable' => true,
+        ),
 
   	'quota_type' =>
  	 array (
@@ -96,15 +97,16 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	'len' => 100,
     	'massupdate' => false,
     	'options' => 'forecast_type_dom',
+        'reportable'=>false,
   ),
 
 	'amount' =>
 	array (
 	  'name' => 'amount',
 	  'vname' => 'LBL_AMOUNT',
-	  'type' => 'int',
+	  'type' => 'currency',
 	  'required' => true,
-	  'reportable' => false,
+	  'reportable' => true,
 	  'importable' => 'required',
 	),
 
@@ -112,7 +114,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	array (
 	  'name' => 'amount_base_currency',
 	  'vname' => 'LBL_AMOUNT_BASE_CURRENCY',
-	  'type' => 'int',
+	  'type' => 'currency',
 	  'required' => true,
 	  'reportable' => false,
 	),
@@ -126,7 +128,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	  'reportable' => false,
 	  'importable' => 'required',
 	),
-  	'currency_symbol' =>
+    'base_rate' =>
+    array (
+         'name' => 'base_rate',
+         'vname' => 'LBL_CURRENCY_RATE',
+         'type' => 'double',
+         'required' => true,
+    ),
+    'currency_symbol' =>
   	array (
     	'name' => 'currency_symbol',
     	'vname' => 'LBL_LIST_SYMBOL',
@@ -165,18 +174,21 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	'vname' => 'LBL_CREATED_BY',
     	'type' => 'varchar',
     	'len' => '36',
+        'reportable'=>false,
   	),
   	'date_entered' =>
   	array (
     	'name' => 'date_entered',
     	'vname' => 'LBL_DATE_ENTERED',
     	'type' => 'datetime',
+        'reportable'=>false,
   	),
 	'date_modified' =>
   	array (
     	'name' => 'date_modified',
     	'vname' => 'LBL_DATE_MODIFIED',
     	'type' => 'datetime',
+        'reportable'=>false,
   	),
 	'deleted' =>
   	array (
@@ -185,16 +197,20 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
     	'type' => 'bool',
     	'reportable'=>false,
   	),
-
+    'name' =>
+    array (
+       'name' => 'name',
+       'type' => 'id',
+       'source'=>'non-db',
+    ),
 
 
     		),	//ends "fields" array
 
 	'indices' => array(
-       	  array('name' =>'quotaspk', 'type' =>'primary', 'fields'=>array('id'))
-	)
-
-
+       	  array('name' =>'quotaspk', 'type' =>'primary', 'fields'=>array('id')),
+       	  array('name' =>'idx_quota_user_tp', 'type' =>'index', 'fields'=>array('user_id', 'timeperiod_id')),
+	),
 );
 
 ?>

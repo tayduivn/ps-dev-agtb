@@ -1,5 +1,6 @@
 <?php
 //FILE SUGARCRM flav=ent ONLY
+
 /*********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -43,7 +44,9 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
         //echo "TearDown";
         if (isset($this->user->id)) {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->user->id}'");
-            $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '{$this->user->id}'");
+            if ($GLOBALS['db']->tableExists('users_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '{$this->user->id}'");
+            }
         }
         //unset($_SESSION['ACL']);
     }

@@ -75,8 +75,9 @@ $mod_strings = array (
   'LBL_QC_LAST_DATE_COMMITTED' => 'Last Commit Date:',
   'LBL_QC_LAST_COMMIT_VALUE' => 'Last Commit Amount:',
   'LBL_QC_HEADER_DELIM'=> 'To',
-  
-  //opportunity worksheet list view labels
+  'LBL_CURRENCY' => 'Currency',
+  'LBL_CURRENCY_RATE' => 'Currency Rate',
+    //opportunity worksheet list view labels
   'LBL_OW_OPPORTUNITIES' => "Opportunity",
   'LBL_OW_ACCOUNTNAME' => "Account",
   'LBL_OW_REVENUE' => "Amount",
@@ -184,7 +185,13 @@ $mod_strings = array (
   'LBL_QC_COMMIT_BEST_CASE'=>'Commit Amount (Best Case):',
   'LBL_QC_COMMIT_LIKELY_CASE'=>'Commit Amount (Likely Case):',
   'LBL_QC_COMMIT_WORST_CASE'=>'Commit Amount (Worst Case):',
-	'LBL_EDIT_LAYOUT' => 'Edit Layout' /*for 508 compliance fix*/,
+  'LBL_EDIT_LAYOUT' => 'Edit Layout', /*for 508 compliance fix*/
+  'LBL_EXPECTED_OPPORTUNITIES' => 'Expected Opportunities',
+  'LBL_EXPECTED_BEST_CASE' => 'Expected Best Case',
+  'LBL_EXPECTED_LIKELY_CASE' => 'Expected Likely Case',
+  'LBL_EXPECTED_WORST_CASE' => 'Expected Worst Case',
+  'LBL_EXPECTED_AMOUNT' => 'Expected Amount',
+  'LBL_INCLUDE_EXPECTED' => 'Include Expected'
 );
 
 

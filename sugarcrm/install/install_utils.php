@@ -934,16 +934,16 @@ RedirectMatch 403 {$ignoreCase}/+upload
 RedirectMatch 403 {$ignoreCase}/+custom/+blowfish
 RedirectMatch 403 {$ignoreCase}/+cache/+diagnostic
 RedirectMatch 403 {$ignoreCase}/+files\.md5$
-//BEGIN SUGARCRM flav=ent ONLY
 <IfModule mod_rewrite.c>
     Options +FollowSymLinks
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^rest/(.*)$ api/rest.php?__sugar_url=$1 [L,QSA]
+//BEGIN SUGARCRM flav=ent ONLY
     RewriteRule ^portal/(.*)$ portal2/$1 [L,QSA]
-</IfModule>
 //END SUGARCRM flav=ent ONLY
+</IfModule>
 # END SUGARCRM RESTRICTIONS
 EOQ;
 
@@ -2154,7 +2154,8 @@ function create_past_date()
 {
     global $timedate;
     $now = $timedate->getNow(true);
-    $day=$now->day-mt_rand(1, 365);
+    $day_of_year = date('z') + 1;
+    $day=$now->day-mt_rand(1, $day_of_year);
     return $timedate->asDbDate($now->get_day_begin($day));
 }
 

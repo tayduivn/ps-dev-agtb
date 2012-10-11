@@ -46,7 +46,7 @@ class ProductCategory extends SugarBean {
 	var $description;
     //BEGIN SUGARCRM flav=pro ONLY
 	var $parent_id;
-
+    var $assigned_user_id;
 
 //TREEVIEW
 
@@ -513,7 +513,40 @@ if (empty($parent_node_id)) $parent_node_id=0;
 ////////////End TreeView 2.0//////////////////////////////////////////////////////////
 //END SUGARCRM flav=pro ONLY
 
+    function save($check_notify = FALSE)
+    {
+        parent::save($check_notify);
 
+        // check if this product category already stores in forecast_tree table
+        $isUpdate = false;
+        $id = $this->db->getOne("SELECT id FROM forecast_tree WHERE id = '$this->id'");
+        if ($id == $this->id)
+        {
+            $isUpdate = true;
+        }
+        $this->update_forecast_tree($isUpdate);
+    }
+
+    //update forecast_tree after bean was saved
+    function update_forecast_tree($is_update = false)
+    {
+        if (!$is_update)
+        {
+            $query = "INSERT INTO forecast_tree (id, name, hierarchy_type, user_id, parent_id)
+                      VALUES ('$this->id', '$this->name', 'products', '$this->assigned_user_id', '$this->parent_id')";
+            $this->db->query($query, true, "error inserting into forecast_tree table: ");
+        }
+        else
+        {
+            $query = "UPDATE forecast_tree
+                      SET name = '$this->name',
+                          hierarchy_type = 'products',
+                          user_id = '$this->assigned_user_id',
+                          parent_id = '$this->parent_id'
+                      WHERE id = '$this->id'";
+            $this->db->query($query, true, "error updating forecast_tree table: ");
+        }
+    }
 }
 
 ?>
