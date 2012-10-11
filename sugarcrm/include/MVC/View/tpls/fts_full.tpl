@@ -215,7 +215,7 @@ width:70%;
                 url: "index.php",
                 dataType: 'json',
                 data: {'action':'spot', 'ajax': true,'full' : true, 'module':'Home', 'to_pdf' : '1',  'q': q, 'm' : m, 'rs_only': true,
-                        'offset': SUGAR.FTS.currentOffset, 'refreshModList': rml},
+                        'offset': SUGAR.FTS.currentOffset, 'refreshModList': rml, append_wildcard : true},
                 success: function(o)
                 {
                     SUGAR.FTS.totalHits = o.totalHits;
