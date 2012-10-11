@@ -413,14 +413,30 @@ class SugarChart {
 	}
 	//END SUGARCRM flav=pro ONLY
 
-	function convertCurrency($to_convert){
-		global $locale;
-		$decimals = '2';
-		$decimals = $locale->getPrecision();
-		$amount = ($this->div == 1) ? $to_convert : round($to_convert * $this->div,$decimals);
+    /**
+     * Convert the amount given to the User's currency.
+     *
+     * TODO make this use the Currency module to convert from dollars and make
+     * it deprecated.
+     *
+     * @param float $to_convert
+     *   The amount to be converted.
+     *
+     * @return float
+     *   The amount converted in the User's current currency.
+     *
+     * @see Currency::convertFromDollar()
+     * @see SugarChart::__construct()
+     */
+    function convertCurrency($to_convert)
+    {
+        global $locale;
 
-		return $amount;
-	}
+        $decimals = $locale->getPrecision();
+        $amount = round($to_convert * $this->div, $decimals);
+
+        return $amount;
+    }
 
 	function formatNumber($number, $decimals= null, $decimal_point= null, $thousands_sep= null){
 		global $locale;
