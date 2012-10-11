@@ -58,6 +58,15 @@ interface IMailer
     public function setHeaders(EmailHeaders $headers);
 
     /**
+     * Returns the value currently representing the header.
+     *
+     * @access public
+     * @param string $key required Should look like the real header it represents.
+     * @return mixed Refer to EmailHeaders::getHeader to see the possible return types.
+     */
+    public function getHeader($key);
+
+    /**
      * Adds or replaces header values.
      *
      * @access public
@@ -75,14 +84,6 @@ interface IMailer
      * @throws MailerException
      */
     public function setSubject($subject);
-
-    /**
-     * Returns the EmailIdentity currently representing the From header.
-     *
-     * @access public
-     * @return EmailIdentity
-     */
-    public function getFrom();
 
     /**
      * Restores the email headers to a fresh EmailHeaders object.
