@@ -19,7 +19,7 @@
             relate: true,
             fieldsToValidate: this.getFields(this.module),
             success: function() {
-                self.checkFileFieldsAndProcessUpload(createModel, {
+                app.file.checkFileFieldsAndProcessUpload(createModel, {
                     success: function() { self.saveComplete(); }
                 });
             },
