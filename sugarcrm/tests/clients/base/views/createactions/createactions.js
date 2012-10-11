@@ -1,18 +1,23 @@
 describe("Create Actions Dropdown", function() {
-    var moduleName = 'Cases';
+    var moduleName = 'Cases',
+        viewName = 'createactions';
 
     beforeEach(function() {
-        SugarTest.loadViewHandlebarsTemplate('base', 'createactions');
-        SugarTest.loadComponent('base', 'view', 'createactions');
+        SugarTest.testMetadata.init();
+        SugarTest.loadViewHandlebarsTemplate('base', viewName);
+        SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.testMetadata.apply();
+    });
 
-        SugarTest.app.metadata.set(fixtures.metadata, false);
+    afterEach(function() {
+        SugarTest.testMetadata.dispose();
     });
 
     describe('Render', function() {
         var view, isAuthenticatedStub;
 
         beforeEach(function() {
-            view = SugarTest.createView("base", moduleName, "createactions", null, null);
+            view = SugarTest.createView("base", moduleName, viewName, null, null);
             isAuthenticatedStub = sinon.stub(SugarTest.app.api, 'isAuthenticated', function() {
                 return true;
             });

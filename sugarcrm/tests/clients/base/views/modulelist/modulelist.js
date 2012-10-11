@@ -1,11 +1,16 @@
 describe("Module List", function() {
-    var moduleName = 'Cases';
+    var moduleName = 'Cases',
+        viewName = 'modulelist';
 
     beforeEach(function() {
-        SugarTest.loadViewHandlebarsTemplate('base', 'modulelist');
-        SugarTest.loadComponent('base', 'view', 'modulelist');
+        SugarTest.testMetadata.init();
+        SugarTest.loadViewHandlebarsTemplate('base', viewName);
+        SugarTest.loadComponent('base', 'view', viewName);
+        SugarTest.testMetadata.apply();
+    });
 
-        SugarTest.app.metadata.set(fixtures.metadata, false);
+    afterEach(function() {
+        SugarTest.testMetadata.dispose();
     });
 
     describe('Render', function() {
