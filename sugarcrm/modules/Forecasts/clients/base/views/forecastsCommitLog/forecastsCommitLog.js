@@ -63,11 +63,6 @@
     totals : null,
 
     /**
-     * Stores the previous totals to display in the view
-     */
-    previousTotals : null,
-
-    /**
      * Template to use when updating the bestCase on the committed bar
      */
     bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
@@ -76,8 +71,6 @@
      * Template to use wen updating the likelyCase on the committed bar
      */
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
-
-    savedTotal : null,
 
     runningFetch : false,
 
@@ -178,9 +171,6 @@
         //Reset the history log
         self.historyLog = [];
         self.moreLog = [];
-        //self.previousText = "Previous Commit: 0";
-        self.previousLikelyCase = 0;
-        self.previousBestCase = 0;
 
         _.each(self._collection.models, function(model)
         {
@@ -192,16 +182,7 @@
                     dateEntered = previousModel.get('date_entered');
                 }
                 self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
-                self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
-                self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
             } else {
-                if(count == 1)
-                {
-                    self.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
-                    self.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
-                    dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
-                    self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
-                }
                 self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
                 previousModel = model;
             }
