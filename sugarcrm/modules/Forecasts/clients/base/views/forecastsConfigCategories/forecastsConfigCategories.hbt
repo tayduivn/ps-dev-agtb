@@ -1,4 +1,4 @@
-<div class="modal-body">
+<div class="modal-content hide">
     <p>{{str label "Forecasts"}}</p>
     <p></p>
     {{#with forecast_categories_field}}

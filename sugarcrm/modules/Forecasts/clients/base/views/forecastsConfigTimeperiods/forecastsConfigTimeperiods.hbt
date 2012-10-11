@@ -1,4 +1,4 @@
-<div class="modal-body">
+<div class="modal-content show">
 {{#each meta.panels}}
     {{str label "Forecasts"}}
     <ol>
