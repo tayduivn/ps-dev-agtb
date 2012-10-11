@@ -31,11 +31,17 @@
     },
 
     next: function(evt) {
-        this.handleDirectionSwitch('next');
+        // only fire if the target is not disabled
+        if($(evt.target).hasClass('disabled') == false) {
+            this.handleDirectionSwitch('next');
+        }
     },
 
-    previous: function() {
-        this.handleDirectionSwitch('previous');
+    previous: function(evt) {
+        // only fire if the target is not disabled
+        if($(evt.target).hasClass('disabled') == false) {
+            this.handleDirectionSwitch('previous');
+        }
     },
 
     handleDirectionSwitch: function(way) {
@@ -62,9 +68,7 @@
             nextPanel = this.totalPanels;
         }
 
-        console.log('-- total panels: ' + this.totalPanels);
-
-        if(nextPanel > 0) {
+        if(nextPanel > 0 && nextPanel != this.totalPanels) {
             this.$el.find('[name=next_button]').removeClass('disabled');
             this.$el.find('[name=previous_button]').removeClass('disabled');
         } else if(nextPanel == 0) {
