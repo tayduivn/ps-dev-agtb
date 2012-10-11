@@ -16,10 +16,18 @@ if [[ "$platform" == 'osx' ]]; then
 	cp config.sample.php config.php
 	cp configs/config.sample.php configs/config.php
 
-
-	name="$(osascript -e 'Tell application "System Events" to display dialog "Enter the hostname:" default answer "localhost"' -e 'text returned of result' 2>/dev/null)"
-	port="$(osascript -e 'Tell application "System Events" to display dialog "Enter the port:" default answer "8888"' -e 'text returned of result' 2>/dev/null)"
-	path="$(osascript -e 'Tell application "System Events" to display dialog "Enter the path from the webroot without initial/trailing slashes:" default answer "sugar66"' -e 'text returned of result' 2>/dev/null)"
+    name=$1
+    port=$2
+    path=$3
+    if [ -z "$name" ]; then
+    	name="$(osascript -e 'Tell application "System Events" to display dialog "Enter the hostname:" default answer "localhost"' -e 'text returned of result' 2>/dev/null)"
+    fi
+    if [ -z "$port" ]; then
+        port="$(osascript -e 'Tell application "System Events" to display dialog "Enter the port:" default answer "8888"' -e 'text returned of result' 2>/dev/null)"
+	fi
+    if [ -z "$path" ]; then
+        path="$(osascript -e 'Tell application "System Events" to display dialog "Enter the path from the webroot without initial/trailing slashes:" default answer "sugar66"' -e 'text returned of result' 2>/dev/null)"
+    fi
 
     if [[ $path ]]; then
         path="/""$path"
