@@ -48,6 +48,10 @@ describe("The forecastsConfigCategories view", function(){
         expect(view.category_ranges_field).toBeDefined();
     });
 
+    it("should have a parameter to keep track of the selection between selection changes", function() {
+        expect(view.selection).toBeDefined();
+    });
+
     describe("view parameters", function() {
 
         beforeEach(function() {
@@ -64,7 +68,8 @@ describe("The forecastsConfigCategories view", function(){
                                 view: 'edit',
                                 options: 'forecasts_config_category_options_dom',
                                 default: false,
-                                enabled: true
+                                enabled: true,
+                                value: ''
                             },
                             {
                                 name: 'category_ranges'
@@ -74,11 +79,15 @@ describe("The forecastsConfigCategories view", function(){
                                 options: {
                                     show_binary: 'commit_stage_binary_dom',
                                     show_buckets: 'commit_stage_dom'
-                                }
+                                },
+                                value: ''
                             }
                         ]
                     }
                 ]
+            },
+            view.model = {
+                get: function(key) {return ''}
             };
         });
 
@@ -102,6 +111,55 @@ describe("The forecastsConfigCategories view", function(){
             expect(view.forecast_categories_field).toEqual(fieldMeta[0]);
             expect(view.category_ranges_field).toEqual(fieldMeta[1]);
             expect(view.buckets_dom_field).toEqual(fieldMeta[2]);
+        });
+
+        describe("initial value for", function() {
+
+            beforeEach(function() {
+                view.model = {
+                    get: function(item) {
+                        if (item == 'forecast_categories') {
+                            return 'test_category';
+                        }
+                        if (item == 'buckets_dom') {
+                            return 'test_category_dom';
+                        }
+                    }
+                };
+            });
+
+            afterEach(function() {
+                delete view.model;
+            });
+
+            describe("forecast_categories_field", function() {
+                it("should be defined", function() {
+                    view.initialize({});
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.forecast_categories_field.value).toBeDefined();
+                });
+
+                it("should be set to what is in the model during initialize", function() {
+                    view.initialize({});
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.forecast_categories_field.value).toEqual('test_category');
+                });
+            });
+
+            describe("bucket_dom_field", function() {
+                it("should be defined", function() {
+                    view.initialize({});
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.buckets_dom_field.value).toBeDefined();
+                });
+
+                it("should be set to what is in the model during initialize", function() {
+                    view.initialize({});
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.buckets_dom_field.value).toEqual('test_category_dom');
+                });
+            });
+
         });
 
     });
