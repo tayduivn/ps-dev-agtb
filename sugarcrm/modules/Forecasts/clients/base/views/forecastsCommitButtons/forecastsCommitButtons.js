@@ -21,7 +21,7 @@
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
-        "click a[id=forecastSettings]" : "triggerConfigModal"
+        "click a[name=forecastSettings]" : "triggerConfigModal"
     },
 
     initialize: function (options) {
@@ -147,12 +147,12 @@
     triggerConfigModal: function() {
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"forecastsConfig"}]
+            components: [{layout:"forecastsWizardConfig"}]
         };
         var callback = function(){};
 
         if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsConfig:open", params, callback);
+            this.layout.trigger("modal:forecastsWizardConfig:open", params, callback);
         }
     },
 
