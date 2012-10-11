@@ -635,17 +635,23 @@ function fill_mail_object(&$mail_object, &$focus, $template_id, $source_field, $
         return true; // true=encountered an error
     }
 
-    if ($template->from_address != "" && $template->from_name != "") {
-        $mail_object->setHeader(EmailHeaders::From, new EmailIdentity($template->from_address, $template->from_name));
-    } else {
-        //@todo need to be able to set the From address and From name separately
-        if ($template->from_name != '') {
-            //$mail_object->FromName = $template->from_name;
+    // override the From email header if the template provides the necessary values
+    if ($template->from_address != "" || $template->from_name != "") {
+        $from      = $mail_object->getHeader(EmailHeaders::From);
+        $fromEmail = $from->getEmail();
+        $fromName  = $from->getName();
+
+        // retain the email address of the From header if the template doesn't provide one
+        if ($template->from_address != "") {
+            $fromEmail = $template->from_address;
         }
 
-        if ($template->from_address != '') {
-            //$mail_object->From = $template->from_address;
+        // retain the name of the From header if the template doesn't provide one
+        if ($template->from_name != "") {
+            $fromName = $template->from_name;
         }
+
+        $mail_object->setHeader(EmailHeaders::From, new EmailIdentity($fromEmail, $fromName));
     }
 
     if (!empty($template->body)) {
