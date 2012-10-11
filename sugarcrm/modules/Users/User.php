@@ -2157,7 +2157,9 @@ EOQ;
                     $this->setNewPassword($additionalData['password'], '1');
                 }
             } else {
-                //@todo throw an exception if no recipients? can PHPMailer raise this error for us?
+                // this exception is ignored as part of the default case in the switch statement in the catch block
+                // but it adds documentation as to what is happening
+                throw new MailerException("There are no recipients", MailerException::FailedToSend);
             }
         } catch (MailerException $me) {
             switch ($me->getCode()) {
@@ -2180,6 +2182,7 @@ EOQ;
 
                     break;
                 default:
+                    // status=failed to send, but no message is returned
                     break;
             }
         }
