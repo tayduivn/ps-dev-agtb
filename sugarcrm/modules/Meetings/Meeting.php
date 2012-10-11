@@ -617,9 +617,11 @@ class Meeting extends SugarBean {
 		require_once("modules/vCals/vCal.php");
 		$content = vCal::get_ical_event($this, $GLOBALS['current_user']);
 
-		if(file_put_contents($path,$content)){
-			$notify_mail->AddAttachment($path, 'meeting.ics', 'base64', 'text/calendar');
+		if (file_put_contents($path,$content)){
+            $attachment = new Attachment($path, "meeting.ics", Encoding::Base64, "text/calendar");
+            $notify_mail->addAttachment($attachment);
 		}
+
 		return $notify_mail;
 	}
 
