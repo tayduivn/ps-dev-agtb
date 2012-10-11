@@ -2116,10 +2116,10 @@ EOQ;
         $htmlBody = str_replace('$config_site_url', $sugar_config['site_url'], $htmlBody);
         $body     = str_replace('$config_site_url', $sugar_config['site_url'], $body);
 
-        $htmlBody             = str_replace('$contact_user_user_name', $this->user_name, $htmlBody);
-        $htmlBody             = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
-        $body                 = str_replace('$contact_user_user_name', $this->user_name, $body);
-        $body                 = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
+        $htmlBody                 = str_replace('$contact_user_user_name', $this->user_name, $htmlBody);
+        $htmlBody                 = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
+        $body                     = str_replace('$contact_user_user_name', $this->user_name, $body);
+        $body                     = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
         $emailTemplate->body_html = $htmlBody;
         $emailTemplate->body      = $body;
 
@@ -2149,7 +2149,7 @@ EOQ;
                 $result["status"] = true;
 
                 // save the email record
-                $email = new Email();
+                $email                   = new Email();
                 $email->team_id          = 1;
                 $email->to_addrs         = '';
                 $email->type             = 'archived';
