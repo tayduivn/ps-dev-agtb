@@ -46,7 +46,7 @@ class TimePeriod extends SugarBean {
 	var $date_modified;
 	var $deleted;
 	var $fiscal_year;
-	var $is_fiscal_year;
+	var $is_fiscal_year = 0;
     var $is_fiscal;
 	//end time period stored fields.
 	var $table_name = "timeperiods";
@@ -296,7 +296,7 @@ class TimePeriod extends SugarBean {
     /**
      * getCurrentId
      *
-     * Returns the current timeperiod name if a timeperiod entry is found
+     * Returns the current timeperiod id if a timeperiod entry is found
      *
      */
     public static function getCurrentId($timedate=null)
@@ -311,9 +311,32 @@ class TimePeriod extends SugarBean {
             $db = DBManagerFactory::getInstance();
             $queryDate = $timedate->getNow();
             $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_leaf = 0 and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
         }
         return $currentId;
+    }
+
+    /**
+     * getCurrentType
+     *
+     * Returns the current timeperiod type if a timeperiod entry is found
+     *
+     */
+    public static function getCurrentType($timedate=null)
+    {
+        static $currentType;
+
+        if(!isset($currentType))
+        {
+            global $app_strings;
+            $timedate = !is_null($timedate) ? $timedate : TimeDate::getInstance();
+            //get current timeperiod
+            $db = DBManagerFactory::getInstance();
+            $queryDate = $timedate->getNow();
+            $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+            $currentType = $db->getOne("SELECT time_period_type FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_leaf = 0 and is_fiscal_year = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+        }
+        return $currentType;
     }
 
     /**
@@ -467,11 +490,11 @@ class TimePeriod extends SugarBean {
         $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
 
-        $query = "select id from timeperiods where ";
+        $query = "select id, time_period_type from timeperiods where ";
         $query .= " time_period_type = " . $this->db->quoted($this->time_period_type);
         $query .= " AND deleted = 0";
 
-        $queryDate = $timedate->fromDbDate($this->end_date);
+        $queryDate = $timedate->fromDbDate($this->start_date);
         $queryDate = $queryDate->modify('-1 day');
         $queryDate = $this->db->convert($this->db->quoted($queryDate->asDbDate()), 'date');
 
@@ -496,6 +519,7 @@ class TimePeriod extends SugarBean {
        //kill the old timeperiods first
        self::deleteCurrentTimePeriods();
        $db = DBManagerFactory::getInstance();
+
        $timedate = TimeDate::getInstance();
        $adminBean = BeanFactory::getBean("Administration");
 
@@ -505,18 +529,19 @@ class TimePeriod extends SugarBean {
        //determine today
        $currentDate = $timedate->getNow();
        $targetStartDate = $timedate->getNow();
+
        //get settings and translate them from text
-       $targetMonth = intval($forecastSettings['timeperiods_start_month']);
-       $targetDay = intval($forecastSettings['timeperiods_start_day']);
-       $periodsBack = intval($forecastSettings['timeperiods_shown_backward']);
-       $periodsForward = intval($forecastSettings['timeperiods_shown_forward']);
+       $targetMonth = intval($forecastSettings["timeperiod_start_month"]);
+       $targetDay = intval($forecastSettings["timeperiod_start_day"]);
+       $periodsBack = intval($forecastSettings["timeperiods_shown_backward"]);
+       $periodsForward = intval($forecastSettings["timeperiods_shown_forward"]);
 
        //set the target date
-       $targetStartDate->setDate(intval($current->format("Y")), $targetMonth, $targetMonth);
+       $targetStartDate->setDate(intval($currentDate->format("Y")), $targetMonth, $targetDay);
 
        //if the date has yet to occur this year, then we need to subtract one from the year to create the first time period
        if($currentDate < $targetStartDate) {
-           $targetStartDate->setDate(intval($current->format("Y"))-1, $targetMonth, $targetMonth);
+           $targetStartDate->setDate(intval($currentDate->format("Y"))-1, $targetMonth, $targetDay);
        }
 
        $currentTimePeriod = BeanFactory::newBean($forecastSettings['timeperiod_interval']."TimePeriods");
@@ -526,10 +551,12 @@ class TimePeriod extends SugarBean {
            $currentTimePeriod->is_fiscal = true;
        }
        $currentTimePeriod->setStartDate($targetStartDate->asDbDate());
+       $currentTimePeriod->save();
        $currentTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
 
         //create the back periods
-       $priorTimePeriod = $currentTimePeriod;
+       $priorTimePeriod = BeanFactory::getBean($forecastSettings['timeperiod_interval']."TimePeriods",$currentTimePeriod->id);
+       $forwardTimePeriod = BeanFactory::getBean($forecastSettings['timeperiod_interval']."TimePeriods",$currentTimePeriod->id);
 
        for($i = 1; $i <= $periodsBack; $i++) {
            $priorTimePeriod = $priorTimePeriod->createPreviousTimePeriod();
@@ -537,11 +564,9 @@ class TimePeriod extends SugarBean {
        }
 
        //create the forward periods
-
-       $forwardTimePeriod = $currentTimePeriod
        for($i = 1; $i <= $periodsForward; $i++) {
-           $currentTimePeriod = $forwardTimePeriod->createNextTimePeriod();
-           $currentTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
+           $forwardTimePeriod = $forwardTimePeriod->createNextTimePeriod();
+           $forwardTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
         }
 
     }
