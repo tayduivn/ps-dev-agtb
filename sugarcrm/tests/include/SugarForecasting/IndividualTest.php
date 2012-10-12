@@ -54,6 +54,13 @@ class SugarForecasting_IndividualTest extends Sugar_PHPUnit_Framework_TestCase
         self::$user = SugarTestForecastUtilities::createForecastUser(array('timeperiod_id' => $timeperiod->id));
         self::$args['user_id'] = self::$user['user']->id;
     }
+    
+    public function setUp()
+    {
+        $this->_user = self::$user["user"];
+        $GLOBALS["current_user"] = $this->_user;
+        $this->authToken = "";
+    }
 
     public function tearDown()
     {
