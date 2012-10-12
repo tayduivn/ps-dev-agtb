@@ -34,6 +34,8 @@ class RestTestPortalBase extends RestTestBase {
     protected $bugs = array();
     protected $notes = array();
     protected $kbdocs = array();
+    protected $currentPortalBean = null;
+    protected $testConsumer = null;
 
     public function setUp()
     {
@@ -78,6 +80,26 @@ class RestTestPortalBase extends RestTestBase {
 
         // Adding it to the contacts array makes sure it gets deleted when done
         $this->contacts[] = $this->contact;
+
+        // Add the support_portal oauth key
+        $this->testConsumer = BeanFactory::newBean('OAuthKeys');
+
+        // use consumer to find bean with client_type === support portal
+        $this->currentPortalBean = BeanFactory::newBean('OAuthKeys');
+        $this->currentPortalBean->getByKey('support_portal', 'oauth2');
+        $this->currentPortalBean->new_with_id = true;
+
+        $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+
+        // Create a unit test login ID
+        $this->testConsumer->id = 'UNIT-TEST-portallogin';
+        $this->testConsumer->new_with_id = true;
+        $this->testConsumer->c_key = 'support_portal';
+        $this->testConsumer->c_secret = '';
+        $this->testConsumer->oauth_type = 'oauth2';
+        $this->testConsumer->client_type = 'support_portal';
+        $this->testConsumer->save();
+        
         $GLOBALS['db']->commit();
     }
     public function tearDown()
@@ -186,9 +208,14 @@ class RestTestPortalBase extends RestTestBase {
             }
         }
         
-        
-        
-        
+        // Delete test support_portal user
+        $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
+
+        // Add back original support_portal user
+        if($this->currentPortalBean->id) {
+            $this->currentPortalBean->save();
+        }
+ 
         parent::tearDown();
     }
 
@@ -201,6 +228,7 @@ class RestTestPortalBase extends RestTestBase {
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         
         // Prevent an infinite loop, put a fake authtoken in here.

@@ -8,15 +8,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsCommitted'] = array(
             'fields' =>
             array(
                 array(
-                    'name' => 'timeperiod',
-                    'label' => 'LBL_TIMEPERIOD_NAME',
-                    'type' => 'enum',
-                    'view' => 'forecastsTimeperiod',
-                    // options are set dynamically in the view
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
                     'name' => 'id',
                     'label' => 'LBL_ID',
                     'default' => true,

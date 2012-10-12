@@ -1,5 +1,6 @@
-<select id="date_filter" data-placeholder=" " name="{{name}}" {{#if def.multi}} multiple {{/if}}>
+<select id="date_filter" data-placeholder=" " name="{{name}}">
     {{#eachOptions def.options}}
-    <option value="{{{this.key}}}" {{#has this.key ../def.value}}selected{{/has}}>{{this.value}}</option>
+    <option value="{{{this.key}}}"
+        {{#eq this.key ../def.value}}selected{{/eq}}>{{this.value}}</option>
     {{/eachOptions}}
 </select>

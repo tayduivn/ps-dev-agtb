@@ -1,0 +1,89 @@
+<!-- Tour Guide -->
+<div class="modal hide system-tour">
+<div class="screen" id="screen1">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+        <h3>{{str "LBL_PORTAL_TOUR_WELCOME_TITLE"}}</h3>
+      </div>
+      <div class="modal-body">
+
+			    <ul class="features">
+
+                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_1"}}</li>
+                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_2"}}</li>
+                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_3"}}</li>
+                    <li><i class="icon-ok"></i>{{str "LBL_PORTAL_TOUR_FEATURES_4"}}</li>
+                </ul>
+                <p>
+                {{str "LBL_PORTAL_TOUR_MORE_INFO_1"}}
+                </p>
+                <p>
+                {{str "LBL_PORTAL_TOUR_MORE_INFO_2"}}
+                </p>
+
+
+      </div>
+
+
+
+          <div class="modal-footer">
+          <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_TAKE_TOUR_LNK"}}</a>
+          <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+          </div>
+  </div>
+  <div class="screen hide" id="screen2">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+        <h3>{{str "LBL_PORTAL_TOUR_CASES_TITLE"}}</h3>
+      </div>
+      <div class="modal-body">
+        <p>{{str "LBL_PORTAL_TOUR_CASES_BODY"}}</p>
+      </div>
+        <div class="modal-footer">
+        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
+        <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+        </div>
+  </div>
+  <div class="screen hide" id="screen3">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+        <h3>{{str "LBL_PORTAL_TOUR_SEARCH_TITLE"}}</h3>
+      </div>
+      <div class="modal-body">
+        <p>{{str "LBL_PORTAL_TOUR_SEARCH_BODY"}}</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
+        <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+      </div>
+  </div>
+  <div class="screen hide" id="screen4">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+        <h3>{{str "LBL_PORTAL_TOUR_QUICK_TITLE"}}</h3>
+      </div>
+      <div class="modal-body">
+        <p>{{str "LBL_PORTAL_TOUR_QUICK_BODY"}}</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="#" class="btn btn-primary next">{{str "LBL_PORTAL_TOUR_NEXT_LNK"}} <i class="icon-play icon-xsm"></i></a>
+        <a href="#" class="btn btn-invisible skip">{{str "LBL_PORTAL_TOUR_SKIP_LNK"}}</a>
+      </div>
+  </div>
+  <div class="screen hide" id="screen5">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+        <h3><i class="icon-ok"></i> {{str "LBL_PORTAL_TOUR_DONE_TITLE"}}</h3>
+      </div>
+      <div class="modal-body">
+        <p>{{str "LBL_PORTAL_TOUR_DONE_BODY"}}</p>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn btn-primary back">{{str "LBL_PORTAL_TOUR_BACK_LNK"}}</a>
+        <a href="#" class="btn btn-primary done">{{str "LBL_PORTAL_TOUR_DONE_LNK"}}</a>
+      </div>
+  </div>
+</div>
