@@ -40,6 +40,8 @@ if(!$GLOBALS['current_user']->isAdminForModule('Users')
 
 global $locale;
 
+$db = DBManagerFactory::getInstance();
+
 $return_module = isset($_REQUEST['return_module']) ? $_REQUEST['return_module'] : '';
 $return_action = isset($_REQUEST['return_action']) ? $_REQUEST['return_action'] : '';
 $return_id = isset($_REQUEST['return_id']) ? $_REQUEST['return_id'] : '';
@@ -266,8 +268,9 @@ else if(!isset($_GET['execute'])){
 	$tousername = $_POST['touser'];
 
 	$query = "select user_name, id from users where id in ('{$_POST['fromuser']}', '{$_POST['touser']}')";
-	$res = $GLOBALS['db']->query($query);
-	while($row = $GLOBALS['db']->fetchByAssoc($res)){
+
+	$res = $db->query($query);
+	while($row = $db->fetchByAssoc($res)){
 		if($row['id'] == $_POST['fromuser'])
 			$fromusername = $row['user_name'];
 		if($row['id'] == $_POST['touser'])
@@ -327,9 +330,9 @@ else if(!isset($_GET['execute'])){
 			      "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
 			      "modified_user_id = '{$current_user->id}' ";
 		//BEGIN SUGARCRM flav=pro ONLY
-
-        //make sure team id is set, and the module is not EAPM, which does not have team/teamset fields
-		if(!empty($team_id) && $module!='EAPM'){
+        //make sure team_id and team_set_id columns are available
+		if(!empty($team_id) && isset($object->field_defs['team_id']))
+        {
 			$q_set .= ", team_id = '{$team_id}', team_set_id = '{$team_set_id}' ";
 		}
 		//END SUGARCRM flav=pro ONLY
@@ -390,8 +393,8 @@ else if(!isset($_GET['execute'])){
 		$_SESSION['reassignRecords']['modules'][$module]['query'] = $query;
 		$_SESSION['reassignRecords']['modules'][$module]['update'] = $updatequery;
 
-		$res = $GLOBALS['db']->query($countquery);
-		$row = $GLOBALS['db']->fetchByAssoc($res);
+		$res = $db->query($countquery);
+		$row = $db->fetchByAssoc($res);
 
 		echo "{$row['count']} {$mod_strings_users['LBL_REASS_RECORDS_FROM']} {$app_list_strings['moduleList'][$p_module]} {$mod_strings_users['LBL_REASS_WILL_BE_UPDATED']}\n<BR>\n";
 		echo "<input type=checkbox name={$module}_workflow> {$mod_strings_users['LBL_REASS_WORK_NOTIF_AUDIT']}<BR>\n";
@@ -432,14 +435,14 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 
 		echo "<h5>{$mod_strings_users['LBL_PROCESSING']} {$app_list_strings['moduleList'][$p_module]}</h5>";
 
-		$res = $GLOBALS['db']->query($query, true);
+		$res = $db->query($query, true);
 
 		//echo "<i>Workflow and Notifications <b>".($workflow ? "enabled" : "disabled")."</b> for this module record reassignment</i>\n<BR>\n";
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
 		echo "<td>\n";
 		if(! $workflow){
-			$affected_rows = $GLOBALS['db']->getAffectedRowCount($res);
+			$affected_rows = $db->getAffectedRowCount($res);
 			echo "{$mod_strings_users['LBL_UPDATE_FINISH']}: $affected_rows {$mod_strings_users['LBL_AFFECTED']}<BR>\n";
 		}
 		else{
@@ -447,7 +450,7 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 			$failarr = array();
 
 			require_once($beanFiles[$module]);
-			while($row = $GLOBALS['db']->fetchByAssoc($res)){
+			while($row = $db->fetchByAssoc($res)){
 				$bean = new $module();
 				if(empty($row['id'])){
 					continue;

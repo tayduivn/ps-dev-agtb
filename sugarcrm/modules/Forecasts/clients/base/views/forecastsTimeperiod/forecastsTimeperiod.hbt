@@ -1,0 +1,9 @@
+<div class="control-group datefilter">
+    {{#with timeperiod}}
+    <label for="date_filter" class="control-label">{{str label "Forecasts"}}</label>
+
+    <div class="controls">
+        {{field ../this ../model}}
+    </div>
+    {{/with}}
+</div>

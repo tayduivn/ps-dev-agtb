@@ -31,8 +31,14 @@ ob_start();
 chdir(dirname(__FILE__).'/../');
 
 require('include/entryPoint.php');
-include_once("include/api/SugarApi/RestService.php");
+require_once("include/api/RestService.php");
 
-$service = new RestService();
+if ( file_exists('custom/include/RestService.php') ) {
+    $restServiceClass = 'CustomRestService';
+} else {
+    $restServiceClass = 'RestService';
+}
+
+$service = new $restServiceClass();
 $service->execute();
 
