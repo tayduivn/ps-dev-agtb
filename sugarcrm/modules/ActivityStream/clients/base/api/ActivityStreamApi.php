@@ -19,7 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-require_once("include/api/ListApi.php");
+require_once("clients/base/api/ListApi.php");
 
 class ActivityStreamApi extends ListApi {
     public function registerApiRest() {
@@ -65,7 +65,7 @@ class ActivityStreamApi extends ListApi {
                     'path' => array('ActivityStream','?','?'),
                     'pathVars' => array('','module', 'id'),
                     'method' => 'deleteRecord',
-            ),                                
+            ),
         );
     }
 
@@ -99,15 +99,15 @@ class ActivityStreamApi extends ListApi {
     public function deleteRecord($api, $args) {
         $module = isset($args['module']) ? $args['module'] : '';
         $id = isset($args['id']) ? $args['id'] : '';
-        
+
         if(!in_array($module, array('ActivityStream', 'ActivityComments')) || empty($id)) {
             return false;
         }
-        
+
         $seed = BeanFactory::getBean('ActivityStream');
         return $module == 'ActivityStream' ? $seed->deletePost($id) : $seed->deleteComment($id);
     }
-    
+
     protected function parseArguments($api, $args, $seed) {
         // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities')
         $options = parent::parseArguments($api, $args, $seed);
@@ -119,7 +119,7 @@ class ActivityStreamApi extends ListApi {
         }
         if(!empty($args['view'])) {
             $options['view'] = $args['view'];
-        }        
+        }
         return $options;
     }
 }
