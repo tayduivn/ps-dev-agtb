@@ -28,15 +28,28 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
             'label' => 'LBL_FORECASTS_CONFIG_CATEGORIES',
             'fields' => array(
                 array(
-                    'name' => 'forecast_categories',
+                    'name' =>'forecast_categories',
                     'type' => 'radioenum',
                     'label' => 'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS',
+                    'view' => 'edit',
                     'options' => 'forecasts_config_category_options_dom',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
                 ),
-            ),
+                array(
+                    'name' => 'category_ranges',
+                ),
+                array(
+                    'name' => 'buckets_dom',
+                    'options' => array(
+                        'show_binary' => 'commit_stage_binary_dom',
+                        'show_buckets' => 'commit_stage_dom',
+//BEGIN SUGARCRM flav=ent ONLY
+                        'show_n_buckets' => 'commit_stage_extended_dom'
+//END SUGARCRM flav=ent ONLY
+                    )
+                )
+            )
         ),
     ),
 );

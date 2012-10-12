@@ -233,7 +233,7 @@ $mod_strings = array (
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
     'LBL_UP' => 'up',
     'LBL_DOWN' => 'down',
-    'LBL_PREVIOUS_COMMIT' => 'Latest Commit: {{likely_case}}',
+    'LBL_PREVIOUS_COMMIT' => 'Latest Commit:',
     'LBL_COMMITTED_HISTORY_BOTH_CHANGED' => 'Updated forecast likely {3} {4} to {5} and best {0} {1} to {2}',
     'LBL_COMMITTED_HISTORY_BEST_CHANGED' => 'Updated forecast likely stayed the same and best {0} {1} to {2}',
     'LBL_COMMITTED_HISTORY_LIKELY_CHANGED' => 'Updated forecast likely {0} {1} to {2} and best stayed the same',
@@ -329,6 +329,8 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD' => 'Choose the time periods you want to forecast over:',
     'LBL_FORECASTS_CONFIG_LEAFPERIOD' => 'Choose the sub period that you want to view your time period over:',
+    'LBL_FORECASTS_CONFIG_START_MONTH' => 'Choose the month that you would like your time period to start in:',
+    'LBL_FORECASTS_CONFIG_START_DAY' => 'Choose the day that you would like your time period to start on:',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD' => 'Choose how many future time periods you want users to see:',
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:',
 

@@ -32,7 +32,7 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestClearCacheTest extends RestTestBase {
-    protected $_customFile = 'custom/include/api/PongApi.php';
+    protected $_customFile = 'custom/clients/base/api/PongApi.php';
     protected $_customDirMade = false;
     
     public function setUp()
@@ -53,9 +53,9 @@ class RestClearCacheTest extends RestTestBase {
         $replyPing = $this->_restCall('ping');
         $this->assertEquals('pong',$replyPing['reply']);
         
-        if(!is_dir('custom/include/api')) {
+        if(!is_dir('custom/clients/base/api')) {
             $this->_customDirMade = true;
-            mkdir('custom/include/api',0777,true);
+            mkdir('custom/clients/base/api',0777,true);
         }
         
         // Preapre the custom file
@@ -96,7 +96,7 @@ EOQ;
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
-        $this->assertTrue(!file_exists('cache/include/api/SugarApi/ServiceDictionary.rest.php'), "Didn't really clear the cache");
+        $this->assertTrue(!file_exists('cache/include/api/ServiceDictionary.rest.php'), "Didn't really clear the cache");
 
 
         // verify pong is there now
@@ -124,7 +124,7 @@ EOQ;
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
         
-        $this->assertTrue(!file_exists('cache/include/api/SugarApi/ServiceDictionary.rest.php'), "Didn't really clear the cache the SECOND time");
+        $this->assertTrue(!file_exists('cache/include/api/ServiceDictionary.rest.php'), "Didn't really clear the cache the SECOND time");
         
         // verify pong isn't there
         $replyPong = $this->_restCall('ping');

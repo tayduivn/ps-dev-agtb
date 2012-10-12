@@ -24,7 +24,7 @@
  ********************************************************************************/
 
 require_once('include/SugarForecasting/Manager.php');
-require_once('modules/Forecasts/api/ForecastsWorksheetManagerApi.php');
+require_once('modules/Forecasts/clients/base/api/ForecastsWorksheetManagerApi.php');
 /**
  * Bug54621Test.php
  *

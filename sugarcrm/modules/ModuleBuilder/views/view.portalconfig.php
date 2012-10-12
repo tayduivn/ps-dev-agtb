@@ -75,14 +75,14 @@ class ViewPortalConfig extends SugarView
         };
 
         $admin = new Administration();
-       	$admin->retrieveSettings();
 
+        $portalConfig = $admin->getConfigForModule('portal','support');
         $smarty = new Sugar_Smarty();
         $smarty->assign('disabledDisplayModulesList', $disabledModules);
         $smarty->assign('disabledDisplayModules', $disabledModulesFlag);
         foreach ($portalFields as $fieldName=>$fieldDefault) {
-            if (isset($admin->settings['portal_'.$fieldName])) {
-                $smarty->assign($fieldName, json_decode(html_entity_decode($admin->settings['portal_'.$fieldName])));
+            if (isset($portalConfig[$fieldName])) {
+                $smarty->assign($fieldName, html_entity_decode($portalConfig[$fieldName]));
             } else {
                 $smarty->assign($fieldName,$fieldDefault);
             }
