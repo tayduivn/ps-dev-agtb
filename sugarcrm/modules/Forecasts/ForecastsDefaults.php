@@ -22,10 +22,13 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 class ForecastsDefaults
 {
+
     /**
+     * Sets up the default forecasts config settings
      *
-     * @param bool $isUpgrade
-     * @param string $version
+     * @param bool $isUpgrade if this is being called in an upgrade setting
+     * @param string $currentVersion if isUpgrade == true, the current version the user has
+     * @param string $targetVersion if isUpgrade == true, the version the user is upgrading to
      */
     public static function setupForecastSettings($isUpgrade=false,$currentVersion="670",$targetVersion="670")
     {
@@ -91,8 +94,15 @@ class ForecastsDefaults
             'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
             // used to reference the app_list_string entry to indicate the commit stage list to use
             'buckets_dom' => 'commit_stage_binary_dom', // options:  commit_stage_binary_dom, commit_stage_dom, commit_stage_extended_dom
-            // the defined ranges the different buckets opportunites will fall in by default based on their probability
-            'category_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
+            // the defined binary ranges the different buckets opportunities will fall in by default based on their probability
+            'show_binary_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
+            // the defined bucket ranges the different buckets opportunities will fall in by default based on their probability
+            'show_buckets_ranges' => array('include' => array('min' => 85, 'max' => 100), 'upside' => array('min' => 70, 'max' => 84), 'exclude' => array('min' => 0, 'max' => 69)),
+            //BEGIN SUGARCRM flav=ent ONLY
+            // the defined custom ranges the different buckets opportunities will fall in by default based on their probability
+            'show_custom_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
+            //END SUGARCRM flav=ent ONLY
+
             //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
             'sales_stage_won' => array('Closed Won'),
             //sales_stage_lost are all sales_stage opportunity values indicating the opportunity is lost
@@ -112,7 +122,12 @@ class ForecastsDefaults
         );
     }
 
-    public static function getDefaultByKey($key) {
+    /**
+     * Returns a Forecasts config default given the key for the default
+     * @param $key
+     * @return mixed
+     */
+    public static function getConfigDefaultByKey($key) {
         $forecastsDefault = self::getDefaults();
         return $forecastsDefault[$key];
     }

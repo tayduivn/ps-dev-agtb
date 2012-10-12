@@ -58,15 +58,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $db->query("DELETE FROM config WHERE category = 'Forecasts' ");
 
         $admin = BeanFactory::getBean('Administration');
-        foreach(self::$currentConfig as $name => $value)
-        {
-            if(is_array($value))
-            {
-                $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
-            } else {
-                $admin->saveSetting('Forecasts', $name, $value, 'base');
-            }
-        }
+        self::saveConfig(self::$currentConfig, $admin);
+
         parent::tearDownAfterClass();
     }
 
@@ -105,15 +98,7 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $admin = BeanFactory::getBean('Administration');
-        foreach($setupConfig as $name => $value)
-        {
-            if(is_array($value))
-            {
-                $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
-            } else {
-                $admin->saveSetting('Forecasts', $name, $value, 'base');
-            }
-        }
+        $this->saveConfig($setupConfig, $admin);
 
         ForecastsDefaults::setupForecastSettings(true);
 
@@ -145,19 +130,10 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $admin = BeanFactory::getBean('Administration');
-        foreach($setupConfig as $name => $value)
-        {
-            if(is_array($value))
-            {
-                $admin->saveSetting('Forecasts', $name, json_encode($value), 'base');
-            } else {
-                $admin->saveSetting('Forecasts', $name, $value, 'base');
-            }
-        }
+        $this->saveConfig($setupConfig, $admin);
 
         ForecastsDefaults::setupForecastSettings(true);
 
-        $admin = BeanFactory::getBean('Administration');
         $adminConfig = $admin->getConfigForModule('Forecasts');
 
         $this->assertEquals($timeperiodType, $adminConfig['timeperiod_type'], "On an upgrade with config data already set up, pre-existing settings should be preserved");
@@ -166,4 +142,33 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals('Annual', $adminConfig['timeperiod_interval'], "On an upgrade with config data already set up, default settings that don't override pre-existing settings should be in the config table");
     }
 
+    /**
+     * Test the getConfigDefaultByKey method that should return the default value used
+     *
+     * @group forecasts
+     */
+    public function testGetConfigDefaultByKey() {
+        $defaultConfig = ForecastsDefaults::getDefaults();
+        $key = 'timeperiod_type';
+
+        $this->assertEquals($defaultConfig[$key], ForecastsDefaults::getConfigDefaultByKey($key), "The default value returned by ForecastsDefaults::getConfigDefaultByKey was not the same as in ForecastsDefaults::getDefaults");
+    }
+
+    /**
+     * Local function to iterate through a config array and save those settings using the adminBean
+     *
+     * @param $cfg {Array} an array of key => value pairs of config values for the config table
+     * @param $adminBean {SugarBean} the Administration bean from BeanFactory
+     */
+    protected function saveConfig($cfg, $adminBean) {
+        foreach($cfg as $name => $value)
+        {
+            if(is_array($value))
+            {
+                $adminBean->saveSetting('Forecasts', $name, json_encode($value), 'base');
+            } else {
+                $adminBean->saveSetting('Forecasts', $name, $value, 'base');
+            }
+        }
+    }
 }
