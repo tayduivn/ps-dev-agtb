@@ -213,8 +213,8 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
             self::deleteOutboundEmail(self::$system_config->id,self::$system_config->name);
         }
 
-        $this->assertNotEmpty($config, "SYSTEM MailConfiguration Not Found");
-        $this->assertEquals($config->config_id, self::$system_config->id, "Unexpected 'SYSTEM' MailConfiguration");
+        $this->assertNotEmpty($config, "SYSTEM OutboundEmailConfiguration Not Found");
+        $this->assertEquals($config->config_id, self::$system_config->id, "Unexpected 'SYSTEM' OutboundEmailConfiguration");
     }
 
 

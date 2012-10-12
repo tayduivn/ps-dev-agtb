@@ -59,7 +59,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group functional
      */
     public function testGetMailer_ConfigSenderEmailIsInvalid_ThrowsMailerException() {
-        $mailConfig               = new MailConfiguration($GLOBALS["current_user"]);
+        $mailConfig               = new OutboundEmailConfiguration($GLOBALS["current_user"]);
         $mailConfig->sender_email = 1234; // an invalid From email address
 
         self::setExpectedException("MailerException");
@@ -70,7 +70,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_NoMode_ReturnsSmtpMailer() {
-        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
+        $mailConfig                   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
         $mailConfig->sender_email     = "foo@bar.com";
         $mailConfig->mailerConfigData = $this->mockMailerConfig;
 
@@ -83,7 +83,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_ModeIsAllCaps_ReturnsSmtpMailer() {
-        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
+        $mailConfig                   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
         $mailConfig->mode             = strtoupper(MailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
         $mailConfig->sender_email     = "foo@bar.com";
         $mailConfig->mailerConfigData = $this->mockMailerConfig;
@@ -97,7 +97,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_ModeIsInvalid_ThrowsException() {
-        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
+        $mailConfig                   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
         $mailConfig->mode             = "asdf"; // some asinine value that wouldn't actually be used
         $mailConfig->sender_email     = "foo@bar.com";
         $mailConfig->mailerConfigData = $this->mockMailerConfig;

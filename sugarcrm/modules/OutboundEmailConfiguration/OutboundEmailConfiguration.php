@@ -29,7 +29,8 @@ require_once "SmtpMailerConfiguration.php"; // also imports MailerConfiguration.
 // external imports
 require_once "modules/Users/User.php";
 
-class MailConfiguration {
+class OutboundEmailConfiguration
+{
     public $mode;
     public $user_id;
     public $config_id;
@@ -45,6 +46,6 @@ class MailConfiguration {
     public $mailerConfigData; // MailerConfiguration or SmtpMailerConfiguration
 
     public function __construct(User $user) {
-        $this->user_id=$user->id;
+        $this->user_id = $user->id;
     }
 }

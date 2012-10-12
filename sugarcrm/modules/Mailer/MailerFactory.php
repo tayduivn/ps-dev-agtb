@@ -28,12 +28,13 @@ require_once "EmailIdentity.php";                        // requires EmailIdenti
 require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
 
 // external imports
-require_once "modules/OutboundEmailConfiguration/SmtpMailerConfiguration.php"; // required if producing an SMTP Mailer,
-                                                                               // also imports MailerConfiguration
-require_once "modules/OutboundEmailConfiguration/MailConfigurationPeer.php";   // needs the constants that represent
-                                                                               // the modes
-require_once "modules/OutboundEmailConfiguration/MailConfiguration.php";       // uses the properties to produce the
-                                                                               // expected mailer
+require_once "modules/OutboundEmailConfiguration/SmtpMailerConfiguration.php";    // required if producing an SMTP
+                                                                                  // Mailer; also imports
+                                                                                  // MailerConfiguration
+require_once "modules/OutboundEmailConfiguration/MailConfigurationPeer.php";      // needs the constants that represent
+                                                                                  // the modes
+require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php"; // uses the properties to produce the
+                                                                                  // expected mailer
 
 /**
  * Factory to create Mailers.
@@ -42,7 +43,7 @@ class MailerFactory
 {
     // protected members
 
-    // Maps the mode from a MailConfiguration to the class that represents the sending strategy for that
+    // Maps the mode from a OutboundEmailConfiguration to the class that represents the sending strategy for that
     // configuration.
     // key = mode; value = mailer class
     protected static $modeToMailerMap = array(
@@ -82,12 +83,12 @@ class MailerFactory
      *
      * @static
      * @access public
-     * @param MailConfiguration $config required The configuration that provides context to the chosen sending
-     *                                           strategy.
+     * @param OutboundEmailConfiguration $config required The configuration that provides context to the chosen sending
+     *                                                    strategy.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      * @throws MailerException
      */
-    public static function getMailer(MailConfiguration $config) {
+    public static function getMailer(OutboundEmailConfiguration $config) {
         // copy the config value because you don't want to modify the object by reassigning a public variable
         // in the case of mode being null
         $mode = is_null($config->mode) ? MailConfigurationPeer::MODE_SMTP : $config->mode;

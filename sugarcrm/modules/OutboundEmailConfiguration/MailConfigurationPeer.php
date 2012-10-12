@@ -59,7 +59,7 @@ class MailConfigurationPeer
     }
 
     /**
-     * @return MailConfiguration  System or User defined System-Override Mail Configuration
+     * @return OutboundEmailConfiguration  System or User defined System-Override Mail Configuration
      * @throws MailerException
      */
     public static function getSystemMailConfiguration(User $user, Localization $locale = null, $charset = null) {
@@ -124,7 +124,7 @@ class MailConfigurationPeer
             }
 
             if ($name != null && $addr != null && !empty($outbound_config_id) && !empty($oe) && ($outbound_config_id == $oe->id)) {
-                $mailConfiguration               = new MailConfiguration($user);
+                $mailConfiguration               = new OutboundEmailConfiguration($user);
                 $mailConfiguration->config_id    = $outbound_config_id;
                 $mailConfiguration->config_type  = 'user';
                 $mailConfiguration->inbox_id     = $k;
@@ -171,7 +171,7 @@ class MailConfigurationPeer
             throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
 
-        $mailConfiguration               = new MailConfiguration($user);
+        $mailConfiguration               = new OutboundEmailConfiguration($user);
         $mailConfiguration->config_id    = $system->id;
         $mailConfiguration->config_type  = 'system';
         $mailConfiguration->sender_name  = "{$ret['name']}";
