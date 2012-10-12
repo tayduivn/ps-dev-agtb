@@ -38,13 +38,7 @@ $viewdefs['Employees']['mobile']['view']['detail'] = array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
-                array(
-                    'name' => 'first_name',
-                    'displayParams' => array('wireless_edit_only' => true,),
-                ),
-                array('name' => 'last_name',
-                    'displayParams' => array('required' => true, 'wireless_edit_only' => true,),
-                ),
+                'full_name',
                 array(
                     'name' => 'title',
                     'customCode' => '{if $EDIT_TITLE_DEPT}<input type="text" name="{$fields.title.name}" id="{$fields.title.name}" size="30" maxlength="50" value="{$fields.title.value}" title="" tabindex="t" >' .

@@ -46,6 +46,8 @@ $viewdefs['Bugs']['mobile']['view']['edit'] = array(
                     'name' => 'name',
                     'label' => 'LBL_SUBJECT',
                 ),
+                'description',
+                'resolution',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

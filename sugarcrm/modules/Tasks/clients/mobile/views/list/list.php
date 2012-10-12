@@ -27,7 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
-$viewdefs['Cases']['mobile']['view']['list'] = array(
+$viewdefs['Tasks']['mobile']['view']['list'] = array(
     'panels' => array(
         array(
             'label' => 'LBL_PANEL_DEFAULT',
@@ -48,13 +48,6 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'case_number',
-                    'label' => 'LBL_NUMBER',
-                    'link' => true,
-                    'default' => true,
-                    'enabled' => true,
-                ),
-                array(
                     'name' => 'priority',
                     'width' => '10',
                     'label' => 'LBL_PRIORITY',
@@ -62,9 +55,9 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 array(
-                    'name' => 'resolution',
-                    'width' => '10',
-                    'label' => 'LBL_RESOLUTION',
+                    'name' => 'assigned_user_name',
+                    'width' => '9',
+                    'label' => 'LBL_ASSIGNED_USER',
                     'default' => true,
                     'enabled' => true,
                 ),
@@ -77,13 +70,6 @@ $viewdefs['Cases']['mobile']['view']['list'] = array(
                     'enabled' => true,
                 ),
                 //END SUGARCRM flav=pro ONLY
-                array(
-                    'name' => 'assigned_user_name',
-                    'width' => '9',
-                    'label' => 'LBL_ASSIGNED_USER',
-                    'default' => true,
-                    'enabled' => true,
-                ),
             ),
         ),
     ),
