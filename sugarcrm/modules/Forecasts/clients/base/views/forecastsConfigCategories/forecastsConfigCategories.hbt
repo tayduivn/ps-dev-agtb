@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-<div class="modal-body">
-    <h2>{{str label "Forecasts"}}</h2>
-=======
 <div class="modal-content hide">
     <p>{{str label "Forecasts"}}</p>
->>>>>>> 8f550b9fb9fd0ea87c029366fadcdf38a4a2e6fd
     <p></p>
     {{#with forecast_categories_field}}
         {{#eachOptions options}}
