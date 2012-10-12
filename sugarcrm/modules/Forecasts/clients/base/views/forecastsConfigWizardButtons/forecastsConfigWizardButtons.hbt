@@ -3,7 +3,9 @@
         <li class="disabled"><a href="#">Time Periods</a></li>
         <li class="disabled"><a href="#">Categories</a></li>
         <li class="disabled"><a href="#">Range</a></li>
+        <!-- // BEGIN SUGARCRM flav=ent ONLY -->
         <li class="disabled"><a href="#">Variables</a></li>
+        <!-- // END SUGARCRM flav=ent ONLY -->
     </ul>
 </div>
 

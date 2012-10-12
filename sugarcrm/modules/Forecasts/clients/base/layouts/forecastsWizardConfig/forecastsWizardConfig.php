@@ -37,9 +37,11 @@ $viewdefs['Forecasts']['base']['layout']['forecastsWizardConfig'] = array(
         array(
             'view' => 'forecastsConfigRange',
         ),
+        // BEGIN SUGARCRM flav=ent ONLY
         array(
             'view' => 'forecastsConfigVariables',
         ),
+        // END SUGARCRM flav=ent ONLY
         array(
             'view' => 'forecastsConfigWizardButtons'
         )
