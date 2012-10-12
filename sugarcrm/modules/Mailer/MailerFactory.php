@@ -93,8 +93,17 @@ class MailerFactory
             throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);
         }
 
-        // these method calls can bubble up a MailerException
-        $headers = self::buildHeadersForMailer($config->sender_email, $config->sender_name);
+        // the rest of the method calls can bubble up a MailerException
+
+        $sender  = new EmailIdentity($config->sender_email, $config->sender_name);
+        $replyTo = null;
+
+        // add the Reply-To header, but only if it should be different from the From header
+        if (!empty($config->replyto_email)) {
+            $replyTo = new EmailIdentity($config->replyto_email, $config->replyto_name);
+        }
+
+        $headers = self::buildHeadersForMailer($sender, $replyTo);
         $mailer  = self::buildMailer($mode, $config->mailerConfigData);
         $mailer->setHeaders($headers);
 
@@ -133,17 +142,22 @@ class MailerFactory
      *
      * @static
      * @access private
-     * @param string      $senderEmail required
-     * @param null|string $senderName           Should be a string, but null is acceptable if no name is associated.
+     * @param EmailIdentity $sender  required The true sender of the email.
+     * @param EmailIdentity $replyTo          Should be an EmailIdentity, but null is acceptable if no Reply-To header
+     *                                        is to be set.
      * @return EmailHeaders
      * @throws MailerException
      */
-    private static function buildHeadersForMailer($senderEmail, $senderName = null) {
+    private static function buildHeadersForMailer(EmailIdentity $sender, EmailIdentity $replyTo = null) {
         // add the known email headers
-        $from    = new EmailIdentity($senderEmail, $senderName);
         $headers = new EmailHeaders();
-        $headers->setHeader(EmailHeaders::From, $from);
-        $headers->setHeader(EmailHeaders::Sender, $from);
+        $headers->setHeader(EmailHeaders::From, $sender);
+        $headers->setHeader(EmailHeaders::Sender, $sender);
+
+        // add the Reply-To header, but only if it should be different from the From header
+        if (!is_null($replyTo)) {
+            $headers->setHeader(EmailHeaders::ReplyTo, $replyTo);
+        }
 
         return $headers;
     }
