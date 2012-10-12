@@ -48,6 +48,7 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->time_period_type = 'Month';
         $this->is_fiscal = $is_fiscal;
         $this->is_leaf = false;
+        $this->date_modifier = $this->is_fiscal ? '4 week' : '1 month';
 
         $this->setStartDate($start_date, $week_count);
     }
@@ -100,65 +101,6 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $nextPeriod->save();
 
         return $nextPeriod;
-    }
-
-    /**
-     * creates a new MonthTimePeriod to keep past records
-     *
-     * @param int $week_length denotes how many weeks should be included in month for a fiscal month
-     *
-     * @return MonthTimePeriod
-     */
-    public function createPreviousTimePeriod($week_length=4) {
-        $timedate = TimeDate::getInstance();
-        $previousStartDate = $timedate->fromDbDate($this->start_date);
-        if($this->is_fiscal) {
-            $previousStartDate = $previousStartDate->modify('-'.$week_count.' week');
-        } else {
-            $previousStartDate = $previousStartDate->modify('-1 month');
-        }
-        $previousPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $previousPeriod->is_fiscal = $this->is_fiscal;
-        $previousPeriod->setStartDate($timedate->asDbDate($previousStartDate));
-        $previousPeriod->save();
-
-        return $previousPeriod;
-    }
-
-    /**
-     * loads related time periods and returns whether there are leaves populated.
-     *
-     * @return bool
-     */
-    public function hasLeaves() {
-        $this->load_relationship('related_timeperiods');
-
-        if(count($this->related_timeperiods))
-            return true;
-
-        return false;
-
-    }
-
-    /**
-     * loads the related time periods and returns the array
-     *
-     * @return mixed
-     */
-    public function getLeaves() {
-        //$this->load_relationship('related_timeperiods');
-        $leaves = array();
-        $db = DBManagerFactory::getInstance();
-        $query = "select id, time_period_type from timeperiods "
-        . "WHERE parent_id = " . $db->quoted($this->id) . " "
-        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
-
-        $result = $db->query($query);
-
-        while($row = $db->fetchByAssoc($result)) {
-            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
-        }
-        return $leaves;
     }
 
 

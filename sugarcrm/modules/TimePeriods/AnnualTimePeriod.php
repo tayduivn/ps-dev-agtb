@@ -48,126 +48,24 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->time_period_type = 'Annual';
         $this->is_fiscal = $fiscal_period;
         $this->is_leaf = false;
+        $this->date_modifier = $this->is_fiscal ? '52 week' : '1 year';
 
         $this->setStartDate($start_date);
     }
 
     /**
-     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
-     * The end date is adjusted as well to hold to the contract of this being an annual time period
+     * override parent function so to add a name for the annual time period.  This can
      *
      * @param null $startDate  db format date string to set the start date of the annual time period
      */
     public function setStartDate($start_date = null) {
+        parent::setStartDate($start_date);
         $timedate = TimeDate::getInstance();
-
-        //check start_date, put it to now if it's not passed in
-        if(is_null($start_date)) {
-            $start_date = $timedate->asDbDate($timedate->getNow());
-        }
-        $end_date = $timedate->fromDbDate($start_date);
-
-        //set the start/end date
-        $this->start_date = $start_date;
-        if($this->is_fiscal) {
-
-            $end_date = $end_date->modify('+52 week');
-            $end_date = $end_date->modify('-1 day');
-            $this->end_date = $timedate->asDbDate($end_date);
-        } else {
-            $end_date = $end_date->modify('+1 year');
-            $end_date = $end_date->modify('-1 day');
-            $this->end_date = $timedate->asDbDate($end_date);
-        }
 
         if(empty($this->name)) {
-            $start_date_time = $timedate->fromDbDate($start_date);
-            if($this->is_fiscal) {
-                $this->name = "Fiscal Year ".$start_date_time->format("Y");
-            } else{
-                $this->name = "Year ".$start_date_time->format("Y");
-            }
+            $start_date_time = $timedate->fromDbDate($this->start_date);
+            $this->name = $this->is_fiscal ? "Fiscal " : "" . "Year ".$start_date_time->format("Y");
         }
-    }
-
-    /**
-     * loads related time periods and returns whether there are leaves populated.
-     *
-     * @return bool
-     */
-    public function hasLeaves() {
-        if(count($this->getLeaves()))
-            return true;
-
-        return false;
-
-    }
-
-    /**
-     * removes related timeperiods
-     */
-    public function removeLeaves() {
-        $this->load_relationship('related_timeperiods');
-        $this->related_timeperiods->delete($this->id);
-    }
-
-    /**
-     * loads the related time periods
-     */
-    public function getLeaves() {
-        //$this->load_relationship('related_timeperiods');
-        $leaves = array();
-        $db = DBManagerFactory::getInstance();
-        $query = "select id, time_period_type from timeperiods "
-        . "WHERE parent_id = " . $db->quoted($this->id) . " "
-        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
-
-        $result = $db->query($query);
-
-        while($row = $db->fetchByAssoc($result)) {
-            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
-        }
-        return $leaves;
-    }
-
-    /**
-     * creates a new AnnualTimePeriod to start to use
-     *
-     * @return AnnualTimePeriod
-     */
-    public function createNextTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromDbDate($this->end_date);
-        $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $nextPeriod->is_fiscal = $this->is_fiscal;
-        $nextPeriod->name = "";
-        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
-        $nextPeriod->save();
-
-        return $nextPeriod;
-    }
-
-    /**
-     * creates a new AnnualTimePeriod to keep past records
-     *
-     * @return AnnualTimePeriod
-     */
-    public function createPreviousTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $previousStartDate = $timedate->fromDbDate($this->start_date);
-        if($this->is_fiscal) {
-            $previousStartDate = $previousStartDate->modify('-52 week');
-        } else {
-            $previousStartDate = $previousStartDate->modify('-1 year');
-        }
-        $previousPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $previousPeriod->name = "";
-        $previousPeriod->is_fiscal = $this->is_fiscal;
-        $previousPeriod->setStartDate($timedate->asDbDate($previousStartDate));
-        $previousPeriod->save();
-
-        return $previousPeriod;
     }
 
     /**
@@ -233,7 +131,7 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         }
         $leafPeriod->setStartDate($this->start_date);
-        $leafPeriod->is_leaf = 1;
+        $leafPeriod->is_leaf = true;
         $leafPeriod->name = $nameStart."1 ".$start_date_time->format("Y");
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);

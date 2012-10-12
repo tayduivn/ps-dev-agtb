@@ -129,7 +129,6 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
      array (
        'name' => 'is_leaf',
        'vname' => 'LBL_TP_IS_LEAF',
-        'default' => 0,
        'type' => 'bool',
      ),
     'time_period_type' =>
