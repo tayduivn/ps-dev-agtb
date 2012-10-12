@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Emails/MailConfigurationPeer.php');
+require_once('modules/OutboundEmailConfiguration/MailConfigurationPeer.php');
 
 /**
  *

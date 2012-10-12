@@ -23,13 +23,17 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once "MailerException.php";                      // requires MailerException in order to throw exceptions of
                                                          // that type
-require_once "modules/Emails/MailConfigurationPeer.php"; // needs the constants that represent the modes
-require_once "modules/Emails/MailConfiguration.php";     // uses the properties to produce the expected mailer
-require_once "SmtpMailerConfiguration.php";              // required if producing an SMTP Mailer, also imports
-                                                         // MailerConfiguration
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
 require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
+
+// external imports
+require_once "modules/OutboundEmailConfiguration/SmtpMailerConfiguration.php"; // required if producing an SMTP Mailer,
+                                                                               // also imports MailerConfiguration
+require_once "modules/OutboundEmailConfiguration/MailConfigurationPeer.php";   // needs the constants that represent
+                                                                               // the modes
+require_once "modules/OutboundEmailConfiguration/MailConfiguration.php";       // uses the properties to produce the
+                                                                               // expected mailer
 
 /**
  * Factory to create Mailers.

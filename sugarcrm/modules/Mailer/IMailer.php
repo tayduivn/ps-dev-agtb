@@ -23,8 +23,11 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once "Encoding.php";            // needs to know the valid encodings that are available for email
 require_once "EmailIdentity.php";       // requires EmailIdentity for representing email senders and recipients
-require_once "MailerConfiguration.php"; // needs to take on a MailerConfiguration or a type that derives from it
 require_once "EmbeddedImage.php";       // requires Attachment and EmbeddedImage, which imports Attachment
+
+// external imports
+require_once "modules/OutboundEmailConfiguration/MailerConfiguration.php"; // needs to take on a MailerConfiguration or
+                                                                           // a type that derives from it
 
 /**
  * This defines the basic interface that is expected from a Mailer.

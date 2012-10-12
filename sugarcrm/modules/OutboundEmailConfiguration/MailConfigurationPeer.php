@@ -24,9 +24,11 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once "MailConfiguration.php";
+
+// external imports
 require_once "include/OutboundEmail/OutboundEmail.php";
 require_once "modules/InboundEmail/InboundEmail.php";
-require_once "MailConfiguration.php";
 require_once "modules/Users/User.php";
 
 class MailConfigurationPeer
