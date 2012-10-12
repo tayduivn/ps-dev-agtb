@@ -185,7 +185,7 @@
             }
         },
 
-        apply: function() {
+        set: function() {
             if (this.isInitialized()) {
                 SugarTest.app.metadata.set(this._data, true, true);
             }
