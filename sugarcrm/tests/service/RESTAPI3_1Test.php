@@ -329,4 +329,103 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
+
+
+    //BEGIN SUGARCRM flav=pro ONLY
+        public static function _wirelessGridModuleLayoutProvider()
+        {
+            return array(
+                array('module' => 'Accounts', 'view' => 'edit', 'metadatafile' => 'modules/Accounts/clients/mobile/views/edit/edit.php',),
+                array('module' => 'Accounts', 'view' => 'detail', 'metadatafile' => 'modules/Accounts/clients/mobile/views/detail/detail.php',),
+            );
+
+        }
+
+        /**
+         * Leaving as a provider in the event we need to extend it in the future
+         *
+         * @static
+         * @return array
+         */
+        public static function _wirelessListModuleLayoutProvider()
+        {
+            return array(
+                array('module' => 'Cases'),
+            );
+
+        }
+
+        /**
+         * @dataProvider _wirelessListModuleLayoutProvider
+         */
+        public function testGetWirelessListModuleLayout($module)
+        {
+            $result = $this->_login();
+            $session = $result['id'];
+
+            $type = 'wireless';
+            $view = 'list';
+
+            $result = $this->_makeRESTCall('get_module_layout',
+                            array(
+                                'session' => $session,
+                                'module' => array($module),
+                                'type' => array($type),
+                                'view' => array($view))
+                            );
+
+            // This is carried over metadata from pre-6.6 OOTB installations
+            // This test if for backward compatibility with older API clients
+            require 'tests/service/metadata/' . $module . 'legacy' . $view . '.php';
+
+            $legacy = $listViewDefs[$module];
+
+            $this->assertTrue(isset($result[$module][$type][$view]), 'Result did not contain expected data');
+            $this->assertArrayHasKey('NAME', $result[$module][$type][$view], 'NAME not found in the REST call result');
+
+            $legacyKeys = array_keys($legacy);
+            sort($legacyKeys);
+
+            $convertedKeys = array_keys($result[$module][$type][$view]);
+            sort($convertedKeys);
+
+            $this->assertEquals($legacyKeys, $convertedKeys, 'Converted list def keys not the same as known list def keys');
+        }
+
+        /**
+         * @dataProvider _wirelessGridModuleLayoutProvider
+         */
+        public function testGetWirelessGridModuleLayout($module, $view, $metadatafile)
+        {
+            $result = $this->_login();
+            $session = $result['id'];
+
+            $type = 'wireless';
+            $result = $this->_makeRESTCall('get_module_layout',
+                            array(
+                                'session' => $session,
+                                'module' => array($module),
+                                'type' => array($type),
+                                'view' => array($view))
+                            );
+            require 'tests/service/metadata/' . $module . 'legacy' . $view . '.php';
+
+            // This is carried over metadata from pre-6.6 OOTB installations
+            $legacy = $viewdefs[$module][ucfirst($view) .'View' ];
+            unset($viewdefs); // Prevent clash with current viewdefs
+
+            // Get our current OOTB metadata
+            require $metadatafile;
+            $current = $viewdefs[$module]['mobile']['view'][$view];
+
+            $legacyFields = $legacy['panels'];
+            $currentFields = $current['panels'][0]['fields'];
+
+            $this->assertArrayHasKey('panels', $result[$module][$type][$view], 'REST call result does not have a panels array');
+
+            $panels = $result[$module][$type][$view]['panels'];
+            $this->assertTrue(isset($panels[0][0]['name']), 'No name index in the first row array of panel fields');
+            $this->assertEquals(count($legacyFields), count($currentFields), 'Field count differs between legacy and current metadata');
+        }
+        //END SUGARCRM flav=pro ONLY
 }
