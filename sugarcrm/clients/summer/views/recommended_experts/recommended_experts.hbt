@@ -1,7 +1,31 @@
 <div class="block thumbnail padded">
-    <h4 data-tour="tour-recommended-contacts">Recommended Experts:</h4>
-    <ul id="{{this.guid}}">
-    </ul>
-    <input class="find">
-    <button class="btn recommendme">Recommend Me</button>
+    <h4 data-tour="tour-recommended-experts">Recommended Experts</h4>
+    <div class="recommended-experts-input-wrapper">
+        <input class="span9 job-title" type="text" data-provide="typeahead" placeholder="Type a job title">
+        <button class="btn btn-primary find-experts">Find Experts</button>
+    </div>
+    <div class="recommended-experts-list">
+        {{#if this.collection.length}}
+        {{#each this.collection.models}}
+        <article class="{{this.attributes.guid}}">
+            <a class="recommended-experts-link" href="#Users/{{this.attributes.id}}">
+                <div class="recommended-experts-cell">
+                    <img src="{{this.attributes.picture_url}}" alt="{{this.attributes.full_name}}">
+                </div>
+                <div class="recommended-experts-cell">
+                    <h6>{{str "LBL_CONTACT"}} {{str "LBL_INFOINLINE"}}</h6>
+                    <span><i class="icon-user"></i> {{this.attributes.full_name}}</span>
+                    <span><i class="icon-envelope-alt"></i> {{this.attributes.email1}}</span>
+                </div>
+                <div class="recommended-experts-cell">
+                    <span><i class="icon-briefcase"></i> {{this.attributes.title}}</span>
+                    <span><i class="icon-phone"></i> {{this.attributes.phone_work}}</span>
+                </div>
+            </a>
+        </article>
+        {{/each}}
+        {{else}}
+        <em>No experts found.</em>
+        {{/if}}
+    </div>
 </div>
