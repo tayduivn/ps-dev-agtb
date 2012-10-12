@@ -316,7 +316,6 @@ class EmailHeaders
     private function packageReplyTo(&$headers) {
         $replyTo = $this->getReplyTo();
 
-        // only bother with packaging this header if there is a value
         if (!is_null($replyTo)) {
             // validate the header value
             if (!($replyTo instanceof EmailIdentity)) {
@@ -326,6 +325,10 @@ class EmailHeaders
                 // add the Reply-To header to the package as an array with an email address and a name
                 $headers[self::ReplyTo] = array($replyTo->getEmail(), $replyTo->getName());
             }
+        } else {
+            // the Reply-To header should always be explicit and match the From header if no Reply-To has been given
+            $from                   = $this->getFrom();
+            $headers[self::ReplyTo] = array($from->getEmail(), $from->getName());
         }
     }
 
@@ -341,7 +344,6 @@ class EmailHeaders
     private function packageSender(&$headers) {
         $sender = $this->getSender();
 
-        // only bother with packaging this header if there is a value
         if (!is_null($sender)) {
             // validate the header value
             if (!($sender instanceof EmailIdentity)) {
@@ -351,6 +353,13 @@ class EmailHeaders
                 // add the Sender header to the package; only the email address is accepted
                 $headers[self::Sender] = $sender->getEmail();
             }
+        } else {
+            // the Sender header should always be explicit and match the From header if no Sender has been given
+            //@todo in reality, the Sender header should be set to the email address of the true sender, regardless
+            // of configuration, but the following should be acceptable for now
+            // however, we may not be able to decouple this from the configuration because campaigns may require
+            // a different sender than the true sender
+            $headers[self::Sender] = $this->getFrom()->getEmail();
         }
     }
 
