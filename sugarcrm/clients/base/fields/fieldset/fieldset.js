@@ -13,6 +13,7 @@
                 var field = app.view.createField({
                     def: fieldDef,
                     view: self.view,
+                    viewName: self.options.viewName,
                     model: self.model
                 });
                 self.fields.push(field);
