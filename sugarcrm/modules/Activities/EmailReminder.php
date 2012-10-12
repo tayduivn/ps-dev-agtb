@@ -125,11 +125,11 @@ class EmailReminder
         $xtpl->parse($templateName);
         $xtpl->parse("{$templateName}_Subject");
 
-        $method = "unknown";
+        $mailTransmissionProtocol = "unknown";
 
         try {
-            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
-            $method = $mailer->getMailTransmissionProtocol();
+            $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
             // set the subject of the email
             $subject = $xtpl->text("{$templateName}_Subject");
@@ -153,7 +153,7 @@ class EmailReminder
                     $GLOBALS["log"]->fatal("Email Reminder: error sending email, system smtp server is not set");
                     break;
                 default:
-                    $GLOBALS["log"]->fatal("Email Reminder: error sending e-mail (method: {$method}), (error: {$message})");
+                    $GLOBALS["log"]->fatal("Email Reminder: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
                     break;
             }
 

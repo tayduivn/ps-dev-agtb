@@ -1976,11 +1976,11 @@ class SugarBean
             $notification->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
-            $method = "unknown";
+            $mailTransmissionProtocol = "unknown";
 
             try {
-                $mailer = $this->create_notification_email($notify_user);
-                $method = $mailer->getMailTransmissionProtocol();
+                $mailer                   = $this->create_notification_email($notify_user);
+                $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
                 // by default, use the following admin settings for the From email header
                 $fromEmail = $admin->settings['notify_fromaddress'];
@@ -2031,7 +2031,7 @@ class SugarBean
                         $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
                         break;
                     default:
-                        $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+                        $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
                         break;
                 }
             }

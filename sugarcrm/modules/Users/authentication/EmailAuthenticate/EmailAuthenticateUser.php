@@ -110,11 +110,11 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
         if (empty($row['email1']) && empty($row['email2'])) {
             $_SESSION['login_error'] = 'Please contact an administrator to setup up your email address associated to this account';
         } else {
-            $method = "unknown";
+            $mailTransmissionProtocol = "unknown";
 
             try {
-                $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
-                $method = $mailer->getMailTransmissionProtocol();
+                $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+                $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
                 // add the recipient...
 
@@ -144,7 +144,7 @@ class EmailAuthenticateUser extends SugarAuthenticateUser
                 $GLOBALS["log"]->info("Notifications: e-mail successfully sent");
             } catch (MailerException $me) {
                 $message = $me->getMessage();
-                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
             }
         }
     }

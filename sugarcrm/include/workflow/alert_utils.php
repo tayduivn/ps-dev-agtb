@@ -397,11 +397,11 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
         // you are using a custom template and this is a meeting/call child invite
         get_invite_email($focus, $admin, $address_array, $invitePerson, $alert_msg, $alert_shell_array);
     } else {
-        $method = "unknown";
+        $mailTransmissionProtocol = "unknown";
 
         try {
-            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
-            $method = $mailer->getMailTransmissionProtocol();
+            $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+            $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
             foreach ($address_array['to'] as $userInfo) {
                 $mailer->addRecipientsTo(new EmailIdentity($userInfo['address'], $userInfo['name']));
@@ -453,7 +453,7 @@ function send_workflow_alert(&$focus, $address_array, $alert_msg, &$admin, $aler
             $mailer->send();
         } catch (MailerException $me) {
             $message = $me->getMessage();
-            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+            $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
         }
     }
 }
@@ -973,11 +973,11 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
     $users    = array();
     $contacts = array();
 
-    $method = "unknown";
+    $mailTransmissionProtocol = "unknown";
 
     try {
-        $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
-        $method = $mailer->getMailTransmissionProtocol();
+        $mailer                   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
         //TO: Addresses
         foreach ($address_array['to'] as $userInfo) {
@@ -1015,7 +1015,7 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 }
             } catch (MailerException $me) {
                 $message = $me->getMessage();
-                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
             }
         }
 
@@ -1055,7 +1055,7 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 }
             } catch (MailerException $me) {
                 $message = $me->getMessage();
-                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
             }
         }
 
@@ -1095,12 +1095,12 @@ function get_invite_email($focus, $admin, $address_array, $invite_person, $alert
                 }
             } catch (MailerException $me) {
                 $message = $me->getMessage();
-                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+                $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
             }
         }
     } catch (MailerException $me) {
         $message = $me->getMessage();
-        $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$method}), (error: {$message})");
+        $GLOBALS["log"]->warn("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
     }
 
     if ($invite_person == true) {
