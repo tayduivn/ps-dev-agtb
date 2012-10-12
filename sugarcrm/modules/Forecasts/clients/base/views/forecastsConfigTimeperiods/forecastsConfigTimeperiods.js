@@ -6,7 +6,6 @@
      * @private
      */
     _renderField: function(field) {
-        //debugger;
         if (field.name == "timeperiod_start_month") {
             field = this._setUpTimeperiodStartMonthBind(field);
         } else if(field.name == "timeperiod_start_day") {
