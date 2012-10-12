@@ -114,12 +114,14 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
  'is_fiscal' =>
   array (
     'name' => 'is_fiscal',
+     'default' => 0,
     'vname' => 'LBL_TP_IS_FISCAL',
     'type' => 'bool',
   ),
     'is_fiscal_year' =>
      array (
        'name' => 'is_fiscal_year',
+       'default' => 0,
        'vname' => 'LBL_TP_IS_FISCAL_YEAR',
        'type' => 'bool',
      ),
@@ -127,6 +129,7 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
      array (
        'name' => 'is_leaf',
        'vname' => 'LBL_TP_IS_LEAF',
+        'default' => 0,
        'type' => 'bool',
      ),
     'time_period_type' =>
