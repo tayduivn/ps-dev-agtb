@@ -25,6 +25,14 @@
 require_once 'tests/rest/RestTestBase.php';
 require_once 'include/MetaDataManager/MetaDataManager.php';
 
+/**
+ * Tests the rest metadata endpoint
+ * 
+ * Note: To prevent issues with caching, if you send more than one rest request 
+ * in a test, make sure to call $this->_clearMetadataCache() after every rest 
+ * call you make in this class. This is not required for the last call since it 
+ * will be called in the tearDown method as well. 
+ */
 class RestMetadataModuleListTest extends RestTestBase {
     //BEGIN SUGARCRM flav=ent ONLY
     public $oppTestPath ='modules/Opportunities/clients/portal/views/list/list.php';
@@ -48,10 +56,16 @@ class RestMetadataModuleListTest extends RestTestBase {
         //BEGIN SUGARCRM flav=pro ONLY
         $this->unitTestFiles[] = 'custom/include/MVC/Controller/wireless_module_registry.php';
         //END SUGARCRM flav=pro ONLY
+        
+        // Start off by clearing our metadata cache
+        $this->_clearMetadataCache();
     }
     
     public function tearDown()
     {
+        // Clear the metadata cache for other tests downstream
+        $this->_clearMetadataCache();
+        
         foreach($this->unitTestFiles as $unitTestFile ) {
             if ( file_exists($unitTestFile) ) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
@@ -88,10 +102,9 @@ class RestMetadataModuleListTest extends RestTestBase {
         $tabs = new TabController();
         $this->defaultTabs = $tabs->get_tabs_system();
         
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal&test=1');
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
-        // Adding the cache killer right here because it resolves cache issues on Windows
-        $this->_clearMetadataCache();
+        
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
         $enabledPortal = array('Cases','Contacts');
@@ -119,8 +132,9 @@ class RestMetadataModuleListTest extends RestTestBase {
         // Do this to load the tab list into cache
         $moduleListFromSystem = $tabs->get_tabs_system();
         $this->assertEquals(count($newModuleList),count($moduleListFromSystem[0]),"The get_tabs_system() is returning an incorrect number of modules, changing the tab list failed, it is: ".var_export($moduleListFromSystem[0],true));
+        
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal&test=2');
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Contacts
@@ -146,9 +160,8 @@ class RestMetadataModuleListTest extends RestTestBase {
             sugar_mkdir($dir, null, true);
         }
         sugar_file_put_contents($this->oppTestPath, "<?php\n\$viewdefs['Opportunities']['portal']['view']['list'] = array('test' => 'Testing');");
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
-
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal&test=3');
+        
         $this->assertTrue(in_array('Opportunities',$restReply['reply']['module_list']),'The new Opportunities module did not appear in the portal list');
         
     }
@@ -159,8 +172,8 @@ class RestMetadataModuleListTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetModuleListMobile() {
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile&test=4');
         $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
 
         foreach ( array ( '','custom/') as $prefix) {
             if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
@@ -188,8 +201,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         $enabledMobile = array('Accounts','Contacts','Opportunities');
 
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
+        $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile&test=5');
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no mobile module list on the second pass');
         $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
@@ -206,9 +218,8 @@ class RestMetadataModuleListTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetModuleListBase() {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=module_list');
-
+        $restReply = $this->_restCall('metadata?type_filter=module_list&test=6');
+        
         $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no base module list');
         $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
@@ -228,8 +239,7 @@ class RestMetadataModuleListTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataGetFullModuleListBase() {
-        $this->_clearMetadataCache();
-        $restReply = $this->_restCall('metadata?type_filter=full_module_list');
+        $restReply = $this->_restCall('metadata?type_filter=full_module_list&test=7');
         $this->assertArrayHasKey('full_module_list', $restReply['reply'], "Full Module List is missing from the reply");
         $fullRestModules = $restReply['reply']['full_module_list'];
         $this->assertArrayHasKey('_hash', $fullRestModules, 'There is no _hash key in the response');
@@ -311,7 +321,7 @@ class RestMetadataModuleListTest extends RestTestBase {
     public function testPortalMetadataModulesContainsNotes()
     {
         // Get the metadata for portal 
-        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal');
+        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal&test=8');
         $this->assertArrayHasKey('modules', $restReply['reply'], "The modules index is missing from the response");
         $this->assertArrayHasKey('Notes', $restReply['reply']['modules'], 'Notes was not returned in the modules metadata as expected');        
     }
