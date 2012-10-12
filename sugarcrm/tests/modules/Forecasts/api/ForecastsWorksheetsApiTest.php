@@ -361,4 +361,59 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $GLOBALS["current_user"] = $oldUser;
         $this->authToken = "";
     }
+    
+     /**
+     * @group forecastapi
+     * @group forecasts
+     */
+     public function testNoResultsForManagerOnDraftSaveOfNewUser()
+     {
+     	$oldUser = $GLOBALS["current_user"];
+    	$db = DBManagerFactory::getInstance();
+    	
+     	$newUser = SugarTestForecastUtilities::createForecastUser(array("user" => array("reports_to" => $this->manager["user"]->id)));
+     	
+     	//remove any created worksheets for this user so we can test the edge case
+     	$worksheetIds = array();
+     	foreach($newUser["opp_worksheets"] as $worksheet)
+     	{
+     		$worksheetIds[] = $worksheet->id;
+     	}
+     	SugarTestWorksheetUtilities::removeSpecificCreatedWorksheets($worksheetIds);
+     	
+     	// set the current user to the new user
+        $this->_user = $newUser["user"];
+        $GLOBALS["current_user"] = $this->_user;
+        $this->authToken = "";
+     	
+     	$response = $this->_restCall("ForecastWorksheets?user_id=" . $newUser["user"]->id . "&timeperiod_id=" . $this->timeperiod->id);     	     	
+     	
+     	$postData = array(
+            "best_case" => $response["reply"][0]["best_case"],
+            "likely_case" => $response["reply"][0]["likely_case"],
+            "probability" => $response["reply"][0]["probability"],
+            "commit_stage" => $response["reply"][0]["commit_stage"],
+            "id" => $response["reply"][0]["id"],
+            "worksheet_id" => $response["reply"][0]["worksheet_id"],
+            "product_id" => $response["reply"][0]["product_id"],
+            "timeperiod_id" => $this->timeperiod->id,            
+            "assigned_user_id" => $response["reply"][0]["assigned_user_id"],
+            "draft" => 1
+        );
+        
+        // set the current user to Manager
+        $this->_user = $this->manager["user"];
+        $GLOBALS["current_user"] = $this->_user;
+        $this->authToken = "";
+
+        // now get the data back to see if it we get no rows
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
+        
+        $this->assertEmpty($response["reply"], "Data was returned, this edge case should return no data");
+     	
+     	 // set the current user to original user
+        $this->_user = $oldUser;
+        $GLOBALS["current_user"] = $oldUser;
+        $this->authToken = "";
+     }
 }
