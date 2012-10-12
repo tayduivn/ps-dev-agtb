@@ -95,7 +95,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         foreach ($this->dataArray as $data) {
             $val = $this->defaultValueArray;
 
-            $val['label'] = $data['name'];
+            $val['label'] = html_entity_decode($data['label'], ENT_QUOTES);
             $val['goalmarkervaluelabel'][] = SugarCurrency::formatAmountUserLocale($quota, $currency_id);
             $val['goalmarkervalue'][] = number_format($quota, 2, '.', '');
             $val['links'] = array();

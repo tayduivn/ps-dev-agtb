@@ -132,14 +132,18 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $reportee = BeanFactory::getBean('Users', $reportee_id);
             $default_data = $this->defaultData;
             $default_data['id'] = $reportee_id;
+
+            $default_data['label'] = $locale->getLocaleFormattedName($reportee->first_name, $reportee->last_name);
+
             if($reportee_id == $user_id) {
                 // we have the owner
-                $default_data["name"] = string_format($mod_strings['LBL_MY_OPPORTUNITIES'], array($locale->getLocaleFormattedName($user->first_name, $user->last_name)));
-                $default_data["show_opps"] = true;
+                $default_data['name'] = string_format($mod_strings['LBL_MY_OPPORTUNITIES'], array($default_data['label']));
+                $default_data['show_opps'] = true;
             } else {
-                $default_data['name'] = $locale->getLocaleFormattedName($reportee->first_name, $reportee->last_name);
-                $default_data["show_opps"] = User::isManager($reportee_id) ? false : true;
+                $default_data['name'] = $default_data['label'];
+                $default_data['show_opps'] = User::isManager($reportee_id) ? false : true;
             }
+
             $default_data['user_id'] = $reportee_id;
             $data[$reportee->user_name] = $default_data;
         }
