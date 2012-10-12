@@ -36,7 +36,7 @@ class OpportunitiesSummerApi extends ListApi
             ),
             'expertsTypeahead' => array(
                 'reqType' => 'GET',
-                'path' => array('Opportunities','?', 'expertTsypeahead'),
+                'path' => array('Opportunities','?', 'expertsTypeahead'),
                 'pathVars' => array('module', 'record'),
                 'method' => 'recommendExpertsTypeahead',
                 'shortHelp' => 'Typeahead provider for recommended users',
@@ -98,21 +98,14 @@ class OpportunitiesSummerApi extends ListApi
         $sortCallback = function($a, $b) {
             return $a['interaction_count'] - $b['interaction_count'];
         };
-        $filterCallback1 = function($a) use($args) {
-            return $args['title'] == $a['title'];
-        };
         $filtered = array();
         if(!empty($args['title'])) {
-            $filtered = array_filter($data, $filterCallback1);
-        }
-        if(count($filtered) == 0) {
-            $filtered = $data;
-        }
-        $filterCallback2 = function($a) {
-            return $a['interaction_count'] !== 0;
-        };
-        $filtered = array_filter($filtered, $filterCallback2);
-        if(count($filtered) == 0) {
+            foreach($data as $entry) {
+                if($entry['title'] === $args['title']) {
+                    $filtered[] = $entry;
+                }
+            }
+        } else {
             $filtered = $data;
         }
         usort($filtered, $sortCallback);
@@ -121,19 +114,16 @@ class OpportunitiesSummerApi extends ListApi
 
     public function recommendExpertsTypeahead($api, $args)
     {
-        // TODO: Use employee_status instead of first name.
-        $data = array();
-        $seed = BeanFactory::getBean("Users");
-        $result = $seed->get_list();
-        foreach ($result['list'] as $bean) {
-            if(!empty($bean->title) && !empty($bean->first_name)) {
-                if(empty($data[$bean->title])) {
-                    $data[$bean->title] = array();
+        $data = $this->getInteractionsByUser($api, $args);
+        $titles = array();
+        foreach ($data as $bean) {
+            if(!empty($bean['title'])) {
+                if(!in_array($bean['title'], $titles)) {
+                    $titles[] = $bean['title'];
                 }
-                $data[$bean->title][] = $bean;
             }
         }
-        return array_keys($data);
+        return $titles;
     }
 
 
