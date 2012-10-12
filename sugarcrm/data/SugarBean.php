@@ -2005,6 +2005,12 @@ class SugarBean
                 $mailer->setHeader(EmailHeaders::From, $from);
                 $mailer->setHeader(EmailHeaders::ReplyTo, $from);
 
+                // set the subject of the email
+                $mailer->setSubject($subject);
+
+                // set the body of the email... looks to be plain-text only
+                $mailer->setTextBody($textBody);
+
                 // add the recipient
                 $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
                 $recipientName         = $notify_user->full_name;
@@ -2014,12 +2020,6 @@ class SugarBean
                 } catch (MailerException $me) {
                     $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
                 }
-
-                // set the subject of the email
-                $mailer->setSubject($subject);
-
-                // set the body of the email... looks to be plain-text only
-                $mailer->setTextBody($textBody);
 
                 $mailer->send();
                 $GLOBALS['log']->info("Notifications: e-mail successfully sent");
