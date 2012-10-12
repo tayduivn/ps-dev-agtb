@@ -130,6 +130,9 @@
 
     _addPostComment: function(url, contents, attachments) {
         var self = this;
+        var callback = _.after(1 + attachments.length, function() {
+            self.collection.fetch(self.opts);
+        });
         app.api.call('create', url, {'value': contents}, {success: function(post_id) {
             attachments.each(function(index, el) {
                 var id = $(el).attr('id');
@@ -154,13 +157,13 @@
                             contentType: false,
                             success: function() {
                                 delete app.drag_drop[id];
-                                self.collection.fetch(self.opts);
+                                callback();
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts);
+            callback();
         }});
     },
 
