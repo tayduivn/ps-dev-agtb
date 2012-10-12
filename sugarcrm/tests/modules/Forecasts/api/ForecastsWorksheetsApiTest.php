@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once("tests/rest/RestTestBase.php");
 
 /***
  * Used to test Forecast Module endpoints from ForecastModuleApi.php
@@ -56,10 +56,10 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     public static function setUpBeforeClass()
     {
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp("app_strings");
+        SugarTestHelper::setUp("app_list_strings");
+        SugarTestHelper::setUp("beanFiles");
+        SugarTestHelper::setUp("beanList");
         parent::setUpBeforeClass();
     }
 
@@ -69,51 +69,51 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         $this->manager = SugarTestForecastUtilities::createForecastUser();
 
-        $this->reportee = SugarTestForecastUtilities::createForecastUser(array('user' => array('reports_to' => $this->manager['user']->id)));
+        $this->reportee = SugarTestForecastUtilities::createForecastUser(array("user" => array("reports_to" => $this->manager["user"]->id)));
 
         $this->timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
 
         $this->managerData = array(
-            "amount" => $this->manager['opportunities_total'],
-            "quota" => $this->manager['quota']->amount,
-            "quota_id" => $this->manager['quota']->id,
-            "best_case" => $this->manager['forecast']->best_case,
-            "likely_case" => $this->manager['forecast']->likely_case,
-            "worst_case" => $this->manager['forecast']->worst_case,
-            "best_adjusted" => $this->manager['worksheet']->best_case,
-            "likely_adjusted" => $this->manager['worksheet']->likely_case,
-            "worst_adjusted" => $this->manager['worksheet']->worst_case,
-            "commit_stage" => $this->manager['worksheet']->commit_stage,
-            "forecast_id" => $this->manager['forecast']->id,
-            "worksheet_id" => $this->manager['worksheet']->id,
+            "amount" => $this->manager["opportunities_total"],
+            "quota" => $this->manager["quota"]->amount,
+            "quota_id" => $this->manager["quota"]->id,
+            "best_case" => $this->manager["forecast"]->best_case,
+            "likely_case" => $this->manager["forecast"]->likely_case,
+            "worst_case" => $this->manager["forecast"]->worst_case,
+            "best_adjusted" => $this->manager["worksheet"]->best_case,
+            "likely_adjusted" => $this->manager["worksheet"]->likely_case,
+            "worst_adjusted" => $this->manager["worksheet"]->worst_case,
+            "commit_stage" => $this->manager["worksheet"]->commit_stage,
+            "forecast_id" => $this->manager["forecast"]->id,
+            "worksheet_id" => $this->manager["worksheet"]->id,
             "show_opps" => true,
-            "ops" => $this->manager['opportunities'],
-            "op_worksheets" => $this->manager['opp_worksheets'],
-            "id" => $this->manager['user']->id,
-            "name" => 'Opportunities (' . $this->manager['user']->first_name . ' ' . $this->manager['user']->last_name . ')',
-            "user_id" => $this->manager['user']->id,
+            "ops" => $this->manager["opportunities"],
+            "op_worksheets" => $this->manager["opp_worksheets"],
+            "id" => $this->manager["user"]->id,
+            "name" => "Opportunities (" . $this->manager["user"]->first_name . " " . $this->manager["user"]->last_name . ")",
+            "user_id" => $this->manager["user"]->id,
             "timeperiod_id" => $this->timeperiod->id
         );
 
         $this->repData = array(
-            "amount" => $this->reportee['opportunities_total'],
-            "quota" => $this->reportee['quota']->amount,
-            "quota_id" => $this->reportee['quota']->id,
-            "best_case" => $this->reportee['forecast']->best_case,
-            "likely_case" => $this->reportee['forecast']->likely_case,
-            "worst_case" => $this->reportee['forecast']->worst_case,
-            "best_adjusted" => $this->reportee['worksheet']->best_case,
-            "likely_adjusted" => $this->reportee['worksheet']->likely_case,
-            "worst_adjusted" => $this->reportee['worksheet']->worst_case,
-            "commit_stage" => $this->manager['worksheet']->commit_stage,
-            "forecast_id" => $this->reportee['forecast']->id,
-            "worksheet_id" => $this->reportee['worksheet']->id,
+            "amount" => $this->reportee["opportunities_total"],
+            "quota" => $this->reportee["quota"]->amount,
+            "quota_id" => $this->reportee["quota"]->id,
+            "best_case" => $this->reportee["forecast"]->best_case,
+            "likely_case" => $this->reportee["forecast"]->likely_case,
+            "worst_case" => $this->reportee["forecast"]->worst_case,
+            "best_adjusted" => $this->reportee["worksheet"]->best_case,
+            "likely_adjusted" => $this->reportee["worksheet"]->likely_case,
+            "worst_adjusted" => $this->reportee["worksheet"]->worst_case,
+            "commit_stage" => $this->manager["worksheet"]->commit_stage,
+            "forecast_id" => $this->reportee["forecast"]->id,
+            "worksheet_id" => $this->reportee["worksheet"]->id,
             "show_opps" => true,
-            "ops" => $this->reportee['opportunities'],
-            "op_worksheets" => $this->reportee['opp_worksheets'],
-            "id" => $this->reportee['user']->id,
-            "name" => $this->reportee['user']->first_name . ' ' . $this->reportee['user']->last_name,
-            "user_id" => $this->reportee['user']->id,
+            "ops" => $this->reportee["opportunities"],
+            "op_worksheets" => $this->reportee["opp_worksheets"],
+            "id" => $this->reportee["user"]->id,
+            "name" => $this->reportee["user"]->first_name . " " . $this->reportee["user"]->last_name,
+            "user_id" => $this->reportee["user"]->id,
             "timeperiod_id" => $this->timeperiod->id
         );
 
@@ -135,11 +135,11 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     public function testForecastWorksheets()
     {
-    	$tempUser = $GLOBALS['current_user'] = $this->_user;
+    	$tempUser = $GLOBALS["current_user"] = $this->_user;
     	
     	// set the current user to salesrep
-        $this->_user = $this->reportee['user'];
-        $GLOBALS['current_user'] = $this->_user;
+        $this->_user = $this->reportee["user"];
+        $GLOBALS["current_user"] = $this->_user;
         $this->authToken = "";
         
         $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
@@ -147,7 +147,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         
         // set the current user back.
         $this->_user = $tempUser;
-        $GLOBALS['current_user'] = $tempUser;
+        $GLOBALS["current_user"] = $tempUser;
         $this->authToken = "";
     }
 
@@ -159,13 +159,20 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     public function testForecastWorksheetSave()
     {
+    	$oldUser = $GLOBALS["current_user"];
+    	
+    	// set the current user to salesrep
+        $this->_user = $this->reportee["user"];
+        $GLOBALS["current_user"] = $this->_user;
+        $this->authToken = "";
+        
     	$response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
     	
         $best_case = $response["reply"][0]["best_case"] + 100;
         $probability = $response["reply"][0]["probability"] + 10;
         $id = $response["reply"][0]["id"];
-        $returnBest = '';
-        $returnProb = '';
+        $returnBest = "";
+        $returnProb = "";
 
         $postData = array(
             "best_case" => $best_case,
@@ -203,6 +210,10 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $this->assertEquals($probability, $returnProb, "Worksheet probability was not saved.");
         $this->assertEquals($best_case, $returnBest, "Worksheet best_case was not saved.");
 
+		// set the current user to original user
+        $this->_user = $oldUser;
+        $GLOBALS["current_user"] = $oldUser;
+        $this->authToken = "";
 
     }
 
@@ -214,11 +225,11 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     public function testWorksheetCommitSave()
     {
-    	$oldUser = $GLOBALS['current_user'];
+    	$oldUser = $GLOBALS["current_user"];
     	
     	// set the current user to salesrep
-        $this->_user = $this->reportee['user'];
-        $GLOBALS['current_user'] = $this->_user;
+        $this->_user = $this->reportee["user"];
+        $GLOBALS["current_user"] = $this->_user;
         $this->authToken = "";
         
         $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
@@ -226,8 +237,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $best_case = $response["reply"][0]["best_case"] + 100;
         $probability = $response["reply"][0]["probability"] + 10;
         $id = $response["reply"][0]["id"];
-        $returnBest = '';
-        $returnProb = '';
+        $returnBest = "";
+        $returnProb = "";
 
         $postData = array(
             "best_case" => $best_case,
@@ -248,8 +259,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $db->commit();
 		
 		// set the current user to Manager
-        $this->_user = $this->manager['user'];
-        $GLOBALS['current_user'] = $this->_user;
+        $this->_user = $this->manager["user"];
+        $GLOBALS["current_user"] = $this->_user;
         $this->authToken = "";
         
         // now get the data back to see if it was saved to all the proper tables.
@@ -270,7 +281,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         // set the current user to original user
         $this->_user = $oldUser;
-        $GLOBALS['current_user'] = $oldUser;
+        $GLOBALS["current_user"] = $oldUser;
         $this->authToken = "";
     }
 
@@ -281,12 +292,12 @@ class ForecastsWorksheetsApiTest extends RestTestBase
     public function testWorksheetCommitVisibility()
     {
 
-        $oldUser = $GLOBALS['current_user'];
+        $oldUser = $GLOBALS["current_user"];
     	$db = DBManagerFactory::getInstance();
     	
     	// set the current user to salesrep
-        $this->_user = $this->reportee['user'];
-        $GLOBALS['current_user'] = $this->_user;
+        $this->_user = $this->reportee["user"];
+        $GLOBALS["current_user"] = $this->_user;
         $this->authToken = "";
         
         $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
@@ -294,8 +305,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $best_case = $response["reply"][0]["best_case"] + 100;
         $probability = $response["reply"][0]["probability"] + 10;
         $id = $response["reply"][0]["id"];
-        $returnBest = '';
-        $returnProb = '';
+        $returnBest = "";
+        $returnProb = "";
 
         $postData = array(
             "best_case" => $response["reply"][0]["best_case"],
@@ -325,8 +336,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $db->commit();
 
         // set the current user to Manager
-        $this->_user = $this->manager['user'];
-        $GLOBALS['current_user'] = $this->_user;
+        $this->_user = $this->manager["user"];
+        $GLOBALS["current_user"] = $this->_user;
         $this->authToken = "";
 
         // now get the data back to see if it we get the live version, not the draft version
@@ -347,7 +358,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
         // set the current user to original user
         $this->_user = $oldUser;
-        $GLOBALS['current_user'] = $oldUser;
+        $GLOBALS["current_user"] = $oldUser;
         $this->authToken = "";
     }
 }
