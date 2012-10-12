@@ -2375,10 +2375,14 @@ private function dir_file_count($path){
                     'target' => '#header'
                 ),
                 'footer' => array(
-                    'target' => '#footer'
+                    'target' => '#footer',
+                    'layout' => 'footer'
                 ),
                 'alert' => array(
                     'target' => '#alert'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
@@ -2408,10 +2412,14 @@ private function dir_file_count($path){
                     'target' => '#header'
                 ),
                 'footer' => array(
-                    'target' => '#footer'
+                    'target' => '#footer',
+                    'layout' => 'footer'
                 ),
                 'alert' => array(
                     'target' => '#alert'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
