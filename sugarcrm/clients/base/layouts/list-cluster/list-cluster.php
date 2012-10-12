@@ -6,4 +6,4 @@ $layout->push(array('view'=>'list-top'));
 $layout->push(array('view'=>'filter'));
 $layout->push(array('view'=>'list'));
 $layout->push(array('view'=>'list-bottom'));
-$viewdefs['summer']['layout']['list-cluster'] = $layout->getLayout();
+$viewdefs['base']['layout']['list-cluster'] = $layout->getLayout();

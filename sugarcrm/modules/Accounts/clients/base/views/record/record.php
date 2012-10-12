@@ -29,7 +29,7 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-$viewdefs['Accounts']['summer']['view']['record'] = array(
+$viewdefs['Accounts']['base']['view']['record'] = array(
     'buttons' =>
     array(
         array(

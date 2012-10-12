@@ -8,4 +8,4 @@ $layout->push(array('view'=>'twitter'));
 $layout->push(array('view'=>'todo-list'));
 //$layout->push(array('view'=>'maps'));
 
-$viewdefs['Accounts']['summer']['layout']['sidebar'] = $layout->getLayout();
+$viewdefs['Accounts']['base']['layout']['sidebar'] = $layout->getLayout();

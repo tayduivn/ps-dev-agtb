@@ -306,12 +306,12 @@
 
         currFieldParent = $(cell);
         targetParent = self.$(e.target).parents(".record-cell");
+        field.$el.find("input").trigger("change");
 
         if (currFieldParent[0] == targetParent[0]) {
             return;
         }
 
-        field.$el.find("input").trigger("change");
         self.toggleCell(field, cell, true);
     },
 
