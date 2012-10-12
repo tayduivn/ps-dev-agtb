@@ -1,0 +1,23 @@
+{{#if previousDateEntered}}
+<div class="log drawer">
+    <div class="title pull-left">
+        <strong>{{str "LBL_PREVIOUS_COMMIT" "Forecasts"}}:</strong> {{previousDateEntered}}
+    </div>
+    <div class="toggle pull-left">
+        &nbsp;<i id="show_hide_history_log" class="icon-caret-down icon-sm"></i>
+    </div>
+    <div class="clearfix"></div>
+</div>
+{{/if}}
+
+{{#if historyLog.length}}
+<div class="extend results hide" id="history_log_results">
+    {{#each historyLog}}
+    <article>
+        {{this.text}}
+        <br>
+        <date>{{this.text2}}</date>
+    </article>
+    {{/each}}
+</div>
+{{/if}}

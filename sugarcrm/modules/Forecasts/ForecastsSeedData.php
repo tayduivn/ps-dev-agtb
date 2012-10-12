@@ -197,8 +197,10 @@ public static function setupForecastSettings()
         // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
         'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
         // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
-        'timeperiod_interval' => 'quarterly',
-        'timeperiod_start_month' => 'July',
+        'timeperiod_interval' => 'Annual',
+        // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_quarterly_options_dom, (first, middle, last)
+        'timeperiod_leaf_interval' => 'Quarter',
+        'timeperiod_start_month' => '7',
         'timeperiod_start_day' => '1',
         // number of timeperiods forward from the current that are displayed
         'timeperiods_shown_forward' => 4,
