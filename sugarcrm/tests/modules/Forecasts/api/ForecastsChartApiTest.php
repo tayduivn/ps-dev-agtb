@@ -61,6 +61,7 @@ class ForecastsChartApiTest extends RestTestBase
 
     public static function tearDownAfterClass()
     {
+    	SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestQuotaUtilities::removeAllCreatedQuotas();
@@ -99,8 +100,18 @@ class ForecastsChartApiTest extends RestTestBase
     {    	
         $url = 'Forecasts/chart?timeperiod_id=' . self::$timeperiod . '&user_id=' . self::$user["user"]->id . '&group_by=sales_stage&dataset=' . $dataset;
         $return = $this->_restCall($url);
-        $chart = $return['reply'];
-        $this->assertEquals(self::$user["opportunities"][0]->$key, $chart['values'][0]['goalmarkervalue'][1]);
+        $chart = $return['reply'];        
+        $found = false;
+        
+        foreach($chart["values"] as $value)
+        {
+        	if($value["goalmarkervalue"][1] != 0.00)
+        	{
+        		$this->assertEquals(self::$user["opportunities"][0]->$key, $value["goalmarkervalue"][1]);
+        		$found = true;
+        	}
+        }
+        $this->assertEquals(true, $found, "The chart value was now found in the dataset.");
     }
 
     /**
