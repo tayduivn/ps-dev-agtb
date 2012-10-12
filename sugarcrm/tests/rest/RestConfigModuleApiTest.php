@@ -80,6 +80,9 @@ class RestConfigModuleApiTest extends RestTestBase {
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group rest
+     */
     public function testRetrieveSettingsByValidModuleWithPlatformReturnsSettings()
     {
         $restReply = $this->_restCall('Forecasts/config?platform=base');
@@ -87,6 +90,9 @@ class RestConfigModuleApiTest extends RestTestBase {
         $this->assertTrue($restReply['reply'] > 0);
     }
 
+    /**
+     * @group rest
+     */
     public function testRetrieveSettingsByValidModuleWithPlatformOverRidesBasePlatform()
     {
         $restReply = $this->_restCall('Forecasts/config?platform=portal');
@@ -94,7 +100,9 @@ class RestConfigModuleApiTest extends RestTestBase {
         $this->assertEquals('Portal', $restReply['reply']['AdministrationTest']);
     }
 
-
+    /**
+     * @group rest
+     */
     public function testJsonValueIsArray()
     {
         $restReply = $this->_restCall('Forecasts/config?platform=json');

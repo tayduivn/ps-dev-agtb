@@ -41,8 +41,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_strings');
-        self::$db = DBManagerFactory::getInstance();
-        self::$db->query("DELETE FROM config where name = 'Forecasts'");
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         foreach(self::$foreastsConfigSettings as $config){
@@ -53,14 +53,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         parent::setUpBeforeClass();
     }
 
-    public function tearDown() {
-        SugarTestHelper::tearDown();
-    }
-
     public static function tearDownAfterClass()
     {
+        $db = DBManagerFactory::getInstance();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        self::$db->query("DELETE FROM timeperiods where deleted = 0");
+        //$db->query("DELETE FROM timeperiods where deleted = 0");
+        SugarTestHelper::tearDown();
     }
 
     /**
@@ -68,8 +66,9 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testNumberOfPrimaryPeriods() {
-        $result = self::$db->query("select count(id) as count from timeperiods where is_leaf = 0 and deleted = 0");
-        $count = self::$db->fetchByAssoc($result);
+        $db = DBManagerFactory::getInstance();
+        $result = $db->query("select count(id) as count from timeperiods where is_leaf = 0 and deleted = 0");
+        $count = $db->fetchByAssoc($result);
         $this->assertEquals(9, $count['count']);
     }
 
@@ -78,8 +77,9 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testNumberOfLeafPeriods() {
-        $result = self::$db->query("select count(id) as count from timeperiods where is_leaf = 1 and deleted = 0");
-        $count = self::$db->fetchByAssoc($result);
+        $db = DBManagerFactory::getInstance();
+        $result = $db->query("select count(id) as count from timeperiods where is_leaf = 1 and deleted = 0");
+        $count = $db->fetchByAssoc($result);
         $this->assertEquals(36, $count['count']);
     }
 

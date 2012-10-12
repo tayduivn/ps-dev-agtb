@@ -24,14 +24,8 @@ require_once('clients/base/api/ModuleApi.php');
 
 class ConfigModuleApi extends ModuleApi {
 
-    public function __construct()
-    {
-
-    }
-
     public function registerApiRest()
     {
-        $parentApi = parent::registerApiRest();
         //Extend with test method
         $parentApi= array (
             'config' => array(
@@ -75,12 +69,10 @@ class ConfigModuleApi extends ModuleApi {
         $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
 
         if (!empty($args['module'])) {
-            $data = $adminBean->getConfigForModule($args['module'], $platform);
-        } else {
-            return;
+            return$adminBean->getConfigForModule($args['module'], $platform);
         }
+        return;
 
-        return $data;
     }
 
     /**
@@ -100,6 +92,11 @@ class ConfigModuleApi extends ModuleApi {
         unset($args['platform']);
         unset($args['__sugar_url']);
 
+        //acl check, only allow if they are module admin
+        if(!hasAccess($module)) {
+            throw new SugarApiExceptionNotAuthorized("Current User not authorized to change ".$module." configuration settings");
+        }
+
         foreach ($args as $name => $value) {
             if(is_array($value)) {
                 $admin->saveSetting($module, $name, json_encode($value), $platform);
@@ -111,5 +108,10 @@ class ConfigModuleApi extends ModuleApi {
         return $admin->getConfigForModule($module, $platform);
     }
 
+
+    private function hasAccess($module) {
+        global $current_user;
+        return $current_user->isAdminForModule($module) ? true : false;
+    }
 
 }
