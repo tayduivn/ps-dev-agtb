@@ -22,8 +22,8 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/api/SugarApi/RestService.php';
-require_once 'include/api/RelateRecordApi.php';
+require_once 'include/api/RestService.php';
+require_once 'clients/base/api/RelateRecordApi.php';
 
 class RelateRecordApiTest extends Sugar_PHPUnit_Framework_TestCase
 {

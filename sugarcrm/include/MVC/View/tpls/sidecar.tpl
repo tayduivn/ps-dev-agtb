@@ -66,6 +66,7 @@
                     </div>
                 </div>
                 <div id="footer"></div>
+                <div id="tourguide"></div>
 			</div>
 		</div>
         {literal}

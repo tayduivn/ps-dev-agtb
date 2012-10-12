@@ -24,7 +24,6 @@
         app.view.View.prototype.render.call(this);
         if (!SUGAR.App.api.isAuthenticated()) {
             $(".navbar").hide();
-            $("footer").hide();
         }
         return this;
     },

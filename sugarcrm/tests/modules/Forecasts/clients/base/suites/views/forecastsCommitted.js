@@ -18,42 +18,330 @@
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-describe("The forecastCommitted view", function(){
 
-    var app, view, formatAmountLocaleStub, createHistoryLogStub;
+describe("The forecasts committed view", function () {
+
+    var app, view, testMethodStub, context, totals, formatAmountLocaleStub, createHistoryLogStub;
+    var stubs = [];
 
     beforeEach(function() {
         app = SugarTest.app;
-        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function(d) { return eval(d); });
-        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function(d) { return eval(d); });
+        view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function (d) {
+            return eval(d);
+        });
 
-        var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
-        var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
-        var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
-        var collection = new Backbone.Collection([model1, model2, model3]);
-        view._collection = collection;
+        SugarTest.loadFile("../sidecar/src/utils", "currency", "js", function (d) {
+            return eval(d);
+        });
+
+        SugarTest.loadFile("../modules/Forecasts/clients/base/lib", "ForecastsUtils", "js", function (d) {
+            return eval(d);
+        });
 
         formatAmountLocaleStub = sinon.stub(app.currency, "formatAmountLocale", function(value) {
             return value;
         });
 
+        stubs.push(formatAmountLocaleStub);
+
         createHistoryLogStub = sinon.stub(app.forecasts.utils, "createHistoryLog", function(model, previousModel) {
             return "createHistoryLog";
         });
 
+        stubs.push(createHistoryLogStub);
+
         view.render = function() {};
+
+        context = app.context.getContext({
+            url:"someurl",
+            module:"Forecasts"
+        });
+
+        app.defaultSelections = {
+            timeperiod_id:{},
+            group_by:{},
+            dataset:{},
+            selectedUser:{}
+        };
+
+        view.selectedUser = {
+            isManager: false,
+            showOpps: true
+        };
+
     });
 
-    afterEach(function() {
-        formatAmountLocaleStub.restore();
-        createHistoryLogStub.restore();
+    afterEach(function () {
+        _.each(stubs, function (stub) {
+            stub.restore();
+        });
+
+        delete totals;
+        delete view.selectedUser;
+        delete view.totals;
+        delete view._collection.models;
     });
 
-    describe("test buildForecastsCommitted function", function() {
-        it("should create two historyLog entries", function() {
-            view.buildForecastsCommitted();
-            expect(view.historyLog.length == 2).toBeTruthy();
+
+    describe("test arrow directions for sales rep", function () {
+
+        beforeEach(function() {
+            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
+            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
+            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
+            view._collection = new Backbone.Collection([model1, model2, model3]);
+        });
+
+        it("should show up for both", function () {
+
+            totals = {
+                'amount': 500,
+                'best_case':500,
+                'best_adjusted':550,
+                'likely_case':450,
+                'likely_adjusted':475,
+                'worst_case':400,
+                'worst_adjusted':425
+            };
+
+            view.updateTotals(totals);
+
+            expect(view.bestCaseCls).toContain('icon-arrow-up');
+            expect(view.likelyCaseCls).toContain('icon-arrow-up');
+        });
+
+        it("should show down for both", function () {
+
+            totals = {
+                'best_case':1,
+                'best_adjusted':1,
+                'likely_case':1,
+                'likely_adjusted':1,
+                'worst_case':1,
+                'worst_adjusted':1
+            };
+
+            view.updateTotals(totals);
+
+            expect(view.bestCaseCls).toContain('icon-arrow-down');
+            expect(view.likelyCaseCls).toContain('icon-arrow-down');
         });
     });
+
+    describe("test arrow directions for manager", function () {
+
+        beforeEach(function() {
+            var model1 = new Backbone.Model({date_entered:"2012-12-05T11:14:25-04:00", best_case : 100, likely_case : 90, base_rate : 1 });
+            var model2 = new Backbone.Model({date_entered:"2012-10-05T11:14:25-04:00", best_case : 110, likely_case : 100, base_rate : 1 });
+            var model3 = new Backbone.Model({date_entered:"2012-11-05T11:14:25-04:00", best_case : 120, likely_case : 110, base_rate : 1 });
+            view._collection = new Backbone.Collection([model1, model2, model3]);
+        });
+
+        it("should show up for both", function () {
+
+            totals = {
+                'amount': 500,
+                'best_case':500,
+                'best_adjusted':550,
+                'likely_case':450,
+                'likely_adjusted':475,
+                'worst_case':400,
+                'worst_adjusted':425
+            };
+
+            view.updateTotals(totals);
+
+            expect(view.bestCaseCls).toContain('icon-arrow-up');
+            expect(view.likelyCaseCls).toContain('icon-arrow-up');
+        });
+
+        it("should show down for both", function () {
+
+            totals = {
+                'best_case':1,
+                'best_adjusted':1,
+                'likely_case':1,
+                'likely_adjusted':1,
+                'worst_case':1,
+                'worst_adjusted':1
+            };
+
+            view.updateTotals(totals);
+
+            expect(view.bestCaseCls).toContain('icon-arrow-down');
+            expect(view.likelyCaseCls).toContain('icon-arrow-down');
+        });
+    });
+
+    describe("updateTotals function without previous commit entries", function() {
+
+        beforeEach(function() {
+            totals = {
+                amount: 1000,
+                best_case: 1100,
+                worst_case: 900,
+                included_opp_count: 1,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 1000,
+                overall_best: 1100,
+                overall_worst: 900,
+                timeperiod_id: "abc",
+                total_opp_count: 1,
+                won_amount: 0,
+                won_count: 0
+            };
+
+            //Simulate the view having no models in the collection
+            view._collection.models = [];
+
+            //Simulate empty totals (no previous commit history)
+            view.totals = {
+                amount: 0,
+                best_case: 0,
+                worst_case: 0,
+                included_opp_count: 0,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 0,
+                overall_best: 0,
+                overall_worst: 0,
+                timeperiod_id: null,
+                total_opp_count: 0,
+                won_amount: 0,
+                won_count: 0
+            };
+        });
+
+        describe("test updateTotals function without a previousCommit entry", function() {
+            it("should correctly set the member variables used to render commit log section", function() {
+                view.updateTotals(totals);
+                expect(view.likelyCase).toEqual(1000);
+                expect(view.likelyCaseCls).toContain("icon-arrow-up font-green");
+                expect(view.bestCase).toEqual(1100);
+                expect(view.bestCaseCls).toContain("icon-arrow-up font-green");
+                expect(view.totals.amount).toEqual(1000);
+                expect(view.totals.best_case).toEqual(1100);
+                expect(view.totals.worst_case).toEqual(900);
+            });
+        });
+    });
+
+
+    describe("updateTotals function with previous commit entries", function() {
+
+         beforeEach(function() {
+             totals = {
+                 amount: 1000,
+                 best_case: 1100,
+                 worst_case: 900,
+                 included_opp_count: 1,
+                 lost_amount: 0,
+                 lost_count: 0,
+                 overall_amount: 1000,
+                 overall_best: 1100,
+                 overall_worst: 900,
+                 timeperiod_id: "abc",
+                 total_opp_count: 1,
+                 won_amount: 0,
+                 won_count: 0
+             };
+
+             //Simulate the view having one model in the collection
+             view._collection.models = [new Backbone.Model({
+                 likely_case : 900,
+                 best_case: 1000,
+                 worst_case: 800
+             })];
+
+             //Simulate previous commit history
+             view.totals = {
+                 amount: 900,
+                 best_case: 1000,
+                 worst_case: 800,
+                 included_opp_count: 1,
+                 lost_amount: 0,
+                 lost_count: 0,
+                 overall_amount: 900,
+                 overall_best: 1000,
+                 overall_worst: 800,
+                 timeperiod_id: "def",
+                 total_opp_count: 1,
+                 won_amount: 0,
+                 won_count: 0
+             };
+         });
+
+         describe("test updateTotals function with a previousCommit entry", function() {
+             it("should correctly set the member variables used to render commit log section", function() {
+                 view.updateTotals(totals);
+                 expect(view.likelyCase).toEqual(1000);
+                 expect(view.likelyCaseCls).toContain("icon-arrow-up font-green");
+                 expect(view.bestCase).toEqual(1100);
+                 expect(view.bestCaseCls).toContain("icon-arrow-up font-green");
+                 expect(view.totals.amount).toEqual(1000);
+                 expect(view.totals.best_case).toEqual(1100);
+                 expect(view.totals.worst_case).toEqual(900);
+             });
+         });
+     });
+
+
+    describe("non-empty savedTotal will be set to null", function() {
+        beforeEach(function() {
+            totals = {
+                amount: 1000,
+                best_case: 1100,
+                worst_case: 900,
+                included_opp_count: 1,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 1000,
+                overall_best: 1100,
+                overall_worst: 900,
+                timeperiod_id: "abc",
+                total_opp_count: 1,
+                won_amount: 0,
+                won_count: 0
+            };
+
+            //Simulate the view having one model in the collection
+            view._collection.models = [new Backbone.Model({
+                likely_case : 900,
+                best_case: 1000,
+                worst_case: 800
+            })];
+
+            //Simulate previous commit history
+            view.totals = {
+                amount: 900,
+                best_case: 1000,
+                worst_case: 800,
+                included_opp_count: 1,
+                lost_amount: 0,
+                lost_count: 0,
+                overall_amount: 900,
+                overall_best: 1000,
+                overall_worst: 800,
+                timeperiod_id: "def",
+                total_opp_count: 1,
+                won_amount: 0,
+                won_count: 0
+            };
+
+            view.savedTotal = view.totals;
+        });
+
+        afterEach(function() {
+            delete view.savedTotal;
+        });
+
+        describe("test updateTotals function with set savedTotal", function() {
+            it("should set savedTotals to null", function() {
+                view.updateTotals(totals);
+                expect(view.savedTotal).toBeNull();
+            });
+        });
+    });
+
 });

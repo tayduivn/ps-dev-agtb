@@ -36,7 +36,6 @@ class Bug51617Test extends SOAPTestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-
         $GLOBALS['current_user']->status = 'Active';
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
@@ -97,7 +96,6 @@ class Bug51617Test extends SOAPTestCase
         SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestHelper::tearDown();
-        unset($GLOBALS['current_user']);
 
         parent::tearDown();
         $GLOBALS['db']->commit();

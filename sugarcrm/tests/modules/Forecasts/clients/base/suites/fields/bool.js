@@ -28,7 +28,7 @@ describe("forecast bool field", function() {
                 "type": "bool",
                 "view": "detail"
             };
-            this.field = SugarTest.createField("forecast","checkbox", "toggle", "detail", fieldDef);
+            this.field = SugarTest.createField("base","checkbox", "bool", "detail", fieldDef);
             var model = new Backbone.Model({forecast: true});
             this.field.model = model;
             expect(this.field.def.view).toEqual(fieldDef.view);
@@ -42,7 +42,7 @@ describe("forecast bool field", function() {
                 "type": "bool",
                 "view": "edit"
             };
-            this.field = SugarTest.createField("forecast","checkbox", "toggle", "edit", fieldDef);
+            this.field = SugarTest.createField("base","checkbox", "bool", "edit", fieldDef);
             var model = new Backbone.Model({forecast: true});
             this.field.model = model;
             expect(this.field.def.view).toEqual(fieldDef.view);
