@@ -163,9 +163,8 @@
                         if(settings.field.type == 'currency') {
                             // convert value and format for display
                             var currencyId = settings.field.model.get('currency_id');
-                            var base_rate = settings.field.model.get('base_rate');
                             if(settings.field.def.convertToBase) {
-                                value = app.currency.convertWithRate(value, base_rate);
+                                value = value * settings.field.model.get('base_rate');
                                 currencyId = '-99';
                             }
                             value = app.currency.formatAmountLocale(
