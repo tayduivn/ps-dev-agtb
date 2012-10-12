@@ -345,7 +345,7 @@ $app_list_strings = array (
 
   'commit_stage_binary_dom' => array (
     'include' => 'Include',
-    'exclude' => 'Exclude',
+    'pipeline' => 'Pipeline',
   ),
   'commit_stage_dom' =>
   array (
