@@ -64,13 +64,24 @@ if(empty($_REQUEST['inline']))
 //$focus=new $beanList[$_REQUEST['module']];
 //$focus->retrieve($record);
 
-include('include/SubPanel/SubPanel.php');
+// Try to use custom SubPanel class
+if(is_file('custom/include/SubPanel/SubPanel.php'))
+{
+    include('custom/include/SubPanel/SubPanel.php');
+    $sp_class = 'CustomSubPanel';
+}
+else // or use core class
+{
+    include('include/SubPanel/SubPanel.php');
+    $sp_class = 'SubPanel';
+}
+
 $layout_def_key = '';
 if(!empty($_REQUEST['layout_def_key'])){
 	$layout_def_key = $_REQUEST['layout_def_key'];
 }
 
-$subpanel_object = new SubPanel($module, $record, $subpanel,null, $layout_def_key);
+$subpanel_object = new $sp_class($module, $record, $subpanel,null, $layout_def_key);
 
 $subpanel_object->setTemplateFile('include/SubPanel/SubPanelDynamic.html');
 echo (empty($_REQUEST['inline']))?$subpanel_object->get_buttons():'' ;  
