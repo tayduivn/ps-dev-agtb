@@ -34,7 +34,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
         $admin = BeanFactory::getBean('Administration');
 
         //acl check, only allow if they are module admin
-        if(!hasAccess("Forecasts")) {
+        if(!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
         }
 

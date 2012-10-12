@@ -93,7 +93,7 @@ class ConfigModuleApi extends ModuleApi {
         unset($args['__sugar_url']);
 
         //acl check, only allow if they are module admin
-        if(!hasAccess($module)) {
+        if(!$this->hasAccess($module)) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change ".$module." configuration settings");
         }
 
@@ -109,7 +109,7 @@ class ConfigModuleApi extends ModuleApi {
     }
 
 
-    private function hasAccess($module) {
+    public function hasAccess($module) {
         global $current_user;
         return $current_user->isAdminForModule($module) ? true : false;
     }
