@@ -252,7 +252,7 @@ nv.models.funnelChart = function() {
         .call(yAxis)
           .style('stroke-width', '2')
           .selectAll('line')
-            .attr('x2', function(d,i){ return aTicks[i] ? ( c + ( r * y(aTicks[i]) ) + w/2 + 60 ) : 0 } );
+            .attr('x2', function(d,i){ return d !== 0 ? ( c + ( r * y(d) ) + w/2 + 60 ) : availableWidth; });
 
       //------------------------------------------------------------
 

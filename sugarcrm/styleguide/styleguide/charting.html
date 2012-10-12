@@ -151,7 +151,7 @@
           </div>
         </div>
         <div class="span6">
-          <h3>My Forecasting</h3>
+          <h3>Pareto Chart</h3>
           <p>This is a new NVD3 chart type created for SugarCRM. An example of usage in the Sugar7 prototype is on <a href="../styleguide/sugar7/forecast_nvd3.html">forecasting page</a>. <a href="charts/multiBarChart_forecast.html">Full Screen</a> with gradient fill.</p>
           <div>
 <div id="vert2" class="chart-container view-forecastsChart">
@@ -168,7 +168,7 @@
       </div>
       <div class="row">
         <div class="span6">
-          <h3>All Opportunities by Lead Source</h3>
+          <h3>Pie Chart</h3>
           <p>Example pie chart. <a href="charts/pieChart.html">Full Screen</a></p>
           <div>
 <div id="pie" class="chart-container">
@@ -440,10 +440,9 @@
 
   <!-- new D3 charting library files -->
   <script src="js/nvd3/lib/d3.v2.js"></script>
-  <script src="js/nvd3/nv.d3.js"></script>
+  <script src="js/nvd3/nv.d3.min.js"></script>
 
-  <script src="js/nvd3/data/forecasting_q1.js"></script>
-  <script src="js/nvd3/data/forecasting_q2.js"></script>
+  <script src="js/nvd3/data/forecasting_jit.js"></script>
   <script src="js/nvd3/data/vertical_data.js"></script>
   <script src="js/nvd3/data/opportunities.js"></script>
   <script src="js/nvd3/data/funnel_data.js"></script>
@@ -458,35 +457,77 @@
       generate: function() {
           //var chart = nv.models.multiBarChart();
           //override default barClick function
-          var chart = nv.models.multiBarChart()
+          var chart = nv.models.paretoChart()
                 .margin({top: 10, right: 10, bottom: 30, left: 40})
                 .showControls(false)
                 .showTitle(false)
-                .barClick( function(data,e,selection) {
-                    //if only one bar series is disabled
-                    // console.log(data);
-                    // console.log(e);
-                    // console.log(selection);
-                    d3.select('#vert2 svg')
-                      .datum(forecast_data_Q2)
-                      .transition().duration(500).call(chart);
-                  })
-                .tooltipBar( function(key, x, y, e, graph) {
-                  return '<p>Stage: <b>' + key + '</b></p>' +
-                         '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                         '<p>Percent: <b>' +  x + '%</b></p>'
-                  })
-                .tooltipLine( function(key, x, y, e, graph) {
-                    return '<p>Likely: <b>' + parseInt(y) + 'K</b></p>'
-                  })
+                .stacked(false)
+                // .barClick( function(data,e,selection) {
+                //     //if only one bar series is disabled
+                //     // console.log(data);
+                //     // console.log(e);
+                //     // console.log(selection);
+                //     d3.select('#vert2 svg')
+                //       .datum(forecast_data_Q1)
+                //       .transition().duration(500).call(chart);
+                //   })
                 ;
           //end override
 
           d3.select('#vert2 svg')
-            .datum(forecast_data_Q1)
+            .datum(this.translateDataToD3(forecast_data_Q1))
             .transition().duration(500).call(chart);
 
           return chart;
+      },
+      translateDataToD3 : function( json, params )
+      {
+          return {
+              'properties':{
+                  'title': json.properties[0].title
+                , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
+                // bar group data (x-axis)
+                , 'groupData': json.values.map( function(d,i){
+                      return {
+                        'group': i
+                      , 'l': json.values[i].label
+                      , 't': json.values[i].values.reduce( function(p, c, i, a){
+                          return parseInt(p,10) + parseInt(c,10);
+                        })
+                      }
+                  })
+              }
+              // series data
+            , 'data': json.label.map( function(d,i){
+                  return {
+                      'key': d
+                    , 'type': 'bar'
+                    , 'series': i
+                    , 'values': json.values.map( function(e,j){
+                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
+                      })
+                    , 'valuesOrig': json.values.map( function(e,j){
+                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
+                      })
+                  }
+              }).concat(
+                  json.properties[0].goal_marker_label.filter( function(d,i){
+                      return d !== 'Quota';
+                    }).map( function(d,i){
+                      return {
+                          'key': d
+                        , 'type': 'line'
+                        , 'series': i
+                        , 'values': json.values.map( function(e,j){
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                          })
+                        , 'valuesOrig': json.values.map( function(e,j){
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                          })
+                      }
+                  })
+              )
+          };
       },
       callback: function(graph) {
         $('#log').text('Chart is loaded');
@@ -505,7 +546,7 @@
             .colorData( 'default' )
             //.colorFill( 'gradient' )
             .colorFill( 'default' )
-            .tooltipBar( function(key, x, y, e, graph) {
+            .tooltip( function(key, x, y, e, graph) {
                 return '<p>Stage: <b>' + key + '</b></p>' +
                        '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
                        '<p>Percent: <b>' +  x + '%</b></p>'
@@ -571,11 +612,11 @@
                 .tooltips(true)
                 .showControls(false)
                 .stacked(false)
-                // .tooltip( function(key, x, y, e, graph) {
-                //   return '<p>Outcome: <b>' + key + '</b></p>' +
-                //          '<p>Lead Source: <b>' +  x + '</b></p>' +
-                //          '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
-                //   })
+                .tooltip( function(key, x, y, e, graph) {
+                  return '<p>Outcome: <b>' + key + '</b></p>' +
+                         '<p>Lead Source: <b>' +  x + '</b></p>' +
+                         '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>'
+                })
               ;
 
           chart.yAxis

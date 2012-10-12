@@ -12,6 +12,7 @@ JS_FILES = \
 	src/models/line.js \
 	src/models/lineChart_sugar.js \
 	src/models/multiBar_sugar.js \
+	src/models/multiBarChart_sugar.js \
 	src/models/paretoChart.js \
 	src/models/paretoLegend.js \
 	src/models/multiBarHorizontal_sugar.js \
