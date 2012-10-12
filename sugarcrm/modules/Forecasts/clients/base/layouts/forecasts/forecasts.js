@@ -295,16 +295,17 @@
 
             // begin building params to pass to modal
             var params = {
-                title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts")
+                title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
+                span: 10
             };
 
             if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
-                params.components = [{layout:"forecastsConfig"}];
+                params.components = [{layout:"forecastsWizardConfig"}];
             } else {
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
             }
 
-            this.trigger("modal:forecastsConfig:open", params, callback);
+            this.trigger("modal:forecastsWizardConfig:open", params, callback);
         },
 
         /**

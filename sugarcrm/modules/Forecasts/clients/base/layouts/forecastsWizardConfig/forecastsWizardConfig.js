@@ -1,5 +1,3 @@
-<?php
-if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,25 +20,38 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-$viewdefs['Forecasts']['base']['view']['forecastsConfigGeneral'] = array(
-    'panels' => array(
-        array(
-            'buttons' => array(
-                array(
-                    'name' => 'ok_button',
-                    'type' => 'button',
-                    'css_class' => 'btn-primary pull-right',
-                    'label' => 'LBL_EMAIL_OK',
-                    'primary' => true,
-                ),
-                array(
-                    'name' => 'close_button',
-                    'type' => 'button',
-                    'css_class' => 'btn-invisible btn-link',
-                    'label' => 'LBL_EMAIL_CANCEL',
-                    'primary' => false,
-                ),
-            ),
-        ),
-    ),
-);
+
+(function (app) {
+
+    app.view.layouts.ForecastsWizardConfigLayout = app.view.Layout.extend({
+
+        initialize: function (options) {
+            settingsModel = {};
+            if(_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config') ) {
+                // if we're using this layout from inside the Forecasts module
+                // and forecasts already has a config model, use that config model
+                // as our current context so we're updating the same model
+                settingsModel = options.context.forecasts.config;
+            } else {
+                // if we're not coming in from the Forecasts module (e.g. Admin)
+                // create a new model and use that to change/save
+                var Model = Backbone.Model.extend({
+                    url: app.api.buildURL("Forecasts", "config"),
+                    sync: function(method, model, options) {
+                        var url = _.isFunction(model.url) ? model.url() : model.url;
+                        return app.api.call(method, url, model, options);
+                    }
+                }),
+                settingsModel = new Model();
+
+                settingsModel.fetch();
+            }
+
+            options.context.set("model", settingsModel);
+
+            app.view.Layout.prototype.initialize.call(this, options);
+        }
+
+    });
+
+})(SUGAR.App)
