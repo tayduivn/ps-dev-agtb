@@ -6,7 +6,7 @@
                 {{#if this.collections.length}}
                     {{#each this.collections}}
                         <li class="influencers-item">
-                            <a class="avatar avatar42 pull-left">
+                            <a href="#Users/{{this.id}}" class="avatar avatar42 pull-left">
                                 <img src="{{this.picture_url}}" alt="{{this.full_name}}">
                             </a>
                             <a href="#Users/{{this.id}}">{{this.full_name}}</a>
