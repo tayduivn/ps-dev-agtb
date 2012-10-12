@@ -47,106 +47,9 @@ class Quarter454TimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->time_period_type = 'Quarter454';
         $this->is_fiscal = true;
         $this->is_leaf = false;
+        $this->date_modifier = '13 week';
 
         $this->setStartDate($start_date);
-    }
-
-    /**
-     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
-     * The end date is adjusted as well to hold to the contract of this being an quarter time period
-     *
-     * @param null $startDate  db format date string to set the start date of the quarter time period
-     */
-    public function setStartDate($start_date = null) {
-        $timedate = TimeDate::getInstance();
-
-        //check start_date, put it to now if it's not passed in
-        if(is_null($start_date)) {
-            $start_date = $timedate->asDbDate($timedate->getNow());
-        }
-        $end_date = $timedate->fromDbDate($start_date);
-
-        //set the start/end date
-        $this->start_date = $start_date;
-        $end_date = $end_date->modify('+13 week');
-        $end_date = $end_date->modify('-1 day');
-        $this->end_date = $timedate->asDbDate($end_date);
-    }
-
-    /**
-     * creates a new Quarter454TimePeriod to start to use
-     *
-     * @return Quarter454TimePeriod
-     */
-    public function createNextTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromDbDate($this->end_date);
-        $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
-        $nextPeriod->is_leaf = $this->is_leaf;
-        $nextPeriod->save();
-
-        return $nextPeriod;
-    }
-
-    /**
-     * creates a new Quarter454TimePeriod to keep past records
-     *
-     * @return Quarter454TimePeriod
-     */
-    public function createPreviousTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $previousStartDate = $timedate->fromDbDate($this->start_date);
-        $previousStartDate = $previousStartDate->modify('-13 week');
-        $previousPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $previousPeriod->is_fiscal = $this->is_fiscal;
-        $previousPeriod->setStartDate($timedate->asDbDate($previousStartDate));
-        $previousPeriod->save();
-
-        return $previousPeriod;
-    }
-
-    /**
-     * loads related time periods and returns whether there are leaves populated.
-     *
-     * @return bool
-     */
-    public function hasLeaves() {
-        if(count($this->getLeaves()))
-            return true;
-
-        return false;
-
-    }
-
-    /**
-     * removes related timeperiods
-     */
-    public function removeLeaves() {
-        $this->load_relationship('related_timeperiods');
-        $this->related_timeperiods->delete($this->id);
-    }
-
-    /**
-     * loads the related time periods and returns the array
-     *
-     * @return mixed
-     */
-    public function getLeaves() {
-        //$this->load_relationship('related_timeperiods');
-        $leaves = array();
-        $db = DBManagerFactory::getInstance();
-        $query = "select id, time_period_type from timeperiods "
-        . "WHERE parent_id = " . $db->quoted($this->id) . " "
-        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
-
-        $result = $db->query($query);
-
-        while($row = $db->fetchByAssoc($result)) {
-            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
-        }
-        return $leaves;
     }
 
     /**
@@ -170,7 +73,7 @@ class Quarter454TimePeriod extends TimePeriod implements TimePeriodInterface {
         $leafPeriod = BeanFactory::newBean('MonthTimePeriods');
         $leafPeriod->is_fiscal = true;
         $leafPeriod->setStartDate($this->start_date, 4);
-        $leafPeriod->is_leaf = 1;
+        $leafPeriod->is_leaf = true;
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
 
