@@ -28,16 +28,11 @@
      * Creates the task create drop down list
      */
     setCreateTasksList: function() {
-        var self = this, singularModules;
-        self.createListLabels = [];
+        var singularModules = this.app.lang.getAppListStrings("moduleListSingular");
+        this.createListLabels = [];
 
-        try {
-            singularModules = SUGAR.App.lang.getAppListStrings("moduleListSingular");
-            if(singularModules) {
-                self.createListLabels = this.creatableModuleList;
-            }
-        } catch(e) {
-            return;
+        if(singularModules) {
+            this.createListLabels = this.creatableModuleList;
         }
     },
 
@@ -45,11 +40,7 @@
      * Retrieves list of available modules and current module information
      */
     setModuleInfo: function() {
-        this.createListLabels = [];
-        this.currentModule = this.module;
         //TODO: sidecar needs a function to pull this list from user prefs
-        //The module list needs to be key:value pairs of module name and its translated label
-        this.module_list = SUGAR.App.metadata.data.module_list;
-        this.creatableModuleList = app.metadata.getModuleNames(true,"create");
+        this.creatableModuleList = this.app.metadata.getModuleNames(true,"create");
     }
 })

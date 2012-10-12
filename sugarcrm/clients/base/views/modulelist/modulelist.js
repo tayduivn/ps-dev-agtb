@@ -21,7 +21,10 @@
     _renderHtml: function() {
         if (!this.app.api.isAuthenticated() || this.app.config.appStatus == 'offline') return;
 
-        this.module_list = SUGAR.App.metadata.data.module_list;
+        //TODO: sidecar needs a function to pull this list from user prefs
+        //The module list needs to be key:value pairs of module name and its translated label
+        this.module_list = this.app.metadata.data.module_list;
+        this.currentModule = this.module;
         this.app.view.View.prototype._renderHtml.call(this);
         this.initMenu();
     },
@@ -31,7 +34,7 @@
      */
     onModuleTabClicked: function(evt) {
         var moduleHref = this.$(evt.currentTarget).attr('href');
-        if(!moduleHref.match(/^javascript\:/g)) {
+        if(moduleHref.match(/^#/)) {
             evt.preventDefault();
             evt.stopPropagation();
             this.$('#module_list li').removeClass('active');
@@ -62,7 +65,7 @@
         //TODO: ie Compatible, scrollable dropdown for low-res. window
         //TODO: Theme Compatible, Filtered switching menu
         var currentModuleList = this.$("#module_list"),
-            menuItemsWidth = currentModuleList.width(),
+            menuItemsWidth = currentModuleList.outerWidth(true),
             menuItems = currentModuleList.children("li"),
             menuLength = menuItems.length,
             menuNode = currentModuleList.find(".more"),
@@ -94,7 +97,7 @@
 
                 nextMenuNode = menuNode.prev();
                 dropdownNode.prepend(menuNode.attr("width", menuNode.width()));
-                menuItemsWidth = currentModuleList.width();
+                menuItemsWidth = currentModuleList.outerWidth(true);
                 menuNode = nextMenuNode;
 
             }
@@ -118,7 +121,7 @@
                     }
                 }
                 menuNode.before(insertNode);
-                menuItemsWidth = currentModuleList.width();
+                menuItemsWidth = currentModuleList.outerWidth(true);
                 insertNode = nextMenuNode;
             }
         }

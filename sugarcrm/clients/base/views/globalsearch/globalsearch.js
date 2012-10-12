@@ -62,9 +62,7 @@
      */
     gotoFullSearchResultsPage: function(evt) {
         var term;
-        // Don't let plugin kick in. Navigating directly to search results page
-        // when clicking on adjacent button is, to my mind, special case portal
-        // application requirements so I'd rather do here than change plugin.
+        // Force navigation to full results page and don't let plugin get control
         evt.preventDefault();
         evt.stopPropagation();
         // URI encode search query string so that it can be safely

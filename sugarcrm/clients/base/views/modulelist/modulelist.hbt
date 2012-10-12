@@ -6,7 +6,7 @@
     </li>
     {{/eachOptions}}
     <li class="dropdown more">
-        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
+        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{str "LBL_LINK_MORE"}} <b class="caret"></b></a>
         <ul class="dropdown-menu">
         </ul>
     </li>

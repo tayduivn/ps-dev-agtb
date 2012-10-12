@@ -187,13 +187,13 @@
 
         apply: function() {
             if (this.isInitialized()) {
-                SugarTest.app.metadata.set(this._data, false);
+                SugarTest.app.metadata.set(this._data, true, true);
             }
         },
 
         revert: function() {
             if (this.isInitialized()) {
-                SugarTest.app.metadata.set(fixtures.metadata, false);
+                SugarTest.app.metadata.set(fixtures.metadata, true, true);
             }
         },
 

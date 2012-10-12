@@ -29,14 +29,22 @@
      * that tells the module list to resize
      */
     resize: function() {
-        var maxMenuWidth = this.$(".navbar-inner > .container-fluid").width() - 100; //100px: spacing for submegamenu, padding and border lines
+        var totalWidth = 100, //100px: spacing for submegamenu, padding and border lines
+            modulelist, maxMenuWidth,
+            container = this.$('.container-fluid');
 
-        var totalWidth = 0;
         _.each(this._components, function(component) {
             if (component.name !== 'modulelist') {
-                totalWidth += component.$el.children().first().width();
+                totalWidth += component.$el.children().first().outerWidth(true);
+                component.$el.children().first().attr('log',component.$el.children().first().outerWidth(true));
+            } else {
+                modulelist = component.$el;
+                modulelist.hide();
             }
         });
+
+        maxMenuWidth = container.first().width();
+        modulelist.show();
 
         this.trigger('view:resize', maxMenuWidth - totalWidth);
     }
