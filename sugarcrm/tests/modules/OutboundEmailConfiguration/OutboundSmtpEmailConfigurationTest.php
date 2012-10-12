@@ -19,15 +19,15 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/OutboundEmailConfiguration/SmtpMailerConfiguration.php";
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.phpion.php";
 
-class SmtpMailerConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
+class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @group mailer
      */
     public function testLoadDefaultConfigs_CharsetIsReset_WordwrapIsInitialized() {
-        $mailerConfig = new SmtpMailerConfiguration();
+        $mailerConfig = new OutboundSmtpEmailConfiguration();
 
         // change the default charset in order to show that loadDefaultConfigs will reset it
         $mailerConfig->setCharset("asdf"); // some asinine value that wouldn't actually be used
@@ -54,7 +54,7 @@ class SmtpMailerConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSetEncoding_PassInAValidEncoding_EncodingIsSet() {
-        $mailerConfig = new SmtpMailerConfiguration();
+        $mailerConfig = new OutboundSmtpEmailConfiguration();
         $expected     = Encoding::EightBit;
 
         $mailerConfig->setEncoding($expected);
@@ -66,7 +66,7 @@ class SmtpMailerConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSetEncoding_PassInAnInvalidEncoding_ThrowsException() {
-        $mailerConfig = new SmtpMailerConfiguration();
+        $mailerConfig = new OutboundSmtpEmailConfiguration();
         $encoding     = "asdf"; // some asinine value that wouldn't actually be used
 
         self::setExpectedException("MailerException");
@@ -77,8 +77,8 @@ class SmtpMailerConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSetSecirutyProtocol_PassInAValidProtocol_SecurityProtocolIsSet() {
-        $mailerConfig = new SmtpMailerConfiguration();
-        $expected     = SmtpMailerConfiguration::SecurityProtocolSsl;
+        $mailerConfig = new OutboundSmtpEmailConfiguration();
+        $expected     = OutboundSmtpEmailConfiguration::SecurityProtocolSsl;
 
         $mailerConfig->setSecurityProtocol($expected);
         $actual = $mailerConfig->getSecurityProtocol();
@@ -89,7 +89,7 @@ class SmtpMailerConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testSetSecurityProtocol_PassInAnInvalidProtocol_ThrowsException() {
-        $mailerConfig     = new SmtpMailerConfiguration();
+        $mailerConfig     = new OutboundSmtpEmailConfiguration();
         $securityProtocol = "asdf"; // some asinine value that wouldn't actually be used
 
         self::setExpectedException("MailerException");

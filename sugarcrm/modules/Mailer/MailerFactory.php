@@ -28,13 +28,11 @@ require_once "EmailIdentity.php";                        // requires EmailIdenti
 require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
 
 // external imports
-require_once "modules/OutboundEmailConfiguration/SmtpMailerConfiguration.php";    // required if producing an SMTP
-                                                                                  // Mailer; also imports
-                                                                                  // MailerConfiguration
-require_once "modules/OutboundEmailConfiguration/MailConfigurationPeer.php";      // needs the constants that represent
-                                                                                  // the modes
-require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php"; // uses the properties to produce the
-                                                                                  // expected mailer
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php"; // required if producing an SMTP
+                                                                                      // Mailer; also imports
+                                                                                      // OutboundEmailConfiguration
+require_once "modules/OutboundEmailConfiguration/MailConfigurationPeer.php";          // needs the constants that
+                                                                                      // represent the modes
 
 /**
  * Factory to create Mailers.
@@ -120,12 +118,13 @@ class MailerFactory
      *
      * @static
      * @access private
-     * @param string              $mode   required The mode that represents the sending strategy.
-     * @param MailerConfiguration $config required Must be a MailerConfiguration or a type that derives from it.
+     * @param string                     $mode   required The mode that represents the sending strategy.
+     * @param OutboundEmailConfiguration $config required Must be an OutboundEmailConfiguration or a type that derives
+     *                                                    from it.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      * @throws MailerException
      */
-    private static function buildMailer($mode, MailerConfiguration $config) {
+    private static function buildMailer($mode, OutboundEmailConfiguration $config) {
         $path   = self::$modeToMailerMap[$mode]["path"];
         $class  = self::$modeToMailerMap[$mode]["class"];
         $file   = "{$path}/{$class}.php";

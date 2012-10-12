@@ -27,7 +27,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailTransmissionProtocol_ReturnsSmtp() {
-        $mailer   = new SmtpMailer(new SmtpMailerConfiguration());
+        $mailer   = new SmtpMailer(new OutboundSmtpEmailConfiguration());
         $expected = SmtpMailer::MailTransmissionProtocol;
         $actual   = $mailer->getMailTransmissionProtocol();
         self::assertEquals(
@@ -48,7 +48,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "clearRecipientsCc",
                  "clearRecipientsBcc"
             ),
-            array(new SmtpMailerConfiguration())
+            array(new OutboundSmtpEmailConfiguration())
         );
 
         $mockMailer->expects(self::once())
@@ -87,7 +87,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(new SmtpMailerConfiguration())
+            array(new OutboundSmtpEmailConfiguration())
         );
 
         $mockMailer->expects(self::once())
@@ -152,7 +152,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(new SmtpMailerConfiguration())
+            array(new OutboundSmtpEmailConfiguration())
         );
 
         $mockMailer->setHeaders($mockEmailHeaders);
@@ -220,7 +220,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(new SmtpMailerConfiguration())
+            array(new OutboundSmtpEmailConfiguration())
         );
 
         $mockMailer->setHeaders($mockEmailHeaders);
@@ -265,7 +265,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferRecipients",
                  "transferAttachments",
             ),
-            array(new SmtpMailerConfiguration())
+            array(new OutboundSmtpEmailConfiguration())
         );
 
         $mockMailer->expects(self::once())
@@ -302,7 +302,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("translateCharset")
             ->will(self::returnValue("foobar")); // the filename that Localization::translateCharset will return
 
-        $mailerConfiguration = new SmtpMailerConfiguration();
+        $mailerConfiguration = new OutboundSmtpEmailConfiguration();
         $mailerConfiguration->setLocale($mockLocale);
 
         $mockPhpMailer = self::getMock(
@@ -366,7 +366,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("translateCharset")
             ->will(self::returnValue("foobar")); // the filename that Localization::translateCharset will return
 
-        $mailerConfiguration = new SmtpMailerConfiguration();
+        $mailerConfiguration = new OutboundSmtpEmailConfiguration();
         $mailerConfiguration->setLocale($mockLocale);
 
         $mockPhpMailer = self::getMock(
@@ -442,7 +442,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(new SmtpMailerConfiguration())
+            array(new OutboundSmtpEmailConfiguration())
         );
 
         $mockMailer->expects(self::once())
@@ -498,7 +498,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
                  "transferBody",
                  "transferAttachments",
             ),
-            array(new SmtpMailerConfiguration())
+            array(new OutboundSmtpEmailConfiguration())
         );
 
         $mockMailer->expects(self::once())

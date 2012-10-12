@@ -26,8 +26,9 @@ require_once "EmailIdentity.php";       // requires EmailIdentity for representi
 require_once "EmbeddedImage.php";       // requires Attachment and EmbeddedImage, which imports Attachment
 
 // external imports
-require_once "modules/OutboundEmailConfiguration/MailerConfiguration.php"; // needs to take on a MailerConfiguration or
-                                                                           // a type that derives from it
+require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php"; // needs to take on an
+                                                                                  // OutboundEmailConfiguration or a
+                                                                                  // type that derives from it
 
 /**
  * This defines the basic interface that is expected from a Mailer.
@@ -39,9 +40,9 @@ interface IMailer
     /**
      * @abstract
      * @access public
-     * @param MailerConfiguration $config required
+     * @param OutboundEmailConfiguration $config required
      */
-    public function __construct(MailerConfiguration $config);
+    public function __construct(OutboundEmailConfiguration $config);
 
     /**
      * Set the object properties back to their initial default values.

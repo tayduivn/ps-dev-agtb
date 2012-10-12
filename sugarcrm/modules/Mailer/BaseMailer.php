@@ -49,9 +49,9 @@ abstract class BaseMailer implements IMailer
 
     /**
      * @access public
-     * @param MailerConfiguration $config required
+     * @param OutboundEmailConfiguration $config required
      */
-    public function __construct(MailerConfiguration $config) {
+    public function __construct(OutboundEmailConfiguration $config) {
         $this->reset(); // the equivalent of initializing the Mailer object's properties
 
         $this->config = $config;

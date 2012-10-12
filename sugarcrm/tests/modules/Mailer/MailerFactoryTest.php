@@ -29,7 +29,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
 
         $this->mockMailerConfig = self::getMock(
-            "SmtpMailerConfiguration"
+            "OutboundSmtpEmailConfiguration"
         );
     }
 

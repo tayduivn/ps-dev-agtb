@@ -144,7 +144,7 @@ class MailConfigurationPeer
                 $oeAsArray                           = self::toArray($oe);
                 $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
                 $mailConfiguration->config_name      = $oeAsArray['name'];
-                $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
+                $mailConfiguration->mailerConfigData = self::buildOutboundEmailConfiguration(
                     $oeAsArray,
                     $mailConfiguration->mode,
                     $locale,
@@ -188,7 +188,7 @@ class MailConfigurationPeer
         $oeAsArray                           = self::toArray($oe);
         $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
         $mailConfiguration->config_name      = $oeAsArray['name'];
-        $mailConfiguration->mailerConfigData = self::buildMailerConfiguration(
+        $mailConfiguration->mailerConfigData = self::buildOutboundEmailConfiguration(
             $oeAsArray,
             $mailConfiguration->mode,
             $locale,
@@ -200,13 +200,13 @@ class MailConfigurationPeer
         return $mailConfigurations;
     }
 
-    private static function buildMailerConfiguration($oe, $mode, Localization $locale, $charset) {
+    private static function buildOutboundEmailConfiguration($oe, $mode, Localization $locale, $charset) {
         $mailerConfig = null;
 
         // setup the mailer's known configurations based on the type of mailer
         switch ($mode) {
             case self::MODE_SMTP:
-                $mailerConfig = new SmtpMailerConfiguration();
+                $mailerConfig = new OutboundSmtpEmailConfiguration();
                 $mailerConfig->setHost($oe['mail_smtpserver']);
                 $mailerConfig->setPort($oe['mail_smtpport']);
 
@@ -219,14 +219,14 @@ class MailConfigurationPeer
 
                 // determine the appropriate encryption layer for the sending strategy
                 if ($oe['mail_smtpssl'] === 1) {
-                    $mailerConfig->setSecurityProtocol(SmtpMailerConfiguration::SecurityProtocolSsl);
+                    $mailerConfig->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolSsl);
                 } elseif ($oe['mail_smtpssl'] === 2) {
-                    $mailerConfig->setSecurityProtocol(SmtpMailerConfiguration::SecurityProtocolTls);
+                    $mailerConfig->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolTls);
                 }
 
                 break;
             default:
-                $mailerConfig = new MailerConfiguration();
+                $mailerConfig = new OutboundEmailConfiguration();
                 break;
         }
 
