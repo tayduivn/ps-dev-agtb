@@ -1982,6 +1982,30 @@ class SugarBean
                 $mailer = $this->create_notification_email($notify_user);
                 $method = $mailer->getMailTransmissionProtocol();
 
+                // by default, use the following admin settings for the From email header
+                $fromEmail = $admin->settings['notify_fromaddress'];
+                $fromName  = $admin->settings['notify_fromname'];
+
+                if (!empty($admin->settings['notify_send_from_assigning_user'])) {
+                    // the "notify_send_from_assigning_user" admin setting is set
+                    // use the current user's email address and name for the From email header
+                    $usersEmail = $GLOBALS["current_user"]->emailAddress->getReplyToAddress($GLOBALS["current_user"]);
+                    $usersName  = $GLOBALS["current_user"]->full_name;
+
+                    // only use it if a valid email address is returned for the current user
+                    if (!empty($usersEmail)) {
+                        $fromEmail = $usersEmail;
+                        $fromName = $usersName;
+                    }
+                }
+
+                // set the From and Reply-To email headers according to the values determined above (either default
+                // or current user)
+                $from = new EmailIdentity($fromEmail, $fromName);
+                $mailer->setHeader(EmailHeaders::From, $from);
+                $mailer->setHeader(EmailHeaders::ReplyTo, $from);
+
+                // add the recipient
                 $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
                 $recipientName         = $notify_user->full_name;
 
@@ -1991,8 +2015,10 @@ class SugarBean
                     $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
                 }
 
+                // set the subject of the email
                 $mailer->setSubject($subject);
 
+                // set the body of the email... looks to be plain-text only
                 $mailer->setTextBody($textBody);
 
                 $mailer->send();
