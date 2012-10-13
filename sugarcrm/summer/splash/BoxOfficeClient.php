@@ -265,6 +265,7 @@ class BoxOfficeClient
             // reset the session since we're changing security context
             session_regenerate_id();
             $_SESSION['authenticated_user_id'] = $usr_id;
+            $_SESSION['platform'] = 'summer';
             $GLOBALS['current_user'] = new User();
             $GLOBALS['current_user']->retrieve($_SESSION['authenticated_user_id']);
             $ac = AuthenticationController::getInstance();
