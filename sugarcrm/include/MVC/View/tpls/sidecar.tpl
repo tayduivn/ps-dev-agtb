@@ -42,7 +42,6 @@
 
         <!-- CSS -->
         <link rel="stylesheet" href="sidecar/lib/chosen/chosen.css"/>
-        <link rel="stylesheet" href="include/javascript/twitterbootstrap/css/bootstrap.css"/>
         <link rel="stylesheet" href="sidecar/lib/jquery-ui/css/smoothness/jquery-ui-1.8.18.custom.css"/>
         <link rel="stylesheet" href="include/javascript/jquery/bootstrap-wysihtml5/bootstrap-wysihtml5.css"/>
     </head>
