@@ -302,7 +302,7 @@ $mod_strings = array (
     'LBL_NOTE' => 'Note',
     'LBL_EMAIL' => 'Email',
     'LBL_PDF' => 'PDF',
-    'LBL_CSV' => 'CSV',
+    'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
     'LBL_ADMIN' => 'Admin',
 

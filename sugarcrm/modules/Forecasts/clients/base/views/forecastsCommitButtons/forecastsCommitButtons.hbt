@@ -12,15 +12,9 @@
         <div class="dropdown">
             <a href="#" data-toggle="dropdown"
                class="dropdown-toggle btn btn-success">{{str "LBL_ACTIONS" "Forecasts"}} <i class="icon caret"></i></a>
-            <ul class="dropdown-menu menu">
-                <li><a href="#">{{str "LBL_DUPLICATE" "Forecasts"}}</a></li>
-                <li><a href="#">{{str "LBL_SAVE" "Forecasts"}}</a></li>
-                <li class="divider"></li>
-                <li><a href="#">{{str "LBL_NOTE" "Forecasts"}}</a></li>
-                <li><a href="#">{{str "LBL_EMAIL" "Forecasts"}}</a></li>
-                <li><a href="#">{{str "LBL_PDF" "Forecasts"}}</a></li>
-                <li><a href="#">{{str "LBL_CSV" "Forecasts"}}</a></li>
-            </ul>
+                <ul class="dropdown-menu menu">
+                    <li><a href="#">{{str "LBL_EXPORT_CSV" "Forecasts"}}</a></li>
+                </ul>
         </div>
     </div>
     {{#if showConfigButton}}
