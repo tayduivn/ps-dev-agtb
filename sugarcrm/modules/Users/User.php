@@ -996,51 +996,35 @@ EOQ;
 		$this->fill_in_additional_detail_fields();
 	}
 
-	function fill_in_additional_detail_fields() {
+    function fill_in_additional_detail_fields() {
         // jmorais@dri Bug #56269
         parent::fill_in_additional_detail_fields();
-        // ~jmorais@dri
-		global $locale;
+        // ~jmorais@dri/home/vindl/git/Mango/build/rome/build.php
+        global $locale;
 
-		$query = "SELECT u1.first_name, u1.last_name from users  u1, users  u2 where u1.id = u2.reports_to_id AND u2.id = '$this->id' and u1.deleted=0";
-		$result = $this->db->query($query, true, "Error filling in additional detail fields");
+        $query = "SELECT u1.first_name, u1.last_name from users  u1, users  u2 where u1.id = u2.reports_to_id AND u2.id = '$this->id' and u1.deleted=0";
+        $result = $this->db->query($query, true, "Error filling in additional detail fields");
 
-		$row = $this->db->fetchByAssoc($result);
+        $row = $this->db->fetchByAssoc($result);
 
-		if ($row != null) {
-			$this->reports_to_name = stripslashes($row['first_name'].' '.$row['last_name']);
-		} else {
-			$this->reports_to_name = '';
-		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query = "SELECT team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.team_id = '{$this->default_team}'";
-		$result = $this->db->query($query, false, "Error retrieving team name: ");
+        if ($row != null) {
+            $this->reports_to_name = stripslashes($row['first_name'].' '.$row['last_name']);
+        } else {
+            $this->reports_to_name = '';
+        }
 
-		//rrs bug: 31277 - this tempDefaultTeam works in conjunction with the 'if' stmt below/
-		//what was happening was that if the user was an admin user and they did not have team membership to their primary team
-		//then this query would not return anything and the default_team would be set to empty, which is fine, but
-		//we need to ensure that the team_id is not empty for team set widget purposes.
-		$tempDefaultTeam = $this->default_team;
+        //BEGIN SUGARCRM flav=pro ONLY
 
-		$row = $this->db->fetchByAssoc($result);
-		if (!empty ($row['team_id'])) {
-			$this->default_team = $row['team_id'];
-			$this->default_team_name = Team::getDisplayName($row['name'], $row['name_2'], $this->showLastNameFirst());
-		} else {
-			$this->default_team = '';
-			$this->default_team_name = '';
-			$this->team_set_id = '';
-		}
+        // Must set team_id for team widget purposes (default_team is primary team id)
+        if (empty($this->team_id))
+        {
+            $this->team_id = $this->default_team;
+        }
 
-		if(!empty($this->is_admin) && empty($this->default_team)){
-			$this->team_id = $tempDefaultTeam;
-		}else{
-			$this->team_id = $this->default_team;
-		}
-		//END SUGARCRM flav=pro ONLY
+        //END SUGARCRM flav=pro ONLY
 
-		$this->_create_proper_name_field();
-	}
+        $this->_create_proper_name_field();
+    }
 
 	public function retrieve_user_id(
 	    $user_name
