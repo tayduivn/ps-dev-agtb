@@ -52,10 +52,15 @@ class SugarTinyMCETest extends Sugar_PHPUnit_Framework_TestCase{
 	 * Setup: Backup old custom files and create new ones for the test
 	 */
 	public static function setUpBeforeClass(){
-		
+		if(!file_exists('custom/include'))
+        {
+            mkdir_recursive('custom/include');
+        }
+        
 		if(file_exists(self::$customConfigFile)){
 			rename(self::$customConfigFile, self::$customConfigFile . ".bak");
 		}
+
 		if(file_exists(self::$customDefaultConfigFile)){
 			rename(self::$customDefaultConfigFile, self::$customDefaultConfigFile . ".bak");
 		}
@@ -97,8 +102,9 @@ class SugarTinyMCETest extends Sugar_PHPUnit_Framework_TestCase{
 			rename(self::$customDefaultConfigFile . ".bak", self::$customDefaultConfigFile);
 		}
 	}
-	
-	public function testCheckValidCustomButtonOverrdide(){
+
+    public function testCheckValidCustomButtonOverrdide(){
+        echo var_export(self::$MCE, true);
 		$this->assertContains("testcase", self::$MCE, "TinyMCE custom button not found.");
 	}
 	
