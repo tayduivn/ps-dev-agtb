@@ -66,10 +66,10 @@ class MailerFactory
      */
     public static function getMailerForUser(User $user) {
         // get the configuration that the Mailer needs
-        $mailConfiguration = OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
+        $mailConfiguration = static::getOutboundEmailConfiguration($user);
 
         // generate the Mailer
-        $mailer = self::getMailer($mailConfiguration);
+        $mailer = static::getMailer($mailConfiguration);
 
         return $mailer;
     }
@@ -106,8 +106,8 @@ class MailerFactory
             $replyTo = new EmailIdentity($config->replyto_email, $config->replyto_name);
         }
 
-        $headers = self::buildHeadersForMailer($sender, $replyTo);
-        $mailer  = self::buildMailer($mode, $config);
+        $headers = static::buildHeadersForMailer($sender, $replyTo);
+        $mailer  = static::buildMailer($mode, $config);
         $mailer->setHeaders($headers);
 
         return $mailer;
@@ -125,8 +125,8 @@ class MailerFactory
      * @throws MailerException
      */
     private static function buildMailer($mode, OutboundEmailConfiguration $config) {
-        $path   = self::$modeToMailerMap[$mode]["path"];
-        $class  = self::$modeToMailerMap[$mode]["class"];
+        $path   = static::$modeToMailerMap[$mode]["path"];
+        $class  = static::$modeToMailerMap[$mode]["class"];
         $file   = "{$path}/{$class}.php";
         @include_once $file; // suppress errors
 
@@ -164,5 +164,16 @@ class MailerFactory
         }
 
         return $headers;
+    }
+
+    /**
+     * Returns the system outbound email configuration associated with the specified user.
+     *
+     * @param User $user required The user from which the mail configuration is retrieved.
+     * @return OutboundEmailConfiguration An OutboundEmailConfiguration object or one that derives from it.
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
+    protected static function getOutboundEmailConfiguration(User $user) {
+        return OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
     }
 }

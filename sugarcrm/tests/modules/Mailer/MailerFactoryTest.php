@@ -23,14 +23,8 @@ require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer cl
 
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $mockMailerConfig;
-
     public function setUp() {
         $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
-
-        $this->mockMailerConfig = self::getMock(
-            "OutboundSmtpEmailConfiguration"
-        );
     }
 
     public function tearDown() {
@@ -40,10 +34,21 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group mailer
+     * @group mytest
      */
     public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
+        $outboundSmtpEmailConfiguration               = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $outboundSmtpEmailConfiguration->mode         = "smtp";
+        $outboundSmtpEmailConfiguration->sender_email = "foo@bar.com";
+        $outboundSmtpEmailConfiguration->sender_name  = "Foo Bar";
+
+        $mockMailerFactory = $this->getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
+        $mockMailerFactory::staticExpects($this->any())
+            ->method("getOutboundEmailConfiguration")
+            ->will($this->returnValue($outboundSmtpEmailConfiguration));
+
         $expected = "SmtpMailer";
-        $actual   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $actual   = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
@@ -70,9 +75,8 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_NoMode_ReturnsSmtpMailer() {
-        $mailConfig                   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $this->mockMailerConfig;
+        $mailConfig               = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+        $mailConfig->sender_email = "foo@bar.com";
 
         $expected = "SmtpMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
@@ -83,10 +87,9 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_ModeIsAllCaps_ReturnsSmtpMailer() {
-        $mailConfig                   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->mode             = strtoupper(OutboundEmailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
-        $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $this->mockMailerConfig;
+        $mailConfig               = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+        $mailConfig->mode         = strtoupper(OutboundEmailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
+        $mailConfig->sender_email = "foo@bar.com";
 
         $expected = "SmtpMailer";
         $actual   = MailerFactory::getMailer($mailConfig);
@@ -97,10 +100,9 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_ModeIsInvalid_ThrowsException() {
-        $mailConfig                   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->mode             = "asdf"; // some asinine value that wouldn't actually be used
-        $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $this->mockMailerConfig;
+        $mailConfig               = new OutboundEmailConfiguration($GLOBALS["current_user"]);
+        $mailConfig->mode         = "asdf"; // some asinine value that wouldn't actually be used
+        $mailConfig->sender_email = "foo@bar.com";
 
         self::setExpectedException("MailerException");
         $actual = MailerFactory::getMailer($mailConfig); // hopefully nothing is actually returned
