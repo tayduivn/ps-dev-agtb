@@ -17,7 +17,7 @@ describe("Quickcreate", function() {
         SugarTest.loadComponent('base', 'view', 'quickcreate');
         SugarTest.loadComponent('base', 'view', 'quickcreateactions');
 
-        SugarTest.testMetadata.addViewFieldDefinition('quickcreate-list', {
+        SugarTest.testMetadata.addViewDefinition('quickcreate-list', {
             panels: [{
                 fields: [{
                     name: "first_name",
@@ -30,7 +30,7 @@ describe("Quickcreate", function() {
             }]
         });
 
-        SugarTest.testMetadata.addViewFieldDefinition('quickcreate', {
+        SugarTest.testMetadata.addViewDefinition('quickcreate', {
             type: "edit",
             panels: [{
                 fields: [{
@@ -48,7 +48,7 @@ describe("Quickcreate", function() {
             }]
         });
 
-        SugarTest.testMetadata.addViewFieldDefinition('quickcreateactions', {
+        SugarTest.testMetadata.addViewDefinition('quickcreateactions', {
             buttons: [{
                 name: "restore_button",
                 type: "button",

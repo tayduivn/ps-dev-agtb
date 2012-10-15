@@ -170,11 +170,11 @@
             }
         },
 
-        addViewFieldDefinition: function(name, fieldDef) {
+        addViewDefinition: function(name, viewDef) {
             if (this.isInitialized()) {
                 this._data.views = this._data.views || {};
                 this._data.views[name] = this._data.views[name] || {};
-                this._data.views[name].meta = fieldDef;
+                this._data.views[name].meta = viewDef;
             }
         },
 
