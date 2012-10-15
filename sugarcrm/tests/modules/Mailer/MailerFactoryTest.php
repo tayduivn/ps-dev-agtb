@@ -34,7 +34,6 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group mailer
-     * @group mytest
      */
     public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
         $outboundSmtpEmailConfiguration               = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
