@@ -232,7 +232,7 @@ class OutboundEmailConfigurationPeer
                 break;
         }
 
-        $outboundEmailConfiguration->config_id     = $configurations["outbound_config_id"];
+        $outboundEmailConfiguration->config_id     = $configurations["config_id"];
         $outboundEmailConfiguration->config_type   = $configurations["config_type"];
         $outboundEmailConfiguration->mode          = $mode;
         $outboundEmailConfiguration->config_name   = $outboundEmail["name"];
