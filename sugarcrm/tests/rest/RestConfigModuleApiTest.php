@@ -56,7 +56,7 @@ class RestConfigModuleApiTest extends RestTestBase {
     public function tearDown()
     {
         $db = DBManagerFactory::getInstance();
-        $db->query("DELETE FROM config where name = 'AdministrationTest'");
+        $db->query("DELETE FROM config where name = 'AdministrationTest' or name = 'AdministrationSaveTest'");
         $db->commit();
         parent::tearDown();
     }
@@ -108,6 +108,30 @@ class RestConfigModuleApiTest extends RestTestBase {
         $restReply = $this->_restCall('Forecasts/config?platform=json');
         $this->assertEquals('200', $restReply['info']['http_code']);
         $this->assertEquals(array("Portal"), $restReply['reply']['AdministrationTest']);
+    }
+
+    /**
+     * @group rest
+     */
+    public function testSaveForecastsConfigValueUnauthorizedUser()
+    {
+        $GLOBALS['current_user']->is_admin = false;
+        $GLOBALS['current_user']->save();
+        $restReply = $this->_restCall('Forecasts/config?platform=base',json_encode(array('AdministrationSaveTest' => 'My voice is my passport, verify me')),'POST');
+        $this->assertEquals('403', $restReply['info']['http_code']);
+        $this->assertEquals("Current User not authorized to change Forecasts configuration settings", $restReply['reply']['error_message']);
+    }
+
+    /**
+     * @group rest
+     */
+    public function testSaveForecastsConfigValue()
+    {
+        $GLOBALS['current_user']->is_admin = true;
+        $GLOBALS['current_user']->save();
+        $restReply = $this->_restCall('Forecasts/config?platform=base',json_encode(array('AdministrationSaveTest' => 'My voice is my passport, verify me')),'POST');
+        $this->assertEquals('200', $restReply['info']['http_code']);
+        $this->assertEquals('My voice is my passport, verify me', $restReply['reply']['AdministrationSaveTest']);
     }
     //END SUGARCRM flav=pro ONLY
 
