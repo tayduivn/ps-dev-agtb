@@ -31,6 +31,11 @@
                 self.selectedUser = user;
                 this.toggleCategoryFieldVisibility();
             }, this);
+            if (this.context.forecasts.config) {
+                this.context.forecasts.config.on("change", function (context) {
+                    this.render();
+                }, this);
+            }
         }
     },
 
@@ -55,6 +60,7 @@
         if (field.name == 'category') {
             var categorySetting = this.context.forecasts.config.get('forecast_categories');
             field.def.options = this.context.forecasts.config.get('buckets_dom');
+            field.def.value = app.defaultSelections.category;
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
