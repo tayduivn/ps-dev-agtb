@@ -102,7 +102,7 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
                     $worksheet->save();
                     $created_ids[] = $worksheet->id;
 
-                    //BEGIN SUGARCRM flav=ent ONLY
+                    //BEGIN SUGARCRM flav=pro ONLY
                     $products = $opp->getProducts();
                     foreach($products as $prod)
                     {
@@ -120,7 +120,7 @@ while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
                         $worksheet->save();
                         $created_ids[] = $worksheet->id;
                     }
-                    //END SUGARCRM flav=ent ONLY
+                    //END SUGARCRM flav=pro ONLY
                 }
             }
 

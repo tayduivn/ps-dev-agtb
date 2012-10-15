@@ -530,3 +530,9 @@ tr.yui-dt-selected td, tr.yui-dt-selected td.yui-dt-asc, tr.yui-dt-selected td.y
 background-color: #f6fccd;
 }
 
+#glblSearchBtn .searchIconLink {
+    background-color: #6EA100;
+    border: 1px solid rgba(44, 64, 0, 0.25);
+    top: 0px;
+    height: 15px;
+}

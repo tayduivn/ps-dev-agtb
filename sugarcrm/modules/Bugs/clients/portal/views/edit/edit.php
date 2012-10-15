@@ -102,7 +102,8 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
                         array(
                             'colspan' => 2,
                         ),
-                    ), 
+                    ),
+                    'status',
                     'type',
                     'product_category',
                     'priority',
