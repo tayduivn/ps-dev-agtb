@@ -25,7 +25,7 @@
                 app.file.checkFileFieldsAndProcessUpload(self.model, {
                     success: function () {
                         app.alert.dismiss('save_edit_view');
-                        self.app.navigate(self.context, self.model, 'detail');
+                        app.navigate(self.context, self.model, 'detail');
                     }
                 });
 
@@ -103,7 +103,7 @@
                     controlGroup.addClass("error");
                     controlGroup.find('.controls').addClass('input-append');
                     _.each(fieldErrors, function (errorContext, errorName) {
-                        controlGroup.find('.help-block').append(self.app.error.getErrorString(errorName, errorContext));
+                        controlGroup.find('.help-block').append(app.error.getErrorString(errorName, errorContext));
                     });
                     controlGroup.find('.controls input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
                 }
