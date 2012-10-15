@@ -69,13 +69,7 @@ class SugarCleaner
      */
     protected $purifier;
 
-    /**
-     * Additional options for cleaner
-     * @var options
-     */
-    protected $options;
-    
-    function __construct($options = null)
+    function __construct()
     {
         global $sugar_config;
         $config = HTMLPurifier_Config::createDefault();
@@ -83,8 +77,6 @@ class SugarCleaner
         if(!is_dir(sugar_cached("htmlclean"))) {
             create_cache_directory("htmlclean");
         }
-        $this->options = $options;
-        
         $config->set('HTML.Doctype', 'XHTML 1.0 Transitional');
         $config->set('Core.Encoding', 'UTF-8');
         $hidden_tags = array('script' => true, 'style' => true, 'title' => true, 'head' => true);
@@ -96,10 +88,7 @@ class SugarCleaner
         $config->set('HTML.ForbiddenElements', array('body' => true, 'html' => true));
         $config->set('AutoFormat.RemoveEmpty', false);
         // for style
-        if (is_array($this->options) && isset($this->options['allow_styles']) && $this->options['allow_styles'])
-        {
-            $config->set('Filter.ExtractStyleBlocks', true);
-        }
+        //$config->set('Filter.ExtractStyleBlocks', true);
         $config->set('Filter.ExtractStyleBlocks.TidyImpl', false); // can't use csstidy, GPL
         // for object
         $config->set('HTML.SafeObject', true);
@@ -155,13 +144,12 @@ class SugarCleaner
 
     /**
      * Get cleaner instance
-     * @param array $options Additional options include: boolean allow_styles
      * @return SugarCleaner
      */
-    public static function getInstance($options = null)
+    public static function getInstance()
     {
         if(is_null(self::$instance)) {
-            self::$instance = new self($options);
+            self::$instance = new self;
         }
         return self::$instance;
     }
@@ -170,10 +158,9 @@ class SugarCleaner
      * Clean string from potential XSS problems
      * @param string $html
      * @param bool $encoded Was it entity-encoded?
-     * @param array $options Additional options include: boolean allow_styles
      * @return string
      */
-    static public function cleanHtml($html, $encoded = false, $options = null)
+    static public function cleanHtml($html, $encoded = false)
     {
         if(empty($html)) return $html;
 
@@ -184,16 +171,12 @@ class SugarCleaner
             /* if it only has "safe" chars, don't bother */
             $cleanhtml = $html;
         } else {
-            $purifier = self::getInstance($options)->purifier;
+            $purifier = self::getInstance()->purifier;
             $cleanhtml = $purifier->purify($html);
-            if (is_array($options) && isset($options['allow_styles']) && $options['allow_styles'])
-            {
-                $styles = $purifier->context->get('StyleBlocks');
-                if (count($styles) > 0)
-                {
-                    $cleanhtml = "<style>" . join("</style><style>", $styles) . "</style>" . $cleanhtml;
-                }
-            }
+//            $styles = $purifier->context->get('StyleBlocks');
+//            if(count($styles) > 0) {
+//                $cleanhtml = "<style>".join("</style><style>", $styles)."</style>".$cleanhtml;
+//            }
         }
         if($encoded) {
             $cleanhtml = to_html($cleanhtml);

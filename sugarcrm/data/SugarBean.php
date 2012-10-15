@@ -1367,14 +1367,7 @@ class SugarBean
                 $type .= $def['dbType'];
 
             if($def['type'] == 'html') {
-                if ($this->object_name == "EmailTemplate")
-                {
-                    $this->$key = SugarCleaner::cleanHtml($this->$key, true, array('allow_styles' => true));
-                }
-                else
-                {
-                    $this->$key = SugarCleaner::cleanHtml($this->$key, true);
-                }
+                $this->$key = SugarCleaner::cleanHtml($this->$key, true);
             } elseif((strpos($type, 'char') !== false ||
                 strpos($type, 'text') !== false ||
                 $type == 'enum') &&
