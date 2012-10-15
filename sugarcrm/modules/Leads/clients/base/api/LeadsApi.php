@@ -21,7 +21,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('modules/Campaigns/utils.php');
-require_once('include/api/ModuleApi.php');
+require_once('clients/base/api/ModuleApi.php');
 
 class LeadsApi extends ModuleApi {
     public function registerApiRest() {
