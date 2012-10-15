@@ -31,7 +31,7 @@ require_once "include/OutboundEmail/OutboundEmail.php";
 require_once "modules/InboundEmail/InboundEmail.php";
 require_once "modules/Users/User.php";
 
-class MailConfigurationPeer
+class OutboundEmailConfigurationPeer
 {
     const MODE_DEFAULT = "default";
     const MODE_SMTP    = "smtp";

@@ -26,7 +26,7 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/OutboundEmailConfiguration/MailConfigurationPeer.php');
+require_once('modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php');
 
 /**
  *
@@ -138,7 +138,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         );
         //print_r($mail_configs_expected);
 
-        $configs = MailConfigurationPeer::listMailConfigurations(self::$current_user);
+        $configs = OutboundEmailConfigurationPeer::listMailConfigurations(self::$current_user);
         //print_r($configs);
 
         $mail_configs_actual = array();
@@ -202,7 +202,7 @@ class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
         list($ib1, $ob1) = self::createInboundAndOutboundEmail($config1_array);
         list($ib2, $ob2) = self::createInboundAndOutboundEmail($config2_array);
 
-        $config = MailConfigurationPeer::getSystemMailConfiguration(self::$current_user);
+        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration(self::$current_user);
 
         self::deleteInboundEmail($ib1->id,$ib1->name);
         self::deleteInboundEmail($ib2->id,$ib2->name);

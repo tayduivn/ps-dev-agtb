@@ -84,7 +84,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetMailer_ModeIsAllCaps_ReturnsSmtpMailer() {
         $mailConfig                   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->mode             = strtoupper(MailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
+        $mailConfig->mode             = strtoupper(OutboundEmailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
         $mailConfig->sender_email     = "foo@bar.com";
         $mailConfig->mailerConfigData = $this->mockMailerConfig;
 

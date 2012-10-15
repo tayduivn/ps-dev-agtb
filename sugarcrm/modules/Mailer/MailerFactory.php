@@ -31,7 +31,7 @@ require_once "SmtpMailer.php";                           // requires SmtpMailer 
 require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php"; // required if producing an SMTP
                                                                                       // Mailer; also imports
                                                                                       // OutboundEmailConfiguration
-require_once "modules/OutboundEmailConfiguration/MailConfigurationPeer.php";          // needs the constants that
+require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // needs the constants that
                                                                                       // represent the modes
 
 /**
@@ -45,11 +45,11 @@ class MailerFactory
     // configuration.
     // key = mode; value = mailer class
     protected static $modeToMailerMap = array(
-        MailConfigurationPeer::MODE_SMTP => array(
+        OutboundEmailConfigurationPeer::MODE_SMTP => array(
             "path"  => ".",          // the path to the class file without trailing slash ("/")
             "class" => "SmtpMailer", // the name of the class
         ),
-        MailConfigurationPeer::MODE_WEB  => array(
+        OutboundEmailConfigurationPeer::MODE_WEB  => array(
             "path"  => ".",
             "class" => "WebMailer",
         ),
@@ -66,7 +66,7 @@ class MailerFactory
      */
     public static function getMailerForUser(User $user) {
         // get the configuration that the Mailer needs
-        $mailConfiguration = MailConfigurationPeer::getSystemMailConfiguration($user);
+        $mailConfiguration = OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
 
         // generate the Mailer
         $mailer = self::getMailer($mailConfiguration);
@@ -89,10 +89,10 @@ class MailerFactory
     public static function getMailer(OutboundEmailConfiguration $config) {
         // copy the config value because you don't want to modify the object by reassigning a public variable
         // in the case of mode being null
-        $mode = is_null($config->mode) ? MailConfigurationPeer::MODE_SMTP : $config->mode;
+        $mode = is_null($config->mode) ? OutboundEmailConfigurationPeer::MODE_SMTP : $config->mode;
         $mode = strtolower($mode); // make sure it's lower case
 
-        if (!MailConfigurationPeer::isValidMode($mode)) {
+        if (!OutboundEmailConfigurationPeer::isValidMode($mode)) {
             throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);
         }
 
