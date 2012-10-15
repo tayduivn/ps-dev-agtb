@@ -75,7 +75,7 @@ class ThemeApi extends SugarApi
     {
         // Validating arguments
         $platform = isset($args['platform']) ? $args['platform'] : 'base';
-        $themeName = isset($args['themeName']) ? $args['themeName'] : null;
+        $themeName = isset($args['themeName']) ? $args['themeName'] : 'default';
         $minify = isset($args['min']) ? true : false;
 
         $theme = new SidecarTheme($platform, $themeName);

@@ -1,0 +1,28 @@
+<!-- Tour Guide -->
+<div class="modal hide system-tour">
+    <div class="modal-header">
+        <a class="close" data-dismiss="modal"><i class="icon-remove"></i></a>
+        <h3>Tour the Portal</h3>
+    </div>
+    <div class="modal-body">
+        <div class="tour-modal-description">
+            <p>Take a tour of Summer! (Estimated time: 15 mins)</p>
+            <div class="tour-modal-image"></div>
+        </div>
+        <div class="modal-footer">
+            <a class="btn" data-dismiss="modal">Cancel</a>
+            <a class="btn btn-primary tour-module-start">Tour this Page</a>
+            <a class="btn btn-primary tour-full-start">Full Tour</a>
+        </div>
+    </div>
+</div>
+<div class="modal-backdrop hide system-tour-backdrop"></div>
+<style>
+    .tour-modal-image {
+        background-image: url("../clients/summer/views/tour/tour.jpg");
+        background-size: 100%;
+        height: 285px;
+        background-position-y: -20px;
+    }
+    .bottom-up {top: auto; bottom: 100%; }
+</style>
