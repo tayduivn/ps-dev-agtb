@@ -232,18 +232,17 @@ class OutboundEmailConfigurationPeer
                 break;
         }
 
-        $outboundEmailConfiguration->config_id     = $configurations["config_id"];
-        $outboundEmailConfiguration->config_type   = $configurations["config_type"];
+        $outboundEmailConfiguration->setConfigId($configurations["config_id"]);
+        $outboundEmailConfiguration->setConfigType($configurations["config_type"]);
         $outboundEmailConfiguration->setMode($mode);
-        $outboundEmailConfiguration->config_name   = $outboundEmail["name"];
-        $outboundEmailConfiguration->inbox_id      = $configurations["inbox_id"];
-        $outboundEmailConfiguration->sender_email  = $configurations["sender_email"];
-        $outboundEmailConfiguration->sender_name   = $configurations["sender_name"];
-        $outboundEmailConfiguration->display_name  = $configurations["display_name"];
-        $outboundEmailConfiguration->personal      = $configurations["personal"];
-        $outboundEmailConfiguration->replyto_email = $configurations["replyto_email"];
-        $outboundEmailConfiguration->replyto_name  = $configurations["replyto_name"];
-
+        $outboundEmailConfiguration->setConfigName($outboundEmail["name"]);
+        $outboundEmailConfiguration->setInboxId($configurations["inbox_id"]);
+        $outboundEmailConfiguration->setSenderEmail($configurations["sender_email"]);
+        $outboundEmailConfiguration->setSenderName($configurations["sender_name"]);
+        $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
+        $outboundEmailConfiguration->setPersonal($configurations["personal"]);
+        $outboundEmailConfiguration->setReplyToEmail($configurations["replyto_email"]);
+        $outboundEmailConfiguration->setReplyToName($configurations["replyto_name"]);
         $outboundEmailConfiguration->setLocale($configurations["locale"]);
         $outboundEmailConfiguration->setCharset($configurations["charset"]);
 

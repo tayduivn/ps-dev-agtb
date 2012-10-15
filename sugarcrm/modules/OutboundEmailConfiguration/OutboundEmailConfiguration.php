@@ -36,20 +36,19 @@ require_once "include/Localization/Localization.php"; // required for using the 
  */
 class OutboundEmailConfiguration
 {
-    public $user_id;
-    public $config_id;
-    public $config_name;
-    public $config_type;
-    public $inbox_id;
-    public $sender_name;
-    public $sender_email;
-    public $display_name;
-    public $replyto_name;
-    public $replyto_email;
-    public $personal;
-
     // protected members
+    protected $userId;
+    protected $configId;
+    protected $configName;
+    protected $configType;
+    protected $inboxId;
     protected $mode;
+    protected $personal;
+    protected $senderEmail;
+    protected $senderName;
+    protected $displayName;
+    protected $replyToEmail;
+    protected $replyToName;
     protected $hostname; // the hostname to use in Message-ID and Received headers and as default HELO string
                          // not the server hostname
     protected $locale;   // the Localization object necessary for performing character set translations
@@ -61,8 +60,7 @@ class OutboundEmailConfiguration
      * @access public
      */
     public function __construct(User $user) {
-        $this->user_id = $user->id;
-
+        $this->setUserId($user->id);
         $this->loadDefaultConfigs();
     }
 
@@ -211,6 +209,46 @@ class OutboundEmailConfiguration
         return $this->wordwrap;
     }
 
+    public function setUserId($id) {
+        $this->userId = $id;
+    }
+
+    public function getUserId() {
+        return $this->userId;
+    }
+
+    public function setConfigId($id) {
+        $this->configId = $id;
+    }
+
+    public function getConfigId() {
+        return $this->configId;
+    }
+
+    public function setConfigName($name) {
+        $this->configName = $name;
+    }
+
+    public function getConfigName() {
+        return $this->configName;
+    }
+
+    public function setConfigType($type) {
+        $this->configType = $type;
+    }
+
+    public function getConfigType() {
+        return $this->configType;
+    }
+
+    public function setInboxId($id) {
+        $this->inboxId = $id;
+    }
+
+    public function getInboxId() {
+        return $this->inboxId;
+    }
+
     public function setMode($mode) {
         if (empty($mode)) {
             $mode = OutboundEmailConfigurationPeer::MODE_SMTP;
@@ -227,5 +265,53 @@ class OutboundEmailConfiguration
 
     public function getMode() {
         return $this->mode;
+    }
+
+    public function setPersonal($personal = false) {
+        $this->personal = $personal;
+    }
+
+    public function getPersonal() {
+        return $this->personal;
+    }
+
+    public function setSenderEmail($email) {
+        $this->senderEmail = $email;
+    }
+
+    public function getSenderEmail() {
+        return $this->senderEmail;
+    }
+
+    public function setSenderName($name) {
+        $this->senderName = $name;
+    }
+
+    public function getSenderName() {
+        return $this->senderName;
+    }
+
+    public function setDisplayName($name) {
+        $this->displayName = $name;
+    }
+
+    public function getDisplayName() {
+        return $this->displayName;
+    }
+
+    public function setReplyToEmail($email) {
+        $this->replyToEmail = $email;
+    }
+
+    public function getReplyToEmail() {
+        return $this->replyToEmail;
+    }
+
+    public function setReplyToName($name) {
+        $this->replyToName = $name;
+    }
+
+    public function getReplyToName() {
+        return $this->replyToName;
     }
 }

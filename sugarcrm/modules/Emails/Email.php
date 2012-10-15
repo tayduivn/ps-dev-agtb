@@ -559,10 +559,12 @@ class Email extends SugarBean {
         $mailer->setHtmlBody($htmlBody);
         $mailer->setTextBody($textBody);
 
-        if (!empty($mailConfig->replyto_email)) {
+        $replyToEmail = $mailConfig->getReplyToEmail();
+
+        if (!empty($replyToEmail)) {
             $mailer->setHeader(
                 EmailHeaders::ReplyTo,
-                new EmailIdentity($mailConfig->replyto_email, $mailConfig->replyto_name)
+                new EmailIdentity($replyToEmail, $mailConfig->getReplyToName())
             );
         }
 
@@ -811,8 +813,8 @@ class Email extends SugarBean {
 			(isset($request['saveToSugar']) && $request['saveToSugar'] == 1)) {
 
 			// saving a draft OR saving a sent email
-			$decodedFromName = mb_decode_mimeheader($mailConfig->sender_name);
-			$this->from_addr = "{$decodedFromName} <{$mailConfig->sender_email}>";
+			$decodedFromName = mb_decode_mimeheader($mailConfig->getSenderName());
+			$this->from_addr = "{$decodedFromName} <" . $mailConfig->getSenderEmail() . ">";
 			$this->from_addr_name = $this->from_addr;
 			$this->to_addrs = $_REQUEST['sendTo'];
 			$this->to_addrs_names = $_REQUEST['sendTo'];

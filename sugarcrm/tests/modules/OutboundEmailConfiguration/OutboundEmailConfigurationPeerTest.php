@@ -204,7 +204,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         }
 
         $this->assertNotEmpty($config, "SYSTEM OutboundEmailConfiguration Not Found");
-        $this->assertEquals($config->config_id, self::$systemConfig->id, "Unexpected 'SYSTEM' OutboundEmailConfiguration");
+        $this->assertEquals($config->getConfigId(), self::$systemConfig->id, "Unexpected 'SYSTEM' OutboundEmailConfiguration");
     }
 
     private static function createOutboundEmail($config) {

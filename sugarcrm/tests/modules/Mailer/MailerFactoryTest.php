@@ -36,9 +36,9 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
-        $outboundSmtpEmailConfiguration               = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $outboundSmtpEmailConfiguration->sender_email = "foo@bar.com";
-        $outboundSmtpEmailConfiguration->sender_name  = "Foo Bar";
+        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $outboundSmtpEmailConfiguration->setSenderEmail("foo@bar.com");
+        $outboundSmtpEmailConfiguration->setSenderName("Foo Bar");
         $outboundSmtpEmailConfiguration->setMode("smtp");
 
         $mockMailerFactory = $this->getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
@@ -70,7 +70,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetMailer_ConfigSenderEmailIsInvalid_ThrowsMailerException() {
         $outboundSmtpEmailConfiguration               = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $outboundSmtpEmailConfiguration->sender_email = 1234; // an invalid From email address
+        $outboundSmtpEmailConfiguration->setSenderEmail(1234); // an invalid From email address
 
         static::setExpectedException("MailerException");
         $actual = MailerFactory::getMailer($outboundSmtpEmailConfiguration); // hopefully nothing is actually returned
