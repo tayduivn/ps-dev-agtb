@@ -366,51 +366,92 @@
 
 <script src="../js/jquery.jstree.js"></script>
 <script src="../js/jquery.prettynumber.js"></script>
-<script src="../js/sugarCharts.js"></script>
 <script src="../js/cookie.js"></script>
 
 <!-- new D3 charting library files -->
 <script src="../js/nvd3/lib/d3.v2.min.js"></script>
 <script src="../js/nvd3/nv.d3.min.js"></script>
 
-<script src="../js/nvd3/data/forecasting_q1.js"></script>
-<script src="../js/nvd3/data/forecasting_q2.js"></script>
+<script src="../js/nvd3/data/forecasting_jit.js"></script>
 
 <script src="../js/application.js"></script>
 <script src="../js/jquery.nouislider.min.js"></script>
 <script src="setup.js"></script>
 
-<script>
-    //instantiate D3 chart using NVD3
-    nv.addGraph({
-        generate: function() {
-            var chart = nv.models.multiBarChart()
-                            .showControls(false)
-                            .colorData( 'default' )
-                            .colorFill( 'gradient' )
-                            .tooltipBar( function(key, x, y, e, graph) {
-                                return '<p>Stage: <b>' + key + '</b></p>' +
-                                        '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                                        '<p>Percent: <b>' +  x + '%</b></p>'
-                            })
-                            .tooltipLine( function(key, x, y, e, graph) {
-                                return '<p>Likely: <b>' + parseInt(y) + 'K</b></p>'
-                            })
-                    ;
+    <script>
+      //instantiate D3 chart using NVD3
+	  nv.addGraph({
+	    generate: function() {
+	        var chart = nv.models.paretoChart()
+                .margin({top: 10, right: 10, bottom: 30, left: 40})
+                .showControls(false)
+                .showTitle(false)
+                .stacked(false)
+                .colorData( 'default' )
+                .colorFill( 'default' );
 
-            d3.select('#chart1 svg')
-                    .datum(forecast_data_Q1)
-                    .transition().duration(500).call(chart);
+	        d3.select('#chart1 svg')
+	          .datum(this.translateDataToD3(forecast_data_Q1))
+	          .transition().duration(500).call(chart);
 
-            nv.utils.windowResize(chart.update);
+	        nv.utils.windowResize(chart.update);
 
-            return chart;
-        },
-        callback: function(graph) {
-            $('#log').text('Chart is loaded');
-        }
-    });
-</script>
+	        return chart;
+	    },
+      translateDataToD3 : function( json, params )
+      {
+          return {
+              'properties':{
+                  'title': json.properties[0].title
+                , 'quota': parseInt(json.values[0].goalmarkervalue[0],10)
+                // bar group data (x-axis)
+                , 'groupData': json.values.map( function(d,i){
+                      return {
+                        'group': i
+                      , 'l': json.values[i].label
+                      , 't': json.values[i].values.reduce( function(p, c, i, a){
+                          return parseInt(p,10) + parseInt(c,10);
+                        })
+                      }
+                  })
+              }
+              // series data
+            , 'data': json.label.map( function(d,i){
+                  return {
+                      'key': d
+                    , 'type': 'bar'
+                    , 'series': i
+                    , 'values': json.values.map( function(e,j){
+                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
+                      })
+                    , 'valuesOrig': json.values.map( function(e,j){
+                          return { 'series': i, 'x': j+1, 'y': parseInt(e.values[i],10),  y0: 0 };
+                      })
+                  }
+              }).concat(
+                  json.properties[0].goal_marker_label.filter( function(d,i){
+                      return d !== 'Quota';
+                    }).map( function(d,i){
+                      return {
+                          'key': d
+                        , 'type': 'line'
+                        , 'series': i
+                        , 'values': json.values.map( function(e,j){
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                          })
+                        , 'valuesOrig': json.values.map( function(e,j){
+                            return { 'series': i, 'x': j+1, 'y': parseInt(e.goalmarkervalue[i+1],10) };
+                          })
+                      }
+                  })
+              )
+          };
+      },
+	    callback: function(graph) {
+	      $('#log').text('Chart is loaded');
+	    }
+	  });
+    </script>
 
 
 <script type="text/javascript" charset="utf-8">
