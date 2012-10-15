@@ -19,7 +19,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.phpion.php";
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
 class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
 {
