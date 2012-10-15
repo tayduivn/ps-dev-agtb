@@ -489,6 +489,10 @@ svg .title {
   stroke-width: 2;
 }
 
+.nvd3 .nv-lineLegend .nv-series {
+  cursor: default;
+}
+
 /**********
 * Styleguide
 */
@@ -503,6 +507,10 @@ body.full-screen {
   min-width: 100px;
   min-height: 100px;
   border: 1px solid #ddd;
+  .nv-chart {
+    width:99%;
+    height:99%;
+  }
 /*
   Minimum height and width is a good idea to prevent negative SVG dimensions...
   For example width should be =< margin.left + margin.right + 1,
