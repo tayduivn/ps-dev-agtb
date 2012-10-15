@@ -34,15 +34,16 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         array('name' => 'timeperiod_start_month', 'value' => '7', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_start_day', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiods_shown_forward', 'value' => '4', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiods_shown_backward', 'value' => '4', 'platform' => 'base', 'category' => 'Forecasts'));
-
-    protected static $db;
+        array('name' => 'timeperiods_shown_backward', 'value' => '4', 'platform' => 'base', 'category' => 'Forecasts')
+    );
 
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE timeperiods set deleted = 1");
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         foreach(self::$foreastsConfigSettings as $config){
@@ -57,7 +58,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $db = DBManagerFactory::getInstance();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        //$db->query("DELETE FROM timeperiods where deleted = 0");
+        $db->query("DELETE FROM timeperiods where deleted = 0");
+        $db->query("UPDATE timeperiods set deleted = 0 WHERE deleted = 1");
         SugarTestHelper::tearDown();
     }
 

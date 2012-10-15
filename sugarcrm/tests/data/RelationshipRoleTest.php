@@ -31,8 +31,6 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
-
-
         $GLOBALS['current_user']->setPreference('timezone', "America/Los_Angeles");
 	    $GLOBALS['current_user']->setPreference('datef', "m/d/Y");
 		$GLOBALS['current_user']->setPreference('timef', "h.iA");
@@ -45,11 +43,11 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-	    foreach($this->createdBeans as $bean)
-        {
-            $bean->retrieve($bean->id);
-            $bean->mark_deleted($bean->id);
-        }
+	    SugarTestQuoteUtilities::removeAllCreatedQuotes();
+        SugarTestAccountUtilities::removeAllCreatedAccounts();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestTaskUtilities::removeAllCreatedTasks();
+
         foreach($this->createdFiles as $file)
         {
             if (is_file($file))
@@ -66,17 +64,11 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testQuoteAccountsRole()
 	{
-        require('include/modules.php');
-	    $account = BeanFactory::newBean("Accounts");
+	    $account = SugarTestAccountUtilities::createAccount();
         $account->name = "RoleTestAccount";
         $account->save();
-        $this->createdBeans[] = $account;
 
-        $quote = BeanFactory::newBean("Quotes");
-        $quote->name = "RoleTestQuote";
-        $quote->save();
-        $this->createdBeans[] = $quote;
-
+        $quote = SugarTestQuoteUtilities::createQuote();
         $quote->load_relationship("billing_accounts");
         $quote->billing_accounts->add($account);
 
@@ -91,14 +83,13 @@ class RelationshipRoleTest extends Sugar_PHPUnit_Framework_TestCase
      */
 	public function testOne2MGetJoinWithRole()
 	{
-        global $db;
-        require('include/modules.php');
-	    $task = BeanFactory::newBean("Tasks");
+        $db = DBManagerFactory::getInstance();
+        $task = SugarTestTaskUtilities::createTask();
         $task->name = "RoleTestTask";
         $task->save();
         $this->createdBeans[] = $task;
 
-        $opp = BeanFactory::newBean("Opportunities");
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->name = "RoleTestOpp";
         $opp->save();
         $this->createdBeans[] = $opp;
