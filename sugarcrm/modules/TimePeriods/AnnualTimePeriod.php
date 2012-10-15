@@ -48,94 +48,24 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->time_period_type = 'Annual';
         $this->is_fiscal = $fiscal_period;
         $this->is_leaf = false;
+        $this->date_modifier = $this->is_fiscal ? '52 week' : '1 year';
 
         $this->setStartDate($start_date);
     }
 
     /**
-     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
-     * The end date is adjusted as well to hold to the contract of this being an annual time period
+     * override parent function so to add a name for the annual time period.  This can
      *
      * @param null $startDate  db format date string to set the start date of the annual time period
      */
     public function setStartDate($start_date = null) {
+        parent::setStartDate($start_date);
         $timedate = TimeDate::getInstance();
 
-        //check start_date, put it to now if it's not passed in
-        if(is_null($start_date)) {
-            $start_date = $timedate->asDbDate($timedate->getNow());
+        if(empty($this->name)) {
+            $start_date_time = $timedate->fromDbDate($this->start_date);
+            $this->name = $this->is_fiscal ? "Fiscal " : "" . "Year ".$start_date_time->format("Y");
         }
-        $end_date = $timedate->fromDbDate($start_date);
-
-        //set the start/end date
-        $this->start_date = $start_date;
-        if($this->is_fiscal) {
-
-            $end_date = $end_date->modify('+52 week');
-            $end_date = $end_date->modify('-1 day');
-            $this->end_date = $timedate->asDbDate($end_date);
-        } else {
-            $end_date = $end_date->modify('+1 year');
-            $end_date = $end_date->modify('-1 day');
-            $this->end_date = $timedate->asDbDate($end_date);
-        }
-    }
-
-    /**
-     * loads related time periods and returns whether there are leaves populated.
-     *
-     * @return bool
-     */
-    public function hasLeaves() {
-        if(count($this->getLeaves()))
-            return true;
-
-        return false;
-
-    }
-
-    /**
-     * removes related timeperiods
-     */
-    public function removeLeaves() {
-        $this->load_relationship('related_timeperiods');
-        $this->related_timeperiods->delete($this->id);
-    }
-
-    /**
-     * loads the related time periods
-     */
-    public function getLeaves() {
-        //$this->load_relationship('related_timeperiods');
-        $leaves = array();
-        $db = DBManagerFactory::getInstance();
-        $query = "select id, time_period_type from timeperiods "
-        . "WHERE parent_id = " . $db->quoted($this->id) . " "
-        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
-
-        $result = $db->query($query);
-
-        while($row = $db->fetchByAssoc($result)) {
-            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
-        }
-        return $leaves;
-    }
-
-    /**
-     * creates a new AnnualTimePeriod to start to use
-     *
-     * @return AnnualTimePeriod
-     */
-    public function createNextTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromDbDate($this->end_date);
-        $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $nextPeriod->is_fiscal = $this->is_fiscal;
-        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
-        $nextPeriod->save();
-
-        return $nextPeriod;
     }
 
     /**
@@ -154,6 +84,9 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         }
 
         $n = 0;
+        $timedate = TimeDate::getInstance();
+        $start_date_time = $timedate->fromDbDate($this->start_date);
+        $nameStart = "Q";
 
         $this->load_relationship('related_timeperiods');
         //valid time periods to be leaves of this period
@@ -161,22 +94,27 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
             //set up the first leaf
             case "Quarter";
                 $n = 4;
+                $nameStart = "Q";
                 $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
                 break;
             case "Quarter544";
                 $n = 4;
+                $nameStart = "FQ";
                 $leafPeriod = BeanFactory::newBean("Quarter544TimePeriods");
                 break;
             case "Quarter454";
                 $n = 4;
+                $nameStart = "FQ";
                 $leafPeriod = BeanFactory::newBean("Quarter454TimePeriods");
                 break;
             case "Quarter445";
                 $n = 4;
+                $nameStart = "FQ";
                 $leafPeriod = BeanFactory::newBean("Quarter445TimePeriods");
                 break;
             case "Month";
                 $n = 12;
+                $nameStart = $this->is_fiscal ? "FM" : "M";
                 $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
                 $leafPeriod->is_fiscal = $this->is_fiscal;
                 break;
@@ -184,25 +122,29 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
                 $n = 4;
                 if($this->is_fiscal) {
                     $leafPeriod = BeanFactory::newBean("QuarterTimePeriods445");
+                    $nameStart = "FQ";
                 } else {
                     $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
+                    $nameStart = "Q";
                 }
                 break;
 
         }
         $leafPeriod->setStartDate($this->start_date);
-        $leafPeriod->is_leaf = 1;
+        $leafPeriod->is_leaf = true;
+        $leafPeriod->name = $nameStart."1 ".$start_date_time->format("Y");
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
 
         //loop the count to create the next n leaves to fill out the relationship
-        for($i = 1; $i < $n; $i++) {
-            if($timePeriodType == "Month" && ((i+1) % 3 == 0)) {
+        for($i = 2; $i <= $n; $i++) {
+            if($timePeriodType == "Month" && ((i) % 3 == 0)) {
                 // leaf is monthly and need to even out the fiscal numbering
                 $leafPeriod = $leafPeriod->createNextTimePeriod(5);
             } else {
                 $leafPeriod = $leafPeriod->createNextTimePeriod();
             }
+            $leafPeriod->name = $nameStart.$i." ".$start_date_time->format("Y");
             $this->related_timeperiods->add($leafPeriod->id);
         }
 

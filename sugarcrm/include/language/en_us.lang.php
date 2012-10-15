@@ -350,18 +350,19 @@ $app_list_strings = array (
   'commit_stage_dom' =>
   array (
     'include' => 'Include',
-    'exclude' => 'Exclude',
     'upside'  => 'Upside',
+    'exclude' => 'Exclude',
   ),
 
-  //The n-option for commit_stage dropdowns
-  'commit_stage_expanded_dom' =>
-  array (
-    'include' => 'Include',
-    'exclude' => 'Exclude',
-    'stretch' => 'Stretch',
-    'risk' => 'Risk',
+//BEGIN SUGARCRM flav=ent ONLY
+  'commit_n_stage_dom' => array(
+      'include' => 'Include',
+      'customRange0' => 'Custom 1',
+      'customRange1' => 'Custom 2',
+      'customRange2' => 'Custom 3',
+      'exclude' => 'Exclude',
   ),
+//END SUGARCRM flav=ent ONLY
 
   'in_total_group_stages' => array (
     'Draft' => 'Draft',

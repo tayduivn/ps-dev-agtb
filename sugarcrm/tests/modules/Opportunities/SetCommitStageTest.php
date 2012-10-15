@@ -59,8 +59,8 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         SugarTestHelper::setUp('current_user');
-        require_once('modules/Forecasts/ForecastsSeedData.php');
-        ForecastsSeedData::setupForecastSettings();
+        require_once('modules/Forecasts/ForecastsDefaults.php');
+        ForecastsDefaults::setupForecastSettings();
     }
 
     public static function tearDownAfterClass()
