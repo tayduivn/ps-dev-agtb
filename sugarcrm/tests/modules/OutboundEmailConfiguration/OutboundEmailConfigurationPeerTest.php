@@ -28,65 +28,56 @@
 
 require_once('modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php');
 
-/**
- *
- */
 class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    public static $current_user;
-    public static $system_config_exists=true;
-    public static $system_config;
+    public static $systemConfigExists = true;
+    public static $systemConfig;
 
-    public static function setUpBeforeClass()
-    {
-        //$sql = "DELETE FROM outbound_email";
-        //$GLOBALS['db']->query($sql);
+    public static function setUpBeforeClass() {
+        parent::setUpBeforeClass();
 
         $sql = "DELETE FROM outbound_email where name like 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
-        //printf("(DELETE) SQL: %s\n",$sql);
+
         $sql = "DELETE FROM inbound_email where name like 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
-        //printf("(DELETE) SQL: %s\n",$sql);
 
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
-        self::$current_user = $GLOBALS['current_user'];
-        $obj = self::get_system_mail_config();
+        $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
+
+        $obj = self::getSystemMailConfig();
+
         if ($obj) {
-            self::$system_config_exists=true;
-            self::$system_config = $obj;
-        }
-        else {
-            self::$system_config_exists=false;
-            $obj = new OutboundEmail();
-            $obj->new_with_id = TRUE;
-            $obj->name = 'system';
-            $obj->type = 'system';
-            $obj->user_id = '1';
-            $obj->mail_sendtype = "SMTP";
-            $obj->mail_smtptype = "other";
-            $obj->mail_smtpserver = "smtp.yahoomailservice.com";
-            $obj->mail_smtpport   = "25";
-            $obj->mail_smtpuser = "YahooUser";
-            $obj->mail_smtppass = "YahooUserPassword";
-            $obj->mail_smtpauth_req = '1';
-            $obj->mail_smtpssl = '0';
+            self::$systemConfigExists = true;
+            self::$systemConfig       = $obj;
+        } else {
+            self::$systemConfigExists = false;
+            $obj                      = new OutboundEmail();
+            $obj->new_with_id         = TRUE;
+            $obj->name                = 'system';
+            $obj->type                = 'system';
+            $obj->user_id             = '1';
+            $obj->mail_sendtype       = "SMTP";
+            $obj->mail_smtptype       = "other";
+            $obj->mail_smtpserver     = "smtp.yahoomailservice.com";
+            $obj->mail_smtpport       = "25";
+            $obj->mail_smtpuser       = "YahooUser";
+            $obj->mail_smtppass       = "YahooUserPassword";
+            $obj->mail_smtpauth_req   = '1';
+            $obj->mail_smtpssl        = '0';
             $obj->save();
-            self::$system_config = $obj;
+            self::$systemConfig = $obj;
         }
     }
 
-    public static function tearDownAfterClass()
-    {
-        $sql = "DELETE FROM outbound_email where name like 'Sugar___Test%'";
+    public static function tearDownAfterClass() {
+        $sql = "DELETE FROM outbound_email WHERE name LIKE 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
-        //printf("(DELETE) SQL: %s\n",$sql);
-        $sql = "DELETE FROM inbound_email where name like 'Sugar___Test%'";
+
+        $sql = "DELETE FROM inbound_email WHERE name LIKE 'Sugar___Test%'";
         $GLOBALS['db']->query($sql);
-        //printf("(DELETE) SQL: %s\n",$sql);
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        unset($GLOBALS["current_user"]);
         parent::tearDownAfterClass();
     }
 
@@ -94,14 +85,13 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
      * @group mailer
      * @group mailconfig01
      */
-   function testListMailConfigurations_All_Success()
-    {
+    function testListMailConfigurations_All_Success() {
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
             "from_email"        => "unit_test1@sugar_unit_test.net",
             "name"              => 'Sugar___Test1',
             "type"              => 'user',
-            "user_id"           => self::$current_user->id,
+            "user_id"           => $GLOBALS["current_user"]->id,
             "mail_sendtype"     => "SMTP",
             "mail_smtptype"     => "other",
             "mail_smtpserver"   => "smtp.yahoomailservice.com",
@@ -117,7 +107,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
             "from_email"        => "unit_test2@sugar_unit_test.net",
             "name"              => 'Sugar___Test2',
             "type"              => 'user',
-            "user_id"           => self::$current_user->id,
+            "user_id"           => $GLOBALS["current_user"]->id,
             "mail_sendtype"     => "SMTP",
             "mail_smtptype"     => "other",
             "mail_smtpserver"   => "smtp.yahoomailservice.com",
@@ -132,30 +122,29 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         list($ib2, $ob2) = self::createInboundAndOutboundEmail($config2_array);
 
         $mail_configs_expected = array(
-            $ob1->id  => $ob1->name,
-            $ob2->id  => $ob2->name,
-            self::$system_config->id => self::$system_config->name
+            $ob1->id                => $ob1->name,
+            $ob2->id                => $ob2->name,
+            self::$systemConfig->id => self::$systemConfig->name
         );
-        //print_r($mail_configs_expected);
 
-        $configs = OutboundEmailConfigurationPeer::listMailConfigurations(self::$current_user);
-        //print_r($configs);
+        $configs = OutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
 
         $mail_configs_actual = array();
+
         if (is_array($configs)) {
-            foreach($configs AS $config) {
+            foreach ($configs AS $config) {
                 $mail_configs_actual[$config->config_id] = $config->config_name;
             }
         }
-        //print_r($mail_configs_actual);
 
-        self::deleteInboundEmail($ib1->id,$ib1->name);
-        self::deleteInboundEmail($ib2->id,$ib2->name);
+        self::deleteInboundEmail($ib1->id, $ib1->name);
+        self::deleteInboundEmail($ib2->id, $ib2->name);
 
-        self::deleteOutboundEmail($ob1->id,$ob1->name);
-        self::deleteOutboundEmail($ob2->id,$ob2->name);
-        if (!self::$system_config_exists) {
-            self::deleteOutboundEmail(self::$system_config->id,self::$system_config->name);
+        self::deleteOutboundEmail($ob1->id, $ob1->name);
+        self::deleteOutboundEmail($ob2->id, $ob2->name);
+
+        if (!self::$systemConfigExists) {
+            self::deleteOutboundEmail(self::$systemConfig->id, self::$systemConfig->name);
         }
 
         $this->assertEquals($mail_configs_expected, $mail_configs_actual, "Unexpected list for 'ALL' MailConfigurations");
@@ -165,14 +154,13 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
      * @group mailer
      * @group mailconfig02
      */
-    function testListMailConfigurations_SystemOnly_Success()
-    {
+    function testListMailConfigurations_SystemOnly_Success() {
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
             "from_email"        => "unit_test1@sugar_unit_test.net",
             "name"              => 'Sugar___Test1',
             "type"              => 'user',
-            "user_id"           => self::$current_user->id,
+            "user_id"           => $GLOBALS["current_user"]->id,
             "mail_sendtype"     => "SMTP",
             "mail_smtptype"     => "other",
             "mail_smtpserver"   => "smtp.yahoomailservice.com",
@@ -188,7 +176,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
             "from_email"        => "unit_test2@sugar_unit_test.net",
             "name"              => 'Sugar___Test2',
             "type"              => 'user',
-            "user_id"           => self::$current_user->id,
+            "user_id"           => $GLOBALS["current_user"]->id,
             "mail_sendtype"     => "SMTP",
             "mail_smtptype"     => "other",
             "mail_smtpserver"   => "smtp.yahoomailservice.com",
@@ -202,28 +190,28 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         list($ib1, $ob1) = self::createInboundAndOutboundEmail($config1_array);
         list($ib2, $ob2) = self::createInboundAndOutboundEmail($config2_array);
 
-        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration(self::$current_user);
+        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS["current_user"]);
 
-        self::deleteInboundEmail($ib1->id,$ib1->name);
-        self::deleteInboundEmail($ib2->id,$ib2->name);
+        self::deleteInboundEmail($ib1->id, $ib1->name);
+        self::deleteInboundEmail($ib2->id, $ib2->name);
 
-        self::deleteOutboundEmail($ob1->id,$ob1->name);
-        self::deleteOutboundEmail($ob2->id,$ob2->name);
-        if (!self::$system_config_exists) {
-            self::deleteOutboundEmail(self::$system_config->id,self::$system_config->name);
+        self::deleteOutboundEmail($ob1->id, $ob1->name);
+        self::deleteOutboundEmail($ob2->id, $ob2->name);
+
+        if (!self::$systemConfigExists) {
+            self::deleteOutboundEmail(self::$systemConfig->id, self::$systemConfig->name);
         }
 
         $this->assertNotEmpty($config, "SYSTEM OutboundEmailConfiguration Not Found");
-        $this->assertEquals($config->config_id, self::$system_config->id, "Unexpected 'SYSTEM' OutboundEmailConfiguration");
+        $this->assertEquals($config->config_id, self::$systemConfig->id, "Unexpected 'SYSTEM' OutboundEmailConfiguration");
     }
 
 
     private static function createOutboundEmail($config) {
         $obj = new OutboundEmail();
 
-        $obj->new_with_id   = true;
-        $obj->id            = create_guid();
-
+        $obj->new_with_id       = true;
+        $obj->id                = create_guid();
         $obj->name              = $config['name'];
         $obj->type              = $config['type'];
         $obj->user_id           = $config['user_id'];
@@ -237,26 +225,22 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $obj->mail_smtpssl      = $config['mail_smtpssl'];
         $obj->save();
 
-        //printf("(CREATE): ID=%s  NAME=%s\n",$obj->id,$obj->name);
         return $obj;
     }
 
-
     private static function createInboundAndOutboundEmail($config) {
-        /*------ Outbound Email -----------------*/
+        //------ Outbound Email -----------------
         $ob = self::createOutboundEmail($config);
 
-        /*------ Inbound Email -----------------*/
-        $stored_options['from_name'] = $config['from_name'];
-        $stored_options['from_addr'] = $config['from_email'];
+        //------ Inbound Email -----------------
+        $stored_options['from_name']      = $config['from_name'];
+        $stored_options['from_addr']      = $config['from_email'];
         $stored_options["outbound_email"] = $ob->id;
-        $encoded_stored_options = base64_encode(serialize($stored_options));
+        $encoded_stored_options           = base64_encode(serialize($stored_options));
 
-        $ib = new InboundEmail();
-
+        $ib                 = new InboundEmail();
         $ib->new_with_id    = true;
         $ib->id             = create_guid();
-
         $ib->name           = $config['name'];
         $ib->stored_options = $encoded_stored_options;
         $ib->is_personal    = true;
@@ -264,36 +248,28 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $ib->group_id       = $config['user_id'];
         $ib->save();
 
-        //printf("(CREATE IB): ID=%s  NAME=%s\n",$ib->id,$ib->name);
-        //printf("(CREATE OB): ID=%s  NAME=%s\n",$ob->id,$ob->name);
         return array($ib, $ob);
     }
-
 
     private static function deleteOutboundEmail($id, $name) {
         $sql = "DELETE FROM outbound_email where id='{$id}' AND name='{$name}'";
         $GLOBALS['db']->query($sql);
-        //printf("(DELETE) SQL: %s\n",$sql);
     }
-
 
     private static function deleteInboundEmail($id, $name) {
         $sql = "DELETE FROM inbound_email where id='{$id}' AND name='{$name}'";
         $GLOBALS['db']->query($sql);
-        //printf("(DELETE) SQL: %s\n",$sql);
     }
 
-
-    private static function get_system_mail_config() {
+    private static function getSystemMailConfig() {
         $q = "SELECT id FROM outbound_email WHERE type = 'system'";
         $r = $GLOBALS['db']->query($q);
         $a = $GLOBALS['db']->fetchByAssoc($r);
-        if(empty($a)) {
+        if (empty($a)) {
             return null;
         }
         $oe = new OutboundEmail();
         $oe->retrieve($a['id']);
         return $oe;
     }
-
 }
