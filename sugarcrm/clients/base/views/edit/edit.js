@@ -5,6 +5,7 @@
  * @extends View.View
  */
 ({
+    extendsFrom: 'BaseeditView',
     events: {
         'click [name=save_button]': 'saveModel'
     },
@@ -84,30 +85,5 @@
         if (!this.model.id) {
             this.context.trigger('subnav:set:title', app.lang.get('LBL_NEW_FORM_TITLE', this.module));
         }
-    },
-
-    handleValidationError:function (errors) {
-        var self = this;
-
-        _.each(errors, function (fieldErrors, fieldName) {
-            //retrieve the field by name
-            var field = self.getField(fieldName);
-            if (field) {
-                var controlGroup = field.$el.parents('.control-group:first');
-
-                if (controlGroup) {
-                    //Clear out old messages
-                    controlGroup.find('.add-on').remove();
-                    controlGroup.find('.help-block').html("");
-
-                    controlGroup.addClass("error");
-                    controlGroup.find('.controls').addClass('input-append');
-                    _.each(fieldErrors, function (errorContext, errorName) {
-                        controlGroup.find('.help-block').append(self.app.error.getErrorString(errorName, errorContext));
-                    });
-                    controlGroup.find('.controls input:last').after('<span class="add-on"><i class="icon-exclamation-sign"></i></span>');
-                }
-            }
-        });
     }
 })

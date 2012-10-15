@@ -1,0 +1,13 @@
+<ul class="nav" id="module_list">
+    <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a></li>
+    {{#eachOptions module_list}}
+    <li class="{{key}}{{#eq key ../currentModule}} active{{/eq}}">
+        <a href="#{{key}}">{{value}}</a>
+    </li>
+    {{/eachOptions}}
+    <li class="dropdown more">
+        <a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown">{{str "LBL_LINK_MORE"}} <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+        </ul>
+    </li>
+</ul>

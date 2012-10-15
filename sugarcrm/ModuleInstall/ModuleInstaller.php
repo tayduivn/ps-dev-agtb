@@ -2372,19 +2372,25 @@ private function dir_file_count($path){
             'platform' => 'portal',
             'additionalComponents' => array(
                 'header' => array(
-                    'target' => '#header'
+                    'target' => '#header',
+                    'layout' => 'header'
                 ),
                 'footer' => array(
-                    'target' => '#footer'
+                    'target' => '#footer',
+                    'layout' => 'footer'
                 ),
                 'alert' => array(
                     'target' => '#alert'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('signup', 'error'),
             'loadCss' => 'url',
+            'themeName' => 'default',
             'clientID' => 'support_portal',
             'maxSearchQueryResult'=>'5'
         );
@@ -2405,17 +2411,25 @@ private function dir_file_count($path){
             'platform' => 'base',
             'additionalComponents' => array(
                 'header' => array(
-                    'target' => '#header'
+                    'target' => '#header',
+                    'layout' => 'header'
                 ),
                 'footer' => array(
-                    'target' => '#footer'
+                    'target' => '#footer',
+                    'layout' => 'footer'
                 ),
                 'alert' => array(
                     'target' => '#alert'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+            'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('login', 'error'),
+            'loadCss' => 'url',
+            'themeName' => 'default',
             'clientID' => 'sugar'
         );
         self::writeJSConfig($sidecarConfig,$filePath);

@@ -43,8 +43,10 @@
             // e.g. new Date("2011-10-10" ) // in my version of chrome browser returns
             // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
             parts = value.match(/(\d+)/g);
-            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
-            value  = app.date.format(jsDate, usersDateFormatPreference);
+            if ( parts ) {
+                jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
+                value  = app.date.format(jsDate, usersDateFormatPreference);
+            }
         }
 
         jsDate = app.date.parse(value);
