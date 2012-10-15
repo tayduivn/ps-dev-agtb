@@ -87,8 +87,8 @@ class MailConfigurationPeer
             $charset = $locale->getPrecedentPreference("default_email_charset");
         }
 
-        $mailConfigurations = array();
-        $ret                = $user->getUsersNameAndEmail();
+        $outboundEmailConfigurations = array();
+        $ret                         = $user->getUsersNameAndEmail();
 
         if (empty($ret['email'])) {
             $systemReturn          = $user->getSystemDefaultNameAndEmail();
@@ -124,36 +124,28 @@ class MailConfigurationPeer
             }
 
             if ($name != null && $addr != null && !empty($outbound_config_id) && !empty($oe) && ($outbound_config_id == $oe->id)) {
-                $mailConfiguration               = new OutboundEmailConfiguration($user);
-                $mailConfiguration->config_id    = $outbound_config_id;
-                $mailConfiguration->config_type  = 'user';
-                $mailConfiguration->inbox_id     = $k;
-                $mailConfiguration->sender_name  = "{$name}";
-                $mailConfiguration->sender_email = "{$addr}";
-                $mailConfiguration->display_name = "{$name} ({$addr})";
-                $mailConfiguration->personal     = (bool)($v->is_personal);
-
-                $mailConfiguration->replyto_name  = (!empty($storedOptions['reply_to_name']) ?
-                    $storedOptions['reply_to_name'] :
-                    $mailConfiguration->sender_name);
-                $mailConfiguration->replyto_email = (!empty($storedOptions['reply_to_addr']) ?
-                    $storedOptions['reply_to_addr'] :
-                    $mailConfiguration->sender_email);
-
                 // turn the OutboundEmail object into a useable set of mail configurations
-                $oeAsArray                           = self::toArray($oe);
-                $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
-                $mailConfiguration->config_name      = $oeAsArray['name'];
-                $mailConfiguration->mailerConfigData = self::buildOutboundEmailConfiguration(
-                    $oeAsArray,
-                    $mailConfiguration->mode,
-                    $locale,
-                    $charset
-                );
-
-                $mailConfigurations[] = $mailConfiguration;
-            } // if
-        } // foreach
+                $oeAsArray                       = self::toArray($oe);
+                $configurations                  = array();
+                $configurations["config_id"]     = $outbound_config_id;
+                $configurations["config_type"]   = "user";
+                $configurations["inbox_id"]      = $k;
+                $configurations["sender_email"]  = $addr;
+                $configurations["sender_name"]   = $name;
+                $configurations["display_name"]  = "{$name} ({$addr})";
+                $configurations["personal"]      = (bool)($v->is_personal);
+                $configurations["replyto_email"] = (!empty($storedOptions["reply_to_addr"])) ?
+                                                    $storedOptions["reply_to_addr"] :
+                                                    $addr;
+                $configurations["replyto_name"]  = (!empty($storedOptions["reply_to_name"])) ?
+                                                    $storedOptions["reply_to_name"] :
+                                                    $name;
+                $configurations["locale"]        = $locale;
+                $configurations["charset"]       = $charset;
+                $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oeAsArray);
+                $outboundEmailConfigurations[]   = $outboundEmailConfiguration;
+            }
+        }
 
         $oe     = new OutboundEmail();
         $system = $oe->getSystemMailerSettings();
@@ -171,69 +163,76 @@ class MailConfigurationPeer
             throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
 
-        $mailConfiguration               = new OutboundEmailConfiguration($user);
-        $mailConfiguration->config_id    = $system->id;
-        $mailConfiguration->config_type  = 'system';
-        $mailConfiguration->sender_name  = "{$ret['name']}";
-        $mailConfiguration->sender_email = "{$ret['email']}";
-        $mailConfiguration->display_name = "{$ret['name']} ({$ret['email']})";
-        $mailConfiguration->personal     = $personal;
-
-        $mailConfiguration->replyto_name  = $system_replyToName;
-        $mailConfiguration->replyto_email = $system_replyToAddress;
-
         // turn the OutboundEmail object into a useable set of mail configurations
         $oe = new OutboundEmail();
         $oe->retrieve($system->id);
-        $oeAsArray                           = self::toArray($oe);
-        $mailConfiguration->mode             = strtolower($oeAsArray['mail_sendtype']);
-        $mailConfiguration->config_name      = $oeAsArray['name'];
-        $mailConfiguration->mailerConfigData = self::buildOutboundEmailConfiguration(
-            $oeAsArray,
-            $mailConfiguration->mode,
-            $locale,
-            $charset
-        );
 
-        $mailConfigurations[] = $mailConfiguration;
+        $oeAsArray                       = self::toArray($oe);
+        $configurations                  = array();
+        $configurations["config_id"]     = $system->id;
+        $configurations["config_type"]   = "system";
+        $configurations["inbox_id"]      = null;
+        $configurations["sender_email"]  = $ret["email"];
+        $configurations["sender_name"]   = $ret["name"];
+        $configurations["display_name"]  = "{$ret["name"]} ({$ret["email"]})";
+        $configurations["personal"]      = $personal;
+        $configurations["replyto_email"] = $system_replyToAddress;
+        $configurations["replyto_name"]  = $system_replyToName;
+        $configurations["locale"]        = $locale;
+        $configurations["charset"]       = $charset;
+        $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oeAsArray);
+        $outboundEmailConfigurations[]   = $outboundEmailConfiguration;
 
-        return $mailConfigurations;
+        return $outboundEmailConfigurations;
     }
 
-    private static function buildOutboundEmailConfiguration($oe, $mode, Localization $locale, $charset) {
-        $mailerConfig = null;
+    private static function buildOutboundEmailConfiguration(User $user, $configurations, $outboundEmail) {
+        $outboundEmailConfiguration = null;
+        $mode                       = strtolower($outboundEmail["mail_sendtype"]);
 
         // setup the mailer's known configurations based on the type of mailer
         switch ($mode) {
             case self::MODE_SMTP:
-                $mailerConfig = new OutboundSmtpEmailConfiguration();
-                $mailerConfig->setHost($oe['mail_smtpserver']);
-                $mailerConfig->setPort($oe['mail_smtpport']);
+                $outboundEmailConfiguration = new OutboundSmtpEmailConfiguration($user);
+                $outboundEmailConfiguration->setHost($outboundEmail["mail_smtpserver"]);
+                $outboundEmailConfiguration->setPort($outboundEmail["mail_smtpport"]);
 
-                if ($oe['mail_smtpauth_req']) {
+                if ($outboundEmail["mail_smtpauth_req"]) {
                     // require authentication with the SMTP server
-                    $mailerConfig->setAuthenticationRequirement(true);
-                    $mailerConfig->setUsername($oe['mail_smtpuser']);
-                    $mailerConfig->setPassword($oe['mail_smtppass']);
+                    $outboundEmailConfiguration->setAuthenticationRequirement(true);
+                    $outboundEmailConfiguration->setUsername($outboundEmail["mail_smtpuser"]);
+                    $outboundEmailConfiguration->setPassword($outboundEmail["mail_smtppass"]);
                 }
 
                 // determine the appropriate encryption layer for the sending strategy
-                if ($oe['mail_smtpssl'] === 1) {
-                    $mailerConfig->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolSsl);
-                } elseif ($oe['mail_smtpssl'] === 2) {
-                    $mailerConfig->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolTls);
+                if ($outboundEmail["mail_smtpssl"] === 1) {
+                    $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolSsl);
+                } elseif ($outboundEmail["mail_smtpssl"] === 2) {
+                    $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolTls);
                 }
 
                 break;
             default:
-                $mailerConfig = new OutboundEmailConfiguration();
+                $outboundEmailConfiguration = new OutboundEmailConfiguration($user);
                 break;
         }
 
-        $mailerConfig->setLocale($locale);
-        $mailerConfig->setCharset($charset);
+        $outboundEmailConfiguration->config_id     = $configurations["outbound_config_id"];
+        $outboundEmailConfiguration->config_type   = $configurations["config_type"];
+        $outboundEmailConfiguration->mode          = $mode;
+        $outboundEmailConfiguration->config_name   = $outboundEmail["name"];
+        $outboundEmailConfiguration->inbox_id      = $configurations["inbox_id"];
+        $outboundEmailConfiguration->sender_email  = $configurations["sender_email"];
+        $outboundEmailConfiguration->sender_name   = $configurations["sender_name"];
+        $outboundEmailConfiguration->display_name  = $configurations["display_name"];
+        $outboundEmailConfiguration->personal      = $configurations["personal"];
+        $outboundEmailConfiguration->replyto_email = $configurations["replyto_email"];
+        $outboundEmailConfiguration->replyto_name  = $configurations["replyto_name"];
 
-        return $mailerConfig;
+        $outboundEmailConfiguration->setLocale($configurations["locale"]);
+        $outboundEmailConfiguration->setCharset($configurations["charset"]);
+
+        return $outboundEmailConfiguration;
     }
 
     private static function toArray($obj, $scalarOnly=true) {
