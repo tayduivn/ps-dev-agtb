@@ -42,20 +42,26 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $outboundSmtpEmailConfiguration->sender_name  = "Foo Bar";
 
         $mockMailerFactory = $this->getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
-        $mockMailerFactory::staticExpects($this->any())
+        $mockMailerFactory::staticExpects(static::any())
             ->method("getOutboundEmailConfiguration")
-            ->will($this->returnValue($outboundSmtpEmailConfiguration));
+            ->will(static::returnValue($outboundSmtpEmailConfiguration));
 
         $expected = "SmtpMailer";
         $actual   = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
-        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
+        static::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
     /**
      * @group mailer
      */
     public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException() {
-        self::markTestIncomplete("Not yet implemented; requires ability to remove all possible mail configurations for the user, including system configurations, or ability to mock them out");
+        $mockMailerFactory = $this->getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
+        $mockMailerFactory::staticExpects(static::any())
+            ->method("getOutboundEmailConfiguration")
+            ->will(static::throwException(new MailerException()));
+
+        static::setExpectedException("MailerException");
+        $actual = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]); // hopefully nothing is actually returned
     }
 
     /**
@@ -66,7 +72,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $outboundSmtpEmailConfiguration               = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $outboundSmtpEmailConfiguration->sender_email = 1234; // an invalid From email address
 
-        self::setExpectedException("MailerException");
+        static::setExpectedException("MailerException");
         $actual = MailerFactory::getMailer($outboundSmtpEmailConfiguration); // hopefully nothing is actually returned
     }
 
@@ -79,7 +85,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = "SmtpMailer";
         $actual   = MailerFactory::getMailer($outboundSmtpEmailConfiguration);
-        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
+        static::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
     /**
@@ -92,7 +98,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expected = "SmtpMailer";
         $actual   = MailerFactory::getMailer($outboundSmtpEmailConfiguration);
-        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
+        static::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
     /**
@@ -103,7 +109,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $outboundSmtpEmailConfiguration->mode         = "asdf"; // some asinine value that wouldn't actually be used
         $outboundSmtpEmailConfiguration->sender_email = "foo@bar.com";
 
-        self::setExpectedException("MailerException");
+        static::setExpectedException("MailerException");
         $actual = MailerFactory::getMailer($outboundSmtpEmailConfiguration); // hopefully nothing is actually returned
     }
 }
