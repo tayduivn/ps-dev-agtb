@@ -1,7 +1,9 @@
 ({
     events: {
-        "click .login-submit": "login"
+        "click .login-submit": "login",
+        "keypress": "handleKeypress"
     },
+    
     initialize: function(options) {
         // Adds the metadata for the Login module
         app.metadata.set(this._metadata);
@@ -17,6 +19,14 @@
         // use modal template for the fields
         this.fallbackFieldTemplate = "modal";
     },
+    
+    handleKeypress: function(e) {
+        if (e.keyCode === 13) {
+            this.$("input").trigger("blur");
+            this.login();
+        }
+    },
+    
     render: function() {
         if (app.config && app.config.logoURL) {
             this.logoURL = app.config.logoURL;
@@ -27,6 +37,7 @@
         }
         return this;
     },
+    
     login: function() {
         var self = this;
         if (this.model.isValid()) {
@@ -52,6 +63,7 @@
             });
         }
     },
+    
     _metadata : {
         _hash: '',
         "modules": {

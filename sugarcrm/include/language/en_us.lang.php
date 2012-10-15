@@ -3458,6 +3458,12 @@ $app_strings = array (
 
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
+
+    //quickcreate modal dialog
+    'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
+    'LBL_SAVE_AND_CREATE_ANOTHER' => 'Save and Create Another',
+    'LBL_SAVE_AND_VIEW' => 'Save and View',
+    'LBL_RESTORE' => 'Reset to Original',
 );
 
 
