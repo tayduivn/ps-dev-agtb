@@ -238,6 +238,7 @@ svg .title { font:bold 14px Arial; }
   stroke-opacity:1;
   stroke-width:2;
 }
+.nvd3 .nv-lineLegend .nv-series { cursor:default; }
 body.full-screen {
   overflow-y:scroll;
   padding:20px;
@@ -247,6 +248,10 @@ body.full-screen {
   min-width:100px;
   min-height:100px;
   border:1px solid #dddddd;
+}
+.chart-container .nv-chart {
+  width:99%;
+  height:99%;
 }
 body.full-screen .chart-container {
   height:95%;
