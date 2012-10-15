@@ -2372,7 +2372,8 @@ private function dir_file_count($path){
             'platform' => 'portal',
             'additionalComponents' => array(
                 'header' => array(
-                    'target' => '#header'
+                    'target' => '#header',
+                    'layout' => 'header'
                 ),
                 'footer' => array(
                     'target' => '#footer',
@@ -2410,7 +2411,8 @@ private function dir_file_count($path){
             'platform' => 'base',
             'additionalComponents' => array(
                 'header' => array(
-                    'target' => '#header'
+                    'target' => '#header',
+                    'layout' => 'header'
                 ),
                 'footer' => array(
                     'target' => '#footer',
