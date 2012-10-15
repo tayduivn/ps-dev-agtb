@@ -22,7 +22,14 @@ class HTMLPurifier_Filter_ExtractStyleBlocks extends HTMLPurifier_Filter
     private $_tidy;
 
     public function __construct() {
-        $this->_tidy = new csstidy();
+        if (class_exists('csstidy'))
+        {
+            $this->_tidy = new csstidy();            
+        }
+        else
+        {
+            $this->_tidy = null;   
+        }
     }
 
     /**
