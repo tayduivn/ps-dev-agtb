@@ -29,6 +29,9 @@ describe("The forecasts layout controller", function(){
                 forecasts: {
                     set: function() {}
                 }
+            },
+            meta: {
+                components: {}
             }
         };
 
@@ -76,7 +79,6 @@ describe("The forecasts layout controller", function(){
                     name:name,
                     $el: $(testEl)
                 };
-
             layout.$el = $('<div class="outer"><div class="view-' + name + '"></div></div>');
             layout._placeComponent(testComp);
             expect(testComp.$el.parent().html()).toEqual(testEl);

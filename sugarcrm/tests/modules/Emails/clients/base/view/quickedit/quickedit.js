@@ -37,6 +37,8 @@ describe("Emails - clients/base/view/quickedit", function() {
         it("should send formatted data to conform to API parameters", function() {
             var data = {
                 to_addresses : "test@example.com",
+                cc_addresses : "cc@example.com",
+                bcc_addresses : "bcc@example.com",
                 subject    : "subject",
                 html_body  : "html body",
                 text_body  : "text body"
@@ -44,10 +46,12 @@ describe("Emails - clients/base/view/quickedit", function() {
             
             var expected_data = _.extend({}, data);
             expected_data.to_addresses = [ { email: "test@example.com" } ]; 
-            
+            expected_data.cc_addresses = [ { email: "cc@example.com" } ];
+            expected_data.bcc_addresses = [ { email: "bcc@example.com" } ];
+
             view.model.set(data);
             view.saveModel();
-            
+
             expect(requests.length).toEqual(1);
             expect(requests[0].requestBody).toEqual(JSON.stringify(expected_data));
         });

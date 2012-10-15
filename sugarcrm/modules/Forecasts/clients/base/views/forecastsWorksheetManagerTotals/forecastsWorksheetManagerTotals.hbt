@@ -16,4 +16,5 @@
         <td>{{formatCurrency worst_case "-99"}}</td>
         <td>{{formatCurrency worst_adjusted "-99"}}</td>
     {{/if}}
+    <td>&nbsp;</td>
 </tr>

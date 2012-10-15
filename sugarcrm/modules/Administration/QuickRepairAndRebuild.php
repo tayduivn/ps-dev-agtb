@@ -401,7 +401,7 @@ class RepairAndClear
         global $mod_strings, $sugar_config;
 		if($this->show_output) echo "<h3>{$mod_strings['LBL_QR_CLEAR_ADD_CACHE']}</h3>";
         // clear out the API Cache
-        require_once('include/api/SugarApi/ServiceDictionary.php');
+        require_once('include/api/ServiceDictionary.php');
         $sd = new ServiceDictionary();
         $sd->clearCache();
         //clear out the api metadata cache

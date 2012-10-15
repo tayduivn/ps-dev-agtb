@@ -13,6 +13,6 @@ $viewdefs['base']['layout']['list'] = array(
         ),
         array(
             'view' => 'list-bottom',
-        ),
+        )
     ),
 );

@@ -664,6 +664,7 @@ class MetaDataManager {
      * The method for getting the module list, can collect for base, portal and mobile
      *
      * @return array The list of modules that are supported by this platform
+     * @deprecated Functionality for this method moved into the MetadataApi class
      */
     public function getModuleList($platform = 'base') {
         if ( $platform == 'portal' ) {
