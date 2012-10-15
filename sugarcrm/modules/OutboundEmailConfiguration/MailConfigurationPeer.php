@@ -24,7 +24,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once "MailConfiguration.php";
+require_once "OutboundSmtpEmailConfiguration.php"; // also imports OutboundEmailConfiguration.php
 
 // external imports
 require_once "include/OutboundEmail/OutboundEmail.php";
@@ -59,7 +59,11 @@ class MailConfigurationPeer
     }
 
     /**
-     * @return OutboundEmailConfiguration  System or User defined System-Override Mail Configuration
+     * @access public
+     * @param User         $user    required
+     * @param Localization $locale
+     * @param string       $charset
+     * @return OutboundEmailConfiguration System- or User-defined System-Override Mail Configuration
      * @throws MailerException
      */
     public static function getSystemMailConfiguration(User $user, Localization $locale = null, $charset = null) {
@@ -75,6 +79,10 @@ class MailConfigurationPeer
     }
 
     /**
+     * @access public
+     * @param User         $user    required
+     * @param Localization $locale
+     * @param string       $charset
      * @return array MailConfigurations
      * @throws MailerException
      */
@@ -186,6 +194,13 @@ class MailConfigurationPeer
         return $outboundEmailConfigurations;
     }
 
+    /**
+     * @access private
+     * @param User  $user           required
+     * @param array $configurations required
+     * @param array $outboundEmail  required
+     * @return OutboundEmailConfiguration|OutboundSmtpEmailConfiguration
+     */
     private static function buildOutboundEmailConfiguration(User $user, $configurations, $outboundEmail) {
         $outboundEmailConfiguration = null;
         $mode                       = strtolower($outboundEmail["mail_sendtype"]);
@@ -235,6 +250,12 @@ class MailConfigurationPeer
         return $outboundEmailConfiguration;
     }
 
+    /**
+     * @access private
+     * @param      $obj        required
+     * @param bool $scalarOnly
+     * @return array
+     */
     private static function toArray($obj, $scalarOnly=true) {
         $fields = get_object_vars($obj);
         $arr    = array();
