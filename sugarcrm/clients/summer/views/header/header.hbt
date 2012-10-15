@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <div class="nav-collapse">
                 <ul class="nav" id="moduleList">
-                    <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str " LBL_TABGROUP_HOME"}}"></a>
+                    <li class="Home"><a class="cube" href="#" rel="tooltip" title="{{str "LBL_TABGROUP_HOME"}}"></a>
                     </li>
                     {{#each moduleList}}
                     <li class="{{this}}{{#eq this ../currentModule}} active{{/eq}}" data-tour="tour-navbar-{{this}}">
