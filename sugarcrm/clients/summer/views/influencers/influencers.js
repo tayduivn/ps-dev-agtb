@@ -4,20 +4,20 @@
         this.collections = {};
     },
     loadData: function() {
-        var self = this;
-        app.api.call("read", app.api.buildURL(app.controller.layout.options.module + "/" + app.controller.context.get("model").id + "/" +"influencers"), null,
-            { success: function(data) {
-                _.each(data, function(key, value) {
-                    data[value]["picture_url"] = data[value]["picture"] ? app.api.buildFileURL({
-                        module: "Users",
-                        id: data[value]["id"],
-                        field: "picture"
-                    }) : "../clients/summer/views/imagesearch/anonymous.jpg";
-                });
+        var self = this,
+            url = app.api.buildURL(this.module, "influencers", {"id": app.controller.context.get("model").id});
 
-                self.collections = data;
-                self.render();
-            }
-        });
+        app.api.call("read", url, null, { success: function(data) {
+            _.each(data, function(key, value) {
+                data[value]["picture_url"] = data[value]["picture"] ? app.api.buildFileURL({
+                    module: "Users",
+                    id: data[value]["id"],
+                    field: "picture"
+                }) : "../clients/summer/views/imagesearch/anonymous.jpg";
+            });
+
+            self.collections = data;
+            self.render();
+        }});
     }
 })

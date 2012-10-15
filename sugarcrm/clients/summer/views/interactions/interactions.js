@@ -23,17 +23,16 @@
         this.meetingsActive = false;
     },
     loadData: function() {
-        var self = this;
+        var self = this,
+            url = app.api.buildURL(this.module, "interactions", {"id": app.controller.context.get("model").id});
 
-        app.api.call("read", app.api.buildURL(app.controller.layout.options.module + "/" + app.controller.context.get("model").id + "/" +"interactions"), null,
-        { success: function(data) {
+        app.api.call("read", url, null, { success: function(data) {
             self.collections = data;
             self.callsActive = true;
             self.emailsActive = false;
             self.meetingsActive = false;
             self.render();
-          }
-        });
+        }});
     },
     contentSwitcher: function(e) {
         var $target = this.$(e.target);
@@ -61,9 +60,6 @@
                     this.meetingsActive = true;
                     break;
             }
-
-            // will probably change this method to show/hide elements
-            // instead of rendering
             this.render();
         }
     }
