@@ -55,7 +55,6 @@
         if (field.name == 'category') {
             var categorySetting = this.context.forecasts.config.get('forecast_categories');
             field.def.options = this.context.forecasts.config.get('buckets_dom');
-            field.def.multi = (categorySetting == 'show_binary')?false:true;
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
