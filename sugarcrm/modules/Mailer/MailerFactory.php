@@ -107,7 +107,7 @@ class MailerFactory
         }
 
         $headers = self::buildHeadersForMailer($sender, $replyTo);
-        $mailer  = self::buildMailer($mode, $config->mailerConfigData);
+        $mailer  = self::buildMailer($mode, $config);
         $mailer->setHeaders($headers);
 
         return $mailer;

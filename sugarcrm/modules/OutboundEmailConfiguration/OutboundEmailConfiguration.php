@@ -48,7 +48,6 @@ class OutboundEmailConfiguration
     public $replyto_name;
     public $replyto_email;
     public $personal;
-    public $mailerConfigData; // MailerConfiguration or SmtpMailerConfiguration
 
     // protected members
     protected $hostname; // the hostname to use in Message-ID and Received headers and as default HELO string
