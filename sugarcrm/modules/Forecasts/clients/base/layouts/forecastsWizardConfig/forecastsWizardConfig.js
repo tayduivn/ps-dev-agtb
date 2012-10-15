@@ -25,6 +25,8 @@
 
     app.view.layouts.ForecastsWizardConfigLayout = app.view.Layout.extend({
 
+        breadCrumbLabels: [],
+
         initialize: function (options) {
             settingsModel = {};
             if(_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config') ) {
@@ -50,7 +52,17 @@
             options.context.set("model", settingsModel);
 
             app.view.Layout.prototype.initialize.call(this, options);
+        },
+
+        registerBreadCrumbLabel : function(label) {
+            this.breadCrumbLabels.push(label);
+            this.breadCrumbLabels = _.uniq(this.breadCrumbLabels);
+        },
+
+        getBreadCrumbLabels : function(){
+            return this.breadCrumbLabels;
         }
+
 
     });
 

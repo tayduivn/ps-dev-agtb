@@ -324,6 +324,12 @@ $mod_strings = array (
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
 
+    // Panel and BreadCrumb Labels
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES' => 'Categories',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE' => 'Ranges',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
+
     // timeperiod config
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',

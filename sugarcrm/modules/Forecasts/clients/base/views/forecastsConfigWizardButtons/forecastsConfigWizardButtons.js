@@ -16,12 +16,21 @@
 
     navTabs:[],
 
+    breadCrumbLabels: [],
+
     events:{
         'click [name=close_button]':'close',
         'click [name=save_button]':'save',
         'click [name=next_button]':'next',
         'click [name=previous_button]':'previous',
         'click .breadcrumb.two li a':'breadcrumb'
+    },
+
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+
+        this.breadCrumbLabels = this.layout.getBreadCrumbLabels();
+        debugger;
     },
 
     /**
