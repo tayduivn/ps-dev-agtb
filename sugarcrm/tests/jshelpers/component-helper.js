@@ -170,6 +170,14 @@
             }
         },
 
+        addViewFieldDefinition: function(name, fieldDef) {
+            if (this.isInitialized()) {
+                this._data.views = this._data.views || {};
+                this._data.views[name] = this._data.views[name] || {};
+                this._data.views[name].meta = fieldDef;
+            }
+        },
+
         addFieldTemplate: function(type, name, template) {
             if (this.isInitialized()) {
                 this._data.fields[type] = this._data.fields[type] || {};

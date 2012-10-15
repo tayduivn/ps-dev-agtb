@@ -1,6 +1,8 @@
 describe("Quickcreate", function() {
 
     beforeEach(function() {
+        SugarTest.testMetadata.init();
+
         SugarTest.loadViewHandlebarsTemplate('base', 'quickcreate-list');
         SugarTest.loadViewHandlebarsTemplate('base', 'quickcreate');
         SugarTest.loadViewHandlebarsTemplate('base', 'quickcreateactions');
@@ -15,12 +17,7 @@ describe("Quickcreate", function() {
         SugarTest.loadComponent('base', 'view', 'quickcreate');
         SugarTest.loadComponent('base', 'view', 'quickcreateactions');
 
-        fixtures.metadata.views = fixtures.metadata.views || {};
-        fixtures.metadata.views['quickcreate-list'] = fixtures.metadata.views['quickcreate-list'] || {};
-        fixtures.metadata.views['quickcreate'] = fixtures.metadata.views['quickcreate'] || {};
-        fixtures.metadata.views['quickcreateactions'] = fixtures.metadata.views['quickcreateactions'] || {};
-
-        fixtures.metadata.views['quickcreate-list'].meta = {
+        SugarTest.testMetadata.addViewFieldDefinition('quickcreate-list', {
             panels: [{
                 fields: [{
                     name: "first_name",
@@ -31,9 +28,9 @@ describe("Quickcreate", function() {
                     name: "phone_work"
                 }]
             }]
-        };
+        });
 
-        fixtures.metadata.views['quickcreate'].meta = {
+        SugarTest.testMetadata.addViewFieldDefinition('quickcreate', {
             type: "edit",
             panels: [{
                 fields: [{
@@ -49,9 +46,9 @@ describe("Quickcreate", function() {
                     duplicate_merge: "default"
                 }]
             }]
-        };
+        });
 
-        fixtures.metadata.views['quickcreateactions'].meta = {
+        SugarTest.testMetadata.addViewFieldDefinition('quickcreateactions', {
             buttons: [{
                 name: "restore_button",
                 type: "button",
@@ -80,9 +77,13 @@ describe("Quickcreate", function() {
                 value: "save",
                 css_class: "btn-primary"
             }]
-        };
+        });
 
-        SugarTest.app.metadata.set(fixtures.metadata, false);
+        SugarTest.testMetadata.set();
+    });
+
+    afterEach(function() {
+        SugarTest.testMetadata.dispose();
     });
 
     var initializeLayout = function() {
