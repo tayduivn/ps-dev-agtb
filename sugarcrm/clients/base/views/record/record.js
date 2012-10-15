@@ -30,8 +30,6 @@
             this.model.isNotEmpty = true;
             this.editable = true;
         }
-
-        test = this;
     },
 
     render: function() {

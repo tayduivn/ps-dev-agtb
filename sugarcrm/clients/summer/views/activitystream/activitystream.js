@@ -25,7 +25,9 @@
     },
 
     initialize: function(options) {
-        var self = this;
+        var self = this,
+            url = app.api.buildURL("CustomReport/EntityList");
+
         this.opts = {params: {}};
         this.collection = {};
 
@@ -33,6 +35,7 @@
         app.view.View.prototype.initialize.call(this, options);
 
         // Check to see if we need to make a related activity stream.
+        // Currently the "Home" module is dubbed ActivityStreem
         if (this.module !== "ActivityStream") {
             if (this.context.get("modelId")) {
                 this.opts = { params: { module: this.module, id: this.context.get("modelId") }};
@@ -42,20 +45,18 @@
         }
 
         this.collection = app.data.createBeanCollection("ActivityStream");
+
         // By default, show all posts.
         this.showAllActivities();
 
         // Fetch taggable entities.
-        var url = app.api.buildURL("CustomReport/EntityList");
         app.api.call('GET', url, null, {success: function(o) {
             self.entityList = o;
         }});
 
-
         this.user_id = app.user.get('id');
         this.full_name = app.user.get('full_name');
-        var picture = app.user.get('picture');
-        this.picture_url = (picture) ? app.api.buildFileURL({
+        this.picture_url = (app.user.get('picture')) ? app.api.buildFileURL({
             module: 'Users',
             id: app.user.get('id'),
             field: 'picture'
@@ -66,8 +67,8 @@
     },
 
     toggleView: function(event) {
-        event.preventDefault();
         var view = this.$(event.currentTarget).data('view');
+        event.preventDefault();
 
         if (view == 'timeline') {
             this.$('#activitystream-timeline').show();
@@ -88,8 +89,9 @@
     },
 
     showAnchor: function(event) {
-        event.preventDefault();
         var myId = this.$(event.currentTarget).data('id');
+
+        event.preventDefault();
         $('html, body').animate({ scrollTop: $('#'+myId).offset().top - 50 }, 'slow');
     },
 
@@ -128,6 +130,9 @@
 
     _addPostComment: function(url, contents, attachments) {
         var self = this;
+        var callback = _.after(1 + attachments.length, function() {
+            self.collection.fetch(self.opts);
+        });
         app.api.call('create', url, {'value': contents}, {success: function(post_id) {
             attachments.each(function(index, el) {
                 var id = $(el).attr('id');
@@ -152,13 +157,13 @@
                             contentType: false,
                             success: function() {
                                 delete app.drag_drop[id];
-                                self.collection.fetch(self.opts);
+                                callback();
                             }
                         });
                     }
                 });
             });
-            self.collection.fetch(self.opts);
+            callback();
         }});
     },
 
@@ -500,7 +505,7 @@
     _addCalendarMonthEvent: function(models) {
         var events = [], counts = {};
         var getDate = function(dateString) {
-            var d = app.date.parse(dateString, app.date.guessFormat(dateString));
+            var d = app.date.parse(dateString, 'Y-m-d H:i:s');
             d.setHours(0);
             d.setMinutes(0);
             d.setSeconds(0);
@@ -531,20 +536,20 @@
     },
 
     _addCalendarWeekEvent: function(models) {
-        var events = [], numEvents = 5;
+        var events = [], numEvents = 5, dateFormat = 'Y-m-d H:i:s';
 
         $.each(models, function(index, model) {
             if(events.length < numEvents) {
                 var event = {allDay:false};
                 event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+                event.start = app.date.parse(model.get("date_created"), dateFormat);
                 event.title =  model.get("created_by_name") + " " + model.get("activity_type") + "...";
                 events.push(event);
             }
             else if(events.length == numEvents) {
                 var event = {allDay:true};
                 event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+                event.start = app.date.parse(model.get("date_created"), dateFormat);
                 event.title = (models.length - numEvents)+" more event(s)";
                 events.push(event);
                 return false;
@@ -561,7 +566,7 @@
             var activityType = model.get('activity_type');
             var event = {allDay:false};
             event.id = model.get('id');
-            event.start = app.date.parse(model.get("date_created"), app.date.guessFormat(model.get("date_created")));
+            event.start = app.date.parse(model.get("date_created"), 'Y-m-d H:i:s');
             if(events.length < numEvents) {
                 event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
 

@@ -2,7 +2,7 @@
 //FILE SUGARCRM flav=free ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
-require_once 'include/api/ListApi.php';
+require_once 'clients/base/api/ListApi.php';
 require_once 'data/BeanFactory.php';
 
 class OpportunitiesSummerApi extends ListApi
@@ -26,13 +26,37 @@ class OpportunitiesSummerApi extends ListApi
                 'shortHelp' => '',
                 'longHelp' => '',
             ),
+            'experts' => array(
+                'reqType' => 'GET',
+                'path' => array('Opportunities','?', 'experts'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'recommendExperts',
+                'shortHelp' => 'Recommend users to help with a particular record',
+                'longHelp' => 'Test',
+            ),
+            'expertsTypeahead' => array(
+                'reqType' => 'GET',
+                'path' => array('Opportunities','?', 'expertsTypeahead'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'recommendExpertsTypeahead',
+                'shortHelp' => 'Typeahead provider for recommended users',
+                'longHelp' => '',
+            ),
+            'similar' => array(
+                'reqType' => 'GET',
+                'path' => array('Opportunities','?', 'similar'),
+                'pathVars' => array('module', 'record'),
+                'method' => 'similarDeals',
+                'shortHelp' => 'Show deals similar to the current record',
+                'longHelp' => '',
+            ),
         );
     }
 
     public function interactions($api, $args)
     {
         $record = $this->getBean($api, $args);
-        $account = $this->getAccountBean($api, $args);
+        $account = $this->getAccountBean($api, $args, $record);
         $box = BoxOfficeClient::getInstance();
         $data = array('calls' => array(),'meetings' => array(),'emails' => array());
 
@@ -68,14 +92,52 @@ class OpportunitiesSummerApi extends ListApi
         return $data;
     }
 
+    public function recommendExperts($api, $args)
+    {
+        $data = $this->getInteractionsByUser($api, $args);
+        $sortCallback = function($a, $b) {
+            return $a['interaction_count'] - $b['interaction_count'];
+        };
+        $filtered = array();
+        if(!empty($args['title'])) {
+            foreach($data as $entry) {
+                if($entry['title'] === $args['title']) {
+                    $filtered[] = $entry;
+                }
+            }
+        } else {
+            $filtered = $data;
+        }
+        usort($filtered, $sortCallback);
+        return array_slice($filtered, 0, 5);
+    }
+
+    public function recommendExpertsTypeahead($api, $args)
+    {
+        $data = $this->getInteractionsByUser($api, $args);
+        $titles = array();
+        foreach ($data as $bean) {
+            if(!empty($bean['title'])) {
+                if(!in_array($bean['title'], $titles)) {
+                    $titles[] = $bean['title'];
+                }
+            }
+        }
+        return $titles;
+    }
+
 
     public function influencers($api, $args)
     {
-        $account = $this->getAccountBean($api, $args);
+        $data = $this->getInteractionsByUser($api, $args);
+        return $data;
+    }
+
+    protected function getInteractionsByUser($api, $args) {
+        $record = $this->getBean($api, $args);
+        $account = $this->getAccountBean($api, $args, $record);
         $relationships = array('calls' => 0, 'meetings' => 0);
         $data = array();
-        //$calls = $this->getAccountRelationship($api, $args, $account, 'calls', null);
-        //$meetings = $this->getAccountRelationship($api, $args, $account, 'meetings', null);
         foreach($relationships as $relationship => $ignore) {
             // Load up the relationship
             if (!$account->load_relationship($relationship)) {
@@ -101,18 +163,55 @@ class OpportunitiesSummerApi extends ListApi
                 foreach($userData['rows'] as $userId => $user) {
                     if(empty($data[$userId])) {
                         $userBean = BeanFactory::getBean('Users', $userId);
-                        _ppl($userId);
                         if($userBean) {
                             $data[$userId] = array_merge($this->formatBean($api, $args, $userBean), $relationships);
                             $data[$userId][$relationship]++;
+                            $data[$userId]['interaction_count'] = 1;
                         }
                     } else {
                         $data[$userId][$relationship]++;
+                        $data[$userId]['interaction_count']++;
                     }
                 }
             }
         }
         return array_values($data);
+    }
+
+    public function similarDeals($api, $args) {
+        $record = $this->getBean($api, $args);
+        $account = $this->getAccountBean($api, $args, $record);
+        $data = array();
+
+        $scoreSort = function($a, $b) {
+            return 1000*($b['score'] - $a['score']);
+        };
+
+        $moduleName = $record->accounts->getRelatedModuleName();
+        $seed = BeanFactory::newBean($moduleName);
+        $beanList = $seed->get_full_list('', "{$seed->table_name}.industry = '" . $seed->db->quote($account->industry) . "'");
+        if(count($beanList) == 1) {
+            // If the current record is the only one of the current industry, load *all* the accounts.
+            $beanList = $seed->get_full_list();
+        }
+        foreach($beanList as $bean) {
+            if($bean->id == $account->id) {
+                continue;
+            }
+            if(!$bean->load_relationship('opportunities')) {
+                continue;
+            }
+            $opportunities = $bean->opportunities->query(array());
+            foreach($opportunities['rows'] as $id => $value) {
+                $opportunity = BeanFactory::getBean($args['module'], $id);
+                $array = $this->formatBean($api, $args, $opportunity);
+                $array['score'] = abs($array['amount'] - $record->amount)/$record->amount;
+                $data[] = $array;
+            }
+        }
+
+        usort($data, $scoreSort);
+        return array_slice($data, 0, 3);
     }
 
     protected function getBean($api, $args)
@@ -129,9 +228,8 @@ class OpportunitiesSummerApi extends ListApi
         return $record;
     }
 
-    protected function getAccountBean($api, $args)
+    protected function getAccountBean($api, $args, $record)
     {
-        $record = $this->getBean($api, $args);
         // Load up the relationship
         if (!$record->load_relationship('accounts')) {
             throw new SugarApiExceptionNotFound('Could not find a relationship name accounts');
