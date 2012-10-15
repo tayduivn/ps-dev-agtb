@@ -285,7 +285,7 @@
             </div>
 
 
-    
+
             <div class="block thumbnail">
               <h4>Events</h4>
               <div id="donut" class="chart-container" style="height: 300px">
@@ -300,7 +300,7 @@
                 </ul>
               </div>
             </div>
-          </div>  
+          </div>
           <div class="preview-pane hide" id="file1">
             <div class="block" id="">
               <a href="#overview" class="actions"><i class="icon-remove"></i></a>
@@ -906,35 +906,9 @@
 
       <!-- new D3 charting library files -->
       <script src="../js/nvd3/lib/d3.v2.js"></script>
-      <script src="../js/nvd3/nv.d3.js"></script>
-      <script src="../js/nvd3/src/utils.js"></script>
-      <script src="../js/nvd3/src/models/legend.js"></script>
+      <script src="../js/nvd3/nv.d3.min.js"></script>
 
-      <script src="../js/nvd3/src/tooltip.js"></script>
-
-      <script src="../js/nvd3/src/models/multiBar_sugar.js"></script>
-      <script src="../js/nvd3/src/models/multiBarChart_sugar.js"></script>
-      <script src="../js/nvd3/src/models/multiBarHorizontalChart_sugar.js"></script>
-      <script src="../js/nvd3/src/models/funnel.js"></script>
-      <script src="../js/nvd3/src/models/funnelChart.js"></script>
-      <script src="../js/nvd3/src/models/gauge.js"></script>
-      <script src="../js/nvd3/src/models/gaugeChart.js"></script>
-      <script src="../js/nvd3/src/models/pie.js"></script>
-      <script src="../js/nvd3/src/models/pieChart.js"></script>
-      <script src="../js/nvd3/src/models/line.js"></script>
-      <script src="../js/nvd3/src/models/lineChart_sugar.js"></script>
-      <script src="../js/nvd3/src/models/stackedArea.js"></script>
-      <script src="../js/nvd3/src/models/stackedAreaChart_sugar.js"></script>
-
-      <script src="../js/nvd3/data/forecasting_q1.js"></script>
-      <script src="../js/nvd3/data/forecasting_q2.js"></script>
-      <script src="../js/nvd3/data/vertical_data.js"></script>
-      <script src="../js/nvd3/data/opportunities.js"></script>
-      <script src="../js/nvd3/data/funnel_data.js"></script>
-      <script src="../js/nvd3/data/gauge_data.js"></script>
       <script src="../js/nvd3/data/pie_data.js"></script>
-      <script src="../js/nvd3/data/line_data.js"></script>
-      <script src="../js/nvd3/data/horizbar_data.js"></script>
       <script>
       // Donut Chart
       nv.addGraph(function() {
@@ -951,15 +925,17 @@
             return '<p>Event: <b>' + key + '</b></p>' +
                    '<p>Amount: <b>' +  parseInt(y) + '</b></p>' +
                    '<p>Percent: <b>' +  x + '%</b></p>'
-      });
+          });
+
           d3.select("#donut svg")
             .datum(pie_data)
             .transition().duration(1200)
             .call(chart);
-        return chart;
+
+          nv.utils.windowResize(function(){chart.update();});
+
+          return chart;
       });
-
-
-        </script>
+      </script>
     </body>
     </html>
