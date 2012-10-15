@@ -59,7 +59,9 @@
         before24Hours = jsDate.getHours();
         value  = app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference);
         jsDate = app.date.parse(value);
-        jsDate = app.date.roundTime(jsDate);
+        if(self.view.name === 'edit') {
+            jsDate = app.date.roundTime(jsDate);
+        }
         
         value = {
             dateTime: app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference),
