@@ -36,7 +36,8 @@ function perform_save(&$focus){
         $settings = $admin->getConfigForModule('Forecasts');
 
         //Retrieve Forecasts_category_ranges and json decode as an associative array
-        $category_ranges = isset($settings['category_ranges']) ? $settings['category_ranges'] : array();
+        $forecast_category = isset($settings['forecast_categories']) ? $settings['forecast_categories'] : '';
+        $category_ranges = isset($settings[$forecast_category.'_ranges']) ? $settings[$forecast_category.'_ranges'] : array();
 
         foreach($category_ranges as $key=>$entry)
         {

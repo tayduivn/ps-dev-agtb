@@ -149,6 +149,8 @@ class MetadataApi extends SugarApi {
             $data = $this->loadMetadata($hashKey);
         }
 
+        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);
+
         //If we had to generate a new hash, create the etag with the new hash
         if (empty($hash)) {
             generateETagHeader($data['_hash']);
@@ -240,11 +242,81 @@ class MetadataApi extends SugarApi {
         $data['app_strings'] = $mm->getAppStrings();
         $data['app_list_strings'] = $app_list_strings_public;
         $data['config'] = $this->getConfigs();
+        $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);        
         $data["_hash"] = md5(serialize($data));
 
         $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
+    }
+
+    protected function buildJSFileFromMD(&$data, $platform) {
+        $js = "(function(app) {\n SUGAR.jssource = {";
+        $compJS = $this->buildJSForComponents($data);
+        $js .= $compJS;
+
+        if (!empty($data['modules']))
+        {
+            $firstModule = true;
+            if (!empty($compJS))
+                $js .= ",";
+            $js .= "\n\tmodules:{";
+            foreach($data['modules'] as $module => $def)
+            {
+                $moduleJS = $this->buildJSForComponents($data['modules'][$module]);
+                if (empty($moduleJS))
+                    continue;
+                $moduleJS = "\n\t\t$module:{{$moduleJS}}";
+                if (!$firstModule)
+                    $moduleJS = "," . $moduleJS;
+                else
+                    $firstModule = false;
+                $js .= $moduleJS;
+            }
+            $js .= "\n\t}";
+        }
+
+        $js .= "}})(SUGAR.App);";
+        $hash = md5($js);
+        $path = "cache/javascript/$platform/components_$hash.js";
+        if (!file_exists($path)){
+            mkdir_recursive(dirname($path));
+            file_put_contents($path, $js);
+        }
+        global $sugar_config;
+        $sugar_config['site_url'];
+        return $sugar_config['site_url'] . "/{$path}";
+    }
+
+    protected function buildJSForComponents(&$data) {
+        $firstType = true;
+        $js = "";
+        foreach(array('fields', 'views', 'layouts') as $mdType){
+            if (!empty($data[$mdType])){
+                if (!$firstType)
+                    $js .= ",";
+                else
+                    $firstType = false;
+
+                $js .= "\n\t$mdType:{";
+                $firstComp = true;
+                foreach($data[$mdType] as $name => $component) {
+                    if (is_array($component) && !empty($component['controller']))
+                    {
+                        if (!$firstComp)
+                            $js .= ",";
+                        else
+                            $firstComp = false;
+                        $controller = $component['controller'];
+                        $js .= "\n\t\t\"$name\":{controller:$controller}";
+                            unset($data[$mdType][$name]['controller']);
+
+                    }
+                }
+                $js .= "\n\t}";
+            }
+        }
+        return $js;
     }
 
     protected function loadMetadata($hashKey) {
@@ -330,10 +402,41 @@ class MetadataApi extends SugarApi {
                 $data['currencies'][$current->id] = $currency;
             }
         }
-        
+
         // Handle enforcement of acls for clients that do this (portal)
         $data['acl'] = $this->enforceModuleACLs($data['acl']);
         $data['module_list'] = $this->cleanUpModuleList($data['module_list']);
+
+        if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
+            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+            // This is a change in the ACL's for users without Accounts
+            $vis = new SupportPortalVisibility($apiPerson);
+            $accounts = $vis->getAccountIds();
+            if (count($accounts)==0) {
+                // This user has no accounts, modify their ACL's so that they match up with enforcement
+                $data['acl']['Accounts']['access'] = 'no';
+                $data['acl']['Cases']['access'] = 'no';
+                foreach ($data['module_list'] as $moduleIndex=>$moduleKey) {
+                    if ($moduleKey == 'Cases') {
+                        unset($data['module_list'][$moduleIndex]);
+                    }
+                }
+            }
+        }
+
+        // remove the disabled modules from the module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $tabs = $controller->get_tabs_system();
+
+        if (isset($tabs[1])) {
+            foreach($data['module_list'] as $moduleKey => $moduleName){
+                if (in_array($moduleName,$tabs[1])) {
+                    unset($data['module_list'][$moduleKey]);
+                }
+            }
+        }
+
         $data['fields']  = $mm->getSugarClientFiles('field');
         $data['views']   = $mm->getSugarClientFiles('view');
         $data['layouts'] = $mm->getSugarClientFiles('layout');

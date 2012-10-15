@@ -95,6 +95,15 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
     public function testCurrencyRateSchedulerJob()
     {
         global $current_user;
+        $db = DBManagerFactory::getInstance();
+
+        $oppBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunity->id));
+        $oppUsDollarPreJob = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunity->id));
+        $oppBaseRateClosedPreJob = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
+        $oppUsDollarClosedPreJob = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
+        $quotaBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM quotas WHERE id = '%s'", $this->quota->id));
+        $forecastBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
+        $forecastScheduleBaseRatePreJob = $db->getOne(sprintf("SELECT base_rate FROM forecast_schedule WHERE id = '%s'", $this->forecastSchedule->id));
 
         // change the conversion rate
         $this->currency->conversion_rate = '2.345';
@@ -110,24 +119,21 @@ class CurrencyRateSchedulerJobTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
 
-        $db = DBManagerFactory::getInstance();
         $oppBaseRate = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunity->id));
-        $oppAmount = $db->getOne(sprintf("SELECT amount FROM opportunities WHERE id = '%s'", $this->opportunity->id));
         $oppUsDollar = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunity->id));
         $oppBaseRateClosed = $db->getOne(sprintf("SELECT base_rate FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
-        $oppAmountClosed = $db->getOne(sprintf("SELECT amount FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
         $oppUsDollarClosed = $db->getOne(sprintf("SELECT amount_usdollar FROM opportunities WHERE id = '%s'", $this->opportunityClosed->id));
         $quotaBaseRate = $db->getOne(sprintf("SELECT base_rate FROM quotas WHERE id = '%s'", $this->quota->id));
         $forecastBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecasts WHERE id = '%s'", $this->forecast->id));
         $forecastScheduleBaseRate = $db->getOne(sprintf("SELECT base_rate FROM forecast_schedule WHERE id = '%s'", $this->forecastSchedule->id));
 
-        $this->assertEquals('2.345', $oppBaseRate, 'opportunities.base_rate was modified by CurrencyRateSchedulerJob');
-        $this->assertEquals(($oppAmount * $oppBaseRate), $oppUsDollar, 'opportunities.amount_usdollar was modified by CurrencyRateSchedulerJob',2);
-        $this->assertEquals('1.234', $oppBaseRateClosed, 'opportunities.base_rate was not modified by CurrencyRateSchedulerJob');
-        $this->assertEquals(($oppAmountClosed * $oppBaseRateClosed), $oppUsDollarClosed, 'opportunities.amount_usdollar was not modified by CurrencyRateSchedulerJob for closed opportunity',2);
-        $this->assertEquals('2.345', $quotaBaseRate, 'quotas.base_rate was modified by CurrencyRateSchedulerJob');
-        $this->assertEquals('1', $forecastBaseRate, 'forecasts.base_rate was modified by CurrencyRateSchedulerJob');
-        $this->assertEquals('2.345', $forecastScheduleBaseRate, 'forecast_schedule.base_rate not modified by CurrencyRateSchedulerJob');
+        $this->assertNotEquals($oppBaseRatePreJob, $oppBaseRate, 'opportunities.base_rate was modified by CurrencyRateSchedulerJob');
+        $this->assertNotEquals($oppUsDollarPreJob, $oppUsDollar, 'opportunities.amount_usdollar was modified by CurrencyRateSchedulerJob',2);
+        $this->assertEquals($oppBaseRateClosedPreJob, $oppBaseRateClosed, 'opportunities.base_rate was not modified by CurrencyRateSchedulerJob');
+        $this->assertEquals($oppUsDollarClosedPreJob, $oppUsDollarClosed, 'opportunities.amount_usdollar was not modified by CurrencyRateSchedulerJob for closed opportunity',2);
+        $this->assertNotEquals($quotaBaseRatePreJob, $quotaBaseRate, 'quotas.base_rate was modified by CurrencyRateSchedulerJob');
+        $this->assertEquals($forecastBaseRatePreJob, $forecastBaseRate, 'forecasts.base_rate was not modified by CurrencyRateSchedulerJob');
+        $this->assertNotEquals($forecastScheduleBaseRatePreJob, $forecastScheduleBaseRate, 'forecast_schedule.base_rate modified by CurrencyRateSchedulerJob');
     }
 
     /**

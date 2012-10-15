@@ -48,90 +48,9 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->time_period_type = 'Quarter';
         $this->is_fiscal = false;
         $this->is_leaf = false;
+        $this->date_modifier = '3 month';
 
         $this->setStartDate($start_date);
-    }
-
-    /**
-     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
-     * The end date is adjusted as well to hold to the contract of this being an quarter time period
-     *
-     * @param null $startDate  db format date string to set the start date of the quarter time period
-     */
-    public function setStartDate($start_date = null) {
-        $timedate = TimeDate::getInstance();
-
-        //check start_date, put it to now if it's not passed in
-        if(is_null($start_date)) {
-            $start_date = $timedate->asDbDate($timedate->getNow());
-        }
-        $end_date = $timedate->fromDbDate($start_date);
-
-        //set the start/end date
-        $this->start_date = $start_date;
-        $end_date = $end_date->modify('+3 month');
-        $end_date = $end_date->modify('-1 day');
-        $this->end_date = $timedate->asDbDate($end_date);
-    }
-
-    /**
-     * creates a new QuarterTimePeriod to start to use
-     *
-     * @return QuarterTimePeriod
-     */
-    public function createNextTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromDbDate($this->end_date);
-        $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $nextPeriod->is_fiscal = $this->is_fiscal;
-        $nextPeriod->is_leaf = $this->is_leaf;
-        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
-        $nextPeriod->save();
-
-        return $nextPeriod;
-    }
-
-    /**
-     * loads related time periods and returns whether there are leaves populated.
-     *
-     * @return bool
-     */
-    public function hasLeaves() {
-        if(count($this->getLeaves()))
-            return true;
-
-        return false;
-
-    }
-
-    /**
-     * removes related timeperiods
-     */
-    public function removeLeaves() {
-        $this->load_relationship('related_timeperiods');
-        $this->related_timeperiods->delete($this->id);
-    }
-
-    /**
-     * loads the related time periods and returns the array
-     *
-     * @return mixed
-     */
-    public function getLeaves() {
-        //$this->load_relationship('related_timeperiods');
-        $leaves = array();
-        $db = DBManagerFactory::getInstance();
-        $query = "select id, time_period_type from timeperiods "
-        . "WHERE parent_id = " . $db->quoted($this->id) . " "
-        . "AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp";
-
-        $result = $db->query($query);
-
-        while($row = $db->fetchByAssoc($result)) {
-            array_push($leaves, BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']));
-        }
-        return $leaves;
     }
 
     /**
@@ -164,7 +83,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
                 break;
         }
         $leafPeriod->setStartDate($this->start_date);
-        $leafPeriod->is_leaf = 1;
+        $leafPeriod->is_leaf = true;
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
 

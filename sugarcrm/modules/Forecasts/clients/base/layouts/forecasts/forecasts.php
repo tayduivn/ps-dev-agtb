@@ -41,7 +41,7 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         array(
             'layout' => array(
                 'type' => 'modal',
-                'showEvent' => 'modal:forecastsConfig:open',
+                'showEvent' => 'modal:forecastsWizardConfig:open',
             ),
         ),
         array(
@@ -52,12 +52,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         ),
         array(
             'view' => 'forecastsCommitButtons',
-        ),
-        array(
-            'layout' => array(
-                'type' => 'modal',
-                'showEvent' => 'modal:forecastsConfig:open',
-            ),
         ),
         array(
             'layout' => 'forecastsInfo'

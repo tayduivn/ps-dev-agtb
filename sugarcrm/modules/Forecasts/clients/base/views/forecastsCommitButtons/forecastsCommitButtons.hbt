@@ -25,7 +25,7 @@
     </div>
     {{#if showConfigButton}}
     <div class="btn-group pull-left">
-        <a href="#" class="btn" id="forecastSettings"><span class="icon-cog"></span></a>
+        <a href="#" class="btn" name="forecastSettings"><span class="icon-cog"></span></a>
     </div>
     {{/if}}
 </div>

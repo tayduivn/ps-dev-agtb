@@ -546,9 +546,7 @@ class Opportunity extends SugarBean
 		return $ret_array;
 	}
 
-
-
-	//BEGIN SUGARCRM flav=ent ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * getProducts
 	 *
@@ -569,7 +567,7 @@ class Opportunity extends SugarBean
 		$query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
 		$this->db->query($query);
 	}
-	//END SUGARCRM flav=ent ONLY
+	//END SUGARCRM flav=pro ONLY
 }
 
 
