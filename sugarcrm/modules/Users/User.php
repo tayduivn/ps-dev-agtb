@@ -1012,32 +1012,16 @@ EOQ;
 		} else {
 			$this->reports_to_name = '';
 		}
-		//BEGIN SUGARCRM flav=pro ONLY
-		$query = "SELECT team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.team_id = '{$this->default_team}'";
-		$result = $this->db->query($query, false, "Error retrieving team name: ");
+		
+        //BEGIN SUGARCRM flav=pro ONLY
 
-		//rrs bug: 31277 - this tempDefaultTeam works in conjunction with the 'if' stmt below/
-		//what was happening was that if the user was an admin user and they did not have team membership to their primary team
-		//then this query would not return anything and the default_team would be set to empty, which is fine, but
-		//we need to ensure that the team_id is not empty for team set widget purposes.
-		$tempDefaultTeam = $this->default_team;
+        // Must set team_id for team widget purposes (default_team is primary team id)
+        if (empty($this->team_id))
+        {
+            $this->team_id = $this->default_team;
+        }
 
-		$row = $this->db->fetchByAssoc($result);
-		if (!empty ($row['team_id'])) {
-			$this->default_team = $row['team_id'];
-			$this->default_team_name = Team::getDisplayName($row['name'], $row['name_2'], $this->showLastNameFirst());
-		} else {
-			$this->default_team = '';
-			$this->default_team_name = '';
-			$this->team_set_id = '';
-		}
-
-		if(!empty($this->is_admin) && empty($this->default_team)){
-			$this->team_id = $tempDefaultTeam;
-		}else{
-			$this->team_id = $this->default_team;
-		}
-		//END SUGARCRM flav=pro ONLY
+        //END SUGARCRM flav=pro ONLY
 
 		$this->_create_proper_name_field();
 	}
