@@ -133,7 +133,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             }
             
             // Set the new panel defs from the fields that were just converted
-            $paneldefs = array(array('label' => $this->viewtype == 'edit' ? 'LBL_EDIT' : 'LBL_DETAIL', 'fields' => $fields));
+            $paneldefs = array(array('label' => 'LBL_PANEL_DEFAULT', 'fields' => $fields));
             
             // Kill the data (old defs) and panels (new defs) elements from the defs
             unset($newdefs['data'], $newdefs['panels']);

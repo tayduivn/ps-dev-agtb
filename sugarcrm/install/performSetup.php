@@ -637,6 +637,12 @@ FP;
     $enabled_tabs[] = 'ProspectLists';
     //END SUGARCRM flav!=sales ONLY
 
+    //BEGIN SUGARCRM flav=ent ONLY
+    if ($_SESSION['demoData'] != 'no') {
+        $enabled_tabs[] = 'KBDocuments';
+        $enabled_tabs[] = 'Bugs';
+    }
+    //END SUGARCRM flav=ent ONLY
 
     installerHook('pre_setSystemTabs');
     require_once('modules/MySettings/TabController.php');
