@@ -402,10 +402,41 @@ class MetadataApi extends SugarApi {
                 $data['currencies'][$current->id] = $currency;
             }
         }
-        
+
         // Handle enforcement of acls for clients that do this (portal)
         $data['acl'] = $this->enforceModuleACLs($data['acl']);
         $data['module_list'] = $this->cleanUpModuleList($data['module_list']);
+
+        if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
+            $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+            // This is a change in the ACL's for users without Accounts
+            $vis = new SupportPortalVisibility($apiPerson);
+            $accounts = $vis->getAccountIds();
+            if (count($accounts)==0) {
+                // This user has no accounts, modify their ACL's so that they match up with enforcement
+                $data['acl']['Accounts']['access'] = 'no';
+                $data['acl']['Cases']['access'] = 'no';
+                foreach ($data['module_list'] as $moduleIndex=>$moduleKey) {
+                    if ($moduleKey == 'Cases') {
+                        unset($data['module_list'][$moduleIndex]);
+                    }
+                }
+            }
+        }
+
+        // remove the disabled modules from the module list
+        require_once("modules/MySettings/TabController.php");
+        $controller = new TabController();
+        $tabs = $controller->get_tabs_system();
+
+        if (isset($tabs[1])) {
+            foreach($data['module_list'] as $moduleKey => $moduleName){
+                if (in_array($moduleName,$tabs[1])) {
+                    unset($data['module_list'][$moduleKey]);
+                }
+            }
+        }
+
         $data['fields']  = $mm->getSugarClientFiles('field');
         $data['views']   = $mm->getSugarClientFiles('view');
         $data['layouts'] = $mm->getSugarClientFiles('layout');

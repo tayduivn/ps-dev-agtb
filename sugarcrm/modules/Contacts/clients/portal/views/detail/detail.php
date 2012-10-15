@@ -64,7 +64,7 @@ $viewdefs ['Contacts']['portal']['view']['detail'] =
         'panels' =>
         array(
             array(
-                'label' => 'default',
+                'label' => 'LBL_PANEL_DEFAULT',
                 'fields' =>
                 array(
                     array(
