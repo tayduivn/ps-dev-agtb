@@ -21,9 +21,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 class ProspectListsService
 {
-
     /**
-     * Adds records to a target list
+     * Add records to a specific prospect list
      *
      * @param $module         the module associated with this Bean instance (will be used to get the class name)
      * @param $prospectListId the id of the prospect list
