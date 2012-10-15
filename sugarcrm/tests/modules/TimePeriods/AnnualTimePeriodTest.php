@@ -293,7 +293,6 @@ class AnnualTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group forecasts
      * @group timeperiods
-     * @outputBuffering disabled
      */
     public function testCreateNextFiscalTimePeriod()
     {
