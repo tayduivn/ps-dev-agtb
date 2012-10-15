@@ -21,7 +21,7 @@
 
         initialize: function(options) {
 
-            this.componentsMeta = app.metadata.getLayout("Forecasts").forecasts.meta.components;
+            this.componentsMeta = options.meta.components;
 
             options.context = _.extend(options.context, this.initializeAllModels());
 
@@ -141,17 +141,21 @@
          * @return {Object} new instance of the main model, which contains instances of the sub-models for each view
          * as defined in metadata.
          */
-        initializeAllModels: function() {
+        initializeAllModels: function(existingModel) {
             var self = this,
                 componentsMetadata = this.componentsMeta,
                 module = app.viewModule.toLowerCase(),
-                models = {};
+                models = {},
+                existingModel = existingModel || {};
 
-            // creates the context.forecasts topmost model
-            models[module] = app.data.createBean(module);
-
-            // creates the config model as a special case
-            self.namespace(models, module);
+            // creates the context.forecasts topmost model, if it's not already set on the models
+            if(_.isUndefined(existingModel[module])) {
+                models[module] = app.data.createBean(module);
+                // creates the config model as a special case
+                self.namespace(models, module);
+            } else {
+                models[module] = existingModel[module];
+            }
             // Loops through components from the metadata, and creates their models/collections, as defined
             _.each(componentsMetadata, function(component) {
                 var name,

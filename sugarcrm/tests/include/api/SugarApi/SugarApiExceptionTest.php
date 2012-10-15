@@ -22,7 +22,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/api/SugarApi/SugarApiException.php';
+require_once 'include/api/SugarApiException.php';
 
 class SugarApiExceptionTest extends Sugar_PHPUnit_Framework_TestCase
 {

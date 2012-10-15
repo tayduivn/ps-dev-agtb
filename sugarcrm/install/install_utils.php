@@ -861,11 +861,10 @@ function handleSugarConfig() {
        merge_config_si_settings(false, 'config.php', 'config_si.php');
     }
     include('ModuleInstall/ModuleInstaller.php');
-    $modInstaller = new ModuleInstaller();
     //BEGIN SUGARCRM flav=ent ONLY
-    $modInstaller->handlePortalConfig();
+    ModuleInstaller::handlePortalConfig();
     //END SUGARCRM flav=ent ONLY
-    $modInstaller->handleBaseConfig();
+    ModuleInstaller::handleBaseConfig();
     ////    END $sugar_config
     ///////////////////////////////////////////////////////////////////////////////
     return $bottle;

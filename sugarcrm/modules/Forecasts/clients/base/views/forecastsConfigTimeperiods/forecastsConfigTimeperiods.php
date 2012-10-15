@@ -34,7 +34,12 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'options' => 'forecasts_timeperiod_types_dom',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'view' => 'edit',
+                    //END SUGARCRM flav=ent ONLY
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    'view' => 'detail',
+                    //END SUGARCRM flav=pro ONLY
                 ),
                 array(
                     'name' => 'timeperiod_interval',
@@ -43,7 +48,12 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'view' => 'edit',
+                    //END SUGARCRM flav=ent ONLY
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    'view' => 'detail',
+                    //END SUGARCRM flav=pro ONLY
                 ),
                 array(
                     'name' => 'timeperiod_leaf_interval',
@@ -52,7 +62,33 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_LEAFPERIOD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    //BEGIN SUGARCRM flav=ent ONLY
+                    'view' => 'edit',
+                    //END SUGARCRM flav=ent ONLY
+                    //BEGIN SUGARCRM flav=pro ONLY
+                    'view' => 'detail',
+                    //END SUGARCRM flav=pro ONLY
+                ),
+                array(
+                    'name' => 'timeperiod_start_month',
+                    'type' => 'enum',
+                    'options' => 'forecasts_timeperiod_month_options_dom',
+                    'label' => 'LBL_FORECASTS_CONFIG_START_MONTH',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'forecastsTimeperiod'
+                ),
+                array(
+                    'name' => 'timeperiod_start_day',
+                    'type' => 'enum',
+                    /*
+                    This is an enum field, however the 'options' string is set dynamically in the view (which is why it
+                    is missing here), since the dropdown shown to the user depends on a config setting
+                    */
+                    'label' => 'LBL_FORECASTS_CONFIG_START_DAY',
+                    'default' => false,
+                    'enabled' => true,
+                    'view' => 'forecastsTimeperiod'
                 ),
                 array(
                     'name' => 'timeperiods_shown_forward',

@@ -2359,7 +2359,7 @@ private function dir_file_count($path){
     /**
      * handles portal config creation
      */
-    public function handlePortalConfig()
+    public static function handlePortalConfig()
     {
         if (!isset($sugar_config)) {
             global $sugar_config;
@@ -2376,25 +2376,30 @@ private function dir_file_count($path){
                     'layout' => 'header'
                 ),
                 'footer' => array(
-                    'target' => '#footer'
+                    'target' => '#footer',
+                    'layout' => 'footer'
                 ),
                 'alert' => array(
                     'target' => '#alert'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('signup', 'error'),
             'loadCss' => 'url',
+            'themeName' => 'default',
             'clientID' => 'support_portal',
             'maxSearchQueryResult'=>'5'
         );
         $filePath = 'portal2/config.js';
-        $this->writeJSConfig($portalConfig,$filePath);
+        self::writeJSConfig($portalConfig,$filePath);
 
     }
 //END SUGARCRM flav=ent ONLY
-    public function handleBaseConfig() {
+    public static function handleBaseConfig() {
         $filePath = 'config.js';
         if (!isset($sugar_config)) {
             global $sugar_config;
@@ -2410,20 +2415,27 @@ private function dir_file_count($path){
                     'layout' => 'header'
                 ),
                 'footer' => array(
-                    'target' => '#footer'
+                    'target' => '#footer',
+                    'layout' => 'footer'
                 ),
                 'alert' => array(
                     'target' => '#alert'
+                ),
+                'tourguide' => array(
+                    'target' => '#tourguide'
                 )
             ),
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
+            'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('login', 'error'),
+            'loadCss' => 'url',
+            'themeName' => 'default',
             'clientID' => 'sugar'
         );
-        $this->writeJSConfig($sidecarConfig,$filePath);
+        self::writeJSConfig($sidecarConfig,$filePath);
     }
 
-    public function writeJSConfig($config, $path) {
+    public static function writeJSConfig($config, $path) {
         $configString = json_encode($config);
         $JSConfig = '(function(app) {app.augment("config", ' . $configString . ', false);})(SUGAR.App);';
         sugar_file_put_contents($path, $JSConfig);

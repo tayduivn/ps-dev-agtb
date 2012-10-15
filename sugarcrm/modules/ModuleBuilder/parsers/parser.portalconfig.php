@@ -97,7 +97,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         }
 
         foreach ($portalConfig as $fieldKey => $fieldValue) {
-            $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue));
+            $GLOBALS ['system_config']->saveSetting('portal', $fieldKey, json_encode($fieldValue), 'support');
         }
 
         // Clear the Contacts file b/c portal flag affects rendering
@@ -142,6 +142,21 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
             $user->portal_only = '1';
             $user->save();
             $id = $user->id;
+            
+            // Make the oauthkey record for this portal user now if it doesn't exists
+            $clientSeed = BeanFactory::newBean('OAuthKeys');
+            $clientBean = $clientSeed->fetchKey('support_portal', 'oauth2');
+            
+            if (!$clientBean) {
+                $newKey = BeanFactory::newBean('OAuthKeys');
+                $newKey->oauth_type = 'oauth2';
+                $newKey->c_secret = '';
+                $newKey->client_type = 'support_portal';
+                $newKey->c_key = 'support_portal';
+                $newKey->name = 'OAuth Support Portal Key';
+                $newKey->description = 'This OAuth key is automatically created by the OAuth2.0 system to enable logins to the serf-service portal system in Sugar.';
+                $newKey->save();
+            }
 
             // set user id in system settings
             $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $id);

@@ -1,5 +1,5 @@
 <tr id="forecastsWorksheetTotalsIncludedTotals">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
+    <th colspan='5' class="tright">{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
 
     {{#if show_worksheet_likely}}
         <th>{{formatCurrency amount "-99"}}</th>
@@ -15,7 +15,7 @@
 </tr>
 
 <tr id="forecastsWorksheetTotalsOverallTotals">
-    <th colspan='5' style='text-align: right;'>{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
+    <th colspan='5' class="tright">{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
 
     {{#if show_worksheet_likely}}
         <th>{{formatCurrency overall_amount "-99"}}</th>
