@@ -27,8 +27,8 @@ require_once "lib/phpmailer/class.smtp.php";      // required to establish the S
 require_once "BaseMailer.php";                    // requires BaseMailer in order to extend it
 
 // external imports
-require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfigurationuration.php"; // needs to take on an
-                                                                               // OutboundSmtpEmailConfiguration
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php"; // needs to take on an
+                                                                                      // OutboundSmtpEmailConfiguration
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
