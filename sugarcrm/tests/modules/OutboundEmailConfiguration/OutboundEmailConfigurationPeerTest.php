@@ -78,6 +78,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($GLOBALS["current_user"]);
+
         parent::tearDownAfterClass();
     }
 
@@ -85,7 +86,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
      * @group mailer
      * @group mailconfig01
      */
-    function testListMailConfigurations_All_Success() {
+    public function testListMailConfigurations_All_Success() {
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
             "from_email"        => "unit_test1@sugar_unit_test.net",
@@ -154,7 +155,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
      * @group mailer
      * @group mailconfig02
      */
-    function testListMailConfigurations_SystemOnly_Success() {
+    public function testListMailConfigurations_SystemOnly_Success() {
         $config1_array = array(
             "from_name"         => "Sugar UnitTest1",
             "from_email"        => "unit_test1@sugar_unit_test.net",
@@ -205,7 +206,6 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $this->assertNotEmpty($config, "SYSTEM OutboundEmailConfiguration Not Found");
         $this->assertEquals($config->config_id, self::$systemConfig->id, "Unexpected 'SYSTEM' OutboundEmailConfiguration");
     }
-
 
     private static function createOutboundEmail($config) {
         $obj = new OutboundEmail();
@@ -262,14 +262,17 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     private static function getSystemMailConfig() {
-        $q = "SELECT id FROM outbound_email WHERE type = 'system'";
+        $q = "SELECT id FROM outbound_email WHERE type='system'";
         $r = $GLOBALS['db']->query($q);
         $a = $GLOBALS['db']->fetchByAssoc($r);
+
         if (empty($a)) {
             return null;
         }
+
         $oe = new OutboundEmail();
         $oe->retrieve($a['id']);
+
         return $oe;
     }
 }
