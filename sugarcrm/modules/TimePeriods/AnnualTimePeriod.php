@@ -60,11 +60,11 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function setStartDate($start_date = null) {
         parent::setStartDate($start_date);
-        $timedate = TimeDate::getInstance();
 
         if(empty($this->name)) {
+            $timedate = TimeDate::getInstance();
             $start_date_time = $timedate->fromDbDate($this->start_date);
-            $this->name = $this->is_fiscal ? "Fiscal " : "" . "Year ".$start_date_time->format("Y");
+            $this->name = $this->is_fiscal ? "Fiscal " : "Year ".$start_date_time->format("Y");
         }
     }
 
