@@ -102,7 +102,8 @@ $viewdefs ['Cases']['portal']['view']['edit'] =
                         array(
                             'colspan' => 2,
                         ),
-                    ), 
+                    ),
+                    'status', 
                     'type',
                     'priority',
                 ),

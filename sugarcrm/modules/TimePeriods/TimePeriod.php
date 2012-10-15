@@ -608,7 +608,6 @@ class TimePeriod extends SugarBean {
     public static function rebuildForecastingTimePeriods() {
        //kill the old timeperiods first
        self::deleteCurrentTimePeriods();
-       $db = DBManagerFactory::getInstance();
 
        $timedate = TimeDate::getInstance();
        $adminBean = BeanFactory::getBean("Administration");
@@ -667,8 +666,8 @@ class TimePeriod extends SugarBean {
      * @return void
      */
     protected static function deleteCurrentTimePeriods() {
-            $db = DBManagerFactory::getInstance();
-            $db->query('UPDATE timeperiods set deleted = 1 WHERE deleted=0');
+        $db = DBManagerFactory::getInstance();
+        $db->query('UPDATE timeperiods set deleted = 1 WHERE deleted=0');
     }
 
     /**
