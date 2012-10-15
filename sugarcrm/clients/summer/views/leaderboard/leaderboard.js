@@ -42,7 +42,7 @@
                 return chart;
             });
 
-            app.view.View.prototype._render.call(this);
+            app.view.View.prototype._render.call(self);
         }});
     }
 })

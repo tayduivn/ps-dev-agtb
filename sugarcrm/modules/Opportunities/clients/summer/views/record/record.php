@@ -29,12 +29,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 $viewdefs['Opportunities']['summer']['view']['record'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '1',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-        ),
-    ),
     'buttons' =>
     array(
         array(
@@ -56,7 +50,7 @@ $viewdefs['Opportunities']['summer']['view']['record'] = array(
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
-                array('name' => 'name', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
+                array('name' => 'name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
             ),
         ),
         array(
