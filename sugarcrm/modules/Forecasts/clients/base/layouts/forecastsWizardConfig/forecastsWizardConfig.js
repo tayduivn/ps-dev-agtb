@@ -25,6 +25,9 @@
 
     app.view.layouts.ForecastsWizardConfigLayout = app.view.Layout.extend({
 
+        /**
+         * Saved Labels to use for the Breadcrumbs
+         */
         breadCrumbLabels: [],
 
         initialize: function (options) {
@@ -54,11 +57,21 @@
             app.view.Layout.prototype.initialize.call(this, options);
         },
 
+        /**
+         * Register a new breadcrumb label
+         *
+         * @param {string} label
+         */
         registerBreadCrumbLabel : function(label) {
             this.breadCrumbLabels.push(label);
             this.breadCrumbLabels = _.uniq(this.breadCrumbLabels);
         },
 
+        /**
+         * Get the current registered breadcrumb labels
+         *
+         * @return {*}
+         */
         getBreadCrumbLabels : function(){
             return this.breadCrumbLabels;
         }
