@@ -3796,6 +3796,16 @@ SUGAR.searchForm = function() {
                     }
                 }
             }
+            if (typeof collection != 'undefined')
+            {
+                for (var element in collection) 
+                {
+                    if (element.indexOf(form.id) == 0)
+                    {
+                        collection[element].clean_up();
+                    }
+                }
+            }
 			SUGAR.savedViews.clearColumns = true;
 		}
 	};
