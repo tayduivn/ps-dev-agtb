@@ -659,6 +659,24 @@ class TimePeriod extends SugarBean {
            $forwardTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
         }
 
+        //clear job scheduler
+        $job_id = $db->getOne("SELECT id FROM job_queue WHERE name = ".$db->quoted('TimePeriodAutomationJob'));
+
+        $jobQueue = new SugarJobQueue();
+        if($job_id) {
+            $jobQueue->deleteJob($job_id);
+        }
+
+        //schedule job to run on the end_date of the last time period
+        global $current_user;
+        $job = BeanFactory::getBean('SchedulersJobs');
+        $job->name = "TimePeriodAutomationJob";
+        $job->target = "class::SugarJobCreateNextTimePeriod";
+        $job->execute_time = $timedate->fromDbDate($forwardTimePeriod->end_date);
+        $job->retry_count = 0;
+        $job->assigned_user_id = $current_user->id;
+        $jobQueue->submitJob($job);
+
     }
 
     /**
