@@ -3500,6 +3500,8 @@ $app_strings = array (
     'ERR_MOBILE_CONNECTION_FAILED' => 'Can\'t reach the server',
     'ERR_MOBILE_INTERNAL' => 'Internal error ({{code}}). Please try again later.',
     'ERR_MOBILE_VALIDATION' => 'Record is invalid',
+    'ERR_MOBILE_EMAIL' => 'Error. Invalid Email Address.',
+
     //END SUGARCRM flav=pro ONLY
 
     //for portal
