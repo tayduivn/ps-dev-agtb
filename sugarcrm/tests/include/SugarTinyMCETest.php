@@ -104,7 +104,6 @@ class SugarTinyMCETest extends Sugar_PHPUnit_Framework_TestCase{
 	}
 
     public function testCheckValidCustomButtonOverrdide(){
-        echo var_export(self::$MCE, true);
 		$this->assertContains("testcase", self::$MCE, "TinyMCE custom button not found.");
 	}
 	
