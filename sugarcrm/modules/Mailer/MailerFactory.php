@@ -28,11 +28,11 @@ require_once "EmailIdentity.php";                        // requires EmailIdenti
 require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
 
 // external imports
-require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php"; // required if producing an SMTP
-                                                                                      // Mailer; also imports
-                                                                                      // OutboundEmailConfiguration
 require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // needs the constants that
-                                                                                      // represent the modes
+                                                                                      // represent the modes; also
+                                                                                      // imports
+                                                                                      // OutboundSmtpEmailConfiguration
+                                                                                      // and OutboundEmailConfiguration
 
 /**
  * Factory to create Mailers.
