@@ -31,7 +31,7 @@ require_once('modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.
 /**
  *
  */
-class MailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
+class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public static $current_user;
     public static $system_config_exists=true;
