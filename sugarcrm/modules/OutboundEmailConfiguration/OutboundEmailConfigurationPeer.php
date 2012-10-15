@@ -70,7 +70,7 @@ class OutboundEmailConfigurationPeer
         $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
 
         foreach($mailConfigurations AS $mailConfiguration) {
-            if ($mailConfiguration->config_type == 'system') {
+            if ($mailConfiguration->getConfigType() == 'system') {
                 return $mailConfiguration;
             }
         }

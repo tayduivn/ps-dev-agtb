@@ -134,7 +134,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
 
         if (is_array($configs)) {
             foreach ($configs AS $config) {
-                $mail_configs_actual[$config->config_id] = $config->config_name;
+                $mail_configs_actual[$config->getConfigId()] = $config->getConfigName();
             }
         }
 
