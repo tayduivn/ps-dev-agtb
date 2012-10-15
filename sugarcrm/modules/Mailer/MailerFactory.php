@@ -169,6 +169,7 @@ class MailerFactory
     /**
      * Returns the system outbound email configuration associated with the specified user.
      *
+     * @access protected
      * @param User $user required The user from which the mail configuration is retrieved.
      * @return OutboundEmailConfiguration An OutboundEmailConfiguration object or one that derives from it.
      * @throws MailerException Allows MailerExceptions to bubble up.
