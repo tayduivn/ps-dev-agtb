@@ -36,7 +36,6 @@ require_once "include/Localization/Localization.php"; // required for using the 
  */
 class OutboundEmailConfiguration
 {
-    public $mode;
     public $user_id;
     public $config_id;
     public $config_name;
@@ -50,6 +49,7 @@ class OutboundEmailConfiguration
     public $personal;
 
     // protected members
+    protected $mode;
     protected $hostname; // the hostname to use in Message-ID and Received headers and as default HELO string
                          // not the server hostname
     protected $locale;   // the Localization object necessary for performing character set translations
@@ -209,5 +209,23 @@ class OutboundEmailConfiguration
      */
     public function getWordwrap() {
         return $this->wordwrap;
+    }
+
+    public function setMode($mode) {
+        if (empty($mode)) {
+            $mode = OutboundEmailConfigurationPeer::MODE_SMTP;
+        }
+
+        $mode = strtolower($mode); // make sure it's lower case
+
+        if (!OutboundEmailConfigurationPeer::isValidMode($mode)) {
+            throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);
+        }
+
+        $this->mode = $mode;
+    }
+
+    public function getMode() {
+        return $this->mode;
     }
 }

@@ -104,4 +104,39 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
         self::setExpectedException("MailerException");
         $mailerConfig->setSecurityProtocol($securityProtocol);
     }
+
+    /**
+     * @group mailer
+     */
+    public function testSetMode_ValidModeSmtpIsInAllCaps_ModeBecomesLowerCaseSmtp() {
+        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+
+        $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
+        $outboundSmtpEmailConfiguration->setMode(strtoupper($expected));
+        $actual = $outboundSmtpEmailConfiguration->getMode();
+        static::assertEquals($expected, $actual, "The mode should have been a {$expected}");
+    }
+
+    /**
+     * @group mailer
+     */
+    public function testSetMode_ModeIsInvalid_ThrowsException() {
+        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $invalidMode                    = "asdf"; // some asinine value that wouldn't actually be used
+
+        static::setExpectedException("MailerException");
+        $outboundSmtpEmailConfiguration->setMode($invalidMode); // hopefully nothing is actually returned
+    }
+
+    /**
+     * @group mailer
+     */
+    public function testSetMode_NoMode_ModeBecomesSmtp() {
+        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $outboundSmtpEmailConfiguration->setMode("");
+
+        $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
+        $actual   = $outboundSmtpEmailConfiguration->getMode();
+        static::assertEquals($expected, $actual, "The mode should have been a {$expected}");
+    }
 }

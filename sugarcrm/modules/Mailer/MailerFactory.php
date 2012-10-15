@@ -84,20 +84,9 @@ class MailerFactory
      * @param OutboundEmailConfiguration $config required The configuration that provides context to the chosen sending
      *                                                    strategy.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
-     * @throws MailerException
+     * @throws MailerException Allows MailerExceptions to bubble up.
      */
     public static function getMailer(OutboundEmailConfiguration $config) {
-        // copy the config value because you don't want to modify the object by reassigning a public variable
-        // in the case of mode being null
-        $mode = is_null($config->mode) ? OutboundEmailConfigurationPeer::MODE_SMTP : $config->mode;
-        $mode = strtolower($mode); // make sure it's lower case
-
-        if (!OutboundEmailConfigurationPeer::isValidMode($mode)) {
-            throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);
-        }
-
-        // the rest of the method calls can bubble up a MailerException
-
         $sender  = new EmailIdentity($config->sender_email, $config->sender_name);
         $replyTo = null;
 
@@ -107,7 +96,7 @@ class MailerFactory
         }
 
         $headers = static::buildHeadersForMailer($sender, $replyTo);
-        $mailer  = static::buildMailer($mode, $config);
+        $mailer  = static::buildMailer($config);
         $mailer->setHeaders($headers);
 
         return $mailer;
@@ -118,16 +107,24 @@ class MailerFactory
      *
      * @static
      * @access private
-     * @param string                     $mode   required The mode that represents the sending strategy.
      * @param OutboundEmailConfiguration $config required Must be an OutboundEmailConfiguration or a type that derives
      *                                                    from it.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      * @throws MailerException
      */
-    private static function buildMailer($mode, OutboundEmailConfiguration $config) {
-        $path   = static::$modeToMailerMap[$mode]["path"];
-        $class  = static::$modeToMailerMap[$mode]["class"];
-        $file   = "{$path}/{$class}.php";
+    private static function buildMailer(OutboundEmailConfiguration $config) {
+        $mode  = $config->getMode();
+
+        if (!array_key_exists($mode, static::$modeToMailerMap)) {
+            throw new MailerException(
+                "Invalid Mailer: Could not find mode '{$mode}'",
+                MailerException::InvalidMailer
+            );
+        }
+
+        $path  = static::$modeToMailerMap[$mode]["path"];
+        $class = static::$modeToMailerMap[$mode]["class"];
+        $file  = "{$path}/{$class}.php";
         @include_once $file; // suppress errors
 
         if (!class_exists($class)) {

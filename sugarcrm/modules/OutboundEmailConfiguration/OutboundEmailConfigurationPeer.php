@@ -234,7 +234,7 @@ class OutboundEmailConfigurationPeer
 
         $outboundEmailConfiguration->config_id     = $configurations["config_id"];
         $outboundEmailConfiguration->config_type   = $configurations["config_type"];
-        $outboundEmailConfiguration->mode          = $mode;
+        $outboundEmailConfiguration->setMode($mode);
         $outboundEmailConfiguration->config_name   = $outboundEmail["name"];
         $outboundEmailConfiguration->inbox_id      = $configurations["inbox_id"];
         $outboundEmailConfiguration->sender_email  = $configurations["sender_email"];
