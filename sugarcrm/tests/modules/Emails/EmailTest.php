@@ -123,6 +123,49 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group emailsend
+     */
+    public function testEmailSend_Success()
+    {
+        $this->markTestSkipped("In Progress ......");
+
+        $mailConfig = MailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
+        $mockMailer = new MockMailer($mailConfig->mailerConfigData);
+
+        $MockMailerFactoryClass = $this->getMockClass('MailerFactory', array('getMailer'));
+        $MockMailerFactoryClass::staticExpects($this->once())
+            ->method('getMailer')
+            ->with($mailConfig)
+            ->will($this->returnValue($mockMailer));
+
+        Email::_setMailFactoryClassName($MockMailerFactoryClass);
+
+        $em = new Email();
+        $em->email2init();
+
+        $em->from_name = "Woody Woodpecker";
+        $em->from_addr = "woody@woodpecker.com";
+
+        $em->reply_to_name = "Captain Kangaroo";
+        $em->reply_to_addr = "captainkangaroo@yahoo.com";
+
+        $em->name = "This is the Subject";
+        $em->description_html = "This is the HTML Description";
+        $em->description      = "This is the Description";
+
+        try {
+            $em->send();
+        } catch (Exception $e) {
+            var_dump($e->getNMessage());
+        }
+
+        var_dump($mockMailer);
+        printf("\n--------------------------------------------------\n\n");
+        $mockMailer->dump();
+
+    }
+
+    /**
      * @group bug51804
      * @dataProvider configParamProvider
      * @param string $config_param
@@ -135,6 +178,24 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
             $this->assertEquals($expected,$this->email->_arrayToDelimitedString($address_array), 'Array should be delimited with correct delimiter');
 
+    }
+}
+
+require_once "modules/Mailer/SmtpMailer.php";             // requires BaseMailer in order to extend it
+
+class MockMailer extends SmtpMailer
+{
+    function __construct(MailerConfiguration $mailerConfig) {
+        $from    = new EmailIdentity("tony@tiger.com", "Tony Tiger");
+        $headers = new EmailHeaders();
+        $headers->setHeader(EmailHeaders::From, $from);
+        $this->setHeaders($headers);
+    }
+
+    public function send() {
+    }
+
+    public function dump() {
     }
 }
 ?>

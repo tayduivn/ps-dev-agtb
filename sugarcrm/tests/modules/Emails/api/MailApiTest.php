@@ -512,7 +512,7 @@ class MailApiTest extends RestTestBase {
 
         $this->assertEquals(412, $post_response['info']['http_code'], "Expected Request Failure Http Status Code");
         $this->assertEquals("request_failure", $post_response['reply']['error'], "Expected Request Failure Response");
-        $this->assertEquals("Invalid Status Property", $post_response['reply']['error_description'], "Expected Request Failure Response");
+        $this->assertEquals("Invalid Status Property", $post_response['reply']['error_message'], "Expected Request Failure Response");
     }
 
 
