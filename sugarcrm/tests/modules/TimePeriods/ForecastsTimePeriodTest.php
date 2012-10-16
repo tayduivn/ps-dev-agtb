@@ -65,7 +65,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             }
             $timeperiod = $timeperiod->getNextTimePeriod();
         } while(!is_null($timeperiod));
-        error_log(print_r(SugarTestTimePeriodUtilities::getCreatedTimePeriodIds(), 1));
     }
 
     public function setUp()
