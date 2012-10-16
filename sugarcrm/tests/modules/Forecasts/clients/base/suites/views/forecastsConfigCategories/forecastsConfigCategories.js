@@ -56,6 +56,9 @@ describe("The forecastsConfigCategories view", function(){
 
         beforeEach(function() {
             testStub = sinon.stub(app.view.View.prototype, "initialize");
+            view.layout = {
+                registerBreadCrumbLabel : function(){}
+            };
             view.meta = {
                 panels : [
                     {
@@ -85,7 +88,7 @@ describe("The forecastsConfigCategories view", function(){
                         ]
                     }
                 ]
-            },
+            };
             view.model = {
                 get: function(key) {return ''}
             };
@@ -97,14 +100,18 @@ describe("The forecastsConfigCategories view", function(){
 
 
         it("for label should get initialized to the label string in metadata", function() {
-            var options = {};
+            var options = {
+                meta : []
+            };
             view.initialize(options);
             expect(testStub).toHaveBeenCalled();
             expect(view.label).toEqual(_.first(view.meta.panels).label);
         });
 
         it("for fields should get initialized to the field metadata they correspond to", function() {
-            var options = {},
+            var options = {
+                     meta : []
+                },
                 fieldMeta = _.first(view.meta.panels).fields;
             view.initialize(options);
             expect(testStub).toHaveBeenCalled();
@@ -134,13 +141,13 @@ describe("The forecastsConfigCategories view", function(){
 
             describe("forecast_categories_field", function() {
                 it("should be defined", function() {
-                    view.initialize({});
+                    view.initialize({ meta : []});
                     expect(testStub).toHaveBeenCalled();
                     expect(view.forecast_categories_field.value).toBeDefined();
                 });
 
                 it("should be set to what is in the model during initialize", function() {
-                    view.initialize({});
+                    view.initialize({ meta : [] });
                     expect(testStub).toHaveBeenCalled();
                     expect(view.forecast_categories_field.value).toEqual('test_category');
                 });
@@ -148,13 +155,13 @@ describe("The forecastsConfigCategories view", function(){
 
             describe("bucket_dom_field", function() {
                 it("should be defined", function() {
-                    view.initialize({});
+                    view.initialize({ meta : []});
                     expect(testStub).toHaveBeenCalled();
                     expect(view.buckets_dom_field.value).toBeDefined();
                 });
 
                 it("should be set to what is in the model during initialize", function() {
-                    view.initialize({});
+                    view.initialize({ meta : [] });
                     expect(testStub).toHaveBeenCalled();
                     expect(view.buckets_dom_field.value).toEqual('test_category_dom');
                 });
