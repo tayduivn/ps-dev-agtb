@@ -51,4 +51,42 @@ describe("Forecasts Commit Buttons Component", function(){
             });
         });
     });
+
+    describe("test showConfigButton", function() {
+        var testStub, metaStub;
+
+        beforeEach(function() {
+            testStub = sinon.stub(app.view.View.prototype, "initialize");
+        });
+        afterEach(function() {
+            testStub.restore();
+            metaStub.restore();
+        });
+
+        it("variable should be true an admin", function() {
+            metaStub = sinon.stub(app.metadata, 'getAcls', function() {
+                return {
+                    'Forecasts': {
+                        admin: 'yes'
+                    }
+                }
+            });
+            var options = {};
+            view.initialize(options);
+            expect(view.showConfigButton).toBeTruthy();
+        });
+
+        it("variable should be false for a non-admin", function(){
+            metaStub = sinon.stub(app.metadata, 'getAcls', function() {
+                return {
+                    'Forecasts': {
+                        admin: 'no'
+                    }
+                }
+            });
+            var options = {};
+            view.initialize(options);
+            expect(view.showConfigButton).toBeFalsy();
+        });
+    });
 });
