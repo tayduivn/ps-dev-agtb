@@ -37,16 +37,17 @@ require_once "include/Localization/Localization.php"; // required for using the 
 class OutboundEmailConfiguration
 {
     // protected members
-    protected $userId;
-    protected $configId;
-    protected $configName;
-    protected $configType;
-    protected $inboxId;
-    protected $mode;
-    protected $personal;
-    protected $displayName;
-    protected $sender;
-    protected $replyTo;
+    protected $userId;      // the ID of the user who "owns" this configuration
+    protected $configId;    // the ID of the OutboundEmail record
+    protected $configName;  // the name of the configuration
+    protected $configType;  // the type of the configuration ("user" or "system")
+    protected $inboxId;     // the ID of the InboundEmail record associated with the configuration (null for "system")
+    protected $mode;        // the sending strategy
+    protected $personal;    // true=a user's personal configuration; false=shared configuration
+    protected $displayName; // the name that user's use to identify the configuration
+    protected $sender;      // the EmailIdentity representing the sender of an email (used for the From email header)
+    protected $replyTo;     // the EmailIdentity representing where replies should be sent (used for the Reply-To email
+                            // header)
     protected $hostname;    // the hostname to use in Message-ID and Received headers and as default HELO string
                             // not the server hostname
     protected $locale;      // the Localization object necessary for performing character set translations
@@ -207,47 +208,91 @@ class OutboundEmailConfiguration
         return $this->wordwrap;
     }
 
+    /**
+     * @access public
+     * @param string $id required
+     */
     public function setUserId($id) {
         $this->userId = $id;
     }
 
+    /**
+     * @access public
+     * @return string
+     */
     public function getUserId() {
         return $this->userId;
     }
 
+    /**
+     * @access public
+     * @param string $id required
+     */
     public function setConfigId($id) {
         $this->configId = $id;
     }
 
+    /**
+     * @access public
+     * @return string
+     */
     public function getConfigId() {
         return $this->configId;
     }
 
+    /**
+     * @access public
+     * @param string $name required
+     */
     public function setConfigName($name) {
         $this->configName = $name;
     }
 
+    /**
+     * @access public
+     * @return string
+     */
     public function getConfigName() {
         return $this->configName;
     }
 
+    /**
+     * @access public
+     * @param string $type required
+     */
     public function setConfigType($type) {
         $this->configType = $type;
     }
 
+    /**
+     * @access public
+     * @return string
+     */
     public function getConfigType() {
         return $this->configType;
     }
 
+    /**
+     * @access public
+     * @param string $id required
+     */
     public function setInboxId($id) {
         $this->inboxId = $id;
     }
 
+    /**
+     * @access public
+     * @return string
+     */
     public function getInboxId() {
         return $this->inboxId;
     }
 
-    public function setMode($mode) {
+    /**
+     * @param null|string $mode
+     * @throws MailerException
+     */
+    public function setMode($mode = null) {
         if (empty($mode)) {
             $mode = OutboundEmailConfigurationPeer::MODE_SMTP;
         }
@@ -261,38 +306,78 @@ class OutboundEmailConfiguration
         $this->mode = $mode;
     }
 
+    /**
+     * @access public
+     * @return string
+     */
     public function getMode() {
         return $this->mode;
     }
 
+    /**
+     * @access public
+     * @param bool $personal
+     */
     public function setPersonal($personal = false) {
         $this->personal = $personal;
     }
 
+    /**
+     * @access public
+     * @return bool
+     */
     public function getPersonal() {
         return $this->personal;
     }
 
+    /**
+     * @access public
+     * @param string $name required
+     */
     public function setDisplayName($name) {
         $this->displayName = $name;
     }
 
+    /**
+     * @access public
+     * @return string
+     */
     public function getDisplayName() {
         return $this->displayName;
     }
 
+    /**
+     * @access public
+     * @param string      $email required
+     * @param null|string $name
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
     public function setSender($email, $name = null) {
         $this->sender = new EmailIdentity($email, $name);
     }
 
+    /**
+     * @access public
+     * @return EmailIdentity
+     */
     public function getSender() {
         return $this->sender;
     }
 
+    /**
+     * @access public
+     * @param string      $email required
+     * @param null|string $name
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
     public function setReplyTo($email, $name = null) {
         $this->replyTo = new EmailIdentity($email, $name);
     }
 
+    /**
+     * @access public
+     * @return EmailIdentity
+     */
     public function getReplyTo() {
         return $this->replyTo;
     }
