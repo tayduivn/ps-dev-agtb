@@ -53,9 +53,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //add all of the newly created timePeriods to the test utils
         $db = DBManagerFactory::getInstance();
-        $results = $db->limitQuery('select time_period_type, id from timeperiods where is_leaf = 0 and deleted = 0 order by start_date_timestamp asc', 0,1);
-        $row = $db->fetchByAssoc($results);
-        $timeperiod = BeanFactory::getBean($row['time_period_type']."TimePeriods",$row['id']);
+        $id = $db->getOne('select id from timeperiods where is_leaf = 0 and deleted = 0 order by start_date_timestamp asc');
+        $timeperiod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(),$id);
 
         do{
             SugarTestTimePeriodUtilities::addTimePeriod($timeperiod);
@@ -390,9 +389,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         //add new timeperiods to the test util list so they can be deleted humanely in tear down
         //get the current last time period
         $query = "select id, time_period_type from timeperiods where is_leaf = 0 and deleted = 0 order by end_date_timestamp desc";
-        $result = $db->limitQuery($query, 0, 1);
-        $row = $db->fetchByAssoc($result);
-        $lastTimePeriod = BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']);
+        $id = $db->getOne($query);
+        $lastTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(), $id);
 
         SugarTestTimePeriodUtilities::addTimePeriod($lastTimePeriod);
         $leaves = $lastTimePeriod->getLeaves();
@@ -413,9 +411,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         //get the current last time period
         $query = "select id, time_period_type from timeperiods where is_leaf = 0 and deleted = 0 order by end_date_timestamp desc";
-        $result = $db->limitQuery($query, 0, 1);
-        $row = $db->fetchByAssoc($result);
-        $lastTimePeriod = BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']);
+        $id = $db->getOne($query);
+        $lastTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(), $id);
         $lastStartDate = $timedate->fromDbDate($lastTimePeriod->start_date);
         $lastEndDate = $timedate->fromDbDate($lastTimePeriod->end_date);
         $lastStartDate = $lastStartDate->modify("+1 year");
