@@ -611,8 +611,9 @@
     previewRecord: function(event) {
         var self = this,
             el = this.$(event.currentTarget).closest("a"),
-            module = el.attr("data-module"),
-            id = el.attr("data-id");
+            data = el.data(),
+            module = data.module,
+            id = data.id;
 
         // If module/id data attributes don't exist, this user
         // doesn't have access to that record due to team security.

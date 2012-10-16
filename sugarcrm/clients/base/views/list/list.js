@@ -154,8 +154,9 @@
     previewRecord: function(e) {
         var self = this,
             el = this.$(e.target).closest("a"),
-            module = el.attr("data-module"),
-            id = el.attr("data-id"),
+            data = el.data(),
+            module = data.module,
+            id = data.id,
             model = app.data.createBean(module);
 
         model.set("id", id);
