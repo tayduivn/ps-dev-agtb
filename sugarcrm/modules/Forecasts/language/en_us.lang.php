@@ -299,6 +299,7 @@ $mod_strings = array (
     // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',
     'LBL_EXPORT_PDF' => 'Export PDF',
+    'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
 
     'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',

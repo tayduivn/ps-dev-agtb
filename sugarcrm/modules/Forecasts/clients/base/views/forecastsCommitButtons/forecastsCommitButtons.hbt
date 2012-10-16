@@ -9,14 +9,14 @@
     </div>
     {{/if}}
     <div class="btn-group pull-left">
-        <a href="#" data-toggle="dropdown"
-           class="dropdown-toggle btn btn-success">{{str "LBL_ACTIONS" "Forecasts"}} <i class="icon caret"></i>
+        <a class="btn">{{str "LBL_EXPORT_CSV" "Forecasts"}}</a>
+        {{#if showConfigButton}}
+        <a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
+            <i class="caret"></i>
         </a>
         <ul class="dropdown-menu">
-            <li><a href="#">{{str "LBL_EXPORT_PDF" "Forecasts"}}</a></li>
-            {{#if showConfigButton}}
-            <li><a href="#" name="forecastSettings"><i class="icon-cog"></i> Admin Settings</a></li>
-            {{/if}}
+            <li><a href="#" name="forecastSettings">Settings</a></li>
         </ul>
+        {{/if}}
     </div>
 </div>
