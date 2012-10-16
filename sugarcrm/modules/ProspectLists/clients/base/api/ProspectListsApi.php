@@ -38,7 +38,7 @@ class ProspectListsApi extends ModuleApi {
     }
 
     /**
-     * Create the lead record and optionally perform post-save actions for Convert Target & Lead from Email cases
+     * Adds records to a prospect list
      */
     public function addRecordsToProspectList($api, $args) {
 
