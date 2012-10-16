@@ -27,7 +27,7 @@
  ********************************************************************************/
 
 require_once 'include/api/RestService.php';
-require_once 'include/api/vCardApi.php';
+require_once 'clients/base/api/vCardApi.php';
 
 
 /*

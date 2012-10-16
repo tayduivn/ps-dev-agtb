@@ -31,12 +31,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Contacts']['summer']['view']['record'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-        ),
-    ),
     'buttons' => array(
         array(
             'name' => 'edit_button',
@@ -58,8 +52,8 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
-                array('name' => 'first_name', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_FIRST_NAME'),
-                array('name' => 'last_name', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_LAST_NAME'),
+                array('name' => 'first_name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_FIRST_NAME'),
+                array('name' => 'last_name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_LAST_NAME'),
             )
         ),
         array(
@@ -86,16 +80,16 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
                 'assigned_user_name',
             ),
         ),
-        array(
-            'label' => 'panel_hidden',
-            'fields' => array(
-                'twitter',
-            ),
-            'columns' => 2,
-            'labels' => true,
-            'labelsOnTop' => true,
-            'placeholders' => true,
-            'hide' => true
-        )
+//        array(
+//            'label' => 'panel_hidden',
+//            'fields' => array(
+//                'twitter',
+//            ),
+//            'columns' => 2,
+//            'labels' => true,
+//            'labelsOnTop' => true,
+//            'placeholders' => true,
+//            'hide' => true
+//        )
     )
 );

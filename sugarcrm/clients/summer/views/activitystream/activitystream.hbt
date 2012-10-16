@@ -44,29 +44,27 @@
             {{#each attributes.activity_data}}
               <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
             {{/each}}
-              {{#if attributes.target_name}}
-              on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
-              {{/if}}
+            on
           {{/eq}}
           {{#eq attributes.activity_type "posted"}}
               "{{{attributes.activity_data.value}}}"
               {{#if attributes.target_name}}
-                  {{#if attributes.target_id}}
-                  on <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
-                  {{else}}
-                  on <a href="#{{attributes.target_module}}">{{attributes.target_name}}</a>
-                  {{/if}}
+                on
               {{/if}}
-          {{/eq}}
-          {{#eq attributes.activity_type "created"}}
-              <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
           {{/eq}}
           {{#eq attributes.activity_type "related"}}
-              <a href="#{{attributes.activity_data.relate_to}}/{{attributes.activity_data.relate_id}}">{{attributes.activity_data.relate_name}}</a>
-              {{#if attributes.target_name}}
-              to <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
-              {{/if}}
+              <a href="#{{attributes.activity_data.relate_to}}/{{attributes.activity_data.relate_id}}">{{attributes.activity_data.relate_name}}</a> to
           {{/eq}}
+          {{#if attributes.target_module}}
+            {{#if attributes.target_id}}
+              <a href="#{{attributes.target_module}}/{{attributes.target_id}}">{{attributes.target_name}}</a>
+            {{else}}
+              <a href="#{{attributes.target_module}}">{{attributes.target_name}}</a>
+            {{/if}}
+          {{else}}
+            a record
+          {{/if}}
+
           <br>
           {{#if attributes.notes}}
           <strong>Attachments:</strong><br />
