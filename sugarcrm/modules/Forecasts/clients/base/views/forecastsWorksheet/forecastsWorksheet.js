@@ -478,7 +478,7 @@
         _.each(self._collection.models, function (model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage'))
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
-                amount = parseFloat(model.get('amount')),
+                amount = parseFloat(model.get('likely_case')),
                 commit_stage = model.get('commit_stage'),
                 best = parseFloat(model.get('best_case')),
                 base_rate = parseFloat(model.get('base_rate')),
