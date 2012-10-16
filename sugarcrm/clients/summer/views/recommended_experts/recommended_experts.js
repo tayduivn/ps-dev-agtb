@@ -7,7 +7,6 @@
         app.view.View.prototype.initialize.call(this, opts);
         this.getJobTitles();
         this.collection = app.data.createBeanCollection("Users");
-        this.model = {};
     },
     _render: function() {
         app.view.View.prototype._render.call(this);
@@ -53,9 +52,9 @@
                             field: "picture"
                         }) : "../clients/summer/views/imagesearch/anonymous.jpg";
 
-                        self.model = app.data.createBean("User");
-                        self.model.attributes = data[value];
-                        self.collection.add(self.model);
+                        var model = app.data.createBean("User");
+                        model.attributes = data[value];
+                        self.collection.add(model);
                     });
                 }
                 self.render();
