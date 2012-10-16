@@ -237,8 +237,7 @@ class OutboundEmailConfigurationPeer
         $outboundEmailConfiguration->setMode($mode);
         $outboundEmailConfiguration->setConfigName($outboundEmail["name"]);
         $outboundEmailConfiguration->setInboxId($configurations["inbox_id"]);
-        $outboundEmailConfiguration->setSenderEmail($configurations["sender_email"]);
-        $outboundEmailConfiguration->setSenderName($configurations["sender_name"]);
+        $outboundEmailConfiguration->setSender($configurations["sender_email"], $configurations["sender_name"]);
         $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
         $outboundEmailConfiguration->setPersonal($configurations["personal"]);
         $outboundEmailConfiguration->setReplyToEmail($configurations["replyto_email"]);

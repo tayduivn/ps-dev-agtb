@@ -44,17 +44,16 @@ class OutboundEmailConfiguration
     protected $inboxId;
     protected $mode;
     protected $personal;
-    protected $senderEmail;
-    protected $senderName;
+    protected $sender;
     protected $displayName;
     protected $replyToEmail;
     protected $replyToName;
-    protected $hostname; // the hostname to use in Message-ID and Received headers and as default HELO string
-                         // not the server hostname
-    protected $locale;   // the Localization object necessary for performing character set translations
-    protected $charset;  // the character set of the message
-    protected $encoding; // the encoding of the message, which must be one of the valid encodings from Encoding
-    protected $wordwrap; // number of characters per line before the message body wrap
+    protected $hostname;     // the hostname to use in Message-ID and Received headers and as default HELO string
+                             // not the server hostname
+    protected $locale;       // the Localization object necessary for performing character set translations
+    protected $charset;      // the character set of the message
+    protected $encoding;     // the encoding of the message, which must be one of the valid encodings from Encoding
+    protected $wordwrap;     // number of characters per line before the message body wrap
 
     /**
      * @access public
@@ -275,20 +274,12 @@ class OutboundEmailConfiguration
         return $this->personal;
     }
 
-    public function setSenderEmail($email) {
-        $this->senderEmail = $email;
+    public function setSender($email, $name = null) {
+        $this->sender = new EmailIdentity($email, $name);
     }
 
-    public function getSenderEmail() {
-        return $this->senderEmail;
-    }
-
-    public function setSenderName($name) {
-        $this->senderName = $name;
-    }
-
-    public function getSenderName() {
-        return $this->senderName;
+    public function getSender() {
+        return $this->sender;
     }
 
     public function setDisplayName($name) {
