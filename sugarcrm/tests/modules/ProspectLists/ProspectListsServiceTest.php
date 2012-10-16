@@ -49,8 +49,8 @@ class ProspectListsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group prospectlistsservice
      */
-    public function testAddRecordsToProspectList_AllRecordsAdded_ReturnTrue(){
-
+    public function testAddRecordsToProspectList_AllRecordsAdded_ReturnTrue()
+    {
         $prospectList = SugarTestProspectListsUtilities::createProspectLists();
         $contact1 = SugarTestContactUtilities::createContact();
         $contact2 = SugarTestContactUtilities::createContact();
@@ -74,8 +74,8 @@ class ProspectListsServiceTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * @group prospectlistsservice
      */
-    public function testAddToList_RecordNotFound_ReturnsFalse(){
-
+    public function testAddToList_RecordNotFound_ReturnsFalse()
+    {
         $prospectList = SugarTestProspectListsUtilities::createProspectLists();
         $contactId = '111-9999';
 
@@ -89,19 +89,5 @@ class ProspectListsServiceTest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(1, count($results), "Three records should have been returned");
         $this->assertEquals(false, $results[$contactId]);
-
-    }
-
-    /**
-     * @group prospectlistsservice
-     */
-    public function testAddToList_ProspectListNotFound_ReturnsFalse(){
-
-        $prospectListId = 'prospect1234';
-
-        $prospectListService = new ProspectListsService();
-        $results = $prospectListService->addRecordsToProspectList("Contacts", $prospectListId, array());
-
-        $this->assertEquals(false, $results);
     }
 }

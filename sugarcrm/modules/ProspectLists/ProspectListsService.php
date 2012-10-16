@@ -24,20 +24,20 @@ class ProspectListsService
     /**
      * Add records to a specific prospect list
      *
-     * @param $module         the module associated with this Bean instance (will be used to get the class name)
+     * @param $moduleName         the module name for the records that will be associated to the prospect list
      * @param $prospectListId the id of the prospect list
-     * @param $recordIds      Array of ids of the records to be added to the prospect list
-     * @return $results       Array Associative array of record ids and status of add to list.
+     * @param $recordIds      Array of record ids to be added to the prospect list
+     * @return $results       Associative array containing status for each record.
      */
-    public function addRecordsToProspectList($module, $prospectListId, $recordIds)
+    public function addRecordsToProspectList($moduleName, $prospectListId, $recordIds)
     {
-       $prospectList = BeanFactory::getBean("ProspectLists", $prospectListId);
+        $prospectList = BeanFactory::getBean("ProspectLists", $prospectListId);
 
         if($prospectList === false) {
             return false;
         }
 
-        $bean = BeanFactory::newBean($module);
+        $bean = BeanFactory::newBean($moduleName);
         $results = array();
         $relationship = '';
 
@@ -55,12 +55,11 @@ class ProspectListsService
                 $retrieveResult = $bean->retrieve($id);
                 if ($retrieveResult === null) {
                     $results[$id] = false;
-                    continue;
+                } else {
+                    $bean->load_relationship($relationship);
+                    $bean->prospect_lists->add($prospectListId);
+                    $results[$id] = true;
                 }
-
-                $bean->load_relationship($relationship);
-                $bean->prospect_lists->add($prospectListId);
-                $results[$id] = true;
             }
         }
 

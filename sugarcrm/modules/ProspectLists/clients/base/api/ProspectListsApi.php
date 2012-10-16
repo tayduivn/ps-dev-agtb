@@ -23,8 +23,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once('clients/base/api/ModuleApi.php');
 require_once('modules/ProspectLists/ProspectListsService.php');
 
-class ProspectListsApi extends ModuleApi {
-    public function registerApiRest() {
+class ProspectListsApi extends ModuleApi
+{
+    public function registerApiRest()
+    {
         return array(
             'addToList' => array(
                 'reqType' => 'POST',
@@ -40,14 +42,27 @@ class ProspectListsApi extends ModuleApi {
     /**
      * Adds records to a prospect list
      */
-    public function addRecordsToProspectList($api, $args) {
+    public function addRecordsToProspectList($api, $args)
+    {
+        $moduleName = $args['module'];
+        $prospectListId = $args['prospectListId'];
+        $recordIds = $args['recordIds'];
+
+        if (empty($moduleName)) {
+            throw new SugarApiExceptionMissingParameter('The module parameter is missing');
+        }
+        if (empty($prospectListId)) {
+            throw new SugarApiExceptionMissingParameter('The prospectlistId parameter is missing');
+        }
+        if (empty($recordIds)) {
+            throw new SugarApiExceptionMissingParameter('The recordIds are missing');
+        }
 
         $targetList = new ProspectListsService();
-
-        $response = $targetList->addRecordsToProspectList($args['modules'], $args['prospectListId'], $args['recordIds']);
+        $response = $targetList->addRecordsToProspectList($moduleName, $prospectListId, $recordIds);
 
         if($response === false) {
-           throw new SugarApiExceptionInvalidParameter();
+            throw new SugarApiExceptionNotFound('Could not find parent record ' . $prospectListId . ' in module ' . $moduleName);
         }
 
         return $response;

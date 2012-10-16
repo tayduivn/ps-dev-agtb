@@ -35,6 +35,7 @@ class ProspectListsApiTest extends RestTestBase
     {
         parent::setUp();
     }
+
     public function tearDown()
     {
         SugarTestProspectListsUtilities::removeAllCreatedProspectLists();
@@ -44,15 +45,15 @@ class ProspectListsApiTest extends RestTestBase
     /**
      * @group prospectlistsapi
      */
-    public function testAddToList_Contacts_AllRecordsAdded(){
-
+    public function testAddToList_Contacts_AllRecordsAdded()
+    {
         $prospectList = SugarTestProspectListsUtilities::createProspectLists();
         $contact1 = SugarTestContactUtilities::createContact();
         $contact2 = SugarTestContactUtilities::createContact();
         $contact3 = SugarTestContactUtilities::createContact();
 
         $postData = array(
-            "modules" => "Contacts",
+            "module" => "Contacts",
             "prospectListId" => $prospectList->id,
             "recordIds" => array(
                 $contact1->id,
@@ -73,13 +74,13 @@ class ProspectListsApiTest extends RestTestBase
     /**
      * @group prospectlistsapi
      */
-    public function testAddToList_RecordNotFound_ReturnsFalse(){
-
+    public function testAddToList_RecordNotFound_ReturnsFalse()
+    {
         $prospectList = SugarTestProspectListsUtilities::createProspectLists();
         $contactId = '111-9999';
 
         $postData = array(
-            "modules" => "Contacts",
+            "module" => "Contacts",
             "prospectListId" => $prospectList->id,
             "recordIds" => array(
                 $contactId
@@ -91,20 +92,21 @@ class ProspectListsApiTest extends RestTestBase
 
         $this->assertEquals(1, count($results), "Three records should have been returned");
         $this->assertEquals(false, $results[$contactId]);
-
     }
 
     /**
      * @group prospectlistsapi
      */
-    public function testAddToList_ProspectListNotFound_ThrowsException(){
-
+    public function testAddToList_ProspectListNotFound_ThrowsException()
+    {
         $prospectListId = 'prospect1234';
+        $contact1 = SugarTestContactUtilities::createContact();
 
         $postData = array(
-            "modules" => "Contacts",
+            "module" => "Contacts",
             "prospectListId" => $prospectListId,
             "recordIds" => array(
+                $contact1->id
             )
         );
 
@@ -112,5 +114,38 @@ class ProspectListsApiTest extends RestTestBase
 
         $this->assertEquals(412, $response['info']['http_code'], "Expected Request Failure Http Status Code");
         $this->assertEquals("invalid_parameter", $response['reply']['error'], "Expected Request Failure Response");
+    }
+
+    /**
+     * @group prospectlistsapi
+     * @dataProvider prospectlistDataProvider
+     */
+    public function testAddToList_MissingParameters_ThrowsException($moduleName, $prospectListId, $recordIds)
+    {
+         $postData = array(
+            "module" => $moduleName,
+            "prospectListId" => $prospectListId,
+            "recordIds" => $recordIds
+         );
+
+        $response = $this->_restCall("ProspectLists/addToList", json_encode($postData), "POST");
+
+        $this->assertEquals(412, $response['info']['http_code'], "Expected Request Failure Http Status Code");
+        $this->assertEquals("missing_parameter", $response['reply']['error'], "Expected Request Failure Response");
+    }
+
+    public function prospectlistDataProvider()
+    {
+        return array(
+            //no module name
+            array(null, '123', array('123')),
+            array('', '123', array('123')),
+            //no prospectlistsid
+            array('Contacts', null, array('123')),
+            array('Contacts', '', array('123')),
+            //no record ids
+            array('Contacts', '123', null),
+            array('Contacts', '123', array())
+        );
     }
 }
