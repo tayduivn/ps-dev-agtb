@@ -10,7 +10,7 @@
     /**
      * The url for the REST endpoint
      */
-    url : 'rest/v10/Forecasts/committed',
+    url : app.api.buildURL('Forecasts/committed'),
 
     /**
      * The class selector representing the element which contains the view output

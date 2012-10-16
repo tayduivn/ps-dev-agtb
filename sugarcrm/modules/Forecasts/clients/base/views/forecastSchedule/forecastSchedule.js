@@ -4,7 +4,7 @@
  */
 ({
 
-    url: 'rest/v10/ForecastSchedule',
+    url: app.api.buildURL('ForecastSchedule'),
     tagName: 'tr',
     class: 'view-forecastSchedule',
     id: 'expected_opportunities',
@@ -65,7 +65,7 @@
     {
         this._collection.url = this.createURL();
         var self = this;
-        this._collection.fetch({success : function() { 
+        this._collection.fetch({success : function() {
             self.render();
             if(_.isFunction(callback)){
                 callback();
@@ -88,13 +88,13 @@
             //Set the field.def.options value based on buckets_dom setting (if set)
             field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
             if(this.editableWorksheet)
-            {               
+            {
                field = this._setUpCommitStage(field);
             }
         }
-    	
+
     	app.view.View.prototype._renderField.call(this, field);
-        
+
     	if (this.editableWorksheet === true && field.def.clickToEdit === true) {
             new app.view.ClickToEditField(field, this);
         }
@@ -102,7 +102,7 @@
         if (this.editableWorksheet === true && field.name == "expected_commit_stage") {
             new app.view.BucketGridEnum(field, this, "ForecastSchedule");
         }
-     
+
     },
 
     bindDataChange: function(params) {
@@ -157,7 +157,7 @@
     	if(forecastCategories == "show_binary"){
             this.isBinary = true;
     		field.type = "bool";
-    					
+
     		field.format = function(value){
     			return value == "include";
     		};
@@ -169,11 +169,11 @@
             this.isBinary = false;
     		field.type = "enum";
     		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-    	}  	
-    	
+    	}
+
         return field;
     },
-    
+
     /**
      * Renders view
      *
