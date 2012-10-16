@@ -191,6 +191,8 @@
                 }
             });
 
+            this.context.forecasts.config.on('change:buckets_dom change:forecast_categories', this.render, this);
+
             var worksheet = this;
             $(window).bind("beforeunload",function(){
                 if(worksheet._collection.isDirty){
@@ -338,7 +340,6 @@
                             fieldDef["sSortDataType"] = "dom-checkbox";
                             fieldDef["sType"] = "numeric";
                             break;
-
                         case "int":
                         case "currency":
                             fieldDef["sSortDataType"] = "dom-number";
@@ -353,6 +354,7 @@
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
+                "bAutoWidth": false,
                 "aoColumnDefs": columnDefs,
                 "aaSorting": this.aaSorting,
                 "bInfo":false,
@@ -583,85 +585,39 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
-        var self = this;
-        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') { // buckets
+        var self = this,
+            forecast_categories_setting = this.context.forecasts.config.get('forecast_categories') || 'show_binary';
 
-             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
-             $.fn.dataTableExt.afnFiltering.push (
-                    function(oSettings, aData, iDataIndex)
-                    {
+        // start with no filters, i. e. show everything.
+        $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+        if (!_.isEmpty(params)) {
+            $.fn.dataTableExt.afnFiltering.push (
+                function(oSettings, aData, iDataIndex) {
 
-                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
-                            return true;
-                        }
-
-                        var editable = self.isMyWorksheet();
-                        var returnVal = null;
-                        //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
-                        var selectVal = editable ? $(aData[0]).find("select").attr("value") : $(aData[0]).text().trim();
-
-                        if(editable && (typeof(selectVal) != "undefined" && _.contains(params, selectVal)))
-                        {
-                            returnVal = selectVal;
-                        } else if(!editable) {
-                            //Get the array for the bucket stages
-                            var buckets_dom = app.lang.getAppListStrings(this.context.forecasts.config.get('buckets_dom') || 'commit_stage_dom');
-                            _.each(params, function(filter)
-                            {
-                                if(buckets_dom[filter] == selectVal)
-                                {
-                                   returnVal = selectVal;
-                                   return;
-                                }
-                            });
-                        }
-
-                        return returnVal;
+                    // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
+                    if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
+                        return true;
                     }
-                );
-        } else {  // not buckets
-            // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(_.first(params) == "include") {//committed
-                $.fn.dataTableExt.afnFiltering.push (
-                    function(oSettings, aData, iDataIndex)
-                    {
-                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
-                            return true;
-                        }
 
-                        var val = aData[0];
-                        var jVal = $(val);
+                    var editable = self.isMyWorksheet(),
+                        selectVal,
+                        rowCategory = $(_.first(aData)),
+                        checkState;
 
-                        var returnVal = null;
-
-                        // our custom checkbox sort has taken over, this is now a 1 or 0
-                        if(val.length == 1){
-                            if(val == 1){
-                                returnVal = val;
-                            }
-                        }
-                        //initial load still has html here, or it is a dropdown.
-                        else{
-                            var checkboxVal = jVal.find("input").attr("checked");
-                            var selectVal = jVal.find("select").attr("value");
-
-                            if( !_.isUndefined(checkboxVal)){
-                                returnVal = 1;
-                            }
-                            else if( !_.isUndefined(selectVal) && selectVal == 'include'){
-                                returnVal = selectVal;
-                            }
-                        }
-
-                        return returnVal;
+                    //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
+                    if (forecast_categories_setting == 'show_binary') {
+                        checkState = rowCategory.find('input').attr('checked');
+                        selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
+                    } else {
+                        selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim();
                     }
-                );
-            } else {
-                //pipeline
-                //Remove the filters
-                $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
-            }
+
+                    return (_.contains(params, selectVal));
+
+                }
+            );
         }
+
         this.render();
     },
 

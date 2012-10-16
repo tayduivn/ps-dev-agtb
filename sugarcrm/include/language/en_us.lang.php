@@ -345,7 +345,7 @@ $app_list_strings = array (
 
   'commit_stage_binary_dom' => array (
     'include' => 'Include',
-    'pipeline' => 'Pipeline',
+    'exclude' => 'Exclude',
   ),
   'commit_stage_dom' =>
   array (
@@ -355,7 +355,7 @@ $app_list_strings = array (
   ),
 
 //BEGIN SUGARCRM flav=ent ONLY
-  'commit_n_stage_dom' => array(
+  'commit_stage_custom_dom' => array(
       'include' => 'Include',
       'customRange0' => 'Custom 1',
       'customRange1' => 'Custom 2',

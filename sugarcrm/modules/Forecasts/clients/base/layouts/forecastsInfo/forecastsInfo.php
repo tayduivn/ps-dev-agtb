@@ -38,5 +38,8 @@ $viewdefs['Forecasts']['base']['layout']['forecastsInfo'] = array(
         array(
             'view' => 'forecastsCommitLog',
         ),
+        array(
+            'view' => 'forecastsFilter',
+        ),
     ),
 );
