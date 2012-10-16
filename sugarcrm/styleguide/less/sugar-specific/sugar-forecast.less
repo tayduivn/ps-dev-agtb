@@ -1,30 +1,9 @@
-/* Typography
---------------*/
-h1 {font-size: 26px !important;}
-
-
 
 /* Tables
 --------------*/
 table th { white-space: nowrap; }
 table.datatable tbody td { white-space: nowrap; }
-
-
-
-/* Activity Stream
---------------*/
-#dashboard  #folded .tab-pane.active {
-  background-color: @grayLighter;
-  border-left: 1px solid darken(@grayLighter, 4%);
-}
-#folded .tab-pane.active {
-  top: 48px;
-  background-color: @grayLighter;
-  padding: 20px 0;
-  border-left: 1px solid darken(@grayLighter, 4%);
-}
-
-
+table th:first-child, table td:first-child {padding-left: 20px;}
 
 /* Editable
 --------------*/
@@ -55,8 +34,8 @@ table.datatable tbody td { white-space: nowrap; }
 }
 .navbar .advanced {
   position: absolute;
-  right: 2px;
-  top: -2px;
+  right: 0;
+  top: 0;
 }
 .navbar .advanced .dropdown-menu {
   right: 35px;
@@ -71,35 +50,14 @@ table.datatable tbody td { white-space: nowrap; }
 
 /* CSS for forecasts subnav
 ------------------------- */
-#headerbar h1 {
-    float:left;
-    margin-right:5px;
-    margin-left:12px;
-}
-
-#folded {
-    background-image: url('@{baseUrl}/img/light_toast.png');
-    margin-left: 0px;
-    width: 34.04%;
-
-    .viz {
-        padding-top: 0px;
-    }
-
-    .block h4 {
-        padding: 7px 80px 7px 10px;
-    }
-}
-
-#overview {
-    background-image: url('@{baseUrl}/img/light_toast.png');
-    border-left:3px solid #cdcccb;
-}
 
 /* Bug 55601 - fix for IE9 so that tree menu is properly rendered */
 .view-forecastsSubnav {
     z-index: auto;
 }
+
+#sales_stage_filter_chzn .chzn-drop, #date_filter_chzn .chzn-drop {padding: 0;}
+.topline .control-group.filter  {padding: 5px;}
 
 /* Buttons
 ------------------------- */

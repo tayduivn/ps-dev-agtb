@@ -87,7 +87,8 @@
   </div>
   <div class="container-fluid contentflex">
     <div class="row-fluid">
-      <div class="span8 headerbar">
+      <div class="span8 main-pane">
+        <div class="headerpane">
         <h1>My Dashboard</h1>
         <div class="btn-toolbar pull-right dropdown">
           <a href="#" data-toggle="dropdown" title="Create Account" class="btn btn-primary dropdown-toggle">Create</a>
@@ -99,41 +100,68 @@
           <a href="#" title="Create Account" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
         </div>
       </div>
-    </div>
+      <form class="form-search" action="">
       <div class="row-fluid">
-        <div class="span8 main-pane">
+        <div class="span9 myfilter">
+          <input value="" placeholder="Search accounts..." class="span12">
+          <div class="actions btn-group dropdown">
+            <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
+            <ul class="dropdown-menu carettop">
+              <li><a href="#myAccount">My accounts</a></li>
+              <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
+            </ul>
+          </div>
+          </div>
+          <div class="span3">
+            <div class="pull-right">
+              <a href="" class="btn btn-invisible active"><i class="icon-th-list"></i></a>
+              <a href="" class="btn btn-invisible"><i class="icon-time"></i></a>
+              <a href="" class="btn btn-invisible"><i class="icon-calendar"></i></a>
+              <a href="" class="btn btn-invisible"><i class="icon-table"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="filtered extend results hide">
+          <article class="filtered-header">
+            <input placeholder="Select a name...">
+            <div class="pull-right dropdown">
+              <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
+            </div>
+          </article>
+          <article class="filtered-body">
+            <select class="chzn-select span2 buildit">
+              <option>Name</option>
+              <option>Sales Stage</option>
+            </select>
+            <select class="chzn-select span2">
+              <option>matches</option>
+            </select>
+            <input placeholder="Select a name...">
+            <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+          </article>
+        </div>
+        <div class="mu extend results hide">
+          <article class="filtered-header">
+            <strong>Mass Update</strong>
+            <div class="btn-group pull-right dropdown">
+              <a href="" class="btn">update</a>
+            </div>
+          </article>
+          <article class="filtered-body">
+            <select class="chzn-select span2 buildit">
+              <option>Name</option>
+              <option>Sales Stage</option>
+            </select>
+            <select class="chzn-select span2">
+              <option>matches</option>
+            </select>
+            <input placeholder="Select a name...">
+            <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+          </article>
+        </div>
+      </form>
           <div class="block filtered tabbable tabs-left" id="moduleActivity">
-            <form class="form-search" action="">
-               <div class="actions btn-group pull-right dropdown">
-                 <a href="" data-toggle="dropdown" class="dropdown-toggle btn">Filter &nbsp;<i class="icon-caret-down"></i></a>
-                 <ul class="dropdown-menu">
-                   <li><a href="#myAccount">My accounts</a></li>
-                   <li><a href="#myContacts">My contacts</a></li>
-                   <li><a href="#myOpportunities">My opportunities</a></li>
-                   <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
-                 </ul>
-               </div>
-                <input value="" class="span11" placeholder="Search activity...">
-                <div class="filtered extend hide">
-                  <div class="filtered-header">
-                    <input placeholder="Select a name...">
-                    <div class="btn-group pull-right dropdown">
-                      <a href="" class="btn">Save</a>
-                    </div>
-                  </div>
-                  <div class="filtered-body">
-                    <select class="chzn-select span12 buildit">
-                      <option>Name</option>
-                      <option>Sales Stage</option>
-                    </select>
-                    <select class="chzn-select span12">
-                      <option>matches</option>
-                    </select>
-                    <input placeholder="Select a name...">
-                    <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
-                  </div>
-                </div>
-              </form>
+            
               <form class="omnibar clearfix" action="">
               <a href="" class="avatar avatar42 pull-left">
                 <img src="../img/avatar_sabra.jpg" alt="Skhan avatar">
@@ -271,24 +299,7 @@
           <div class="side-pane active" id="overview">
             <div class="block thumbnail">
               <h4>Events</h4>
-              <div id="donut" class="chart-container" style="height: 300px">
-                <svg></svg>
-              </div>
-              <div class="actions dropdown pull-right">
-                <a data-toggle="dropdown" rel="tooltip" class="dashletActionAdmin dropdown-toggle" href="#" title="Admin"><i class="icon-cog"></i></a>
-                <ul class="dropdown-menu">
-                  <li><a href="">Expand</a></li>
-                  <li><a href="">Chart options</a></li>
-                  <li class="primary"><a href="" class="remove">Remove dashlet</a></li>
-                </ul>
-              </div>
-            </div>
-
-
-
-            <div class="block thumbnail">
-              <h4>Events</h4>
-              <div id="donut" class="chart-container" style="height: 300px">
+              <div id="donut" style="height: 300px">
                 <svg></svg>
               </div>
               <div class="actions dropdown pull-right">

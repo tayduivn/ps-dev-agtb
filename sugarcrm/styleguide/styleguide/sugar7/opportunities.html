@@ -20,6 +20,7 @@
             <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
             <li><a href="accounts.html">Accounts</a></li>
             <li><a href="contacts.html">Contacts</a></li>
+            <li><a href="forecast.html">Forecasts</a></li>
             <li class="active"><a href="opportunities.html">Opportunities</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">More <b class="caret"></b></a>
@@ -65,9 +66,9 @@
             <form class="navbar-search pull-right" action="">
               <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
               <div class="advanced">
-                <div class="btn-toolbar pull-right">
+                <div class="pull-right">
                   <div class="btn-group">
-                    <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
+                    <a class="advanced dropdown-toggle" data-toggle="dropdown" href="#">
                       <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
@@ -87,29 +88,88 @@
       </div>
     </div><!-- /navbar-inner -->
   </div>
-  <div class="container-fluid contentflex">
+  <div class="container-fluid">
     <div class="row-fluid">
-      <div class="span8 headerbar">
-        <h1>Opportunities</h1>
-        <div class="btn-toolbar pull-right dropdown">
-          <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
-           <a href="#" title="Create Account" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
-           
+      <div class="span8 main-pane">
+        <div class="headerpane">
+          <h1>Opportunities</h1>
+          <div class="btn-toolbar pull-right dropdown">
+            <a href="#createAccount" data-toggle="modal" title="Create Account" class="btn btn-primary">Create</a>
+            <a href="#" title="Create Account" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="row-fluid">
-      <div class="span8 content">
+         <form class="form-search" action="">
+        <div class="row-fluid">
+          <div class="span9 myfilter">
+            <input value="" placeholder="Search opportunities..." class="span12">
+            <div class="actions btn-group dropdown">
+              <a href="" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible">Filter &nbsp;<i class="icon-caret-down"></i></a>
+              <ul class="dropdown-menu carettop">
+                <li><a href="#myAccount">My accounts</a></li>
+                <li><a href="#myContacts">My contacts</a></li>
+                <li><a href="#myOpportunities">My opportunities</a></li>
+                <li class="primary"><a href="#createFilter" class="newfilter">+ Create a filter</a></li>
+              </ul>
+            </div>
+            </div>
+            <div class="span3">
+              <div class="pull-right">
+                <a href="" class="btn btn-invisible"><i class="icon-th-list"></i></a>
+                <a href="" class="btn btn-invisible"><i class="icon-time"></i></a>
+                <a href="" class="btn btn-invisible"><i class="icon-calendar"></i></a>
+                <a href="" class="btn btn-invisible active"><i class="icon-table"></i></a>
+              </div>
+            </div>
+          </div>
+          <div class="filtered extend results hide">
+            <article class="filtered-header">
+              <input placeholder="Select a name...">
+              <div class="pull-right dropdown">
+                <a href="" class="btn">Save</a><a href="" class="btn btn-invisible"><i class="icon-remove"></i></a>
+              </div>
+            </article>
+            <article class="filtered-body">
+              <select class="chzn-select span12 buildit">
+                <option>Name</option>
+                <option>Sales Stage</option>
+              </select>
+              <select class="chzn-select span12">
+                <option>matches</option>
+              </select>
+              <input placeholder="Select a name...">
+              <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+            </article>
+          </div>
+          <div class="mu extend results hide">
+            <article class="filtered-header">
+              <strong>Mass Update</strong>
+              <div class="btn-group pull-right dropdown">
+                <a href="" class="btn">update</a>
+              </div>
+            </article>
+            <article class="filtered-body">
+              <select class="chzn-select span12 buildit">
+                <option>Name</option>
+                <option>Sales Stage</option>
+              </select>
+              <select class="chzn-select span12">
+                <option>matches</option>
+              </select>
+              <input placeholder="Select a name...">
+              <a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a>
+            </article>
+          </div>
+        </form>
         <table class="table datatable">
           <thead>
             <tr>
               <th class="nosort">
                 <div class="btn-group">
-                  <b class="btn" rel="tooltip" data-original-title="Actions for the data table"><input type="checkbox" class="toggle-all"></b>
+                  <b class="btn"><input type="checkbox" class="toggle-all"></b>
                   <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"> <span class="caret"></span></a>
                   <ul class="dropdown-menu">
                     <li><a href="#">Email</a></li>
-                    <li><a href="#">Mass Update</a></li>
+                    <li><a href="#" class="tmu">Mass Update</a></li>
                     <li><a href="#">Merge</a></li>
                     <li><a href="#">Export</a></li>
                   </ul>
@@ -120,578 +180,392 @@
               <th>Country</th>
               <th>Phone</th>
               <th>Email</th>
-              <th class="nosort">. . .</th>
+              <th class="nosort morecol">
+                <a href="" data-toggle="dropdown" class="dropdown-toggle">. . .</a>
+                <ul class="dropdown-menu left carettop">
+                  <li><a href="#myAccount">Column1</a></li>
+                  <li><a href="#myContacts">Column2</a></li>
+                  <li><a href="#myOpportunities">Column3</a></li>
+                </ul>
+              </th>
             </tr>
           </thead>
           <tbody id="listed">
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="detail_underwater.html">Underwater Mining Inc.</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">San Francisco</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">	(202) 312-5472</span></td>
               <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="opportunity_plato.html">Plato's LED Financial Apps</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">Cupertino</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">(408) 555-5271</span></td>
               <td><a href="mailto:sales@perkins.com">sales@perkins.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
             <tr>
               <td><input type="checkbox"> <i class="icon-star"></i></td>
-              <td><a href="detail_underwater.html">Underwater Mining Inc.</a></td>
+              <td><a href="opportunity_plato.html">Plato's LED MFT</a></td>
               <td><span class="dblclick">San Francisco</span></td>
               <td><span class="dblclick">USA</span></td>
               <td><span class="dblclick">	(202) 312-5472</span></td>
               <td><a href="mailto:sales.support.im@example.com">sales.support.im@example.com</a></td>
               <td>
-                <span class="hide actions dropdown pull-right">
-                  <a class="btn btn-invisible dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-pencil"></i></a>
+                <span class="hide actions dropdown pull-right btn-group">
+                  <a class="btn" href="#"><i class="icon-eye-open"></i></a>
+                  <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
                   <ul class="dropdown-menu">
-                    <li><a href="#">Edit</a></li>
-                    <li><a href="#">Delete</a></li>
+                    <li><a href="#"><i class="icon-pencil"></i> Edit</a></li>
+                    <li><a href="#"><i class="icon-trash"></i> Delete</a></li>
                   </ul>
                 </span>
               </td>
             </tr>
           </tbody>
         </table>
-      </div>
-      <div class="span4 sidebar-content folded">
-        <div class="sidebar-pane active" id="overview">
-          <div class="block" id="moduleTwitter">
-            <h4>InsideView</h4>
-            <br>
-            <div class="row-fluid">
-              <div class="span6">
-                Find Opportunities, Get Referrals, Engage Customers
-              </div>
-              <div class="span4 offset2 tright"><a href="" class="btn  btn-danger">Get Started</a></div>
+
             </div>
-            <br>
-
-          </div>
-          <div class="block filtered" id="moduleTwitter">
-            <h4><a href="http://twitter.com/firedupsky">Twitter @firedupsky</a></h4>
-            <form class="form-search hide" action="">
-              <input value="" class="span4" placeholder="Refine activity ...">
-            </form>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                Tax time again make sure you follow these tips <a href="http://so.short">http://so.short</a><br>
-                <date class="date">Posted 1 day ago - Retweet - Reply</date>
-              </p>
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                Engines looking solid for May launch <a href="http://so.short">http://so.short</a><br>
-                <date class="date">Posted 4 days ago - Retweet - Reply</date>
-              </p>
-            </article>
-            <article data-type="update" data-pubdate="2012-02-16">
-              <p>
-                New engine <a href="http://so.short">http://so.short</a> clears launch readiness<br>
-                <date class="date">Posted 1 week ago - Retweet - Reply</date>
-              </p>
-            </article>
-            <ul class="nav nav-pills actions">
-              <li>
-                <a href="" rel="tooltip" title="Refine list" class="search" id=""><i class="icon-search"></i></a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="sidebar-pane" id="file1">
-          <div class="block" id="">
-            <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-            <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
-            <br>
-            <img src="http://placehold.it/400x300">
-            <div class="card2">
-              <div class="row-fluid">
-                 <div class="span3">Added:</div>
-                 <div class="span9">1 hour ago at 3:00 pm EST</div>
-               </div>
-               <div class="row-fluid">
-                 <div class="span3">Added By:</div>
-                 <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-               </div>
-               <div class="row-fluid">
-                 <div class="span3">File Type:</div>
-                 <div class="span9">PNG</div>
-               </div>
-             </div>
+            <div class="span4 side">
+              <div class="side-pane">
+                <div class="block thumbnail">
+                  	<h4>Stats</h4>
+                  	<ul class="listed">
+                  	    <li>
+                  	        Item
+                  	    </li>
+                  	    <li>
+                  	        Item
+                  	    </li>
+                  	    <li>
+                  	        Item
+                  	    </li>
+                  	</ul>
+                </div>
+              </div>
+              <div class="preview-pane hide" id="file1">
+                <div class="block" id="">
+                  <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+                  <h4><span class="label label-file">File</span> Screenshot_766.png</h4>
+                  <br>
+                  <img src="http://placehold.it/400x300">
+                  <div class="card2">
+                    <div class="row-fluid">
+                       <div class="span3">Added:</div>
+                       <div class="span9">1 hour ago at 3:00 pm EST</div>
+                     </div>
+                     <div class="row-fluid">
+                       <div class="span3">Added By:</div>
+                       <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
+                     </div>
+                     <div class="row-fluid">
+                       <div class="span3">File Type:</div>
+                       <div class="span9">PNG</div>
+                     </div>
+                   </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="sidebar-pane" id="lead1">
-          <div class="block" id="">
-            <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
+        <footer>
+          <div class="row-fluid">
+            <div class="span6"><a href="" class="logo">SugarCRM</a></div>
+            <div class="span6">
+              <div class="btn-toolbar pull-right">
+                  <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
+                  <span class="dropdown dropup">
+                    <a href="#" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-calendar"></i> To Do <b class="caret"></b></a>
+                     <div class="dropdown-menu">
+                      <h4 class="title">Title</h4>
+                      <ul>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                        <li><a href="#">Item</a></li>
+                      </ul>
+                    </div>
+                  </span>
+                  <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
+                  <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+              </div>
+            </div>
+          </div>
+        </footer>
 
-            <h4><span class="label label-lead">Lead</span> Plato's LED Financial Apps - 100 Seats</h4>
-            <br>
-            <div class="row">
-              <div class="card2" style="margin-left: 20px;">
-                <div class="row-fluid">
-                  <div class="span3">Account:</div>
-                  <div class="span9">
-                    <a href="opportunity_plato.html">Plato's LED Financial Apps</a>
-                    <div class="hide">
-                      <select data-placeholder="Choose a account..." class="chzn-select chzn-done" tabindex="-1" id="selNCF" style="display: none; ">
-                        <option value="pk">Plato's LED Financial Apps</option>
-                        <option value="pk">Weyland</option>
-                      </select><div id="selNCF_chzn" class="chzn-container chzn-container-single" style="width: 222px; "><a href="javascript:void(0)" class="chzn-single" tabindex="2"><span>Plato's LED Financial Apps</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 220px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 185px; " tabindex="-1"></div><ul class="chzn-results"><li id="selNCF_chzn_o_0" class="active-result result-selected" style="">Plato's LED Financial Apps</li><li id="selNCF_chzn_o_1" class="active-result" style="">Weyland</li></ul></div></div>
+        <div class="modal hide" id="systemTour">
+
+        </div>
+
+        <div class="modal hide" id="adminHistory">
+          <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Manage History</h3>
+          </div>
+          <div class="modal-body">
+            <div>
+              <form class="form-horizontal">
+                <fieldset>
+                  <div class="control-group">
+                    <label for="input01" class="control-label">Filter Name</label>
+                    <div class="controls">
+                      <input type="text" id="input01" class="input-xlarge">
                     </div>
                   </div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span3">Sales Stage:</div>
-                  <div class="span9">60% - Negotiation</div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span3">Amount:</div>
-                  <div class="span9" title="Click to edit...">$50,000.00 (USD)</div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span3">Close:</div>
-                  <div class="span9" title="Click to edit...">05/13/2012 (20 days)</div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span3">Type:</div>
-                  <div class="span9" title="Click to edit...">Existing Business</div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span3">Lead Source:</div>
-                  <div class="span9" title="Click to edit...">Word of mouth</div>
-                </div>
-                <div class="row-fluid">
-                  <div class="span3">Next Step:</div>
-                  <div class="span9" title="Click to edit...">Call Chris Lottery to ask how to import his files</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="sidebar-pane" id="doc1">
-          <div class="block" id="">
-            <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-            <h4><span class="label label-document">Document</span> Sales-document33.doc</h4>
-            <br>
-            <div class="row">
-              <div class="span3"><img src="http://placehold.it/200x250"></div>
-            </div>
-            <div class="card2">
-              <div class="row-fluid">
-                 <div class="span3">Added:</div>
-                 <div class="span9">6 hours ago at 9:00 am EST</div>
-               </div>
-               <div class="row-fluid">
-                 <div class="span3">Added By:</div>
-                 <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-               </div>
-               <div class="row-fluid">
-                 <div class="span3">File Type:</div>
-                 <div class="span9">Word Document</div>
-               </div>
-             </div>
-          </div>
-        </div>
-        <div class="sidebar-pane" id="log1">
-          <div class="block" id="">
-            <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-            <h4><span class="label label-log">Log</span> Sent Email</h4>
-            <br>
-            <div class="card2">
-              <div class="row-fluid">
-                 <div class="span3">Action:</div>
-                 <div class="span9">Email Sent to <a href="contact_mark.html">Mark Edwin</a></div>
-               </div>
-               <div class="row-fluid">
-                  <div class="span3">Subject:</div>
-                  <div class="span9">Lets's do lunch.</div>
-                </div>
-              <div class="row-fluid">
-                 <div class="span3">Added:</div>
-                 <div class="span9">1 hour ago at 3:00 pm EST</div>
-               </div>
-               <div class="row-fluid">
-                 <div class="span3">Added By:</div>
-                 <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-               </div>
-             </div>
-            </div>
-        </div>
-        <div class="sidebar-pane" id="contact1">
-          <div class="block" id="">
-            <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-            <h4><span class="label label-contact">Contact</span> Mark Edwin</a>, CIO</h4>
-            <br>
-            <div class="row">
-              <div class="span1"><img src="../img/avatar_weyland.png"></div>
-              <div class="vcard span4">
-                <address>
-                  <p>
-                    <span class="address">Address:</span>
-                    <span>
-                      <a href="http://g.co/maps/u45p4">9 IBM Path<br>
-                        Poughkeepsie, Dutchess, New York 12601<br>
-                        USA</a>
-                      </span>
-                    </p>
-                    <p>
-                      <span class="tel">Phone:</span> (408) 555-5271
-                    </p>
-                    <p>
-                      <span class="url">Website:</span> <a href="http://www.perkins.com">www.perkins.com</a>
-                    </p>
-                    <p>
-                      <span class="email">Email:</span> <a href="mailto:sales@perkins.com">sales@perkins.com</a> <small>(Primary)</small><br>
-                      <span class="email">&nbsp;</span> <a href="mailto:support@perkins.com">support@perkins.com</a>
-
-                    </p>
-
-                  </address>
-                  <br>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="sidebar-pane" id="note1">
-            <div class="block" id="">
-              <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-              <h4><span class="label label-note">Note</span> Follow up with Mark</h4>
-              <br>
-              <p>Mark would love to talk more about fuel options</p>
-              <div class="card2">
-                <div class="row-fluid">
-                   <div class="span3">Added:</div>
-                   <div class="span9">2 days ago at 3:30 am EST</div>
-                 </div>
-                 <div class="row-fluid">
-                   <div class="span3">Added By:</div>
-                   <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-                 </div>
-               </div>
-            </div>
-          </div>
-          <div class="sidebar-pane" id="log2">
-            <div class="block" id="">
-              <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-              <h4><span class="label label-log">Log</span> Planned Outbound Call</h4>
-              <br>
-              <div class="card2">
-                <div class="row-fluid">
-                   <div class="span3">Action:</div>
-                   <div class="span9">Outbound Call to <a href="contact_mark.html">Mark Edwin</a></div>
-                 </div>
-                 <div class="row-fluid">
-                    <div class="span3">Type:</div>
-                    <div class="span9">Planned</div>
+                  <div class="control-group">
+                    <label for="input01" class="control-label">Account</label>
+                    <div class="controls">
+                      <input type="text" id="input01" class="input-xlarge">
+                    </div>
                   </div>
-                  <div class="row-fluid">
-                     <div class="span3">Duration:</div>
-                     <div class="span9">30 mins</div>
-                   </div>
-                <div class="row-fluid">
-                   <div class="span3">Added:</div>
-                   <div class="span9">1 hour ago at 3:00 pm EST</div>
-                 </div>
-                 <div class="row-fluid">
-                   <div class="span3">Added By:</div>
-                   <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-                 </div>
-               </div>
+                  <div class="control-group">
+                    <label for="select01" class="control-label">Result Amount</label>
+                    <div class="controls">
+                      <select id="select01">
+                        <option>something</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label for="textarea" class="control-label">Keywords</label>
+                    <div class="controls">
+                      <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <a href="#" class="btn btn-primary">Save</a>
+              <a href="#" class="btn" data-dismiss="modal">Cancel</a>
             </div>
           </div>
         </div>
-    </div>
-  </div>
-  <footer>
-    <div class="row-fluid">
-      <div class="span6"><a href="" class="logo">SugarCRM</a></div>
-      <div class="span6">
-        <div class="btn-toolbar pull-right">
-            <a data-toggle="modal" title="Activity View Tour" href="#systemTour" class="btn btn-invisible"><i class="icon-road"></i> Tour</a>
-            <span class="dropdown dropup">
-              <a href="#" class="btn btn-invisible dropdown-toggle" data-toggle="dropdown"><i class="icon-calendar"></i> To Do <b class="caret"></b></a>
-               <div class="dropdown-menu">
-                <h4 class="title">Title</h4>
-                <ul>
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
-                  <li><a href="#">Item</a></li>
-                </ul>
-              </div>
-            </span>
-            <a data-toggle="modal" title="Feedback" href="#systemFeedback" class="btn btn-invisible"><i class="icon-comment"></i> Feedback</a>
-            <a data-toggle="modal" title="Support" href="#systemSupport" class="btn btn-invisible"><i class="icon-question-sign"></i> Support</a>
+
+        <div class="modal span10 hide" id="createAccount">
+          <div class="modal-header">
+            <a class="close" data-dismiss="modal">×</a>
+            <h3>Create Account</h3>
+          </div>
+          <div class="modal-body">
+            <div>
+              <form class="form-horizontal">
+                <fieldset>
+                  <div class="control-group">
+                    <label for="input01" class="control-label">Filter Name</label>
+                    <div class="controls">
+                      <input type="text" id="input01" class="input-xlarge">
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label for="input01" class="control-label">Account</label>
+                    <div class="controls">
+                      <input type="text" id="input01" class="input-xlarge">
+                    </div>
+                  </div>
+                  <div class="control-group teams">
+                    <label for="select01" class="control-label">Teams:</label>
+                    <div class="controls">
+                      <select data-placeholder="Choose a account..." class="chzn-select span2" tabindex="2">
+                        <option value="pk">Global</option>
+                        <option value="pk" selected="selected">East</option>
+                        <option value="pk">West</option>
+                        <option value="pk">North</option>
+                        <option value="pk">South</option>
+                      </select>
+                      <button class="btn add" rel="tooltip" data-original-title="Primary"><i class="icon-star"></i></button>
+                      <a href="" class="btn remove" rel="tooltip" data-original-title="Add team"><i class="icon-plus"></i></a>
+                    </div>
+                  </div>
+                  <div class="control-group">
+                    <label for="textarea" class="control-label">Keywords</label>
+                    <div class="controls">
+                      <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <a href="#" class="btn btn-invisible btn-link" data-dismiss="modal">Cancel</a>
+              <a href="#" class="btn btn-primary">Save</a>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  </footer>
 
-  <div class="modal hide" id="systemTour">
+        <script src="../js/jquery-1.7.2.min.js"></script>
+        <script src="../../assets/js/bootstrap-transition.js"></script>
+        <script src="../../assets/js/bootstrap-alert.js"></script>
+        <script src="../../assets/js/bootstrap-modal.js"></script>
+        <script src="../../assets/js/bootstrap-collapse.js"></script>
+        <script src="../../assets/js/bootstrap-dropdown.js"></script>
+        <script src="../../assets/js/bootstrap-scrollspy.js"></script>
+        <script src="../../assets/js/bootstrap-tab.js"></script>
+        <script src="../../assets/js/bootstrap-tooltip.js"></script>
+        <script src="../../assets/js/bootstrap-popover.js"></script>
+        <script src="../../assets/js/bootstrap-button.js"></script>
+        <script src="../../assets/js/bootstrap-typeahead.js"></script>
+        <script src="../../assets/js/bootstrapx-clickover.js"></script>
 
-  </div>
+        <script src="../js/jquery.datatables.js"></script>
+        <script src="../js/wicked.js"></script>
+        <script src="../js/jquery.jeditable.js"></script>
+        <script src="../js/editable.js"></script>
+        <script src="../js/chosen.jquery.min.js"></script>
 
-  <div class="modal hide" id="adminHistory">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h3>Manage History</h3>
-    </div>
-    <div class="modal-body">
-      <div>
-        <form class="form-horizontal">
-          <fieldset>
-            <div class="control-group">
-              <label for="input01" class="control-label">Filter Name</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="input01" class="control-label">Account</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="select01" class="control-label">Result Amount</label>
-              <div class="controls">
-                <select id="select01">
-                  <option>something</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="textarea" class="control-label">Keywords</label>
-              <div class="controls">
-                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-primary">Save</a>
-        <a href="#" class="btn" data-dismiss="modal">Cancel</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal span10 hide" id="createAccount">
-    <div class="modal-header">
-      <a class="close" data-dismiss="modal">×</a>
-      <h3>Create Account</h3>
-    </div>
-    <div class="modal-body">
-      <div>
-        <form class="form-horizontal">
-          <fieldset>
-            <div class="control-group">
-              <label for="input01" class="control-label">Filter Name</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="input01" class="control-label">Account</label>
-              <div class="controls">
-                <input type="text" id="input01" class="input-xlarge">
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="select01" class="control-label">Result Amount</label>
-              <div class="controls">
-                <select id="select01">
-                  <option>something</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-              </div>
-            </div>
-            <div class="control-group">
-              <label for="textarea" class="control-label">Keywords</label>
-              <div class="controls">
-                <textarea rows="3" id="textarea" class="input-xlarge"></textarea>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <a href="#" class="btn btn-invisible btn-link" data-dismiss="modal">Cancel</a>
-        <a href="#" class="btn btn-primary">Save</a>
-      </div>
-    </div>
-  </div>
-
-  <script src="../js/jquery-1.7.2.min.js"></script>
-  <script src="../../assets/js/bootstrap-transition.js"></script>
-  <script src="../../assets/js/bootstrap-alert.js"></script>
-  <script src="../../assets/js/bootstrap-modal.js"></script>
-  <script src="../../assets/js/bootstrap-collapse.js"></script>
-  <script src="../../assets/js/bootstrap-dropdown.js"></script>
-  <script src="../../assets/js/bootstrap-scrollspy.js"></script>
-  <script src="../../assets/js/bootstrap-tab.js"></script>
-  <script src="../../assets/js/bootstrap-tooltip.js"></script>
-  <script src="../../assets/js/bootstrap-popover.js"></script>
-  <script src="../../assets/js/bootstrap-button.js"></script>
-  <script src="../../assets/js/bootstrap-typeahead.js"></script>
-  <script src="../../assets/js/bootstrapx-clickover.js"></script>
-
-  <script src="../js/jquery.datatables.js"></script>
-  <script src="../js/wicked.js"></script>
-  <script src="../js/jquery.jeditable.js"></script>
-  <script src="../js/editable.js"></script>
-  <script src="../js/chosen.jquery.min.js"></script>
-
-  <script src="../js/application.js"></script>
-</body>
-</html>
+        <script src="../js/application.js"></script>
+      </body>
+      </html>
