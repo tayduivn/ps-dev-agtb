@@ -46,14 +46,23 @@ $viewdefs['Contacts']['summer']['view']['record'] = array(
         array(
             'name' => 'panel_head',
             'label' => 'LBL_PANEL_1',
-            'columns' => 3,
+            'columns' => 2,
             'labels' => false,
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
                 array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
-                array('name' => 'first_name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_FIRST_NAME'),
-                array('name' => 'last_name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_LAST_NAME'),
+                array(
+                    'name' => 'name_fieldset',
+                    'type' => 'fieldset',
+                    'cell_css' => 'bigcell',
+                    'css' => 'big',
+                    'span' => 5,
+                    'fields' => array(
+                        array('name' => 'first_name', 'label' => '', 'placeholder' => 'LBL_FIRST_NAME'),
+                        array('name' => 'last_name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 5, 'label' => '', 'placeholder' => 'LBL_LAST_NAME'),
+                    )
+                )
             )
         ),
         array(
