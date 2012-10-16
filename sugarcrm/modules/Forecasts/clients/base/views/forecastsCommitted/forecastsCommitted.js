@@ -270,7 +270,27 @@
      */
     commitForecast: function() {
         var self = this;
-
+        var worksheetData = {};
+        
+        var currentWorksheet = self.context.forecasts.get("currentWorksheet");
+        
+        if(currentWorksheet == "worksheet"){
+        	var worksheetDataCurrent = [];
+        	var worksheetDataNew = [];
+        	_.each(self.context.forecasts[currentWorksheet].models, function(item){
+        		//if isDirty is defined this has been saved from the worksheet save so we can skip it here 
+        		if(typeof item.get("isDirty") == "undefined"){
+        			if(_.isEmpty(item.get("worksheet_id"))){
+            			worksheetDataNew.push(item.attributes);
+            		}
+            		else{
+            			worksheetDataCurrent.push(item.attributes);
+            		}
+        		}        		
+        	});
+        	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
+        } 
+        
         if(!self.context.forecasts.get('commitButtonEnabled')) {
             return false;
         }
@@ -303,6 +323,7 @@
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;
         forecastData.opp_count = self.totals.included_opp_count;
+        forecastData.worksheetData = worksheetData;
 
         // apply data to model then save
         forecast.set(forecastData);

@@ -134,6 +134,7 @@
     				worksheet.isDirty = false;
     			}    			    				
     		});
+    		
     		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
