@@ -309,17 +309,15 @@ class AnnualTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $nextTimePeriod = BeanFactory::getBean('AnnualTimePeriods', $nextTimePeriod->id);
 
         //next timeperiod (1 year from today)
-        $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
-        $nextStartDate = $nextStartDate->modify("+52 week");
-        $nextEndDate = $timedate->fromDBDate($baseTimePeriod->end_date);
-        $nextEndDate = $nextEndDate->modify("+52 week");
-
+        $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date)->modify("+1 year");
+        $nextEndDate = $timedate->fromDBDate($baseTimePeriod->end_date)->modify("+1 year");
         $this->assertEquals($timedate->fromDBDate($nextTimePeriod->start_date), $nextStartDate, "Fiscal Start Dates do not match");
-
         $this->assertEquals($timedate->fromDBDate($nextTimePeriod->end_date), $nextEndDate, "Fiscal End Dates do not match");
 
-        $dayLength = 52 * 7;
-
+        $dayLength = 365;
+        if(($nextEndDate->year % 4) == 0) {
+            $dayLength = 366;
+        }
         $this->assertEquals($dayLength, $nextTimePeriod->getLengthInDays());
     }
 
