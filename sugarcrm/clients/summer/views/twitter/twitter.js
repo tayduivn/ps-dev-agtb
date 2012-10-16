@@ -11,11 +11,16 @@
     },
 
     getTweets: function() {
-        var self = this;
         var twitter = this.model.get('twitter') ||
-            this.model.get('name').replace(" ", "") ||
-            this.model.get('account_name').replace(" ", "") ||
-            this.model.get('full_name').replace(" ", "");
+            this.model.get('name') ||
+            this.model.get('account_name') ||
+            this.model.get('full_name');
+
+        if (!twitter) {
+            return false;
+        }
+
+        twitter = twitter.replace(" ", "");
 
         $.ajax({
             url: "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + twitter + "&count=6&callback=?",

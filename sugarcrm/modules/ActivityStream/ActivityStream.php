@@ -287,22 +287,21 @@ class ActivityStream extends SugarBean {
             $limit = ' LIMIT '.$start. ', '.$numActivities;
         }
 
-        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ";
+        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
         $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
 
         if(!empty($result)) {
-            $activityIds = array();
-
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
-                $row['target_name'] = '';
                 if(!empty($row['target_id'])) {
                     $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
                     if(!empty($bean)) {
                         $row['target_name'] = $bean->get_summary_text();
                     } else {
-                        continue;
+                        // We don't have access to the target.
+                        unset($row['target_module']);
+                        unset($row['target_id']);
                     }
                 }
                 else if(!empty($row['target_module'])) {
@@ -318,21 +317,18 @@ class ActivityStream extends SugarBean {
                 unset($row['first_name']);
                 unset($row['last_name']);
 
-                $activities[] = $row;
-                $activityIds[] = $row['id'];
+                $activities[$row['id']] = $row;
             }
 
-            $activities = array_slice($activities, $start, $numActivities);
-            $activityIds = array_slice($activityIds, $start, $numActivities);
-
-            if(!empty($activityIds)) {
+            if(!empty($activities)) {
                 $comments = array();
                 $commentNotes = array();
 
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];
-                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".implode("','",$activityIds)."') AND c.deleted = 0 AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
+                    $activityIds = implode("','",array_keys($activities));
+                    $sql = "SELECT c.id, c.activity_id,c.value,c.created_by, c.date_created,u.first_name, u.last_name, u.picture as created_by_picture FROM activity_comments c, users u WHERE c.activity_id in ('".$activityIds."') AND c.deleted = 0 AND c.created_by = u.id ORDER BY c.date_created ASC".($numComments > 0 ? " LIMIT 0, ".$numComments : '');
                     $result = $GLOBALS['db']->query($sql);
 
                     if(!empty($result)) {
@@ -351,7 +347,7 @@ class ActivityStream extends SugarBean {
                     }
                 }
 
-                $activityNotes = $this->getNotes('ActivityStream', $activityIds);
+                $activityNotes = $this->getNotes('ActivityStream', array_keys($activities));
 
                 foreach($activities as &$activity) {
                     $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array();
@@ -364,106 +360,13 @@ class ActivityStream extends SugarBean {
         }
 
         $getViewData = "get".ucfirst($options['view'])."ViewData";
-        return $this->$getViewData($activities, $options);
+        return $this->$getViewData(array_values($activities), $options);
     }
 
     protected function getListViewData($activities, $options = array()) {
         $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
         $list = array('next_offset'=>$nextOffset,'records'=>$activities);
         return $list;
-    }
-
-    protected function getTimelineViewData($activities, $options = array()) {
-        $timeline = array(
-                "headline"=>$options['filter'] == "all" ? "ALL Activities" : ($options['filter'] == "myactivities" ? "My Activities" : "My Favorities Activities") ,
-                "type"=>"default",
-                "text"=>"",
-                "startDate"=>$this->getTimelineDate($activities[0]),
-                "asset"=> array(
-                        "media"=>"",
-                        "credit"=>"",
-                        "caption"=>""));
-        $date = array();
-        foreach($activities as $activity) {
-            $date[] = array(
-                    "startDate"=>$this->getTimelineDate($activity),
-                    //"endDate"=>date("Y,m,d",strtotime($activity['date_created'])+24*3600),
-                    "headline"=>$this->getTimelineHeadline($activity),
-                    "text"=>$this->getTimelineText($activity),
-                    "tag"=>"",
-                    "asset"=> array(
-                            "media"=>$this->getTimelineMedia($activity),
-                            "thumbnail"=>$this->getTimelineThumbnail($activity),
-                            "credit"=>"",
-                            "caption"=>""));
-        }
-
-        $timeline['date'] = $date;
-        return array('timeline'=>$timeline);
-    }
-
-    protected function getTimelineDate($activity) {
-        return date("m/d/Y H:i:s",strtotime($activity['date_created']));
-    }
-
-    protected function getTimelineHeadline($activity) {
-        return '<a href="" data-id="'.$activity['id'].'" class="showAnchor">'.$activity['created_by_name'].' '.$activity['activity_type'].'</a>';
-    }
-
-    protected function getTimelineMedia($activity) {
-        return '<a href=#Users/'.$activity['created_by'].' class="avatar avatar42"><img src='.($activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg").'></a>';
-    }
-
-    protected function getTimelineThumbnail($activity) {
-        return $activity['created_by_picture'] ? "../rest/v10/Users/".$activity['created_by']."/file/picture?oauth_token=".$_GET['oauth_token'] : "../clients/summer/views/imagesearch/anonymous.jpg";
-    }
-
-    protected function getTimelineText($activity) {
-        $result = '';
-
-        switch ($activity['activity_type']) {
-            case "posted":
-                $result = $activity['activity_data']['value'];
-                if(!empty($activity['target_module'])) {
-                    if(!empty($activity['target_id'])) {
-                        $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
-                    }
-                    else {
-                        $result .= ' on <a href="#'.$activity['target_module'].'">'.$activity['target_name'].'</a>';
-                    }
-                }
-                break;
-            case "created":
-                $result = '<a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
-                break;
-            case "related":
-                $result = '<a href="#'.$activity['activity_data']['relate_to'].'/'.$activity['activity_data']['relate_id'].'">'.$activity['activity_data']['relate_name'].'</a> to <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
-                break;
-            case "updated":
-                foreach($activity['activity_data'] as $i =>$update) {
-                    if($i != 0) {
-                        $result .= ', ';
-                    }
-                    $result .= '<a href="#" rel="tooltip" title="Was: '.$update['before'].'<br>Now: '.$update['after'].'">'.$update['field_name'].'</a>';
-                }
-                if(!empty($activity['target_name'])) {
-                    $result .= ' on <a href="#'.$activity['target_module'].'/'.$activity['target_id'].'">'.$activity['target_name'].'</a>';
-                }
-                break;
-            default:
-                break;
-        }
-
-        $result .= '<br/>';
-
-        if(count($activity['notes']) > 0) {
-            $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Attachments('.count($activity['notes']).')</a>';
-        }
-        if(count($activity['comments']) > 0) {
-            $result .= '<br/><a href="" data-id="'.$activity['id'].'" class="showAnchor">Comments('.count($activity['comments']).')</a>';
-        }
-
-        return $result;
     }
 
     /**
