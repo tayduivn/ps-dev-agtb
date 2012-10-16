@@ -27,6 +27,8 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    protected $currentTimePeriod;
+    
     protected static $foreastsConfigSettings = array(
         array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_interval', 'value' => 'Annual', 'platform' => 'base', 'category' => 'Forecasts'),
@@ -50,8 +52,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
         TimePeriod::rebuildForecastingTimePeriods();
+    }
 
-        parent::setUpBeforeClass();
+    public function setUp()
+    {
+        $this->currentTimePeriod = new AnnualTimePeriod();
+        $this->currentTimePeriod->retrieve(TimePeriod::getCurrentId());
     }
 
     public static function tearDownAfterClass()
@@ -90,7 +96,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testDateBoundsOfCurrentTimePeriod() {
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
         $timeDate = TimeDate::getInstance();
         $now = $timeDate->getNow();
         $expectedStartDate = $timeDate->getNow();
@@ -104,8 +109,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $expectedEndDate = $expectedEndDate->modify("-1 year");
         }
 
-        $this->assertEquals($expectedStartDate->asDbDate(), $currentTimePeriod->start_date, "Start Dates do not match");
-        $this->assertEquals($expectedEndDate->asDbDate(), $currentTimePeriod->end_date, "End Dates do not match");
+        $this->assertEquals($expectedStartDate->asDbDate(), $this->currentTimePeriod->start_date, "Start Dates do not match");
+        $this->assertEquals($expectedEndDate->asDbDate(), $this->currentTimePeriod->end_date, "End Dates do not match");
     }
 
     /**
@@ -113,9 +118,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testDateBoundsOfCurrentLeafPeriods() {
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
         $timeDate = TimeDate::getInstance();
-        $leaves = $currentTimePeriod->getLeaves();
+        $leaves = $this->currentTimePeriod->getLeaves();
         $now = $timeDate->getNow();
         $expectedStartDate = $timeDate->getNow();
         $expectedEndDate = $timeDate->getNow();
@@ -167,7 +171,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testDateBoundsOfPreviousTimePeriods() {
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
         $timeDate = TimeDate::getInstance();
         $now = $timeDate->getNow();
         $expectedStartDate = $timeDate->getNow();
@@ -182,11 +185,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         for($i = 0; $i < 4; $i++) {
-            $currentTimePeriod = $currentTimePeriod->getPreviousTimePeriod();
+            $this->currentTimePeriod = $this->currentTimePeriod->getPreviousTimePeriod();
             $expectedStartDate = $expectedStartDate->modify("-1 year");
             $expectedEndDate = $expectedEndDate->modify("-1 year");
-            $this->assertEquals($expectedStartDate->asDbDate(), $currentTimePeriod->start_date, "Start Dates do not match");
-            $this->assertEquals($expectedEndDate->asDbDate(), $currentTimePeriod->end_date, "End Dates do not match");
+            $this->assertEquals($expectedStartDate->asDbDate(), $this->currentTimePeriod->start_date, "Start Dates do not match");
+            $this->assertEquals($expectedEndDate->asDbDate(), $this->currentTimePeriod->end_date, "End Dates do not match");
         }
     }
 
@@ -195,7 +198,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testDateBoundsOfFutureTimePeriods() {
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
         $timeDate = TimeDate::getInstance();
         $now = $timeDate->getNow();
         $expectedStartDate = $timeDate->getNow();
@@ -210,11 +212,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         for($i = 0; $i < 4; $i++) {
-            $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
+            $this->currentTimePeriod = $this->currentTimePeriod->getNextTimePeriod();
             $expectedStartDate = $expectedStartDate->modify("+1 year");
             $expectedEndDate = $expectedEndDate->modify("+1 year");
-            $this->assertEquals($expectedStartDate->asDbDate(), $currentTimePeriod->start_date, "Start Dates do not match");
-            $this->assertEquals($expectedEndDate->asDbDate(), $currentTimePeriod->end_date, "End Dates do not match");
+            $this->assertEquals($expectedStartDate->asDbDate(), $this->currentTimePeriod->start_date, "Start Dates do not match");
+            $this->assertEquals($expectedEndDate->asDbDate(), $this->currentTimePeriod->end_date, "End Dates do not match");
         }
     }
 
@@ -223,11 +225,10 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testDateBoundsOfPreviousLeafPeriods() {
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
         $timeDate = TimeDate::getInstance();
         for($i = 1; $i <= 4; $i++) {
-            $currentTimePeriod = $currentTimePeriod->getPreviousTimePeriod();
-            $leaves = $currentTimePeriod->getLeaves();
+            $this->currentTimePeriod = $this->currentTimePeriod->getPreviousTimePeriod();
+            $leaves = $this->currentTimePeriod->getLeaves();
             $now = $timeDate->getNow();
             $expectedStartDate = $timeDate->getNow();
             $expectedEndDate = $timeDate->getNow();
@@ -283,11 +284,10 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      */
     public function testDateBoundsOfNextLeafPeriods() {
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
         $timeDate = TimeDate::getInstance();
         for($i = 1; $i <= 4; $i++) {
-            $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
-            $leaves = $currentTimePeriod->getLeaves();
+            $this->currentTimePeriod = $this->currentTimePeriod->getNextTimePeriod();
+            $leaves = $this->currentTimePeriod->getLeaves();
             $now = $timeDate->getNow();
             $expectedStartDate = $timeDate->getNow();
             $expectedEndDate = $timeDate->getNow();
