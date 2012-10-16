@@ -335,12 +335,10 @@
                 {
                     switch(field.type)
                     {
-                        case "enum":
                         case "bool":
                             fieldDef["sSortDataType"] = "dom-checkbox";
                             fieldDef["sType"] = "numeric";
                             break;
-
                         case "int":
                         case "currency":
                             fieldDef["sSortDataType"] = "dom-number";
@@ -606,7 +604,12 @@
 
                     //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
                     if (forecast_categories_setting == 'show_binary') {
-                        selectVal = rowCategory.find('input').attr('checked') ? 'include' : 'exclude';
+                        // custom sorting on checkboxes changes the values to "1" or "0", so here we need to account for that so the filters know what to do.
+                        if (rowCategory.length == 1) {
+                            selectVal = (rowCategory.val() == 1) ? 'include' : 'exclude';
+                        } else {
+                            selectVal = rowCategory.find('input').attr('checked') ? 'include' : 'exclude';
+                        }
                     } else {
                         selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim();
                     }

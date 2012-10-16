@@ -58,8 +58,7 @@
      */
     _renderField: function(field) {
         if (field.name == 'category') {
-            var categorySetting = this.context.forecasts.config.get('forecast_categories');
-            field.def.options = this.context.forecasts.config.get('buckets_dom');
+            field.def.options = this.context.forecasts.config.get('buckets_dom') || 'show_binary_dom';
             field.def.value = app.defaultSelections.category;
             field = this._setUpCategoryField(field);
         }
