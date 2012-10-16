@@ -62,7 +62,9 @@
               <a href="#{{attributes.target_module}}">{{attributes.target_name}}</a>
             {{/if}}
           {{else}}
+          {{#notEq attributes.activity_type "posted"}}
             a record
+          {{/notEq}}
           {{/if}}
 
           <br>
