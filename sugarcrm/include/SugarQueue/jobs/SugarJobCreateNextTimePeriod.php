@@ -61,7 +61,8 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
         $timedate = TimeDate::getInstance();
 
         //fetch the last timeperiod
-        $result = $db->query("select id, time_period_type from timeperiods where start_date_timestamp = (select max(start_date_timestamp) from timeperiods where is_leaf = 0 and deleted = 0) and is_leaf = 0 and deleted = 0");
+        $query = "select id, time_period_type from timeperiods where is_leaf = 0 and deleted = 0 order by end_date_timestamp desc";
+        $result = $db->limitQuery($query, 0, 1);
         $row = $db->fetchByAssoc($result);
         //load it from the bean factory
         $lastTimePeriod = BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']);

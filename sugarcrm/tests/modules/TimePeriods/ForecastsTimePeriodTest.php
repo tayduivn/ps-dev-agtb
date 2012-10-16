@@ -382,7 +382,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timedate = TimeDate::getInstance();
         $db = DBManagerFactory::getInstance();
         //get the current last time period
-        $result = $db->query("select id, time_period_type from timeperiods where end_date_timestamp = (select max(end_date_timestamp) from timeperiods where deleted = 0 and is_leaf = 0) and deleted = 0 and is_leaf = 0");
+        $query = "select id, time_period_type from timeperiods where is_leaf = 0 and deleted = 0 order by end_date_timestamp desc";
+        $result = $db->limitQuery($query, 0, 1);
         $row = $db->fetchByAssoc($result);
         $lastTimePeriod = BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']);
         $lastStartDate = $timedate->fromDbDate($lastTimePeriod->start_date);
