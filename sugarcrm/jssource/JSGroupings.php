@@ -115,6 +115,7 @@
                 "modules/Forecasts/clients/base/helper/hbt-helpers.js" => "summer/summer.min.js",
                 "include/javascript/twitterbootstrap/js/sugarCharts.js" => "summer/summer.min.js",
                 "include/SugarCharts/Jit/js/Jit/jit.js" => "summer/summer.min.js",
+                "include/javascript/jquery/jquery.jstree.js" => "summer/summer.min.js",
 
             ),
 

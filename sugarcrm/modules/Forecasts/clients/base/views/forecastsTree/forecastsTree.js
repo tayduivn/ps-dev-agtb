@@ -115,7 +115,9 @@
 
             //Scan for the nodes with the data attribute.  These are the nodes we are interested in
             if (entry.data) {
-                data[index].data = replaceHTMLChars(entry.data);
+                data[index].data = (function(value) {
+                    return value.replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&#039;/gi,'\'').replace(/&quot;/gi,'"');
+                })(entry.data);
 
                 if (entry.children) {
                     //For each children found (if any) then call _recursiveReplaceHTMLChars again.  Notice setting

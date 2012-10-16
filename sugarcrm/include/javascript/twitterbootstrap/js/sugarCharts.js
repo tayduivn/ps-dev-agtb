@@ -185,7 +185,7 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
                 }
 
                 table += "</table>";
-                list.innerHTML = table;
+                //list.innerHTML = table;
 
 
                 //save canvas to image for pdf consumption
