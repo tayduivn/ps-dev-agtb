@@ -23,16 +23,16 @@
         twitter = twitter.replace(" ", "");
 
         $.ajax({
-            url: "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + twitter + "&count=6&callback=?",
+            url: "https://api.twitter.com/1/statuses/user_timeline.json?screen_name=" + twitter + "&count=3&callback=?",
             dataType: "jsonp",
             context: this,
             success: function(data) {
                 var tweets = [];
 
                 _.each(data, function(tweet) {
-                    var day = tweet.created_at.substring(8, 10),
-                        month = tweet.created_at.substring(4, 7),
-                        year = tweet.created_at.substring(tweet.created_at.length - 4, tweet.created_at.length),
+                    var time = new Date(tweet.created_at.replace(/^\w+ (\w+) (\d+) ([\d:]+) \+0000 (\d+)$/,
+        "$1 $2 $4 $3 UTC")),
+                        date = app.date.format(time, "Y-m-d H:i:s"),
                         text = tweet.text,
                         sourceUrl = tweet.source,
                         tokenText = text.split(' '),
@@ -41,19 +41,18 @@
                     // Search for links and turn them into hrefs
                     for (j = 0; j < tokenText.length; j++) {
                         if (tokenText[j].charAt(0) == 'h' && tokenText[j].charAt(1) == 't') {
-                            tokenText[j] = "<a class='googledoc-fancybox' href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>"
+                            tokenText[j] = "<a class='googledoc-fancybox' href=" + '"' + tokenText[j] + '"' + "target='_blank'>" + tokenText[j] + "</a>";
                         }
                     }
 
                     text = tokenText.join(" ");
-                    tweets.push({text: text, source: sourceUrl, day: day, month: month, year: year});
+                    tweets.push({text: text, source: sourceUrl, date: date});
                 }, this);
 
                 this.tweets = tweets;
 
                 app.view.View.prototype.render.call(this);
-            },
-            context: this
+            }
         });
     },
 
