@@ -21,7 +21,8 @@
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
-        "click a[name=forecastSettings]" : "triggerConfigModal"
+        "click a[name=forecastSettings]" : "triggerConfigModal",
+        "click a.drawerTrig" : "triggerRightColumnVisibility"
     },
 
     initialize: function (options) {
@@ -195,6 +196,20 @@
      */
     checkShowCommitButton: function(id) {
         return app.user.get('id') == id;
+    },
+
+    /**
+     * Toggle the right Column Visibility
+     * @param evt
+     */
+    triggerRightColumnVisibility : function(evt) {
+        // we need to use currentTarget so we always get the a and not any child that was clicked on
+        var el = $(evt.currentTarget);
+        el.find('i').toggleClass('icon-chevron-right icon-chevron-left');
+
+        // we need to go up and find the parent containg the two rows
+        el.parents('#contentflex').find('>div.row-fluid').find('>div:first').toggleClass('span8 span12');
+        el.parents('#contentflex').find('>div.row-fluid').find('>div:last').toggleClass('span4 hide');
     }
 
 })
