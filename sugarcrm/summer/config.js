@@ -183,7 +183,8 @@
         displayModules : [
             'Accounts',
             'Contacts',
-            'Opportunities'
+            'Opportunities',
+            'Forecasts'
         ],
         /**
          * Client ID for oAuth

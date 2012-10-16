@@ -61,7 +61,7 @@ class TimePeriod extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('reports_to_name');
 
-	
+
 	var $new_schema = true;
 
 	public function __construct() {
@@ -135,13 +135,13 @@ class TimePeriod extends SugarBean {
     public function fill_in_additional_detail_fields()
 	{
 		if (isset($this->parent_id) && !empty($this->parent_id)) {
-		
+
 		  $query ="SELECT name from timeperiods where id = '$this->parent_id' and deleted = 0";
 		  $result =$this->db->query($query, true, "Error filling in additional detail fields") ;
 		  $row = $this->db->fetchByAssoc($result);
-		  $GLOBALS['log']->debug("additional detail query results: $row");
+		  $GLOBALS['log']->debug("additional detail query results: " . var_export($row, true));
 
-		  
+
 		  if($row != null) {
 			 $this->fiscal_year = $row['name'];
 		  }
@@ -151,12 +151,12 @@ class TimePeriod extends SugarBean {
 
     public function get_list_view_data(){
 
-		$timeperiod_fields = $this->get_list_view_array();		
+		$timeperiod_fields = $this->get_list_view_array();
 		$timeperiod_fields['FISCAL_YEAR'] = $this->fiscal_year;
-	
+
 		if ($this->is_fiscal_year == 1)
 			$timeperiod_fields['FISCAL_YEAR_CHECKED'] = "checked";
-		
+
 		return $timeperiod_fields;
 	}
 
@@ -219,7 +219,7 @@ class TimePeriod extends SugarBean {
 
 				$fiscal_years[$row['id']]=$row['name'];
 			}
-			
+
 			if (!isset($fiscal_years)) {
 				$fiscal_years=array();
 			}
@@ -449,12 +449,14 @@ class TimePeriod extends SugarBean {
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null) {
-            return $this->createNextTimePeriod();
+        if($row == null)
+        {
+           return $this->createNextTimePeriod();
         }
 
-        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
-
+        $nextTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
+        $nextTimePeriod->retrieve($row['id']);
+        return $nextTimePeriod;
     }
 
 
@@ -464,7 +466,6 @@ class TimePeriod extends SugarBean {
      * @return null|SugarBean
      */
     public function getPreviousTimePeriod() {
-        $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
 
         $query = "select id from timeperiods where ";
@@ -480,11 +481,14 @@ class TimePeriod extends SugarBean {
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null) {
+        if($row == null)
+        {
             return null;
         }
 
-        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
+        $previousTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
+        $previousTimePeriod->retrieve($row['id']);
+        return $previousTimePeriod;
     }
 
     /**

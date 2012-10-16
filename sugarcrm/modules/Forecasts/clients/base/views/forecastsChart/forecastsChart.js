@@ -6,7 +6,7 @@
  */
 ({
     values:{},
-    url:'rest/v10/Forecasts/chart',
+    url: app.api.buildURL('Forecasts/chart'),
 
     chart: null,
 
@@ -35,7 +35,7 @@
      */
     changeDisplayOptions : function()
     {
-        this.handleRenderOptions({dataset: this.getCheckedOptions('datasetOptions')})
+        this.handleRenderOptions({dataset: this.getCheckedOptions('datasetOptions')});
     },
 
     /**
@@ -175,7 +175,7 @@
     updateChart: function() {
         var self = this;
         SUGAR.charts.update(self.chart, self.url, self.values, _.bind(function(chart){
-            SUGAR.charts.generateLegend(chart, chart.config.injectInto)
+            SUGAR.charts.generateLegend(chart, chart.config.injectInto);
             // update the chart title
             self.$el.find('h4').html(self.chartTitle);
         }, self));

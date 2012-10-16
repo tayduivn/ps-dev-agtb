@@ -109,6 +109,14 @@
                 "styleguide/styleguide/js/nvd3/src/models/pieChart.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/src/models/funnel.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/src/models/funnelChart.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/ForecastsUtils.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/BucketGridEnum.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/ClickToEdit.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/helper/hbt-helpers.js" => "summer/summer.min.js",
+                "include/javascript/twitterbootstrap/js/sugarCharts.js" => "summer/summer.min.js",
+                "include/SugarCharts/Jit/js/Jit/jit.js" => "summer/summer.min.js",
+                "include/javascript/jquery/jquery.jstree.js" => "summer/summer.min.js",
+
             ),
 
             $summer_css = array(
