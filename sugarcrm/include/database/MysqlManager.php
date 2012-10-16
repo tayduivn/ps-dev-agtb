@@ -1078,10 +1078,10 @@ class MysqlManager extends DBManager
 	{
 		$ctype = $this->getColumnType($type);
 		if($ctype == "datetime") {
-			return $this->convert($this->quoted("0000-00-00 00:00:00"), "datetime");
+			return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
 		}
 		if($ctype == "date") {
-			return $this->convert($this->quoted("0000-00-00"), "date");
+			return $this->convert($this->quoted("1970-01-01"), "date");
 		}
 		if($ctype == "time") {
 			return $this->convert($this->quoted("00:00:00"), "time");

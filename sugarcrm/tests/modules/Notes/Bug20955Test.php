@@ -1,4 +1,4 @@
-<?php
+v<?php
 //FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
@@ -90,8 +90,10 @@ class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
 	public function testDisabledNewCampaignDefaultTeam() 
     {
 		global $current_user;
+        $timedate = TimeDate::getInstance();
 		$temp_campaign=new Campaign();  
-		$temp_campaign->save();
+		$temp_campaign->end_date = $timedate->nowDbDate();
+        $temp_campaign->save();
 		return $this->assertEquals($temp_campaign->team_id,$current_user->default_team, "The campaign default team is not the current user's default team! ");
 	}
 	//END SUGARCRM flav!=sales ONLY

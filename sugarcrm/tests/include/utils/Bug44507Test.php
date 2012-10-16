@@ -39,7 +39,7 @@ class Bug44507Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-    	if($GLOBALS['db']->dbType != 'mysql')
+    	if($GLOBALS['db']->variant != 'mysql' || !function_exists('mysqli_connect'))
     	{
     		$this->markTestSkipped('Skipping Test Bug44507');
     		$this->skipped = true;
