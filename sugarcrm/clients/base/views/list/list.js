@@ -153,10 +153,10 @@
     },
     previewRecord: function(e) {
         var self = this,
-            root = this.$(e.target).closest("[name]"),
-            hash = root.attr("name"),
-            arr = hash.split("_"),
-            module = arr[0], id = arr[1],
+            el = this.$(e.target).closest("a"),
+            data = el.data(),
+            module = data.module,
+            id = data.id,
             model = app.data.createBean(module);
 
         model.set("id", id);
