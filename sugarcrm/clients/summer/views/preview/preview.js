@@ -33,7 +33,6 @@
 
             // Get the corresponding detail view meta for said module
             this.meta = app.metadata.getView(this.model.module, 'detail') || {};
-            console.log(this.meta);
             // Clip meta panel fields to first N number of fields per the spec
             this.meta.panels[0].fields = _.first(this.meta.panels[0].fields, fieldsToDisplay);
 
