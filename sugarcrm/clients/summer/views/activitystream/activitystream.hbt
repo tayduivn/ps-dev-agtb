@@ -14,8 +14,8 @@
           {{/if}}
     </ul>
   </div>
-  <div id="activitystream-timeline"></div>
-  <div id='activitystream-calendar'></div>
+  <div id="{{timelineId}}"></div>
+  <div id="{{calendarId}}"></div>
   <div class="activitystream-post row omnibar">
       <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
         <img src="{{picture_url}}" alt="{{full_name}}">

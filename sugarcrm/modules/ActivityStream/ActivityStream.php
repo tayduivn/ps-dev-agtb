@@ -234,33 +234,48 @@ class ActivityStream extends SugarBean {
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
             return false;
-        }
-
-        if(empty($options['view'])) {
-            $options['view'] = 'list';
-        }
-
-        // TimelineJS adds some garbage data to url
-        if(strpos($options['view'], 'timeline') !== false) {
-            $options['view'] = 'timeline';
-        }
-
-        if(!in_array($options['view'], array('list', 'timeline'))) {
-            return false;
-        }
-
+        } 
+              
         // Convert to int for security
         $start = isset($options['offset']) ? (int) $options['offset'] : 0;
         $numActivities = isset($options['limit']) ? (int) $options['limit'] : -1;
         $numComments = isset($options['num_comments']) ? (int) $options['num_comments'] : -1;
         $filter = isset($options['filter']) ? $options['filter'] : 'all';
+        $link = isset($options['link']) ? $options['link'] : '';
+        $parentModule = isset($options['parent_module']) ? $options['parent_module'] : '';
+        $parentId = isset($options['parent_id']) ? $options['parent_id'] : '';       
+        
         $activities = array();
-
+        
         $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name, u.picture as created_by_picture';
-        $from = 'activity_stream a, users u';
+        $from = 'users u, activity_stream a';
         $where = 'a.created_by = u.id AND a.deleted = 0';
         $limit = '';
 
+        // For related tab
+        if(!empty($link)) {
+            if(empty($parentModule) || empty($parentId)) {
+                $GLOBALS['log']->debug("parent_module and parent_id cannot be empty for related tab.");
+                return false;
+            }
+            
+            $parentBean = BeanFactory::getBean($parentModule, $parentId, false);
+            if(empty($parentBean)) {
+                $GLOBALS['log']->debug("No parent bean found for related tab.");
+                return false;
+            }
+            
+            // Load up the relationship
+            if (!$parentBean->load_relationship($link)) {
+                // The relationship did not load
+                $GLOBALS['log']->debug("Couldn't find relationship.");
+                return false;
+            }
+
+            // Get related ids
+            $where .= ' AND a.target_id IN ('.$parentBean->$link->getQuery().')';
+        }
+        
         if($targetModule == 'Users' && !empty($targetId)) {
             $where .= " AND (a.created_by = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['created_by']) ." OR (a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module'])." AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id'])."))";
         }
@@ -288,7 +303,7 @@ class ActivityStream extends SugarBean {
         }
 
         $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
-        $GLOBALS['log']->debug("Activity query: $sql");
+        $GLOBALS['log']->fatal("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
 
         if(!empty($result)) {
@@ -358,12 +373,8 @@ class ActivityStream extends SugarBean {
                 }
             }
         }
-
-        $getViewData = "get".ucfirst($options['view'])."ViewData";
-        return $this->$getViewData(array_values($activities), $options);
-    }
-
-    protected function getListViewData($activities, $options = array()) {
+        
+        $activities = array_values($activities);
         $nextOffset = count($activities) < $options['limit'] ? -1 : $options['offset'] + count($activities);
         $list = array('next_offset'=>$nextOffset,'records'=>$activities);
         return $list;
