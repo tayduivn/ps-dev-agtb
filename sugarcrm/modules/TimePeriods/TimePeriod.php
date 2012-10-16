@@ -27,9 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
-
-
+require_once('include/SugarQueue/SugarJobQueue.php');
 
 // User is used to store customer information.
 class TimePeriod extends SugarBean {
