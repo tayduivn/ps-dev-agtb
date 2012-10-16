@@ -562,12 +562,14 @@ class TimePeriod extends SugarBean {
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null) {
-            return $this->createNextTimePeriod();
+        if($row == null)
+        {
+           return $this->createNextTimePeriod();
         }
 
-        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
-
+        $nextTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
+        $nextTimePeriod->retrieve($row['id']);
+        return $nextTimePeriod;
     }
 
 
@@ -577,7 +579,6 @@ class TimePeriod extends SugarBean {
      * @return null|SugarBean
      */
     public function getPreviousTimePeriod() {
-        $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
 
         $query = "select id, time_period_type from timeperiods where ";
@@ -593,11 +594,14 @@ class TimePeriod extends SugarBean {
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null) {
+        if($row == null)
+        {
             return null;
         }
 
-        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
+        $previousTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
+        $previousTimePeriod->retrieve($row['id']);
+        return $previousTimePeriod;
     }
 
     /**
@@ -608,7 +612,6 @@ class TimePeriod extends SugarBean {
     public static function rebuildForecastingTimePeriods() {
        //kill the old timeperiods first
        self::deleteCurrentTimePeriods();
-       $db = DBManagerFactory::getInstance();
 
        $timedate = TimeDate::getInstance();
        $adminBean = BeanFactory::getBean("Administration");
@@ -667,8 +670,8 @@ class TimePeriod extends SugarBean {
      * @return void
      */
     protected static function deleteCurrentTimePeriods() {
-            $db = DBManagerFactory::getInstance();
-            $db->query('UPDATE timeperiods set deleted = 1 WHERE deleted=0');
+        $db = DBManagerFactory::getInstance();
+        $db->query('UPDATE timeperiods set deleted = 1 WHERE deleted=0');
     }
 
     /**
