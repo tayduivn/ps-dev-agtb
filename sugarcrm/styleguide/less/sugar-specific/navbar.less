@@ -22,9 +22,10 @@
   padding: 0 1px;
 }
 
-#contentflex #headerbar {
+#contentflex #headerbar, .headerpane {
     height: 60px;
     z-index: 1000;
+    background: @grayLighter;
     border-bottom: 1px solid darken(@grayLighter,5%);
     h1 {
         float: left;
@@ -33,7 +34,7 @@
     }
 
     .btn {
-        margin: 7px 8px 0 0;
+        margin: 10px 8px 0 0;
     }
 
     .dropdown-toggle {
@@ -42,6 +43,12 @@
 
     .span12 {
         margin-left: 0px;
+    }
+    .btn-group .btn.dropdown-toggle {
+      margin-left: -12px !important;
+    }
+    .btn-toolbar {
+      margin-top: 5px;
     }
 
 }
@@ -95,8 +102,8 @@
 
 .navbar .advanced {
   position: absolute;
-  top: -9px;
-  right: -1px;
+  top: -8px;
+  right: -2px;
 }
 
 .navbar .advanced .btn {
@@ -269,7 +276,9 @@ textarea[readonly] {
   position: relative;
 }
 .listed {margin: 0; padding: 0;}
-.listed li {border-bottom: 1px solid @grayLighter; margin: 0; padding: 5px;}
+.listed li {border-bottom: 1px solid @grayLighter; margin: 0; padding: 8px;}
+.side .block .listed { margin: -10px 0 0; }
+.side .block .listed li:last-child { border-bottom: none;}
 
 .block .list li.active a {
   background: @grayLighter;
@@ -376,7 +385,6 @@ h4 i {color: @grayLight;}
 .block h4 {
   padding: 0 0 10px;
   font-weight: 600;
-  border-bottom: 1px solid @grayLight;
   margin-bottom: 10px;
 }
 
