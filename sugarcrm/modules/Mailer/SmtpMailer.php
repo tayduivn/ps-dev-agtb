@@ -45,6 +45,7 @@ class SmtpMailer extends BaseMailer
      * Performs the send of an email using PHPMailer (currently version 5.2.1).
      *
      * @access public
+     * @access public
      * @throws MailerException
      */
     public function send() {

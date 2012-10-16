@@ -123,11 +123,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group emailsend
+     * @group mailer
      */
     public function testEmailSend_Success()
     {
-        $this->markTestSkipped("In Progress ......");
+        //$this->markTestSkipped("In Progress ......");
 
         $mailConfig = MailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
         $mockMailer = new MockMailer($mailConfig->mailerConfigData);
@@ -138,10 +138,10 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
             ->with($mailConfig)
             ->will($this->returnValue($mockMailer));
 
-        Email::_setMailFactoryClassName($MockMailerFactoryClass);
-
         $em = new Email();
         $em->email2init();
+
+        $em->_setMailerFactoryClassName($MockMailerFactoryClass);
 
         $em->from_name = "Woody Woodpecker";
         $em->from_addr = "woody@woodpecker.com";
@@ -153,16 +153,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
         $em->description_html = "This is the HTML Description";
         $em->description      = "This is the Description";
 
-        try {
-            $em->send();
-        } catch (Exception $e) {
-            var_dump($e->getNMessage());
-        }
+        $em->send();
 
-        var_dump($mockMailer);
-        printf("\n--------------------------------------------------\n\n");
-        $mockMailer->dump();
-
+        // $mockMailer->dump();
     }
 
     /**
@@ -196,6 +189,7 @@ class MockMailer extends SmtpMailer
     }
 
     public function dump() {
+        print_r($this);
     }
 }
 ?>

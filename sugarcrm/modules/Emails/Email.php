@@ -112,6 +112,7 @@ class Email extends SugarBean {
 	var $link_action;
 	var $emailAddress;
 	var $attachments = array();
+    var $saved_attachments = array();
 
 	/* to support Email 2.0 */
 	var $isDuplicate;
@@ -134,7 +135,7 @@ class Email extends SugarBean {
 	// prefix to use when importing inlinge images in emails
 	public $imagePrefix;
 
-    private $MockMailerFactoryClass = null;
+    private $MockMailerFactoryClass = 'MailerFactory';
 
     /**
      * Used for keeping track of field defs that have been modified
@@ -166,13 +167,13 @@ class Email extends SugarBean {
 	}
 
     /**
-     * This method is here solely to allow for the MailFactory Class to be mocked for testing
+     * This method is here solely to allow for the MailerFactory Class to be mocked for testing
      * It should never be used outside of the PHP Unit Test Framework
      *
      * @param $className
      */
-    public function _setMailFactoryClassName($className) {
-        $this->$MockMailFactoryClass = $className;
+    public function _setMailerFactoryClassName($className) {
+        $this->MockMailerFactoryClass = $className;
     }
 
 
@@ -567,7 +568,8 @@ class Email extends SugarBean {
             throw new MailerException("No Valid Mail Configurations Found", MailerException::InvalidConfiguration);
         }
 
-        $mailer = MailerFactory::getMailer($mailConfig);
+        $mailerFactoryClass = $this->MockMailerFactoryClass;
+        $mailer = $mailerFactoryClass::getMailer($mailConfig);
         $mailer->setSubject($subject);
         $mailer->setHtmlBody($htmlBody);
         $mailer->setTextBody($textBody);
@@ -1656,9 +1658,6 @@ class Email extends SugarBean {
 	 */
 	function handleAttachments() {
 
-
-
-
 		global $mod_strings;
 
         ///////////////////////////////////////////////////////////////////////////
@@ -1933,16 +1932,23 @@ class Email extends SugarBean {
 
 
         $mailConfig = MailConfigurationPeer::getSystemMailConfiguration($current_user);
-        $mailer = MailerFactory::getMailer($mailConfig);
+        $mailerFactoryClass = $this->MockMailerFactoryClass;
+        $mailer = $mailerFactoryClass::getMailer($mailConfig);
 
-        foreach ($this->to_addrs_arr as $addr_arr) {
-            $mailer->addRecipientsTo(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+        if (is_array($this->to_addrs_arr)) {
+            foreach ($this->to_addrs_arr as $addr_arr) {
+                $mailer->addRecipientsTo(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+            }
         }
-        foreach ($this->cc_addrs_arr as $addr_arr) {
-            $mailer->addRecipientsCc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+        if (is_array($this->cc_addrs_arr)) {
+            foreach ($this->cc_addrs_arr as $addr_arr) {
+                $mailer->addRecipientsCc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+            }
         }
-        foreach ($this->cc_addrs_arr as $addr_arr) {
-            $mailer->addRecipientsBcc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+        if (is_array($this->bcc_addrs_arr)) {
+            foreach ($this->bcc_addrs_arr as $addr_arr) {
+                $mailer->addRecipientsBcc(new EmailIdentity($addr_arr['email'], $addr_arr['display']));
+            }
         }
 
         // SENDER Info
@@ -1958,59 +1964,61 @@ class Email extends SugarBean {
             $this->reply_to_name = $this->from_name;
         }
 
-        $mailer->setSender (new EmailIdentity($this->from_addr, $this->from_name));
-        $mailer->setReplyTo(new EmailIdentity($this->reply_to_addr, $this->reply_to_name));
+ //       $mailer->setSender (new EmailIdentity($this->from_addr, $this->from_name));
+  //      $mailer->setReplyTo(new EmailIdentity($this->reply_to_addr, $this->reply_to_name));
 
         $mailer->setSubject($this->name);
 
         ///////////////////////////////////////////////////////////////////////
         ////	ATTACHMENTS
-        foreach($this->saved_attachments as $note) {
-            $mime_type = 'text/plain';
-            if($note->object_name == 'Note') {
-                if(!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) { // brandy-new file upload/attachment
+        if (is_array($this->saved_attachments)) {
+            foreach($this->saved_attachments as $note) {
+                $mime_type = 'text/plain';
+                if($note->object_name == 'Note') {
+                    if(!empty($note->file->temp_file_location) && is_file($note->file->temp_file_location)) { // brandy-new file upload/attachment
+                        $file_location = "upload://$note->id";
+                        $filename = $note->file->original_file_name;
+                        $mime_type = $note->file->mime_type;
+                    } else { // attachment coming from template/forward
+                        $file_location = "upload://{$note->id}";
+                        // cn: bug 9723 - documents from EmailTemplates sent with Doc Name, not file name.
+                        $filename = !empty($note->filename) ? $note->filename : $note->name;
+                        $mime_type = $note->file_mime_type;
+                    }
+                } elseif($note->object_name == 'DocumentRevision') { // from Documents
+                    $filePathName = $note->id;
+                    // cn: bug 9723 - Emails with documents send GUID instead of Doc name
+                    $filename = $note->getDocumentRevisionNameForDisplay();
                     $file_location = "upload://$note->id";
-                    $filename = $note->file->original_file_name;
-                    $mime_type = $note->file->mime_type;
-                } else { // attachment coming from template/forward
-                    $file_location = "upload://{$note->id}";
-                    // cn: bug 9723 - documents from EmailTemplates sent with Doc Name, not file name.
-                    $filename = !empty($note->filename) ? $note->filename : $note->name;
                     $mime_type = $note->file_mime_type;
                 }
-            } elseif($note->object_name == 'DocumentRevision') { // from Documents
-                $filePathName = $note->id;
-                // cn: bug 9723 - Emails with documents send GUID instead of Doc name
-                $filename = $note->getDocumentRevisionNameForDisplay();
-                $file_location = "upload://$note->id";
-                $mime_type = $note->file_mime_type;
-            }
 
-            // strip out the "Email attachment label if exists
-            $filename = str_replace($mod_strings['LBL_EMAIL_ATTACHMENT'].': ', '', $filename);
-            $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
-            //is attachment in our list of bad files extensions?  If so, append .txt to file location
-            //check to see if this is a file with extension located in "badext"
-            foreach($sugar_config['upload_badext'] as $badExt) {
-                if(strtolower($file_ext) == strtolower($badExt)) {
-                    //if found, then append with .txt to filename and break out of lookup
-                    //this will make sure that the file goes out with right extension, but is stored
-                    //as a text in db.
-                    $file_location = $file_location . ".txt";
-                    break; // no need to look for more
+                // strip out the "Email attachment label if exists
+                $filename = str_replace($mod_strings['LBL_EMAIL_ATTACHMENT'].': ', '', $filename);
+                $file_ext = pathinfo($filename, PATHINFO_EXTENSION);
+                //is attachment in our list of bad files extensions?  If so, append .txt to file location
+                //check to see if this is a file with extension located in "badext"
+                foreach($sugar_config['upload_badext'] as $badExt) {
+                    if(strtolower($file_ext) == strtolower($badExt)) {
+                        //if found, then append with .txt to filename and break out of lookup
+                        //this will make sure that the file goes out with right extension, but is stored
+                        //as a text in db.
+                        $file_location = $file_location . ".txt";
+                        break; // no need to look for more
+                    }
                 }
-            }
 
-            if($note->embed_flag == true) {
-                $cid = $filename;
-                $attachment = AttachmentPeer::embeddedImageFromSugarBean($note, $cid);
-                //print_r($attachment);
-                $mailer->addAttachment($attachment);
-            } else {
-                $attachment = AttachmentPeer::attachmentFromSugarBean($note);
-                $mailer->addAttachment($attachment);
-            }
+                if($note->embed_flag == true) {
+                    $cid = $filename;
+                    $attachment = AttachmentPeer::embeddedImageFromSugarBean($note, $cid);
+                    //print_r($attachment);
+                    $mailer->addAttachment($attachment);
+                } else {
+                    $attachment = AttachmentPeer::attachmentFromSugarBean($note);
+                    $mailer->addAttachment($attachment);
+                }
 
+            }
         }
         ////	END ATTACHMENTS
         ///////////////////////////////////////////////////////////////////////
@@ -2054,7 +2062,7 @@ class Email extends SugarBean {
 
             return true;
         } catch (MailerException $me) {
-            $GLOBALS['log']->debug($app_strings['LBL_EMAIL_ERROR_PREPEND'].$mailer->getMessage());
+            $GLOBALS['log']->debug($app_strings['LBL_EMAIL_ERROR_PREPEND'].$me->getMessage());
             return false;
         }
     }
