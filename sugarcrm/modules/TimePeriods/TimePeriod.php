@@ -449,12 +449,14 @@ class TimePeriod extends SugarBean {
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null) {
-            return $this->createNextTimePeriod();
+        if($row == null)
+        {
+           return $this->createNextTimePeriod();
         }
 
-        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
-
+        $nextTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
+        $nextTimePeriod->retrieve($row['id']);
+        return $nextTimePeriod;
     }
 
 
@@ -464,7 +466,6 @@ class TimePeriod extends SugarBean {
      * @return null|SugarBean
      */
     public function getPreviousTimePeriod() {
-        $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
 
         $query = "select id from timeperiods where ";
@@ -480,11 +481,14 @@ class TimePeriod extends SugarBean {
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null) {
+        if($row == null)
+        {
             return null;
         }
 
-        return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
+        $previousTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
+        $previousTimePeriod->retrieve($row['id']);
+        return $previousTimePeriod;
     }
 
     /**
