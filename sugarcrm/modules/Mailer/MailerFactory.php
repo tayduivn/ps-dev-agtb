@@ -69,7 +69,7 @@ class MailerFactory
         $mailConfiguration = static::getOutboundEmailConfiguration($user);
 
         // generate the Mailer
-        $mailer = static::getMailer($mailConfiguration);
+        $mailer = self::getMailer($mailConfiguration);
 
         return $mailer;
     }
@@ -87,8 +87,8 @@ class MailerFactory
      * @throws MailerException Allows MailerExceptions to bubble up.
      */
     public static function getMailer(OutboundEmailConfiguration $config) {
-        $headers = static::buildHeadersForMailer($config->getSender(), $config->getReplyTo());
-        $mailer  = static::buildMailer($config);
+        $headers = self::buildHeadersForMailer($config->getSender(), $config->getReplyTo());
+        $mailer  = self::buildMailer($config);
         $mailer->setHeaders($headers);
 
         return $mailer;
@@ -107,15 +107,15 @@ class MailerFactory
     private static function buildMailer(OutboundEmailConfiguration $config) {
         $mode  = $config->getMode();
 
-        if (!array_key_exists($mode, static::$modeToMailerMap)) {
+        if (!array_key_exists($mode, self::$modeToMailerMap)) {
             throw new MailerException(
                 "Invalid Mailer: Could not find mode '{$mode}'",
                 MailerException::InvalidMailer
             );
         }
 
-        $path  = static::$modeToMailerMap[$mode]["path"];
-        $class = static::$modeToMailerMap[$mode]["class"];
+        $path  = self::$modeToMailerMap[$mode]["path"];
+        $class = self::$modeToMailerMap[$mode]["class"];
         $file  = "{$path}/{$class}.php";
         @include_once $file; // suppress errors
 
