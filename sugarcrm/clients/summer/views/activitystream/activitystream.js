@@ -107,20 +107,20 @@
         event.preventDefault();
 
         if (view == 'timeline') {
-            this.$('#'+this.getTimelineId()).show();
-            this.$('#'+this.getCalendarId()).hide();
-            if (this.$('#'+this.getTimelineId()).html() === "") {
+            this.$('#'+this.timelineId).show();
+            this.$('#'+this.calendarId).hide();
+            if (this.$('#'+this.timelineId).html() === "") {
                 this._renderTimeline();
             }
         } else if(view == 'calendar') {
-            this.$('#'+this.getCalendarId()).show();
-            this.$('#'+this.getTimelineId()).hide();
-            if (this.$('#'+this.getCalendarId()).html() === "") {
+            this.$('#'+this.calendarId).show();
+            this.$('#'+this.timelineId).hide();
+            if (this.$('#'+this.calendarId).html() === "") {
                 this._renderCalendar();
             }
         } else {
-            this.$('#'+this.getTimelineId()).hide();
-            this.$('#'+this.getCalendarId()).hide();
+            this.$('#'+this.timelineId).hide();
+            this.$('#'+this.calendarId).hide();
         }
     },
 
@@ -759,8 +759,8 @@
                 start_at_end:true,
                 js: 'lib/TimelineJS/js/timeline.js',
                 source: timeline,
-                id: 'storyjs-'+self.getTimelineId(),
-                embed_id: self.getTimelineId()           // ID of the DIV you want to load the timeline into
+                id: 'storyjs-'+self.timelineId,
+                embed_id: self.timelineId           // ID of the DIV you want to load the timeline into
             });
         }
     },
@@ -777,10 +777,10 @@
                 },
                 editable: false,
                 viewDisplay: function(view) {
-                    $('#'+self.getCalendarId()).fullCalendar( 'refetchEvents' );
+                    $('#'+self.calendarId).fullCalendar( 'refetchEvents' );
                 },
                 events: function(start, end, callback) {
-                    var events = [], view = $('#'+self.getCalendarId()).fullCalendar('getView'), objarrays;
+                    var events = [], view = $('#'+self.calendarId).fullCalendar('getView'), objarrays;
                     if(view.name == 'month') {
                         events = self._addCalendarMonthEvent(self.collection.models);
                     }
@@ -798,8 +798,8 @@
         };
 
         if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
-            $('#'+self.getCalendarId()).html('');
-            $('#'+self.getCalendarId()).fullCalendar(calendar);
+            $('#'+self.calendarId).html('');
+            $('#'+self.calendarId).fullCalendar(calendar);
         }
     },
 
