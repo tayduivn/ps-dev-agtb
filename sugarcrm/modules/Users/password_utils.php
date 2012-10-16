@@ -28,36 +28,52 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
- function canSendPassword() {
- 	require_once('include/SugarPHPMailer.php');
-    global $mod_strings;
-	global $current_user;
-	global $app_strings;
-	$mail = new SugarPHPMailer();
- 	$emailTemp = new EmailTemplate();
- 	$mail->setMailerForSystem();
-    $emailTemp->disable_row_level_security = true;
+function canSendPassword() {
+    global $mod_strings,
+           $current_user,
+           $app_strings;
 
+    require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php";
 
-    if ($current_user->is_admin){
-    	if ($emailTemp->retrieve($GLOBALS['sugar_config']['passwordsetting']['generatepasswordtmpl']) == '')
-        	return $mod_strings['LBL_EMAIL_TEMPLATE_MISSING'];
-    	if(empty($emailTemp->body) && empty($emailTemp->body_html))
-    		return $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
-    	if($mail->Mailer == 'smtp' && $mail->Host =='')
-    		return $mod_strings['ERR_SERVER_SMTP_EMPTY'];
+    if ($current_user->is_admin) {
+        $emailTemplate                             = new EmailTemplate();
+        $emailTemplate->disable_row_level_security = true;
 
-		$email_errors=$mod_strings['ERR_EMAIL_NOT_SENT_ADMIN'];
-		if ($mail->Mailer == 'smtp')
-			$email_errors.="<br>-".$mod_strings['ERR_SMTP_URL_SMTP_PORT'];
-		if ($mail->SMTPAuth)
-		 	$email_errors.="<br>-".$mod_strings['ERR_SMTP_USERNAME_SMTP_PASSWORD'];
-		$email_errors.="<br>-".$mod_strings['ERR_RECIPIENT_EMAIL'];
-		$email_errors.="<br>-".$mod_strings['ERR_SERVER_STATUS'];
-		return $email_errors;
-	}
-	else
-		return $mod_strings['LBL_EMAIL_NOT_SENT'];
+        if ($emailTemplate->retrieve($GLOBALS['sugar_config']['passwordsetting']['generatepasswordtmpl']) == '') {
+            return $mod_strings['LBL_EMAIL_TEMPLATE_MISSING'];
+        }
+
+        if (empty($emailTemplate->body) && empty($emailTemplate->body_html)) {
+            return $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
+        }
+
+        if (!OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user)) {
+            return $mod_strings['ERR_SERVER_SMTP_EMPTY'];
+        }
+
+        $emailErrors = $mod_strings['ERR_EMAIL_NOT_SENT_ADMIN'];
+
+        try {
+            $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
+
+            if ($config instanceof OutboundSmtpEmailConfiguration) {
+                $emailErrors .= "<br>-{$mod_strings['ERR_SMTP_URL_SMTP_PORT']}";
+
+                if ($config->isAuthenticationRequired()) {
+                    $emailErrors .= "<br>-{$mod_strings['ERR_SMTP_USERNAME_SMTP_PASSWORD']}";
+                }
+            }
+        } catch (MailerException $me) {
+            // might want to report the error
+        }
+
+        $emailErrors .= "<br>-{$mod_strings['ERR_RECIPIENT_EMAIL']}";
+        $emailErrors .= "<br>-{$mod_strings['ERR_SERVER_STATUS']}";
+
+        return $emailErrors;
+    }
+
+    return $mod_strings['LBL_EMAIL_NOT_SENT'];
 }
 
 function  hasPasswordExpired($username){
