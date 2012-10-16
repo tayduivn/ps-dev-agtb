@@ -8,6 +8,9 @@
      */
     events:{
         'click [class*="orderBy"]':'setOrderBy',
+        'click .preview-list-item':'previewRecord',
+        'mouseenter .preview-list-item': 'showTooltip',
+        'mouseleave .preview-list-item': 'hideTooltip',
         'mouseenter tr':'showActions',
         'mouseleave tr':'hideActions'
     },
@@ -147,6 +150,36 @@
             options.relate = true;
         }
         return options;
+    },
+    previewRecord: function(e) {
+        var self = this,
+            root = this.$(e.target).closest("[name]"),
+            hash = root.attr("name"),
+            arr = hash.split("_"),
+            module = arr[0], id = arr[1],
+            model = app.data.createBean(module);
+
+        model.set("id", id);
+        model.fetch({
+            success: function(model) {
+                model.set("_module", module);
+
+                if( _.isUndefined(self.context._callbacks) ) {
+                    // Clicking preview on a related module, need the
+                    // parent context instead
+                    self.context.parent.trigger("togglePreview", model);
+                }
+                else {
+                    self.context.trigger("togglePreview", model);
+                }
+            }
+        });
+    },
+    showTooltip: function(e) {
+        this.$(e.target).closest("a").tooltip("show");
+    },
+    hideTooltip: function(e) {
+        this.$(e.target).closest("a").tooltip("hide");
     },
     showActions:function (e) {
         $(e.currentTarget).children("td").children("span").children(".btn-group").show();
