@@ -30,7 +30,6 @@
         app.view.View.prototype.initialize.call(this, options);
 
         this.breadCrumbLabels = this.layout.getBreadCrumbLabels();
-        debugger;
     },
 
     /**
