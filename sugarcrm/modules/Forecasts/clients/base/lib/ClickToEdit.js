@@ -11,9 +11,9 @@
      * Checks to see if the entered value of the field matches its data type
      */
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
-        var ds = app.utils.escapeRegex(app.user.get('decimal_separator')) || '.';
-        var gs = app.utils.escapeRegex(app.user.get('number_grouping_separator')) || ',';
-        var reg = new RegExp("^[\\+\\-]?(\\d+|\\d{1,3}(\\"+gs+"\\d{3})*)?(\\"+ds+"\\d+)?\\%?$");
+        var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.';
+        var gs = app.utils.regexEscape(app.user.get('number_grouping_separator')) || ',';
+        var reg = new RegExp("^[\\+\\-]?(\\d+|\\d{1,3}("+gs+"\\d{3})*)?("+ds+"\\d+)?\\%?$");
     	switch(field.type){
             case "int":
             case "numeric":

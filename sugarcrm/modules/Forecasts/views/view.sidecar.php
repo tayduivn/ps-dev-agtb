@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/Forecasts/api/ForecastsFiltersApi.php');
-require_once('modules/Forecasts/api/ForecastsChartApi.php');
+require_once('modules/Forecasts/clients/base/api/ForecastsFiltersApi.php');
+require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
 
 class ForecastsViewSidecar extends SidecarView
 {
@@ -67,7 +67,7 @@ class ForecastsViewSidecar extends SidecarView
         $returnInitData = array();
         $defaultSelections = array();
 
-        require_once('modules/Forecasts/api/ForecastsCurrentUserApi.php');
+        require_once('modules/Forecasts/clients/base/api/ForecastsCurrentUserApi.php');
         $forecastsCurrentUserApi = new ForecastsCurrentUserApi();
         $data = $forecastsCurrentUserApi->retrieveCurrentUser($forecastsCurrentUserApi,array());
         $selectedUser = $data["current_user"];
@@ -144,6 +144,7 @@ echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></sc
 <script src='sidecar/src/app.js'></script>
 <script src='sidecar/src/utils/utils.js'></script>
 <script src='sidecar/src/utils/date.js'></script>
+<script src='sidecar/src/utils/file.js'></script>
 <script src='sidecar/src/utils/currency.js'></script>
 <script src='sidecar/src/core/cache.js'></script>
 <script src='sidecar/src/core/events.js'></script>

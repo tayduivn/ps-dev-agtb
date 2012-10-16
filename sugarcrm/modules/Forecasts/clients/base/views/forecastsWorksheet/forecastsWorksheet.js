@@ -123,7 +123,13 @@
         var self = this;
         if (this._collection) {
             this._collection.on("reset", function() { self.calculateTotals(), self.render(); }, this);
-            
+            this._collection.on("change", function() {
+                _.each(this._collection.models, function(element){
+                    if(element.hasChanged("commit_stage")) {
+                        this._render();
+                    }
+                }, this);
+            }, this);
         }
 
         // listening for updates to context for selectedUser:change
@@ -296,8 +302,8 @@
         if(!this.showMe()){
         	return false;
         }
-        $("#view-sales-rep").show();
-        $("#view-manager").hide();
+        $("#view-sales-rep").addClass('show').removeClass('hide');
+        $("#view-manager").addClass('hide').removeClass('show');
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();

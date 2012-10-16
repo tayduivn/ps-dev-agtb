@@ -128,6 +128,7 @@ require_once 'SugarTestTimePeriodUtilities.php';
 require_once 'SugarTestWorksheetUtilities.php';
 require_once 'SugarTestProspectUtilities.php';
 require_once 'SugarTestProspectListsUtilities.php';
+require_once 'SugarTestNotificationUtilities.php';
 //END SUGARCRM flav=pro ONLY
 require_once 'SugarTestRelationshipUtilities.php';
 

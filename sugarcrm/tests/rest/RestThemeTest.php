@@ -23,8 +23,8 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
-require_once('include/api/SugarApi/SugarApi.php');
-require_once('include/api/ThemeApi.php');
+require_once('include/api/SugarApi.php');
+require_once('clients/base/api/ThemeApi.php');
 
 class RestThemeTest extends RestTestBase
 {
@@ -141,11 +141,23 @@ class RestThemeTest extends RestTestBase
         $this->_user->is_admin = 0;
         $this->_user->save();
         $GLOBALS['db']->commit();
+
+        $dir = sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/');
+        $ffl = scandir($dir);
+        $files = array();
+        foreach ($ffl as $entry) {
+            if ($entry != '.' && $entry != '..') {
+                if (!is_dir($dir . '/' . $entry)) {
+                    $files[] = $dir . $entry;
+                }
+            }
+        }
+
         // TEST the boostrap.css file has been created
-        $this->assertTrue(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Created bootstrap file does not exist");
+        $this->assertTrue(file_exists($files[0]), "Created bootstrap file does not exist");
 
         // TEST the boostrap.css file is not empty
-        $this->assertTrue(filesize(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')) > 0, "Created file has no contents");
+        $this->assertTrue(filesize($files[0]) > 0, "Created file has no contents");
         $thisTheme = new SidecarTheme($args['platform'], $args['themeName']);
 
         // TEST we have updated the variables in variables.less
@@ -162,7 +174,7 @@ class RestThemeTest extends RestTestBase
         $this->assertEquals(
             // Some databases (*cough* ORACLE *cough*) are backslash escaping this value
             stripslashes(html_entity_decode($row['value'])),
-            '"' . $GLOBALS['sugar_config']['site_url'] . '/cache/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css"',
+            '"' . $GLOBALS['sugar_config']['site_url'] .'/'. $files[0].'"',
             "$row[value] does not match the expected value"
         );
     }
@@ -189,11 +201,22 @@ class RestThemeTest extends RestTestBase
         $this->_user->is_admin = 0;
         $this->_user->save();
         $GLOBALS['db']->commit();
-        // TEST boostrap.css file has been created
-        $this->assertEquals(file_exists(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), true, "Bootstrap file was not reset");
+        $dir = sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/');
+        $ffl = scandir($dir);
+        $files = array();
+        foreach ($ffl as $entry) {
+            if ($entry != '.' && $entry != '..') {
+                if (!is_dir($dir . '/' . $entry)) {
+                    $files[] = $dir . $entry;
+                }
+            }
+        }
+        $this->assertEquals(count($files), 1, "More than 1 css file created");
+            // TEST boostrap.css file has been created
+        $this->assertEquals(file_exists($files[0]), true, "Bootstrap file was not reset");
 
         // TEST boostrap.css file is not empty
-        $this->assertNotEmpty(file_get_contents(sugar_cached('themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/bootstrap.css')), "Bootstrap.css is empty");
+        $this->assertNotEmpty(file_get_contents($files[0]), "Bootstrap.css is empty");
 
         // TEST variables.less file is not empty
         $this->assertNotEmpty(file_get_contents('custom/themes/clients/' . $args['platform'] . '/' . $args['themeName'] . '/variables.less'),"Variables.less is not empty");

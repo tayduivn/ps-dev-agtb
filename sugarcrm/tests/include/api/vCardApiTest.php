@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once 'include/api/SugarApi/RestService.php';
-require_once 'include/api/vCardApi.php';
+require_once 'include/api/RestService.php';
+require_once 'clients/base/api/vCardApi.php';
 
 
 /*

@@ -1,0 +1,18 @@
+<table class="table table-condensed">
+    <tbody>
+    {{#each meta.panels}}
+        {{#each fields}}
+            {{#notEq name "name"}}
+                <tr>
+                    <td>
+                        <dl>
+                            <dt>{{str  this.label ../../../this.model.module}}</dt>
+                            <dd>{{field ../../../this}}</dd>
+                        </dl>
+                    </td>
+                </tr>
+            {{/notEq}}
+        {{/each}}
+    {{/each}}
+    </tbody>
+</table>
