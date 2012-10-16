@@ -402,7 +402,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $embeddedImage = new EmbeddedImage("foobar", "/foo/bar.txt");
-        $mockMailer->addEmbeddedImage($embeddedImage);
+        $mockMailer->addAttachment($embeddedImage);
 
         $mockMailer->expects(self::once())
             ->method("generateMailer")

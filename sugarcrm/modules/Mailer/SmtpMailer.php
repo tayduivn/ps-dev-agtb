@@ -454,7 +454,7 @@ class SmtpMailer extends BaseMailer
         $images    = $formatted["images"];
 
         foreach ($images as $embeddedImage) {
-            $this->addEmbeddedImage($embeddedImage);
+            $this->addAttachment($embeddedImage);
         }
 
         $body = $this->forceRfcComplianceOnHtmlBody($body);

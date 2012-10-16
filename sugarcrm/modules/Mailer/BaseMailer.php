@@ -278,17 +278,6 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
-     * Adds an embedded attachment. This can include images, sounds, and just about any other document. Make sure to set
-     * the $mimeType to the appropriate type. For JPEG images use "image/jpeg" and for GIF images use "image/gif".
-     *
-     * @access public
-     * @param EmbeddedImage $embeddedImage
-     */
-    public function addEmbeddedImage(EmbeddedImage $embeddedImage) {
-        $this->addAttachment($embeddedImage);
-    }
-
-    /**
      * Removes any existing attachments by restoring the container to an empty array.
      *
      * @access public
