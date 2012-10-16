@@ -59,7 +59,8 @@
         before24Hours = jsDate.getHours();
         value  = app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference);
         jsDate = app.date.parse(value);
-        if(self.view.name === 'edit') {
+        // round time to the nearest 15th if this is a edit which is consitent with rest of app
+        if(this.view.name === 'edit') {
             jsDate = app.date.roundTime(jsDate);
         }
         
