@@ -29,20 +29,16 @@ class SugarForecasting_AbstractForecastTest extends Sugar_PHPUnit_Framework_Test
     /**
      * @var MockSugarForecasting_Abstract
      */
-    protected $obj;
+    protected static $obj;
 
-    public function setUp()
+    public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('timedate');
         SugarTestHelper::setUp('current_user');
-
-        $GLOBALS['current_user']->setPreference('timezone', 'America/Indiana/Indianapolis');
-        $GLOBALS['current_user']->savePreferencesToDB();
-
-        $this->obj = new MockSugarForecasting_Abstract(array());
+        self::$obj = new MockSugarForecasting_Abstract(array());
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
     }
@@ -53,16 +49,20 @@ class SugarForecasting_AbstractForecastTest extends Sugar_PHPUnit_Framework_Test
      */
     public function testConvertDateTimeToISO($dt_string, $expected)
     {
-        $actual = $this->obj->convertDateTimeToISO($dt_string);
-
+        $actual = self::$obj->convertDateTimeToISO($dt_string);
         $this->assertEquals($expected, $actual);
     }
 
     public static function dataTimeDataProvider()
     {
+        global $current_user;
+        $current_user->setPreference('timezone', 'America/Indiana/Indianapolis');
+        $current_user->savePreferencesToDB();
+        $timedate = TimeDate::getInstance();
+
         return array(
-            array('2012-10-15 14:38:42', '2012-10-15T10:38:42-04:00'), // db format
-            array('10/15/2012 10:38', '2012-10-15T10:38:00-04:00'), // from user format
+            array('2012-10-15 14:38:42', $timedate->asIso($timedate->fromDb('2012-10-15 14:38:42'), $current_user)), // db format
+            array('10/15/2012 10:38', $timedate->asIso($timedate->fromDb('2012-10-15 10:38:00'), $current_user)), // from user format
         );
     }
 }

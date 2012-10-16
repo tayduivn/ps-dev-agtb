@@ -135,12 +135,10 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
     protected function convertDateTimeToISO($dt_string)
     {
         $timedate = TimeDate::getInstance();
-        global $current_user;
-
-        if ($timedate->check_matching_format($dt_string, TimeDate::DB_DATETIME_FORMAT) == false) {
+        if ($timedate->check_matching_format($dt_string, TimeDate::DB_DATETIME_FORMAT) === false) {
             $dt_string = $timedate->to_db($dt_string);
         }
-
+        global $current_user;
         return $timedate->asIso($timedate->fromDb($dt_string), $current_user);
     }
 }

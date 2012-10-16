@@ -95,6 +95,33 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $probability = array("10", "40", "70", "90");
         $key = array_rand($probability);
         $opp->probability = $probability[$key];
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        //Setup forecast seed data
+        $opp->commit_stage = $opp->probability >= 70 ? 'include' : 'exclude';
+
+        $product = BeanFactory::getBean('Products');
+
+        $opp->id = create_guid();
+        $opp->new_with_id = true;
+
+        $product->name = $opp->name;
+        $product->best_case = $opp->best_case;
+        $product->likely_case = $opp->amount;
+        $product->worst_case = $opp->worst_case;
+        $product->cost_price = $opp->amount;
+        $product->quantity = 1;
+        $product->currency_id = $opp->currency_id;
+        $product->base_rate = $opp->base_rate;
+        $product->probability = $opp->probability;
+        $product->date_closed = $opp->date_closed;
+        $product->date_closed_timestamp = $opp->date_closed_timestamp;
+        $product->assigned_user_id = $opp->assigned_user_id;
+        $product->opportunity_id = $opp->id;
+        $product->commit_stage = $opp->commit_stage;
+        $product->save();
+
+        //END SUGARCRM flav=pro ONLY
         
         $opp->save();
         // Create a linking table entry to assign an account to the opportunity.
