@@ -34,7 +34,7 @@ class AttachmentTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::returnValue(true));
 
         self::setExpectedException("MailerException");
-        $actual = Attachment::fromSugarBean($mockAccount);
+        $actual = AttachmentPeer::attachmentFromSugarBean($mockAccount);
     }
 
     /**

@@ -43,23 +43,9 @@ class EmbeddedImage extends Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($path, $cid, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
+    public function __construct($cid, $path, $name = null, $encoding = Encoding::Base64, $mimeType=null) {
         $this->setCid($cid);
         parent::__construct($path, $name, $encoding, $mimeType);
-    }
-
-    /**
-     * Constructs an embedded image from the SugarBean that is passed in.
-     *
-     * @static
-     * @access public
-     * @param SugarBean $bean required
-     * @return EmbeddedImage
-     * @throws MailerException
-     */
-    public static function fromSugarBean(SugarBean $bean) {
-        // don't want to allow for creating an Attachment via the inherited method, so overwrite it for now
-        throw new MailerException("not yet implemented", MailerException::ResourceNotFound);
     }
 
     /**

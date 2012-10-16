@@ -51,49 +51,6 @@ class Attachment
     }
 
     /**
-     * Constructs an attachment from the SugarBean that is passed in.
-     *
-     * @static
-     * @access public
-     * @param SugarBean $bean required
-     * @return Attachment
-     * @throws MailerException
-     */
-    public static function fromSugarBean(SugarBean $bean) {
-        $beanName = get_class($bean);
-        $filePath = null;
-        $fileName = null;
-        $mimeType = "application/octet-stream";
-
-        switch ($beanName) {
-            case "Note":
-            case "DocumentRevision":
-                $filePath = "upload/{$bean->id}";
-                $fileName = empty($bean->filename) ? $bean->name : $bean->filename;
-                $mimeType = empty($bean->file_mime_type) ? $mimeType : $bean->file_mime_type;
-                break;
-            default:
-                throw new MailerException(
-                    "Invalid Attachment: SugarBean '{$beanName}' not supported as an Email Attachment",
-                    MailerException::InvalidAttachment
-                );
-                break;
-        }
-
-        // Path must Exist and Must be a Regular File
-        if (!is_file($filePath)) {
-            throw new MailerException(
-                "Invalid Attachment: file not found: {$filePath}",
-                MailerException::InvalidAttachment
-            );
-        }
-
-        $attachment = new Attachment($filePath, $fileName, Encoding::Base64, $mimeType);
-
-        return $attachment;
-    }
-
-    /**
      * @access public
      * @param string $path required
      */
