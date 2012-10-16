@@ -102,34 +102,6 @@
         },
 
         /**
-         * Takes a date from the database in yyyy-mm-dd hh:mm:ss and returns a Date()
-         *
-         * @param dateStr
-         * @return {Date} or null if we didnt receive a properly formatted date
-         */
-        parseDBDate: function(dateStr) {
-            var retDate = null;
-            if(!_.isUndefined(dateStr)) {
-                var dateTime = dateStr.split(' ');
-                // if there is only one element, we didn't receive a properly formatted date
-                if(dateTime.length > 1) {
-                    var dateArr = dateTime[0].split('-');
-                    var timeArr = dateTime[1].split(':');
-
-                    retDate =  new Date(
-                        dateArr[0],
-                        dateArr[1],
-                        dateArr[2],
-                        timeArr[0],
-                        timeArr[1],
-                        timeArr[2]
-                    );
-                }
-            }
-            return retDate;
-        },
-
-        /**
          * Contains a list of column names from metadata and maps them to correct config param
          * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
          * Used by forecastsWorksheetManager, forecastsWorksheetManagerTotals
