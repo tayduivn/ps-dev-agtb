@@ -103,7 +103,7 @@
 <tr>
 <td width="70%">{literal}{$product.quantity}{/literal}</td>
 <td width="175%">{literal}{$product.mft_part_num}{/literal}</td>
-<td width="175%">{literal}{$product.name}{/literal}</td>
+<td width="175%">{literal}{$product.name}{if isset($product.list_price)}<br></br>{$product.description}{/if}{/literal}</td>
 <td align="right" width="70%">{literal}{$product.list_price}{/literal}</td>
 <td align="right" width="70%">{literal}{$product.discount_price}{/literal}</td>
 <td align="right" width="70%">{literal}{$product.ext_price}{/literal}</td>
