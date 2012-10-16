@@ -34,6 +34,14 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
                 'shortHelp' => 'Returns current user',
                 'longHelp' => 'include/api/html/me.html',
             ),
+            'init' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts','init'),
+                'pathVars' => array(),
+                'method' => 'forecastsInitialization',
+                'shortHelp' => 'Returns current user data',
+                'longHelp' => 'include/api/html/init.html',
+            ),
             'selecteUserObject' => array(
                 'reqType' => 'GET',
                 'path' => array('Forecasts', 'user', '?'),
@@ -65,6 +73,39 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
 
         return $data;
     }
+
+    public function forecastsInitialization($api, $args) {
+        global $current_user, $app_list_strings;
+
+        $returnInitData = array();
+        $defaultSelections = array();
+
+        $data = $this->retrieveCurrentUser($api, array());
+        $selectedUser = $data["current_user"];
+
+        $returnInitData["initData"]["selectedUser"] = $selectedUser;
+        $defaultSelections["selectedUser"] = $selectedUser;
+
+        $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
+        // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
+        $id = TimePeriod::getCurrentId();
+        $defaultSelections["timeperiod_id"]["id"] = $id;
+        $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
+
+        // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+        $admin = BeanFactory::getBean("Administration");
+        $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
+
+        $defaultSelections["category"] = array("include");
+        $defaultSelections["group_by"] = 'forecast';
+        $defaultSelections["dataset"] = 'likely';
+
+        // push in defaultSelections
+        $returnInitData["defaultSelections"] = $defaultSelections;
+
+        return $returnInitData;
+    }
+
 
     /**
      * Retrieves a "selecteUser" object for a given user id
