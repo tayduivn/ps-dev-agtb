@@ -240,8 +240,7 @@ class OutboundEmailConfigurationPeer
         $outboundEmailConfiguration->setSender($configurations["sender_email"], $configurations["sender_name"]);
         $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
         $outboundEmailConfiguration->setPersonal($configurations["personal"]);
-        $outboundEmailConfiguration->setReplyToEmail($configurations["replyto_email"]);
-        $outboundEmailConfiguration->setReplyToName($configurations["replyto_name"]);
+        $outboundEmailConfiguration->setReplyTo($configurations["replyto_email"], $configurations["replyto_name"]);
         $outboundEmailConfiguration->setLocale($configurations["locale"]);
         $outboundEmailConfiguration->setCharset($configurations["charset"]);
 

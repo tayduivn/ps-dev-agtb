@@ -87,16 +87,7 @@ class MailerFactory
      * @throws MailerException Allows MailerExceptions to bubble up.
      */
     public static function getMailer(OutboundEmailConfiguration $config) {
-        $replyTo = null;
-
-        // add the Reply-To header, but only if it should be different from the From header
-        $replyToEmail = $config->getReplyToEmail();
-
-        if (!empty($replyToEmail)) {
-            $replyTo = new EmailIdentity($replyToEmail, $config->getReplyToName());
-        }
-
-        $headers = static::buildHeadersForMailer($config->getSender(), $replyTo);
+        $headers = static::buildHeadersForMailer($config->getSender(), $config->getReplyTo());
         $mailer  = static::buildMailer($config);
         $mailer->setHeaders($headers);
 

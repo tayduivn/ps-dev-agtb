@@ -559,12 +559,13 @@ class Email extends SugarBean {
         $mailer->setHtmlBody($htmlBody);
         $mailer->setTextBody($textBody);
 
-        $replyToEmail = $mailConfig->getReplyToEmail();
+        $replyTo      = $mailConfig->getReplyTo();
+        $replyToEmail = $replyTo->getEmail();
 
         if (!empty($replyToEmail)) {
             $mailer->setHeader(
                 EmailHeaders::ReplyTo,
-                new EmailIdentity($replyToEmail, $mailConfig->getReplyToName())
+                new EmailIdentity($replyToEmail, $replyTo->getName())
             );
         }
 

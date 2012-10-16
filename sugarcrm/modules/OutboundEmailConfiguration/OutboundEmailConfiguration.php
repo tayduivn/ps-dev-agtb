@@ -44,16 +44,15 @@ class OutboundEmailConfiguration
     protected $inboxId;
     protected $mode;
     protected $personal;
-    protected $sender;
     protected $displayName;
-    protected $replyToEmail;
-    protected $replyToName;
-    protected $hostname;     // the hostname to use in Message-ID and Received headers and as default HELO string
-                             // not the server hostname
-    protected $locale;       // the Localization object necessary for performing character set translations
-    protected $charset;      // the character set of the message
-    protected $encoding;     // the encoding of the message, which must be one of the valid encodings from Encoding
-    protected $wordwrap;     // number of characters per line before the message body wrap
+    protected $sender;
+    protected $replyTo;
+    protected $hostname;    // the hostname to use in Message-ID and Received headers and as default HELO string
+                            // not the server hostname
+    protected $locale;      // the Localization object necessary for performing character set translations
+    protected $charset;     // the character set of the message
+    protected $encoding;    // the encoding of the message, which must be one of the valid encodings from Encoding
+    protected $wordwrap;    // number of characters per line before the message body wrap
 
     /**
      * @access public
@@ -274,14 +273,6 @@ class OutboundEmailConfiguration
         return $this->personal;
     }
 
-    public function setSender($email, $name = null) {
-        $this->sender = new EmailIdentity($email, $name);
-    }
-
-    public function getSender() {
-        return $this->sender;
-    }
-
     public function setDisplayName($name) {
         $this->displayName = $name;
     }
@@ -290,19 +281,19 @@ class OutboundEmailConfiguration
         return $this->displayName;
     }
 
-    public function setReplyToEmail($email) {
-        $this->replyToEmail = $email;
+    public function setSender($email, $name = null) {
+        $this->sender = new EmailIdentity($email, $name);
     }
 
-    public function getReplyToEmail() {
-        return $this->replyToEmail;
+    public function getSender() {
+        return $this->sender;
     }
 
-    public function setReplyToName($name) {
-        $this->replyToName = $name;
+    public function setReplyTo($email, $name = null) {
+        $this->replyTo = new EmailIdentity($email, $name);
     }
 
-    public function getReplyToName() {
-        return $this->replyToName;
+    public function getReplyTo() {
+        return $this->replyTo;
     }
 }
