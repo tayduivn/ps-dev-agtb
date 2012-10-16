@@ -62,7 +62,7 @@ $mpx .= "11,2,0,1,8.00,40.00,$10.00/h,$15.00/h,1,0\n";
 $mpx .= "12,2,0,480,-,:,am,pm,20,20\n";
 
 // (30) Project Header Information
-$mpx .= "30," . $focus->name . ",,,Standard," . $timedate->to_db_date($focus->estimated_start_date, false) .",,0," . $timedate->nowDbDate() .",,$0.00,$0.00,$0.00,0h,0h,0h,0%,0d,0d,0d,0%,,,,,0d,0d\n";
+$mpx .= "30," . $focus->name . ",,,Standard," . $focus->estimated_start_date .",,0," . $timedate->nowDbDate() .",,$0.00,$0.00,$0.00,0h,0h,0h,0%,0d,0d,0d,0%,,,,,0d,0d\n";
  
 // (20) Calendar Definition
 $mpx .= "20,Standard,0,1,1,1,1,1,0\n";
@@ -147,10 +147,10 @@ for ($i = 0; $i < count($projectTasks); $i++){
 	$mpx .= ($projectTasks[$i]->milestone_flag == 1) ? "Yes," :  "No,";
 	
 	// start
-	$mpx .= $timedate->to_db_date($projectTasks[$i]->date_start, false) . ",";
+	$mpx .= $projectTasks[$i]->date_start . ",";
 	
 	// constraint date
-	$mpx .= $timedate->to_db_date($projectTasks[$i]->date_start, false) . ",";
+	$mpx .= $projectTasks[$i]->date_start . ",";
 	
 	// constraint type
 	$mpx .= "Must Start On,";
@@ -163,7 +163,7 @@ for ($i = 0; $i < count($projectTasks); $i++){
 	$mpx .= $projectTasks[$i]->percent_complete ."%,";
 	
 	// actual start
-	$mpx .= $timedate->to_db_date($projectTasks[$i]->date_start, false);
+	$mpx .= $projectTasks[$i]->date_start;
 	
 	// predecessors
 	if ($projectTasks[$i]->predecessors != ''){
