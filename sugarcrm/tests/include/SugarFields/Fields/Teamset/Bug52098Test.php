@@ -38,10 +38,13 @@ require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 class Bug52098Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    private $user;
+    private $sft;
+    private $params;
+
     public function setUp()
     {
-        $this->user = SugarTestUserUtilities::createAnonymousUser($is_admin = true);
-        $this->field = 'team_name';
+        $this->user = SugarTestUserUtilities::createAnonymousUser(true, true);
         $this->sft = new SugarFieldTeamset('Teamset');
 
         $this->params =  array(
@@ -56,17 +59,12 @@ class Bug52098Test extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($this->user);
-        unset($this->field);
-        unset($this->sft);
-        unset($this->params);
-        unset($this->newTeamId);
     }
 
     public function testSetPrimaryTeamForAdmin()
     {
         $this->newTeamId = '123';
-        $this->sft->save($this->user, $this->params, $this->field, '');
+        $this->sft->save($this->user, $this->params, 'team_name', '');
 
         $this->assertEquals($this->user->default_team, $this->newTeamId, 'Primary team is not saved correctly for admin user');
     }
