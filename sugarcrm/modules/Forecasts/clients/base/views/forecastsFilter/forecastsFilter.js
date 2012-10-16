@@ -8,7 +8,27 @@
     /**
      * Store the created fields by name in an array
      */
-    fields: [],
+    fields:[],
+
+    events:{
+        'focus .chzn-container input': 'dropFocus',
+        'click .chzn-container .chzn-drop' : 'chznClick'
+    },
+
+    dropFocus:function (evt) {
+
+        var el = $(evt.target).parents('.chzn-container').find('.chzn-drop');
+        var left = el.css('left');
+        if (left == "-9000px") {
+            el.width(0);
+        } else {
+            el.width(100).css("left", "auto").css("right", "0px");
+        }
+    },
+
+    chznClick: function(evt) {
+        $(evt.target).css("right","auto");
+    },
 
     /**
      * Initialize because we need to set the selectedUser variable
@@ -16,18 +36,18 @@
      */
     initialize:function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.selectedUser = {id: app.user.get('id'), isManager:app.user.get('isManager'), showOpps : false};
+        this.selectedUser = {id:app.user.get('id'), isManager:app.user.get('isManager'), showOpps:false};
     },
 
     /**
      * Watch for the selectedUser Change
      */
-    bindDataChange: function() {
+    bindDataChange:function () {
 
         var self = this;
 
-        if(this.context && this.context.forecasts) {
-            this.context.forecasts.on("change:selectedUser", function(context, user) {
+        if (this.context && this.context.forecasts) {
+            this.context.forecasts.on("change:selectedUser", function (context, user) {
                 self.selectedUser = user;
                 this.toggleCategoryFieldVisibility();
             }, this);
@@ -42,8 +62,8 @@
     /**
      * Method to toggle the field visibility of the group by field
      */
-    toggleCategoryFieldVisibility: function() {
-        if(!_.isUndefined(this.fields['category']) && this.selectedUser.isManager && this.selectedUser.showOpps === false) {
+    toggleCategoryFieldVisibility:function () {
+        if (!_.isUndefined(this.fields['category']) && this.selectedUser.isManager && this.selectedUser.showOpps === false) {
             this.fields['category'].$el.hide();
         } else {
             this.fields['category'].$el.show();
@@ -56,7 +76,7 @@
      * @param field
      * @private
      */
-    _renderField: function(field) {
+    _renderField:function (field) {
         if (field.name == 'category') {
             var categorySetting = this.context.forecasts.config.get('forecast_categories');
             field.def.options = this.context.forecasts.config.get('buckets_dom');
@@ -64,6 +84,8 @@
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
+
+        field.$el.find('.chzn-container').css("width", "100%").append('<div class="indicator">Filter <span class="caret"></span></div>');
 
         this.fields[field.name] = field;
     },
@@ -73,7 +95,7 @@
      *
      * @private
      */
-    _render : function() {
+    _render:function () {
         app.view.View.prototype._render.call(this);
 
         // toggle the visibility of the group by field for the initial render
@@ -88,10 +110,11 @@
      * @return {*}
      * @private
      */
-    _setUpCategoryField: function (field) {
+    _setUpCategoryField:function (field) {
 
-        field.events = _.extend({"change select": "_updateSelections"}, field.events);
-        field.bindDomChange = function() {};
+        field.events = _.extend({"change select":"_updateSelections"}, field.events);
+        field.bindDomChange = function () {
+        };
 
         /**
          * updates the selection when a change event is triggered from a dropdown/multiselect
@@ -99,7 +122,7 @@
          * @param input the (de)selection
          * @private
          */
-        field._updateSelections = function(event, input) {
+        field._updateSelections = function (event, input) {
             var selectedCategory = this.context.forecasts.get("selectedCategory");
             var selectElement = this.$el.find("select");
             var id;
@@ -108,13 +131,13 @@
                 selectedCategory = new Array();
             }
 
-            if(this.def.multi) { // if it's a multiselect we need to add or drop the correct values from the filter model
+            if (this.def.multi) { // if it's a multiselect we need to add or drop the correct values from the filter model
                 if (_.has(input, "selected")) {
                     id = input.selected;
                     if (!_.contains(selectedCategory, id)) {
                         selectedCategory = _.union(selectedCategory, id);
                     }
-                } else if(_.has(input, "deselected")) {
+                } else if (_.has(input, "deselected")) {
                     id = input.deselected;
                     if (_.contains(selectedCategory, id)) {
                         selectedCategory = _.without(selectedCategory, id);

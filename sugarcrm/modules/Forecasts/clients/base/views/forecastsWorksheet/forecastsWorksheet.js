@@ -355,6 +355,7 @@
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
+                "bAutoWidth": false,
                 "aoColumnDefs": columnDefs,
                 "aaSorting": this.aaSorting,
                 "bInfo":false,
