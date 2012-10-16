@@ -610,21 +610,28 @@
 
     previewRecord: function(event) {
         var self = this,
-            root = this.$(event.currentTarget).parent().parent().parent(),
-            hash = root.find("p a:last").attr("href").replace('#', ''),
-            arr = hash.split('/'),
-            module = arr[0], id = arr[1],
-            model = app.data.createBean(module);
+            el = this.$(event.currentTarget).closest("a"),
+            module = el.attr("data-module"),
+            id = el.attr("data-id");
 
-        // Grab model corresponding to preview icon clicked
-        model.set("id", id);
-        model.fetch({
-            success: function(model) {
-                model.set("_module", module);
-                // Fire on parent layout .. works nicely for relatively simple page ;=)
-                self.context.trigger("togglePreview", model);
-            }
-        });
+        // If module/id data attributes don't exist, this user
+        // doesn't have access to that record due to team security.
+        if( module.length && id.length ) {
+            var model = app.data.createBean(module);
+
+            model.set("id", id);
+            model.fetch({
+                success: function(model) {
+                    model.set("_module", module);
+                    self.context.trigger("togglePreview", model);
+                }
+            });
+        }
+        else {
+            app.alert.show("no_access", {level: "error", title:"Permission Denied",
+                messages: "Sorry, you do not have access to preview this specific record.", autoClose: true});
+            return;
+        }
     },
 
     _focusOnPost: _.once(function() {
