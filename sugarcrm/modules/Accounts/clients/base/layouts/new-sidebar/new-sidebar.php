@@ -2,4 +2,4 @@
 
 $layout = MetaDataManager::getLayout('GenericLayout');
 $layout->push(array('view' => 'createhelp'));
-$viewdefs['Accounts']['summer']['layout']['new-sidebar'] = $layout->getLayout();
+$viewdefs['Accounts']['base']['layout']['new-sidebar'] = $layout->getLayout();
