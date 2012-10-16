@@ -50,6 +50,22 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $admin->saveSetting($config['category'], $config['name'], $config['value'], $config['platform']);
         }
         TimePeriod::rebuildForecastingTimePeriods();
+
+        //add all of the newly created timePeriods to the test utils
+        $db = DBManagerFactory::getInstance();
+        $results = $db->limitQuery('select time_period_type, id from timeperiods where is_leaf = 0 and deleted = 0 order by start_date_timestamp asc', 0,1);
+        $row = $db->fetchByAssoc($results);
+        $timeperiod = BeanFactory::getBean($row['time_period_type']."TimePeriods",$row['id']);
+
+        do{
+            SugarTestTimePeriodUtilities::addTimePeriod($timeperiod);
+            $leaves = $timeperiod->getLeaves();
+            for($i=0; $i < sizeof($leaves); $i++) {
+                SugarTestTimePeriodUtilities::addTimePeriod($leaves[$i]);
+            }
+            $timeperiod = $timeperiod->getNextTimePeriod();
+        } while(!is_null($timeperiod));
+        error_log(print_r(SugarTestTimePeriodUtilities::getCreatedTimePeriodIds(), 1));
     }
 
     public function setUp()
@@ -346,7 +362,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $job = $job = BeanFactory::newBean('SchedulersJobs');
         $job->retrieve_by_string_fields(array('name'=>'TimePeriodAutomationJob'));
         //get current time period, expect the next timeperiod to be built at the end of this one
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
+        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(),TimePeriod::getCurrentId());
         $expectedEndDate = $timedate->fromDbDate($currentTimePeriod->end_date);
 
         $actualEndDate = SugarDateTime::createFromFormat($timedate->get_db_date_time_format(), $job->execute_time);
@@ -359,16 +375,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testRunTimePeriodScheduledJob() {
         $timedate = TimeDate::getInstance();
+        $db = DBManagerFactory::getInstance();
+
         //grab scheduler job
         $job = $job = BeanFactory::newBean('SchedulersJobs');
         $job->retrieve_by_string_fields(array('name'=>'TimePeriodAutomationJob'));
         //run the job
         $job->runJob();
         //get current time period, and advance one to check the dates
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
+        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(),TimePeriod::getCurrentId());
         $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
+
         $expectedEndDate = $timedate->fromDbDate($currentTimePeriod->end_date);
 
+        //add new timeperiods to the test util list so they can be deleted humanely in tear down
+        //get the current last time period
+        $query = "select id, time_period_type from timeperiods where is_leaf = 0 and deleted = 0 order by end_date_timestamp desc";
+        $result = $db->limitQuery($query, 0, 1);
+        $row = $db->fetchByAssoc($result);
+        $lastTimePeriod = BeanFactory::getBean($row['time_period_type']."TimePeriods", $row['id']);
+
+        SugarTestTimePeriodUtilities::addTimePeriod($lastTimePeriod);
+        $leaves = $lastTimePeriod->getLeaves();
+        for($i=0; $i < sizeof($leaves); $i++) {
+            SugarTestTimePeriodUtilities::addTimePeriod($leaves[$i]);
+        }
         $actualEndDate = SugarDateTime::createFromFormat($timedate->get_db_date_time_format(), $job->execute_time);
         //job was supposed to reschedule self for the next time
         $this->assertEquals($expectedEndDate->asDbDate(), $actualEndDate->asDbDate());
@@ -397,6 +428,13 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $job->runJob();
         //get the new time period
         $lastTimePeriod = $lastTimePeriod->getNextTimePeriod();
+
+        //add new timeperiods to the test util list so they can be deleted humanely in tear down
+        SugarTestTimePeriodUtilities::addTimePeriod($lastTimePeriod);
+        $leaves = $lastTimePeriod->getLeaves();
+        for($i=0; $i < sizeof($leaves); $i++) {
+            SugarTestTimePeriodUtilities::addTimePeriod($leaves[$i]);
+        }
 
         $this->assertNotNull($lastTimePeriod, "scheduled job did not create the new timeperiod as expected");
         $this->assertEquals($timedate->asDbDate($lastStartDate), $lastTimePeriod->start_date);

@@ -427,6 +427,10 @@ class TimePeriod extends SugarBean {
         return $currentType;
     }
 
+    public static function getCurrentTypeClass() {
+        return TimePeriod::getCurrentType()."TimePeriods";
+    }
+
     /**
      * getLastCurrentNextIds
      * Returns the quarterly ids of the last, current and next timeperiod
@@ -658,8 +662,6 @@ class TimePeriod extends SugarBean {
         if($job_id) {
             $jobQueue->deleteJob($job_id);
         }
-
-        //error_log(print_r($forwardTimePeriod,1));
 
         //schedule job to run on the end_date of the last time period
         global $current_user;

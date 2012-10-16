@@ -76,9 +76,8 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
         $lastTimePeriod->buildLeaves($leaf_type);
 
         //reschedule myself
-        $now = $timedate->getNow();
         //get current timeperiod
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentType()."TimePeriods",TimePeriod::getCurrentId());
+        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(),TimePeriod::getCurrentId());
         //advance one
         $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
         $nextEndDate = $timedate->fromDbDate($currentTimePeriod->end_date);
