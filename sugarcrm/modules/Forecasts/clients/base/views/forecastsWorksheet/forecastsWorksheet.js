@@ -594,6 +594,7 @@
             $.fn.dataTableExt.afnFiltering.push (
                 function(oSettings, aData, iDataIndex) {
 
+                    // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
                     if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
                         return true;
                     }
