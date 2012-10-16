@@ -23,10 +23,10 @@
     _render:function () {
 
         var commitDateStr = _.first(this.context.forecasts.committed.models).get('date_modified');
-        var commitDate = app.forecasts.utils.parseDBDate(commitDateStr);
+        var commitDate = new Date(commitDateStr);
 
         var fieldDateStr = this.model.get('date_modified');
-        var fieldDate = app.forecasts.utils.parseDBDate(fieldDateStr);
+        var fieldDate = new Date(fieldDateStr);
 
         // if fieldDate is newer than the forecast commitDate, then we want to show the field
         var showFieldAlert = false;

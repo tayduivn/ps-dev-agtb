@@ -102,36 +102,4 @@ describe("Forecasts Utils", function(){
             });
         });
     });
-    describe("Test parseDBDate", function() {
-        beforeEach(function() {
-            App = app;
-            newestModel = new Backbone.Model();
-            oldestModel = new Backbone.Model();
-        });
-
-        afterEach(function(){
-            newestModel = null;
-            oldestModel = null;
-        });
-
-        describe("should parse properly formatted date string", function() {
-            it("should parse properly formatted date string", function() {
-                var dbDateStr = "2012-01-14 14:50:30";
-                result = app.forecasts.utils.parseDBDate(dbDateStr);
-                expect(_.isDate(result)).toBeTruthy();
-            });
-
-            it("should be null on improperly formatted date string", function() {
-                var dbDateStr = "6516513513";
-                result = app.forecasts.utils.parseDBDate(dbDateStr);
-                expect(result).toBeNull();
-            });
-
-            it("should be null on undefined date string", function() {
-                var dbDateStr = undefined;
-                result = app.forecasts.utils.parseDBDate(dbDateStr);
-                expect(result).toBeNull();
-            });
-        });
-    });
 });
