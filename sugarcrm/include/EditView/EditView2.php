@@ -433,7 +433,7 @@ class EditView
 
             $this->focus->team_name = (empty($this->focus->team_name) && !empty($this->focus->team_id))
                 ? Team::getTeamName($this->focus->team_id)
-                : Team::getTeamName($current_user->default_team);
+                : $current_user->default_team_name;
 
             //END SUGARCRM flav=pro ONLY
             foreach ($this->focus->toArray() as $name => $value)
