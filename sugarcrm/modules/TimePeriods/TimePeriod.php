@@ -443,11 +443,6 @@ class TimePeriod extends SugarBean {
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
 
-        if(empty($admin) || !is_object($admin))
-        {
-           display_stack_trace();
-        }
-
         //Retrieve Forecasts_timeperiod_interval
         $interval = isset($settings['timeperiod_interval']) ? $settings['timeperiod_interval'] : 'Quarter';
 
@@ -595,7 +590,7 @@ class TimePeriod extends SugarBean {
 
         if($row == null)
         {
-            return null;
+           return $this->createPreviousTimePeriod();
         }
 
         $previousTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
@@ -638,11 +633,7 @@ class TimePeriod extends SugarBean {
        }
 
        $currentTimePeriod = BeanFactory::newBean($forecastSettings['timeperiod_interval']."TimePeriods");
-       if($forecastSettings['timeperiod_type'] == 'chronological') {
-           $currentTimePeriod->is_fiscal = false;
-       } else {
-           $currentTimePeriod->is_fiscal = true;
-       }
+       $currentTimePeriod->is_fiscal = $forecastSettings['timeperiod_type'] != 'chronological';
        $currentTimePeriod->setStartDate($targetStartDate->asDbDate());
        $currentTimePeriod->save();
        $currentTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);

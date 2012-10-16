@@ -64,7 +64,7 @@ class Bug37123Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $timedate = TimeDate::getInstance();
         $unid = uniqid();
-        $project = new Project();
+        $project = SugarTestProjectUtilities::createProject();
         $project->id = 'p_' . $unid;
         $project->name = 'test project ' . $unid;
         $project->estimated_start_date = $timedate->nowDate();
