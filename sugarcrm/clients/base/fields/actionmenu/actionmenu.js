@@ -7,17 +7,17 @@
     actionDropDownTag: ".dropdown-toggle",
     fieldTag: "input[name=check]",
     initialize: function(options) {
-        var result = app.view.Field.prototype.initialize.call(this, options);
-        this.massModel = this.context.get('mass_model');
-        if(!this.massModel) {
-            var MassModel = app.BeanCollection.extend({
+        var result = app.view.Field.prototype.initialize.call(this, options),
+            massCollection = this.context.get('mass_collection');
+        if(!massCollection) {
+            var MassCollection = app.BeanCollection.extend({
                     reset: function() {
                         this.entire = false;
                         Backbone.Collection.prototype.reset.call(this);
                     }
                 });
-            this.massModel = new MassModel();
-            this.context.set('mass_model', this.massModel);
+            massCollection = new MassCollection();
+            this.context.set('mass_collection', massCollection);
         }
         return result;
     },
@@ -33,54 +33,56 @@
         this.toggleSelect(checkbox.is(":checked"));
     },
     toggleSelect: function(check) {
-        if(this.massModel) {
+        var massCollection = this.context.get('mass_collection');
+        if(massCollection) {
             if(check) { //if checkbox is selected
                 if(this.model.id) { //each selection
-                    this.massModel.add(this.model);
+                    massCollection.add(this.model);
                 } else {
                     //entire selection
-                    this.massModel.add(this.view.collection.models);
+                    massCollection.add(this.view.collection.models);
                 }
             } else { //if checkbox is unchecked
                 if(this.model.id) { //each selection
-                    if(this.massModel.entire) {
-                        this.massModel.reset();
-                        this.massModel.add(this.view.collection.models);
-                        this.massModel.remove(this.model);
+                    if(massCollection.entire) {
+                        massCollection.reset();
+                        massCollection.add(this.view.collection.models);
+                        massCollection.remove(this.model);
                     } else {
-                        this.massModel.remove(this.model);
+                        massCollection.remove(this.model);
                     }
                 } else { //entire selection
-                    this.massModel.reset();
+                    massCollection.reset();
                 }
             }
         }
     },
 
     bindDataChange: function() {
-        var self = this;
-        if (this.massModel && this.model.id) { //listeners for each record selection
-            this.massModel.on("add", function(model) {
+        var self = this,
+            massCollection = this.context.get('mass_collection');
+        if (massCollection && this.model.id) { //listeners for each record selection
+            massCollection.on("add", function(model) {
                 if(model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
             }, this);
-            this.massModel.on("remove", function(model){
+            massCollection.on("remove", function(model){
                 if(model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", false);
                 }
             });
-            this.massModel.on("reset", function(){
+            massCollection.on("reset", function(){
                 self.$(self.fieldTag).attr("checked", false);
             });
-            if(this.massModel.get(this.model) || this.massModel.entire) {
+            if(massCollection.get(this.model) || massCollection.entire) {
                 this.$(self.fieldTag).attr("checked", true);
                 this.selected = true;
             } else {
                 delete this.selected;
             }
-        } else if (this.massModel) { //listeners for entire selection
-            this.massModel.on("add", function(model) {
+        } else if (massCollection) { //listeners for entire selection
+            massCollection.on("add", function(model) {
                 if(this.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
                 }
@@ -89,33 +91,34 @@
                 }
                 self.toggleShowSelectAll();
             });
-            this.massModel.on("remove reset", function(model) {
+            massCollection.on("remove reset", function(model) {
                 if(this.length == 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
                 }
                 self.$(self.fieldTag).attr("checked", false);
                 self.toggleShowSelectAll();
             });
-            this.action_enabled = (this.massModel.length > 0);
-            this.selected = (this.massModel.entire);
+            this.action_enabled = (massCollection.length > 0);
+            this.selected = (massCollection.entire);
         }
     },
     toggleShowSelectAll: function() {
-        if(this.view.collection.next_offset > 0) {
+        var massCollection = (this.context) ? this.context.get('mass_collection') : null;
+        if(massCollection && this.view.collection.next_offset > 0) {
             //only if the collection contains more records
             var self = this;
-            if(this.massModel.entire) {
+            if(massCollection.entire) {
                 var selectAll = $("<a>").attr("href", "javascript:void(0);").html(app.lang.get('LBL_LISTVIEW_CLEAR_ALL')),
                     message = $("<div>").css("textAlign", "center").html(app.lang.get('LBL_LISTVIEW_SELECTED_ALL')).append(selectAll);
                 selectAll.on("click", function(evt) {
-                    self.massModel.reset();
+                    massCollection.reset();
                 });
                 this.view.layout.trigger("list:alert:show", message);
-            } else if(this.massModel.length == this.view.collection.models.length) {
+            } else if(massCollection.length == this.view.collection.models.length) {
                 var selectAll = $("<a>").attr("href", "javascript:void(0);").html(app.lang.get('LBL_LISTVIEW_OPTION_ENTIRE')),
-                    message = $("<div>").css("textAlign", "center").html(app.lang.get('LBL_LISTVIEW_SELECTED_NUM').replace("{num}", this.massModel.length)).append(selectAll).append(app.lang.get('LBL_LISTVIEW_RECORDS'));
+                    message = $("<div>").css("textAlign", "center").html(app.lang.get('LBL_LISTVIEW_SELECTED_NUM').replace("{num}", massCollection.length)).append(selectAll).append(app.lang.get('LBL_LISTVIEW_RECORDS'));
                 selectAll.on("click", function(evt) {
-                    self.massModel.entire = true;
+                    massCollection.entire = true;
                     self.toggleShowSelectAll();
                 });
                 this.view.layout.trigger("list:alert:show", message);
