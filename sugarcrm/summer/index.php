@@ -90,6 +90,25 @@ if (empty($_SESSION['authenticated_user_id'])) {
                     //callback(null, data);
                 }
             });
+
+
+            if(!_.has(app, 'forecasts')) {
+                app.forecasts = {}
+            }
+            app.augment("forecasts", _.extend(app.forecasts, {
+                initForecast: function() {
+                    var url = app.api.buildURL("Forecasts/init");
+                    App.api.call('GET', url, null, {success: function(forecastData) {
+                        // get default selections for filter and category
+                        app.defaultSelections = forecastData.defaultSelections;
+                        app.initData = forecastData.initData;
+                        app.user.set(app.initData.selectedUser);
+                    }});
+                    return app;
+                }
+            }));
+
+            app.forecasts.initForecast();
         }
 
     });
