@@ -205,6 +205,34 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
         $this->assertEquals($config->getConfigId(), self::$systemConfig->id, "Unexpected 'SYSTEM' OutboundEmailConfiguration");
     }
 
+    /**
+     * @group outboundemailconfiguration
+     */
+    public function testValidSystemMailConfigurationExists_SystemConfigExistsAndIsValid_ReturnsTrue() {
+        // need to make sure there is a valid mail_smtpserver on the system mail configuration
+        $config                  = self::getSystemMailConfig();
+        $originalServer          = $config->mail_smtpserver;
+        $config->mail_smtpserver = "localhost"; // make it valid in case it's not
+        $config->save();
+
+        $actual = OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertTrue($actual, "A system mail configuration should exist");
+
+        // restore the original mail_smtpserver
+        $config->mail_smtpserver = $originalServer;
+        $config->save();
+    }
+
+    /**
+     * @group outboundemailconfiguration
+     */
+    public function testValidSystemMailConfigurationExists_NoSystemConfigExists_ReturnsFalse() {
+        self::deleteOutboundEmail(self::$systemConfig->id, self::$systemConfig->name);
+
+        $actual = OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($GLOBALS["current_user"]);
+        self::assertFalse($actual, "No system mail configuration should be found");
+    }
+
     private static function createOutboundEmail($config) {
         $obj                    = new OutboundEmail();
         $obj->new_with_id       = true;

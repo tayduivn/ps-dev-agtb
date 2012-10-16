@@ -60,6 +60,34 @@ class OutboundEmailConfigurationPeer
 
     /**
      * @access public
+     * @param User $user required
+     * @return bool
+     */
+    public static function validSystemMailConfigurationExists(User $user) {
+        $configExists = false;
+
+        try {
+            $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
+
+            if ($config instanceof OutboundSmtpEmailConfiguration) {
+                $host = $config->getHost();
+
+                if (!empty($host)) {
+                    $configExists = true;
+                }
+            }
+        } catch (MailerException $me) {
+            $GLOBALS["log"]->warn(
+                "An error occurred while searching for a valid system mail configuration: " .
+                $me->getMessage()
+            );
+        }
+
+        return $configExists;
+    }
+
+    /**
+     * @access public
      * @param User         $user    required
      * @param Localization $locale
      * @param string       $charset
