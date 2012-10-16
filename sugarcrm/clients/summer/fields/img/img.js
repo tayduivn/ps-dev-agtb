@@ -11,9 +11,15 @@
     },
 
     render: function() {
-        if (!this.model) { return; }
+        if (!this.model) {
+            return;
+        }
 
-        this.profile = this.model.get("img") || this.profile;
+        this.profile = this.model.get("img") || ((this.model.has("picture")) ? app.api.buildFileURL({
+            module: 'Users',
+            id: this.model.id,
+            field: 'picture'
+        }) : false) || this.profile;
         app.view.Field.prototype.render.call(this);
     },
 
