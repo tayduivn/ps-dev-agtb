@@ -96,7 +96,6 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     //BEGIN SUGARCRM flav=pro ONLY
     'merge_filter' => 'enabled',
     //END SUGARCRM flav=pro ONLY
-    'unified_search' => true,
   ),
   'resolution' =>
   array (

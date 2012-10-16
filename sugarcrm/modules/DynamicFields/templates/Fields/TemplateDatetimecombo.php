@@ -43,7 +43,7 @@ class TemplateDatetimecombo extends TemplateRange
         'next friday'=>'next friday',
         'two weeks'=> '+2 weeks',
         'next month'=> '+1 month',
-        'first day of next month'=> 'first of next month', // must handle this non-GNU date string in SugarBean->populateDefaultValues; if we don't this will evaluate to 1969...
+        'first day of next month'=> 'first day of next month', // must handle this non-GNU date string in SugarBean->populateDefaultValues; if we don't this will evaluate to 1969...
         'three months'=> '+3 months',  //kbrill Bug #17023
         'six months'=> '+6 months',
         'next year'=> '+1 year',

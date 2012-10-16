@@ -24,6 +24,7 @@ $config['builds']['ult']['languages']= array(
 'cs_CZ',
 'da_DK',
 'de_DE',
+'el_EL',
 'es_ES',
 'et_EE',
 'fr_FR',
@@ -32,6 +33,7 @@ $config['builds']['ult']['languages']= array(
 'it_it',
 'lt_LT',
 'ja_JP',
+'ko_KR',
 'lv_LV',
 'nb_NO',
 'nl_NL',
@@ -46,6 +48,8 @@ $config['builds']['ult']['languages']= array(
 'ca_ES',
 'en_UK',
 'sr_RS',
+'sk_SK',
+'sq_AL',
 );
 $config['builds']['ult']['lic'] = array('sub');
 $config['blackList']['ult'] = array(

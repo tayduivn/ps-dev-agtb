@@ -478,7 +478,7 @@
         _.each(self._collection.models, function (model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage'))
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
-                amount = parseFloat(model.get('amount')),
+                amount = parseFloat(model.get('likely_case')),
                 commit_stage = model.get('commit_stage'),
                 best = parseFloat(model.get('best_case')),
                 base_rate = parseFloat(model.get('base_rate')),
@@ -524,9 +524,9 @@
                     best = best != null ? parseFloat(best) : 0;
                     worst = worst != null ? parseFloat(worst) : 0;
 
-                    var amount_base = amount * base_rate,
-                        best_base = best * base_rate,
-                        worst_base = worst * base_rate;
+                    var amount_base = app.currency.convertWithRate(amount, base_rate),
+                        best_base = app.currency.convertWithRate(best, base_rate),
+                        worst_base = app.currency.convertWithRate(worst, base_rate);
 
                     //If commit_stage is include then we count the forecast schedule model
                     if(model.get('expected_commit_stage') == 'include')
