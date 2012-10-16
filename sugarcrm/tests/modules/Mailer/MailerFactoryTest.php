@@ -37,7 +37,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
         $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $outboundSmtpEmailConfiguration->setSender("foo@bar.com", "Foo Bar");
+        $outboundSmtpEmailConfiguration->setFrom("foo@bar.com", "Foo Bar");
         $outboundSmtpEmailConfiguration->setMode("smtp");
 
         $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
@@ -77,7 +77,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
             ->method("getMode")
             ->will(self::returnValue("asdf")); // some asinine value that wouldn't actually be used
 
-        $mockOutboundEmailConfiguration->setSender("foo@bar.com");
+        $mockOutboundEmailConfiguration->setFrom("foo@bar.com");
 
         self::setExpectedException("MailerException");
         $actual = MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned

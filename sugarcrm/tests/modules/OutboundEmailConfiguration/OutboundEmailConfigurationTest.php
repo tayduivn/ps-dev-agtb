@@ -97,9 +97,9 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
      * @group outboundemailconfiguration
      * @group functional
      */
-    public function testSetSender_EmailIsInvalid_ThrowsMailerException() {
+    public function testSetFrom_EmailIsInvalid_ThrowsMailerException() {
         self::setExpectedException("MailerException");
         $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $config->setSender(1234); // an invalid email address
+        $config->setFrom(1234); // an invalid email address
     }
 }

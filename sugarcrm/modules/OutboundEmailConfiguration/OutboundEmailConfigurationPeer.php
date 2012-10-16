@@ -138,8 +138,8 @@ class OutboundEmailConfigurationPeer
                 $configurations["config_id"]     = $outbound_config_id;
                 $configurations["config_type"]   = "user";
                 $configurations["inbox_id"]      = $k;
-                $configurations["sender_email"]  = $addr;
-                $configurations["sender_name"]   = $name;
+                $configurations["from_email"]    = $addr;
+                $configurations["from_name"]     = $name;
                 $configurations["display_name"]  = "{$name} ({$addr})";
                 $configurations["personal"]      = (bool)($v->is_personal);
                 $configurations["replyto_email"] = (!empty($storedOptions["reply_to_addr"])) ?
@@ -180,8 +180,8 @@ class OutboundEmailConfigurationPeer
         $configurations["config_id"]     = $system->id;
         $configurations["config_type"]   = "system";
         $configurations["inbox_id"]      = null;
-        $configurations["sender_email"]  = $ret["email"];
-        $configurations["sender_name"]   = $ret["name"];
+        $configurations["from_email"]    = $ret["email"];
+        $configurations["from_name"]     = $ret["name"];
         $configurations["display_name"]  = "{$ret["name"]} ({$ret["email"]})";
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
@@ -237,7 +237,7 @@ class OutboundEmailConfigurationPeer
         $outboundEmailConfiguration->setMode($mode);
         $outboundEmailConfiguration->setConfigName($outboundEmail["name"]);
         $outboundEmailConfiguration->setInboxId($configurations["inbox_id"]);
-        $outboundEmailConfiguration->setSender($configurations["sender_email"], $configurations["sender_name"]);
+        $outboundEmailConfiguration->setFrom($configurations["from_email"], $configurations["from_name"]);
         $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
         $outboundEmailConfiguration->setPersonal($configurations["personal"]);
         $outboundEmailConfiguration->setReplyTo($configurations["replyto_email"], $configurations["replyto_name"]);

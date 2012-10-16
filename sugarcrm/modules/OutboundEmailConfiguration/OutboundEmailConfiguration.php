@@ -45,7 +45,7 @@ class OutboundEmailConfiguration
     protected $mode;        // the sending strategy
     protected $personal;    // true=a user's personal configuration; false=shared configuration
     protected $displayName; // the name that user's use to identify the configuration
-    protected $sender;      // the EmailIdentity representing the sender of an email (used for the From email header)
+    protected $from;        // the EmailIdentity representing the sender of an email (used for the From email header)
     protected $replyTo;     // the EmailIdentity representing where replies should be sent (used for the Reply-To email
                             // header)
     protected $hostname;    // the hostname to use in Message-ID and Received headers and as default HELO string
@@ -352,16 +352,16 @@ class OutboundEmailConfiguration
      * @param null|string $name
      * @throws MailerException Allows MailerExceptions to bubble up.
      */
-    public function setSender($email, $name = null) {
-        $this->sender = new EmailIdentity($email, $name);
+    public function setFrom($email, $name = null) {
+        $this->from = new EmailIdentity($email, $name);
     }
 
     /**
      * @access public
      * @return EmailIdentity
      */
-    public function getSender() {
-        return $this->sender;
+    public function getFrom() {
+        return $this->from;
     }
 
     /**
