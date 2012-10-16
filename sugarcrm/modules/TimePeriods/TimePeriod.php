@@ -563,7 +563,7 @@ class TimePeriod extends SugarBean {
         $row = $this->db->fetchByAssoc($result);
 
         if($row == null) {
-            return $this->createNextTimePeriod();
+            return null;
         }
 
         return BeanFactory::getBean($row['time_period_type'].'TimePeriods', $row['id']);
@@ -667,12 +667,15 @@ class TimePeriod extends SugarBean {
             $jobQueue->deleteJob($job_id);
         }
 
+        //error_log(print_r($forwardTimePeriod,1));
+
         //schedule job to run on the end_date of the last time period
         global $current_user;
-        $job = BeanFactory::getBean('SchedulersJobs');
+        $job = BeanFactory::newBean('SchedulersJobs');
         $job->name = "TimePeriodAutomationJob";
         $job->target = "class::SugarJobCreateNextTimePeriod";
-        $job->execute_time = $timedate->fromDbDate($forwardTimePeriod->end_date);
+        $endDate = $timedate->fromDbDate($currentTimePeriod->end_date);
+        $job->execute_time = $timedate->asUserDate($endDate,true);
         $job->retry_count = 0;
         $job->assigned_user_id = $current_user->id;
         $jobQueue->submitJob($job);
