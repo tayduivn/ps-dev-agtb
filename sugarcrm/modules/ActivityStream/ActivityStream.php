@@ -303,7 +303,7 @@ class ActivityStream extends SugarBean {
         }
 
         $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
-        $GLOBALS['log']->fatal("Activity query: $sql");
+        $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
 
         if(!empty($result)) {
