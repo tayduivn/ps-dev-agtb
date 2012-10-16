@@ -129,13 +129,13 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     {
         //$this->markTestSkipped("In Progress ......");
 
-        $mailConfig = MailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
-        $mockMailer = new MockMailer($mailConfig->mailerConfigData);
+        $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
+        $mockMailer = new MockMailer($config);
 
         $MockMailerFactoryClass = $this->getMockClass('MailerFactory', array('getMailer'));
         $MockMailerFactoryClass::staticExpects($this->once())
             ->method('getMailer')
-            ->with($mailConfig)
+            ->with($config)
             ->will($this->returnValue($mockMailer));
 
         $em = new Email();
@@ -174,11 +174,11 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 }
 
-require_once "modules/Mailer/SmtpMailer.php";             // requires BaseMailer in order to extend it
+require_once "modules/Mailer/SmtpMailer.php"; // requires BaseMailer in order to extend it
 
 class MockMailer extends SmtpMailer
 {
-    function __construct(MailerConfiguration $mailerConfig) {
+    function __construct(OutboundEmailConfiguration $config) {
         $from    = new EmailIdentity("tony@tiger.com", "Tony Tiger");
         $headers = new EmailHeaders();
         $headers->setHeader(EmailHeaders::From, $from);

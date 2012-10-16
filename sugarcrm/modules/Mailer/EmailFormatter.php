@@ -175,7 +175,7 @@ class EmailFormatter
                     $mimeType = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 }
 
-                $embeddedImages[] = new EmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
+                $embeddedImages[] = new EmbeddedImage($cid, $fileLocation, $filename, Encoding::Base64, $mimeType);
                 $i++;
             }
         }

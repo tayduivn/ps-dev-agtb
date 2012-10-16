@@ -23,7 +23,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+require_once "modules/Mailer/MailerFactory.php";  // imports all but one of the Mailer classes that are needed
+require_once "modules/Mailer/AttachmentPeer.php"; // AttachmentPeer is needed to factor Attachments and EmbeddedImages
 
 require_once('include/SugarPHPMailer.php');
 require_once 'include/upload_file.php';
@@ -1931,7 +1932,7 @@ class Email extends SugarBean {
         global $sugar_config;
 
 
-        $mailConfig = MailConfigurationPeer::getSystemMailConfiguration($current_user);
+        $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
         $mailerFactoryClass = $this->MockMailerFactoryClass;
         $mailer = $mailerFactoryClass::getMailer($mailConfig);
 

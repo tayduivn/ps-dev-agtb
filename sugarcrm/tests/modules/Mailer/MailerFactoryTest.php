@@ -40,26 +40,26 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
         $outboundSmtpEmailConfiguration->setSender("foo@bar.com", "Foo Bar");
         $outboundSmtpEmailConfiguration->setMode("smtp");
 
-        $mockMailerFactory = $this->getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
-        $mockMailerFactory::staticExpects(static::any())
+        $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
+        $mockMailerFactory::staticExpects(self::any())
             ->method("getOutboundEmailConfiguration")
-            ->will(static::returnValue($outboundSmtpEmailConfiguration));
+            ->will(self::returnValue($outboundSmtpEmailConfiguration));
 
         $expected = "SmtpMailer";
         $actual   = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
-        static::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
+        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
     /**
      * @group mailer
      */
     public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException() {
-        $mockMailerFactory = $this->getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
-        $mockMailerFactory::staticExpects(static::any())
+        $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
+        $mockMailerFactory::staticExpects(self::any())
             ->method("getOutboundEmailConfiguration")
-            ->will(static::throwException(new MailerException()));
+            ->will(self::throwException(new MailerException()));
 
-        static::setExpectedException("MailerException");
+        self::setExpectedException("MailerException");
         $actual = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]); // hopefully nothing is actually returned
     }
 
@@ -67,19 +67,19 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
      * @group mailer
      */
     public function testGetMailer_ModeIsInvalid_ThrowsException() {
-        $mockOutboundEmailConfiguration = static::getMock(
+        $mockOutboundEmailConfiguration = self::getMock(
             "OutboundEmailConfiguration",
             array("getMode"),
             array($GLOBALS["current_user"])
         );
 
-        $mockOutboundEmailConfiguration->expects(static::any())
+        $mockOutboundEmailConfiguration->expects(self::any())
             ->method("getMode")
-            ->will(static::returnValue("asdf")); // some asinine value that wouldn't actually be used
+            ->will(self::returnValue("asdf")); // some asinine value that wouldn't actually be used
 
         $mockOutboundEmailConfiguration->setSender("foo@bar.com");
 
-        static::setExpectedException("MailerException");
+        self::setExpectedException("MailerException");
         $actual = MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
     }
 }

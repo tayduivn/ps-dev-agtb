@@ -22,6 +22,7 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
+require_once "EmbeddedImage.php";   // requires Attachment and EmbeddedImage, which imports Attachment
 
 /**
  * This class encapsulates properties and behavior of an attachment so that a common interface can be expected

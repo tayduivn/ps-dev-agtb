@@ -41,7 +41,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
 
         $config->setSecurityProtocol($expected);
         $actual = $config->getSecurityProtocol();
-        static::assertEquals($expected, $actual, "The security protocol should have been set to {$expected}");
+        self::assertEquals($expected, $actual, "The security protocol should have been set to {$expected}");
     }
 
     /**
@@ -51,7 +51,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
         $config           = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $securityProtocol = "asdf"; // some asinine value that wouldn't actually be used
 
-        static::setExpectedException("MailerException");
+        self::setExpectedException("MailerException");
         $config->setSecurityProtocol($securityProtocol);
     }
 
@@ -64,7 +64,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
         $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
         $config->setMode(strtoupper($expected));
         $actual = $config->getMode();
-        static::assertEquals($expected, $actual, "The mode should have been a {$expected}");
+        self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
     }
 
     /**
@@ -76,6 +76,6 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
 
         $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
         $actual   = $config->getMode();
-        static::assertEquals($expected, $actual, "The mode should have been a {$expected}");
+        self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
     }
 }

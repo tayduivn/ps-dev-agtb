@@ -44,19 +44,19 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
         // test that the charset has been changed from its default
         $expected = "asdf";
         $actual   = $config->getCharset();
-        static::assertEquals($expected, $actual, "The charset should have been set to {$expected}");
+        self::assertEquals($expected, $actual, "The charset should have been set to {$expected}");
 
         $config->loadDefaultConfigs();
 
         // test that the charset has been returned to its default
         $expected = "utf-8";
         $actual   = $config->getCharset();
-        static::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
+        self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
 
         // test that the wordwrap has been initialized correctly
         $expected = 996;
         $actual   = $config->getWordwrap();
-        static::assertEquals($expected, $actual, "The wordwrap should have been initialized to {$expected}");
+        self::assertEquals($expected, $actual, "The wordwrap should have been initialized to {$expected}");
     }
 
     /**
@@ -68,7 +68,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
 
         $config->setEncoding($expected);
         $actual = $config->getEncoding();
-        static::assertEquals($expected, $actual, "The encoding should have been set to {$expected}");
+        self::assertEquals($expected, $actual, "The encoding should have been set to {$expected}");
     }
 
     /**
@@ -78,7 +78,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
         $config   = new OutboundEmailConfiguration($GLOBALS["current_user"]);
         $encoding = "asdf"; // some asinine value that wouldn't actually be used
 
-        static::setExpectedException("MailerException");
+        self::setExpectedException("MailerException");
         $config->setEncoding($encoding);
     }
 
@@ -89,7 +89,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
         $config      = new OutboundEmailConfiguration($GLOBALS["current_user"]);
         $invalidMode = "asdf"; // some asinine value that wouldn't actually be used
 
-        static::setExpectedException("MailerException");
+        self::setExpectedException("MailerException");
         $config->setMode($invalidMode); // hopefully nothing is actually returned
     }
 
@@ -98,7 +98,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
      * @group functional
      */
     public function testSetSender_EmailIsInvalid_ThrowsMailerException() {
-        static::setExpectedException("MailerException");
+        self::setExpectedException("MailerException");
         $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $config->setSender(1234); // an invalid email address
     }

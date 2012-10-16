@@ -43,7 +43,7 @@ class EmbeddedImage extends Attachment
      * @param string      $encoding
      * @param string      $mimeType
      */
-    public function __construct($cid, $path, $name = null, $encoding = Encoding::Base64, $mimeType=null) {
+    public function __construct($cid, $path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
         $this->setCid($cid);
         parent::__construct($path, $name, $encoding, $mimeType);
     }
