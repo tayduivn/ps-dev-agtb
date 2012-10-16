@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Forecast - SugarCRM</title>
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!--[if lt IE 9]>
-    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <link href="../css/bootstrap.css" rel="stylesheet">
+  <meta charset="utf-8">
+  <title>Filters - SugarCRM</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <link href="../css/bootstrap.css" rel="stylesheet">
     <link href="../css/nv.d3.css" rel="stylesheet" type="text/css">
     <style type="text/css">
         #chart1 {
@@ -38,191 +38,180 @@
         }
     </style>
 </head>
-<body>
-<div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
         <div class="container-fluid">
-            <div class="nav-collapse">
-                <ul class="nav">
-                    <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-                    <li><a href="opportunity.html">Opportunities</a></li>
-                    <li class="active"><a href="forecast.html">Forecasts</a></li>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
+              <li><a href="accounts.html">Accounts</a></li>
+              <li><a href="contacts.html">Contacts</a></li>
+              <li class="active"><a href="forecast.html">Forecasts</a></li>
+              <li><a href="opportunities.html">Opportunities</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
+                <ul class="dropdown-menu">
+                  <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                  <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                  <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
                 </ul>
-                <ul class="nav pull-right">
-                    <li class="divider-vertical"></li>
-                    <li class="dropdown">
-                        <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
-                        <ul class="dropdown-menu">
-                            <li><a href="">System-wide maintenance &hellip;</a></li>
-                            <li class="divider"></li>
-                            <li><a href="">Upgrade to 7.0!</a></li>
-                            <li class="divider"></li>
-                            <li><a href="">Please take our survey.</a></li>
-                        </ul>
-                    </li>
-                    <li class="divider-vertical"></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="profile_skhan.html">Profile</a></li>
-                            <li><a href="#">Password</a></li>
-                            <li><a href="#">Advanced</a></li>
-                            <li><a href="#">External Accounts</a></li>
-                            <li class="divider"></li>
-                            <li><a href="#">Log Out</a></li>
-                        </ul>
-                    </li>
-                    <li class="divider-vertical"></li>
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
-                        <ul class="dropdown-menu quick">
-                            <li><a href="create_account.html">Create Account</a></li>
-                            <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
-                            <li><a href="create.html">Create Opportunity</a></li>
-                        </ul>
-                    </li>
+              </li>
+            </ul>
+            <ul class="nav pull-right">
+              <li class="divider-vertical"></li>
+              <li class="dropdown">
+                <button href="#" class="btn btn-danger dropdown-toggle" data-toggle="dropdown">3</button>
+                <ul class="dropdown-menu">
+                  <li><a href="">System-wide maintenance &hellip;</a></li>
+                  <li><a href="">Upgrade to 7.0!</a></li>
+                  <li><a href="">Please take our survey.</a></li>
                 </ul>
-                <div id="searchForm">
-                    <form class="navbar-search pull-right" action="">
-                        <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
-                        <div class="advanced">
-                            <div class="btn-toolbar pull-right">
-                                <div class="btn-group">
-                                    <a class="advanced btn-invisible dropdown-toggle" data-toggle="dropdown" href="#">
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                        <li class="title">Advanced Search:</li>
-                                        <li class="divider"></li>
-                                        <li><input type="checkbox"> Accounts</li>
-                                        <li><input type="checkbox"> Cases</li>
-                                        <li><input type="checkbox"> Opportunities</li>
-                                        <li><input type="checkbox"> Reports</li>
-                                    </ul>
-                                    <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+              </li>
+              <li class="divider-vertical"></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="../img/avatar_sabra.jpg" alt="skahn" class="avatar">skhan <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="profile_skhan.html">Profile</a></li>
+                  <li><a href="#">Password</a></li>
+                  <li><a href="#">Advanced</a></li>
+                  <li><a href="#">External Accounts</a></li>
+                  <li><a href="#">Log Out</a></li>
+                </ul>
+              </li>
+              <li class="divider-vertical"></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-plus icon-md"></i> <b class="caret"></b></a>
+                <ul class="dropdown-menu quick">
+                  <li><a href="create_account.html">Create Account</a></li>
+                  <li><a data-toggle="modal" href="#contactModal">Create Contact</a></li>
+                  <li><a href="create.html">Create Opportunity</a></li>
+                </ul>
+              </li>
+            </ul>
+            <div id="searchForm">
+              <form class="navbar-search pull-right" action="">
+                <input type="text" class="search-query span2" placeholder="Search" data-provide="typeahead" data-items="10" data-source="[&quot;Bad links in Pitch&quot;,&quot;Broken images in pdf&quot;,&quot;Misspellings everywhere&quot;,&quot;404 on faq&quot;,&quot;HTML is broken&quot;,&quot;Page link is not redirecting&quot;,&quot;Improper text in search placeholder&quot;,&quot;Misaligned elements&quot;,&quot;Need new text on log in&quot;,&quot;Image broken on profile&quot;]">
+                <div class="advanced">
+                  <div class="pull-right">
+                    <div class="btn-group">
+                      <a class="advanced dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="caret"></span>
+                      </a>
+                      <ul class="dropdown-menu">
+                        <li class="title">Advanced Search:</li>
+                        <li><input type="checkbox"> Accounts</li>
+                        <li><input type="checkbox"> Cases</li>
+                        <li><input type="checkbox"> Opportunities</li>
+                        <li><input type="checkbox"> Reports</li>
+                      </ul>
+                      <a class="btn btn-inverse" href="#"><i class="icon icon-search"></i></a>
+                    </div>
+                  </div>
                 </div>
-            </div><!-- /.nav-collapse -->
+              </form>
+            </div>
+          </div><!-- /.nav-collapse -->
         </div>
-    </div><!-- /navbar-inner -->
-</div>
-<div class="container-fluid" id="contentflex">
-
-<div class="row-fluid">
-<div class="span8">
-
-
-    <div id="headerbar">
-        <h1>Forecast: Sabra Khan </h1>
+      </div><!-- /navbar-inner -->
+    </div>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span8 main-pane">
+      <div class="headerpane">
+        <h1>Forecast: Sabra Khan</h1>
         <div class="btn-toolbar pull-left">
             <div class="btn-group">
                 <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
                     <span class="caret"></span>
                 </a>
                 <ul class="dropdown-menu carettop">
-                    <li><div id="people"></div> </li>
+                    <li><div id="people"></div></li>
                 </ul>
             </div>
         </div>
-        <div class="btn-toolbar pull-right">
-            <a href="forecast.html" class="btn" >Save Draft</a>
-            <a href="forecast.html" class="btn btn-primary"><i class="icon-upload"></i> Commit</a>
-            <div id="pageConfig"  class="btn-group">
-                <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
-                    <i class="icon-cog"></i>
-                </a>
-                <ul class="dropdown-menu left carettop">
-                    <li><a href="#" class="drawerTrig"><span class="expand    ">Expand pane</span><span class="collapse hide">Collapse pane</span></a></li>
-                    <li><a id="tabs_setup_btn" href="#">Admin settings tabs</a></li>
-                    <li><a id="setup_btn" href="#">Admin settings breadcrumbs</a></li>
-                </ul>
-            </div>
+        <div class="btn-toolbar pull-right dropdown">
+          <a href="forecast.html" class="btn" >Save Draft</a>
+          <a href="forecast.html" class="btn btn-primary"><i class="icon-upload"></i> Commit</a>
+          <div id="pageConfig" class="btn-group">
+            <a class="btn" href="#">Export CSV</a>
+            <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a>
+            <ul class="dropdown-menu carettop">
+                <li><a id="" href="#">Export PDF</a></li>
+                <li><a id="setup_btn" href="#">Settings</a></li>
+            </ul>
+          </div>
+          <a href="#" title="Create Account" class="btn btn-invisible drawerTrig"><i class="icon-chevron-right"></i></a>
         </div>
+      </div>
+      <div class="topline">
+          <div class="title">
+              <div class="control-group datefilter">
+                  <label for="date_filter" class="control-label">Timeframe</label>
+                  <div class="controls ">
+                      <select id="date_filter" data-placeholder="Choose a forecast period..." class="chzn-select" tabindex="0">
+                          <option value="2012-01-01 - 2012-03-30" selected="selected">Q1 2012</option>
+                          <option value="2012-04-01 - 2012-06-30">Q2 2012</option>
+                          <option value="2012-07-01 - 2012-09-30">Q3 2012</option>
+                          <option value="2012-10-01 - 2012-12-30">Q4 2012</option>
+                      </select>
+                  </div>
+              </div>
+          </div>
+          <div class="datapoint1">
+              Best<br>
+              <h2 id="best"></h2> <i class="icon-arrow-up"></i>  <br>
+              123,300
+          </div>
+          <div class="divider"></div>
+          <div class="datapoint2">
+              Likely<br>
+              <h2 id="likely"></h2>  <i class="icon-arrow-up"></i> <br>
+              123,300
+          </div>
+          <div class="clearfix"></div>
+          <div class="log drawer">
+              <div class="title pull-left">
+                  <strong>Previous</strong>:  3 days ago on May 29, 2012 at 4:30 pm EST
+              </div>
+              <div class="toggle pull-left">
+                  <i class="icon-caret-down icon-sm"></i>
+              </div>
+              <span class="divider"></span>
+          </div>
+          <div class="hide extend results">
+              <article>
+                  Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
+                  <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
+              </article>
+              <article>
+                  Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
+                  <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
+              </article>
+          </div>
+          <div class="control-group filter">
+              <div class="controls">
+                  <select id="sales_stage_filter" data-placeholder="Choose a forecast category..." class="chzn-select" multiple tabindex="1" style="width: 100%;">
+                      <option value=""></option>
+                      <option value="Committed" selected="selected">Committed</option>
+                      <option value="Upside">Upside</option>
+                      <option value="Downside">Downside</option>
+                  </select>
+              </div>
+          </div>
+      </div>
+      <div id="dynamic"></div>
     </div>
-    <div class="topline">
-
-
-
-
-        <div class="title">
-            <div class="control-group datefilter">
-                <label for="date_filter" class="control-label">Timeframe</label>
-                <div class="controls ">
-                    <select id="date_filter" data-placeholder="Choose a forecast period..." class="chzn-select" tabindex="0">
-                        <option value="2012-01-01 - 2012-03-30" selected="selected">Q1 2012</option>
-                        <option value="2012-04-01 - 2012-06-30">Q2 2012</option>
-                        <option value="2012-07-01 - 2012-09-30">Q3 2012</option>
-                        <option value="2012-10-01 - 2012-12-30">Q4 2012</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        <div class="datapoint1">
-            Best<br>
-            <h2 id="best"></h2> <i class="icon-arrow-up"></i>  <br>
-            123,300
-
-        </div>
-        <div class="divider"></div>
-        <div class="datapoint2">
-            Likely<br>
-            <h2 id="likely"></h2>  <i class="icon-arrow-up"></i> <br>
-
-            123,300
-
-        </div>
-
-        <div class="clearfix"></div>
-
-        <div class="log drawer">
-            <div class="title pull-left">
-                <strong>Previous</strong>:  3 days ago on May 29, 2012 at 4:30 pm EST
-            </div>
-            <div class="toggle pull-left">
-                <i class="icon-caret-down icon-sm"></i>
-            </div>
-
-            <span class="divider"></span>
-
-        </div>
-        <div class="hide extend results">
-            <article>
-                Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
-                <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
-            </article>
-            <article>
-                Updated forecast best up <i class="icon-arrow-up"></i> $10,000 to $125,000 and likely <i class="icon-arrow-down"></i> down $1,000 to $105,000<br>
-                <date>1 day ago on 2012/03/02 at 1:15 PM EST</date>
-            </article>
-        </div>
-
-        <div class="control-group filter">
-            <div class="controls">
-                <select id="sales_stage_filter" data-placeholder="Choose a forecast category..." class="chzn-select" multiple tabindex="1" style="width: 100%;">
-                    <option value=""></option>
-                    <option value="Committed" selected="selected">Committed</option>
-                    <option value="Upside">Upside</option>
-                    <option value="Downside">Downside</option>
-                </select>
-
-            </div>
-        </div>
-        <div id="dynamic"></div>
-    </div>
-</div>
-<div class="span4 tab-content" id="folded">
-    <div class="tab-pane active" id="overview">
-        <div class="thumbnail viz">
+    <div class="span4 side">
+      <div class="side-pane">
+        <div class="block thumbnail">
             <h4>Forecast for Q1 2012</h4>
             <div id="chart1">
                 <svg></svg>
             </div>
         </div>
         <div class="clearfix"></div>
-        <div class="block thumbnail" id="guages">
+        <div class="block thumbnail">
             <h4>Projected</h4>
             <div class="row-fluid">
                 <strong>
@@ -288,46 +277,24 @@
                 $200,000
               </span>
             </div>
+            <div class="row-fluid">
+              <div class="span4 tcenter">
+                  Opportunities<br>
+                  <strong>12</strong>
+              </div>
+              <div class="span4 tcenter">
+                  Revenue<br>
+                  <strong>120,000</strong>
+              </div>
+              <div class="span4 tcenter">
+                  Pipeline Size<br>
+                  <strong>x2</strong>
+              </div>
+            </div>
         </div>
-        <div class="row-fluid">
-            <div class="span4 tcenter">
-                Opportunities<br>
-                <strong>12</strong>
-            </div>
-            <div class="span4 tcenter">
-                Revenue<br>
-                <strong>120,000</strong>
-            </div>
-            <div class="span4 tcenter">
-                Pipeline Size<br>
-                <strong>x2</strong>
-            </div>
-        </div>
+      </div>
     </div>
-    <div class="tab-pane" id="file1">
-        <div class="block" id="">
-            <a href="#overview" data-toggle="tab" class="actions"><i class="icon-remove"></i></a>
-            <h4>Screenshot_766.png</h4>
-            <br>
-            <img src="http://placehold.it/400x300">
-            <div class="card2">
-                <div class="row-fluid">
-                    <div class="span3">Added:</div>
-                    <div class="span9">1 hour ago at 3:00 pm EST</div>
-                </div>
-                <div class="row-fluid">
-                    <div class="span3">Added By:</div>
-                    <div class="span9"><a href="profile_skhan.html">Sabra Khan</a></div>
-                </div>
-                <div class="row-fluid">
-                    <div class="span3">File Type:</div>
-                    <div class="span9">PNG</div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-</div>
+  </div>
 </div>
 <footer>
     <div class="row-fluid">
@@ -642,7 +609,7 @@ $(document).ready(function() {
                     nCloneTd.innerHTML = '<i class="icon-exclamation-sign label label-warn" style="cursor: pointer;"></i>';
                 }
 
-                nCloneTd2.innerHTML += ' <i class="icon-eye-open" style="cursor: pointer;"></i>';
+                nCloneTd2.innerHTML += '<span class="hide actions dropdown pull-right btn-group"><a class="btn" href="#" rel="tooltip" data-original-title="Preview"><i class="icon-eye-open"></i></a><a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="icon-caret-down"></span></a><ul class="dropdown-menu"><li><a href="#"><i class="icon-pencil"></i> Edit</a></li><li><a href="#"><i class="icon-trash"></i> Delete</a></li></ul></span>';
 
                 nCloneTd.className = "center";
                 $(this).append(nCloneTd);

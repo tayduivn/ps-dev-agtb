@@ -73,7 +73,7 @@
     $('.toggle-all').on('click', function () {
       $('table').find('tr.alert').remove();
       $('table').find(':checkbox').attr('checked', this.checked);
-      $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="">select all 300</a> records.</td></tr>');
+      $(this).parent().parent().parent().parent().parent().append('<tr class="alert alert-warning"><td colspan="7" style="text-align: center;">You have selected 10 records. Do you want select <a href="" class="triggermass">select all 300</a> records.</td></tr>');
     });
 
 
@@ -102,11 +102,11 @@
     // toggle more hide
     $('.newfilter').toggle(
       function () {
-        $(this).parent().parent().parent().parent().find('.extend').removeClass('hide');
+        $(this).parent().parent().parent().parent().parent().parent().find('.filtered').removeClass('hide');
         $(this).dropdown('toggle');
       },
       function () {
-        $(this).parent().parent().parent().parent().find('.extend').addClass('hide');
+        $(this).parent().parent().parent().parent().find('.filtered').addClass('hide');
     });
 
     // toggle more hide
@@ -169,8 +169,8 @@
     // column collapse
     $('.drawerTrig').on('click', function () {
       $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
-      $('.sidebar-pane').toggleClass('hide');
-      $('.content, .headerbar').toggleClass("span12").toggleClass("span8");
+      $('.side-pane').toggleClass('hide');
+      $('.main-pane').toggleClass("span8").toggleClass("span12");
       return false;
     });
 
@@ -200,7 +200,12 @@
         return false;
       }
     );
-
+    $('.tmu').on('click',
+      function () {
+        $('.mu').show();
+        return false;
+      }
+    );
     $('.addme').on('click',
       function () {
         $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
@@ -209,7 +214,7 @@
             $(this).parent('.filtered-body').remove();
             return false;
         });
-        $(this).parent().after('<div class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></div>');
+        $(this).parent().after('<article class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></article>');
         $('.addme').on('click',
           function () {
             $(this).after('<a href="" class="removeme pull-right"><i class="btn btn-invisible icon-minus"></i></a>');
@@ -218,7 +223,7 @@
                 $(this).parent('.filtered-body').remove();
                 return false;
             });
-            $(this).parent().after('<div class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></div>');
+            $(this).parent().after('<article class="filtered-body"><select class="chzn-select chzn-done" id="selNXK" style="display: none; "><option>matches</option></select><div id="selNXK_chzn" class="chzn-container chzn-container-single" style="width: 220px; "><a href="javascript:void(0)" class="chzn-single"><span>matches</span><div><b></b></div></a><div class="chzn-drop" style="left: -9000px; width: 218px; top: 0px; "><div class="chzn-search" style=""><input type="text" autocomplete="off" style="width: 183px; "></div><ul class="chzn-results"><li id="selNXK_chzn_o_0" class="active-result result-selected" style="">matches</li></ul></div></div><input placeholder="Select a name..."><a href="" class="btn btn-invisible pull-right addme"><i class="icon-plus"></i></a></article>');
             return false;
         });
         return false;
