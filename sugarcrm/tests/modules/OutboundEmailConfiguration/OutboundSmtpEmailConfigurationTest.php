@@ -33,110 +33,49 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
-     * @group mailer
+     * @group outboundemailconfiguration
      */
-    public function testLoadDefaultConfigs_CharsetIsReset_WordwrapIsInitialized() {
-        $mailerConfig = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+    public function testSetSecurityProtocol_PassInAValidProtocol_SecurityProtocolIsSet() {
+        $config   = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $expected = OutboundSmtpEmailConfiguration::SecurityProtocolSsl;
 
-        // change the default charset in order to show that loadDefaultConfigs will reset it
-        $mailerConfig->setCharset("asdf"); // some asinine value that wouldn't actually be used
-
-        // test that the charset has been changed from its default
-        $expected = "asdf";
-        $actual   = $mailerConfig->getCharset();
-        self::assertEquals($expected, $actual, "The charset should have been set to {$expected}");
-
-        $mailerConfig->loadDefaultConfigs();
-
-        // test that the charset has been returned to its default
-        $expected = "utf-8";
-        $actual   = $mailerConfig->getCharset();
-        self::assertEquals($expected, $actual, "The charset should have been reset to {$expected}");
-
-        // test that the wordwrap has been initialized correctly
-        $expected = 996;
-        $actual   = $mailerConfig->getWordwrap();
-        self::assertEquals($expected, $actual, "The wordwrap should have been initialized to {$expected}");
+        $config->setSecurityProtocol($expected);
+        $actual = $config->getSecurityProtocol();
+        static::assertEquals($expected, $actual, "The security protocol should have been set to {$expected}");
     }
 
     /**
-     * @group mailer
-     */
-    public function testSetEncoding_PassInAValidEncoding_EncodingIsSet() {
-        $mailerConfig = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $expected     = Encoding::EightBit;
-
-        $mailerConfig->setEncoding($expected);
-        $actual = $mailerConfig->getEncoding();
-        self::assertEquals($expected, $actual, "The encoding should have been set to {$expected}");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testSetEncoding_PassInAnInvalidEncoding_ThrowsException() {
-        $mailerConfig = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $encoding     = "asdf"; // some asinine value that wouldn't actually be used
-
-        self::setExpectedException("MailerException");
-        $mailerConfig->setEncoding($encoding);
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testSetSecirutyProtocol_PassInAValidProtocol_SecurityProtocolIsSet() {
-        $mailerConfig = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $expected     = OutboundSmtpEmailConfiguration::SecurityProtocolSsl;
-
-        $mailerConfig->setSecurityProtocol($expected);
-        $actual = $mailerConfig->getSecurityProtocol();
-        self::assertEquals($expected, $actual, "The security protocol should have been set to {$expected}");
-    }
-
-    /**
-     * @group mailer
+     * @group outboundemailconfiguration
      */
     public function testSetSecurityProtocol_PassInAnInvalidProtocol_ThrowsException() {
-        $mailerConfig     = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $config           = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
         $securityProtocol = "asdf"; // some asinine value that wouldn't actually be used
 
-        self::setExpectedException("MailerException");
-        $mailerConfig->setSecurityProtocol($securityProtocol);
+        static::setExpectedException("MailerException");
+        $config->setSecurityProtocol($securityProtocol);
     }
 
     /**
-     * @group mailer
+     * @group outboundemailconfiguration
      */
     public function testSetMode_ValidModeSmtpIsInAllCaps_ModeBecomesLowerCaseSmtp() {
-        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
 
         $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
-        $outboundSmtpEmailConfiguration->setMode(strtoupper($expected));
-        $actual = $outboundSmtpEmailConfiguration->getMode();
+        $config->setMode(strtoupper($expected));
+        $actual = $config->getMode();
         static::assertEquals($expected, $actual, "The mode should have been a {$expected}");
     }
 
     /**
-     * @group mailer
-     */
-    public function testSetMode_ModeIsInvalid_ThrowsException() {
-        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $invalidMode                    = "asdf"; // some asinine value that wouldn't actually be used
-
-        static::setExpectedException("MailerException");
-        $outboundSmtpEmailConfiguration->setMode($invalidMode); // hopefully nothing is actually returned
-    }
-
-    /**
-     * @group mailer
+     * @group outboundemailconfiguration
      */
     public function testSetMode_NoMode_ModeBecomesSmtp() {
-        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
-        $outboundSmtpEmailConfiguration->setMode("");
+        $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $config->setMode("");
 
         $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
-        $actual   = $outboundSmtpEmailConfiguration->getMode();
+        $actual   = $config->getMode();
         static::assertEquals($expected, $actual, "The mode should have been a {$expected}");
     }
 }

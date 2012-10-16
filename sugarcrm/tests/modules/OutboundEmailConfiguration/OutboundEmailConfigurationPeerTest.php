@@ -83,8 +83,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
-     * @group mailer
-     * @group mailconfig01
+     * @group outboundemailconfiguration
      */
     public function testListMailConfigurations_All_Success() {
         $config1_array = array(
@@ -152,8 +151,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
-     * @group mailer
-     * @group mailconfig02
+     * @group outboundemailconfiguration
      */
     public function testListMailConfigurations_SystemOnly_Success() {
         $config1_array = array(
@@ -208,8 +206,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     private static function createOutboundEmail($config) {
-        $obj = new OutboundEmail();
-
+        $obj                    = new OutboundEmail();
         $obj->new_with_id       = true;
         $obj->id                = create_guid();
         $obj->name              = $config['name'];
