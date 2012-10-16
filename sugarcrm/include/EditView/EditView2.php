@@ -507,7 +507,7 @@ class EditView
                     $this->fieldDefs[$name]['value'] = $this->getValueFromRequest($_REQUEST, $name);
                 }
 
-                $this->fieldDefs[$name]['value'] = $this->focus->fixFieldDateForView($this->fieldDefs[$name]['type'], $value);
+                $this->fieldDefs[$name]['value'] = $this->focus->convertDateFieldValueToUserFormat($this->fieldDefs[$name]['type'], $value);
                 
                /*
                 * Populate any relate fields that are linked by a relationship to the calling module.

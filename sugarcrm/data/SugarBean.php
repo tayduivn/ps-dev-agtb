@@ -4800,8 +4800,6 @@ function save_relationship_changes($is_update, $exclude=array())
         foreach($this->field_defs as $field=>$value){
 
             if(isset($this->$field)){
-                $fieldType = $this->field_defs[$field]['type'];
-                $return_array[$cache[$field]] = $this->fixFieldDateForView($fieldType, $this->$field);
                 // cn: bug 12270 - sensitive fields being passed arbitrarily in listViews
                 if(isset($sensitiveFields[$field]))
                     continue;
@@ -4817,6 +4815,10 @@ function save_relationship_changes($is_update, $exclude=array())
                     //END SUGARCRM flav=een ONLY
                         $return_array[$cache[$field]] = "";
 
+                }
+                else if (in_array($value['type'], array('datetime', 'datetimecombo', 'date', 'time')))
+                {
+                    $return_array[$cache[$field]] = $this->convertDateFieldValueToUserFormat($value['type'], $this->$field);
                 }
                 //cn: if $field is a _dom, detect and return VALUE not KEY
                 //cl: empty function check for meta-data enum types that have values loaded from a function
@@ -4850,7 +4852,7 @@ function save_relationship_changes($is_update, $exclude=array())
         }
         return $return_array;
     }
-    
+
     /**
      * Transform $value of given field $type to user prefered format for output.
      *
@@ -4859,7 +4861,7 @@ function save_relationship_changes($is_update, $exclude=array())
      * @param string $value value of the field
      * @return string formatted for output date
      */
-    public function fixFieldDateForView($type, $value)
+    public function convertDateFieldValueToUserFormat($type, $value)
     {
         global $timedate;
         switch ($type)

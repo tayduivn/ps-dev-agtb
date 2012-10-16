@@ -35,7 +35,9 @@
  */
 class Bug46605Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @var Lead
+     */
     protected $_lead;
 
     public function setUp()
@@ -49,13 +51,30 @@ class Bug46605Test extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group bug46605
+     * @group 46605
      */
     public function testBeanRetrieveReturnsDatesInDbFormat()
     {
         $this->_lead->retrieve();
-        $match = preg_match('/^[\d]{4}-[\d]{2}-[\d]{2}\s[\d]{2}:[\d]{2}:[\d]{2}$/s', $this->_lead->date_entered);
-        $this->assertEquals(1, $match);
+        $this->assertRegExp('/^[\d]{4}-[\d]{2}-[\d]{2}\s[\d]{2}:[\d]{2}:[\d]{2}$/s', $this->_lead->date_entered);
+    }
+
+    /**
+     * @group 46605
+     */
+    public function testDeprecatedLogEntriesDoNotAppearDuringBeadSave()
+    {
+        $logFileName = SUGAR_PATH.'/sugarcrm.log';
+        $initialLogSize = filesize($logFileName);
+        /** @var $log LoggerManager */
+        $log = $GLOBALS['log'];
+        $log->setLevel('deprecated');
+
+        $this->_lead->save();
+        $log->setLevel('fatal');
+
+        $logContent = file_get_contents($logFileName, null, null, $initialLogSize);
+        $this->assertNotContains('DEPRECATED', $logContent);
     }
 
 }

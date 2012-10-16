@@ -1773,45 +1773,6 @@ EOQ;
         }
 	}
 
-	//BEGIN SUGARCRM flav!=com ONLY
-	function preprocess_fields_on_save(){
-		parent::preprocess_fields_on_save();
-        require_once('include/upload_file.php');
-		$upload_file = new UploadFile("picture");
-
-		//remove file
-		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
-		{
-			$upload_file->unlink_file($this->picture);
-			$this->picture="";
-		}
-
-		//uploadfile
-		if (isset($_FILES['picture']))
-		{
-			//confirm only image file type can be uploaded
-			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
-			if (in_array($_FILES['picture']["type"], $imgType))
-			{
-				if ($upload_file->confirm_upload())
-				{
-					$this->picture = create_guid().".png";
-					$upload_file->final_move( $this->picture);
-					$path=$upload_file->get_upload_path($this->picture);
-					if(!verify_image_file($path)) {
-					    $this->picture = '';
-					}
-				}
-			}
-		}
-
-		//duplicate field handling (in the event the Duplicate button was pressed)
-		if(empty($this->picture) && !empty($_REQUEST['picture_duplicate'])) {
-           $this->picture = $_REQUEST['picture_duplicate'];
-		}
-	}
-	//END SUGARCRM flav!=com ONLY
-
 
    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
    {	//call parent method, specifying for array to be returned

@@ -27,6 +27,7 @@
  ********************************************************************************/
 
 require_once('include/SugarObjects/templates/basic/Basic.php');
+require_once('include/upload_file.php');
 
 class Person extends Basic
 {
@@ -152,6 +153,9 @@ class Person extends Basic
         $this->add_address_streets('alt_address_street');
         $ori_in_workflow = empty($this->in_workflow) ? false : true;
         $this->emailAddress->handleLegacySave($this, $this->module_dir);
+        //BEGIN SUGARCRM flav!=com ONLY
+        $this->handlePictureSave();
+        //END SUGARCRM flav!=com ONLY
         parent::save($check_notify);
         $override_email = array();
         if(!empty($this->email1_set_in_workflow)) {
@@ -168,6 +172,50 @@ class Person extends Basic
         }
 		return $this->id;
 	}
+
+    //BEGIN SUGARCRM flav!=com ONLY
+    /**
+     * Handle profile picture saving
+     */
+    protected function handlePictureSave()
+    {
+
+        $upload_file = new UploadFile("picture");
+
+        //remove file
+        if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
+        {
+            $upload_file->unlink_file($this->picture);
+            $this->picture="";
+        }
+
+        //uploadfile
+        if (isset($_FILES['picture']))
+        {
+            //confirm only image file type can be uploaded
+            $imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
+            if (in_array($_FILES['picture']["type"], $imgType))
+            {
+                if ($upload_file->confirm_upload())
+                {
+                    $this->picture = create_guid().".png";
+                    $upload_file->final_move( $this->picture);
+                    $path=$upload_file->get_upload_path($this->picture);
+                    if (!verify_image_file($path))
+                    {
+                        $this->picture = '';
+                    }
+                }
+            }
+        }
+
+        //duplicate field handling (in the event the Duplicate button was pressed)
+        if (empty($this->picture) && !empty($_REQUEST['picture_duplicate']))
+        {
+            $this->picture = $_REQUEST['picture_duplicate'];
+        }
+    }
+    //END SUGARCRM flav!=com ONLY
 
 	/**
  	 * @see parent::get_summary_text()
