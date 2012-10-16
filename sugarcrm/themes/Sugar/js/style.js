@@ -207,6 +207,10 @@ SUGAR.append(SUGAR.themes, {
             ignoreClass: 'megawrapper',
             rtl: isRTL,
 			onBeforeShow: function() {
+				if ($('#moduleTab_AllHome').length != 0)
+				{
+					$('#moduleTab_AllHome').mouseout();
+				}
 				if($(this).hasClass("megamenu") && $(this).prev().hasClass('more') != true) {
                     var extraMenu = "#moduleTabExtraMenu"+sugar_theme_gm_current;
 					var moduleName = $(this).prev().attr("module");

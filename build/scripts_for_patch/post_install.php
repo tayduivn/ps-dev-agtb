@@ -63,22 +63,6 @@ function do_repair_workflow_conditions() {
 	$workflow_object = new WorkFlow();
 	$workflow_object->repair_workflow();
 }
-
-/**
- * Rebuild workflow scripts to the current structure (bug #54584)
- */
-function do_rebuild_workflow_scripts()
-{
-    require_once 'modules/WorkFlow/WorkFlow.php';
-    $workflow = new Workflow();
-    $query  = $workflow->create_new_list_query(null, null);
-    $result = $workflow->db->query($query);
-    while ($row = $workflow->db->fetchRow($result))
-    {
-        $workflow->retrieve($row['id']);
-        write_workflow($workflow);
-    }
-}
 // END SUGARCRM flav=pro ONLY
 
 function add_EZ_PDF() {
@@ -262,8 +246,6 @@ function clearCompanyLogo(){
 
 
 function genericFunctions(){
-    global $sugar_version;
-
 	$server_software = $_SERVER["SERVER_SOFTWARE"];
 	if(strpos($server_software,'Microsoft-IIS') !== true)
 	{
@@ -286,14 +268,6 @@ function genericFunctions(){
 	////	WORKFLOW REPAIR
 	_logThis("Repairing WorkFlows", $path);
 	do_repair_workflow_conditions();
-
-    ///////////////////////////////////////////////////////////////////////////
-    ////    REBUILD WORKFLOW SCRIPTS
-    if (version_compare($sugar_version, '6.5.6', 'lt'))
-    {
-        _logThis("Rebuilding workflow scripts", $path);
-        do_rebuild_workflow_scripts();
-    }
 	//END SUGARCRM flav=pro ONLY
 
 		///////////////////////////////////////////////////////////////////////////

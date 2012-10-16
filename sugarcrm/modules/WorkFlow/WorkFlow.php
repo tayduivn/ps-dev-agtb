@@ -1062,7 +1062,10 @@ function get_alert_contents_for_file($workflow_id, $trigger_count, $alert_array_
     $alert_count = 0;
 
     $alert_string = "";
-	$eval_dump = '';
+	$eval_dump = '$_SESSION[\'WORKFLOW_ALERTS\'] = isset($_SESSION[\'WORKFLOW_ALERTS\']) && is_array($_SESSION[\'WORKFLOW_ALERTS\']) ? $_SESSION[\'WORKFLOW_ALERTS\'] : array();'."\n";
+	$eval_dump .= "\t\t".'$_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] = isset($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\']) '
+	            . '&& is_array($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\']) ? $_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] : array();'."\n";
+	$eval_dump .= "\t\t".'$_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'] = array_merge($_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'],array (';
         $query = "  SELECT $this->rel_alertshells_table.parent_id parent_id,
                             $this->rel_alertshells_table.id id,
                     $this->rel_alertshells_table.alert_text alert_text,
@@ -1078,7 +1081,7 @@ function get_alert_contents_for_file($workflow_id, $trigger_count, $alert_array_
         // Get the id and the name.
         while($row = $this->db->fetchByAssoc($result)){
             $array_position_name = $alert_array_name."".$trigger_count."_alert".$alert_count;
-            $eval_dump .= '$_SESSION[\'WORKFLOW_ALERTS\'][\''.$alert_array_name.'\'][\''.$array_position_name.'\'][$focus->id] = true;' . "\n";
+            $eval_dump .= '\''.$array_position_name.'\',';
             $alert_string .= 'function process_wflow_'.$array_position_name.'(&$focus){
             include("custom/modules/'.$alert_array_name. '/workflow/alerts_array.php");';
             $alert_string .="\n\n\t \$alertshell_array = array(); \n\n";
@@ -1116,6 +1119,7 @@ function get_alert_contents_for_file($workflow_id, $trigger_count, $alert_array_
 
         //end while statement
         }
+        $eval_dump .= '));';
 
 return array($eval_dump, $alert_string);
 
