@@ -119,7 +119,7 @@
         // format the email as an array with sugar parameters.
 
         if (this.$el.find(this.fieldTag).length === 1 && this.$el.find(this.fieldTag).hasClass('textField')) {
-            this.app.view.Field.prototype.bindDomChange.call(this);
+            app.view.Field.prototype.bindDomChange.call(this);
         } else {
             // Bind all tooltips on page
             function bindAll(sel) {
