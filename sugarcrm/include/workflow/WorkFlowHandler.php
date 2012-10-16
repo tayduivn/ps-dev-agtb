@@ -80,7 +80,7 @@ function WorkFlowHandler(&$focus, $event){
  * @param alerts - the alerts that were saved in the session
  *
  */
-function process_alerts(&$focus){
+function process_alerts(&$focus, $alerts){
 
     //Confirm we are not running populating seed data
     if(!isset($_SESSION['disable_workflow'])){
@@ -110,16 +110,12 @@ function process_alerts(&$focus){
                 $file = "custom/modules/".$focus->module_dir."/workflow/workflow_alerts.php";
                     if(file_exists($file)){
                         include_once($file);
-                        $alerts = $_SESSION['WORKFLOW_ALERTS'][$focus->module_name];
-                        foreach($alerts as $alert => $bean_ids){
-                            if (isset($bean_ids[$focus->id])) {
-                                $alert_target_class = $focus->module_dir."_alerts";
-                                if(class_exists($alert_target_class)){
-                                    $alert_class = new $alert_target_class();
-                                    $function_name = "process_wflow_".$alert;
-                                    $alert_class->$function_name($focus);
-                                }
-                                unset($_SESSION['WORKFLOW_ALERTS'][$focus->module_name][$alert][$focus->id]);
+                        foreach($alerts as $alert){
+                            $alert_target_class = $focus->module_dir."_alerts";
+                            if(class_exists($alert_target_class)){
+                                $alert_class = new $alert_target_class();
+                                $function_name = "process_wflow_".$alert;
+                                $alert_class->$function_name($focus);
                             }
                         }
                     }
