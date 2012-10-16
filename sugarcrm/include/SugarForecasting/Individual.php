@@ -98,7 +98,7 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
             $data = array();
             $data['id'] = $row["opp_id"];
             $data['product_id'] = $row["product_id"];
-            $data['date_closed'] = $row["date_closed"];
+            $data['date_closed'] = $this->convertDateTimeToISO($row["date_closed"]);
             $data['sales_stage'] = $row["sales_stage"];
             $data['assigned_user_id'] = $row["assigned_user_id"];
             $data['amount'] = $row["likely_case"];
