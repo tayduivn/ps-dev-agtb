@@ -1,5 +1,13 @@
 ({
 
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+
+        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
+            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+        }
+    },
+
     /**
      * Overriding _renderField because we need to set up a binding to the start month drop down to populate the day drop down on change
      * @param field

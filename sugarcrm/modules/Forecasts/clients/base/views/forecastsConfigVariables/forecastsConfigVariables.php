@@ -23,9 +23,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Forecasts']['base']['view']['forecastsConfigVariables'] = array(
+    'registerLabelAsBreadCrumb' => true,
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_VARIABLES',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES',
             'fields' => array(
                 array(
                     'name' => 'sales_stage_lost',
