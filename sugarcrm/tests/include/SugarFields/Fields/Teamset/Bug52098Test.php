@@ -37,23 +37,11 @@ require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
 
 class Bug52098Test extends Sugar_PHPUnit_Framework_TestCase
 {
-
     private $user;
-    private $sft;
-    private $params;
 
     public function setUp()
     {
         $this->user = SugarTestUserUtilities::createAnonymousUser(true, true);
-        $this->sft = new SugarFieldTeamset('Teamset');
-
-        $this->params =  array(
-            'team_name_collection_0' => 'Global',
-            'id_team_name_collection_0' => '1',
-            'team_name_collection_1' => 'TestTeam',
-            'id_team_name_collection_1' => '123',
-            'primary_team_name_collection' => '1',
-        );
     }
 
     public function tearDown()
@@ -63,10 +51,20 @@ class Bug52098Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function testSetPrimaryTeamForAdmin()
     {
-        $this->newTeamId = '123';
-        $this->sft->save($this->user, $this->params, 'team_name', '');
+        $sft = new SugarFieldTeamset('Teamset');
+        $newTeamId = '123';
 
-        $this->assertEquals($this->user->default_team, $this->newTeamId, 'Primary team is not saved correctly for admin user');
+        $params =  array(
+            'team_name_collection_0' => 'Global',
+            'id_team_name_collection_0' => '1',
+            'team_name_collection_1' => 'TestTeam',
+            'id_team_name_collection_1' => '123',
+            'primary_team_name_collection' => '1',
+        );
+
+        $sft->save($this->user, $params, 'team_name', '');
+
+        $this->assertEquals($this->user->default_team, $newTeamId, 'Primary team is not saved correctly for admin user');
     }
 
 }
