@@ -337,8 +337,8 @@
                     {
                         case "enum":
                         case "bool":
-                            fieldDef["sSortDataType"] = "dom-checkbox";
-                            fieldDef["sType"] = "numeric";
+                            // disable sorting for non-numerical fields
+                            fieldDef["bSortable"] = false;
                             break;
                         case "int":
                         case "currency":
