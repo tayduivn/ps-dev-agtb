@@ -44,8 +44,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
-        $db = DBManagerFactory::getInstance();
-        $db->query("UPDATE timeperiods set deleted = 1");
         /* @var $admin Administration */
         $admin = BeanFactory::getBean('Administration');
         foreach(self::$foreastsConfigSettings as $config){
