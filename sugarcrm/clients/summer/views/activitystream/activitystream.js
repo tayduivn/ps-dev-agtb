@@ -392,13 +392,48 @@
     }, 250),
 
     getEntities: function(event) {
+        var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown");
+        // Coerce integer to a boolean.
+        var dropdownOpen = !!(dropdown.length);
+        if(dropdownOpen) {
+            var active = dropdown.find('.active');
+            // Enter or tab. Tab doesn't work in some browsers.
+            if(event.keyCode == 13 || event.keyCode == 9) {
+                event.preventDefault();
+                event.stopPropagation();
+                dropdown.find('.active').click();
+            }
+            // Up arrow.
+            if(event.keyCode == 38) {
+                var prev = active.prev();
+                if(!prev.length) {
+                  prev = dropdown.find('li').last();
+                }
+                active.removeClass('active');
+                prev.addClass('active');
+            }
+            // Down arrow.
+            if(event.keyCode == 40) {
+                var next = active.next();
+                if(!next.length) {
+                  next = dropdown.find('li').first();
+                }
+                active.removeClass('active');
+                next.addClass('active');
+            }
+        }
+
         $(event.currentTarget).find('.label').each(function() {
             var el = $(this);
             if(el.data('name') !== el.text()) {
                 el.remove();
             }
         });
-        this._getEntities(event);
+
+        // If we're typing text.
+        if(event.keyCode > 47) {
+            this._getEntities(event);
+        }
     },
 
     hideTypeahead: function() {
