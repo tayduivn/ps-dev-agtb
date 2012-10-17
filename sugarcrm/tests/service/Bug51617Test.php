@@ -23,6 +23,7 @@
  ********************************************************************************/
 
 require_once 'tests/service/SOAPTestCase.php';
+require_once 'modules/DynamicFields/FieldCases.php';
 
 class Bug51617Test extends SOAPTestCase
 {
@@ -32,12 +33,9 @@ class Bug51617Test extends SOAPTestCase
     {
         $this->_soapURL = $GLOBALS['sugar_config']['site_url'].'/service/v2/soap.php';
 
-        $beanList = array();
-        $beanFiles = array();
-        require('include/modules.php');
-        $GLOBALS['beanList'] = $beanList;
-        $GLOBALS['beanFiles'] = $beanFiles;
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setup('current_user');
         $GLOBALS['current_user']->status = 'Active';
         $GLOBALS['current_user']->is_admin = 1;
         $GLOBALS['current_user']->save();
@@ -45,7 +43,7 @@ class Bug51617Test extends SOAPTestCase
         $this->field = get_widget('varchar');
         $this->field->id = 'Accountstest_custom_c';
         $this->field->name = 'test_custom_c';
-        $this->field->vanme = 'LBL_TEST_CUSTOM_C';
+        $this->field->vname = 'LBL_TEST_CUSTOM_C';
         $this->field->comments = NULL;
         $this->field->help = NULL;
         $this->field->custom_module = 'Accounts';
@@ -71,6 +69,7 @@ class Bug51617Test extends SOAPTestCase
         $this->df->setup($this->mod);
         $this->df->addFieldObject($this->field);
         $this->df->buildCache('Accounts');
+        $GLOBALS['db']->commit();
         VardefManager::clearVardef();
         VardefManager::refreshVardefs('Accounts', 'Account');
         $this->mod->field_defs = $GLOBALS['dictionary']['Account']['fields'];
@@ -78,6 +77,8 @@ class Bug51617Test extends SOAPTestCase
         $this->_account = SugarTestAccountUtilities::createAccount();
 
         $this->_account->test_custom_c = 'Custom Field';
+        $this->_account->team_set_id = '1';
+        $this->_account->team_id = '1';
         $this->_account->save();
 
         $GLOBALS['db']->commit(); // Making sure we commit any changes
@@ -88,30 +89,33 @@ class Bug51617Test extends SOAPTestCase
     public function tearDown()
     {
         $this->df->deleteField($this->field);
+        if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->_account->id}'");
+        }
 
         SugarTestAccountUtilities::removeAllCreatedAccounts();
 
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+        SugarTestHelper::tearDown();
         unset($GLOBALS['current_user']);
 
         parent::tearDown();
+        $GLOBALS['db']->commit();
 
         global $soap_version_test_accountId, $soap_version_test_opportunityId, $soap_version_test_contactId;
         unset($soap_version_test_accountId);
         unset($soap_version_test_opportunityId);
         unset($soap_version_test_contactId);
-        unset($GLOBALS['beanFiles']);
-        unset($GLOBALS['beanList']);
     }
 
     public function testGetEntryListWithCustomField()
     {
         $this->_login();
+        $GLOBALS['db']->commit();
         $result = $this->_soapClient->call('get_entry_list',
             array(
                  'session'=>$this->_sessionId,
                  "module_name" => 'Accounts',
-                 '',
+                 "id='".$this->_account->id."'",
                  '',
                  0,
                  "select_fields" => array('id', 'name', 'test_custom_c'),
@@ -131,10 +135,10 @@ class Bug51617Test extends SOAPTestCase
         {
             foreach($row as $r) {
                 // just make sure they are all not empty
-                $this->assertNotEmpty($r['value']);
+                $this->assertNotEmpty($r['value'],"Value is empty, looks like: ".var_export($r,true));
                 // make sure that the test field has our value in it
                 if($r['name'] == "test_custom_c") {
-                    $this->assertEquals("Custom Field", $r['value']);
+                    $this->assertEquals("Custom Field", $r['value'],"Custom field does not have our value in it");
                 }
             }
         } // if

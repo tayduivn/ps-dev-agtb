@@ -1,2 +1,9 @@
+<<<<<<< HEAD
 <input type="text" class="existing center textField" value="{{value}}" placeholder="{{label}}"></div>
 <p class="help-block">
+=======
+
+        <input type="text" class="center textField" value="{{value}}" placeholder="{{label}}">
+    <p class="help-block">
+    </p>
+>>>>>>> b72abaaedf1e724978d945c91653506e124422df

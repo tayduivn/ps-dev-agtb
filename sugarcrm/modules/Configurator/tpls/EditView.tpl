@@ -380,7 +380,7 @@
 
 	<tr>
 		<!--//BEGIN SUGARCRM flav=ent ONLY -->
-		<td  scope="row">{$MOD.SESSION_TIMEOUT}: </td>
+		<td  scope="row">{$MOD.SESSION_TIMEOUT}:&nbsp;{sugar_help text=$MOD.LBL_SESSION_TIMEOUT_TOOLTIP}</td>
 		<td  >
 			<input type='text' size='8' name='system_session_timeout' value='{$SESSION_TIMEOUT}'>&nbsp;{$MOD.SESSION_TIMEOUT_UNITS}
 		</td>
