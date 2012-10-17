@@ -268,7 +268,7 @@
         );
 
         if(this.values.display_manager === true) {
-            this.values.category = "Committed";
+            this.values.category = "include";
         }
 
         // update the chart title
