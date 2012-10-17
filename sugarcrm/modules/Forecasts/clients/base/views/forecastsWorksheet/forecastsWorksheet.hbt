@@ -21,8 +21,6 @@
     {{/each}}
     </tbody>
     <tfoot id="summary">
-    <tr id="expected_opportunities" class="view-forecastSchedule">
-    </tr>
     <tr id="included_totals">
     </tr>
     <tr id="overall_totals" class="overall">
