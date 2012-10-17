@@ -488,7 +488,6 @@
                 includedCount++;
             }
 
-            debugger;
             overallAmount += amount_base;
             overallBest += best_base;
             overallWorst += worst_base;
