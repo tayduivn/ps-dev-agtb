@@ -1,6 +1,4 @@
-<div class="control-group">
-    <div class="controls">
-        <input type="text" class="center textField" value="{{value}}" placeholder="{{label}}"></div>
+
+        <input type="text" class="center textField" value="{{value}}" placeholder="{{label}}">
     <p class="help-block">
     </p>
-</div>
