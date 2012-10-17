@@ -304,6 +304,7 @@
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
+        this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();

@@ -269,6 +269,7 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
+        this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         app.view.View.prototype._render.call(this);
