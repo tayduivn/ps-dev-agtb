@@ -1743,6 +1743,10 @@ function snapshotForm(theForm) {
             }
         }
         else if ( elemType == 'hidden' ) {
+            if (elem.name=='edit_all_recurrences') {
+                continue;
+            }
+
             snapshotTxt = snapshotTxt + elem.value;
         }
     }
