@@ -273,23 +273,25 @@
       return false;
     });
 
-    $('table.datatable').dataTable({
-      "bPaginate": false,
-      "bFilter": true,
-      "bInfo": false,
-      "bAutoWidth": false
-    });
+    if($(".container.welcome").length===0) {
+      $('table.datatable').dataTable({
+        "bPaginate": false,
+        "bFilter": true,
+        "bInfo": false,
+        "bAutoWidth": false
+      });
 
-    // Select widget
-    $(".chzn-select").chosen({ disable_search_threshold: 5 });
-    $(".chzn-select-deselect").chosen({allow_single_deselect:true});
-
+      // Select widget
+      $(".chzn-select").chosen({ disable_search_threshold: 5 });
+      $(".chzn-select-deselect").chosen({allow_single_deselect:true});
+      $('#moduleActivity .form-search select').chosen();
+      $('#moduleActivity .form-search input').quicksearch('ul.results li');
+    }
+    
     //popover
     $("[rel=popover]").popover();
     $("[rel=popoverTop]").popover({placement: "top"});
     $("[rel=popoverBottom]").popover({placement: "bottom"});
-    $('#moduleActivity .form-search select').chosen();
-    $('#moduleActivity .form-search input').quicksearch('ul.results li');
   });
 }(window.jQuery);
 
