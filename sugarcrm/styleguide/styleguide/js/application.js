@@ -174,7 +174,9 @@
       return false;
     });
 
-    $('.btngroup .btn').button();
+    if($('.btngroup .btn').length>0){
+      $('.btngroup .btn').button();
+    }
 
     // editable example
     $('.dblclick').hover(
