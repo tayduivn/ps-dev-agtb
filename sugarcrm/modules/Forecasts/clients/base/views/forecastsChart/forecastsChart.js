@@ -22,45 +22,68 @@
     chartTitle: '',
     timeperiod_label: '',
 
+    stopRender: false,
+
     /**
      * events on the view to watch for
      */
     events : {
-        'click #forecastsChartDisplayOptions div.datasetOptions input[type=radio]' : 'changeDisplayOptions',
-        'click #forecastsChartDisplayOptions div.groupByOptions input[type=radio]' : 'changeGroupByOptions'
+        'click #forecastsChartDisplayOptions div.datasetOptions label.radio' : 'changeDisplayOptions',
+        'click #forecastsChartDisplayOptions div.groupByOptions label.radio' : 'changeGroupByOptions'
     },
 
     /**
      * event handler to update which dataset is used.
      */
-    changeDisplayOptions : function()
-    {
-        this.handleRenderOptions({dataset: this.getCheckedOptions('datasetOptions')})
+    changeDisplayOptions : function(evt) {
+        this.handleRenderOptions({dataset: this.handleOptionChange(evt)})
     },
 
     /**
      * Handle any group by changes
      */
-    changeGroupByOptions: function()
-    {
-        this.handleRenderOptions({group_by:_.first(this.getCheckedOptions('groupByOptions'))});
+    changeGroupByOptions: function(evt) {
+        this.handleRenderOptions({group_by:_.first(this.handleOptionChange(evt))});
+    },
+
+    /**
+     * Handle the click event for the optins menu
+     *
+     * @param evt
+     * @return {Array}
+     */
+    handleOptionChange: function(evt) {
+        el = $(evt.currentTarget);
+        // get the parent
+        pel = el.parents('div:first');
+
+        // un-check the one that is currently checked
+        pel.find('label.checked').removeClass('checked');
+
+        // check the one that was clicked
+        el.addClass('checked');
+
+        // return the dataset from the one that was clicked
+        return [el.attr('data-set')];
     },
 
     /**
      * find all the checkedOptions in a give option class
      *
-     * @param {string}
+     * @param {string} divClass
      * @return {Array}
      */
-    getCheckedOptions : function(divClass)
-    {
-        var chkOptions = this.$el.find("div." + divClass + " input[type=radio]:checked");
+    getCheckedOptions : function(divClass) {
+        // find the checked options
+        var chkOptions = this.$el.find("div." + divClass + " label.checked");
 
+        // parse the array to get the data-set attribute
         var options = [];
         _.each(chkOptions, function(o) {
-            options.push(o.value);
+            options.push($(o).attr('data-set'));
         });
 
+        // return the found options
         return options;
     },
 
@@ -88,6 +111,8 @@
             dataset : this.getCheckedOptions('datasetOptions'),
             category : app.defaultSelections.category
         };
+
+        console.log(values);
 
         this.handleRenderOptions(values);
     },
@@ -151,6 +176,15 @@
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
             self.handleRenderOptions({category:_.first(value)});
         });
+        this.context.forecasts.on('change:hiddenSidebar', function(context, value){
+            // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
+            self.stopRender = value;
+            // if the sidebar is not hidden
+            if(value == false){
+                // we need to force the render to happen again
+                self.renderChart();
+            }
+        });
     },
 
     handleRenderOptions:function (options) {
@@ -188,6 +222,11 @@
      * @private
      */
     _initializeChart:function () {
+
+        if(this.stopRender) {
+            return {};
+        }
+
         var chart,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {

@@ -52,6 +52,9 @@
         this.forecast_categories_field.value = this.model.get('forecast_categories');
         this.buckets_dom_field.value = this.model.get('buckets_dom');
 
+        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
+            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+        }
     },
 
     _renderHtml: function(ctx, options) {

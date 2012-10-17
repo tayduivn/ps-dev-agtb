@@ -48,8 +48,6 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
      */
     protected function loadCommitted()
     {
-        global $current_user;
-
         $db = DBManagerFactory::getInstance();
 
         $args = $this->getArgs();
@@ -66,10 +64,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $results = $db->query($query);
 
         $forecasts = array();
-        $timedate = TimeDate::getInstance();
         while (($row = $db->fetchByAssoc($results))) {
-            $row['date_entered'] = $timedate->asIso($timedate->fromDb($row['date_entered']), $current_user);
-            $row['date_modified'] = $timedate->asIso($timedate->fromDb($row['date_modified']), $current_user);
+            $row['date_entered'] = $this->convertDateTimeToISO($row['date_entered']);
+            $row['date_modified'] = $this->convertDateTimeToISO($row['date_modified']);
             $forecasts[] = $row;
         }
 
@@ -106,8 +103,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->save();
 
         $timedate = TimeDate::getInstance();
-        $forecast->date_entered = $timedate->asIso($timedate->fromDb($forecast->date_entered), $current_user);
-        $forecast->date_modified = $timedate->asIso($timedate->fromDb($forecast->date_modified), $current_user);
+        $forecast->date_entered = $this->convertDateTimeToISO($forecast->date_entered);
+        $forecast->date_modified = $this->convertDateTimeToISO($forecast->date_modified);
 
         return $forecast->toArray(true);
     }

@@ -1,4 +1,4 @@
-<div class="filterOptions" style="width:220px !important;">
+<div class="control-group filter">
     {{#each meta.panels}}
         {{#each fields}}
             {{field ../../this ../../model}}

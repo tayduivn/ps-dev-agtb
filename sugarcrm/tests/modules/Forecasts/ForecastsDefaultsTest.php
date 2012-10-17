@@ -34,9 +34,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
         // Save the current config to be put back later
         $admin = BeanFactory::getBean('Administration');
         self::$currentConfig = $admin->getConfigForModule('Forecasts');
-
-        parent::setUpBeforeClass();
     }
+
     public function setUp()
     {
         parent::setUp();
@@ -59,8 +58,6 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $admin = BeanFactory::getBean('Administration');
         self::saveConfig(self::$currentConfig, $admin);
-
-        parent::tearDownAfterClass();
     }
 
     /**

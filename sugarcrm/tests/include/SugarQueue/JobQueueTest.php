@@ -99,9 +99,11 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
+        $timedate = TimeDate::getInstance();
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_RUNNING;
         $job->scheduler_id = 'unittest';
+        $job->execute_time = $timedate->nowDb();
         $job->name = "Unit test Job 1";
         $job->target = "test::test";
         $job->save();
