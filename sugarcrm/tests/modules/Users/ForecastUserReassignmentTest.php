@@ -31,10 +31,8 @@
 require_once('modules/Forecasts/ForecastsSeedData.php');
 require_once('modules/Forecasts/WorksheetSeedData.php');
 
-require_once('install/seed_data/ForecastTreeSeedData.php');
-
 /**
- * Bug nutmeg:sfa-219
+ * nutmeg:sfa-219
  * Fix reassignment of records when user set to Inactive
  *
  * @ticket sfa-219
@@ -49,8 +47,9 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 
     /**
      * create user
-     * @param $user
-     * @param null $report_user
+     *
+     * @param $user String id of the user to create
+     * @param $report_user String id of the user the created user should report to (defaults to null)
      */
     private function _createUser($user, $report_user = null)
     {
@@ -59,15 +58,16 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $this->_users[$user]->new_with_id = true;
         $this->_users[$user]->user_name = $user;
         $this->_users[$user]->first_name = $user;
-        $this->_users[$user]->reports_to_id =  $report_user && isset($this->_users[$report_user]) ?  $this->_users[$report_user]->id : null;
+        $this->_users[$user]->reports_to_id = $report_user && isset($this->_users[$report_user]) ?  $this->_users[$report_user]->id : null;
         $this->_users[$user]->save();
         $this->_users_ids[] = $this->_users[$user]->id;
     }
 
     /**
      * create opportunities for the user
-     * @param $user
-     * @param $count
+     *
+     * @param $user String id of the user to create opportunities for
+     * @param $count int value for number of opportunities to create
      */
     private function _createOpportunityForUser($user, $count)
     {
@@ -83,6 +83,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 
     /**
      * return count of opportunities for user
+     *
      * @param $user
      * @return int
      */
@@ -91,11 +92,11 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne("SELECT count(*) as cnt FROM opportunities WHERE assigned_user_id = '".$this->_users[$user]->id."' and deleted = '0'");
         return $row['cnt'];
-
     }
 
     /**
      * return count of products for user
+     *
      * @param $user
      * @return int
      */
@@ -104,11 +105,11 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne("SELECT count(*) as cnt FROM products WHERE assigned_user_id = '".$this->_users[$user]->id."' and deleted = '0'");
         return $row['cnt'];
-
     }
 
     /**
      * return count of worksheets for user
+     *
      * @param $user
      * @return int
      */
@@ -117,11 +118,11 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne("SELECT count(*) as cnt FROM worksheet WHERE user_id = '".$this->_users[$user]->id."' and deleted = '0'");
         return $row['cnt'];
-
     }
 
     /**
      * return count of forecasts for user
+     *
      * @param $user
      * @return int
      */
@@ -130,11 +131,11 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne("SELECT count(*) as cnt FROM forecasts WHERE user_id = '".$this->_users[$user]->id."' and deleted = '0'");
         return $row['cnt'];
-
     }
 
     /**
      * return count of forecast schedules for user
+     *
      * @param $user
      * @return int
      */
@@ -143,11 +144,11 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne("SELECT count(*) as cnt FROM forecast_schedule WHERE user_id = '".$this->_users[$user]->id."' and deleted = '0'");
         return $row['cnt'];
-
     }
 
     /**
      * return count of quotas for user
+     *
      * @param $user
      * @return int
      */
@@ -156,7 +157,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $db = DBManagerFactory::getInstance();
         $row = $db->fetchOne("SELECT count(*) as cnt FROM quotas WHERE user_id = '".$this->_users[$user]->id."' and deleted = '0'");
         return $row['cnt'];
-
     }
 
     /**
@@ -208,6 +208,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $_POST['touser'] = $this->_users[$toUser]->id;
         $_POST['modules'] = array('ForecastWorksheet');
         $_POST['steponesubmit'] = 'Next';
+
         unset($_GET['execute']);
 
         global $app_list_strings, $beanFiles, $beanList, $current_user, $mod_strings, $app_strings;
@@ -224,8 +225,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('app_strings');
 
-        //SugarTestHelper::setUp('mod_strings', array('Calls'));
-
+        //This reporting structure mimics our seed data hierarchy
         $this->_createUser('jim');
         $this->_createUser('sarah', 'jim');
         $this->_createUser('will', 'jim');
@@ -233,7 +233,6 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $this->_createUser('max', 'sarah');
         $this->_createUser('chris', 'will');
         SugarTestHelper::setUp('current_user', array(true, 1));
-
         $this->_timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
     }
 
@@ -249,6 +248,13 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $db->query("DELETE FROM forecast_schedule WHERE timeperiod_id = '{$this->_timeperiod->id}'");
         $db->query("DELETE FROM quotas WHERE timeperiod_id = '{$this->_timeperiod->id}'");
 
+        unset($_SESSION['reassignRecords']);
+        $postVars = array('module', 'action', 'fromuser', 'touser', 'modules', 'steponesubmit');
+        foreach($postVars as $key)
+        {
+            unset($_POST[$key]);
+        }
+
         unset($this->_users, $this->_users_ids, $this->_users_opps, $this->_users_worksheets_count, $this->_timeperiod);
         SugarTestHelper::tearDown();
     }
@@ -260,11 +266,15 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
      */
     public function testReassignRepToRep()
     {
+        //Create 10 opportunities for sally
         $this->_createOpportunityForUser('sally', 10);
         $this->_created_items = ForecastsSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
+
+        //Create worksheet entries using WorksheetSeedData class
         $worksheets_ids = WorksheetSeedData::populateSeedData();
         SugarTestWorksheetUtilities::setCreatedWorksheet($worksheets_ids);
 
+        //Assert that 10 opportunities and 10 products are created for sally
         $count = $this->_getOpportunitiesCountForUser('sally');
         $this->assertEquals(10, $count);
         $count = $this->_getProductsCountForUser('sally');
@@ -273,28 +283,30 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $expected['worksheets'] = $this->_getWorksheetsCountForUser('sally');
         $expected['opportunities'] = sizeof($this->_users_opps['sally']);
 
+        //Now simulate the reassignment from sally to chris
         $this->_doReassign('sally', 'chris');
 
         // from sally
         $count = $this->_getOpportunitiesCountForUser('sally');
-        $this->assertEquals(0, $count, 'Opportunities are not ressigned.');
+        $this->assertEquals(0, $count, 'Opportunities are not reassigned.');
         $count = $this->_getProductsCountForUser('sally');
-        $this->assertEquals(0, $count, 'Products are not ressigned.');
+        $this->assertEquals(0, $count, 'Products are not reassigned.');
         $count = $this->_getWorksheetsCountForUser('sally');
-        $this->assertEquals(0, $count, 'Worksheets are not ressigned.');
+        $this->assertEquals(0, $count, 'Worksheets are not reassigned.');
         $count = $this->_getForecastsCountForUser('sally');
         $this->assertEquals(0, $count, 'Forecasts are not deleted.');
         $count = $this->_getForecastScheduleCountForUser('sally');
         $this->assertEquals(0, $count, 'ForecastSchedule are not deleted.');
         $count = $this->_getQuotasCountForUser('sally');
         $this->assertEquals(0, $count, 'Quotas are not deleted.');
-        // to chris
+
+        // check that the opportunities, products and worksheet entries have been assigned to chris
         $count = $this->_getOpportunitiesCountForUser('chris');
-        $this->assertEquals($expected['opportunities'], $count, 'Opportunities are not ressigned.');
+        $this->assertEquals($expected['opportunities'], $count, 'Opportunities are not reassigned.');
         $count = $this->_getProductsCountForUser('chris');
-        $this->assertEquals($expected['opportunities'], $count, 'Products are not ressigned.');
+        $this->assertEquals($expected['opportunities'], $count, 'Products are not reassigned.');
         $count = $this->_getWorksheetsCountForUser('chris');
-        $this->assertEquals($expected['worksheets'], $count, 'Worksheets are not ressigned.');
+        $this->assertEquals($expected['worksheets'], $count, 'Worksheets are not reassigned.');
     }
 
     /**
@@ -314,18 +326,19 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $count = $this->_getProductsCountForUser('sarah');
         $this->assertEquals(10, $count);
 
-        $expected['worksheets'] = $this->_getWorksheetsCountForUser('sarah') - 1; // without worksheet created by sharah for himseft from manager view
+        // subtract 1 from the total count because of the rollup entry created for sarah's manager (jim)
+        $expected['worksheets'] = $this->_getWorksheetsCountForUser('sarah') - 1; 
         $expected['opportunities'] = sizeof($this->_users_opps['sarah']);
 
         $this->_doReassign('sarah', 'will');
 
         // from sarah
         $count = $this->_getOpportunitiesCountForUser('sarah');
-        $this->assertEquals(0, $count, 'Opportunities are not ressigned.');
+        $this->assertEquals(0, $count, 'Opportunities are not reassigned.');
         $count = $this->_getProductsCountForUser('sarah');
-        $this->assertEquals(0, $count, 'Products are not ressigned.');
+        $this->assertEquals(0, $count, 'Products are not reassigned.');
         $count = $this->_getWorksheetsCountForUser('sarah');
-        $this->assertEquals(0, $count, 'Worksheets are not ressigned.');
+        $this->assertEquals(0, $count, 'Worksheets are not reassigned.');
         $count = $this->_getForecastsCountForUser('sarah');
         $this->assertEquals(0, $count, 'Forecasts are not deleted.');
         $count = $this->_getForecastScheduleCountForUser('sarah');
@@ -333,17 +346,17 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $count = $this->_getQuotasCountForUser('sarah');
         $this->assertEquals(0, $count, 'Quotas are not deleted.');
 
-        // to will
+         // check that the opportunities, products and worksheet entries have been assigned to will
         $count = $this->_getOpportunitiesCountForUser('will');
-        $this->assertEquals($expected['opportunities'], $count, 'Opportunities are not ressigned.');
+        $this->assertEquals($expected['opportunities'], $count, 'Opportunities are not reassigned.');
         $count = $this->_getProductsCountForUser('will');
-        $this->assertEquals($expected['opportunities'], $count, 'Products are not ressigned.');
+        $this->assertEquals($expected['opportunities'], $count, 'Products are not reassigned.');
         $count = $this->_getWorksheetsCountForUser('will');
-        $this->assertEquals($expected['worksheets'], $count, 'Worksheets are not ressigned.');
+        $this->assertEquals($expected['worksheets'], $count, 'Worksheets are not reassigned.');
     }
 
     /**
-     * test reassignment manager to manager
+     * test reassignment manager to rep
      * @group forecast
      * @outputBuffering enabled
      */
@@ -359,18 +372,19 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $count = $this->_getProductsCountForUser('sarah');
         $this->assertEquals(10, $count);
 
-        $expected['worksheets'] = $this->_getWorksheetsCountForUser('sarah') - 1; // without worksheet created by sharah for himseft from manager view
+        // subtract 1 from the total count because of the rollup entry created for sarah's manager (jim)
+        $expected['worksheets'] = $this->_getWorksheetsCountForUser('sarah') - 1;
         $expected['opportunities'] = sizeof($this->_users_opps['sarah']);
 
         $this->_doReassign('sarah', 'sally');
 
         // from sarah
         $count = $this->_getOpportunitiesCountForUser('sarah');
-        $this->assertEquals(0, $count, 'Opportunities are not ressigned.');
+        $this->assertEquals(0, $count, 'Opportunities are not reassigned.');
         $count = $this->_getProductsCountForUser('sarah');
-        $this->assertEquals(0, $count, 'Products are not ressigned.');
+        $this->assertEquals(0, $count, 'Products are not reassigned.');
         $count = $this->_getWorksheetsCountForUser('sarah');
-        $this->assertEquals(0, $count, 'Worksheets are not ressigned.');
+        $this->assertEquals(0, $count, 'Worksheets are not reassigned.');
         $count = $this->_getForecastsCountForUser('sarah');
         $this->assertEquals(0, $count, 'Forecasts are not deleted.');
         $count = $this->_getForecastScheduleCountForUser('sarah');
@@ -380,16 +394,57 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 
         // to will
         $count = $this->_getOpportunitiesCountForUser('sally');
-        $this->assertEquals($expected['opportunities'], $count, 'Opportunities are not ressigned.');
+        $this->assertEquals($expected['opportunities'], $count, 'Opportunities are not reassigned.');
         $count = $this->_getProductsCountForUser('sally');
-        $this->assertEquals($expected['opportunities'], $count, 'Products are not ressigned.');
+        $this->assertEquals($expected['opportunities'], $count, 'Products are not reassigned.');
         $count = $this->_getWorksheetsCountForUser('sally');
-        $this->assertEquals($expected['worksheets'], $count, 'Worksheets are not ressigned.');
+        $this->assertEquals($expected['worksheets'], $count, 'Worksheets are not reassigned.');
 
         $objSally = new User();
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEquals($this->_users['sarah']->reports_to_id, $objSally->reports_to_id );
     }
+
+
+    /**
+     * Placeholder for now.  Not sure if we need to support Opportunities filtering and pass along filters
+    public function testReassignRepToRepUsingFilters()
+    {
+        //Create 10 opportunities for sally
+        $this->_createOpportunityForUser('sally', 10);
+        $this->_created_items = ForecastsSeedData::populateSeedData( array($this->_timeperiod->id => $this->_timeperiod) );
+
+        //Create worksheet entries using WorksheetSeedData class
+        $worksheets_ids = WorksheetSeedData::populateSeedData();
+        SugarTestWorksheetUtilities::setCreatedWorksheet($worksheets_ids);
+
+        $count = 0;
+        $newWonCount = 0;
+        foreach($this->_users_opps['sally'] as $opportunity)
+        {
+            $even = ($count++ % 2) == 0;
+            if($even) {
+                $newWonCount++;
+            }
+            $opportunity->opportunity_type = $even ? 'New Business' : 'Existing Business';
+            $opportunity->sales_stage = $even ? 'Closed Won' : 'Closed Lost';
+            $opportunity->save();
+        }
+
+        $expected['worksheets'] = $this->_getWorksheetsCountForUser('sally');
+        $expected['opportunities'] = sizeof($this->_users_opps['sally']);
+
+        $additionalParams = array(
+            'modules' => array ( 'Opportunity' => array ( 'query' => 'select id from opportunities where opportunities.deleted=0 and opportunities.assigned_user_id = \'seed_chris_id\' and (opportunities.sales_stage in (\'Qualification\') ) and (opportunities.opportunity_type in (\'Existing Business\') )', 'update' => 'update opportunities set assigned_user_id = \'seed_sally_id\', date_modified = \'2012-10-17 19:43:24\', modified_user_id = \'1\' , team_id = \'1\', team_set_id = \'1\' where opportunities.deleted=0 and opportunities.assigned_user_id = \'seed_chris_id\' and (opportunities.sales_stage in (\'Qualification\') ) and (opportunities.opportunity_type in (\'Existing Business\') )', ), ), )
+        );
+
+
+        $_SESSION['reassignRecords'] ...
+        $_SESSION['reassignRecords'] ...
+        //Now simulate the reassignment from sally to chris
+        $this->_doReassign('sally', 'chris');
+    }
+    */
 
     /**
      * test user's reportees if some user became inactive
@@ -416,7 +471,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * test user's reportees if some user became deleted
+     * test a user's reportees if some user is set to be deleted
      * @group forecast
      */
     public function testDeletedChildren()
@@ -499,6 +554,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * This is a test to move a manager's data (sarah) to a reportees (sally)
      * @outputBuffering enabled
      * @group forecasts
      */
@@ -506,33 +562,36 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('sarah', 'sally');
 
-        $objJim = new User();
+        $objJim = BeanFactory::getBean('Users');
         $objJim->retrieve($this->_users['jim']->id);
         $this->assertEmpty($objJim->reports_to_id, 'Jim report_to_id is not empty');
 
-        $objSarah = new User();
+        $objSarah = BeanFactory::getBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEmpty($objSarah->reports_to_id, 'Sarah report_to_id is not empty');
 
-        $objSally = new User();
+        $objSally = BeanFactory::getBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEquals($this->_users['jim']->id, $objSally->reports_to_id, 'Sally does not report to Jim');
 
-        $objMax = new User();
+        $objMax = BeanFactory::getBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sally']->id, $objMax->reports_to_id, 'Max does not report to Sally');
 
-        $objWill = new User();
+        $objWill = BeanFactory::getBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['jim']->id, $objWill->reports_to_id, 'Will does not report to Jim');
 
-        $objChris = new User();
+        $objChris = BeanFactory::getBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
 
     }
 
     /**
+     * This is a test to check the reporting structure changes when jim (top level manager) has his data reassigned to
+     * sally (a reportee)
+     *
      * @outputBuffering enabled
      * @group forecasts
      */
@@ -540,33 +599,34 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('jim', 'sally');
 
-        $objJim = new User();
+        $objJim = BeanFactory::getBean('Users');
         $objJim->retrieve($this->_users['jim']->id);
         $this->assertEmpty($objJim->reports_to_id, 'Jim report_to_id is not empty');
 
-        $objSally = new User();
+        $objSally = BeanFactory::getBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEmpty($objSally->reports_to_id, 'Sally report_to_id is not empty');
 
-        $objSarah = new User();
+        $objSarah = BeanFactory::getBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEquals($this->_users['sally']->id, $objSarah->reports_to_id, 'Sarah does not report to Sally');
 
-        $objMax = new User();
+        $objMax = BeanFactory::getBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sarah']->id, $objMax->reports_to_id, 'Max does not report to Sarah');
 
-        $objWill = new User();
+        $objWill = BeanFactory::getBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['sally']->id, $objWill->reports_to_id, 'Will does not report to Sally');
 
-        $objChris = new User();
+        $objChris = BeanFactory::getBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
 
     }
 
     /**
+     * This is a test to check the reporting structure when sally (a reportee) has her data reassigned to chris (another reportee)
      * @outputBuffering enabled
      * @group forecasts
      */
@@ -574,28 +634,29 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('sally', 'chris');
 
-        $objSally = new User();
+        $objSally = BeanFactory::getBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEmpty($objSally->reports_to_id, 'Sally report_to_id is not empty');
 
-        $objChris = new User();
+        $objChris = BeanFactory::getBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
 
-        $objWill = new User();
+        $objWill = BeanFactory::getBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['jim']->id, $objWill->reports_to_id, 'Will does not report to Jim');
 
-        $objMax = new User();
+        $objMax = BeanFactory::getBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sarah']->id, $objMax->reports_to_id, 'Max does not report to Sarah');
 
-        $objSarah = new User();
+        $objSarah = BeanFactory::getBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEquals($this->_users['jim']->id, $objSarah->reports_to_id, 'Sarah does not report to Jim');
     }
 
     /**
+     * This is a test to move two manager's data (sarah and jim) to a reportee (sally)
      * @outputBuffering enabled
      * @group forecasts
      */
@@ -604,25 +665,26 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
         $this->_doReassign('sarah', 'sally');
         $this->_doReassign('jim', 'sally');
 
-        $objSarah = new User();
+        $objSarah = BeanFactory::getBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEmpty($objSarah->reports_to_id, 'Sarah report_to_id is not empty');
 
-        $objJim = new User();
+        $objJim = BeanFactory::getBean('Users');
         $objJim->retrieve($this->_users['jim']->id);
         $this->assertEmpty($objJim->reports_to_id, 'Jim report_to_id is not empty');
 
-        $objSally = new User();
+        $objSally = BeanFactory::getBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEmpty($objSally->reports_to_id, 'Sally report_to_id is not empty');
 
-        $objMax = new User();
+        $objMax = BeanFactory::getBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['sally']->id, $objMax->reports_to_id, 'Max does not report to Sally');
     }
 
 
     /**
+     * This is a test to move data between managers (sarah and will)
      * @outputBuffering enabled
      * @group forecasts
      */
@@ -630,23 +692,23 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
     {
         $this->_doReassign('sarah', 'will');
 
-        $objSarah = new User();
+        $objSarah = BeanFactory::getBean('Users');
         $objSarah->retrieve($this->_users['sarah']->id);
         $this->assertEmpty($objSarah->reports_to_id, 'Sarah report_to_id is not empty');
 
-        $objSally = new User();
+        $objSally = BeanFactory::getBean('Users');
         $objSally->retrieve($this->_users['sally']->id);
         $this->assertEquals($this->_users['will']->id, $objSally->reports_to_id, 'Sally does not report to Will');
 
-        $objMax = new User();
+        $objMax = BeanFactory::getBean('Users');
         $objMax->retrieve($this->_users['max']->id);
         $this->assertEquals($this->_users['will']->id, $objMax->reports_to_id, 'Sally does not report to Will');
 
-        $objChris = new User();
+        $objChris = BeanFactory::getBean('Users');
         $objChris->retrieve($this->_users['chris']->id);
         $this->assertEquals($this->_users['will']->id, $objChris->reports_to_id, 'Chris does not report to Will');
 
-        $objWill = new User();
+        $objWill = BeanFactory::getBean('Users');
         $objWill->retrieve($this->_users['will']->id);
         $this->assertEquals($this->_users['jim']->id, $objWill->reports_to_id, 'Will does not report to Jim');
 

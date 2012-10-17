@@ -1074,20 +1074,20 @@ class MysqlManager extends DBManager
 		return "ALTER TABLE $tablename CHANGE COLUMN $column ".$this->oneColumnSQLRep($field);
 	}
 
-	public function emptyValue($type)
-	{
-		$ctype = $this->getColumnType($type);
-		if($ctype == "datetime") {
-			return $this->convert($this->quoted("1970-01-01 00:00:00"), "datetime");
-		}
-		if($ctype == "date") {
-			return $this->convert($this->quoted("1970-01-01"), "date");
-		}
-		if($ctype == "time") {
-			return $this->convert($this->quoted("00:00:00"), "time");
-		}
-		return parent::emptyValue($type);
-	}
+    public function emptyValue($type)
+   	{
+   		$ctype = $this->getColumnType($type);
+   		if($ctype == "datetime") {
+   			return $this->convert($this->quoted("0000-00-00 00:00:00"), "datetime");
+   		}
+   		if($ctype == "date") {
+   			return $this->convert($this->quoted("0000-00-00"), "date");
+   		}
+   		if($ctype == "time") {
+   			return $this->convert($this->quoted("00:00:00"), "time");
+   		}
+   		return parent::emptyValue($type);
+   	}
 
 	/**
 	 * (non-PHPdoc)
