@@ -44,14 +44,14 @@
             }
         }
 
-        this.viewId = this.getViewId();
-        this.calendarId = this.getCalendarId();
-        this.timelineId = this.getTimelineId();
+        this.viewId = this.viewId || this.getViewId();
+        this.calendarId = this.calendarId || this.getCalendarId();
+        this.timelineId = this.timelineId || this.getTimelineId();
         
         if (this.context.get("link")) {
             this.opts.params.link = this.context.get("link");
-            this.opts.params.parent_module = SUGAR.App.controller.context.get('module');
-            this.opts.params.parent_id = SUGAR.App.controller.context.get('modelId');            
+            this.opts.params.parent_module = this.layout.layout.module;
+            this.opts.params.parent_id = this.layout.layout.model.id;
         }
         
         this.collection = app.data.createBeanCollection("ActivityStream");
@@ -78,9 +78,9 @@
 
     // There may be more than one activity stream widget on one page
     getViewId: function() {
-        var viewId = SUGAR.App.controller.context.get('module');
-        if(SUGAR.App.controller.context.get('modelId')) {
-            viewId += '-'+SUGAR.App.controller.context.get('modelId'); 
+        var viewId = app.controller.context.get('module');
+        if(app.controller.context.get('modelId')) {
+            viewId += '-'+app.controller.context.get('modelId'); 
         }
         if(this.context.get("link")) {
             viewId += '-'+this.context.get("link");
