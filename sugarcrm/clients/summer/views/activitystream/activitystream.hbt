@@ -199,7 +199,7 @@
           {{#eq attributes.comments.length "0"}}
           <a class="comment reply" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
           {{/eq}}
-          <a class="preview-stream" data-module="{{attributes.target_module}}" data-id="{{attributes.target_id}}" data-toggle="tab"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+          <a class="preview-stream" data-postid="{{attributes.id}}" data-module="{{attributes.target_module}}" data-id="{{attributes.target_id}}" data-toggle="tab"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
         </div>
       </li>
       {{/each}}

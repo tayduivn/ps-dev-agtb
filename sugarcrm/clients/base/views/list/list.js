@@ -153,7 +153,7 @@
     },
     previewRecord: function(e) {
         var self = this,
-            el = this.$(e.target).closest("a"),
+            el = this.$(e.currentTarget),
             data = el.data(),
             module = data.module,
             id = data.id,
@@ -167,10 +167,10 @@
                 if( _.isUndefined(self.context._callbacks) ) {
                     // Clicking preview on a related module, need the
                     // parent context instead
-                    self.context.parent.trigger("togglePreview", model);
+                    self.context.parent.trigger("togglePreview", model, self.collection);
                 }
                 else {
-                    self.context.trigger("togglePreview", model);
+                    self.context.trigger("togglePreview", model, self.collection);
                 }
             }
         });
