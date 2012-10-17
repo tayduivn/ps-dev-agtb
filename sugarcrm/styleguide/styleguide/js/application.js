@@ -285,7 +285,7 @@
       $(".chzn-select").chosen({ disable_search_threshold: 5 });
       $(".chzn-select-deselect").chosen({allow_single_deselect:true});
       $('#moduleActivity .form-search select').chosen();
-      $('#moduleActivity .form-search input').quicksearch('ul.results li');
+      //$('#moduleActivity .form-search input').quicksearch('ul.results li');
     }
     
     //popover
