@@ -7,7 +7,7 @@
      * @private
      */
     _render: function() {
-        this.app.view.Field.prototype._render.call(this);
+        app.view.Field.prototype._render.call(this);
 
         this._getHtmlEditableField().attr('name', this.name);
         if (this._isEditView()) {
@@ -56,11 +56,11 @@
     _renderView: function() {
         var self = this;
         this._setupIframeOnLoadEvent();
-        this.app.on(this._getEventString('ready'), function() {
+        app.on(this._getEventString('ready'), function() {
             self._setIframeContent(self.value);
 
             // remove event handler
-            self.app.off(self._getEventString('ready'));
+            app.off(self._getEventString('ready'));
         });
     },
 

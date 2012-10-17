@@ -1,6 +1,6 @@
 ({
     initialize: function(options) {
-        this.app.view.Layout.prototype.initialize.call(this, options);
+        app.view.Layout.prototype.initialize.call(this, options);
         this.$el.addClass("tab-content");
         this.addSubComponents();
     },

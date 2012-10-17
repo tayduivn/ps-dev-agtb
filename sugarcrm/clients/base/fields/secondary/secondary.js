@@ -19,12 +19,12 @@
     _render: function() {
         this.$el.hide();
 
-        if (this.app.metadata.data.modules[this.module].fields[this.def.primary.field].type.toLowerCase() !== 'enum') {
+        if (app.metadata.data.modules[this.module].fields[this.def.primary.field].type.toLowerCase() !== 'enum') {
             throw Error('Secondary fields only work with enum primary field type.');
         }
 
-        var field = this.app.view.createField({
-            def: this.app.metadata.data.modules[this.module].fields[this.def.name],
+        var field = app.view.createField({
+            def: app.metadata.data.modules[this.module].fields[this.def.name],
             view: this.view,
             model: this.model
         });

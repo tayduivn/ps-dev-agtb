@@ -1,7 +1,7 @@
 ({
     fieldTag: "select",
     _render: function() {
-        this.app.view.Field.prototype._render.call(this);
+        app.view.Field.prototype._render.call(this);
         var optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.

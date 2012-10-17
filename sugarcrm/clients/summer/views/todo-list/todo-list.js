@@ -34,7 +34,7 @@
         }, this);
 
         app.events.on("app:view:todo:refresh", function(model, action) {
-            var taskType = self.app.view.views.TodoView.prototype.getTaskType(model.attributes.date_due),
+            var taskType = app.view.views.TodoView.prototype.getTaskType(model.attributes.date_due),
                 givenModel = model;
 
             if( self.collection ) {
@@ -170,7 +170,7 @@
 
             this.collection.add(this.model);
             this.model.save();
-            this.collection.modelList[this.app.view.views.TodoView.prototype.getTaskType(datetime)].push(this.model);
+            this.collection.modelList[app.view.views.TodoView.prototype.getTaskType(datetime)].push(this.model);
             app.events.trigger("app:view:todo-list:refresh", this.model, "create");
 
             subjectEl.val("");
@@ -206,7 +206,7 @@
             upcoming: []
         };
         _.each(collection.models, function(model) {
-            collection.modelList[self.app.view.views.TodoView.prototype.getTaskType(model.attributes.date_due)].push(model);
+            collection.modelList[app.view.views.TodoView.prototype.getTaskType(model.attributes.date_due)].push(model);
         });
     },
     bindDataChange: function() {

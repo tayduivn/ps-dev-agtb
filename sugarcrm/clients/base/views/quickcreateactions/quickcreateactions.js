@@ -91,12 +91,12 @@
 
         if ( options.duplicate === true ) {
             $buttons.save
-                    .text(this.app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module));
+                    .text(app.lang.get('LBL_IGNORE_DUPLICATE_AND_SAVE', this.module));
             $buttons.saveAndNew.hide();
             $buttons.saveAndView.hide();
         } else {
             $buttons.save
-                    .text(this.app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
+                    .text(app.lang.get('LBL_SAVE_BUTTON_LABEL', this.module));
             $buttons.saveAndNew.show();
             $buttons.saveAndView.show();
 

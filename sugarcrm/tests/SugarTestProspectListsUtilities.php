@@ -29,6 +29,29 @@
 
 class SugarTestProspectListsUtilities
 {
+    private static $_createdProspectLists = array();
+
+    /**
+     * @static Creates a test prospectList
+     * @param string $prospect_list_id
+     */
+    public static function createProspectLists($id = '')
+    {
+        $name = 'SugarProspectListName';
+
+        $prospectList = new ProspectList();
+        $prospectList->name = $name;
+
+        if(!empty($id))
+        {
+            $prospectList->new_with_id = true;
+            $prospectList->id = $id;
+        }
+        $prospectList->save();
+        self::$_createdProspectLists[] = $prospectList;
+        return $prospectList;
+    }
+
     /**
      * @static
      * @param mixed $prospect_list_id
@@ -51,6 +74,27 @@ class SugarTestProspectListsUtilities
     public static function removeProspectsListToProspectRelation($prospect_list_id, $prospect_id)
     {
         $GLOBALS['db']->query("DELETE FROM prospect_lists_prospects WHERE prospect_list_id='{$prospect_list_id}' AND related_id='{$prospect_id}'");
+    }
+
+    /**
+     * @static
+     */
+    public static function removeAllCreatedProspectLists()
+    {
+        $prospectListIds = self::getCreatedProspectListIds();
+        $GLOBALS['db']->query('DELETE FROM prospect_lists WHERE id IN (\'' . implode("', '", $prospectListIds) . '\')');
+    }
+
+    /**
+     * @static
+     */
+    public static function getCreatedProspectListIds()
+    {
+        $prospectListIds = array();
+        foreach (self::$_createdProspectLists as $prospectList) {
+            $prospectListIds[] = $prospectList->id;
+        }
+        return $prospectListIds;
     }
 
 }

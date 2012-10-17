@@ -212,7 +212,7 @@ class RestTestPortalBase extends RestTestBase {
         $db->query("DELETE FROM ".$this->testConsumer->table_name." WHERE client_type = 'support_portal'");
 
         // Add back original support_portal user
-        if($this->currentPortalBean->id) {
+        if(empty($this->currentPortalBean->id)) {
             $this->currentPortalBean->save();
         }
  

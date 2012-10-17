@@ -101,7 +101,7 @@
      * @param model
      */
     editExisting: function(model) {
-        var newTitle = this.app.lang.get('LBL_EDIT_BUTTON', this.module) + ' ' + this.module,
+        var newTitle = app.lang.get('LBL_EDIT_BUTTON', this.module) + ' ' + this.module,
             origAttributes = this.saveFormData();
 
         this.model.clear();
@@ -132,7 +132,7 @@
      * Restore to the original form state before edit selection
      */
     restoreModel: function() {
-        var newTitle = this.app.lang.get('LBL_NEW_FORM_TITLE', this.module);
+        var newTitle = app.lang.get('LBL_NEW_FORM_TITLE', this.module);
         this.context.parent.trigger('modal:changetitle', newTitle);
 
         this.context.trigger('quickcreate:resetDuplicateState');
