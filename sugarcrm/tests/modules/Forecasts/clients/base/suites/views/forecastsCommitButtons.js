@@ -64,7 +64,7 @@ describe("Forecasts Commit Buttons Component", function(){
         });
 
         it("variable should be true an admin", function() {
-            metaStub = sinon.stub(app.metadata, 'getAcls', function() {
+            metaStub = sinon.stub(app.user, 'getAcls', function() {
                 return {
                     'Forecasts': {
                         admin: 'yes'
@@ -77,7 +77,7 @@ describe("Forecasts Commit Buttons Component", function(){
         });
 
         it("variable should be false for a non-admin", function(){
-            metaStub = sinon.stub(app.metadata, 'getAcls', function() {
+            metaStub = sinon.stub(app.user, 'getAcls', function() {
                 return {
                     'Forecasts': {
                         admin: 'no'
