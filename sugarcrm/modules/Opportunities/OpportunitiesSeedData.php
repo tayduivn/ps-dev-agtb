@@ -64,7 +64,8 @@ public static function populateSeedData($records, $app_list_strings, $accounts
     }
 
     $opp_ids = array();
-
+    $timedate = TimeDate::getInstance();
+    
     while($records-- > 0)
     {
         $key = array_rand($accounts);
@@ -87,7 +88,7 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $opp->date_closed = ($opp->sales_stage == "Closed Won" || $opp->sales_stage == "Closed Lost")
             ? self::createPastDate()
             : self::createDate();
-        
+        $opp->date_closed_timestamp = $timedate->fromDbDate($opp->date_closed)->getTimestamp();
         $opp->opportunity_type = array_rand($app_list_strings['opportunity_type_dom']);
         $amount = array("10000", "25000", "50000", "75000");
         $key = array_rand($amount);
