@@ -18,7 +18,6 @@
         'blur .sayit': 'hideTypeahead',
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
-        'click .sayit .label a.close': 'removeTag',
         'click .showAnchor': 'showAnchor',
         'click .icon-eye-open': 'previewRecord',
         'click .toggleView': 'toggleView'
@@ -393,6 +392,12 @@
     }, 250),
 
     getEntities: function(event) {
+        $(event.currentTarget).find('.label').each(function() {
+            var el = $(this);
+            if(el.data('name') !== el.text()) {
+                el.remove();
+            }
+        });
         this._getEntities(event);
     },
 
@@ -415,8 +420,12 @@
         var lastIndex = body.innerHTML.lastIndexOf("@");
         var data = $(event.currentTarget).data();
 
-        var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name + '<a class="close">×</a>');
-        tag.attr("data-id", data.id).attr("data-module", data.module);
+        var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
+        tag.attr({
+            "data-id": data.id,
+            "data-module": data.module,
+            "data-name": data.name
+        });
         body.innerHTML = body.innerHTML.substring(0, lastIndex) + " " + tag[0].outerHTML + "&nbsp;";
         if (document.createRange) {
             var range = document.createRange();
@@ -427,10 +436,6 @@
             selection.addRange(range);
         }
         this.hideTypeahead();
-    },
-
-    removeTag: function(event) {
-        this.$(event.currentTarget).parent().remove();
     },
 
     _parseTags: function(text) {
