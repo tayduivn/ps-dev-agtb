@@ -57,7 +57,7 @@ class UnifiedSearchApi extends SugarApi {
         $options = array();
 
         $options['query'] = '';
-        if ( !empty($args['q']) ) {
+        if ( isset($args['q']) ) {
             $options['query'] = trim($args['q']);
         }
 
