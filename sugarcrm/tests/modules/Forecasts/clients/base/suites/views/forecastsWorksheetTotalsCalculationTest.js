@@ -40,10 +40,12 @@ describe("The forecasts worksheet totals calculation test", function(){
 
     });
 
-
+    /*
+     * Skip this test.  Expected Opportunities is not a part of nutmeg
+     */
     describe("updateTotals worksheet calculation test with expected opportunities", function() {
 
-        it("should calculate the included values based on forecast value along with expected opportunities", function() {
+        xit("should calculate the included values based on forecast value along with expected opportunities", function() {
             //Expected opportunities model
             var expectedModel = new Backbone.Model({expected_commit_stage : 'include', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
@@ -68,10 +70,12 @@ describe("The forecasts worksheet totals calculation test", function(){
         });
     });
 
-
+    /*
+     * Skip this test.  Expected Opportunities is not a part of nutmeg
+     */
     describe("updateTotals worksheet calculation test without expected opportunities", function() {
 
-        it("should calculate the included values based on forecast value without expected opportunities", function() {
+        xit("should calculate the included values based on forecast value without expected opportunities", function() {
             //Expected opportunities model
             var expectedModel = new Backbone.Model({expected_commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
@@ -96,10 +100,12 @@ describe("The forecasts worksheet totals calculation test", function(){
         });
     });
 
-
+    /*
+     * Skip this test.  Expected Opportunities is not a part of nutmeg
+     */
     describe("updateTotals worksheet calculation test with null values in expected opportunities", function() {
 
-        it("should default the included values to 0 when the amounts are null", function() {
+        xit("should default the included values to 0 when the amounts are null", function() {
             //Expected opportunities model
             var expectedModel = new Backbone.Model({commit_stage : 'include', status : 'Active', expected_amount : null, expected_best_case : null, base_rate : 1});
             var expectedCollection = new Backbone.Collection([expectedModel]);
@@ -128,15 +134,9 @@ describe("The forecasts worksheet totals calculation test", function(){
     describe("calculate excluded sales stages correctly", function() {
 
         it("should calculate the closed_opp_count and closed_amount values", function() {
-            //Expected opportunities model
-            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
-            var expectedCollection = new Backbone.Collection([expectedModel]);
-
             context = app.context.getContext({module:'Forecasts'});
             view.context = { forecasts :
                 {
-                        forecastschedule : expectedCollection,
-
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(100);
@@ -161,15 +161,10 @@ describe("The forecasts worksheet totals calculation test", function(){
     describe("calculate custom won and lost stages correctly", function() {
 
         it("should calculate the correct values for custom sales stages", function() {
-            //Expected opportunities model
-            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
-            var expectedCollection = new Backbone.Collection([expectedModel]);
 
             context = app.context.getContext({module:'Forecasts'});
             view.context = { forecasts :
                 {
-                        forecastschedule : expectedCollection,
-
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');
                             expect(updatedTotals.best_case).toEqual(100);
@@ -196,14 +191,9 @@ describe("The forecasts worksheet totals calculation test", function(){
     describe("calculate multiple custom won and lost stages correctly", function() {
 
         it("should calculate the correct values for multiple custom sales stages", function() {
-            //Expected opportunities model
-            var expectedModel = new Backbone.Model({commit_stage : 'exclude', status : 'Active', expected_amount : 20, expected_best_case : 20, base_rate : 1});
-            var expectedCollection = new Backbone.Collection([expectedModel]);
-
             context = app.context.getContext({module:'Forecasts'});
             view.context = { forecasts :
                 {
-                        forecastschedule : expectedCollection,
 
                         set : function(model, updatedTotals) {
                             expect(model).toEqual('updatedTotals');

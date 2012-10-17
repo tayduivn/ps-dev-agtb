@@ -121,7 +121,7 @@
         /**
          * Contains a list of column names from metadata and maps them to correct config param
          * e.g. 'likely_case' column is controlled by the context.forecasts.config.get('show_worksheet_likely') param
-         * Used by forecastsWorksheet, forecastsWorksheetTotals, forecastSchedule
+         * Used by forecastsWorksheet, forecastsWorksheetTotals
          *
          * @property tableColumnsConfigKeyMapRep
          * @private
@@ -129,25 +129,19 @@
         _tableColumnsConfigKeyMapRep: {
             'likely_case': 'show_worksheet_likely',
             'best_case': 'show_worksheet_best',
-            'worst_case': 'show_worksheet_worst',
-
-            // used for forecastSchedule
-            'expected_amount': 'show_worksheet_likely',
-            'expected_best_case': 'show_worksheet_best',
-            'expected_worst_case': 'show_worksheet_worst'
+            'worst_case': 'show_worksheet_worst'
         },
 
         /**
          * Function checks the proper _tableColumnsConfigKeyMap___ for the key and returns the config setting
          *
-         * @param key {String} table key name (eg: 'likely_case', 'expected_amount')
-         * @param viewName {String} the name of the view calling the function (eg: 'forecastSchedule', 'forecastsWorksheet')
+         * @param key {String} table key name (eg: 'likely_case')
+         * @param viewName {String} the name of the view calling the function (eg: 'forecastsWorksheet')
          * @param configCtx {Backbone.Model} the config context model from the view
          * @return {*}
          */
         getColumnVisFromKeyMap : function(key, viewName, configCtx) {
             var moduleMap = {
-                'forecastSchedule' : 'rep',
                 'forecastsWorksheet' : 'rep',
                 'forecastsWorksheetTotals' : 'rep',
                 'forecastsWorksheetManager' : 'mgr',
