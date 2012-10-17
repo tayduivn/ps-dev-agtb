@@ -76,7 +76,7 @@
         this.initiateSave(function() {
             self.close();
             self.context.trigger('quickcreate:alert:show:recordcreated', true);
-            self.app.navigate(self.context, self.model, 'detail');
+            app.navigate(self.context, self.model, 'detail');
         });
     },
 

@@ -6,7 +6,7 @@
     initialize: function(options) {
         var leadId;
 
-        this.app.view.Layout.prototype.initialize.call(this, options);
+        app.view.Layout.prototype.initialize.call(this, options);
 
         //create parent convert model to hold all sub-models
         leadId = this.context.get('modelId');
@@ -31,7 +31,7 @@
         this.context.convertModel.save(null, {
             success: function(data) {
                 app.alert.dismiss('save_edit_view');
-                self.app.navigate(self.context, self.model, 'detail');
+                app.navigate(self.context, self.model, 'detail');
                 self.displayResults(data);
             }
         });
