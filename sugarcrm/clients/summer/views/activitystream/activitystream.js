@@ -44,9 +44,9 @@
             }
         }
 
-        this.viewId = this.viewId || this.getViewId();
-        this.calendarId = this.calendarId || this.getCalendarId();
-        this.timelineId = this.timelineId || this.getTimelineId();
+        this.viewId = this.getViewId();
+        this.calendarId = this.getCalendarId();
+        this.timelineId = this.getTimelineId();
         
         if (this.context.get("link")) {
             this.opts.params.link = this.context.get("link");
@@ -89,16 +89,12 @@
     },
     
     getTimelineId: function() {
-        if(typeof this.viewId == 'undefined') {
-            this.viewId = this.getViewId();
-        }
+        this.viewId = this.viewId || this.getViewId();
         return 'activitystream-timeline-'+this.viewId;
     },
 
     getCalendarId: function() {
-        if(typeof this.viewId == 'undefined') {
-            this.viewId = this.getViewId();
-        }
+        this.viewId = this.viewId || this.getViewId();
         return 'activitystream-calendar-'+this.viewId;
     },
     
