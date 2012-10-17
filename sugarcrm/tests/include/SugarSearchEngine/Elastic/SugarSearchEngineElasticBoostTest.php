@@ -32,6 +32,8 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('current_user');
         SugarTestHelper::setUp('app_list_strings');
         SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('mod_strings', array('Administration', 'Leads'));        
         $this->calls = array();
         $this->files = array();
         $this->dir = 'custom/Extension/modules/Leads/Ext/Vardefs';
