@@ -112,7 +112,6 @@
             category : app.defaultSelections.category
         };
 
-        console.log(values);
 
         this.handleRenderOptions(values);
     },
