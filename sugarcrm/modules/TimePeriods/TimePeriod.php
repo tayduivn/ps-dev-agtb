@@ -27,9 +27,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Contributor(s): ______________________________________..
  ********************************************************************************/
 
-
-
-
+require_once('include/SugarQueue/SugarJobQueue.php');
 
 // User is used to store customer information.
 class TimePeriod extends SugarBean {
@@ -429,6 +427,10 @@ class TimePeriod extends SugarBean {
         return $currentType;
     }
 
+    public static function getCurrentTypeClass() {
+        return TimePeriod::getCurrentType()."TimePeriods";
+    }
+
     /**
      * getLastCurrentNextIds
      * Returns the quarterly ids of the last, current and next timeperiod
@@ -442,11 +444,6 @@ class TimePeriod extends SugarBean {
 
         $admin = BeanFactory::getBean('Administration');
         $settings = $admin->getConfigForModule('Forecasts');
-
-        if(empty($admin) || !is_object($admin))
-        {
-           display_stack_trace();
-        }
 
         //Retrieve Forecasts_timeperiod_interval
         $interval = isset($settings['timeperiod_interval']) ? $settings['timeperiod_interval'] : 'Quarter';
@@ -562,9 +559,8 @@ class TimePeriod extends SugarBean {
         $result = $this->db->query($query);
         $row = $this->db->fetchByAssoc($result);
 
-        if($row == null)
-        {
-           return $this->createNextTimePeriod();
+        if($row == null) {
+            return null;
         }
 
         $nextTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
@@ -596,7 +592,7 @@ class TimePeriod extends SugarBean {
 
         if($row == null)
         {
-            return null;
+           return null;
         }
 
         $previousTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
@@ -614,6 +610,7 @@ class TimePeriod extends SugarBean {
        self::deleteCurrentTimePeriods();
 
        $timedate = TimeDate::getInstance();
+       $db = DBManagerFactory::getInstance();
        $adminBean = BeanFactory::getBean("Administration");
 
        //get forecast settings
@@ -638,11 +635,7 @@ class TimePeriod extends SugarBean {
        }
 
        $currentTimePeriod = BeanFactory::newBean($forecastSettings['timeperiod_interval']."TimePeriods");
-       if($forecastSettings['timeperiod_type'] == 'chronological') {
-           $currentTimePeriod->is_fiscal = false;
-       } else {
-           $currentTimePeriod->is_fiscal = true;
-       }
+       $currentTimePeriod->is_fiscal = $forecastSettings['timeperiod_type'] != 'chronological';
        $currentTimePeriod->setStartDate($targetStartDate->asDbDate());
        $currentTimePeriod->save();
        $currentTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
@@ -661,6 +654,25 @@ class TimePeriod extends SugarBean {
            $forwardTimePeriod = $forwardTimePeriod->createNextTimePeriod();
            $forwardTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
         }
+
+        //clear job scheduler
+        $job_id = $db->getOne("SELECT id FROM job_queue WHERE name = ".$db->quoted('TimePeriodAutomationJob'));
+
+        $jobQueue = new SugarJobQueue();
+        if($job_id) {
+            $jobQueue->deleteJob($job_id);
+        }
+
+        //schedule job to run on the end_date of the last time period
+        global $current_user;
+        $job = BeanFactory::newBean('SchedulersJobs');
+        $job->name = "TimePeriodAutomationJob";
+        $job->target = "class::SugarJobCreateNextTimePeriod";
+        $endDate = $timedate->fromDbDate($currentTimePeriod->end_date);
+        $job->execute_time = $timedate->asUserDate($endDate,true);
+        $job->retry_count = 0;
+        $job->assigned_user_id = $current_user->id;
+        $jobQueue->submitJob($job);
 
     }
 

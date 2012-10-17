@@ -87,7 +87,7 @@ class MetadataApi extends SugarApi {
         }
 
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','acl','module_list', 'views', 'layouts','relationships','currencies');
+        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies');
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -157,7 +157,7 @@ class MetadataApi extends SugarApi {
         }
 
         $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies');
-        $perModuleChunks = array('modules','mod_strings','acl');
+        $perModuleChunks = array('modules','mod_strings');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
     }
@@ -322,89 +322,16 @@ class MetadataApi extends SugarApi {
     protected function loadMetadata($hashKey) {
         // Start collecting data
         $data = array();
-
         $mm = $this->getMetadataManager();
-        
-        $data['module_list'] = $this->getModuleList();
-        $data['full_module_list'] = $data['module_list'];
-
-        $data['modules'] = array();
-
-        foreach($data['full_module_list'] as $module) {
-            $bean = BeanFactory::newBean($module);
-            if (!$bean || !is_a($bean,'SugarBean') ) {
-                // There is no bean, we can't get data on this
-                continue;
-            }
-
-            $modData = $mm->getModuleData($module);
-            $data['modules'][$module] = $modData;
-
-            if (isset($data['modules'][$module]['fields'])) {
-                $fields = $data['modules'][$module]['fields'];
-                foreach($fields as $fieldName => $fieldDef) {
-                    if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
-                        if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
-                            $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
-                        }
-                    } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
-                        $bean->load_relationship($fieldDef['name']);
-                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                        $data['full_module_list'][$otherSide] = $otherSide;
-                    }
-                }
-            }
-        }
-
-        foreach($data['modules'] as $moduleName => $moduleDef) {
-            if (!array_key_exists($moduleName, $data['full_module_list'])) {
-                unset($data['modules'][$moduleName]);
-            }
-        }
-
-        $data['mod_strings'] = array();
-        foreach ($data['modules'] as $modName => $moduleDef) {
-            $modData = $mm->getModuleStrings($modName);
-            $data['mod_strings'][$modName] = $modData;
-            $data['mod_strings'][$modName]['_hash'] = md5(serialize($data['mod_strings'][$modName]));
-        }
-
-        $data['acl'] = array();
-
-        foreach ($data['full_module_list'] as $modName) {
-            $bean = BeanFactory::newBean($modName);
-            if (!$bean || !is_a($bean,'SugarBean') ) {
-                // There is no bean, we can't get data on this
-                continue;
-            }
-            $data['acl'][$modName] = $mm->getAclForModule($modName,$GLOBALS['current_user']->id);
-            $data['acl'][$modName] = $this->verifyACLs($data['acl'][$modName]);
-        }
-
-        // populate available system currencies
-        $data['currencies'] = array();
-        require_once('modules/Currencies/ListCurrency.php');
-        $lcurrency = new ListCurrency();
-        $lcurrency->lookupCurrencies();
-        if(!empty($lcurrency->list))
-        {
-            foreach($lcurrency->list as $current)
-            {
-                $currency = array();
-                $currency['name'] = $current->name;
-                $currency['iso'] = $current->iso4217;
-                $currency['status'] = $current->status;
-                $currency['symbol'] = $current->symbol;
-                $currency['rate'] = $current->conversion_rate;
-                $currency['name'] = $current->name;
-                $currency['date_entered'] = $current->date_entered;
-                $currency['date_modified'] = $current->date_modified;
-                $data['currencies'][$current->id] = $currency;
-            }
-        }
-
-        // Handle enforcement of acls for clients that do this (portal)
-        $data['acl'] = $this->enforceModuleACLs($data['acl']);
+        $data = $this->_populateModules($data);
+        // TODO:
+        // Sadly, it's now unclear what our abstraction is here. It should be that this class
+        // is just for API stuff and $mm is for any metadata data operations. However, since
+        // we now have child classes like MetadataPortalApi overriding getModules, etc., I'm
+        // tentative to push the following three calls out to $mm. I propose refactor to instead
+        // inherit as MetadataPortalDataManager and put all accessors, etc., there.
+        $data['mod_strings'] = $this->getModStrings($data);
+        $data['currencies'] = $this->getSystemCurrencies();
         $data['module_list'] = $this->cleanUpModuleList($data['module_list']);
 
         if (isset($_SESSION['type']) && $_SESSION['type']=='support_portal') {
@@ -548,27 +475,6 @@ class MetadataApi extends SugarApi {
         return $configs;
     }
 
-    /**
-     * Manipulates the ACLs as needed, per client
-     * 
-     * @param array $acls
-     * @return array
-     */
-    protected function verifyACLs(Array $acls) {
-        // No manipulation for base acls
-        return $acls;
-    }
-
-    /**
-     * Enforces module specific ACLs for users without accounts, as needed
-     * 
-     * @param array $acls
-     * @return array
-     */
-    protected function enforceModuleACLs(Array $acls) {
-        // No manipulation for base acls
-        return $acls;
-    }
 
     /**
      * Fills in additional app list strings data as needed by the client
@@ -607,6 +513,100 @@ class MetadataApi extends SugarApi {
         return $moduleList;
     }
 
+
+    /**
+     * Gets full module list and data for each module. 
+     * Precondition: $data['module_list'] must already be populated.
+     *
+     * @param array $data load metadata array
+     * @return array
+     */
+    private function _populateModules($data) {
+        $mm = $this->getMetadataManager();
+        $data['module_list'] = $this->getModuleList();
+        $data['modules'] = array();
+        $data['full_module_list'] = $data['module_list'];
+        foreach($data['full_module_list'] as $module) {
+            $bean = BeanFactory::newBean($module);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+            $data['modules'][$module] = $mm->getModuleData($module);
+            $this->_relateFields($data, $module, $bean);
+        }
+        return $data;
+    }
+
+    /**
+     * Loads relationships for relate and link type fields
+     * @param array $data load metadata array
+     * @return array
+     */
+    private function _relateFields($data, $module, $bean) {
+        if (isset($data['modules'][$module]['fields'])) {
+            $fields = $data['modules'][$module]['fields'];
+
+            foreach($fields as $fieldName => $fieldDef) {
+
+                // Load and assign any relate or link type fields
+                if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
+                    if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
+                        $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
+                    }
+                } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
+                    $bean->load_relationship($fieldDef['name']);
+                    $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                    $data['full_module_list'][$otherSide] = $otherSide;
+                }
+            }
+        }
+    }
+
+    /**
+     * Gets mod strings
+     * 
+     * @param array $data The metadata array
+     * @return array
+     */
+    public function getModStrings($data) {
+        $mm = $this->getMetadataManager();
+        $modStrings = array();
+        foreach ($data['modules'] as $modName => $moduleDef) {
+            $modData = $mm->getModuleStrings($modName);
+            $modStrings[$modName] = $modData;
+            $modStrings[$modName]['_hash'] = md5(serialize($modStrings[$modName]));
+        }
+        return $modStrings;
+    }
+
+    /**
+     * Gets currencies
+     * @return array
+     */  
+    public function getSystemCurrencies() {
+        $currencies = array();
+        require_once('modules/Currencies/ListCurrency.php');
+        $lcurrency = new ListCurrency();
+        $lcurrency->lookupCurrencies();
+        if(!empty($lcurrency->list))
+        {
+            foreach($lcurrency->list as $current)
+            {
+                $currency = array();
+                $currency['name'] = $current->name;
+                $currency['iso'] = $current->iso4217;
+                $currency['status'] = $current->status;
+                $currency['symbol'] = $current->symbol;
+                $currency['rate'] = $current->conversion_rate;
+                $currency['name'] = $current->name;
+                $currency['date_entered'] = $current->date_entered;
+                $currency['date_modified'] = $current->date_modified;
+                $currencies[$current->id] = $currency;
+            }
+        }
+        return $currencies;
+    }
     /**
      * Cleans up the module list for any modules that should not be on it
      * 

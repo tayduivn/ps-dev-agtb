@@ -11,7 +11,7 @@
         // h specifies 12 hour format (TODO: refactor date.js to support g/G options and add here)
         this.showAmPm = userTimePrefs.match(/h/)!==null ? true : false; // TODO: date.js doesn't yet support g/G options 
         this.timeOptions.hours = this.getHours();
-        this.app.view.Field.prototype.initialize.call(this, options);
+        app.view.Field.prototype.initialize.call(this, options);
     },
     _render:function(value) {
         var self = this;
@@ -59,7 +59,10 @@
         before24Hours = jsDate.getHours();
         value  = app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference);
         jsDate = app.date.parse(value);
-        jsDate = app.date.roundTime(jsDate);
+        // round time to the nearest 15th if this is a edit which is consitent with rest of app
+        if(this.view.name === 'edit') {
+            jsDate = app.date.roundTime(jsDate);
+        }
         
         value = {
             dateTime: app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference),

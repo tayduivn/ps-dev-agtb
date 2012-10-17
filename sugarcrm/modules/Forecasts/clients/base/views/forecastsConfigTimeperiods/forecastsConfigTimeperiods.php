@@ -23,9 +23,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
+    'registerLabelAsBreadCrumb' => true,
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS',
             'fields' => array(
                 array(
                     'name' => 'timeperiod_type',

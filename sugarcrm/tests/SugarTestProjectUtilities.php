@@ -40,10 +40,13 @@ class SugarTestProjectUtilities extends SugarTestObjectUtilities
 
 	public static function createProject($id = '')
 	{
+        $timeDate = TimeDate::getInstance();
 		$project = new Project();
 		$project->name = "testProject";
 		$project->team_id = 1;
 		$project->team_set_id = 1;
+        $project->estimated_start_date = $timeDate->nowDbDate();
+        $project->estimated_end_date = $timeDate->getNow()->modify('+1 day')->asDbDate();
 		$project->save();
 		self::pushObject($project);
 		return $project;

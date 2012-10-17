@@ -28,17 +28,16 @@ function perform_save(&$focus){
     global $app_list_strings, $timedate, $current_language;
     $app_list_strings = return_app_list_strings_language($current_language);
 
-    //Determine the default commit_stage based on the probability
-    if (empty($focus->commit_stage) && $focus->probability !== '')
-    {
-        /* @var $admin Administration */
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
+    /* @var $admin Administration */
+    $admin = BeanFactory::getBean('Administration');
+    $settings = $admin->getConfigForModule('Forecasts');
 
+    //Determine the default commit_stage based on the probability
+    if ($settings['is_setup'] && empty($focus->commit_stage) && $focus->probability !== '')
+    {
         //Retrieve Forecasts_category_ranges and json decode as an associative array
         $forecast_category = isset($settings['forecast_categories']) ? $settings['forecast_categories'] : '';
         $category_ranges = isset($settings[$forecast_category.'_ranges']) ? $settings[$forecast_category.'_ranges'] : array();
-
         foreach($category_ranges as $key=>$entry)
         {
             if($focus->probability >= $entry['min'] && $focus->probability <= $entry['max'])
@@ -81,34 +80,37 @@ function perform_save(&$focus){
     }
 
     //BEGIN SUGARCRM flav=pro ONLY
-    //We create a related product entry for any new opportunity so that we may forecast on products
-    // create an empty product module
-    $product = BeanFactory::getBean('Products');
-    if (empty($focus->id)) {
-        $focus->id = create_guid();
-        $focus->new_with_id = true;
-    } else {
-        //We still need to update the associated product with changes
-        $product->retrieve_by_string_fields(array('opportunity_id'=>$focus->id));
-    }
+    if($settings['is_setup'])
+    {
+        //We create a related product entry for any new opportunity so that we may forecast on products
+        // create an empty product module
+        $product = BeanFactory::getBean('Products');
+        if (empty($focus->id)) {
+            $focus->id = create_guid();
+            $focus->new_with_id = true;
+        } else {
+            //We still need to update the associated product with changes
+            $product->retrieve_by_string_fields(array('opportunity_id'=>$focus->id));
+        }
 
-    //If $product is set then we need to copy values into it from the opportunity
-    if(isset($product)) {
-        $product->name = $focus->name;
-        $product->best_case = $focus->best_case;
-        $product->likely_case = $focus->amount;
-        $product->worst_case = $focus->worst_case;
-        $product->cost_price = $focus->amount;
-        $product->quantity = 1;
-        $product->currency_id = $focus->currency_id;
-        $product->base_rate = $focus->base_rate;
-        $product->probability = $focus->probability;
-        $product->date_closed = $focus->date_closed;
-        $product->date_closed_timestamp = $focus->date_closed_timestamp;
-        $product->assigned_user_id = $focus->assigned_user_id;
-        $product->opportunity_id = $focus->id;
-        $product->commit_stage = $focus->commit_stage;
-        $product->save();
+        //If $product is set then we need to copy values into it from the opportunity
+        if(isset($product)) {
+            $product->name = $focus->name;
+            $product->best_case = $focus->best_case;
+            $product->likely_case = $focus->amount;
+            $product->worst_case = $focus->worst_case;
+            $product->cost_price = $focus->amount;
+            $product->quantity = 1;
+            $product->currency_id = $focus->currency_id;
+            $product->base_rate = $focus->base_rate;
+            $product->probability = $focus->probability;
+            $product->date_closed = $focus->date_closed;
+            $product->date_closed_timestamp = $focus->date_closed_timestamp;
+            $product->assigned_user_id = $focus->assigned_user_id;
+            $product->opportunity_id = $focus->id;
+            $product->commit_stage = $focus->commit_stage;
+            $product->save();
+        }
     }
     //END SUGARCRM flav=pro ONLY
 }

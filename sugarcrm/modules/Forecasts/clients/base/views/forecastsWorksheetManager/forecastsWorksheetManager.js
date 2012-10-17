@@ -383,7 +383,7 @@
                     for(var i = 0; i < otherModels.length; i++) {
                         // check for the first model equal to or past the forecast commit date
                         // we want the last commit just before the whole forecast was committed
-                        if(app.forecasts.utils.parseDBDate(otherModels[i].date_modified) <= commitDate) {
+                        if(new Date(otherModels[i].date_modified) <= commitDate) {
                             oldestModel = new Backbone.Model(otherModels[i]);
                             break;
                         }
