@@ -56,13 +56,13 @@ class AttachmentHeaderTest extends Sugar_PHPUnit_Framework_TestCase
     public function contentParameterProvider()
     {
         return array(
-            // pretty standard parameters
+            // pretty standard dparameters
             array(
                 $this->_convertToObject('dparameters','filename','test.txt'),
                 'test.txt'
             ),
 
-            // test for bug50357 - filename*
+            // how about a regular parameter set
             array(
                 $this->_convertToObject('parameters','name','bonus.txt'),
                 'bonus.txt'
