@@ -139,7 +139,7 @@
 
             // Email is special case as each input email is a sort of field within the one email 
             // field itself; and we need to append errors directly beneath said sub-fields
-            if(self.type==='email') {
+            if(self.type==='email' && self.view.name != "signup") {
                 self.handleEmailValidationError(errors.email);
                 return;
             }
