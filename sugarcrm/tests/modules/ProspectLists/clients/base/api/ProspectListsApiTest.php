@@ -112,8 +112,8 @@ class ProspectListsApiTest extends RestTestBase
 
         $response = $this->_restCall("ProspectLists/addToList", json_encode($postData), "POST");
 
-        $this->assertEquals(412, $response['info']['http_code'], "Expected Request Failure Http Status Code");
-        $this->assertEquals("invalid_parameter", $response['reply']['error'], "Expected Request Failure Response");
+        $this->assertEquals(404, $response['info']['http_code'], "Expected Request Failure Http Status Code");
+        $this->assertEquals("not_found", $response['reply']['error'], "Expected Request Failure Response");
     }
 
     /**
@@ -129,7 +129,6 @@ class ProspectListsApiTest extends RestTestBase
          );
 
         $response = $this->_restCall("ProspectLists/addToList", json_encode($postData), "POST");
-
         $this->assertEquals(412, $response['info']['http_code'], "Expected Request Failure Http Status Code");
         $this->assertEquals("missing_parameter", $response['reply']['error'], "Expected Request Failure Response");
     }
