@@ -27,7 +27,7 @@
 
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.showConfigButton = (app.metadata.getAcls()['Forecasts'].admin == "yes");
+        this.showConfigButton = (app.user.getAcls()['Forecasts'].admin == "yes");
     },
 
     /**
@@ -153,7 +153,7 @@
         };
         var callback = function(){};
 
-        if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
+        if(app.user.getAcls()['Forecasts'].admin == "yes") {
             this.layout.trigger("modal:forecastsWizardConfig:open", params, callback);
         }
     },

@@ -299,7 +299,7 @@
                 span: 10
             };
 
-            if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
+            if(app.user.getAcls()['Forecasts'].admin == "yes") {
                 params.components = [{layout:"forecastsWizardConfig"}];
             } else {
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
