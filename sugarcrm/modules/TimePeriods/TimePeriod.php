@@ -592,7 +592,7 @@ class TimePeriod extends SugarBean {
 
         if($row == null)
         {
-           return $this->createPreviousTimePeriod();
+           return null;
         }
 
         $previousTimePeriod = BeanFactory::getBean($row['time_period_type'].'TimePeriods');
