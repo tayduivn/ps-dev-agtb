@@ -18,7 +18,6 @@
         'blur .sayit': 'hideTypeahead',
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
-        'click .sayit .label a.close': 'removeTag',
         'click .showAnchor': 'showAnchor',
         'click .preview-stream': 'previewRecord',
         'click .toggleView': 'toggleView'
@@ -393,10 +392,17 @@
     }, 250),
 
     getEntities: function(event) {
+        $(event.currentTarget).find('.label').each(function() {
+            var el = $(this);
+            if(el.data('name') !== el.text()) {
+                el.remove();
+            }
+        });
         this._getEntities(event);
     },
 
     hideTypeahead: function() {
+        var self = this;
         setTimeout(function() {
             self.$("ul.typeahead.activitystream-tag-dropdown").remove();
         }, 150);
@@ -411,26 +417,35 @@
         event.stopPropagation();
         event.preventDefault();
         var el = $(event.currentTarget);
-        var body = $(el.parents()[1]).find(".sayit")[0];
-        var lastIndex = body.innerHTML.lastIndexOf("@");
+        var body = $(el.parents()[1]).find(".sayit");
+        var originalChildren = body.clone(true).children();
+        var lastIndex = body.html().lastIndexOf("@");
         var data = $(event.currentTarget).data();
 
-        var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name + '<a class="close">×</a>');
-        tag.attr("data-id", data.id).attr("data-module", data.module);
-        body.innerHTML = body.innerHTML.substring(0, lastIndex) + " " + tag[0].outerHTML + "&nbsp;";
+        var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
+        tag.data("id", data.id).data("module", data.module).data("name", data.name);
+        var substring = body.html().substring(0, lastIndex);
+        $(body).html(substring).append(tag).append("&nbsp;");
+
+        // Since the data is stored as an object, it's not preserved when we add the tag.
+        // For this reason, we need to add it again.
+        body.children().each(function(i) {
+            if(originalChildren[i]) {
+                var tagChild = this;
+                _($.data(originalChildren[i])).each(function(value, key) {
+                    $.data(tagChild, key, value);
+                });
+            }
+        });
         if (document.createRange) {
             var range = document.createRange();
-            range.selectNodeContents(body);
+            range.selectNodeContents(body[0]);
             range.collapse(false);
             var selection = window.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
         }
         this.hideTypeahead();
-    },
-
-    removeTag: function(event) {
-        this.$(event.currentTarget).parent().remove();
     },
 
     _parseTags: function(text) {
