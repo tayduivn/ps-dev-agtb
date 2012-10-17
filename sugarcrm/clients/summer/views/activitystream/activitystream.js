@@ -20,7 +20,7 @@
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
         'click .sayit .label a.close': 'removeTag',
         'click .showAnchor': 'showAnchor',
-        'click .icon-eye-open': 'previewRecord',
+        'click .preview-stream': 'previewRecord',
         'click .toggleView': 'toggleView'
     },
 
@@ -610,10 +610,11 @@
 
     previewRecord: function(event) {
         var self = this,
-            el = this.$(event.currentTarget).closest("a"),
+            el = this.$(event.currentTarget),
             data = el.data(),
             module = data.module,
-            id = data.id;
+            id = data.id,
+            postId = data.postid;
 
         // If module/id data attributes don't exist, this user
         // doesn't have access to that record due to team security.
@@ -621,10 +622,11 @@
             var model = app.data.createBean(module);
 
             model.set("id", id);
+            model.set("postId", postId);
             model.fetch({
                 success: function(model) {
                     model.set("_module", module);
-                    self.context.trigger("togglePreview", model);
+                    self.context.trigger("togglePreview", model, self.collection);
                 }
             });
         }
