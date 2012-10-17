@@ -214,6 +214,11 @@ class ActivityStream extends SugarBean {
         $this->activity_type = $activityType;
         $this->date_created = TimeDate::getInstance()->nowDb();
         $this->created_by = $current_user->id;
+        // Needed for demo data.
+        $this->set_created_by = false;
+        if($activityType == self::ACTIVITY_TYPE_CREATE) {
+            $this->created_by = $bean->created_by;
+        }
         $this->updateLastActivityDate($bean, $this->date_created);
         return $this->save();
     }
