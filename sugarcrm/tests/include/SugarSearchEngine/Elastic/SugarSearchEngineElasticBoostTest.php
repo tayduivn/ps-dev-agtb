@@ -188,7 +188,9 @@ class SugarSearchEngineElasticBoostTest extends Sugar_PHPUnit_Framework_TestCase
         $rc = new RepairAndClear();
         $rc->repairAndClearAll(array('clearAll'), array(), true, false);
         $GLOBALS['current_user'] = $old_user;
-        
+
+        VardefManager::refreshVardefs('Leads', 'Lead');
+
         // run search again with 5678
         // Run search with 5678
         $results = $this->search_engine->search('5678', 0, 1000, array('moduleFilter' => array('Leads')));
