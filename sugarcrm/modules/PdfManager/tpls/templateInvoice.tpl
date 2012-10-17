@@ -30,7 +30,7 @@
 <table border="0" cellspacing="2">
 <tbody>
 <tr>
-<td rowspan="6" width="180%"><img src="./themes/default/images/pdf_logo.jpg" alt="" /></td>
+<td rowspan="6" width="180%"><img src="{$logoUrl}" alt="" /></td>
 <td width="60%"><strong>{$MOD.LBL_TPL_INVOICE}</strong></td>
 <td width="60%">&nbsp;</td>
 </tr>
