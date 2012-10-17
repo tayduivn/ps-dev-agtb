@@ -221,8 +221,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'name' => 'date_closed_timestamp',
         'vname' => 'LBL_DATE_CLOSED',
         'type' => 'int',
-        'required' => true,
-        'enable_range_search' => true,
         'studio' => false
     ),
   'next_step' =>

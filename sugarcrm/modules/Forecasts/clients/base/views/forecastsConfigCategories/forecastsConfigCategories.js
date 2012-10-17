@@ -52,6 +52,9 @@
         this.forecast_categories_field.value = this.model.get('forecast_categories');
         this.buckets_dom_field.value = this.model.get('buckets_dom');
 
+        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
+            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+        }
     },
 
     _renderHtml: function(ctx, options) {
@@ -97,30 +100,34 @@
             _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
                 // TODO: use a text input, for now, this will be replaced by a range field slider
                 var ranges,
-                    minVal, maxVal;
+                    minVal, maxVal,
+                    callbackCtx;
                 var handler = function(event) {
                     var view = event.data.view,
                         key = event.data.key,
-                        ranges = event.data.ranges,
+                        category = event.data.category,
                         setting;
 
-                    ranges = view.model.get('category_ranges');
+                    ranges = view.model.get(category + '_ranges');
                     setting = ranges[key] || {};
 
                     setting[event.target.name] = event.target.value;
                     ranges[key] = setting;
 
-                    view.model.set('category_ranges', ranges);
+                    view.model.set(category + '_ranges', ranges);
                 };
-                ranges = view.model.get('category_ranges');
+
+                ranges = view.model.get(this.category + '_ranges');
                 this.showElement.append($('<p>' + label + '</p>'));
 
+
+                callbackCtx = {view: this.view, key: key, ranges: ranges, category: this.category};
                 minVal = ranges[key]?ranges[key]['min']:'';
-                var min = $('<input name="min" type="text" value="' + minVal + '" />').change({view: this.view, key: key, ranges: ranges}, handler);
+                var min = $('<input name="min" type="text" value="' + minVal + '" />').change(callbackCtx, handler);
                 this.showElement.append(min);
 
                 maxVal = ranges[key]?ranges[key]['max']:'';
-                var max = $('<input name="max" type="text" value="' + maxVal + '" />').change({view: this.view, key: key, ranges: ranges}, handler);
+                var max = $('<input name="max" type="text" value="' + maxVal + '" />').change(callbackCtx, handler);
                 this.showElement.append(max);
 
             }, {view: view, showElement:showElement, category: this.value});

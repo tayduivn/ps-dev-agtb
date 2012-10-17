@@ -149,9 +149,6 @@
             this.context.forecasts.worksheet.on("change", function() {
             	this.calculateTotals();
             }, this);
-            this.context.forecasts.on("change:expectedOpportunities", function() {
-            	this.calculateTotals();
-            }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
             	if(this.context.forecasts.get('reloadWorksheetFlag') && this.showMe()){
             		var model = this.context.forecasts.worksheet;
@@ -190,6 +187,8 @@
                     self.setColumnVisibility(['worst_case'], value, self);
                 }
             });
+
+            this.context.forecasts.config.on('change:buckets_dom change:forecast_categories', this.render, this);
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
@@ -335,10 +334,9 @@
                     {
                         case "enum":
                         case "bool":
-                            fieldDef["sSortDataType"] = "dom-checkbox";
-                            fieldDef["sType"] = "numeric";
+                            // disable sorting for non-numerical fields
+                            fieldDef["bSortable"] = false;
                             break;
-
                         case "int":
                         case "currency":
                             fieldDef["sSortDataType"] = "dom-number";
@@ -353,6 +351,7 @@
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
+                "bAutoWidth": false,
                 "aoColumnDefs": columnDefs,
                 "aaSorting": this.aaSorting,
                 "bInfo":false,
@@ -371,18 +370,7 @@
             });
         }
 
-        //Remove all events that may be associated with forecastschedule view
-        this.context.forecasts.forecastschedule.off();
-        this.context.forecasts.forecastschedule.on("change", function() { this.calculateTotals(); }, this);
-        //Create the view for expected opportunities
-        var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
-        var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
-
-        $("#expected_opportunities").remove();
-        view.fetchCollection(function(){
-        	self.calculateTotals.call(self);
-        });
-        $("#summary").prepend(view.$el);
+        self.calculateTotals();
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
@@ -478,7 +466,7 @@
         _.each(self._collection.models, function (model) {
             var won = _.include(sales_stage_won_setting, model.get('sales_stage'))
                 lost = _.include(sales_stage_lost_setting, model.get('sales_stage')),
-                amount = parseFloat(model.get('amount')),
+                amount = parseFloat(model.get('likely_case')),
                 commit_stage = model.get('commit_stage'),
                 best = parseFloat(model.get('best_case')),
                 base_rate = parseFloat(model.get('base_rate')),
@@ -507,41 +495,6 @@
             overallWorst += worst_base;
         });
 
-        //Now see if we need to add the expected opportunity amounts
-        if(this.context.forecasts.forecastschedule.models)
-        {
-            _.each(this.context.forecasts.forecastschedule.models, function(model) {
-                if(model.get('status') == 'Active')
-                {
-                    var amount = model.get('expected_amount'),
-                        best = model.get('expected_best_case'),
-                        worst = model.get('expected_worst_case'),
-                        base_rate = parseFloat(model.get('base_rate'));
-
-
-                    //Check for null condition and, if so, set to 0
-                    amount = amount != null ? parseFloat(amount) : 0;
-                    best = best != null ? parseFloat(best) : 0;
-                    worst = worst != null ? parseFloat(worst) : 0;
-
-                    var amount_base = amount * base_rate,
-                        best_base = best * base_rate,
-                        worst_base = worst * base_rate;
-
-                    //If commit_stage is include then we count the forecast schedule model
-                    if(model.get('expected_commit_stage') == 'include')
-                    {
-                        includedAmount += amount_base;
-                        includedBest += best_base;
-                        includedWorst += worst_base;
-                    }
-
-                    overallAmount += amount_base;
-                    overallBest += best_base;
-                    overallWorst += worst_base;
-                }
-            });
-        }
 
         var totals = {
             'amount' : includedAmount,
@@ -583,85 +536,39 @@
      */
     updateWorksheetBySelectedCategory:function (params) {
         // Set the filters for the datatable then re-render
-        var self = this;
-        if (this.context.forecasts.config.get('forecast_categories') != 'show_binary') { // buckets
+        var self = this,
+            forecast_categories_setting = this.context.forecasts.config.get('forecast_categories') || 'show_binary';
 
-             $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
-             $.fn.dataTableExt.afnFiltering.push (
-                    function(oSettings, aData, iDataIndex)
-                    {
+        // start with no filters, i. e. show everything.
+        $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
+        if (!_.isEmpty(params)) {
+            $.fn.dataTableExt.afnFiltering.push (
+                function(oSettings, aData, iDataIndex) {
 
-                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
-                            return true;
-                        }
-
-                        var editable = self.isMyWorksheet();
-                        var returnVal = null;
-                        //If we are in an editable worksheet get the selected dropdown value; otherwise, get the enum detail/default text
-                        var selectVal = editable ? $(aData[0]).find("select").attr("value") : $(aData[0]).text().trim();
-
-                        if(editable && (typeof(selectVal) != "undefined" && _.contains(params, selectVal)))
-                        {
-                            returnVal = selectVal;
-                        } else if(!editable) {
-                            //Get the array for the bucket stages
-                            var buckets_dom = app.lang.getAppListStrings(this.context.forecasts.config.get('buckets_dom') || 'commit_stage_dom');
-                            _.each(params, function(filter)
-                            {
-                                if(buckets_dom[filter] == selectVal)
-                                {
-                                   returnVal = selectVal;
-                                   return;
-                                }
-                            });
-                        }
-
-                        return returnVal;
+                    // This is required to prevent manager view from filtering incorrectly, since datatables does filtering globally
+                    if(oSettings.nTable == _.first($('.worksheetManagerTable'))) {
+                        return true;
                     }
-                );
-        } else {  // not buckets
-            // INVESTIGATE:  this needs to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            if(_.first(params) == "include") {//committed
-                $.fn.dataTableExt.afnFiltering.push (
-                    function(oSettings, aData, iDataIndex)
-                    {
-                        if(oSettings.nTable == $('.worksheetManagerTable')[0]) {
-                            return true;
-                        }
 
-                        var val = aData[0];
-                        var jVal = $(val);
+                    var editable = self.isMyWorksheet(),
+                        selectVal,
+                        rowCategory = $(_.first(aData)),
+                        checkState;
 
-                        var returnVal = null;
-
-                        // our custom checkbox sort has taken over, this is now a 1 or 0
-                        if(val.length == 1){
-                            if(val == 1){
-                                returnVal = val;
-                            }
-                        }
-                        //initial load still has html here, or it is a dropdown.
-                        else{
-                            var checkboxVal = jVal.find("input").attr("checked");
-                            var selectVal = jVal.find("select").attr("value");
-
-                            if( !_.isUndefined(checkboxVal)){
-                                returnVal = 1;
-                            }
-                            else if( !_.isUndefined(selectVal) && selectVal == 'include'){
-                                returnVal = selectVal;
-                            }
-                        }
-
-                        return returnVal;
+                    //If we are in an editable worksheet get the selected dropdown/checkbox value; otherwise, get the detail/default text
+                    if (forecast_categories_setting == 'show_binary') {
+                        checkState = rowCategory.find('input').attr('checked');
+                        selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
+                    } else {
+                        selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim();
                     }
-                );
-            } else {
-                //pipeline
-                //Remove the filters
-                $.fn.dataTableExt.afnFiltering.splice(0, $.fn.dataTableExt.afnFiltering.length);
-            }
+
+                    return (_.contains(params, selectVal));
+
+                }
+            );
         }
+
         this.render();
     },
 

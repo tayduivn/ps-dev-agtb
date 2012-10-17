@@ -39,6 +39,9 @@ require_once('modules/Opportunities/Opportunity.php');
 class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
 {
     var $opp;
+    static $isSetup;
+    static $forecastCategories;
+    static $rangeValues;
 
     public function setUp()
     {
@@ -59,12 +62,24 @@ class SetCommitStageTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setup('app_list_strings');
         SugarTestHelper::setUp('current_user');
-        require_once('modules/Forecasts/ForecastsSeedData.php');
-        ForecastsSeedData::setupForecastSettings();
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        self::$isSetup = $settings['is_setup'];
+        self::$forecastCategories = $settings['forecast_categories'];
+        self::$rangeValues = $settings['show_binary_ranges'];
+
+        $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
+        $admin->saveSetting('Forecasts', 'forecast_categories', 'show_binary', 'base');
+        $values = json_encode(array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)));
+        $admin->saveSetting('Forecasts', 'show_binary_ranges', $values, 'base');
     }
 
     public static function tearDownAfterClass()
     {
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
+        $admin->saveSetting('Forecasts', 'forecast_categories', self::$forecastCategories, 'base');
+        $admin->saveSetting('Forecasts', 'show_binary_ranges', json_encode(self::$rangeValues), 'base');
         SugarTestHelper::tearDown();
     }
 

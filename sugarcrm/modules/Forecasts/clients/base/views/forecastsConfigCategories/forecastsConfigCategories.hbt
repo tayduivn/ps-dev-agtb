@@ -1,6 +1,5 @@
-<div class="modal-body">
-    <h2>{{str label "Forecasts"}}</h2>
-    <p></p>
+<div class="modal-content hide">
+    <p>{{str "LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS" "Forecasts"}}</p>
     {{#with forecast_categories_field}}
         {{#eachOptions options}}
         <fieldset class="{{{key}}}Fields">

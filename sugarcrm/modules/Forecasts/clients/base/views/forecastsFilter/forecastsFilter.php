@@ -11,6 +11,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsFilter'] = array(
                     is missing here), since the dropdown shown to the user depends on a config setting
                     */
                     'type' => 'enum',
+                    'multi' => true,
                     'label' => 'LBL_FILTERS',
                     'default' => false,
                     'enabled' => true,

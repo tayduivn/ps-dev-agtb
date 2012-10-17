@@ -644,12 +644,19 @@ class SugarDateTime extends DateTime
      */
     public function modify($modify)
     {
-        if(PHP_VERSION_ID >= 50300 || $modify != 'first day of next month') {
-            parent::modify($modify);
-        } else {
-            /* PHP 5.2 does not understand 'first day of' and defaults need it */
-            $this->setDate($this->year, $this->month+1, 1);
+        //PHP 5.2 does not understand the " of " format
+        if(PHP_VERSION_ID < 50300)
+        {
+           //Special case for first day of next month used in code base
+           if($modify == 'first day of next month')
+           {
+               $this->setDate($this->year, $this->month+1, 1);
+               return $this;
+           }
+           //Last ditch effort to resolve this to syntax used for versions below 5.3
+           $modify = str_replace(' of ', ' ', $modify);
         }
+        parent::modify($modify);
         return $this;
     }
 

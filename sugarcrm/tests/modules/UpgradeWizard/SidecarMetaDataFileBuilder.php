@@ -101,12 +101,20 @@ class SidecarMetaDataFileBuilder {
     }
     
     /**
-     * Tears down the test files that were created and restores all backed up files
+     * Tears down the test files that were created, the sidecar files that were
+     * made during the upgrade and restores all backed up files
      */
     public function teardownFiles() {
         foreach ($this->created as $file) {
             // Kill the file we made for testing
             unlink($file);
+        }
+        
+        // Kill the sidecar files that were created in testing
+        foreach ($this->filesToMake as $file) {
+            if (file_exists($file['sidecarpath'])) {
+                unlink($file['sidecarpath']);
+            }
         }
         
         // Now handle backups

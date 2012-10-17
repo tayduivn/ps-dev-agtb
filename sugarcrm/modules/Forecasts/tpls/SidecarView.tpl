@@ -1,8 +1,4 @@
-<script src='include/javascript/sugarAuthStore.js'></script>
-<script type='text/javascript' src='include/SugarCharts/Jit/js/Jit/jit.js'></script>
-<script type='text/javascript' src='include/SugarCharts/Jit/js/sugarCharts.js'></script>
-
-<div class="content"></div>
+<div class="content" id="forecasts"></div>
 <footer>
     <div class="row-fluid">
         <div class="span6">
@@ -20,15 +16,6 @@
     </div>
 </footer>
 <script src='{$configFile}'></script>
-<script src='modules/Forecasts/clients/base/helper/hbt-helpers.js'></script>
-<script src='modules/Forecasts/clients/base/lib/ClickToEdit.js'></script>
-<script src='modules/Forecasts/clients/base/lib/BucketGridEnum.js'></script>
-<script src='modules/Forecasts/clients/base/lib/ForecastsUtils.js'></script>
-<script src='modules/Forecasts/clients/base/views/alert-view/alert-view.js'></script>
-<script src='modules/Forecasts/tpls/SidecarView.js'></script>
-<script src='include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'></script>
-<script src='include/javascript/twitterbootstrap/js/bootstrap-popover.js'></script>
-<script src='include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'></script>
 {literal}
 <script language="javascript">
     var syncResult, view, layout, html;

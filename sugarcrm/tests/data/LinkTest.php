@@ -371,7 +371,7 @@ class LinkTest extends Sugar_PHPUnit_Framework_TestCase
     {
         require('include/modules.php');
 
-        $opp = BeanFactory::newBean("Opportunities");
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->name = "A test Opp";
         $opp->save();
         $this->createdBeans[] = $opp;

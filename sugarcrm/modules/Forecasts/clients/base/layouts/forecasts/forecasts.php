@@ -3,9 +3,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
     'type' => 'forecasts',
     'components' => array(
         array(
-            'view' => 'forecastsFilter',
-        ),
-        array(
             'view' => 'forecastsChart',
         ),
         array(
@@ -22,13 +19,6 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             'view' => 'forecastsWorksheetTotals'
         ),
         array(
-            'view' => 'forecastSchedule',
-            'contextCollection' => array(
-                'module' => 'ForecastSchedule',
-                'name' => 'ForecastSchedule',
-            )
-        ),
-        array(
             'view' => 'forecastsWorksheetManager',
             'contextCollection' => array(
                 'module' => 'ForecastManagerWorksheets',
@@ -41,7 +31,7 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
         array(
             'layout' => array(
                 'type' => 'modal',
-                'showEvent' => 'modal:forecastsConfig:open',
+                'showEvent' => 'modal:forecastsWizardConfig:open',
             ),
         ),
         array(

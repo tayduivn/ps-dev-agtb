@@ -37,7 +37,7 @@ $viewdefs['Contacts']['mobile']['view']['edit'] = array(
     ),
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
                     'name' => 'first_name',
@@ -54,7 +54,6 @@ $viewdefs['Contacts']['mobile']['view']['edit'] = array(
                     ),
                 ),
                 'title',
-                'account_name',
                 'phone_work',
                 'phone_mobile',
                 'email1',
@@ -63,6 +62,7 @@ $viewdefs['Contacts']['mobile']['view']['edit'] = array(
                 'primary_address_state',
                 'primary_address_postalcode',
                 'primary_address_country',
+                'account_name',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',

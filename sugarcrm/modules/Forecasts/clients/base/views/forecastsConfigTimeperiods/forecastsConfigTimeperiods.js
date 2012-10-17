@@ -1,12 +1,19 @@
 ({
 
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+
+        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
+            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+        }
+    },
+
     /**
      * Overriding _renderField because we need to set up a binding to the start month drop down to populate the day drop down on change
      * @param field
      * @private
      */
     _renderField: function(field) {
-
         if (field.name == "timeperiod_start_month") {
             field = this._setUpTimeperiodStartMonthBind(field);
         } else if(field.name == "timeperiod_start_day") {
@@ -26,7 +33,9 @@
         field.events = _.extend({"change select":  "_updateDaysForMonth"}, field.events);
         field.bindDomChange = function() {};
 
-        field.def.options = app.lang.getAppListStrings(field.def.options);
+        if(typeof(field.def.options) == 'string') {
+            field.def.options = app.lang.getAppListStrings(field.def.options);
+        }
 
         /**
          * function that uses the selected month to key in and determine how many days to file into the date chooser for timeperiods

@@ -1,12 +1,12 @@
 <form name='{{name}}'>
     <div class="container welcome subhead">
         <div class="row">
-            <div class="span4 offset4 thumbnail">
-                <div class="modal-header tcenter">
+            <div class="span4 offset4 thumbnail login">
+                <div class="tcenter">
                     <h2 class="brand" {{#if logoURL}} style="background: url({{logoURL}}) 50% 50% no-repeat;"{{/if}}>SugarCRM</h2>
                 </div>
                 {{#each meta.panels}}
-                <div class="modal-body tcenter">
+                <div class="form-horizontal tcenter">
                     {{#each fields}}
                     <div class="row-fluid control-group">
                     <div>
@@ -20,7 +20,7 @@
                     </p>
                 </div>
                 {{/each}}
-                <div class="modal-footer">
+                <div class="login-footer span3">
                     {{#each meta.buttons}}
                     {{field ../this ../model}}
                     {{/each}}

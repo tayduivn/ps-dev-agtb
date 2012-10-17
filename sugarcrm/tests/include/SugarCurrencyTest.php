@@ -155,6 +155,10 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     {
         $currency1 = SugarCurrency::getCurrencyByISO('SGD');
         $currency2 = SugarCurrency::getCurrencyByISO('PHP');
+
+        $this->assertEquals($currency1->iso4217,'SGD');
+        $this->assertEquals($currency2->iso4217,'PHP');
+
         $base_currency = SugarCurrency::getBaseCurrency();
         $this->assertInstanceOf('Currency',$currency1);
         $this->assertInstanceOf('Currency',$currency2);
@@ -163,26 +167,30 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $dollar_value = 1000.00;
 
         // test convert to base currency
-        $converted_amount = round($dollar_value * $currency1->conversion_rate / $base_currency->conversion_rate, 6);
-        $this->assertTrue(is_numeric($converted_amount));
+        $converted_amount = 802.45809;
         $amount = SugarCurrency::convertAmountToBase($dollar_value,$currency1->id);
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount,$amount);
 
         // test convert from base currency
-        $converted_amount = round($dollar_value * $base_currency->conversion_rate / $currency1->conversion_rate, 6);
-        $this->assertTrue(is_numeric($converted_amount));
+        $converted_amount = 1246.171;
         $amount = SugarCurrency::convertAmountFromBase($dollar_value,$currency1->id);
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount,$amount);
 
 
         // test convert from one currency to another
-        $converted_amount = round($dollar_value * $currency1->conversion_rate / $currency2->conversion_rate, 6);
-        $this->assertTrue(is_numeric($converted_amount));
+        $converted_amount = 33566.677446;
         $amount = SugarCurrency::convertAmount($dollar_value, $currency1->id, $currency2->id);
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount, $amount);
+
+        // test converting with specific rate
+        $rate = 0.5;
+        $amount = 1000;
+        $this->assertEquals(2000,SugarCurrency::convertWithRate($amount, $rate));
+        $rate = 2.0;
+        $this->assertEquals(500,SugarCurrency::convertWithRate($amount, $rate));
 
     }
 
@@ -329,8 +337,7 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $currency3 = SugarCurrency::getCurrencyByISO('YEN');
         // get base currency
         $currency4 = SugarCurrency::getBaseCurrency();
-        // we have to retrieve the currency manually because
-        // the original value was cached by the bean factory
+        // retrieve values since BeanFactory caches them
         $currency4->retrieve('-99');
         // test the instances
         $this->assertInstanceOf('Currency', $currency1);
@@ -345,22 +352,26 @@ class SugarCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals(1.0, $currency4->conversion_rate);
         $this->assertEquals('BTC', $currency4->iso4217);
         $dollar_value = 1000.00;
-        $converted_amount = round($dollar_value * $currency1->conversion_rate / $currency2->conversion_rate, 6);
+        // converting 1000 SGD to PHP
+        $converted_amount = 33566.677446;
         $this->assertTrue(is_numeric($converted_amount));
         $amount = SugarCurrency::convertAmount($dollar_value, $currency1->id, $currency2->id);
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount, $amount);
-        $converted_amount = round($dollar_value * $currency2->conversion_rate / $currency3->conversion_rate, 6);
+        // converting 1000 PHP to YEN
+        $converted_amount = 1885.496997;
         $this->assertTrue(is_numeric($converted_amount));
         $amount = SugarCurrency::convertAmount($dollar_value, $currency2->id, $currency3->id);
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount, $amount);
-        $converted_amount = round($dollar_value * $currency3->conversion_rate / $currency4->conversion_rate, 6);
+        // converting 1000 YEN to BTC
+        $converted_amount = 12.679092;
         $this->assertTrue(is_numeric($converted_amount));
         $amount = SugarCurrency::convertAmount($dollar_value, $currency3->id, $currency4->id);
         $this->assertTrue(is_numeric($amount));
         $this->assertEquals($converted_amount, $amount);
-        $converted_amount = round($dollar_value * $currency4->conversion_rate / $currency1->conversion_rate, 6);
+        // converting 1000 BTC to SGD
+        $converted_amount = 1246.171;
         $this->assertTrue(is_numeric($converted_amount));
         $amount = SugarCurrency::convertAmount($dollar_value, $currency4->id, $currency1->id);
         $this->assertTrue(is_numeric($amount));

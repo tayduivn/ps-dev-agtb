@@ -222,6 +222,29 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * Test that the manager's label does not have the Opportunities () text surrounding the name
+     *
+     * @group forecasts
+     * @group forecastschart
+     */
+    public function testTopLevelManagerUserDataOnlyContainsName()
+    {
+        global $locale;
+        $obj = new SugarForecasting_Chart_Manager(self::$args);
+        $data = $obj->process();
+        $managerName = $locale->getLocaleFormattedName(self::$users['manager']['user']->first_name, self::$users['manager']['user']->last_name);
+        $foundManager = false;
+        foreach($data['values'] as $value)
+        {
+            if($value['label'] == $managerName)
+            {
+                $foundManager = true;
+            }
+        }
+        $this->assertTrue($foundManager, 'Unable to find the manager name');
+    }
+
+    /**
      * @depends testLoadUsersReturnsTwoUsersForCurrentUser
      * @dataProvider dataProviderParetoValues
      * @group forecastschart
