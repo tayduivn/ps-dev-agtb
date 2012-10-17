@@ -389,18 +389,7 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-        
-        //see if anything in the model is a draft version
-        _.each(this._collection.models, function(model, index){
-        	if(model.get("version") == 0){
-        		enableCommit = true;
-        	}
-        });
-
-        if(enableCommit){
-        	self.context.forecasts.set({commitButtonEnabled: true});
-        }
-        
+                
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:render");
 
