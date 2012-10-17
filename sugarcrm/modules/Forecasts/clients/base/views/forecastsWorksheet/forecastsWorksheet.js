@@ -370,6 +370,8 @@
             });
         }
 
+        self.calculateTotals.call(self);
+
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
         
