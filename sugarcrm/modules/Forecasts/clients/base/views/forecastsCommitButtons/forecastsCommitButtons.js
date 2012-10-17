@@ -210,6 +210,9 @@
         // we need to go up and find the parent containg the two rows
         el.parents('#contentflex').find('>div.row-fluid').find('>div:first').toggleClass('span8 span12');
         el.parents('#contentflex').find('>div.row-fluid').find('>div:last').toggleClass('span4 hide');
+
+        // toggle the "event" to make the chart stop rendering if the sidebar is hidden
+        this.context.forecasts.set({hiddenSidebar: el.find('i').hasClass('icon-chevron-left')});
     }
 
 })

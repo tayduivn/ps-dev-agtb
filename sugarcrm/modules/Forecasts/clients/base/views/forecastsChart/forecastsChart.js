@@ -22,6 +22,8 @@
     chartTitle: '',
     timeperiod_label: '',
 
+    stopRender: false,
+
     /**
      * events on the view to watch for
      */
@@ -151,6 +153,15 @@
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
             self.handleRenderOptions({category:_.first(value)});
         });
+        this.context.forecasts.on('change:hiddenSidebar', function(context, value){
+            // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
+            self.stopRender = value;
+            // if the sidebar is not hidden
+            if(value == false){
+                // we need to force the render to happen again
+                self.renderChart();
+            }
+        });
     },
 
     handleRenderOptions:function (options) {
@@ -188,6 +199,11 @@
      * @private
      */
     _initializeChart:function () {
+
+        if(this.stopRender) {
+            return {};
+        }
+
         var chart,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
