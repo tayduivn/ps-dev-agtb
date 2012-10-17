@@ -19,8 +19,18 @@
         <div class="nav-collapse">
           <ul class="nav">
             <li><a class="cube" href="dashboard.html" rel="tooltip" title="Dashboard"></a></li>
-            <li><a href="opportunity.html">Opportunities</a></li>
+            <li><a href="accounts.html">Accounts</a></li>
+            <li><a href="contacts.html">Contacts</a></li>
             <li class="active"><a href="forecast.html">Forecasts</a></li>
+            <li><a href="opportunities.html">Opportunities</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-chevron-down"></i></a>
+              <ul class="dropdown-menu">
+                <li id="gen17"><a href="index.php?module=Campaigns&amp;action=index" id="moduleTab_Campaigns">Campaigns</a></li>
+                <li id="gen18"><a href="index.php?module=Quotes&amp;action=index" id="moduleTab_Quotes">Quotes</a></li>
+                <li id="gen19"><a href="#ajaxUILoc=index.php%3Fmodule%3DSubscriptions%26action%3Dindex" id="moduleTab_Subscriptions">Subscriptions</a></li>
+              </ul>
+            </li>
           </ul>
           <ul class="nav pull-right">
             <li class="divider-vertical"></li>
@@ -90,11 +100,11 @@
         <div class="layout_Forecasts">
           <div id="alert" class="alert-top"></div>
 
-          <div class="container-fluid" id="contentflex">
+          <div class="container-fluid">
             <div class="row-fluid" id="forecasts">
-              <div class="span8">
-                <div id="headerbar">
-                    <h1>Forecast: Sabra Khan </h1>
+              <div class="span8 main-pane">
+                <div class="headerpane">
+                    <h1>Sabra Khan </h1>
                     <div class="btn-toolbar pull-left">
                         <div class="btn-group">
                             <a class="dropdown-toggle btn btn-invisible" data-toggle="dropdown" href="#">
@@ -202,17 +212,17 @@
                   <div id="dynamic"></div>
                 </div>
               </div>
-              <div class="span4 tab-content" id="folded">
-                <div class="tab-pane active" id="overview">
+              <div class="span4 side tab-content">
+                <div class="side-pane tab-pane active" id="overview">
 
 
                   <div class="thumbnail viz">
                     <div class="view-forecastsChart">
                       <div>
-                        <div class="btn-toolbar pull-right">
-                          <form class="dropdown form-horizontal btn-group" id="forecastsChartDisplayOptions">
-                              <a href="#" class="btn btn-mini btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
-                              <a href="#forecastsChartDisplayOptions" data-toggle="dropdown" class="dropdown-toggle btn btn-mini btn-invisible pull-right"><span class="icon-cog"></span></a>
+                        <div class="actions pull-right">
+                          <form class="dropdown" id="forecastsChartDisplayOptions">
+                              <a href="#" class="btn btn-invisible btn-expand-full"><span class="icon-resize-full"></span></a>
+                              <a href="#forecastsChartDisplayOptions" data-toggle="dropdown" class="dropdown-toggle btn btn-invisible"><span class="icon-cog"></span></a>
                               <ul class="dropdown-menu left carettop" id="chartDisplayOptions">
                                   <div class="datasetOptions">
 
