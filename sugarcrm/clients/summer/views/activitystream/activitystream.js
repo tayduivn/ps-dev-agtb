@@ -205,9 +205,8 @@
                 contents += this.data;
             } else if (this.nodeName == "SPAN") {
                 var el = $(this);
-                el.find('a').remove();
                 var data = el.data();
-                contents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
+                contents += '@[' + data.module + ':' + data.id + ']';
             }
         }).html();
         return contents.replace(/&nbsp;/gi, ' ');
@@ -516,12 +515,16 @@
     },
 
     _parseTags: function(text) {
+        var self = this;
         if(!text || text.length === 0) {
             return text;
         }
-        var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
-        return text.replace(pattern, function(str, module, id, text) {
-            return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
+        var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g);
+        return text.replace(pattern, function(str, module, id) {
+            var name = _(self.entityList).find(function(el) {
+                return el.id == id;
+            }).name || "A record";
+            return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + name + "</a></span>";
         });
     },
 
