@@ -16,6 +16,7 @@
     isExpandableRows:'',
     isEditableWorksheet:false,
     _collection:{},
+    columnDefs : [],
 
     /**
      * Initialize the View
@@ -126,7 +127,17 @@
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element){
                     if(element.hasChanged("commit_stage")) {
-                        this._render();
+                    	
+                        this.gTable.fnDestroy();
+                        this.gTable = this.$('.worksheetTable').dataTable(
+                                {
+                                    "bAutoWidth": false,
+                                    "aoColumnDefs": self.columnDefs,
+                                    "aaSorting": self.aaSorting,
+                                    "bInfo":false,
+                                    "bPaginate":false
+                                }
+                            );
                     }
                 }, this);
             }, this);
@@ -314,7 +325,6 @@
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
-        var columnDefs = [];
         var fields = this.meta.panels[0].fields;
         var columnKeys = {};
 
@@ -347,14 +357,14 @@
                     }
                 }
 
-                columnDefs.push(fieldDef);
+                self.columnDefs.push(fieldDef);
                 columnKeys[name] = key;
             }
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "bAutoWidth": false,
-                "aoColumnDefs": columnDefs,
+                "aoColumnDefs": this.columnDefs,
                 "aaSorting": this.aaSorting,
                 "bInfo":false,
                 "bPaginate":false

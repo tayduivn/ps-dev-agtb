@@ -50,7 +50,7 @@ class TimePeriod extends SugarBean {
 	var $table_name = "timeperiods";
 	var $fiscal_year_checked;
 	var $module_dir = 'TimePeriods';
-    var $time_period_type = 'Annually';
+    var $time_period_type = 'Annual';
 	var $object_name = "TimePeriod";
 	var $user_preferences;
     var $date_modifier;
