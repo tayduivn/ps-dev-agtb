@@ -42,19 +42,22 @@
     },
     login: function() {
         var self = this;
+        self.__app = app;
+
         if (this.model.isValid()) {
             $('#content').hide();
             app.alert.show('login', {level:'process', title:'LBL_PORTAL_LOADING', autoClose:false});
             var args = {password: this.model.get("password"), username: this.model.get("username")};
 
-            this.app.login(args, null, {
+            app.login(args, null, {
                 error: function() {
+                    var app = self.__app;
                     app.alert.dismiss('login');
                     $('#content').show();
                 },
                 success: function() {
                     $(".navbar").show();
-                    var app = self.app;
+                    var app = self.__app;
                     app.events.on('app:sync:complete', function() {
                         app.alert.dismiss('login');
                         $('#content').show();
