@@ -36,6 +36,8 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
+        this.selection = this.context.forecasts.config.get('forecast_categories');
+
         this.label = _.first(this.meta.panels).label;
 
         // sets this.<array_item>_field to the corresponding field metadata, which gets used by the template to render these fields later.
@@ -69,14 +71,22 @@
      * @private
      */
     _addForecastCategorySelectionHandler: function (){
-        var element = this.$el.find(':radio[name="' + this.forecast_categories_field.name + '"]');
+        // finds all radiobuttons with this name
+        var elements = this.$el.find(':radio[name="' + this.forecast_categories_field.name + '"]');
 
-        element.change({
+        // apply change handler to all elements
+        elements.change({
             view:this
         }, this.selectionHandler);
 
-        // manually trigger the handler so that it will render for the default/previously set value
-        element.triggerHandler("change");
+        // of the elements find the one that is checked
+        _.each(elements, function(el) {
+            if($(el).prop('checked')) {
+                // manually trigger the handler on the checked element so that it will render
+                // for the default/previously set value
+                $(el).triggerHandler("change");
+            }
+        });
     },
 
     selectionHandler: function(event) {
