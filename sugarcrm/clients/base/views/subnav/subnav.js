@@ -26,7 +26,7 @@
     _render: function() {
         var next, newMarginTop;
 
-        this.app.view.View.prototype._render.call(this);
+        app.view.View.prototype._render.call(this);
 
         //push down the view below by the subnav height
         next = this.$el.next();
@@ -52,7 +52,7 @@
      * Handle click on the edit button
      */
     edit: function() {
-        this.app.navigate(this.context, this.model, "edit", {trigger:true});
+        app.navigate(this.context, this.model, "edit", {trigger:true});
     },
 
     /**

@@ -56,7 +56,7 @@
                     field.$el.wrap('<div class="input-append  '+ftag+'">');
 
                     _.each(fieldErrors, function (errorContext, errorName) {
-                        controlGroup.find('.help-block').append(self.app.error.getErrorString(errorName, errorContext));
+                        controlGroup.find('.help-block').append(app.error.getErrorString(errorName, errorContext));
                     });
 
                     $('<span class="add-on"><i class="icon-exclamation-sign"></i></span>').insertBefore(controlGroup.find('.help-block'));

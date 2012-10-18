@@ -5,17 +5,17 @@
     },
 
     _renderHtml: function() {
-        if (!this.app.api.isAuthenticated() || this.app.config.appStatus == 'offline') return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
-        this.app.view.View.prototype._renderHtml.call(this);
+        app.view.View.prototype._renderHtml.call(this);
 
         // Search ahead drop down menu stuff
         var self = this,
-            menuTemplate = this.app.template.getView('dropdown-menu');
+            menuTemplate = app.template.getView('dropdown-menu');
         this.$('.search-query').searchahead({
             request:  this.fireSearchRequest,
             compiler: menuTemplate,
-            throttleMillis: (this.app.config.requiredElapsed || 500),
+            throttleMillis: (app.config.requiredElapsed || 500),
             throttle: function(callback, millis) {
                 if(!self.debounceFunction) {
                     self.debounceFunction = _.debounce(function(){
@@ -31,7 +31,7 @@
                 } else {
                     // It's the term only (user didn't select from drop down
                     // so this is essentially the term typed
-                    self.app.router.navigate('#search/'+hrefOrTerm, {trigger: true});
+                    app.router.navigate('#search/'+hrefOrTerm, {trigger: true});
                 }
             }
         });
@@ -69,7 +69,7 @@
         // decoded by search handler (bug55572)
         term = encodeURIComponent(this.$('.search-query').val());
         if(term && term.length) {
-            this.app.router.navigate('#search/'+term, {trigger: true});
+            app.router.navigate('#search/'+term, {trigger: true});
         }
     },
 

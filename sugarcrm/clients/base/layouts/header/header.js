@@ -4,10 +4,10 @@
      * @param options
      */
     initialize: function(options) {
-        this.app.view.Layout.prototype.initialize.call(this, options);
+        app.view.Layout.prototype.initialize.call(this, options);
 
-        this.app.events.on("app:sync:complete", this.resize, this);
-        this.app.events.on("app:view:change", this.resize, this);
+        app.events.on("app:sync:complete", this.resize, this);
+        app.events.on("app:view:change", this.resize, this);
 
         var resize = _.bind(this.resize, this);
         $(window)
