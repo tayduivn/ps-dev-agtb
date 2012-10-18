@@ -340,57 +340,53 @@ class Email extends SugarBean {
 	}
 
 
-	function sendEmailTest($mailserver_url, $port, $ssltls, $smtp_auth_req, $smtp_username, $smtppassword, $fromaddress, $toaddress, $mail_sendtype = 'smtp', $fromname = '') {
-		global $current_user,$app_strings;
+	function sendEmailTest($mailserver_url, $port, $ssltls, $smtp_auth_req, $smtp_username, $smtppassword, $fromaddress,
+        $toaddress, $mail_sendtype = 'smtp', $fromname = ''
+    ) {
+		global $current_user,
+               $app_strings;
+
 		$mod_strings = return_module_language($GLOBALS['current_language'], 'Emails'); //Called from EmailMan as well.
-	    $mail = new SugarPHPMailer();
-		$mail->Mailer = strtolower($mail_sendtype);
-		if($mail->Mailer == 'smtp')
-		{
-    		$mail->Host = $mailserver_url;
-    		$mail->Port = $port;
-    		if (isset($ssltls) && !empty($ssltls)) {
-    			$mail->protocol = "ssl://";
-    	        if ($ssltls == 1) {
-    	            $mail->SMTPSecure = 'ssl';
-    	        } // if
-    	        if ($ssltls == 2) {
-    	            $mail->SMTPSecure = 'tls';
-    	        } // if
-    		} else {
-    			$mail->protocol = "tcp://";
-    		}
-    		if ($smtp_auth_req) {
-    			$mail->SMTPAuth = TRUE;
-    			$mail->Username = $smtp_username;
-    			$mail->Password = $smtppassword;
-    		}
-		}
-		else
-		    $mail->Mailer = 'sendmail';
 
-		$mail->Subject = from_html($mod_strings['LBL_TEST_EMAIL_SUBJECT']);
-		$mail->From = $fromaddress;
+        $fromname = (!empty($fromname)) ? html_entity_decode($fromname, ENT_QUOTES) : $current_user->name;
 
-        if ($fromname != '') {
-            $mail->FromName = html_entity_decode($fromname,ENT_QUOTES);
-        } else {
-            $mail->FromName = $current_user->name;
+        $configurations                 = array();
+        $configurations["from_email"]   = $fromaddress;
+        $configurations["from_name"]    = $fromname;
+        $configurations["display_name"] = "{$fromname} ({$fromaddress})";
+
+        $outboundEmail                    = new OutboundEmail();
+        $outboundEmail->mail_sendtype     = $mail_sendtype;
+        $outboundEmail->mail_smtpserver   = $mailserver_url;
+        $outboundEmail->mail_smtpport     = $port;
+        $outboundEmail->mail_smtpauth_req = $smtp_auth_req;
+        $outboundEmail->mail_smtpuser     = $smtp_username;
+        $outboundEmail->mail_smtppass     = $smtppassword;
+        $outboundEmail->mail_smtpssl      = $ssltls;
+
+        $return = array();
+
+        try {
+            $outboundEmailConfiguration = OutboundEmailConfigurationPeer::buildOutboundEmailConfiguration(
+                $current_user,
+                $configurations,
+                $outboundEmail
+            );
+
+            $mailer = MailerFactory::getMailer($outboundEmailConfiguration);
+
+            $mailer->setSubject($mod_strings['LBL_TEST_EMAIL_SUBJECT']);
+            $mailer->addRecipientsTo(new EmailIdentity($toaddress));
+            $mailer->setTextBody($mod_strings['LBL_TEST_EMAIL_BODY']);
+
+            $mailer->send();
+            $return['status'] = true;
+        } catch (MailerException $me) {
+            ob_clean();
+            $return['status']       = false;
+            $return['errorMessage'] = $app_strings['LBL_EMAIL_ERROR_PREPEND'] . $me->getMessage();
         }
 
-        $mail->Sender = $mail->From;
-		$mail->AddAddress($toaddress);
-		$mail->Body = $mod_strings['LBL_TEST_EMAIL_BODY'];
-
-		$return = array();
-
-		if(!$mail->Send()) {
-	        ob_clean();
-	        $return['status'] = false;
-	        $return['errorMessage'] = $app_strings['LBL_EMAIL_ERROR_PREPEND']. $mail->ErrorInfo;
-	        return $return;
-		} // if
-		$return['status'] = true;
         return $return;
 	} // fn
 
@@ -2038,15 +2034,18 @@ class Email extends SugarBean {
             ////	END ATTACHMENTS
             ///////////////////////////////////////////////////////////////////////
 
+            if (isset($_REQUEST['description_html'])) {
+                $this->description_html = $_REQUEST['description_html'];
+            }
+
             $htmlBody = $this->description_html;
             $textBody = $this->description;
 
             //------------------- HANDLEBODY() ---------------------------------------------
             if ((isset($_REQUEST['setEditor']) /* from Email EditView navigation */
                  && $_REQUEST['setEditor'] == 1
-                 && trim($_REQUEST['description_html']) != '')
-                || trim($this->description_html) != '' /* from email templates */
-                   && $current_user->getPreference('email_editor_option', 'global') !== 'plain' //user preference is not set to plain text
+                 && trim($this->description_html) != '')
+                && $current_user->getPreference('email_editor_option', 'global') !== 'plain' //user preference is not set to plain text
             ) {
                 $htmlBody = $this->decodeDuringSend($htmlBody);
                 $textBody = $this->decodeDuringSend($textBody);

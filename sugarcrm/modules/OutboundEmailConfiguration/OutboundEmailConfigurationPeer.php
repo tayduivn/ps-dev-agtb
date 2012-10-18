@@ -115,14 +115,6 @@ class OutboundEmailConfigurationPeer
      * @throws MailerException
      */
     public static function listMailConfigurations(User $user, Localization $locale = null, $charset = null) {
-        if (is_null($locale)) {
-            $locale = $GLOBALS["locale"];
-        }
-
-        if (is_null($charset)) {
-            $charset = $locale->getPrecedentPreference("default_email_charset");
-        }
-
         $outboundEmailConfigurations = array();
         $ret                         = $user->getUsersNameAndEmail();
 
@@ -161,7 +153,6 @@ class OutboundEmailConfigurationPeer
 
             if ($name != null && $addr != null && !empty($outbound_config_id) && !empty($oe) && ($outbound_config_id == $oe->id)) {
                 // turn the OutboundEmail object into a useable set of mail configurations
-                $oeAsArray                       = self::toArray($oe);
                 $configurations                  = array();
                 $configurations["config_id"]     = $outbound_config_id;
                 $configurations["config_type"]   = "user";
@@ -176,9 +167,7 @@ class OutboundEmailConfigurationPeer
                 $configurations["replyto_name"]  = (!empty($storedOptions["reply_to_name"])) ?
                                                     $storedOptions["reply_to_name"] :
                                                     $name;
-                $configurations["locale"]        = $locale;
-                $configurations["charset"]       = $charset;
-                $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oeAsArray);
+                $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oe, $locale, $charset);
                 $outboundEmailConfigurations[]   = $outboundEmailConfiguration;
             }
         }
@@ -203,7 +192,6 @@ class OutboundEmailConfigurationPeer
         $oe = new OutboundEmail();
         $oe->retrieve($system->id);
 
-        $oeAsArray                       = self::toArray($oe);
         $configurations                  = array();
         $configurations["config_id"]     = $system->id;
         $configurations["config_type"]   = "system";
@@ -214,9 +202,7 @@ class OutboundEmailConfigurationPeer
         $configurations["personal"]      = $personal;
         $configurations["replyto_email"] = $system_replyToAddress;
         $configurations["replyto_name"]  = $system_replyToName;
-        $configurations["locale"]        = $locale;
-        $configurations["charset"]       = $charset;
-        $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oeAsArray);
+        $outboundEmailConfiguration      = self::buildOutboundEmailConfiguration($user, $configurations, $oe, $locale, $charset);
         $outboundEmailConfigurations[]   = $outboundEmailConfiguration;
 
         return $outboundEmailConfigurations;
@@ -224,33 +210,37 @@ class OutboundEmailConfigurationPeer
 
     /**
      * @access private
-     * @param User  $user           required
-     * @param array $configurations required
-     * @param array $outboundEmail  required
-     * @return OutboundEmailConfiguration|OutboundSmtpEmailConfiguration
+     * @param User          $user           required
+     * @param array         $configurations required
+     * @param OutboundEmail $outboundEmail  required
+     * @param Localization  $locale
+     * @param string        $charset
+     * @return OutboundEmailConfiguration
      */
-    private static function buildOutboundEmailConfiguration(User $user, $configurations, $outboundEmail) {
+    public static function buildOutboundEmailConfiguration(User $user, $configurations, $outboundEmail,
+        Localization $locale = null, $charset = null
+    ) {
         $outboundEmailConfiguration = null;
-        $mode                       = strtolower($outboundEmail["mail_sendtype"]);
+        $mode                       = strtolower($outboundEmail->mail_sendtype);
 
         // setup the mailer's known configurations based on the type of mailer
         switch ($mode) {
             case self::MODE_SMTP:
                 $outboundEmailConfiguration = new OutboundSmtpEmailConfiguration($user);
-                $outboundEmailConfiguration->setHost($outboundEmail["mail_smtpserver"]);
-                $outboundEmailConfiguration->setPort($outboundEmail["mail_smtpport"]);
+                $outboundEmailConfiguration->setHost($outboundEmail->mail_smtpserver);
+                $outboundEmailConfiguration->setPort($outboundEmail->mail_smtpport);
 
-                if ($outboundEmail["mail_smtpauth_req"]) {
+                if ($outboundEmail->mail_smtpauth_req) {
                     // require authentication with the SMTP server
                     $outboundEmailConfiguration->setAuthenticationRequirement(true);
-                    $outboundEmailConfiguration->setUsername($outboundEmail["mail_smtpuser"]);
-                    $outboundEmailConfiguration->setPassword($outboundEmail["mail_smtppass"]);
+                    $outboundEmailConfiguration->setUsername($outboundEmail->mail_smtpuser);
+                    $outboundEmailConfiguration->setPassword($outboundEmail->mail_smtppass);
                 }
 
                 // determine the appropriate encryption layer for the sending strategy
-                if ($outboundEmail["mail_smtpssl"] === 1) {
+                if ($outboundEmail->mail_smtpssl === 1) {
                     $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolSsl);
-                } elseif ($outboundEmail["mail_smtpssl"] === 2) {
+                } elseif ($outboundEmail->mail_smtpssl === 2) {
                     $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolTls);
                 }
 
@@ -260,41 +250,52 @@ class OutboundEmailConfigurationPeer
                 break;
         }
 
-        $outboundEmailConfiguration->setConfigId($configurations["config_id"]);
-        $outboundEmailConfiguration->setConfigType($configurations["config_type"]);
         $outboundEmailConfiguration->setMode($mode);
-        $outboundEmailConfiguration->setConfigName($outboundEmail["name"]);
-        $outboundEmailConfiguration->setInboxId($configurations["inbox_id"]);
-        $outboundEmailConfiguration->setFrom($configurations["from_email"], $configurations["from_name"]);
-        $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
-        $outboundEmailConfiguration->setPersonal($configurations["personal"]);
-        $outboundEmailConfiguration->setReplyTo($configurations["replyto_email"], $configurations["replyto_name"]);
-        $outboundEmailConfiguration->setLocale($configurations["locale"]);
-        $outboundEmailConfiguration->setCharset($configurations["charset"]);
 
-        return $outboundEmailConfiguration;
-    }
-
-    /**
-     * @access private
-     * @param      $obj        required
-     * @param bool $scalarOnly
-     * @return array
-     */
-    private static function toArray($obj, $scalarOnly=true) {
-        $fields = get_object_vars($obj);
-        $arr    = array();
-
-        foreach ($fields as $name => $type) {
-            if (isset($obj->$name)) {
-                if ((!$scalarOnly) || (!is_array($obj->$name) && !is_object($obj->$name))) {
-                    $arr[$name] = $obj->$name;
-                }
-            } else {
-                $arr[$name] = '';
-            }
+        if (!empty($configurations["config_id"])) {
+            $outboundEmailConfiguration->setConfigId($configurations["config_id"]);
         }
 
-        return $arr;
+        if (!empty($configurations["config_type"])) {
+            $outboundEmailConfiguration->setConfigType($configurations["config_type"]);
+        }
+
+        if (!empty($outboundEmail->name)) {
+            $outboundEmailConfiguration->setConfigName($outboundEmail->name);
+        }
+
+        if (!empty($configurations["inbox_id"])) {
+            $outboundEmailConfiguration->setInboxId($configurations["inbox_id"]);
+        }
+
+        if (!empty($configurations["from_email"])) {
+            $outboundEmailConfiguration->setFrom($configurations["from_email"], $configurations["from_name"]);
+        }
+
+        if (!empty($configurations["display_name"])) {
+            $outboundEmailConfiguration->setDisplayName($configurations["display_name"]);
+        }
+
+        if (!empty($configurations["personal"])) {
+            $outboundEmailConfiguration->setPersonal($configurations["personal"]);
+        }
+
+        if (!empty($configurations["replyto_email"])) {
+            $outboundEmailConfiguration->setReplyTo($configurations["replyto_email"], $configurations["replyto_name"]);
+        }
+
+        if (is_null($locale)) {
+            $locale = $GLOBALS["locale"];
+        }
+
+        $outboundEmailConfiguration->setLocale($locale);
+
+        if (is_null($charset)) {
+            $charset = $locale->getPrecedentPreference("default_email_charset");
+        }
+
+        $outboundEmailConfiguration->setCharset($charset);
+
+        return $outboundEmailConfiguration;
     }
 }
