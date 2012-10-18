@@ -1,6 +1,6 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
-//TODO: fix this up for when expected opps is added back in 6.8
+//TODO: fix this up for when expected opps is added back in 6.8 - https://sugarcrm.atlassian.net/browse/SFA-255
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
