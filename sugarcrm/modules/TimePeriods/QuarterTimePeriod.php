@@ -71,7 +71,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->load_relationship('related_timeperiods');
 
         switch($timePeriodType) {
-            case "Monthly";
+            case "Month";
                 $n = 3;
                 $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
                 $leafPeriod->is_fiscal = $this->is_fiscal;
