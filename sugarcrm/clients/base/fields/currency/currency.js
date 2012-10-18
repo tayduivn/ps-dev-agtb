@@ -1,6 +1,6 @@
 ({
     unformat: function(value) {
-        return this.app.currency.unformatAmountLocale(value);
+        return app.currency.unformatAmountLocale(value);
     },
     format: function(value) {
         var currency_id, base_rate;

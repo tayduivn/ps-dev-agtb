@@ -241,7 +241,7 @@
             }
         }
 
-        myPostUrl = this.app.api.buildURL(myPostUrl);
+        myPostUrl = app.api.buildURL(myPostUrl);
         myPostContents = this._processTags(myPost.find('div.sayit'));
         this._addPostComment(myPostUrl, myPostContents, attachments);
     },
@@ -251,7 +251,7 @@
             recordId = this.$(event.currentTarget).data('id'),
             recordModule = this.$(event.currentTarget).data('module'),
             myPostUrl = 'ActivityStream/' + recordModule + '/' + recordId;
-        this.app.api.call('delete', this.app.api.buildURL(myPostUrl), {}, {success: function() {
+        app.api.call('delete', app.api.buildURL(myPostUrl), {}, {success: function() {
             self.collection.fetch(self.opts);
         }});
     },

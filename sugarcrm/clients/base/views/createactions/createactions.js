@@ -4,16 +4,16 @@
     },
 
     initialize: function(options) {
-        this.app.events.on("app:sync:complete", this.render, this);
-        this.app.view.View.prototype.initialize.call(this, options);
+        app.events.on("app:sync:complete", this.render, this);
+        app.view.View.prototype.initialize.call(this, options);
     },
 
     _renderHtml: function() {
-        if (!this.app.api.isAuthenticated() || this.app.config.appStatus == 'offline') return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         this.setModuleInfo();
         this.setCreateTasksList();
-        this.app.view.View.prototype._renderHtml.call(this);
+        app.view.View.prototype._renderHtml.call(this);
     },
 
     onCreateClicked: function(evt) {
@@ -28,7 +28,7 @@
      * Creates the task create drop down list
      */
     setCreateTasksList: function() {
-        var singularModules = this.app.lang.getAppListStrings("moduleListSingular");
+        var singularModules = app.lang.getAppListStrings("moduleListSingular");
         this.createListLabels = [];
 
         if(singularModules) {
@@ -41,6 +41,6 @@
      */
     setModuleInfo: function() {
         //TODO: sidecar needs a function to pull this list from user prefs
-        this.creatableModuleList = this.app.metadata.getModuleNames(true,"create");
+        this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     }
 })

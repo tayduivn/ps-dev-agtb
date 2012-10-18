@@ -724,7 +724,7 @@
 
         for (var i in cols) {
 
-            var title = this.app.lang.get(cols[i].sTitle);
+            var title = app.lang.get(cols[i].sTitle);
 
             if (onlyVisible) {
                 if (cols[i].bVisible) {

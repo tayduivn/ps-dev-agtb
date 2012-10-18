@@ -4,10 +4,10 @@
     },
 
     initialize: function(options) {
-        this.app.events.on("app:sync:complete", this.render, this);
-        this.app.events.on("app:view:change", this.render, this);
+        app.events.on("app:sync:complete", this.render, this);
+        app.events.on("app:view:change", this.render, this);
 
-        this.app.view.View.prototype.initialize.call(this, options);
+        app.view.View.prototype.initialize.call(this, options);
 
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
@@ -19,13 +19,13 @@
      * @private
      */
     _renderHtml: function() {
-        if (!this.app.api.isAuthenticated() || this.app.config.appStatus == 'offline') return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         //TODO: sidecar needs a function to pull this list from user prefs
         //The module list needs to be key:value pairs of module name and its translated label
-        this.module_list = this.app.metadata.data.module_list;
+        this.module_list = app.metadata.data.module_list;
         this.currentModule = this.module;
-        this.app.view.View.prototype._renderHtml.call(this);
+        app.view.View.prototype._renderHtml.call(this);
         this.initMenu();
     },
 
@@ -39,7 +39,7 @@
             evt.stopPropagation();
             this.$('#module_list li').removeClass('active');
             this.$(evt.currentTarget).parent().addClass('active');
-            this.app.router.navigate(moduleHref, {trigger: true});
+            app.router.navigate(moduleHref, {trigger: true});
         }
     },
 
@@ -55,7 +55,7 @@
         //restore back to the module list
         this.$(".more").before(moduleList.find(".dropdown-menu").children());
         this.$(".dropdown.open").toggleClass("open");
-        moduleList.find("." + this.app.controller.context.get("module")).addClass("active");
+        moduleList.find("." + app.controller.context.get("module")).addClass("active");
     },
 
     /**

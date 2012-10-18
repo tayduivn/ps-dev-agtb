@@ -173,10 +173,10 @@
                 }).call(text);
 
                 function navigate(d) {
-                    var model = self.app.data.createBean(self.module);
+                    var model = app.data.createBean(self.module);
                     model.set("id", d.id);
                     model.fetch();
-                    self.app.navigate(self.context, model);
+                    app.navigate(self.context, model);
                 }
 
                 function transition(d) {

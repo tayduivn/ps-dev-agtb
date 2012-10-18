@@ -47,14 +47,13 @@
             app.alert.show('login', {level:'process', title:'LBL_PORTAL_LOADING', autoClose:false});
             var args = {password: this.model.get("password"), username: this.model.get("username")};
 
-            this.app.login(args, null, {
+            app.login(args, null, {
                 error: function() {
                     app.alert.dismiss('login');
                     $('#content').show();
                 },
                 success: function() {
                     $(".navbar").show();
-                    var app = self.app;
                     app.events.on('app:sync:complete', function() {
                         app.alert.dismiss('login');
                         $('#content').show();
