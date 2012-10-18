@@ -27,7 +27,7 @@ $config = array (
     'enabled' => true,
     'only' => true,
   ),
-  'order' => 14,
+  'order' => 16,
   'properties' => array (
       'oauth_consumer_key' => '',
       'oauth_consumer_secret' => '',

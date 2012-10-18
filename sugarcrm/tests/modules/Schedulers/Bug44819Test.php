@@ -18,33 +18,39 @@
  * requirements.  Your Warranty, Limitations of liability and Indemnity are
  * expressly stated in the License.  Please refer to the License for the specific
  * language governing these rights and limitations under the License.
- * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
+ * Portions created by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
 
-class Bug44515 extends Sugar_PHPUnit_Framework_TestCase
-{
-   
-    /**
-     * @group Bug44515
-     */
-    public function setUp()
-    {
-        
-    }
+require_once 'modules/Schedulers/Scheduler.php';
 
+/**
+ * Bug44819Test
+ * Test Scheduler static function initUser() which returns a valid admin user
+ * 
+ * @author avucinic@sugarcrm.com
+ */
+class Bug44819Test extends Sugar_PHPUnit_Framework_TestCase
+{
+
+	public function setUp()
+    {
+    	// Create admin user
+    	SugarTestUserUtilities::createAnonymousUser(true, 1);
+    }
 
     public function tearDown()
     {
+		// Clear the admin user created
+    	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testLoadCustomFormulas()
-    {
-      require_once "modules/ProductTemplates/Formulas.php";
+	public function testInitUser() {
+		// Check if the initUser() function returns an Admin user
+		$user = Scheduler::initUser();
+		$this->assertNotEquals(false, $user, "No admnin users found in the system.");
+		$this->assertEquals(1, $user->is_admin, "User returned is not admin.");
+		$this->assertEquals("Active", $user->status, "User returned is not active.");
+	}
 
-      // At this point I expect to have only the 5 standard formulas
-      $expectedIndexes = 5;
-      $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
-    }
 }
-

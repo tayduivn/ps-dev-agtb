@@ -667,18 +667,31 @@ SUGAR.expressions.GridToolTip = {
      * This section sets up the formula builder autocomplete
      */
 
-    //Insert the wrapper html
-    if($("#fb_ac_wrapper").length == 0){
+    // Find the max z-index and use it for the autocomplete popup/tooltip
+    var maxZ = Math.max.apply(
+            null,
+            // Apply a function to all elements of body to return z-index
+            $.map(
+                $('body > *'),
+                function(element, index)
+                {
+                    return parseInt($(element).css('z-index')) || 1;	
+                }
+            )
+        );
+
+    // Create the auto-complete wrapper
+    if ($("#fb_ac_wrapper").length == 0)
+    {
         $("body").append(
-            "<input id='fb_ac_input' style='display:none;z-index:50;position:relative'>" +
+            "<input id='fb_ac_input' style='display: none; z-index: " + maxZ + "; position: relative'>" +
             "<div id='fb_ac_wrapper' style='position: absolute;'>" +
                 "<div id='fb_ac_spacer'></div>" +
             "</div>"
         )
-        $("#fb_ac_wrapper").position({ my : "left top", at: "left top", of: "#formulaInput"});
+        $("#fb_ac_wrapper").position({ my: "left top", at: "left top", of: "#formulaInput" });
     }
-
-
+    
     var fb_ac_open = false;
     /**
      * Gets the index of the first character in the current formula component (function or variable)
@@ -905,14 +918,23 @@ SUGAR.expressions.GridToolTip = {
         $("#fb_ac_wrapper ul.ui-autocomplete").before(html);
     }
 
-    //create the autcomplete help text div
-    $('body').append("<div id='fb_ac_help' class='fb_ac_help'></div>'");
+    // Use (maxZInput + 2) so that we guarantee that the help tooltip will be on top
+    // because one more element is generated using the #fb_ac_input z-index + 1
+    var maxZTooltip = maxZ + 2;
+    
+    // Create the auto-complete tooltip
+    if ($("#fb_ac_help").length == 0)
+    {
+        $('body').append("<div id='fb_ac_help' style='z-index: " + maxZTooltip + ";' class='fb_ac_help'></div>'");
+    }
 
-    var hideACHelp = function(){
+    var hideACHelp = function()
+    {
         $("#fb_ac_help").css("visibility", "hidden");
     };
 
-    var showACHelp = function(func){
+    var showACHelp = function(func)
+    {
         var ggt = SUGAR.expressions.GridToolTip,
             cache = ggt.tipCache,
             div = $("#fb_ac_help");
