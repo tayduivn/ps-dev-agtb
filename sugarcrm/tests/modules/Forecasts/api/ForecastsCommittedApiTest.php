@@ -64,39 +64,6 @@ class ForecastsCommittedApiTest extends RestTestBase
         SugarTestHelper::tearDown();
         parent::tearDownAfterClass();
     }
-    /**
-     * @group forecastapi
-     * @group forecasts
-     */
-    public function testForecastsCommittedApi()
-    {
-        require_once('modules/TimePeriods/TimePeriod.php');
-        require_once('modules/Forecasts/Common.php');
-
-        $timeperiods = TimePeriod::get_timeperiods_dom();
-        $comm = new Common();
-        $commit_order=$comm->get_forecast_commit_order();
-
-        foreach ($timeperiods as $timeperiod_id=>$start_date)
-        {
-        	foreach($commit_order as $commit_type_array)
-            {
-        		//create forecast schedule for this timeperiod record and user.
-        		//create forecast schedule using this record becuse there will be one
-        		//direct entry per user, and some user will have a Rollup entry too.
-        		if ($commit_type_array[1] == 'Direct')
-                {
-        			$fcst_schedule = new ForecastSchedule();
-        			$fcst_schedule->timeperiod_id=$timeperiod_id;
-        			$fcst_schedule->user_id=$commit_type_array[0];
-        			$fcst_schedule->cascade_hierarchy=0;
-        			$fcst_schedule->forecast_start_date=$start_date;
-        			$fcst_schedule->status='Active';
-        			$fcst_schedule->save();
-        		}
-        	}
-        }
-    }
 
     /**
      * @group forecastapi

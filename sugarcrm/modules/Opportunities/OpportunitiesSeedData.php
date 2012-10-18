@@ -80,6 +80,8 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
         $opp->assigned_user_id = $account->assigned_user_id;
         $opp->assigned_user_name = $account->assigned_user_name;
+        $opp->currency_id = '-99';
+        $opp->base_rate = 1;
         $opp->name = substr($account->name." - 1000 units", 0, 50);
         $opp->lead_source = array_rand($app_list_strings['lead_source_dom']);
         $opp->sales_stage = array_rand($app_list_strings['sales_stage_dom']);
@@ -99,6 +101,8 @@ public static function populateSeedData($records, $app_list_strings, $accounts
 
         //BEGIN SUGARCRM flav=pro ONLY
         //Setup forecast seed data
+        $opp->best_case = $opp->amount;
+        $opp->worst_case = $opp->amount;
         $opp->commit_stage = $opp->probability >= 70 ? 'include' : 'exclude';
 
         $product = BeanFactory::getBean('Products');
@@ -121,13 +125,11 @@ public static function populateSeedData($records, $app_list_strings, $accounts
         $product->opportunity_id = $opp->id;
         $product->commit_stage = $opp->commit_stage;
         $product->save();
-
         //END SUGARCRM flav=pro ONLY
         
         $opp->save();
         // Create a linking table entry to assign an account to the opportunity.
-        $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);        
-
+        $opp->set_relationship('accounts_opportunities', array('opportunity_id'=>$opp->id ,'account_id'=> $account->id), false);
         $opp_ids[] = $opp->id;
     }
 

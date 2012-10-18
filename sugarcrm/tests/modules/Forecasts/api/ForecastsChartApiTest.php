@@ -41,6 +41,11 @@ class ForecastsChartApiTest extends RestTestBase
      */
     protected static $timeperiod;
 
+    /**
+     * @var commit_stage;
+     */
+    protected static $commit_stage;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
@@ -51,11 +56,12 @@ class ForecastsChartApiTest extends RestTestBase
 
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod("2012-01-01", "2012-03-31");
 
+        self::$commit_stage = 'include';
         // create an opp
         $opp1 = SugarTestOpportunityUtilities::createOpportunity();
         $opp1->assigned_user_id = self::$user->id;
         $opp1->probability = '85';
-        $opp1->commit_stage = 'include';
+        $opp1->commit_stage = self::$commit_stage;
         $opp1->amount = 1200;
         $opp1->best_case = 1300;
         $opp1->worst_case = 1100;
@@ -241,7 +247,7 @@ class ForecastsChartApiTest extends RestTestBase
 
         $chart = $return['reply'];
 
-        $this->assertEquals($mod_strings['LBL_CHART_INCLUDED'], $chart['label'][0]);
+        $this->assertEquals(ucfirst(self::$commit_stage), $chart['label'][0]);
         //$this->assertEquals("Likely", $chart['properties'][0]['goal_marker_label'][1]);
     }
 

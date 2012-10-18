@@ -496,7 +496,6 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'name' => 'date_closed_timestamp',
     'vname' => 'LBL_DATE_CLOSED',
     'type' => 'int',
-    'enable_range_search' => true,
     'studio' => false
   ),
   'commit_stage' =>

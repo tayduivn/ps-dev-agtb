@@ -87,7 +87,13 @@
                 /**
                  * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
                  */
-                commitForecastFlag : false
+                commitForecastFlag : false,
+
+                /**
+                 * hiddenSidebar: Is the sidebar hidden or not.
+                 */
+                hiddenSidebar : false
+
             });
 
             // grab a copy of the init data for forecasts to use

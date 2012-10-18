@@ -16,6 +16,7 @@
     isExpandableRows:'',
     isEditableWorksheet:false,
     _collection:{},
+    columnDefs : [],
 
     /**
      * Initialize the View
@@ -126,7 +127,17 @@
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element){
                     if(element.hasChanged("commit_stage")) {
-                        this._render();
+                    	
+                        this.gTable.fnDestroy();
+                        this.gTable = this.$('.worksheetTable').dataTable(
+                                {
+                                    "bAutoWidth": false,
+                                    "aoColumnDefs": self.columnDefs,
+                                    "aaSorting": self.aaSorting,
+                                    "bInfo":false,
+                                    "bPaginate":false
+                                }
+                            );
                     }
                 }, this);
             }, this);
@@ -147,9 +158,6 @@
                     this.updateWorksheetBySelectedCategory(category);
                 },this);
             this.context.forecasts.worksheet.on("change", function() {
-            	this.calculateTotals();
-            }, this);
-            this.context.forecasts.on("change:expectedOpportunities", function() {
             	this.calculateTotals();
             }, this);
             this.context.forecasts.on("change:reloadWorksheetFlag", function(){
@@ -315,7 +323,6 @@
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
-        var columnDefs = [];
         var fields = this.meta.panels[0].fields;
         var columnKeys = {};
 
@@ -348,14 +355,14 @@
                     }
                 }
 
-                columnDefs.push(fieldDef);
+                self.columnDefs.push(fieldDef);
                 columnKeys[name] = key;
             }
         });
         this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "bAutoWidth": false,
-                "aoColumnDefs": columnDefs,
+                "aoColumnDefs": this.columnDefs,
                 "aaSorting": this.aaSorting,
                 "bInfo":false,
                 "bPaginate":false
@@ -373,18 +380,7 @@
             });
         }
 
-        //Remove all events that may be associated with forecastschedule view
-        this.context.forecasts.forecastschedule.off();
-        this.context.forecasts.forecastschedule.on("change", function() { this.calculateTotals(); }, this);
-        //Create the view for expected opportunities
-        var viewmeta = app.metadata.getView("Forecasts", "forecastSchedule");
-        var view = app.view.createView({name:"forecastSchedule", meta:viewmeta, timeperiod_id:this.timePeriod, user_id:this.selectedUser.id });
-
-        $("#expected_opportunities").remove();
-        view.fetchCollection(function(){
-        	self.calculateTotals.call(self);
-        });
-        $("#summary").prepend(view.$el);
+        self.calculateTotals();
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
@@ -509,41 +505,6 @@
             overallWorst += worst_base;
         });
 
-        //Now see if we need to add the expected opportunity amounts
-        if(this.context.forecasts.forecastschedule.models)
-        {
-            _.each(this.context.forecasts.forecastschedule.models, function(model) {
-                if(model.get('status') == 'Active')
-                {
-                    var amount = model.get('expected_amount'),
-                        best = model.get('expected_best_case'),
-                        worst = model.get('expected_worst_case'),
-                        base_rate = parseFloat(model.get('base_rate'));
-
-
-                    //Check for null condition and, if so, set to 0
-                    amount = amount != null ? parseFloat(amount) : 0;
-                    best = best != null ? parseFloat(best) : 0;
-                    worst = worst != null ? parseFloat(worst) : 0;
-
-                    var amount_base = app.currency.convertWithRate(amount, base_rate),
-                        best_base = app.currency.convertWithRate(best, base_rate),
-                        worst_base = app.currency.convertWithRate(worst, base_rate);
-
-                    //If commit_stage is include then we count the forecast schedule model
-                    if(model.get('expected_commit_stage') == 'include')
-                    {
-                        includedAmount += amount_base;
-                        includedBest += best_base;
-                        includedWorst += worst_base;
-                    }
-
-                    overallAmount += amount_base;
-                    overallBest += best_base;
-                    overallWorst += worst_base;
-                }
-            });
-        }
 
         var totals = {
             'amount' : includedAmount,
