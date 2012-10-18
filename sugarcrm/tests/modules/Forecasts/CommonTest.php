@@ -78,7 +78,7 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
 
         SugarTestForecastUtilities::createForecast($this->timeperiod, $this->rep);
 
-        SugarTestForecastScheduleUtilities::createForecastSchedule($this->timeperiod, $this->rep);
+        //SugarTestForecastScheduleUtilities::createForecastSchedule($this->timeperiod, $this->rep);
     }
 
     public function tearDown()
@@ -86,7 +86,7 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::removeAllCreatedForecasts();
-        SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
+        //SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
     }
 
     /**

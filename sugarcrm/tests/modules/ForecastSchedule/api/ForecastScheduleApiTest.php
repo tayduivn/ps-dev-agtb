@@ -79,8 +79,8 @@ class ForecastScheduleApiTest extends RestTestBase
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
     	//create ForecastSchedule
-        self::$forecastSchedule1 = SugarTestForecastScheduleUtilities::createForecastSchedule(self::$timeperiod, self::$manager);
-        self::$forecastSchedule2 = SugarTestForecastScheduleUtilities::createForecastSchedule(self::$timeperiod, self::$reportee);
+        //self::$forecastSchedule1 = SugarTestForecastScheduleUtilities::createForecastSchedule(self::$timeperiod, self::$manager);
+        //self::$forecastSchedule2 = SugarTestForecastScheduleUtilities::createForecastSchedule(self::$timeperiod, self::$reportee);
 
     	parent::setUpBeforeClass();
     }
@@ -88,12 +88,13 @@ class ForecastScheduleApiTest extends RestTestBase
     public static function tearDownAfterClass(){
     	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
+        //SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
     	parent::tearDownAfterClass();
     }
     
     public function setUp()
     {
+    	$this->markTestSkipped("Skipped becuase this was pulled out to be done in 6.8.  Preserving work.");
         //Create an anonymous user for login purposes/
         $this->_user = self::$manager;
         $GLOBALS['current_user'] = $this->_user;
