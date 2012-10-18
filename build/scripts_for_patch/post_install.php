@@ -905,7 +905,7 @@ function update_relationships()
     $directory = new RecursiveDirectoryIterator('custom/Extension/modules/relationships/relationships');
     foreach($directory as $file)
     {
-        if ($file->getExtension() != 'php')
+        if (pathinfo($file->getFilename(), PATHINFO_EXTENSION) != 'php')
         {
             continue;
         }
