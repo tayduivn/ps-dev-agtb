@@ -246,6 +246,11 @@ class FileApi extends SugarApi {
 
                 // Handle errors
                 if (!empty($sf->error)) {
+
+                    // Check delete_if_fails flag ... if true delete corresponding record
+                    if(!empty($args['delete_if_fails'])) {
+                        $bean->mark_deleted($bean->id);
+                    }
                     throw new SugarApiExceptionError($sf->error);
                 }
 
