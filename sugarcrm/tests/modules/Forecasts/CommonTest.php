@@ -1,5 +1,6 @@
 <?php
 //FILE SUGARCRM flav=pro ONLY
+//TODO: fix this up for when expected opps is added back in 6.8
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
