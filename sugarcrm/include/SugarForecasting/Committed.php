@@ -134,39 +134,39 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         
         if(count($worksheetIds) > 0)
         {
-        	$sql = "update worksheet w " .
-        	   		"set w.best_case = 	(" .
+        	$sql = "update worksheet " .
+        	   		"set best_case = 	(" .
         	   								"select p.best_case " .
         	   								"from products p " .
-        	   								"where p.id = w.related_id" .
+        	   								"where p.id = related_id" .
         	   							"), " .
-        	   			"w.likely_case = (" .
+        	   			"likely_case = (" .
         	   								"select p.likely_case " .
         	   								"from products p " .
-        	   								"where p.id = w.related_id" .
+        	   								"where p.id = related_id" .
         	   							"), " .
-        	   			"w.worst_case = (" .
+        	   			"worst_case = (" .
         	   								"select p.worst_case " .
         	   								"from products p " .
-        	   								"where p.id = w.related_id" .
+        	   								"where p.id = related_id" .
         	   							"), " .
-        	   			"w.op_probability = (" .
+        	   			"op_probability = (" .
         	   									"select p.probability " .
         	   									"from products p " .
-        	   									"where p.id = w.related_id" .
+        	   									"where p.id = related_id" .
         	   								"), " .
-        	   			"w.commit_stage = (" .
+        	   			"commit_stage = (" .
         	   								"select p.commit_stage " .
         	   								"from products p " .
-        	   								"where p.id = w.related_id" .
+        	   								"where p.id = related_id" .
         	   							  "), " .
-        	   			"w.version = 1 " .
+        	   			"version = 1 " .
         	   	"where exists (" .
         	   					"select * " .
         	   					"from products p " .
-        	   					"where p.id = w.related_id" .
+        	   					"where p.id = related_id" .
         	   				  ") " .
-        	    "and w.id in ('" . implode("', '", $worksheetIds) . "')";
+        	    "and id in ('" . implode("', '", $worksheetIds) . "')";
         	        	        	
         	$db->query($sql, true);      	        	
         }
