@@ -15,7 +15,7 @@
     },
 
     getData: function() {
-        var name = this.model.get("name") || this.model.get('account_name') || this.model.get('full_name');
+        var name = this.model.get("account_name") || this.model.get('name') || this.model.get('full_name');
 
         if (name) {
             $.ajax({

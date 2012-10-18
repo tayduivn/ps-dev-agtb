@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=free ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'clients/base/api/ListApi.php';
@@ -211,7 +210,25 @@ class OpportunitiesSummerApi extends ListApi
         }
 
         usort($data, $scoreSort);
-        return array_slice($data, 0, 3);
+        $result =  array_slice($data, 0, 3);
+        $users = array();
+        foreach($result as $k=>$row){
+            if(isset($row['assigned_user_id'])){
+                $users[$row['assigned_user_id']] = $row['assigned_user_id'];
+            }
+        }
+        if(!empty($users)){
+            $pics = $GLOBALS['db']->query('SELECT id, picture FROM users WHERE id IN (\'' . implode($users, "', '"). '\')');
+            foreach($pics as $pic){
+                $users[$pic['id']] = $pic['picture'];
+            }
+            foreach($result as $k=>$row){
+                 if(isset($row['assigned_user_id'])){
+                    $result[$k]['picture'] = $users[$row['assigned_user_id']];
+                }
+            }
+        }
+        return $result;
     }
 
     protected function getBean($api, $args)
