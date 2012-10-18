@@ -25,6 +25,11 @@ describe("The forecastsConfigCategories view", function(){
     beforeEach(function() {
         app = SugarTest.app;
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsConfigCategories", "forecastsConfigCategories", "js", function(d) { return eval(d); });
+        view.context = {};
+        view.context.forecasts = {};
+        view.context.forecasts.config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
     });
 
     afterEach(function() {
