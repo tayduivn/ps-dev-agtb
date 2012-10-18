@@ -4,10 +4,10 @@
     },
 
     initialize: function(options) {
-        this.app.events.on("app:sync:complete", this.render, this);
-        this.app.events.on("app:view:change", this.render, this);
+        app.events.on("app:sync:complete", this.render, this);
+        app.events.on("app:view:change", this.render, this);
 
-        this.app.view.View.prototype.initialize.call(this, options);
+        app.view.View.prototype.initialize.call(this, options);
 
         if (this.layout) {
             this.layout.on("view:resize", this.resize, this);
@@ -19,111 +19,200 @@
      * @private
      */
     _renderHtml: function() {
-        if (!this.app.api.isAuthenticated() || this.app.config.appStatus == 'offline') return;
+        if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         //TODO: sidecar needs a function to pull this list from user prefs
         //The module list needs to be key:value pairs of module name and its translated label
-        this.module_list = this.app.metadata.data.module_list;
-        this.currentModule = this.module;
-        this.app.view.View.prototype._renderHtml.call(this);
-        this.initMenu();
+        var self = this;
+        this.module_list = {};
+        if (app.metadata.data.module_list) {
+            _.each(app.metadata.data.module_list, function(val, key) {
+                if (key !== '_hash') {
+                    self.module_list[key] = val;
+                }
+            });
+        }
+
+        app.view.View.prototype._renderHtml.call(this);
+        this.resetMenu();
+        this.activeModule.set(this.app.controller.context.get("module"));
     },
 
     /**
      * When user clicks tab navigation in header
      */
     onModuleTabClicked: function(evt) {
-        var moduleHref = this.$(evt.currentTarget).attr('href');
+        var $target = this.$(evt.currentTarget),
+            moduleHref = $target.attr('href');
+
         if(moduleHref.match(/^#/)) {
-            evt.preventDefault();
-            evt.stopPropagation();
-            this.$('#module_list li').removeClass('active');
-            this.$(evt.currentTarget).parent().addClass('active');
-            this.app.router.navigate(moduleHref, {trigger: true});
+            this.activeModule.set($target.closest('li').attr('class'));
+            app.router.navigate(moduleHref, {trigger: true});
+            return false;
         }
     },
 
     /**
      * Reset the module list to the full list
      */
-    initMenu: function() {
-        var moduleList = this.$("#module_list"),
-            activeMenu = moduleList.find(".active");
-        if (activeMenu.length > 0 && activeMenu[0]._nextSibling) {
-            activeMenu[0]._nextSibling.before(activeMenu);
-        }
-        //restore back to the module list
-        this.$(".more").before(moduleList.find(".dropdown-menu").children());
-        this.$(".dropdown.open").toggleClass("open");
-        moduleList.find("." + this.app.controller.context.get("module")).addClass("active");
+    resetMenu: function() {
+        this.$('.more').before(this.$('#module_list .dropdown-menu').children());
+        this.$('.dropdown.open').removeClass('open');
     },
 
     /**
-     * Resize the module list to the specified width and move the extra module names to the dropdown
+     * Resize the module list to the specified width and move the extra module names to the dropdown.
+     * We first clone the module list, make adjustments, and then replace.
+     * @param width
      */
     resize: function (width) {
+        if (width <= 0) {
+            return;
+        }
+
+        var $moduleList = this.$el.find('#module_list'),
+            $moduleListClone = $moduleList.clone(),
+            $cloneContainer = $('<div></div>');
+
+        // make the cloned module list visible but away from user's view to accurately calculate width
+        $cloneContainer
+            .css({
+                position: 'absolute',
+                top: '-9999px',
+                display: 'block'
+            })
+            .append($moduleListClone);
+
+        this.$el.append($cloneContainer);
+
         //TODO: ie Compatible, scrollable dropdown for low-res. window
         //TODO: Theme Compatible, Filtered switching menu
-        var currentModuleList = this.$("#module_list"),
-            menuItemsWidth = currentModuleList.outerWidth(true),
-            menuItems = currentModuleList.children("li"),
-            menuLength = menuItems.length,
-            menuNode = currentModuleList.find(".more"),
-            moreMenuLength = menuNode.find(".dropdown-menu li").length,
-            dropdownNode = menuNode.find(".dropdown-menu"),
         //TODO: User preferences maximum menu count
-            max_tabs = menuLength + moreMenuLength,
-            nextMenuNode = null;
+        if($moduleListClone.outerWidth(true) >= width){
+            this.removeModulesFromList($moduleListClone, width);
+        } else {
+            this.addModulesToList($moduleListClone, width);
+        }
 
-        if(menuItemsWidth > width){ //Flip
-            menuNode = menuNode.prev();
-            //Move the overflooding menu item into the dropdown
-            //until the current menu item width exceeds the max. available width
-            //To avoid the race condition the loop lasts until all menu items iterates once.
-            while(menuItemsWidth >= width && menuLength-- > 0){
+        // replace the module list with the modified cloned list
+        $moduleList.remove();
+        this.$el.append($moduleListClone);
+        $cloneContainer.remove();
+    },
 
-                if(menuNode.hasClass("active")){
-                    if(_.isUndefined(menuNode[0]._nextSibling)) {
-                        menuNode[0]._nextSibling = dropdownNode.children("li:first");
-                    }
-                    menuNode = menuNode.prev();
-                }
-                if(menuNode.hasClass("home")){
-                    menuNode = menuNode.prev();
-                }
-                if(menuNode.hasClass("more")){
-                    menuNode = menuNode.prev();
-                }
+    /**
+     * Move modules from the dropdown to the list to fit the specified width
+     * @param $modules
+     * @param width
+     */
+    addModulesToList: function($modules, width) {
+        var $dropdown = $modules.find('.dropdown-menu'),
+            $moduleToInsert = $dropdown.children("li:first"),
+            $more = $modules.find('.more'),
+            $lastModuleInList, $nextModule,
+            currentWidth = $modules.outerWidth(true);
 
-                nextMenuNode = menuNode.prev();
-                dropdownNode.prepend(menuNode.attr("width", menuNode.width()));
-                menuItemsWidth = currentModuleList.outerWidth(true);
-                menuNode = nextMenuNode;
+        while ((currentWidth < width) && ($dropdown.children().length > 0)){
+            $nextModule = $moduleToInsert.next();
 
+            // add the modules in order
+            $lastModuleInList = $more.prev();
+            if (this.activeModule.isActive($lastModuleInList) && !this.activeModule.isNext($moduleToInsert)) {
+                $lastModuleInList.before($moduleToInsert);
+            } else {
+                $more.before($moduleToInsert);
             }
-        } else { //Expand
-            var insertNode = dropdownNode.children("li:first");
-            while(menuItemsWidth <= width && (menuLength <= max_tabs)){
-                var menuNodeWidth = insertNode.width();
-                //If current proposing item exceeds the maxium availble width,
-                //it should skip the expanding job.
-                if (menuItemsWidth + menuNodeWidth > width) {
-                    break;
-                }
-                menuLength++;
 
-                nextMenuNode = insertNode.next();
+            currentWidth = $modules.outerWidth(true);
+            $moduleToInsert = $nextModule;
 
-                if(menuNode.prev().hasClass("active")) {
-                    menuNode = menuNode.prev();
-                    if(menuNode[0]._nextSibling && menuNode[0]._nextSibling.attr("class") == insertNode.attr("class")) {
-                        menuNode = menuNode.next();
-                    }
-                }
-                menuNode.before(insertNode);
-                menuItemsWidth = currentModuleList.outerWidth(true);
-                insertNode = nextMenuNode;
+            // remove the last added module if the width is wider than desired
+            if (currentWidth >= width) {
+                this.removeModulesFromList($modules, width);
+                break;
             }
+        }
+    },
+
+    /**
+     * Move modules from the list to the dropdown to fit the specified width
+     * @param $modules
+     * @param width
+     */
+    removeModulesFromList: function($modules, width) {
+        var $dropdown = $modules.find('.dropdown-menu'),
+            $module = $modules.find('.more').prev(),
+            $next, currentWidth = $modules.outerWidth(true);
+
+        while (currentWidth >= width) {
+            // home and currently active module should not be removed from the list
+            if (this.activeModule.isActive($module) || $module.hasClass('Home')) {
+                $module = $module.prev();
+            }
+
+            $next = $module.prev();
+            $dropdown.prepend($module);
+
+            currentWidth = $modules.outerWidth(true);
+            $module = $next;
+        }
+    },
+
+    activeModule: {
+        _class: 'active', //class to indicate the active module
+        _next: null, //the module next to the active module
+        _moduleList: this,
+
+        /**
+         * Set the specified module as the active module
+         * @param module
+         */
+        set: function(module) {
+            var $modules, $module, $next;
+            if (module) {
+                this.reset();
+
+                $modules = this._moduleList.$('#module_list');
+                $module = $modules.find('.' + module);
+
+                $module.addClass(this._class);
+
+                // remember which module is supposed to be next to the active module so that
+                // ordering can be preserved while modules are removed and added to the list
+                if (!this._next) {
+                    $next = $module.next();
+                    if ($next.hasClass('more')) {
+                        $next = $modules.find('.dropdown-menu li:first');
+                    }
+                    this._next = $next.attr('class');
+                }
+            }
+        },
+
+        /**
+         * Is this module the active module?
+         * @param $module
+         * @return {Boolean}
+         */
+        isActive: function($module) {
+            return $module.hasClass(this._class);
+        },
+
+        /**
+         * Is this module supposed to be next to the the active module?
+         * @param $module
+         * @return {Boolean}
+         */
+        isNext: function($module) {
+            return (this._next === $module.attr('class'));
+        },
+
+        /**
+         * Clear active modules
+         */
+        reset: function() {
+            this._next = null;
+            this._moduleList.$('#module_list').children(this._class).removeClass(this._class);
         }
     }
 })
