@@ -167,7 +167,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         	   					"where p.id = w.related_id" .
         	   				  ") " .
         	    "and w.id in ('" . implode("', '", $worksheetIds) . "')";
-        	$db->query($sql);
+        	        	        	
+        	$db->query($sql, true);      	        	
         }
         
 

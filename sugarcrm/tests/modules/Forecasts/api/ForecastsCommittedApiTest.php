@@ -74,4 +74,57 @@ class ForecastsCommittedApiTest extends RestTestBase
         $response = $this->_restCall("Forecasts/committed");
         $this->assertEmpty($response["reply"], "Rest reply is not empty. No default manager data should have been returned.");
     }
+    
+     /**
+     * @group forecastapi
+     * @group forecasts
+     */
+    public function testForecastsCommittedSubmit()
+    {
+    	$manager = SugarTestForecastUtilities::createForecastUser();
+        $reportee = SugarTestForecastUtilities::createForecastUser(array("user" => array("reports_to" => $manager["user"]->id)));
+        $timeperiod = SugarTestForecastUtilities::getCreatedTimePeriod();
+        
+        $tempUser = $GLOBALS["current_user"] = $this->_user;
+    	
+    	// set the current user to salesrep
+        $this->_user = $reportee["user"];
+        $GLOBALS["current_user"] = $this->_user;
+        $this->authToken = "";
+        $postData = array(
+        	"amount" => 100,
+        	"base_rate" => 1,
+        	"best_case" => 100,
+        	"currency_id" => -99,
+        	"forecast_type" => "Direct",
+        	"likely_case" => 100,
+        	"opp_count" => 3,
+        	"timeperiod_id" => $timeperiod->id,
+        	"worksheetData" => array(
+        		"new" => array(),
+        		"current" => array(
+        			array(
+        				"worksheet_id" => $reportee["opp_worksheets"][0]->id
+        			),
+        			array(
+        				"worksheet_id" => $reportee["opp_worksheets"][1]->id
+        			),
+        		)
+        	)
+        );        
+        
+        /*
+         * Make the rest call so that the worksheet update SQL is fired. This is to test DB 
+         * compatibility. There is nothing to assert, but if the SQL fails, the testing suite should
+         * catastrophically die.
+         */
+        $response = $this->_restCall("Forecasts/committed", json_encode($postData), "POST");
+               
+        $this->assertNotEmpty($response["reply"], "The rest reply is empty.  Please check sugarcrm.log for database errors.");
+        
+        // set the current user back.
+        $this->_user = $tempUser;
+        $GLOBALS["current_user"] = $tempUser;
+        $this->authToken = "";
+    }
 }
