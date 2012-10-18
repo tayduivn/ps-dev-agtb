@@ -288,9 +288,9 @@ class ActivityStream extends SugarBean {
             $where .= " AND ((a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
                 $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
-                $post_tag_header = "@[".$targetModule.":".$targetId;
-                $where .= ") OR (a.activity_data LIKE '%".$post_tag_header."%'";
-                $where .= ") OR (a.id IN (SELECT activity_id FROM activity_comments where value LIKE '%".$post_tag_header."%')";
+                $post_tag = "@[".$targetModule.":".$targetId."]";
+                $where .= ") OR (a.activity_data LIKE '%".$post_tag."%'";
+                $where .= ") OR (a.id IN (SELECT activity_id FROM activity_comments where value LIKE '%".$post_tag."%')";
             }
             $where .= "))";
         }
