@@ -39,11 +39,12 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $GLOBALS['module'] = $moduleName; //WirelessView keys off global variable not instance variable...
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
-                    //$results = self::formatWirelessListViewResultsToArray($results);
                     
                     // Needed for conversion
                     require_once 'include/MetaDataManager/MetaDataConverter.php';
                     $results = MetaDataConverter::toLegacy('list', $results);
+                    $results = self::formatWirelessListViewResultsToArray($results);
+                    
                 }
                 elseif ($view == 'subpanel')
                     $results = $this->get_subpanel_defs($moduleName, $type);
