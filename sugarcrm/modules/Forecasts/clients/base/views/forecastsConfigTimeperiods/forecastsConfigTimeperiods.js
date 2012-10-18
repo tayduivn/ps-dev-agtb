@@ -24,7 +24,7 @@
          * This is needed to make sure that this view is read only
          * when viewing it in the Tabbed Config View
          */
-        if(this.layout.meta.type == "forecastsTabbedConfig") {
+        if(!_.isUndefined(this.layout) && this.layout.meta.type == "forecastsTabbedConfig") {
             // if we are on the tabbed config, this is read only!
             field.options.def.view = 'detail';
         }
