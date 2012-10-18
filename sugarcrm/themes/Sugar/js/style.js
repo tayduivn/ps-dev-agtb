@@ -83,6 +83,12 @@ SUGAR.append(SUGAR.themes, {
     },
     setCurrentTab: function(params) {
         var el = '#moduleTab_'+ sugar_theme_gm_current + params.module;
+
+        // Sometimes the current module is picked with CSS used
+        // for the "More" tab, so the sub menu appears to the right of it
+        // Clear the 'top' and 'left' attributes
+        $(el).parent().children('ul').css({'top' : '', 'left' : ''});
+
         if ($(el) && $(el).parent()) {
             SUGAR.themes.setRightMenuTab(el, params);
             var currActiveTab = "#themeTabGroupMenu_"+sugar_theme_gm_current+" li.current";

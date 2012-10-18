@@ -520,12 +520,15 @@ class RenameModules
 
                     $replaceKey = $linkEntry['vname'];
                     $oldStringValue = $mod_strings[$replaceKey];
-                    //At this point we don't know if we should replace the string with the plural or singular version of the new
-                    //strings so we'll try both but with the plural version first since it should be longer than the singular.
-                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_plural'], ENT_QUOTES), $renameFields['plural'], $oldStringValue);
-                    if ($replacedString == $oldStringValue) {
-                        $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_singular'], ENT_QUOTES), $renameFields['singular'], $replacedString);
+                   // Use the plural value of the two only if it's longer and the old language string contains it,
+                   // singular otherwise
+                    if (strlen($renameFields['prev_plural']) > strlen($renameFields['prev_singular']) && strpos($oldStringValue, $renameFields['prev_plural']) !== false) {
+                        $key = 'plural';
+                    } else {
+                       $key = 'singular';
+
                     }
+                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_' . $key], ENT_QUOTES), $renameFields[$key], $oldStringValue);
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
             }
@@ -707,7 +710,7 @@ class RenameModules
             array('name' => 'LNK_LIST', 'type' => 'plural'), //Module built modules, View <moduleName>
             array('name' => 'LNK_NEW_###MODULE_SINGULAR###', 'type' => 'singular'),
             array('name' => 'LNK_CREATE', 'type' => 'singular'),
-            array('name' => 'LBL_MODULE_NAME', 'type' => 'singular'),
+            array('name' => 'LBL_MODULE_NAME', 'type' => 'plural'),
             array('name' => 'LBL_NEW_FORM_TITLE', 'type' => 'singular'),
             array('name' => 'LBL_NEW_FORM_BTN', 'type' => 'singular'),
             array('name' => 'LNK_###MODULE_SINGULAR###_LIST', 'type' => 'plural'),

@@ -23,6 +23,7 @@
  ********************************************************************************/
 
 require_once 'modules/ModuleBuilder/controller.php';
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
     public $mbController;
@@ -113,4 +114,18 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
         $this->assertFileExists($file, "$file was not created when module was saved");
         //END SUGARCRM flav=ent ONLY
     }
+    
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group Bug56675
+     */
+    public function testUndeployedMobileListViewsHavePanelDefs()
+    {
+        $parser = ParserFactory::getParser(MB_WIRELESSLISTVIEW, 'test', 'test', null, MB_WIRELESS);
+        $paneldefs = $parser->getPanelDefs();
+        $this->assertNotEmpty($paneldefs, "Undeployed Module list view defs have no panel defs");
+        $this->assertTrue(is_array($paneldefs), "Undeployed Module List view panel defs are not of type ARRAY");
+        $this->assertTrue(isset($paneldefs[0]['label']), "Undeployed Module List view panel defs do not have a label");
+    }
+    //END SUGARCRM flav=pro ONLY
 }

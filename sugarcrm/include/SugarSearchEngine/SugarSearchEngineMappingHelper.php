@@ -73,10 +73,8 @@ class SugarSearchEngineMappingHelper
             ),
             */
            'type' => array(
-                'datetimecombo'  =>  array(
-                                      'type'  => 'date',
-                                    ),
-            )
+                'datetimecombo'  =>  'date',
+            ),
         ),
     );
 
@@ -176,7 +174,7 @@ class SugarSearchEngineMappingHelper
 
         if (empty($searchEngineType))
         {
-            $searchEngineType = array('type'=> 'string'); // default
+            $searchEngineType = 'string'; // default
         }
 
         return $searchEngineType;

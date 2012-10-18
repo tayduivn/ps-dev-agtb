@@ -319,17 +319,7 @@ class Email extends SugarBean {
 	 * @return string MIME-type
 	 */
 	function email2GetMime($fileLocation) {
-	    if(!is_readable($fileLocation)) {
-	        return 'application/octet-stream';
-	    }
-		if(function_exists('mime_content_type')) {
-			$mime = mime_content_type($fileLocation);
-		} elseif(function_exists('ext2mime')) {
-			$mime = ext2mime($fileLocation);
-		} else {
-			$mime = 'application/octet-stream';
-		}
-		return $mime;
+	    return get_file_mime_type($fileLocation, 'application/octet-stream');
 	}
 
 
@@ -1201,7 +1191,7 @@ class Email extends SugarBean {
                 continue;
             }
             if(!empty($parts["name"])) {
-                $res[] = "{$parts["name"]} <{$parts["email"]}>";
+                $res[] = "{$parts['name']} <{$parts['email']}>";
             } else {
                 $res[] .= $parts["email"];
             }
@@ -1443,7 +1433,7 @@ class Email extends SugarBean {
 		if(empty($text)) {
 			return '';
 		}
-		$text = str_replace("\n", "\n<BR/>", $text);
+		$text = str_replace("\n", "<BR/>", $text);
 		$out = "<div style='border-left:1px solid #00c; padding:5px; margin-left:10px;'>{$text}</div>";
 
 		return $out;
