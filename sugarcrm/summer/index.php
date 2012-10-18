@@ -22,6 +22,16 @@ if (empty($_SESSION['authenticated_user_id'])) {
     header('Location: splash/');
     die();
 }
+if(!empty($_REQUEST['demo'])){
+    if (!defined('sugarEntry')) {
+        define('sugarEntry', true);
+    }
+    chdir('..');
+    include 'include/entryPoint.php';
+    include 'summer/demo.php';
+    chdir('summer');
+    header("Location: index.php");
+}
 
 ?>
 <!DOCTYPE HTML>
