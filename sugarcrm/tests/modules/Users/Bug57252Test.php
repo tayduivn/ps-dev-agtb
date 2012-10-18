@@ -43,6 +43,8 @@ class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        global $current_user;
+        $current_user->resetPreferences();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
