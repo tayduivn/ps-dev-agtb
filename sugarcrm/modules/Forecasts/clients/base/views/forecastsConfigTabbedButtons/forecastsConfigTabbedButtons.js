@@ -30,6 +30,13 @@
         this.breadCrumbLabels = this.layout.getBreadCrumbLabels();
     },
 
+    bindDataChange: function() {
+        var self = this;
+        this.model.on('change', function(){
+            self.$el.find('[name=save_button]').removeClass('disabled');
+        })
+    },
+
     /**
      * Handle the close button click, don't save anything
      *

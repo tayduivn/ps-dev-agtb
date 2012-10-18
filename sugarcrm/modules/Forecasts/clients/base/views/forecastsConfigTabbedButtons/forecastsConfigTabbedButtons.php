@@ -29,7 +29,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTabbedButtons'] = array(
                 array(
                     'name' => 'save_button',
                     'type' => 'button',
-                    'css_class' => 'btn-primary pull-right',
+                    'css_class' => 'btn-primary pull-right disabled',
                     'label' => 'LBL_SAVE_BUTTON_LABEL',
                     'primary' => true,
                 ),
