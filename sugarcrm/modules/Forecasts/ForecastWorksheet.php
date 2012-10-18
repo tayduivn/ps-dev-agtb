@@ -119,5 +119,109 @@ class ForecastWorksheet extends SugarBean {
             $this->$arg_key = $arg;
         }
 	}
+	
+    static public function reassignForecast($fromUserId, $toUserId)
+    {
+        global $current_user;
+
+        $db = DBManagerFactory::getInstance();
+
+        // reassign Opportunities
+        $_object = new Opportunity();
+        $_query = "update {$_object->table_name} set ".
+            "assigned_user_id = '{$toUserId}', ".
+            "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
+            "modified_user_id = '{$current_user->id}' ".
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}'";
+        $res = $db->query($_query, true);
+        $affected_rows = $db->getAffectedRowCount($res);
+
+        // Products
+        // reassign only products that have related opportunity - products created from opportunity::save()
+        // other products will be reassigned if module Product is selected by user
+        $_object = new Product();
+        $_query = "update {$_object->table_name} set ".
+            "assigned_user_id = '{$toUserId}', ".
+            "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
+            "modified_user_id = '{$current_user->id}' ".
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.assigned_user_id = '{$fromUserId}' and {$_object->table_name}.opportunity_id IS NOT NULL ";
+        $db->query($_query, true);
+
+        // delete Forecasts
+        $_object = new Forecast();
+        $_query = "update {$_object->table_name} set ".
+            "deleted = 1, ".
+            "date_modified = '".TimeDate::getInstance()->nowDb()."' ".
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
+        $db->query($_query, true);
+
+        // delete Expected Oportunities
+        $_object = new ForecastSchedule();
+        $_query = "update {$_object->table_name} set ".
+            "deleted = 1, ".
+            "date_modified = '".TimeDate::getInstance()->nowDb()."' ".
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
+        $db->query($_query, true);
+
+        // delete Quotas
+        $_object = new Quota();
+        $_query = "update {$_object->table_name} set ".
+            "deleted = 1, ".
+            "date_modified = '".TimeDate::getInstance()->nowDb()."' ".
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}'";
+        $db->query($_query, true);
+
+        // clear reports_to for inactive users
+        $objFromUser = new User();
+        $objFromUser->retrieve($fromUserId);
+        $fromUserReportsTo = !empty($objFromUser->reports_to_id) ? $objFromUser->reports_to_id : '';
+        $objFromUser->reports_to_id = '';
+        $objFromUser->save();
+
+        if ( User::isManager($fromUserId) )
+        {
+            // setup report_to for user
+            $objToUserId = new User();
+            $objToUserId->retrieve($toUserId);
+            $objToUserId->reports_to_id = $fromUserReportsTo;
+            $objToUserId->save();
+
+            // reassign users (reportees)
+            $_object = new User();
+            $_query = "update {$_object->table_name} set ".
+                "reports_to_id = '{$toUserId}', ".
+                "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
+                "modified_user_id = '{$current_user->id}' ".
+                "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.reports_to_id = '{$fromUserId}' ".
+                "and {$_object->table_name}.id != '{$toUserId}'";
+            $db->query($_query, true);
+        }
+
+        // Worksheets
+        // reassign worksheets for products (opportunities)
+        $_object = new Worksheet();
+        $_query = "update {$_object->table_name} set ".
+            "user_id = '{$toUserId}', ".
+            "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
+            "modified_user_id = '{$current_user->id}' ".
+            "where {$_object->table_name}.deleted = 0 and {$_object->table_name}.user_id = '{$fromUserId}' ";
+        $db->query($_query, true);
+
+        // delete worksheet where related_id is user id - rollups
+        $_object = new Worksheet();
+        $_query = "update {$_object->table_name} set ".
+            "deleted = 1, ".
+            "date_modified = '".TimeDate::getInstance()->nowDb()."', ".
+            "modified_user_id = '{$current_user->id}' ".
+            "where {$_object->table_name}.deleted = 0 ".
+            "and {$_object->table_name}.forecast_type = 'Rollup' and {$_object->table_name}.related_forecast_type = 'Direct' ".
+            "and {$_object->table_name}.related_id = '{$fromUserId}' ";
+        $db->query($_query, true);
+
+        //todo: forecast_tree
+
+        return $affected_rows;
+    }
+
 }
 

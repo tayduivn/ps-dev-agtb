@@ -176,7 +176,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 					   "ON q.user_id = u.id " .
 					   "WHERE q.timeperiod_id = '{$this->getArg('timeperiod_id')}' " .
 					   "AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct') " .
-						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))";
+						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup')) and q.deleted = 0";
 
         $result = $db->query($quota_query);
 

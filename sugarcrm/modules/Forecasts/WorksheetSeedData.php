@@ -38,10 +38,11 @@ class WorksheetSeedData {
  * populateSeedData
  *
  * This is a static function to create the seed data
+ * @param Array $timeperiods Array of $timeperiod instances to build forecast data for
  * @return Array of created worksheet ids
  *
  */
-public static function populateSeedData()
+public static function populateSeedData($timeperiods = null)
 {
 
 require_once('modules/Forecasts/Common.php');
@@ -54,13 +55,19 @@ $db = DBManagerFactory::getInstance();
 
 $created_ids = array();
 
-//Get the previous, current and next timeperiods
-$result = $GLOBALS['db']->query("SELECT id FROM timeperiods WHERE is_fiscal_year = 0");
-
-while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
+if ( empty($timeperiods) )
 {
-    $timeperiod_id = $row['id'];
+    //Get the previous, current and next timeperiods
+    $timeperiods = array();
+    $result = $GLOBALS['db']->query("SELECT id FROM timeperiods WHERE is_fiscal_year = 0");
+    while(($row = $GLOBALS['db']->fetchByAssoc($result)) != null)
+    {
+        $timeperiods[$row['id']] = $row['id'];
+    }
+}
 
+foreach ($timeperiods as $timeperiod_id=>$timeperiod)
+{
     foreach($comm->all_users as $user_id => $reports_to)
     {
         $opps = self::getRelatedOpportunities($user_id, $timeperiod_id);

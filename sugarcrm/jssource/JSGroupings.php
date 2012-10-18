@@ -216,6 +216,38 @@
            //END SUGARCRM flav=ent ONLY
         );
 
+    // groupings for sidecar forecast
+    // use sidecar/src/include-manifest.php file to define what files should be loaded
+    // exclude lib/jquery/jquery.min.js b/s jquery is loaded and extended with sugar_grp1_jquery.js
+    $sidecar_forecasts = array();
+    $cached_file = 'include/javascript/sidecar_forecasts.js';
+    if ( file_exists('sidecar/src/include-manifest.php') )
+    {
+        require_once('sidecar/src/include-manifest.php');
+        if ( !empty($buildFiles) )
+        {
+            $sidecar_forecasts = array();
+            $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
+            foreach ( $buildFiles as $_ind => $_file )
+            {
+                $sidecar_forecasts['sidecar/'.$_file] = $cached_file;
+            }
+            $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
+            $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
+            $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/views/alert-view/alert-view.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
+            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
+            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
+            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
+        }
+    }
+    $js_groupings[] = $sidecar_forecasts;
+
     /**
      * Check for custom additions to this code
      */

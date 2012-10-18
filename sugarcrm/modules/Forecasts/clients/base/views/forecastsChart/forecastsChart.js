@@ -112,7 +112,6 @@
             category : app.defaultSelections.category
         };
 
-        console.log(values);
 
         this.handleRenderOptions(values);
     },
@@ -174,7 +173,7 @@
             self.handleRenderOptions({group_by: groupBy});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category:_.first(value)});
+            self.handleRenderOptions({category: value});
         });
         this.context.forecasts.on('change:hiddenSidebar', function(context, value){
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
@@ -268,7 +267,7 @@
         );
 
         if(this.values.display_manager === true) {
-            this.values.category = "Committed";
+            this.values.category = "include";
         }
 
         // update the chart title

@@ -308,6 +308,9 @@ class MetadataApi extends SugarApi {
                         else
                             $firstComp = false;
                         $controller = $component['controller'];
+                        // remove additional symbols in end of js content - it will be included in content
+                        $controller = trim(trim($controller), ",;");
+
                         $js .= "\n\t\t\"$name\":{controller:$controller}";
                             unset($data[$mdType][$name]['controller']);
 

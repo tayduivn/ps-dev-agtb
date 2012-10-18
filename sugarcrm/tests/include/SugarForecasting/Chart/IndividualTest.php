@@ -118,6 +118,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
     {
         $args = self::$args;
         $args['dataset'] = $dataset;
+        $args['category'] = 'include';
         $obj = new SugarForecasting_Chart_Individual($args);
         $data = $obj->process();
 
@@ -163,6 +164,7 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
     {
         $args = self::$args;
         $args['dataset'] = $dataset;
+        $args['category'] = 'include';
         $obj = new MockSugarForecasting_Chart_Individual($args);
         $data = $obj->process();
 
@@ -216,6 +218,56 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         $base_currency = SugarCurrency::getBaseCurrency();
 
         $this->assertStringStartsWith($base_currency->symbol, $data['values'][$chart_position]['goalmarkervaluelabel'][1]);
+    }
+
+    /**
+     * @dataProvider dataProviderCategories
+     * @group forecasts
+     * @group forecastschart
+     */
+    public function testChartFiltering($category)
+    {
+        $args = self::$args;
+        $args['category'] = $category;
+        $obj = new SugarForecasting_Chart_Individual($args);
+        $data = $obj->process();
+
+        foreach ($category as $key => $value)
+        {
+            $category[$key] = ucfirst($value);
+        }
+
+        if (!empty($category))
+        {
+            $categories = $category;
+        }
+        else
+        {
+            $opp_ids = SugarTestOpportunityUtilities::getCreatedOpportunityIds();
+            $categories = array();
+            foreach($opp_ids as $id)
+            {
+                $opp = BeanFactory::getBean('Opportunities', $id);
+                $categories[] = ucfirst($opp->commit_stage);
+            }
+            $categories = array_unique($categories);
+        }
+
+        $this->assertEmpty(array_diff($categories, $data['label']));
+    }
+
+        /**
+     * Dataset Provider
+     *
+     * @return array
+     */
+    public function dataProviderCategories()
+    {
+        return array(
+            array(array('include')),
+            array(array('include', 'exclude')),
+            array(array()),
+        );
     }
 
     /**

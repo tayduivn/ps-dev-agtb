@@ -19,6 +19,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/*
+ * Skip this test.  Expected Opportunities is not a part of nutmeg
+ */
 describe("The expected opportunities view tests", function(){
 
     var app, view, context, dm, metadata;
@@ -158,7 +161,7 @@ describe("The expected opportunities view tests", function(){
 
     describe("test change:expected_commit_stage updates the model", function() {
 
-        it("should update the model on change:expected_commit_stage", function() {
+        xit("should update the model on change:expected_commit_stage", function() {
             var moduleName = "ForecastSchedule";
             dm.declareModel(moduleName, metadata.modules[moduleName]);
             forecastSchedule = dm.createBean(moduleName, {  id: "xyz", expected_commit_stage : 'exclude', expected_worst_case : 100, expected_best_case : 100, expected_amount : 100 });

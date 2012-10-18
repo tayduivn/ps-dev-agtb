@@ -83,25 +83,4 @@
         return new Handlebars.SafeString(label);
     });
 
-
-    /**
-     * Render the expected opportunities.  Moved the code to handle rendering the expected opportunities into a helper
-     * function since we have to iterate through the collection
-     *
-     */
-    Handlebars.registerHelper("expected_opportunity_column", function(tag) {
-    	
-        if(this.name == 'expected_commit_stage')
-        {
-        	var center = "";
-        	if(this.type == "bool"){
-        		center = "text-align:center;";
-        	}
-        	return tag == 'start' ? '<td><div style="font-weight: normal; width: 100%;' + center + '">' : '</div></td>';
-        } else if (this.name == 'expected_amount') {
-        	return tag == 'start' ? ('<th colspan="4" style="text-align: right;"><i>' + app.lang.get('LBL_EXPECTED_OPPORTUNITIES', 'Forecasts') + '</i></th><th>') : '</th>';
-        }
-        return tag == 'start' ? '<th>' : '</th>';
-    });
-
 })(SUGAR.App);

@@ -344,8 +344,11 @@ describe("The forecasts worksheet", function(){
     	it("forecasts.worksheet.on should have been called with change", function(){
     		expect(view.context.forecasts.worksheet.on).toHaveBeenCalledWith("change");
     	});
-    	
-    	it("forecasts.on should have been called with expectedOpportunities", function(){
+
+        /*
+         * Skip this test.  Expected Opportunities is not a part of nutmeg
+         */
+    	xit("forecasts.on should have been called with expectedOpportunities", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:expectedOpportunities");
     	});
     	
