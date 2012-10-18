@@ -61,6 +61,9 @@ class Bug43143Test extends Sugar_PHPUnit_Framework_TestCase
 	        array('+3 months', '2011-04-01'),
 	        array('+6 months', '2011-07-01'),
 	        array('+1 year', '2012-01-01'),
+            array('first day of this month', '2011-01-01'),
+            array('last day of this month', '2011-01-31'),
+            array('last day of next month', '2011-02-28'),
 	        );
 	}
 

@@ -647,14 +647,29 @@ class SugarDateTime extends DateTime
         //PHP 5.2 does not understand the " of " format
         if(PHP_VERSION_ID < 50300)
         {
-           //Special case for first day of next month used in code base
-           if($modify == 'first day of next month')
-           {
-               $this->setDate($this->year, $this->month+1, 1);
-               return $this;
-           }
-           //Last ditch effort to resolve this to syntax used for versions below 5.3
-           $modify = str_replace(' of ', ' ', $modify);
+            //Special case for first day of next month used in code base
+            switch ( strtolower($modify) )
+            {
+                case 'first day of this month' :
+                    $this->setDate($this->year, $this->month, 1);
+                    return $this;
+                    break;
+                case 'first day of next month' :
+                    $this->setDate($this->year, $this->month+1, 1);
+                    return $this;
+                    break;
+                case 'last day of this month' :
+                    $this->setDate($this->year, $this->month, $this->days_in_month);
+                    return $this;
+                    break;
+                case 'last day of next month' :
+                    $this->setDate($this->year, $this->month+1, 1);
+                    $this->setDate($this->year, $this->month, $this->days_in_month);
+                    return $this;
+                    break;
+            }
+            //Last ditch effort to resolve this to syntax used for versions below 5.3
+            $modify = str_replace(' of ', ' ', $modify);
         }
         parent::modify($modify);
         return $this;
