@@ -24,6 +24,10 @@
 (function (app) {
 
     app.view.layouts.ForecastsEmptyLayout = app.view.layouts.ForecastsLayout.extend({
+        /**
+         * location for the window to redirect to when OK or Cancel is clicked by default
+         */
+        loc: 'index.php?module=Forecasts',
 
         initialize:function (options) {
             options.context = _.extend(options.context, this.initializeAllModels(options.context));
@@ -57,10 +61,23 @@
         },
 
         _showConfigModal: function(showWizard) {
-            // callback is only used if the user is not an admin, gets to the modal,
-            // sees the "Not configured yet" message and clicks ok.  Not used if
-            // user is an admin, but needs to be passed
-            var callback = function(){};
+            var self = this;
+
+            // Callback object that gets called by modal.js when user clicks OK or cancel
+            var callback = {
+                // callback() has to be here for the modal to close, but the close function gets run
+                // after callback() and overwrites any location settings that need to happen
+                // without callback, no callbacks happen when you click OK button
+                callback: function() {},
+
+                // Checks to see if is_setup has been set and redirects the user accordingly
+                close: function() {
+                    if(!self.context.forecasts.config.get('is_setup')) {
+                        self.loc = 'index.php?module=Home';
+                    }
+                    window.location = self.loc;
+                }
+            }
 
             // begin building params to pass to modal
             var params = {
