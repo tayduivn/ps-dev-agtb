@@ -698,22 +698,41 @@
 
     _renderHtml: function() {
         var self = this;
+        var processAttachment = function(note, i) {
+            if(note.file_mime_type) {
+                note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
+                note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
+                note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
+            }
+        };
+        var processPicture = function(obj) {
+            var isModel = (obj instanceof Backbone.Model);
+            var created_by = obj.created_by || obj.get('created_by');
+            var url = "../clients/summer/views/imagesearch/anonymous.jpg";
+            if(obj.created_by_picture || obj.get('created_by_picture')) {
+                url = app.api.buildFileURL({
+                    module: 'Users',
+                    id: created_by,
+                    field: 'picture'
+                });
+            }
+            if(isModel) {
+                obj.set('created_by_picture_url', url);
+            } else {
+                obj.created_by_picture_url = url;
+            }
+        };
+
         _.each(this.collection.models, function(model) {
             var activity_data = model.get("activity_data");
-            var picture = model.get("created_by_picture");
             var comments = model.get("comments");
+
             if (activity_data && activity_data.value) {
                 activity_data.value = self._parseTags(activity_data.value);
                 model.set("activity_data", activity_data);
             }
 
-            model.set("created_by_picture_url", (picture) ? app.api.buildFileURL({
-                module: 'Users',
-                id: model.get('created_by'),
-                field: 'picture'
-            }) : "../clients/summer/views/imagesearch/anonymous.jpg");
-
-
+            processPicture(model);
             if (comments.length > 1) {
                 comments[1]['_starthidden'] = true;
                 comments[comments.length - 1]['_stophidden'] = true;
@@ -721,29 +740,10 @@
             }
             _.each(comments, function(comment) {
                 comment.value = self._parseTags(comment.value);
-
-                comment.created_by_picture_url = (comment.created_by_picture) ? app.api.buildFileURL({
-                    module: 'Users',
-                    id: comment.created_by,
-                    field: 'picture'
-                }) : "../clients/summer/views/imagesearch/anonymous.jpg";
-
-                _.each(comment.notes, function(note, index) {
-                    if(note.file_mime_type) {
-                        note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
-                        note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                        note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
-                    }
-                });
+                processPicture(comment);
+                _.each(comment.notes, processAttachment);
             });
-
-            _.each(model.get("notes"), function(note, index) {
-                if(note.file_mime_type) {
-                    note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
-                    note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                    note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
-                }
-            });
+            _.each(model.get("notes"), processAttachment);
 
         }, this);
 
