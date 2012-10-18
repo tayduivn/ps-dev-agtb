@@ -328,8 +328,8 @@ class MetadataApi extends SugarApi {
 
         $mm = $this->getMetadataManager();
         
-        $data['module_list'] = $this->getModuleList();
-        $data['full_module_list'] = $data['module_list'];
+        $data['full_module_list'] = $this->getModuleList();
+        $data['module_list'] = $this->getDisplayModules($data['full_module_list']);
 
         $data['modules'] = array();
 
@@ -556,7 +556,7 @@ class MetadataApi extends SugarApi {
      */
     protected function getModules() {
         // Loading a standard module list
-        return array_keys($GLOBALS['app_list_strings']['moduleList']);
+        return array_merge($GLOBALS['moduleList'], $GLOBALS['apiModuleList']);
     }
 
     /**
@@ -565,12 +565,7 @@ class MetadataApi extends SugarApi {
      */
     public function getModuleList() {
         $moduleList = $this->getModules();
-        $oldModuleList = $moduleList;
-        $moduleList = array();
-        foreach ( $oldModuleList as $module ) {
-            $moduleList[$module] = $module;
-        }
-
+        $moduleList = array_combine($moduleList, $moduleList);
         $moduleList['_hash'] = md5(serialize($moduleList));
         return $moduleList;
     }
@@ -596,5 +591,28 @@ class MetadataApi extends SugarApi {
         }
         
         return $module_list;
+    }
+
+    //TODO: This function needs to be in /me as it is user defined
+    protected function getDisplayModules($moduleList)
+    {
+        global $app_list_strings;
+        $ret = $moduleList;
+        if (!empty($this->user))
+        {
+            // Loading a standard module list
+            require_once("modules/MySettings/TabController.php");
+            $controller = new TabController();
+            $ret = array_intersect_key($controller->get_user_tabs($this->user), $moduleList);
+            foreach($ret as $mod => $lbl)
+            {
+                if (!empty($app_list_strings['moduleList'][$mod])){
+                    $ret[$mod] = $app_list_strings['moduleList'][$mod];
+                }
+            }
+        }
+
+        return $ret;
+
     }
 }

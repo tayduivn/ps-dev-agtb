@@ -410,6 +410,8 @@ $adminOnlyList = array(
                     'Schedulers' => array('all' => 1),
                     );
 
+$apiModuleList = array('Users', 'ActivityStream');
+
 //BEGIN SUGARCRM flav=ent ONLY
 $modInvisList[] = 'CustomQueries';
 $modInvisList[] = 'DataSets';
