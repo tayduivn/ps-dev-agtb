@@ -47,8 +47,6 @@
      * @param evt
      */
     save:function (evt) {
-        // Make sure the config is_setup is set to 1 if we save modal
-        this.model.set({is_setup: 1});
         this.model.save();
         this.layout.context.trigger("modal:close");
     },
