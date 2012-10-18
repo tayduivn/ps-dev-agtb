@@ -72,6 +72,7 @@ if (!empty($focus->pricing_formula)
 	|| !empty($focus->discount_amount)
 	|| !empty($focus->discount_select)) {
 	require_once('modules/ProductTemplates/Formulas.php');
+    refresh_price_formulas();
 	global $price_formulas;
 	if (isset($price_formulas[$focus->pricing_formula])) 
 	{

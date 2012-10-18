@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,50 +23,29 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Opportunities/Opportunity.php";
+require_once "modules/ProductTemplates/Formulas.php";
 
-class MockOpportunity extends Opportunity {
-
-    public $mailWasSent = false;
-    public $notify_inworkflow = true;
-    public $set_created_by = false;
-    
-    public function send_assignment_notifications() {
-        $this->mailWasSent = true;
-    }
-}
-
-class Bug42727Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug44515WithoutCustomTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    protected $_opportunity;
-    protected $_opportunityIds = array();
-
     public function setUp()
     {
-        $this->_opportunity = new MockOpportunity();
+        
     }
+
 
     public function tearDown()
     {
-        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        $GLOBALS['db']->query('DELETE FROM opportunities WHERE id IN (\'' . implode("', '", $this->_opportunityIds) . '\')');
     }
 
-    
-    public function testSentMail() 
+    /**
+     * @group 44515
+     */
+    public function testLoadCustomFormulas()
     {
-        $this->_opportunity->created_by = $this->_opportunity->assigned_user_id = SugarTestUserUtilities::createAnonymousUser()->id;
-        $this->_opportunityIds[] = $this->_opportunity->save();
-        $this->assertTrue($this->_opportunity->isOwner($this->_opportunity->created_by));
-        $this->assertFalse($this->_opportunity->mailWasSent);
-    }
-    
-    public function testNotSentMail() 
-    {
-        $this->_opportunity->created_by = SugarTestUserUtilities::createAnonymousUser()->id;
-        $this->_opportunity->assigned_user_id = SugarTestUserUtilities::createAnonymousUser()->id;
-        $this->_opportunityIds[] = $this->_opportunity->save();
-        $this->assertFalse($this->_opportunity->isOwner($this->_opportunity->created_by));
-        $this->assertTrue($this->_opportunity->mailWasSent);    
+      refresh_price_formulas();
+      // At this point I expect to have only the 5 standard formulas
+      $expectedIndexes = 5;
+      $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
     }
 }
+

@@ -238,6 +238,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	    $results = array();
 	    switch ($type)
 	    {
+//BEGIN SUGARCRM flav=pro ONLY
 	        case 'wireless':
 	            if (file_exists('custom/modules/'.$module.'/metadata/wireless.subpaneldefs.php'))
 	                 require_once('custom/modules/'.$module.'/metadata/wireless.subpaneldefs.php');
@@ -245,6 +246,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	                 require_once('modules/'.$module.'/metadata/wireless.subpaneldefs.php');
 	            break;
 
+//END SUGARCRM flav=pro ONLY
 	        case 'default':
 	        default:
 	            if (file_exists ('modules/'.$module.'/metadata/subpaneldefs.php' ))
@@ -275,6 +277,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         $results = array();
         $view = strtolower($view);
         switch (strtolower($type)){
+//BEGIN SUGARCRM flav=pro ONLY
             case 'wireless':
                 if( $view == 'list'){
                     require_once('include/SugarWireless/SugarWirelessListView.php');
@@ -312,6 +315,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
                 }
 
                 break;
+//END SUGARCRM flav=pro ONLY
             case 'default':
             default:
                 if ($view == 'subpanel')
@@ -334,6 +338,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         return $results;
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Examine the wireless_module_registry to determine which modules have been enabled for the mobile view.
      *
@@ -358,6 +363,7 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
         return $enabled_modules;
     }
 
+//END SUGARCRM flav=pro ONLY
     /**
      * Examine the application to determine which modules have been enabled..
      *
