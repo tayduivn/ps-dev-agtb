@@ -29,7 +29,7 @@
 
         this.opts = {params: {}};
         this.collection = {};
-
+        
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
 
@@ -43,6 +43,16 @@
             }
         }
 
+        this.viewId = this.getViewId();
+        this.calendarId = this.getCalendarId();
+        this.timelineId = this.getTimelineId();
+        
+        if (this.context.get("link")) {
+            this.opts.params.link = this.context.get("link");
+            this.opts.params.parent_module = this.layout.layout.module;
+            this.opts.params.parent_id = this.layout.layout.model.id;
+        }
+        
         this.collection = app.data.createBeanCollection("ActivityStream");
 
         // By default, show all posts.
@@ -65,25 +75,47 @@
         jQuery.event.props.push('dataTransfer');
     },
 
+    // There may be more than one activity stream widget on one page
+    getViewId: function() {
+        var viewId = app.controller.context.get('module');
+        if(app.controller.context.get('modelId')) {
+            viewId += '-'+app.controller.context.get('modelId'); 
+        }
+        if(this.context.get("link")) {
+            viewId += '-'+this.context.get("link");
+        }
+        return viewId;
+    },
+    
+    getTimelineId: function() {
+        this.viewId = this.viewId || this.getViewId();
+        return 'activitystream-timeline-'+this.viewId;
+    },
+
+    getCalendarId: function() {
+        this.viewId = this.viewId || this.getViewId();
+        return 'activitystream-calendar-'+this.viewId;
+    },
+    
     toggleView: function(event) {
         var view = this.$(event.currentTarget).data('view');
         event.preventDefault();
 
         if (view == 'timeline') {
-            this.$('#activitystream-timeline').show();
-            this.$('#activitystream-calendar').hide();
-            if (this.$('#activitystream-timeline').html() === "") {
+            this.$('#'+this.timelineId).show();
+            this.$('#'+this.calendarId).hide();
+            if (this.$('#'+this.timelineId).html() === "") {
                 this._renderTimeline();
             }
         } else if(view == 'calendar') {
-            this.$('#activitystream-calendar').show();
-            this.$('#activitystream-timeline').hide();
-            if (this.$('#activitystream-calendar').html() === "") {
+            this.$('#'+this.calendarId).show();
+            this.$('#'+this.timelineId).hide();
+            if (this.$('#'+this.calendarId).html() === "") {
                 this._renderCalendar();
             }
         } else {
-            this.$('#activitystream-timeline').hide();
-            this.$('#activitystream-calendar').hide();
+            this.$('#'+this.timelineId).hide();
+            this.$('#'+this.calendarId).hide();
         }
     },
 
@@ -783,7 +815,8 @@
                 start_at_end:true,
                 js: 'lib/TimelineJS/js/timeline.js',
                 source: timeline,
-                embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
+                id: 'storyjs-'+self.timelineId,
+                embed_id: self.timelineId           // ID of the DIV you want to load the timeline into
             });
         }
     },
@@ -800,10 +833,10 @@
                 },
                 editable: false,
                 viewDisplay: function(view) {
-                    $('#activitystream-calendar').fullCalendar( 'refetchEvents' );
+                    $('#'+self.calendarId).fullCalendar( 'refetchEvents' );
                 },
                 events: function(start, end, callback) {
-                    var events = [], view = $('#activitystream-calendar').fullCalendar('getView'), objarrays;
+                    var events = [], view = $('#'+self.calendarId).fullCalendar('getView'), objarrays;
                     if(view.name == 'month') {
                         events = self._addCalendarMonthEvent(self.collection.models);
                     }
@@ -821,8 +854,8 @@
         };
 
         if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
-            $('#activitystream-calendar').html('');
-            $('#activitystream-calendar').fullCalendar(calendar);
+            $('#'+self.calendarId).html('');
+            $('#'+self.calendarId).fullCalendar(calendar);
         }
     },
 
