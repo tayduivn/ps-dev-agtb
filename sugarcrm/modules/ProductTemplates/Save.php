@@ -26,6 +26,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 
 require_once('modules/ProductTemplates/Formulas.php');
+refresh_price_formulas();
 require_once('include/formbase.php');
 
 $focus = new ProductTemplate();

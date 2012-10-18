@@ -23,7 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class Bug42907Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug42097Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	var $testUser;
 	
@@ -60,5 +60,3 @@ class Bug42907Test extends Sugar_PHPUnit_Framework_TestCase
     }
     
 }
-
-?>
