@@ -36,6 +36,8 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
+        this.selection = this.context.forecasts.config.get('forecast_categories');
+
         this.label = _.first(this.meta.panels).label;
 
         // sets this.<array_item>_field to the corresponding field metadata, which gets used by the template to render these fields later.
