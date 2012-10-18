@@ -1931,7 +1931,6 @@ class Email extends SugarBean {
         global $current_user;
         global $sugar_config;
 
-
         $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
         $mailerFactoryClass = $this->MockMailerFactoryClass;
         $mailer = $mailerFactoryClass::getMailer($mailConfig);
@@ -1965,10 +1964,9 @@ class Email extends SugarBean {
             $this->reply_to_name = $this->from_name;
         }
 
- //       $mailer->setSender (new EmailIdentity($this->from_addr, $this->from_name));
-  //      $mailer->setReplyTo(new EmailIdentity($this->reply_to_addr, $this->reply_to_name));
-
-        $mailer->setSubject($this->name);
+        $mailer->setHeader(EmailHeaders::From, new EmailIdentity($this->from_addr, $this->from_name));
+        $mailer->setHeader(EmailHeaders::ReplyTo, new EmailIdentity($this->reply_to_addr, $this->reply_to_name));
+        $mailer->setHeader(EmailHeaders::Subject, $this->name);
 
         ///////////////////////////////////////////////////////////////////////
         ////	ATTACHMENTS

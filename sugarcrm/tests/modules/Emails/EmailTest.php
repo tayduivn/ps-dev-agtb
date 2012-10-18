@@ -124,11 +124,10 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group mailer
+     * @group emailstest
      */
     public function testEmailSend_Success()
     {
-        //$this->markTestSkipped("In Progress ......");
-
         $config = OutboundEmailConfigurationPeer::getSystemMailConfiguration($GLOBALS['current_user']);
         $mockMailer = new MockMailer($config);
 
@@ -143,19 +142,62 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
 
         $em->_setMailerFactoryClassName($MockMailerFactoryClass);
 
-        $em->from_name = "Woody Woodpecker";
-        $em->from_addr = "woody@woodpecker.com";
-
-        $em->reply_to_name = "Captain Kangaroo";
-        $em->reply_to_addr = "captainkangaroo@yahoo.com";
-
         $em->name = "This is the Subject";
         $em->description_html = "This is the HTML Description";
-        $em->description      = "This is the Description";
+        $em->description      = "This is the Text Description";
+
+        $from       = new EmailIdentity("twolf@sugarcrm.com" , "Tim Wolf");
+        $replyto    = $from;
+        $to         = new EmailIdentity("twolf@sugarcrm.com" , "Tim Wolf");
+        $cc         = new EmailIdentity("twolf@sugarcrm.com" , "Tim Wolf");
+
+        $em->from_addr = $from->getEmail();
+        $em->from_name = $from->getName();
+
+        $em->reply_to_addr = $replyto->getEmail();
+        $em->reply_to_name = $replyto->getName();
+
+        $em->to_addrs_arr = array(
+            array(
+                'email'     => $to->getEmail(),
+                'display'   => $to->getName(),
+            )
+        );
+        $em->cc_addrs_arr = array(
+            array(
+                'email'     => $cc->getEmail(),
+                'display'   => $cc->getName(),
+            )
+        );
 
         $em->send();
 
-        // $mockMailer->dump();
+        $data = $mockMailer->toArray();
+        //print_r($data);
+        $this->assertEquals($em->description_html, $data['htmlBody']);
+        $this->assertEquals($em->description, $data['textBody']);
+
+        $headers = $mockMailer->getHeaders();
+        // print_r($headers);
+        $this->assertEquals($em->name, $headers['Subject']);
+        $this->assertEquals($from->getEmail(), $headers['From'][0]);
+        $this->assertEquals($from->getName(),  $headers['From'][1]);
+        $this->assertEquals($replyto->getEmail(), $headers['Reply-To'][0]);
+        $this->assertEquals($replyto->getName(),  $headers['Reply-To'][1]);
+
+        $recipients = $mockMailer->getRecipients();
+        // print_r($recipients);
+
+        $actual_to=array_values($recipients['to']);
+        $this->assertEquals($to->getEmail(), $actual_to[0]->getEmail(), "TO Email Address Incorrect");
+        $this->assertEquals($to->getName(),  $actual_to[0]->getName(),  "TO Name Incorrect");
+
+        $actual_cc=array_values($recipients['cc']);
+        $this->assertEquals($to->getEmail(), $actual_cc[0]->getEmail(), "CC Email Address Incorrect");
+        $this->assertEquals($to->getName(),  $actual_cc[0]->getName(),  "CC Name Incorrect");
+
+        $this->assertEquals(true,$mockMailer->wasSent());
+
     }
 
     /**
@@ -167,9 +209,9 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testArrayToDelimitedString($config_param, $address_array, $expected)
     {
-            $GLOBALS['sugar_config']['email_address_separator'] = $config_param;
+        $GLOBALS['sugar_config']['email_address_separator'] = $config_param;
 
-            $this->assertEquals($expected,$this->email->_arrayToDelimitedString($address_array), 'Array should be delimited with correct delimiter');
+        $this->assertEquals($expected,$this->email->_arrayToDelimitedString($address_array), 'Array should be delimited with correct delimiter');
 
     }
 }
@@ -178,18 +220,46 @@ require_once "modules/Mailer/SmtpMailer.php"; // requires BaseMailer in order to
 
 class MockMailer extends SmtpMailer
 {
+    var $_sent;
+
     function __construct(OutboundEmailConfiguration $config) {
-        $from    = new EmailIdentity("tony@tiger.com", "Tony Tiger");
+        $this->_sent = false;
+        $this->config = $config;
         $headers = new EmailHeaders();
-        $headers->setHeader(EmailHeaders::From, $from);
-        $this->setHeaders($headers);
+        $headers->setHeader(EmailHeaders::From,   $config->getFrom());
+        $headers->setHeader(EmailHeaders::Sender, $config->getFrom());
+        $this->headers = $headers;
+        $this->recipients = new RecipientsCollection();
+    }
+
+    public function getHeaders() {
+        return($this->headers->packageHeaders());
+    }
+
+    public function getRecipients() {
+        return $this->recipients->getAll();
     }
 
     public function send() {
+        $this->_sent = true;
     }
 
-    public function dump() {
-        print_r($this);
+    public function wasSent() {
+        return $this->_sent;
+    }
+
+    public function toArray() {
+        return $this->asArray($this);
+    }
+
+    private function asArray($d) {
+        if (is_object($d)) {
+            $d = get_object_vars($d);
+        }
+        if (is_array($d)) {
+            return array_map(__METHOD__, $d);
+        }
+        return $d;
     }
 }
 ?>
