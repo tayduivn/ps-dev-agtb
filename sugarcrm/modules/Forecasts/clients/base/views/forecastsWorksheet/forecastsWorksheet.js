@@ -1,5 +1,6 @@
 /**
  * View that displays header for current app
+ *
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
@@ -44,6 +45,10 @@
         this._collection.url = this.createURL();
     },
 
+    /**
+     *
+     * @return {String}
+     */
     createURL:function() {
         var url = this.url;
         var args = {};
@@ -63,6 +68,7 @@
 
     /**
      * Sets up the save event and handler for the commit_stage dropdown fields in the worksheet.
+     *
      * @param field the commit_stage field
      * @return {*}
      * @private
@@ -120,6 +126,10 @@
         }
     },
 
+    /**
+     *
+     * @param {Object} params
+     */
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
@@ -244,6 +254,7 @@
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
+     *
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
@@ -291,6 +302,11 @@
     	}    	
     },
 
+    /**
+     *
+     * @param {Object} fields
+     * @private
+     */
     _setForecastColumn: function(fields) {
         var self = this;
 
@@ -303,7 +319,10 @@
     },
 
     /**
-     * Renders view
+     * renders the view
+     *
+     * @return {Object} this
+     * @private
      */
     _render: function() {
         var self = this;
@@ -408,6 +427,7 @@
     /**
      * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
      * or whether to render the clickToEdit field
+     *
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
      */
     isMyWorksheet: function() {
@@ -416,6 +436,8 @@
 
     /**
      * Determines if this Worksheet should be rendered
+     *
+     * @return {Boolean} this.show
      */
     showMe: function(){
     	var selectedUser = this.selectedUser;
@@ -585,7 +607,7 @@
     /**
      * Event Handler for updating the worksheet by a timeperiod id
      *
-     * @param params is always a context
+     * @param {Object} params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
@@ -599,7 +621,7 @@
     /**
      * Formats the additional details div when a user clicks a row in the grid
      *
-     * @param dRow the row from the datagrid that user has clicked on
+     * @param {Object} dRow the row from the datagrid that user has clicked on
      * @return {String} html output to be shown to the user
      */
     formatAdditionalDetails:function (dRow) {
@@ -626,8 +648,8 @@
     /**
      * Returns an array of column headings
      *
-     * @param dTable datatable param so we can grab all the column headings from it
-     * @param onlyVisible -OPTIONAL, defaults true- if we want to return only visible column headings or not
+     * @param {Object} dTable datatable param so we can grab all the column headings from it
+     * @param {Boolean} onlyVisible -OPTIONAL, defaults true- if we want to return only visible column headings or not
      * @return {Array} column heading title strings in an array ["heading","heading2"...]
      */
     getColumnHeadings:function (dTable, onlyVisible) {
@@ -657,7 +679,8 @@
 
     /***
      * Checks current gTable to see if a particular column name exists
-     * @param columnName the column sName you're checking for.  NOT the Column sTitle/heading
+     *
+     * @param {String} columnName the column sName you're checking for.  NOT the Column sTitle/heading
      * @return {Boolean} true if it exists, false if not
      */
     hasColumn:function(columnName) {

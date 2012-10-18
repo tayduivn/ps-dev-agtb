@@ -1,1 +1,1 @@
-{{value}}
+<div class="pull-right">{{#if transactionValue}}<span class="label">{{transactionValue}}</span>&nbsp;{{/if}}<span class="numberValue">{{value}}</span></div>
