@@ -45,6 +45,12 @@ class RestPortalSecurityTest extends RestTestPortalBase {
     
     public function tearDown()
     {
+        // KBDoc cleanup
+        if (!empty($this->kbDocId)) {
+            $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id = '" . $this->kbDocId . "'");
+            $GLOBALS['db']->query("DELETE FROM kbdocument_revisions WHERE id = '" . $this->kbDocId . "'");
+            $GLOBALS['db']->query("DELETE FROM document_revisions WHERE id = '" . $this->kbDocId . "'");
+        }
         parent::tearDown();
     }
 
@@ -63,17 +69,11 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $kbdoc->exp_date = $endDate->format('Y-m-d');
         $kbdoc->status_id = 'Published';
         $kbdoc->is_external_article = '1';
-
         $kbdoc->save();
-
-        // Positive Test : Should be able to see the KBDoc
+        $this->kbDocId =$kbdoc->id;
+            // Positive Test : Should be able to see the KBDoc
         $restReply = $this->_restCall("KBDocuments/" . $kbdoc->id);
         $this->assertEquals($kbdoc->id,$restReply['reply']['id'], 'bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact');
-
-        // KBDoc cleanup
-        $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id = '" . $kbdoc->id . "'");
-        $GLOBALS['db']->query("DELETE FROM kbdocument_revisions WHERE id = '" . $kbdoc->id . "'");
-        $GLOBALS['db']->query("DELETE FROM document_revisions WHERE id = '" . $kbdoc->id . "'");
     }
 
     /**
