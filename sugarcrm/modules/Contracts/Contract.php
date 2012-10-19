@@ -191,8 +191,8 @@ class Contract extends SugarBean {
 
 	function _set_contract_term() {
 		global $timedate;
-		$start_date_timestamp = empty($this->start_date) ? 0 : strtotime($timedate->to_db_date($this->start_date, false));
-		$end_date_timestamp = empty($this->end_date) ? 0 : strtotime($timedate->to_db_date($this->end_date, false));
+		$start_date_timestamp = empty($this->start_date) ? 0 : strtotime($this->start_date);
+		$end_date_timestamp = empty($this->end_date) ? 0 : strtotime($this->end_date);
 		$this->contract_term = '';
 		if(!empty($start_date_timestamp) && !empty($end_date_timestamp)) {
 			$this->contract_term = ($end_date_timestamp - $start_date_timestamp) / constant('SUGARCRM_SECONDS_PER_DAY');
@@ -200,7 +200,7 @@ class Contract extends SugarBean {
 	}		
 	function _set_time_to_expiry() {
 		global $timedate;
-		$end_date_timestamp = empty($this->end_date) ? 0 : strtotime($timedate->to_db_date($this->end_date, false));
+		$end_date_timestamp = empty($this->end_date) ? 0 : strtotime($this->end_date);
 		$now = time();
 		$this->time_to_expiry = '';
 		if(!empty($end_date_timestamp)) {

@@ -57,13 +57,13 @@ class CalendarActivity {
 
 
 		if ($sugar_bean->object_name == 'Task'){
-			$this->start_time = $timedate->fromUser($this->sugar_bean->date_due);
+			$this->start_time = $timedate->fromDb($this->sugar_bean->date_due);
 			if ( empty($this->start_time)){
 				return null;
 			}
-			$this->end_time = $timedate->fromUser($this->sugar_bean->date_due);
+			$this->end_time = $timedate->fromDb($this->sugar_bean->date_due);
 		}else{
-			$this->start_time = $timedate->fromUser($this->sugar_bean->date_start);
+			$this->start_time = $timedate->fromDb($this->sugar_bean->date_start);
 			if ( empty($this->start_time)){
 			    return null;
 			}
