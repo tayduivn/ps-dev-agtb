@@ -75,26 +75,36 @@ class RestBug54528Test extends RestTestBase {
     {
         if ( isset($this->bug_id) ) {
             $GLOBALS['db']->query("DELETE FROM bugs WHERE id = '{$this->bug_id}'");
-            $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id = '{$this->bug_id}'");
+            if ($GLOBALS['db']->tableExists('bugs_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c = '{$this->bug_id}'");
+            }
         }
         if (isset($this->case_id)) {
             $GLOBALS['db']->query("DELETE FROM cases WHERE id = '{$this->case_id}'");
-            $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id = '{$this->case_id}'");
+            if ($GLOBALS['db']->tableExists('cases_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM cases_cstm WHERE id_c = '{$this->case_id}'");
+            }
         } 
         if(isset($this->account->id))
         {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");            
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account->id}'");
+            }
         } 
         if(isset($this->contact->id))
         {
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id = '{$this->contact->id}'");
-            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id = '{$this->contact->id}'");            
+            if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '{$this->contact->id}'");
+            }
         } 
         if(isset($this->apiuser->id))
         {
             $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->apiuser->id}'");
-            $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id = '{$this->apiuser->id}'");            
+            if ($GLOBALS['db']->tableExists('users_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '{$this->apiuser->id}'");
+            }
         }
         parent::tearDown();
         
@@ -136,8 +146,8 @@ class RestBug54528Test extends RestTestBase {
         $case = BeanFactory::getBean('Cases',$this->case_id);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertEquals($this->apiuser->default_team, $case->team_id, "Team ID doesn't match");
-        $this->assertEquals($this->apiuser->default_team, $case->team_set_id, "Team Set ID doesn't match");
+        $this->assertEquals($this->contact->team_id, $case->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->contact->team_set_id, $case->team_set_id, "Team Set ID doesn't match");
         //END SUGARCRM flav=pro ONLY
 
         $this->assertEquals($this->contact->assigned_user_id, $case->assigned_user_id, "Assigned user id doesn't match.");
@@ -156,8 +166,8 @@ class RestBug54528Test extends RestTestBase {
         $bug = BeanFactory::getBean('Bugs', $this->bug_id);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertEquals($this->apiuser->default_team, $bug->team_id, "Team ID doesn't match");
-        $this->assertEquals($this->apiuser->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");        
+        $this->assertEquals($this->contact->team_id, $bug->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->contact->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
         //END SUGARCRM flav=pro ONLY
 
         $this->assertEquals($this->contact->assigned_user_id, $bug->assigned_user_id, "Assigned user id doesn't.");

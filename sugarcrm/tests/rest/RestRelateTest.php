@@ -54,13 +54,19 @@ class RestRelateTest extends RestTestBase {
         $contactIds = "('".implode("','",$contactIds)."')";
         
         $GLOBALS['db']->query("DELETE FROM accounts WHERE id IN {$accountIds}");
-        $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id IN {$accountIds}");
+        if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
-        $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id IN {$oppIds}");
+        if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
-        $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id IN {$contactIds}");
+        if ($GLOBALS['db']->tableExists('contacts_cstm')) {
+            $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
+        }
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
         
         parent::tearDown();

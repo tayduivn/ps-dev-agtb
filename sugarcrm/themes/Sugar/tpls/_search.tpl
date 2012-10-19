@@ -63,7 +63,7 @@ $("#sugar_spot_search").ready(function() {
             $("#glblSearchBtn").attr('title', searchTip2 + " '" + $("#sugar_spot_search").val() + "'.");
             $("#glblSearchBtn").tipTip({maxWidth: "auto", edgeOffset: 10});
             $("#glblSearchBtn").mouseover();
-            setTimeout("$('#glblSearchBtn').mouseout();$('#glblSearchBtn').attr('title', searchTip);$('#glblSearchBtn').tipTip({maxWidth: 'auto', edgeOffset: 10});", 2500);
+            setTimeout("$('#glblSearchBtn').mouseout();$('#glblSearchBtn').attr('title', searchTip);$('#glblSearchBtn').tipTip({maxWidth: 'auto', edgeOffset: 10});", 7500);
         var el = $("#sugar_spot_search_results");
                    if ( !el.is(":visible") ) {
                        el.html('');

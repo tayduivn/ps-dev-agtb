@@ -23,6 +23,7 @@
  ********************************************************************************/
 
 require_once 'modules/ModuleBuilder/controller.php';
+require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
 class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
     public $mbController;
@@ -105,12 +106,23 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
         //END SUGARCRM flav=pro ONLY
         
         //BEGIN SUGARCRM flav=ent ONLY
-        // Now make sure list copied over for portal (list is only portal view def for basic)
-        $dir = $this->dirname . 'portal/views/list';
-        $this->assertFileExists($dir, "$dir directory was not created when the module was saved");
-        
-        $file = $dir . '/list.php';
-        $this->assertFileExists($file, "$file was not created when module was saved");
+        // Modified this test for Bug 57259 to test NOT exists for portal viewdefs
+        $dir = $this->dirname . 'portal';
+        $this->assertFileNotExists($dir, "$dir directory was created when the module was saved but should not have been");
         //END SUGARCRM flav=ent ONLY
     }
+    
+    //BEGIN SUGARCRM flav=pro ONLY
+    /**
+     * @group Bug56675
+     */
+    public function testUndeployedMobileListViewsHavePanelDefs()
+    {
+        $parser = ParserFactory::getParser(MB_WIRELESSLISTVIEW, 'test', 'test', null, MB_WIRELESS);
+        $paneldefs = $parser->getPanelDefs();
+        $this->assertNotEmpty($paneldefs, "Undeployed Module list view defs have no panel defs");
+        $this->assertTrue(is_array($paneldefs), "Undeployed Module List view panel defs are not of type ARRAY");
+        $this->assertTrue(isset($paneldefs[0]['label']), "Undeployed Module List view panel defs do not have a label");
+    }
+    //END SUGARCRM flav=pro ONLY
 }

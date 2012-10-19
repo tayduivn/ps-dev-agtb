@@ -36,13 +36,13 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 
 require_once('include/connectors/utils/ConnectorUtils.php');
 require_once('include/connectors/sources/SourceFactory.php');
-$connector = SourceFactory::getSource('ext_eapm_lotuslive', false);
+$connector = SourceFactory::getSource('ext_eapm_ibmsmartcloud', false);
 
-// Check if LotusLive is configured and enabled
-if ( !empty($connector) && $connector->propertyExists('oauth_consumer_key') && $connector->propertyExists('oauth_consumer_secret') && ConnectorUtils::eapmEnabled('ext_eapm_lotuslive')) {
-    // All we need is lotuslive url
+// Check if IBM SmartCloud (was Lotus Live) is configured and enabled
+if ( !empty($connector) && $connector->propertyExists('oauth_consumer_key') && $connector->propertyExists('oauth_consumer_secret') && ConnectorUtils::eapmEnabled('ext_eapm_ibmsmartcloud')) {
+    // All we need is ibm smartcloud url
     require_once('modules/EAPM/EAPM.php'); 
-    $eapmBean = EAPM::getLoginInfo('LotusLive');
+    $eapmBean = EAPM::getLoginInfo('IBMSmartCloud');
     
     if ( !empty($eapmBean->api_data) ) {
         $api_data = json_decode(base64_decode($eapmBean->api_data), true);
@@ -54,13 +54,13 @@ if ( !empty($connector) && $connector->propertyExists('oauth_consumer_key') && $
             $dynamicDCActions['LotusLiveMeetings'] = array(
                     'module' => 'Meetings',
                     'label' => translate('LBL_VIEW_LOTUS_LIVE_MEETINGS','EAPM'),
-                    'action'=> "DCMenu.hostMeetingUrl='".$lotusLiveUrl."'; DCMenu.loadView('".translate('LBL_TITLE_LOTUS_LIVE_MEETINGS','EAPM')."','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'".$llNowButton."');",
+                    'action'=> "DCMenu.hostMeetingUrl='".$lotusLiveUrl."'; DCMenu.loadView('".translate('LBL_TITLE_LOTUS_LIVE_MEETINGS','EAPM')."','index.php?module=Meetings&action=listbytype&type=IBMSmartCloud',undefined,undefined,undefined,'".$llNowButton."');",
                     'icon'=> 'icon_LotusMeetings_footer_bar.png',
             );
             $dynamicDCActions['LotusLiveDocuments'] = array(
                     'module' => 'Documents',
                     'label' => translate('LBL_VIEW_LOTUS_LIVE_DOCUMENTS','EAPM'),
-                    'action' => 'DCMenu.loadView(\''.translate('LBL_TITLE_LOTUS_LIVE_DOCUMENTS','EAPM').'\',\'index.php?module=Documents&action=extdoc&type=LotusLive\');',
+                    'action' => 'DCMenu.loadView(\''.translate('LBL_TITLE_LOTUS_LIVE_DOCUMENTS','EAPM').'\',\'index.php?module=Documents&action=extdoc&type=IBMSmartCloud\');',
                     'icon' => 'icon_LotusDocuments_footer_bar.png',
             );
         }

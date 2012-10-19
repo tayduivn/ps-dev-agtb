@@ -30,7 +30,22 @@ class KBDocumentsApiHelper extends SugarBeanApiHelper
 
     public function formatForApi(SugarBean $bean, array $fieldList = array(), array $options = array() )
     {
+
+        // bug 56834 - the api doesn't return kbdoc_approver_name
+        $isKbApprover = in_array('kbdoc_approver_name', $fieldList);
+
+        //add kbdoc_approver_id if not in fieldList
+        if ( $isKbApprover && !in_array('kbdoc_approver_id', $fieldList) ) {
+            $fieldList[] = 'kbdoc_approver_id';
+        }
         $data = parent::formatForApi($bean, $fieldList, $options);
+
+        // bug 56834 - manually fill kbdoc_approver_name if in fieldList
+        if ( (empty($fieldList) || $isKbApprover) && isset($data['kbdoc_approver_id']) ) {
+            $user = new User();
+            $user->retrieve($data['kbdoc_approver_id'],true);
+            $data['kbdoc_approver_name'] = $user->name;
+        }
 
         if ( empty($fieldList) || in_array('attachment_list',$fieldList) ) {
             $db = DBManagerFactory::getInstance();

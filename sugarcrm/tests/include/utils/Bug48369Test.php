@@ -24,7 +24,7 @@
 
 require_once('include/utils/LogicHook.php');
 
-class Bu48369Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48369Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $backupContents;
 

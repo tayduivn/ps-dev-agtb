@@ -34,11 +34,15 @@ class RestDateTimeTest extends RestTestBase {
     {
         if (isset($this->account->id)) {
             $GLOBALS['db']->query("DELETE FROM accounts WHERE id = '{$this->account->id}'");
-            $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id = '{$this->account->id}'");
+            if ($GLOBALS['db']->tableExists('accounts_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c = '{$this->account->id}'");
+            }
         }
         if (isset($this->opp->id)) {
             $GLOBALS['db']->query("DELETE FROM opportunities WHERE id = '{$this->opp->id}'");
-            $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id = '{$this->opp->id}'");
+            if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
+                $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c = '{$this->opp->id}'");
+            }
         }
         if (isset($this->meeting->id)) {
             $GLOBALS['db']->query("DELETE FROM meetings WHERE id = '{$this->meeting->id}'");

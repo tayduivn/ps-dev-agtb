@@ -21,56 +21,21 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once 'include/database/MysqlHelper.php';
-require_once 'include/database/MssqlHelper.php';
-require_once 'include/database/FreeTDSHelper.php';
-//BEGIN SUGARCRM flav=ent ONLY
-require_once 'include/database/OracleHelper.php';
-//END SUGARCRM flav=ent ONLY
 
-class Bug44291 extends Sugar_PHPUnit_Framework_TestCase
+class Bug44291Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+    public function testGetColumnType()
     {
+        switch($GLOBALS['db']->dbType)
+        {
+            //BEGIN SUGARCRM flav=ent ONLY
+            case 'oci8' :
+                $this->assertEquals("number(26,6)", $GLOBALS['db']->getColumnType("currency"));
+                break;
+            //END SUGARCRM flav=ent ONLY
+            default :
+                $this->assertEquals("decimal(26,6)", $GLOBALS['db']->getColumnType("currency"));
+        }
+        $this->assertEquals("Unknown", $GLOBALS['db']->getColumnType("Unknown"));
     }
-
-    public function tearDown()
-    {
-    }
-
-    public function testGetColumnTypeMySql()
-    {
-        $_helper = new MysqlHelper();
-        $this->assertEquals("decimal(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
-    }
-
-    public function testGetColumnTypeMSSql()
-    {
-        $_helper = new MssqlHelper();
-        $this->assertEquals("decimal(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
-    }
-
-    public function testGetColumnTypeFreeTDS()
-    {
-        $_helper = new FreeTDSHelper();
-        $this->assertEquals("decimal(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
-    }
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    public function testGetColumnTypeOracle()
-    {
-        $_helper = new OracleHelper();
-        $this->assertEquals("number(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
-    }
-    //END SUGARCRM flav=ent ONLY
-
 }
