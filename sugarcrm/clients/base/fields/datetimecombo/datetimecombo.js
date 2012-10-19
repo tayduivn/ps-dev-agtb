@@ -9,7 +9,7 @@
         // Determines if we're using 12 or 24 hour clock conventions
         userTimePrefs = app.user.get('timepref');
         // h specifies 12 hour format (TODO: refactor date.js to support g/G options and add here)
-        this.showAmPm = userTimePrefs.match(/h/)!==null ? true : false; // TODO: date.js doesn't yet support g/G options 
+        this.showAmPm = userTimePrefs.match(/[aA]$/)==null ? true : false; // TODO: date.js doesn't yet support g/G options
         this.timeOptions.hours = this.getHours();
         this.app.view.Field.prototype.initialize.call(this, options);
     },

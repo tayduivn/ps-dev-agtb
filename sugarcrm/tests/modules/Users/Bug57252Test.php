@@ -22,57 +22,59 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once ("include/SugarFields/Fields/Datetimecombo/SugarFieldDatetimecombo.php");
-
 
 /**
- * @group Bug49691
+ * Bug57252Test.php
+ * @author Matt Marum
+ *
+ * This unit test checks to make sure that we are pulling the Admin panel date/time format
+ * preferences when a user does not have an existing date/time format preference.
+ *
  */
-class Bug49691aTest extends Sugar_PHPUnit_Framework_TestCase {
+class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
+{
 
-    var $bean;
-    var $sugarField;
-
-    public function setUp() {
-        $this->bean = new Bug49691aMockBean();
-        $this->sugarField = new SugarFieldDatetimecombo("Accounts");
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+    public static function setUpBeforeClass()
+    {
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->save();
     }
 
-    public function tearDown() {
-        unset($GLOBALS['current_user']);
+    public static function tearDownAfterClass()
+    {
+        global $current_user;
+        $current_user->resetPreferences();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($this->sugarField);
     }
 
     /**
-     * @dataProvider providerFunction
+     * @group bug57252
+     *
      */
-    public function testDBDateConversion($dateValue, $expected) {
+    public function testDefaultDateTimeFormatFromSystemConfig()
+    {
+        global $current_user, $sugar_config;
+        $this->assertEquals($current_user->getPreference('datef'), $sugar_config['default_date_format']);
+        $this->assertEquals($current_user->getPreference('timef'), $sugar_config['default_time_format']);
+
+    }
+
+    /**
+     * @group bug57252
+     *
+     */
+    public function testDefaultDateTimeFormatFromUserPref()
+    {
         global $current_user;
 
-        $this->bean->test_c = $dateValue;
+        $current_user->setPreference('datef','d/m/Y', 0, 'global');
+        $current_user->setPreference('timef','h.iA',0,'global');
 
-        $inputData = array('test_c'=>$dateValue);
-        $field = 'test_c';
-        $def = '';
-        $prefix = '';
+        $this->assertEquals($current_user->getPreference('datef'), 'd/m/Y');
+        $this->assertEquals($current_user->getPreference('timef'), 'h.iA');
 
-        $this->sugarField->save($this->bean, $inputData, $field, $def, $prefix);
-        $this->assertNotEmpty($this->bean->test_c);
-        $this->assertSame($expected, $this->bean->test_c);
     }
 
-    public function providerFunction() {
-        return array(
-            array('01/01/2012 12:00am', '2012-01-01 00:00:00'),
-            array('2012-01-01 12:00:00', '2012-01-01 12:00:00'),
-            array('01/01/2012', '2012-01-01'),
-            array('2012-01-01', '2012-01-01'),
-        );
-    }
-}
 
-class Bug49691aMockBean {
-    var $test_c;
 }
