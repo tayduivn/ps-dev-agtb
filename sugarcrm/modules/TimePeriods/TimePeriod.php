@@ -53,6 +53,8 @@ class TimePeriod extends SugarBean {
     var $time_period_type = 'Annual';
     var $leaf_period_type = 'Quarter';
     var $leaf_periods = 4;
+    var $leaf_name_template;
+    var $name_template;
 	var $object_name = "TimePeriod";
 	var $user_preferences;
     var $date_modifier;
@@ -636,9 +638,6 @@ class TimePeriod extends SugarBean {
 
        }
 
-
-
-
        //Right now we only support chronological AnnualTimePeriods so just hard code this for now
        //$currentTimePeriod = BeanFactory::newBean($periodsInterval . 'TimePeriods');
        /*
@@ -711,7 +710,7 @@ class TimePeriod extends SugarBean {
                   $earliestTimePeriod = TimePeriod::getByType($this->time_period_type);
                   $earliestTimePeriod->setStartDate($this->start_date);
               }
-              $earliestTimePeriod->buildPreviousLeaves($shownBackwardDifference);
+              $earliestTimePeriod->buildTimePeriods($shownBackwardDifference, $this->previous_date_modifier);
           }
 
           if($shownForwardDifference > 0)
@@ -722,11 +721,17 @@ class TimePeriod extends SugarBean {
                   $latestTimePeriod = TimePeriod::getByType($this->time_period_type);
                   $latestTimePeriod->setStartDate($this->start_date);
               }
-              $latestTimePeriod->buildNextLeaves($shownForwardDifference);
+              $latestTimePeriod->buildTimePeriods($shownForwardDifference, $this->next_date_modifier);
           }
     }
 
-    public function buildPreviousLeaves($timePeriods)
+    /**
+     * buildTimePeriods
+     *
+     * @param $timePeriods int value of the number of parent level TimePeriods to create
+     * @param $dateModifier String value of the date modifier (1 year, -1 year, etc.) to use when creating the parent level TimePeriods
+     */
+    protected function buildTimePeriods($timePeriods, $dateModifier)
     {
         $timedate = TimeDate::getInstance();
 
@@ -735,47 +740,31 @@ class TimePeriod extends SugarBean {
             //Create annual TimePeriod instance
             $timePeriod = TimePeriod::getByType($this->time_period_type);
             $timePeriod->name = sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('Y'));
-            $timePeriod->setStartDate($timedate->fromDbDate($this->start_date)->modify($this->previous_date_modifier)->asDbDate());
+            $timePeriod->setStartDate($timedate->fromDbDate($this->start_date)->modify($dateModifier)->asDbDate());
             $timePeriod->time_period_type = $this->time_period_type;
             $timePeriod->is_fiscal_year = true;
             $timePeriod->is_fiscal = $this->is_fiscal;
             $timePeriod->save();
 
+            $leafStartDate = $timedate->fromDbDate($timePeriod->start_date);
+            $leafYear = $timedate->fromDbDate($timePeriod->start_date)->format('Y');
+
             for($x=1; $x <= $this->leaf_periods; $x++)
             {
-                //Create leaf TimePeriods instance
+                $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
+                $leafPeriod->name = sprintf($this->leaf_name_template, $x, $leafYear);
+                $startDate = ($x == 1) ? $leafStartDate->asDbDate() : $leafStartDate->modify($leafPeriod->next_date_modifier)->asDbDate();
+                $leafPeriod->setStartDate($startDate);
+                $leafPeriod->parent_id = $timePeriod->id;
+                $leafPeriod->is_fiscal_year = false;
+                $leafPeriod->is_fiscal = $timePeriod->is_fiscal;
+                $leafPeriod->save();
             }
 
             //Set start_date to be modified with $this->previous_date_modifier
             $this->start_date = $timedate->fromDbDate($timePeriod->start_date)->asDbDate();
         }
     }
-
-    public function buildNextLeaves($timePeriods)
-    {
-        $timedate = TimeDate::getInstance();
-
-        for($i=0; $i < $timePeriods; $i++)
-        {
-            //Create annual TimePeriod instance
-            $timePeriod = TimePeriod::getByType($this->time_period_type);
-            $timePeriod->name = sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('Y'));
-            $timePeriod->setStartDate($timedate->fromDbDate($this->start_date)->modify($this->next_date_modifier)->asDbDate());
-            $timePeriod->time_period_type = $this->time_period_type;
-            $timePeriod->is_fiscal_year = true;
-            $timePeriod->is_fiscal = $this->is_fiscal;
-            $timePeriod->save();
-
-            for($x=1; $x <= $this->leaf_periods; $x++)
-            {
-                //Create leaf TimePeriods instance
-            }
-
-            //Set start_date to be modified with $this->previous_date_modifier
-            $this->start_date = $timedate->fromDbDate($timePeriod->start_date)->asDbDate();
-        }
-    }
-
 
     /**
      * Checks if the targetStartDate is different based on prior settings

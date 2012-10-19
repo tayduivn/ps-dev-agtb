@@ -45,6 +45,7 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->next_date_modifier = $this->is_fiscal ? '52 week' : '1 year';
         $this->previous_date_modifier = $this->is_fiscal ? '-52 week' : '-1 year';
         $this->name_template = "Year %d";
+        $this->leaf_name_template = "Q%d %d";
     }
 
     /**

@@ -45,6 +45,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
     }
 
     /**
@@ -321,6 +322,9 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $earliest = TimePeriod::getEarliest('Annual');
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 new backward timeperiods');
 
+        $earliest = TimePeriod::getEarliest('Quarter');
+        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 8 leaf timeperiods');
+
         //Now let's go up to 6 from 4 and see if we create 2 more
         $priorForecastSettings['timeperiod_shown_backward'] = 4;
         $currentForecastSettings['timeperiod_shown_backward'] = 6;
@@ -330,6 +334,9 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $earliest = TimePeriod::getEarliest('Annual');
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 more new backward timeperiods');
 
+        $earliest = TimePeriod::getEarliest('Quarter');
+        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 16 leaf timeperiods');
+
         //Now let's decrement and assert that it does not affect things
         $priorForecastSettings['timeperiod_shown_backward'] = 6;
         $currentForecastSettings['timeperiod_shown_backward'] = 2;
@@ -338,11 +345,14 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $earliest = TimePeriod::getEarliest('Annual');
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed not creating backward timeperiods');
+
+        $earliest = TimePeriod::getEarliest('Quarter');
+        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed not creating leaf timeperiods');
     }
 
     /**
      * testOnlyShownForwardDifferenceChanged
-     * @outputBuffering disabled
+     *
      */
     public function testOnlyShownForwardDifferenceChanged()
     {
@@ -358,8 +368,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timedate = TimeDate::getInstance();
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('2 year')->format('Y'), 1, 1);
 
-        $earliest = TimePeriod::getLatest('Annual');
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 new foward timeperiods');
+        $latest = TimePeriod::getLatest('Annual');
+        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 2 new foward timeperiods');
+
+        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('2 year')->format('Y'), 10, 1);
+        $latest = TimePeriod::getLatest('Quarter');
+        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
 
         //Now let's go up to 6 from 4 and see if we create 2 more
         $priorForecastSettings['timeperiod_shown_forward'] = 4;
@@ -367,8 +381,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 1, 1);
 
-        $earliest = TimePeriod::getLatest('Annual');
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 more new backward timeperiods');
+        $latest = TimePeriod::getLatest('Annual');
+        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 2 more new backward timeperiods');
+
+        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 10, 1);
+        $latest = TimePeriod::getLatest('Quarter');
+        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
 
         //Now let's decrement and assert that it does not affect things
         $priorForecastSettings['timeperiod_shown_forward'] = 6;
@@ -376,8 +394,12 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 1, 1);
 
-        $earliest = TimePeriod::getLatest('Annual');
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed not creating forward timeperiods');
+        $latest = TimePeriod::getLatest('Annual');
+        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed not creating forward timeperiods');
+
+        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 10, 1);
+        $latest = TimePeriod::getLatest('Quarter');
+        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
     }
 
     /**
