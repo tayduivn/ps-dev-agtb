@@ -380,7 +380,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      		$worksheetIds[] = $worksheet->id;
      	}
      	SugarTestWorksheetUtilities::removeSpecificCreatedWorksheets($worksheetIds);
-     	
+    
      	// set the current user to the new user
         $this->_user = $newUser["user"];
         $GLOBALS["current_user"] = $this->_user;
@@ -407,7 +407,7 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $this->authToken = "";
 
         // now get the data back to see if it we get no rows
-        $response = $this->_restCall("ForecastWorksheets?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id);
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $newUser["user"]->id . "&timeperiod_id=" . $this->timeperiod->id);
         
         $this->assertEmpty($response["reply"], "Data was returned, this edge case should return no data");
      	
