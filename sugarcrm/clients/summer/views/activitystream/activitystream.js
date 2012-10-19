@@ -464,6 +464,11 @@
         // If we're typing text.
         if(event.keyCode > 47) {
             this._getEntities(event);
+        } else {
+            // Fixes issue where a random font tag appears. ABE-128.
+            if(this.$(event.currentTarget).text().length === 0) {
+                this.$(event.currentTarget).html('');
+            }
         }
     },
 
