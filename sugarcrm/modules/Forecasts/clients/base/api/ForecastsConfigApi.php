@@ -53,6 +53,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
             $timePeriod->rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
             $timePeriod->deleteTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
         }
+
         return $new_settings;
     }
 

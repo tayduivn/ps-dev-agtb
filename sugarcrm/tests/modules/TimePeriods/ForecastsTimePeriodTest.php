@@ -29,8 +29,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     //These are the default forecast configuration settings we will use to test
     protected $forecastConfigSettings = array (
         array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_interval', 'value' => 'Annual', 'platform' => 'base', 'category' => 'Forecasts'),
-        array('name' => 'timeperiod_leaf_interval', 'value' => 'Quarter', 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_interval', 'value' => TimePeriod::ANNUAL_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
+        array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_start_month', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_start_day', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
         array('name' => 'timeperiod_shown_forward', 'value' => '2', 'platform' => 'base', 'category' => 'Forecasts'),
@@ -69,7 +69,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         //Run rebuildForecastingTimePeriods which takes care of creating the TimePeriods based on the configuration data
-        $timePeriod = TimePeriod::getByType('Annual');
+        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
 
         $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
@@ -219,11 +219,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue($timeperiod->isTargetIntervalDifferent(array(), $currentForecastSettings));
 
         //Check if timeperiod_interval chagnes
-        $currentForecastSettings['timeperiod_interval'] = 'Quarter';
+        $currentForecastSettings['timeperiod_interval'] = TimePeriod::QUARTER_TYPE;
         $this->assertTrue($timeperiod->isTargetIntervalDifferent($priorForecastSettings, $currentForecastSettings));
 
         //Check if timeperiod_leaf_interval chagnes
-        $currentForecastSettings['timeperiod_interval'] = 'Quarter';
+        $currentForecastSettings['timeperiod_interval'] = TimePeriod::QUARTER_TYPE;
         $currentForecastSettings['timeperiod_leaf_interval'] = 'Month';
         $this->assertTrue($timeperiod->isTargetIntervalDifferent($priorForecastSettings, $currentForecastSettings));
     }
@@ -237,8 +237,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function getByTypeDataProvider()
     {
         return array(
-            array('Annual'),
-            array('Quarter')
+            array(TimePeriod::ANNUAL_TYPE),
+            array(TimePeriod::QUARTER_TYPE)
         );
     }
 
@@ -261,19 +261,19 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetLatest()
     {
-        $timePeriod = TimePeriod::getLatest('Annual');
+        $timePeriod = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
         //We don't have any existing data so this should be null
         $this->assertNull($timePeriod);
 
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2020-01-01', '2020-03-31');
-        $tp1->time_period_type = 'Annual';
+        $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
 
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2021-01-01', '2021-03-31');
-        $tp2->time_period_type = 'Annual';
+        $tp2->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp2->save();
 
-        $timePeriod = TimePeriod::getLatest('Annual');
+        $timePeriod = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($tp2->id, $timePeriod->id);
     }
 
@@ -284,19 +284,19 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testGetEarliest()
     {
-        $timePeriod = TimePeriod::getEarliest('Annual');
+        $timePeriod = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
         //We don't have any existing data so this should be null
         $this->assertNull($timePeriod);
 
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2020-01-01', '2020-03-31');
-        $tp1->time_period_type = 'Annual';
+        $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
 
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2021-01-01', '2021-03-31');
-        $tp2->time_period_type = 'Annual';
+        $tp2->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp2->save();
 
-        $timePeriod = TimePeriod::getEarliest('Annual');
+        $timePeriod = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($tp1->id, $timePeriod->id);
     }
 
@@ -312,17 +312,17 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentForecastSettings = $priorForecastSettings;
         $currentForecastSettings['timeperiod_shown_backward'] = 4;
 
-        $timePeriod = TimePeriod::getByType('Annual');
+        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
 
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
 
         $timedate = TimeDate::getInstance();
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('-2 year')->format('Y'), 1, 1);
 
-        $earliest = TimePeriod::getEarliest('Annual');
+        $earliest = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 new backward timeperiods');
 
-        $earliest = TimePeriod::getEarliest('Quarter');
+        $earliest = TimePeriod::getEarliest(TimePeriod::QUARTER_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 8 leaf timeperiods');
 
         //Now let's go up to 6 from 4 and see if we create 2 more
@@ -331,10 +331,10 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('-4 year')->format('Y'), 1, 1);
 
-        $earliest = TimePeriod::getEarliest('Annual');
+        $earliest = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 more new backward timeperiods');
 
-        $earliest = TimePeriod::getEarliest('Quarter');
+        $earliest = TimePeriod::getEarliest(TimePeriod::QUARTER_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 16 leaf timeperiods');
 
         //Now let's decrement and assert that it does not affect things
@@ -343,10 +343,10 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('-4 year')->format('Y'), 1, 1);
 
-        $earliest = TimePeriod::getEarliest('Annual');
+        $earliest = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed not creating backward timeperiods');
 
-        $earliest = TimePeriod::getEarliest('Quarter');
+        $earliest = TimePeriod::getEarliest(TimePeriod::QUARTER_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed not creating leaf timeperiods');
     }
 
@@ -361,18 +361,18 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentForecastSettings = $priorForecastSettings;
         $currentForecastSettings['timeperiod_shown_forward'] = 4;
 
-        $timePeriod = TimePeriod::getByType('Annual');
+        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
 
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
 
         $timedate = TimeDate::getInstance();
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('2 year')->format('Y'), 1, 1);
 
-        $latest = TimePeriod::getLatest('Annual');
+        $latest = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 2 new foward timeperiods');
 
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('2 year')->format('Y'), 10, 1);
-        $latest = TimePeriod::getLatest('Quarter');
+        $latest = TimePeriod::getLatest(TimePeriod::QUARTER_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
 
         //Now let's go up to 6 from 4 and see if we create 2 more
@@ -381,11 +381,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 1, 1);
 
-        $latest = TimePeriod::getLatest('Annual');
+        $latest = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 2 more new backward timeperiods');
 
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 10, 1);
-        $latest = TimePeriod::getLatest('Quarter');
+        $latest = TimePeriod::getLatest(TimePeriod::QUARTER_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
 
         //Now let's decrement and assert that it does not affect things
@@ -394,11 +394,11 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 1, 1);
 
-        $latest = TimePeriod::getLatest('Annual');
+        $latest = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed not creating forward timeperiods');
 
         $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 10, 1);
-        $latest = TimePeriod::getLatest('Quarter');
+        $latest = TimePeriod::getLatest(TimePeriod::QUARTER_TYPE);
         $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
     }
 
@@ -452,7 +452,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentTimePeriod = TimePeriod::getBean($currentId);
         $this->assertNotEmpty($currentTimePeriod, 'Unable to get TimePeriod instance for id ' . $currentId);
 
-        $this->assertEquals('Quarter', $currentTimePeriod->time_period_type);
+        $this->assertEquals(TimePeriod::QUARTER_TYPE, $currentTimePeriod->time_period_type);
 
         $startMonthDate = "{$year}-01-01";
         $endMonthDate = "{$year}-03-31";

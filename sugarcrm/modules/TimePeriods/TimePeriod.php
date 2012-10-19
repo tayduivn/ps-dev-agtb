@@ -31,6 +31,11 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 
 // User is used to store customer information.
 class TimePeriod extends SugarBean {
+
+    const ANNUAL_TYPE = 'Annual';
+    const QUARTER_TYPE = 'Quarter';
+    const MONTH_TYPE = 'Month';
+
 	//time period stored fields.
 	var $id;
 	var $name;
