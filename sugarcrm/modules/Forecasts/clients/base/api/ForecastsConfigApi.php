@@ -46,9 +46,10 @@ class ForecastsConfigApi extends ConfigModuleApi {
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
         //if primary settings for timeperiods have changed, then rebuild them
-        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
-            TimePeriod::rebuildForecastingTimePeriods();
-        }
+        // TODO:  fix this!  Commenting out, for now, so that work can continue on config settings in other areas
+//        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
+//            TimePeriod::rebuildForecastingTimePeriods();
+//        }
         return $new_settings;
     }
 
