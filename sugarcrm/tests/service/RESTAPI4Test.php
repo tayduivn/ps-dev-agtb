@@ -626,7 +626,7 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(isset($result[$module][$type][$view]), 'Result did not contain expected data');
     
         foreach($result[$module][$type][$view] AS $def) {
-            $this->assertArrayHasKey('name', $def, 'Name ket not found in result definitions');
+            $this->assertArrayHasKey('name', $def, 'Name key not found in result definitions');
         }
     
         
