@@ -44,7 +44,7 @@ function make_sugar_config(&$sugar_config)
 	global $default_charset;
 	global $default_currency_name;
 	global $default_currency_symbol;
-	global $default_currency_iso4217;
+    global $default_currency_iso4217;
 	global $defaultDateFormat;
 	global $default_language;
 	global $default_module;
@@ -3394,7 +3394,7 @@ function display_stack_trace($textOnly=false){
 }
 
 function StackTraceErrorHandler($errno, $errstr, $errfile,$errline, $errcontext) {
-	$error_msg = " $errstr occured in <b>$errfile</b> on line $errline [" . date("Y-m-d H:i:s") . ']';
+	$error_msg = " $errstr occurred in <b>$errfile</b> on line $errline [" . date("Y-m-d H:i:s") . ']';
 	$halt_script = true;
 	switch($errno){
 		case 2048: return; //depricated we have lots of these ignore them
