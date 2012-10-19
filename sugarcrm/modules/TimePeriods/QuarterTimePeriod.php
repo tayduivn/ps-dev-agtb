@@ -56,7 +56,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
     /**
      * override parent function so to add a name for the quarter time period.  This can
      *
-     * @param null $startDate  db format date string to set the start date of the annual time period
+     * @param null $start_date  db format date string to set the start date of the annual time period
      */
     public function setStartDate($start_date = null) {
         parent::setStartDate($start_date);
