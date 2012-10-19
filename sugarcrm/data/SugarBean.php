@@ -1598,21 +1598,13 @@ class SugarBean
      *
      * @return void
      */
-    function updateDependentField($filter_fields = null)
+    function updateDependentField()
     {
         // This is ignored when coming via a webservice as it's only needed for display and not just raw data.
         // It results in a huge performance gain when pulling multiple records via webservices.
         if(!isset($GLOBALS['service_object']) && !$this->is_updated_dependent_fields) {
             require_once("include/Expressions/DependencyManager.php");
-
-            if (empty($filter_fields)) {
-                $filterFields = $this->field_defs;
-            }
-            else {
-                $filterFields = array_intersect_key($this->field_defs, $filter_fields);
-            }
-
-            $deps = DependencyManager::getDependentFieldDependencies($filterFields);
+            $deps = DependencyManager::getDependentFieldDependencies($this->field_defs);
             foreach($deps as $dep)
             {
                 if ($dep->getFireOnLoad())
@@ -4969,7 +4961,7 @@ class SugarBean
      *
      * return listDef for bean
      */
-    function updateDependentFieldForListView($listview_def_main = '', $filter_fields = null)
+    function updateDependentFieldForListView($listview_def_main = '')
     {
         static $listview_def = '';
         static $module_name = '';
@@ -4994,9 +4986,18 @@ class SugarBean
             }
             $module_name = $this->module_name;
         }
-
-        $this->updateDependentField($filter_fields);
-        $this->is_updated_dependent_fields = true;
+        
+        if (!empty($listview_def))
+        {
+            $temp_field_defs = $this->field_defs;
+            $this->field_defs = array_intersect_ukey($this->field_defs, $listview_def, 'strcasecmp');
+            $this->updateDependentField();
+            $this->field_defs = array_merge($temp_field_defs, $this->field_defs);
+        } else
+        {
+            $this->updateDependentField();
+        }
+		$this->is_updated_dependent_fields = true;
     }
 	//END SUGARCRM flav=pro ONLY
     /**
