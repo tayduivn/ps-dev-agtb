@@ -120,10 +120,10 @@ class EmailHeaders
      *
      * @access public
      * @param string $key   required Should look like the real header it represents.
-     * @param mixed  $value required The value of the header.
+     * @param mixed  $value          The value of the header.
      * @throws MailerException
      */
-    public function setHeader($key, $value) {
+    public function setHeader($key, $value = null) {
         switch ($key) {
             case self::MessageId:
                 $this->messageId = $value;
@@ -153,22 +153,6 @@ class EmailHeaders
         }
     }
 
-
-    /**
-     * @access public
-     * @param string $subject required
-     * @throws MailerException
-     */
-    public function setSubject($subject) {
-        if (!is_string($subject)) {
-            throw new MailerException(
-                "Invalid header: " . self::Subject . " must be a string",
-                MailerException::InvalidHeader
-            );
-        }
-
-        $this->subject = $subject;
-    }
 
     /**
      * @access public
@@ -434,7 +418,7 @@ class EmailHeaders
 
         // validate that the Subject header is present, but its setter took care of validating the actual value so that
         // is not necessary
-        if (is_null($subject)) {
+        if (empty($subject)) {
             throw new MailerException(
                 "Invalid header: " . self::Subject . " cannot be null",
                 MailerException::InvalidHeader
@@ -463,7 +447,7 @@ class EmailHeaders
      * @access private
      * @param EmailIdentity $from required
      */
-    private function setFrom(EmailIdentity $from) {
+    private function setFrom(EmailIdentity $from = null) {
         $this->from = $from;
     }
 
@@ -471,7 +455,7 @@ class EmailHeaders
      * @access private
      * @param EmailIdentity $replyTo required
      */
-    private function setReplyTo(EmailIdentity $replyTo) {
+    private function setReplyTo(EmailIdentity $replyTo = null) {
         $this->replyTo = $replyTo;
     }
 
@@ -479,8 +463,24 @@ class EmailHeaders
      * @access public
      * @param EmailIdentity $sender required
      */
-    private function setSender(EmailIdentity $sender) {
+    private function setSender(EmailIdentity $sender = null) {
         $this->sender = $sender;
+    }
+
+    /**
+     * @access private
+     * @param string $subject
+     * @throws MailerException
+     */
+    private function setSubject($subject = null) {
+        if (!is_null($subject) && !is_string($subject)) {
+            throw new MailerException(
+                "Invalid header: " . self::Subject . " must be a string",
+                MailerException::InvalidHeader
+            );
+        }
+
+        $this->subject = $subject;
     }
 
     /**
@@ -513,9 +513,13 @@ class EmailHeaders
      * @param string $value required The value of the header.
      * @throws MailerException
      */
-    private function addCustomHeader($key, $value) {
-        if (is_string($key) && is_string($value)) {
+    private function addCustomHeader($key, $value = null) {
+        if (is_string($key) && (is_null($value) || is_string($value))) {
             $this->custom[$key] = $value;
+
+            if (is_null($value)) {
+                unset($this->custom[$key]);
+            }
         } else {
             throw new MailerException(
                 "Invalid custom header: '{$key}' and '{$value}' must be strings",

@@ -121,10 +121,10 @@ abstract class BaseMailer implements IMailer
      *
      * @access public
      * @param string $key   required Should look like the real header it represents.
-     * @param mixed  $value required The value of the header.
+     * @param mixed  $value          The value of the header.
      * @throws MailerException
      */
-    public function setHeader($key, $value) {
+    public function setHeader($key, $value = null) {
         $this->headers->setHeader($key, $value);
     }
 
@@ -132,10 +132,10 @@ abstract class BaseMailer implements IMailer
      * Adds or replaces the Subject header.
      *
      * @access public
-     * @param string $subject required
+     * @param string $subject
      * @throws MailerException
      */
-    public function setSubject($subject) {
+    public function setSubject($subject = null) {
         $this->setHeader(EmailHeaders::Subject, $subject);
     }
 
