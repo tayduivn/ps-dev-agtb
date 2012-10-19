@@ -421,81 +421,79 @@ class EmailMan extends SugarBean{
    /**
     * The function creates a copy of email send to each target.
     */
-    function create_indiv_email($module,$mail) {
+    public function create_indiv_email($module, $mail) {
+        global $timedate,
+               $mod_strings;
 
-        global $locale, $timedate;
         $email = new Email();
+
         //BEGIN SUGARCRM flav=pro ONLY
         $email->team_id = 1;
         //END SUGARCRM flav=pro ONLY
-        $email->to_addrs= $module->name . '&lt;'.$module->email1.'&gt;';
-        $email->to_addrs_ids = $module->id .';';
-        $email->to_addrs_names = $module->name . ';';
-        $email->to_addrs_emails = $module->email1 . ';';
-        $email->type= 'archived';
-        $email->deleted = '0';
-        $email->name = $this->current_campaign->name.': '.$mail->Subject ;
+
+        $email->to_addrs        = "{$module->name}&lt;{$module->email1}&gt;";
+        $email->to_addrs_ids    = "{$module->id};";
+        $email->to_addrs_names  = "{$module->name};";
+        $email->to_addrs_emails = "{$module->email1};";
+        $email->type            = 'archived';
+        $email->deleted         = '0';
+        $email->name            = "{$this->current_campaign->name}: {$mail->Subject}";
+
         if ($mail->ContentType == "text/plain") {
-            $email->description = $mail->Body;
-            $email->description_html =null;
+            $email->description      = $mail->Body;
+            $email->description_html = null;
         } else {
             $email->description_html = $mail->Body;
-            $email->description = $mail->AltBody;
+            $email->description      = $mail->AltBody;
         }
-        $email->from_addr = $mail->From;
+
+        $email->from_addr        = $mail->From;
         $email->assigned_user_id = $this->user_id;
-        $email->parent_type = $this->related_type;
-        $email->parent_id = $this->related_id ;
+        $email->parent_type      = $this->related_type;
+        $email->parent_id        = $this->related_id;
+        $email->date_start       = $timedate->nowDbDate();
+        $email->time_start       = $timedate->asDbTime($timedate->getNow());
+        $email->status           = 'sent';
+        $retId                   = $email->save();
 
-        $email->date_start = $timedate->nowDbDate();
-        $email->time_start = $timedate->asDbTime($timedate->getNow());
-        $email->status='sent';
-        $retId = $email->save();
-
-        foreach($this->notes_array as $note) {
-            if(!class_exists('Note')) {
-
-            }
+        foreach ($this->notes_array as $note) {
             // create "audit" email without duping off the file to save on disk space
-            $noteAudit = new Note();
-            $noteAudit->parent_id = $retId;
+            $noteAudit              = new Note();
+            $noteAudit->parent_id   = $retId;
             $noteAudit->parent_type = $email->module_dir;
-            $noteAudit->description = "[".$note->filename."] ".$mod_strings['LBL_ATTACHMENT_AUDIT'];
+            $noteAudit->description = "[{$note->filename}] {$mod_strings['LBL_ATTACHMENT_AUDIT']}";
             $noteAudit->save();
         }
 
-        if (!empty($this->related_id ) && !empty($this->related_type)) {
+        if (!empty($this->related_id) && !empty($this->related_type)) {
+            //save relationships.
+            switch ($this->related_type) {
+                case 'Users':
+                    $rel_name = "users";
+                    break;
+                case 'Prospects':
+                    $rel_name = "prospects";
+                    break;
+                case 'Contacts':
+                    $rel_name = "contacts";
+                    break;
+                case 'Leads':
+                    $rel_name = "leads";
+                    break;
+                case 'Accounts':
+                    $rel_name = "accounts";
+                    break;
+            }
 
-                //save relationships.
-                switch ($this->related_type)  {
-                    case 'Users':
-                        $rel_name="users";
-                        break;
-
-                    case 'Prospects':
-                        $rel_name="prospects";
-                        break;
-
-                    case 'Contacts':
-                        $rel_name="contacts";
-                        break;
-
-                    case 'Leads':
-                        $rel_name="leads";
-                        break;
-
-                    case 'Accounts':
-                        $rel_name="accounts";
-                        break;
-                }
-
-                if (!empty($rel_name)) {
-                    $email->load_relationship($rel_name);
-                    $email->$rel_name->add($this->related_id);
-                }
+            if (!empty($rel_name)) {
+                $email->load_relationship($rel_name);
+                $email->$rel_name->add($this->related_id);
+            }
         }
+
         return $email->id;
     }
+
     /*
      * Call this function to verify the email_marketing message and email_template configured
      * for the campaign. If issues are found a fatal error will be logged but processing will not stop.
