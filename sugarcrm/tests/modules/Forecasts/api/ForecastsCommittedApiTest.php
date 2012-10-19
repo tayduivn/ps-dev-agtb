@@ -91,6 +91,7 @@ class ForecastsCommittedApiTest extends RestTestBase
         $this->_user = $reportee["user"];
         $GLOBALS["current_user"] = $this->_user;
         $this->authToken = "";
+        
         $postData = array(
         	"amount" => 100,
         	"base_rate" => 1,
@@ -121,6 +122,57 @@ class ForecastsCommittedApiTest extends RestTestBase
         $response = $this->_restCall("Forecasts/committed", json_encode($postData), "POST");
                
         $this->assertNotEmpty($response["reply"], "The rest reply is empty.  Please check sugarcrm.log for database errors.");
+        
+        //Now we need to change one of the worksheet values and save it with the worksheet api as a "draft"
+        $productId = $reportee["opp_worksheets"][0]->related_id;
+        $oldBestCase = $reportee["opp_worksheets"][0]->best_case;
+        $returnBest = "";
+        
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $reportee["user"]->id . "&timeperiod_id=" . $timeperiod->id);
+        
+    	//find one of the rows we updated in the forecast save step.
+    	$worksheetIndex = 0;
+    	foreach($response["reply"] as $sheet)
+    	{
+    		if($sheet["product_id"] == $productId)
+    		{
+    			break;
+    		}
+    		$worksheetIndex++;
+    	}        
+
+        $postData = array(
+            "best_case" => $response["reply"][$worksheetIndex]["best_case"] + 100,
+            "likely_case" => $response["reply"][$worksheetIndex]["likely_case"],
+            "probability" => $response["reply"][$worksheetIndex]["probability"],
+            "commit_stage" => $response["reply"][$worksheetIndex]["commit_stage"],
+            "id" => $response["reply"][$worksheetIndex]["id"],
+            "worksheet_id" => $response["reply"][$worksheetIndex]["worksheet_id"],
+            "product_id" => $response["reply"][$worksheetIndex]["product_id"],
+            "timeperiod_id" => $timeperiod->id,            
+            "assigned_user_id" => $response["reply"][$worksheetIndex]["assigned_user_id"],
+            "draft" => 1
+        );
+        
+        $response = $this->_restCall("ForecastWorksheets/" . $reportee["user"]->id, json_encode($postData), "PUT");
+        
+        //switch user to manager and get the worksheet for the rep. Verify committed value is returned instead of draft (live) value
+        $this->_user = $manager["user"];
+        $GLOBALS["current_user"] = $this->_user;
+        $this->authToken = "";
+        
+        // now get the data back to see if it was saved to all the proper tables.
+        $response = $this->_restCall("ForecastWorksheets?user_id=" . $reportee["user"]->id . "&timeperiod_id=" . $timeperiod->id);
+
+        //loop through response and pick out the rows that correspond with ops[0]->id
+        foreach ($response["reply"] as $record) {
+            if ($record["product_id"] == $productId) {
+                $returnBest = $record["best_case"];
+            }
+        }
+
+        //check to see if the draft data comes back
+        $this->assertEquals($oldBestCase, $returnBest, "Committed Data was not returned.");
         
         // set the current user back.
         $this->_user = $tempUser;
