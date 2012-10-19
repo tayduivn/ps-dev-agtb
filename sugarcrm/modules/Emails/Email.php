@@ -438,7 +438,6 @@ class Email extends SugarBean {
 		/* satisfy basic HTML email requirements */
 		$this->name = $request['sendSubject'];
 
-        // work-around legacy code in SugarPHPMailer
         if($_REQUEST['setEditor'] == 1) {
             $_REQUEST['description_html'] = $_REQUEST['sendDescription'];
             $this->description_html = $_REQUEST['description_html'];
@@ -446,7 +445,6 @@ class Email extends SugarBean {
             $this->description_html = '';
             $this->description = $_REQUEST['sendDescription'];
         }
-        // end work-around
 
 		if ( $this->isDraftEmail($request) )
 		{
@@ -645,7 +643,6 @@ class Email extends SugarBean {
                         $note->save();
                     } else {
                         $note                             = new Note();
-                        $note->disable_row_level_security = true; // Workaround for User Security Issue - Forecast module
                         $note->retrieve($fileGUID);
                         //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
                         //$note->x_file_path   = "upload/{$note->id}";
@@ -671,7 +668,6 @@ class Email extends SugarBean {
                     $doc->retrieve($docId);
 
                     $documentRevision                             = new DocumentRevision();
-                    $documentRevision->disable_row_level_security = true; // Workaround for User Security Issue - Forecast module
                     $documentRevision->retrieve($doc->document_revision_id);
                     //$documentRevision->x_file_name   = $documentRevision->filename;
                     //$documentRevision->x_file_path   = "upload/{$documentRevision->id}";
@@ -755,7 +751,6 @@ class Email extends SugarBean {
                         } // if
 
                         $note                             = new Note();
-                        $note->disable_row_level_security = true; // Workaround for User Security Issue - Forecast module
                         $note->retrieve($fileGUID);
                         //$note->x_file_name   = empty($note->filename) ? $note->name : $note->filename;
                         //$note->x_file_path   = "upload/{$note->id}";
