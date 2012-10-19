@@ -139,6 +139,7 @@
      */
     _setUpTimeperiodIntervalBind: function(field) {
 
+        self = this;
         // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
         field.def.value = this.model.get(field.name);
 
@@ -163,8 +164,8 @@
                 selected_interval = input.selected;
             }
             this.def.value = selected_interval;
-            this.model.set(this.name, selected_interval);
-            this.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
+            self.model.set(this.name, selected_interval);
+            self.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
         }
         return field;
 
