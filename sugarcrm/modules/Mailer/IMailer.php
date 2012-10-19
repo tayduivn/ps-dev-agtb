@@ -172,9 +172,9 @@ interface IMailer
      *
      * @abstract
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setTextBody($body);
+    public function setTextBody($body = null);
 
     /**
      * Returns the HTML part of the email.
@@ -189,9 +189,9 @@ interface IMailer
      *
      * @abstract
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setHtmlBody($body);
+    public function setHtmlBody($body = null);
 
     /**
      * Adds an attachment from a path on the filesystem.

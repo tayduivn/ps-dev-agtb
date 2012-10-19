@@ -241,9 +241,9 @@ abstract class BaseMailer implements IMailer
      * Sets the plain-text part of the email.
      *
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setTextBody($body) {
+    public function setTextBody($body = null) {
         $this->textBody = $body;
     }
 
@@ -261,9 +261,9 @@ abstract class BaseMailer implements IMailer
      * Sets the HTML part of the email.
      *
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setHtmlBody($body) {
+    public function setHtmlBody($body = null) {
         $this->htmlBody = trim($body);
     }
 
