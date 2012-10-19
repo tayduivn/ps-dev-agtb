@@ -33,6 +33,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
@@ -51,6 +52,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException() {
@@ -64,6 +66,7 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testGetMailer_ModeIsInvalid_ThrowsException() {

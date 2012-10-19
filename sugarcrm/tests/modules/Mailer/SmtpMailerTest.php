@@ -33,6 +33,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
     
     /**
+     * @group email
      * @group mailer
      */
     public function testGetMailTransmissionProtocol_ReturnsSmtp() {
@@ -47,6 +48,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testClearRecipients_ClearToAndBccButNotCc() {
@@ -73,6 +75,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_PHPMailerSmtpConnectThrowsException_ConnectToHostCatchesAndThrowsMailerException() {
@@ -126,6 +129,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_PHPMailerSetFromThrowsException_TransferHeadersThrowsMailerException() {
@@ -194,6 +198,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_PHPMailerAddReplyToReturnsFalse_TransferHeadersThrowsMailerException() {
@@ -262,6 +267,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_NoMessageParts_TransferBodyThrowsMailerException() {
@@ -303,6 +309,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_PHPMailerAddAttachmentThrowsException_TransferAttachmentsThrowsMailerException() {
@@ -367,6 +374,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_PHPMailerAddEmbeddedImageReturnsFalse_TransferAttachmentsThrowsMailerException() {
@@ -431,6 +439,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_PhpMailerSendThrowsException_SendCatchesItAndThrowsMailerException() {
@@ -487,6 +496,7 @@ class SmtpMailerTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSend_AllMethodCallsAreSuccessful_NoExceptionsThrown() {

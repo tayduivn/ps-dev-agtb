@@ -59,6 +59,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testListMailConfigurations_All_Success() {
@@ -88,6 +89,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testListMailConfigurations_SystemOnly_Success() {
@@ -104,6 +106,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testValidSystemMailConfigurationExists_SystemConfigExistsAndIsValid_ReturnsTrue() {
@@ -112,6 +115,7 @@ class OutboundEmailConfigurationPeerTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testValidSystemMailConfigurationExists_NoSystemConfigExists_ReturnsFalse() {

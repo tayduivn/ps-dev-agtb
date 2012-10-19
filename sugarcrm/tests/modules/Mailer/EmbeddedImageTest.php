@@ -25,6 +25,7 @@ require_once "modules/Mailer/AttachmentPeer.php";
 class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @group email
      * @group mailer
      */
     public function testFromSugarBean_ThrowsException() {
@@ -39,6 +40,7 @@ class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testToArray() {

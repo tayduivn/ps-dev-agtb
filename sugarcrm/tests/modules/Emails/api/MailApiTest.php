@@ -179,6 +179,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi01
      * @group mailer
      */
@@ -211,6 +212,7 @@ class MailApiTest extends RestTestBase {
     }
 
     /**
+     * @group email
      * @group mailapi02
      * @group mailer
      */
@@ -254,6 +256,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi03
      * @group mailer
      */
@@ -292,6 +295,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi04
      * @group mailer
      */
@@ -334,6 +338,7 @@ class MailApiTest extends RestTestBase {
     }
 
     /**
+     * @group email
      * @group mailapi05
      * @group mailer
      */
@@ -372,6 +377,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi06
      * @group mailer
      */
@@ -411,6 +417,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi07
      * @group mailer
      */
@@ -456,6 +463,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi08
      * @group mailer
      */
@@ -501,6 +509,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi09
      * @group mailer
      */

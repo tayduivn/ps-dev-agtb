@@ -48,6 +48,7 @@ class OutboundEmailConfigurationApiTest extends RestTestBase {
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testList_ReturnsAllConfigurationsWithTheSystemAsDefault() {

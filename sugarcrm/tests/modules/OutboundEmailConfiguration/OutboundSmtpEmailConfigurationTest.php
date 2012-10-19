@@ -33,6 +33,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testSetSecurityProtocol_PassInAValidProtocol_SecurityProtocolIsSet() {
@@ -45,6 +46,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testSetSecurityProtocol_PassInAnInvalidProtocol_ThrowsException() {
@@ -56,6 +58,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testSetMode_ValidModeSmtpIsInAllCaps_ModeBecomesLowerCaseSmtp() {
@@ -68,6 +71,7 @@ class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCas
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testSetMode_NoMode_ModeBecomesSmtp() {

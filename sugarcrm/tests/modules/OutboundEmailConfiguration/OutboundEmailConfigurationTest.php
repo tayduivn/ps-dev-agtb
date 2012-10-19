@@ -33,6 +33,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testLoadDefaultConfigs_CharsetIsReset_WordwrapIsInitialized() {
@@ -60,6 +61,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testSetEncoding_PassInAValidEncoding_EncodingIsSet() {
@@ -72,6 +74,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testSetEncoding_PassInAnInvalidEncoding_ThrowsException() {
@@ -83,6 +86,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      */
     public function testSetMode_ModeIsInvalid_ThrowsException() {
@@ -94,6 +98,7 @@ class OutboundEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group outboundemailconfiguration
      * @group functional
      */

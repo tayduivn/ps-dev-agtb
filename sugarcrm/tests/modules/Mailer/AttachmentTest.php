@@ -25,6 +25,7 @@ require_once "modules/Mailer/AttachmentPeer.php";
 class AttachmentTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @group email
      * @group mailer
      */
     public function testFromSugarBean_BeanIsAccount_ThrowsException() {
@@ -39,6 +40,7 @@ class AttachmentTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testFromSugarBean_BeanIsNote_ThrowsException() {

@@ -123,8 +123,8 @@ class EmailTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
-     * @group emailstest
      */
     public function testEmailSend_Success()
     {

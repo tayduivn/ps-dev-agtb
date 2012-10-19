@@ -35,6 +35,7 @@ class ReportsUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group reports
+     * @group email
      * @group mailer
      */
     public function testSendNotificationOfInvalidReport_InvalidRecipientAddress_ThrowsMailerException() {
@@ -49,6 +50,7 @@ class ReportsUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * @group reports
+     * @group email
      * @group mailer
      */
     public function testSendNotificationOfInvalidReport_AllMethodCallsAreSuccessful_NoExceptionsThrown() {
