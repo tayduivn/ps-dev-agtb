@@ -38,6 +38,11 @@
     likelyCase : 0,
 
     /**
+     * Stores the worst case to display in the view
+     */
+    worstCase : 0,
+
+    /**
      * Used to query for the user_id value in Forecasts
      */
     userId : '',
@@ -72,6 +77,11 @@
      */
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
 
+    /**
+     * Template to use wen updating the WorstCase on the committed bar
+     */
+    worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
+
     runningFetch : false,
 
     /**
@@ -105,6 +115,7 @@
 
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.worstCase = 0;
         this.showHistoryLog = false;
     },
 
@@ -133,6 +144,7 @@
 
         this.$el.parents('div.topline').find("span.lastBestCommit").html(this.previousBestCase);
         this.$el.parents('div.topline').find("span.lastLikelyCommit").html(this.previousLikelyCase);
+        this.$el.parents('div.topline').find("span.lastWorstCommit").html(this.previousWorstCase);
     },
 
 
@@ -174,6 +186,7 @@
 
         _.each(self._collection.models, function(model)
         {
+            console.log(model);
             //Get the first entry
             if(count == 0) {
                 previousModel = model;
@@ -188,6 +201,7 @@
             }
             count++;
         });
+        //debugger;
 
         self.render();
     }

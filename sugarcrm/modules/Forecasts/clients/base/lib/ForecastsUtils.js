@@ -16,6 +16,7 @@
                 oldestModel = new Backbone.Model({
                     best_case : 0,
                     likely_case: 0,
+                    worst_case: 0,
                     date_entered: ''
 
                 })
@@ -26,8 +27,12 @@
             var likely_difference = newestModel.get('likely_case') - oldestModel.get('likely_case');
             var likely_changed = likely_difference != 0;
             var likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : '');
+            var worst_difference = newestModel.get('worst_case') - oldestModel.get('worst_case');
+            var worst_changed = worst_difference != 0;
+            var worst_direction = worst_difference > 0 ? 'LBL_UP' : (worst_difference < 0 ? 'LBL_DOWN' : '');
             var args = Array();
             var text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED';
+            debugger;
 
             var best_arrow = '';
             if(best_direction == "LBL_UP") {
@@ -43,7 +48,14 @@
                 likely_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
             }
 
-            if(best_changed && likely_changed)
+            var worst_arrow = '';
+            if(worst_direction == "LBL_UP") {
+                worst_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
+            } else if(worst_direction == "LBL_DOWN") {
+                worst_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
+            }
+
+            if(best_changed && likely_changed && worst_changed)
             {
                 args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
                 args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
@@ -51,18 +63,56 @@
                 args[3] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
                 args[4] = app.currency.formatAmountLocale(Math.abs(likely_difference));
                 args[5] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
-                text = 'LBL_COMMITTED_HISTORY_BOTH_CHANGED';
-            } else if (!best_changed && likely_changed) {
+                args[6] = App.lang.get(worst_direction, 'Forecasts') + worst_arrow;
+                args[7] = app.currency.formatAmountLocale(Math.abs(worst_difference));
+                args[8] = app.currency.formatAmountLocale(newestModel.get('worst_case'));
+                text = 'LBL_COMMITTED_HISTORY_ALL_CHANGED';
+            } else if(best_changed && likely_changed && !worst_changed)
+            {
+                args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
+                args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
+                args[2] = app.currency.formatAmountLocale(newestModel.get('best_case'));
+                args[3] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
+                args[4] = app.currency.formatAmountLocale(Math.abs(likely_difference));
+                args[5] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
+                text = 'LBL_COMMITTED_HISTORY_LIKELY_BEST_CHANGED';
+            } else if(best_changed && !likely_changed && worst_changed)
+            {
+                args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
+                args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
+                args[2] = app.currency.formatAmountLocale(newestModel.get('best_case'));
+                args[3] = App.lang.get(worst_direction, 'Forecasts') + worst_arrow;
+                args[4] = app.currency.formatAmountLocale(Math.abs(worst_difference));
+                args[5] = app.currency.formatAmountLocale(newestModel.get('worst_case'));
+                text = 'LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED';
+            } else if(!best_changed && likely_changed && worst_changed)
+            {
+                args[0] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
+                args[1] = app.currency.formatAmountLocale(Math.abs(likely_difference));
+                args[2] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
+                args[3] = App.lang.get(worst_direction, 'Forecasts') + worst_arrow;
+                args[4] = app.currency.formatAmountLocale(Math.abs(worst_difference));
+                args[5] = app.currency.formatAmountLocale(newestModel.get('worst_case'));
+                text = 'LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED';
+            } else if (!best_changed && likely_changed && !worst_changed) {
                 args[0] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
                 args[1] = app.currency.formatAmountLocale(Math.abs(likely_difference));
                 args[2] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
                 text = 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED';
-            } else if (best_changed && !likely_changed) {
+            } else if (best_changed && !likely_changed && !worst_changed) {
                 args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
                 args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
                 args[2] = app.currency.formatAmountLocale(newestModel.get('best_case'));
                 text = 'LBL_COMMITTED_HISTORY_BEST_CHANGED';
+            } else if (!best_changed && !likely_changed && worst_changed) {
+                args[0] = App.lang.get(worst_direction, 'Forecasts') + worst_arrow;
+                args[1] = app.currency.formatAmountLocale(Math.abs(worst_difference));
+                args[2] = app.currency.formatAmountLocale(newestModel.get('worst_case'));
+                text = 'LBL_COMMITTED_HISTORY_WORST_CHANGED';
             }
+            console.log(best_changed);
+            console.log(likely_changed);
+            console.log(worst_changed);
 
             //Compile the language string for the log
             var hb = Handlebars.compile("{{str_format key module args}}");
