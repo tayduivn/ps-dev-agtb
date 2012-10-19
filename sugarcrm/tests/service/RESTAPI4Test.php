@@ -624,12 +624,19 @@ class RESTAPI4Test extends Sugar_PHPUnit_Framework_TestCase
         $legacy = $listViewDefs[$module];
         
         $this->assertTrue(isset($result[$module][$type][$view]), 'Result did not contain expected data');
-        $this->assertArrayHasKey('NAME', $result[$module][$type][$view], 'NAME not found in the REST call result');
+    
+        foreach($result[$module][$type][$view] AS $def) {
+            $this->assertArrayHasKey('name', $def, 'Name key not found in result definitions');
+        }
+    
         
         $legacyKeys = array_keys($legacy);
         sort($legacyKeys);
         
-        $convertedKeys = array_keys($result[$module][$type][$view]);
+        foreach($result[$module][$type][$view] AS $def) {
+            $convertedKeys[] = $def['name'];
+        }
+        
         sort($convertedKeys);
         
         $this->assertEquals($legacyKeys, $convertedKeys, 'Converted list def keys not the same as known list def keys');
