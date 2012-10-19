@@ -121,7 +121,7 @@ nv.models.multiBarChart = function() {
 
       //x   .domain(d3.extent(d3.merge(data.map(function(d) { return d.values })), getX ))
       //   .range([0, availableWidth]);
-console.log(d3.extent(d3.merge(series1), function(d) { return d.y } ))
+
       y   .domain(d3.extent(d3.merge(series1), function(d) { return d.y } ))
           .range([availableHeight, 0]);
 
@@ -185,7 +185,7 @@ console.log(d3.extent(d3.merge(series1), function(d) { return d.y } ))
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').style('height') ) +
+        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height ) +
           parseInt( g.select('.nv-title').style('margin-top') ) +
           parseInt( g.select('.nv-title').style('margin-bottom') );
 
@@ -197,7 +197,7 @@ console.log(d3.extent(d3.merge(series1), function(d) { return d.y } ))
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').style('height') )) +')');
+            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height )) +')');
       }
 
       //------------------------------------------------------------
