@@ -238,9 +238,9 @@ class OutboundEmailConfigurationPeer
                 }
 
                 // determine the appropriate encryption layer for the sending strategy
-                if ($outboundEmail->mail_smtpssl === 1) {
+                if ($outboundEmail->mail_smtpssl == 1) {
                     $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolSsl);
-                } elseif ($outboundEmail->mail_smtpssl === 2) {
+                } elseif ($outboundEmail->mail_smtpssl == 2) {
                     $outboundEmailConfiguration->setSecurityProtocol(OutboundSmtpEmailConfiguration::SecurityProtocolTls);
                 }
 
