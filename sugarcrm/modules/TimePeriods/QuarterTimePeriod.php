@@ -40,17 +40,25 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      *
      * @param null $start_date date string to set the start date of the quarter time period
      */
-    public function __construct($start_date = null) {
+    public function __construct() {
         parent::__construct();
-        $timedate = TimeDate::getInstance();
-
         //set defaults
         $this->time_period_type = 'Quarter';
         $this->is_fiscal = false;
         $this->is_leaf = false;
         $this->date_modifier = '3 month';
+        $this->next_date_modifier = '3 month';
+        $this->previous_date_modifier = '-3 month';
+    }
 
-        $this->setStartDate($start_date);
+    public function buildPreviousLeaves($timePeriods)
+    {
+
+    }
+
+    public function buildNextLeaves($timePeriods)
+    {
+
     }
 
     /**
@@ -59,6 +67,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
      * @return mixed
      */
+    /*
     public function buildLeaves($timePeriodType) {
         if($this->hasLeaves()) {
             throw new Exception("This TimePeriod already has leaves");
@@ -93,4 +102,5 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
             $this->related_timeperiods->add($leafPeriod->id);
         }
     }
+    */
 }

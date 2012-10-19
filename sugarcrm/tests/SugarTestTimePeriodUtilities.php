@@ -133,13 +133,6 @@ class SugarTestTimePeriodUtilities
         return $rand_date;
     }
 
-    public static function addTimePeriod($timeperiod=NULL) {
-        if(is_null($timeperiod)) {
-            return;
-        }
-        self::$_createdTimePeriods[] = $timeperiod;
-    }
-
     /**
      * @static
      * This is a static function to remove all created test TimePeriod instance
@@ -165,5 +158,16 @@ class SugarTestTimePeriodUtilities
             $timeperiod_ids[] = $tp->id;
         }
         return $timeperiod_ids;
+    }
+
+    /**
+     * @static
+     * This is a static function to set all created TimePeriod instances
+     *
+     * @param $timePeriods Array of TimePeriod instances
+     */
+    public static function setCreatedTimePeriods($timePeriods=array())
+    {
+        self::$_createdTimePeriods = $timePeriods;
     }
 }

@@ -112,8 +112,8 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param string $timePeriodType
      * @return mixed
      */
-    public function buildLeaves($timePeriodType) {
+    public function buildLeaves($shownBackwardDifference, $shownForwardDifference)
+    {
         throw new Exception("This TimePeriod is a leaf only and not allowed to be a leaf");
-
     }
 }

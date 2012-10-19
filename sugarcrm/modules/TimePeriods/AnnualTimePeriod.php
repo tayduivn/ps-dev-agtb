@@ -34,23 +34,17 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    /**
-     * constructor override
-     *
-     * @param null $start_date date string to set the start date of the annual time period
-     * @param bool $fiscal_period flag to determine if the timeperiod is meant to be a fiscal or calendar based period
-     */
-    public function __construct($start_date = null, $fiscal_period = false) {
+    public function __construct() {
         parent::__construct();
-        $timedate = TimeDate::getInstance();
-
         //set defaults
         $this->time_period_type = 'Annual';
-        $this->is_fiscal = $fiscal_period;
+        $this->leaf_period_type = 'Quarter';
+        $this->leaf_periods = 4;
+        $this->is_fiscal = false; //Fiscal is 52-week based, chronological is year based
         $this->is_leaf = false;
-        $this->date_modifier = $this->is_fiscal ? '52 week' : '1 year';
-
-        $this->setStartDate($start_date);
+        $this->next_date_modifier = $this->is_fiscal ? '52 week' : '1 year';
+        $this->previous_date_modifier = $this->is_fiscal ? '-52 week' : '-1 year';
+        $this->name_template = "Year %d";
     }
 
     /**
@@ -60,12 +54,11 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function setStartDate($start_date = null) {
         parent::setStartDate($start_date);
-
-        if(empty($this->name)) {
-            $timedate = TimeDate::getInstance();
-            $start_date_time = $timedate->fromDbDate($this->start_date);
-            $this->name = $this->is_fiscal ? "Fiscal " : "Year ".$start_date_time->format("Y");
-        }
+        $timedate = TimeDate::getInstance();
+        $start_date_time = $timedate->fromDbDate($this->start_date);
+        //Todo: get labels from language strings
+        $label = $this->is_fiscal ? 'Fiscal %s' : 'Year %s';
+        $this->name = sprintf($label, $start_date_time->format("Y"));
     }
 
     /**
@@ -74,21 +67,25 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
      * @param string $timePeriodType
      * @return mixed
      */
+    /*
     public function buildLeaves($timePeriodType) {
-        if($this->hasLeaves()) {
-            throw new Exception("This TimePeriod already has leaves");
+        global $app_strings;
+
+        if($this->hasLeaves())
+        {
+            throw new Exception($app_strings['ERR_TIMEPERIOD_ALREADY_HAS_LEAVES']);
         }
 
-        if($this->is_leaf) {
-            throw new Exception("Leaf Time Periods cannot have leaves");
+        if($this->is_leaf)
+        {
+            throw new Exception($app_strings['ERR_TIMEPERIOD_ALREADY_LEAF']);
         }
 
-        $n = 0;
         $timedate = TimeDate::getInstance();
         $start_date_time = $timedate->fromDbDate($this->start_date);
-        $nameStart = "Q";
 
         $this->load_relationship('related_timeperiods');
+
         //valid time periods to be leaves of this period
         switch($timePeriodType) {
             //set up the first leaf
@@ -128,25 +125,28 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
                     $nameStart = "Q";
                 }
                 break;
-
         }
+
         $leafPeriod->setStartDate($this->start_date);
         $leafPeriod->is_leaf = true;
-        $leafPeriod->name = $nameStart."1 ".$start_date_time->format("Y");
+        $leafPeriod->name = sprintf("%s1 %d", $nameStart, '1', $start_date_time->format("Y"));
         $leafPeriod->save();
+
         $this->related_timeperiods->add($leafPeriod->id);
 
         //loop the count to create the next n leaves to fill out the relationship
-        for($i = 2; $i <= $n; $i++) {
+        for($i = 2; $i <= $n; $i++)
+        {
             if($timePeriodType == "Month" && ((i) % 3 == 0)) {
-                // leaf is monthly and need to even out the fiscal numbering
+                //leaf is monthly and need to even out the fiscal numbering
                 $leafPeriod = $leafPeriod->createNextTimePeriod(5);
             } else {
                 $leafPeriod = $leafPeriod->createNextTimePeriod();
             }
-            $leafPeriod->name = $nameStart.$i." ".$start_date_time->format("Y");
+            $leafPeriod->name = sprintf("%s%d %d", $nameStart, $i, $start_date_time->format("Y"));
             $this->related_timeperiods->add($leafPeriod->id);
         }
 
     }
+    */
 }

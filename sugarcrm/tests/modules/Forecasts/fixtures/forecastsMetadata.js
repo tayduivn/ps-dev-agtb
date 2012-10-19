@@ -21,8 +21,8 @@ fixtures.metadata.modules.Forecasts.config = {
     "timeperiod_leaf_interval":"Quarter",
     "timeperiod_start_month":"July",
     "timeperiod_start_day":"1",
-    "timeperiods_shown_forward":4,
-    "timeperiods_shown_backward":4,
+    "timeperiod_shown_forward":4,
+    "timeperiod_shown_backward":4,
     "forecast_categories":"show_binary",
     "buckets_dom":"commit_stage_dom",
     "category_ranges":{

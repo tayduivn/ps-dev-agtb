@@ -40,44 +40,20 @@ class ForecastsConfigApi extends ConfigModuleApi {
 
         $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
 
-        //track what settings have changed to determine if timeperiods need rebuilt
+        //track what settings have changed to determine if timeperiods need to be rebuilt
         $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
+
+        //save new settings from the admin wizard
         $new_settings = parent::configSave($api, $args);
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
-        //if primary settings for timeperiods have changed, then rebuild them
-        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
-            TimePeriod::rebuildForecastingTimePeriods();
+        $timePeriod = BeanFactory::getBean('TimePeriods');
+        if(!$timePeriod->isSettingIdentical($prior_forecasts_settings, $current_forecasts_settings))
+        {
+            $timePeriod->rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
+            $timePeriod->deleteTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
         }
         return $new_settings;
-    }
-
-    /**
-     * compares two sets of forecasting settings to see if the primary timeperiods settings are the same
-     *
-     * @param $priorSettings
-     * @param $currentSettings
-     *
-     * @return boolean
-     */
-    private function timePeriodSettingsChanged($priorSettings, $currentSettings) {
-        if(!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {
-            return true;
-        }
-        if(!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
-            return true;
-        }
-        if(!isset($priorSettings['timeperiods_start_month']) || (isset($currentSettings['timeperiods_start_month']) && ($currentSettings['timeperiods_start_month'] != $priorSettings['timeperiods_start_month']))) {
-            return true;
-        }
-        if(!isset($priorSettings['timeperiods_start_day']) || (isset($currentSettings['timeperiods_start_day']) && ($currentSettings['timeperiods_start_day'] != $priorSettings['timeperiods_start_day']))) {
-            return true;
-        }
-        if(!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {
-            return true;
-        }
-
-        return false;
     }
 
 }
