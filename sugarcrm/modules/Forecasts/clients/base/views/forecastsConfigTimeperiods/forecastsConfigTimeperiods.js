@@ -128,8 +128,9 @@
 
         return field;
 
-    },
-
+    }
+    //BEGIN SUGARCRM flav=pro ONLY
+    ,
     /**
      * Sets up the change event on the timeperiod_interval drop down to maintain the interval selection
      * and push in the default selction for the leaf period
@@ -139,7 +140,7 @@
      */
     _setUpTimeperiodIntervalBind: function(field) {
 
-        self = this;
+        var self = this;
         // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
         field.def.value = this.model.get(field.name);
 
@@ -170,5 +171,5 @@
         return field;
 
     }
-
+    //END SUGARCRM flav=pro ONLY
 })
