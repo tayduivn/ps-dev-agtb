@@ -40,7 +40,9 @@ $(window).resize(function() {
 
 $(document).ready(function(){
 	SUGAR.themes.resizeSearch();
-	SUGAR.themes.resizeMenu();
+    if(SUGAR.App == undefined) {
+	    SUGAR.themes.resizeMenu();
+    }
 	//setup for action menus
 	SUGAR.themes.actionMenu();
 	//setup event handler for search results

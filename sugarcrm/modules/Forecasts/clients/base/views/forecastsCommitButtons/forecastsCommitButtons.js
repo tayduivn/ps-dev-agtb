@@ -148,13 +148,13 @@
     triggerConfigModal: function() {
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"forecastsWizardConfig"}],
+            components: [{layout:"forecastsTabbedConfig"}],
             span: 10
         };
         var callback = function(){};
 
         if(app.user.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsWizardConfig:open", params, callback);
+            this.layout.trigger("modal:forecastsTabbedConfig:open", params, callback);
         }
     },
 
