@@ -273,7 +273,10 @@ class MetaDataManager {
         $indexes = array();
         if(isset($data['indices'])) {
             foreach($data['indices'] AS $index) {
-                $indexes[$index['fields'][0]] = $index['fields'][0];
+                if(isset($index['fields'][0]))
+                {
+                    $indexes[$index['fields'][0]] = $index['fields'][0];
+                }
             }
         }
 
