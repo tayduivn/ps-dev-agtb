@@ -45,7 +45,6 @@ class RestMetadataJssourceTest extends RestTestBase {
         $restReply = $this->_restCall('metadata?type_filter=jssource&platform=portal');
         // Hash should always be set
         $this->assertTrue(isset($restReply['reply']['jssource']), "Jssource is missing");
-        unset($restReply['reply']['modules']['Contacts']['layouts']['_hash']);
         
     }
 
