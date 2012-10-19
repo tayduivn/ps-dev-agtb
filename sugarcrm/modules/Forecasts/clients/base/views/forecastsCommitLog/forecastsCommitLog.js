@@ -186,7 +186,6 @@
 
         _.each(self._collection.models, function(model)
         {
-            console.log(model);
             //Get the first entry
             if(count == 0) {
                 previousModel = model;
@@ -201,7 +200,6 @@
             }
             count++;
         });
-        //debugger;
 
         self.render();
     }
