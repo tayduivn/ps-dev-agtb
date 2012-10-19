@@ -63,26 +63,19 @@
         _showConfigModal: function(showWizard) {
             var self = this;
 
-            // Callback object that gets called by modal.js when user clicks OK or cancel
-            var callback = {
-                // callback() has to be here for the modal to close, but the close function gets run
-                // after callback() and overwrites any location settings that need to happen
-                // without callback, no callbacks happen when you click OK button
-                callback: function() {},
-
-                // Checks to see if is_setup has been set and redirects the user accordingly
-                close: function() {
-                    if(!self.context.forecasts.config.get('is_setup')) {
-                        self.loc = 'index.php?module=Home';
-                    }
-                    window.location = self.loc;
-                }
-            }
-
             // begin building params to pass to modal
             var params = {
                 title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-                span: 10
+                span: 10,
+                before: {
+                    hide : function(){
+                        // if we cancel out
+                        if(!this.context.forecasts.config.get('is_setup')) {
+                            this.loc = 'index.php?module=Home';
+                        }
+                        window.location = self.loc;
+                    }
+                }
             };
 
             if(app.user.getAcls()['Forecasts'].admin == "yes") {
@@ -91,8 +84,8 @@
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
             }
 
-            this.trigger("modal:forecastsWizardConfig:open", params, callback);
-        },
+            this.trigger("modal:forecastsWizardConfig:open", params);
+        }
 
     });
 
