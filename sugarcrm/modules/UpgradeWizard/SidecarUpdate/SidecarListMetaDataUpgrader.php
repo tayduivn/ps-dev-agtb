@@ -1,6 +1,7 @@
 <?php
 // This will need to be pathed properly when packaged
 require_once 'SidecarAbstractMetaDataUpgrader.php';
+require_once 'modules/ModuleBuilder/parsers/views/AbstractMetaDataParser.php';
 
 class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
 {
@@ -21,8 +22,8 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             // For mobile upgrades, enabled is true if it was not set before or if it was true before
             // For both platforms, default is true if it was not set before, or
             // if it was set to true
-            $defs['default'] = !isset($def['default']) || $def['default'] == true;
-            $defs['enabled'] = $this->client == 'portal' || !isset($def['enabled']) || $def['enabled'] == true;
+            $defs['default'] = !isset($def['default']) || AbstractMetaDataParser::isTruthy($def['default']);
+            $defs['enabled'] = $this->client == 'portal' || !isset($def['enabled']) || AbstractMetaDataParser::isTruthy($def['enabled']);
             $defs = array_merge($defs, $def);
             
             $newdefs[] = $defs;
