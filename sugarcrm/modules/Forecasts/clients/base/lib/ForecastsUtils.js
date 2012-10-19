@@ -32,7 +32,6 @@
             var worst_direction = worst_difference > 0 ? 'LBL_UP' : (worst_difference < 0 ? 'LBL_DOWN' : '');
             var args = Array();
             var text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED';
-            debugger;
 
             var best_arrow = '';
             if(best_direction == "LBL_UP") {
@@ -110,9 +109,6 @@
                 args[2] = app.currency.formatAmountLocale(newestModel.get('worst_case'));
                 text = 'LBL_COMMITTED_HISTORY_WORST_CHANGED';
             }
-            console.log(best_changed);
-            console.log(likely_changed);
-            console.log(worst_changed);
 
             //Compile the language string for the log
             var hb = Handlebars.compile("{{str_format key module args}}");
