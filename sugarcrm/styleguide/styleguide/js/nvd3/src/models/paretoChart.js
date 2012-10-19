@@ -5,7 +5,7 @@ nv.models.paretoChart = function() {
   // Public Variables with Default Settings
   //------------------------------------------------------------
 
-  var margin = {top: 30, right: 20, bottom: 20, left: 40}//margin = {top: 30, right: 20, bottom: 50, left: 60}
+  var margin = {top: 5, right: 5, bottom: 34, left: 40}
     , width = null
     , height = null
     , getX = function(d) { return d.x }
@@ -107,10 +107,12 @@ nv.models.paretoChart = function() {
       var container = d3.select(this),
           that = this;
 
-      var availableWidth = (width  || parseInt(container.style('width')) || 960)
-                             - margin.left - margin.right,
-          availableHeight = (height || parseInt(container.style('height')) || 400)
-                             - margin.top - margin.bottom;
+      var availableWidth = (width  || parseInt(container.style('width')) || 960) - margin.left - margin.right
+        , availableHeight = (height || parseInt(container.style('height')) || 400) - margin.top - margin.bottom
+        , expandMode = container.node().offsetParent.className.indexOf('expanded') !== -1;
+
+      margin.left = (expandMode) ? 50 : 40;
+      margin.bottom = (expandMode) ? 40 : 34;
 
       //------------------------------------------------------------
       // Display noData message if there's nothing to show.
@@ -268,7 +270,7 @@ nv.models.paretoChart = function() {
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').style('height') ) +
+        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height ) +
           parseInt( g.select('.nv-title').style('margin-top') ) +
           parseInt( g.select('.nv-title').style('margin-bottom') );
 
@@ -280,7 +282,7 @@ nv.models.paretoChart = function() {
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').style('height') )) +')');
+            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height )) +')');
       }
 
       //------------------------------------------------------------
@@ -378,7 +380,57 @@ nv.models.paretoChart = function() {
 
       xTicks
         .selectAll('line, text')
-        .style('opacity', 1)
+        .style('opacity', 1);
+
+      xTicks.select('text').each( function(d,i){
+
+        var textContent = this.textContent
+          , textNode = d3.select(this)
+          , textArray = textContent.split(' ')
+          , l = textArray.length
+          , i = 0
+          , dy = 0.71
+          , maxWidth = x.rangeBand();
+
+        if (this.getBBox().width > maxWidth)
+        {
+          this.textContent = '';
+
+          do
+          {
+            var textString
+              , textSpan = textNode.append('tspan')
+                  .text(textArray[i]+' ')
+                  .attr("dy", dy + 'em')
+                  .attr("x", 0 + 'px');
+
+            if (i==0)
+            {
+              dy = 0.9;
+            }
+
+            i += 1;
+
+            while ( i<l )
+            {
+              textString = textSpan.text();
+              textSpan.text(textString+' '+textArray[i]);
+              if (this.getBBox().width <= maxWidth)
+              {
+                i += 1;
+              }
+              else
+              {
+                textSpan.text(textString);
+                break;
+              }
+            }
+
+          }
+          while ( i<l )
+        }
+
+      });
 
       if (reduceXTicks)
         xTicks

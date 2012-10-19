@@ -147,7 +147,7 @@ nv.models.multiBarHorizontalChart = function() {
             .attr('fill', 'black')
           ;
 
-        titleHeight = parseInt( g.select('.nv-title').style('height') ) +
+        titleHeight = parseInt( g.select('.nv-title').node().getBBox().height ) +
           parseInt( g.select('.nv-title').style('margin-top') ) +
           parseInt( g.select('.nv-title').style('margin-bottom') );
 
@@ -159,7 +159,7 @@ nv.models.multiBarHorizontalChart = function() {
         }
 
         g.select('.nv-titleWrap')
-            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').style('height') )) +')');
+            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').node().getBBox().height )) +')');
       }
 
       //------------------------------------------------------------

@@ -10,7 +10,7 @@
 </head>
 <body class="full-screen">
 
-<div id="chart1" class="chart-container view-forecastsChart">
+<div id="chart1" class="nv-chart">
   <svg></svg>
 </div>
 
@@ -108,17 +108,7 @@
             //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
             //.colorData( 'class' )
             .colorData( 'default' )
-            .colorFill( 'gradient' )
-            //.colorFill( 'default' )
-            .tooltipBar( function(key, x, y, e, graph) {
-              return '<p>Stage: <b>' + key + '</b></p>' +
-                     '<p>Amount: <b>$' +  parseInt(y) + 'K</b></p>' +
-                     '<p>Percent: <b>' +  x + '%</b></p>'
-              })
-            .tooltipLine( function(key, x, y, e, graph) {
-                return '<p>Likely: <b>' + parseInt(y) + 'K</b></p>'
-              })
-            ;
+            .colorFill( 'gradient' );
 
       d3.select(this.el)
         .datum( this.translateDataToD3(chartData) )
