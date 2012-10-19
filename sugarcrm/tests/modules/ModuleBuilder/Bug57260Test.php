@@ -110,7 +110,6 @@ class Bug57260Test extends Sugar_PHPUnit_Framework_TestCase {
         $view->display();
         $output = ob_get_clean();
         $output = json_decode($output);
-        _ppl($output);
         
         // Test that our output is what we wanted
         $this->assertNotEmpty($output->center->content, "Expected output from parsing layout editor not returned");
