@@ -24,6 +24,15 @@
                 field = this._setUpTimeperiodIntervalBind(field);
             }
         //END SUGARCRM flav=pro ONLY
+
+        /**
+         * This is needed to make sure that this view is read only
+         * when viewing it in the Tabbed Config View
+         */
+        if(!_.isUndefined(this.layout) && this.layout.meta.type == "forecastsTabbedConfig") {
+            // if we are on the tabbed config, this is read only!
+            field.options.def.view = 'detail';
+        }
         app.view.View.prototype._renderField.call(this, field);
     },
 
