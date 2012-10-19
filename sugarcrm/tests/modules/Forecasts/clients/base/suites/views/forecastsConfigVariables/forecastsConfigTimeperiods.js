@@ -21,7 +21,19 @@
 
 describe("The forecastsConfigTimeperiods view", function(){
 
-    var app, view, field, dayField, monthField, intervalField, _renderFieldStub, testMonthMethodStub,testDayMethodStub, testIntervalMethodStub, testValue, testIntervalValue;
+    var app,
+        view,
+        field,
+        dayField,
+        monthField,
+        intervalField,
+        _renderFieldStub,
+        testMonthMethodStub,
+        testDayMethodStub,
+        testIntervalMethodStub,
+        testValue,
+        testIntervalValue,
+        testLeafIntervalValue;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -91,11 +103,11 @@ describe("The forecastsConfigTimeperiods view", function(){
         beforeEach(function() {
             testValue = 3;
             testIntervalValue = "Annual";
-            view.model = {
-                get: function(param) {
-                    return {};
-                }
-            };
+            testLeafIntervalValue = "Quarter";
+            view.model = new Backbone.Model({
+                timeperiod_interval: '',
+                timeperiod_leaf_interval: ''
+                });
             monthField = {
                 model: {
                     get: function(param) {
@@ -144,6 +156,7 @@ describe("The forecastsConfigTimeperiods view", function(){
             delete intervalField;
             delete testValue;
             delete testIntervalValue;
+            delete testLeafIntervalValue;
         });
 
         it("should add the event handlers to update the selections for the field", function() {
@@ -176,10 +189,18 @@ describe("The forecastsConfigTimeperiods view", function(){
             expect(options).toEqual(expectedOptions);
         });
 
+        //BEGIN SUGARCRM flav=pro ONLY
         it("should check that the method to select the interval and default the leaf was called", function() {
             var testIntervalMethodStub = sinon.stub(intervalField, "_updateIntervals", function() {return '';});
             intervalField._updateIntervals({}, {selected: testIntervalValue});
             expect(testIntervalMethodStub).toHaveBeenCalled;
         });
+
+        it("should check that the method to select the interval and default the leaf set the model correctly", function() {
+            intervalField._updateIntervals({}, {selected: testIntervalValue});
+            expect(view.model.get("timeperiod_interval")).toEqual(testIntervalValue);
+            expect(view.model.get("timeperiod_leaf_interval")).toEqual(testLeafIntervalValue);
+        });
+        //END SUGARCRM flav=pro ONLY
     });
 });
