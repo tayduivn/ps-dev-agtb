@@ -33,6 +33,7 @@ class SideBarLayout {
 
     public function getLayout() {
         $this->push("preview", array("view" => "preview"));
+        $this->push("preview", array("view" => "preview-stream"));
         $this->layout->push(array("layout" => $this->mainPane->getLayout()));
         $this->layout->push(array("layout" => $this->sidePane->getLayout()));
         $this->layout->push(array("layout" => $this->previewPane->getLayout()));
