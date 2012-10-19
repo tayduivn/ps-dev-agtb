@@ -420,6 +420,9 @@ class EmailMan extends SugarBean{
 
    /**
     * The function creates a copy of email send to each target.
+    *
+    * @param $module
+    * @param BaseMailer $mail
     */
     public function create_indiv_email($module, $mail) {
         global $timedate,
@@ -431,23 +434,16 @@ class EmailMan extends SugarBean{
         $email->team_id = 1;
         //END SUGARCRM flav=pro ONLY
 
-        $email->to_addrs        = "{$module->name}&lt;{$module->email1}&gt;";
-        $email->to_addrs_ids    = "{$module->id};";
-        $email->to_addrs_names  = "{$module->name};";
-        $email->to_addrs_emails = "{$module->email1};";
-        $email->type            = 'archived';
-        $email->deleted         = '0';
-        $email->name            = "{$this->current_campaign->name}: {$mail->Subject}";
-
-        if ($mail->ContentType == "text/plain") {
-            $email->description      = $mail->Body;
-            $email->description_html = null;
-        } else {
-            $email->description_html = $mail->Body;
-            $email->description      = $mail->AltBody;
-        }
-
-        $email->from_addr        = $mail->From;
+        $email->to_addrs         = "{$module->name}&lt;{$module->email1}&gt;";
+        $email->to_addrs_ids     = "{$module->id};";
+        $email->to_addrs_names   = "{$module->name};";
+        $email->to_addrs_emails  = "{$module->email1};";
+        $email->type             = 'archived';
+        $email->deleted          = '0';
+        $email->name             = "{$this->current_campaign->name}: " . $mail->getHeader(EmailHeaders::Subject);
+        $email->description      = $mail->getTextBody();
+        $email->description_html = $mail->getHtmlBody();
+        $email->from_addr        = $mail->getHeader(EmailHeaders::From)->getEmail();
         $email->assigned_user_id = $this->user_id;
         $email->parent_type      = $this->related_type;
         $email->parent_id        = $this->related_id;
