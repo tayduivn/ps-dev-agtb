@@ -191,9 +191,11 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     public function upgrade() {
         // Get our legacy view defs
+        $this->logUpgradeStatus('setting legacy viewdefs');
         $this->setLegacyViewdefs();
         
         // Convert them
+        $this->logUpgradeStatus('converting legacy viewdefs to 6.6.0 format');
         $this->convertLegacyViewDefsToSidecar();
         
         // Save the new file and report it
@@ -213,6 +215,7 @@ abstract class SidecarAbstractMetaDataUpgrader
         $content = $this->getNewFileContents();
         
         // Make the new file
+        $this->logUpgradeStatus('Saving new viewdefs...');
         return $this->save($newname, $content);
         //return true;
     }
@@ -313,5 +316,14 @@ abstract class SidecarAbstractMetaDataUpgrader
      */
     public function getNormalizedModuleName() {
         return isset($this->modulename) ? $this->modulename : $this->module;
+    }
+
+    /**
+     * Sets a message into the upgrade log
+     * 
+     * @param $message
+     */
+    protected function logUpgradeStatus($message) {
+        $this->upgrader->logUpgradeStatus($message);
     }
 }

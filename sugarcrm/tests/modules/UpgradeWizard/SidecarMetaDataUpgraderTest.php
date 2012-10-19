@@ -28,6 +28,14 @@ require_once 'tests/modules/UpgradeWizard/SidecarMetaDataFileBuilder.php';
 
 class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     /**
+     * Flag to let us know if there is a current upgrade wizard log that is backed 
+     * up to support this test
+     * 
+     * @var bool
+     */
+    protected static $logBackedUp = false;
+    
+    /**
      * The files builder to bring in legacy files into place and prepare them
      * for upgrade
      * 
@@ -78,6 +86,12 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     }
     
     public static function setUpBeforeClass() {
+        // If there is an upgrade wizard log in place, back it up
+        if (file_exists('upgradeWizard.log')) {
+            rename('upgradeWizard.log', 'upgradeWizard.log.unittestbak');
+            self::$logBackedUp = true;
+        }
+        
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         
         // Builds all the legacy test files
@@ -92,6 +106,14 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     public static function tearDownAfterClass() {
         self::getBuilder();
         self::$builder->teardownFiles();
+        
+        // Remove the upgrade wizard log
+        @unlink('upgradeWizard.log');
+        
+        if (self::$logBackedUp && file_exists('upgradeWizard.log.unittestbak')) {
+            // Set the log back in place
+            rename('upgradeWizard.log.unittestbak', 'upgradeWizard.log');
+        }
     }
     
     public function testLegacyMetadataFilesForRemoval() {
