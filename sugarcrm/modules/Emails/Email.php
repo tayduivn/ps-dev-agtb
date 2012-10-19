@@ -25,8 +25,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once "modules/Mailer/MailerFactory.php";  // imports all but one of the Mailer classes that are needed
 require_once "modules/Mailer/AttachmentPeer.php"; // AttachmentPeer is needed to factor Attachments and EmbeddedImages
-
-require_once('include/SugarPHPMailer.php');
 require_once 'include/upload_file.php';
 
 class Email extends SugarBean {
