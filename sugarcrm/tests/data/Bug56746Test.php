@@ -1,4 +1,6 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -33,7 +35,7 @@
  *
  * @ticket 46230
  * @ticket 54042
- * @ticked 56746
+ * @ticket 56746
  */
 class Bug56746Test extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -70,9 +72,9 @@ class Bug56746Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function tearDown()
     {
+	unset($this->account->field_defs['checkbox_c']);
+        unset($this->account->field_defs['text_c']);
         parent::tearDown();
-
-        SugarTestAccountUtilities::removeAllCreatedAccounts();
         SugarTestHelper::tearDown();
     }
 
