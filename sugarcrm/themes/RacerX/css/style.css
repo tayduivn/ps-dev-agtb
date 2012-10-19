@@ -5738,6 +5738,8 @@ padding:0px;
 position: fixed;
 top: 0;
 width:100%;
+
+    z-index:1030;
 }
 #globalLinksSubnav, #quickCreateULSubnav {
     z-index: 20;
