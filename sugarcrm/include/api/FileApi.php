@@ -249,7 +249,11 @@ class FileApi extends SugarApi {
 
                     // Check delete_if_fails flag ... if true delete corresponding record
                     if(!empty($args['delete_if_fails'])) {
-                        $bean->mark_deleted($bean->id);
+
+                        // First ensure user owns record
+                        if($bean->created_by == $GLOBALS['current_user']->id) {
+                            $bean->mark_deleted($bean->id);
+                        } 
                     }
                     throw new SugarApiExceptionError($sf->error);
                 }
