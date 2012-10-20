@@ -88,7 +88,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['module_list']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Leads
         $enabledPortal = array('Cases','Contacts');
         $restModules = $restReply['reply']['module_list'];
@@ -117,7 +117,7 @@ class RestMetadataModuleListPortalTest extends RestTestPortalBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=portal');
 
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no portal module list');
+        $this->assertTrue(isset($restReply['reply']['module_list']),'There is no portal module list');
         // There should only be the following modules by default: Bugs, Cases, KBDocuments, Contacts
         // And now 3 are enabled
         $enabledPortal = array('Cases','Contacts', 'Bugs');
