@@ -42,18 +42,71 @@ describe("Forecasts Utils", function(){
             oldestModel = null;
         });
 
-        describe("should show both values changed", function() {
+        describe("should show all values changed", function() {
             it("should return object with text attribute indicating both best and likely values changed", function() {
                 newestModel.set('best_case', 1000);
                 newestModel.set('likely_case', 900);
+                newestModel.set('worst_case', 700);
                 newestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 oldestModel.set('best_case', 900);
                 oldestModel.set('likely_case', 800);
+                oldestModel.set('worst_case', 600);
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_BOTH_CHANGED').toBeTruthy();
+                expect(result.text == 'LBL_COMMITTED_HISTORY_ALL_CHANGED').toBeTruthy();
+            });
+        });
+
+        describe("should show best and likely values changed", function() {
+            it("should return object with text attribute indicating both best and likely values changed", function() {
+                newestModel.set('best_case', 1000);
+                newestModel.set('likely_case', 900);
+                newestModel.set('worst_case', 700);
+                newestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                oldestModel.set('best_case', 900);
+                oldestModel.set('likely_case', 800);
+                oldestModel.set('worst_case', 700);
+                oldestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_BEST_CHANGED').toBeTruthy();
+            });
+        });
+
+        describe("should show best and worst values changed", function() {
+            it("should return object with text attribute indicating both best and likely values changed", function() {
+                newestModel.set('best_case', 1000);
+                newestModel.set('likely_case', 900);
+                newestModel.set('worst_case', 800);
+                newestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                oldestModel.set('best_case', 900);
+                oldestModel.set('likely_case', 900);
+                oldestModel.set('worst_case', 700);
+                oldestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED').toBeTruthy();
+            });
+        });
+
+        describe("should show likely and worst values changed", function() {
+            it("should return object with text attribute indicating both best and likely values changed", function() {
+                newestModel.set('best_case', 1000);
+                newestModel.set('likely_case', 900);
+                newestModel.set('worst_case', 800);
+                newestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                oldestModel.set('best_case', 1000);
+                oldestModel.set('likely_case', 800);
+                oldestModel.set('worst_case', 700);
+                oldestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED').toBeTruthy();
             });
         });
 
@@ -61,10 +114,12 @@ describe("Forecasts Utils", function(){
             it("should return object with text attribute best case value changed", function() {
                 newestModel.set('best_case', 1000);
                 newestModel.set('likely_case', 900);
+                newestModel.set('worst_case', 700);
                 newestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 oldestModel.set('best_case', 900);
                 oldestModel.set('likely_case', 900);
+                oldestModel.set('worst_case', 700);
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
@@ -76,10 +131,12 @@ describe("Forecasts Utils", function(){
             it("should return object with text attribute likely case value changed", function() {
                 newestModel.set('best_case', 1000);
                 newestModel.set('likely_case', 900);
+                newestModel.set('worst_case', 700);
                 newestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 oldestModel.set('best_case', 1000);
                 oldestModel.set('likely_case', 800);
+                oldestModel.set('worst_case', 700);
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
@@ -87,14 +144,33 @@ describe("Forecasts Utils", function(){
             });
         });
 
+        describe("should show worst values changed", function() {
+            it("should return object with text attribute likely case value changed", function() {
+                newestModel.set('best_case', 1000);
+                newestModel.set('likely_case', 800);
+                newestModel.set('worst_case', 800);
+                newestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                oldestModel.set('best_case', 1000);
+                oldestModel.set('likely_case', 800);
+                oldestModel.set('worst_case', 700);
+                oldestModel.set('date_entered', '2012-07-12 18:37:36');
+
+                result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
+                expect(result.text == 'LBL_COMMITTED_HISTORY_WORST_CHANGED').toBeTruthy();
+            });
+        });
+
         describe("should show no values changed", function() {
             it("should return object with text attribute no value changed", function() {
                 newestModel.set('best_case', 1000);
                 newestModel.set('likely_case', 900);
+                newestModel.set('worst_case', 700);
                 newestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 oldestModel.set('best_case', 1000);
                 oldestModel.set('likely_case', 900);
+                oldestModel.set('worst_case', 700);
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
