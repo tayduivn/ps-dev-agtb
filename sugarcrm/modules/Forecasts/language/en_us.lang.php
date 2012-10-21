@@ -296,15 +296,19 @@ $mod_strings = array (
     'LBL_PIPELINE_OPPORTUNITIES' => 'Pipeline Opportunities',
     'LBL_LOADING' => 'Loading',
 
+    // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',
+<<<<<<< HEAD
     'LBL_DUPLICATE' => 'Duplicate',
     'LBL_SAVE' => 'Save',
     'LBL_NOTE' => 'Note',
     'LBL_EMAIL' => 'Email',
     'LBL_PDF' => 'PDF',
+=======
+    'LBL_EXPORT_PDF' => 'Export PDF',
+>>>>>>> nutmeg
     'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
-    'LBL_ADMIN' => 'Admin',
 
     'LBL_CHART_FORECAST_FOR' => 'Forecast for {0}',
     'LBL_FORECAST_TITLE' => 'Forecast: {0}',
@@ -315,6 +319,7 @@ $mod_strings = array (
 
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
+    'LBL_FORECAST_SETTINGS' => 'Settings',
 
     // config panels strings
     // splash screens
@@ -323,6 +328,12 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'You can also do manual setup by clicking ',
     'LNK_FORECASTS_CONFIG_ADMIN_SPLASH_HERE' => 'here.',
     'LBL_FORECASTS_CONFIG_USER_SPLASH' => 'Forecasting has not been configured yet.  Please contact your system administrator.',
+
+    // Panel and BreadCrumb Labels
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_CATEGORIES' => 'Categories',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE' => 'Ranges',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS' => 'Time Periods',
+    'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
 
     // timeperiod config
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',

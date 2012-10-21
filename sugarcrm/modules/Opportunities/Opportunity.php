@@ -83,8 +83,6 @@ class Opportunity extends SugarBean
 	var $rel_quote_table = "quotes_opportunities";
 	var $best_case;
 	var $worst_case;
-    var $best_case_base_currency;
-    var $worst_case_base_currency;
     var $timeperiod_id;
 	var $commit_stage;
 //END SUGARCRM flav=pro ONLY
@@ -283,8 +281,6 @@ class Opportunity extends SugarBean
 			$currency->retrieve($this->currency_id);
 			if ( $currency->id != $this->currency_id || $currency->deleted == 1 ) {
 				$this->amount      = $this->amount_usdollar;
-                $this->best_case = $this->best_case_base_currency;
-                $this->worst_case = $this->worst_case_base_currency;
 				$this->currency_id = $currency->id;
 			}
 		}
@@ -546,9 +542,7 @@ class Opportunity extends SugarBean
 		return $ret_array;
 	}
 
-
-
-	//BEGIN SUGARCRM flav=ent ONLY
+	//BEGIN SUGARCRM flav=pro ONLY
 	/**
 	 * getProducts
 	 *
@@ -569,7 +563,7 @@ class Opportunity extends SugarBean
 		$query = "UPDATE products SET deleted = 0 WHERE opportunity_id = '{$this->id}'";
 		$this->db->query($query);
 	}
-	//END SUGARCRM flav=ent ONLY
+	//END SUGARCRM flav=pro ONLY
 }
 
 

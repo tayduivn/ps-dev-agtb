@@ -25,6 +25,8 @@ require_once('modules/Users/User.php');
 class ForecastManagerWorksheet extends SugarBean
 {
 	var $args;
+    var $user_id;
+    var $version;
     var $id;
     var $currency_id;
     var $base_rate;
@@ -38,10 +40,6 @@ class ForecastManagerWorksheet extends SugarBean
     var $table_name = 'forecasts';
     var $disable_custom_fields = true;
     var $isManager = false;
-
-    function __construct() {
-        parent::__construct();
-    }
 
     public function save($check_notify = false)
     {

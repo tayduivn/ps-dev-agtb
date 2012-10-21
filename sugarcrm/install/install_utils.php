@@ -1204,7 +1204,6 @@ function insert_default_settings(){
 
       //END SUGARCRM lic=sub ONLY
 
-
     //insert default tracker settings
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");
 

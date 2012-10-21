@@ -128,6 +128,8 @@
 
             }, this);
 
+            /*
+             * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
@@ -148,6 +150,7 @@
                     self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
                 }
             });
+            */
             
             var worksheet = this;
             $(window).bind("beforeunload",function(){
@@ -384,7 +387,7 @@
                     for(var i = 0; i < otherModels.length; i++) {
                         // check for the first model equal to or past the forecast commit date
                         // we want the last commit just before the whole forecast was committed
-                        if(app.forecasts.utils.parseDBDate(otherModels[i].date_modified) <= commitDate) {
+                        if(new Date(otherModels[i].date_modified) <= commitDate) {
                             oldestModel = new Backbone.Model(otherModels[i]);
                             break;
                         }
@@ -433,14 +436,14 @@
         _.each(self._collection.models, function (model) {
 
            var base_rate = parseFloat(model.get('base_rate'));
-           amount 			+= parseFloat(model.get('amount')) * base_rate;
-           quota 			+= parseFloat(model.get('quota')) * base_rate;
-           best_case 		+= parseFloat(model.get('best_case')) * base_rate;
-           best_adjusted 	+= parseFloat(model.get('best_adjusted')) * base_rate;
-           likely_case 		+= parseFloat(model.get('likely_case')) * base_rate;
-           likely_adjusted 	+= parseFloat(model.get('likely_adjusted')) * base_rate;
-           worst_case       += parseFloat(model.get('worst_case')) * base_rate;
-           worst_adjusted 	+= parseFloat(model.get('worst_adjusted')) * base_rate;
+           amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);
+           quota 			+= app.currency.convertWithRate(model.get('quota'), base_rate);
+           best_case 		+= app.currency.convertWithRate(model.get('best_case'), base_rate);
+           best_adjusted 	+= app.currency.convertWithRate(model.get('best_adjusted'), base_rate);
+           likely_case 		+= app.currency.convertWithRate(model.get('likely_case'), base_rate);
+           likely_adjusted 	+= app.currency.convertWithRate(model.get('likely_adjusted'), base_rate);
+           worst_case       += app.currency.convertWithRate(model.get('worst_case'), base_rate);
+           worst_adjusted 	+= app.currency.convertWithRate(model.get('worst_adjusted'), base_rate);
         });
 
         self.totalModel.set({

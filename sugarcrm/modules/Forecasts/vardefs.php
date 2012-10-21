@@ -725,6 +725,12 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'vname' => 'LBL_LIKELY_CASE',
         'type' => 'currency',
     ),
+    'worst_case' =>
+    array(
+        'name' => 'worst_case',
+        'vname' => 'LBL_WORST_CASE',
+        'type' => 'currency',
+    ),
     'currency_id' =>
     array(
         'name' => 'currency_id',
@@ -834,5 +840,35 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
         'vname' => 'LBL_BASE_RATE',
         'type' => 'double',
     ),
+    'version' =>
+    array(
+        'name' => 'version',
+        'vname' => 'LBL_VERSION',
+        'type' => 'int',
+    ),
+    'user_id' =>
+    array(
+        'name' => 'user_id',
+        'vname' => 'LBL_USER_ID',
+        'type' => 'id',
+    ),
+    'commit_stage' =>
+    array(
+        'name' => 'commit_stage',
+        'vname' => 'LBL_COMMIT_STAGE',
+        'type' => 'enum',
+    ),
+    'label' =>
+    array(
+        'name' => 'label',
+        'vname' => 'LBL_LABEL',
+        'type' => 'varchar',
+    ),
+    'date_modified' =>
+    array(
+        'name' => 'date_modified',
+        'vname' => 'LBL_DATE_MODIFIED',
+        'type' => 'datetime',
+    )
 ),
 );

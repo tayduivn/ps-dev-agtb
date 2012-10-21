@@ -30,7 +30,7 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
         $this->sidecarViewdefs[$module][$client]['view']['list'] = array(
             'panels' => array(
                 array(
-                    'label' => 'LBL_PANEL_1',
+                    'label' => 'LBL_PANEL_DEFAULT',
                     'fields' => $newdefs,
                 ),
             ),

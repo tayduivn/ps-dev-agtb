@@ -125,4 +125,20 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
 
         return $return;
     }
+
+    /**
+     * Utility method to convert a date time string into an ISO data time string for Sidecar usage.
+     *
+     * @param string $dt_string     Date Time value to from the db to convert into ISO format for Sidecar to consume
+     * @return string               The ISO version of the string
+     */
+    protected function convertDateTimeToISO($dt_string)
+    {
+        $timedate = TimeDate::getInstance();
+        if ($timedate->check_matching_format($dt_string, TimeDate::DB_DATETIME_FORMAT) === false) {
+            $dt_string = $timedate->to_db($dt_string);
+        }
+        global $current_user;
+        return $timedate->asIso($timedate->fromDb($dt_string), $current_user);
+    }
 }

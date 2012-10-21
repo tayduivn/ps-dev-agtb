@@ -31,19 +31,7 @@ $viewdefs['Users']['mobile']['view']['detail'] = array(
         array (
             'label' => 'LBL_DETAIL',
             'fields' => array(
-                array(
-                    'name' => 'first_name',
-                    'displayParams' => array(
-                        'wireless_edit_only' => true,
-                    ),
-                ),
-                array(
-                    'name' => 'last_name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,
-                    ),
-                ),
+                'full_name',
                 array(
                     'name' => 'title',
                     'customCode' => '{if $EDIT_TITLE_DEPT}<input type="text" name="{$fields.title.name}" id="{$fields.title.name}" size="30" maxlength="50" value="{$fields.title.value}" title="" tabindex="t" >'.
@@ -57,6 +45,15 @@ $viewdefs['Users']['mobile']['view']['detail'] = array(
                 'phone_work',
                 'phone_mobile',
                 'email1',
+                'primary_address_street',
+                'primary_address_city',
+                'primary_address_state',
+                'primary_address_postalcode',
+                'primary_address_country',
+                'picture',
+                //BEGIN SUGARCRM flav=pro ONLY
+                'team_name',
+                //END SUGARCRM flav=pro ONLY
             ),
         ),
     ),

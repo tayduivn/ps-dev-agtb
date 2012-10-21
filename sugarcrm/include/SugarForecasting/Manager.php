@@ -52,8 +52,14 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                               "currency_id" => '',
                               "base_rate" => 0,
                               "show_opps" => false,
-                              "timeperiod_id" => "",
-                              "id" => ""
+                              "timeperiod_id" => '',
+                              "id" => '',
+                              "user_id" => '',
+                              "version" => 0,
+                              "name" => '',
+                              "date_modified" => '',
+                              "commit_stage" => '',
+                              "label" => '',
                             );
 
 
@@ -176,7 +182,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 					   "ON q.user_id = u.id " .
 					   "WHERE q.timeperiod_id = '{$this->getArg('timeperiod_id')}' " .
 					   "AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct') " .
-						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))";
+						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup')) and q.deleted = 0";
 
         $result = $db->query($quota_query);
 
@@ -328,7 +334,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
                 $this->dataArray[$user_name]['worst_adjusted'] = $row['worst_case'];
                 $this->dataArray[$user_name]['forecast_id'] = $row['id'];
-                $this->dataArray[$user_name]['date_modified'] = $row['date_modified'];
+                $this->dataArray[$user_name]['date_modified'] = $this->convertDateTimeToISO($row['date_modified']);
                 $this->dataArray[$user_name]['currency_id'] = $row['currency_id'];
                 $this->dataArray[$user_name]['base_rate'] = $row['base_rate'];
             }

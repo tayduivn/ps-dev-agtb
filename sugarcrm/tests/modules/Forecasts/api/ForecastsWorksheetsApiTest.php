@@ -54,6 +54,11 @@ class ForecastsWorksheetsApiTest extends RestTestBase
      */
     protected $repData;
 
+    /**
+     * @var Administration
+     */
+    protected static $admin;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('app_strings');
@@ -61,6 +66,8 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         parent::setUpBeforeClass();
+        // get current settings
+        self::$admin = BeanFactory::getBean('Administration');
     }
 
     public function setUp()
@@ -117,6 +124,10 @@ class ForecastsWorksheetsApiTest extends RestTestBase
             "timeperiod_id" => $this->timeperiod->id
         );
 
+        //Reset all columns to be shown
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
     }
 
     public function tearDown()
@@ -206,7 +217,6 @@ class ForecastsWorksheetsApiTest extends RestTestBase
 
     }
 
-   
 
     /**
      * @group forecastapi
@@ -378,4 +388,51 @@ class ForecastsWorksheetsApiTest extends RestTestBase
         $GLOBALS['current_user'] = $oldUser;
         $this->authToken = "";
     }
+
+
+    /**
+     * exportForecastWorksheetsProvider
+     *
+     * This is the dataProvider function for testExportForecastWorksheets
+     */
+   public function exportForecastWorksheetProvider()
+   {
+       return array
+       (
+           array('show_worksheet_likely', 'assertNotRegExp', '/(w\_)?likely\_case/'),
+           array('show_worksheet_best', 'assertNotRegExp', '/(w\_)?best\_case/'),
+           array('show_worksheet_worst', 'assertNotRegExp', '/(w\_)?worst\_case/'),
+       );
+   }
+
+    /**
+     * testExportForecastWorksheets
+     *
+     * This is a test to check that we get a response back from the export data call
+     *
+     * @group forecastapi
+     * @group forecasts
+     * @group export
+     *
+     * @dataProvider exportForecastWorksheetProvider
+     */
+   public function testExportForecastWorksheets($hide, $method, $expectedRegex)
+   {
+        // set the current user to salesrep
+        $this->_user = $this->reportee['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+
+        if(!empty($hide))
+        {
+            self::$admin->saveSetting('Forecasts', $hide, 0, 'base');
+        }
+
+        $response = $this->_restCall("ForecastWorksheets/export?user_id=" . $this->repData["id"] . "&timeperiod_id=" . $this->timeperiod->id,
+                                    json_encode(array()),
+                                    'GET');
+
+        $this->assertNotEmpty($response['replyRaw'], "Rest replyRaw is empty. Rep data should have returned csv file contents.");
+        $this->$method($expectedRegex, $response['replyRaw']);
+   }
 }

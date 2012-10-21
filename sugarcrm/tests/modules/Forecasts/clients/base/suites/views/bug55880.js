@@ -19,6 +19,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+/*
+ * Skip this test.  Expected Opportunities is not a part of nutmeg
+ */
 describe("Bug 55880", function() {
     var app,
         view,
@@ -91,7 +94,7 @@ describe("Bug 55880", function() {
             });
         });
 
-        it("should be click to editable on a user's own worksheet.", function () {
+        xit("should be click to editable on a user's own worksheet.", function () {
             view.editableWorksheet = true;
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalled();
@@ -99,7 +102,7 @@ describe("Bug 55880", function() {
             expect(_renderClickToEditStub).toHaveBeenCalled();
         });
 
-        it("should not be click to editable on a worksheet that does not belong to the user.", function () {
+        xit("should not be click to editable on a worksheet that does not belong to the user.", function () {
             view.editableWorksheet = false;
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalled();
@@ -127,13 +130,13 @@ describe("Bug 55880", function() {
                 _isMyWorksheetStub.restore();
             });
 
-            it("should be set to true for a user's own worksheet", function () {
+            xit("should be set to true for a user's own worksheet", function () {
                 _isMyWorksheetStub = new sinon.stub(view, "isMyWorksheet", function () { return true; });
                 view._render();
                 expect(_isMyWorksheetStub).toHaveBeenCalled();
                 expect(view.editableWorksheet).toBeTruthy();
             });
-            it("should be set to false for worksheet that does not belong to the user", function () {
+            xit("should be set to false for worksheet that does not belong to the user", function () {
                 _isMyWorksheetStub = new sinon.stub(view, "isMyWorksheet", function () { return false; });
                 view._render();
                 expect(_isMyWorksheetStub).toHaveBeenCalled();

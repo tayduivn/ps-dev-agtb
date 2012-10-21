@@ -57,9 +57,6 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
 
         $data = parent::retrieveCurrentUser($api, $args);
 
-        // todo: TEMPORARY addition once sidecar adds correct ACL setup for admin this can go
-        $data['current_user']['isAdmin'] = $current_user->isAdminForModule('Forecasts');
-
         // Add Forecasts-specific items to returned data
         $data['current_user']['isManager'] = User::isManager($current_user->id);
         $data['current_user']['showOpps'] = false;

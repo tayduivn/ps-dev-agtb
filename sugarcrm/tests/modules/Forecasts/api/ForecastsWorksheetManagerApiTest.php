@@ -79,6 +79,11 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
      */
     protected static $repData;
 
+    /**
+     * @var Administration
+     */
+    protected static $admin;
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
@@ -157,6 +162,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         );
 
+        // get current settings
+        self::$admin = BeanFactory::getBean('Administration');
     }
 
     public function setUp()
@@ -165,6 +172,10 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $this->_user = self::$manager['user'];
         $this->_oldUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $this->_user;
+        //Reset all columns to be shown
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
     }
 
     public static function tearDownAfterClass()
@@ -610,5 +621,51 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         
         $this->assertEquals(self::$managerData2["best_adjusted"] - 100, $best_adjusted, "Draft version was returned");
     }
+
+    /**
+     * exportForecastManagerWorksheetsProvider
+     *
+     * This is the dataProvider function for testExportForecastManagerWorksheets
+     */
+   public function exportForecastManagerWorksheetProvider()
+   {
+       return array
+       (
+           array('show_worksheet_likely', 'assertNotRegExp', '/(w\_)?likely\_case/'),
+           array('show_worksheet_best', 'assertNotRegExp', '/(w\_)?best\_case/'),
+           array('show_worksheet_worst', 'assertNotRegExp', '/(w\_)?worst\_case/'),
+       );
+   }
+
+    /**
+     * testExportForecastManagerWorksheets
+     *
+     * This is a test to check that we get a response back from the export data call
+     *
+     * @group forecastapi
+     * @group forecasts
+     * @group export
+     *
+     * @dataProvider exportForecastManagerWorksheetProvider
+     */
+   public function testExportForecastManagerWorksheets($hide, $method, $expectedRegex)
+   {
+        // set the current user to salesrep
+        $this->_user = self::$manager['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+
+        if(!empty($hide))
+        {
+            self::$admin->saveSetting('Forecasts', $hide, 0, 'base');
+        }
+
+        $response = $this->_restCall("ForecastManagerWorksheets/export?user_id=" . self::$managerData["user_id"] . "&timeperiod_id=" . self::$timeperiod->id,
+                                    json_encode(array()),
+                                    'GET');
+
+        $this->$method($expectedRegex, $response['replyRaw']);
+        $this->assertNotEmpty($response['replyRaw'], "Rest replyRaw is empty. Manager data should have returned csv file contents.");
+   }
 }
 

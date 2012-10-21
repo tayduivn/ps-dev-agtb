@@ -39,14 +39,15 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
     /**
      * Run all the tasks we need to process get the data back
      *
+     * @param $execute boolean indicating whether or not to execute the query and return the results; defaults to true
      * @return array|string
      */
-    public function process()
+    public function process($execute=true)
     {
         global $current_user;
         $db = DBManagerFactory::getInstance();
 
-        $sql = "select o.id opp_id, " .
+        $query = "select o.id opp_id, " .
         	   		"p.probability, " .
         	   		"p.commit_stage, " .
         	   		"o.sales_stage," .
@@ -83,16 +84,23 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         	   	"on p.id = w.related_id "; 
 
         if ($this->getArg('user_id') == $current_user->id) {
-            $sql .= "and w.date_modified = (select max(date_modified) from worksheet w2 " .
+            $query .= "and w.date_modified = (select max(date_modified) from worksheet w2 " .
                 "where w2.user_id = p.assigned_user_id and related_id = p.id " .
                 "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') ";
         } else {
-            $sql .= "and w.version = 1 ";
+            $query .= "and w.version = 1 ";
         }
         
-		$sql .= "where p.deleted = 0 " .
+		$query .= "where p.deleted = 0 " .
 				"and o.deleted = 0 ";
-        $result = $db->query($sql);
+
+        //If execute is set to false just return the query
+        if(!$execute)
+        {
+           return $query;
+        }
+
+        $result = $db->query($query);
 
         while (($row = $db->fetchByAssoc($result)) != null) {
             $data = array();
@@ -132,6 +140,16 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         return array_values($this->dataArray);
     }
 
+
+    /**
+     * getQuery
+     *
+     * This is a helper function to allow for the query function to be used in ForecastWorksheet->create_export_query
+     */
+    public function getQuery()
+    {
+        return $this->query;
+    }
 
     /**
      * Save the Individual Worksheet

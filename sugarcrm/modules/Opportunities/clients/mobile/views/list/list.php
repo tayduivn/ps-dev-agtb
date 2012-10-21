@@ -30,13 +30,20 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['Opportunities']['mobile']['view']['list'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
                     'name' => 'name',
                     'width' => '30',
                     'label' => 'LBL_LIST_OPPORTUNITY_NAME',
                     'link' => true,
+                    'default' => true,
+                    'enabled' => true
+                ),
+                array(
+                    'name' => 'account_name',
+                    'width' => '10',
+                    'label' => 'LBL_LIST_ACCOUNT_NAME',
                     'default' => true,
                     'enabled' => true
                 ),

@@ -23,10 +23,12 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
+    'registerLabelAsBreadCrumb' => true,
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS',
             'fields' => array(
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'timeperiod_type',
                     'type' => 'enum',
@@ -34,13 +36,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'options' => 'forecasts_timeperiod_types_dom',
                     'default' => false,
                     'enabled' => true,
-                    //BEGIN SUGARCRM flav=ent ONLY
                     'view' => 'edit',
-                    //END SUGARCRM flav=ent ONLY
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    'view' => 'detail',
-                    //END SUGARCRM flav=pro ONLY
                 ),
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'timeperiod_interval',
                     'type' => 'enum',
@@ -48,13 +46,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
-                    //BEGIN SUGARCRM flav=ent ONLY
                     'view' => 'edit',
-                    //END SUGARCRM flav=ent ONLY
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    'view' => 'detail',
-                    //END SUGARCRM flav=pro ONLY
                 ),
+                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'timeperiod_leaf_interval',
                     'type' => 'enum',
@@ -62,13 +56,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_LEAFPERIOD',
                     'default' => false,
                     'enabled' => true,
-                    //BEGIN SUGARCRM flav=ent ONLY
                     'view' => 'edit',
-                    //END SUGARCRM flav=ent ONLY
-                    //BEGIN SUGARCRM flav=pro ONLY
-                    'view' => 'detail',
-                    //END SUGARCRM flav=pro ONLY
                 ),
+                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'timeperiod_start_month',
                     'type' => 'enum',

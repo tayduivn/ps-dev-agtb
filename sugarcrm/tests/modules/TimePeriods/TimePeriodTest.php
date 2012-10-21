@@ -27,7 +27,6 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
     public function setUp()
     {
         SugarTestHelper::setUp('app_strings');
@@ -102,5 +101,4 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($end_date_timestamp, $tp->end_date_timestamp, "end time stamps do not match");
 
     }
-
 }

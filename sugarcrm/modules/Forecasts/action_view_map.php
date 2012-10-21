@@ -27,6 +27,8 @@
  ********************************************************************************/
 
 $action_view_map = array(
-    'index' => 'index',
+    'index' => 'sidecar',
     'sidecar' => 'sidecar',
+    'detailview' => 'sidecar',
+    'listview' => 'sidecar',
 );

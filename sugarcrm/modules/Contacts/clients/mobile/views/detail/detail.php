@@ -37,21 +37,9 @@ $viewdefs['Contacts']['mobile']['view']['detail'] = array(
     ),
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
-                array(
-                    'name' => 'first_name',
-                    'customCode' => '{html_options name="salutation" options=$fields.salutation.options selected=$fields.salutation.value}&nbsp;<input name="first_name" size="15" maxlength="25" type="text" value="{$fields.first_name.value}">',
-                    'displayParams' => array(
-                        'wireless_edit_only' => true,
-                    ),
-                ),
-                array('name' => 'last_name',
-                    'displayParams' => array(
-                        'required' => true,
-                        'wireless_edit_only' => true,
-                    ),
-                ),
+                'full_name',
                 'title',
                 'account_name',
                 'phone_work',
@@ -63,6 +51,7 @@ $viewdefs['Contacts']['mobile']['view']['detail'] = array(
                 'primary_address_postalcode',
                 'primary_address_country',
                 'assigned_user_name',
+                'picture',
                 //BEGIN SUGARCRM flav=pro ONLY
                 'team_name',
                 //END SUGARCRM flav=pro ONLY
