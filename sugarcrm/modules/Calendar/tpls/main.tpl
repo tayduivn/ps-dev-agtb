@@ -26,8 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2006 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 *}
-<link type="text/css" href="modules/Calendar/Cal.css" rel="stylesheet" />
-<script type="text/javascript" src="modules/Calendar/Cal.js"></script>
+<link type="text/css" href="{sugar_getjspath file="modules/Calendar/Cal.css"}" rel="stylesheet" />
+{sugar_getscript file="modules/Calendar/Cal.js"}
 <script type="text/javascript">
 
 	{literal}
