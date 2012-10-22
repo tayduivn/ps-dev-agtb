@@ -16,6 +16,10 @@
             field = this._setUpMultiselectField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
+
+        // fix the width of the field's container
+        field.$el.find('.chzn-container').css("width", "100%");
+        field.$el.find('.chzn-drop').css("width", "100%");
     },
 
     /**
