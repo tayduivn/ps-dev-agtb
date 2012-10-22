@@ -169,7 +169,11 @@ class SidecarMetaDataUpgrader
         // The last path will be handdled by base types with a package name and undeployed status
         // 
         $this->logUpgradeStatus('Beginning search for custom module mobile metadata...');
+        // Count for logging
+        $total = 0;
         foreach ($mb->packages as $packagename => $package) {
+            // For count logging
+            $count = $deployedcount = $undeployedcount = 0;
             $buildpath = $package->getBuildDir() . '/SugarModules/modules/';
             foreach ($package->modules as $module => $mbmodule) {
                 $appModulePath = $modulepath . $package->key . '_' . $module;
@@ -187,6 +191,8 @@ class SidecarMetaDataUpgrader
                     
                     // Get our upgrade files as base files since these are regular metadata
                     $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype);
+                    $count += count($files);
+                    $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
                     
                     // For deployed modules we still need to handle package dir metadata
@@ -194,6 +200,8 @@ class SidecarMetaDataUpgrader
                     
                     // Get our upgrade files as undeployed base type wireless client
                     $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', $packagename, false);
+                    $count += count($files);
+                    $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
                 } else {
                     // Handle undeployed history metadata
@@ -201,11 +209,16 @@ class SidecarMetaDataUpgrader
                     
                     // Get our upgrade files
                     $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'history', $packagename, false);
+                    $count += count($files);
+                    $undeployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
                 }
             }
+            $this->logUpgradeStatus("$count upgrade files set for package $packagename: Deployed - $deployedcount, Undeployed - $undeployedcount ...");
+            $total += $count;
         }
         $this->logUpgradeStatus('Custom module mobile metadata done.');
+        $this->logUpgradeStatus("$total custom module files fetched for conversion");
     }
     
     /**
@@ -296,6 +309,10 @@ class SidecarMetaDataUpgrader
     protected function setUpgradeFiles($client) 
     {
         $this->logUpgradeStatus("Getting $client upgrade files ...");
+        
+        // Keep track of how many files were added, for logging
+        $count = 0;
+        
         // Hit the legacy paths list to start the ball rolling 
         if (isset($this->legacyFilePaths[$client]) && is_array($this->legacyFilePaths[$client])) {
             foreach ($this->legacyFilePaths[$client] as $type => $path) {
@@ -311,12 +328,17 @@ class SidecarMetaDataUpgrader
                         
                         // Get our upgrade files
                         $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $client, $type);
+                        
+                        // Increment the count
+                        $count += count($files);
+                        
+                        // Merge them
                         $this->files = array_merge($this->files, $files);
                     }
                 }
             }
         }
-        $this->logUpgradeStatus("$client upgrade files set ...");
+        $this->logUpgradeStatus("$count $client upgrade files set ...");
     }
     
     /**
