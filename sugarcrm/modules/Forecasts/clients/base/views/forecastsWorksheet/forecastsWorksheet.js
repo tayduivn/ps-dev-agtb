@@ -397,7 +397,7 @@
                 columnKeys[name] = key;
             }
         });
-        this.gTable = this.$('#worksheetTable').dataTable(
+        this.gTable = this.$('.worksheetTable').dataTable(
             {
                 "bAutoWidth": false,
                 "aoColumnDefs": this.columnDefs,
