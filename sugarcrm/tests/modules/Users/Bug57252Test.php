@@ -34,17 +34,19 @@
 class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
+    static $testUser;
+
     public static function setUpBeforeClass()
     {
-        global $current_user;
-        $current_user = SugarTestUserUtilities::createAnonymousUser();
-        $current_user->save();
+
+        Bug57252Test::$testUser = SugarTestUserUtilities::createAnonymousUser();
+        Bug57252Test::$testUser->save();
     }
 
     public static function tearDownAfterClass()
     {
-        global $current_user;
-        $current_user->resetPreferences();
+
+        Bug57252Test::$testUser->resetPreferences();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
@@ -54,9 +56,10 @@ class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDefaultDateTimeFormatFromSystemConfig()
     {
-        global $current_user, $sugar_config;
-        $this->assertEquals($current_user->getPreference('datef'), $sugar_config['default_date_format']);
-        $this->assertEquals($current_user->getPreference('timef'), $sugar_config['default_time_format']);
+        global $sugar_config;
+
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('datef'), $sugar_config['default_date_format']);
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('timef'), $sugar_config['default_time_format']);
 
     }
 
@@ -66,13 +69,12 @@ class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testDefaultDateTimeFormatFromUserPref()
     {
-        global $current_user;
 
-        $current_user->setPreference('datef','d/m/Y', 0, 'global');
-        $current_user->setPreference('timef','h.iA',0,'global');
+        Bug57252Test::$testUser->setPreference('datef','d/m/Y', 0, 'global');
+        Bug57252Test::$testUser->setPreference('timef','h.iA',0,'global');
 
-        $this->assertEquals($current_user->getPreference('datef'), 'd/m/Y');
-        $this->assertEquals($current_user->getPreference('timef'), 'h.iA');
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('datef'), 'd/m/Y');
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('timef'), 'h.iA');
 
     }
 
