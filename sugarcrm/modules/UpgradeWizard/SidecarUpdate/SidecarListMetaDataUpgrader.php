@@ -29,12 +29,15 @@ class SidecarListMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             
             $newdefs[] = $defs;
         }
+        $this->logUpgradeStatus("view defs converted, getting normalized module name");
         
         // This is the structure of the sidecar list meta
         $module = $this->getNormalizedModuleName();
+        $this->logUpgradeStatus("module name normalized to: $module");
         
         // Clean up client to mobile for wireless clients
         $client = $this->client == 'wireless' ? 'mobile' : $this->client;
+        $this->logUpgradeStatus("Setting new $client {$this->type} view defs internally for $module");
         $this->sidecarViewdefs[$module][$client]['view']['list'] = array(
             'panels' => array(
                 array(

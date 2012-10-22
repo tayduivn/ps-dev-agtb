@@ -145,7 +145,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             
             // Clean up the module name for saving
             $module = $this->getNormalizedModuleName();
-            
+            $this->logUpgradeStatus("Setting new $client {$this->type} view defs internally for $module");
             // Setup the new defs
             $this->sidecarViewdefs[$module][$client]['view'][$this->viewtype] = $newdefs;
         }
