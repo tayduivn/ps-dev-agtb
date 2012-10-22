@@ -311,6 +311,7 @@ $mod_strings = array (
 
     'LBL_SAVE_DRAFT' => 'Save Draft',
     'LBL_CHANGES_BY' => 'Changes by {0}',
+    'LBL_FORECAST_SETTINGS' => 'Settings',
 
     // config panels strings
     // splash screens

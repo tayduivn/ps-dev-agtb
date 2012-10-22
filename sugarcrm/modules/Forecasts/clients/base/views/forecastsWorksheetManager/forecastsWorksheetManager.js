@@ -128,6 +128,8 @@
 
             }, this);
 
+            /*
+             * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
@@ -148,6 +150,7 @@
                     self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
                 }
             });
+            */
             
             var worksheet = this;
             $(window).bind("beforeunload",function(){

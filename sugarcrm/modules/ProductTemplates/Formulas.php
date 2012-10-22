@@ -34,33 +34,36 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 // FG - No more need to change local file. Added inclusion of custom/modules/ProductTemplates/formulas/*.php 
 //global $price_formulas;
 
-$GLOBALS['price_formulas'] = array(
-	//$discount_price manually entered by admin
-	'Fixed'=>'modules/ProductTemplates/formulas/price_fixed.php'
-
-	//Profit Margin: $discount_price = $cost_price * 100 /(100 - $factor) 
-	,'ProfitMargin'=>'modules/ProductTemplates/formulas/price_profit_margin.php'
-
-	//Percentage Markup: $discount_price = $cost_price x (1 + $percentage) 
-	,'PercentageMarkup'=>'modules/ProductTemplates/formulas/price_cost_markup.php'
-
-	//Percentage Discount: $discount_price = $list_price x (1 - $percentage) 
-	,'PercentageDiscount'=>'modules/ProductTemplates/formulas/price_list_discount.php'
-
-	//List: $discount_price = $list_price  
-	,'IsList'=>'modules/ProductTemplates/formulas/price_list.php'
-	);
-
-// FG - Bug 44515 - Added inclusion of all .php formula files in custom/modules/ProductTemplates/formulas (if exists).
-//                  Every file must contain a class whose name must equals the file name (without extension) all lowercase except the first letter, uppercase.
-//                  Here devs can add classes for custom formulas - The Upgrade Safe Way
-if (sugar_is_dir("custom/modules/ProductTemplates/formulas"))
+function refresh_price_formulas()
 {
-    $_files = glob("custom/modules/ProductTemplates/formulas/*.php");
-    foreach ($_files as $filename) 
+    $GLOBALS['price_formulas'] = array(
+        //$discount_price manually entered by admin
+        'Fixed'=>'modules/ProductTemplates/formulas/price_fixed.php'
+
+        //Profit Margin: $discount_price = $cost_price * 100 /(100 - $factor)
+    ,'ProfitMargin'=>'modules/ProductTemplates/formulas/price_profit_margin.php'
+
+        //Percentage Markup: $discount_price = $cost_price x (1 + $percentage)
+    ,'PercentageMarkup'=>'modules/ProductTemplates/formulas/price_cost_markup.php'
+
+        //Percentage Discount: $discount_price = $list_price x (1 - $percentage)
+    ,'PercentageDiscount'=>'modules/ProductTemplates/formulas/price_list_discount.php'
+
+        //List: $discount_price = $list_price
+    ,'IsList'=>'modules/ProductTemplates/formulas/price_list.php'
+    );
+
+    // FG - Bug 44515 - Added inclusion of all .php formula files in custom/modules/ProductTemplates/formulas (if exists).
+    //                  Every file must contain a class whose name must equals the file name (without extension) all lowercase except the first letter, uppercase.
+    //                  Here devs can add classes for custom formulas - The Upgrade Safe Way
+    if (sugar_is_dir("custom/modules/ProductTemplates/formulas"))
     {
-        $_formulaId = ucfirst(basename(strtolower($filename), ".php"));
-        $GLOBALS['price_formulas'][$_formulaId] = $filename;
+        $_files = glob("custom/modules/ProductTemplates/formulas/*.php");
+        foreach ($_files as $filename)
+        {
+            $_formulaId = ucfirst(basename(strtolower($filename), ".php"));
+            $GLOBALS['price_formulas'][$_formulaId] = $filename;
+        }
     }
 }
 
@@ -136,5 +139,3 @@ function get_detail($formula, $factor) {
 		return '';
 	}
 }
-
-?>

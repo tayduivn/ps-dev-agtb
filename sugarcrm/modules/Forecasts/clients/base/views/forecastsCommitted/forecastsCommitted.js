@@ -312,9 +312,11 @@
         if(user.isManager == true && user.showOpps == false) {
             forecastData.best_case = self.totals.best_adjusted;
             forecastData.likely_case = self.totals.likely_adjusted;
+            forecastData.worst_case = self.totals.worst_adjusted;
         } else {
             forecastData.best_case = self.totals.best_case;
             forecastData.likely_case = self.totals.amount;
+            forecastData.worst_case = self.totals.worst_case;
         }
 
         forecastData.currency_id = -99; //Always default to the base currency

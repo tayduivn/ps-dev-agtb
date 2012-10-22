@@ -60,7 +60,8 @@ $listViewDefs['Bugs'] = array(
 	'ASSIGNED_USER_NAME' => array(
 		'width' => '9',
 		'label' => 'LBL_ASSIGNED_USER',
-        'default' => true),
+        'default' => false,
+        'enabled' => true),
 
 );
 ?>

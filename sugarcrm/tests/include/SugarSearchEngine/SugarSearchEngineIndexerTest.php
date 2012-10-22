@@ -31,7 +31,7 @@
 require_once 'include/SugarSearchEngine/SugarSearchEngineFullIndexer.php';
 
 
-class SugarSearchIndexerTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarSearchEngineIndexerTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
      * @var db
