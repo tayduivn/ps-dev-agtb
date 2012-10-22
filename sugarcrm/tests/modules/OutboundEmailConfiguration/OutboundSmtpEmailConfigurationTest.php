@@ -19,10 +19,9 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Reports/utils.php";
-require_once "modules/Users/User.php";
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php";
 
-class ReportsUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
+class OutboundSmtpEmailConfigurationTest extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp() {
         $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
@@ -34,35 +33,53 @@ class ReportsUtilitiesTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group reports
      * @group email
-     * @group mailer
+     * @group outboundemailconfiguration
      */
-    public function testSendNotificationOfInvalidReport_InvalidRecipientAddress_ThrowsMailerException() {
-        $recipient = new User();
-        $recipient->email1 = null;
-        $recipient->email2 = null;
+    public function testSetSecurityProtocol_PassInAValidProtocol_SecurityProtocolIsSet() {
+        $config   = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $expected = OutboundSmtpEmailConfiguration::SecurityProtocolSsl;
 
-        self::setExpectedException("MailerException");
-        $reportsUtilities = new ReportsUtilities();
-        $reportsUtilities->sendNotificationOfInvalidReport($recipient, "asdf");
+        $config->setSecurityProtocol($expected);
+        $actual = $config->getSecurityProtocol();
+        self::assertEquals($expected, $actual, "The security protocol should have been set to {$expected}");
     }
 
     /**
-     * @group reports
      * @group email
-     * @group mailer
+     * @group outboundemailconfiguration
      */
-    public function testSendNotificationOfInvalidReport_AllMethodCallsAreSuccessful_NoExceptionsThrown() {
-        self::markTestIncomplete(
-            "Not yet implemented; requires mocking MailerFactory to return a mocked Mailer with a stub for send"
-        );
+    public function testSetSecurityProtocol_PassInAnInvalidProtocol_ThrowsException() {
+        $config           = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $securityProtocol = "asdf"; // some asinine value that wouldn't actually be used
 
-        $recipient = new User();
-        $recipient->email1 = null;
-        $recipient->email2 = "foo@bar.com";
+        self::setExpectedException("MailerException");
+        $config->setSecurityProtocol($securityProtocol);
+    }
 
-        $reportsUtilities = new ReportsUtilities();
-        $reportsUtilities->sendNotificationOfInvalidReport($recipient, "asdf");
+    /**
+     * @group email
+     * @group outboundemailconfiguration
+     */
+    public function testSetMode_ValidModeSmtpIsInAllCaps_ModeBecomesLowerCaseSmtp() {
+        $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+
+        $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
+        $config->setMode(strtoupper($expected));
+        $actual = $config->getMode();
+        self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
+    }
+
+    /**
+     * @group email
+     * @group outboundemailconfiguration
+     */
+    public function testSetMode_NoMode_ModeBecomesSmtp() {
+        $config = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $config->setMode("");
+
+        $expected = OutboundEmailConfigurationPeer::MODE_SMTP;
+        $actual   = $config->getMode();
+        self::assertEquals($expected, $actual, "The mode should have been a {$expected}");
     }
 }

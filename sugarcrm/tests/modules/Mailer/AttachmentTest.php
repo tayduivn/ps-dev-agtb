@@ -20,10 +20,12 @@
  ********************************************************************************/
 
 require_once "modules/Mailer/Attachment.php";
+require_once "modules/Mailer/AttachmentPeer.php";
 
 class AttachmentTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @group email
      * @group mailer
      */
     public function testFromSugarBean_BeanIsAccount_ThrowsException() {
@@ -34,10 +36,11 @@ class AttachmentTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::returnValue(true));
 
         self::setExpectedException("MailerException");
-        $actual = Attachment::fromSugarBean($mockAccount);
+        $actual = AttachmentPeer::attachmentFromSugarBean($mockAccount);
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testFromSugarBean_BeanIsNote_ThrowsException() {

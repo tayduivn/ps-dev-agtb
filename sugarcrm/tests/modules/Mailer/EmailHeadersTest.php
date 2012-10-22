@@ -24,6 +24,7 @@ require_once "modules/Mailer/EmailHeaders.php";
 class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @group email
      * @group mailer
      */
     public function testSetPriority_ThroughSetHeader_PassInInteger_PriorityIsUpdated() {
@@ -35,6 +36,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSetPriority_ThroughSetHeader_PassInString_PriorityIsNotUpdated() {
@@ -47,6 +49,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSetRequestConfirmation_ThroughSetHeader_PassInBoolean_RequestConfirmationIsUpdated() {
@@ -58,6 +61,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSetRequestConfirmation_ThroughSetHeader_PassInInteger_RequestConfirmationIsNotUpdated() {
@@ -69,6 +73,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSetSubject_ThroughSetHeader_PassInString_SubjectIsUpdated() {
@@ -80,6 +85,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSetSubject_ThroughSetHeader_PassInInteger_MailerExceptionIsThrown() {
@@ -91,6 +97,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testAddCustomHeader_ThroughSetHeader_PassInStrings_CustomHeaderIsAdded() {
@@ -103,6 +110,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testAddCustomHeader_ThroughSetHeader_UpdateExistingCustomHeader() {
@@ -122,6 +130,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testAddCustomHeader_ThroughSetHeader_PassInValidKeyAndInvalidValue_MailerExceptionIsThrown() {
@@ -140,6 +149,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
      * valid to build headers from an array without the From header and then set the From header
      * explicitly, using its setter.
      *
+     * @group email
      * @group mailer
      */
     public function testBuildFromArray_ResultIsSuccessful() {
@@ -169,6 +179,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
      * headers may change over time -- potentially making this test brittle -- this test was written such that it
      * is only concerned with guaranteeing that the headers passed in to the object are present.
      *
+     * @group email
      * @group mailer
      */
     public function testPackageHeaders_ResultIsSuccessful() {
@@ -190,6 +201,7 @@ class EmailHeadersTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testPackageHeaders_NoFromHeaderCausesAMailerExceptionToBeThrown() {

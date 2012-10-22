@@ -19,20 +19,12 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "modules/Mailer/MailerFactory.php";
-require_once "modules/Emails/MailConfiguration.php";
-require_once "modules/Mailer/SmtpMailerConfiguration.php";
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
 {
-    private $mockMailerConfig;
-
     public function setUp() {
         $GLOBALS["current_user"] = SugarTestUserUtilities::createAnonymousUser();
-
-        $this->mockMailerConfig = self::getMock(
-            "SmtpMailerConfiguration"
-        );
     }
 
     public function tearDown() {
@@ -41,70 +33,56 @@ class MailerFactoryTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testGetMailerForUser_UserHasAMailConfiguration_ReturnsSmtpMailer() {
+        $outboundSmtpEmailConfiguration = new OutboundSmtpEmailConfiguration($GLOBALS["current_user"]);
+        $outboundSmtpEmailConfiguration->setFrom("foo@bar.com", "Foo Bar");
+        $outboundSmtpEmailConfiguration->setMode("smtp");
+
+        $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
+        $mockMailerFactory::staticExpects(self::any())
+            ->method("getOutboundEmailConfiguration")
+            ->will(self::returnValue($outboundSmtpEmailConfiguration));
+
         $expected = "SmtpMailer";
-        $actual   = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+        $actual   = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]);
         self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testGetMailerForUser_UserHasNoMailConfigurations_ThrowsMailerException() {
-        self::markTestIncomplete("Not yet implemented; requires ability to remove all possible mail configurations for the user, including system configurations, or ability to mock them out");
-    }
-
-    /**
-     * @group mailer
-     * @group functional
-     */
-    public function testGetMailer_ConfigSenderEmailIsInvalid_ThrowsMailerException() {
-        $mailConfig               = new MailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->sender_email = 1234; // an invalid From email address
+        $mockMailerFactory = self::getMockClass("MailerFactory", array("getOutboundEmailConfiguration"));
+        $mockMailerFactory::staticExpects(self::any())
+            ->method("getOutboundEmailConfiguration")
+            ->will(self::throwException(new MailerException()));
 
         self::setExpectedException("MailerException");
-        $actual = MailerFactory::getMailer($mailConfig); // hopefully nothing is actually returned
+        $actual = $mockMailerFactory::getMailerForUser($GLOBALS["current_user"]); // hopefully nothing is actually returned
     }
 
     /**
-     * @group mailer
-     */
-    public function testGetMailer_NoMode_ReturnsSmtpMailer() {
-        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $this->mockMailerConfig;
-
-        $expected = "SmtpMailer";
-        $actual   = MailerFactory::getMailer($mailConfig);
-        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
-    }
-
-    /**
-     * @group mailer
-     */
-    public function testGetMailer_ModeIsAllCaps_ReturnsSmtpMailer() {
-        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->mode             = strtoupper(MailConfigurationPeer::MODE_SMTP); // use a valid mode in all caps
-        $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $this->mockMailerConfig;
-
-        $expected = "SmtpMailer";
-        $actual   = MailerFactory::getMailer($mailConfig);
-        self::assertInstanceOf($expected, $actual, "The mailer should have been a {$expected}");
-    }
-
-    /**
+     * @group email
      * @group mailer
      */
     public function testGetMailer_ModeIsInvalid_ThrowsException() {
-        $mailConfig                   = new MailConfiguration($GLOBALS["current_user"]);
-        $mailConfig->mode             = "asdf"; // some asinine value that wouldn't actually be used
-        $mailConfig->sender_email     = "foo@bar.com";
-        $mailConfig->mailerConfigData = $this->mockMailerConfig;
+        $mockOutboundEmailConfiguration = self::getMock(
+            "OutboundEmailConfiguration",
+            array("getMode"),
+            array($GLOBALS["current_user"])
+        );
+
+        $mockOutboundEmailConfiguration->expects(self::any())
+            ->method("getMode")
+            ->will(self::returnValue("asdf")); // some asinine value that wouldn't actually be used
+
+        $mockOutboundEmailConfiguration->setFrom("foo@bar.com");
 
         self::setExpectedException("MailerException");
-        $actual = MailerFactory::getMailer($mailConfig); // hopefully nothing is actually returned
+        $actual = MailerFactory::getMailer($mockOutboundEmailConfiguration); // hopefully nothing is actually returned
     }
 }

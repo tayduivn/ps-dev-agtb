@@ -35,6 +35,9 @@ require_once "EmailFormatter.php";       // formatting methods needed for prepar
  */
 abstract class BaseMailer implements IMailer
 {
+    // constants
+    const MailTransmissionProtocol = ""; // there is no protocol by default; all derived classes must set this
+
     // protected members
     protected $formatter;
     protected $config;
@@ -46,9 +49,9 @@ abstract class BaseMailer implements IMailer
 
     /**
      * @access public
-     * @param MailerConfiguration $config required
+     * @param OutboundEmailConfiguration $config required
      */
-    public function __construct(MailerConfiguration $config) {
+    public function __construct(OutboundEmailConfiguration $config) {
         $this->reset(); // the equivalent of initializing the Mailer object's properties
 
         $this->config = $config;
@@ -67,6 +70,18 @@ abstract class BaseMailer implements IMailer
         $this->recipients = new RecipientsCollection();
         $this->htmlBody   = null;
         $this->textBody   = null;
+    }
+
+    /**
+     * Returns the value stored in the constant MailTransmissionProtocol, which represents the method by which email
+     * is sent for this strategy.
+     *
+     * @access public
+     * @return string
+     */
+    public function getMailTransmissionProtocol() {
+        $class = get_class($this);
+        return $class::MailTransmissionProtocol;
     }
 
     /**
@@ -91,14 +106,25 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
+     * Returns the value currently representing the header.
+     *
+     * @access public
+     * @param string $key required Should look like the real header it represents.
+     * @return mixed Refer to EmailHeaders::getHeader to see the possible return types.
+     */
+    public function getHeader($key) {
+        return $this->headers->getHeader($key);
+    }
+
+    /**
      * Adds or replaces header values.
      *
      * @access public
      * @param string $key   required Should look like the real header it represents.
-     * @param mixed  $value required The value of the header.
+     * @param mixed  $value          The value of the header.
      * @throws MailerException
      */
-    public function setHeader($key, $value) {
+    public function setHeader($key, $value = null) {
         $this->headers->setHeader($key, $value);
     }
 
@@ -106,10 +132,10 @@ abstract class BaseMailer implements IMailer
      * Adds or replaces the Subject header.
      *
      * @access public
-     * @param string $subject required
+     * @param string $subject
      * @throws MailerException
      */
-    public function setSubject($subject) {
+    public function setSubject($subject = null) {
         $this->setHeader(EmailHeaders::Subject, $subject);
     }
 
@@ -202,22 +228,42 @@ abstract class BaseMailer implements IMailer
     }
 
     /**
+     * Returns the plain-text part of the email.
+     *
+     * @access public
+     * @return string
+     */
+    public function getTextBody() {
+        return $this->textBody;
+    }
+
+    /**
      * Sets the plain-text part of the email.
      *
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setTextBody($body) {
+    public function setTextBody($body = null) {
         $this->textBody = $body;
+    }
+
+    /**
+     * Returns the HTML part of the email.
+     *
+     * @access public
+     * @return string
+     */
+    public function getHtmlBody() {
+        return $this->htmlBody;
     }
 
     /**
      * Sets the HTML part of the email.
      *
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setHtmlBody($body) {
+    public function setHtmlBody($body = null) {
         $this->htmlBody = trim($body);
     }
 
@@ -229,17 +275,6 @@ abstract class BaseMailer implements IMailer
      */
     public function addAttachment(Attachment $attachment) {
         $this->attachments[] = $attachment;
-    }
-
-    /**
-     * Adds an embedded attachment. This can include images, sounds, and just about any other document. Make sure to set
-     * the $mimeType to the appropriate type. For JPEG images use "image/jpeg" and for GIF images use "image/gif".
-     *
-     * @access public
-     * @param EmbeddedImage $embeddedImage
-     */
-    public function addEmbeddedImage(EmbeddedImage $embeddedImage) {
-        $this->addAttachment($embeddedImage);
     }
 
     /**

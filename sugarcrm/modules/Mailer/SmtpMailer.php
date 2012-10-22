@@ -25,7 +25,10 @@ require_once "lib/phpmailer/class.phpmailer.php"; // needs the PHPMailer library
 require_once "lib/phpmailer/class.smtp.php";      // required to establish the SMTP connection prior to PHPMailer's
                                                   // send for error handling purposes
 require_once "BaseMailer.php";                    // requires BaseMailer in order to extend it
-require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMailerConfiguration
+
+// external imports
+require_once "modules/OutboundEmailConfiguration/OutboundSmtpEmailConfiguration.php"; // needs to take on an
+                                                                                      // OutboundSmtpEmailConfiguration
 
 /**
  * This class implements the basic functionality that is expected from a Mailer that uses PHPMailer to deliver its
@@ -35,8 +38,8 @@ require_once "SmtpMailerConfiguration.php";       // needs to take on an SmtpMai
  */
 class SmtpMailer extends BaseMailer
 {
-    // constants used for documenting which mail transmission protocols are valid
-    const MailTransmissionProtocolSmtp = "smtp";
+    // constants
+    const MailTransmissionProtocol = "smtp"; // only use SMTP to send email with PHPMailer
 
     /**
      * Performs the send of an email using PHPMailer (currently version 5.2.1).
@@ -86,7 +89,7 @@ class SmtpMailer extends BaseMailer
         $mailer->SetLanguage();
 
         // transfer the basic configurations to PHPMailer
-        $mailer->Mailer   = self::MailTransmissionProtocolSmtp; // only use SMTP to send email with PHPMailer
+        $mailer->Mailer   = $this->getMailTransmissionProtocol();
         $mailer->Hostname = $this->config->getHostname();
         $mailer->CharSet  = $this->config->getCharset();
         $mailer->Encoding = $this->config->getEncoding();
@@ -145,15 +148,12 @@ class SmtpMailer extends BaseMailer
             switch ($key) {
                 case EmailHeaders::From:
                     if (!empty($value[1])) {
-                        // perform character set translations on the name in the From header
-                        $value[1] = $this->config->getLocale()->translateCharset(
+                        // perform character set and HTML character translations on the From name
+                        $value[1] = $this->formatter->translateCharacters(
                             $value[1],
-                            "UTF-8",
+                            $this->config->getLocale(),
                             $this->config->getCharset()
                         );
-
-                        // perform HTML character translations on the From name
-                        $value[1] = from_html($value[1]);
                     }
 
                     // set PHPMailer's From so that PHPMailer can correctly construct the From header at send time
@@ -173,15 +173,12 @@ class SmtpMailer extends BaseMailer
                     $mailer->ClearReplyTos();
 
                     if (!empty($value[1])) {
-                        // perform character set translations on the name in the Reply-To header
-                        $value[1] = $this->config->getLocale()->translateCharset(
+                        // perform character set and HTML character translations on the Reply-To name
+                        $value[1] = $this->formatter->translateCharacters(
                             $value[1],
-                            "UTF-8",
+                            $this->config->getLocale(),
                             $this->config->getCharset()
                         );
-
-                        // perform HTML character translations on the Reply-To name
-                        $value[1] = from_html($value[1]);
                     }
 
                     // set PHPMailer's ReplyTo so that PHPMailer can correctly construct the Reply-To header at send
@@ -222,11 +219,12 @@ class SmtpMailer extends BaseMailer
                     $mailer->ConfirmReadingTo = $value;
                     break;
                 case EmailHeaders::Subject:
-                    // perform character set translations on the subject
-                    $value = $this->config->getLocale()->translateCharset($value, "UTF-8", $this->config->getCharset());
-
-                    // perform HTML character translations on the subject
-                    $value = from_html($value);
+                    // perform character set and HTML character translations on the subject
+                    $value = $this->formatter->translateCharacters(
+                        $value,
+                        $this->config->getLocale(),
+                        $this->config->getCharset()
+                    );
 
                     // set PHPMailer's Subject so that PHPMailer can correctly construct the Subject header at send time
                     $mailer->Subject = $value;
@@ -331,6 +329,8 @@ class SmtpMailer extends BaseMailer
             throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
         }
 
+        $textBody = null; // initialize it so that it's available for use later in the method
+
         if ($hasText) {
             // perform character set translations on the plain-text body
             $textBody = $this->prepareTextBody($this->textBody);
@@ -372,11 +372,19 @@ class SmtpMailer extends BaseMailer
         foreach ($this->attachments as $attachment) {
             if ($attachment instanceof EmbeddedImage) {
                 // it's an embedded image
+
+                // perform character set and HTML character translations on the file name
+                $name = $this->formatter->translateCharacters(
+                    $attachment->getName(),
+                    $this->config->getLocale(),
+                    $this->config->getCharset()
+                );
+
                 // transfer the image to PHPMailer so it can be embedded correctly at send time
                 if (!$mailer->AddEmbeddedImage(
                     $attachment->getPath(),
                     $attachment->getCid(),
-                    $attachment->getName(),
+                    $name,
                     $attachment->getEncoding(),
                     $attachment->getMimeType())
                 ) {
@@ -388,10 +396,17 @@ class SmtpMailer extends BaseMailer
             } elseif ($attachment instanceof Attachment) {
                 // it's a normal file attachment
                 try {
+                    // perform character set and HTML character translations on the file name
+                    $name = $this->formatter->translateCharacters(
+                        $attachment->getName(),
+                        $this->config->getLocale(),
+                        $this->config->getCharset()
+                    );
+
                     // transfer the attachment to PHPMailer so it can be attached correctly at send time
                     $mailer->AddAttachment(
                         $attachment->getPath(),
-                        $attachment->getName(),
+                        $name,
                         $attachment->getEncoding(),
                         $attachment->getMimeType());
                 } catch (Exception $e) {
@@ -418,8 +433,9 @@ class SmtpMailer extends BaseMailer
      */
     protected function prepareTextBody($body) {
         $body = $this->formatter->formatTextBody($body);
-        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
-        $body = from_html($body); // perform HTML character translations on the plain-text body
+
+        // perform character set and HTML character translations on the plain-text body
+        $body = $this->formatter->translateCharacters($body, $this->config->getLocale(), $this->config->getCharset());
 
         return $body;
     }
@@ -438,12 +454,13 @@ class SmtpMailer extends BaseMailer
         $images    = $formatted["images"];
 
         foreach ($images as $embeddedImage) {
-            $this->addEmbeddedImage($embeddedImage);
+            $this->addAttachment($embeddedImage);
         }
 
         $body = $this->forceRfcComplianceOnHtmlBody($body);
-        $body = $this->config->getLocale()->translateCharset($body, "UTF-8", $this->config->getCharset());
-        $body = from_html($body); // perform HTML character translations on the HTML body
+
+        // perform character set and HTML character translations on the HTML body
+        $body = $this->formatter->translateCharacters($body, $this->config->getLocale(), $this->config->getCharset());
 
         return $body;
     }

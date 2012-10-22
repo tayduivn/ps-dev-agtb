@@ -26,6 +26,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This test essentially tests clearAll, clearTo, clearCc and clearBcc.
      *
+     * @group email
      * @group mailer
      */
     public function testClearAll_ResultIsSuccessful() {
@@ -58,6 +59,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testAddRecipients_CallInvalidMethod_ThrowsException() {
@@ -72,6 +74,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This test essentially tests addRecipients and addTo.
      *
+     * @group email
      * @group mailer
      */
     public function testAddRecipients_UseAddTo_PassInAnEmailIdentity_RecipientIsValidSoRecipientIsAdded() {
@@ -91,6 +94,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This test essentially tests addRecipients and addCc.
      *
+     * @group email
      * @group mailer
      */
     public function testAddRecipients_UseAddCc_PassInAnArrayOfEmailIdentityObjects_NoInvalidRecipientsSoAllAreAdded() {
@@ -113,6 +117,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This test essentially tests getAll, getTo, getCc and getBcc.
      *
+     * @group email
      * @group mailer
      */
     public function testGetAll_HasRecipients_ReturnsNonEmptyArrays() {
@@ -155,6 +160,7 @@ class RecipientsCollectionTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This test essentially tests getAll, getTo, getCc and getBcc.
      *
+     * @group email
      * @group mailer
      */
     public function testGetAll_HasNoRecipients_ReturnsEmptyArrays() {

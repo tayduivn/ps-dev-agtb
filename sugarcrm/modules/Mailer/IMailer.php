@@ -21,10 +21,14 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "Encoding.php";            // needs to know the valid encodings that are available for email
-require_once "EmailIdentity.php";       // requires EmailIdentity for representing email senders and recipients
-require_once "MailerConfiguration.php"; // needs to take on a MailerConfiguration or a type that derives from it
-require_once "EmbeddedImage.php";       // requires Attachment and EmbeddedImage, which imports Attachment
+require_once "Encoding.php";      // needs to know the valid encodings that are available for email
+require_once "EmailIdentity.php"; // requires EmailIdentity for representing email senders and recipients
+require_once "EmbeddedImage.php"; // requires Attachment and EmbeddedImage, which imports Attachment
+
+// external imports
+require_once "modules/OutboundEmailConfiguration/OutboundEmailConfiguration.php"; // needs to take on an
+                                                                                  // OutboundEmailConfiguration or a
+                                                                                  // type that derives from it
 
 /**
  * This defines the basic interface that is expected from a Mailer.
@@ -36,9 +40,9 @@ interface IMailer
     /**
      * @abstract
      * @access public
-     * @param MailerConfiguration $config required
+     * @param OutboundEmailConfiguration $config required
      */
-    public function __construct(MailerConfiguration $config);
+    public function __construct(OutboundEmailConfiguration $config);
 
     /**
      * Set the object properties back to their initial default values.
@@ -58,23 +62,32 @@ interface IMailer
     public function setHeaders(EmailHeaders $headers);
 
     /**
+     * Returns the value currently representing the header.
+     *
+     * @access public
+     * @param string $key required Should look like the real header it represents.
+     * @return mixed Refer to EmailHeaders::getHeader to see the possible return types.
+     */
+    public function getHeader($key);
+
+    /**
      * Adds or replaces header values.
      *
      * @access public
      * @param string $key   required Should look like the real header it represents.
-     * @param mixed  $value required The value of the header.
+     * @param mixed  $value          The value of the header.
      * @throws MailerException
      */
-    public function setHeader($key, $value);
+    public function setHeader($key, $value = null);
 
     /**
      * Adds or replaces the Subject header.
      *
      * @access public
-     * @param string $subject required
+     * @param string $subject
      * @throws MailerException
      */
-    public function setSubject($subject);
+    public function setSubject($subject = null);
 
     /**
      * Restores the email headers to a fresh EmailHeaders object.
@@ -147,22 +160,38 @@ interface IMailer
     public function clearRecipientsBcc();
 
     /**
+     * Returns the plain-text part of the email.
+     *
+     * @access public
+     * @return string
+     */
+    public function getTextBody();
+
+    /**
      * Sets the plain-text part of the email.
      *
      * @abstract
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setTextBody($body);
+    public function setTextBody($body = null);
+
+    /**
+     * Returns the HTML part of the email.
+     *
+     * @access public
+     * @return string
+     */
+    public function getHtmlBody();
 
     /**
      * Sets the HTML part of the email.
      *
      * @abstract
      * @access public
-     * @param string $body required
+     * @param string $body
      */
-    public function setHtmlBody($body);
+    public function setHtmlBody($body = null);
 
     /**
      * Adds an attachment from a path on the filesystem.
@@ -172,16 +201,6 @@ interface IMailer
      * @param Attachment $attachment
      */
     public function addAttachment(Attachment $attachment);
-
-    /**
-     * Adds an embedded attachment. This can include images, sounds, and just about any other document. Make sure to set
-     * the $mimeType to the appropriate type. For JPEG images use "image/jpeg" and for GIF images use "image/gif".
-     *
-     * @abstract
-     * @access public
-     * @param EmbeddedImage $embeddedImage
-     */
-    public function addEmbeddedImage(EmbeddedImage $embeddedImage);
 
     /**
      * Removes any existing attachments by restoring the container to an empty array.

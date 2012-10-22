@@ -29,6 +29,8 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 //FILE SUGARCRM flav!=sales ONLY
  // $Id: PasswordManager.php 35791 2009-05-20 23:06:34Z faissah $
 
+require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php";
+
 if(!is_admin($current_user)){
     sugar_die($GLOBALS['app_strings']['ERR_NOT_ADMIN']); 
 }
@@ -183,16 +185,9 @@ $sugar_smarty->assign("VALID_PUBLIC_KEY", $valid_public_key);
 
 $res=$GLOBALS['sugar_config']['passwordsetting'];
 
+$smtpServerIsSet = (OutboundEmailConfigurationPeer::validSystemMailConfigurationExists($current_user)) ? "0" : "1";
+$sugar_smarty->assign("SMTP_SERVER_NOT_SET", $smtpServerIsSet);
 
-require_once('include/SugarPHPMailer.php');   
-$mail = new SugarPHPMailer();
-$mail->setMailerForSystem();
-if($mail->Mailer == 'smtp' && $mail->Host ==''){
-	$sugar_smarty->assign("SMTP_SERVER_NOT_SET", '1');
-	}
-else
-	$sugar_smarty->assign("SMTP_SERVER_NOT_SET", '0');
-	
 $focus = new InboundEmail();
 $focus->checkImap();
 $storedOptions = unserialize(base64_decode($focus->stored_options));	
@@ -209,4 +204,3 @@ $sugar_smarty->assign("LOGGED_OUT_DISPLAY_STATUS", $LOGGED_OUT_DISPLAY);
 //END SUGARCRM flav=pro ONLY
 
 $sugar_smarty->display('modules/Administration/PasswordManager.tpl');
-?>
