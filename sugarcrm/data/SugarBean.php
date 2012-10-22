@@ -5532,8 +5532,23 @@ class SugarBean
         $handler = new WorkFlowHandler($this, 'after_save');
         if(!empty($_SESSION['WORKFLOW_ALERTS']))
         {
-            $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
-            unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+            $id_for_save = true;
+            // Bug 55942 the in-save id gets overwritten during resaveRelatedBeans process
+            // here we want to make sure the correct in-save id is used to send the alert
+            if (isset($_SESSION['WORKFLOW_ALERTS']['id']))
+            {
+                $id_for_save = ($_SESSION['WORKFLOW_ALERTS']['id'] == $this->id ? true : false);
+            }
+
+            if ($id_for_save && !($this instanceof SugarFeed))
+            {
+                $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+                unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+                if (isset($_SESSION['WORKFLOW_ALERTS']['id']))
+                {
+                    unset( $_SESSION['WORKFLOW_ALERTS']['id']);
+                }
+            }
         }
     }
     //END SUGARCRM flav=pro ONLY
