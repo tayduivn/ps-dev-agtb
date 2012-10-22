@@ -55,8 +55,11 @@
      * @param evt
      */
     save:function (evt) {
-        this.model.save();
-        this.layout.context.trigger("modal:close");
+        // If button is disabled, do nothing
+        if(!$(evt.target).hasClass('disabled')) {
+            this.model.save();
+            this.layout.context.trigger("modal:close");
+        }
     },
 
     breadcrumb:function (evt) {
