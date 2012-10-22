@@ -20,10 +20,12 @@
  ********************************************************************************/
 
 require_once "modules/Mailer/EmbeddedImage.php";
+require_once "modules/Mailer/AttachmentPeer.php";
 
 class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @group email
      * @group mailer
      */
     public function testFromSugarBean_ThrowsException() {
@@ -34,19 +36,20 @@ class EmbeddedImageTest extends Sugar_PHPUnit_Framework_TestCase
             ->will(self::returnValue(true));
 
         self::setExpectedException("MailerException");
-        $actual = EmbeddedImage::fromSugarBean($mockNote);
+        $actual = AttachmentPeer::embeddedImageFromSugarBean($mockNote, '1234567890');
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testToArray() {
         $expected      = array(
-            "path" => "path/to/somewhere",
             "cid"  => "1234",
+            "path" => "path/to/somewhere",
             "name" => "abcd",
         );
-        $embeddedImage = new EmbeddedImage($expected["path"], $expected["cid"], $expected["name"]);
+        $embeddedImage = new EmbeddedImage($expected["cid"], $expected["path"], $expected["name"]);
         $actual        = $embeddedImage->toArray();
 
         $key = "path";

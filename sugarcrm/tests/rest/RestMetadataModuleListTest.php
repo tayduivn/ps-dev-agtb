@@ -33,7 +33,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list');
 
-        $this->assertTrue(isset($restReply['reply']['module_list']['_hash']),'There is no base module list');
+        $this->assertTrue(isset($restReply['reply']['module_list']),'There is no base module list');
         $restModules = $restReply['reply']['module_list'];
         unset($restModules['_hash']);
         

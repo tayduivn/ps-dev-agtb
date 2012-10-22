@@ -1,6 +1,5 @@
 <?php
 if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
-
 /********************************************************************************
  *The contents of this file are subject to the SugarCRM Professional End User License Agreement
  *("License") which can be viewed at http://www.sugarcrm.com/EULA.
@@ -21,59 +20,50 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "Attachment.php"; // requires Attachment in order to extend it
+require_once "clients/base/api/ModuleApi.php";
+require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // also imports
+                                                                                      // OutboundEmailConfiguration and
+                                                                                      // OutboundSmtpEmailConfiguration
 
-/**
- * This class encapsulates properties and behavior of an embedded image, which is a type of attachment, so that a common
- * interface can be expected no matter what package is being used to deliver email.
- *
- * @extends Attachment
- */
-class EmbeddedImage extends Attachment
+class OutboundEmailConfigurationApi extends ModuleApi
 {
-    // private members
-    private $cid;   // The Content-ID used to reference the image in the message.
+    public function registerApiRest() {
+        $api = array(
+            "outboundEmailConfigurationList" => array(
+                "reqType"   => "GET",
+                "path"      => array("OutboundEmailConfiguration", "list"),
+                "pathVars"  => array("", ""),
+                "method"    => "listConfigurations",
+                "shortHelp" => "A list of outbound email configurations",
+                "longHelp"  => "include/api/html/modules/OutboundEmailConfiguration/OutboundEmailConfiguration.html#listConfigurations"
+            ),
+        );
 
-    /**
-     * @access public
-     * @param string      $path     required
-     * @param string      $cid      required
-     * @param null|string $name              Should be a string, but null is acceptable if the path will be used for
-     *                                       the name.
-     * @param string      $encoding
-     * @param string      $mimeType
-     */
-    public function __construct($cid, $path, $name = null, $encoding = Encoding::Base64, $mimeType = "application/octet-stream") {
-        $this->setCid($cid);
-        parent::__construct($path, $name, $encoding, $mimeType);
+        return $api;
     }
 
     /**
-     * @access public
-     * @param string $cid required
+     * @param $api
+     * @param $args
+     * @return array
      */
-    public function setCid($cid) {
-        $this->cid = $cid;
-    }
+    public function listConfigurations($api, $args) {
+        $list = array();
 
-    /**
-     * @return string
-     */
-    public function getCid() {
-        return $this->cid;
-    }
+        $configs = OutboundEmailConfigurationPeer::listMailConfigurations($GLOBALS["current_user"]);
 
-    /**
-     * Returns an array representation of the embedded image by adding the Content-ID to the array resulting from
-     * calling the parent method of the same name.
-     *
-     * @access public
-     * @return array Array of key value pairs representing the properties of the attachment.
-     */
-    public function toArray() {
-        $image = parent::toArray();
-        $image["cid"] = $this->getCid();
+        foreach ($configs as $config) {
+            $configType = $config->getConfigType();
 
-        return $image;
+            $list[] = array(
+                "id"      => $config->getConfigId(),
+                "name"    => $config->getConfigName(),
+                "display" => $config->getDisplayName(),
+                "type"    => $configType,
+                "default" => ($configType == "system"),
+            );
+        }
+
+        return $list;
     }
 }

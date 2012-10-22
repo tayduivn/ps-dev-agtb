@@ -23,13 +23,16 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once "MailerException.php";                      // requires MailerException in order to throw exceptions of
                                                          // that type
-require_once "modules/Emails/MailConfigurationPeer.php"; // needs the constants that represent the modes
-require_once "modules/Emails/MailConfiguration.php";     // uses the properties to produce the expected mailer
-require_once "SmtpMailerConfiguration.php";              // required if producing an SMTP Mailer, also imports
-                                                         // MailerConfiguration
 require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
 require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
 require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
+
+// external imports
+require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // needs the constants that
+                                                                                      // represent the modes; also
+                                                                                      // imports
+                                                                                      // OutboundSmtpEmailConfiguration
+                                                                                      // and OutboundEmailConfiguration
 
 /**
  * Factory to create Mailers.
@@ -38,15 +41,15 @@ class MailerFactory
 {
     // protected members
 
-    // Maps the mode from a MailConfiguration to the class that represents the sending strategy for that
+    // Maps the mode from a OutboundEmailConfiguration to the class that represents the sending strategy for that
     // configuration.
     // key = mode; value = mailer class
     protected static $modeToMailerMap = array(
-        MailConfigurationPeer::MODE_SMTP => array(
+        OutboundEmailConfigurationPeer::MODE_SMTP => array(
             "path"  => ".",          // the path to the class file without trailing slash ("/")
             "class" => "SmtpMailer", // the name of the class
         ),
-        MailConfigurationPeer::MODE_WEB  => array(
+        OutboundEmailConfigurationPeer::MODE_WEB  => array(
             "path"  => ".",
             "class" => "WebMailer",
         ),
@@ -63,7 +66,7 @@ class MailerFactory
      */
     public static function getMailerForUser(User $user) {
         // get the configuration that the Mailer needs
-        $mailConfiguration = MailConfigurationPeer::getSystemMailConfiguration($user);
+        $mailConfiguration = static::getOutboundEmailConfiguration($user);
 
         // generate the Mailer
         $mailer = self::getMailer($mailConfiguration);
@@ -78,24 +81,14 @@ class MailerFactory
      *
      * @static
      * @access public
-     * @param MailConfiguration $config required The configuration that provides context to the chosen sending
-     *                                           strategy.
+     * @param OutboundEmailConfiguration $config required The configuration that provides context to the chosen sending
+     *                                                    strategy.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
-     * @throws MailerException
+     * @throws MailerException Allows MailerExceptions to bubble up.
      */
-    public static function getMailer(MailConfiguration $config) {
-        // copy the config value becuase you don't want to modify the object by reassigning a public variable
-        // in the case of mode being null
-        $mode = is_null($config->mode) ? MailConfigurationPeer::MODE_SMTP : $config->mode;
-        $mode = strtolower($mode); // make sure it's lower case
-
-        if (!MailConfigurationPeer::isValidMode($mode)) {
-            throw new MailerException("Invalid Mailer: '{$mode}' is an invalid mode", MailerException::InvalidMailer);
-        }
-
-        // these method calls can bubble up a MailerException
-        $headers = self::buildHeadersForMailer($config->sender_email, $config->sender_name);
-        $mailer  = self::buildMailer($mode, $config->mailerConfigData);
+    public static function getMailer(OutboundEmailConfiguration $config) {
+        $headers = self::buildHeadersForMailer($config->getFrom(), $config->getReplyTo());
+        $mailer  = self::buildMailer($config);
         $mailer->setHeaders($headers);
 
         return $mailer;
@@ -106,15 +99,24 @@ class MailerFactory
      *
      * @static
      * @access private
-     * @param string              $mode   required The mode that represents the sending strategy.
-     * @param MailerConfiguration $config required Must be a MailerConfiguration or a type that derives from it.
+     * @param OutboundEmailConfiguration $config required Must be an OutboundEmailConfiguration or a type that derives
+     *                                                    from it.
      * @return mixed An object of one of the Mailers defined in $modeToMailerMap.
      * @throws MailerException
      */
-    private static function buildMailer($mode, MailerConfiguration $config) {
-        $path   = self::$modeToMailerMap[$mode]["path"];
-        $class  = self::$modeToMailerMap[$mode]["class"];
-        $file   = "{$path}/{$class}.php";
+    private static function buildMailer(OutboundEmailConfiguration $config) {
+        $mode  = $config->getMode();
+
+        if (!array_key_exists($mode, self::$modeToMailerMap)) {
+            throw new MailerException(
+                "Invalid Mailer: Could not find mode '{$mode}'",
+                MailerException::InvalidMailer
+            );
+        }
+
+        $path  = self::$modeToMailerMap[$mode]["path"];
+        $class = self::$modeToMailerMap[$mode]["class"];
+        $file  = "{$path}/{$class}.php";
         @include_once $file; // suppress errors
 
         if (!class_exists($class)) {
@@ -129,21 +131,39 @@ class MailerFactory
 
     /**
      * Constructs and returns the Headers object to be used by the Mailer and takes care of initializing the From
-     * header.
+     * and Sender headers.
      *
      * @static
      * @access private
-     * @param string      $senderEmail required
-     * @param null|string $senderName           Should be a string, but null is acceptable if no name is associated.
+     * @param EmailIdentity $from    required The true sender of the email.
+     * @param EmailIdentity $replyTo          Should be an EmailIdentity, but null is acceptable if no Reply-To header
+     *                                        is to be set.
      * @return EmailHeaders
      * @throws MailerException
      */
-    private static function buildHeadersForMailer($senderEmail, $senderName = null) {
+    private static function buildHeadersForMailer(EmailIdentity $from, EmailIdentity $replyTo = null) {
         // add the known email headers
-        $from    = new EmailIdentity($senderEmail, $senderName);
         $headers = new EmailHeaders();
         $headers->setHeader(EmailHeaders::From, $from);
+        $headers->setHeader(EmailHeaders::Sender, $from);
+
+        // add the Reply-To header, but only if it should be different from the From header
+        if (!is_null($replyTo)) {
+            $headers->setHeader(EmailHeaders::ReplyTo, $replyTo);
+        }
 
         return $headers;
+    }
+
+    /**
+     * Returns the system outbound email configuration associated with the specified user.
+     *
+     * @access protected
+     * @param User $user required The user from which the mail configuration is retrieved.
+     * @return OutboundEmailConfiguration An OutboundEmailConfiguration object or one that derives from it.
+     * @throws MailerException Allows MailerExceptions to bubble up.
+     */
+    protected static function getOutboundEmailConfiguration(User $user) {
+        return OutboundEmailConfigurationPeer::getSystemMailConfiguration($user);
     }
 }

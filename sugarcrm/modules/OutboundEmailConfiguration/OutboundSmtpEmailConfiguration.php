@@ -21,14 +21,14 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "MailerConfiguration.php"; // requires MailerConfiguration in order to extend it
+require_once "OutboundEmailConfiguration.php"; // requires OutboundEmailConfiguration in order to extend it
 
 /**
  * Represents the configurations and contains the logic for setting the configurations for an SMTP Mailer.
  *
- * @extends MailerConfiguration
+ * @extends OutboundEmailConfiguration
  */
-class SmtpMailerConfiguration extends MailerConfiguration
+class OutboundSmtpEmailConfiguration extends OutboundEmailConfiguration
 {
     // constants used for documenting which security protocol configurations are valid
     const SecurityProtocolNone = "";

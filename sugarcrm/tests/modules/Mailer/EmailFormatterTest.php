@@ -24,6 +24,7 @@ require_once "modules/Mailer/EmailFormatter.php";
 class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
 {
     /**
+     * @group email
      * @group mailer
      */
     public function testFormatTextBody_IncludeDisclosure_DisclosureIsAppendedToBody() {
@@ -31,6 +32,7 @@ class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testFormatTextBody_DoNotIncludeDisclosure_BodyIsNotChanged() {
@@ -38,6 +40,7 @@ class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testFormatHtmlBody_IncludeDisclosure_DisclosureIsAppendedToBody() {
@@ -45,6 +48,7 @@ class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testFormatHtmlBody_DoNotIncludeDisclosure_BodyIsNotChanged() {
@@ -52,6 +56,7 @@ class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testFormatHtmlBody_HasInlineImages_ConvertInlineImagesToEmbeddedImages_ReturnsModifiedBodyAndArrayOfEmbeddedImagesToAttach() {
@@ -59,9 +64,36 @@ class EmailFormatterTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testFormatHtmlBody_DoesNotHaveInlineImages_BodyIsNotChangedAndReturnedArrayIsEmpty() {
         self::markTestIncomplete("Not yet implemented");
+    }
+
+    /**
+     * Formerly HandleBodyInHTMLformatTest::testHandleBodyInHtmlformat. This is really testing that from_html works,
+     * but it's best not to lose a test and thus risk a regression.
+     *
+     * @group email
+     * @group bug30591
+     * @group mailer
+     */
+    public function testTranslateCharacters_HtmlEntitiesAreTranslatedToRealCharacters() {
+        $body = "Check to see if &quot; &lt; &gt; &#039; was translated to \" < > '";
+
+        $mockLocale = self::getMock("Localization", array("translateCharset"));
+        $mockLocale->expects(self::any())
+            ->method("translateCharset")
+            ->will(self::returnValue($body)); // return the exact same string
+
+        $mockFormatter = self::getMock("EmailFormatter", array("retrieveDisclosureSettings"));
+        $mockFormatter->expects(self::any())
+            ->method("retrieveDisclosureSettings")
+            ->will(self::returnValue(false));
+
+        $expected = "Check to see if \" < > ' was translated to \" < > '";
+        $actual   = $mockFormatter->translateCharacters($body, $mockLocale, "UTF-8");
+        self::assertEquals($expected, $actual, "The HTML entities were not all translated properly");
     }
 }

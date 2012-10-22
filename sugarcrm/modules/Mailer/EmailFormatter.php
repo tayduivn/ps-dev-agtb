@@ -41,6 +41,26 @@ class EmailFormatter
     }
 
     /**
+     * Performs character set and HTML character translations on the string.
+     *
+     * @access public
+     * @param string       $string      required The string that is to be translated.
+     * @param Localization $locale      required The locale object for doing the character set translation.
+     * @param string       $toCharset   required Translate to this character set.
+     * @param string       $fromCharset          Translate from this character set.
+     * @return string The translated string.
+     */
+    public function translateCharacters($string, Localization $locale, $toCharset, $fromCharset = "UTF-8") {
+        // perform character set translations on the string
+        $string = $locale->translateCharset($string, $fromCharset, $toCharset);
+
+        // perform HTML character translations on the string
+        $string = from_html($string);
+
+        return $string;
+    }
+
+    /**
      * Adds the optional disclosure content to the message.
      *
      * @access public
@@ -155,7 +175,7 @@ class EmailFormatter
                     $mimeType = "image/" . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                 }
 
-                $embeddedImages[] = new EmbeddedImage($fileLocation, $cid, $filename, Encoding::Base64, $mimeType);
+                $embeddedImages[] = new EmbeddedImage($cid, $fileLocation, $filename, Encoding::Base64, $mimeType);
                 $i++;
             }
         }

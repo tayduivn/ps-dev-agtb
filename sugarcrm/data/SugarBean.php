@@ -33,6 +33,7 @@ require_once('modules/DynamicFields/DynamicField.php');
 require_once("data/Relationships/RelationshipFactory.php");
 require_once 'data/BeanVisibility.php';
 require_once 'data/SugarACL.php';
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 
 /**
@@ -1921,156 +1922,153 @@ class SugarBean
         */
     }
 
+    protected function create_notification_email($notify_user) {
+        return MailerFactory::getMailerForUser($GLOBALS["current_user"]);
+    }
+
+    protected function getTemplateNameForNotificationEmail() {
+        global $beanList;
+
+        $templateName = null;
+
+        if ($this->module_dir == "Cases") {
+            $templateName = "Case"; //we should use Case, you can refer to the en_us.notify_template.html.
+        } else {
+            $templateName = $beanList[$this->module_dir]; //bug 20637, in workflow this->object_name = strange chars.
+        }
+
+        if (!in_array('set_notification_body', get_class_methods($this))) {
+            $templateName = "Default";
+        }
+
+        if (!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
+            $templateName = $beanList[$this->module_dir].'Special';
+        }
+
+        if ($this->special_notification) {
+            $templateName = $beanList[$this->module_dir].'Special';
+        }
+
+        return $templateName;
+    }
+
     /**
     * Handles sending out email notifications when items are first assigned to users
     *
     * @param string $notify_user user to notify
     * @param string $admin the admin user that sends out the notification
     */
-    function send_assignment_notifications($notify_user, $admin)
-    {
-        global $current_user;
+    function send_assignment_notifications($notify_user, $admin) {
+        if (($this->object_name == 'Meeting' || $this->object_name == 'Call') || $notify_user->receive_notifications) {
+            $this->current_notify_user = $notify_user;
 
-        if(($this->object_name == 'Meeting' || $this->object_name == 'Call') || $notify_user->receive_notifications)
-        {
-            $sendToEmail = $notify_user->emailAddress->getPrimaryAddress($notify_user);
-            $sendEmail = TRUE;
-            if(empty($sendToEmail)) {
-                $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
-                $sendEmail = FALSE;
-            }
+            $templateName = $this->getTemplateNameForNotificationEmail();
+            $xtpl         = $this->createNotificationEmailTemplate($notify_user, $templateName);
+            $subject      = $xtpl->text($templateName . "_Subject");
+            $textBody     = trim($xtpl->text($templateName));
 
-            $notify_mail = $this->create_notification_email($notify_user);
-            $notify_mail->setMailerForSystem();
-
-            if(empty($admin->settings['notify_send_from_assigning_user'])) {
-                $notify_mail->From = $admin->settings['notify_fromaddress'];
-                $notify_mail->FromName = (empty($admin->settings['notify_fromname'])) ? "" : $admin->settings['notify_fromname'];
-            } else {
-                // Send notifications from the current user's e-mail (if set)
-                $fromAddress = $current_user->emailAddress->getReplyToAddress($current_user);
-                $fromAddress = !empty($fromAddress) ? $fromAddress : $admin->settings['notify_fromaddress'];
-                $notify_mail->From = $fromAddress;
-                //Use the users full name is available otherwise default to system name
-                $from_name = !empty($admin->settings['notify_fromname']) ? $admin->settings['notify_fromname'] : "";
-                $from_name = !empty($current_user->full_name) ? $current_user->full_name : $from_name;
-                $notify_mail->FromName = $from_name;
-            }
             //BEGIN SUGARCRM flav=notifications ONLY
             //Save the notification
-            $n = new Notifications();
-            $n->name = $notify_mail->Subject;
-            $n->description = $notify_mail->Body;
-            $n->assigned_user_id = $notify_user->id;
-            $n->save(FALSE);
+            $notification = new Notifications();
+            $notification->name = $subject;
+            $notification->description = $textBody;
+            $notification->assigned_user_id = $notify_user->id;
+            $notification->save(FALSE);
             //END SUGARCRM flav=notifications ONLY
 
-           $oe = new OutboundEmail();
-            $oe = $oe->getUserMailerSettings($current_user);
-            //only send if smtp server is defined
-            if($sendEmail){
-                $smtpVerified = false;
+            $mailTransmissionProtocol = "unknown";
 
-                //first check the user settings
-                if(!empty($oe->mail_smtpserver)){
-                    $smtpVerified = true;
-                }
+            try {
+                $mailer                   = $this->create_notification_email($notify_user);
+                $mailTransmissionProtocol = $mailer->getMailTransmissionProtocol();
 
-                //if still not verified, check against the system settings
-                if (!$smtpVerified){
-                    $oe = $oe->getSystemMailerSettings();
-                    if(!empty($oe->mail_smtpserver)){
-                        $smtpVerified = true;
+                // by default, use the following admin settings for the From email header
+                $fromEmail = $admin->settings['notify_fromaddress'];
+                $fromName  = $admin->settings['notify_fromname'];
+
+                if (!empty($admin->settings['notify_send_from_assigning_user'])) {
+                    // the "notify_send_from_assigning_user" admin setting is set
+                    // use the current user's email address and name for the From email header
+                    $usersEmail = $GLOBALS["current_user"]->emailAddress->getReplyToAddress($GLOBALS["current_user"]);
+                    $usersName  = $GLOBALS["current_user"]->full_name;
+
+                    // only use it if a valid email address is returned for the current user
+                    if (!empty($usersEmail)) {
+                        $fromEmail = $usersEmail;
+                        $fromName = $usersName;
                     }
                 }
-                //if smtp was not verified against user or system, then do not send out email
-                if (!$smtpVerified){
-                    $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
-                    //break out
-                    return;
+
+                // set the From and Reply-To email headers according to the values determined above (either default
+                // or current user)
+                $from = new EmailIdentity($fromEmail, $fromName);
+                $mailer->setHeader(EmailHeaders::From, $from);
+                $mailer->setHeader(EmailHeaders::ReplyTo, $from);
+
+                // set the subject of the email
+                $mailer->setSubject($subject);
+
+                // set the body of the email... looks to be plain-text only
+                $mailer->setTextBody($textBody);
+
+                // add the recipient
+                $recipientEmailAddress = $notify_user->emailAddress->getPrimaryAddress($notify_user);
+                $recipientName         = $notify_user->full_name;
+
+                try {
+                    $mailer->addRecipientsTo(new EmailIdentity($recipientEmailAddress, $recipientName));
+                } catch (MailerException $me) {
+                    $GLOBALS['log']->warn("Notifications: no e-mail address set for user {$notify_user->user_name}, cancelling send");
                 }
 
-                if(!$notify_mail->Send()) {
-                    $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$notify_mail->Mailer}), (error: {$notify_mail->ErrorInfo})");
-                }else{
-                    $GLOBALS['log']->info("Notifications: e-mail successfully sent");
+                $mailer->send();
+                $GLOBALS['log']->info("Notifications: e-mail successfully sent");
+            } catch (MailerException $me) {
+                $message = $me->getMessage();
+
+                switch ($me->getCode()) {
+                    case MailerException::FailedToConnectToRemoteServer:
+                        $GLOBALS['log']->fatal("Notifications: error sending e-mail, smtp server was not found ");
+                        break;
+                    default:
+                        $GLOBALS['log']->fatal("Notifications: error sending e-mail (method: {$mailTransmissionProtocol}), (error: {$message})");
+                        break;
                 }
             }
-
         }
     }
 
-    /**
+   /**
     * This function handles create the email notifications email.
-    * @param string $notify_user the user to send the notification email to
+    * @param string $templateName the name of the template used for the email content
+    * @return XTemplate
     */
-    function create_notification_email($notify_user) {
-        global $sugar_version;
-        global $sugar_config;
-        global $app_list_strings;
-        global $current_user;
-        global $locale;
-        global $beanList;
-        $OBCharset = $locale->getPrecedentPreference('default_email_charset');
+    protected function createNotificationEmailTemplate($templateName) {
+        global $sugar_config,
+               $current_user,
+               $sugar_version;
 
+        $currentLanguage = $_SESSION['authenticated_user_language'];
 
-        require_once("include/SugarPHPMailer.php");
-
-        $notify_address = $notify_user->emailAddress->getPrimaryAddress($notify_user);
-        $notify_name = $notify_user->full_name;
-        $GLOBALS['log']->debug("Notifications: user has e-mail defined");
-
-        $notify_mail = new SugarPHPMailer();
-        $notify_mail->AddAddress($notify_address,$locale->translateCharsetMIME(trim($notify_name), 'UTF-8', $OBCharset));
-
-        if(empty($_SESSION['authenticated_user_language'])) {
-            $current_language = $sugar_config['default_language'];
-        } else {
-            $current_language = $_SESSION['authenticated_user_language'];
-        }
-        $xtpl = new XTemplate(get_notify_template_file($current_language));
-        if($this->module_dir == "Cases") {
-            $template_name = "Case"; //we should use Case, you can refer to the en_us.notify_template.html.
-        }
-        else {
-            $template_name = $beanList[$this->module_dir]; //bug 20637, in workflow this->object_name = strange chars.
+        if (empty($currentLanguage)) {
+            $currentLanguage = $sugar_config['default_language'];
         }
 
-        $this->current_notify_user = $notify_user;
+        $xtpl = new XTemplate(get_notify_template_file($currentLanguage));
 
-        if(in_array('set_notification_body', get_class_methods($this))) {
+        if (in_array('set_notification_body', get_class_methods($this))) {
             $xtpl = $this->set_notification_body($xtpl, $this);
         } else {
             $xtpl->assign("OBJECT", translate('LBL_MODULE_NAME'));
-            $template_name = "Default";
         }
-        if(!empty($_SESSION["special_notification"]) && $_SESSION["special_notification"]) {
-            $template_name = $beanList[$this->module_dir].'Special';
-        }
-        if($this->special_notification) {
-            $template_name = $beanList[$this->module_dir].'Special';
-        }
+
         $xtpl->assign("ASSIGNED_USER", $this->new_assigned_user_name);
         $xtpl->assign("ASSIGNER", $current_user->name);
-        $port = '';
-
-        if(isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) {
-            $port = $_SERVER['SERVER_PORT'];
-        }
-
-        if (!isset($_SERVER['HTTP_HOST'])) {
-            $_SERVER['HTTP_HOST'] = '';
-        }
-
-        $httpHost = $_SERVER['HTTP_HOST'];
-
-        if($colon = strpos($httpHost, ':')) {
-            $httpHost    = substr($httpHost, 0, $colon);
-        }
 
         $parsedSiteUrl = parse_url($sugar_config['site_url']);
-        $host = $parsedSiteUrl['host'];
-        if(!isset($parsedSiteUrl['port'])) {
+        $host          = $parsedSiteUrl['host'];
+
+        if (!isset($parsedSiteUrl['port'])) {
             $parsedSiteUrl['port'] = 80;
         }
 
@@ -2080,16 +2078,10 @@ class SugarBean
 
         $xtpl->assign("URL", $cleanUrl."/index.php?module={$this->module_dir}&action=DetailView&record={$this->id}");
         $xtpl->assign("SUGAR", "Sugar v{$sugar_version}");
-        $xtpl->parse($template_name);
-        $xtpl->parse($template_name . "_Subject");
+        $xtpl->parse($templateName);
+        $xtpl->parse($templateName . "_Subject");
 
-        $notify_mail->Body = from_html(trim($xtpl->text($template_name)));
-        $notify_mail->Subject = from_html($xtpl->text($template_name . "_Subject"));
-
-        // cn: bug 8568 encode notify email in User's outbound email encoding
-        $notify_mail->prepForOutbound();
-
-        return $notify_mail;
+        return $xtpl;
     }
 
     /**
