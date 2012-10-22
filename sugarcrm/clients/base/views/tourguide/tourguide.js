@@ -1,45 +1,47 @@
 ({
     events: {
+        'click .tour-type': 'startTour'
     },
     initialize: function(options) {
         var self = this;
-        //console.log("tour::init");
-        //console.log(this);
-        //console.log(options);
         app.view.View.prototype.initialize.call(this, options);
-
-        app.events.on("app:view:tour:change", function() {
-            if( this.tourMode ) {
-                console.log("from tour init");
-                this.currentModule = app.controller.layout.options.module;
-                this.viewType = app.controller.layout.options.name;
-                this.initPopover(this.currentModule, this.viewType);
-            }
+        app.events.on("app:view:change", function(viewType, obj) {
+            self.module = obj.module;
+            self.viewType = viewType;
         });
     },
-    startTour: function(module, viewType, fullTour) {
+
+    startTour: function(e) {
+        var data = this.$(e.currentTarget).data();
+        this.fullTour = data.type === "full" ? true: false;
+
+        this.$(".system-tour").modal("hide");
+
+        // If you're already touring the system, remove the current tour popover
+        if( this.tourMode === true ) {
+            var $popoverEl = $(".popover[class*='tour']");
+
+            if( $popoverEl.length ) {
+                $popoverEl.remove();
+            }
+        }
+
         this.tourMode = true;
-        this.currentModule = module;
-        this.viewType = viewType;
-        this.fullTour = fullTour;
 
         // Route to the home page if the user clicked "Full Tour"
-        if( fullTour ) {
-            //TODO: When we have a "Home" module for summer, change this
-            this.currentModule = "ActivityStream";
-            this.viewType = "dashboard";
+        if( this.fullTour ) {
             app.router.navigate("#", {trigger: true});
         }
-        this.initPopover(this.currentModule, this.viewType);
+        this.initPopover(this.module, this.viewType);
     },
     endTour: function() {
         this.tourMode = false;
         app.alert.show("tour_end", {level: "info", title:"End of Tour",
-            messages: "Thank you for taking the Summer tour! You can re-take the tour anytime by clicking the 'Tour' button in the footer.", autoClose: true});
+            messages: "Thank you for taking the Summer tour! You can re-take the tour anytime by clicking the 'Tour' " +
+                "button in the footer.", autoClose: true});
         return;
     },
     nextItem: function(index, obj, currentArray, data) {
-        //console.log("next");
         var self = this;
 
         if( obj === _.last(currentArray) ) {
@@ -48,16 +50,17 @@
             }
 
             // Conditions to end the tour
-            if( !(this.fullTour) || (this.fullTour && this.currentModule === "Opportunities" && this.viewType === "record") ) {
+            if( !(this.fullTour) || (this.fullTour && this.module === "Opportunities" && this.viewType === "record") ) {
                 this.endTour();
                 return;
             }
 
             // Routing conditions
-            if( this.currentModule === "ActivityStream" ) {
+            // TODO: Change this when we have a "Home" module
+            if( this.module === "ActivityStream" ) {
                 app.router.navigate("#Accounts", {trigger: true});
             }
-            else if( this.currentModule === "Accounts" ) {
+            else if( this.module === "Accounts" ) {
                 switch( this.viewType ) {
                     case "records":
                         app.router.navigate("#Accounts/create", {trigger: true});
@@ -69,7 +72,7 @@
                         break;
                 }
             }
-            else if( this.currentModule === "Contacts" ) {
+            else if( this.module === "Contacts" ) {
                 switch( this.viewType ) {
                     case "records":
                         app.router.navigate("#Contacts/create", {trigger: true});
@@ -81,7 +84,7 @@
                         break;
                 }
             }
-            else if( this.currentModule === "Opportunities" ) {
+            else if( this.module === "Opportunities" ) {
                 switch( this.viewType ) {
                     case "records":
                         app.router.navigate("#Opportunities/create", {trigger: true});
@@ -91,17 +94,17 @@
                         return;
                 }
             }
-
-            // get the new module and viewtype
-            this.currentModule = app.controller.layout.options.module;
-            this.viewType = app.controller.layout.options.name;
-            this.initPopover(this.currentModule, this.viewType);
+            this.initPopover(this.module, this.viewType);
         }
         else {
             var nextIndex = index + 1,
                 nextObj = currentArray[nextIndex],
                 $nextEl = $("[data-tour='" + nextObj.id + "']"),
-                templateEl = '<div class="popover '+ nextObj.id + '"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a><a class="btn btn-primary tour-prev">Prev</a><a class="btn btn-primary tour-next">Next</a></div></div></div>';
+                templateEl = '<div class="popover '+ nextObj.id + '"><div class="arrow"></div>' +
+                    '<div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content">' +
+                    '<p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a>' +
+                    '<a class="btn btn-primary tour-prev">Prev</a><a class="btn btn-primary tour-next">'+
+                    app.lang.getAppString("LBL_NEXT_BUTTON_LABEL") +'</a></div></div></div>';
 
             // hide the current popover, if it exists
             if( $("[data-tour='" + obj.id + "']").length > 0 ) {
@@ -129,7 +132,6 @@
     },
     prevItem: function(index, obj, currentArray, data) {
         var self = this;
-        //console.log("prev");
 
         var prevIndex = index - 1,
             prevObj = currentArray[prevIndex],
@@ -153,7 +155,8 @@
 
         $.getJSON("../clients/summer/views/tour/data.json", null, function(tourData) {
             if( tourData.error ) {
-                app.alert.show('retrieve_failed', {level: 'error', title:'Tour Failed', messages: 'Failed to retrieve tour data: '+ tourData.error, autoClose: false});
+                app.alert.show('retrieve_failed', {level: 'error', title:'Tour Failed', messages: 'Failed to retrieve ' +
+                    'tour data: '+ tourData.error, autoClose: false});
                 return;
             }
             else {
@@ -162,7 +165,11 @@
                     $currentEl = $("[data-tour='" + firstObj.id + "']");
 
                 if( $currentEl.length > 0 ) {
-                    var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a><a class="btn btn-primary tour-next">Next</a></div></div></div>';
+                    var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div>' +
+                        '<div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p>' +
+                        '</div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a>' +
+                        '<a class="btn btn-primary tour-next">'+ app.lang.getAppString("LBL_NEXT_BUTTON_LABEL") +'</a>' +
+                        '</div></div></div>';
 
                     self.scrollToEl($currentEl, function() {
                         $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
@@ -187,8 +194,9 @@
         var viewportHeight = $(window).height(),
             elTop = $targetEl.offset().top,
             elHeight = $targetEl.height(),
-            headerHeight = 48,
-            footerHeight = 44,
+            headerHeight = $(".navbar").height() + 3,
+            footerHeight = $("footer").height(),
+
             // the header and footer cover elements on the page so we account for this
             buffer = 55,
             direction;
@@ -201,8 +209,7 @@
             direction = "up";
             buffer *= -1;
         }
-        else
-        {
+        else {
             direction = "none";
             if (callback && typeof(callback) === "function") {
                 callback();
@@ -269,20 +276,20 @@
         // the navbar and the footer. Boost it to 1030 to account for that.
         $("." + className).css("z-index", 1030);
     },
-    bindClickEvents: function(context, $el, index, obj, list, data) {
+    bindClickEvents: function(scope, $el, index, obj, list, data) {
 
         $(".tour-next").on("click", function() {
-            context.nextItem(index, obj, list, data);
+            scope.nextItem(index, obj, list, data);
         });
         $(".tour-end").on("click", function() {
             $el.popover("hide");
-            context.endTour();
+            scope.endTour();
         });
 
         if( $(".tour-prev").length > 0 )
         {
             $(".tour-prev").on("click", function() {
-                context.prevItem(index, obj, list, data);
+                scope.prevItem(index, obj, list, data);
             });
         }
     }
