@@ -30,7 +30,7 @@
                 worst_difference = newestModel.get('worst_case') - oldestModel.get('worst_case'),
                 worst_changed = worst_difference != 0,
                 worst_direction = worst_difference > 0 ? 'LBL_UP' : (worst_difference < 0 ? 'LBL_DOWN' : ''),
-                args = Array(),
+                args = [],
                 text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED',
                 best_arrow = this.getArrowDirectionSpan(best_direction),
                 likely_arrow = this.getArrowDirectionSpan(likely_direction),
