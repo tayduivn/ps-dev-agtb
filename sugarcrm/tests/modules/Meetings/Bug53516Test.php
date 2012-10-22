@@ -42,11 +42,17 @@ class Bug53516Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        SugarTestHelper::setUp('current_user', array(true));
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        parent::setUp();
         $this->contact = SugarTestContactUtilities::createContact();
     }
 
     protected function tearDown()
     {
+        SugarTestHelper::tearDown();
         SugarTestContactUtilities::removeAllCreatedContacts();
         SugarTestContactUtilities::removeCreatedContactsEmailAddresses();
         SugarTestContactUtilities::removeCreatedContactsUsersRelationships();
