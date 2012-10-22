@@ -670,6 +670,12 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'vname' => 'LBL_ID',
         'type' => 'id',
     ),
+    'product_id' =>
+    array(
+        'name' => 'product_id',
+        'vname' => 'LBL_PRODUCT_ID',
+        'type' => 'id'
+    ),
     'assigned_user_id' =>
     array (
         'name' => 'assigned_user_id',
@@ -743,6 +749,12 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'vname' => 'LBL_BASE_RATE',
         'type' => 'double',
     ),
+    'version' =>
+    array(
+        'name' => 'version',
+        'vname' => 'LBL_VERSION',
+        'type' => 'int'
+    )
 ),
 );
 

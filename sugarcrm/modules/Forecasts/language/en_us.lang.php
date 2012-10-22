@@ -191,7 +191,10 @@ $mod_strings = array (
     'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
     'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
     'LBL_CURRENCY' => 'Currency',
+    'LBL_CURRENCY_ID' => 'Currency ID',
     'LBL_CURRENCY_RATE' => 'Currency Rate',
+    'LBL_BASE_RATE' => 'Base Rate',
+
     'LBL_BEST_CASE_BASE_CURRENCY' => 'Best (Adjusted) base currency',
     'LBL_LIKELY_CASE_BASE_CURRENCY' => 'Likely (Adjusted) base currency',
     'LBL_WORST_CASE_BASE_CURRENCY' => 'Worst (Adjusted) base currency',
@@ -228,6 +231,9 @@ $mod_strings = array (
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
     'LBL_PROBABILITY' => 'Probability',
+    'LBL_PRODUCT_ID' => 'Product ID',
+    'LBL_QUOTA_ID' => 'Quota ID',
+    'LBL_VERSION' => 'Version',
 
     //Labels for forecasting history log and endpoint
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
@@ -298,15 +304,6 @@ $mod_strings = array (
 
     // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',
-<<<<<<< HEAD
-    'LBL_DUPLICATE' => 'Duplicate',
-    'LBL_SAVE' => 'Save',
-    'LBL_NOTE' => 'Note',
-    'LBL_EMAIL' => 'Email',
-    'LBL_PDF' => 'PDF',
-=======
-    'LBL_EXPORT_PDF' => 'Export PDF',
->>>>>>> nutmeg
     'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
 

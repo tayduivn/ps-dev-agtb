@@ -44,14 +44,6 @@ class ForecastsWorksheetApi extends ModuleApi
                 'method' => 'forecastWorksheetSave',
                 'shortHelp' => 'Updates a ForecastWorksheet model',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheet',
-            ),
-            'forecastWorksheetExport' => array(
-                'reqType' => 'GET',
-                'path' => array('ForecastWorksheets', 'export'),
-                'pathVars' => array('', ''),
-                'method' => 'exportForecastWorksheet',
-                'shortHelp' => 'Exports a forecast worksheet',
-                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastWorksheetExport',
             )
         );
         return $parentApi;
@@ -99,80 +91,6 @@ class ForecastsWorksheetApi extends ModuleApi
         return $obj->save();
     }
 
-
-    /**
-     * This method handles exporting data for the /ForecastWorksheet REST endpoint
-     *
-     * @param $api ServiceBase The API class of the request, used in cases where the API changes how the fields are pulled from the args array.
-     * @param $args array The arguments array passed in from the API
-     *
-     * @return binary file
-     * @throws SugarApiExceptionNotAuthorized
-     */
-    public function exportForecastWorksheet($api, $args)
-    {
-        // Load up a seed bean
-        $seed = BeanFactory::getBean('ForecastWorksheets');
-
-        if (!$seed->ACLAccess('list')) {
-            throw new SugarApiExceptionNotAuthorized('No access to view records for module: ' . $args['module']);
-        }
-
-        global $current_user;
-
-        $args['timeperiod_id'] = isset($args['timeperiod_id']) ? $args['timeperiod_id'] : TimePeriod::getCurrentId();
-        $args['user_id'] = isset($args['user_id']) ? $args['user_id'] : $current_user->id;
-
-        $obj = $this->getClass($args);
-        $query = $obj->process(false);
-
-        //Filter out the data based on the configuration settings
-        $admin = BeanFactory::getBean('Administration');
-        $settings = $admin->getConfigForModule('Forecasts');
-
-        $hide = array();
-
-        if(!$settings['show_worksheet_likely'])
-        {
-            $hide[] = 'likely_case';
-            $hide[] = 'w_likely_case';
-        }
-
-        if(!$settings['show_worksheet_best'])
-        {
-            $hide[] = 'best_case';
-            $hide[] = 'w_best_case';
-        }
-
-        if(!$settings['show_worksheet_worst'])
-        {
-            $hide[] = 'worst_case';
-            $hide[] = 'w_worst_case';
-        }
-
-        global $locale;
-        $timePeriod = BeanFactory::getBean('TimePeriods');
-        $timePeriod->retrieve($args['timeperiod_id']);
-        $filename = sprintf("%s_to_%s_%s.csv", $timePeriod->start_date, $timePeriod->end_date, $args['user_id']);
-
-        $db = DBManagerFactory::getInstance();
-        $result = $db->query($query);
-
-        require_once('include/export_utils.php');
-        $content = getExportContentFromResult($seed, $result, !empty($hide), $hide);
-
-        ob_clean();
-        header("Pragma: cache");
-        header("Content-type: application/octet-stream; charset=".$locale->getExportCharset());
-        header("Content-Disposition: attachment; filename={$filename}.csv");
-        header("Content-transfer-encoding: binary");
-        header("Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-        header("Last-Modified: " . TimeDate::httpTime() );
-        header("Cache-Control: post-check=0, pre-check=0", false );
-        header("Content-Length: ".mb_strlen($locale->translateCharset($content, 'UTF-8', $locale->getExportCharset())));
-        print $locale->translateCharset($content, 'UTF-8', $locale->getExportCharset());
-        @sugar_cleanup();
-    }
 
     /**
      * @param $args

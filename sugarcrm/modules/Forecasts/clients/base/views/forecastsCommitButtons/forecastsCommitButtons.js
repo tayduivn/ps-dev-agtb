@@ -23,7 +23,8 @@
         "click a[id=save_draft]" : "triggerSaveDraft",
         "click a[name=forecastSettings]" : "triggerConfigModal",
         "click a.drawerTrig" : "triggerRightColumnVisibility",
-        "click a[id=export]" : "triggerExport"
+        "click a[id=export]" : "triggerExport",
+        "click a[id=print]" : "triggerPrint"
     },
 
     initialize: function (options) {
@@ -216,12 +217,25 @@
         this.context.forecasts.set({hiddenSidebar: el.find('i').hasClass('icon-chevron-left')});
     },
 
-    triggerExport : function() {
-        var args = {
-            timeperiod_id : $("date_filter").val(),
-            user_id : app.user.get('id')
-        }
-        var url = app.api.buildURL('ForecastWorksheets', '', '', args);
+    /**
+     * Trigger the export to send csv data
+     * @param evt
+     */
+    triggerExport : function(evt) {
+        var url = 'index.php?module=Forecasts&action=';
+        url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
+        url += '&user_id=' + app.user.get('id');
+        url += '&timeperiod_id=' + $("#date_filter").val();
+        document.location.href = url;
+    },
+
+    /**
+     * Trigger print by calling window.print()
+     *
+     * @param evt
+     */
+    triggerPrint : function(evt) {
+        window.print();
     }
 
 })
