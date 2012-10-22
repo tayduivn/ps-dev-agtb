@@ -33,14 +33,25 @@ class Bug49691aTest extends Sugar_PHPUnit_Framework_TestCase {
     var $bean;
     var $sugarField;
 
+    var $oldDate;
+    var $oldTime;
+
     public function setUp() {
+        global $sugar_config;
         $this->bean = new Bug49691aMockBean();
         $this->sugarField = new SugarFieldDatetimecombo("Accounts");
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        $this->oldDate = $sugar_config['default_date_format'];
+        $sugar_config['default_date_format'] = 'm/d/Y';
+        $this->oldTime = $sugar_config['default_time_format'];
+        $sugar_config['default_time_format'] = 'H:i';
     }
 
     public function tearDown() {
+        global $sugar_config;
         unset($GLOBALS['current_user']);
+        $sugar_config['default_date_format'] = $this->oldDate;
+        $sugar_config['default_time_format'] = $this->oldTime;
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         unset($this->sugarField);
     }
@@ -65,7 +76,7 @@ class Bug49691aTest extends Sugar_PHPUnit_Framework_TestCase {
 
     public function providerFunction() {
         return array(
-            array('01/01/2012 12:00am', '2012-01-01 00:00:00'),
+            array('01/01/2012 12:00', '2012-01-01 12:00:00'),
             array('2012-01-01 12:00:00', '2012-01-01 12:00:00'),
             array('01/01/2012', '2012-01-01'),
             array('2012-01-01', '2012-01-01'),
