@@ -101,6 +101,12 @@
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
 
+        // make sure that the default data set is actually shown, if it's not then we need
+        // to set it to the first available option from the allowed dataset.
+        if(_.isUndefined(this.chartDataSet[this.defaultDataset])) {
+            this.defaultDataset = _.first(_.keys(this.chartDataSet));
+        }
+
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
         var values = {
