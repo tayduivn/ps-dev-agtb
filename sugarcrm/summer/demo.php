@@ -321,7 +321,7 @@ class Phase3Demo
             ),
 	    'Stream'=>array(
 		array(
-		   'activity_data'=> array('value'=>'@[Contacts:seed_rmaurice:Robert Maurice] downloaded a white paper titled "Our Cloud". @[Opportunities:seed_barclays_op1:800 Liceneses] @[Opportunities:seed_barclays_op2:On Site Training] '),
+		   'activity_data'=> array('value'=>'@[Contacts:seed_rmaurice] downloaded a white paper titled "Our Cloud". @[Opportunities:seed_barclays_op1] @[Opportunities:seed_barclays_op2] '),
 		   'target_module' => 'Accounts',
 	           'target_id'=>'seed_barclays',
 		   'activity_type'=>'posted',
@@ -720,7 +720,7 @@ class Phase3Demo
                 array(
                     'id' => 'seed_hdp',
                     'first_name' => 'Hans',
-                    'last_name' => 'Dieter Pštsch',
+                    'last_name' => 'Dieter Pötsch',
                     'email1' => 'hdp@example.com',
                     'title' => 'CFO',
                     'picture' => 'http://www.austriantimes.at/thumbnails/s/saczuk28_large.jpg'
