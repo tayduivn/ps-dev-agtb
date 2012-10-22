@@ -549,6 +549,7 @@ function getProductTypes($focus, $field='type_id', $value,$view='DetailView') {
 
 function getPricingFormula($focus, $field='pricing_formula', $value, $view='DetailView') {
 	require_once('modules/ProductTemplates/Formulas.php');
+    refresh_price_formulas();
 	if($view == 'EditView' || $view == 'MassUpdate') {
 		global $app_list_strings;
 	    $html = "<select id=\"$field\" name=\"$field\"";

@@ -49,10 +49,7 @@ class ParserModifyPortalConfig extends ModuleBuilderParser
         $portalConfig = array(
             'platform' => 'portal',
             'debugSugarApi' => true,
-            'logLevel' => array(
-                'name' => 'DEBUG',
-                'value' => 2
-            ),
+            'logLevel' => 'DEBUG',
             'logWriter' => 'ConsoleWriter',
             'logFormatter' => 'SimpleFormatter',
             'metadataTypes' => array(),

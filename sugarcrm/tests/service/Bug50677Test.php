@@ -101,4 +101,3 @@ class Bug50677Test extends SOAPTestCase
 
     }
 }
-

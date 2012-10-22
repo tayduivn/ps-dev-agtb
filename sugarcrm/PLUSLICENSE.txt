@@ -182,5 +182,5 @@ UNLESS AND UNTIL COMPANY HAS AGREED TO BE BOUND BY ALL OF THE TERMS OF THE AGREE
 
 MASTER SUBSCRIPTION AGREEMENT              Effective: 1 June 2011
 
-(c) 2011 SugarCRM, Inc.  SugarCRM and the SugarCRM logo are trademarks of SugarCRM, Inc.
+(c) 2012 SugarCRM, Inc.  SugarCRM and the SugarCRM logo are trademarks of SugarCRM, Inc.
 
