@@ -282,10 +282,13 @@ function verify_data(form)
 		return false;
 	}
 	
-	if (document.EditView.dec_sep.value != '' && (document.EditView.dec_sep.value == "'")) {
-		alert(SUGAR.language.get('app_strings','ERR_NO_SINGLE_QUOTE') + SUGAR.language.get('Users','LBL_DECIMAL_SEP'));
-		return false;
-	}
+    if ( !document.EditView.isDuplicate || !document.EditView.isDuplicate.value )
+    {
+        if (document.EditView.dec_sep.value != '' && (document.EditView.dec_sep.value == "'")) {
+            alert(SUGAR.language.get('app_strings','ERR_NO_SINGLE_QUOTE') + SUGAR.language.get('Users','LBL_DECIMAL_SEP'));
+            return false;
+        }
+    }
     
 	if (document.EditView.num_grp_sep.value != '' && (document.EditView.num_grp_sep.value == "'")) {
 		alert(SUGAR.language.get('app_strings','ERR_NO_SINGLE_QUOTE') + SUGAR.language.get('Users','LBL_NUMBER_GROUPING_SEP'));
