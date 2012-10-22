@@ -176,10 +176,10 @@
         });
     },
     showTooltip: function(e) {
-        this.$(e.target).closest("a").tooltip("show");
+        this.$(e.currentTarget).tooltip("show");
     },
     hideTooltip: function(e) {
-        this.$(e.target).closest("a").tooltip("hide");
+        this.$(e.currentTarget).tooltip("hide");
     },
     showActions:function (e) {
         $(e.currentTarget).children("td").children("span").children(".btn-group").show();
