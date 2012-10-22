@@ -117,8 +117,17 @@ if(!empty($_REQUEST['demo'])){
                     return app;
                 }
             }));
-
             app.forecasts.initForecast();
+
+            if(!_.has(app, 'entityList')) {
+                var url = app.api.buildURL("CustomReport/EntityList");
+                app.entityList = [];
+                // Fetch taggable entities.
+                app.api.call('GET', url, null, {success: function(o) {
+                    app.entityList = o;
+                }});
+            }
+
         }
 
     });

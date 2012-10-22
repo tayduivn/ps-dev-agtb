@@ -24,12 +24,9 @@
     },
 
     initialize: function(options) {
-        var self = this,
-            url = app.api.buildURL("CustomReport/EntityList");
-
         this.opts = {params: {}};
         this.collection = {};
-        
+
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
 
@@ -46,22 +43,17 @@
         this.viewId = this.getViewId();
         this.calendarId = this.getCalendarId();
         this.timelineId = this.getTimelineId();
-        
+
         if (this.context.get("link")) {
             this.opts.params.link = this.context.get("link");
             this.opts.params.parent_module = this.layout.layout.module;
             this.opts.params.parent_id = this.layout.layout.model.id;
         }
-        
+
         this.collection = app.data.createBeanCollection("ActivityStream");
 
         // By default, show all posts.
         this.showAllActivities();
-
-        // Fetch taggable entities.
-        app.api.call('GET', url, null, {success: function(o) {
-            self.entityList = o;
-        }});
 
         this.user_id = app.user.get('id');
         this.full_name = app.user.get('full_name');
@@ -377,7 +369,7 @@
         }
 
         // Do initial list filtering.
-        var list = _.filter(this.entityList, function(entity) {
+        var list = _.filter(app.entityList, function(entity) {
             return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
         });
 
@@ -515,13 +507,12 @@
     },
 
     _parseTags: function(text) {
-        var self = this;
         if(!text || text.length === 0) {
             return text;
         }
         var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g);
         return text.replace(pattern, function(str, module, id) {
-            var name = _(self.entityList).find(function(el) {
+            var name = _(app.entityList).find(function(el) {
                 return el.id == id;
             }).name || "A record";
             return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + name + "</a></span>";
