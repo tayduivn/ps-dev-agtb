@@ -1,0 +1,11 @@
+<div class="headerpane">
+    <h1 class="headerpane-title"></h1>
+    <div class="btn-toolbar pull-right dropdown">
+        {{#if hasAccess}}
+            {{#each meta.buttons}}
+                {{field ../this}}
+            {{/each}}
+        {{/if}}
+        <a class="btn btn-invisible drawerTrig" title="Create Account" href="#"><i class="icon-chevron-right"></i></a>
+    </div>
+</div>

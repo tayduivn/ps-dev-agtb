@@ -3,32 +3,30 @@
     editMode: false,
 
     initialize: function(options) {
-        var extraEvents = {
-            "click .record-edit": "toggleEdit",
-            "click .record-edit-link-wrapper": "handleEdit",
-            "click .record-save": "handleSave",
-            "click .record-cancel": "handleCancel",
-            "click .record-delete": "handleDelete"
-        };
-
         _.bindAll(this);
 
         app.view.views.DetailView.prototype.initialize.call(this, options);
 
         // Re delegate events adding some of our custom
-        this.delegateEvents(_.extend(this.events, extraEvents));
+        this.delegateEvents(_.extend(this.events, {
+            "click .record-edit-link-wrapper": "handleEdit"
+        }));
+
+        this.context.on('headerpane:edit:click', this.toggleEdit, this);
+        this.context.on('headerpane:save:click', this.handleSave, this);
+        this.context.on('headerpane:cancel:click', this.handleCancel, this);
+        this.context.on('headerpane:delete:click', this.handleDelete, this);
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.editMode || this.editAllMode) {
                 this.previousModelState = this.model.previousAttributes();
-                this.$(".record-save-btns-bar").show();
+                this.context.trigger('headerpane:buttons:edit');
             }
         }, this);
 
         if (this.context.get("create") === true) {
             this.model.isNotEmpty = true;
-            this.editable = true;
         }
     },
 
@@ -83,21 +81,13 @@
         // Check if this is a new record, if it is, enable the edit view
         if (this.context.has("create") && this.model.isNew) {
             this.editAllMode = false;
-            this.toggleEdit();
+            this.toggleEdit(true);
         }
     },
 
     // Overloaded functions
     _renderHtml: function() { // Use original original
         app.view.View.prototype._renderHtml.call(this);
-    },
-
-    checkReadOnly: function() {
-        if (this.context.get("model").module == "Users") {
-            this.editable = (app.user.get("id") == this.context.get("model").id);
-        } else {
-            this.editable = app.acl.hasAccessToModel("edit", this.model);
-        }
     },
 
     toggleMoreLess: function() {
@@ -107,13 +97,19 @@
     },
 
     bindDataChange: function() {
+        var title = '';
         if (this.model) {
             this.model.on("change", function() {
                 if (this.model.isNotEmpty !== true) {
                     this.model.isNotEmpty = true;
-                    this.checkReadOnly();
                     this.render();
                 }
+            }, this);
+
+            // display title
+            this.model.on('change:first_name change:last_name', function() {
+                title = this.model.get('first_name') + ' ' + this.model.get('last_name');
+                this.context.trigger('headerpane:title:render', title);
             }, this);
         }
     },
@@ -147,7 +143,7 @@
     },
 
     // Handler functions
-    toggleEdit: function() {
+    toggleEdit: function(isEdit) {
         _.each(this.fields, function(field) {
 
             // Exclude image picker,
@@ -156,7 +152,12 @@
                 return;
             }
 
-            field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+            if (_.isUndefined(isEdit)) {
+                field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+            } else {
+                field.options.viewName = isEdit ? "edit" : "detail";
+            }
+
             field.render();
         }, this);
 
@@ -209,6 +210,7 @@
         var self = this;
 
         this.editMode = false;
+        this.editAllMode = false;
         this.model.save({}, {
             success: function() {
                 if (self.context.get("create") === true) {
@@ -225,18 +227,19 @@
 
     handleCancel: function() {
         this.editMode = false;
+        this.editAllMode = false;
 
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);
         }
 
-        this.toggleEdit();
+        this.toggleEdit(false);
     },
 
     handleDelete: function() {
         // Open up a modal
         var self = this,
-            modal = this.$(".delete-confirmation").modal();
+            modal = this.$("#delete-confirmation").modal();
 
         this.$(".confirm-delete").on("click", function() {
             self.model.destroy();
