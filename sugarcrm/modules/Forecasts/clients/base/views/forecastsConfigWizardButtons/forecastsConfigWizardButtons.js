@@ -78,7 +78,7 @@
 
     breadcrumb:function (evt) {
         // ignore the click if the crumb is already active
-        if ($(evt.target).parent().is(".active,.disabled") == false) {
+        if ($(evt.target).parent().is(".disabled") == true) {
             // figure out which crumb was checked
             var clickedCrumb = 0;
             _.each(this.navTabs, function (tab, index) {
@@ -168,9 +168,7 @@
      * @param next
      */
     switchNavigationTab:function (next) {
-        $(this.navTabs[next]).removeClass('disabled');
-
-        $(this.navTabs[this.activePanel]).toggleClass('active');
-        $(this.navTabs[next]).toggleClass('active');
+        $(this.navTabs[this.activePanel]).toggleClass('active disabled');
+        $(this.navTabs[next]).toggleClass('active disabled');
     }
 })
