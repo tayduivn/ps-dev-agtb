@@ -66,7 +66,7 @@ class iCal extends vCal {
     */
     protected function escapeNls($string)
     {
-        $str = str_replace("\r\n", "\\n", $string);
+        $str = str_replace(array("\r\n", "\n"), "\\n", $string);
         return $str;
     }
 
