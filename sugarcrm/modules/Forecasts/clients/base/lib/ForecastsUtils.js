@@ -21,19 +21,19 @@
 
                 })
             }
-            var best_difference = newestModel.get('best_case') - oldestModel.get('best_case');
-            var best_changed = best_difference != 0;
-            var best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : '');
-            var likely_difference = newestModel.get('likely_case') - oldestModel.get('likely_case');
-            var likely_changed = likely_difference != 0;
-            var likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : '');
-            var worst_difference = newestModel.get('worst_case') - oldestModel.get('worst_case');
-            var worst_changed = worst_difference != 0;
-            var worst_direction = worst_difference > 0 ? 'LBL_UP' : (worst_difference < 0 ? 'LBL_DOWN' : '');
-            var args = Array();
-            var text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED';
+            var best_difference = newestModel.get('best_case') - oldestModel.get('best_case'),
+                best_changed = best_difference != 0,
+                best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : ''),
+                likely_difference = newestModel.get('likely_case') - oldestModel.get('likely_case'),
+                likely_changed = likely_difference != 0,
+                likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : ''),
+                worst_difference = newestModel.get('worst_case') - oldestModel.get('worst_case'),
+                worst_changed = worst_difference != 0,
+                worst_direction = worst_difference > 0 ? 'LBL_UP' : (worst_difference < 0 ? 'LBL_DOWN' : ''),
+                args = Array(),
+                text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED',
+                best_arrow = '';
 
-            var best_arrow = '';
             if(best_direction == "LBL_UP") {
                 best_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
             } else if(best_direction == "LBL_DOWN") {
@@ -111,21 +111,20 @@
             }
 
             //Compile the language string for the log
-            var hb = Handlebars.compile("{{str_format key module args}}");
-            var text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
+            var hb = Handlebars.compile("{{str_format key module args}}"),
+                text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
 
             // Check for first time run -- no date_entered for oldestModel
             var oldestDateEntered = oldestModel.get('date_entered');
 
             // This will always have a value
-            var newestModelDate = new Date(Date.parse(newestModel.get('date_entered')));
-            var text2 = '';
+            var newestModelDate = new Date(Date.parse(newestModel.get('date_entered'))),
+                text2 = '';
 
             if(!_.isEmpty(oldestDateEntered)) {
-                var oldestModelDate = new Date(Date.parse(oldestDateEntered));
-
-                var yearDiff = oldestModelDate.getYear() - newestModelDate.getYear();
-                var monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
+                var oldestModelDate = new Date(Date.parse(oldestDateEntered)),
+                    yearDiff = oldestModelDate.getYear() - newestModelDate.getYear(),
+                    monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
 
                 //Format the date according to the user date and time preferences
                 newestModelDate = app.date.format(newestModelDate, app.user.get('datepref') + ' ' + app.user.get('timepref'));
