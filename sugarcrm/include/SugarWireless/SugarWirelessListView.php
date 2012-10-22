@@ -123,19 +123,28 @@ class SugarWirelessListView extends SugarWirelessView{
 
         return $listViewDefs[$module];
     }
-    
-	/**
-	 * Protected function that returns the filter_fields based on the module's
-	 * list view metadata
-	 */
- 	protected function get_filter_fields($module){
-		// code from ListViewDisplay setup(), determines the $filter_fields array based off
-		// of the display columns of the listview metadata
-		$filter_fields = array ();
-        foreach($this->displayColumns as $columnName => $def) {
+
+    /**
+     * Protected function that returns the filter_fields based on the module's
+     * list view metadata.
+     *
+     * @see ListViewDisplay::setupFilterFields()
+     */
+    protected function get_filter_fields($module)
+    {
+        $filter_fields = array();
+        foreach ($this->displayColumns as $columnName => $def) {
             $filter_fields[strtolower($columnName)] = true;
-            if(!empty($def['related_fields'])) {
-                foreach($def['related_fields'] as $field) {
+
+            if (!empty($def['type']) &&
+                strtolower($def['type']) == 'currency' &&
+                isset($this->bean->field_defs['currency_id'])
+            ) {
+                $filter_fields['currency_id'] = true;
+            }
+
+            if (!empty($def['related_fields'])) {
+                foreach ($def['related_fields'] as $field) {
                     //id column is added by query construction function. This addition creates duplicates
                     //and causes issues in oracle. #10165
                     if ($field != 'id') {
@@ -145,7 +154,7 @@ class SugarWirelessListView extends SugarWirelessView{
             }
         }
         return $filter_fields;
- 	}
+    }
 
 }
 ?>

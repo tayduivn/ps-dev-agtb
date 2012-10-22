@@ -44,6 +44,8 @@
                     //keyValueStore: app.sugarAuthStore, //override the keyValueStore
                     callback: function(app) {
                         app.user.set(app.initData.selectedUser);
+                        // resize the top menu after the layout has been initialized
+                        SUGAR.themes.resizeMenu();
                         app.start();
                     }
                 });

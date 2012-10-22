@@ -65,7 +65,7 @@ class Bug49691aTest extends Sugar_PHPUnit_Framework_TestCase {
 
     public function providerFunction() {
         return array(
-            array('01/01/2012 12:00', '2012-01-01 12:00:00'),
+            array('01/01/2012 12:00am', '2012-01-01 00:00:00'),
             array('2012-01-01 12:00:00', '2012-01-01 12:00:00'),
             array('01/01/2012', '2012-01-01'),
             array('2012-01-01', '2012-01-01'),

@@ -47,6 +47,8 @@ class RestMetadataTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
         $this->assertTrue(isset($restReply['reply']['currencies']),'Currencies are missing.');
+        $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
+
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
@@ -59,6 +61,7 @@ class RestMetadataTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['config']), 'Portal Configs are missing.');
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
     }
     
     /**

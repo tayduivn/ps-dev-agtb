@@ -38,32 +38,6 @@ class TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
     }
 
-    /**
-     *
-     */
-    function testGetLastCurrentNextIds()
-    {
-        global $app_strings;
-
-        $current = SugarTestTimePeriodUtilities::createTimePeriod();
-        $timedate = TimeDate::getInstance();
-        $endDate = $timedate->fromDbDate($current->start_date)->modify('-1 day')->asDbDate();
-        $last = SugarTestTimePeriodUtilities::createTimePeriod('2011-01-01', $endDate);
-        $startDate = $timedate->fromDbDate($current->end_date)->modify('+1 day')->asDbDate();
-        $next = SugarTestTimePeriodUtilities::createTimePeriod($startDate, '2020-01-01');
-
-        $timeperiods = array();
-        $timeperiods[$current->id] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
-        $timeperiods[$last->id] = $app_strings['LBL_PREVIOUS_TIMEPERIOD'];
-        $timeperiods[$next->id] = $app_strings['LBL_NEXT_TIMEPERIOD'];
-
-        $result = TimePeriod::getLastCurrentNextIds();
-        $this->assertSame($timeperiods, $result);
-
-        $result = TimePeriod::getLastCurrentNextIds(TimeDate::getInstance());
-        $this->assertSame($timeperiods, $result);
-    }
-
     public function testGetTimePeriodFromDbDateWithValidDate()
     {
         // get time period within 2009-02-15

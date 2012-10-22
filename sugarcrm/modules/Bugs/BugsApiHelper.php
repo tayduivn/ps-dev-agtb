@@ -47,8 +47,8 @@ class BugsApiHelper extends SugarBeanApiHelper
             $support_portal_user = BeanFactory::getBean('Users', $_SESSION['authenticated_user_id']);
 
             //BEGIN SUGARCRM flav=pro ONLY
-            $bean->team_id = $support_portal_user->fetched_row['default_team'];
-            $bean->team_set_id = $support_portal_user->fetched_row['team_set_id'];
+            $bean->team_id = $contact->fetched_row['team_id'];
+            $bean->team_set_id = $contact->fetched_row['team_set_id'];
             //END SUGARCRM flav=pro ONLY
             $bean->load_relationship('contacts');
             $bean->contacts->add($contact->id);

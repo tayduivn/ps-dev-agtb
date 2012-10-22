@@ -21,56 +21,60 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
-require_once 'include/database/MysqlHelper.php';
-require_once 'include/database/MssqlHelper.php';
-require_once 'include/database/FreeTDSHelper.php';
-//BEGIN SUGARCRM flav=ent ONLY
-require_once 'include/database/OracleHelper.php';
-//END SUGARCRM flav=ent ONLY
 
-class Bug44291 extends Sugar_PHPUnit_Framework_TestCase
+
+/**
+ * Bug57252Test.php
+ * @author Matt Marum
+ *
+ * This unit test checks to make sure that we are pulling the Admin panel date/time format
+ * preferences when a user does not have an existing date/time format preference.
+ *
+ */
+class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
 {
-    public function setUp()
+
+    public static function setUpBeforeClass()
     {
+        global $current_user;
+        $current_user = SugarTestUserUtilities::createAnonymousUser();
+        $current_user->save();
     }
 
-    public function tearDown()
+    public static function tearDownAfterClass()
     {
+        global $current_user;
+        $current_user->resetPreferences();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
     }
 
-    public function testGetColumnTypeMySql()
+    /**
+     * @group bug57252
+     *
+     */
+    public function testDefaultDateTimeFormatFromSystemConfig()
     {
-        $_helper = new MysqlHelper();
-        $this->assertEquals("decimal(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
+        global $current_user, $sugar_config;
+        $this->assertEquals($current_user->getPreference('datef'), $sugar_config['default_date_format']);
+        $this->assertEquals($current_user->getPreference('timef'), $sugar_config['default_time_format']);
+
     }
 
-    public function testGetColumnTypeMSSql()
+    /**
+     * @group bug57252
+     *
+     */
+    public function testDefaultDateTimeFormatFromUserPref()
     {
-        $_helper = new MssqlHelper();
-        $this->assertEquals("decimal(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
+        global $current_user;
+
+        $current_user->setPreference('datef','d/m/Y', 0, 'global');
+        $current_user->setPreference('timef','h.iA',0,'global');
+
+        $this->assertEquals($current_user->getPreference('datef'), 'd/m/Y');
+        $this->assertEquals($current_user->getPreference('timef'), 'h.iA');
+
     }
 
-    public function testGetColumnTypeFreeTDS()
-    {
-        $_helper = new FreeTDSHelper();
-        $this->assertEquals("decimal(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
-    }
-
-    //BEGIN SUGARCRM flav=ent ONLY
-    public function testGetColumnTypeOracle()
-    {
-        $_helper = new OracleHelper();
-        $this->assertEquals("number(26,6)", $_helper->getColumnType("currency"));
-        $this->assertEquals("Unknown", $_helper->getColumnType("Unknown"));
-        unset($_helper);
-    }
-    //END SUGARCRM flav=ent ONLY
 
 }

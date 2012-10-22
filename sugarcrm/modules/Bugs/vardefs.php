@@ -84,6 +84,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
        'portallistview' => 'visible',
        'portalsearchview' => false,
        //END SUGARCRM flav=ent ONLY
+
 	   ),
   ),
 
@@ -111,6 +112,7 @@ $dictionary['Bug'] = array('table' => 'bugs',    'audited'=>true, 'comment' => '
           'portallistview' => false,
           //END SUGARCRM flav=ent ONLY
       ), // tyoung bug 16442 - don't show in studio fields list
+
   	'massupdate' => true,
   	),
    'fixed_in_release_name'=>

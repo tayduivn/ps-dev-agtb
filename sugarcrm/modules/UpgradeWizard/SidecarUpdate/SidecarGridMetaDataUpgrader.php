@@ -25,6 +25,8 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      * of the metadata will come from the 6.6+ style metadata.
      */
     public function convertLegacyViewDefsToSidecar() {
+        $this->logUpgradeStatus('Converting ' . $this->client . ' list view defs for ' . $this->module);
+        
         // Leave the original legacy viewdefs in tact
         $defs = $this->legacyViewdefs;
         
