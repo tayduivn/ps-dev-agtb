@@ -2252,13 +2252,11 @@ class Email extends SugarBean {
 		if ($return_array) {
 			return parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, $return_array,$parentbean, $singleSelect);
 		}
-        $custom_join = $this->custom_fields->getJOIN();
+        $custom_join = $this->getCustomJoin();
 
 		$query = "SELECT ".$this->table_name.".*, users.user_name as assigned_user_name\n";
 
-    	if($custom_join){
-			$query .= $custom_join['select'];
-		}
+        $query .= $custom_join['select'];
     	$query .= " FROM emails\n";
     	if ($where != "" && (strpos($where, "contacts.first_name") > 0))  {
 			$query .= " LEFT JOIN emails_beans ON emails.id = emails_beans.email_id\n";
@@ -2275,9 +2273,7 @@ class Email extends SugarBean {
         $query .= " JOIN contacts ON contacts.id= emails_beans.bean_id AND emails_beans.bean_module='Contacts' and contacts.deleted=0 \n";
     	}
 
-		if($custom_join){
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($show_deleted == 0) {
 			$where_auto = " emails.deleted=0 \n";
@@ -2405,18 +2401,17 @@ class Email extends SugarBean {
 
 
 
-	function create_export_query(&$order_by, &$where) {
+	function create_export_query(&$order_by, &$where)
+    {
 		$contact_required = stristr($where, "contacts");
-		$custom_join = $this->custom_fields->getJOIN(true, true,$where);
+		$custom_join = $this->getCustomJoin(true, true, $where);
 
 		if($contact_required) {
 			$query = "SELECT emails.*, contacts.first_name, contacts.last_name";
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 
 			$query .= " FROM contacts, emails, emails_contacts ";
 			$where_auto = "emails_contacts.contact_id = contacts.id AND emails_contacts.email_id = emails.id AND emails.deleted=0 AND contacts.deleted=0";
@@ -2425,9 +2420,7 @@ class Email extends SugarBean {
 			//BEGIN SUGARCRM flav=pro ONLY
 			$query .= ", teams.name AS team_name";
 			//END SUGARCRM flav=pro ONLY
-			if($custom_join) {
-				$query .= $custom_join['select'];
-			}
+            $query .= $custom_join['select'];
 
             $query .= ' FROM emails ';
             $where_auto = "emails.deleted=0";
@@ -2438,9 +2431,7 @@ class Email extends SugarBean {
 		$this->add_team_security_where_clause($query);
 		$query .= getTeamSetNameJoin('emails');
 		//END SUGARCRM flav=pro ONLY
-		if($custom_join){
-			$query .= $custom_join['join'];
-		}
+        $query .= $custom_join['join'];
 
 		if($where != "")
 			$query .= "where $where AND ".$where_auto;
