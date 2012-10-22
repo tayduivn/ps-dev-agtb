@@ -19,10 +19,16 @@ $app->get('/rest/users/callback', function() use ($app, $box)
     //$app->response()->header('Content-Type', 'text/html;charset=utf-8');
     $api = new EasyRpService($box->getSetting('google_key'));
     $result = $api->verify($box->getSetting('top_url')."summer/splash/rest/users/callback", $_SERVER['QUERY_STRING']);
+    $whitelistedEmails = array();
+    if(file_exists('summer/splash/whitelist.php')) {
+        include('summer/splash/whitelist.php');
+        $whitelistedEmails = array_merge($emails);
+    }
     if(empty($result['verifiedEmail'])) {
         $data = json_encode(array("error" => "Failed to authenticate. Please contact support."));
-    }else if(substr_count($result['verifiedEmail'], '@sugarcrm.com') != 1){
-                $data = json_encode(array("error" => "Summer is currently in a private beta. Thank you for your interest!"));
+
+    }else if(!in_array($result['verifiedEmail'], $whitelistedEmails) && substr_count($result['verifiedEmail'], '@sugarcrm.com') != 1){
+        $data = json_encode(array("error" => "Summer is currently in a private beta. Thank you for your interest!"));
     } else {
         $email = $result['verifiedEmail'];
 

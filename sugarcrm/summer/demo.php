@@ -16,7 +16,7 @@ class Phase3Demo
     protected $userId = '';
     protected $demodata = array(
           array(
-            'user_id'=> 'rmt-6c3327c2f478edf7ce6be1b97277c188',
+            'user_id'=> 'rmt-b97520b441781f8dbe838ab5c71cc45c',
             'se_id'=>'seed_max_id',
             'Accounts' => array(
                 array(
@@ -117,7 +117,7 @@ class Phase3Demo
         ),
 
         array(
-            'user_id'=> 'rmt-6c3327c2f478edf7ce6be1b97277c188',
+            'user_id'=> 'rmt-b97520b441781f8dbe838ab5c71cc45c',
             'se_id'=>'seed_max_id',
             'Accounts' => array(
                 array(
@@ -215,7 +215,7 @@ class Phase3Demo
 
 
         array(
-            'user_id'=> 'rmt-6c3327c2f478edf7ce6be1b97277c188',
+            'user_id'=> 'rmt-b97520b441781f8dbe838ab5c71cc45c',
             'se_id'=>'seed_sally_id',
             'Accounts' => array(
                 array(
@@ -286,7 +286,7 @@ class Phase3Demo
 
 
         array(
-            'user_id'=> 'rmt-6c3327c2f478edf7ce6be1b97277c188',
+            'user_id'=> 'rmt-b97520b441781f8dbe838ab5c71cc45c',
             'Accounts' => array(
                 array(
                     'id' => 'seed_barclays',
@@ -321,12 +321,12 @@ class Phase3Demo
             ),
 	    'Stream'=>array(
 		array(
-		   'activity_data'=> array('value'=>'@[Contacts:seed_rmaurice:Robert Maurice] downloaded a white paper titled "Our Cloud". @[Opportunities:seed_barclays_op1:800 Liceneses] @[Opportunities:seed_barclays_op2:On Site Training] '),
-		   'target_module' => 'Accounts', 
+		   'activity_data'=> array('value'=>'@[Contacts:seed_rmaurice] downloaded a white paper titled "Our Cloud". @[Opportunities:seed_barclays_op1] @[Opportunities:seed_barclays_op2] '),
+		   'target_module' => 'Accounts',
 	           'target_id'=>'seed_barclays',
-		   'activity_type'=>'posted',		 
+		   'activity_type'=>'posted',
 		  'id'=>'seed_barclays_str1'
-           ), 
+           ),
 ),
             'Opportunities' => array(
                 array(
@@ -720,7 +720,7 @@ class Phase3Demo
                 array(
                     'id' => 'seed_hdp',
                     'first_name' => 'Hans',
-                    'last_name' => 'Dieter Pštsch',
+                    'last_name' => 'Dieter Pötsch',
                     'email1' => 'hdp@example.com',
                     'title' => 'CFO',
                     'picture' => 'http://www.austriantimes.at/thumbnails/s/saczuk28_large.jpg'
@@ -1079,7 +1079,7 @@ class Phase3Demo
 
 
                 }
-		
+
 
 		if(isset($data['Stream'])){
 			foreach($data['Stream'] as $stream){
@@ -1104,8 +1104,8 @@ class Phase3Demo
 
 		}
             }
-        
-	
+
+
         if(!isset($GLOBALS['current_user']))$GLOBALS['current_user'] = new User();
         $GLOBALS['current_user']->retrieve($actual_user_id);
 
@@ -1171,6 +1171,6 @@ class Phase3Demo
 }
 
 
-$demo = new Phase3Demo('rmt-6c3327c2f478edf7ce6be1b97277c188');
+$demo = new Phase3Demo('rmt-b97520b441781f8dbe838ab5c71cc45c');
 $demo->install();
 
