@@ -54,6 +54,7 @@ class MetadataSummerApi extends MetadataApi {
             $moduleList[$module] = $module;
         }
         $moduleList["ActivityStream"] = "ActivityStream";
+        $moduleList["Forecasts"] = "Forecasts";
         $moduleList['_hash'] = md5(serialize($moduleList));
         return $moduleList;
     }

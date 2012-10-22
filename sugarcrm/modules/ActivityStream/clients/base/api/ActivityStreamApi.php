@@ -109,7 +109,7 @@ class ActivityStreamApi extends ListApi {
     }
 
     protected function parseArguments($api, $args, $seed) {
-        // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities')
+        // options supported: limit, offset (no 'end'), filter ('favorites', 'myactivities'), link, parent_module, parent_id
         $options = parent::parseArguments($api, $args, $seed);
         if(isset($args['filter']) && in_array($args['filter'], array('favorites', 'myactivities'))) {
             $options['filter'] = $args['filter'];
@@ -117,9 +117,16 @@ class ActivityStreamApi extends ListApi {
         if(!empty($args['limit'])) {
             $options['limit'] = $args['limit'];
         }
-        if(!empty($args['view'])) {
-            $options['view'] = $args['view'];
-        }
+        // For related tabs
+        if(!empty($args['link'])) {
+            $options['link'] = $args['link'];
+        } 
+        if(!empty($args['parent_module'])) {
+            $options['parent_module'] = $args['parent_module'];
+        }  
+        if(!empty($args['parent_id'])) {
+            $options['parent_id'] = $args['parent_id'];
+        }   
         return $options;
     }
 }

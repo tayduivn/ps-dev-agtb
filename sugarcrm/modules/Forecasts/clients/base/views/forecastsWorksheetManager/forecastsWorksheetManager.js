@@ -5,7 +5,7 @@
  * @extends View.View
  */
 ({
-    url: 'rest/v10/ForecastManagerWorksheets',
+    url: app.api.buildURL('ForecastManagerWorksheets'),
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -148,12 +148,12 @@
                     self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
                 }
             });
-            
+
             var worksheet = this;
             $(window).bind("beforeunload",function(){
                 if(worksheet._collection.isDirty){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
-                }            	
+                }
             });
         }
     },
@@ -193,7 +193,7 @@
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
-     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
+     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false
      */
     safeFetch: function(fetch){
 
@@ -230,7 +230,7 @@
     			if(fetch){
     				collection.fetch();
     			}
-    			
+
     		}
     	}
     	else{
@@ -238,7 +238,7 @@
     		if(fetch){
     			collection.fetch();
     		}
-    		
+
     	}
     },
 

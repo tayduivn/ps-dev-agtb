@@ -6,7 +6,7 @@
  */
 ({
 
-    url: 'rest/v10/ForecastWorksheets',
+    url: app.api.buildURL('ForecastWorksheets'),
     show: false,
     viewModule: {},
     selectedUser: {},
@@ -25,7 +25,7 @@
      */
     initialize:function (options) {
         var self = this;
-        
+
         this.viewModule = app.viewModule;
 
         //set expandable behavior to false by default
@@ -37,7 +37,7 @@
         //set up base selected user
     	this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
 
-        // INIT tree with logged-in user       
+        // INIT tree with logged-in user
         this.timePeriod = app.defaultSelections.timeperiod_id.id;
         this.updateWorksheetBySelectedCategory(app.defaultSelections.category);
         this._collection.url = this.createURL();
@@ -56,7 +56,7 @@
         }
 
         url = app.api.buildURL('ForecastWorksheets', '', '', args);
-        
+
         return url;
     },
 
@@ -69,7 +69,7 @@
     _setUpCommitStage: function (field) {
     	var forecastCategories = this.context.forecasts.config.get("forecast_categories");
     	var self = this;
-    	    	
+
     	//show_binary, show_buckets, show_n_buckets
     	if(forecastCategories == "show_binary"){
             field.type = "bool";
@@ -83,8 +83,8 @@
     	else{
     		field.type = "enum";
     		field.def.options = this.context.forecasts.config.get("buckets_dom") || 'commit_stage_dom';
-    	}  	
-    	
+    	}
+
         return field;
     },
 
@@ -107,7 +107,7 @@
                 field.view = 'detail';
             }
         }
-        
+
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -195,7 +195,7 @@
             $(window).bind("beforeunload",function(){
                 if(worksheet._collection.isDirty){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
-                }            	
+                }
             });
         }
     },
@@ -234,7 +234,7 @@
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
-     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
+     * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false
      */
     safeFetch: function(fetch){
 
@@ -242,7 +242,7 @@
         {
             fetch = true;
         }
-    	var collection = this._collection; 
+    	var collection = this._collection;
     	var self = this;
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
@@ -253,7 +253,7 @@
         				model.set({draft: 1}, {silent:true});
         				model.save();
         				model.set({isDirty: false}, {silent:true});
-        			}  
+        			}
 				});
     			collection.isDirty = false;
 				$.when(!collection.isDirty).then(function(){
@@ -262,7 +262,7 @@
 	    				collection.fetch();
 	    			}
     		});
-			
+
 		}
     		else{
     			//ignore, fetch still
@@ -277,8 +277,8 @@
     		//no changes, fetch like normal.
     		if(fetch){
 				collection.fetch();
-			}	
-    	}    	
+			}
+    	}
     },
 
     _setForecastColumn: function(fields) {
@@ -298,7 +298,7 @@
     _render: function() {
         var self = this;
         var enableCommit = false;
-        
+
         if(!this.showMe()){
         	return false;
         }
@@ -386,7 +386,7 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-        
+
         //see if anything in the model is a draft version
         _.each(this._collection.models, function(model, index){
         	if(model.get("version") == 0){

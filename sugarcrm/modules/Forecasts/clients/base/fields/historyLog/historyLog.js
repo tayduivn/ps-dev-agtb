@@ -21,7 +21,9 @@
      * @private
      */
     _render:function () {
-
+        if(this.context.forecasts.committed.models.length === 0) {
+            return;
+        }
         var commitDateStr = _.first(this.context.forecasts.committed.models).get('date_modified');
         var commitDate = app.forecasts.utils.parseDBDate(commitDateStr);
 

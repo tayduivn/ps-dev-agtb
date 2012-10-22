@@ -10,5 +10,4 @@ $layout->push(array('view'=>'todo-list'));
 $layout->push(array('view'=>'gmail'));
 $layout->push(array('view'=>'gdrive'));
 $layout->push(array('view'=>'linkedin'));
-$layout->push(array('view'=>'gplus'));
 $viewdefs['Contacts']['summer']['layout']['sidebar'] = $layout->getLayout();
