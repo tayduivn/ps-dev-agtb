@@ -55,7 +55,7 @@ describe("Forecasts Utils", function(){
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_ALL_CHANGED').toBeTruthy();
+                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_CHANGED').toBeTruthy();
             });
         });
 
@@ -72,7 +72,7 @@ describe("Forecasts Utils", function(){
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_BEST_CHANGED').toBeTruthy();
+                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_CHANGED').toBeTruthy();
             });
         });
 
@@ -174,7 +174,7 @@ describe("Forecasts Utils", function(){
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_NONE_CHANGED').toBeTruthy();
+                expect(result.text == 'LBL_COMMITTED_HISTORY_CHANGED').toBeTruthy();
             });
         });
     });
