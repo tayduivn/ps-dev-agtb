@@ -234,15 +234,34 @@ function checkSavedReportACL(&$reporter,&$args) {
 		$hashModules = array();
 		foreach ($display_columns as $column) {
 			$col_module = $full_table_list[$column['table_key']]['module'];
+            $ACLenabled = false;
 			if(!isset($hashModules[$col_module])) {
                $b = loadBean($col_module);
+               $ACLenabled = $b->bean_implements('ACL');
                $hashModules[$col_module] = !empty($b) ? $b->acltype : 'module';
 			}
 			$type = $hashModules[$col_module];
 			//todo: check the last param of this call (is_owner)
-			if((!ACLController::checkAccess($col_module, 'list', true, $type) || !ACLController::checkAccess($col_module, 'view', true, $type)) && $col_module != 'Currencies' && $col_module != 'EmailAddresses' && $col_module != 'Users' && $col_module != 'Releases' && $col_module != 'Teams' && $col_module != 'CampaignLog'){
-				sugar_die($mod_strings['LBL_NO_ACCESS']);
-			}
+
+            if (
+                 (
+                     $ACLenabled == true
+                     &&
+                     (
+                         !ACLController::checkAccess($col_module, 'list', true, $type)
+                         || !ACLController::checkAccess($col_module, 'view', true, $type)
+                     )
+                 )
+                 && $col_module != 'Currencies'
+                 && $col_module != 'EmailAddresses'
+                 && $col_module != 'Users'
+                 && $col_module != 'Releases'
+                 && $col_module != 'Teams'
+                 && $col_module != 'CampaignLog'
+             )
+             {
+                 sugar_die($mod_strings['LBL_NO_ACCESS']);
+             }
 		}
 
 		// Check Report module Permissions

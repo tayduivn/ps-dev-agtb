@@ -29,10 +29,7 @@ class SugarWidgetFieldTimeperiod extends SugarWidgetFieldEnum
 	public function queryFilteris($layout_def) {
         $input_name0 = $this->getInputValue($layout_def);
 
-        if ($input_name0 == 'last_current_next')
-        {
-            return SugarWidgetFieldid::_get_column_select($layout_def)." IN ('". implode("','", array_keys(TimePeriod::getLastCurrentNextIds())) ."')\n";
-        } else if($input_name0 == 'current') {
+        if($input_name0 == 'current') {
             $name = array_keys(TimePeriod::getCurrentName());
             $name = !empty($name) ? $name[0] : '';
             return SugarWidgetFieldid::_get_column_select($layout_def)." = '". $name ."'\n";
@@ -44,10 +41,7 @@ class SugarWidgetFieldTimeperiod extends SugarWidgetFieldEnum
 	public function queryFilteris_not($layout_def) {
         $input_name0 = $this->getInputValue($layout_def);
 
-        if ($input_name0 == 'last_current_next')
-        {
-            return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN ('". implode("','", array_keys(TimePeriod::getLastCurrentNextIds())) ."')\n";
-        } else if($input_name0 == 'current') {
+        if($input_name0 == 'current') {
             $name = array_keys(TimePeriod::getCurrentName());
             $name = !empty($name) ? $name[0] : '';
             return SugarWidgetFieldid::_get_column_select($layout_def)." NOT IN ('" . $name . "')\n";
@@ -60,14 +54,7 @@ class SugarWidgetFieldTimeperiod extends SugarWidgetFieldEnum
 		$arr = array ();
 		foreach ($layout_def['input_name0'] as $value)
         {
-            if($value == 'last_current_next')
-            {
-                $last_cur_next_arr = array_keys(TimePeriod::getLastCurrentNextIds());
-                foreach ($last_cur_next_arr as $timeperiod)
-                {
-                    $arr[] = $this->reporter->db->quoted($timeperiod);
-                }
-            } else if($value == 'current') {
+            if($value == 'current') {
                 $name = array_keys(TimePeriod::getCurrentName());
                 $name = !empty($name) ? $name[0] : '';
                 $arr[] = $this->reporter->db-quoted($name);
@@ -83,14 +70,7 @@ class SugarWidgetFieldTimeperiod extends SugarWidgetFieldEnum
 		$arr = array ();
 		foreach ($layout_def['input_name0'] as $value)
         {
-            if($value == 'last_current_next')
-            {
-                $last_cur_next_arr = array_keys(TimePeriod::getLastCurrentNextIds());
-                foreach ($last_cur_next_arr as $timeperiod)
-                {
-                    $arr[] = $this->reporter->db->quoted($timeperiod);
-                }
-            } else if($value == 'current') {
+            if($value == 'current') {
                 $name = array_keys(TimePeriod::getCurrentName());
                 $name = !empty($name) ? $name[0] : '';
                 $arr[] = $this->reporter->db->quoted($name);

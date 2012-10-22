@@ -115,7 +115,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             }
         }
         // Add some KBDocuments
-        for ( $i = 0 ; $i < 5 ; $i++ ) {
+        for ( $i = 0 ; $i < 6 ; $i++ ) {
             $kbdoc = new KBDocument();
             $kbdoc->kbdocument_name = "KBDocument ".($i+1)." - ".create_guid();
             $kbdoc->body = 'This is a document for the unit test system';
@@ -144,6 +144,10 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                     // Set the end date to the past
                     $endDate->modify('-8 weeks');
                     $kbdoc->exp_date = $endDate->format('Y-m-d');
+                    break;
+                case 4:
+                    // docs without expire date and start date in the past should always be visible
+                    unset($kbdoc->exp_date);
                     break;
             }
 
@@ -476,17 +480,20 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             $this->assertEquals('Published',$kbdoc['status_id']);
             $startTime = SugarDateTime::createFromFormat('Y-m-d',$kbdoc['active_date'])->getTimestamp();
             $this->assertLessThan(time(),$startTime,"Current date is less than: ".$kbdoc['active_date']);
-            $endTime = SugarDateTime::createFromFormat('Y-m-d',$kbdoc['exp_date'])->getTimestamp();
-            $this->assertGreaterThan(time(),$endTime,"Current date is after: ".$kbdoc['exp_date']);
+            // Valid expiration dates are either before now or not set
+            $validExpire = (!isset($kbdoc['exp_date']) || time() < SugarDateTime::createFromFormat('Y-m-d',$kbdoc['exp_date'])->getTimestamp());
+            $this->assertTrue($validExpire,"Expiration date is invalid. ");
         }
         // Should not be able to fetch some of the records, let's test that.
-        for ( $i = 0; $i < 4 ; $i++ ) {
+        for ( $i = 0; $i < 3 ; $i++ ) {
             $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[$i]->id);
             $this->assertEquals('not_found',$restReply['reply']['error']);
         }
-
+        // The last two KBDocs we created should be visible.
         $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[4]->id);
         $this->assertEquals($this->kbdocs[4]->id,$restReply['reply']['id']);
+        $restReply = $this->_restCall("KBDocuments/".$this->kbdocs[5]->id);
+        $this->assertEquals($this->kbdocs[5]->id,$restReply['reply']['id']);
 
     }
 

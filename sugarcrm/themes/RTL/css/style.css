@@ -523,7 +523,3 @@ ul.clickMenu li ul.subnav, ul.clickMenu ul.subnav-sub, ul.SugarActionMenuIESub {
 #moduleList .ltr .MMLastViewed, #moduleList .ltr .MMFavorites {
     display:none;
 }
-
-#footer .copyright {
-    float: right;
-}

@@ -20,7 +20,7 @@
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-class Bug52113Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug52133Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $bean;
     protected $hook;
