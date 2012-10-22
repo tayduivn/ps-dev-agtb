@@ -99,6 +99,7 @@ class ForecastsCommittedApiTest extends RestTestBase
         	"currency_id" => -99,
         	"forecast_type" => "Direct",
         	"likely_case" => 100,
+        	"worst_case" => 10,
         	"opp_count" => 3,
         	"timeperiod_id" => $timeperiod->id,
         	"worksheetData" => array(
@@ -120,7 +121,7 @@ class ForecastsCommittedApiTest extends RestTestBase
          * catastrophically die.
          */
         $response = $this->_restCall("Forecasts/committed", json_encode($postData), "POST");
-               
+    
         $this->assertNotEmpty($response["reply"], "The rest reply is empty.  Please check sugarcrm.log for database errors.");
         
         //Now we need to change one of the worksheet values and save it with the worksheet api as a "draft"
@@ -141,9 +142,11 @@ class ForecastsCommittedApiTest extends RestTestBase
     		$worksheetIndex++;
     	}        
 
+		//save a draft version
         $postData = array(
             "best_case" => $response["reply"][$worksheetIndex]["best_case"] + 100,
             "likely_case" => $response["reply"][$worksheetIndex]["likely_case"],
+            "worst_case" => $response["reply"][$worksheetIndex]["worst_case"],
             "probability" => $response["reply"][$worksheetIndex]["probability"],
             "commit_stage" => $response["reply"][$worksheetIndex]["commit_stage"],
             "id" => $response["reply"][$worksheetIndex]["id"],
