@@ -720,7 +720,7 @@ class Phase3Demo
                 array(
                     'id' => 'seed_hdp',
                     'first_name' => 'Hans',
-                    'last_name' => 'Dieter Pštsch',
+                    'last_name' => 'Dieter Pötsch',
                     'email1' => 'hdp@example.com',
                     'title' => 'CFO',
                     'picture' => 'http://www.austriantimes.at/thumbnails/s/saczuk28_large.jpg'
