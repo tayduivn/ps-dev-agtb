@@ -409,12 +409,16 @@ class MBModule
      * Copies the clients directory from the sugar object this module is based on.
      * This method is inspired heavily by copyMetaData as at one time the client
      * view defs were actually part of metadata.
+     * 
+     * Bug 57259
+     * 
+     * Only copy mobile clients because all clients would include portal clients
      */
     public function copyClients() {
         $templates = array_reverse($this->config['templates'], true);
         foreach ($templates as $template => $a) {
-            if (file_exists(MB_TEMPLATES . '/' . $template . '/clients')) {
-                $this->copyMetaRecursive(MB_TEMPLATES . '/' . $template . '/clients', $this->path . '/clients/');
+            if (file_exists(MB_TEMPLATES . '/' . $template . '/clients/mobile')) {
+                $this->copyMetaRecursive(MB_TEMPLATES . '/' . $template . '/clients/mobile', $this->path . '/clients/mobile');
             }
         }
     }

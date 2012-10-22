@@ -22,9 +22,11 @@
         var self = this;
         var moduleMeta = app.metadata.getModule(this.module);
         var results = new Array();
+        // Allowed fields limited to int, varchar because of search limitations
+        var allowedFields = ["int","varchar","name"];
         _.each(moduleMeta.fields, function(fieldMeta, fieldName) {
             var fMeta = fieldMeta;
-            if(fMeta.unified_search && _.indexOf(self.collection.fields, fieldName) >= 0) {
+            if(fMeta.unified_search && _.indexOf(self.collection.fields, fieldName) >= 0 && _.indexOf(allowedFields, fMeta.type) !== -1) {
                 results.push(app.lang.get(fMeta.vname, self.module));
             }
         });

@@ -78,7 +78,7 @@ class SugarSearchEngineHighlighterTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testHighlighter($resultArray, $expectedArray, $maxLen, $maxHits, $preTag, $postTag)
     {
-        $this->markTestSkipped("Rewriting highlighting");
+        $this->markTestIncomplete("Rewriting highlighting");
         $highlighter = new SugarSearchEngineHighlighter($maxLen, $maxHits, $preTag, $postTag);
 
         $ret = $highlighter->processHighlightText($resultArray);

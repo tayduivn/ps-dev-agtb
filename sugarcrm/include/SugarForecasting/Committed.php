@@ -92,6 +92,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->timeperiod_id = $args['timeperiod_id'];
         $forecast->best_case = $args['best_case'];
         $forecast->likely_case = $args['likely_case'];
+        $forecast->worst_case = $args['worst_case'];
         $forecast->forecast_type = $args['forecast_type'];
         $forecast->opp_count = $args['opp_count'];
         $forecast->currency_id = $args['currency_id'];

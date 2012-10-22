@@ -725,6 +725,12 @@ $dictionary['ForecastWorksheet'] = array('table'=>'does_not_exist',
         'vname' => 'LBL_LIKELY_CASE',
         'type' => 'currency',
     ),
+    'worst_case' =>
+    array(
+        'name' => 'worst_case',
+        'vname' => 'LBL_WORST_CASE',
+        'type' => 'currency',
+    ),
     'currency_id' =>
     array(
         'name' => 'currency_id',
