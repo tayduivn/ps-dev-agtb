@@ -11,6 +11,7 @@
     viewModule: {},
     selectedUser: {},
     gTable:'',
+    gTableDefs:{},
     aaSorting:[],
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
@@ -26,6 +27,14 @@
      */
     initialize:function (options) {
         var self = this;
+        
+        self.gTableDefs = {
+					            "bAutoWidth": false,
+					            "aoColumnDefs": self.columnDefs,
+					            "aaSorting": self.aaSorting,
+					            "bInfo":false,
+					            "bPaginate":false
+					      };
         
         this.viewModule = app.viewModule;
 
@@ -127,17 +136,8 @@
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element){
                     if(element.hasChanged("commit_stage")) {
-                    	
                         this.gTable.fnDestroy();
-                        this.gTable = this.$('.worksheetTable').dataTable(
-                                {
-                                    "bAutoWidth": false,
-                                    "aoColumnDefs": self.columnDefs,
-                                    "aaSorting": self.aaSorting,
-                                    "bInfo":false,
-                                    "bPaginate":false
-                                }
-                            );
+                        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
                     }
                 }, this);
             }, this);
@@ -362,15 +362,7 @@
                 columnKeys[name] = key;
             }
         });
-        this.gTable = this.$('.worksheetTable').dataTable(
-            {
-                "bAutoWidth": false,
-                "aoColumnDefs": this.columnDefs,
-                "aaSorting": this.aaSorting,
-                "bInfo":false,
-                "bPaginate":false
-            }
-        );
+        this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
@@ -567,8 +559,12 @@
                 }
             );
         }
-
-        this.render();
+        if(!_.isUndefined(this.gTable.fnDestroy)){
+	        this.gTable.fnDestroy();
+	        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+	        // fix the style on the rows that contain a checkbox
+	        this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
+    	}
     },
 
     /**
