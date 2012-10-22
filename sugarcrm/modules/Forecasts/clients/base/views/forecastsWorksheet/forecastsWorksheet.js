@@ -114,7 +114,6 @@
                 field.view = 'detail';
             }
         }
-        
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -329,7 +328,9 @@
     _render: function() {
         var self = this;
         var enableCommit = false;
-        
+        var fields = this.meta.panels[0].fields;
+        var columnKeys = {};
+
         if(!this.showMe()){
         	return false;
         }
@@ -344,8 +345,6 @@
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
-        var fields = this.meta.panels[0].fields;
-        var columnKeys = {};
 
         _.each(fields, function(field, key){
             if(field.enabled)
@@ -358,9 +357,9 @@
                     "bVisible" : self.checkConfigForColumnVisibility(field.name)
                 };
 
-                //Apply sorting for the worksheet
                 if(typeof(field.type) != "undefined")
                 {
+                    //Apply sorting for the worksheet
                     switch(field.type)
                     {
                         case "enum":
@@ -374,13 +373,31 @@
                             fieldDef["sType"] = "numeric";
                             break;
                     }
+                    // apply class and width
+                    switch(field.name) {
+                        case "likely_case":
+                            fieldDef["sClass"] = "number likely";
+                            fieldDef["sWidth"] = "22%";
+                            break;
+                        case "best_case":
+                            fieldDef["sClass"] = "number best";
+                            fieldDef["sWidth"] = "22%";
+                            break;
+                        case "worst_case":
+                            fieldDef["sClass"] = "number worst";
+                            fieldDef["sWidth"] = "22%";
+                            break;
+                        case "probability":
+                            fieldDef["sClass"] = "number";
+                            break;
+                    }
                 }
 
                 self.columnDefs.push(fieldDef);
                 columnKeys[name] = key;
             }
         });
-        this.gTable = this.$('.worksheetTable').dataTable(
+        this.gTable = this.$('#worksheetTable').dataTable(
             {
                 "bAutoWidth": false,
                 "aoColumnDefs": this.columnDefs,
@@ -389,6 +406,44 @@
                 "bPaginate":false
             }
         );
+
+        // set dynamic widths on currency columns showing original currency
+
+        var likelyWidths= $('.likely .converted').map(function() {
+            return $(this).width();
+        }).get();
+
+        var likelyLabelWidths= $('.likely label.original').map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestWidths= $('.best .converted').map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestLabelWidths= $('.best label.original').map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstWidths= $('.worst .converted').map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstLabelWidths= $('.worst label.original').map(function() {
+            return $(this).width();
+        }).get();
+
+        $('.likely .converted').width(_.max(likelyWidths));
+        $('.likely label.original').width(_.max(likelyLabelWidths));
+        $('.best .converted').width(_.max(bestWidths));
+        $('.best label.original').width(_.max(bestLabelWidths));
+        $('.worst .converted').width(_.max(worstWidths));
+        $('.worst label.original').width(_.max(worstLabelWidths));
+
+        // now set table column width from this value
+        $('.number .likely').width($('.likely .converted').width()+$('.likely label.original').width());
+        $('.number .best').width($('.best .converted').width()+$('.best label.original').width());
+        $('.number .worst').width($('.worst .converted').width()+$('.worst label.original').width());
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {

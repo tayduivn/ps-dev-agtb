@@ -10,7 +10,7 @@
         $('td:eq('+iColumn+') span[sfuuid]', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
             // look for text inside a span of class numberValue,
             // otherwise fall back to full text content
-            sortString = $(this).find('.numberValue').text();
+            sortString = $(this).find('.click.format').text();
             if(_.isEmpty(sortString)) {
                 sortString = this.textContent;
             }

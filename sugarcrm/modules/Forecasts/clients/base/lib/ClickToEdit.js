@@ -64,14 +64,19 @@
                 } else {
                     settings.field.isCancel = false;
                 }
+                /*
                 if(settings.field.type == 'currency') {
-                    $(this).parent().find(".cte_currency_symbol").each(function(index, node){
+                    $(this).parent().find(".cte-symbol").each(function(index, node){
                         $(node).remove();
                     });
                 }
+                */
                 return value;
             },
             {
+                width: 'none', // input width (not css)
+                height: 'none', // input height (not css)
+                style: 'margin: 0', // form style
                 select: true,
                 field: this.field,
                 view: this.view,
@@ -86,11 +91,13 @@
                  * @param {Object} original
                  */
                 onreset: function(settings, original) {
+                    /*
                     if(settings.field.type == 'currency') {
-                        $(this).parent().parent().find(".cte_currency_symbol").each(function(index, node){
+                        $(this).parent().parent().find(".cte-symbol").each(function(index, node){
                             $(node).remove();
                         });
                     }
+                    */
                 },
                 /**
                  * data returns the string to be edited.
@@ -137,15 +144,29 @@
                     $(this).parent().find(".tempMsg").each(function(index, node){
                         $(node).remove();
                     });
-                    if(settings.field.type == 'currency') {
-                        // add symbol before input field
-                        var symbol = app.currency.getCurrencySymbol(settings.field.model.get('currency_id'));
-                        $(this).before('<span class="cte_currency_symbol" style="float: left; padding-right: 2px;">'+symbol+'</span>');
-                    }
-
                     // hold value for use later in case user enters a +/- percentage, or user enters an empty value
                     if(settings.field.isValid) {
                         settings.field.holder = $(original).html();
+                    }
+                },
+                /**
+                 * access the form after created
+                 *
+                 * @param {Object} settings
+                 * @param {Object} form
+                 */
+                afterform: function(settings, form) {
+                    // set css on input field
+                    var input = form.find('input');
+                    if(_.include(settings.numberTypes, settings.field.type)) {
+                        // format input field for numeric values
+                        input.attr('style','width: 60px; text-align: right;');
+                    }
+                    // append currency symbol
+                    if(settings.field.type == 'currency') {
+                        // add symbol before input field
+                        var symbol = app.currency.getCurrencySymbol(settings.field.model.get('currency_id'));
+                        input.before('<span class="cte-symbol" style="margin-right: 3px">'+symbol+'</span>');
                     }
                 },
                 /**
@@ -224,7 +245,7 @@
      */
     app.view.ClickToEditField.prototype._addCTEIcon = function(){
         // add icon markup
-        this.field.cteIcon = $('<div style="position:absolute; margin-left:-10px"><span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span></div>');
+        this.field.cteIcon = $('<span class="edit-icon" style="position: absolute; left: -3px"><i class="icon-pencil icon-sm"></i></span>');
 
         // add events
         this.field.showCteIcon = function(){
