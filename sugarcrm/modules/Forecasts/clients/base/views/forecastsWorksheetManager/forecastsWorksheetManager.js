@@ -303,6 +303,7 @@
                         case "currency":
                             fieldDef["sSortDataType"] = "dom-number";
                             fieldDef["sType"] = "numeric";
+                            fieldDef["sClass"] = "number";
                             break;
                     }
                 }
