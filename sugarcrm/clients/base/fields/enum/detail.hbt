@@ -2,6 +2,6 @@
 {{this.value}}
 {{else}}
 {{#eachOptions def.options}}
-{{#has this.key ../value}}{{this.value}}{{/has}}
+{{#eq this.key ../value}}{{this.value}}{{/eq}}
 {{/eachOptions}}
 {{/if}}

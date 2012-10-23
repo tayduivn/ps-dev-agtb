@@ -95,6 +95,8 @@
                 }
             });
 
+            /*
+             * // TODO: tagged for 6.8 see SFA-253 for details
             //Listen for config changes
             this.context.forecasts.config.on('change:show_projected_likely change:show_projected_best change:show_projected_worst', function(context, value) {
                 self.model.set({
@@ -103,6 +105,7 @@
                     show_projected_worst: context.get('show_projected_worst') == 1
                 });
             });
+            */
         }
     },
 
@@ -131,9 +134,6 @@
         this.likelyTotal = totals.likely_adjusted;
         this.bestTotal = totals.best_adjusted;
         this.worstTotal = totals.worst_adjusted;
-        this.model.set({
-            quota_amount : totals.quota
-        });
         this.recalculateModel();
     },
 
@@ -265,7 +265,8 @@
                     self.model.set({
                         opportunities : data.opportunities,
                         closed_amount : data.closed_amount,
-                        revenue : data.pipeline_revenue
+                        revenue : data.pipeline_revenue,
+                        quota_amount : data.quota_amount
                     });
                 } else {
                     self.model.set({

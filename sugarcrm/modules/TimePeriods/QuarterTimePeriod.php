@@ -62,6 +62,19 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
     }
 
     /**
+     * override parent function so to add a name for the quarter time period.  This can
+     *
+     * @param null $start_date  db format date string to set the start date of the annual time period
+     */
+    public function setStartDate($start_date = null) {
+        parent::setStartDate($start_date);
+
+        if(empty($this->name)) {
+            $this->name = "Quarter";
+        }
+    }
+
+    /**
      * build leaves for the timeperiod by creating the specified types of timeperiods
      *
      * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
@@ -77,28 +90,35 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
             throw new Exception("Leaf Time Periods cannot have leaves");
         }
 
+        $timedate = TimeDate::getInstance();
         $this->load_relationship('related_timeperiods');
 
         switch($timePeriodType) {
-            case "Monthly";
+            case "Month";
                 $n = 3;
                 $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
                 $leafPeriod->is_fiscal = $this->is_fiscal;
+                $nameStart = $this->is_fiscal ? "Fiscal" : "";
                 break;
             default;
                 $n = 3;
                 $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
                 $leafPeriod->is_fiscal = $this->is_fiscal;
+                $nameStart = $this->is_fiscal ? "Fiscal" : "";
                 break;
         }
         $leafPeriod->setStartDate($this->start_date);
         $leafPeriod->is_leaf = true;
+        $leafDate = $timedate->fromDbDate($leafPeriod->start_date);
+        $leafPeriod->name = $nameStart.$leafDate->format("F");
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
 
         //loop the count to create the next n leaves to fill out the relationship
         for($i = 1; $i < $n; $i++) {
             $leafPeriod = $leafPeriod->createNextTimePeriod();
+            $leafDate = $timedate->fromDbDate($leafPeriod->start_date);
+            $leafPeriod->name = $nameStart.$leafDate->format("F");
             $this->related_timeperiods->add($leafPeriod->id);
         }
     }

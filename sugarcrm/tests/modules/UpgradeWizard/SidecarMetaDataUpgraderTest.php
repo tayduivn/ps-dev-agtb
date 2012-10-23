@@ -28,6 +28,14 @@ require_once 'tests/modules/UpgradeWizard/SidecarMetaDataFileBuilder.php';
 
 class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     /**
+     * Flag to let us know if there is a current upgrade wizard log that is backed 
+     * up to support this test
+     * 
+     * @var bool
+     */
+    protected static $logBackedUp = false;
+    
+    /**
      * The files builder to bring in legacy files into place and prepare them
      * for upgrade
      * 
@@ -78,6 +86,12 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     }
     
     public static function setUpBeforeClass() {
+        // If there is an upgrade wizard log in place, back it up
+        if (file_exists('upgradeWizard.log')) {
+            rename('upgradeWizard.log', 'upgradeWizard.log.unittestbak');
+            self::$logBackedUp = true;
+        }
+        
         $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
         
         // Builds all the legacy test files
@@ -92,6 +106,14 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
     public static function tearDownAfterClass() {
         self::getBuilder();
         self::$builder->teardownFiles();
+        
+        // Remove the upgrade wizard log
+        @unlink('upgradeWizard.log');
+        
+        if (self::$logBackedUp && file_exists('upgradeWizard.log.unittestbak')) {
+            // Set the log back in place
+            rename('upgradeWizard.log.unittestbak', 'upgradeWizard.log');
+        }
     }
     
     public function testLegacyMetadataFilesForRemoval() {
@@ -170,5 +192,51 @@ class SidecarMetaDataUpgraderTest extends Sugar_PHPUnit_Framework_TestCase  {
         if ($view == 'list') {
             $this->assertArrayHasKey('name', $defs['panels'][0]['fields'][0], 'No name field found in the first field def');
         } 
+    }
+
+    /**
+     * Added for bug 57414
+     * Available fields of mobile listview shown under default fields list after
+     * upgrade
+     * 
+     * @group Bug57414
+     * @dataProvider _sidecarListEnabledFieldProvider
+     */
+    public function testSidecarListViewDefsProperlyFlagEnabledFields($module, $view, $type, $filepath) {
+        require $filepath;
+        
+        // Begin assertions
+        $this->assertNotEmpty($viewdefs[$module][$type]['view'][$view], "$view view defs for the $module module are empty");
+        
+        $defs = $viewdefs[$module][$type]['view'][$view];
+        $this->assertTrue(isset($defs['panels'][0]['fields']), 'Field array is missing from the upgrade file');
+        
+        // Test actual fix for this bug
+        $test['name'] = array('default' => '', 'enabled' => '', 'edefault' => true, 'eenabled' => true);
+        $testfield = 'assigned_user_name';
+        //BEGIN SUGARCRM flav=ent ONLY
+        if ($type == 'portal') {
+            $testfield = 'priority';
+        }
+        //END SUGARCRM flav=ent ONLY
+        $test[$testfield] = array('default' => '', 'enabled' => '', 'edefault' => false, 'eenabled' => true);
+        
+        foreach ($defs['panels'][0]['fields'] as $field) {
+            if (isset($test[$field['name']])) {
+                $test[$field['name']]['default'] = $field['default'];
+                $test[$field['name']]['enabled'] = $field['enabled'];
+            }
+        }
+        
+        // Assertions
+        foreach ($test as $field => $assert) {
+            $this->assertEquals($assert['edefault'], $assert['default'], "$field default should be false but is {$assert['default']}");
+            $this->assertEquals($assert['eenabled'], $assert['enabled'], "$field enabled should be true but is {$assert['enabled']}");
+        }
+    }
+    
+    public function _sidecarListEnabledFieldProvider() {
+        $builder = self::getBuilder();
+        return $builder->getFilesToMakeByView('list'); 
     }
 }

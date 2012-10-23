@@ -561,31 +561,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[0]->end_date, "1st Quarter End Dates do not match");
 
         $expectedStartDate = $expectedStartDate->modify("+3 month");
-        //not every month will have 31 days, or even 30 for that matter
-        $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+        //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+        $expectedEndDate = $expectedEndDate->modify("first day of this month");
         $expectedEndDate = $expectedEndDate->modify("+3 month");
-        //yes this works, and it is awesome.
-        $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+        //yes this works, and it is awesome. @see SugarDateTime::modify
+        $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
         $this->assertEquals($expectedStartDate->asDbDate(), $leaves[1]->start_date, "2nd Quarter Start Dates do not match");
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[1]->end_date, "2nd Quarter End Dates do not match");
 
         $expectedStartDate = $expectedStartDate->modify("+3 month");
-        //not every month will have 31 days, or even 30 for that matter
-        $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+        //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+        $expectedEndDate = $expectedEndDate->modify("first day of this month");
         $expectedEndDate = $expectedEndDate->modify("+3 month");
-        //yes this works, and it is awesome.
-        $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+        //yes this works, and it is awesome. @see SugarDateTime::modify
+        $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
         $this->assertEquals($expectedStartDate->asDbDate(), $leaves[2]->start_date, "3rd Quarter Start Dates do not match");
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[2]->end_date, "3rd Quarter End Dates do not match");
 
         $expectedStartDate = $expectedStartDate->modify("+3 month");
-        //not every month will have 31 days, or even 30 for that matter
-        $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+        //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+        $expectedEndDate = $expectedEndDate->modify("first day of this month");
         $expectedEndDate = $expectedEndDate->modify("+3 month");
-        //yes this works, and it is awesome.
-        $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+        //yes this works, and it is awesome. @see SugarDateTime::modify
+        $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
         $this->assertEquals($expectedStartDate->asDbDate(), $leaves[3]->start_date, "4th Quarter Start Dates do not match");
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[3]->end_date, "4th Quarter End Dates do not match");
@@ -681,31 +681,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[0]->end_date, "1st Quarter of previous year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter
-            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("first day of this month");
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome.
-            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+            //yes this works, and it is awesome. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[1]->start_date, "2nd Quarter of previous year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[1]->end_date, "2nd Quarter of previous year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter
-            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("first day of this month");
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome.
-            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+            //yes this works, and it is awesome. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[2]->start_date, "3rd Quarter of previous year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[2]->end_date, "3rd Quarter of previous year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter
-            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("first day of this month");
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome.
-            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+            //yes this works, and it is awesome. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[3]->start_date, "4th Quarter of previous year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[3]->end_date, "4th Quarter of previous year: ".$i." End Dates do not match");
@@ -743,31 +743,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[0]->end_date, "1st Quarter of future year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter
-            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("first day of this month");
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome.
-            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+            //yes this works, and it is awesome. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[1]->start_date, "2nd Quarter of future year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[1]->end_date, "2nd Quarter of future year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter
-            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("first day of this month");
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome.
-            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+            //yes this works, and it is awesome. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[2]->start_date, "3rd Quarter of future year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[2]->end_date, "3rd Quarter of future year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter
-            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
+            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("first day of this month");
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome.
-            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
+            //yes this works, and it is awesome. @see SugarDateTime::modify
+            $expectedEndDate = $expectedEndDate->modify("last day of this month");
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[3]->start_date, "4th Quarter of future year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[3]->end_date, "4th Quarter of future year: ".$i." End Dates do not match");

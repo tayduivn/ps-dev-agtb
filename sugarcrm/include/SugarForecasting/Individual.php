@@ -82,12 +82,8 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         	   	"left join worksheet w " .
         	   	"on p.id = w.related_id "; 
 
-        if ($this->getArg('user_id') == $current_user->id) {
-            $sql .= "and w.date_modified = (select max(date_modified) from worksheet w2 " .
-                "where w2.user_id = p.assigned_user_id and related_id = p.id " .
-                "and timeperiod_id = '" . $this->getArg('timeperiod_id') . "') ";
-        } else {
-            $sql .= "and w.version = 1 ";
+        if ($this->getArg('user_id') != $current_user->id) {
+        	   $sql .= "and w.version = 1 ";
         }
         
 		$sql .= "where p.deleted = 0 " .
@@ -95,36 +91,45 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
         $result = $db->query($sql);
 
         while (($row = $db->fetchByAssoc($result)) != null) {
+        	
+        	/* if we are a manager looking at a reportee worksheet and they haven't committed anything yet 
+        	 * (no worksheet row), we don't want to add this row to the output.
+        	 */
+        	if(!isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id)
+        	{
+        		continue;
+        	}
+        	
             $data = array();
-            $data['id'] = $row["opp_id"];
-            $data['product_id'] = $row["product_id"];
-            $data['date_closed'] = $row["date_closed"];
-            $data['sales_stage'] = $row["sales_stage"];
-            $data['assigned_user_id'] = $row["assigned_user_id"];
-            $data['amount'] = $row["likely_case"];
-            $data['worksheet_id'] = "";
-            $data['name'] = $row["name"];
-            $data['currency_id'] = $row["currency_id"];
-            $data['base_rate'] = $row["base_rate"];
-            $data['version'] = 1;
+            $data["id"] = $row["opp_id"];
+            $data["product_id"] = $row["product_id"];
+            $data["date_closed"] = $row["date_closed"];
+            $data["sales_stage"] = $row["sales_stage"];
+            $data["assigned_user_id"] = $row["assigned_user_id"];
+            $data["amount"] = $row["likely_case"];
+            $data["worksheet_id"] = "";
+            $data["name"] = $row["name"];
+            $data["currency_id"] = $row["currency_id"];
+            $data["base_rate"] = $row["base_rate"];
+            $data["version"] = 1;
+            $data["worksheet_id"] = $row["worksheet_id"];
 
-            if (isset($row["worksheet_id"])) {
+            if (isset($row["worksheet_id"]) && $this->getArg("user_id") != $current_user->id) {
             	//use the worksheet data if it exists
-                $data['worksheet_id'] = $row["worksheet_id"];
-                $data['best_case'] = $row["w_best_case"];
-                $data['likely_case'] = $row["w_likely_case"];
-                $data['worst_case'] = $row["w_worst_case"];
-                $data['amount'] = $row["w_likely_case"];
-                $data['commit_stage'] = $row["w_commit_stage"];
-                $data['probability'] = $row["w_probability"];
-                $data['version'] = $row["w_version"];
+                $data["best_case"] = $row["w_best_case"];
+                $data["likely_case"] = $row["w_likely_case"];
+                $data["worst_case"] = $row["w_worst_case"];
+                $data["amount"] = $row["w_likely_case"];
+                $data["commit_stage"] = $row["w_commit_stage"];
+                $data["probability"] = $row["w_probability"];
+                $data["version"] = $row["w_version"];
             } else {
-                //Set default values to that of the product's
-                $data['best_case'] = $row["best_case"];
-                $data['likely_case'] = $row["likely_case"];
-                $data['worst_case'] = $row["worst_case"];
-                $data['commit_stage'] = $row["commit_stage"];
-                $data['probability'] = $row["probability"];
+                //Set default values to that of the product"s
+                $data["best_case"] = $row["best_case"];
+                $data["likely_case"] = $row["likely_case"];
+                $data["worst_case"] = $row["worst_case"];
+                $data["commit_stage"] = $row["commit_stage"];
+                $data["probability"] = $row["probability"];
             }
             $this->dataArray[] = $data;
         }

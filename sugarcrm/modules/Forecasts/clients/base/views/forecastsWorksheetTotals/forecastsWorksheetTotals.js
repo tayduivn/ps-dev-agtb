@@ -33,6 +33,8 @@
         });
 
         //Listen for config changes
+        /*
+         * // TODO: tagged for 6.8 see SFA-253 for details
         this.context.forecasts.config.on('change:show_worksheet_likely change:show_worksheet_best change:show_worksheet_worst', function(context, value) {
             self.model.set({
                 show_worksheet_likely: context.get('show_worksheet_likely') == 1,
@@ -41,6 +43,7 @@
             });
             self._render();
         });
+        */
 
         this.context.forecasts.on('forecasts:worksheet:render', function() {
             self._render();

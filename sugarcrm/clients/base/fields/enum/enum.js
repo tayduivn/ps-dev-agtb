@@ -2,7 +2,12 @@
     fieldTag: "select",
     _render: function() {
         app.view.Field.prototype._render.call(this);
-        var optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
+        var optionsKeys = [];
+        if(_.isString(this.def.options)) {
+            optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
+        } else if(_.isObject(this.def.options)) {
+                optionsKeys = _.keys(this.def.options);
+        }
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
         //The chosen plugin displays it correclty, but the value is not set to the select and the model.

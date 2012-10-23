@@ -1,4 +1,5 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -21,30 +22,25 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-
-class Bug44515 extends Sugar_PHPUnit_Framework_TestCase
-{
-   
-    /**
-     * @group Bug44515
-     */
-    public function setUp()
-    {
-        
-    }
-
-
-    public function tearDown()
-    {
-    }
-
-    public function testLoadCustomFormulas()
-    {
-      require_once "modules/ProductTemplates/Formulas.php";
-
-      // At this point I expect to have only the 5 standard formulas
-      $expectedIndexes = 5;
-      $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
-    }
-}
-
+$viewdefs['Forecasts']['base']['view']['forecastsConfigTabbedButtons'] = array(
+    'panels' => array(
+        array(
+            'buttons' => array(
+                array(
+                    'name' => 'save_button',
+                    'type' => 'button',
+                    'css_class' => 'btn-primary pull-right disabled',
+                    'label' => 'LBL_SAVE_BUTTON_LABEL',
+                    'primary' => true,
+                ),
+                array(
+                    'name' => 'close_button',
+                    'type' => 'button',
+                    'css_class' => 'btn-invisible btn-link pull-left',
+                    'label' => 'LBL_EMAIL_CANCEL',
+                    'primary' => false,
+                ),
+            ),
+        ),
+    ),
+);

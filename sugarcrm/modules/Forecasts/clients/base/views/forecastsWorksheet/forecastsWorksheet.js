@@ -1,5 +1,6 @@
 /**
  * View that displays header for current app
+ *
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
@@ -11,6 +12,7 @@
     viewModule: {},
     selectedUser: {},
     gTable:'',
+    gTableDefs:{},
     aaSorting:[],
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
@@ -26,6 +28,14 @@
      */
     initialize:function (options) {
         var self = this;
+        
+        self.gTableDefs = {
+					            "bAutoWidth": false,
+					            "aoColumnDefs": self.columnDefs,
+					            "aaSorting": self.aaSorting,
+					            "bInfo":false,
+					            "bPaginate":false
+					      };
         
         this.viewModule = app.viewModule;
 
@@ -44,6 +54,10 @@
         this._collection.url = this.createURL();
     },
 
+    /**
+     *
+     * @return {String}
+     */
     createURL:function() {
         var url = this.url;
         var args = {};
@@ -63,6 +77,7 @@
 
     /**
      * Sets up the save event and handler for the commit_stage dropdown fields in the worksheet.
+     *
      * @param field the commit_stage field
      * @return {*}
      * @private
@@ -108,7 +123,6 @@
                 field.view = 'detail';
             }
         }
-        
         app.view.View.prototype._renderField.call(this, field);
 
         if (this.isEditableWorksheet === true && field.viewName !="edit" && field.def.clickToEdit === true) {
@@ -120,6 +134,10 @@
         }
     },
 
+    /**
+     *
+     * @param {Object} params
+     */
     bindDataChange: function(params) {
         var self = this;
         if (this._collection) {
@@ -127,17 +145,8 @@
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element){
                     if(element.hasChanged("commit_stage")) {
-                    	
                         this.gTable.fnDestroy();
-                        this.gTable = this.$('.worksheetTable').dataTable(
-                                {
-                                    "bAutoWidth": false,
-                                    "aoColumnDefs": self.columnDefs,
-                                    "aaSorting": self.aaSorting,
-                                    "bInfo":false,
-                                    "bPaginate":false
-                                }
-                            );
+                        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
                     }
                 }, this);
             }, this);
@@ -178,6 +187,8 @@
 
             }, this);
 
+            /*
+             * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
@@ -198,7 +209,7 @@
                     self.setColumnVisibility(['worst_case'], value, self);
                 }
             });
-
+            */
             this.context.forecasts.config.on('change:buckets_dom change:forecast_categories', this.render, this);
 
             var worksheet = this;
@@ -244,6 +255,7 @@
     /**
      * This function checks to see if the worksheet is dirty, and gives the user the option
      * of saving their work before the sheet is fetched.
+     *
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
@@ -291,6 +303,11 @@
     	}    	
     },
 
+    /**
+     *
+     * @param {Object} fields
+     * @private
+     */
     _setForecastColumn: function(fields) {
         var self = this;
 
@@ -303,17 +320,23 @@
     },
 
     /**
-     * Renders view
+     * renders the view
+     *
+     * @return {Object} this
+     * @private
      */
     _render: function() {
         var self = this;
         var enableCommit = false;
-        
+        var fields = this.meta.panels[0].fields;
+        var columnKeys = {};
+
         if(!this.showMe()){
         	return false;
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
+        this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
@@ -323,8 +346,6 @@
 
         // parse metadata into columnDefs
         // so you can sort on the column's "name" prop from metadata
-        var fields = this.meta.panels[0].fields;
-        var columnKeys = {};
 
         _.each(fields, function(field, key){
             if(field.enabled)
@@ -337,9 +358,9 @@
                     "bVisible" : self.checkConfigForColumnVisibility(field.name)
                 };
 
-                //Apply sorting for the worksheet
                 if(typeof(field.type) != "undefined")
                 {
+                    //Apply sorting for the worksheet
                     switch(field.type)
                     {
                         case "enum":
@@ -353,21 +374,69 @@
                             fieldDef["sType"] = "numeric";
                             break;
                     }
+                    // apply class and width
+                    switch(field.name) {
+                        case "likely_case":
+                            fieldDef["sClass"] = "number likely";
+                            fieldDef["sWidth"] = "22%";
+                            break;
+                        case "best_case":
+                            fieldDef["sClass"] = "number best";
+                            fieldDef["sWidth"] = "22%";
+                            break;
+                        case "worst_case":
+                            fieldDef["sClass"] = "number worst";
+                            fieldDef["sWidth"] = "22%";
+                            break;
+                        case "probability":
+                            fieldDef["sClass"] = "number";
+                            break;
+                    }
                 }
 
                 self.columnDefs.push(fieldDef);
                 columnKeys[name] = key;
             }
         });
-        this.gTable = this.$('.worksheetTable').dataTable(
-            {
-                "bAutoWidth": false,
-                "aoColumnDefs": this.columnDefs,
-                "aaSorting": this.aaSorting,
-                "bInfo":false,
-                "bPaginate":false
-            }
-        );
+        this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
+
+        // set dynamic widths on currency columns showing original currency
+
+        var likelyWidths= $('.likely .converted').map(function() {
+            return $(this).width();
+        }).get();
+
+        var likelyLabelWidths= $('.likely label.original').map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestWidths= $('.best .converted').map(function() {
+            return $(this).width();
+        }).get();
+
+        var bestLabelWidths= $('.best label.original').map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstWidths= $('.worst .converted').map(function() {
+            return $(this).width();
+        }).get();
+
+        var worstLabelWidths= $('.worst label.original').map(function() {
+            return $(this).width();
+        }).get();
+
+        $('.likely .converted').width(_.max(likelyWidths));
+        $('.likely label.original').width(_.max(likelyLabelWidths));
+        $('.best .converted').width(_.max(bestWidths));
+        $('.best label.original').width(_.max(bestLabelWidths));
+        $('.worst .converted').width(_.max(worstWidths));
+        $('.worst label.original').width(_.max(worstLabelWidths));
+
+        // now set table column width from this value
+        $('.number .likely').width($('.likely .converted').width()+$('.likely label.original').width());
+        $('.number .best').width($('.best .converted').width()+$('.best label.original').width());
+        $('.number .worst').width($('.worst .converted').width()+$('.worst label.original').width());
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
@@ -384,21 +453,7 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-        
-        //see if anything in the model is a draft version
-        _.each(this._collection.models, function(model, index){
-        	if(model.get("version") == 0){
-        		enableCommit = true;
-        	}
-        });
-
-        if(enableCommit){
-        	self.context.forecasts.set({commitButtonEnabled: true});
-        }
-        else{
-        	self.context.forecasts.set({commitButtonEnabled: false});
-        }
-
+                
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:render");
 
@@ -408,6 +463,7 @@
     /**
      * Determines if this Worksheet belongs to the current user, applicable for determining if this view should show,
      * or whether to render the clickToEdit field
+     *
      * @return {Boolean} true if it is the worksheet of the logged in user, false if not.
      */
     isMyWorksheet: function() {
@@ -416,6 +472,8 @@
 
     /**
      * Determines if this Worksheet should be rendered
+     *
+     * @return {Boolean} this.show
      */
     showMe: function(){
     	var selectedUser = this.selectedUser;
@@ -578,14 +636,18 @@
                 }
             );
         }
-
-        this.render();
+        if(!_.isUndefined(this.gTable.fnDestroy)){
+	        this.gTable.fnDestroy();
+	        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+	        // fix the style on the rows that contain a checkbox
+	        this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
+    	}
     },
 
     /**
      * Event Handler for updating the worksheet by a timeperiod id
      *
-     * @param params is always a context
+     * @param {Object} params is always a context
      */
     updateWorksheetBySelectedTimePeriod:function (params) {
         this.timePeriod = params.id;
@@ -599,7 +661,7 @@
     /**
      * Formats the additional details div when a user clicks a row in the grid
      *
-     * @param dRow the row from the datagrid that user has clicked on
+     * @param {Object} dRow the row from the datagrid that user has clicked on
      * @return {String} html output to be shown to the user
      */
     formatAdditionalDetails:function (dRow) {
@@ -626,8 +688,8 @@
     /**
      * Returns an array of column headings
      *
-     * @param dTable datatable param so we can grab all the column headings from it
-     * @param onlyVisible -OPTIONAL, defaults true- if we want to return only visible column headings or not
+     * @param {Object} dTable datatable param so we can grab all the column headings from it
+     * @param {Boolean} onlyVisible -OPTIONAL, defaults true- if we want to return only visible column headings or not
      * @return {Array} column heading title strings in an array ["heading","heading2"...]
      */
     getColumnHeadings:function (dTable, onlyVisible) {
@@ -657,7 +719,8 @@
 
     /***
      * Checks current gTable to see if a particular column name exists
-     * @param columnName the column sName you're checking for.  NOT the Column sTitle/heading
+     *
+     * @param {String} columnName the column sName you're checking for.  NOT the Column sTitle/heading
      * @return {Boolean} true if it exists, false if not
      */
     hasColumn:function(columnName) {

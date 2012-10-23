@@ -79,7 +79,9 @@ class SugarFieldFile extends SugarFieldBase {
     		$bean->file_mime_type = $upload_file->mime_type;
 			$bean->file_ext = $upload_file->file_ext;
 			$move=true;
-		}
+        } else {
+            $this->error = $upload_file->getErrorMessage();
+        }
 
         if (!empty($params['isDuplicate']) && $params['isDuplicate'] == 'true' ) {
             // This way of detecting duplicates is used in Notes
@@ -98,7 +100,8 @@ class SugarFieldFile extends SugarFieldBase {
                 $bean->file_mime_type = $upload_file->mime_type;
                 $bean->file_ext = $upload_file->file_ext;
                 $move=true;
-
+            } else {
+                $this->error = $upload_file->getErrorMessage();
             }
         } else if ( !$move && !empty($old_id) && isset($_REQUEST['uploadfile']) && !isset($_REQUEST[$prefix . $field . '_file']) ) {
             // I think we are duplicating a backwards compatibility module.
