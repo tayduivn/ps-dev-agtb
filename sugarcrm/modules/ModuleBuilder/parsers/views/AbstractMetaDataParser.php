@@ -154,5 +154,15 @@ abstract class AbstractMetaDataParser
         return true;
     }
 
+    /**
+     * Public accessor for the isTrue method, to allow handlers outside of the 
+     * parsers to test truthiness of a value in metadata
+     * 
+     * @static
+     * @param mixed $val
+     * @return bool
+     */
+    public static function isTruthy($val) {
+        return self::isTrue($val);
+    }
 }
-?>

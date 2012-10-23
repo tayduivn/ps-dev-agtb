@@ -32,17 +32,19 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
         $view = strtolower($view);
         switch (strtolower($type)){
+//BEGIN SUGARCRM flav=pro ONLY
             case 'wireless':
                 if( $view == 'list'){
                     require_once('include/SugarWireless/SugarWirelessListView.php');
                     $GLOBALS['module'] = $moduleName; //WirelessView keys off global variable not instance variable...
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
-                    //$results = self::formatWirelessListViewResultsToArray($results);
                     
                     // Needed for conversion
                     require_once 'include/MetaDataManager/MetaDataConverter.php';
                     $results = MetaDataConverter::toLegacy('list', $results);
+                    $results = self::formatWirelessListViewResultsToArray($results);
+                    
                 }
                 elseif ($view == 'subpanel')
                     $results = $this->get_subpanel_defs($moduleName, $type);
@@ -70,6 +72,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                 }
 
                 break;
+//END SUGARCRM flav=pro ONLY
             case 'default':
             default:
                 if ($view == 'subpanel')
@@ -95,6 +98,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         return $results;
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Format the results for wirless list view metadata from an associative array to a
      * numerically indexed array.  This conversion will ensure that consumers of the metadata
@@ -115,6 +119,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
         return $results;
     }
+//END SUGARCRM flav=pro ONLY
 
     /**
      * Equivalent of get_list function within SugarBean but allows the possibility to pass in an indicator
@@ -186,6 +191,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
         return $fav;
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
    /**
 	 * Parse wireless editview metadata and add ACL values.
 	 *
@@ -268,6 +274,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 
 	    return $results;
 	}
+//END SUGARCRM flav=pro ONLY
 
 	/**
 	 * Processes the filter_fields attribute to use with SugarBean::create_new_list_query()

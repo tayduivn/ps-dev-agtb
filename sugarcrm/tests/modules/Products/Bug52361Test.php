@@ -167,6 +167,9 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
      */
     public function testAccounts()
     {
+        global $currentModule;
+         $currentModule = 'Accounts';
+
         // Adding username field to subpanel of products
         $studio = new SubpanelMetaDataParser('products', 'Accounts', '');
         foreach ($studio->getFieldDefs() as $name => $def)
@@ -222,6 +225,9 @@ class Bug52361Test extends Sugar_PHPUnit_Framework_OutputTestCase
      */
     public function testContacts()
     {
+        global $currentModule;
+        $currentModule = 'Contacts';
+
         // Adding username field to subpanel of products
         $studio = new SubpanelMetaDataParser('products', 'Contacts', '');
         foreach ($studio->getFieldDefs() as $name => $def)

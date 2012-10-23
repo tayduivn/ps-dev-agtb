@@ -11,6 +11,7 @@
     viewModule: {},
     selectedUser: {},
     gTable:'',
+    gTableDefs:{},
     aaSorting:[],
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
@@ -26,6 +27,14 @@
      */
     initialize:function (options) {
         var self = this;
+        
+        self.gTableDefs = {
+					            "bAutoWidth": false,
+					            "aoColumnDefs": self.columnDefs,
+					            "aaSorting": self.aaSorting,
+					            "bInfo":false,
+					            "bPaginate":false
+					      };
         
         this.viewModule = app.viewModule;
 
@@ -127,17 +136,8 @@
             this._collection.on("change", function() {
                 _.each(this._collection.models, function(element){
                     if(element.hasChanged("commit_stage")) {
-                    	
                         this.gTable.fnDestroy();
-                        this.gTable = this.$('.worksheetTable').dataTable(
-                                {
-                                    "bAutoWidth": false,
-                                    "aoColumnDefs": self.columnDefs,
-                                    "aaSorting": self.aaSorting,
-                                    "bInfo":false,
-                                    "bPaginate":false
-                                }
-                            );
+                        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
                     }
                 }, this);
             }, this);
@@ -316,6 +316,7 @@
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
+        this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
@@ -361,15 +362,7 @@
                 columnKeys[name] = key;
             }
         });
-        this.gTable = this.$('.worksheetTable').dataTable(
-            {
-                "bAutoWidth": false,
-                "aoColumnDefs": this.columnDefs,
-                "aaSorting": this.aaSorting,
-                "bInfo":false,
-                "bPaginate":false
-            }
-        );
+        this.gTable = this.$('.worksheetTable').dataTable(this.gTableDefs);
 
         // if isExpandable, add expandable row behavior
         if (this.isExpandableRows) {
@@ -386,21 +379,7 @@
 
         // fix the style on the rows that contain a checkbox
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-        
-        //see if anything in the model is a draft version
-        _.each(this._collection.models, function(model, index){
-        	if(model.get("version") == 0){
-        		enableCommit = true;
-        	}
-        });
-
-        if(enableCommit){
-        	self.context.forecasts.set({commitButtonEnabled: true});
-        }
-        else{
-        	self.context.forecasts.set({commitButtonEnabled: false});
-        }
-
+                
         // Trigger event letting other components know worksheet finished rendering
         self.context.forecasts.trigger("forecasts:worksheet:render");
 
@@ -580,8 +559,12 @@
                 }
             );
         }
-
-        this.render();
+        if(!_.isUndefined(this.gTable.fnDestroy)){
+	        this.gTable.fnDestroy();
+	        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
+	        // fix the style on the rows that contain a checkbox
+	        this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
+    	}
     },
 
     /**

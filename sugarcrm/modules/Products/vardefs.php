@@ -731,9 +731,9 @@ array (
 	    'source'=>'non-db',
 	    'vname'=>'LBL_PROJECTS',
 	),
-    'products' =>
+    'product_bundles' =>
       array (
-        'name' => 'products',
+        'name' => 'product_bundles',
         'type' => 'link',
         'relationship' => 'product_bundle_product',
         'module'=>'ProductBundles',

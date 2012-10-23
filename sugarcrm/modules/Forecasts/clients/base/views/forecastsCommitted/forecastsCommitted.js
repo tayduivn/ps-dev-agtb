@@ -227,6 +227,11 @@
                 likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
                 likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
             }
+            
+            if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
+            {
+            	self.context.forecasts.set({commitButtonEnabled: true});
+            }
 
             self.bestCaseCls = best.bestCaseCls;
             self.bestCase = best.bestCase;
@@ -265,7 +270,27 @@
      */
     commitForecast: function() {
         var self = this;
-
+        var worksheetData = {};
+        
+        var currentWorksheet = self.context.forecasts.get("currentWorksheet");
+        
+        if(currentWorksheet == "worksheet"){
+        	var worksheetDataCurrent = [];
+        	var worksheetDataNew = [];
+        	_.each(self.context.forecasts[currentWorksheet].models, function(item){
+        		//if isDirty is defined this has been saved from the worksheet save so we can skip it here 
+        		if(_.isUndefined(item.get("isDirty"))){
+        			if(_.isEmpty(item.get("worksheet_id"))){
+            			worksheetDataNew.push(item.attributes);
+            		}
+            		else{
+            			worksheetDataCurrent.push(item.attributes);
+            		}
+        		}        		
+        	});
+        	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
+        } 
+        
         if(!self.context.forecasts.get('commitButtonEnabled')) {
             return false;
         }
@@ -300,6 +325,7 @@
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;
         forecastData.opp_count = self.totals.included_opp_count;
+        forecastData.worksheetData = worksheetData;
 
         // apply data to model then save
         forecast.set(forecastData);

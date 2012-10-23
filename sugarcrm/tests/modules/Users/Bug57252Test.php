@@ -22,29 +22,61 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-class Bug44515 extends Sugar_PHPUnit_Framework_TestCase
+
+/**
+ * Bug57252Test.php
+ * @author Matt Marum
+ *
+ * This unit test checks to make sure that we are pulling the Admin panel date/time format
+ * preferences when a user does not have an existing date/time format preference.
+ *
+ */
+class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
 {
-   
+
+    static $testUser;
+
+    public static function setUpBeforeClass()
+    {
+
+        Bug57252Test::$testUser = SugarTestUserUtilities::createAnonymousUser();
+        Bug57252Test::$testUser->save();
+    }
+
+    public static function tearDownAfterClass()
+    {
+
+        Bug57252Test::$testUser->resetPreferences();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
+    }
+
     /**
-     * @group Bug44515
+     * @group bug57252
+     *
      */
-    public function setUp()
+    public function testDefaultDateTimeFormatFromSystemConfig()
     {
-        
+        global $sugar_config;
+
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('datef'), $sugar_config['default_date_format']);
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('timef'), $sugar_config['default_time_format']);
+
+    }
+
+    /**
+     * @group bug57252
+     *
+     */
+    public function testDefaultDateTimeFormatFromUserPref()
+    {
+
+        Bug57252Test::$testUser->setPreference('datef','d/m/Y', 0, 'global');
+        Bug57252Test::$testUser->setPreference('timef','h.iA',0,'global');
+
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('datef'), 'd/m/Y');
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('timef'), 'h.iA');
+
     }
 
 
-    public function tearDown()
-    {
-    }
-
-    public function testLoadCustomFormulas()
-    {
-      require_once "modules/ProductTemplates/Formulas.php";
-
-      // At this point I expect to have only the 5 standard formulas
-      $expectedIndexes = 5;
-      $this->assertEquals($expectedIndexes, count($GLOBALS['price_formulas']));
-    }
 }
-

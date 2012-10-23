@@ -1,6 +1,6 @@
 ({
     events: {
-        'click [data-dismiss="modal"]' : 'close'
+        'click .close' : 'close'
     },
     close: function() {
         this.layout.hide();

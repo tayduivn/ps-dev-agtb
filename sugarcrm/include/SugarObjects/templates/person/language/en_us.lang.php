@@ -77,4 +77,8 @@ $mod_strings = array(
 //BEGIN SUGARCRM flav!=com ONLY
 'LBL_PICTURE_FILE' => 'Picture',
 //END SUGARCRM flav!=com ONLY
+
+'LBL_EDIT_BUTTON' => 'Edit',
+'LBL_REMOVE' => 'Remove',
+
 );

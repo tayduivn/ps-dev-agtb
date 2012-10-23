@@ -31,6 +31,8 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
     private static $currentConfig;
 
     public static function setUpBeforeClass() {
+    	SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         // Save the current config to be put back later
         $admin = BeanFactory::getBean('Administration');
         self::$currentConfig = $admin->getConfigForModule('Forecasts');

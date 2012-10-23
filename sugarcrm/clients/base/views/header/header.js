@@ -139,7 +139,7 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.module_list = app.metadata.getModuleNames(true);
+        this.module_list = app.metadata.getModuleNames(true, 'list');
         this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 
