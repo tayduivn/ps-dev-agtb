@@ -210,11 +210,17 @@ SUGAR.tour = function() {
                     });
                     $(tourIdSel+' a.close').on("click",function(e){
                         tourModal.modal("hide");
+                        $(tourIdSel+'Start').css("display","block");
+                        $(tourIdSel+'End').css("display","none");
+                        centerModal();
                         SUGAR.tour.saveUserPref(params.prefUrl);
                         params.onTourFinish();
                     });
                     $(tourIdSel+'End a.btn.btn-primary').on("click",function(e){
                         tourModal.modal("hide");
+                        $(tourIdSel+'Start').css("display","block");
+                        $(tourIdSel+'End').css("display","none");
+                        centerModal();
                         SUGAR.tour.saveUserPref(params.prefUrl);
                         params.onTourFinish();
                     });
