@@ -35,8 +35,9 @@
             if(_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config') ) {
                 // if we're using this layout from inside the Forecasts module
                 // and forecasts already has a config model, use that config model
-                // as our current context so we're updating the same model
-                settingsModel = options.context.forecasts.config;
+                // as our current context so we're updating a clone of the same model
+                // the clone lets us not save to a "live" model if you hit cancel
+                settingsModel = options.context.forecasts.config.clone();
             } else {
                 // if we're not coming in from the Forecasts module (e.g. Admin)
                 // create a new model and use that to change/save
