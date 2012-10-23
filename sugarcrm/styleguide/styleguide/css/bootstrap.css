@@ -5191,12 +5191,14 @@ input[type="hidden"] { display:none; }
 .alert-top .alert {
   text-align:left;
   margin:0 auto;
+  float:none;
   display:block;
   max-width:50%;
   -webkit-box-shadow:0 1px 4px rgba(0,0,0,0.4);
   -moz-box-shadow:0 1px 4px rgba(0,0,0,0.4);
   box-shadow:0 1px 4px rgba(0,0,0,0.4);
 }
+.alert a.btn { margin-top:6px; }
 .alert-top .alert-process { width:80px; }
 .alert-top .alert:first-child { margin-top:0; }
 .alert-top .alert {
@@ -5379,11 +5381,6 @@ article .avatar {
 article p { display:block; }
 #activity article.imgs p { margin-left:36px; }
 article p:last-child { margin:0; }
-.results article:first-child {
-  -webkit-box-shadow:inset 0 4px 6px rgba(0,0,0,.2);
-  -moz-box-shadow:inset 0 4px 6px rgba(0,0,0,.2);
-  box-shadow:inset 0 4px 6px rgba(0,0,0,.2);
-}
 .results article:nth-child(even), .results article:nth-child(odd) {
   background-color:transparent;
   border-top:1px solid #f3f2f2;
@@ -5394,6 +5391,9 @@ table.table.dataTable td.details .extend, .filtered.extend, .mu.extend {
   background:#e8e8e8;
   margin:5px -5px -5px;
   text-align:left;
+  -webkit-box-shadow:inset 0 4px 6px rgba(0,0,0,.2);
+  -moz-box-shadow:inset 0 4px 6px rgba(0,0,0,.2);
+  box-shadow:inset 0 4px 6px rgba(0,0,0,.2);
 }
 #sActivity article {
   padding:10px 45px 10px 0;
@@ -6339,8 +6339,9 @@ a:hover [class^="icon-"] { color:#58595b !important; }
 a:active [class^="icon-"] { color:#000000 !important; }
 a.active [class^="icon-"] { color:#313130 !important; }
 table [class^="icon-star"] { margin:0 16px; }
-table .icon-star, .subnav .icon-star { color:#cdcccb; }
-table .active .icon-star, .subnav .active .icon-star { color:#e57417; }
+.icon-star { color:#cdcccb; }
+.active .icon-star { color:#e57417; }
+h1 span { margin-left:5px; }
 .the-icons {
   margin-left:0;
   list-style:none;
@@ -8186,6 +8187,74 @@ a.label:hover, a.badge:hover {
 }
 .layout_Leads .modal .table-striped tbody tr:nth-child(odd) td, .layout_Leads .modal .table-striped tbody tr:nth-child(odd) th { background-color:#fdfbf1; }
 .layout_Leads .modal .table tbody tr:hover td, .layout_Leads .modal .table tbody tr:hover th { background-color:#faf2cc; }
+.ui-timepicker-list {
+  overflow:visible;
+  height:150px;
+  width:6.5em;
+  background:#ffffff;
+  border:1px solid #dddddd;
+  margin:1px 0 0 0;
+  padding:0;
+  list-style:none;
+  -webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+  -moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+  box-shadow:0 5px 10px rgba(0,0,0,0.2);
+  outline:none;
+  z-index:1000;
+  border:1px solid rgba(0,0,0,0.2);
+  -webkit-border-radius:4px;
+  -moz-border-radius:4px;
+  border-radius:4px;
+}
+.ui-timepicker-list:before {
+  content:'';
+  display:inline-block;
+  border-left:7px solid transparent;
+  border-right:7px solid transparent;
+  border-bottom:7px solid #cccccc;
+  border-bottom-color:rgba(0,0,0,0.2);
+  position:absolute;
+  top:-7px;
+  left:6px;
+}
+.ui-timepicker-list:after {
+  content:'';
+  display:inline-block;
+  border-left:6px solid transparent;
+  border-right:6px solid transparent;
+  border-bottom:6px solid #ffffff;
+  position:absolute;
+  top:-6px;
+  left:7px;
+}
+.ui-timepicker-list .scroll {
+  height:150px;
+  margin:0;
+  overflow:auto;
+}
+.ui-timepicker-list.ui-timepicker-with-duration { width:11em; }
+.ui-timepicker-duration {
+  margin-left:5px;
+  color:#888888;
+}
+.ui-timepicker-list:hover .ui-timepicker-duration { color:#888888; }
+.ui-timepicker-list li {
+  padding:3px 0 3px 5px;
+  cursor:pointer;
+  white-space:nowrap;
+  color:#000000;
+  list-style:none;
+  margin:0;
+}
+.ui-timepicker-list:hover .ui-timepicker-selected {
+  background:#ffffff;
+  color:#000000;
+}
+li.ui-timepicker-selected, .ui-timepicker-list li:hover, .ui-timepicker-list:hover .ui-timepicker-selected:hover {
+  background:#1980ec;
+  color:#ffffff;
+}
+li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover .ui-timepicker-duration { color:#cccccc; }
 @media (max-width: 920px) {
   .side .side-pane.active { position:absolute !important; }
   .row > [class*="span"], .container-fluid .row-fluid > [class*="span"] {
