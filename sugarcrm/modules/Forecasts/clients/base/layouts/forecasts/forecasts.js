@@ -83,6 +83,11 @@
                  * boolean to use across components to enable commit button or not
                  */
                 commitButtonEnabled : false,
+                
+                /**
+                 * boolean to use across components to determine if the commit button was enabled by the committed widget
+                 */
+                commitButtonEnabledFromCommitted : false,
 
                 /**
                  * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
