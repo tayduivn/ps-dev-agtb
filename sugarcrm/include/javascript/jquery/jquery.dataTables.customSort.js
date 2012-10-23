@@ -1,13 +1,18 @@
 (function($){
     /**
-   	 * Custom sort method for numbers.  Set sSortDataType:"dom-number" to use
-   	 */
-   	$.fn.dataTableExt.afnSortData['dom-number'] = function  ( oSettings, iColumn )
-   	{
-   		var aData = [];
+     * Custom sort method for numbers.  Set sSortDataType:"dom-number" to use
+     *
+     * @param oSettings table settings
+     * @param iColumn the column index for all columns, hidden or not
+     * @param jColumn the column index for only visible columns
+     * @return {Array}
+     */
+    $.fn.dataTableExt.afnSortData['dom-number'] = function  ( oSettings, iColumn, jColumn )
+    {
+        var aData = [];
         var sortString;
         //Use JQuery select on the table cell which has a span with an sfuuid attribute
-        $('td:eq('+iColumn+') span[sfuuid]', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
+        $('td:eq('+jColumn+') span[sfuuid]', oSettings.oApi._fnGetTrNodes(oSettings) ).each( function () {
             // look for text inside a span of class numberValue,
             // otherwise fall back to full text content
             sortString = $(this).find('.click.format').text();
@@ -16,6 +21,6 @@
             }
             aData.push(SUGAR.App.currency.unformatAmount(sortString, SUGAR.App.user.get('number_grouping_separator'), SUGAR.App.user.get('decimal_separator'), false));
         });
-   		return aData;
-   	}
+        return aData;
+    }
 })(jQuery);
