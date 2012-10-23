@@ -27,7 +27,7 @@ if ( !isset($dynamicDCActions) || !is_array($dynamicDCActions) ) {
     $dynamicDCActions = array();
 }
 
-if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version']) && $_SESSION['current_db_version'] != $_SESSION['target_db_version'])
+if (isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version']) && version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '!='))
 {
     // check if we are in upgrade. If yes, skip EAPM for now, until the DB is upgraded
     return;

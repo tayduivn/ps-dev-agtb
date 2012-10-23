@@ -96,10 +96,10 @@ function upgrade_multienum_data(){
     require_once("include/SugarObjects/VardefManager.php");
     global $dictionary, $db, $moduleList, $beanList, $sugar_version;
     
-    if ($_SESSION['current_db_version'] >= 550)
+    if (version_compare($_SESSION['current_db_version'], '5.5.0', '>='))
+    {
         return;
-        
-    
+    }
          
     foreach($moduleList as $module) 
     {
@@ -131,5 +131,3 @@ function upgrade_multienum_data(){
         }
     }   
 }
-    
-?>

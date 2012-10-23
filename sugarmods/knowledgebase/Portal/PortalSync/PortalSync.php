@@ -29,8 +29,8 @@ require_once ('include/utils/zip_utils.php');
  	}
  	
  	function displayScripts(){
- 		require_once('config.php');
- 		require_once('sugar_version.php');
+ 		require('config.php');
+ 		require('sugar_version.php');
  		global $mod_strings;
  		$ss = new Sugar_Smarty();
  		$ss->assign('sugar_version', $sugar_version);

@@ -775,7 +775,13 @@ function loginLicense(){
 			set_last_check_date_config_setting("$current_date_time");
 			include('sugar_version.php');
 
-			if(!empty($version)&& count($version) == 1 && $version[0]['version'] > $sugar_version  && is_admin($current_user))
+            $newVersion = '';
+            if (!empty($version) && count($version) == 1)
+            {
+                $newVersion = $version[0]['version'];
+            }
+
+            if (version_compare($newVersion, $sugar_version, '>') && is_admin($current_user))
 			{
 				//set session variables.
 				$_SESSION['available_version']=$version[0]['version'];
@@ -804,12 +810,3 @@ function loginLicense(){
 	  //END SUGARCRM lic=sub ONLY
 
 }
-
-
-
-
-
-
-
-
-?>

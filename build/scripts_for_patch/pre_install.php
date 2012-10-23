@@ -52,7 +52,8 @@ function upgrade_config_pwd(){
 
 function pre_install() {
 	global $sugar_version;
-    if($sugar_version < '5.5.0') {
+    if (version_compare($sugar_version, '5.5.0', '<'))
+    {
         _logThis("Begin Upgrade passwords in table config", $path);
         upgrade_config_pwd();
         _logThis("End Upgrade passwords in table config", $path);
@@ -71,4 +72,3 @@ function pre_install() {
     }
 	return true;
 }
-?>

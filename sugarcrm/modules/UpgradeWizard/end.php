@@ -205,7 +205,8 @@ logThis("Complete: Update custom module built using module builder to add favori
 //END SUGARCRM flav=pro ONLY
 
 if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'])){
-	if($_SESSION['current_db_version'] != $_SESSION['target_db_version']){
+    if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '!='))
+    {
 		//BEGIN SUGARCRM flav=pro ONLY
 		logThis("Adding Saved Report Chart Types", $path);
 		if(file_exists("$unzip_dir/scripts/upgrade_homepage.php")) {
@@ -222,7 +223,8 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 
 
 	 //keeping separate. making easily visible and readable
-	 if($_SESSION['current_db_version'] == $_SESSION['target_db_version']){
+     if (version_compare($_SESSION['current_db_version'], $_SESSION['target_db_version'], '='))
+     {
 	    $_REQUEST['upgradeWizard'] = true;
 	    ob_start();
 			include('modules/ACL/install_actions.php');
@@ -288,12 +290,13 @@ logThis('End upgrade_connectors', $path);
 
 
 // Enable the InsideView connector by default
-if($_SESSION['current_db_version'] < '621' && function_exists('upgradeEnableInsideViewConnector')) {
+if (version_compare($_SESSION['current_db_version'], '6.2.1', '<')  && function_exists('upgradeEnableInsideViewConnector'))
+{
     upgradeEnableInsideViewConnector();
 }
 
 /*
-if ($_SESSION['current_db_version'] < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
+if (version_compare($_SESSION['current_db_version'], '6.2.0', '<') && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
 {
     repair_long_relationship_names($path);
 }
@@ -301,7 +304,7 @@ if ($_SESSION['current_db_version'] < '620' && ($sugar_config['dbconfig']['db_ty
 
 //Global search support
 /*
-if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_search_to_custom_modules_vardefs'))
+if (version_compare($_SESSION['current_db_version'], '6.2.0', '<') && function_exists('add_unified_search_to_custom_modules_vardefs'))
 {
    logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
@@ -315,7 +318,7 @@ if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 	upgradeDisplayedTabsAndSubpanels($_SESSION['current_db_version']);
 }
 
-if ($_SESSION['current_db_version'] < '650')
+if (version_compare($_SESSION['current_db_version'], '6.5.0', '<'))
 {
     // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
     $db->query("UPDATE email_templates SET type = 'workflow' WHERE
@@ -337,7 +340,7 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 }
 
 //Run repairUpgradeHistoryTable
-if($_SESSION['current_db_version'] < '650' && function_exists('repairUpgradeHistoryTable'))
+if (version_compare($_SESSION['current_db_version'], '6.5.0', '<') && function_exists('repairUpgradeHistoryTable'))
 {
     repairUpgradeHistoryTable();
 }
@@ -348,8 +351,7 @@ upgrade_custom_relationships();
 require_once('modules/UpgradeWizard/uw_utils.php');
 
 /*
-if($_SESSION['current_db_version'] < '620')
-{
+if (version_compare($_SESSION['current_db_version'], '6.2.0', '<')) {
 	upgradeDateTimeFields($path);
 	upgradeDocumentTypeFields($path);
 }

@@ -35,6 +35,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 class UpgradeRemoval
 {
 
+    /**
+     * @var string minimal version for removal
+     */
+    public $version = '';
+
 /**
  * getFilesToRemove
  * Return array of files/directories to remove.  Default implementation returns empty array.
@@ -108,4 +113,3 @@ protected function backup($file)
 }
 
 }
-?>

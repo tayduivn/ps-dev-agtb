@@ -29,8 +29,11 @@ require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 
 class UpgradeRemoval64x extends UpgradeRemoval
 {
-	
-	
+    /**
+     * @var string minimal version for removal
+     */
+    public $version = '6.4.0';
+
 /**
  * getFilesToRemove
  * Return an array of files/directories to remove for 64x upgrades
@@ -43,7 +46,7 @@ $files = array();
 // In 6.4.0 we did the following
 // 1) Removed from include/javascript/yui3/assets dpSyntaxHighlighter.css and dpSyntaxHighlighter.js files
 
-if($version < '640')
+if (version_compare($version, $this->version, '<'))
 {
 	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.css';
 	$files[] = 'include/javascript/yui3/assets/dpSyntaxHighligther.js';
@@ -83,5 +86,3 @@ return $files;
 	
 		
 }
-
-?>

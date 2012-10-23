@@ -30,6 +30,11 @@ require_once('modules/UpgradeWizard/UpgradeRemoval.php');
 class UpgradeRemoval65x extends UpgradeRemoval
 {
     /**
+     * @var string minimal version for removal
+     */
+    public $version = '6.5.0';
+
+    /**
      * getFilesToRemove
      * Return an array of files/directories to remove for 65x upgrades
      * @param unknown_type $version
@@ -41,7 +46,7 @@ class UpgradeRemoval65x extends UpgradeRemoval
         // In 6.5.0 we did the following
         // 1) Removed template files for RTL theme
 
-        if($version < '650')
+        if (version_compare($version, $this->version, '<'))
         {
             $files[] = 'themes/RTL/tpls/_companyLogo.tpl';
             $files[] = 'themes/RTL/tpls/_globalLinks.tpl';
@@ -58,5 +63,3 @@ class UpgradeRemoval65x extends UpgradeRemoval
 
 
 }
-
-?>

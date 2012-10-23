@@ -464,10 +464,11 @@ logThis('End rebuild relationships.', $path);
 
 include("$unzip_dir/manifest.php");
 $ce_to_pro_ent = isset($manifest['name']) && ($manifest['name'] == 'SugarCE to SugarPro' || $manifest['name'] == 'SugarCE to SugarEnt'  || $manifest['name'] == 'SugarCE to SugarCorp' || $manifest['name'] == 'SugarCE to SugarUlt');
-$origVersion = getSilentUpgradeVar('origVersion');
-if(!$origVersion){
+$sugar_version = getSilentUpgradeVar('origVersion');
+if (!$sugar_version)
+{
     global $silent_upgrade_vars_loaded;
-    logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
+    logThis("Error retrieving silent upgrade var for sugar_version: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
 }
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -476,8 +477,9 @@ if(!$origVersion){
 // so that we can check against that in 6.1.1.
 /*
 //BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '610'){
-    logThis("Since origVersion is {$origVersion}, which is before 6.1.0, we migrate reports favorites", $path);
+if (version_compare($sugar_version, '6.1.0', '<'))
+{
+    logThis("Since sugar_version is {$sugar_version}, which is before 6.1.0, we migrate reports favorites", $path);
     logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
     migrate_sugar_favorite_reports();
     logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
@@ -523,7 +525,8 @@ if($ce_to_pro_ent) {
 
 /*
 //BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '620'){
+if (version_compare($sugar_version, '6.2.0', '<'))
+{
 	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
 	upgradeDateTimeFields($path);
 	//upgrade the documents and meetings for lotus support
@@ -543,7 +546,8 @@ upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
 // Enable the InsideView connector by default
-if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
+if (version_compare($sugar_version, '6.2.1', '<') && function_exists('upgradeEnableInsideViewConnector'))
+{
     logThis("Looks like we need to enable the InsideView connector\n",$path);
     upgradeEnableInsideViewConnector($path);
 }
@@ -552,7 +556,8 @@ if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) 
 //bug: 36845 - ability to provide global search support for custom modules
 /*
 //BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
+if (version_compare($sugar_version, '6.2.0', '<') && function_exists('add_unified_search_to_custom_modules_vardefs'))
+{
    logThis('Add global search for custom modules start .', $path);
    add_unified_search_to_custom_modules_vardefs();
    logThis('Add global search for custom modules finished .', $path);
@@ -563,10 +568,11 @@ if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules
 //Upgrade system displayed tabs and subpanels
 if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 {
-	upgradeDisplayedTabsAndSubpanels($origVersion);
+	upgradeDisplayedTabsAndSubpanels($sugar_version);
 }
 
-if ($origVersion < '650')
+
+if (version_compare($sugar_version, '6.5.0', '<'))
 {
     // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
     $db->query("UPDATE email_templates SET type = 'workflow' WHERE
@@ -579,7 +585,7 @@ if ($origVersion < '650')
 //Unlink files that have been removed
 if(function_exists('unlinkUpgradeFiles'))
 {
-	unlinkUpgradeFiles($origVersion);
+	unlinkUpgradeFiles($sugar_version);
 }
 
 if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
@@ -588,7 +594,7 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
 }
 
 //Run repairUpgradeHistoryTable
-if($origVersion < '650' && function_exists('repairUpgradeHistoryTable'))
+if (version_compare($sugar_version, '6.5.0', '<') && function_exists('repairUpgradeHistoryTable'))
 {
     repairUpgradeHistoryTable();
 }
@@ -628,6 +634,3 @@ if(count($errors) > 0) {
 	echo "******** Run Repair -> Rebuild Relationships  **********************\n";
 	echo "********************************************************************\n";
 }
-
-
-?>
