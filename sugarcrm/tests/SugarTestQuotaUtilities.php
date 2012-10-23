@@ -33,6 +33,7 @@ require_once 'modules/Quotas/Quota.php';
 class SugarTestQuotaUtilities
 {
     private static $_createdQuotas = array();
+    private static $_createdUserIds = array();
 
     private function __construct() {}
 
@@ -59,11 +60,24 @@ class SugarTestQuotaUtilities
         	self::$_createdQuotas[] = $quota;
     	} // foreach
     } // fn
+    
+    public static function setCreatedUserIds($user_ids)
+    {
+    	self::$_createdUserIds = $user_ids;	
+    }
+    
+    public static function getCreatedUserIds()
+    {
+    	return self::$_createdUserIds;
+    }
 
     public static function removeAllCreatedQuotas()
     {
         $quota_ids = self::getCreatedQuotaIds();
+        
         $GLOBALS['db']->query('DELETE FROM quotas WHERE id IN (\'' . implode("', '", $quota_ids) . '\')');
+        //remove quotas generated in the worksheets by using the temporary user id's
+        $GLOBALS['db']->query('DELETE FROM quotas WHERE user_id IN (\'' . implode("', '", self::getCreatedUserIds()) . '\')');
     }
 
     public static function getCreatedQuotaIds()

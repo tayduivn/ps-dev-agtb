@@ -569,6 +569,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
      */
     public function testWorksheetDraftVisibility()
     {
+    	$oldUser = $GLOBALS["current_user"];
+    	
         self::$managerData2["best_adjusted"] = self::$managerData2["best_adjusted"] + 100;
 		$best_adjusted = "";
 		
@@ -620,52 +622,152 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         }
         
         $this->assertEquals(self::$managerData2["best_adjusted"] - 100, $best_adjusted, "Draft version was returned");
+        
+        //Now, save as a regular version so things will be reset.
+        $postData["draft"] = 0;
+        $response = $this->_restCall("ForecastManagerWorksheets/" . self::$managerData2["user_id"], json_encode($postData), "PUT");
+
+        $db->commit();
+        
+        // set the current user to original user
+        $this->_user = $oldUser;
+        $GLOBALS["current_user"] = $oldUser;
+        $this->authToken = "";
     }
-
-    /**
-     * exportForecastManagerWorksheetsProvider
-     *
-     * This is the dataProvider function for testExportForecastManagerWorksheets
-     */
-   public function exportForecastManagerWorksheetProvider()
-   {
-       return array
-       (
-           array('show_worksheet_likely', 'assertNotRegExp', '/(w\_)?likely\_case/'),
-           array('show_worksheet_best', 'assertNotRegExp', '/(w\_)?best\_case/'),
-           array('show_worksheet_worst', 'assertNotRegExp', '/(w\_)?worst\_case/'),
-       );
-   }
-
-    /**
-     * testExportForecastManagerWorksheets
-     *
-     * This is a test to check that we get a response back from the export data call
-     *
+    
+     /**
      * @group forecastapi
      * @group forecasts
-     * @group export
-     *
-     * @dataProvider exportForecastManagerWorksheetProvider
      */
-   public function testExportForecastManagerWorksheets($hide, $method, $expectedRegex)
-   {
-        // set the current user to salesrep
+     public function testForecastWorksheetQuotaRecalc()
+     {
+     	$oldUser = $GLOBALS["current_user"];
+     	$quota = "";
+     	$index = 0;
+     	// reset current user to manager1
         $this->_user = self::$manager['user'];
         $GLOBALS['current_user'] = $this->_user;
         $this->authToken = "";
-
-        if(!empty($hide))
+        
+        $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);
+            	
+    	foreach($response["reply"] as $record)
         {
-            self::$admin->saveSetting('Forecasts', $hide, 0, 'base');
+        	if($record["user_id"] == self::$manager2["user"]->id)
+        	{        		
+        		break;
+        	}
+        	$index++;
         }
+    	  
+    	$postData = array(	 "amount" => $response["reply"][$index]["amount"],
+							 "quota" => 5000,
+                             "quota_id" => $response["reply"][$index]["quota_id"],
+                             "best_case" => $response["reply"][$index]["best_case"],
+                             "likely_case" => $response["reply"][$index]["amount"],
+                             "worst_case" => $response["reply"][$index]["worst_case"],
+                             "best_adjusted" => $response["reply"][$index]["best_adjusted"],
+                             "likely_adjusted" => $response["reply"][$index]["likely_adjusted"],
+                             "worst_adjusted" => $response["reply"][$index]["worst_adjusted"],
+                             "forecast" => intval($response["reply"][$index]["forecast"]),
+                             "forecast_id" => $response["reply"][$index]["forecast_id"],
+                             "id" => $response["reply"][$index]["id"],
+                             "worksheet_id" => $response["reply"][$index]["worksheet_id"],
+                             "show_opps" => $response["reply"][$index]["show_opps"],
+                             "name" => $response["reply"][$index]["name"],
+                             "user_id" => $response["reply"][$index]["user_id"],
+                             "current_user" => $this->_user->id,
+                             "timeperiod_id" =>$response["reply"][$index]["timeperiod_id"],
+                             "draft" => 0
+                        );
+        $response = $this->_restCall("ForecastManagerWorksheets/" .  $response["reply"][$index]["user_id"], json_encode($postData), "PUT");
+						
+		// now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);	
+		
+		//check to see if the Quota was auto calculated
+		foreach($response["reply"] as $record)
+        {
+        	if($record["user_id"] == $this->_user->id)
+        	{
+        		$quota = $record["quota"];
+        	}
+        	break;
+        }
+                
+        //Since the manager has no overall quota assigned to him from an uber_manager, his total should be recalculated
+        //to zero on updating a reportee.
+		$this->assertEquals(0, $quota, "Quota data was not auto calculated.");
+		
+		// set the current user to original user
+        $this->_user = $oldUser;
+        $GLOBALS["current_user"] = $oldUser;
+        $this->authToken = "";
+     }
+     
+     /**
+      * @depends testForecastWorksheetQuotaRecalc
+      * @group forecastapi
+      * @group forecasts
+     */
+     public function testForecastWorksheetQuotaRecalcReps()
+     {
+    	$oldUser = $GLOBALS["current_user"];
+     	$quota = "";
+     
+     	// reset current user to manager1
+        $this->_user = self::$manager2['user'];
+        $GLOBALS['current_user'] = $this->_user;
+        $this->authToken = "";
+        
+        $response = $this->_restCall("ForecastManagerWorksheets?user_id=" . self::$manager2["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);
+     	
+        $newQuota = 4000;
+        $postData = array(	 "amount" => $response["reply"][1]["amount"],
+							 "quota" => $newQuota,
+                             "quota_id" => $response["reply"][1]["quota_id"],
+                             "best_case" => $response["reply"][1]["best_case"],
+                             "likely_case" => $response["reply"][1]["amount"],
+                             "worst_case" => $response["reply"][1]["worst_case"],
+                             "best_adjusted" => $response["reply"][1]["best_adjusted"],
+                             "likely_adjusted" => $response["reply"][1]["likely_adjusted"],
+                             "worst_adjusted" => $response["reply"][1]["worst_adjusted"],
+                             "forecast" => intval($response["reply"][1]["forecast"]),
+                             "forecast_id" => $response["reply"][1]["forecast_id"],
+                             "id" => $response["reply"][1]["id"],
+                             "worksheet_id" => $response["reply"][1]["worksheet_id"],
+                             "show_opps" => $response["reply"][1]["show_opps"],
+                             "name" => $response["reply"][1]["name"],
+                             "user_id" => $response["reply"][1]["user_id"],
+                             "current_user" => $this->_user->id,
+                             "timeperiod_id" =>$response["reply"][1]["timeperiod_id"],
+                             "draft" => 0
+                        );
+        
+        $response = $this->_restCall("ForecastManagerWorksheets/" .  $response["reply"][1]["user_id"], json_encode($postData), "PUT");
+        
+        // now get the data back to see if it was saved to all the proper tables.
+		$response = $this->_restCall("ForecastManagerWorksheets?user_id=". self::$manager2["user"]->id . "&timeperiod_id=" . self::$timeperiod->id);
+		
+		$GLOBALS['current_user'] = $this->_user;
+		//check to see if the Quota was auto calculated
+		foreach($response["reply"] as $record)
+        {
+        	if($record["user_id"] == $this->_user->id)
+        	{
+        		$quota = $record["quota"];
+        	}
+        	break;
+        }
+        
+        //Since we set Manager2 to have a overall quota of 5000 in the testForecastWorksheetQuotaRecalc test, the recalc
+        //should subtract the rep value of 4000 from 5000, giving us 1000 for manager2's direct
+		$this->assertEquals(5000 - $newQuota, $quota, "Quota data was not auto calculated.");
+        
+		// set the current user to original user
+        $this->_user = $oldUser;
+        $GLOBALS["current_user"] = $oldUser;
+        $this->authToken = "";
+     }	
 
-        $response = $this->_restCall("ForecastManagerWorksheets/export?user_id=" . self::$managerData["user_id"] . "&timeperiod_id=" . self::$timeperiod->id,
-                                    json_encode(array()),
-                                    'GET');
-
-        $this->$method($expectedRegex, $response['replyRaw']);
-        $this->assertNotEmpty($response['replyRaw'], "Rest replyRaw is empty. Manager data should have returned csv file contents.");
-   }
 }
-

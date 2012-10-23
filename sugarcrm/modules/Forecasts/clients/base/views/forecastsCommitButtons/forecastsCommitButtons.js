@@ -63,9 +63,7 @@
         if(this.showCommitButton) {
             if(this.commitButtonEnabled) {
                 this.$el.find('a[id=commit_forecast]').removeClass('disabled');
-                //this.$el.find('a[id=save_draft]').removeClass('disabled');
             } else {
-            	//this.$el.find('a[id=save_draft]').addClass('disabled');
                 this.$el.find('a[id=commit_forecast]').addClass('disabled');               
             }
         }        
@@ -139,6 +137,7 @@
     				worksheet.isDirty = false;
     			}    			    				
     		});
+    		
     		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        

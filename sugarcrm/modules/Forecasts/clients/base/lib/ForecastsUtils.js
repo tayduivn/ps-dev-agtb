@@ -16,70 +16,63 @@
                 oldestModel = new Backbone.Model({
                     best_case : 0,
                     likely_case: 0,
+                    worst_case: 0,
                     date_entered: ''
 
                 })
             }
-            var best_difference = newestModel.get('best_case') - oldestModel.get('best_case');
-            var best_changed = best_difference != 0;
-            var best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : '');
-            var likely_difference = newestModel.get('likely_case') - oldestModel.get('likely_case');
-            var likely_changed = likely_difference != 0;
-            var likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : '');
-            var args = Array();
-            var text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED';
+            var best_difference = newestModel.get('best_case') - oldestModel.get('best_case'),
+                best_changed = best_difference != 0,
+                best_direction = best_difference > 0 ? 'LBL_UP' : (best_difference < 0 ? 'LBL_DOWN' : ''),
+                likely_difference = newestModel.get('likely_case') - oldestModel.get('likely_case'),
+                likely_changed = likely_difference != 0,
+                likely_direction = likely_difference > 0 ? 'LBL_UP' : (likely_difference < 0 ? 'LBL_DOWN' : ''),
+                worst_difference = newestModel.get('worst_case') - oldestModel.get('worst_case'),
+                worst_changed = worst_difference != 0,
+                worst_direction = worst_difference > 0 ? 'LBL_UP' : (worst_difference < 0 ? 'LBL_DOWN' : ''),
+                args = [],
+                text = 'LBL_COMMITTED_HISTORY_NONE_CHANGED',
+                best_arrow = this.getArrowDirectionSpan(best_direction),
+                likely_arrow = this.getArrowDirectionSpan(likely_direction),
+                worst_arrow = this.getArrowDirectionSpan(worst_direction);
 
-            var best_arrow = '';
-            if(best_direction == "LBL_UP") {
-                best_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
-            } else if(best_direction == "LBL_DOWN") {
-                best_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
+            //determine what changed and add parts to the array for displaying the changes
+            if(best_changed) {
+                args.push(App.lang.get(best_direction, 'Forecasts') + best_arrow);
+                args.push(app.currency.formatAmountLocale(Math.abs(best_difference)));
+                args.push(app.currency.formatAmountLocale(newestModel.get('best_case')));
             }
 
-            var likely_arrow = '';
-            if(likely_direction == "LBL_UP") {
-                likely_arrow = '&nbsp;<span class="icon-arrow-up font-green"></span>'
-            } else if(likely_direction == "LBL_DOWN") {
-                likely_arrow = '&nbsp;<span class="icon-arrow-down font-red"></span>'
+            if(likely_changed) {
+                args.push(App.lang.get(likely_direction, 'Forecasts') + likely_arrow);
+                args.push(app.currency.formatAmountLocale(Math.abs(likely_difference)));
+                args.push(app.currency.formatAmountLocale(newestModel.get('likely_case')));
             }
 
-            if(best_changed && likely_changed)
-            {
-                args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
-                args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
-                args[2] = app.currency.formatAmountLocale(newestModel.get('best_case'));
-                args[3] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
-                args[4] = app.currency.formatAmountLocale(Math.abs(likely_difference));
-                args[5] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
-                text = 'LBL_COMMITTED_HISTORY_BOTH_CHANGED';
-            } else if (!best_changed && likely_changed) {
-                args[0] = App.lang.get(likely_direction, 'Forecasts') + likely_arrow;
-                args[1] = app.currency.formatAmountLocale(Math.abs(likely_difference));
-                args[2] = app.currency.formatAmountLocale(newestModel.get('likely_case'));
-                text = 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED';
-            } else if (best_changed && !likely_changed) {
-                args[0] = App.lang.get(best_direction, 'Forecasts') + best_arrow;
-                args[1] = app.currency.formatAmountLocale(Math.abs(best_difference));
-                args[2] = app.currency.formatAmountLocale(newestModel.get('best_case'));
-                text = 'LBL_COMMITTED_HISTORY_BEST_CHANGED';
+            if(worst_changed) {
+                args.push(App.lang.get(worst_direction, 'Forecasts') + worst_arrow);
+                args.push(app.currency.formatAmountLocale(Math.abs(worst_difference)));
+                args.push(app.currency.formatAmountLocale(newestModel.get('worst_case')));
             }
+
+            //get label that will be used for the history changes
+            text = this.getCommittedHistoryLabel(best_changed, likely_changed, worst_changed);
 
             //Compile the language string for the log
-            var hb = Handlebars.compile("{{str_format key module args}}");
-            var text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
+            var hb = Handlebars.compile("{{str_format key module args}}"),
+                text = hb({'key' : text, 'module' : 'Forecasts', 'args' : args});
 
             // Check for first time run -- no date_entered for oldestModel
             var oldestDateEntered = oldestModel.get('date_entered');
 
             // This will always have a value
-            var newestModelDate = new Date(Date.parse(newestModel.get('date_entered')));
-            var text2 = '';
+            var newestModelDate = new Date(Date.parse(newestModel.get('date_entered'))),
+                text2 = '';
 
             if(!_.isEmpty(oldestDateEntered)) {
-                var oldestModelDate = new Date(Date.parse(oldestDateEntered));
-
-                var yearDiff = oldestModelDate.getYear() - newestModelDate.getYear();
-                var monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
+                var oldestModelDate = new Date(Date.parse(oldestDateEntered)),
+                    yearDiff = oldestModelDate.getYear() - newestModelDate.getYear(),
+                    monthsDiff = oldestModelDate.getMonth() - newestModelDate.getMonth();
 
                 //Format the date according to the user date and time preferences
                 newestModelDate = app.date.format(newestModelDate, app.user.get('datepref') + ' ' + app.user.get('timepref'));
@@ -99,6 +92,34 @@
             // need to tell Handelbars not to escape the string when it renders it, since there might be
             // html in the string
             return {'text' : new Handlebars.SafeString(text), 'text2' : new Handlebars.SafeString(text2)};
+        },
+
+        /**
+         * checks the direction class passed in to determine what span to create to show the appropriate arrow
+         * or lack of arrow to display on the
+         * @param directionClass class being used for the label ('LBL_UP' or 'LBL_DOWN')
+         * @return {String}
+         */
+        getArrowDirectionSpan: function (directionClass) {
+            return directionClass == "LBL_UP" ? '&nbsp;<span class="icon-arrow-up font-green"></span>' :
+                directionClass == "LBL_DOWN" ? '&nbsp;<span class="icon-arrow-down font-red"></span>' : '';
+         },
+
+        /**
+         * builds the string to look up for the history label based on what has changed in the model
+         * @param best_changed {bool}
+         * @param likely_changed {bool}
+         * @param worst_changed {bool}
+         * @return {String}
+         */
+        getCommittedHistoryLabel: function(best_changed, likely_changed, worst_changed) {
+            var labelText = "LBL_COMMITTED_HISTORY";
+
+            labelText += best_changed ? "_BEST" : "";
+            labelText += likely_changed ? "_LIKELY" : "";
+            labelText += worst_changed ? "_WORST" : "";
+
+            return labelText + "_CHANGED";
         },
 
         /**

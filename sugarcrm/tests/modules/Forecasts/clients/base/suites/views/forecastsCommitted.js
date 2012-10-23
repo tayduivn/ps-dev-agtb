@@ -21,7 +21,7 @@
 
 describe("The forecasts committed view", function () {
 
-    var app, view, testMethodStub, context, totals, formatAmountLocaleStub, createHistoryLogStub;
+    var app, view, testMethodStub, context, totals, formatAmountLocaleStub, createHistoryLogStub, forecastsSetStub;
     var stubs = [];
 
     beforeEach(function() {
@@ -51,7 +51,16 @@ describe("The forecasts committed view", function () {
         stubs.push(createHistoryLogStub);
 
         view.render = function() {};
-
+        view.context = {
+        	forecasts: {
+        		set: function(){}
+        	}	
+        };
+        
+        forecastsSetStub = sinon.stub(view.context.forecasts, "set", function(){});
+        sinon.spy(view.context.forecasts.set);
+        stubs.push(forecastsSetStub);
+        
         context = app.context.getContext({
             url:"someurl",
             module:"Forecasts"
@@ -79,6 +88,7 @@ describe("The forecasts committed view", function () {
         delete totals;
         delete view.selectedUser;
         delete view.totals;
+        delete view.context;
         delete view._collection.models;
     });
 
@@ -108,6 +118,7 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-up');
             expect(view.likelyCaseCls).toContain('icon-arrow-up');
+            expect(view.context.forecasts.set).toHaveBeenCalled();
         });
 
         it("should show down for both", function () {
@@ -125,6 +136,7 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-down');
             expect(view.likelyCaseCls).toContain('icon-arrow-down');
+            expect(view.context.forecasts.set).toHaveBeenCalled();
         });
     });
 
@@ -153,6 +165,7 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-up');
             expect(view.likelyCaseCls).toContain('icon-arrow-up');
+            expect(view.context.forecasts.set).toHaveBeenCalled();
         });
 
         it("should show down for both", function () {
@@ -170,6 +183,7 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-down');
             expect(view.likelyCaseCls).toContain('icon-arrow-down');
+            expect(view.context.forecasts.set).toHaveBeenCalled();
         });
     });
 
@@ -223,6 +237,7 @@ describe("The forecasts committed view", function () {
                 expect(view.totals.amount).toEqual(1000);
                 expect(view.totals.best_case).toEqual(1100);
                 expect(view.totals.worst_case).toEqual(900);
+                expect(view.context.forecasts.set).toHaveBeenCalled();
             });
         });
     });
