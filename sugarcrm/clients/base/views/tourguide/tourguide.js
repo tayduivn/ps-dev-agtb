@@ -13,7 +13,7 @@
 
     startTour: function(e) {
         var data = this.$(e.currentTarget).data();
-        this.fullTour = data.type === "full" ? true: false;
+        this.fullTour = ( data.type === "full" ) ? true : false;
 
         this.$(".system-tour").modal("hide");
 
@@ -42,11 +42,12 @@
         return;
     },
     nextItem: function(index, obj, currentArray, data) {
-        var self = this;
+        var self = this,
+            $tourEl = $("[data-tour='" + obj.id + "']");
 
         if( obj === _.last(currentArray) ) {
-            if( $("[data-tour='" + obj.id + "']").length > 0 ) {
-                $("[data-tour='" + obj.id + "']").popover("hide");
+            if( $tourEl.length ) {
+                $tourEl.popover("hide");
             }
 
             // Conditions to end the tour
@@ -102,17 +103,18 @@
                 $nextEl = $("[data-tour='" + nextObj.id + "']"),
                 templateEl = '<div class="popover '+ nextObj.id + '"><div class="arrow"></div>' +
                     '<div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content">' +
-                    '<p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a>' +
-                    '<a class="btn btn-primary tour-prev">Prev</a><a class="btn btn-primary tour-next">'+
-                    app.lang.getAppString("LBL_NEXT_BUTTON_LABEL") +'</a></div></div></div>';
+                    '<p></p></div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">' +
+                    app.lang.getAppString("LBL_TOUR_END_TOUR") +'</a><a class="btn btn-primary tour-prev">' +
+                    app.lang.getAppString("LBL_TOUR_BACK") +'</a><a class="btn btn-primary tour-next">' +
+                    app.lang.getAppString("LBL_TOUR_NEXT") +'</a></div></div></div>';
 
             // hide the current popover, if it exists
-            if( $("[data-tour='" + obj.id + "']").length > 0 ) {
-                $("[data-tour='" + obj.id + "']").popover("hide");
+            if( $tourEl.length ) {
+                $tourEl.popover("hide");
             }
 
             // show the next popover, if it exists
-            if( $nextEl.length > 0 ) {
+            if( $nextEl.length ) {
                 // If its not a full tour, don't instruct the user to take certain actions (e.g. click this button to
                 // create a new record), this is done by overriding the content with custom "not full tour" content.
                 var popoverContent = !(this.fullTour) ? (nextObj["content_not_full"] || nextObj.content) : nextObj.content;
@@ -131,16 +133,16 @@
         }
     },
     prevItem: function(index, obj, currentArray, data) {
-        var self = this;
-
-        var prevIndex = index - 1,
+        var self = this,
+            prevIndex = index - 1,
             prevObj = currentArray[prevIndex],
+            $tourEl = $("[data-tour='" + obj.id + "']"),
             $prevEl = $("[data-tour='" + prevObj.id + "']");
 
-        if( $("[data-tour='" + obj.id + "']").length > 0 ) {
-            $("[data-tour='" + obj.id + "']").popover("hide");
+        if( $tourEl.length ) {
+            $tourEl.popover("hide");
         }
-        if( $prevEl.length > 0 ) {
+        if( $prevEl.length ) {
             this.scrollToEl($prevEl, function() {
                 $prevEl.popover("show");
                 self.bindClickEvents(self, $prevEl, prevIndex, prevObj, currentArray, data);
@@ -164,12 +166,12 @@
                     firstObj = _.first(list),
                     $currentEl = $("[data-tour='" + firstObj.id + "']");
 
-                if( $currentEl.length > 0 ) {
+                if( $currentEl.length ) {
                     var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div>' +
                         '<div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p>' +
-                        '</div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">End Tour</a>' +
-                        '<a class="btn btn-primary tour-next">'+ app.lang.getAppString("LBL_NEXT_BUTTON_LABEL") +'</a>' +
-                        '</div></div></div>';
+                        '</div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">' +
+                        app.lang.getAppString("LBL_TOUR_END_TOUR") +'</a><a class="btn btn-primary tour-next">' +
+                        app.lang.getAppString("LBL_TOUR_NEXT") +'</a></div></div></div>';
 
                     self.scrollToEl($currentEl, function() {
                         $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
@@ -218,7 +220,7 @@
 
         if( direction !== "none" ) {
             // scroll to element
-            $('body').animate({
+            $('body, .main-pane, .side-pane').animate({
                 scrollTop: elTop + buffer
             }, function() {
                 if (callback && typeof(callback) === "function") {
@@ -286,8 +288,7 @@
             scope.endTour();
         });
 
-        if( $(".tour-prev").length > 0 )
-        {
+        if( $(".tour-prev").length ) {
             $(".tour-prev").on("click", function() {
                 scope.prevItem(index, obj, list, data);
             });

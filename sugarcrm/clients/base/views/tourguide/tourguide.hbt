@@ -10,8 +10,8 @@
         </div>
         <div class="modal-footer">
             <a class="btn " data-dismiss="modal">{{str "LBL_CANCEL_BUTTON_LABEL"}}</a>
-            <a class="btn btn-primary tour-type" data-type="module">Tour this Page</a>
-            <a class="btn btn-primary tour-type" data-type="full">Full Tour</a>
+            <a class="btn btn-primary tour-type" data-type="module">{{str "LBL_TOUR_MODULE"}}</a>
+            <a class="btn btn-primary tour-type" data-type="full">{{str "LBL_TOUR_FULL_TOUR"}}</a>
         </div>
     </div>
 </div>
