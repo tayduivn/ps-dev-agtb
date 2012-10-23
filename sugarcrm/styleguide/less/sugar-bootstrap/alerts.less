@@ -25,13 +25,13 @@
 .alert-success,
 .alert-success .alert-heading {
   background-color: @successBackground;
-  border-color: @successBorder; 
+  border-color: @successBorder;
   color:  darken(@successBackground, 70%);
 }
 .alert-danger,
 .alert-error {
   background: @errorBackground;
-  border-color: @errorBorder;  
+  border-color: @errorBorder;
 }
 .alert-danger,
 .alert-error,
@@ -62,15 +62,19 @@
   z-index: 1060;
   text-align: center;
 }
-.alert-top .alert {  
+.alert-top .alert {
   text-align: left;
   margin: 0 auto;
+  float: none;
   display: block;
   max-width: 50%;
   @shadow: 0 1px 4px rgba(0,0,0,.4);
   .box-shadow(@shadow);
 }
-.alert-top .alert-process {  
+.alert a.btn {
+  margin-top: 6px;
+}
+.alert-top .alert-process {
   width: 80px;
 }
 .alert-top .alert:first-child {
