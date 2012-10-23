@@ -55,7 +55,13 @@ describe("Forecasts Utils", function(){
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_ALL_CHANGED').toBeTruthy();
+                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_CHANGED').toBeTruthy();
+            });
+
+            it("should return label indicating all values have changed", function() {
+               //call getCommitted history label with best_changed = true, likely_changed = true and worst_changed = true
+               text = app.forecasts.utils.getCommittedHistoryLabel(true, true, true);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_CHANGED');
             });
         });
 
@@ -72,7 +78,13 @@ describe("Forecasts Utils", function(){
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_BEST_CHANGED').toBeTruthy();
+                expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_LIKELY_CHANGED').toBeTruthy();
+            });
+
+            it("should return label indicating best and likely values have changed", function() {
+               //call getCommitted history label with best_changed = true, likely_changed = true and worst_changed = false
+               text = app.forecasts.utils.getCommittedHistoryLabel(true, true, false);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_LIKELY_CHANGED');
             });
         });
 
@@ -91,6 +103,12 @@ describe("Forecasts Utils", function(){
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED').toBeTruthy();
             });
+
+            it("should return label indicating best and worst values have changed", function() {
+               //call getCommitted history label with best_changed = true, likely_changed = false and worst_changed = true
+               text = app.forecasts.utils.getCommittedHistoryLabel(true, false, true);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_WORST_CHANGED');
+            });
         });
 
         describe("should show likely and worst values changed", function() {
@@ -107,6 +125,12 @@ describe("Forecasts Utils", function(){
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED').toBeTruthy();
+            });
+
+            it("should return label indicating likely ad worst values have changed", function() {
+               //call getCommitted history label with best_changed = false, likely_changed = true and worst_changed = true
+               text = app.forecasts.utils.getCommittedHistoryLabel(false, true, true);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_LIKELY_WORST_CHANGED');
             });
         });
 
@@ -125,6 +149,12 @@ describe("Forecasts Utils", function(){
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_BEST_CHANGED').toBeTruthy();
             });
+
+            it("should return label indicating best values have changed", function() {
+               //call getCommitted history label with best_changed = true, likely_changed = false and worst_changed = false
+               text = app.forecasts.utils.getCommittedHistoryLabel(true, false, false);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_BEST_CHANGED');
+            });
         });
 
         describe("should show likely values changed", function() {
@@ -141,6 +171,12 @@ describe("Forecasts Utils", function(){
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_LIKELY_CHANGED').toBeTruthy();
+            });
+
+            it("should return label indicating likely values have changed", function() {
+               //call getCommitted history label with best_changed = false, likely_changed = true and worst_changed = false
+               text = app.forecasts.utils.getCommittedHistoryLabel(false, true, false);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_LIKELY_CHANGED');
             });
         });
 
@@ -159,6 +195,12 @@ describe("Forecasts Utils", function(){
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
                 expect(result.text == 'LBL_COMMITTED_HISTORY_WORST_CHANGED').toBeTruthy();
             });
+
+            it("should return label indicating worst values have changed", function() {
+               //call getCommitted history label with best_changed = false, likely_changed = false and worst_changed = true
+               text = app.forecasts.utils.getCommittedHistoryLabel(false, false, true);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_WORST_CHANGED');
+            });
         });
 
         describe("should show no values changed", function() {
@@ -174,8 +216,31 @@ describe("Forecasts Utils", function(){
                 oldestModel.set('date_entered', '2012-07-12 18:37:36');
 
                 result = app.forecasts.utils.createHistoryLog(oldestModel,newestModel);
-                expect(result.text == 'LBL_COMMITTED_HISTORY_NONE_CHANGED').toBeTruthy();
+                expect(result.text == 'LBL_COMMITTED_HISTORY_CHANGED').toBeTruthy();
             });
+
+            it("should return label indicating no values have changed", function() {
+               //call getCommitted history label with best_changed = false, likely_changed = false and worst_changed = false
+               text = app.forecasts.utils.getCommittedHistoryLabel(false, false, false);
+               expect(text).toEqual('LBL_COMMITTED_HISTORY_CHANGED');
+            });
+        });
+
+        describe("Should return a span for the arrow dependent on direction passed", function() {
+           it("should return a span indicating an arrow up", function() {
+               arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_UP");
+               expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-up font-green"></span>');
+           });
+
+           it("should return a span indicating an arrow down", function() {
+                arrowText = app.forecasts.utils.getArrowDirectionSpan("LBL_DOWN");
+                expect(arrowText).toEqual('&nbsp;<span class="icon-arrow-down font-red"></span>');
+           });
+
+           it("should return a span indicating no change", function() {
+               arrowText = app.forecasts.utils.getArrowDirectionSpan("");
+               expect(arrowText).toEqual('');
+           });
         });
     });
 });

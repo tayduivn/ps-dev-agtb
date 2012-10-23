@@ -64,8 +64,11 @@ class SugarForecasting_Chart_IndividualTest extends Sugar_PHPUnit_Framework_Test
         self::$args['user_id'] = self::$user['user']->id;
     }
 
-    public function tearDown()
+    public function setUp()
     {
+        $this->_user = self::$user["user"];
+        $GLOBALS["current_user"] = $this->_user;
+        $this->authToken = "";
     }
 
     public static function tearDownAfterClass()

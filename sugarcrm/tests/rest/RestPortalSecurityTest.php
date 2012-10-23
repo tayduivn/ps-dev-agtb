@@ -45,9 +45,37 @@ class RestPortalSecurityTest extends RestTestPortalBase {
     
     public function tearDown()
     {
+        // KBDoc cleanup
+        if (!empty($this->kbDocId)) {
+            $GLOBALS['db']->query("DELETE FROM kbdocuments WHERE id = '" . $this->kbDocId . "'");
+            $GLOBALS['db']->query("DELETE FROM kbdocument_revisions WHERE id = '" . $this->kbDocId . "'");
+            $GLOBALS['db']->query("DELETE FROM document_revisions WHERE id = '" . $this->kbDocId . "'");
+        }
         parent::tearDown();
     }
-    
+
+    public function testBug57022KBDocuments() {
+        //bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact
+
+        // Add 1 KBDocument
+        $kbdoc = new KBDocument();
+        $kbdoc->kbdocument_name = "KBDocument bug57022 - " . create_guid();
+        $kbdoc->body = 'This is a document for the unit test system';
+        $startDate = new SugarDateTime();
+        $startDate->modify('-7 weeks');
+        $endDate = new SugarDateTime();
+        $endDate->modify('+7 weeks');
+        $kbdoc->active_date = $startDate->format('Y-m-d');
+        $kbdoc->exp_date = $endDate->format('Y-m-d');
+        $kbdoc->status_id = 'Published';
+        $kbdoc->is_external_article = '1';
+        $kbdoc->save();
+        $this->kbDocId =$kbdoc->id;
+            // Positive Test : Should be able to see the KBDoc
+        $restReply = $this->_restCall("KBDocuments/" . $kbdoc->id);
+        $this->assertEquals($kbdoc->id,$restReply['reply']['id'], 'bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact');
+    }
+
     /**
      * @group rest
      */
@@ -188,7 +216,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $contactNums = array(1,3);
                 $contactNum = $contactNums[($i%2)];
             }
-            
+
             $acase->contacts->add(array($this->contacts[$contactNum]));
 
             // 4 out of 5 cases have bugs
@@ -197,7 +225,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $bug->name = "UNIT TEST ".($i+1)." - ".create_guid();
                 $bug->work_log = "The portal should never see this.";
                 $bug->description = "The portal can see this.";
-                
+
                 //BEGIN SUGARCRM flav=ent ONLY
                 if ( $i%2 == 1 && $acase->portal_viewable == true ) {
                     $bug->portal_viewable = true;
@@ -207,7 +235,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
                 $bug->save();
                 $bug->_accountNum = $accountNum;
                 $this->bugs[] = $bug;
-                
+
                 $bug->load_relationship('cases');
                 $bug->cases->add(array($acase));
             }
@@ -234,12 +262,12 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             }
             $linkBean->load_relationship('notes');
             $linkBean->notes->add(array($note));
-            
+
             $this->notes[] = $note;
         }
         // Clean up any hanging related records
         SugarRelationship::resaveRelatedBeans();
-        
+
         $GLOBALS['db']->commit();
 
         // Negative test: Try and fetch a Contact you shouldn't be able to see
@@ -259,7 +287,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Negative test: Should not be able to create a new Contact
         $restReply = $this->_restCall("Contacts/",json_encode(array('last_name'=>'UnitTestNew','first_name'=>'NewGuy')),'POST');
         $this->assertEquals('not_authorized',$restReply['reply']['error']);
-        
+
         // Fetch contacts, make sure we can only see the correct ones.
         $restReply = $this->_restCall("Contacts");
 
@@ -286,7 +314,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Negative test: Should not be able to create a new Account
         $restReply = $this->_restCall("Accounts/",json_encode(array('name'=>'UnitTestNew')),'POST');
         $this->assertEquals('not_authorized',$restReply['reply']['error']);
-        
+
         $restReply = $this->_restCall("Accounts");
 
         foreach ( $restReply['reply']['records'] as $record ) {
@@ -319,7 +347,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Negative test: We should not be able to list opportunities
         $restReply = $this->_restCall("Opportunities/");
         $this->assertEquals(-1,$restReply['reply']['next_offset']);
-        
+
         // Negative test: Should not be able to create a new Opportunity
         $restReply = $this->_restCall("Opportunities/",json_encode(array('name'=>'UnitTestNew','account_id'=>$this->accounts[1]->id,'expected_close_date'=>'2012-10-11 12:00:00')),'POST');
         $this->assertEquals('not_authorized',$restReply['reply']['error']);
@@ -342,11 +370,11 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $this->assertNotEmpty($restReply['reply']['id']);
         $createdCase = BeanFactory::getBean('Cases',$restReply['reply']['id']);
         $this->cases[] = $createdCase;
-        
+
         // Positive test: Should be able to fetch this new bean
         $restReply = $this->_restCall("Cases/".$createdCase->id);
         $this->assertEquals($restReply['reply']['id'],$createdCase->id);
-        
+
         $restReply = $this->_restCall("Cases");
 
         foreach ( $restReply['reply']['records'] as $record ) {
@@ -381,11 +409,11 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         $this->assertNotEmpty($restReply['reply']['related_record']['id']);
         $createdBug = BeanFactory::getBean('Bugs',$restReply['reply']['related_record']['id']);
         $this->bugs[] = $createdBug;
-        
+
         // Positive test: Should be able to fetch this new bean
         $restReply = $this->_restCall("Bugs/".$createdBug->id);
         $this->assertEquals($restReply['reply']['id'],$createdBug->id);
-        
+
         $restReply = $this->_restCall("Bugs");
 
         foreach ( $restReply['reply']['records'] as $record ) {
@@ -410,11 +438,11 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Note 2: no portal_flag, related to bug #2, bug not portal visible, related to account #2
         $restReply = $this->_restCall("Notes/".$this->notes[2]->id);
         $this->assertEquals('not_found',$restReply['reply']['error']);
-        
+
         // Note 5: portal_flag, related to bug #5, bug not portal visible, related to account #0
         $restReply = $this->_restCall("Notes/".$this->notes[5]->id);
         $this->assertEquals('not_found',$restReply['reply']['error']);
-        
+
         // Note 35: portal_flag, related to bug #11, bug portal visible, related to account #1
         $restReply = $this->_restCall("Notes/".$this->notes[35]->id);
         $this->assertEquals($this->notes[35]->id,$restReply['reply']['id']);
@@ -438,7 +466,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Make sure we can find Note #13 through the relationship API
         $restReply = $this->_restCall('Cases/'.$this->cases[13]->id.'/link/notes/'.$this->notes[13]->id);
         $this->assertEquals($this->notes[13]->id,$restReply['reply']['id']);
-        
+
         // Make sure we can find Note #13 through the relationship list API
         $restReply = $this->_restCall('Cases/'.$this->cases[13]->id.'/link/notes/');
         $foundIt = false;
@@ -448,7 +476,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             }
             $this->assertEquals(1,$noteRecord['portal_flag']);
         }
-        $this->assertTrue($foundIt);        
+        $this->assertTrue($foundIt);
 
         // Note 22: portal_flag, related to case #22, case not portal visible, related to account #1
         $restReply = $this->_restCall("Notes/".$this->notes[22]->id);
@@ -560,7 +588,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Positive test: Make sure we can access this account first
         $restReply = $this->_restCall('Accounts/'.$this->accounts[1]->id);
         $this->assertEquals($this->accounts[1]->id,$restReply['reply']['id']);
-        
+
         // Remove the contact from one of the accounts and make sure that
         // it doesn't come up on the list
         $this->portalGuy->accounts->delete($this->portalGuy->id,$this->accounts[1]);
@@ -623,17 +651,17 @@ class RestPortalSecurityTest extends RestTestPortalBase {
             $bug->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $bug->work_log = "The portal should never see this.";
             $bug->description = "The portal can see this.";
-            
+
             //BEGIN SUGARCRM flav=ent ONLY
             if ( $acase->portal_viewable == true ) {
                 $bug->portal_viewable = true;
             }
             //END SUGARCRM flav=ent ONLY
-            
+
             $bug->save();
             $bug->_accountNum = $accountNum;
             $this->bugs[] = $bug;
-            
+
             $bug->load_relationship('cases');
             $bug->cases->add(array($acase));
 
@@ -661,7 +689,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Negative test: Try and fetch an account we never linked
         $restReply = $this->_restCall("Accounts/".$this->accounts[1]->id);
         $this->assertEquals('not_found',$restReply['reply']['error']);
-        
+
         // Negative test: Try and fetch a contact we never linked
         $restReply = $this->_restCall("Contacts/".$this->contacts[1]->id);
         $this->assertEquals('not_found',$restReply['reply']['error']);
@@ -683,7 +711,7 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Negative test: Should not be able to create a new Case
         $restReply = $this->_restCall("Cases/",json_encode(array('name'=>'UnitTestNew','description'=>'UNIT TEST SHOULD FAIL')),'POST');
         $this->assertEquals('not_authorized',$restReply['reply']['error']);
-        
+
         // Fetch contacts, make sure we can only see the correct one.
         $restReply = $this->_restCall("Contacts");
 
@@ -704,13 +732,13 @@ class RestPortalSecurityTest extends RestTestPortalBase {
         // Positive test: Make sure we can fetch a note that is related to a visible bug
         $restReply = $this->_restCall('Notes/'.$this->notes[1]->id);
         $this->assertEquals($this->notes[1]->id,$restReply['reply']['id']);
-        
+
         // BEGIN SUGARCRM flav=ent ONLY
         // Negative test: Try and fetch a non-visible note
         $restReply = $this->_restCall("Notes/".$this->notes[0]->id);
         $this->assertEquals('not_found',$restReply['reply']['error']);
         // END SUGARCRM flav=ent ONLY
-        
+
         // Positive test: Make sure we can create a new note
         $restReply = $this->_restCall('Notes/',json_encode(array('name'=>'UNIT TEST POSTED','description'=>'This was posted by a unit test.','parent_type'=>'Bugs','parent_id'=>$this->bugs[1]->id,'portal_flag'=>true)),'POST');
         $this->assertTrue(!empty($restReply['reply']['id']));

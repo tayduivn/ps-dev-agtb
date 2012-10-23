@@ -28,9 +28,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
+// Test for Bug 57216 - on demand upgrade fails
+$module_name = '<module_name>';
+$object_name = '<object_name>';
 
-
-$listViewDefs['Bugs'] = array(
+$listViewDefs[$module_name] = array(
 	'BUG_NUMBER' => array(
 		'width' => '5',
 		'label' => 'LBL_NUMBER',
