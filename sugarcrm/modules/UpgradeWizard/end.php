@@ -214,11 +214,6 @@ if(isset($_SESSION['current_db_version']) && isset($_SESSION['target_db_version'
 		    add_report_chart_types();
 		}
 		//END SUGARCRM flav=pro ONLY
-		logThis("Upgrading multienum data", $path);
-        if(file_exists("$unzip_dir/scripts/upgrade_multienum_data.php")) {
-            require_once("$unzip_dir/scripts/upgrade_multienum_data.php");
-            upgrade_multienum_data();
-        }
 	 }
 
 
@@ -288,36 +283,6 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
-
-// Enable the InsideView connector by default
-if (version_compare($_SESSION['current_db_version'], '6.2.1', '<')  && function_exists('upgradeEnableInsideViewConnector'))
-{
-    upgradeEnableInsideViewConnector();
-}
-
-/*
-if (version_compare($_SESSION['current_db_version'], '6.2.0', '<') && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
-{
-    repair_long_relationship_names($path);
-}
-*/
-
-//Global search support
-/*
-if (version_compare($_SESSION['current_db_version'], '6.2.0', '<') && function_exists('add_unified_search_to_custom_modules_vardefs'))
-{
-   logThis('Add global search for custom modules start .', $path);
-   add_unified_search_to_custom_modules_vardefs();
-   logThis('Add global search for custom modules finished .', $path);
-}
-*/
-
-//Upgrade system displayed tabs and subpanels
-if(function_exists('upgradeDisplayedTabsAndSubpanels'))
-{
-	upgradeDisplayedTabsAndSubpanels($_SESSION['current_db_version']);
-}
-
 if (version_compare($_SESSION['current_db_version'], '6.5.0', '<'))
 {
     // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
@@ -349,13 +314,6 @@ require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
 require_once('modules/UpgradeWizard/uw_utils.php');
-
-/*
-if (version_compare($_SESSION['current_db_version'], '6.2.0', '<')) {
-	upgradeDateTimeFields($path);
-	upgradeDocumentTypeFields($path);
-}
-*/
 
 //Update the license
 logThis('Start Updating the license ', $path);

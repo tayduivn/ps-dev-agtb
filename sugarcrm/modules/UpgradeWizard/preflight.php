@@ -133,10 +133,7 @@ if (version_compare(phpversion(),'5.2.0') >=0) {
 	$db =& DBManagerFactory::getInstance();
 
 	//Quickcreatedefs on the basis of editviewdefs
-    if (version_compare($sugar_version, '5', '>='))
-    {
-        updateQuickCreateDefs();
-    }
+    updateQuickCreateDefs();
 	upgradeSugarCache($_SESSION['install_file']);
 
 	if((count($errors) == 1)) { // only diffs

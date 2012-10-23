@@ -49,29 +49,26 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  */
 function implodeVersion($version, $size = 0, $lastSymbol = '', $delimiter = '')
 {
-    preg_match('/^\d+(\.\d+)*/', $version, $version);
-    if (empty($version))
-    {
+    preg_match('/^\d+(\.\d+)*/', $version, $parsedVersion);
+    if (empty($parsedVersion)) {
         return '';
     }
 
-    $version = reset($version);
-    $version = explode('.', $version);
+    $parsedVersion = $parsedVersion[0];
+    $parsedVersion = explode('.', $parsedVersion);
 
-    if ($size == 0)
-    {
-        $size = count($version);
+    if ($size == 0) {
+        $size = count($parsedVersion);
     }
 
-    $version = array_pad($version, $size, 0);
-    $version = array_slice($version, 0, $size);
-    if ($lastSymbol !== '')
-    {
-        array_pop($version);
-        array_push($version, $lastSymbol);
+    $parsedVersion = array_pad($parsedVersion, $size, 0);
+    $parsedVersion = array_slice($parsedVersion, 0, $size);
+    if ($lastSymbol !== '') {
+        array_pop($parsedVersion);
+        array_push($parsedVersion, $lastSymbol);
     }
 
-    return implode($delimiter, $version);
+    return implode($delimiter, $parsedVersion);
 }
 
 /**
@@ -162,8 +159,6 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 	global $sugar_version;
 	$backwardModules='';
 
-    if (version_compare($sugar_version, '5', '>='))
-    {
     	$modules = getAllModules();
 			$backwardModules = array();
 			foreach($modules as $mod){
@@ -176,7 +171,6 @@ function commitCopyNewFiles($unzip_dir, $zip_from_dir, $path='') {
 			    	}
 			   }
 			}
-       }
 
 	$newFiles = findAllFiles(clean_path($unzip_dir . '/' . $zip_from_dir), array());
 	$zipPath = clean_path($unzip_dir . '/' . $zip_from_dir);
@@ -4727,41 +4721,6 @@ function upgradeSugarCache($file)
         }
 	}
 }
-
-
-/**
- * upgradeDisplayedTabsAndSubpanels
- *
- * @param $version String value of current system version (pre upgrade)
- */
-function upgradeDisplayedTabsAndSubpanels($version)
-{
-	if(version_compare($version, '6.2.0', '<'))
-	{
-		logThis('start upgrading system displayed tabs and subpanels');
-	    require_once('modules/MySettings/TabController.php');
-	    $tc = new TabController();
-
-	    //grab the existing system tabs
-	    $tabs = $tc->get_tabs_system();
-
-	    //add Calls, Meetings, Tasks, Notes, Prospects (Targets) and ProspectLists (Target Lists)
-	    //to displayed tabs unless explicitly set to hidden
-	    $modules_to_add = array('Calls', 'Meetings', 'Tasks', 'Notes', 'Prospects', 'ProspectLists');
-	    $added_tabs = array();
-
-	    foreach($modules_to_add as $module)
-	    {
-		       $tabs[0][$module] = $module;
-		       $added_tabs[] = $module;
-	    }
-
-	    logThis('calling set_system_tabs on TabController to add tabs: ' . var_export($added_tabs, true));
-	    $tc->set_system_tabs($tabs[0]);
-	    logThis('finish upgrading system displayed tabs and subpanels');
-	}
-}
-
 
 /**
  * unlinkUpgradeFiles

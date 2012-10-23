@@ -743,18 +743,7 @@ function preflightCheckJsonAlterTableCharset() {
 	if(empty($sugar_db_version))
 		include('sugar_version.php');
 
-    if (version_compare($sugar_db_version, '4.5.0', "<"))
-    {
-		if(isset($persistence['allTables']) && !empty($persistence['allTables'])) {
-			$alterTableContents = printAlterTableSql($persistence['allTables']);
-			$alterTableSchema  = "<p><a href='javascript:void(0); toggleNwFiles(\"alterTableSchemashow\");'>{$mod_strings['LBL_UW_CHARSET_SCHEMA_CHANGE']}</a>";
-			$alterTableSchema .= "<div id='alterTableSchemashow' style='display:none;'>";
-			$alterTableSchema .= "<textarea readonly cols='80' rows='10'>{$alterTableContents}</textarea>";
-			$alterTableSchema .= "</div></p>";
-		}
-	} else {
-		$alterTableSchema = '<i>'.$mod_strings['LBL_UW_PREFLIGHT_NOT_NEEDED'].'</i>';
-	}
+    $alterTableSchema = '<i>'.$mod_strings['LBL_UW_PREFLIGHT_NOT_NEEDED'].'</i>';
 
 	ob_start();
 	echo $alterTableSchema;
