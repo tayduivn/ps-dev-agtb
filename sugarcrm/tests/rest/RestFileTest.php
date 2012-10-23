@@ -31,11 +31,13 @@ class RestFileTest extends RestTestBase {
     protected $_contact_id;
     protected $_testfile1 = 'Bug55655-01.txt';
     protected $_testfile2 = 'Bug55655-02.txt';
-    
+    private $_config_override_existed = false;
+    private $_config_override_name = 'config_override.php'; 
+
     public function setUp()
     {
         parent::setUp();
-        
+
         // Create two sample text files for uploading
         sugar_file_put_contents($this->_testfile1, create_guid());
         sugar_file_put_contents($this->_testfile2, create_guid());
@@ -202,7 +204,50 @@ class RestFileTest extends RestTestBase {
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
     }
-    
+
+   /**
+    * @group rest
+    */
+    public function testSimulateFileTooLargeWithDeleteIfFails() {
+        $this->_beforeHijackConfigOverride();
+        $fileToPost = array('filename' => '@include/images/badge_256.png');
+        $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename' . '?delete_if_fails=true', $fileToPost, 'POST');
+        // In case we fail on assertions we want to get his written back correctly first!
+        $this->_afterHijackConfigOverride(); 
+
+        // Check DB to see if the related Note actually got marked deleted
+        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'",true);
+        $row = $GLOBALS['db']->fetchByAssoc($ret);
+
+        // Our main expectation is that the related Note record got marked deleted=1
+        $this->assertEquals(1, intval($row['deleted']), "Expected deleted column to be marked 1");
+        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
+        $this->assertEquals('fatal_error', $reply['reply']['error'], 'Expected error string not returned');
+        $this->assertContains('ERROR: uploaded file was too big', $reply['reply']['error_message'], 'Expected error message not returned');
+    }
+
+
+   /**
+    * @group rest
+    */
+    public function testSimulateFileTooLargeWithOutDeleteIfFails() {
+        $this->_beforeHijackConfigOverride();
+        $fileToPost = array('filename' => '@include/images/badge_256.png');
+        $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $fileToPost, 'POST');
+        // In case we fail on assertions we want to get his written back correctly first!
+        $this->_afterHijackConfigOverride(); 
+
+        // Check DB to ensure that the related Note did NOT got marked deleted
+        $ret = $GLOBALS['db']->query("SELECT deleted from notes where id = '".$this->_note_id."'",true);
+        $row = $GLOBALS['db']->fetchByAssoc($ret);
+
+        // Our main expectation is that the related Note record did NOT get marked as deleted (e.g. deleted=0)
+        $this->assertEquals(0, intval($row['deleted']), "Expected deleted column to be marked 0 (not deleted)");
+        $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
+        $this->assertEquals('fatal_error', $reply['reply']['error'], 'Expected error string not returned');
+        $this->assertContains('ERROR: uploaded file was too big', $reply['reply']['error_message'], 'Expected error message not returned');
+    }
+
     /**
      * @group rest
      */
@@ -219,7 +264,44 @@ class RestFileTest extends RestTestBase {
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
     }
-    
+
+    // We only want to selectively do the "setup/teardown like" methods
+    protected function _beforeHijackConfigOverride()
+    {
+        // Hijack the config_override.php file if exists, otherwise we'll create sugar_config anew
+        if (file_exists($this->_config_override_name)) {
+            require($this->_config_override_name);
+            rename($this->_config_override_name, ($this->_config_override_name.".bak"));
+            $this->_config_override_existed = true;
+        } else {
+            $this->_config_override_existed = false;
+        }
+        $sugar_config['upload_maxsize'] = '1';
+
+        // write_array_to_file will write array like $foo = array(...) which is NOT what
+        // we want here since it will overwrite the global! So we build line by line.
+        $newContents = "<?php\n";
+        foreach ($sugar_config as $key => $value) {
+            $value = ($value) ? $value : '0';
+            $newContents .= '$sugar_config["'.$key.'"] = '.$value.";\n";
+        }
+        sugar_file_put_contents($this->_config_override_name, $newContents);    
+    } 
+
+    protected function _afterHijackConfigOverride()
+    {
+        // Rest back to original state
+        // If was original config override, copy back over original kept in our ".bak"
+        if($this->_config_override_existed) {
+            rename(($this->_config_override_name.".bak"), $this->_config_override_name);
+        } else {
+            // If it didn't exist before, we need to remove the one we created
+            if (file_exists($this->_config_override_name)) {
+                unlink($this->_config_override_name);
+            }
+        }
+    }
+
     protected function _restCallNoAuthHeader($urlPart,$postBody='',$httpAction='', $addedOpts = array(), $addedHeaders = array())
     {
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
