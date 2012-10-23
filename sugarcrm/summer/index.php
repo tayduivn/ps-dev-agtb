@@ -63,6 +63,7 @@ if(!empty($_REQUEST['demo'])){
         <div id="content"></div>
         <div id="footer"></div>
         <div id="todo-widget-container" class="btn-group"></div>
+        <div id="tourguide"></div>
     </div>
 </div>
 
