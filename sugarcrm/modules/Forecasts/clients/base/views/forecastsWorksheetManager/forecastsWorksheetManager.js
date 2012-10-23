@@ -282,15 +282,12 @@
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
 
-        var _colIndex = 0;
-
         for( var i = 0; i < fields.length; i++ )  {
             if(fields[i].enabled) {
                 // in case we add column rearranging
                 var fieldDef = {
                     "sName": fields[i].name,
-                    "aTargets": [ _colIndex++ ],
-                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%',
+                    "sWidth" : (fields[i].name == "name") ? '30%' : '10%',
                     "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
                 };
 
@@ -303,6 +300,7 @@
                         case "currency":
                             fieldDef["sSortDataType"] = "dom-number";
                             fieldDef["sType"] = "numeric";
+                            fieldDef["sClass"] = "number";
                             break;
                     }
                 }
@@ -315,7 +313,7 @@
             {
                 "bAutoWidth": false,
                 "aaSorting": [],
-                "aoColumnDefs": columnDefs,
+                "aoColumns": columnDefs,
                 "bInfo":false,
                 "bPaginate":false
             }
