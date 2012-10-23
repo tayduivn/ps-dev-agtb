@@ -72,6 +72,10 @@
 <script>
 
 $("#productTour").click(function(){
+
+    if($('#tour').length > 0){
+        $('#tour').modal("show");
+    }  else {
     SUGAR.tour.init({
         id: 'tour',
         modals: modals,
@@ -80,6 +84,7 @@ $("#productTour").click(function(){
         className: 'whatsnew',
         onTourFinish: function() {}
     });
+    }
 });
 //qe_init function sets listeners to click event on elements of 'quickEdit' class
  if(typeof(DCMenu) !='undefined'){

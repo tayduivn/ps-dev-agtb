@@ -8867,6 +8867,10 @@ i.icon-arrow-up:before {
     font-size: 40px;
 
 }
+
+.tour i.icon-play.icon-xsm {
+    font-size: 13px;
+}
 .caption {
     font-size: 16px;
     text-align: center;
