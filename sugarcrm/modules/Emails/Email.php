@@ -548,7 +548,7 @@ class Email extends SugarBean {
             $mailConfigs = OutboundEmailConfigurationPeer::listMailConfigurations($current_user);
 
             foreach ($mailConfigs AS $mconfig) {
-                if ($mconfig->config_id == $request["fromAccount"]) {
+                if ($mconfig->getConfigId() == $request["fromAccount"]) {
                     $mailConfig = $mconfig;
                     break;
                 }
@@ -568,13 +568,14 @@ class Email extends SugarBean {
         $mailer->setTextBody($textBody);
 
         $replyTo      = $mailConfig->getReplyTo();
-        $replyToEmail = $replyTo->getEmail();
-
-        if (!empty($replyToEmail)) {
-            $mailer->setHeader(
-                EmailHeaders::ReplyTo,
-                new EmailIdentity($replyToEmail, $replyTo->getName())
-            );
+        if (!empty($replyTo)) {
+            $replyToEmail = $replyTo->getEmail();
+            if (!empty($replyToEmail)) {
+                $mailer->setHeader(
+                    EmailHeaders::ReplyTo,
+                    new EmailIdentity($replyToEmail, $replyTo->getName())
+                );
+            }
         }
 
         foreach ($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
