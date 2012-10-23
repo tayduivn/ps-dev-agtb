@@ -231,6 +231,7 @@
             if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
             {
             	self.context.forecasts.set({commitButtonEnabled: true});
+            	self.context.forecasts.set({commitButtonEnabledFromCommitted: true});
             }
 
             self.bestCaseCls = best.bestCaseCls;
