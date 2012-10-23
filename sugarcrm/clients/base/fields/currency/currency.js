@@ -39,11 +39,6 @@
             value = app.currency.convertWithRate(value, base_rate);
             currencyId = '-99';
         }
-        // if necessary, unformat first
-        if(/[^\d]/.test(value))
-        {
-            value = this.unformat(value);
-        }
         return app.currency.formatAmountLocale(value, currencyId);
     }
 })
