@@ -29,16 +29,30 @@
 
 function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callback) {
     this.chartObject = "";
-                //Bug#45831
-                if(document.getElementById(chartId) == null) {
-                    return false;
-                }
+
+    //Bug#45831
+    if(document.getElementById(chartId) == null) {
+        return false;
+    }
 
     var labelType = 'Native',
         useGradients = false,
         animate = false,
-        that = this;
+        that = this,
+        /**
+         * the main container to render chart
+         */
+        contentEl = 'content',
+        /**
+         * with of one column to render bars
+         */
+        minColumnWidth = 40;
+
     params = params ? params : {};
+
+    contentEl = params.contentEl || contentEl;
+    minColumnWidth = params.minColumnWidth || minColumnWidth;
+    SUGAR.charts.adjustLegendWidhtByParent = params.adjustLegendWidhtByParent || false;
 
 			switch(chartConfig["chartType"]) {
 			case "barChart":
@@ -54,11 +68,11 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         {
                             function fixChartContainer(event, itemsCount)
                             {
-                                var region = YAHOO.util.Dom.getRegion('content');
+                                var region = YAHOO.util.Dom.getRegion(contentEl);
                                 if ( region && region.width )
                                 {
-                                    // one bar needs about 40 px to correct display data and labels
-                                    var realWidth = itemsCount * 40;
+                                    // one bar needs about minColumnWidth px to correct display data and labels
+                                    var realWidth = itemsCount * parseInt(minColumnWidth, 10);
                                     if ( realWidth > region.width )
                                     {
                                         var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
@@ -661,6 +675,10 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
         chart : null,
         /**
+         * if true the lenend container is resized relatively parent element, false - relatively chart canvas
+         */
+        adjustLegendWidhtByParent : false,
+        /**
          * Execute callback function if specified
          *
          * @param callback
@@ -716,7 +734,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
             //adjust legend width to chart width
             jQuery('#legend'+chartId).ready(function() {
-                var chartWidth = jQuery('#'+chartId).width() - 20;
+                var chartWidth = SUGAR.charts.adjustLegendWidhtByParent ? jQuery('#'+chartId).parent().width() : jQuery('#'+chartId).width();
+                chartWidth = chartWidth - 20;
                 $('#legend'+chartId).width(chartWidth);
                 var legendGroupWidth = new Array();
                 $('.col .legendGroup').each(function(index) {
@@ -802,7 +821,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         setTimeout(function() {
                             // measure container width
                             var width = container.offsetWidth;
-                            var chartWidth = width - 20;
+                            var chartWidth = SUGAR.charts.adjustLegendWidhtByParent ? jQuery(container).parent().width() : container.offsetWidth;
+                            var chartWidth = chartWidth - 20;
                             $('#legend'+chartId).width(chartWidth);
 
                             // display widget before resize, otherwise
