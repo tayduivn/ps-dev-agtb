@@ -3,7 +3,7 @@
  "use strict"
 
   var PopoverExt = function ( element, options ) {
-    this.init('popoverext', element, options)
+    this.init('popoverext', element, options);
   }
 
   /* NOTE: POPOVER EXTENDS BOOTSTRAP-TOOLTIP.js
@@ -14,18 +14,18 @@
     constructor: PopoverExt
   , init: function ( type, element, options ) {
       var eventIn
-        , eventOut
+        , eventOut;
 
-      this.type = type
-      this.$element = $(element)
-      this.options = this.getOptions(options)
-      this.enabled = true
+      this.type = type;
+      this.$element = $(element);
+      this.options = this.getOptions(options);
+      this.enabled = true ;
 
       if (this.options.trigger != 'manual') {
-        eventIn  = this.options.trigger == 'hover' ? 'mouseenter' : 'focus'
-        eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur'
-        this.$element.on(eventIn, this.options.selector, $.proxy(this.enter, this))
-        this.$element.on(eventOut, this.options.selector, $.proxy(this.leave, this))
+        eventIn  = this.options.trigger == 'hover' ? 'mouseenter' : 'focus' ;
+        eventOut = this.options.trigger == 'hover' ? 'mouseleave' : 'blur' ;
+        this.$element.on(eventIn, this.options.selector, $.proxy(this.enter, this));
+        this.$element.on(eventOut, this.options.selector, $.proxy(this.leave, this));
       }
 
       //console.log(this.tip())
@@ -34,7 +34,7 @@
 
       this.options.selector ?
         (this._options = $.extend({}, this.options, { trigger: 'manual', selector: '' })) :
-        this.fixTitle()
+        this.fixTitle();
     }
     
   , setContent: function () {
@@ -51,7 +51,7 @@
     }
 
   , hasContent: function () {
-      return this.getTitle() || this.getContent()
+      return this.getTitle() || this.getContent();
     }
     
     
@@ -78,14 +78,14 @@
         this.setId();
 
         if (this.options.animation) {
-          $tip.addClass('fade')
+          $tip.addClass('fade');
         }
 
         placement = typeof this.options.placement == 'function' ?
           this.options.placement.call(this, $tip[0], this.$element[0]) :
             this.options.placement;
 
-        inside = /in/.test(placement)
+        inside = /in/.test(placement);
 
         $tip
           .remove()
@@ -99,41 +99,41 @@
           .trigger("focus");
         }
 
-        pos = this.getPosition(inside)
-        actualWidth = $tip[0].offsetWidth
-        actualHeight = $tip[0].offsetHeight
+        pos = this.getPosition(inside);
+        actualWidth = $tip[0].offsetWidth;
+        actualHeight = $tip[0].offsetHeight;
 
         switch (inside ? placement.split(' ')[1] : placement) {
           case 'bottom':
-            tp = {top: pos.top + pos.height + this.options.topOffset, left: pos.left + pos.width / 2 - actualWidth / 2}
-            break
+            tp = {top: pos.top + pos.height + this.options.topOffset, left: pos.left + pos.width / 2 - actualWidth / 2};
+            break;
           case 'bottom left':
-            tp = {top: pos.top + pos.height + this.options.topOffset, left: pos.left + this.options.leftOffset}
-            break
+            tp = {top: pos.top + pos.height + this.options.topOffset, left: pos.left + this.options.leftOffset};
+            break;
           case 'bottom right':
-            tp = {top: pos.top + pos.height + this.options.topOffset , left: (pos.left + pos.width) - actualWidth - this.options.leftOffset }
-            break
+            tp = {top: pos.top + pos.height + this.options.topOffset , left: (pos.left + pos.width) - actualWidth - this.options.leftOffset };
+            break;
           case 'top':
-            tp = {top: pos.top - actualHeight + this.options.topOffset, left: pos.left + (pos.width / 2 - actualWidth / 2) + this.options.leftOffset}
-            break
+            tp = {top: pos.top - actualHeight + this.options.topOffset, left: pos.left + (pos.width / 2 - actualWidth / 2) + this.options.leftOffset};
+            break;
           case 'top right':
-            tp = {top: pos.top - actualHeight + this.options.topOffset, left: (pos.left + pos.width) - actualWidth - this.options.leftOffset}
-            break
+            tp = {top: pos.top - actualHeight + this.options.topOffset, left: (pos.left + pos.width) - actualWidth - this.options.leftOffset};
+            break ;
           case 'top left':
-            tp = {top: pos.top - actualHeight  + this.options.topOffset, left: pos.left + this.options.leftOffset}
-            break
+            tp = {top: pos.top - actualHeight  + this.options.topOffset, left: pos.left + this.options.leftOffset};
+            break;
           case 'left':
-            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth}
-            break
+            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth};
+            break;
           case 'right':
-            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width}
-            break
+            tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width};
+            break;
         }
 
         $tip
           .css(tp)
           .addClass(placement)
-          .addClass('in')
+          .addClass('in');
           
           if(this.options.fixed == true) {
           	$tip.css("position","fixed");	
@@ -164,9 +164,9 @@
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('popoverext')
-        , options = typeof option == 'object' && option
+        , options = typeof option == 'object' && option;
       if (!data) $this.data('popoverext', (data = new PopoverExt(this, options)))
-      if (typeof option == 'string') data[option]()
+      if (typeof option == 'string') data[option]();
     })
   }
 

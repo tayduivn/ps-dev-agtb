@@ -1914,6 +1914,7 @@ $app_strings = array (
     'LBL_POWERED_BY_SUGARCRM' => "Powered by SugarCRM",
     'LBL_PRINT' => "Print",
     'LBL_HELP' => "Help",
+    'LBL_TOUR' => "Tour",
     'LBL_ID_FF_SELECT' => "Select",
     'DEFAULT'                              => 'Basic',
     'LBL_SORT'                              => 'Sort',

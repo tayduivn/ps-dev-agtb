@@ -50,11 +50,14 @@
     <div id="help" class="help">{$HELP_LINK}</div>
     {/if}
     <div id="partner">
-        <div id="integrations" style="min-width: 20px;">
+        <div id="integrations">
             {foreach from=$DYNAMICDCACTIONS item=action}
                 {$action.script} {$action.image}
             {/foreach}
         </div>
+    </div>
+    <div id="productTour">
+        {$TOUR_LINK}
     </div>
     <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
 <script>
@@ -68,7 +71,16 @@
 </div>
 <script>
 
-
+$("#productTour").click(function(){
+    SUGAR.tour.init({
+        id: 'tour',
+        modals: modals,
+        modalUrl: "index.php?module=Home&action=tour&to_pdf=1",
+        prefUrl: "index.php?module=Users&action=UpdateTourStatus&to_pdf=true&viewed=true",
+        className: 'whatsnew',
+        onTourFinish: function() {}
+    });
+});
 //qe_init function sets listeners to click event on elements of 'quickEdit' class
  if(typeof(DCMenu) !='undefined'){
     DCMenu.qe_refresh = false;

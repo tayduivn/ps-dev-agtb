@@ -42,8 +42,8 @@
                     <param name="movie" value="http://d2owqhhe2x3j50.cloudfront.net/media.sugarcrm.com/player.swf" />
                     <param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" />
                     <param name="wmode" value="transparent" />
-                    <param name="flashvars" value="file=media.sugarcrm.com/sugar65demos/whatsnewin65_RC3.mp4&amp;streamer=rtmp://s1j4a097o1arx2.cloudfront.net/cfx/st&amp;provider=rtmp&amp;image=include/images/tour/FirstFrame.png&amp;autostart=false" />
-                    <embed autostart="false" allowfullscreen="true" allowscriptaccess="always" bgcolor="transparent" class="movieBox" flashvars="file=media.sugarcrm.com/sugar65demos/whatsnewin65_RC3.mp4&amp;streamer=rtmp://s1j4a097o1arx2.cloudfront.net/cfx/st&amp;provider=rtmp&amp;image=include/images/tour/FirstFrame.png&amp;autostart=false" height="281" id="single2" name="single2" src="http://d2owqhhe2x3j50.cloudfront.net/media.sugarcrm.com/player.swf" width="500" wmode="transparent">
+                    <param name="flashvars" value="file=media.sugarcrm.com/sugar65demos/whatsnew.mp4&amp;streamer=rtmp://s1j4a097o1arx2.cloudfront.net/cfx/st&amp;provider=rtmp&amp;image=include/images/tour/FirstFrame.png&amp;autostart=false" />
+                    <embed autostart="false" allowfullscreen="true" allowscriptaccess="always" bgcolor="transparent" class="movieBox" flashvars="file=media.sugarcrm.com/sugar65demos/whatsnew.mp4&amp;streamer=rtmp://s1j4a097o1arx2.cloudfront.net/cfx/st&amp;provider=rtmp&amp;image=include/images/tour/FirstFrame.png&amp;autostart=false" height="281" id="single2" name="single2" src="http://d2owqhhe2x3j50.cloudfront.net/media.sugarcrm.com/player.swf" width="500" wmode="transparent">
                     </embed>
                 </object>
                 <div class="caption">{$mod.LBL_TOUR_WATCH}</div>
@@ -84,7 +84,7 @@
 			</p>
 			</div>
 			<div style="float: left">
-				<img src="include/images/tour/profile_link.png" width="168" height="247">
+				<img src="themes/default/images/pt-profile-link.png" width="168" height="247">
 			</div>
 		</div>
 	</div>
