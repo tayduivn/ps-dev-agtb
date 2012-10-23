@@ -305,7 +305,7 @@
         var params = this.values || {};
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
-        params.adjustLegendWidhtByParent = true;
+        params.adjustLegendWidthByParent = true;
 
         chart = new loadSugarChart(chartId, this.url, css, chartConfig, params);
         this.chartRendered = true;

@@ -52,7 +52,7 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
 
     contentEl = params.contentEl || contentEl;
     minColumnWidth = params.minColumnWidth || minColumnWidth;
-    SUGAR.charts.adjustLegendWidhtByParent = params.adjustLegendWidhtByParent || false;
+    SUGAR.charts.adjustLegendWidthByParent = params.adjustLegendWidthByParent || false;
 
 			switch(chartConfig["chartType"]) {
 			case "barChart":
@@ -677,7 +677,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
         /**
          * if true the lenend container is resized relatively parent element, false - relatively chart canvas
          */
-        adjustLegendWidhtByParent : false,
+        adjustLegendWidthByParent : false,
         /**
          * Execute callback function if specified
          *
@@ -734,7 +734,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
             //adjust legend width to chart width
             jQuery('#legend'+chartId).ready(function() {
-                var chartWidth = SUGAR.charts.adjustLegendWidhtByParent ? jQuery('#'+chartId).parent().width() : jQuery('#'+chartId).width();
+                var chartWidth = SUGAR.charts.adjustLegendWidthByParent ? jQuery('#'+chartId).parent().width() : jQuery('#'+chartId).width();
                 chartWidth = chartWidth - 20;
                 $('#legend'+chartId).width(chartWidth);
                 var legendGroupWidth = new Array();
@@ -821,7 +821,7 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                         setTimeout(function() {
                             // measure container width
                             var width = container.offsetWidth;
-                            var chartWidth = SUGAR.charts.adjustLegendWidhtByParent ? jQuery(container).parent().width() : container.offsetWidth;
+                            var chartWidth = SUGAR.charts.adjustLegendWidthByParent ? jQuery(container).parent().width() : container.offsetWidth;
                             var chartWidth = chartWidth - 20;
                             $('#legend'+chartId).width(chartWidth);
 
