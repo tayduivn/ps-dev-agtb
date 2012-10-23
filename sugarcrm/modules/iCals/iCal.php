@@ -294,7 +294,7 @@ class iCal extends vCal {
         require_once('modules/ProjectTask/ProjectTask.php');
         $where = "project_task.assigned_user_id='{$user_bean->id}' ".
             "AND (project_task.status IS NULL OR (project_task.status!='Deferred')) ".
-            "AND (project_task.date_start IS NULL OR project_task.date_start <= '$today')";
+            "AND (project_task.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('project_task', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
         $seedProjectTask = new ProjectTask();
         $projectTaskList = $seedProjectTask->get_full_list("", $where);
         if (is_array($projectTaskList))
@@ -308,7 +308,7 @@ class iCal extends vCal {
         require_once('modules/Tasks/Task.php');
         $where = "tasks.assigned_user_id='{$user_bean->id}' ".
             "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
-            "AND (tasks.date_start IS NULL OR tasks.date_start <= '$today')";
+            "AND (tasks.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('tasks', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
         $seedTask = new Task();
         $taskList = $seedTask->get_full_list("", $where);
         if (is_array($taskList))
