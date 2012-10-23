@@ -252,7 +252,7 @@ class iCal extends vCal {
                         {
                             if ($attendee->id != $user_bean->id)
                             {
-                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. $attendee->email1 . "\n";
+                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
                             }
                         }
                     }
@@ -268,7 +268,7 @@ class iCal extends vCal {
                         {
                             if ($attendee->id != $user_bean->id)
                             {
-                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. $attendee->email1 . "\n";
+                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
                             }
                         }
                     }
