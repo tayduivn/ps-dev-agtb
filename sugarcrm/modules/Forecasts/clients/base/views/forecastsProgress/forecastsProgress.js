@@ -134,9 +134,6 @@
         this.likelyTotal = totals.likely_adjusted;
         this.bestTotal = totals.best_adjusted;
         this.worstTotal = totals.worst_adjusted;
-        this.model.set({
-            quota_amount : totals.quota
-        });
         this.recalculateModel();
     },
 
@@ -268,7 +265,8 @@
                     self.model.set({
                         opportunities : data.opportunities,
                         closed_amount : data.closed_amount,
-                        revenue : data.pipeline_revenue
+                        revenue : data.pipeline_revenue,
+                        quota_amount : data.quota_amount
                     });
                 } else {
                     self.model.set({
