@@ -254,12 +254,13 @@ function verify_data(form)
 {
     // handles any errors in the email widget
     var isError = !check_form("EditView");
-	
+
     if (trim(form.last_name.value) == "") {
 		add_error_style('EditView',form.last_name.name,
                         SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_LIST_NAME') );
         isError = true;
 	}
+
 	if (trim(form.user_name.value) == "") {
 		add_error_style('EditView',form.user_name.name,
                         SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_USER_NAME') );
@@ -272,22 +273,22 @@ function verify_data(form)
                         SUGAR.language.get('app_strings','ERR_MISSING_REQUIRED_FIELDS') + SUGAR.language.get('Users','LBL_NEW_PASSWORD') );
         isError = true;
 	}
-	
+
  	if (isError == true) {
         return false;
     }
 	
-	if (document.EditView.return_id.value != '' && (typeof(form.reports_to_id)!="undefined") && (document.EditView.return_id.value == form.reports_to_id.value)) {
-		alert(SUGAR.language.get('app_strings','ERR_SELF_REPORTING'));
-		return false;
-	}
-	
     if ( !document.EditView.isDuplicate || !document.EditView.isDuplicate.value )
     {
-        if (document.EditView.dec_sep.value != '' && (document.EditView.dec_sep.value == "'")) {
-            alert(SUGAR.language.get('app_strings','ERR_NO_SINGLE_QUOTE') + SUGAR.language.get('Users','LBL_DECIMAL_SEP'));
+        if (document.EditView.return_id.value != '' && (typeof(form.reports_to_id)!="undefined") && (document.EditView.return_id.value == form.reports_to_id.value)) {
+            alert(SUGAR.language.get('app_strings','ERR_SELF_REPORTING'));
             return false;
         }
+    }
+
+    if (document.EditView.dec_sep.value != '' && (document.EditView.dec_sep.value == "'")) {
+        alert(SUGAR.language.get('app_strings','ERR_NO_SINGLE_QUOTE') + SUGAR.language.get('Users','LBL_DECIMAL_SEP'));
+        return false;
     }
     
 	if (document.EditView.num_grp_sep.value != '' && (document.EditView.num_grp_sep.value == "'")) {
