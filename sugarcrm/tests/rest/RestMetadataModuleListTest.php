@@ -299,6 +299,8 @@ class RestMetadataModuleListTest extends RestTestBase {
             if (isset($data['modules'][$module]['fields'])) {
                 $fields = $data['modules'][$module]['fields'];
                 foreach($fields as $fieldName => $fieldDef) {
+                    // make sure we got sortable in all these field defs.
+                    $this->assertArrayHasKey('sortable', $fieldDef, "Sortable isn't listed in the fields");
                     if (isset($fieldDef['type']) && ($fieldDef['type'] == 'relate')) {
                         if (isset($fieldDef['module']) && !in_array($fieldDef['module'], $data['full_module_list'])) {
                             $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
