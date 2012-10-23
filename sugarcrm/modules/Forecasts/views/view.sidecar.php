@@ -31,7 +31,7 @@ require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
 
 class ForecastsViewSidecar extends SidecarView
 {
-    function __construct($bean = null, $view_object_map = array())
+    public function __construct($bean = null, $view_object_map = array())
     {
         $this->options['show_footer'] = false;
         $this->options['show_subpanels'] = false;
@@ -44,7 +44,7 @@ class ForecastsViewSidecar extends SidecarView
      * Override the display method to set Forecasts specific variables and use a custom layout template
      *
      */
-    function display()
+    public function display()
     {
         global $current_user, $sugar_config;
 
@@ -75,7 +75,7 @@ class ForecastsViewSidecar extends SidecarView
      * @param bool $returnOnlyUserData skip all the other initial data?
      * @return array Array of initial default data for Forecasts module
      */
-    function forecastsInitialization($returnOnlyUserData=false) {
+    public function forecastsInitialization($returnOnlyUserData=false) {
         global $current_user, $app_list_strings;
 
         $returnInitData = array();
