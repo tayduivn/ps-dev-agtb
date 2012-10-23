@@ -8119,7 +8119,6 @@ a [class*=" icon-"] {
 }
 li [class^="icon-"],
 li [class*=" icon-"] {
-    display: inline-block;
 }
 li .icon-large[class^="icon-"],
 li .icon-large[class*=" icon-"] {
