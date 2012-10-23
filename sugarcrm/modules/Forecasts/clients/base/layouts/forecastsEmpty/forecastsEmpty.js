@@ -70,8 +70,8 @@
                 before: {
                     hide : function(){
                         // if we cancel out
-                        if(!this.context.forecasts.config.get('is_setup')) {
-                            this.loc = 'index.php?module=Home';
+                        if(!self.context.forecasts.config.get('is_setup')) {
+                            self.loc = 'index.php?module=Home';
                         }
                         window.location = self.loc;
                     }
