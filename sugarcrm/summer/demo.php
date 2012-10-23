@@ -691,6 +691,117 @@ class Phase3Demo
 
         array(
             'user_id'=>'seed_chris_id',
+            'se_id'=>'rmt-0cf6224d795dcd82bbc6e719d2a4f595',
+            'Accounts' => array(
+                array(
+                    'id' => 'seed_alcatel_lucent',
+                    'name' => 'Alcatel-Lucent',
+                    'phone_office' => '33 (0)1 40 76 10 10',
+                    'website' => 'www.alcatel-lucent.com',
+                    'billing_address_street' => '3 av. Octave Gréard',
+                    'billing_address_city' => 'Paris',
+                    'billing_address_state' => 'Île-de-France',
+                    'billing_address_postalcode' => '75007',
+                    'billing_address_country' => 'France',
+                    'account_type' => 'Customer',
+                    'industry'=>'Communications'
+                ),
+            ),
+            'Contacts' => array(
+                array(
+                    'id' => 'seed_alcatel_lucent_ct1',
+                    'first_name' => 'Ben',
+                    'last_name' => 'Verwaayen',
+                    'email1' => 'bverwaayen@example.com',
+                    'title' => 'CEO',
+                    'picture' => 'http://www.alcatel-lucent.com/wps/PA_1_A_1OB/images/Photos/Portrait_Photos/verwaayen_70x92.jpg',
+                ),
+                array(
+                    'id' => 'seed_alcatel_lucent_ct2',
+                    'first_name' => 'Michel',
+                    'last_name' => 'Emelianoff',
+                    'email1' => 'memlianoff@example.com',
+                    'title' => 'Executive Vice President',
+                    'picture' => 'http://www.alcatel-lucent.com/wps/PA_1_A_1OB/images/Photos/Portrait_Photos/Michel_Emelianoff_152x200.jpg'
+                ),
+            ),
+            'Opportunities' =>
+            array(
+                array(
+                    'id' => 'seed_alcatel_lucent_op1',
+                    'name' => '1000 User Licenses',
+                    'amount' => '100000',
+                    'sales_stage' => 'Closed Won',
+                    'probability' => 100,
+                ),
+                array(
+                    'id' => 'seed_alcatel_lucent_op2',
+                    'name' => '50 User Training',
+                    'amount' => '20000',
+                    'sales_stage' => 'Closed Lost',
+                    'probability' => 0,
+                ),
+            )
+        ),
+
+        array(
+            'user_id'=>'seed_jim_id',
+            'se_id'=>'rmt-b97520b441781f8dbe838ab5c71cc45c',
+            'Accounts' => array(
+                array(
+                    'id' => 'seed_mubadala',
+                    'name' => 'Mubadala',
+                    'phone_office' => '971 2 413 0000',
+                    'website' => 'www.mubadala.ae',
+                    'billing_address_street' => 'PO Box 45005',
+                    'billing_address_city' => 'Abu Dhabi',
+                    'billing_address_state' => 'Abu Dhabi',
+                    'billing_address_postalcode' => '45005',
+                    'billing_address_country' => 'United Arab Emirates',
+                    'account_type' => 'Customer',
+                    'industry'=>'Government'
+                ),
+            ),
+            'Contacts' => array(
+                array(
+                    'id' => 'seed_mubadala_ct1',
+                    'first_name' => 'Ahmed Yahia',
+                    'last_name' => 'Al Idrissi',
+                    'email1' => 'aidrissi@example.com',
+                    'title' => 'Executive Director',
+                    'picture' => 'http://mubadala.ae/images/sized/images/upload_images/ahmed-yahia-al-idrissi-150x150.jpg',
+                ),
+                array(
+                    'id' => 'seed_mubadala_ct2',
+                    'first_name' => 'Ajit',
+                    'last_name' => 'Naidu',
+                    'email1' => 'anaidu@example.com',
+                    'title' => 'Chief Information Officer',
+                    'picture' => 'http://mubadala.ae/images/sized/images/upload_images/ajit-naidu-150x150.jpg'
+                ),
+            ),
+            'Opportunities' =>
+            array(
+                array(
+                    'id' => 'seed_mubadala_op1',
+                    'name' => '500 User Licenses',
+                    'amount' => '50000',
+                    'sales_stage' => 'Closed Lost',
+                    'probability' => 0,
+                ),
+                array(
+                    'id' => 'seed_mubadala_op2',
+                    'name' => '50 User Trial',
+                    'amount' => '3000',
+                    'sales_stage' => 'Qualification',
+                    'probability' => 40,
+                ),
+            )
+        ),
+
+
+        array(
+            'user_id'=>'seed_chris_id',
             'se_id'=>'seed_max_id',
             'Accounts' => array(
                 array(
