@@ -302,7 +302,12 @@
         var text = hb({'key' : "LBL_CHART_FORECAST_FOR", 'module' : 'Forecasts', 'args' : this.timeperiod_label});
         this.$el.find('h4').html(text);
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
+        var params = this.values || {};
+        params.contentEl = 'chart';
+        params.minColumnWidth = 120;
+        params.adjustLegendWidhtByParent = true;
+
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params);
         this.chartRendered = true;
         return chart.chartObject;
     }
