@@ -63,6 +63,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'clickToEdit' => true,
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                 ),
 
                 array(
@@ -73,6 +74,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'clickToEdit' => true,
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                 ),
 
                 array(
@@ -83,6 +85,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'clickToEdit' => true,
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                 ),
             ),
         ),

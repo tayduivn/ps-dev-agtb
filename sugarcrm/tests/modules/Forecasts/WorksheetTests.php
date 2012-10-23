@@ -52,9 +52,6 @@ class WorksheetTests extends Sugar_PHPUnit_Framework_TestCase
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
         $worksheet->currency_id = $currency->id;
         $worksheet->save();
-        $this->assertEquals(
-            sprintf('%.6f', $worksheet->base_rate),
-            sprintf('%.6f', $currency->conversion_rate)
-        );
+        $this->assertEquals($worksheet->base_rate,$currency->conversion_rate,'',2);
     }
 }
