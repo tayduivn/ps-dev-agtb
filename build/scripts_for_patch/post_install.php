@@ -898,6 +898,11 @@ function upgrade_panel_tab_defs()
  */
 function update_relationships()
 {
+    if (is_dir('custom/Extension/modules/relationships/relationships') == false)
+    {
+        return;
+    }
+
     require_once('modules/ModuleBuilder/parsers/relationships/DeployedRelationships.php');
     require_once('ModuleInstall/ModuleInstaller.php');
     $GLOBALS['app_list_strings'] = return_app_list_strings_language($GLOBALS['current_language']);
