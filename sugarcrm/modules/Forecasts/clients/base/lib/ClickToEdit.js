@@ -226,9 +226,6 @@
                         
                         settings.field.model.set(values);
 
-                        // re-render the field
-                        $(this).html(this.render());
-
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
                     }
