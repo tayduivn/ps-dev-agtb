@@ -15,7 +15,7 @@
     </ul>
   </div>
   <div id="{{timelineId}}"></div>
-  <div id="{{calendarId}}"></div>
+  <div id="{{calendarId}}" class="activitystream-calendar"></div>
   <div class="activitystream-post row omnibar">
       <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
         <img src="{{picture_url}}" alt="{{full_name}}">
