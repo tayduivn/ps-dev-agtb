@@ -659,10 +659,10 @@
                         }
                         break;
                     case "created":
-                        event.title += model.get('target_name');
+                        event.title += model.get('target_name') || 'a record';
                         break;
                     case "related":
-                        event.title += model.get('activity_data').relate_name + " to " + model.get('target_name');
+                        event.title += (model.get('activity_data').relate_name || 'a record') + " to " + (model.get('target_name') || 'a record');
                         break;
                     case "updated":
                         $.each(model.get('activity_data'), function(index, value) {
@@ -671,7 +671,7 @@
                             }
                             event.title += value.field_name;
                         });
-                        event.title += " on "+model.get('target_name');
+                        event.title += model.get('target_name') ? " on "+ model.get('target_name') : 'a record';
                         break;
                     default:
                         break;
