@@ -34,11 +34,11 @@
 class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
 {
 
-    var $testUser;
+    public $testUser;
 
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        SugarTestHelper::setup('current_user');
         $this->testUser = SugarTestUserUtilities::createAnonymousUser();
         $this->testUser->save();
     }
@@ -47,7 +47,7 @@ class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->testUser->resetPreferences();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($GLOBALS['current_user']);
+        SugarTestHelper::tearDown();
     }
 
     /**
