@@ -10707,7 +10707,7 @@ $jit.LineChart = new Class({
       var acumLeft = 0, acumRight = 0;
       var lastNode = (l-1 == i) ? true : false; 
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -11421,7 +11421,7 @@ $jit.AreaChart = new Class({
       var valArray = $.zip(valLeft, valRight);
       var acumLeft = 0, acumRight = 0;
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -13680,7 +13680,7 @@ $jit.BarChart = new Class({
 
 
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         
         'data': {
@@ -14741,7 +14741,7 @@ $jit.FunnelChart = new Class({
     percentageArray.reverse();
     
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         
         'data': {
@@ -16594,7 +16594,7 @@ $jit.PieChart = new Class({
       
  
       ch.push({
-        'id': prefix + val.label,
+        'id': prefix + (val.chart_id || val.label),
         'name': val.label,
         'data': {
           'value': valArray,
@@ -17464,7 +17464,7 @@ $jit.GaugeChart = new Class({
 		  var valuelabelsArray = $.splat(val.valuelabels);
 
 		  ch.push({
-			'id': prefix + val.label,
+			'id': prefix + (val.chart_id || val.label),
 			'name': val.label,
 			'data': {
 			  'value': valArray,
