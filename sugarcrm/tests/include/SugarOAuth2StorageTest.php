@@ -79,6 +79,41 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         parent::tearDown();
     }
 
+    /**
+     * @group bug57572
+     */
+    public function testPortalInactiveError(){
+        $contact1 = BeanFactory::newBean('Contacts');
+        $contact1->first_name = 'bug57572';
+        $contact1->last_name = 'testPortalInactiveError';
+        $contact1->portal_active = true;
+        $contact1->portal_name = "unittestportal1";
+        $contact1->portal_password = User::getPasswordHash("unittestportal1");
+        $contact1->save();
+        $this->contacts[] = $contact1;
+
+        $storage = new SugarOAuth2Storage();
+        $ex = null;
+        try{
+            $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
+        } catch(SugarApiExceptionPortalUserInactive $e){
+            $ex = $e;
+        }
+        $this->assertNull($ex, "SugarApiExceptionPortalUserInactive SHOULD NOT have been thrown.");
+
+        $contact1->portal_active = false;
+        $contact1->save();
+
+        $ex = null;
+        try{
+            $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
+        } catch(SugarApiExceptionPortalUserInactive $e){
+            $ex = $e;
+        }
+        $this->assertNotNull($ex, "SugarApiExceptionPortalUserInactive SHOULD have been thrown.");
+
+    }
+
     public function testTooManyUsers()
     {
         $ret = $GLOBALS['db']->query("SELECT value FROM config WHERE name = 'num_portal_users'");
