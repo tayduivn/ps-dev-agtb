@@ -45,8 +45,6 @@ $viewdefs['Meetings']['mobile']['view']['detail'] = array(
                         'wireless_edit_only' => true,)),
                 'date_start',
                 'status',
-                'duration_hours',
-                'duration_minutes',
                 'description',
                 'assigned_user_name',
                 //BEGIN SUGARCRM flav=pro ONLY
