@@ -1963,7 +1963,7 @@ class SugarBean
             $this->current_notify_user = $notify_user;
 
             $templateName = $this->getTemplateNameForNotificationEmail();
-            $xtpl         = $this->createNotificationEmailTemplate($notify_user, $templateName);
+            $xtpl         = $this->createNotificationEmailTemplate($templateName);
             $subject      = $xtpl->text($templateName . "_Subject");
             $textBody     = trim($xtpl->text($templateName));
 
