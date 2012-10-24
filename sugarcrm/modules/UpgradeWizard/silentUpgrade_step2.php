@@ -468,21 +468,6 @@ if(!$origVersion){
     logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
 }
 
-//BEGIN SUGARCRM flav=pro ONLY
-// If going from pre 610 to 610+, migrate the report favorites
-// At this point in the upgrade, the db and sugar_version have already been updated to 6.1 so we need to add a mechanism of preserving the original version
-// so that we can check against that in 6.1.1.
-/*
-//BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '610'){
-    logThis("Since origVersion is {$origVersion}, which is before 6.1.0, we migrate reports favorites", $path);
-    logThis("Begin: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
-    migrate_sugar_favorite_reports();
-    logThis("Complete: Migrating Sugar Reports Favorites to new SugarFavorites", $path);
-}
-//END SUGARCRM flav=int ONLY
-*/
-
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
@@ -526,17 +511,6 @@ addPdfManagerTemplate();
 logThis("Finished adding pdf template", $path);
 //END SUGARCRM flav=pro ONLY
 
-/*
-//BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '620'){
-	//bug: 39757 - upgrade the calls and meetings end_date to a datetime field
-	upgradeDateTimeFields($path);
-	//upgrade the documents and meetings for lotus support
-	upgradeDocumentTypeFields($path);
-}
-//END SUGARCRM flav=int ONLY
-*/
-
 //bug: 37214 - merge config_si.php settings if available
 logThis('Begin merge_config_si_settings', $path);
 merge_config_si_settings(true, '', '', $path);
@@ -547,38 +521,10 @@ logThis('Begin upgrade_connectors', $path);
 upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
-// Enable the InsideView connector by default
-if($origVersion < '621' && function_exists('upgradeEnableInsideViewConnector')) {
-    logThis("Looks like we need to enable the InsideView connector\n",$path);
-    upgradeEnableInsideViewConnector($path);
-}
-
-
-//bug: 36845 - ability to provide global search support for custom modules
-/*
-//BEGIN SUGARCRM flav=int ONLY
-if($origVersion < '620' && function_exists('add_unified_search_to_custom_modules_vardefs')){
-   logThis('Add global search for custom modules start .', $path);
-   add_unified_search_to_custom_modules_vardefs();
-   logThis('Add global search for custom modules finished .', $path);
-}
-//END SUGARCRM flav=int ONLY
-*/
-
 //Upgrade system displayed tabs and subpanels
 if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 {
 	upgradeDisplayedTabsAndSubpanels($origVersion);
-}
-
-if ($origVersion < '650')
-{
-    // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
-    $db->query("UPDATE email_templates SET type = 'workflow' WHERE
-        coalesce(" . $db->convert("base_module", "length") . ",0) > 0
-        AND
-        coalesce(" . $db->convert("type", "length") . ",0) = 0
-    ");
 }
 
 //Unlink files that have been removed
@@ -592,18 +538,14 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
     rebuildSprites(true);
 }
 
-//Run repairUpgradeHistoryTable
-if($origVersion < '650' && function_exists('repairUpgradeHistoryTable'))
-{
-    repairUpgradeHistoryTable();
-}
-
 //BEGIN SUGARCRM flav=PRO ONLY
 //setup forecast defualt settings
 if($origVersion < '670')
 {
+    require_once(clean_path($unzip_dir.'/scripts/upgrade_utils.php'));
     require_once($unzip_dir.'/'.$zip_from_dir.'/modules/Forecasts/ForecastsDefaults.php');
     ForecastsDefaults::setupForecastSettings(true,$origVersion,getUpgradeVersion());
+    ForecastsDefaults::upgradeColumns();
 }
 //END SUGARCRM flav=PRO ONLY
 
