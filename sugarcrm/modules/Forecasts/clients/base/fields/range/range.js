@@ -28,8 +28,8 @@
      */
     _render: function(value) {
         app.view.Field.prototype._render.call(this);
-debugger;
-        this._setUpSlider(this.$el.find(this.fieldTag));
+
+        this._setupSlider(this.$el.find(this.fieldTag));
     },
 
     /**
@@ -105,7 +105,7 @@ debugger;
      * @param jqel a jquery element, i. e. $.find(this.fieldTag)
      * @private
      */
-    _setUpSlider: function(jqel) {
+    _setupSlider: function(jqel) {
         jqel.noUiSlider('init', {
             knobs: this._calculateHandles(),
             connect: this._setupHandleConnections(this.def.sliderType || 'single'),

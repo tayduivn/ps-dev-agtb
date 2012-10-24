@@ -102,12 +102,12 @@ describe("Range field", function() {
     describe("rendering", function() {
 
         beforeEach(function() {
-            sinon.stub(field, "_setUpSlider");
+            sinon.stub(field, "_setupSlider");
             field._render();
         });
 
         afterEach(function() {
-            field._setUpSlider.restore();
+            field._setupSlider.restore();
         })
 
         it("should render the field", function() {
@@ -115,7 +115,7 @@ describe("Range field", function() {
         });
 
         it("should set up the sliders for the field", function() {
-            expect(field._setUpSlider).toHaveBeenCalled();
+            expect(field._setupSlider).toHaveBeenCalled();
         });
     });
 
@@ -254,7 +254,7 @@ describe("Range field", function() {
         });
     });
 
-    describe("_setUpSlider method", function() {
+    describe("_setupSlider method", function() {
 
         var el;
 
@@ -267,7 +267,7 @@ describe("Range field", function() {
                 noUiSlider: function() { return this; }
             };
             sinon.spy(el, "noUiSlider");
-            field._setUpSlider(el);
+            field._setupSlider(el);
         });
 
         afterEach(function() {
