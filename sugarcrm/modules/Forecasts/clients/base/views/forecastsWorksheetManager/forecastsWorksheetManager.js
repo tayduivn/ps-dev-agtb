@@ -73,6 +73,7 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
+    	this.context.forecasts.set({commitButtonEnabledFromCommitted: false});
         this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
@@ -275,6 +276,7 @@
         this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
+        
         app.view.View.prototype._render.call(this);
 
         // parse metadata into columnDefs

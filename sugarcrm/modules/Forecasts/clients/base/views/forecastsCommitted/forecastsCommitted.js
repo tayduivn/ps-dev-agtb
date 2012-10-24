@@ -309,7 +309,7 @@
         var user = this.context.forecasts.get('selectedUser');
 
         var forecastData = {};
-
+       
         if(user.isManager == true && user.showOpps == false) {
             forecastData.best_case = self.totals.best_adjusted;
             forecastData.likely_case = self.totals.likely_adjusted;
@@ -330,7 +330,9 @@
 
         // apply data to model then save
         forecast.set(forecastData);
-        forecast.save();
+        forecast.save({}, {success:function(){
+        	self.context.forecasts.trigger("forecasts:committed:saved");
+        }});
 
         // clear out the arrows
         self.likelyCaseCls = '';

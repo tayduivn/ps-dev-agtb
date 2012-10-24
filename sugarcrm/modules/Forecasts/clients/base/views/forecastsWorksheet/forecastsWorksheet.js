@@ -19,6 +19,7 @@
     isEditableWorksheet:false,
     _collection:{},
     columnDefs : [],
+    needsRelaoded : false,
 
     /**
      * Initialize the View
@@ -186,6 +187,15 @@
             	}
 
             }, this);
+            this.context.forecasts.on("forecasts:committed:saved", function(){
+            	if(this.needsReloaded){
+            		var model = this.context.forecasts.worksheet;
+            		model.url = this.createURL();
+            		this.safeFetch();
+            		this.needsReloaded = false;
+            	}
+            	
+            }, this);
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -295,6 +305,28 @@
     			}
     		}
     	}
+    	else if(self.selectedUser.isManager){
+    		//check to see if we just have a draft version saved, and show message about committing
+    		if(self.context.forecasts.get("currentWorksheet") == "worksheet" && self.context.forecasts.get("commitButtonEnabled")){
+    			var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
+    			if(confirm(msg[0] + "\n\n" + msg[1])){
+    				self.needsReloaded = true;
+    				self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
+    			}
+    			else{
+    				if(fetch){
+        				collection.fetch();
+        			}
+    			}
+    				
+    		}
+    		else{
+    			//No popups needed, fetch like normal
+        		if(fetch){
+    				collection.fetch();
+    			}
+    		}
+    	}
     	else{
     		//no changes, fetch like normal.
     		if(fetch){
@@ -336,12 +368,12 @@
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
-     
+             
         //check to see if the commit buttons were enabled by the committed widget, if not, disable them.
         if(!this.context.forecasts.get("commitButtonEnabledFromCommitted")){
         	this.context.forecasts.set({commitButtonEnabled: false});
         }
-        this.context.forecasts.set({commitButtonEnabledFromCommitted: false});
+        
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
@@ -595,6 +627,7 @@
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser;
+        this.context.forecasts.set({commitButtonEnabledFromCommitted: false});
         if(this.selectedUser && !this.selectedUser){
         	return false;
         }

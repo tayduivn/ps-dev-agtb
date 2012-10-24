@@ -50,6 +50,7 @@
             }, self);
             this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
+            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
         }
     },
 
@@ -161,7 +162,6 @@
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-        //todo: implement save draft functionality, or trigger flag on context if save is handled elsewhere
     	var savebtn = this.$el.find('#save_draft');
     	if(!savebtn.hasClass("disabled")){
     		var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
@@ -173,12 +173,7 @@
     			if(typeof(isDirty) == "boolean" && isDirty ){
     				modelCount++;
     				model.set({draft: 1}, {silent:true});
-    				model.save({}, {success:function(){
-    					saveCount++;
-    					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
-    					}
-    				}});
+    				model.save();
     				model.set({isDirty: false}, {silent:true});
     				worksheet.isDirty = false;
     			}    			    				
