@@ -72,13 +72,16 @@ describe("Range field", function() {
             field.data = function(key) {
                 return this[key];
             };
+            field.def = {
+                updateOn: 'done'
+            };
             sinon.spy(field, "data");
             sinon.spy(field.model, 'set');
             sinon.stub(field, "getSliderValues");
-            field._sliderChangeComplete('click');
         });
 
         afterEach(function() {
+            delete field.def.updateOnChange;
             field.data.restore();
             field.model.set.restore();
             field.getSliderValues.restore();
@@ -88,17 +91,110 @@ describe("Range field", function() {
         });
 
         it("should have access to the field object", function() {
+            field._sliderChangeComplete('click');
             expect(field.data).toHaveBeenCalledWith('api');
         });
 
-        it("should set the value on the model for the field", function() {
+        it("should set the value on the model for the field if updateOn is 'done' in metadata", function() {
+            field._sliderChangeComplete('click');
             expect(field.model.set).toHaveBeenCalledWith(field.name);
         });
 
-        it("should get the value for the slider from the noUiSliderElement", function() {
+        it("should set the value on the model for the field if updateOn is 'both' in metadata", function() {
+            field.def.updateOn = 'both';
+            field._sliderChangeComplete('click');
+            expect(field.model.set).toHaveBeenCalledWith(field.name);
+        });
+
+        it("should not set the value on the model for the field if updateOn is 'change' in metadata", function() {
+            field.def.updateOn = 'change';
+            field.api.options.field = field;
+            field._sliderChangeComplete('click');
+            expect(field.model.set).not.toHaveBeenCalled();
+        });
+
+        it("should not set the value on the model for the field if updateOnDone is not set in metadata", function() {
+            delete field.def.updateOn;
+            field.api.options.field = field;
+            field._sliderChangeComplete('click');
+            expect(field.model.set).not.toHaveBeenCalled();
+        });
+
+        it("should get the value for the slider from the noUiSliderElement when it updates", function() {
+            field._sliderChangeComplete('click');
             expect(field.getSliderValues).toHaveBeenCalled();
         });
 
+    });
+
+    describe("_sliderChange method", function() {
+        beforeEach(function() {
+            field.model = {
+                set: function(key, value) {  }
+            };
+
+            // we aren't calling from the event, so we have to fake a context switch, instead, we just add the things
+            // expected to be on this, to what this will be defined as in the context of this test, which is the field.
+            field.api = {
+                options: {
+                    field: field
+                }
+            };
+            field.data = function(key) {
+                return this[key];
+            };
+            field.def = {
+                updateOn: 'change'
+            };
+            sinon.spy(field, "data");
+            sinon.spy(field.model, 'set');
+            sinon.stub(field, "getSliderValues");
+        });
+
+        afterEach(function() {
+            delete field.def.updateOnChange;
+            field.data.restore();
+            field.model.set.restore();
+            field.getSliderValues.restore();
+            delete field.data;
+            delete field.api;
+            delete field.model;
+        });
+
+        it("should have access to the field object", function() {
+            field._sliderChange('click');
+            expect(field.data).toHaveBeenCalledWith('api');
+        });
+
+        it("should set the value on the model for the field if updateOn is 'change' in metadata", function() {
+            field._sliderChange('click');
+            expect(field.model.set).toHaveBeenCalledWith(field.name);
+        });
+
+        it("should set the value on the model for the field if updateOn is 'both' in metadata", function() {
+            field.def.updateOn = 'both';
+            field._sliderChange('click');
+            expect(field.model.set).toHaveBeenCalledWith(field.name);
+        });
+
+        it("should not set the value on the model for the field if updateOn is 'done' in metadata", function() {
+            field.def.updateOn = 'done';
+            field.api.options.field = field;
+            field._sliderChange('click');
+            expect(field.model.set).not.toHaveBeenCalled();
+        });
+
+        it("should not set the value on the model for the field if updateOnDone is not set in metadata", function() {
+            delete field.def.updateOn;
+            field.api.options.field = field;
+            field._sliderChange('click');
+            expect(field.model.set).not.toHaveBeenCalled();
+        });
+
+        it("should get the value for the slider from the noUiSliderElement when it updates", function() {
+            field._sliderChange('click');
+            expect(field.getSliderValues).toHaveBeenCalled();
+        });
     });
 
     describe("rendering", function() {

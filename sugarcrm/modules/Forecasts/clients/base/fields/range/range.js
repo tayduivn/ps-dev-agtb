@@ -190,21 +190,36 @@
 
     /**
      * The function that gets called whenever the sliders are in the process of getting moved/changed.
+     *
      * The context of `this` is the noUiSlider from which the function was activated. The field is passed through the
      * settings and can be accessed using `this.data('settings').field` for any necessary access to the controller, model, etc...
+     *
+     * The model will get updated with this method if updateOn is set to 'change' or 'both' in the field metadata.
+     *
      * @param type The type of change that moved the slider.  This will be 'click' when the slider is clicked to a point
      * on the range, 'move' when the slider is updated via the move method (i. e. by the linked slider delegates), or
      * 'slide' when the handle is dragged to a value.
      * @private
      */
     _sliderChange: function(type) {
+        var field = this.data('api').options.field;
 
+        if(field.def.updateOn && (field.def.updateOn == 'change' || field.def.updateOn == 'both')) {
+            field.model.set(field.name, field.getSliderValues(this));
+        }
+
+        // todo - add onChange hook here
     },
 
     /**
-     * The function that gets called whenever the slider change is complete.  The context of `this` is the noUiSlider from
+     * The function that gets called whenever the slider change is complete.
+     *
+     * The context of `this` is the noUiSlider from
      * which the function was activated. The field is passed through the settings and can be accessed using
      * `this.data('settings').field` for any necessary access to the controller, model, etc...
+     *
+     * The model will get updated with this method if updateOn is set to 'done' or 'both' in the field metadata.
+     *
      * @param type The type of change that moved the slider.  This will be 'click' when the slider is clicked to a point
      * on the range, 'move' when the slider is updated via the move method (i. e. by the linked slider delegates), or
      * 'slide' when the handle is dragged to a value.
@@ -212,7 +227,12 @@
      */
     _sliderChangeComplete: function(type) {
         var field = this.data('api').options.field;
-        field.model.set(field.name, field.getSliderValues(this));
+
+        if(field.def.updateOn && (field.def.updateOn == 'done' || field.def.updateOn == 'both')) {
+            field.model.set(field.name, field.getSliderValues(this));
+        }
+
+        // todo - add onDone hook here
     }
 
 })
