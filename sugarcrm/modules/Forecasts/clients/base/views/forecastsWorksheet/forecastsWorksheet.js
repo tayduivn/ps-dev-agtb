@@ -336,7 +336,12 @@
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
-        this.context.forecasts.set({commitButtonEnabled: false});
+     
+        //check to see if the commit buttons were enabled by the committed widget, if not, disable them.
+        if(!this.context.forecasts.get("commitButtonEnabledFromCommitted")){
+        	this.context.forecasts.set({commitButtonEnabled: false});
+        }
+        this.context.forecasts.set({commitButtonEnabledFromCommitted: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
