@@ -1,0 +1,2 @@
+<p>{{label}} - {{def.sliderType}}</p>
+<div class="rangeSlider noUiSlider"></div>

@@ -78,6 +78,7 @@
             'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.nouislider.js'          	 => 'include/javascript/sugar_grp1_jquery.js',
 
             
 			),
@@ -244,6 +245,7 @@
             $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
             $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
             $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
+            $sidecar_forecasts['styleguide/styleguide/js/jquery.nouislider.js'] = $cached_file;
         }
     }
     $js_groupings[] = $sidecar_forecasts;
