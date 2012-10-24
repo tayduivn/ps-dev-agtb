@@ -348,16 +348,6 @@ function post_install() {
 		upgradeDbAndFileVersion($new_sugar_version);
 	}
 
-	//Set the chart engine
-	if ($origVersion < '620') {
-		_logThis('Set chartEngine in config.php to JS Charts', $path);
-		$sugar_config['chartEngine'] = 'Jit';
-	}
-    // Bug 51075 JennyG - We increased the upload_maxsize in 6.4.
-    if ($origVersion < '642') {
-        _logThis('Set upload_maxsize to the new limit that was introduced in 6.4', $path);
-        $sugar_config['upload_maxsize'] = 30000000;
-    }
 	// Bug 40044 JennyG - We removed modules/Administration/SaveTabs.php in 6.1. and we need to remove it
 	// for upgraded instances.  We need to go through the controller for the Administration module (action_savetabs).
     if(file_exists('modules/Administration/SaveTabs.php'))
@@ -426,61 +416,6 @@ function post_install() {
            _logThis('Renaming cache/blowfish');
             rename($sugar_config['cache_dir']."blowfish", "custom/blowfish");
            _logThis('Renamed cache/blowfish to custom/blowfish');
-    }
-
-    if($origVersion < '650') {
-       // move uploads dir
-       if($sugar_config['upload_dir'] == $sugar_config['cache_dir'].'upload/') {
-
-           $sugar_config['upload_dir'] = 'upload/';
-
-           if(file_exists('upload'))
-           {
-               _logThis("Renaming existing upload directory to upload_backup");
-               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                   //Somehow the upgrade script has been stop completely, the dump /upload path possibly exists.
-                   $ext = '';
-                   while(file_exists('upload/upgrades_backup'.$ext)) {
-                       $ext = empty($ext) ? 1 : $ext + 1;
-                   }
-                   rename('upload', 'upload_backup'.$ext);
-               } else {
-                   rename('upload', 'upload_backup');
-               }
-           }
-
-           _logThis("Renaming {$sugar_config['cache_dir']}/upload directory to upload");
-           rename($sugar_config['cache_dir'].'upload', 'upload');
-
-           if(!file_exists('upload/index.html') && file_exists('upload_backup/index.html'))
-           {
-              rename('upload_backup/index.html', 'upload/index.html');
-           }
-
-           if(!write_array_to_file( "sugar_config", $sugar_config, "config.php" ) ) {
-              _logThis('*** ERROR: could not write upload config information to config.php!!', $path);
-           }else{
-              _logThis('sugar_config array in config.php has been updated with upload config contents', $path);
-           }
-
-           mkdir($sugar_config['cache_dir'].'upgrades', 0755, true);
-           //Bug#53276: If upgrade patches exists, the move back to the its original path
-           if(file_exists('upload/upgrades/temp')) {
-               if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                   //Somehow the upgrade script has been stop completely, the daump cache/upload path possibly exists.
-                   $ext = '';
-                   if(file_exists($sugar_config['cache_dir'].'upload/upgrades')) {
-                       while(file_exists($sugar_config['cache_dir'].'upload/upgrades_backup'.$ext)) {
-                           $ext = empty($ext) ? 1 : $ext + 1;
-                       }
-                       rename($sugar_config['cache_dir'].'upload/upgrades', $sugar_config['cache_dir'].'upload/upgrades_backup'.$ext);
-                   }
-               } else {
-                   mkdir($sugar_config['cache_dir'].'upload/upgrades', 0755, true);
-               }
-               rename('upload/upgrades/temp', $sugar_config['cache_dir'].'upload/upgrades/temp');
-           }
-       }
     }
 
     if($origVersion < '651') {
