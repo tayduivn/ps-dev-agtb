@@ -41,8 +41,6 @@ class Bug56904Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testAllRelationsAreRemoved(array $results, $expected)
     {
-        $this->markTestIncomplete("This test passes when run by itself but fails when run as a suite, marking incomplete while we investigate");
-        
         $relationship = $this->getRelationshipMock($results);
         $link         = $this->getLinkMock(count($results));
 
@@ -66,8 +64,6 @@ class Bug56904Test extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function getRelationshipMock(array $results)
     {
-        $this->markTestIncomplete("This test passes when run by itself but fails when run as a suite, marking incomplete while we investigate");
-
         $mock = $this->getMockForAbstractClass('SugarRelationship');
         $mock->expects($this->exactly(count($results)))
             ->method('remove')
@@ -85,8 +81,6 @@ class Bug56904Test extends Sugar_PHPUnit_Framework_TestCase
      */
     protected function getLinkMock($count)
     {
-        $this->markTestIncomplete("This test passes when run by itself but fails when run as a suite, marking incomplete while we investigate");
-
         if ($count > 0)
         {
             $bean  = new SugarBean();
