@@ -344,8 +344,11 @@ describe("The forecasts worksheet", function(){
     	it("forecasts.worksheet.on should have been called with change", function(){
     		expect(view.context.forecasts.worksheet.on).toHaveBeenCalledWith("change");
     	});
-    	
-    	it("forecasts.on should have been called with expectedOpportunities", function(){
+
+        /*
+         * Skip this test.  Expected Opportunities is not a part of nutmeg
+         */
+    	xit("forecasts.on should have been called with expectedOpportunities", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:expectedOpportunities");
     	});
     	
@@ -356,16 +359,19 @@ describe("The forecasts worksheet", function(){
     	it("forecasts.on should have been called with checkDirtyWorksheetFlag", function(){
     		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:checkDirtyWorksheetFlag");
     	});
-    	
-    	it("forecasts.config.on should have been called with show_worksheet_likely", function(){
+
+        // TODO: tagged for 6.8 see SFA-253 for details
+    	xit("forecasts.config.on should have been called with show_worksheet_likely", function(){
     		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_likely");
     	});
-    	
-    	it("forecasts.config.on should have been called with show_worksheet_best", function(){
+
+        // TODO: tagged for 6.8 see SFA-253 for details
+    	xit("forecasts.config.on should have been called with show_worksheet_best", function(){
     		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_best");
     	});
-    	
-    	it("forecasts.config.on should have been called with show_worksheet_worst", function(){
+
+        // TODO: tagged for 6.8 see SFA-253 for details
+    	xit("forecasts.config.on should have been called with show_worksheet_worst", function(){
     		expect(view.context.forecasts.config.on).toHaveBeenCalledWith("change:show_worksheet_worst");
     	});
     });

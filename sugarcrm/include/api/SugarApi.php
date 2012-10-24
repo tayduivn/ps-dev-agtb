@@ -168,9 +168,9 @@ abstract class SugarApi {
 
     /**
      * Toggle Favorites
-     * @param type $module 
-     * @param type $id 
-     * @param type $favorite 
+     * @param type $module
+     * @param type $id
+     * @param type $favorite
      * @return bool
      */
 
@@ -185,7 +185,7 @@ abstract class SugarApi {
         $fav_id = SugarFavorites::generateGUID($module,$record);
 
         $fav = new SugarFavorites();
-        
+
         // get it even if its deleted
         $fav->retrieve($fav_id, true, false);
 
@@ -198,20 +198,20 @@ abstract class SugarApi {
 
         if($favorite) {
             $fav = new SugarFavorites();
-            $fav->id = $fav_id;            
+            $fav->id = $fav_id;
             $fav->new_with_id = true;
             $fav->module = $module;
             $fav->record_id = $record;
             $fav->created_by = $GLOBALS['current_user']->id;
-            $fav->assigned_user_id = $GLOBALS['current_user']->id;    
-            $fave->deleted = 0;
+            $fav->assigned_user_id = $GLOBALS['current_user']->id;
+            $fav->deleted = 0;
             $fav->save();
             return true;
         }
-        
+
         return true;
 
-        
+
     }
 
     //END SUGARCRM flav=pro ONLY

@@ -1,6 +1,5 @@
-<div class="modal-body">
-    <p>{{str label "Forecasts"}}</p>
-    <p></p>
+<div class="modal-content hide">
+    <p>{{str "LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS" "Forecasts"}}</p>
     {{#with forecast_categories_field}}
         {{#eachOptions options}}
         <fieldset class="{{{key}}}Fields">
@@ -8,6 +7,8 @@
                 <input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}}>
                 <b>{{value}}</b>
             </p>
+
+            <div id="{{{key}}}_ranges" class="options {{#notEq key ../value}}hide{{/notEq}}"></div>
         </fieldset>
 
         {{/eachOptions}}

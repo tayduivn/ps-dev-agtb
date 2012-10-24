@@ -47,11 +47,17 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
         //create opportunity to use to build queries
         $this->opportunity = new Opportunity();
 
+        //get the quota data for user
+        /* @var $quota Quota */
+        $quota = BeanFactory::getBean('Quotas');
+        $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
+
         //get data
 		$progressData = array(
             "closed_amount"     => $this->getClosedAmount(),
             "opportunities"     => $this->getPipelineOpportunityCount(),
-            "pipeline_revenue"  => $this->getPipelineRevenue()
+            "pipeline_revenue"  => $this->getPipelineRevenue(),
+            "quota_amount"      => isset($quotaData["amount"]) ? $quotaData["amount"] : 0
 		);
 
 		return $progressData;

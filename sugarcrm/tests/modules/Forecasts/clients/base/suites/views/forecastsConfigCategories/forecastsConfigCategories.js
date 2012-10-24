@@ -25,12 +25,21 @@ describe("The forecastsConfigCategories view", function(){
     beforeEach(function() {
         app = SugarTest.app;
         view = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsConfigCategories", "forecastsConfigCategories", "js", function(d) { return eval(d); });
+        view.context = {};
+        view.context.forecasts = {};
+        view.context.forecasts.config = new (Backbone.Model.extend({
+            "defaults": fixtures.metadata.modules.Forecasts.config
+        }));
     });
 
     afterEach(function() {
         delete view;
         delete app;
     });
+
+    it("should have a label parameter to hold the label from metadata for the template", function() {
+        expect(view.label).toBeDefined();
+    })
 
     it("should have a forecasts_categories_field parameter to hold the metadata for the field", function() {
         expect(view.forecast_categories_field).toBeDefined();
@@ -44,13 +53,21 @@ describe("The forecastsConfigCategories view", function(){
         expect(view.category_ranges_field).toBeDefined();
     });
 
-    describe("field parameters", function() {
+    it("should have a parameter to keep track of the selection between selection changes", function() {
+        expect(view.selection).toBeDefined();
+    });
+
+    describe("view parameters", function() {
 
         beforeEach(function() {
             testStub = sinon.stub(app.view.View.prototype, "initialize");
+            view.layout = {
+                registerBreadCrumbLabel : function(){}
+            };
             view.meta = {
                 panels : [
                     {
+                        label: 'testLabel',
                         fields: [
                             {
                                 name:'forecast_categories',
@@ -59,7 +76,8 @@ describe("The forecastsConfigCategories view", function(){
                                 view: 'edit',
                                 options: 'forecasts_config_category_options_dom',
                                 default: false,
-                                enabled: true
+                                enabled: true,
+                                value: ''
                             },
                             {
                                 name: 'category_ranges'
@@ -69,11 +87,15 @@ describe("The forecastsConfigCategories view", function(){
                                 options: {
                                     show_binary: 'commit_stage_binary_dom',
                                     show_buckets: 'commit_stage_dom'
-                                }
+                                },
+                                value: ''
                             }
                         ]
                     }
                 ]
+            };
+            view.model = {
+                get: function(key) {return ''}
             };
         });
 
@@ -81,14 +103,75 @@ describe("The forecastsConfigCategories view", function(){
             testStub.restore();
         });
 
-        it("should get initialized to the field metadata they correspond to", function() {
-            var options = {},
+
+        it("for label should get initialized to the label string in metadata", function() {
+            var options = {
+                meta : []
+            };
+            view.initialize(options);
+            expect(testStub).toHaveBeenCalled();
+            expect(view.label).toEqual(_.first(view.meta.panels).label);
+        });
+
+        it("for fields should get initialized to the field metadata they correspond to", function() {
+            var options = {
+                     meta : []
+                },
                 fieldMeta = _.first(view.meta.panels).fields;
             view.initialize(options);
             expect(testStub).toHaveBeenCalled();
             expect(view.forecast_categories_field).toEqual(fieldMeta[0]);
             expect(view.category_ranges_field).toEqual(fieldMeta[1]);
             expect(view.buckets_dom_field).toEqual(fieldMeta[2]);
+        });
+
+        describe("initial value for", function() {
+
+            beforeEach(function() {
+                view.model = {
+                    get: function(item) {
+                        if (item == 'forecast_categories') {
+                            return 'test_category';
+                        }
+                        if (item == 'buckets_dom') {
+                            return 'test_category_dom';
+                        }
+                    }
+                };
+            });
+
+            afterEach(function() {
+                delete view.model;
+            });
+
+            describe("forecast_categories_field", function() {
+                it("should be defined", function() {
+                    view.initialize({ meta : []});
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.forecast_categories_field.value).toBeDefined();
+                });
+
+                it("should be set to what is in the model during initialize", function() {
+                    view.initialize({ meta : [] });
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.forecast_categories_field.value).toEqual('test_category');
+                });
+            });
+
+            describe("bucket_dom_field", function() {
+                it("should be defined", function() {
+                    view.initialize({ meta : []});
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.buckets_dom_field.value).toBeDefined();
+                });
+
+                it("should be set to what is in the model during initialize", function() {
+                    view.initialize({ meta : [] });
+                    expect(testStub).toHaveBeenCalled();
+                    expect(view.buckets_dom_field.value).toEqual('test_category_dom');
+                });
+            });
+
         });
 
     });

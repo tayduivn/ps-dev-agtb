@@ -2,15 +2,15 @@
     <th colspan='5' class="tright">{{str "LBL_INCLUDED_TOTAL" "Forecasts"}}</th>
 
     {{#if show_worksheet_likely}}
-        <th>{{formatCurrency amount "-99"}}</th>
+        <th class="tright">{{formatCurrency amount "-99"}}</th>
     {{/if}}
 
     {{#if show_worksheet_best}}
-        <th>{{formatCurrency best_case "-99"}}</th>
+        <th class="tright">{{formatCurrency best_case "-99"}}</th>
     {{/if}}
 
     {{#if show_worksheet_worst}}
-            <th>{{formatCurrency worst_case "-99"}}</th>
+            <th class="tright">{{formatCurrency worst_case "-99"}}</th>
     {{/if}}
 </tr>
 
@@ -18,14 +18,14 @@
     <th colspan='5' class="tright">{{str "LBL_OVERALL_TOTAL" "Forecasts"}}</th>
 
     {{#if show_worksheet_likely}}
-        <th>{{formatCurrency overall_amount "-99"}}</th>
+        <th class="tright">{{formatCurrency overall_amount "-99"}}</th>
     {{/if}}
 
     {{#if show_worksheet_best}}
-        <th>{{formatCurrency overall_best "-99"}}</th>
+        <th class="tright">{{formatCurrency overall_best "-99"}}</th>
     {{/if}}
 
     {{#if show_worksheet_worst}}
-       <th>{{formatCurrency overall_worst "-99"}}</th>
+       <th class="tright">{{formatCurrency overall_worst "-99"}}</th>
     {{/if}}
 </tr>

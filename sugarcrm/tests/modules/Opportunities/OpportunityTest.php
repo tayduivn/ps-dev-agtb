@@ -24,6 +24,8 @@
 
 class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private static $isSetup;
+
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('current_user');
@@ -31,6 +33,10 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestCurrencyUtilities::createCurrency('MonkeyDollars','$','MOD',2.0);
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        self::$isSetup = $settings['is_setup'];
+        $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
     }
 
     public function tearDown()
@@ -45,6 +51,8 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
         SugarTestHelper::tearDown();
     }
 

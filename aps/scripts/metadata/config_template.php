@@ -27,7 +27,6 @@ $sugar_config = array (
     'd.m.Y' => '23.12.2010',
     'm.d.Y' => '12.23.2010',
   ),
-  'datef' => 'm/d/Y',
   'dbconfig' => 
   array (
     'db_host_name' => '@@DB_MAIN_HOST@@',
@@ -279,7 +278,6 @@ $sugar_config = array (
     'h.ia' => '11.00pm',
     'h.iA' => '11.00PM',
   ),
-  'timef' => 'H:i',
   'tmp_dir' => 'cache/xml/',
   'tracker_max_display_length' => 30,
   'translation_string_prefix' => false,

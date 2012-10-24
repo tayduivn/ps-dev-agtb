@@ -1,6 +1,6 @@
-<div class="modal-body">
+<div class="modal-content hide">
 {{#each meta.panels}}
-    <h2>{{str label "Forecasts"}}</h2>
+    <p>{{str "LBL_FORECASTS_CONFIG_VARIABLES_DESC" "Forecasts"}}</p>
     {{#each fields}}
         <label for="{{name}}">{{str label "Forecasts"}}</label>
         {{field ../../this ../../model}}

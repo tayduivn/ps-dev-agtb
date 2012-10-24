@@ -116,6 +116,42 @@ class AnnualTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group forecasts
      * @group timeperiods
      */
+    public function testCreatePreviousTimePeriod()
+    {
+        global $app_strings;
+
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $baseTimePeriod = self::$calendarTP;
+
+        $previousTimePeriod = $baseTimePeriod->createPreviousTimePeriod();
+        $previousTimePeriod->name = "SugarTestCreatedPriorAnnualTimePeriod";
+        $previousTimePeriod->save();
+        SugarTestTimePeriodUtilities::addTimePeriod($previousTimePeriod);
+        $previousTimePeriod = BeanFactory::getBean('AnnualTimePeriods', $previousTimePeriod->id);
+
+        //next timeperiod (1 year ago today)
+        $priorStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
+        $priorStartDate = $priorStartDate->modify("-1 year");
+        $priorEndDate = $timedate->fromDBDate($baseTimePeriod->start_date);
+        $priorEndDate = $priorEndDate->modify("-1 day");
+
+        $this->assertEquals($timedate->fromDBDate($previousTimePeriod->start_date), $priorStartDate);
+
+        $this->assertEquals($timedate->fromDBDate($previousTimePeriod->end_date), $priorEndDate);
+
+        $dayLength = 365;
+        if(($priorEndDate->year % 4) == 0) {
+            $dayLength = 366;
+        }
+
+        $this->assertEquals($dayLength, $previousTimePeriod->getLengthInDays());
+    }
+
+    /**
+     * @group forecasts
+     * @group timeperiods
+     */
     public function testGetNextPeriod()
     {
 
@@ -273,17 +309,15 @@ class AnnualTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $nextTimePeriod = BeanFactory::getBean('AnnualTimePeriods', $nextTimePeriod->id);
 
         //next timeperiod (1 year from today)
-        $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
-        $nextStartDate = $nextStartDate->modify("+52 week");
-        $nextEndDate = $timedate->fromDBDate($baseTimePeriod->end_date);
-        $nextEndDate = $nextEndDate->modify("+52 week");
-
+        $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date)->modify("+1 year");
+        $nextEndDate = $timedate->fromDBDate($baseTimePeriod->end_date)->modify("+1 year");
         $this->assertEquals($timedate->fromDBDate($nextTimePeriod->start_date), $nextStartDate, "Fiscal Start Dates do not match");
-
         $this->assertEquals($timedate->fromDBDate($nextTimePeriod->end_date), $nextEndDate, "Fiscal End Dates do not match");
 
-        $dayLength = 52 * 7;
-
+        $dayLength = 365;
+        if(($nextEndDate->year % 4) == 0) {
+            $dayLength = 366;
+        }
         $this->assertEquals($dayLength, $nextTimePeriod->getLengthInDays());
     }
 

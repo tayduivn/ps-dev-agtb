@@ -379,16 +379,25 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 foreach ($fieldDef as $fieldName => $def) {
                     // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
                     if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
+                        if(isset($options['addSearchBoosts']) && $options['addSearchBoosts'] == true && isset($def['full_text_search']['boost'])) {
+                            $fieldName .= '^' . $def['full_text_search']['boost'];
+                            $fieldName = $mod . '.' . $fieldName;
+                        }
+
                         $fields[] = $fieldName;
                     }
                 }
             }
         } else {
             $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
-            foreach ($allFieldDef as $fieldDef) {
+            foreach ($allFieldDef as $module => $fieldDef) {
                 foreach ($fieldDef as $fieldName => $def) {
                     // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
-                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {               
+                        if(isset($options['addSearchBoosts']) && $options['addSearchBoosts'] == true && isset($def['full_text_search']['boost'])) {
+                            $fieldName .= '^' . $def['full_text_search']['boost'];
+                            $fieldName = $mod . '.' . $fieldName;
+                        }                        
                         $fields[] = $fieldName;
                     }
                 }
@@ -739,7 +748,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
 
                 // set query string fields
+                $options['addSearchBoosts'] = true;
                 $fields = $this->getSearchFields($options);
+                $options['addSearchBoosts'] = false;
                 $queryObj->setFields($fields);
             }
             $s = new Elastica_Search($this->_client);
