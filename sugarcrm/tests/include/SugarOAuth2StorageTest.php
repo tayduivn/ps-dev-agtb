@@ -84,13 +84,21 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
      */
     public function testPortalInactiveError(){
         $contact1 = BeanFactory::newBean('Contacts');
-        $contact1->first_name = 'bug57572';
-        $contact1->last_name = 'testPortalInactiveError';
+        $contact1->first_name = 'UNIT';
+        $contact1->last_name = 'UNIT1';
         $contact1->portal_active = true;
         $contact1->portal_name = "unittestportal1";
         $contact1->portal_password = User::getPasswordHash("unittestportal1");
         $contact1->save();
         $this->contacts[] = $contact1;
+        $contact2 = BeanFactory::newBean('Contacts');
+        $contact2->first_name = 'portal';
+        $contact2->last_name = 'inactive';
+        $contact2->portal_active = false;
+        $contact2->portal_name = "unittestportal2";
+        $contact2->portal_password = User::getPasswordHash("unittestportal2");
+        $contact2->save();
+        $this->contacts[] = $contact2;
 
         $storage = new SugarOAuth2Storage();
         $ex = null;
@@ -99,18 +107,16 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         } catch(SugarApiExceptionPortalUserInactive $e){
             $ex = $e;
         }
-        $this->assertNull($ex, "SugarApiExceptionPortalUserInactive SHOULD NOT have been thrown.");
+        $this->assertTrue(empty($ex), "SugarApiExceptionPortalUserInactive SHOULD NOT have been thrown.");
 
-        $contact1->portal_active = false;
-        $contact1->save();
 
         $ex = null;
         try{
-            $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
+            $storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
         } catch(SugarApiExceptionPortalUserInactive $e){
             $ex = $e;
         }
-        $this->assertNotNull($ex, "SugarApiExceptionPortalUserInactive SHOULD have been thrown.");
+        $this->assertTrue(!empty($ex), "SugarApiExceptionPortalUserInactive SHOULD have been thrown.");
 
     }
 
