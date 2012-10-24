@@ -545,13 +545,7 @@ class Email extends SugarBean {
         $mailConfig = null;
 
         if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
-            $mailConfigs = OutboundEmailConfigurationPeer::listMailConfigurations($current_user);
-            foreach ($mailConfigs AS $mconfig) {
-                if ($mconfig->getConfigId() == $request["fromAccount"] || $mconfig->getInboxId() == $request["fromAccount"]) {
-                    $mailConfig = $mconfig;
-                    break;
-                }
-            }
+            $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
         } else {
             $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
         }
