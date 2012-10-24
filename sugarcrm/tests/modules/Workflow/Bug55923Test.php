@@ -55,6 +55,8 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $this->db = $GLOBALS['db'];
         $_REQUEST['base_module'] = 'Opportunities';
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
 
         $wf = new WorkFlow();
