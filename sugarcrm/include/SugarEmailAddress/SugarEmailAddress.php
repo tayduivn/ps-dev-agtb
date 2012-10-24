@@ -66,19 +66,10 @@ class SugarEmailAddress extends SugarBean
                         $primaryE = (isset($emailAddr['primary_address']) && $emailAddr['primary_address'] == "1") ? true : false;
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
-
                 } else {
-                    for ($i = 1; $i <= 10; $i++) {
-                        $email = 'email' . $i;
-                        if (isset($bean->$email) && !empty($bean->$email)) {
-                            $opt_out_field = $email . '_opt_out';
-                            $invalid_field = $email . '_invalid';
-                            $field_optOut = (isset($bean->$opt_out_field)) ? $bean->$opt_out_field : $optOut;
-                            $field_invalid = (isset($bean->$invalid_field)) ? $bean->$invalid_field : $invalid;
-                            $this->addAddress($bean->$email, $isPrimary, false, $field_invalid, $field_optOut);
-                            $isPrimary = false;
-                        }
-                    }
+                    $mod_dir = $this->getCorrectedModule($bean->module_dir);
+                    $this->addresses = $this->getAddressesByGUID($bean->id, $mod_dir);
+                    $this->populateLegacyFields($bean);
                 }
 
             }
