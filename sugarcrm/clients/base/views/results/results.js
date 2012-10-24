@@ -19,10 +19,7 @@
     events: {
         'click [name=name]': 'gotoDetail',
         'click .icon-eye-open': 'loadPreview',
-        'click span.label': 'sortByModuleName',
-        'hover span.label': 'addPointer',
-        'blur span.label': 'removePointer',
-        'click [name=show_more_button]': 'showMoreResults',
+        'click [name=show_more_button]': 'showMoreResults'
     },
     initialize: function(options) {
         this.options.meta = this._meta;
@@ -112,23 +109,5 @@
 
         // Fire on parent layout .. works nicely for relatively simple page ;=) 
         this.layout.layout.trigger("search:preview", model);
-    },
-    /**
-     * Sorts by submodule name per spec.
-     */
-    sortByModuleName: function(evt) {
-        var li = this.$('li.search').get();
-        li.sort(function(a, b) {
-            a = this.$('span.label', a).text();
-            b = this.$('span.label', b).text();
-            return (a < b) ? -1 : ((a > b) ? 1 : 0);
-        });
-        this.$('ul.nav-tabs').append(li).show();
-    },
-    addPointer: function(evt) {
-        this.$(evt.currentTarget).css('cursor', 'pointer');
-    },
-    removePointer: function(evt) {
-        this.$(evt.currentTarget).css('cursor', 'none');
     }
 })
