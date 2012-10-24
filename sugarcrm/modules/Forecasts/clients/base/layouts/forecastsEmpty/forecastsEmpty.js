@@ -84,9 +84,21 @@
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
             }
 
-            this.trigger("modal:forecastsWizardConfig:open", params);
-        }
+            // callback has to be a function returning the checkSettingsAndRedirect function
+            // to maintain the proper context otherwise from modal, "this" is the Window
+            var callback = function() { return self.checkSettingsAndRedirect }
+            this.trigger("modal:forecastsWizardConfig:open", params, callback);
+        },
 
+        /**
+         * Checks the is_setup config setting and determines where to send the user
+         */
+        checkSettingsAndRedirect: function() {
+            if(!this.context.forecasts.config.get('is_setup')) {
+                this.loc = 'index.php?module=Home';
+            }
+            window.location = this.loc;
+        }
     });
 
 })(SUGAR.App)
