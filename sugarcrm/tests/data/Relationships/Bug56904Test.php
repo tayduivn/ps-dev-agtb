@@ -26,6 +26,8 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once('data/Link2.php');
+
 /**
  * @ticket 56904
  */
@@ -92,7 +94,7 @@ class Bug56904Test extends Sugar_PHPUnit_Framework_TestCase
             $beans = array();
         }
 
-        $mock = $this->getMock('Link2', array('getSide', 'getFocus', 'getBeans'));
+        $mock = $this->getMock('Link2', array('getSide', 'getFocus', 'getBeans'), array(), '', false);
         $mock->expects($this->any())
             ->method('getSide')
             ->will($this->returnValue(REL_LHS));
