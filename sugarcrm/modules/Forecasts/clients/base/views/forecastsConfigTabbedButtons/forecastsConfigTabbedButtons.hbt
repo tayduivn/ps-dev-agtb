@@ -1,0 +1,15 @@
+<div class="modal-navigation setup">
+    <ul class="nav nav-tabs">
+        {{#each breadCrumbLabels}}
+        <li><a href="#">{{str this "Forecasts"}}</a></li>
+        {{/each}}
+    </ul>
+</div>
+
+{{#each meta.panels}}
+<div class="modal-footer">
+    {{#each buttons}}
+        {{field ../../this ../../model}}
+    {{/each}}
+</div>
+{{/each}}

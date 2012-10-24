@@ -19,6 +19,20 @@
         } else if(field.name == "timeperiod_start_day") {
             field = this._setUpTimeperiodStartDayBind(field);
         }
+        //BEGIN SUGARCRM flav=pro ONLY
+            if (field.name == "timeperiod_interval") {
+                field = this._setUpTimeperiodIntervalBind(field);
+            }
+        //END SUGARCRM flav=pro ONLY
+
+        /**
+         * This is needed to make sure that this view is read only
+         * when viewing it in the Tabbed Config View
+         */
+        if(!_.isUndefined(this.layout) && this.layout.meta.type == "forecastsTabbedConfig") {
+            // if we are on the tabbed config, this is read only!
+            field.options.def.view = 'detail';
+        }
         app.view.View.prototype._renderField.call(this, field);
     },
 
@@ -121,10 +135,50 @@
             this.model.set(this.name, selected_day);
         }
 
-        //set up initial days field based on selected month
-        //field.def.options = "forecasts_timeperiod_month_options_dom";
         return field;
 
     }
+    //BEGIN SUGARCRM flav=pro ONLY
+    ,
+    /**
+     * Sets up the change event on the timeperiod_interval drop down to maintain the interval selection
+     * and push in the default selction for the leaf period
+     * @param field the dropdown interval field
+     * @return {*}
+     * @private
+     */
+    _setUpTimeperiodIntervalBind: function(field) {
 
+        var self = this;
+        // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
+        field.def.value = this.model.get(field.name);
+
+        // ensure selected day functions like it should
+        field.events = _.extend({"change select":  "_updateIntervals"}, field.events);
+        field.bindDomChange = function() {};
+
+        if(typeof(field.def.options) == 'string') {
+            field.def.options = app.lang.getAppListStrings(field.def.options);
+        }
+
+        /**
+         * function that updates the selected interval
+         * @param event
+         * @param input
+         * @private
+         */
+        field._updateIntervals = function(event, input) {
+            //get the timeperiod interval selector
+            var selected_interval = "Annual";
+            if(_.has(input, "selected")) {
+                selected_interval = input.selected;
+            }
+            this.def.value = selected_interval;
+            self.model.set(this.name, selected_interval);
+            self.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
+        }
+        return field;
+
+    }
+    //END SUGARCRM flav=pro ONLY
 })

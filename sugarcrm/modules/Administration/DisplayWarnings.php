@@ -40,7 +40,7 @@ if(!empty($_SESSION['display_lotuslive_alert'])){
     displayAdminError(translate('MSG_RECONNECT_LOTUSLIVE', 'Administration'));
 }
 
-//BEGIN SUGARCRM flav=pro
+//BEGIN SUGARCRM flav=pro ONLY
 if( is_admin($current_user) && file_exists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
 {
     require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
@@ -65,7 +65,7 @@ if (is_admin($current_user))
         displayAdminError(translate('LBL_FTS_INDEXING_DONE', 'Administration'));
     }
 }
-//END SUGARCRM flav=pro
+//END SUGARCRM flav=pro ONLY
 
 
 

@@ -96,10 +96,16 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = app.metadata.getStrings('app_list_strings').forecasts_chart_options_dataset || [];
+        this.chartDataSet = this.getChartDatasets();
         this.chartGroupByOptions = app.metadata.getStrings('app_list_strings').forecasts_chart_options_group || [];
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
+
+        // make sure that the default data set is actually shown, if it's not then we need
+        // to set it to the first available option from the allowed dataset.
+        if(_.isUndefined(this.chartDataSet[this.defaultDataset])) {
+            this.defaultDataset = _.first(_.keys(this.chartDataSet));
+        }
 
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
@@ -173,7 +179,7 @@
             self.handleRenderOptions({group_by: groupBy});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category:_.first(value)});
+            self.handleRenderOptions({category: value});
         });
         this.context.forecasts.on('change:hiddenSidebar', function(context, value){
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
@@ -212,6 +218,27 @@
             // update the chart title
             self.$el.find('h4').html(self.chartTitle);
         }, self));
+    },
+
+    /**
+     * Get the Chart Datasets that are only shown in the Worksheet
+     *
+     * @return {Object}
+     */
+    getChartDatasets: function() {
+        var self = this;
+        var ds = app.metadata.getStrings('app_list_strings').forecasts_chart_options_dataset || [];
+
+        cfg = this.context.forecasts.config;
+        cfg_key = 'show_worksheet_';
+
+        var returnDs = {};
+        _.each(ds, function(value, key){
+            if(cfg.get(cfg_key + key) == 1) {
+                returnDs[key] = value
+            }
+        }, self);
+        return returnDs;
     },
 
     /**
@@ -267,7 +294,7 @@
         );
 
         if(this.values.display_manager === true) {
-            this.values.category = "Committed";
+            this.values.category = "include";
         }
 
         // update the chart title
@@ -275,7 +302,12 @@
         var text = hb({'key' : "LBL_CHART_FORECAST_FOR", 'module' : 'Forecasts', 'args' : this.timeperiod_label});
         this.$el.find('h4').html(text);
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
+        var params = this.values || {};
+        params.contentEl = 'chart';
+        params.minColumnWidth = 120;
+        params.adjustLegendWidthByParent = true;
+
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params);
         this.chartRendered = true;
         return chart.chartObject;
     }

@@ -21,7 +21,19 @@
 
 describe("The forecastsConfigTimeperiods view", function(){
 
-    var app, view, field, dayField, monthField, _renderFieldStub, testMonthMethodStub,testDayMethodStub, testValue;
+    var app,
+        view,
+        field,
+        dayField,
+        monthField,
+        intervalField,
+        _renderFieldStub,
+        testMonthMethodStub,
+        testDayMethodStub,
+        testIntervalMethodStub,
+        testValue,
+        testIntervalValue,
+        testLeafIntervalValue;
 
     beforeEach(function() {
         app = SugarTest.app;
@@ -39,6 +51,7 @@ describe("The forecastsConfigTimeperiods view", function(){
         beforeEach(function() {
             testMonthMethodStub = sinon.stub(view, "_setUpTimeperiodStartMonthBind", function() {return field;});
             testDayMethodStub = sinon.stub(view, "_setUpTimeperiodStartDayBind", function() {return field;});
+            testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
             field = {
             }
         });
@@ -46,6 +59,7 @@ describe("The forecastsConfigTimeperiods view", function(){
         afterEach(function() {
             testMonthMethodStub.restore();
             testDayMethodStub.restore();
+            testIntervalMethodStub.restore();
             delete field;
         });
 
@@ -63,12 +77,24 @@ describe("The forecastsConfigTimeperiods view", function(){
             expect(testDayMethodStub).toHaveBeenCalledWith(field);
         });
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        it("should set up day field", function() {
+            field.name = "timeperiod_interval";
+            view._renderField(field);
+            expect(_renderFieldStub).toHaveBeenCalledWith(field);
+            expect(testIntervalMethodStub).toHaveBeenCalledWith(field);
+        });
+        //END SUGARCRM flav=pro ONLY
+
         it("should not set up non-date selecting fields", function() {
             field.name = "timeperiod_config_other";
             view._renderField(field);
             expect(_renderFieldStub).toHaveBeenCalledWith(field);
             expect(testMonthMethodStub).not.toHaveBeenCalled();
             expect(testDayMethodStub).not.toHaveBeenCalled();
+            //BEGIN SUGARCRM flav=pro ONLY
+                expect(testIntervalMethodStub).not.toHaveBeenCalled();
+            //END SUGARCRM flav=pro ONLY
         });
     });
 
@@ -76,11 +102,12 @@ describe("The forecastsConfigTimeperiods view", function(){
 
         beforeEach(function() {
             testValue = 3;
-            view.model = {
-                get: function(param) {
-                    return {};
-                }
-            };
+            testIntervalValue = "Annual";
+            testLeafIntervalValue = "Quarter";
+            view.model = new Backbone.Model({
+                timeperiod_interval: '',
+                timeperiod_leaf_interval: ''
+                });
             monthField = {
                 model: {
                     get: function(param) {
@@ -105,14 +132,31 @@ describe("The forecastsConfigTimeperiods view", function(){
                     options: {}
                 }
             }
+            intervalField = {
+                model: {
+                    get: function(param) {
+                        return {};
+                    },
+                    set: function(key, value) {}
+                },
+                name: 'timeperiod_interval',
+                def: {
+                    options: {}
+                }
+            }
             monthField = view._setUpTimeperiodStartMonthBind(monthField);
             dayField = view._setUpTimeperiodStartDayBind(dayField);
+            intervalField = view._setUpTimeperiodIntervalBind(intervalField);
+
         });
 
         afterEach(function() {
             delete monthField;
             delete dayField;
+            delete intervalField;
             delete testValue;
+            delete testIntervalValue;
+            delete testLeafIntervalValue;
         });
 
         it("should add the event handlers to update the selections for the field", function() {
@@ -123,6 +167,9 @@ describe("The forecastsConfigTimeperiods view", function(){
             expect(dayField.events["change select"]).toBeDefined();
             expect(dayField.events["change select"]).toEqual("_updateDays");
             expect(dayField._updateDays).toBeDefined();
+            expect(intervalField.events["change select"]).toBeDefined();
+            expect(intervalField.events["change select"]).toEqual("_updateIntervals");
+            expect(intervalField._updateIntervals).toBeDefined();
         });
 
         it("should check that the method to build the day options was called with the correct month", function() {
@@ -141,5 +188,19 @@ describe("The forecastsConfigTimeperiods view", function(){
             }
             expect(options).toEqual(expectedOptions);
         });
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        it("should check that the method to select the interval and default the leaf was called", function() {
+            var testIntervalMethodStub = sinon.stub(intervalField, "_updateIntervals", function() {return '';});
+            intervalField._updateIntervals({}, {selected: testIntervalValue});
+            expect(testIntervalMethodStub).toHaveBeenCalled;
+        });
+
+        it("should check that the method to select the interval and default the leaf set the model correctly", function() {
+            intervalField._updateIntervals({}, {selected: testIntervalValue});
+            expect(view.model.get("timeperiod_interval")).toEqual(testIntervalValue);
+            expect(view.model.get("timeperiod_leaf_interval")).toEqual(testLeafIntervalValue);
+        });
+        //END SUGARCRM flav=pro ONLY
     });
 });

@@ -118,6 +118,7 @@ class ViewLayoutView extends ViewEdit
                     $parser->_viewdefs [ 'panels' ] = $editViewPanels;
                     $parser->_fielddefs = $parser2->_fielddefs;
                     $parser->setUseTabs($parser2->getUseTabs());
+                    $parser->setTabDefs($parser2->getTabDefs());
                 }
 		    }
 
@@ -215,7 +216,8 @@ class ViewLayoutView extends ViewEdit
         $smarty->assign ( 'tabDefs', $parser->getTabDefs() ) ;
         $smarty->assign ( 'syncDetailEditViews', $parser->getSyncDetailEditViews() ) ;
         $smarty->assign ( 'fieldwidth', 150 ) ;
-        $smarty->assign ( 'translate', $this->fromModuleBuilder ? false : true ) ;
+        // Bug 57260 - LBL_PANEL_DEFAULT not translated for undeployed modules in layout editor
+        $smarty->assign ( 'translate', true ) ;
 
         if ($this->fromModuleBuilder)
         {

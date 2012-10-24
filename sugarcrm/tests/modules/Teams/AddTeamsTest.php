@@ -28,7 +28,7 @@ require_once('modules/Teams/TeamSet.php');
 /***
  * Test cases for Bug 23871
  */
-class addTeamsTest extends Sugar_PHPUnit_Framework_TestCase
+class AddTeamsTest extends Sugar_PHPUnit_Framework_TestCase
 {
 	private $teamSets, $anotherTeamSets;
 	private $teamIds = array();

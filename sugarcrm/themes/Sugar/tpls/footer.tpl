@@ -47,7 +47,6 @@
     {if $COMPANY_LOGO_URL}
     <img src="{$COMPANY_LOGO_URL}" class="logo" id="logo" title="{$STATISTICS}" border="0"/>
     {/if}
-    <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
     <div id="buffer"></div>
     {if $HELP_LINK}
     <div id="help" class="help">{$HELP_LINK}</div>
@@ -59,6 +58,7 @@
             {/foreach}
         </div>
     </div>
+    <a href="http://www.sugarcrm.com" target="_blank" class="copyright">&#169; 2012 SugarCRM Inc.</a>
 <script>
  	var logoStats = "&#169; 2004-2012 SugarCRM Inc. All Rights Reserved. {$STATISTICS|addslashes}";
 </script>       

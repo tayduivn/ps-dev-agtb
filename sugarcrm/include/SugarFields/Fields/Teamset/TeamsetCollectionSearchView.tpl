@@ -70,7 +70,7 @@
 <!-- BEGIN Remove and Radio -->
         <td valign='top' class="teamset-row">
             &nbsp;
-            {capture assign="otherAttributes"}class="id-ff-remove" id="remove_{$vardef.name}_collection_0" name="remove_{$vardef.name}_collection_0" onclick='collection["{$displayParams.formName}_{$vardef.name}"].remove(0);'{/capture}
+            {capture assign="attr"}class="id-ff-remove" id="remove_{$vardef.name}_collection_0" name="remove_{$vardef.name}_collection_0" onclick='collection["{$displayParams.formName}_{$vardef.name}"].remove(0);'{/capture}
 
             <button type="button" class="id-ff-remove" {$attr}>
                 {sugar_getimage name="id-ff-remove-nobg" ext=".png" attr="" alt=$alt_removeButton}

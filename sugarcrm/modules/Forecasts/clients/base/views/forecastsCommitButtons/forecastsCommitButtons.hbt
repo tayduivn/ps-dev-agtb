@@ -15,7 +15,7 @@
             <i class="caret"></i>
         </a>
         <ul class="dropdown-menu">
-            <li><a href="#" name="forecastSettings">Settings</a></li>
+            <li><a href="#" name="forecastSettings">{{str "LBL_FORECAST_SETTINGS" "Forecasts"}}</a></li>
         </ul>
         {{/if}}
     </div>

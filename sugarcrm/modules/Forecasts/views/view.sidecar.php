@@ -31,7 +31,7 @@ require_once('modules/Forecasts/clients/base/api/ForecastsChartApi.php');
 
 class ForecastsViewSidecar extends SidecarView
 {
-    function __construct($bean = null, $view_object_map = array())
+    public function __construct($bean = null, $view_object_map = array())
     {
         $this->options['show_footer'] = false;
         $this->options['show_subpanels'] = false;
@@ -44,24 +44,38 @@ class ForecastsViewSidecar extends SidecarView
      * Override the display method to set Forecasts specific variables and use a custom layout template
      *
      */
-    function display()
+    public function display()
     {
         global $current_user, $sugar_config;
-        $forecastInitData = $this->forecastsInitialization();
+
+        $admin = BeanFactory::getBean('Administration');
+        $adminCfg = $admin->getConfigForModule('Forecasts');
+
+        $module = $this->module;
+        $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl");
+
+        if($adminCfg['is_setup'])  {
+            $initData = json_encode($this->forecastsInitialization());
+        } else {
+            $initData = json_encode($this->forecastsInitialization(true));
+            $module = 'forecastsEmpty';
+            $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView_empty.tpl");
+        }
 
         // begin initializing all default params
-        $this->ss->assign("initData" , json_encode($forecastInitData));
         $this->ss->assign("token", session_id());
-        $this->ss->assign("module", $this->module);
-        $this->ss->display(get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl"));
+        $this->ss->assign("module", $module);
+        $this->ss->assign("initData" ,$initData);
+        $this->ss->display($displayTemplate);
     }
 
     /**
      * Returns an Array of initial default data settings for Forecasts module
      *
+     * @param bool $returnOnlyUserData skip all the other initial data?
      * @return array Array of initial default data for Forecasts module
      */
-    function forecastsInitialization() {
+    public function forecastsInitialization($returnOnlyUserData=false) {
         global $current_user, $app_list_strings;
 
         $returnInitData = array();
@@ -71,24 +85,24 @@ class ForecastsViewSidecar extends SidecarView
         $forecastsCurrentUserApi = new ForecastsCurrentUserApi();
         $data = $forecastsCurrentUserApi->retrieveCurrentUser($forecastsCurrentUserApi,array());
         $selectedUser = $data["current_user"];
-
         $returnInitData["initData"]["selectedUser"] = $selectedUser;
         $defaultSelections["selectedUser"] = $selectedUser;
 
-        $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
-        // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
-        $id = TimePeriod::getCurrentId();
-        $defaultSelections["timeperiod_id"]["id"] = $id;
-        $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
+        if(!$returnOnlyUserData) {
+            $forecasts_timeframes_dom = TimePeriod::get_not_fiscal_timeperiods_dom();
+            // TODO:  These should probably get moved in with the config/admin settings, or by themselves since this file will probably going away.
+            $id = TimePeriod::getCurrentId();
+            $defaultSelections["timeperiod_id"]["id"] = $id;
+            $defaultSelections["timeperiod_id"]["label"] = $forecasts_timeframes_dom[$id];
 
-        // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-        $admin = BeanFactory::getBean("Administration");
-        $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
+            // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
+            $admin = BeanFactory::getBean("Administration");
+            $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
 
-        $defaultSelections["category"] = array("include");
-        $defaultSelections["group_by"] = 'forecast';
-        $defaultSelections["dataset"] = 'likely';
-
+            $defaultSelections["category"] = array("include");
+            $defaultSelections["group_by"] = 'forecast';
+            $defaultSelections["dataset"] = 'likely';
+        }
         // push in defaultSelections
         $returnInitData["defaultSelections"] = $defaultSelections;
 
