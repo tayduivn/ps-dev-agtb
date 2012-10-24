@@ -68,13 +68,7 @@
                 title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
                 span: 10,
                 before: {
-                    hide : function(){
-                        // if we cancel out
-                        if(!self.context.forecasts.config.get('is_setup')) {
-                            self.loc = 'index.php?module=Home';
-                        }
-                        window.location = self.loc;
-                    }
+                    hide : self.checkSettingsAndRedirect
                 }
             };
 
