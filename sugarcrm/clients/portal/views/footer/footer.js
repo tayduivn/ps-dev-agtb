@@ -37,23 +37,22 @@
         //set up bouncing arrows
         var arrows=new Array();
         arrows[0] = {
-            target: "#module_list li.Cases",
+            target: "#module_list li.Home",
             placement: "bottom"
         };
         arrows[1] = {
+            target: "footer",
+            placement: "top"
+        };
+        arrows[2] = {
             target: "input.search-query",
             placement: "bottom"
         };
-        arrows[2] = {
-            target: "#createList",
-            placement: "bottom right",
-            leftOffset: 40,
-            topOffset: -10
-        };
         arrows[3] = {
-            target: "#tour",
-            placement: "top"
+            target: "#userList",
+            placement: "bottom"
         };
+
 
         var numArrows = arrows.length;
 
