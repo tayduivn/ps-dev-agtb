@@ -29,8 +29,8 @@ describe("Range field", function() {
             "type": "range",
             "view": "edit"
         };
-        // theshark - fix this or move the field to core...
-        field = SugarTest.createField("../modules/Forecasts/clients/base", "rangeSlider", "range", "detail", fieldDef);
+
+        field = SugarTest.createField("base", "rangeSlider", "range", "detail", fieldDef);
         sinon.stub(app.view.Field.prototype, "initialize");
         sinon.stub(app.view.Field.prototype, "_render");
     });
