@@ -78,7 +78,6 @@ class RestBug57210Test extends RestFileTestBase {
         }    
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
    /**
     * @group rest
     */
