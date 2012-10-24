@@ -44,7 +44,7 @@ class ForecastsDefaults
             // get current settings
             $adminConfig = $admin->getConfigForModule('Forecasts');
             // if admin has already been set up
-            if($adminConfig['is_setup'] == 1) {
+            if(!empty($adminConfig['is_setup'])) {
                 foreach($adminConfig as $key => $val) {
                     $forecastConfig[$key] = $val;
                 }
@@ -131,4 +131,26 @@ class ForecastsDefaults
         $forecastsDefault = self::getDefaults();
         return $forecastsDefault[$key];
     }
+
+
+    /**
+     * Runs SQL to upgrade columns specific for Forecasts modules.  This is a helper function called from silentUpgrade_step2.php and end.php
+     * for upgrade script code that runs SQL to update tables.
+     *
+     * @static
+     */
+    public static function upgradeColumns() {
+        $db = DBManagerFactory::getInstance();
+
+        //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
+        $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'forecast_schedule', 'quotes', 'quota');
+        foreach($tables as $table)
+        {
+            //Update base_rate for existing records with currency_id values that are not the base currency
+            $db->query("UPDATE {$table} t, currencies c SET t.base_rate = c.conversion_rate WHERE t.currency_id IS NOT NULL AND t.currency_id <> '-99' AND t.currency_id = c.id");
+            //Update currency_id and base_rate for records with NULL values or where currency_id is base (-99)
+            $db->query("UPDATE {$table} SET currency_id = '-99', base_rate = 1 WHERE currency_id IS NULL OR currency_id = '-99'");
+        }
+    }
+
 }
