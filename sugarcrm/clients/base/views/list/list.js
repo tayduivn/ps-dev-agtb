@@ -14,6 +14,10 @@
         'mouseenter tr':'showActions',
         'mouseleave tr':'hideActions'
     },
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this.fallbackFieldTemplate = 'list-header';
+    },
     _renderHtml:function () {
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
