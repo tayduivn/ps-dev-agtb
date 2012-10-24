@@ -26,24 +26,42 @@
  ********************************************************************************/
 ({
     // date
+    events: {
+        'click .icon-calendar': 'toggleDatepicker'
+    },
+    datepickerVisible: false,
     _render: function(value) {
-        var self = this;
+        var self, viewName, usersDateFormatPreference;
+        self = this;
+
         // Although the server serves up iso date string with Z and all .. for date types going back it wants this
         self.serverDateFormat = 'Y-m-d';
+
+        usersDateFormatPreference = app.user.get('datepref');
+        
         app.view.Field.prototype._render.call(this);//call proto render
-        var viewName = self.view.meta && self.view.meta.type ? self.view.meta.type : self.view.name;
+
+        viewName = self.view.meta && self.view.meta.type ? self.view.meta.type : self.view.name;
         $(function() {
             if(self.options.def.view === 'edit' || self.options.viewName === 'edit' ||
                 viewName === 'edit') {
-                $(".datepicker").datepicker({
-                    showOn: "button",
-                    buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
-                    buttonImageOnly: true
+                self.$(".datepicker").attr('placeholder', app.date.toDatepickerFormat(usersDateFormatPreference));
+                self.$(".datepicker").datepicker({
+                    format: (usersDateFormatPreference) ? app.date.toDatepickerFormat(usersDateFormatPreference) : 'mm-dd-yyyy',
+                    show: function(evt) {
+                        self.datepickerVisible = true;
+                    },
+                    hide: function(evt) {
+                        self.datepickerVisible = false;
+                    }
                 });
             }
         });
     },
-
+    toggleDatepicker: function() {
+        var action = (this.datepickerVisible) ? 'hide' : 'show';
+        this.$(".datepicker").datepicker(action);
+    },
     unformat:function(value) {
         var jsDate, 
             usersDateFormatPreference = app.user.get('datepref');

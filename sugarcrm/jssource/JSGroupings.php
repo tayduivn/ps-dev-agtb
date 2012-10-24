@@ -36,6 +36,9 @@
  *
  */
 
+// subgroups.php gives us getSubgroupForTarget function to use for sub-grouped includes that would otherwise cause duplication.
+require_once('jssource/subgroups.php');
+
        $js_groupings = array(
            $sugar_grp1 = array(
                 //scripts loaded on first page
@@ -195,23 +198,18 @@
                 'modules/Meetings/jsclass_scheduler.js'   => 'include/javascript/sugar_grp_jsolait.js',
             ),
            //BEGIN SUGARCRM flav=ent ONLY
-            $sugar_grp_portal2 = array(
-                'sidecar/lib/jquery/jquery.placeholder.min.js'         => 'portal2/portal.min.js',
-
-                'styleguide/assets/js/bootstrap-button.js'  => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-tooltip.js' => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-dropdown.js'=> 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-popover.js' => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-modal.js'   => 'portal2/portal.min.js',
-                'styleguide/assets/js/bootstrap-alert.js'   => 'portal2/portal.min.js',
-                'portal2/error.js'               => 'portal2/portal.min.js',
-                'portal2/user.js'                => 'portal2/portal.min.js',
-                'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
-                'portal2/portal.js'              => 'portal2/portal.min.js',
-                'portal2/portal-ui.js'           => 'portal2/portal.min.js',
-                'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
-                'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
-
+            $sugar_grp_portal2 = array_merge(
+                array('sidecar/lib/jquery/jquery.placeholder.min.js' => 'portal2/portal.min.js'), // preserve ordering
+                getSubgroupForTarget('bootstrap', 'portal2/portal.min.js'),
+                array(
+                    'portal2/error.js'               => 'portal2/portal.min.js',
+                    'portal2/user.js'                => 'portal2/portal.min.js',
+                    'portal2/views/alert-view.js'    => 'portal2/portal.min.js',
+                    'portal2/portal.js'              => 'portal2/portal.min.js',
+                    'portal2/portal-ui.js'           => 'portal2/portal.min.js',
+                    'include/javascript/jquery/jquery.popoverext.js'           => 'portal2/portal.min.js',
+                    'include/javascript/jquery/jquery.effects.custombounce.js'           => 'portal2/portal.min.js',
+                )
             ),
            //END SUGARCRM flav=ent ONLY
         );
@@ -231,10 +229,8 @@
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
     $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-modal.js'] = $cached_file;
-    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
+    // Forecast and portal2 should include same styleguide bootstrap files
+    $sidecar_forecasts = array_merge($sidecar_forecasts, getSubgroupForTarget('bootstrap', $cached_file));
     $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
 
     $js_groupings[] = $sidecar_forecasts;

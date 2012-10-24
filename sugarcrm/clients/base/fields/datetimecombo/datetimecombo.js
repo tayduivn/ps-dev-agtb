@@ -26,44 +26,70 @@
  ********************************************************************************/
 ({
     // datetimecombo
+    events: {
+        'click .icon-calendar': '_toggleDatepicker'
+    },
+    datepickerVisible: false,
+    timeValue: '', // used by hbt template
+    dateValue: '', // same 
     initialize: function(options) {
-        var userTimePrefs;
+
+        /**
+         * TODO: Are we still using these?
+         */
         this.lastHourSelected   = null;
         this.lastMinuteSelected = null;
         this.lastAmPmSelected   = null;
 
-        // Determines if we're using 12 or 24 hour clock conventions
-        userTimePrefs = app.user.get('timepref');
-        // h specifies 12 hour format (TODO: refactor date.js to support g/G options and add here)
-        this.showAmPm = userTimePrefs.match(/[aA]$/)==null ? true : false; // TODO: date.js doesn't yet support g/G options
-        this.timeOptions.hours = this.getHours();
+
+        this.userTimePrefs  = app.user.get('timepref');
+        this.usersDatePrefs = app.user.get('datepref');
+
+        // Note that Sugar will always have an 'h' if ends with [aA] ('h:iA'=>'11:00PM', 'h.ia'=>'11.00pm', 'h.iA'=>'11.00PM')
+        this.showAmPm = this.userTimePrefs.match(/[aA]$/)==null ? true : false; // TODO: date.js doesn't yet support g/G options
         app.view.Field.prototype.initialize.call(this, options);
     },
     _render:function(value) {
-        var self = this; 
+        var self = this;
+
+        // Set our internal time and date values so hbt picks up
+        self.dateValue = self.$('.datepicker').val();
+        self.dateValue = (self.dateValue) ? self.dateValue : '';
+        self.timeValue = self.$('.ui-timepicker-input').val();
+        self.timeValue = (self.timeValue) ? self.timeValue : '';
+
         app.view.Field.prototype._render.call(self);
+
         $(function() {
-            // Changing in 6.7 - won't use jqueryui datepicker (bootstrap datepicker instead)
-            // If we don't set the date format for jquery ui, it may default to a different 
-            // format then what our user dateprefs are. This results in confusing the date.parse
-            // function which will return false and all bets are off. Solution is to set format
-            // so they are consistent in the first place. Again, though, this all goes away in 6.7
-            var sugar2jQueryUIMap, normalizedDateFormat;
-            sugar2jQueryUIMap = {
-                'd': 'dd', // 2 digit
-                'm': 'mm', // 2 digit
-                'y': 'y',  // 2 digit
-                'Y': 'yy'  // 4 digit
-            };
-            normalizedDateFormat = app.user.get('datepref').replace(/[yYmd]/g, function(s) {
-                return sugar2jQueryUIMap[s];
-            });
+            var prettyNow;
             if(self.view.name === 'edit') {
-                $(".datepicker").datepicker({
-                    showOn: "button",
-                    dateFormat: normalizedDateFormat,
-                    buttonImage: app.config.siteUrl + "/sidecar/lib/jquery-ui/css/smoothness/images/calendar.gif",
-                    buttonImageOnly: true
+
+                /**
+                 * Set up the the Datepicker
+                 */
+                self.$(".datepicker").attr('placeholder', app.date.toDatepickerFormat(self.usersDatePrefs));
+                self.$(".datepicker").datepicker({
+                    format: (self.usersDatePrefs) ? app.date.toDatepickerFormat(self.usersDatePrefs) : 'mm-dd-yyyy'
+                });
+
+                // Bind Datepicker to our proxy functions
+                self.$(".datepicker").datepicker().on({
+                    show: _.bind(self.showDatepicker, self),
+                    hide: _.bind(self.hideDatepicker, self)
+                });
+
+                /**
+                 * Set up the the Timepicker
+                 */
+                self.$(".ui-timepicker-input").attr('placeholder', self.userTimePrefs);
+                self.$(".ui-timepicker-input").timepicker({
+                    'timeFormat': self.userTimePrefs,
+                    'step': 15 // 15 minute intervals consistent w/Sugar proper
+                });
+
+                // Bind Timepicker to proxy functions
+                self.$('.ui-timepicker-input').on({
+                    changeTime: _.bind(self.changeTime, self)
                 });
             }
         });
@@ -71,19 +97,20 @@
     unformat:function(value) {
         var jsDate, 
             myUser = app.user;
-        jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
-        if(jsDate && _.isFunction(jsDate.toISOString)) {
-            return jsDate.toISOString();
-        } else {
-            app.logger.error("Issue converting date to iso string; no toISOString available for date created for value: "+value);
-            return value;
-        }
-    },
 
+        if(value) {
+            jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
+            if(jsDate && _.isFunction(jsDate.toISOString)) {
+                return jsDate.toISOString();
+            } else {
+                app.logger.error("Issue converting date to iso string; no toISOString available for date created for value: "+value);
+                return value;
+            }
+        }
+        return value;
+    },
     format:function(value) {
-        var jsDate, output, usersDateFormatPreference, usersTimeFormatPreference, myUser = app.user, d, parts, before24Hours;
-        usersDateFormatPreference = myUser.get('datepref');
-        usersTimeFormatPreference = myUser.get('timepref');
+        var jsDate, output, myUser = app.user, d, parts, before24Hours;
 
         // If there is a default 'string' value like "yesterday", format it as a date
         if(this.model.isNew() && !value && this.def.display_default && this.view.name === 'edit') {
@@ -99,189 +126,252 @@
 
         // Save the 24 hour based hours in case we're using ampm to determine if am or pm later 
         before24Hours = jsDate.getHours();
-        value  = app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference);
+        value  = app.date.format(jsDate, this.usersDatePrefs)+' '+app.date.format(jsDate, this.userTimePrefs);
         jsDate = app.date.parse(value);
         // round time to the nearest 15th if this is a edit which is consitent with rest of app
         if(this.view.name === 'edit') {
             jsDate = app.date.roundTime(jsDate);
         }
-        
+
+        /**
+         * TODO: Are we still using all of these properties? Prune unused.
+         */
         value = {
-            dateTime: app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference),
-            date: app.date.format(jsDate, usersDateFormatPreference),
-            time: app.date.format(jsDate, usersTimeFormatPreference),
+            date: app.date.format(jsDate, this.usersDatePrefs),
+            time: app.date.format(jsDate, this.userTimePrefs),
             hours: app.date.format(jsDate, (this.showAmPm ? 'h' : 'H')),
             minutes: app.date.format(jsDate, 'i'),
             seconds: app.date.format(jsDate, 's'),
             amPm: this.showAmPm ? (before24Hours < 12 ? 'am' : 'pm') : ''
         };
+
+        /**
+         * TODO: Are we still using these???
+         */
         this.lastHourSelected   = value.hours;
         this.lastMinuteSelected = value.minutes;
         this.lastAmPmSelected   = value.amPm;
 
-        //0am must be shown as 12am if we're on a 12 hour based time format
-        if(!_.isUndefined(value.amPm) && value.amPm === 'am' && value.hours == 0) {
+        // 0am must be shown as 12am if we're on a 12 hour based time format
+        // if(!_.isUndefined(value.amPm) && value.amPm === 'am' && value.hours == 0) {
+        if(value.time.toLowerCase().indexOf('am') !== -1 && value.hours == 0) {
+
+            // Now for 00 to 12 since we want 12am
             value.hours = '12';
             d = new Date();
             d.setHours(12); 
+            value.time = '12' + value.time.substr(2);
             d.setMinutes(value.minutes); 
-            value.time = app.date.format(d, usersTimeFormatPreference);
             this.model.set(this.name, this.buildUnformatted(value.date, '00', value.minutes), {silent: true});
             this.lastHourSelected  = '00';
         }
+        this.timeValue = value['time'];
+        this.dateValue = value['date'];
+        this.$(".datepicker").datepicker('update', this.dateValue);
+
         return value;
-    },
-    getHours: function() {
-        if(this.showAmPm) {
-            return  [
-                {key: "", value: ""},
-                {key: "01", value: "01"},
-                {key: "02", value: "02"},
-                {key: "03", value: "03"},
-                {key: "04", value: "04"},
-                {key: "05", value: "05"},
-                {key: "06", value: "06"},
-                {key: "07", value: "07"},
-                {key: "08", value: "08"},
-                {key: "09", value: "09"},
-                {key: "10", value: "10"},
-                {key: "11", value: "11"},
-                {key: "12", value: "12"}
-            ];
-        } else {
-            return  [
-                {key: "", value: ""},
-                {key: "00", value: "00"},
-                {key: "01", value: "01"},
-                {key: "02", value: "02"},
-                {key: "03", value: "03"},
-                {key: "04", value: "04"},
-                {key: "05", value: "05"},
-                {key: "06", value: "06"},
-                {key: "07", value: "07"},
-                {key: "08", value: "08"},
-                {key: "09", value: "09"},
-                {key: "10", value: "10"},
-                {key: "11", value: "11"},
-                {key: "12", value: "12"},
-                {key: "13", value: "13"},
-                {key: "14", value: "14"},
-                {key: "15", value: "15"},
-                {key: "16", value: "16"},
-                {key: "17", value: "17"},
-                {key: "18", value: "18"},
-                {key: "19", value: "19"},
-                {key: "20", value: "20"},
-                {key: "21", value: "21"},
-                {key: "22", value: "22"},
-                {key: "23", value: "23"}
-            ];
-        }
-    },
-    timeOptions: { 
-        /* hours: set dynamically */
-        minutes: [
-            {key: "", value: ""},
-            {key: "00", value: "00"},
-            {key: "15", value: "15"},
-            {key: "30", value: "30"},
-            {key: "45", value: "45"}
-        ],
-        amPm: [
-            {key: "", value: ""},
-            {key: "am", value: "am"},
-            {key: "pm", value: "pm"}
-        ]
-    },
-    bindDomChange: function() {
-        $('select').css({'width': 50});
-        var self  = this, date, model, fieldName, hour, minute, amPm, hr, min;
-        date      = this.$('input');
-        model     = this.model;
-        fieldName = this.name;
-        hour      = this.$('.date_time_hours');
-        minute    = this.$('.date_time_minutes');
-        amPm      = this.$('.date_time_ampm');
-
-        date.on('change', function(ev) {
-            var timeObj;
-            // If user selects date but no hour/minutes selected yet, prepopulate with 12:00am
-            hr = self.patchHour(amPm.val(), hour.val());
-            timeObj = self.setIfNoTime(hr, minute.val());
-            model.set(fieldName, self.buildUnformatted(date.val(), timeObj.hour, timeObj.minutes));
-        });
-        hour.on('change', function(ev) {
-            // If no date (display default set to none), user may select hrs, minutes, etc., so defaults to today's date 
-            date.val(self.setIfNoDate(date.val()));
-            // if user attempts to select first "blank" option, set back to previous hour selected
-            hr = hour.val() ? hour.val() : self.lastHourSelected; 
-            hr = self.patchHour(amPm.val(), hr);
-            self.lastHourSelected = hr;
-            // if selecting hour and no minutes yet put a default value to make it meaningful
-            min  = minute.val() ? minute.val() : '00'; 
-            // Force trigger since internally 00/12 are both represented as 00 so won't always trigger
-            model.set(fieldName, self.buildUnformatted(date.val(), hr, min), {silent: true});
-            model.trigger('change:'+fieldName);
-        });
-        minute.on('change', function(ev) {
-            date.val(self.setIfNoDate(date.val()));
-            // if selecting minutes and no hours yet put a default value to make it meaningful
-            hr = self.patchHour(amPm.val(), hour.val());
-            min  = minute.val() ? minute.val() : self.lastMinuteSelected;
-            self.lastMinuteSelected = min;
-            model.set(fieldName, self.buildUnformatted(date.val(), hr, min), {silent: true});
-            model.trigger('change:'+fieldName);
-        });
-        amPm.on('change', function(ev) {
-            var ampm, timeObj;
-            date.val(self.setIfNoDate(date.val()));
-
-            // If valid am or pm select fine, but also force blank selection to "bounce back" to previously selected
-            if(!amPm.val()) {
-                amPm.find("option").attr("selected",false);
-                ampm = self.lastAmPmSelected;
-                amPm.find("option[value='"+ampm+"']").attr("selected",true);
-            } else {
-                ampm = amPm.val();
-            }
-            self.lastAmPmSelected = ampm; 
-            hr = self.patchHour(amPm.val(), hour.val());
-            timeObj = self.setIfNoTime(hr, minute.val(), ampm);
-            model.set(fieldName, self.buildUnformatted(date.val(), timeObj.hour, timeObj.minutes));
-        });
     },
     buildUnformatted: function(d, h, m) {
         return this.unformat(d + ' ' + h + ':' + m + ':00');
     },
-    
-    // Checks if h and/or m are falsy, if so, sets to '00'
-    setIfNoTime: function(h, m, ampm) {
+    /**
+     * NOP - jquery.timepicker (the plugin we use for time part of datetimecombo widget),
+     * triggers both a 'change', and, a 'changeTime' event. If we let base Field's bindDomChange
+     * handle, it will result in our format method getting called and we do NOT want that. The
+     * reason is that we've already bound this.changeTime to handle changeTime events (and do all 
+     * time related handling there). Also, the datepicker plugin events are being handled as well.
+     */
+    bindDomChange: function() {
+        // NOP -- pass through to prevent base Field's bindDomChange to handle
+    },
+    showDatepicker: function(ev) {
+        this.datepickerVisible = true;
+    },
+    /**
+     * This is the main hook we use to update model when datepicker selected
+     */
+    hideDatepicker: function(ev) {
+        var model     = this.model,
+            fieldName = this.name, 
+            timeValue = '',
+            hrsMins   = {},
+            dateValue = '',
+            $timepicker;
+
+        this.datepickerVisible = false;
+        model      = this.model;
+        fieldName  = this.name;
+        $timepicker= this.$('.ui-timepicker-input');
+
+        // Get time values. If none, set to default of midnight; also get date, set model, etc.
+        timeValue  = this._getTimepickerValue($timepicker);
+        hrsMins    = this._getHoursMinutes(timeValue);
+        this._setTimepickerValue($timepicker, hrsMins.hours, hrsMins.minutes);
+        dateValue  = this._getDatepickerValue();
+        model.set(fieldName, this.buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+    },
+    /**
+     * This is the main hook we use to update model when timepicker selected
+     */
+    changeTime: function(ev) {
+        var model     = this.model,
+            fieldName = this.name,
+            timeValue = '',
+            hrsMins= {},
+            dateValue = '', timeParts, hour, hours, minutes;
+
+        // Get hours, minutes, and date peices, then set our model
+        timeValue  = this._getTimepickerValue($(ev.currentTarget));
+        hrsMins    = this._getHoursMinutes(timeValue);
+        dateValue  = this._getDatepickerValue();
+        this._setDatepickerValue(dateValue);
+        model.set(fieldName, this.buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+    },
+    /**
+     * Toggles datepicker hidden or shown
+     */
+    _toggleDatepicker: function() {
+        var action = (this.datepickerVisible) ? 'hide' : 'show';
+        this.$(".datepicker").datepicker(action);
+    },
+    /**
+     * Gets the current datepicker value.
+     * 
+     * Note: If we have no date (e.g. display default was set to none), when the 
+     * user selects time part, date part will be pre-filled with today's date.
+     */
+    _getDatepickerValue: function() {
+        var date  = this.$('input.datepicker'), dateValue;
+
+        dateValue = this._getTodayDateStringIfNoDate(date.prop('value'));
+        this.dateValue = dateValue; // so hbt template will pick up on next render
+        return dateValue;
+    },
+    /**
+     * Sets the current datepicker value.
+     * @param String dateValue date value 
+     */
+    _setDatepickerValue: function(dateValue) {
+        var date = this.$('input.datepicker');
+        dateValue = this._getTodayDateStringIfNoDate(dateValue);
+        date.prop('value', dateValue); 
+    },
+    /**
+     * Returns the current value in the timepicker element. 
+     * @param String $timepickerElement the element. 
+     * @return String timeValue The time value.
+     */
+    _getTimepickerValue: function($timepickerElement) {
+        var timeValue  = $timepickerElement.val();
+        this.timeValue = timeValue; // so hbt template will pick up on next render
+        return timeValue;
+    },
+    /**
+     * Sets the timepicker element and plugin to hours and minutes passed in. 
+     * If neither hours or minutes provided defaults to midnight.
+     * @param String $timepickerElement the element. 
+     * @param String hours optional hours 
+     * @param String minutes optional minutes
+     */
+    _setTimepickerValue: function($timepickerElement, hours, minutes) {
+        var date = new Date();
+
+        // If no time value set to midnight
+        if (!hours && !minutes) {
+            // Shorthand allows us to set mins, secs, ms all at once
+            date.setHours(0, 0, 0, 0);
+        }
+        else {
+            // If we have minutes or hours set each one conditionally
+            if (minutes) {
+                date.setMinutes(minutes);
+            }
+            if (hours) {
+                date.setHours(hours);
+            }
+        }
+        $timepickerElement.timepicker('setTime', date);
+        this.timeValue = $timepickerElement.val();// so hbt template will pick up on next render
+    },
+
+    /**
+     * Takes the time value and returns hours and minutes parts.
+     * @param String timeValue time value within timepicker field. 
+     * @return Object An object literal like: {hours: <hours>, minutes: <minutes>}
+     */
+    _getHoursMinutes: function(timeValue) {
+        var timeParts, hour, hours, minutes;
+
+        timeValue = timeValue || '';
+        timeParts = timeValue.toLowerCase().match(/(\d+)(?::(\d\d?))?\s*([pa]?)/);
+
+        // If timeValue is empty we may get back null for regex. If so, set to default.
+        if (!timeParts) {
+            return this._setIfNoTime(null, null);
+        }
+
+        hour = parseInt(timeParts[1]*1, 10);
+
+        // We have am/pm part (ostensibly 12 hour format)
+        if (!_.isUndefined(timeParts[3])) {
+            if (hour == 12) {
+                // If 12 and am force 12 to 0, otherwise leave alone
+                hours = (timeParts[3] == 'a') ? 0 : hour;
+            } else {
+                // If pm add 12 to hour e.g. 2 becomes 14, etc.
+                hours = (hour + (timeParts[3] == 'p' ? 12 : 0));
+            }
+        } 
+        // Otherwise, we don't have am/pm part (ostensibly 24 hr format)
+        else {
+            hours = hour;
+        }
+        minutes = ( timeParts[2]*1 || 0 );
+
+        // Convert above to two character strings
+        minutes = this._forceTwoDigits(minutes.toString());
+        hours = this._forceTwoDigits(hours.toString());
+
+        return this._setIfNoTime(hours, minutes);
+    },
+    /**
+     * Helper to set hours and minutes with 12am and 00pm edge cases in mind.
+     * @param String h hours 
+     * @param String m minutes
+     * @param String ampm optional 'am' or 'pm'  
+     * @return Object object literal with hours, minutes, amPm properties
+     */
+    _setIfNoTime: function(h, m, ampm) {
         var o = {};
         // Essentially, if we have no time parts, we're going to default to 12:00am
         if(!h && !m) {
             o.amPm = ampm ? ampm : 'am';
         }
-        o.hour = h ? h : '00'; // will downstream turn to 12am but internally needs to be 00
+        o.hours = h ? h : '00'; // will downstream turn to 12am but internally needs to be 00
         o.minutes = m ? m : '00';
         
         //Convert 12am to 00 and also 00pm to 12
-        o.hour = o.hour==='12' && o.amPm==='am' ? '00' : o.hour;
-        o.hour = o.hour==='00' && o.amPm==='pm' ? '12' : o.hour;
+        o.hours = o.hours === '12' && o.amPm==='am' ? '00' : o.hours;
+        o.hours = o.hours === '00' && o.amPm==='pm' ? '12' : o.hours;
+
         return o;
     },
-    // Checks if dateToCheck is falsy .. if so returns today date formatted by user's prefs
-    setIfNoDate: function(dateToCheck) {
-        var usersDateFormatPreference = app.user.get('datepref');
-        if(!dateToCheck) {
+    /**
+     * Checks if dateStringToCheck is falsy..if so, returns today's date as string formatted by
+     * user's prefs. Otherwise, just returns dateStringToCheck.
+     */
+    _getTodayDateStringIfNoDate: function(dateStringToCheck) {
+        if(!dateStringToCheck) {
             var d = new Date();
-            return app.date.format(d, usersDateFormatPreference);
+            return app.date.format(d, this.usersDatePrefs);
         } 
-        return dateToCheck;
+        return dateStringToCheck;
     },
-
-    // If we have 00am we patch the displayed value to 12 am but we still want internally to represent as 00am
-    // if on 12 hour time format .. if not this function will just return hour val anyway. 
-    patchHour: function (ampm, hour) {
+    /**
+     * If we have 00am we patch the displayed value to 12 am but we still want internally to represent as 00am
+     * if on 12 hour time format .. if not this function will just return hour val anyway. 
+     */
+    _patchHour: function (ampm, hour) {
         var hr = hour ? parseInt(hour, 10) : 0;
         if(this.showAmPm) {
             // Patch 12am to 00am as we need it this way internally though we present 12am (if on 12 hr time format)
@@ -293,6 +383,11 @@
             }
         }
         return hour;
+    },
+    /**
+     * Pads digits
+     */
+    _forceTwoDigits: function(numstr) {
+        return numstr.length === 1 ? '0' + numstr: numstr;
     }
-    
 })
