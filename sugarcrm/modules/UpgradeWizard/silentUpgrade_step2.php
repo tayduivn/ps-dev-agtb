@@ -468,6 +468,7 @@ if(!$origVersion){
     logThis("Error retrieving silent upgrade var for origVersion: cache dir is {$GLOBALS['sugar_config']['cache_dir']} -- full cache for \$silent_upgrade_vars_loaded is ".var_export($silent_upgrade_vars_loaded, true), $path);
 }
 
+//BEGIN SUGARCRM flav=pro ONLY
 logThis("Begin: Update custom module built using module builder to add favorites", $path);
 add_custom_modules_favorites_search();
 logThis("Complete: Update custom module built using module builder to add favorites", $path);
