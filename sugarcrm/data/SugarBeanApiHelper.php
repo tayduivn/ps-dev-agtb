@@ -152,15 +152,11 @@ class SugarBeanApiHelper
             }
         }
 
-        return true;
-    } 
-
-    public function setParentInformation(SugarBean $bean, array $submittedData, array $options, array $data) {
-      if(!isset($data['parent_type']) && !isset($data['parent_id']) && isset($submittedData['link_name']) && isset($submittedData['remote_id'])) {
-            // get the module name
-            $data['parent_type'] = $primaryBean->$submittedData['link_name']->getRelatedModuleName();
-            $data['parent_id'] = $submittedData['remote_id'];
+        if(isset($bean->field_defs['parent_type']) && isset($bean->field_defs['parent_id']) && empty($bean->parent_type) && empty($bean->parent_id) && isset($submittedData['link_name']) && isset($submittedData['remote_id'])) {
+            $bean->parent_type = $bean->$submittedData['link_name']->getRelatedModuleName();
+            $bean->parent_id = $submittedData['remote_id'];
         }
-        return $data;        
+
+        return true;
     }
 }
