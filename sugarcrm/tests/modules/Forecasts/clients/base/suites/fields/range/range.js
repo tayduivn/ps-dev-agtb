@@ -64,8 +64,10 @@ describe("Range field", function() {
 
             // we aren't calling from the event, so we have to fake a context switch, instead, we just add the things
             // expected to be on this, to what this will be defined as in the context of this test, which is the field.
-            field.settings = {
-                field: field
+            field.api = {
+                options: {
+                    field: field
+                }
             };
             field.data = function(key) {
                 return this[key];
@@ -81,12 +83,12 @@ describe("Range field", function() {
             field.model.set.restore();
             field.getSliderValues.restore();
             delete field.data;
-            delete field.settings;
+            delete field.api;
             delete field.model;
         });
 
         it("should have access to the field object", function() {
-            expect(field.data).toHaveBeenCalledWith('settings');
+            expect(field.data).toHaveBeenCalledWith('api');
         });
 
         it("should set the value on the model for the field", function() {
@@ -305,6 +307,18 @@ describe("Range field", function() {
 
         it("should set the starting point of the slider", function() {
             expect(field._setupSliderStartPositions).toHaveBeenCalled();
+        });
+
+        it("should show a disabled slider if not rendering in an edit view", function() {
+            field.def.view = 'detail';
+            field._setupSlider(el);
+            expect(el.noUiSlider).toHaveBeenCalledWith('disable');
+        });
+
+        it("should show a disabled slider if the field is disabled in metadata", function() {
+            field.def.enabled = false;
+            field._setupSlider(el);
+            expect(el.noUiSlider).toHaveBeenCalledWith('disable');
         });
     });
 

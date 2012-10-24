@@ -115,6 +115,11 @@
             end: this._sliderChangeComplete,
             field: this
         });
+
+
+        if(this.def.enabled == false || this.def.view != 'edit') {
+            jqel.noUiSlider('disable');
+        }
     },
 
     /**
@@ -206,7 +211,8 @@
      * @private
      */
     _sliderChangeComplete: function(type) {
-        var field = this.data('settings').field;
+        debugger;
+        var field = this.data('api').options.field;
         field.model.set(field.name, field.getSliderValues(this));
     }
 
