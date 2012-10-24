@@ -211,7 +211,6 @@
      * @private
      */
     _sliderChangeComplete: function(type) {
-        debugger;
         var field = this.data('api').options.field;
         field.model.set(field.name, field.getSliderValues(this));
     }
