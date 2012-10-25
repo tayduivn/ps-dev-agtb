@@ -28,9 +28,11 @@
         var self = this;
 
         if(self.context && self.context.forecasts) {
+            //Bind to the worksheetmanager render event so we know that the view has been rendered
             self.context.forecasts.on("forecasts:worksheetmanager:render", function() {
                 self.mDeferred.resolve();
             });
+            //Bind to the committed model being reset so we know that the model has been updated
             self.context.forecasts.committed.on("reset", function() {
                 self.wDeferred.resolve();
             });
@@ -39,10 +41,16 @@
         self.handleDeferredRender();
     },
 
+    /**
+     * Handles setting up the listeners for the two deferred objects.  When both conditions are satisfied
+     * it calls _render and sets itself up again.
+     *
+     */
     handleDeferredRender: function() {
         var self = this;
         $.when(self.wDeferred, self.mDeferred).done(function() {
             self._render();
+            //Reset the deferred objects
             self.wDeferred = self.mDeferred = $.Deferred();
             self.handleDeferredRender();
         });
