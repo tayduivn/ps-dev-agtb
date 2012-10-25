@@ -106,15 +106,34 @@
      * @private
      */
     _setupSlider: function(jqel) {
+
+        var start = this._setupSliderStartPositions();
         jqel.noUiSlider('init', {
             knobs: this._calculateHandles(),
             connect: this._setupHandleConnections(this.def.sliderType || 'single'),
             scale: this._setupSliderEndpoints(),
-            start: this._setupSliderStartPositions(),
+            start: start,
             change: this._sliderChange,
             end: this._sliderChangeComplete,
             field: this
-        });
+        }).append(function(){
+                var html = "";
+                var segments = 11;
+                var w = $(this).width();
+                var segmentWidth = w/(segments-1);
+                var acum = 0;
+                for(i=0;i<segments;i++) {
+                    acum = (segmentWidth * i)-2;
+                    html += "<div class='ticks' style='left:"+acum+"px'></div>";
+                }
+                return html;
+
+            })
+            .find('.noUi-handle div').each(function(index){
+                if(i>1) {i=0;}
+                $(this).append('<div class="tooltip fade top in infoBox"><div class="tooltip-arrow"></div><div class="tooltip-inner">' + start[i] + '%'+'</div></div>');
+                i++;
+            });
 
 
         if(this.def.enabled == false || this.def.view != 'edit') {
@@ -202,11 +221,16 @@
      * @private
      */
     _sliderChange: function(type) {
-        var field = this.data('api').options.field;
+        var field = this.data('api').options.field,
+            values = $(this).noUiSlider( 'value' );
 
         if(field.def.updateOn && (field.def.updateOn == 'change' || field.def.updateOn == 'both')) {
             field.model.set(field.name, field.getSliderValues(this));
         }
+
+        $(this).find('.noUi-lowerHandle .infoBox .tooltip-inner').text(values[0]+"%");
+        $(this).find('.noUi-upperHandle .infoBox .tooltip-inner').text(values[1]+"%");
+
 
         // todo - add onChange hook here
     },
