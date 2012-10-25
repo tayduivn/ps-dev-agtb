@@ -39,15 +39,63 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
                 ),
                 array(
                     'name' => 'category_ranges',
+                    'ranges' => array(
+                        array(
+                            'name' => 'include',
+                            'type' => 'range',
+                            'view' => 'edit',
+                            'sliderType' => 'upper',
+                            'updateOn' => 'change',
+                            'minRange' => 0,
+                            'maxRange' => 100,
+                            'default' => true,
+                            'enabled' => true,
+                        ),
+                        array(
+                            'name' => 'upside',
+                            'type' => 'range',
+                            'view' => 'edit',
+                            'sliderType' => 'connected',
+                            'updateOn' => 'change',
+                            'minRange' => 0,
+                            'maxRange' => 100,
+                            'default' => true,
+                            'enabled' => true,
+                        ),
+//BEGIN SUGARCRM flav=int ONLY
+                        array(
+                            'name' => 'custom',
+                            'type' => 'range',
+                            'view' => 'edit',
+                            'sliderType' => 'connected',
+                            'updateOn' => 'change',
+                            'minRange' => 0,
+                            'maxRange' => 100,
+                            'default' => true,
+                            'enabled' => true,
+                        ),
+//END SUGARCRM flav=int ONLY
+                        array(
+                            'name' => 'exclude',
+                            'type' => 'range',
+                            'view' => 'edit',
+                            'sliderType' => 'lower',
+                            'updateOn' => 'change',
+                            'minRange' => 0,
+                            'maxRange' => 100,
+                            'default' => true,
+                            'enabled' => true,
+                        ),
+                    ),
                 ),
                 array(
                     'name' => 'buckets_dom',
                     'options' => array(
                         'show_binary' => 'commit_stage_binary_dom',
                         'show_buckets' => 'commit_stage_dom',
-//BEGIN SUGARCRM flav=ent ONLY
-                        'show_n_buckets' => 'commit_stage_extended_dom'
-//END SUGARCRM flav=ent ONLY
+//BEGIN SUGARCRM flav=int ONLY
+                        'show_custom_buckets' => 'commit_stage_custom_dom'
+//END SUGARCRM flav=int ONLY
                     )
                 )
             )

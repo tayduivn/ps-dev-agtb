@@ -105,43 +105,48 @@
         hideElement = view.$el.find('#' + oldValue + '_ranges');
         showElement = view.$el.find('#' + this.value + '_ranges');
 
+        view.fieldRanges = {}; // a placeholder for the individual ranges that will be used to build the range setting
+
         if (showElement.children().length == 0) {
             // add the things here...
             _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
-                // TODO: use a text input, for now, this will be replaced by a range field slider
-                var ranges,
-                    minVal, maxVal,
-                    callbackCtx;
-                var handler = function(event) {
-                    var view = event.data.view,
-                        key = event.data.key,
-                        category = event.data.category,
-                        setting;
+                var rangeField,
+                    model = new Backbone.Model(),
+                    fieldSettings;
 
-                    ranges = view.model.get(category + '_ranges');
-                    setting = ranges[key] || {};
-
-                    setting[event.target.name] = event.target.value;
-                    ranges[key] = setting;
-
-                    view.model.set(category + '_ranges', ranges);
+                model.set(key, this.view.model.get(this.category + '_ranges')[key]);
+                fieldSettings = {
+                    view: this.view,
+                    def: _.find(
+                        _.find(
+                            _.first(this.view.meta.panels).fields,
+                            function(field) {
+                                return field.name ==  'category_ranges';
+                            }
+                        ).ranges,
+                        function(range) {
+                            return range.name == this.key
+                        },
+                        {key: key}
+                    ),
+                    viewName:'edit',
+                    context: this.view.context,
+                    module: this.view.module,
+                    model: model,
+                    meta: app.metadata.getField('range')
                 };
 
-                ranges = view.model.get(this.category + '_ranges');
-                this.showElement.append($('<p>' + label + '</p>'));
-
-
-                callbackCtx = {view: this.view, key: key, ranges: ranges, category: this.category};
-                minVal = ranges[key]?ranges[key]['min']:'';
-                var min = $('<input name="min" type="text" value="' + minVal + '" />').change(callbackCtx, handler);
-                this.showElement.append(min);
-
-                maxVal = ranges[key]?ranges[key]['max']:'';
-                var max = $('<input name="max" type="text" value="' + maxVal + '" />').change(callbackCtx, handler);
-                this.showElement.append(max);
+                rangeField = app.view.createField(fieldSettings);
+                this.showElement.append(rangeField.el);
+                rangeField.render();
+                // now give the view a way to get at this field's model, so it can be used to set the value on the
+                // real model.
+                 view.fieldRanges[key] = rangeField;
 
             }, {view: view, showElement:showElement, category: this.value});
         }
+
+
 
         if (hideElement) {
             hideElement.toggleClass('hide', true);
@@ -150,8 +155,41 @@
             showElement.toggleClass('hide', false);
         }
 
+        view.connectSliders(view.fieldRanges, this.value);
+
+
         // set the forecast category and associated dropdown dom on the model
         view.model.set(this.name, this.value);
         view.model.set(view.buckets_dom_field.name, bucket_dom);
+    },
+
+    connectSliders: function(sliders, category) {
+        if(category == 'show_binary') {
+            sliders.include.sliderDelegate = sliders.exclude.moveSlider;
+            sliders.include.model.on('change', function(includeModel) {
+                var excludeVal = this.model.get('exclude');
+                excludeVal.max = includeModel.get('include').min - 1;
+                // theshark - remove
+                console.log('exclude max: ' + excludeVal.max);
+                this.model.set({exclude: excludeVal}, {silent: true});
+            }, sliders.exclude);
+            sliders.exclude.model.on('change', function(excludeModel) {
+                var includeVal = this.model.get('include');
+                includeVal.min = excludeModel.get('exclude').max + 1;
+                // theshark - remove
+                console.log('include min: ' + includeVal.min);
+                this.model.set({include: includeVal}, {silent: true});
+            }, sliders.include);
+        } else if(category == 'show_buckets') {
+//            sliders.include.model.on('change', function() {
+//
+//            });
+//            sliders.upside.model.on('change', function() {
+//
+//            });
+//            sliders.exclude.model.on('change', function() {
+//
+//            });
+        }
     }
 })
