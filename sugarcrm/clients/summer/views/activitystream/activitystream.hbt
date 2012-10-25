@@ -42,9 +42,17 @@
           <a href="#Users/{{attributes.created_by}}">{{attributes.created_by_name}}</a> {{attributes.activity_type}} <em>{{attributes.activity_data.field_name}}</em>
           {{#eq attributes.activity_type "updated"}}
             {{#each attributes.activity_data}}
-              <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">{{this.field_name}}</a>,
+              {{#if this.accessible}}
+              <a href="#" rel="tooltip" title="Was: {{this.before}}<br>Now: {{this.after}}">
+              {{/if}}
+              {{this.field_name}}
+              {{#if this.accessible}}
+              </a>,
+              {{/if}}
             {{/each}}
+            {{#if attributes.activity_data.length}}
             on
+            {{/if}}
           {{/eq}}
           {{#eq attributes.activity_type "posted"}}
               "{{{attributes.activity_data.value}}}"
@@ -53,7 +61,11 @@
               {{/if}}
           {{/eq}}
           {{#eq attributes.activity_type "related"}}
+              {{#if attributes.activity_data.relate_name}}
               <a href="#{{attributes.activity_data.relate_to}}/{{attributes.activity_data.relate_id}}">{{attributes.activity_data.relate_name}}</a> to
+              {{else}}
+              a record to
+              {{/if}}
           {{/eq}}
           {{#if attributes.target_module}}
             {{#if attributes.target_id}}

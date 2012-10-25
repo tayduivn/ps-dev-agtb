@@ -57,6 +57,10 @@ class ActivityStream extends SugarBean {
     public $created_by;
     public $date_created;
     public $deleted;
+    //BEGIN SUGARCRM flav=pro ONLY
+    public $team_id;
+    public $team_set_id;    
+    //END SUGARCRM flav=pro ONLY    
 
     /**
      * Constructor
@@ -120,6 +124,7 @@ class ActivityStream extends SugarBean {
 
         foreach($dataChanges as &$dataChange) {
             $fieldName = get_label($fieldDefs[$dataChange['field_name']]['vname'], $mod_strings);
+            $dataChange['field'] = $dataChange['field_name'];
             $dataChange['field_name'] = str_replace(":","",$fieldName);
         }
 
@@ -136,13 +141,19 @@ class ActivityStream extends SugarBean {
      * @return bool query result or false
      *
      */
-    public function addPost($targetModule, $targetId, $text) {
+    public function addPost($targetModule, $targetId, $text
+            //BEGIN SUGARCRM flav=pro ONLY
+            ,$teamId = ''
+            ,$teamSetId = ''
+            //END SUGARCRM flav=pro ONLY            
+            ) {
+        global $current_user;        
         // This combination is not supportable
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is empty for activity post.");
             return false;
         }
-
+        
         $bean = null;
         // Make sure targetModule and targetId are valid
         if(!empty($targetModule)) {
@@ -159,9 +170,19 @@ class ActivityStream extends SugarBean {
             }
         }
 
+        $this->target_id = $targetId;
+        $this->target_module = $targetModule;
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->team_id = $teamId;
+        $this->team_set_id = empty($teamSetId) ? $teamId : $teamSetId;
+        //END SUGARCRM flav=pro ONLY
         $text = strip_tags($text);
-        $activityData = array('value'=>Link2Tag::convert($text));
-        return $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
+        $activityData = array('value'=>Link2Tag::convert($text));        
+        $this->activity_data = json_encode($activityData);
+        $this->activity_type = self::ACTIVITY_TYPE_POST;
+        $this->date_created = TimeDate::getInstance()->nowDb();
+        $this->created_by = $current_user->id;
+        return $this->save();        
     }
 
     /**
@@ -208,8 +229,12 @@ class ActivityStream extends SugarBean {
      */
     protected function addActivity($bean, $activityType, $activityData = array()) {
         global $current_user;
-        $this->target_id = !empty($bean) ? $bean->id : '';
-        $this->target_module = !empty($bean) ? $bean->module_name : '';
+        $this->target_id = $bean->id;
+        $this->target_module = $bean->module_name;
+        //BEGIN SUGARCRM flav=pro ONLY
+        $this->team_id = $bean->team_id;
+        $this->team_set_id = $bean->team_set_id;
+        //END SUGARCRM flav=pro ONLY        
         $this->activity_data = json_encode($activityData);
         $this->activity_type = $activityType;
         $this->date_created = TimeDate::getInstance()->nowDb();
@@ -234,7 +259,7 @@ class ActivityStream extends SugarBean {
         global $dictionary, $current_language, $current_user;
         $tableName = $dictionary['ActivityStream']['table'];
         $fieldDefs = $dictionary['ActivityStream']['fields'];
-
+        
         // This combination is not supportable
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
@@ -253,10 +278,16 @@ class ActivityStream extends SugarBean {
         $activities = array();
         
         $select = 'a.id, a.created_by, a.date_created,a.target_module,a.target_id,a.activity_type,a.activity_data, u.first_name, u.last_name, u.picture as created_by_picture';
-        $from = 'users u, activity_stream a';
-        $where = 'a.created_by = u.id AND a.deleted = 0';
+        $from = 'activity_stream a LEFT JOIN users u ON a.created_by = u.id ';
+        $where = 'a.deleted = 0';
+        $order = 'a.date_created DESC';
         $limit = '';
 
+        //BEGIN SUGARCRM flav=pro ONLY
+        // Team security
+        $this->addVisibilityFrom($from, array('table_alias'=>'a'));
+        //END SUGARCRM flav=pro ONLY
+        
         // For related tab
         if(!empty($link)) {
             if(empty($parentModule) || empty($parentId)) {
@@ -278,13 +309,14 @@ class ActivityStream extends SugarBean {
             }
 
             // Get related ids
-            $where .= ' AND a.target_id IN ('.$parentBean->$link->getQuery().')';
+            $from .= ' INNER JOIN ('.$parentBean->$link->getQuery().') r ON a.target_id = r.id'; 
         }
         
         if($targetModule == 'Users' && !empty($targetId)) {
+            // On an user's profile page, we also want to show this user's activities
             $where .= " AND (a.created_by = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['created_by']) ." OR (a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module'])." AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id'])."))";
         }
-        else if(!empty($targetModule)) {
+        else if(!empty($targetModule) && $targetModule != 'Home') { // Show all activities on Home page
             $where .= " AND ((a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
                 $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
@@ -299,29 +331,68 @@ class ActivityStream extends SugarBean {
             $where .= " AND a.created_by = '".$current_user->id."'";
         }
         else if($filter == 'favorites') {
-            $from .= ", sugarfavorites f";
-            $where .= " AND a.target_module = f.module AND a.target_id = f.record_id AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
+            $from .= " INNER JOIN sugarfavorites f ON (a.target_module = f.module AND a.target_id = f.record_id)";
+            $where .= " AND f.deleted = 0 AND f.created_by = '".$current_user->id."'";
         }
 
         if($numActivities > 0) {
             $limit = ' LIMIT '.$start. ', '.$numActivities;
         }
 
-        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY a.date_created DESC ".$limit;
+        $sql = "SELECT ".$select." FROM ".$from. " WHERE ".$where. " ORDER BY ".$order.$limit;
         $GLOBALS['log']->debug("Activity query: $sql");
         $result = $GLOBALS['db']->query($sql);
 
         if(!empty($result)) {
             while(($row=$GLOBALS['db']->fetchByAssoc($result)) != null) {
                 $row['activity_data'] = json_decode(from_html($row['activity_data']), true);
+
+                // Check module/view access for target module
+                if (!empty($row['target_module']) && ACLController::moduleSupportsACL($row['target_module']) && 
+                        !ACLController::checkAccess($row['target_module'], 'view', $row['created_by'] == $current_user->id) && 
+                        !ACLController::checkAccess($row['target_module'], 'list', $row['created_by'] == $current_user->id)){
+                    // User has no access to the module.
+                    unset($row['target_module']);
+                    unset($row['target_id']); 
+                    if($row['activity_type'] == self::ACTIVITY_TYPE_UPDATE) {
+                        $row['activity_data'] = array();
+                    }               
+                }  
+                                            
+                // Check module/view access for relate module
+                if ($row['activity_type'] == self::ACTIVITY_TYPE_RELATE && !empty($row['activity_data']) && 
+                        ACLController::moduleSupportsACL($row['activity_data']['relate_to']) && 
+                        !ACLController::checkAccess($row['activity_data']['relate_to'], 'view', $row['created_by'] == $current_user->id) && 
+                        !ACLController::checkAccess($row['activity_data']['relate_to'], 'list', $row['created_by'] == $current_user->id)){
+                    // User has no access to the module.
+                    $row['activity_data'] = array();
+                } 
+                            
                 if(!empty($row['target_id'])) {
                     $bean = BeanFactory::getBean($row['target_module'], $row['target_id']);
                     if(!empty($bean)) {
                         $row['target_name'] = $bean->get_summary_text();
+                        if($row['activity_type'] == self::ACTIVITY_TYPE_UPDATE) {
+                            foreach($row['activity_data'] as &$update) {
+                                // Check field access
+                                if(!$bean->ACLFieldAccess($update['field'])) {
+                                    $update['before'] = '';
+                                    $update['after'] = '';
+                                    // We need to tell frontend this field is not accessible
+                                    $update['accessible'] = false;
+                                }
+                                else {
+                                    $update['accessible'] = true;
+                                }
+                            }
+                        }                        
                     } else {
                         // We don't have access to the target.
                         unset($row['target_module']);
                         unset($row['target_id']);
+                        if($row['activity_type'] == self::ACTIVITY_TYPE_UPDATE) {
+                            $row['activity_data'] = array();
+                        }                        
                     }
                 }
                 else if(!empty($row['target_module'])) {
@@ -344,6 +415,7 @@ class ActivityStream extends SugarBean {
                 $comments = array();
                 $commentNotes = array();
 
+                // Get comments for returned activities
                 if($numComments != 0) {
                     $fieldDefs = $dictionary['ActivityComments']['fields'];
                     $tableName = $dictionary['ActivityComments']['table'];
@@ -358,9 +430,11 @@ class ActivityStream extends SugarBean {
                             unset($row['first_name']);
                             unset($row['last_name']);
                             $row['value'] = from_html($row['value']);
+                            // Group comments by activity id
                             $comments[$row['activity_id']][] = $row;
                             $commentIds[] = $row['id'];
                         }
+                        // Get attachments for comments
                         if(!empty($commentIds)) {
                             $commentNotes = $this->getNotes('ActivityComments', $commentIds);
                         }
@@ -369,6 +443,7 @@ class ActivityStream extends SugarBean {
 
                 $activityNotes = $this->getNotes('ActivityStream', array_keys($activities));
 
+                // Get attachments for activities
                 foreach($activities as &$activity) {
                     $activity['comments'] = isset($comments[$activity['id']]) ? $comments[$activity['id']] : array();
                     foreach($activity['comments'] as &$comment) {
@@ -409,6 +484,7 @@ class ActivityStream extends SugarBean {
     }
 
     /**
+     * Update a bean's 'last_activity_date' field
      * @param $bean
      * @param $date
      */
