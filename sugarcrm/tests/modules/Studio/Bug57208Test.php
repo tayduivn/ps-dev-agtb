@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -24,46 +23,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
+require_once 'modules/ModuleBuilder/Module/StudioModule.php';
 
-// Test for Bug 57216 - on demand upgrade fails
-$module_name = '<module_name>';
-$object_name = '<object_name>';
+class Bug57208Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    protected $_testModule = 'Bug57208Test';
+    
+    public function setUp() 
+    {
+        sugar_mkdir("modules/{$this->_testModule}");
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('moduleList');
+    }
+    
+    public function tearDown()
+    {
+        rmdir("modules/{$this->_testModule}");
+        SugarTestHelper::tearDown();
+    }
 
-$listViewDefs[$module_name] = array(
-	'BUG_NUMBER' => array(
-        'name' => 'Garbage', // Test this is removed bug 57414
-		'width' => '5',
-		'label' => 'LBL_NUMBER',
-		'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '32',
-		'label' => 'LBL_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_STATUS',
-        'default' => true),
-    'PRIORITY' => array(
-        'width' => '10',
-        'label' => 'LBL_PRIORITY',
-        'default' => true),
-    'RESOLUTION' => array(
-        'width' => '10',
-        'label' => 'LBL_RESOLUTION',
-        'default' => true),
-	'TEAM_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_TEAM',
-        'default' => true),
-	'ASSIGNED_USER_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_ASSIGNED_USER',
-        'default' => false), // Test default false, enabled true bug 57414
-
-);
-?>
+    /**
+     * @group Bug57208
+     */
+    public function testModuleTypeIsBasicForModuleWithNoBeanListEntry()
+    {
+        $sm = new StudioModule($this->_testModule);
+        $type = $sm->getType();
+        
+        $this->assertEquals('basic', $type, "Type should be 'basic' but '$type' was returned from StudioModule :: getType()");
+    }
+}

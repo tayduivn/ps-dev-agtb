@@ -33,27 +33,30 @@
         app.view.View.prototype._renderHtml.call(this);
     },
     systemTour: function() {
+        console.log(this.$('.shown').length)
+        if(this.$('.shown').length > 0){
+            $('#systemTour').modal("show");
+        }  else {
 
         //set up bouncing arrows
         var arrows=new Array();
         arrows[0] = {
-            target: "#module_list li.Cases",
+            target: "#module_list li.Home",
             placement: "bottom"
         };
         arrows[1] = {
+            target: "footer",
+            placement: "top"
+        };
+        arrows[2] = {
             target: "input.search-query",
             placement: "bottom"
         };
-        arrows[2] = {
-            target: "#createList",
-            placement: "bottom right",
-            leftOffset: 40,
-            topOffset: -10
-        };
         arrows[3] = {
-            target: "#tour",
-            placement: "top"
+            target: "#userList",
+            placement: "bottom"
         };
+
 
         var numArrows = arrows.length;
 
@@ -120,12 +123,24 @@
         //show modal
         centerModal();
         this.$('#systemTour').modal({"backdrop":"static"});
-        this.$('#systemTour').modal('show');
-        $('div.modal-backdrop').css('opacity',0.2);
+        this.$('#systemTour').modal('show').addClass("shown");
         //wire up buttons in modal
+        this.$("#systemTour a.close").click(function() {
+            $('#systemTour').modal('hide');
+            $('#systemTour .screen').each(function(){
+               $(this).addClass("hide");
+            });
+            $('#systemTour #screen1').removeClass("hide");
+            centerModal();
+        });
         this.$("#systemTour .screen .done").click(function() {
             $('#systemTour').modal('hide');
+            $('#systemTour #screen1').removeClass("hide");
+            var totalScreens = $("#systemTour .screen").length,
+                lastScreenId = "#screen" +totalScreens;
+            $(lastScreenId).toggleClass('hide');
             $(arrows[numArrows-1].target).popoverext('hide');
+            centerModal();
         });
 
         this.$("#systemTour .screen .next").each(function(index){
@@ -141,9 +156,7 @@
                         $(arrows[index].target).popoverext('show');
 //                    }
 
-                    if(index == 0) {
                         centerModal();
-                    }
                 });
         });
 
@@ -158,9 +171,7 @@
                         $(arrows[index-1].target).popoverext('show');
                     }
                     $(arrows[index].target).popoverext('hide');
-                    if(index == 0) {
                         centerModal();
-                    }
                 });
 
 
@@ -180,10 +191,12 @@
             });
 
         });
+        }
 
 
 
         function centerModal() {
+            console.log('center')
             $("#systemTour").css("left",$(window).width()/2 - $("#systemTour").width()/2);
             $("#systemTour").css("margin-top",-$("#systemTour").height()/2);
         }
