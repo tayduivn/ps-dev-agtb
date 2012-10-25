@@ -80,8 +80,8 @@
     // timeout the alerts
     setTimeout( function (){$('.timeten').fadeOut().remove();}, 9000);
 
-    // toggle star
-    $('.icon-star').on('click', function () {
+    // toggle star and favorites
+    $('.icon-star, .icon-favorite').on('click', function () {
       $(this).parent().toggleClass('active');
       return false;
     });
