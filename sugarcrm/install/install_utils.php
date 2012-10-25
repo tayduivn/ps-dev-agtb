@@ -2185,12 +2185,12 @@ function post_install_modules(){
 }
 
 function get_help_button_url(){
-    $help_url = 'http://www.sugarcrm.com/docs/Administration_Guides/CommunityEdition_Admin_Guide_5.0/toc.html';
+    $help_url = 'http://support.sugarcrm.com/02_Documentation';
     //BEGIN SUGARCRM flav=pro ONLY
-    $help_url = 'http://www.sugarcrm.com/docs/Administration_Guides/Professional_Admin_Guide_5.0/toc.html';
+    $help_url = 'http://support.sugarcrm.com/02_Documentation';
     //END SUGARCRM flav=pro ONLY
     //BEGIN SUGARCRM flav=ent ONLY
-    $help_url = 'http://www.sugarcrm.com/docs/Administration_Guides/Enterprise_Admin_Guide_5.0/toc.html';
+    $help_url = 'http://support.sugarcrm.com/02_Documentation';
     //END SUGARCRM flav=ent ONLY
 
     return $help_url;
