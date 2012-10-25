@@ -1,6 +1,7 @@
 ({
     events: {
-        'click .tour-type': 'startTour'
+        'click .tour-type': 'startTour',
+        'click .tour-overview': 'startOverview'
     },
     initialize: function(options) {
         var self = this;
@@ -8,9 +9,26 @@
         app.events.on("app:view:change", function(viewType, obj) {
             self.module = obj.module;
             self.viewType = viewType;
+
+            if( self.tourData ) {
+                self.overviewData = self.tourData[self.module][self.viewType]["tour_overview_data"];
+                if( self.tourMode ) {
+                    self.initPopover(self.module, self.viewType);
+                }
+            }
+        });
+        app.events.on("app:sync:complete", function() {
+            // can't call loadData() on an additionalComponent
+            // so we call a custom getData() on app:sync:complete
+            self.getData();
         });
     },
-
+    startOverview: function() {
+        // TODO: Change this when we have modal layout in footer.php
+        this.$(".system-tour").modal("hide");
+        this.render();
+        this.$(".system-tour-overview").modal("show");
+    },
     startTour: function(e) {
         var data = this.$(e.currentTarget).data();
         this.fullTour = ( data.type === "full" ) ? true : false;
@@ -18,7 +36,7 @@
         this.$(".system-tour").modal("hide");
 
         // If you're already touring the system, remove the current tour popover
-        if( this.tourMode === true ) {
+        if( this.tourMode ) {
             var $popoverEl = $(".popover[class*='tour']");
 
             if( $popoverEl.length ) {
@@ -41,7 +59,7 @@
                 "button in the footer.", autoClose: true});
         return;
     },
-    nextItem: function(index, obj, currentArray, data) {
+    nextItem: function(index, obj, currentArray) {
         var self = this,
             $tourEl = $("[data-tour='" + obj.id + "']");
 
@@ -124,15 +142,15 @@
                         trigger: "manual", template: templateEl}).popover("show");
 
                     self.fixPopoverPosition(nextObj.placement, nextObj.id);
-                    self.bindClickEvents(self, $nextEl, nextIndex, nextObj, currentArray, data);
+                    self.bindClickEvents(self, $nextEl, nextIndex, nextObj, currentArray);
                 });
             }
             else {
-                this.nextItem(nextIndex, nextObj, currentArray, data);
+                this.nextItem(nextIndex, nextObj, currentArray);
             }
         }
     },
-    prevItem: function(index, obj, currentArray, data) {
+    prevItem: function(index, obj, currentArray) {
         var self = this,
             prevIndex = index - 1,
             prevObj = currentArray[prevIndex],
@@ -145,52 +163,52 @@
         if( $prevEl.length ) {
             this.scrollToEl($prevEl, function() {
                 $prevEl.popover("show");
-                self.bindClickEvents(self, $prevEl, prevIndex, prevObj, currentArray, data);
+                self.bindClickEvents(self, $prevEl, prevIndex, prevObj, currentArray);
             });
         }
         else {
-            this.prevItem(prevIndex, prevObj, currentArray, data);
+            this.prevItem(prevIndex, prevObj, currentArray);
         }
     },
-    initPopover: function(module, viewType) {
+    getData: function() {
         var self = this;
-
-        $.getJSON("../clients/summer/views/tour/data.json", null, function(tourData) {
-            if( tourData.error ) {
-                app.alert.show('retrieve_failed', {level: 'error', title:'Tour Failed', messages: 'Failed to retrieve ' +
-                    'tour data: '+ tourData.error, autoClose: false});
-                return;
-            }
-            else {
-                var list = tourData[module][viewType],
-                    firstObj = _.first(list),
-                    $currentEl = $("[data-tour='" + firstObj.id + "']");
-
-                if( $currentEl.length ) {
-                    var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div>' +
-                        '<div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p>' +
-                        '</div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">' +
-                        app.lang.getAppString("LBL_TOUR_END_TOUR") +'</a><a class="btn btn-primary tour-next">' +
-                        app.lang.getAppString("LBL_TOUR_NEXT") +'</a></div></div></div>';
-
-                    self.scrollToEl($currentEl, function() {
-                        $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
-                            trigger: "manual", template: templateEl}).popover("show");
-
-                        self.fixPopoverPosition(firstObj.placement, firstObj.id);
-                        self.bindClickEvents(self, $currentEl, 0, firstObj, list, tourData);
-                    });
+        return $.getJSON("../clients/base/views/tourguide/data.json", null, function(tourData) {
+                if( tourData.error ) {
+                    app.alert.show('retrieve_failed', {level: 'error', title:'Tour Failed', messages: 'Failed to retrieve ' +
+                        'tour data: '+ tourData.error, autoClose: false});
                 }
-                else
-                {
-                    // The first item is not in the DOM, try the next one,
-                    // nextItem() will successively "try the next item" if
-                    // it can't keep finding the element in the DOM, until
-                    // it reaches the last item in tourData.
-                    self.nextItem(0, firstObj, list, tourData);
+                else {
+                    self.tourData = tourData;
+                    self.overviewData = self.tourData[self.module][self.viewType]["tour_overview_data"];
                 }
-            }
         });
+    },
+    initPopover: function(module, viewType) {
+        var self = this,
+            list = this.tourData[module][viewType]["tour_popover_data"],
+            firstObj = _.first(list),
+            $currentEl = $("[data-tour='" + firstObj.id + "']");
+
+        if( $currentEl.length ) {
+            var templateEl = '<div class="popover '+ firstObj.id + '"><div class="arrow"></div>' +
+                '<div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p>' +
+                '</div><div class="modal-footer" style="position: relative;"><a class="btn tour-end">' +
+                app.lang.getAppString("LBL_TOUR_END_TOUR") +'</a><a class="btn btn-primary tour-next">' +
+                app.lang.getAppString("LBL_TOUR_NEXT") +'</a></div></div></div>';
+
+            this.scrollToEl($currentEl, function() {
+                $currentEl.popover({title: firstObj.title, content: firstObj.content, placement: firstObj.placement,
+                    trigger: "manual", template: templateEl}).popover("show");
+
+                self.fixPopoverPosition(firstObj.placement, firstObj.id);
+                self.bindClickEvents(self, $currentEl, 0, firstObj, list);
+            });
+        }
+        else
+        {
+            // The first item is not in the DOM, try the next one recursively with nextItem()
+            self.nextItem(0, firstObj, list);
+        }
     },
     scrollToEl: function($targetEl, callback) {
         var viewportHeight = $(window).height(),
@@ -213,7 +231,7 @@
         }
         else {
             direction = "none";
-            if (callback && typeof(callback) === "function") {
+            if ( callback && _.isFunction(callback) ) {
                 callback();
             }
         }
@@ -223,7 +241,7 @@
             $('body, .main-pane, .side-pane').animate({
                 scrollTop: elTop + buffer
             }, function() {
-                if (callback && typeof(callback) === "function") {
+                if ( callback && _.isFunction(callback) ) {
                     callback();
                 }
             });
@@ -278,10 +296,10 @@
         // the navbar and the footer. Boost it to 1030 to account for that.
         $("." + className).css("z-index", 1030);
     },
-    bindClickEvents: function(scope, $el, index, obj, list, data) {
+    bindClickEvents: function(scope, $el, index, obj, list) {
 
         $(".tour-next").on("click", function() {
-            scope.nextItem(index, obj, list, data);
+            scope.nextItem(index, obj, list);
         });
         $(".tour-end").on("click", function() {
             $el.popover("hide");
@@ -290,7 +308,7 @@
 
         if( $(".tour-prev").length ) {
             $(".tour-prev").on("click", function() {
-                scope.prevItem(index, obj, list, data);
+                scope.prevItem(index, obj, list);
             });
         }
     }
