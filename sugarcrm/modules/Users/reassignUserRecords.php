@@ -339,6 +339,16 @@ else if(!isset($_GET['execute'])){
 		$q_tables   = " {$object->table_name} ";
 		$q_where  = "where {$object->table_name}.deleted=0 and {$object->table_name}.assigned_user_id = '{$_POST['fromuser']}' ";
 
+        // nutmeg sfa-219 : Fix reassignment of records when user set to Inactive
+        // for products reassign items that are not related to opportunity
+        // products with opportunity will be reassigned if user select ForecastWorksheet module
+        //BEGIN SUGARCRM flav=pro ONLY
+        if ( $module == 'Product' )
+        {
+            $q_where .= " and {$object->table_name}.opportunity_id IS NULL ";
+        }
+        //END SUGARCRM flav=pro ONLY
+
 		// Process conditions based on metadata
 		if(isset($moduleFilters[$p_module]['fields']) && is_array($moduleFilters[$p_module]['fields'])){
 			$custom_added = false;
@@ -435,14 +445,29 @@ else if(isset($_GET['execute']) && $_GET['execute'] == true){
 
 		echo "<h5>{$mod_strings_users['LBL_PROCESSING']} {$app_list_strings['moduleList'][$p_module]}</h5>";
 
-		$res = $db->query($query, true);
+        //BEGIN SUGARCRM flav=com ONLY
+        $res = $db->query($query, true);
+        $affected_rows = $db->getAffectedRowCount($res);
+        //END SUGARCRM flav=com ONLY
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        // nutmeg sfa-219 : Fix reassignment of records when user set to Inactive
+        if ( $module == 'ForecastWorksheet' )
+        {
+            $affected_rows = ForecastWorksheet::reassignForecast($fromuser, $touser);
+        }
+        else
+        {
+            $res = $db->query($query, true);
+            $affected_rows = $db->getAffectedRowCount($res);
+        }
+        //END SUGARCRM flav=pro ONLY
 
 		//echo "<i>Workflow and Notifications <b>".($workflow ? "enabled" : "disabled")."</b> for this module record reassignment</i>\n<BR>\n";
 		echo "<table border='0' cellspacing='0' cellpadding='0'  class='detail view'>\n";
 		echo "<tr>\n";
 		echo "<td>\n";
 		if(! $workflow){
-			$affected_rows = $db->getAffectedRowCount($res);
 			echo "{$mod_strings_users['LBL_UPDATE_FINISH']}: $affected_rows {$mod_strings_users['LBL_AFFECTED']}<BR>\n";
 		}
 		else{

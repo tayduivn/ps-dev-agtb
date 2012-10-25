@@ -142,11 +142,8 @@ $dictionary['Note'] = array(
   array(
   	'name'=>'file_url',
     'vname' => 'LBL_FILE_URL',
-  	'type'=>'function',
-  	'function_class'=>'UploadFile',
-  	'function_name'=>'get_upload_url',
-  	'function_params'=> array('$this'),
-  	'source'=>'function',
+    'type'=>'varchar',
+   	'source'=>'non-db',
   	'reportable'=>false,
   	'comment' => 'Path to file (can be URL)',
     'importable' => false,

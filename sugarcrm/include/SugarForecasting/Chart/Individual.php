@@ -43,7 +43,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      *
      * @var string
      */
-    protected $category = 1;
+    protected $category = array();
 
     /**
      * The labels to be used in the legend and how to parse the data
@@ -66,19 +66,29 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     public function __construct($args)
     {
-        if (isset($args['category'])) {
-            if(is_array($args['category'])) {
-                $this->category = strtolower(array_shift($args['category']));
-            } else {
-                $this->category = strtolower($args['category']);
+        if (isset($args['category']))
+        {
+            if(is_array($args['category']))
+            {
+                $this->category = $args['category'];
+            }
+            else
+            {
+                $this->category = array($args['category']);
             }
         }
-        if (isset($args['group_by']) && !empty($args['group_by'])) {
+        else
+        {
+            $this->category = array();
+        }
+
+        if (isset($args['group_by']) && !empty($args['group_by']))
+        {
             $this->group_by = strtolower($args['group_by']);
         }
         parent::__construct($args);
 
-        // the individual chart doesn't use the dataset an an arary yet
+        // the individual chart doesn't use the dataset as an arary yet
         if (is_array($this->dataset)) {
             $this->dataset = array_shift($this->dataset);
         }
@@ -112,13 +122,15 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
      */
     protected function parseCategory()
     {
-        if (empty($this->category)) {
-            // nothing to see here, we just go about our business
+        if (empty($this->category))
+        {
+            // display in chart all products (opps) from the worksheet
             return;
         }
 
-        foreach ($this->dataArray as $key => $val) {
-            if ($val['commit_stage'] == 'include')
+        foreach ($this->dataArray as $key => $val)
+        {
+            if (in_array($val['commit_stage'], $this->category))
             {
                 continue;
             }
@@ -156,12 +168,12 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
         } else {
             // default to forecast, just on the off chance it's not set
             $this->group_by = "commit_stage";
-            // here we only have a potential for two
 
-            if (empty($this->category)) {
-                $this->group_by_labels[] = $forecast_strings['LBL_CHART_NOT_INCLUDED'];
+            foreach ($this->dataArray as $data)
+            {
+                $this->group_by_labels[] = ucfirst($data['commit_stage']);
             }
-            $this->group_by_labels[] = $forecast_strings['LBL_CHART_INCLUDED'];
+            $this->group_by_labels = array_unique($this->group_by_labels);
         }
 
         $this->group_by_labels = array_values($this->group_by_labels);
@@ -209,11 +221,7 @@ class SugarForecasting_Chart_Individual extends SugarForecasting_Chart_AbstractC
                 default:
                     $label_name = $opp_strings['LBL_FORECAST'];
                     // if this is not empty it means we are only showing committed
-                    if(!empty($this->category)) {
-                        $value_key = 0;
-                    } else if($data['commit_stage'] == 'include') {
-                        $value_key = 1;
-                    }
+                    $value_key = array_search(ucfirst($data['commit_stage']), $this->group_by_labels);
                     break;
             }
 

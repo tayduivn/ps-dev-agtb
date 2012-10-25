@@ -41,6 +41,8 @@ interface TimePeriodInterface
 
     public function createNextTimePeriod();
 
+    public function createPreviousTimePeriod();
+
     public function hasLeaves();
 
     public function getLeaves();

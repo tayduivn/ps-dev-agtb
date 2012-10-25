@@ -9,7 +9,7 @@
         // Determines if we're using 12 or 24 hour clock conventions
         userTimePrefs = app.user.get('timepref');
         // h specifies 12 hour format (TODO: refactor date.js to support g/G options and add here)
-        this.showAmPm = userTimePrefs.match(/h/)!==null ? true : false; // TODO: date.js doesn't yet support g/G options 
+        this.showAmPm = userTimePrefs.match(/[aA]$/)==null ? true : false; // TODO: date.js doesn't yet support g/G options
         this.timeOptions.hours = this.getHours();
         app.view.Field.prototype.initialize.call(this, options);
     },
@@ -44,7 +44,7 @@
         usersTimeFormatPreference = myUser.get('timepref');
 
         // If there is a default 'string' value like "yesterday", format it as a date
-        if(!value && this.def.display_default) {
+        if(this.model.isNew() && !value && this.def.display_default) {
             value  = app.date.parseDisplayDefault(this.def.display_default);
             jsDate = app.date.dateFromDisplayDefaultString(value);
             this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
@@ -59,7 +59,10 @@
         before24Hours = jsDate.getHours();
         value  = app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference);
         jsDate = app.date.parse(value);
-        jsDate = app.date.roundTime(jsDate);
+        // round time to the nearest 15th if this is a edit which is consitent with rest of app
+        if(this.view.name === 'edit') {
+            jsDate = app.date.roundTime(jsDate);
+        }
         
         value = {
             dateTime: app.date.format(jsDate, usersDateFormatPreference)+' '+app.date.format(jsDate, usersTimeFormatPreference),

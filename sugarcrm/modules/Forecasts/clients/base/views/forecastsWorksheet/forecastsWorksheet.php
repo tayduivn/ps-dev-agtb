@@ -63,6 +63,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'clickToEdit' => true,
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                 ),
 
                 array(
@@ -73,6 +74,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'enabled' => true,
                     'clickToEdit' => true,
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                 ),
 
                 array(
@@ -81,7 +83,9 @@ $viewdefs['Forecasts']['base']['view']['forecastsWorksheet'] = array(
                     'label' => 'LBL_WORST_CASE',
                     'default' => true,
                     'enabled' => true,
+                    'clickToEdit' => true,
                     'convertToBase'=> true,
+                    'showTransactionalAmount'=>true,
                 ),
             ),
         ),

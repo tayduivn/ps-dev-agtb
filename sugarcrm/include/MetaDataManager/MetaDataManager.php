@@ -222,6 +222,7 @@ class MetaDataManager {
 
         }
         //END SUGARCRM flav=pro ONLY
+
         $data["_hash"] = md5(serialize($data));
 
         return $data;
@@ -291,7 +292,33 @@ class MetaDataManager {
 
             return $data;
         }
+        if (!isset($data['relationships'])) {
+            $data['relationships'] = array();
+        }
+        
+        // loop over the fields to find if they can be sortable
+        // get the indexes on the module and the first field of each index
+        $indexes = array();
+        if(isset($data['indices'])) {
+            foreach($data['indices'] AS $index) {
+                if(isset($index['fields'][0]))
+                {
+                    $indexes[$index['fields'][0]] = $index['fields'][0];
+                }
+            }
+        }
 
+        if(!empty($indexes)) {
+            // if the field is indexed set sortable to true
+            foreach($data['fields'] AS $field_name => $info) {
+                $data['fields'][$field_name]['sortable'] = false;
+                if(isset($indexes[$field_name])) {
+                    $data['fields'][$field_name]['sortable'] = true;
+                }
+            }
+        }
+        
+        return $data;
     }
 
     /**

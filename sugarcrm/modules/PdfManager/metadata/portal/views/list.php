@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $viewdefs['PdfManager']['portal']['view']['list'] = array(
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
                     'name' => 'name',

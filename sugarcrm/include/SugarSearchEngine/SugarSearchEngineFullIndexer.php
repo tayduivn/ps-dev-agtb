@@ -165,6 +165,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $job->data = $module;
         $job->name = "FTSConsumer {$module}";
         $job->target = "class::SugarSearchEngineFullIndexer";
+        $job->assigned_user_id =1;
         $queue = new SugarJobQueue();
         $queue->submitJob($job);
 
@@ -327,7 +328,7 @@ class SugarSearchEngineFullIndexer extends SugarSearchEngineIndexerBase
         $GLOBALS['log']->info("FTS Consumer {$this->schedulerJob->name} processed {$count} record(s) in $totalTime (s), records per sec: $avgRecs");
 
         //If no items were processed we've exhausted the list and can therefore succeed job.
-        if( $count == 0)
+        if( $count != -1)
         {
             $this->schedulerJob->succeedJob();
         }

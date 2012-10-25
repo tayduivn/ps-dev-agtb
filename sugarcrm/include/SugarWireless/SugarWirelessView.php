@@ -107,6 +107,9 @@ class SugarWirelessView extends SugarView
             // Special case wireless search
             if (preg_match('#wireless_(.+)_search#', $view)) {
                 $filename = $metadataPath . 'search.php';
+                if (!file_exists($filename)) {
+                    $filename = $metadataPath . 'searchdefs.php';
+                }
             } else {
                 $wireless = strpos($view, 'wireless') !== false;
                 $viewType = str_replace('wireless', '', $view);
@@ -552,8 +555,7 @@ class SugarWirelessView extends SugarView
 	       	 	}
 
 	       	 	if(!$valueFormatted) {
-	       	 	   $this->bean->format_field($this->bean->field_defs[$name]);
-                   $value = isset($this->bean->$name) ? $this->bean->$name : '';
+	       	 	   $value = isset($this->bean->$name) ? $this->bean->$name : '';
 	       	 	}
 
 	            $field_defs[$name]['value'] = $value;

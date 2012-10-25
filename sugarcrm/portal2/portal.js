@@ -45,6 +45,25 @@
         });
     });
 
+    // bug57318: Mulitple alert warning when multiple views get render denied on same page.
+    var oHandleRenderError = app.error.handleRenderError;
+    app.error.handleRenderError = function(component, method, additionalInfo) {
+        function handlePortalRenderDenied(c) {
+            var title, message;
+            title = app.lang.getAppString('ERR_NO_VIEW_ACCESS_TITLE');
+            message = app.utils.formatString(app.lang.getAppString('ERR_NO_VIEW_ACCESS_MSG'),[c.module]);
+            // TODO: We can later create some special case handlers if we DO wish to alert warn,
+            // but since we have recursive views that's usually going to be overbearing.
+            app.logger.warn(title + ":\n" + message);
+        }
+        // Only hijack view_render_denied error case, otherwise, delegate all else to sidecar handler
+        if(method === 'view_render_denied') {
+            handlePortalRenderDenied(component);
+        } else {
+            oHandleRenderError(component, method, additionalInfo);
+        }
+    };
+
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
         var dm, nonModuleRoutes;
@@ -139,7 +158,7 @@
 
             // Email is special case as each input email is a sort of field within the one email 
             // field itself; and we need to append errors directly beneath said sub-fields
-            if(self.type==='email') {
+            if(self.type==='email' && self.view.name != "signup") {
                 self.handleEmailValidationError(errors.email);
                 return;
             }

@@ -63,7 +63,7 @@ class SugarCurrency
         $currency2 = self::_getCurrency($toId);
         // NOTE: we always calculate in maximum precision, which the database defines to 6
         // formatting to two decimals is done with formatting functions
-        return round($amount * $currency1->conversion_rate / $currency2->conversion_rate, 6);
+        return round($amount / $currency1->conversion_rate * $currency2->conversion_rate, 6);
     }
 
     /**
@@ -88,6 +88,18 @@ class SugarCurrency
      */
     public static function convertAmountFromBase( $amount, $toId ) {
         return self::convertAmount($amount, '-99', $toId);
+    }
+
+    /**
+     * convert a currency with a given rate
+     *
+     * @access public
+     * @param  float  $amount
+     * @param  float  $rate rate to convert with
+     * @return float   converted amount
+     */
+    public static function convertWithRate( $amount, $rate ) {
+        return round($amount / $rate, 6);
     }
 
     /**
@@ -174,9 +186,9 @@ class SugarCurrency
      * @return object  currency object
      */
     public static function getCurrencyByISO( $ISO ) {
-        $currency = self::_getCurrency();
+        $currency = self::_getCurrency('-99');
         $currencyId = $currency->retrieveIDByISO($ISO);
-        $currency->retrieve($currencyId);
+        $currency = self::_getCurrency($currencyId);
         return $currency;
     }
 
@@ -199,6 +211,5 @@ class SugarCurrency
         $currencyId = empty($user) ? '-99' : $user->getPreference('currency');
         return self::_getCurrency($currencyId);
     }
-
 
 }

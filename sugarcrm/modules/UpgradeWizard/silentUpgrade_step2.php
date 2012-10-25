@@ -602,8 +602,8 @@ if($origVersion < '650' && function_exists('repairUpgradeHistoryTable'))
 //setup forecast defualt settings
 if($origVersion < '670')
 {
-    require_once('modules/Forecasts/ForecastsSeedData.php');
-    ForecastsSeedData::setupForecastSettings();
+    require_once($unzip_dir.'/'.$zip_from_dir.'/modules/Forecasts/ForecastsDefaults.php');
+    ForecastsDefaults::setupForecastSettings(true,$origVersion,getUpgradeVersion());
 }
 //END SUGARCRM flav=PRO ONLY
 

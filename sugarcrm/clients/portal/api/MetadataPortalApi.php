@@ -43,43 +43,6 @@ class MetadataPortalApi extends MetadataApi {
         return $configs;
     }
 
-    /**
-     * Manipulates the ACLs for portal
-     * 
-     * @param array $acls
-     * @return array
-     */
-    protected function verifyACLs(Array $acls) {
-        $acls['admin'] = 'no';
-        $acls['developer'] = 'no';
-        $acls['edit'] = 'no';
-        $acls['delete'] = 'no';
-        $acls['import'] = 'no';
-        $acls['export'] = 'no';
-        $acls['massupdate'] = 'no';
-        
-        return $acls;
-    }
-
-    /**
-     * Enforces module specific ACLs for users without accounts
-     * 
-     * @param array $acls
-     * @return array
-     */
-    protected function enforceModuleACLs(Array $acls) {
-        $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
-        // This is a change in the ACL's for users without Accounts
-        $vis = new SupportPortalVisibility($apiPerson);
-        $accounts = $vis->getAccountIds();
-        if (count($accounts)==0) {
-            // This user has no accounts, modify their ACL's so that they match up with enforcement
-            $acls['Accounts']['access'] = 'no';
-            $acls['Cases']['access'] = 'no';
-        }
-        
-        return $acls;
-    }
 
     /**
      * Fills in additional app list strings data as needed by the client

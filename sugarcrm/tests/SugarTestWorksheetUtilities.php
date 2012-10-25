@@ -75,6 +75,11 @@ class SugarTestWorksheetUtilities
         //so we have to do some shenanigans to find them.
         $GLOBALS['db']->query('delete from worksheet where user_id in(select user_id from (select user_id FROM worksheet WHERE id IN (\'' . implode("', '", $worksheet_ids) . '\')) temp)');
     }
+    
+    public static function removeSpecificCreatedWorksheets($ids)
+    {
+    	$GLOBALS["db"]->query("delete from worksheet where id in('" . implode("', '", $ids) . "')" );
+    }
 
     public static function getCreatedWorksheetIds()
     {

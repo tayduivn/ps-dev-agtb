@@ -347,23 +347,24 @@ $app_list_strings = array (
 
   'commit_stage_binary_dom' => array (
     'include' => 'Include',
-    'pipeline' => 'Pipeline',
+    'exclude' => 'Exclude',
   ),
   'commit_stage_dom' =>
   array (
     'include' => 'Include',
-    'exclude' => 'Exclude',
     'upside'  => 'Upside',
+    'exclude' => 'Exclude',
   ),
 
-  //The n-option for commit_stage dropdowns
-  'commit_stage_expanded_dom' =>
-  array (
-    'include' => 'Include',
-    'exclude' => 'Exclude',
-    'stretch' => 'Stretch',
-    'risk' => 'Risk',
+//BEGIN SUGARCRM flav=ent ONLY
+  'commit_stage_custom_dom' => array(
+      'include' => 'Include',
+      'customRange0' => 'Custom 1',
+      'customRange1' => 'Custom 2',
+      'customRange2' => 'Custom 3',
+      'exclude' => 'Exclude',
   ),
+//END SUGARCRM flav=ent ONLY
 
   'in_total_group_stages' => array (
     'Draft' => 'Draft',
@@ -2012,7 +2013,7 @@ $app_strings = array (
     'LBL_EMAIL_DELETE_ERROR_DESC'           => 'You do not have access to this area. Contact your site administrator to obtain access.',
     'LBL_EMAIL_ERROR_DUPE_FOLDER_NAME'      => 'Sugar Folder names must be unique.',
     'LBL_EMAIL_ERROR_EMPTY'                 => 'Please enter some search criteria.',
-    'LBL_EMAIL_ERROR_GENERAL_TITLE'         => 'An error has occured',
+    'LBL_EMAIL_ERROR_GENERAL_TITLE'         => 'An error has occurred',
     'LBL_EMAIL_ERROR_LIST_NAME'             => 'An email list with that name already exists',
     'LBL_EMAIL_ERROR_MESSAGE_DELETED'       => 'Message Removed from Server',
     'LBL_EMAIL_ERROR_IMAP_MESSAGE_DELETED'  => 'Either message Removed from Server or moved to a different folder',
@@ -2025,7 +2026,7 @@ $app_strings = array (
     'LBL_EMAIL_ERROR_NO_IMAP_FOLDER_RENAME' => 'IMAP folder renaming is not supported at this time.',
     'LBL_EMAIL_ERROR_SERVER'                => 'A mail server address is required.',
     'LBL_EMAIL_ERROR_SAVE_ACCOUNT'          => 'The mail account may not have been saved.',
-    'LBL_EMAIL_ERROR_TIMEOUT'               => 'An error has occured while communicating with the mail server.',
+    'LBL_EMAIL_ERROR_TIMEOUT'               => 'An error has occurred while communicating with the mail server.',
     'LBL_EMAIL_ERROR_USER'                  => 'A login name is required.',
     'LBL_EMAIL_ERROR_PASSWORD'              => 'A password is required.',
     'LBL_EMAIL_ERROR_PORT'                  => 'A mail server port is required.',
@@ -2318,7 +2319,7 @@ $app_strings = array (
     'NO_QUERY_SELECTED' => 'The data format you have selected does not contain a query.  Please select a custom query for this data format.',
     //END SUGARCRM flav=ent ONLY
 
-    'ERR_AJAX_LOAD'     => 'An error has occured:',
+    'ERR_AJAX_LOAD'     => 'An error has occurred:',
     'ERR_AJAX_LOAD_FAILURE'     => 'There was an error processing your request, please try again at a later time.',
     'ERR_AJAX_LOAD_FOOTER' => 'If this error persists, please have your administrator disable Ajax for this module',
     'ERR_CREATING_FIELDS' => 'Error filling in additional detail fields: ',
@@ -3468,6 +3469,7 @@ $app_strings = array (
 
     'LBL_SYNCED_RECURRING_MSG' => 'You cannot edit this record because it was synced from an external client.',
     'LBL_EXISTING' => 'Existing',
+    'LBL_PANEL_DEFAULT' => 'Default',
 
     //quickcreate modal dialog
     'LBL_IGNORE_DUPLICATE_AND_SAVE' => 'Ignore Duplicate and Save',
@@ -4267,7 +4269,7 @@ $app_list_strings['state_dom'] = array(
     'Sugar'=>'Sugar',
     'WebEx'=>'WebEx',
     'GoToMeeting'=>'GoToMeeting',
-    'LotusLive'=>'LotusLive',
+    'IBMSmartCloud'=>'IBM SmartCloud',
     'Google' => 'Google',
     'Box' => 'Box.net',
     'Facebook'=>'Facebook',

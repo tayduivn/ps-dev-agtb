@@ -434,9 +434,26 @@ var DCMenu = YUI({combine: true, timeout: 10000, base:"include/javascript/yui3/b
             p.setBody("<script type='text/javascript'>DCMenu.jsEvalled = true</script>" + r.html);
             if (!DCMenu.jsEvalled)
                 SUGAR.util.evalScript(r.html);
-            DCMenu.qePanel.center();
+            DCMenu.centerQEPanel();
         }
 	}
+    DCMenu.centerQEPanel = function()
+    {
+        var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+        var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+        var viewPortWidth = YAHOO.util.Dom.getClientWidth();
+        var viewPortHeight = YAHOO.util.Dom.getClientHeight();
+        var elementWidth = DCMenu.qePanel.element.offsetWidth;
+        var elementHeight = DCMenu.qePanel.element.offsetHeight;
+        var x = (viewPortWidth / 2) - (elementWidth / 2) + scrollX;
+        // Bug #50757 : Dashlet quick edit form issue in Chrome
+        // if height of panel is more than height of window display panel on top of window
+        var y = ( elementHeight + 10 >= viewPortHeight ) ? 10 + scrollY : (viewPortHeight / 2) - (elementHeight / 2) + scrollY;
+        DCMenu.qePanel.element.style.left = parseInt(x, 10) + "px";
+        DCMenu.qePanel.element.style.top = parseInt(y, 10) + "px";
+        DCMenu.qePanel.syncPosition();
+        DCMenu.qePanel.cfg.refireEvent("iframe");
+    }
     DCMenu.hideQEPanel = function(){
         if (DCMenu.qePanel)
         {
