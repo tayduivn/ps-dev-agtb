@@ -544,9 +544,9 @@
                 best = parseFloat(model.get('best_case')),
                 base_rate = parseFloat(model.get('base_rate')),
                 worst = parseFloat(model.get('worst_case')),
-                worst_base = worst * base_rate,
-                amount_base = amount * base_rate,
-                best_base = best * base_rate;
+                worst_base =  app.currency.convertWithRate(worst, base_rate),
+                amount_base = app.currency.convertWithRate(amount, base_rate),
+                best_base = app.currency.convertWithRate(best, base_rate);
 
             if(won) {
                 wonAmount += amount_base;
