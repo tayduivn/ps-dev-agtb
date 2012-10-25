@@ -322,6 +322,10 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         );
     }
 
+    /**
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testTopLevelManagerQuotaEqualToWorksheetData()
     {
         $obj = new SugarForecasting_Chart_Manager(self::$args);
@@ -338,6 +342,10 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $this->assertEquals($expected, $actual, null, 2);
     }
 
+    /**
+     * @group forecasts
+     * @group forecastschart
+     */
     public function testMidLevelManagerQuotaEqualToRollup()
     {
         $reportee = SugarTestUserUtilities::createAnonymousUser(false);
