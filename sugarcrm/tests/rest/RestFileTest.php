@@ -25,12 +25,6 @@
 require_once('tests/rest/RestFileTestBase.php');
 
 class RestFileTest extends RestFileTestBase {
-    protected $_note;
-    protected $_note_id;
-    protected $_contact;
-    protected $_contact_id;
-    protected $_testfile1 = 'Bug55655-01.txt';
-    protected $_testfile2 = 'Bug55655-02.txt';
 
     public function setUp()
     {
