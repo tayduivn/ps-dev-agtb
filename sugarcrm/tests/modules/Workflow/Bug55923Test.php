@@ -103,6 +103,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         $wf->write_workflow();
 
         $this->workFlowId = $wf->id;
+        LogicHook::refreshHooks();
     }
 
     protected function tearDown()
@@ -114,6 +115,7 @@ class Bug55923Test extends Sugar_PHPUnit_Framework_TestCase
         $this->db->query("delete from workflow_triggershells where id = '$this->workFlowTriggerShellId'");
         $this->db->query("delete from workflow_actionshells where id = '$this->workFlowActionShellId'");
         $this->db->query("delete from workflow_actions where id = '$this->workFlowActionId'");
+        LogicHook::refreshHooks();
 
         $_REQUEST = array();
         SugarTestHelper::tearDown();
