@@ -294,27 +294,35 @@ eoq;
          }
 		 //END COPY NEW FILES INTO TARGET INSTANCE
     
+        logThis('Checking for mobile/portal metadata upgrade...');
         // 6.6 metadata enhancements for portal and wireless, should only be 
         // handled for upgrades FROM pre-6.6 to a version POST 6.6 and MUST be
         // handled AFTER inclusion of the upgrade package files
         if (!didThisStepRunBefore('commit','upgradePortalMobileMetadata')) {
-            if (version_compare($sugar_version, '6.6.0') == -1 && version_compare($manifest['version'], '6.6.0', '>=')) {
+            if (version_compare($sugar_version, '6.6.0') == -1) {
                 if (file_exists('modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php')) {
                     set_upgrade_progress('commit','in_progress','upgradePortalMobileMetadata','in_progress');
-                    logThis('Preparing to upgrade metadata to 6.6.0 compatibility...');
+                    logThis('Sidecar Upgrade: Preparing to upgrade metadata to 6.6.0 compatibility through the silent upgrader ...');
                     require_once 'modules/UpgradeWizard/SidecarUpdate/SidecarMetaDataUpgrader.php';
                     
                     // Get the sidecar metadata upgrader
+                    logThis('Sidecar Upgrade: Instantiating the mobile/portal metadata upgrader ...');
                     $smdUpgrader = new SidecarMetaDataUpgrader();
                     
                     // Run the upgrader
+                    logThis('Sidecar Upgrade: Beginning the mobile/portal metadata upgrade ...');
                     $smdUpgrader->upgrade();
+                    logThis('Sidecar Upgrade: Mobile/portal metadata upgrade complete');
                     
-                    // Log failures if any
+                    // Log status and failures if any
+                    logThis('Mobile and portal view metadata file upgrade is complete.');
                     $failures = $smdUpgrader->getFailures();
                     if (!empty($failures)) {
-                        logThis(count($failures) . ' metadata files failed to upgrade:');
+                        logThis('Sidecar Upgrade: ' . count($failures) . ' metadata files failed to upgrade through the silent upgrader:');
                         logThis(print_r($failures, true));
+                    } else {
+                        logThis('Sidecar Upgrade: Mobile/portal metadata upgrade ran with no failures:');
+                        logThis($smdUpgrader->getCountOfFilesForUpgrade() . ' files were upgraded.');
                     }
                     
                     // Reset the progress
@@ -323,6 +331,7 @@ eoq;
             }
         }
         // END sidecar metadata updates
+        logThis('Mobile/portal metadata upgrade check complete');
 
     ///////////////////////////////////////////////////////////////////////////////
 	////	HANDLE POSTINSTALL SCRIPTS

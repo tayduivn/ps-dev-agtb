@@ -607,10 +607,10 @@ function handleDbCreateSugarUser() {
         echo $mod_strings['LBL_PERFORM_DONE'];
     } else {
           echo "<div style='color:red;'>";
-          echo "An error occured when creating user:<br>";
+          echo "An error occurred when creating user:<br>";
           echo "$err<br>";
           echo "</div>";
-          installLog("An error occured when creating user: $err");
+          installLog("An error occurred when creating user: $err");
     }
 }
 
@@ -1165,7 +1165,6 @@ function insert_default_settings(){
     $db->query( "INSERT INTO config (category, name, value) VALUES ( 'license', 'key',          '' )" );
 
       //END SUGARCRM lic=sub ONLY
-
 
     //insert default tracker settings
     $db->query("INSERT INTO config (category, name, value) VALUES ('tracker', 'Tracker', '1')");

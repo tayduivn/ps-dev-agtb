@@ -1,5 +1,11 @@
 (function(app) {
-
+    /**
+     *
+     * @param {Object} field
+     * @param {Object} view
+     * @return {String}
+     * @constructor
+     */
     app.view.ClickToEditField = function (field, view) {
         this.field = field;
         this.view = view;
@@ -9,6 +15,11 @@
     
     /**
      * Checks to see if the entered value of the field matches its data type
+     *
+     * @param {Object} field
+     * @param {String} value
+     * @return {Boolean}
+     * @private
      */
     app.view.ClickToEditField.prototype._checkDatatype = function(field, value) {
         var ds = app.utils.regexEscape(app.user.get('decimal_separator')) || '.';
@@ -27,47 +38,75 @@
     	}
     };
 
+    /**
+     * render the field
+     *
+     * @return {Object}
+     */
     app.view.ClickToEditField.prototype.render = function() {
         this._addCTEIcon(this.field);
 
         this.field.$el.editable(
+            /**
+             * this function returns the value that will be displayed after editing.
+             * set back to original value if user manages to undefine or enters in a blank value.
+             *
+             * @param {String} value
+             * @param {Object} settings
+             * @return {String}
+             */
             function(value, settings) {
                 // check if input was valid for formatting in callback
                 settings.field.isValid = settings.checkDatatype(settings.field, value);
-                // This function returns the value that will be displayed after editing.
-                // set back to original value if user manages to undefine or enters in a blank value.
                 if(value == undefined || value == "") {
                     value = settings.field.holder;
                     settings.field.isCancel = true;
                 } else {
                     settings.field.isCancel = false;
                 }
+                /*
                 if(settings.field.type == 'currency') {
-                    $(this).parent().find(".cte_currency_symbol").each(function(index, node){
+                    $(this).parent().find(".cte-symbol").each(function(index, node){
                         $(node).remove();
                     });
                 }
+                */
                 return value;
             },
             {
-                style: "width: 100",
+                width: 'none', // input width (not css)
+                height: 'none', // input height (not css)
+                style: 'margin: 0', // form style
                 select: true,
                 field: this.field,
                 view: this.view,
                 numberTypes: this.numberTypes,
                 checkDatatype: this._checkDatatype,
                 onblur: 'cancel',
+                /**
+                 * This is called on cancel, such as clicking outside of input field.
+                 * Remove currency symbol from front of input field.
+                 *
+                 * @param {Object} settings
+                 * @param {Object} original
+                 */
                 onreset: function(settings, original) {
-                    // This is called on cancel, such as clicking outside of input field.
-                    // Remove currency symbol from front of input field.
+                    /*
                     if(settings.field.type == 'currency') {
-                        $(this).parent().parent().find(".cte_currency_symbol").each(function(index, node){
+                        $(this).parent().parent().find(".cte-symbol").each(function(index, node){
                             $(node).remove();
                         });
                     }
+                    */
                 },
-                // data returns the string to be edited.
-                // we want to edit the raw decimal value.
+                /**
+                 * data returns the string to be edited.
+                 * we want to edit the raw decimal value.
+                 *
+                 * @param {String} value
+                 * @param {Object} settings
+                 * @return {String}
+                 */
                 data: function(value, settings) {
                   if(settings.field.type !== 'currency') {
                       return value;
@@ -80,7 +119,7 @@
                      return 0;
                   }
 
-                  // format for currency editing, mimic excel
+                  // format for currency editing, remove markup
                   return app.utils.formatNumber(
                       fieldValue,
                       app.user.get('decimal_precision'),
@@ -88,27 +127,55 @@
                       '',
                       app.user.get('decimal_separator'));
                 },
+                /**
+                 * sets up the field for editing
+                 *
+                 * @param {Object} settings
+                 * @param {Object} original
+                 */
                 onedit: function(settings, original) {
                     if(_.isUndefined(settings.field.isValid)) {
                         settings.field.isValid = true;
                     }
                     // clear styling
+                    settings.field.hideCteIcon();
                     $(this).css("background-color", "");
                     $(this).css("color", $.data(this, "color"));
                     $(this).parent().find(".tempMsg").each(function(index, node){
                         $(node).remove();
                     });
-                    if(settings.field.type == 'currency') {
-                        // add symbol before input field
-                        var symbol = app.currency.getCurrencySymbol(settings.field.model.get('currency_id'));
-                        $(this).before('<span class="cte_currency_symbol" style="float: left; padding-right: 2px;">'+symbol+'</span>');
-                    }
-
                     // hold value for use later in case user enters a +/- percentage, or user enters an empty value
                     if(settings.field.isValid) {
                         settings.field.holder = $(original).html();
                     }
                 },
+                /**
+                 * access the form after created
+                 *
+                 * @param {Object} settings
+                 * @param {Object} form
+                 */
+                afterform: function(settings, form) {
+                    // set css on input field
+                    var input = form.find('input');
+                    if(_.include(settings.numberTypes, settings.field.type)) {
+                        // format input field for numeric values
+                        input.attr('style','width: 60px; text-align: right;');
+                    }
+                    // append currency symbol
+                    if(settings.field.type == 'currency') {
+                        // add symbol before input field
+                        var symbol = app.currency.getCurrencySymbol(settings.field.model.get('currency_id'));
+                        input.before('<span class="cte-symbol" style="margin-right: 3px">'+symbol+'</span>');
+                    }
+                },
+                /**
+                 * called when the field is submitted
+                 *
+                 * @param {String} value
+                 * @param {Object} settings
+                 * @return {String}
+                 */
                 callback: function(value, settings) {
                     // if canceled, do nothing
                     if(settings.field.isCancel) {
@@ -159,19 +226,8 @@
                         
                         settings.field.model.set(values);
 
-                        //settings.field.context.forecasts.set({commitButtonEnabled: true});
-                        if(settings.field.type == 'currency') {
-                            // convert value and format for display
-                            var currencyId = settings.field.model.get('currency_id');
-                            if(settings.field.def.convertToBase) {
-                                value = value * settings.field.model.get('base_rate');
-                                currencyId = '-99';
-                            }
-                            value = app.currency.formatAmountLocale(
-                                value,
-                                currencyId);
-                            $(this).html(value);
-                        }
+                        // re-render the field
+                        $(this).html(this.render());
 
                     } catch (e) {
                         app.logger.error('Unable to save model in forecastsWorksheet.js: _renderClickToEditField - ' + e);
@@ -182,10 +238,14 @@
         );
         return this.field;
     };
-
+    /**
+     * add the CTE icon next to the field
+     *
+     * @private
+     */
     app.view.ClickToEditField.prototype._addCTEIcon = function(){
         // add icon markup
-        this.field.cteIcon = $('<div style="position:absolute; margin-left:-10px"><span class="span2" style=" border-right: medium none; position: absolute; left: -5px; width: 15px"><i class="icon-pencil icon-sm"></i></span></div>');
+        this.field.cteIcon = $('<span class="edit-icon" style="position: absolute; left: -3px"><i class="icon-pencil icon-sm"></i></span>');
 
         // add events
         this.field.showCteIcon = function(){

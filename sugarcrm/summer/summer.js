@@ -52,6 +52,15 @@
 
         });
 
+        app.router.route("Forecasts", "forecasts", function() {
+            console.log("LOADING FOARCASATUASADKJASFLAKSJF", app.viewModule);
+            app.viewModule = "Forecasts";
+            app.controller.loadView({
+                module: app.viewModule,
+                layout: app.viewModule.toLowerCase()
+            });
+        });
+
         // Load the search results route.
         app.router.route("search/:query", "search", function(query) {
             app.controller.loadView({
@@ -81,6 +90,7 @@
         var dm,
             nonModuleRoutes = [
                 "search",
+                "Forecasts",
                 "error",
                 "profile",
                 "profileedit",

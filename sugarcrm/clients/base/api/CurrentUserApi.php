@@ -22,6 +22,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once('data/BeanFactory.php');
 require_once('include/SugarFields/SugarFieldHandler.php');
+require_once('include/MetaDataManager/MetaDataManager.php');
 
 class CurrentUserApi extends SugarApi {
     public function registerApiRest() {
@@ -70,54 +71,24 @@ class CurrentUserApi extends SugarApi {
      */
     public function retrieveCurrentUser($api, $args) {
 
-        global $locale;
-
         $current_user = $this->getUserBean();
-               
+        
         // Get the basics
         $user_data = $this->getBasicUserInfo();
-
-        // user currency prefs
-        $currency = BeanFactory::getBean('Currencies');
-        $currency_id = $current_user->getPreference('currency');
-        $currency->retrieve($currency_id);
-        $user_data['currency_id'] = $currency->id;
-        $user_data['currency_name'] = $currency->name;
-        $user_data['currency_symbol'] = $currency->symbol;
-        $user_data['currency_iso'] = $currency->iso4217;
-        $user_data['currency_rate'] = $currency->conversion_rate;
-        // user number formatting prefs
-        $user_data['decimal_precision'] = $locale->getPrecision();
-        $user_data['decimal_separator'] = $locale->getDecimalSeparator();
-        $user_data['number_grouping_separator'] = $locale->getNumberGroupingSeparator();
-
-        if ( isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal' ) {
-            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
-            $user_data['type'] = 'support_portal';
-            $user_data['user_id'] = $current_user->id;
-            $user_data['user_name'] = $current_user->user_name;
-            $user_data['id'] = $_SESSION['contact_id'];
-            
-            // We need to ask the visibility system for the list of account ids
-            $visibility = new SupportPortalVisibility($contact);
-            $user_data['account_ids'] = $visibility->getAccountIds();
-
-            $user_data['full_name'] = $contact->full_name;
-            $user_data['portal_name'] = $contact->portal_name;
-            if(isset($contact->preferred_language))
-            {
-                $user_data['preferred_language'] = $contact->preferred_language;
-            }
+        
+        if ( isset($args['platform']) ) {
+            $platform = array(basename($args['platform']),'base');
         } else {
-            $user_data['type'] = 'user';
-            $user_data['id'] = $current_user->id;
-            $user_data['full_name'] = $current_user->full_name;
-            $user_data['user_name'] = $current_user->user_name;
-            $user_data['picture'] = $current_user->picture;
-            if(isset($current_user->preferred_language))
-            {
-                $user_data['preferred_language'] = $current_user->preferred_language;
-            }
+            $platform = array('base');
+        }
+        // Fill in the rest
+        $user_data['type'] = 'user';
+        $user_data['id'] = $current_user->id;
+        $user_data['full_name'] = $current_user->full_name;
+        $user_data['user_name'] = $current_user->user_name;
+        $user_data['acl'] = $this->getAcls($platform);
+        if(isset($current_user->preferred_language)) {
+            $user_data['preferred_language'] = $current_user->preferred_language;
         }
         
         if(class_exists('BoxOfficeClient')) {
@@ -207,6 +178,60 @@ class CurrentUserApi extends SugarApi {
             $user_data['expiration'] = $this->getUserLoginExpirationPreference();
         }
         return $user_data;
+    }
+
+    protected function getMetadataManager( $platform = 'base', $public = false) {
+        $current_user = $this->getUserBean();
+        return new MetaDataManager($current_user, $platform, $public);
+    }
+
+    /**
+     * Gets acls given full module list passed in.
+     * @param string The platform e.g. portal, mobile, base, etc.
+     * @return array
+     */  
+    public function getAcls($platform) {
+        $mm = $this->getMetadataManager($platform);
+        $current_user = $this->getUserBean();
+        $fullModuleList = array_keys($GLOBALS['app_list_strings']['moduleList']);
+        $acls = array();
+        foreach ($fullModuleList as $modName) {
+            $bean = BeanFactory::newBean($modName);
+            if (!$bean || !is_a($bean,'SugarBean') ) {
+                // There is no bean, we can't get data on this
+                continue;
+            }
+
+
+            $acls[$modName] = $mm->getAclForModule($modName,$current_user->id);
+            $acls[$modName] = $this->verifyACLs($acls[$modName]);
+        }
+        // Handle enforcement of acls for clients that override this (e.g. portal)
+        $acls = $this->enforceModuleACLs($acls);
+
+        return $acls;
+    }
+
+    /**
+     * Manipulates the ACLs as needed, per client
+     * 
+     * @param array $acls
+     * @return array
+     */
+    protected function verifyACLs(Array $acls) {
+        // No manipulation for base acls
+        return $acls;
+    }
+
+    /**
+     * Enforces module specific ACLs for users without accounts, as needed
+     * 
+     * @param array $acls
+     * @return array
+     */
+    protected function enforceModuleACLs(Array $acls) {
+        // No manipulation for base acls
+        return $acls;
     }
 
     /**

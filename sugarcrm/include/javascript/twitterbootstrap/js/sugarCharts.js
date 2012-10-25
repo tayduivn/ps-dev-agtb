@@ -52,155 +52,140 @@ function loadSugarChart (chartId,jsonFilename,css,chartConfig) {
 
     switch(chartConfig["chartType"]) {
         case "barChart":
-            var request = jQuery.ajax({
-                url: jsonFilename + "?r=" + new Date().getTime(),
-                dataType:"text",
-                async: false,
-                success: function(data) {
-                    if(data !== undefined && data != "No Data"){
-                        var json = eval('('+data+')');
+            var request = App.api.call('GET', jsonFilename, null, {
+                success: function (o) {
+                    var Chart = Backbone.Model.extend({});
+                    var Charts = Backbone.Collection.extend({
+                        model: Chart
+                    });
+                    charts = new Charts();
+                    charts.reset(o);
 
-                        var properties = $jit.util.splat(json.properties)[0];
-                        var marginBottom = (chartConfig["orientation"] == 'vertical' && json.values.length > 8) ? 20*4 : 20;
-                        //init BarChart
-                        var barChart = new $jit.BarChart({
-                            //id of the visualization container
-                            injectInto: chartId,
-                            //whether to add animations
-                            animate: false,
-                            nodeCount: json.values.length,
-                            renderBackground: chartConfig['imageExportType'] == "jpg" ? true: false,
-                            backgroundColor: 'rgb(255,255,255)',
-                            colorStop1: 'rgba(255,255,255,.8)',
-                            colorStop2: 'rgba(255,255,255,0)',
-                            shadow: {
-                                enable: false,
-                                size: 2
-                            },
-                            //horizontal or vertical barcharts
-                            orientation: chartConfig["orientation"],
-                            hoveredColor: false,
-                            Title: {
-                                text: properties['title'],
-                                size: 16,
-                                color: '#444444',
-                                offset: 20
-                            },
-                            Subtitle: {
-                                text: properties['subtitle'],
-                                size: 11,
-                                color: css["color"],
-                                offset: 20
-                            },
-                            Ticks: {
-                                enable: true,
-                                color: css["gridLineColor"]
-                            },
-                            //bars separation
-                            barsOffset: (chartConfig["orientation"] == "vertical") ? 30 : 20,
-                            //visualization offset
-                            Margin: {
-                                top:20,
-                                left: 30,
-                                right: 20,
-                                bottom: marginBottom
-                            },
-                            ScrollNote: {
-                                text: (chartConfig["scroll"] && $jit.util.isTouchScreen()) ? "Use two fingers to scroll" : "",
-                                size: 12
-                            },
-                            Events: {
-                                enable: true,
-                                onClick: function(node) {
-                                    if(!node || $jit.util.isTouchScreen()) return;
-                                    if(node.link == undefined || node.link == '') return;
-                                    window.location.href=node.link;
-                                }
-                            },
-                            //labels offset position
-                            labelOffset: 5,
-                            //bars style
-                            type: useGradients? chartConfig["barType"]+':gradient' : chartConfig["barType"],
-                            //whether to show the aggregation of the values
-                            showAggregates: (chartConfig["showAggregates"] != undefined) ? chartConfig["showAggregates"] : true,
-                            showNodeLabels: (chartConfig["showNodeLabels"] != undefined) ? chartConfig["showNodeLabels"] : true,
-                            //whether to show the labels for the bars
-                            showLabels:true,
-                            //labels style
-                            Label: {
-                                type: labelType, //Native or HTML
-                                size: 12,
-                                family: css["font-family"],
-                                color: css["color"],
-                                colorAlt: "#ffffff"
-                            },
-                            //add tooltips
-                            Tips: {
-                                enable: true,
-                                onShow: function(tip, elem) {
+                    // The chart view controls the single svg element on the screen
+                    var ChartsView = Backbone.View.extend({
 
-                                    if(elem.type == 'marker') {
-                                        tip.innerHTML = '<b>' + elem.name + '</b>: ' + elem.valuelabel ;
-                                    } else {
-                                        if(elem.link != 'undefined' && elem.link != '') {
-                                            drillDown = ($jit.util.isTouchScreen()) ? "<br><a href='"+ elem.link +"'>Click to drilldown</a>" : "<br>Click to drilldown";
-                                        } else {
-                                            drillDown = "";
-                                        }
+                        initialize: function () {
+                            // bind to model change events and use enter() to modify the appropriate circle
+                            var self = this;
 
-                                        if(elem.valuelabel != 'undefined' && elem.valuelabel != undefined && elem.valuelabel != '') {
-                                            value = "elem.valuelabel";
-                                        } else {
-                                            value = "elem.value";
-                                        }
-                                        eval("tip.innerHTML = properties.label_name + ': <b>' + elem."+chartConfig["tip"]+" + '</b><br> '+properties.value_name+': <b>' + "+value+" + '</b> <br> Percentage: <b>' + elem.percentage + '</b>' + drillDown");
-                                    }
-                                }
-                            }
-                        });
-                        //load JSON data.
-                        barChart.loadJSON(json);
+                            self.collection.bind('reset',
 
-                        //dynamically add legend to list
-                        var list = $jit.id('legend'+chartId);
-                        var legend = barChart.getLegend(),
-                            cols = (typeof SUGAR == 'undefined' || typeof SUGAR.mySugar == 'undefined') ? 8 : 4,
-                            rows = Math.ceil(legend["name"].length/cols),
-                            table = "<table cellpadding='0' cellspacing='0' align='left'>";
-                        var j = 0;
-                        for(i=0;i<rows;i++) {
-                            table += "<tr>";
-                            for(td=0;td<cols;td++) {
+                            function (model) {
+                                d3.select(self.el)
+                                    .datum(model.models.map(function (d, i) {
+                                    return d.attributes;
+                                })[0])
+                                    .transition().duration(500).call(self.chart);
+                            });
+                        },
 
-                                table += '<td width=\'16\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += '<div class=\'query-color\' style=\'background-color:'
-                                        + legend["color"][j] +'\'>&nbsp;</div>';
-                                }
+                        translateDataToD3: function (json, params) {
+                            return {
+                                'properties': {
+                                    'title': json.properties[0].title,
+                                    'quota': parseInt(json.values[0].goalmarkervalue[0], 10),
+                                    // bar group data (x-axis)
+                                    'groupData': json.values.map(function (d, i) {
+                                        return {
+                                            'group': i,
+                                            'l': json.values[i].label,
+                                            't': json.values[i].values.reduce(function (p, c, i, a) {
+                                                return parseInt(p, 10) + parseInt(c, 10);
+                                            })
+                                        };
+                                    })
+                                },
+                                // series data
+                                'data': json.label.map(function (d, i) {
+                                    return {
+                                        'key': d,
+                                        'type': 'bar',
+                                        'series': i,
+                                        'values': json.values.map(function (e, j) {
+                                            return {
+                                                'series': i,
+                                                'x': j + 1,
+                                                'y': parseInt(e.values[i], 10),
+                                                y0: 0
+                                            };
+                                        }),
+                                        'valuesOrig': json.values.map(function (e, j) {
+                                            return {
+                                                'series': i,
+                                                'x': j + 1,
+                                                'y': parseInt(e.values[i], 10),
+                                                y0: 0
+                                            };
+                                        })
+                                    };
+                                }).concat(
+                                json.properties[0].goal_marker_label.filter(function (d, i) {
+                                    return d !== 'Quota';
+                                }).map(function (d, i) {
+                                    return {
+                                        'key': d,
+                                        'type': 'line',
+                                        'series': i,
+                                        'values': json.values.map(function (e, j) {
+                                            return {
+                                                'series': i,
+                                                'x': j + 1,
+                                                'y': parseInt(e.goalmarkervalue[i + 1], 10)
+                                            };
+                                        }),
+                                        'valuesOrig': json.values.map(function (e, j) {
+                                            return {
+                                                'series': i,
+                                                'x': j + 1,
+                                                'y': parseInt(e.goalmarkervalue[i + 1], 10)
+                                            };
+                                        })
+                                    };
+                                }))
+                            };
+                        },
 
-                                table += '</td>';
-                                table += '<td class=\'label\' valign=\'top\'>';
-                                if(legend["name"][j] != undefined) {
-                                    table += legend["name"][j];
-                                }
+                        render: function () {
+                            this.$el.empty();
 
-                                table += '</td>';
-                                j++;
-                            }
-                            table += "</tr>";
+                            var chartData = this.collection.models.map(function (d, i) {
+                                return d.attributes;
+                            })[0];
+
+                            this.chart = nv.models.paretoChart()
+                                .showTitle(true)
+                                .tooltips(true)
+                                .showControls(false)
+                                .stacked(false)
+                            //.colorData( 'graduated', {c1: '#e8e2ca', c2: '#3e6c0a', l: chartData.data.length} )
+                            //.colorData( 'class' )
+                            .colorData('default')
+                                .colorFill('gradient')
+                            //.colorFill( 'default' )
+                            .tooltipBar(function (key, x, y, e, graph) {
+                                return '<p>Stage: <b>' + key + '</b></p>' + '<p>Amount: <b>' + y + '</b></p>' + '<p>Percent: <b>' + x + '%</b></p>';
+                            })
+                                .tooltipLine(function (key, x, y, e, graph) {
+                                return '<p>Likely: <b>' + y + '</b></p>';
+                            });
+                            d3.select(this.el)
+                                .datum(this.translateDataToD3(chartData))
+                                .transition().duration(500).call(this.chart);
+
+                            nv.utils.windowResize(this.chart.update);
+
+                            return this;
                         }
 
-                        table += "</table>";
-                        list.innerHTML = table;
+                    });
 
+                    $("#db620e51-8350-c596-06d1-4f866bfcfd5b").append('<svg></svg>');
 
-                        //save canvas to image for pdf consumption
-                        $jit.util.saveImageTest(chartId,jsonFilename,chartConfig["imageExportType"],chartConfig['saveImageTo']);
-
-                        trackWindowResize(barChart, chartId, json);
-                        that.chartObject = barChart;
-
-                    }
+                    var chartsView = new ChartsView({
+                        el: $('#db620e51-8350-c596-06d1-4f866bfcfd5b svg'),
+                        collection: charts
+                    });
+                    chartsView.render();
                 }
             });
 

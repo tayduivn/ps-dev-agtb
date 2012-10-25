@@ -61,6 +61,8 @@
             //Set the default selection so that when render is called on the view it will use the newly selected value
             app.defaultSelections.timeperiod_id.id = input.selected;
             this.view.context.forecasts.set('selectedTimePeriod', {"id": input.selected, "label": label});
+            // make it close the container to act like a normal dropdown
+            this.$el.find('div.chzn-container-active').removeClass('chzn-container-active');
         };
 
         // INVESTIGATE: Should this be retrieved from the model, instead of directly?

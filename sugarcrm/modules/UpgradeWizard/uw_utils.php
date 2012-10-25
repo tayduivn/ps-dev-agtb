@@ -3303,11 +3303,14 @@ function upgradeUserPreferences() {
             $current_user->savePreferencesToDB();
         }
 
-        //BEGIN SUGARCRM flav=pro ONLY
         $changed = false;
+        if(!$current_user->getPreference('calendar_publish_key')) {
+        	// set publish key if not set already
+        	$current_user->setPreference('calendar_publish_key', create_guid());
+        	$changed = true;
+        }
 
-
-          
+        //BEGIN SUGARCRM flav=pro ONLY
 	      //Set the user theme to be 'Sugar' theme since this is run for CE flavor conversions
 	      $userTheme = $current_user->getPreference('user_theme', 'global');
 
@@ -3384,17 +3387,17 @@ function upgradeUserPreferences() {
 				$current_user->setPreference('pages', $pages, 0, 'Home');
                 $changed = true;
 		  } //if
-
-		  // we need to force save the changes to disk, otherwise we lose them.
-          if($changed)
-          {
-		    $current_user->savePreferencesToDB();
-          }
-
         //END SUGARCRM flav=pro ONLY
+
+        // we need to force save the changes to disk, otherwise we lose them.
+        if($changed)
+        {
+            $current_user->savePreferencesToDB();
+        }
+
 	} //while
 //BEGIN SUGARCRM flav=pro ONLY
-    
+
     /*
 	 * This section checks to see if the Tracker settings for the corresponding versions have been
 	 * disabled and the regular tracker (for breadcrumbs) enabled.  If so, then it will also disable

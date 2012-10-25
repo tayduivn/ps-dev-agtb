@@ -105,10 +105,35 @@
                 "summer/summer-ui.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/lib/d3.v2.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/nv.d3.min.js" => "summer/summer.min.js",
-                "styleguide/styleguide/js/nvd3/src/models/pie.js" => "summer/summer.min.js",
-                "styleguide/styleguide/js/nvd3/src/models/pieChart.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/axis.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/src/models/funnel.js" => "summer/summer.min.js",
                 "styleguide/styleguide/js/nvd3/src/models/funnelChart.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/gauge.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/gaugeChart.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/legend.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/line.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/lineChart_sugar.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/multiBar_sugar.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/multiBarChart_sugar.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/multiBarHorizontal_sugar.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/multiBarHorizontalChart_sugar.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/paretoChart.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/paretoLegend.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/pie.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/pieChart.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/scatter.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/scatterChart.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/sparkline.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/sparklinePlus.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/stackedArea.js" => "summer/summer.min.js",
+                "styleguide/styleguide/js/nvd3/src/models/stackedAreaChart_sugar.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/ForecastsUtils.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/BucketGridEnum.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/lib/ClickToEdit.js" => "summer/summer.min.js",
+                "modules/Forecasts/clients/base/helper/hbt-helpers.js" => "summer/summer.min.js",
+                "include/javascript/twitterbootstrap/js/sugarCharts.js" => "summer/summer.min.js",
+                "include/javascript/jquery/jquery.jstree.js" => "summer/summer.min.js",
+
             ),
 
             $summer_css = array(
@@ -323,6 +348,38 @@
             ),
            //END SUGARCRM flav=ent ONLY
         );
+
+    // groupings for sidecar forecast
+    // use sidecar/src/include-manifest.php file to define what files should be loaded
+    // exclude lib/jquery/jquery.min.js b/s jquery is loaded and extended with sugar_grp1_jquery.js
+    $sidecar_forecasts = array();
+    $cached_file = 'include/javascript/sidecar_forecasts.js';
+    if ( file_exists('sidecar/src/include-manifest.php') )
+    {
+        require_once('sidecar/src/include-manifest.php');
+        if ( !empty($buildFiles) )
+        {
+            $sidecar_forecasts = array();
+            $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
+            foreach ( $buildFiles as $_ind => $_file )
+            {
+                $sidecar_forecasts['sidecar/'.$_file] = $cached_file;
+            }
+            $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
+            $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
+            $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/clients/base/views/alert-view/alert-view.js'] = $cached_file;
+            $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
+            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
+            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
+            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
+        }
+    }
+    $js_groupings[] = $sidecar_forecasts;
 
     /**
      * Check for custom additions to this code

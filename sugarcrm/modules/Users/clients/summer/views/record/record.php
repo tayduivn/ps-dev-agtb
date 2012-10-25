@@ -31,12 +31,6 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Users']['summer']['view']['record'] = array(
-    'templateMeta' => array(
-        'maxColumns' => '2',
-        'widths' => array(
-            array('label' => '10', 'field' => '30'),
-        ),
-    ),
     'buttons' => array(
         array(
             'name' => 'edit_button',
@@ -48,17 +42,26 @@ $viewdefs['Users']['summer']['view']['record'] = array(
             'primary' => true,
         ),
     ),
-    'panels' => array(        
+    'panels' => array(
+        array(
+            'name' => 'panel_head',
+            'columns' => 2,
+            'labels' => false,
+            'labelsOnTop' => false,
+            'placeholders' => true,
+            'fields' => array(
+                array('name' => 'picture', 'noedit' => true, 'span' => 2, 'label' => '', 'type' => 'img'),
+                array('name' => 'full_name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
+            ),
+        ),
         array(
             'name' => 'panel_body',
             'label' => 'LBL_PANEL_2',
-            'columns' => 1,
+            'columns' => 2,
             'labels' => true,
-            'labelsOnTop' => false,
-            'placeholders' => true                                                                                                                                  ,
+            'labelsOnTop' => true,
+            'placeholders' => true,
             'fields' => array(
-                "picture",
-                "full_name",
                 'title',
                 'status',
                 'description',
@@ -66,16 +69,18 @@ $viewdefs['Users']['summer']['view']['record'] = array(
         ),
         array(
             'name' => 'panel_hidden',
-            'hide' => true,                
+            'hide' => true,
+            'columns' => 2,
+            'labelsOnTop' => true,
             'fields' => array(
                 'employee_status',
-                'show_on_employees',                    
+                'show_on_employees',
                 'department',
                 'reports_to_name',
                 'phone_work',
                 'phone_mobile',
                 'phone_home',
-                'phone_other',                    
+                'phone_other',
                 'phone_fax',
                 'address_street',
                 array('fields' => array('address_city', 'address_state', 'address_postalcode')),

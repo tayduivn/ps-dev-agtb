@@ -108,7 +108,15 @@ class SidecarMetaDataUpgrader
      * @var array
      */
     protected $failures = array();
-    
+
+    /**
+     * Flag to tell the upgrader to write to the log or not. On by default. Can
+     * be toggled using {@see toggleWriteToLog()}
+     * 
+     * @var bool
+     */
+    protected $writeToLog = true;
+
     /**
      * Sets the list of files that need to be upgraded. Will look in directories 
      * contained in $legacyFilePaths and will also attempt to identify custom
@@ -160,7 +168,12 @@ class SidecarMetaDataUpgrader
         // The second path will be handled by history types with a package name and undeployed status
         // The last path will be handdled by base types with a package name and undeployed status
         // 
+        $this->logUpgradeStatus('Beginning search for custom module mobile metadata...');
+        // Count for logging
+        $total = 0;
         foreach ($mb->packages as $packagename => $package) {
+            // For count logging
+            $count = $deployedcount = $undeployedcount = 0;
             $buildpath = $package->getBuildDir() . '/SugarModules/modules/';
             foreach ($package->modules as $module => $mbmodule) {
                 $appModulePath = $modulepath . $package->key . '_' . $module;
@@ -178,6 +191,8 @@ class SidecarMetaDataUpgrader
                     
                     // Get our upgrade files as base files since these are regular metadata
                     $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype);
+                    $count += count($files);
+                    $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
                     
                     // For deployed modules we still need to handle package dir metadata
@@ -185,6 +200,8 @@ class SidecarMetaDataUpgrader
                     
                     // Get our upgrade files as undeployed base type wireless client
                     $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'base', $packagename, false);
+                    $count += count($files);
+                    $deployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
                 } else {
                     // Handle undeployed history metadata
@@ -192,10 +209,16 @@ class SidecarMetaDataUpgrader
                     
                     // Get our upgrade files
                     $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $metatype, 'history', $packagename, false);
+                    $count += count($files);
+                    $undeployedcount += count($files);
                     $this->files = array_merge($this->files, $files);
                 }
             }
+            $this->logUpgradeStatus("$count upgrade files set for package $packagename: Deployed - $deployedcount, Undeployed - $undeployedcount ...");
+            $total += $count;
         }
+        $this->logUpgradeStatus('Custom module mobile metadata done.');
+        $this->logUpgradeStatus("$total custom module files fetched for conversion");
     }
     
     /**
@@ -223,9 +246,11 @@ class SidecarMetaDataUpgrader
     public function upgrade() 
     {
         // Set the upgrade file list
+        $this->logUpgradeStatus('Setting upgrade file list...');
         $this->setFilesToUpgrade();
         
         // Traverse the files and start parsing and moving
+        $this->logUpgradeStatus('Beginning mobile/portal metadata upgrade process...');
         foreach ($this->files as $file) {
             // Get the appropriate upgrade class name for this view type
             $class = $this->getUpgraderClass($file['viewtype']);
@@ -238,6 +263,7 @@ class SidecarMetaDataUpgrader
                 $upgrader = new $class($this, $file);
                 
                 // If the upgrade worked for this file, add it to the remove stack
+                $this->logUpgradeStatus("Delegating upgrade to $class ...");
                 if ($upgrader->upgrade()) {
                     if (!in_array($file['fullpath'], self::$filesForRemoval)) {
                         self::$filesForRemoval[] = $file['fullpath'];
@@ -245,8 +271,10 @@ class SidecarMetaDataUpgrader
                 } else {
                     $this->registerFailure($file);
                 }
+                $this->logUpgradeStatus("{$class} :: upgrade() complete...");
             }
         }
+        $this->logUpgradeStatus('Mobile/portal metadata upgrade process complete.');
         
         // Add the rest of the OOTB module wireless metadata files to the stack
         $this->cleanupLegacyFiles();
@@ -280,6 +308,11 @@ class SidecarMetaDataUpgrader
      */
     protected function setUpgradeFiles($client) 
     {
+        $this->logUpgradeStatus("Getting $client upgrade files ...");
+        
+        // Keep track of how many files were added, for logging
+        $count = 0;
+        
         // Hit the legacy paths list to start the ball rolling 
         if (isset($this->legacyFilePaths[$client]) && is_array($this->legacyFilePaths[$client])) {
             foreach ($this->legacyFilePaths[$client] as $type => $path) {
@@ -295,11 +328,17 @@ class SidecarMetaDataUpgrader
                         
                         // Get our upgrade files
                         $files = $this->getUpgradeableFilesInPath($metadatadir, $module, $client, $type);
+                        
+                        // Increment the count
+                        $count += count($files);
+                        
+                        // Merge them
                         $this->files = array_merge($this->files, $files);
                     }
                 }
             }
         }
+        $this->logUpgradeStatus("$count $client upgrade files set ...");
     }
     
     /**
@@ -479,5 +518,54 @@ class SidecarMetaDataUpgrader
      */
     public static function getFilesForRemoval() {
         return self::$filesForRemoval;
+    }
+
+    /**
+     * Gets the listing of files that are to be upgraded
+     * 
+     * @return array
+     */
+    public function getFilesForUpgrade() {
+        return $this->files;
+    }
+
+    /**
+     * Gets the count of the files that are to be upgraded
+     * 
+     * @return int
+     */
+    public function getCountOfFilesForUpgrade() {
+        return count($this->files);
+    }
+
+    /**
+     * Logs a message to the upgrade wizard if logging is turned on
+     * 
+     * @param $message
+     */
+    public function logUpgradeStatus($message) {
+        if ($this->writeToLog) {
+            if (!function_exists('logThis')) {
+                require_once 'modules/UpgradeWizard/uw_utils.php';
+            }
+            
+            logThis("Sidecar Upgrade: $message");
+        }
+    }
+
+    /**
+     * Toggles the writeToLog flag
+     */
+    public function toggleWriteToLog() {
+        $this->writeToLog = !$this->writeToLog;
+    }
+
+    /**
+     * Gets the current value of the log write status
+     * 
+     * @return bool
+     */
+    public function getWriteToLogStatus() {
+        return $this->writeToLog;
     }
 }

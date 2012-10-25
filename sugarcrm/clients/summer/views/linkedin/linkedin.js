@@ -28,7 +28,7 @@
 
         // Module is Unknown
         else {
-            this.$(".linkedin-widget").html("No LinkedIn profile found");
+            return;
         }
     },
 

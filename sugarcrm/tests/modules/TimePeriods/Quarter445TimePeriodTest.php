@@ -83,7 +83,7 @@ class Quarter445TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         SugarTestTimePeriodUtilities::addTimePeriod($nextTimePeriod);
         $nextTimePeriod = BeanFactory::getBean('Quarter445TimePeriods', $nextTimePeriod->id);
 
-        //next timeperiod (1 year from today)
+        //next timeperiod (1 quarter from today)
         $nextStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
         $nextStartDate = $nextStartDate->modify("+13 week");
         $nextEndDate = $timedate->fromDBDate($baseTimePeriod->start_date);
@@ -93,6 +93,35 @@ class Quarter445TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($nextStartDate, $timedate->fromDBDate($nextTimePeriod->start_date));
 
         $this->assertEquals($nextEndDate, $timedate->fromDBDate($nextTimePeriod->end_date));
+    }
+
+    /**
+     * @group forecasts
+     * @group timeperiods
+     */
+    public function testCreatePreviousTimePeriod()
+    {
+        global $app_strings;
+
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $baseTimePeriod = self::$tp;
+
+        $previousTimePeriod = $baseTimePeriod->createPreviousTimePeriod();
+        $previousTimePeriod->name = "SugarTestCreatedPriorQuarter445TimePeriods";
+        $previousTimePeriod->save();
+        SugarTestTimePeriodUtilities::addTimePeriod($previousTimePeriod);
+        $previousTimePeriod = BeanFactory::getBean('Quarter445TimePeriods', $previousTimePeriod->id);
+
+        //next timeperiod (1 quarter ago today)
+        $priorStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
+        $priorStartDate = $priorStartDate->modify("-13 week");
+        $priorEndDate = $timedate->fromDBDate($baseTimePeriod->start_date);
+        $priorEndDate = $priorEndDate->modify("-1 day");
+
+        $this->assertEquals($timedate->fromDBDate($previousTimePeriod->start_date), $priorStartDate);
+
+        $this->assertEquals($timedate->fromDBDate($previousTimePeriod->end_date), $priorEndDate);
     }
 
     /**

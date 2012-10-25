@@ -812,7 +812,6 @@ $GLOBALS['mod_strings']  = $installerStrings;
     //END SUGARCRM flav=com ONLY
 
     //BEGIN SUGARCRM flav=pro ONLY
-    //Create at least 300 Opportunities
     $products = $account->build_related_list('SELECT id FROM products', new Product(), 0, 50);
     $opportunity_ids = OpportunitiesSeedData::populateSeedData($number_companies, $app_list_strings, $accounts, $products, $sugar_demodata['users']);
     //END SUGARCRM flav=pro ONLY

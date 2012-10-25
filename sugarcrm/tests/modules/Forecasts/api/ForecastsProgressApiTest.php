@@ -229,6 +229,7 @@ class ForecastsProgressApiTest extends RestTestBase
         $this->assertEquals(70000, $restReply['closed_amount'], "Closed amount didn't match calculated amount.");
         $this->assertEquals(3, $restReply['opportunities'], "opportunity count did not match");
         $this->assertEquals(50000, $restReply['pipeline_revenue'], "pipeline revenue did not match expected amounts");
+        $this->assertEquals(56000, $restReply['quota_amount'], "quota amount did not match expected amount");
     }
 
     /**

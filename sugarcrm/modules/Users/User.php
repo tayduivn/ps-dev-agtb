@@ -529,10 +529,8 @@ class User extends Person {
 		}
 
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
-		$setNewUserPreferences = empty($this->id);
-		//END SUGARCRM flav=sales ONLY
+		$setNewUserPreferences = empty($this->id) || !empty($this->new_with_id);
 
 		//BEGIN SUGARCRM flav=pro ONLY
 
@@ -579,14 +577,17 @@ class User extends Person {
 		}
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
 		if ( $setNewUserPreferences ) {
+		//BEGIN SUGARCRM flav=sales ONLY
 		    // set default reminder time to 30 minutes
 		    $this->setPreference('reminder_time', 1800);
 		    $this->setPreference('mailmerge_on', 'on');
-		}
 		//END SUGARCRM flav=sales ONLY
+	        if(!$this->getPreference('calendar_publish_key')) {
+		        $this->setPreference('calendar_publish_key', create_guid());
+	        }
+		}
 
         $this->savePreferencesToDB();
         return $this->id;
@@ -1845,55 +1846,6 @@ EOQ;
         	return true;
         }
 	}
-
-	//BEGIN SUGARCRM flav!=com ONLY
-	function preprocess_fields_on_save(){
-		parent::preprocess_fields_on_save();
-        require_once('include/upload_file.php');
-		$upload_file = new UploadFile("picture");
-
-		//remove file
-		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
-		{
-			$upload_file->unlink_file($this->picture);
-			$this->picture="";
-		}
-
-		//uploadfile
-		if (isset($_FILES['picture']) && !empty($_FILES['picture']["name"]))
-		{
-			//confirm only image file type can be uploaded
-			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
-			if (in_array($_FILES['picture']["type"], $imgType))
-			{
-				if ($upload_file->confirm_upload())
-				{
-					$this->picture = create_guid().".png";
-					$upload_file->final_move( $this->picture);
-					$path=$upload_file->get_upload_path($this->picture);
-					if(!verify_image_file($path)) {
-					    $this->picture = '';
-					}
-				}
-			} else {
-				$this->picture = create_guid().".png";
-				$file = "include/images/default-profile.png";
-				$newfile = "upload://$this->picture";
-				if (!copy($file, $newfile)) {
-		   			global $app_strings;
-		        	$GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
-
-				}
-			}
-		}
-
-		//duplicate field handling (in the event the Duplicate button was pressed)
-		if(empty($this->picture) && !empty($_REQUEST['picture_duplicate'])) {
-           $this->picture = $_REQUEST['picture_duplicate'];
-		}
-	}
-	//END SUGARCRM flav!=com ONLY
-
 
    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
    {	//call parent method, specifying for array to be returned

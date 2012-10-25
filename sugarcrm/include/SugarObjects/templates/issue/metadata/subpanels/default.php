@@ -31,7 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 // $Id: default.php 15992 2006-08-16 01:51:22Z majed $
 $module_name = '<module_name>';
-$_object_name = '<_object_name>';
 $subpanel_layout = array(
 	'top_buttons' => array(
 		array('widget_class' => 'SubPanelTopCreateButton'),
@@ -41,11 +40,6 @@ $subpanel_layout = array(
 	'where' => '',
 
 	'list_fields' => array(
-		$_object_name . '_number'=>array(
-	 		'vname' => 'LBL_NUMBER',
-	 		'width' => '5%',
-		),
-		
 		'name'=>array(
 	 		'vname' => 'LBL_SUBJECT',
 			'widget_class' => 'SubPanelDetailViewLink',
@@ -71,11 +65,13 @@ $subpanel_layout = array(
 			'target_module' => 'Employees',
 		),
 		'edit_button'=>array(
+            'vname' => 'LBL_EDIT_BUTTON',
 			'widget_class' => 'SubPanelEditButton',
 		 	'module' => $module_name,
 	 		'width' => '4%',
 		),
 		'remove_button'=>array(
+            'vname' => 'LBL_REMOVE',
 			'widget_class' => 'SubPanelRemoveButton',
 		 	'module' => $module_name,
 			'width' => '5%',

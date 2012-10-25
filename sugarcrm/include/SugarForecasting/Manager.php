@@ -132,14 +132,18 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $reportee = BeanFactory::getBean('Users', $reportee_id);
             $default_data = $this->defaultData;
             $default_data['id'] = $reportee_id;
+
+            $default_data['label'] = $locale->getLocaleFormattedName($reportee->first_name, $reportee->last_name);
+
             if($reportee_id == $user_id) {
                 // we have the owner
-                $default_data["name"] = string_format($mod_strings['LBL_MY_OPPORTUNITIES'], array($locale->getLocaleFormattedName($user->first_name, $user->last_name)));
-                $default_data["show_opps"] = true;
+                $default_data['name'] = string_format($mod_strings['LBL_MY_OPPORTUNITIES'], array($default_data['label']));
+                $default_data['show_opps'] = true;
             } else {
-                $default_data['name'] = $locale->getLocaleFormattedName($reportee->first_name, $reportee->last_name);
-                $default_data["show_opps"] = User::isManager($reportee_id) ? false : true;
+                $default_data['name'] = $default_data['label'];
+                $default_data['show_opps'] = User::isManager($reportee_id) ? false : true;
             }
+
             $default_data['user_id'] = $reportee_id;
             $data[$reportee->user_name] = $default_data;
         }
@@ -172,7 +176,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
 					   "ON q.user_id = u.id " .
 					   "WHERE q.timeperiod_id = '{$this->getArg('timeperiod_id')}' " .
 					   "AND ((u.id = '{$this->getArg('user_id')}' and q.quota_type = 'Direct') " .
-						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup'))";
+						    "OR (u.reports_to_id = '{$this->getArg('user_id')}' and q.quota_type = 'Rollup')) and q.deleted = 0";
 
         $result = $db->query($quota_query);
 
@@ -324,7 +328,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                 // make sure that adjusted is not equal to zero, this might be over written by the loadWorksheetAdjustedValues call
                 $this->dataArray[$user_name]['worst_adjusted'] = $row['worst_case'];
                 $this->dataArray[$user_name]['forecast_id'] = $row['id'];
-                $this->dataArray[$user_name]['date_modified'] = $row['date_modified'];
+                $this->dataArray[$user_name]['date_modified'] = $this->convertDateTimeToISO($row['date_modified']);
                 $this->dataArray[$user_name]['currency_id'] = $row['currency_id'];
                 $this->dataArray[$user_name]['base_rate'] = $row['base_rate'];
             }

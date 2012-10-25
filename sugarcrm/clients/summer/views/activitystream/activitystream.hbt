@@ -14,8 +14,8 @@
           {{/if}}
     </ul>
   </div>
-  <div id="activitystream-timeline"></div>
-  <div id='activitystream-calendar'></div>
+  <div id="{{timelineId}}"></div>
+  <div id="{{calendarId}}"></div>
   <div class="activitystream-post row omnibar">
       <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
         <img src="{{picture_url}}" alt="{{full_name}}">
@@ -62,7 +62,9 @@
               <a href="#{{attributes.target_module}}">{{attributes.target_name}}</a>
             {{/if}}
           {{else}}
+          {{#notEq attributes.activity_type "posted"}}
             a record
+          {{/notEq}}
           {{/if}}
 
           <br>
@@ -197,7 +199,7 @@
           {{#eq attributes.comments.length "0"}}
           <a class="comment reply" href="#comment"><i class="icon-comment" rel="tooltip" data-title="Comment"></i></a>
           {{/eq}}
-          <a data-toggle="tab"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
+          <a class="preview-stream" data-postid="{{attributes.id}}" data-module="{{attributes.target_module}}" data-id="{{attributes.target_id}}" data-toggle="tab"><i class="icon-eye-open" rel="tooltip" data-title="Preview"></i></a>
         </div>
       </li>
       {{/each}}

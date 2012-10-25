@@ -18,9 +18,8 @@
         'blur .sayit': 'hideTypeahead',
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
-        'click .sayit .label a.close': 'removeTag',
         'click .showAnchor': 'showAnchor',
-        'click .icon-eye-open': 'previewRecord',
+        'click .preview-stream': 'previewRecord',
         'click .toggleView': 'toggleView'
     },
 
@@ -30,7 +29,7 @@
 
         this.opts = {params: {}};
         this.collection = {};
-
+        
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
 
@@ -44,6 +43,16 @@
             }
         }
 
+        this.viewId = this.getViewId();
+        this.calendarId = this.getCalendarId();
+        this.timelineId = this.getTimelineId();
+        
+        if (this.context.get("link")) {
+            this.opts.params.link = this.context.get("link");
+            this.opts.params.parent_module = this.layout.layout.module;
+            this.opts.params.parent_id = this.layout.layout.model.id;
+        }
+        
         this.collection = app.data.createBeanCollection("ActivityStream");
 
         // By default, show all posts.
@@ -66,25 +75,47 @@
         jQuery.event.props.push('dataTransfer');
     },
 
+    // There may be more than one activity stream widget on one page
+    getViewId: function() {
+        var viewId = app.controller.context.get('module');
+        if(app.controller.context.get('modelId')) {
+            viewId += '-'+app.controller.context.get('modelId'); 
+        }
+        if(this.context.get("link")) {
+            viewId += '-'+this.context.get("link");
+        }
+        return viewId;
+    },
+    
+    getTimelineId: function() {
+        this.viewId = this.viewId || this.getViewId();
+        return 'activitystream-timeline-'+this.viewId;
+    },
+
+    getCalendarId: function() {
+        this.viewId = this.viewId || this.getViewId();
+        return 'activitystream-calendar-'+this.viewId;
+    },
+    
     toggleView: function(event) {
         var view = this.$(event.currentTarget).data('view');
         event.preventDefault();
 
         if (view == 'timeline') {
-            this.$('#activitystream-timeline').show();
-            this.$('#activitystream-calendar').hide();
-            if (this.$('#activitystream-timeline').html() === "") {
+            this.$('#'+this.timelineId).show();
+            this.$('#'+this.calendarId).hide();
+            if (this.$('#'+this.timelineId).html() === "") {
                 this._renderTimeline();
             }
         } else if(view == 'calendar') {
-            this.$('#activitystream-calendar').show();
-            this.$('#activitystream-timeline').hide();
-            if (this.$('#activitystream-calendar').html() === "") {
+            this.$('#'+this.calendarId).show();
+            this.$('#'+this.timelineId).hide();
+            if (this.$('#'+this.calendarId).html() === "") {
                 this._renderCalendar();
             }
         } else {
-            this.$('#activitystream-timeline').hide();
-            this.$('#activitystream-calendar').hide();
+            this.$('#'+this.timelineId).hide();
+            this.$('#'+this.calendarId).hide();
         }
     },
 
@@ -174,9 +205,8 @@
                 contents += this.data;
             } else if (this.nodeName == "SPAN") {
                 var el = $(this);
-                el.find('a').remove();
                 var data = el.data();
-                contents += '@[' + data.module + ':' + data.id + ':' + el.text() + ']';
+                contents += '@[' + data.module + ':' + data.id + ']';
             }
         }).html();
         return contents.replace(/&nbsp;/gi, ' ');
@@ -393,10 +423,57 @@
     }, 250),
 
     getEntities: function(event) {
-        this._getEntities(event);
+        var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown");
+        // Coerce integer to a boolean.
+        var dropdownOpen = !!(dropdown.length);
+        if(dropdownOpen) {
+            var active = dropdown.find('.active');
+            // Enter or tab. Tab doesn't work in some browsers.
+            if(event.keyCode == 13 || event.keyCode == 9) {
+                event.preventDefault();
+                event.stopPropagation();
+                dropdown.find('.active').click();
+            }
+            // Up arrow.
+            if(event.keyCode == 38) {
+                var prev = active.prev();
+                if(!prev.length) {
+                  prev = dropdown.find('li').last();
+                }
+                active.removeClass('active');
+                prev.addClass('active');
+            }
+            // Down arrow.
+            if(event.keyCode == 40) {
+                var next = active.next();
+                if(!next.length) {
+                  next = dropdown.find('li').first();
+                }
+                active.removeClass('active');
+                next.addClass('active');
+            }
+        }
+
+        $(event.currentTarget).find('.label').each(function() {
+            var el = $(this);
+            if(el.data('name') !== el.text()) {
+                el.remove();
+            }
+        });
+
+        // If we're typing text.
+        if(event.keyCode > 47) {
+            this._getEntities(event);
+        } else {
+            // Fixes issue where a random font tag appears. ABE-128.
+            if(this.$(event.currentTarget).text().length === 0) {
+                this.$(event.currentTarget).html('');
+            }
+        }
     },
 
     hideTypeahead: function() {
+        var self = this;
         setTimeout(function() {
             self.$("ul.typeahead.activitystream-tag-dropdown").remove();
         }, 150);
@@ -411,16 +488,29 @@
         event.stopPropagation();
         event.preventDefault();
         var el = $(event.currentTarget);
-        var body = $(el.parents()[1]).find(".sayit")[0];
-        var lastIndex = body.innerHTML.lastIndexOf("@");
+        var body = $(el.parents()[1]).find(".sayit");
+        var originalChildren = body.clone(true).children();
+        var lastIndex = body.html().lastIndexOf("@");
         var data = $(event.currentTarget).data();
 
-        var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name + '<a class="close">×</a>');
-        tag.attr("data-id", data.id).attr("data-module", data.module);
-        body.innerHTML = body.innerHTML.substring(0, lastIndex) + " " + tag[0].outerHTML + "&nbsp;";
+        var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
+        tag.data("id", data.id).data("module", data.module).data("name", data.name);
+        var substring = body.html().substring(0, lastIndex);
+        $(body).html(substring).append(tag).append("&nbsp;");
+
+        // Since the data is stored as an object, it's not preserved when we add the tag.
+        // For this reason, we need to add it again.
+        body.children().each(function(i) {
+            if(originalChildren[i]) {
+                var tagChild = this;
+                _($.data(originalChildren[i])).each(function(value, key) {
+                    $.data(tagChild, key, value);
+                });
+            }
+        });
         if (document.createRange) {
             var range = document.createRange();
-            range.selectNodeContents(body);
+            range.selectNodeContents(body[0]);
             range.collapse(false);
             var selection = window.getSelection();
             selection.removeAllRanges();
@@ -429,17 +519,17 @@
         this.hideTypeahead();
     },
 
-    removeTag: function(event) {
-        this.$(event.currentTarget).parent().remove();
-    },
-
     _parseTags: function(text) {
+        var self = this;
         if(!text || text.length === 0) {
             return text;
         }
-        var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*):([\d\w\s-]*)\]/g);
-        return text.replace(pattern, function(str, module, id, text) {
-            return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + text + "</a></span>";
+        var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g);
+        return text.replace(pattern, function(str, module, id) {
+            var name = _(self.entityList).find(function(el) {
+                return el.id == id;
+            }).name || "A record";
+            return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + name + "</a></span>";
         });
     },
 
@@ -610,21 +700,31 @@
 
     previewRecord: function(event) {
         var self = this,
-            root = this.$(event.currentTarget).parent().parent().parent(),
-            hash = root.find("p a:last").attr("href").replace('#', ''),
-            arr = hash.split('/'),
-            module = arr[0], id = arr[1],
-            model = app.data.createBean(module);
+            el = this.$(event.currentTarget),
+            data = el.data(),
+            module = data.module,
+            id = data.id,
+            postId = data.postid;
 
-        // Grab model corresponding to preview icon clicked
-        model.set("id", id);
-        model.fetch({
-            success: function(model) {
-                model.set("_module", module);
-                // Fire on parent layout .. works nicely for relatively simple page ;=)
-                self.context.trigger("togglePreview", model);
-            }
-        });
+        // If module/id data attributes don't exist, this user
+        // doesn't have access to that record due to team security.
+        if( module.length && id.length ) {
+            var model = app.data.createBean(module);
+
+            model.set("id", id);
+            model.set("postId", postId);
+            model.fetch({
+                success: function(model) {
+                    model.set("_module", module);
+                    self.context.trigger("togglePreview", model, self.collection);
+                }
+            });
+        }
+        else {
+            app.alert.show("no_access", {level: "error", title:"Permission Denied",
+                messages: "Sorry, you do not have access to preview this specific record.", autoClose: true});
+            return;
+        }
     },
 
     _focusOnPost: _.once(function() {
@@ -638,22 +738,41 @@
 
     _renderHtml: function() {
         var self = this;
+        var processAttachment = function(note, i) {
+            if(note.file_mime_type) {
+                note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
+                note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
+                note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
+            }
+        };
+        var processPicture = function(obj) {
+            var isModel = (obj instanceof Backbone.Model);
+            var created_by = obj.created_by || obj.get('created_by');
+            var url = "../clients/summer/views/imagesearch/anonymous.jpg";
+            if(obj.created_by_picture || obj.get('created_by_picture')) {
+                url = app.api.buildFileURL({
+                    module: 'Users',
+                    id: created_by,
+                    field: 'picture'
+                });
+            }
+            if(isModel) {
+                obj.set('created_by_picture_url', url);
+            } else {
+                obj.created_by_picture_url = url;
+            }
+        };
+
         _.each(this.collection.models, function(model) {
             var activity_data = model.get("activity_data");
-            var picture = model.get("created_by_picture");
             var comments = model.get("comments");
+
             if (activity_data && activity_data.value) {
                 activity_data.value = self._parseTags(activity_data.value);
                 model.set("activity_data", activity_data);
             }
 
-            model.set("created_by_picture_url", (picture) ? app.api.buildFileURL({
-                module: 'Users',
-                id: model.get('created_by'),
-                field: 'picture'
-            }) : "../clients/summer/views/imagesearch/anonymous.jpg");
-
-
+            processPicture(model);
             if (comments.length > 1) {
                 comments[1]['_starthidden'] = true;
                 comments[comments.length - 1]['_stophidden'] = true;
@@ -661,29 +780,10 @@
             }
             _.each(comments, function(comment) {
                 comment.value = self._parseTags(comment.value);
-
-                comment.created_by_picture_url = (comment.created_by_picture) ? app.api.buildFileURL({
-                    module: 'Users',
-                    id: comment.created_by,
-                    field: 'picture'
-                }) : "../clients/summer/views/imagesearch/anonymous.jpg";
-
-                _.each(comment.notes, function(note, index) {
-                    if(note.file_mime_type) {
-                        note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
-                        note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                        note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
-                    }
-                });
+                processPicture(comment);
+                _.each(comment.notes, processAttachment);
             });
-
-            _.each(model.get("notes"), function(note, index) {
-                if(note.file_mime_type) {
-                    note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
-                    note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                    note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
-                }
-            });
+            _.each(model.get("notes"), processAttachment);
 
         }, this);
 
@@ -723,7 +823,8 @@
                 start_at_end:true,
                 js: 'lib/TimelineJS/js/timeline.js',
                 source: timeline,
-                embed_id:   'activitystream-timeline'           // ID of the DIV you want to load the timeline into
+                id: 'storyjs-'+self.timelineId,
+                embed_id: self.timelineId           // ID of the DIV you want to load the timeline into
             });
         }
     },
@@ -740,10 +841,10 @@
                 },
                 editable: false,
                 viewDisplay: function(view) {
-                    $('#activitystream-calendar').fullCalendar( 'refetchEvents' );
+                    $('#'+self.calendarId).fullCalendar( 'refetchEvents' );
                 },
                 events: function(start, end, callback) {
-                    var events = [], view = $('#activitystream-calendar').fullCalendar('getView'), objarrays;
+                    var events = [], view = $('#'+self.calendarId).fullCalendar('getView'), objarrays;
                     if(view.name == 'month') {
                         events = self._addCalendarMonthEvent(self.collection.models);
                     }
@@ -761,8 +862,8 @@
         };
 
         if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
-            $('#activitystream-calendar').html('');
-            $('#activitystream-calendar').fullCalendar(calendar);
+            $('#'+self.calendarId).html('');
+            $('#'+self.calendarId).fullCalendar(calendar);
         }
     },
 

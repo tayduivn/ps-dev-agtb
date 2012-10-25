@@ -3,22 +3,15 @@
 <div class="block thumbnail padded">
     <div class="twitter-widget">
         <h4 data-tour="tour-{{module}}-tweets">Tweets</h4>
-        {{#each tweets}}
-        {{#if this.source}}
-        <ul style="margin-left: 0px">
-        <div class="postdate" style="margin: 0 10px 0 0">
-            <div class="month m-{{{this.month}}}">{{this.month}}</div>
-            <div class="day d-{{{this.day}}}">{{this.day}}</div>
-            <div class="year y-{{{this.year}}}">{{this.year}}</div>
-        </div>
-        <div class="tweet">
-        {{{this.text}}}</br><br></div>
-            </ul>
-        {{else}}
-            No tweets at this time.
 
-        {{/if}}
+        <ul>
+        {{#each tweets}}
+        {{timeago date}}
+        <li class="tweet">
+        {{{text}}}</br><br></li>
         {{/each}}
+
+            </ul>
     </div>
 </div>
 {{/if}}

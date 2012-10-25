@@ -21,12 +21,13 @@
     events: {
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
-        "click a[id=forecastSettings]" : "triggerConfigModal"
+        "click a[name=forecastSettings]" : "triggerConfigModal",
+        "click a.drawerTrig" : "triggerRightColumnVisibility"
     },
 
     initialize: function (options) {
         app.view.View.prototype.initialize.call(this, options);
-        this.showConfigButton = (app.metadata.getAcls()['Forecasts'].admin == "yes");
+        this.showConfigButton = (app.user.getAcls()['Forecasts'].admin == "yes");
     },
 
     /**
@@ -60,9 +61,7 @@
         if(this.showCommitButton) {
             if(this.commitButtonEnabled) {
                 this.$el.find('a[id=commit_forecast]').removeClass('disabled');
-                //this.$el.find('a[id=save_draft]').removeClass('disabled');
             } else {
-            	//this.$el.find('a[id=save_draft]').addClass('disabled');
                 this.$el.find('a[id=commit_forecast]').addClass('disabled');               
             }
         }        
@@ -136,6 +135,7 @@
     				worksheet.isDirty = false;
     			}    			    				
     		});
+    		
     		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
@@ -147,12 +147,13 @@
     triggerConfigModal: function() {
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"forecastsConfig"}]
+            components: [{layout:"forecastsTabbedConfig"}],
+            span: 10
         };
         var callback = function(){};
 
-        if(app.metadata.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsConfig:open", params, callback);
+        if(app.user.getAcls()['Forecasts'].admin == "yes") {
+            this.layout.trigger("modal:forecastsTabbedConfig:open", params, callback);
         }
     },
 
@@ -194,6 +195,23 @@
      */
     checkShowCommitButton: function(id) {
         return app.user.get('id') == id;
+    },
+
+    /**
+     * Toggle the right Column Visibility
+     * @param evt
+     */
+    triggerRightColumnVisibility : function(evt) {
+        // we need to use currentTarget so we always get the a and not any child that was clicked on
+        var el = $(evt.currentTarget);
+        el.find('i').toggleClass('icon-chevron-right icon-chevron-left');
+
+        // we need to go up and find the parent containg the two rows
+        el.parents('#contentflex').find('>div.row-fluid').find('>div:first').toggleClass('span8 span12');
+        el.parents('#contentflex').find('>div.row-fluid').find('>div:last').toggleClass('span4 hide');
+
+        // toggle the "event" to make the chart stop rendering if the sidebar is hidden
+        this.context.forecasts.set({hiddenSidebar: el.find('i').hasClass('icon-chevron-left')});
     }
 
 })

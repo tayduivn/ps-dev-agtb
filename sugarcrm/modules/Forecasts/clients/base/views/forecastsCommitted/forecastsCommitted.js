@@ -10,7 +10,7 @@
     /**
      * The url for the REST endpoint
      */
-    url : 'rest/v10/Forecasts/committed',
+    url : app.api.buildURL('Forecasts/committed'),
 
     /**
      * The class selector representing the element which contains the view output
@@ -227,6 +227,11 @@
                 likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
                 likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
             }
+            
+            if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
+            {
+            	self.context.forecasts.set({commitButtonEnabled: true});
+            }
 
             self.bestCaseCls = best.bestCaseCls;
             self.bestCase = best.bestCase;
@@ -265,7 +270,27 @@
      */
     commitForecast: function() {
         var self = this;
-
+        var worksheetData = {};
+        
+        var currentWorksheet = self.context.forecasts.get("currentWorksheet");
+        
+        if(currentWorksheet == "worksheet"){
+        	var worksheetDataCurrent = [];
+        	var worksheetDataNew = [];
+        	_.each(self.context.forecasts[currentWorksheet].models, function(item){
+        		//if isDirty is defined this has been saved from the worksheet save so we can skip it here 
+        		if(_.isUndefined(item.get("isDirty"))){
+        			if(_.isEmpty(item.get("worksheet_id"))){
+            			worksheetDataNew.push(item.attributes);
+            		}
+            		else{
+            			worksheetDataCurrent.push(item.attributes);
+            		}
+        		}        		
+        	});
+        	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
+        } 
+        
         if(!self.context.forecasts.get('commitButtonEnabled')) {
             return false;
         }
@@ -287,9 +312,11 @@
         if(user.isManager == true && user.showOpps == false) {
             forecastData.best_case = self.totals.best_adjusted;
             forecastData.likely_case = self.totals.likely_adjusted;
+            forecastData.worst_case = self.totals.worst_adjusted;
         } else {
             forecastData.best_case = self.totals.best_case;
             forecastData.likely_case = self.totals.amount;
+            forecastData.worst_case = self.totals.worst_case;
         }
 
         forecastData.currency_id = -99; //Always default to the base currency
@@ -298,6 +325,7 @@
         forecastData.forecast_type = self.forecastType;
         forecastData.amount = self.totals.amount;
         forecastData.opp_count = self.totals.included_opp_count;
+        forecastData.worksheetData = worksheetData;
 
         // apply data to model then save
         forecast.set(forecastData);

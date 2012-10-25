@@ -545,14 +545,7 @@ class Email extends SugarBean {
         $mailConfig = null;
 
         if (isset($request["fromAccount"]) && $request["fromAccount"] != null) {
-            $mailConfigs = OutboundEmailConfigurationPeer::listMailConfigurations($current_user);
-
-            foreach ($mailConfigs AS $mconfig) {
-                if ($mconfig->config_id == $request["fromAccount"]) {
-                    $mailConfig = $mconfig;
-                    break;
-                }
-            }
+            $mailConfig = OutboundEmailConfigurationPeer::getMailConfigurationFromId($current_user, $request["fromAccount"]);
         } else {
             $mailConfig = OutboundEmailConfigurationPeer::getSystemMailConfiguration($current_user);
         }
@@ -568,13 +561,14 @@ class Email extends SugarBean {
         $mailer->setTextBody($textBody);
 
         $replyTo      = $mailConfig->getReplyTo();
-        $replyToEmail = $replyTo->getEmail();
-
-        if (!empty($replyToEmail)) {
-            $mailer->setHeader(
-                EmailHeaders::ReplyTo,
-                new EmailIdentity($replyToEmail, $replyTo->getName())
-            );
+        if (!empty($replyTo)) {
+            $replyToEmail = $replyTo->getEmail();
+            if (!empty($replyToEmail)) {
+                $mailer->setHeader(
+                    EmailHeaders::ReplyTo,
+                    new EmailIdentity($replyToEmail, $replyTo->getName())
+                );
+            }
         }
 
         foreach ($this->email2ParseAddresses($request['sendTo']) as $addr_arr) {
@@ -1172,7 +1166,7 @@ class Email extends SugarBean {
                 continue;
             }
             if(!empty($parts["name"])) {
-                $res[] = "{$parts["name"]} <{$parts["email"]}>";
+                $res[] = "{$parts['name']} <{$parts['email']}>";
             } else {
                 $res[] .= $parts["email"];
             }
@@ -1419,7 +1413,7 @@ class Email extends SugarBean {
 		if(empty($text)) {
 			return '';
 		}
-		$text = str_replace("\n", "\n<BR/>", $text);
+		$text = str_replace("\n", "<BR/>", $text);
 		$out = "<div style='border-left:1px solid #00c; padding:5px; margin-left:10px;'>{$text}</div>";
 
 		return $out;

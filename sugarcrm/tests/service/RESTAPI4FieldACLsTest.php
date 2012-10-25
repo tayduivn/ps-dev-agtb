@@ -69,8 +69,12 @@ class RESTAPI4FieldACLsTest extends Sugar_PHPUnit_Framework_TestCase
         $defs = $this->v4->get_module_view_defs($module, 'wireless', 'list');
         
         // $defs should be converted and ACLed at this point
-        $this->assertArrayHasKey('NAME', $defs, 'NAME index is missing');
-        $this->assertArrayHasKey('acl', $defs['NAME'], 'NAME field has no ACL attached to it');
+        // find the name field
+        foreach($defs AS $def) {
+            $this->assertArrayHasKey('name', $def, "No name index");
+        }
+
+        $this->assertArrayHasKey('acl', $defs[0], 'no ACL attached to it');
         
         // Get the known metadata
         require $metadatafile;
