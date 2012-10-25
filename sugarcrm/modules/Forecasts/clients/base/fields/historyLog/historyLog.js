@@ -14,8 +14,14 @@
      */
     commitDate: '',
 
+    /**
+     * Deferred object for manager worksheet render
+     */
     mDeferred: $.Deferred(),
 
+    /**
+     * Deferred object for worksheet model being ready
+     */
     wDeferred:$.Deferred(),
 
     bindDataChange: function() {
@@ -24,9 +30,8 @@
         if(self.context && self.context.forecasts) {
             self.context.forecasts.on("forecasts:worksheetmanager:render", function() {
                 self.mDeferred.resolve();
-
             });
-            self.context.forecasts.on("forecasts:committed:updatedTotals", function() {
+            self.context.forecasts.committed.on("reset", function() {
                 self.wDeferred.resolve();
             });
         }

@@ -245,7 +245,6 @@
         }
 
         self.totals = totals;
-        self.context.forecasts.trigger('forecasts:committed:updatedTotals');
     },
 
     /**
