@@ -31,14 +31,14 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['ActivityStream'] = 
         array ( 'table' => 'activity_stream',
                 'fields' => array (
-                     'id'=> array('name' =>'id', 'type' =>'id', 'len'=>'36','required'=>true),
-                     'target_id'=>array('name' =>'target_id', 'type' =>'id', 'len'=>'36'), 
-                     'target_module'=>array('name' =>'target_module','type' => 'varchar','len' => 100),              	                      	                   	
-                     'date_created'=>array('name' =>'date_created','type' => 'datetime'),
-                     'created_by'=>array('name' =>'created_by','type' => 'varchar','len' => 36),
-                     'activity_type'=>array('name' =>'activity_type','type' => 'varchar','len' => 100),                        				
-                     'activity_data'=>array('name' =>'activity_data','type' => 'text'),
-                     'deleted'=>array ('name' => 'deleted','type' => 'bool','default' => '0'),                        
+                     'id'=> array('name' =>'id', 'type' =>'id', 'len'=>'36','required'=>true), 
+                      'target_id'=>array('name' =>'target_id', 'type' =>'id', 'len'=>'36'), 
+                      'target_module'=>array('name' =>'target_module','type' => 'varchar','len' => 100),              	                      	                   	
+                      'date_created'=>array('name' =>'date_created','type' => 'datetime'),
+                      'created_by'=>array('name' =>'created_by','type' => 'varchar','len' => 36),
+                      'activity_type'=>array('name' =>'activity_type','type' => 'varchar','len' => 100),                        				
+                      'activity_data'=>array('name' =>'activity_data','type' => 'text'),
+                      'deleted'=>array ('name' => 'deleted','type' => 'bool','default' => '0'),                        
                 ),
                 'indices' => array (
                       //name will be re-constructed adding idx_ and table name as the prefix like 'idx_accounts_'
@@ -47,12 +47,7 @@ $dictionary['ActivityStream'] =
                       array ('name' => 'target', 'type' => 'index', 'fields' => array('target_module','target_id')),
                       // for my activities
                       array ('name' => 'user_target', 'type' => 'index', 'fields' => array('created_by','target_module','target_id')),
-                      array ('name' => 'date_created', 'type' => 'index', 'fields' => array('date_created')),
+                      array ('name' => 'date_created', 'type' => 'index', 'fields' => array('date_created'))                                               
                 )
         );
-VardefManager::createVardef('ActivityStream','ActivityStream', array(
-    //BEGIN SUGARCRM flav=pro ONLY
-    'team_security',
-    //END SUGARCRM flav=pro ONLY
-));
 ?>
