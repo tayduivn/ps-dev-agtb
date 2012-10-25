@@ -53,7 +53,8 @@ describe("The forecasts committed view", function () {
         view.render = function() {};
         view.context = {
         	forecasts: {
-        		set: function(){}
+        		set: function(){},
+                trigger: function(){}
         	}	
         };
         

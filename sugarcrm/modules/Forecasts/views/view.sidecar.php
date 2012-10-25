@@ -156,15 +156,26 @@ class ForecastsViewSidecar extends SidecarView
          */
         if ( !inDeveloperMode() )
         {
+            if ( file_exists('sidecar/src/include-manifest.php') )
+            {
+               require_once('sidecar/src/include-manifest.php');
+               if ( !empty($buildFiles) )
+               {
+                   $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
+                   foreach ( $buildFiles as $_file )
+                   {
+                       echo getVersionedScript('sidecar/'.$_file) . "\n";
+                   }
+               }
+            }
+
             if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
                 $_REQUEST['root_directory'] = ".";
                 require_once("jssource/minify_utils.php");
                 ConcatenateFiles(".");
             }
-            echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js');
-        }
-        else
-        {
+            echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js') . "\n";
+        } else {
             require_once('jssource/JSGroupings.php');
             if ( !empty($sidecar_forecasts) && is_array($sidecar_forecasts) )
             {

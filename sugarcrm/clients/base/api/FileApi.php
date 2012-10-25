@@ -246,6 +246,20 @@ class FileApi extends SugarApi {
 
                 // Handle errors
                 if (!empty($sf->error)) {
+
+                    // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails.
+                    // delete_if_fails flag is an optional query string which can trigger this behavior. An example
+                    // use case might be: user's in a modal and client: 1. POST's related record 2. uploads file...
+                    // If the file was too big, the user may still want to go back and select a smaller file < max;
+                    // but now, upon saving, the client will attempt to PUT related record first and if their ACL's
+                    // may prevent edit/deletes it would fail. This rectifies such a scenario.
+                    if(!empty($args['delete_if_fails'])) {
+
+                        // First ensure user owns record
+                        if($bean->created_by == $GLOBALS['current_user']->id) {
+                            $bean->mark_deleted($bean->id);
+                        } 
+                    }
                     throw new SugarApiExceptionError($sf->error);
                 }
 
