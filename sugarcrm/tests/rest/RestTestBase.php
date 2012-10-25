@@ -67,7 +67,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
             'client_secret' => '',
             'platform' => $platform,
         );
-        
+
         // Prevent an infinite loop, put a fake authtoken in here.
         $this->authToken = 'LOGGING_IN';
 
@@ -104,7 +104,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 $httpAction = 'GET';
             }
         }
-        
+
         if ( !empty($this->authToken) && $this->authToken != 'LOGGING_IN' ) {
             //curl_setopt($ch, CURLOPT_HTTPHEADER, array('oauth_token: '.$this->authToken));
             $addedHeaders[] = 'oauth_token: '.$this->authToken;
@@ -123,6 +123,7 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true);
 
+
         if (is_array($addedOpts) && !empty($addedOpts)) {
             // I know curl_setopt_array() exists, just wasn't sure if it was hurting stuff
             foreach ($addedOpts as $opt => $val) {
@@ -136,12 +137,12 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         $GLOBALS['db']->commit();
         return array('info' => $httpInfo, 'reply' => json_decode($httpReply,true), 'replyRaw' => $httpReply, 'error' => $httpError);
     }
-    
+
     /**
-     * Use for FileApi call tests using a PUT method. This varies enough from 
+     * Use for FileApi call tests using a PUT method. This varies enough from
      * the _restCall method to warrant it's own setup. It is also added to the
      * base class because more than one unit test is using it now.
-     * 
+     *
      * @param string $urlPart The endpoint to hit in the api
      * @param array  $args Arguments to pass to this call (filename and type)
      * @param bool   $passInQueryString Whether to add the filename to the querystring
@@ -151,12 +152,12 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         // Set this to capture our own errors, which is needed in case of non-200
         // response codes from the file_get_contents call
         PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-        
+
         // Auth check early to prevent work when not needed
         if ( empty($this->authToken) ) {
             $this->_restLogin();
         }
-        
+
         $urlBase = $GLOBALS['sugar_config']['site_url'].'/api/rest.php/v6/';
         $filename = basename($args['filename']);
         $url = $urlBase . $urlPart;
@@ -177,11 +178,11 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
         );
 
         $context = stream_context_create($options);
-        
+
         // Because non-200 HTTP responses causes PHP warnings and because PHPUnit
         // throws exceptions for those warnings, we use both error suppression
         // and turning off PHPUnit error warnings to allow the script to continue
-        // to run when encountering a "error". 
+        // to run when encountering a "error".
         $response = @file_get_contents($url, false, $context);
         if (empty($response) && !empty($http_response_header)) {
             // There was a response that was NOT a 200. These are mapped to API
@@ -195,10 +196,10 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                 413 => array('label' => 'request_too_large', 'description' => "The request is too large to process."),
                 500 => array('label' => 'fatal_error', 'description' => "A fatal error happened."),
             );
-            
+
             // Set a reasonable default response code
             $code = 400;
-            
+
             // See if we can get the actual HTTP response code
             foreach ($http_response_header as $header) {
                 if (substr($header, 0, 5) == 'HTTP/') {
@@ -209,24 +210,24 @@ abstract class RestTestBase extends Sugar_PHPUnit_Framework_TestCase
                     }
                 }
             }
-            
+
             // Fallback to the default if we got something we didn't expect
             if (!isset($responses[$code])) {
                 $code = 400;
             }
-            
+
             // Mock an exception response from the API
             $reply = array('error' => $responses[$code]['label'], 'error_description' => $responses[$code]['description']);
         } else {
             $reply = json_decode($response, true);
         }
-        
+
         // Set back the error handler setting
         PHPUnit_Framework_Error_Warning::$enabled = TRUE;
 
         return array('info' => array(), 'reply' => $reply, 'replyRaw' => $response, 'error' => null);
     }
-    
+
     protected function _clearMetadataCache()
     {
         $metadataFiles = glob(sugar_cached('api/metadata/').'*');

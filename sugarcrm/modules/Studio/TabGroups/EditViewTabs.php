@@ -39,7 +39,7 @@ $tabGroupSelected_lang = (!empty($_GET['lang'])?$_GET['lang']:$_SESSION['authent
 $tg = new TabGroupHelper();
 $smarty = new Sugar_Smarty();
 if(empty($GLOBALS['tabStructure'])){
-	require_once('include/tabConfig.php');
+    SugarAutoLoader::requireWithCustom('include/tabConfig.php', true) ; // include custom/ too
 }
 $title=getClassicModuleTitle($mod_strings['LBL_MODULE_NAME'], array($mod_strings['LBL_CONFIGURE_GROUP_TABS']), false);
 
@@ -89,7 +89,7 @@ $smarty->assign('editImage',$editImage);
 $deleteImage = SugarThemeRegistry::current()->getImage( 'delete_inline', '',null,null,'.gif',$mod_strings['LBL_MB_DELETE']);
 $recycleImage = SugarThemeRegistry::current()->getImage('icon_Delete','',48,48,'.gif',$mod_strings['LBL_MB_DELETE'] );
 $smarty->assign('deleteImage',$deleteImage);
-$smarty->assign('recycleImage',$recycleImage);	
+$smarty->assign('recycleImage',$recycleImage);
 
 //#30205
 global $sugar_config;

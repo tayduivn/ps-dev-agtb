@@ -89,29 +89,21 @@ class aSubPanel
 			$this->canDisplay = $this->load_sub_subpanels () ; //load sub-panel definition.
 		} else
 		{
-			if (!is_dir('modules/' . $this->_instance_properties [ 'module' ])){
-				_pstack_trace();
+			if (!SugarAutoLoader::existing('modules/' . $this->_instance_properties [ 'module' ])){
+			    $GLOBALS['log']->fatal("Directory for {$this->_instance_properties [ 'module' ]} does not exist!");
 			}
-			$def_path = 'modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'subpanel_name' ] . '.php' ;
+			$def_path = array('modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'subpanel_name' ] . '.php');
 
-			$orig_exists = is_file($def_path);
-			$loaded = false;
-			if ($orig_exists)
-			{
-				require ($def_path);
-				$loaded = true;
-			}
-			if (is_file("custom/$def_path") && (!$original_only  || !$orig_exists))
-			{
-				require ("custom/$def_path");
-				$loaded = true;
-			}
-
-			if (! $original_only && isset ( $this->_instance_properties [ 'override_subpanel_name' ] ) && file_exists ( 'custom/modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'override_subpanel_name' ] . '.php' ))
-			{
-				$cust_def_path = 'custom/modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'override_subpanel_name' ] . '.php' ;
-				require ($cust_def_path) ;
-				$loaded = true;
+            if(!$original_only) {
+                $def_path[] = 'custom/'.$def_path[0];
+                if(isset ($this->_instance_properties['override_subpanel_name'])) {
+                    $def_path[] = 'custom/modules/' . $this->_instance_properties [ 'module' ] . '/metadata/subpanels/' . $this->_instance_properties [ 'override_subpanel_name' ] . '.php';
+                }
+            }
+            $loaded = false;
+            foreach(SugarAutoLoader::existing($def_path) as $file) {
+                require $file;
+                $loaded = true;
 			}
 
 			if (!$loaded)
@@ -678,11 +670,13 @@ class SubPanelDefinitions
 
 		if (empty ( $this->layout_defs ) || $reload || (! empty ( $layout_def_key ) && ! isset ( $layout_defs [ $layout_def_key ] )))
 		{
-			if (file_exists ( 'modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php' ))
-				require ('modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php') ;
-
-			if (! $original_only && file_exists ( 'custom/modules/' . $this->_focus->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php' ))
-				require ('custom/modules/' . $this->_focus->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php') ;
+		    $def_path = array('modules/' . $this->_focus->module_dir . '/metadata/subpaneldefs.php');
+		    if(!$original_only) {
+		        $def_path[] = SugarAutoLoader::loadExtension("layoutdefs", $this->_focus->module_dir);
+		    }
+		    foreach(SugarAutoLoader::existing($def_path) as $file) {
+		        require $file;
+		    }
 
 			if (! empty ( $layout_def_key ))
 				$this->layout_defs = $layout_defs [ $layout_def_key ] ;
@@ -747,7 +741,7 @@ class SubPanelDefinitions
 			$class = $beanList[$mod_name];
 
 			//skip if class name is not in file list, otherwise require the bean file and create new class
-			if(!isset($beanFiles[$class]) || !file_exists($beanFiles[$class])) continue;
+			if(!isset($beanFiles[$class]) || !SugarAutoLoader::fileExists($beanFiles[$class])) continue;
 
 			//retrieve subpanels for this bean
 			require_once($beanFiles[$class]);

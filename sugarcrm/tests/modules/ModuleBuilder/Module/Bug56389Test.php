@@ -39,7 +39,7 @@ class Bug56389SugarModule extends StudioModule
     /**
      * Override the default remove method to include only portal viewdefs field
      * deletes
-     * 
+     *
      * @param $fieldName
      */
     function removeFieldFromLayouts($fieldName)
@@ -74,7 +74,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
     );
     protected $filesToTearDown = array();
     protected $fieldToTest = 'name';
-    
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -82,7 +82,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('app_list_strings');
-        
+
         // Run through our test files and make sure customs, working and core
         // metadata files are backed up. Core files will restore regardless, but
         // others will only restore if there was an original file.
@@ -90,11 +90,11 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
             // Set aside custom and working files.
             $custom = "custom/$file";
             $working = "custom/working/$file";
-            
+
             $filesets = array($custom, $working);
             foreach ($filesets as $filepath) {
                 $backup = $filepath . '.unittest';
-                            
+
                 // Backup custom first
                 if (file_exists($filepath)) {
                     if (rename($filepath, $backup)) {
@@ -104,7 +104,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
                     $this->filesToTearDown[] = $filepath;
                 }
             }
-            
+
             // Now do core metadata files
             $backup = $file . '.unittest';
             if (file_exists($file)) {
@@ -114,7 +114,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
             }
         }
     }
-    
+
     public function tearDown()
     {
         // Customs were renamed, defaults were copied, both are just moved back
@@ -122,20 +122,20 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
             $restore = str_replace('.unittest', '', $file);
             rename($file, $restore);
         }
-        
+
         // Kill of any custom files that were made
         foreach ($this->filesToTearDown as $file) {
             if (file_exists($file)) {
-                unlink($file);
+                SugarAutoLoader::unlink($file, true);
             }
         }
-        
+
         SugarTestHelper::tearDown();
     }
 
     /**
      * Checks whether a fieldname exists in a viewdef
-     * 
+     *
      * @param string $fieldname The fieldname
      * @param array $defs The defs, as of view type
      * @return bool
@@ -148,7 +148,7 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
                 }
             }
         }
-        
+
         return false;
     }
 
@@ -165,12 +165,12 @@ class Bug56389Test extends Sugar_PHPUnit_Framework_TestCase
             $this->assertTrue($exists, "$this->fieldToTest does not exists in $type layout field for $this->moduleToTest");
             unset($viewdefs);
         }
-        
+
         // Now handle the delete of the fields
         $sm = new Bug56389SugarModule($this->moduleToTest);
         $sm->removeFieldFromLayouts($this->fieldToTest);
-        
-        // Now test again, inside of custom files though since that is where 
+
+        // Now test again, inside of custom files though since that is where
         // changes are saved
         foreach ($this->filesToTest as $testfile) {
             require "custom/$testfile";

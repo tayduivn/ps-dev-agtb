@@ -130,14 +130,7 @@
                 }
             }
 
-            if (is_file('custom/include/EditView/SugarVCR.tpl'))
-            {
-                $html_text .= $ss->fetch('custom/include/EditView/SugarVCR.tpl');
-            }
-            else
-            {
-                $html_text .= $ss->fetch('include/EditView/SugarVCR.tpl');
-            }
+            $html_text .= $ss->fetchCustom('include/EditView/SugarVCR.tpl');
         }
         return $html_text;
     }

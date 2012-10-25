@@ -45,7 +45,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
 
         //Elastica client uses own auto-load schema similar to ZF.
-        spl_autoload_register(array($this, 'loader'));
+        SugarAutoLoader::addPrefixDirectory('Elastica', 'include/SugarSearchEngine/Elastic/');
         if (empty($this->_config['timeout']))
         {
             $this->_config['timeout'] = 15;
@@ -843,23 +843,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function cleanTeamSetID($teamSetID)
     {
         return str_replace("-", "", strtolower($teamSetID));
-    }
-
-    /**
-     * This function loads the desired file/class from Elastic directory.
-     *
-     * @param $teamSetID
-     * @return mixed
-     */
-    protected function loader($className)
-    {
-        // FIXME: convert to use autoloader
-        $fileName = str_replace('_', '/', $className);
-        $path = 'include/SugarSearchEngine/Elastic/' . $fileName . '.php';
-        if( file_exists($path) )
-            require_once($path);
-        else
-            return FALSE;
     }
 
     /**

@@ -44,7 +44,7 @@ class ImportViewConfirm extends ImportView
     const SAMPLE_ROW_SIZE = 3;
  	protected $pageTitleKey = 'LBL_CONFIRM_TITLE';
     protected $errorScript = "";
-    
+
  	/**
      * @see SugarView::display()
      */
@@ -52,7 +52,7 @@ class ImportViewConfirm extends ImportView
     {
         global $mod_strings, $app_strings, $current_user;
         global $sugar_config, $locale;
-        
+
         $this->ss->assign("IMPORT_MODULE", $_REQUEST['import_module']);
         $this->ss->assign("TYPE",( !empty($_REQUEST['type']) ? $_REQUEST['type'] : "import" ));
         $this->ss->assign("SOURCE_ID", $_REQUEST['source_id']);
@@ -206,7 +206,7 @@ class ImportViewConfirm extends ImportView
         $content = $this->ss->fetch('modules/Import/tpls/confirm.tpl');
         $this->ss->assign("CONTENT",$content);
         $this->ss->display('modules/Import/tpls/wizardWrapper.tpl');
-        
+
     }
 
     private function getDelimeterOptions($selctedDelim)
@@ -252,6 +252,7 @@ class ImportViewConfirm extends ImportView
 
     private function getImportMap($importSource)
     {
+        $import_map_seed = null;
         if ( strncasecmp("custom:",$importSource,7) == 0)
         {
             $id = substr($importSource,7);
@@ -265,13 +266,8 @@ class ImportViewConfirm extends ImportView
         else
         {
             $classname = 'ImportMap' . ucfirst($importSource);
-            if ( file_exists("modules/Import/maps/{$classname}.php") )
-                require_once("modules/Import/maps/{$classname}.php");
-            elseif ( file_exists("custom/modules/Import/maps/{$classname}.php") )
-                require_once("custom/modules/Import/maps/{$classname}.php");
-            else
-            {
-                require_once("custom/modules/Import/maps/ImportMapOther.php");
+            if (! SugarAutoLoader::requireWithCustom("modules/Import/maps/{$classname}.php") ) {
+                SugarAutoLoader::requireWithCustom("modules/Import/maps/ImportMapOther.php");
                 $classname = 'ImportMapOther';
                 $importSource = 'other';
             }
@@ -464,11 +460,11 @@ eoq;
         global $mod_strings, $locale;
         $maxRecordsExceededJS = $maxRecordsExceeded?"true":"false";
         $importMappingJS = json_encode($importMappingJS);
-        
+
         $currencySymbolJs = $this->setCurrencyOptions($importFileMap);
         $getNumberJs = $locale->getNumberJs();
         $getNameJs = $locale->getNameJs();
-        
+
         return <<<EOJAVASCRIPT
 
 

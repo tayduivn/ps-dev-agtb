@@ -80,7 +80,7 @@ class EditView
     function setup($module, $focus = null, $metadataFile = null, $tpl = 'include/EditView/EditView.tpl', $createFocus = true)
     {
         $this->th = $this->getTemplateHandler();
-        $this->th->ss =& $this->ss;
+        $this->th->ss = $this->ss;
         $this->tpl = $tpl;
         $this->module = $module;
         $this->focus = $focus;
@@ -103,8 +103,7 @@ class EditView
            $this->showVCRControl = !$GLOBALS['sugar_config']['disable_vcr'];
         }
 
-        if (!empty($this->metadataFile) && file_exists($this->metadataFile))
-        {
+        if (!empty($this->metadataFile) && SugarAutoLoader::existing($this->metadataFile)) {
             include($this->metadataFile);
         }
 
@@ -443,7 +442,7 @@ class EditView
 	       				$function = $this->fieldDefs[$name]['function'];
 	       			}
 
-                    if(isset($this->fieldDefs[$name]['function']['include']) && file_exists($this->fieldDefs[$name]['function']['include']))
+                    if(isset($this->fieldDefs[$name]['function']['include']) && SugarAutoLoader::fileExists($this->fieldDefs[$name]['function']['include']))
                     {
                   		require_once($this->fieldDefs[$name]['function']['include']);
                   	}

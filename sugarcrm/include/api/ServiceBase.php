@@ -26,10 +26,10 @@ require_once('include/api/SugarApi.php');
 abstract class ServiceBase {
     abstract public function execute();
     abstract protected function handleException(Exception $exception);
-    
+
     protected function loadServiceDictionary($dictionaryName) {
         require_once("include/api/{$dictionaryName}.php");
-        
+
         $dict = new $dictionaryName();
 
         // Load the dictionary, because if the dictionary isn't there it will generate it.
@@ -38,10 +38,9 @@ abstract class ServiceBase {
     }
 
     protected function loadApiClass($route) {
-        if ( ! file_exists($route['file']) ) {
+        if (!SugarAutoLoader::requireWithCustom($route['file']) ) {
             throw new SugarApiException('Missing API file.');
         }
-        require_once($route['file']);
 
         if ( ! class_exists($route['className']) ) {
             throw new SugarApiException('Missing API class.');
@@ -49,7 +48,7 @@ abstract class ServiceBase {
 
         $apiClassName = $route['className'];
         $apiClass = new $apiClassName();
-        
+
         return $apiClass;
     }
 

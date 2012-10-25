@@ -649,7 +649,7 @@ class SugarSNIP
      */
     protected function createObject($email)
     {
-    	if(!file_exists('custom/modules/SNIP/createdefs.php')) {
+    	if(!SugarAutoLoader::existing('custom/modules/SNIP/createdefs.php')) {
     		return false;
     	}
     	$createdef = array();

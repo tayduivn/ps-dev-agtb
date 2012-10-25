@@ -47,10 +47,14 @@ class Bug46850Test extends Sugar_PHPUnit_Framework_TestCase
             rename($file.".bak", $file);
         }
         foreach($this->deletes as $file) {
-            unlink($file);
+            SugarAutoLoader::unlink($file);
         }
         unset($GLOBALS['logic_hook']);
         LogicHook::refreshHooks();
+    }
+
+    public static function tearDownAfterClass()
+    {
     }
 
     protected function saveHook($file)

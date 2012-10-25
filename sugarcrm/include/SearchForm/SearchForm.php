@@ -76,15 +76,16 @@ class SearchForm {
      * @param string $tpl template to use, defaults to moduleDir/SearchForm.html
      *
      */
-    function SearchForm($module, &$seedBean, $tpl = null) {
+    function SearchForm($module, &$seedBean, $tpl = null)
+    {
         global $app_strings;
 
         $this->module = $module;
-        require_once('modules/' . $module . '/metadata/SearchFields.php');
-        if(file_exists('custom/modules/' . $module . '/metadata/SearchFields.php')){
-            require_once('custom/modules/' . $module . '/metadata/SearchFields.php');
-        }
 
+        $fieldsfile = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
+        if($fieldsfile) {
+        	require $fieldsfile;
+        }
 
         //require_once('modules/' . $module . '/metadata/SearchFields.php');
         $this->searchFields = $searchFields[$module];
@@ -108,7 +109,7 @@ class SearchForm {
                                   'link'   => $module . '|advanced_search',
                                   'key'    => $module . '|advanced_search'));
 
-        if(file_exists('modules/'.$this->module.'/index.php')){
+        if(SugarAutoLoader::fileExists('modules/'.$this->module.'/index.php')){
             $this->tabs[] = array('title'  => $app_strings['LNK_SAVED_VIEWS'],
                                   'link'   => $module . '|saved_views',
                                   'key'    => $module . '|saved_views');

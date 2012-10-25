@@ -344,10 +344,11 @@ function export($type, $records = null, $members = false, $sample=false) {
 
 }
 
-function generateSearchWhere($module, $query) {//this function is similar with function prepareSearchForm() in view.list.php
-    $seed = loadBean($module);
-    if(file_exists('modules/'.$module.'/SearchForm.html')){
-        if(file_exists('modules/' . $module . '/metadata/SearchFields.php')) {
+function generateSearchWhere($module, $query)
+{//this function is similar with function prepareSearchForm() in view.list.php
+    $seed = BeanFactory::newBean($module);
+    if(SugarAutoLoader::fileExists('modules/'.$module.'/SearchForm.html')){
+        if(SugarAutoLoader::fileExists('modules/' . $module . '/metadata/SearchFields.php')) {
             require_once('include/SearchForm/SearchForm.php');
             $searchForm = new SearchForm($module, $seed);
         }
@@ -369,42 +370,17 @@ function generateSearchWhere($module, $query) {//this function is similar with f
         else {
             return;
         }
-    }
-    else{
+    } else {
         require_once('include/SearchForm/SearchForm2.php');
 
-        if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
-            require('custom/modules/'.$module.'/metadata/metafiles.php');
-        }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
-            require('modules/'.$module.'/metadata/metafiles.php');
+        $searchdefs_file = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
+        if($searchdefs_file) {
+            require $searchdefs_file;
         }
 
-        if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
-        {
-            require_once('custom/modules/'.$module.'/metadata/searchdefs.php');
-        }
-        elseif (!empty($metafiles[$module]['searchdefs']))
-        {
-            require_once($metafiles[$module]['searchdefs']);
-        }
-        elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
-        {
-            require_once('modules/'.$module.'/metadata/searchdefs.php');
-        }
-
-        //fixing bug #48483: Date Range search on custom date field then export ignores range filter
-        // first of all custom folder should be checked
-        if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
-        {
-            require_once('custom/modules/'.$module.'/metadata/SearchFields.php');
-        }
-        elseif(!empty($metafiles[$module]['searchfields']))
-        {
-            require_once($metafiles[$module]['searchfields']);
-        }
-        elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
-        {
-            require_once('modules/'.$module.'/metadata/SearchFields.php');
+        $searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
+        if($searchfields_file) {
+            require $searchfields_file;
         }
         if(empty($searchdefs) || empty($searchFields)) {
            //for some modules, such as iframe, it has massupdate, but it doesn't have search function, the where sql should be empty.

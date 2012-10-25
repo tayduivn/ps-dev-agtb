@@ -38,7 +38,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
             if(file_exists("custom/modules/{$mod}/language/en_us.lang.php"))
             {
                 $this->language_contents[$mod] = file_get_contents("custom/modules/{$mod}/language/en_us.lang.php");
-                unlink("custom/modules/{$mod}/language/en_us.lang.php");
+                SugarAutoLoader::unlink("custom/modules/{$mod}/language/en_us.lang.php", true);
             }
         }
 
@@ -66,7 +66,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         {
             foreach($this->language_contents as $key=>$contents)
             {
-                sugar_file_put_contents("custom/modules/{$key}/language/en_us.lang.php", $contents);
+                SugarAutoLoader::put("custom/modules/{$key}/language/en_us.lang.php", $contents, true);
             }
         }
     }
@@ -100,6 +100,7 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
             $app_list_strings['parent_type_display'][$module] = 'Account';
         }
         $rm->save(FALSE);
+        SugarAutoLoader::buildCache();
 
         //Test app list strings
         $app_list_string = return_app_list_strings_language('en_us');
@@ -128,7 +129,6 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
         //Ensure we recorded which modules were modified.
         $renamedModules = $rm->getRenamedModules();
         $this->assertTrue( count($renamedModules) > 0 );
-
         $this->removeCustomAppStrings();
         $this->removeModuleStrings( $renamedModules );
     }
@@ -170,10 +170,12 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
 
     private function removeCustomAppStrings()
     {
-        $fileName = 'custom'. DIRECTORY_SEPARATOR . 'include'. DIRECTORY_SEPARATOR . 'language' . DIRECTORY_SEPARATOR . $this->language . '.lang.php';
+        $fileName = 'custom/include/language/' . $this->language . '.lang.php';
         if( file_exists($fileName) )
         {
-            @unlink($fileName);
+            @SugarAutoLoader::unlink($fileName, true);
+        } else {
+                SugarAutoLoader::delFromMap($fileName, true);
         }
     }
 
@@ -181,10 +183,12 @@ class RenameModulesTest extends Sugar_PHPUnit_Framework_TestCase
     {
         foreach($modules as $module => $v)
         {
-            $fileName = 'custom'. DIRECTORY_SEPARATOR . 'modules'. DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'language' . DIRECTORY_SEPARATOR . $this->language . '.lang.php';
+            $fileName = 'custom/modules/' . $module . '/language/' . $this->language . '.lang.php';
             if( file_exists($fileName) )
             {
-                @unlink($fileName);
+                @SugarAutoLoader::unlink($fileName, true);
+            } else {
+                SugarAutoLoader::delFromMap($fileName, true);
             }
 
         }

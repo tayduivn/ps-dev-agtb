@@ -16,12 +16,12 @@ class ViewDetail extends SugarView
      * @see SugarView::$type
      */
     public $type = 'detail';
-	
+
     /**
-     * @var DetailView2 object 
+     * @var DetailView2 object
      */
     public $dv;
-	
+
     /**
      * Constructor
      *
@@ -31,7 +31,7 @@ class ViewDetail extends SugarView
     {
         parent::SugarView();
     }
-	
+
     /**
      * @see SugarView::preDisplay()
      */
@@ -39,10 +39,10 @@ class ViewDetail extends SugarView
     {
  	    $metadataFile = $this->getMetaDataFile();
  	    $this->dv = new DetailView2();
- 	    $this->dv->ss =&  $this->ss;
- 	    $this->dv->setup($this->module, $this->bean, $metadataFile, get_custom_file_if_exists('include/DetailView/DetailView.tpl'));
-    } 	
- 	
+ 	    $this->dv->ss = $this->ss;
+ 	    $this->dv->setup($this->module, $this->bean, $metadataFile, SugarAutoLoader::existingCustomOne('include/DetailView/DetailView.tpl'));
+    }
+
     /**
      * @see SugarView::display()
      */
@@ -50,7 +50,7 @@ class ViewDetail extends SugarView
     {
         if(empty($this->bean->id)){
             sugar_die($GLOBALS['app_strings']['ERROR_NO_RECORD']);
-        }				
+        }
         $this->dv->process();
         echo $this->dv->display();
     }

@@ -26,24 +26,11 @@
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-
-
-
 require_once('tests/rest/RestTestBase.php');
 
 class RestClearCacheTest extends RestTestBase {
     protected $_customFile = 'custom/clients/base/api/PongApi.php';
     protected $_customDirMade = false;
-    
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
 
     /**
      * @group rest
@@ -52,12 +39,12 @@ class RestClearCacheTest extends RestTestBase {
         // This needs to be called before the custom dir is made
         $replyPing = $this->_restCall('ping');
         $this->assertEquals('pong',$replyPing['reply']);
-        
+
         if(!is_dir('custom/clients/base/api')) {
             $this->_customDirMade = true;
-            mkdir('custom/clients/base/api',0777,true);
+            SugarAutoLoader::ensureDir('custom/clients/base/api');
         }
-        
+
         // Preapre the custom file
         $file_contents = <<<EOQ
 <?php
@@ -79,9 +66,9 @@ class PongApi extends SugarApi {
     }
 }
 EOQ;
-        file_put_contents($this->_customFile, $file_contents);
+        SugarAutoLoader::put($this->_customFile, $file_contents, true);
         // verify ping
-        
+
         // verify pong isn't there
         $replyPong = $this->_restCall('ping');
         $this->assertNotEquals('ping', $replyPong['reply']);
@@ -95,25 +82,26 @@ EOQ;
         $rc = new RepairAndClear();
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
-        
+
         $this->assertTrue(!file_exists('cache/include/api/ServiceDictionary.rest.php'), "Didn't really clear the cache");
 
 
         // verify pong is there now
         $replyPong = $this->_restCall('ping');
         $this->assertEquals('ping', $replyPong['reply']);
-        
+
         // Now undo it all and test again
         // Clean up after ourselves
         if (file_exists($this->_customFile)) {
             $dirname = dirname($this->_customFile);
-            unlink($this->_customFile);
-            
+            SugarAutoLoader::unlink($this->_customFile, true);
+
             if ($this->_customDirMade) {
                 $done = rmdir($dirname);
+                SugarAutoLoader::delFromMap($dirname, true);
             }
         }
-        
+
         // run repair and rebuild
         $old_user = $GLOBALS['current_user'];
         $user = new User();
@@ -123,9 +111,9 @@ EOQ;
         $rc = new RepairAndClear();
         $rc->clearAdditionalCaches();
         $GLOBALS['current_user'] = $old_user;
-        
+
         $this->assertTrue(!file_exists('cache/include/api/ServiceDictionary.rest.php'), "Didn't really clear the cache the SECOND time");
-        
+
         // verify pong isn't there
         $replyPong = $this->_restCall('ping');
         $this->assertEquals('pong', $replyPong['reply']);

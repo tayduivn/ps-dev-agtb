@@ -60,12 +60,7 @@ class SugarSpot
         $ss->assign('appStrings', $GLOBALS['app_strings']);
         $ss->assign('appListStrings', $GLOBALS['app_list_strings']);
         $ss->assign('queryEncoded', $query_encoded);
-        $template = 'include/SearchForm/tpls/SugarSpot.tpl';
-        if(file_exists('custom/include/SearchForm/tpls/SugarSpot.tpl'))
-        {
-            $template = 'custom/include/SearchForm/tpls/SugarSpot.tpl';
-        }
-        return $ss->fetch($template);
+        return $ss->fetch(SugarAutoLoader::existingCustomOne('include/SearchForm/tpls/SugarSpot.tpl'));
 	}
 
 
@@ -150,15 +145,9 @@ class SugarSpot
 	protected static function getSearchFields( $moduleName )
 	{
 		$searchFields = array();
-
-		if(file_exists("modules/{$moduleName}/metadata/SearchFields.php"))
-		{
-		    require("modules/{$moduleName}/metadata/SearchFields.php");
-		}
-
-		if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php"))
-		{
-		    require("custom/modules/{$moduleName}/metadata/SearchFields.php");
+		$fieldsfile = SugarAutoLoader::loadWithMetafiles($moduleName, 'SearchFields', 'searchfields');
+		if($fieldsfile) {
+			require $fieldsfile;
 		}
 
 		return $searchFields;
@@ -300,7 +289,7 @@ class SugarSpot
         // bug49650 - strip out asterisks from query in case
         // user thinks asterisk is a wildcard value
         $query = str_replace( '*' , '' , $query );
-        
+
         $limit = !empty($GLOBALS['sugar_config']['max_spotresults_initial']) ? $GLOBALS['sugar_config']['max_spotresults_initial'] : 5;
 		if($offset !== -1){
 			$limit = !empty($GLOBALS['sugar_config']['max_spotresults_more']) ? $GLOBALS['sugar_config']['max_spotresults_more'] : 20;
@@ -500,7 +489,7 @@ class SugarSpot
                     // We set the 'fields' parameter, but left it blank, we should fetch all fields
                     $return_fields = '';
                 } else {
-                    
+
                     foreach ( $extraFields as $extraField ) {
                         if ( $extraField == 'id' ) {
                             // Already in the list of fields it will return
@@ -532,11 +521,13 @@ class SugarSpot
             if(empty($where_clauses))
             {
                 if ( $allowBlankSearch ) {
+
                     $ret_array = $seed->create_new_list_query($orderBy, '', $return_fields, $options, 0, '', true, $seed, true);
                     
                     if (!empty($selectFields)) {
                         $ret_array['select'] = "SELECT DISTINCT ".$selectFields;
                     }
+
                     if(!empty($custom_select)) {
                         $ret_array['select'] .= $custom_select;
                     }
@@ -561,7 +552,7 @@ class SugarSpot
                         
                         $ret_array['where'] .= $custom_where;
                     }
-                   
+
                    $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
                 } else {
                     continue;
@@ -609,8 +600,8 @@ class SugarSpot
                 }
                 // So we add it to the output of all of the unions
                 $main_query = "(".join(")\n UNION (", $query_parts).")";
-                if ( !empty($orderBy) ) { 
-                    $main_query .= " ORDER BY ".$orderBy; 
+                if ( !empty($orderBy) ) {
+                    $main_query .= " ORDER BY ".$orderBy;
                 }
             }
             else
@@ -705,14 +696,14 @@ class SugarSpot
                 if($count >= $limit) {
                     $nextOffset = $offset + $limit;
                 }
-                
+
                 if($offset > 0) {
                     $prevOffset = $offset - $limit;
                     if($prevOffset < 0) {
                         $prevOffset = 0;
                     }
                 }
-                
+
                 if( $count >= $limit && $totalCounted) {
                     if(!isset($totalCount)) {
                         $totalCount  = $this->_getCount($seed, $main_query);
@@ -747,11 +738,11 @@ class SugarSpot
         global $current_user, $current_language, $app_list_strings, $mod_list_strings;
         $current_language= (empty($current_language)? "en_us": $current_language);
 
-        $user_action_map_filename = 'cache/modules/'. $current_language . '_sugar_actions_' . $current_user->id . ".php";
+        $user_action_map_filename = sugar_cached('modules/'. $current_language . '_sugar_actions_' . $current_user->id . ".php");
 
         if (!file_exists($user_action_map_filename))
         {
-            $all_menu_files=findAllFiles(getcwd(). "/modules",$all_menu_files,false,"Menu.php");
+            $all_menu_files=findAllFiles("modules",$all_menu_files,false,"Menu.php");
             if (!empty($all_menu_files) and is_array($all_menu_files))
             {
                 foreach ($all_menu_files as $menu_file)

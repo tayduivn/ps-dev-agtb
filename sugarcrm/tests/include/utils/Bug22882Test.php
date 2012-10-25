@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/Calls/metadata/additionalDetails.php';
 
 /**
@@ -32,7 +32,7 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
     private $file = '';
     private $file_fr_tmp = '';
     private $file_en_tmp = '';
-    
+
     public function setUp()
     {
         if ( !is_dir('custom/include/language') )
@@ -40,7 +40,12 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
         sugar_cache_clear('app_list_strings.en_us');
         sugar_cache_clear('app_list_strings.fr_test');
     }
-    
+
+    public function tearDown()
+    {
+        $this->cleanupFiles();
+    }
+
     public function testMultiLanguagesDeletedValue()
     {
         $this->loadFilesDeletedValue();
@@ -51,9 +56,8 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
         if($this->isSameSize($resultfr, $resulten)){
             $this->isEqual($resultfr, $resulten);
         }
-        $this->cleanupFiles();
     }
-    
+
     public function testMultiLanguagesDeletedValueFrOnly()
     {
         $this->loadFilesDeletedValueFrOnly();
@@ -62,9 +66,8 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
         $resultfr = array_keys($resultfr['account_type_dom']);
         $resulten = array_keys($resulten['account_type_dom']);
         $this->assertNotEquals(count($resultfr), count($resulten), 'The 2 drop down list have the same size.');
-        $this->cleanupFiles();
     }
-    
+
     public function testMultiLanguagesDeletedValueEnOnly()
     {
         $this->loadFilesDeletedValueEnOnly();
@@ -75,9 +78,8 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals(count($resultfr),count($resulten));
         $this->assertFalse(in_array('Customer',$resulten));
         $this->assertTrue(in_array('Customer',$resultfr));
-        $this->cleanupFiles();
     }
-    
+
     public function testMultiLanguagesAddedValue()
     {
         $this->loadFilesAddedValueEn();
@@ -86,13 +88,12 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
         $resultfr = array_keys($resultfr['account_type_dom']);
         $resulten = array_keys($resulten['account_type_dom']);
         $this->assertNotEquals(count($resultfr), count($resulten), 'The 2 drop down list have the same size.');
-        $this->cleanupFiles();
     }
-    
+
     public function loadFilesDeletedValue(){
             $file_fr = <<<FRFR
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   //'Analyst' => 'Analyste', Line deleted
   'Competitor' => 'Concurrent',
   'Customer' => 'Client',
@@ -107,7 +108,7 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
 FRFR;
         $file_en = <<<ENEN
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   //'Analyst' => 'Analyst', Line deleted
   'Competitor' => 'Competitor',
   'Customer' => 'Customer',
@@ -123,6 +124,7 @@ ENEN;
         if(!file_exists('include/language/fr_test.lang.php')){
             $this->file = file_get_contents('include/language/en_us.lang.php');
             file_put_contents('include/language/fr_test.lang.php', $this->file);
+            SugarAutoLoader::addToMap('include/language/fr_test.lang.php', false);
         }
         if(!file_exists('custom/include/language/fr_test.lang.php')){
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
@@ -130,18 +132,20 @@ ENEN;
             $this->file_fr_tmp = file_get_contents('custom/include/language/fr_test.lang.php');
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
         }
+        SugarAutoLoader::addToMap('custom/include/language/fr_test.lang.php', false);
         if(!file_exists('custom/include/language/en_us.lang.php')){
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }else{
             $this->file_en_tmp = file_get_contents('custom/include/language/en_us.lang.php');
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }
+        SugarAutoLoader::addToMap('custom/include/language/en_us.lang.php', false);
     }
-    
+
     public function loadFilesDeletedValueFrOnly(){
             $file_fr = <<<FRFR
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   //'Analyst' => 'Analyste', Line deleted
   'Competitor' => 'Concurrent',
   'Customer' => 'Client',
@@ -156,7 +160,7 @@ ENEN;
 FRFR;
         $file_en = <<<ENEN
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   'Analyst' => 'Analyst',
   'Competitor' => 'Competitor',
   'Customer' => 'Customer',
@@ -172,6 +176,7 @@ ENEN;
         if(!file_exists('include/language/fr_test.lang.php')){
             $this->file = file_get_contents('include/language/en_us.lang.php');
             file_put_contents('include/language/fr_test.lang.php', $this->file);
+            SugarAutoLoader::addToMap('include/language/fr_test.lang.php', false);
         }
         if(!file_exists('custom/include/language/fr_test.lang.php')){
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
@@ -179,18 +184,20 @@ ENEN;
             $this->file_fr_tmp = file_get_contents('custom/include/language/fr_test.lang.php');
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
         }
+        SugarAutoLoader::addToMap('custom/include/language/fr_test.lang.php', false);
         if(!file_exists('custom/include/language/en_us.lang.php')){
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }else{
             $this->file_en_tmp = file_get_contents('custom/include/language/en_us.lang.php');
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }
+        SugarAutoLoader::addToMap('custom/include/language/en_us.lang.php', false);
     }
-    
+
     public function loadFilesDeletedValueEnOnly(){
             $file_fr = <<<FRFR
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   'Analyst' => 'Analyste',
   'Competitor' => 'Concurrent',
   'Customer' => 'Client',
@@ -205,7 +212,7 @@ ENEN;
 FRFR;
         $file_en = <<<ENEN
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   'Analyst' => 'Analyst',
   'Competitor' => 'Competitor',
   //'Customer' => 'Customer',
@@ -221,6 +228,7 @@ ENEN;
         if(!file_exists('include/language/fr_test.lang.php')){
             $this->file = file_get_contents('include/language/en_us.lang.php');
             file_put_contents('include/language/fr_test.lang.php', $this->file);
+            SugarAutoLoader::addToMap('include/language/fr_test.lang.php', false);
         }
         if(!file_exists('custom/include/language/fr_test.lang.php')){
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
@@ -228,18 +236,20 @@ ENEN;
             $this->file_fr_tmp = file_get_contents('custom/include/language/fr_test.lang.php');
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
         }
+        SugarAutoLoader::addToMap('custom/include/language/fr_test.lang.php', false);
         if(!file_exists('custom/include/language/en_us.lang.php')){
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }else{
             $this->file_en_tmp = file_get_contents('custom/include/language/en_us.lang.php');
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }
+        SugarAutoLoader::addToMap('custom/include/language/en_us.lang.php', false);
     }
-    
+
     public function loadFilesAddedValueEn(){
             $file_fr = <<<FRFR
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   'Analyst' => 'Analyste',
   'Competitor' => 'Concurrent',
   'Customer' => 'Client',
@@ -254,7 +264,7 @@ ENEN;
 FRFR;
         $file_en = <<<ENEN
 <?php
-\$app_list_strings['account_type_dom']=array ( 
+\$app_list_strings['account_type_dom']=array (
   'Extra' => 'Extra',
   'Analyst' => 'Analyst',
   'Competitor' => 'Competitor',
@@ -271,6 +281,7 @@ ENEN;
         if(!file_exists('include/language/fr_test.lang.php')){
             $this->file = file_get_contents('include/language/en_us.lang.php');
             file_put_contents('include/language/fr_test.lang.php', $this->file);
+            SugarAutoLoader::addToMap('include/language/fr_test.lang.php', false);
         }
         if(!file_exists('custom/include/language/fr_test.lang.php')){
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
@@ -278,33 +289,38 @@ ENEN;
             $this->file_fr_tmp = file_get_contents('custom/include/language/fr_test.lang.php');
             file_put_contents('custom/include/language/fr_test.lang.php', $file_fr);
         }
+        SugarAutoLoader::addToMap('custom/include/language/fr_test.lang.php', false);
         if(!file_exists('custom/include/language/en_us.lang.php')){
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }else{
             $this->file_en_tmp = file_get_contents('custom/include/language/en_us.lang.php');
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }
+        SugarAutoLoader::addToMap('custom/include/language/en_us.lang.php', false);
     }
-    
+
     public function cleanupFiles(){
         if(!empty($this->file)){
             $this->file = '';
             unlink('include/language/fr_test.lang.php');
+            SugarAutoLoader::delFromMap('include/language/fr_test.lang.php');
         }
         if(!empty($this->file_fr_tmp)){
             file_put_contents('custom/include/language/fr_test.lang.php', $this->file_fr_tmp);
             $this->file_fr_tmp = '';
         }else{
             unlink('custom/include/language/fr_test.lang.php');
+            SugarAutoLoader::delFromMap('custom/include/language/fr_test.lang.php');
         }
         if(!empty($this->file_en_tmp)){
             file_put_contents('custom/include/language/en_us.lang.php', $this->file_en_tmp);
             $this->file_en_tmp = '';
         }else{
             unlink('custom/include/language/en_us.lang.php');
+            SugarAutoLoader::delFromMap('custom/include/language/en_us.lang.php');
         }
     }
-    
+
     public function isSameSize($result1, $result2)
     {
         if(count($result1) != count($result2)){
@@ -313,7 +329,7 @@ ENEN;
         }
         return true;
     }
-    
+
     public function isEqual($result1, $result2)
     {
         foreach($result1 as $k=>$v){
