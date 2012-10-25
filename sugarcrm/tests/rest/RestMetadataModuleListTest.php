@@ -322,10 +322,36 @@ class RestMetadataModuleListTest extends RestTestBase {
      */
     public function testPortalMetadataModulesContainsNotes()
     {
-        // Get the metadata for portal 
+        // Get the metadata for portal
         $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal&test=8');
         $this->assertArrayHasKey('modules', $restReply['reply'], "The modules index is missing from the response");
-        $this->assertArrayHasKey('Notes', $restReply['reply']['modules'], 'Notes was not returned in the modules metadata as expected');        
+        $this->assertArrayHasKey('Notes', $restReply['reply']['modules'], 'Notes was not returned in the modules metadata as expected');
+    }
+
+    /**
+     * @group rest
+     * @group Bug57644
+     */
+    public function testPortalMetadataModulesHasSortableFields()
+    {
+        // Get the metadata for portal
+        $restReply = $this->_restCall('metadata?type_filter=modules&platform=portal&test=8');
+        $this->assertArrayHasKey('modules', $restReply['reply'], "The modules index is missing from the response");
+
+        $this->assertArrayHasKey('Bugs', $restReply['reply']['modules'], 'Bugs was not returned in module metadata as expected');
+        $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['status']['sortable'], "Bugs 'status' field should be sortable");
+        $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['priority']['sortable'], "Bugs 'priority' field should be sortable");
+        $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['type']['sortable'], "Bugs type 'field' should be sortable");
+        $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['category']['sortable'], "Bugs 'category' field should be sortable");
+
+        $this->assertArrayHasKey('Cases', $restReply['reply']['modules'], 'Bugs was not returned in module metadata as expected');
+        $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['status']['sortable'], "Cases 'status' field should be sortable");
+        $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['priority']['sortable'], "Cases 'priority' field should be sortable");
+        $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['type']['sortable'], "Cases 'type' field should be sortable");
+
+        $this->assertArrayHasKey('KBDocuments', $restReply['reply']['modules'], 'Bugs was not returned in module metadata as expected');
+        $this->assertEquals(true, $restReply['reply']['modules']['KBDocuments']['fields']['active_date']['sortable'], "KBDocuments 'active_date' field should be sortable");
+        $this->assertEquals(true, $restReply['reply']['modules']['KBDocuments']['fields']['exp_date']['sortable'], "KBDocuments 'exp_date' field should be sortable");
     }
     //END SUGARCRM flav=ent ONLY
 }
