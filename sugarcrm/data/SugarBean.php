@@ -2950,6 +2950,8 @@ class SugarBean
                 $submodulename = $this_subpanel->_instance_properties['module'];
                 $submoduleclass = $beanList[$submodulename];
                 //require_once($beanFiles[$submoduleclass]);
+
+                /** @var SugarBean $submodule */
                 $submodule = new $submoduleclass();
                 $subwhere = $where_definition;
 
@@ -2992,7 +2994,10 @@ class SugarBean
                 $params['include_custom_fields'] = !$subpanel_def->isCollection();
                 $params['collection_list'] = $subpanel_def->get_inst_prop_value('collection_list');
 
-                $subquery = $submodule->create_new_list_query('',$subwhere ,$list_fields,$params, 0,'', true,$parentbean);
+                // use single select in case when sorting by relate field
+                $singleSelect = $submodule->is_relate_field($order_by);
+
+                $subquery = $submodule->create_new_list_query('',$subwhere ,$list_fields,$params, 0,'', true,$parentbean, $singleSelect);
 
                 $subquery['select'] = $subquery['select']." , '$panel_name' panel_name ";
                 $subquery['from'] = $subquery['from'].$query_array['join'];
@@ -3478,7 +3483,8 @@ class SugarBean
                     $jtcount++;
                 }
             }
-            if($data['type'] == 'relate' && isset($data['link']))
+
+            if ($this->is_relate_field($field))
             {
                 $this->load_relationship($data['link']);
                 if(!empty($this->$data['link']))
@@ -6161,4 +6167,24 @@ class SugarBean
 	{
 		return $this->create_new_list_query($order_by, $where, array(), array(), 0, '', false, $this, true, true);
 	}
+
+    /**
+     * Determine whether the given field is a relate field
+     *
+     * @param string $field Field name
+     * @return bool
+     */
+    protected function is_relate_field($field)
+    {
+        if (!isset($this->field_defs[$field]))
+        {
+            return false;
+        }
+
+        $field_def = $this->field_defs[$field];
+
+        return isset($field_def['type'])
+            && $field_def['type'] == 'relate'
+            && isset($field_def['link']);
+    }
 }
