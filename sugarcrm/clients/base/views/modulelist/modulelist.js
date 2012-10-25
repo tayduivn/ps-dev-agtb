@@ -35,7 +35,7 @@
 
         app.view.View.prototype._renderHtml.call(this);
         this.resetMenu();
-        this.activeModule.set(this.app.controller.context.get("module"));
+        this.activeModule.set(app.controller.context.get("module"));
     },
 
     /**
