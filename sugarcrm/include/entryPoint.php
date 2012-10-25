@@ -83,12 +83,13 @@ if (!defined('PHP_VERSION_ID')) {
     define('PHP_VERSION_ID', ($version_array[0]*10000 + $version_array[1]*100 + $version_array[2]));
 }
 
+// BEGIN SUGARCRM flav!=free ONLY
 if(empty($GLOBALS['installing']) && !file_exists('config.php'))
 {
 	header('Location: install.php');
 	exit ();
 }
-
+// END SUGARCRM flav!=free ONLY
 
 /**
  * If we have the BoxOfficeClient let's use it to load the config
