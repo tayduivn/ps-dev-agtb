@@ -59,7 +59,7 @@ function export($type, $records = null, $members = false, $sample=false) {
     global $timedate;
     global $mod_strings;
     global $current_language;
-    $sampleRecordNum = 5;
+
     $contact_fields = array(
         "id"=>"Contact ID"
         ,"lead_source"=>"Lead Source"
@@ -207,7 +207,34 @@ function export($type, $records = null, $members = false, $sample=false) {
         $result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
     }
 
+	return getExportContentFromResult($focus, $result, $members, $remove_from_members);
+}
 
+
+/**
+ * getExportContentsFromResult
+ *
+ * This is a function to handle the processing of generating the export contents.
+ *
+ * @param Mixed $focus SugarBean instance we are retrieving export results for
+ * @param Mixed $result database result resource from the export SQL
+ * @param bool $members used to indicate whether or not to apply filtering for header rows; false by default
+ * @param array $remove_from_members Array of header columns to filter out; empty by default
+ * @param bool $populate boolean used to indicate whether or not to populate with test data; false by default
+ * @return string
+ */
+function getExportContentFromResult(
+    $focus,
+    $result,
+    $members=false,
+    $remove_from_members=array(),
+    $populate=false
+) {
+
+    global $current_user;
+    $sampleRecordNum = 5;
+    $timedate = TimeDate::getInstance();
+    $db = DBManagerFactory::getInstance();
     $fields_array = $db->getFieldsArray($result,true);
 
     //set up the order on the header row
@@ -218,8 +245,9 @@ function export($type, $records = null, $members = false, $sample=false) {
     foreach($fields_array as $key=>$dbname){
         //Remove fields that are only used for logic
         if($members && (in_array($dbname, $remove_from_members)))
+        {
             continue;
-
+        }
         //default to the db name of label does not exist
         $field_labels[$key] = translateForExport($dbname,$focus);
     }
@@ -233,116 +261,245 @@ function export($type, $records = null, $members = false, $sample=false) {
          $content .= returnFakeDataRow($focus,$fields_array,$sampleRecordNum);
     }else{
         //process retrieved record
-    	while($val = $db->fetchByAssoc($result, false)) {
-
+        //BEGIN SUGARCRM flav=pro ONLY
+        $isAdminUser = is_admin($current_user);
+        //END SUGARCRM flav=pro ONLY
+        while($val = $db->fetchByAssoc($result, false)) {
             //order the values in the record array
-            $val = get_field_order_mapping($focus->module_dir,$val);
+            $val = get_field_order_mapping($focus->module_dir, $val);
 
             $new_arr = array();
+
             //BEGIN SUGARCRM flav=pro ONLY
-            if(!is_admin($current_user)){
+            if(!$isAdminUser)
+            {
                 $focus->id = (!empty($val['id']))?$val['id']:'';
                 $focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
                 $focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
                 $focus->ACLFilterFieldList($val, array(), array("blank_value" => true));
             }
+            //END SUGARCRM flav=pro ONLY
 
-		//END SUGARCRM flav=pro ONLY
-		if($members){
-			if($pre_id == $val['id'])
-				continue;
-			if($val['ea_deleted']==1 || $val['ear_deleted']==1){
-				$val['primary_email_address'] = '';
-			}
-			unset($val['ea_deleted']);
-			unset($val['ear_deleted']);
-			unset($val['primary_address']);
-		}
-		$pre_id = $val['id'];
-
-		foreach ($val as $key => $value)
-		{
-            //getting content values depending on their types
-            $fieldNameMapKey = $fields_array[$key];
-
-            if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
+            if($members)
             {
-                $fieldType = $focus->field_name_map[$fieldNameMapKey]['type'];
-                switch ($fieldType)
+                if(isset($val['id']) && $pre_id == $val['id'])
                 {
-                    //if our value is a currency field, then apply the users locale
-                    case 'currency':
-                        require_once('modules/Currencies/Currency.php');
-                        $value = currency_format_number($value);
-                        break;
-
-                    //if our value is a datetime field, then apply the users locale
-                    case 'datetime':
-                    case 'datetimecombo':
-                        $value = $timedate->to_display_date_time($db->fromConvert($value, 'datetime'));
-                        $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
-                        break;
-
-                    //kbrill Bug #16296
-                    case 'date':
-                        $value = $timedate->to_display_date($db->fromConvert($value, 'date'), false);
-                        break;
-
-                    // Bug 32463 - Properly have multienum field translated into something useful for the client
-                    case 'multienum':
-                        $value = str_replace("^","",$value);
-                        if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) )
-                        {
-                            $valueArray = explode(",",$value);
-                            foreach ($valueArray as $multikey => $multivalue )
-                            {
-                                if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) )
-                                {
-                                    $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
-                                }
-                            }
-                            $value = implode(",",$valueArray);
-                        }
-                        break;
+                     continue;
                 }
-            }
 
-             //BEGIN SUGARCRM flav=pro ONLY
-            if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
-                require_once('modules/Teams/TeamSetManager.php');
-                $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
+                if(isset($val['ea_deleted']) && isset($val['primary_email_address']) &&
+                    ($val['ea_deleted']==1 || $val['ear_deleted']==1))
+                {
+                    $val['primary_email_address'] = '';
+                }
+                unset($val['ea_deleted']);
+                unset($val['ear_deleted']);
+                unset($val['primary_address']);
             }
+            $pre_id = isset($val['id']) ? $val['id'] : '';
 
-           //replace user_name with full name if use_real_name preference setting is enabled
-           //and this is a user name field
-           $useRealNames = $current_user->getPreference('use_real_names');
-           if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
-              && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
-              && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
-              && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
-           ){
-               global $locale;
-               $userFocus = new User();
-               $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
-               if ( !empty($userFocus->id) ) {
-                   $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
-               }
+            foreach ($val as $key => $value)
+            {
+                //getting content values depending on their types
+                $fieldNameMapKey = $fields_array[$key];
+
+                if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
+                {
+                    $fieldType = $focus->field_name_map[$fieldNameMapKey]['type'];
+                    switch ($fieldType)
+                    {
+                        //if our value is a currency field, then apply the users locale
+                        case 'currency':
+                            require_once('modules/Currencies/Currency.php');
+                            $value = currency_format_number($value);
+                            break;
+
+                        //if our value is a datetime field, then apply the users locale
+                        case 'datetime':
+                        case 'datetimecombo':
+                            $value = $timedate->to_display_date_time($db->fromConvert($value, 'datetime'));
+                            $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
+                            break;
+
+                        //kbrill Bug #16296
+                        case 'date':
+                            $value = $timedate->to_display_date($db->fromConvert($value, 'date'), false);
+                            break;
+
+                        // Bug 32463 - Properly have multienum field translated into something useful for the client
+                        case 'multienum':
+                            $value = str_replace("^","",$value);
+                            if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) )
+                            {
+                                $valueArray = explode(",",$value);
+                                foreach ($valueArray as $multikey => $multivalue )
+                                {
+                                    if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) )
+                                    {
+                                        $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                                    }
+                                }
+                                $value = implode(",",$valueArray);
+                            }
+                            break;
+                    }
+                }
+
+                //BEGIN SUGARCRM flav=pro ONLY
+                if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
+                    require_once('modules/Teams/TeamSetManager.php');
+                    $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
+                }
+
+                //replace user_name with full name if use_real_name preference setting is enabled
+                //and this is a user name field
+                $useRealNames = $current_user->getPreference('use_real_names');
+                if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
+                  && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
+                  && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
+                  && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
+                ){
+                   global $locale;
+                   $userFocus = new User();
+                   $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
+                   if ( !empty($userFocus->id) ) {
+                       $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
+                   }
+                }
+
+                //END SUGARCRM flav=pro ONLY
+                array_push($new_arr, preg_replace("/\"/","\"\"", $value));
+            } //foreach
+
+            $line = implode("\"".getDelimiter()."\"", $new_arr);
+            $line = "\"" .$line;
+            $line .= "\"\r\n";
+            $content .= $line;
+        }
+    }
+
+    return $content;
+}
+
+
+/**
+ * getExportContentForRow
+ *
+ * @param $val
+ * @param $focus
+ * @param $isAdminUser
+ * @param $fields_array
+ * @param $members
+ *
+ * @return string
+ */
+function getExportContentForRow($val, $focus, $isAdminUser, $fields_array)
+{
+    global $current_user;
+    $timedate = TimeDate::getInstance();
+    $db = DBManagerFactory::getInstance();
+
+    //order the values in the record array
+    if ($focus instanceof ForecastWorksheet || $focus instanceof ForecastManagerWorksheet)
+    {
+        $val = get_field_order_mapping($focus->object_name, $val);
+    }
+    else
+    {
+        $val = get_field_order_mapping($focus->module_dir, $val);
+    }
+
+    $new_arr = array();
+
+    //BEGIN SUGARCRM flav=pro ONLY
+    if(!$isAdminUser)
+    {
+        $focus->id = (!empty($val['id']))?$val['id']:'';
+        $focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
+        $focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
+        $focus->ACLFilterFieldList($val, array(), array("blank_value" => true));
+    }
+    //END SUGARCRM flav=pro ONLY
+
+    foreach ($val as $key => $value)
+    {
+        //getting content values depending on their types
+        $fieldNameMapKey = $fields_array[$key];
+
+        if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
+        {
+            $fieldType = $focus->field_name_map[$fieldNameMapKey]['type'];
+            switch ($fieldType)
+            {
+                //if our value is a currency field, then apply the users locale
+                case 'currency':
+                    require_once('modules/Currencies/Currency.php');
+                    $value = currency_format_number($value);
+                    break;
+
+                //if our value is a datetime field, then apply the users locale
+                case 'datetime':
+                case 'datetimecombo':
+                    $value = $timedate->to_display_date_time($db->fromConvert($value, 'datetime'));
+                    $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
+                    break;
+
+                //kbrill Bug #16296
+                case 'date':
+                    $value = $timedate->to_display_date($db->fromConvert($value, 'date'), false);
+                    break;
+
+                // Bug 32463 - Properly have multienum field translated into something useful for the client
+                case 'multienum':
+                    $value = str_replace("^","",$value);
+                    if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) )
+                    {
+                        $valueArray = explode(",",$value);
+                        foreach ($valueArray as $multikey => $multivalue )
+                        {
+                            if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) )
+                            {
+                                $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
+                            }
+                        }
+                        $value = implode(",",$valueArray);
+                    }
+                    break;
+            }
+        }
+
+        //BEGIN SUGARCRM flav=pro ONLY
+        if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
+            require_once('modules/Teams/TeamSetManager.php');
+            $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
+        }
+
+        //replace user_name with full name if use_real_name preference setting is enabled
+        //and this is a user name field
+        $useRealNames = $current_user->getPreference('use_real_names');
+        if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
+          && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
+          && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
+          && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
+        ){
+           global $locale;
+           $userFocus = new User();
+           $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
+           if ( !empty($userFocus->id) ) {
+               $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
            }
+        }
 
         //END SUGARCRM flav=pro ONLY
         array_push($new_arr, preg_replace("/\"/","\"\"", $value));
-        }
-        $line = implode("\"".getDelimiter()."\"", $new_arr);
-        $line = "\"" .$line;
-        $line .= "\"\r\n";
-        $content .= $line;
-    }
+    } //foreach
 
-
-    }
-	return $content;
-
+    $line = implode("\"".getDelimiter()."\"", $new_arr);
+    $line = "\"" .$line;
+    $line .= "\"\r\n";
+    return $line;
 }
+
 
 function generateSearchWhere($module, $query) {//this function is similar with function prepareSearchForm() in view.list.php
     $seed = loadBean($module);
@@ -742,7 +899,10 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
     $field_order_array['meetings'] =array( 'name'=>'Subject', 'id'=>'ID', 'description'=>'Description', 'status'=>'Status', 'location'=>'Location', 'date_start'=>'Date', 'date_end'=>'Date End', 'duration_hours'=>'Duration Hours', 'duration_minutes'=>'Duration Minutes', 'reminder_time'=>'Reminder Time', 'type'=>'Meeting Type', 'external_id'=>'External ID', 'password'=>'Meeting Password', 'join_url'=>'Join Url', 'host_url'=>'Host Url', 'displayed_url'=>'Displayed Url', 'creator'=>'Meeting Creator', 'parent_type'=>'Related to', 'parent_id'=>'Related to', 'outlook_id'=>'Outlook ID','assigned_user_name' =>'Assigned to','assigned_user_id' => 'Assigned User ID', 'team_name' => 'Teams', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_entered' => 'Date Created', 'date_modified' => 'Date Modified', 'created_by' => 'Created By ID', 'modified_user_id' => 'Modified By ID', 'deleted' => 'Deleted');
     $field_order_array['cases'] =array( 'case_number'=>'Case Number', 'id'=>'ID', 'name'=>'Subject', 'description'=>'Description', 'status'=>'Status', 'type'=>'Type', 'priority'=>'Priority', 'resolution'=>'Resolution', 'work_log'=>'Work Log', 'portal_viewable'=>'Portal Viewable', 'account_name'=>'Account Name', 'account_id'=>'Account ID', 'assigned_user_id'=>'Assigned User ID', 'team_name'=>'Teams', 'team_id'=>'Team id', 'team_set_id'=>'Team Set ID', 'date_entered'=>'Date Created', 'date_modified'=>'Date Modified', 'created_by'=>'Created By ID', 'modified_user_id'=>'Modified By ID', 'deleted'=>'Deleted');
     $field_order_array['prospects'] =array( 'first_name'=>'First Name', 'last_name'=>'Last Name', 'id'=>'ID', 'salutation'=>'Salutation', 'title'=>'Title', 'department'=>'Department', 'account_name'=>'Account Name', 'email_address'=>'Email Address', 'phone_mobile' => 'Phone Mobile', 'phone_work' => 'Phone Work', 'phone_home' => 'Phone Home', 'phone_other' => 'Phone Other', 'phone_fax' => 'Phone Fax',  'primary_address_street' => 'Primary Address Street', 'primary_address_city' => 'Primary Address City', 'primary_address_state' => 'Primary Address State', 'primary_address_postalcode' => 'Primary Address Postal Code', 'primary_address_country' => 'Primary Address Country', 'alt_address_street' => 'Alternate Address Street', 'alt_address_city' => 'Alternate Address City', 'alt_address_state' => 'Alternate Address State', 'alt_address_postalcode' => 'Alternate Address Postal Code', 'alt_address_country' => 'Alternate Address Country', 'description' => 'Description', 'birthdate' => 'Birthdate', 'assistant'=>'Assistant', 'assistant_phone'=>'Assistant Phone', 'campaign_id'=>'campaign_id', 'tracker_key'=>'Tracker Key', 'do_not_call'=>'Do Not Call', 'lead_id'=>'Lead Id', 'assigned_user_name'=>'Assigned User Name', 'assigned_user_id'=>'Assigned User ID', 'team_id' =>'Team Id', 'team_name' =>'Teams', 'team_set_id' =>'Team Set ID', 'date_entered' =>'Date Created', 'date_modified' =>'Date Modified', 'modified_user_id' =>'Modified By', 'created_by' =>'Created By', 'deleted' =>'Deleted');
-
+    //BEGIN SUGARCRM flav=pro ONLY
+    $field_order_array['forecastworksheet'] = array('id' => 'ID', 'product_id' => 'Product ID', 'date_closed' => 'Expected Close', 'sales_stage' => 'Stage', 'assigned_user_id' => 'Assigned To', 'amount' => 'Amount', 'worksheet_id' => 'Worksheet ID', 'name' => 'Name', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'version' => 'Version', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'commit_stage' => 'Commit Stage', 'probability' => 'Probability');
+    $field_order_array['forecastmanagerworksheet'] = array('amount' => 'Amount', 'quota' => 'Quota', 'quota_id' => 'Quota ID', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'best_adjusted' => 'Best Adjusted', 'likely_adjusted' => 'Likely Adjusted', 'worst_adjusted' => 'Worst Adjusted', 'forecast' => 'Forecast', 'forecast_id' => 'Forecast ID', 'worksheet_id' => 'Worksheet ID', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'show_opps' => 'Show Opps', 'timeperiod_id' => 'Timeperiod ID', 'id' => 'ID', 'user_id' => 'User ID', 'version' => 'Version', 'name' => 'Name', 'date_modified' => 'Date Modified', 'commit_stage' => 'Commit Stage', 'label' => 'Label');
+    //END SUGARCRM flav=pro ONLY
     $fields_to_exclude = array();
     $fields_to_exclude['accounts'] = array('account_name');
     $fields_to_exclude['bugs'] = array('system_id');
@@ -769,16 +929,11 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
 
             $exemptModuleList = array('ProspectLists');
             if(in_array($name, $exemptModuleList))
+            {
                 return $newReorder;
+            }
 
-            //get an instance of the bean
-            global $beanList;
-            global $beanFiles;
-
-            $bean = $beanList[$_REQUEST['module']];
-            require_once($beanFiles[$bean]);
-            $focus = new $bean;
-
+            $focus = BeanFactory::getBean($_REQUEST['module']);
 
             //if module is of type person
             if($focus instanceof Person){
@@ -836,7 +991,7 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
         return $temp_result_arr;
     }
 
-    //if no array was passed in, pass back either the list of ordered columns by module, or the entireorder array
+    //if no array was passed in, pass back either the list of ordered columns by module, or the entire order array
     if(empty($name)){
         return $field_order_array;
     }else{
@@ -844,4 +999,3 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
     }
 
 }
-?>
