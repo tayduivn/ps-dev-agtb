@@ -28,8 +28,10 @@
 var rtl = rtl == "undefined" ? false : rtl;
 var modals=new Array();
 modals[0] = {
+    target: "#globalLinksModule",
     title: SUGAR.language.get('Home', 'LBL_TOUR_PDF_MANAGER'),
-    content: SUGAR.language.get('Home', 'LBL_TOUR_PDF_MANAGER_DESCRIPTION')
+    content: SUGAR.language.get('Home', 'LBL_TOUR_PDF_MANAGER_DESCRIPTION'),
+    placement: "bottom"
 };
 modals[1] = {
     title: SUGAR.language.get('Home', 'LBL_TOUR_MEETINGS_CALLS'),
