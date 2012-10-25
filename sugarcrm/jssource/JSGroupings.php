@@ -223,15 +223,15 @@
     $cached_file = 'include/javascript/sidecar_forecasts.js';
     if ( file_exists('sidecar/src/include-manifest.php') )
     {
-        require_once('sidecar/src/include-manifest.php');
-        if ( !empty($buildFiles) )
-        {
+
             $sidecar_forecasts = array();
+            /*
             $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
             foreach ( $buildFiles as $_ind => $_file )
             {
-                $sidecar_forecasts['sidecar/'.$_file] = $cached_file;
+                $sidecar_forecasts['sidecar/'.$_file] = $target;
             }
+            */
             $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
             $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
             $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
@@ -241,10 +241,13 @@
             $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
             $sidecar_forecasts['modules/Forecasts/clients/base/views/alert-view/alert-view.js'] = $cached_file;
             $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
-            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
-            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
-            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
-        }
+            $sidecar_forecasts['styleguide/assets/js/bootstrap-button.js']  = $cached_file;
+            $sidecar_forecasts['styleguide/assets/js/bootstrap-tooltip.js'] = $cached_file;
+            $sidecar_forecasts['styleguide/assets/js/bootstrap-dropdown.js']= $cached_file;
+            $sidecar_forecasts['styleguide/assets/js/bootstrap-popover.js'] = $cached_file;
+            $sidecar_forecasts['styleguide/assets/js/bootstrap-modal.js']   = $cached_file;
+            $sidecar_forecasts['styleguide/assets/js/bootstrap-alert.js']   = $cached_file;
+            $sidecar_forecasts['styleguide/assets/js/bootstrap-datepicker.js']   = $cached_file;
     }
     $js_groupings[] = $sidecar_forecasts;
 
