@@ -7413,5 +7413,9 @@ div.hoverscroll div.fixed-arrow.bottom {
 	bottom:0px;
 	background-image:url('../../../../index.php?entryPoint=getImage&imageName=arrow-down-small.png');
 }
-
-
+#defaultUser_chzn.chzn-container-single .chzn-single span {
+  margin-right:30px !important;
+}
+#defaultUser_chzn.chzn-container-single .chzn-single .search-choice-close {
+  right:18px;
+}
