@@ -1,27 +1,32 @@
 ({
-    extendsFrom: "DetailView",
     editMode: false,
+
+    events: {
+        'click .record-edit': 'editClicked',
+        'click .record-edit-link-wrapper': 'handleEdit',
+        'click .record-save': 'saveClicked',
+        'click .record-cancel': 'cancelClicked',
+        'click .record-delete': 'deleteClicked',
+        'click .more': 'toggleMoreLess',
+        'click .less': 'toggleMoreLess'
+    },
+
+    // button states
+    STATE: {
+        EDIT: 'edit',
+        VIEW: 'view'
+    },
 
     initialize: function(options) {
         _.bindAll(this);
 
-        app.view.views.DetailView.prototype.initialize.call(this, options);
-
-        // Re delegate events adding some of our custom
-        this.delegateEvents(_.extend(this.events, {
-            "click .record-edit-link-wrapper": "handleEdit"
-        }));
-
-        this.context.on('headerpane:edit:click', this.toggleEdit, this);
-        this.context.on('headerpane:save:click', this.handleSave, this);
-        this.context.on('headerpane:cancel:click', this.handleCancel, this);
-        this.context.on('headerpane:delete:click', this.handleDelete, this);
+        app.view.View.prototype.initialize.call(this, options);
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.editMode || this.editAllMode) {
                 this.previousModelState = this.model.previousAttributes();
-                this.context.trigger('headerpane:buttons:edit');
+                this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
 
@@ -85,9 +90,22 @@
         }
     },
 
-    // Overloaded functions
-    _renderHtml: function() { // Use original original
+    _renderHtml: function() {
+        this.checkAclForButtons();
         app.view.View.prototype._renderHtml.call(this);
+    },
+
+    /**
+     * Check to see if the buttons should be displayed
+     */
+    checkAclForButtons: function() {
+        if (this.context.get("model").module === "Users") {
+            this.hasAccess = (app.user.get("id") == this.context.get("model").id);
+        } else if (this.context.get("create") === true) {
+            this.hasAccess = true;
+        } else {
+            this.hasAccess = app.acl.hasAccessToModel("edit", this.model);
+        }
     },
 
     toggleMoreLess: function() {
@@ -97,19 +115,12 @@
     },
 
     bindDataChange: function() {
-        var title = '';
         if (this.model) {
             this.model.on("change", function() {
                 if (this.model.isNotEmpty !== true) {
                     this.model.isNotEmpty = true;
                     this.render();
                 }
-            }, this);
-
-            // display title
-            this.model.on('change:first_name change:last_name', function() {
-                title = this.model.get('first_name') + ' ' + this.model.get('last_name');
-                this.context.trigger('headerpane:title:render', title);
             }, this);
         }
     },
@@ -140,6 +151,32 @@
         }
 
         return false;
+    },
+
+    editClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.toggleEdit();
+        }
+    },
+
+    saveClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleSave();
+        }
+    },
+
+    cancelClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleCancel();
+        }
+    },
+
+    deleteClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.handleDelete();
+        }
     },
 
     // Handler functions
@@ -333,6 +370,40 @@
             }
         } else if (e.which == 27) { // If esc
             this.toggleCell(field, cell, true);
+        }
+    },
+
+    /**
+     * Change the behavior of buttons depending on the state that they should be in
+     * @param state
+     */
+    setButtonStates: function(state) {
+        var $buttons = {
+            edit:   this.$('.record-edit'),
+            save:   this.$('.record-save'),
+            cancel: this.$('.record-cancel'),
+            del:    this.$('.record-delete')
+        };
+
+        switch (state) {
+            case this.STATE.EDIT:
+                $buttons.edit.toggleClass('hide', false).addClass('disabled');
+                $buttons.save.toggleClass('hide', false);
+                $buttons.cancel.toggleClass('hide', false);
+                $buttons.del.toggleClass('hide', false);
+                break;
+            case this.STATE.VIEW:
+                $buttons.edit.toggleClass('hide', false).removeClass('disabled');
+                $buttons.save.toggleClass('hide', true);
+                $buttons.cancel.toggleClass('hide', true);
+                $buttons.del.toggleClass('hide', false);
+                break;
+            default:
+                $buttons.edit.toggleClass('hide', true).removeClass('disabled');
+                $buttons.save.toggleClass('hide', true);
+                $buttons.cancel.toggleClass('hide', true);
+                $buttons.del.toggleClass('hide', true);
+                break;
         }
     }
 })
