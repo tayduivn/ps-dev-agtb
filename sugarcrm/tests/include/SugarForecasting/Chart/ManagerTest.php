@@ -43,7 +43,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setup('mod_strings', array('manager', 'Forecasts'));
         SugarTestHelper::setup('current_user');
-        
+
         $timeperiod = SugarTestTimePeriodUtilities::createTimePeriod('2009-01-01', '2009-03-31');
 
         self::$args['timeperiod_id'] = $timeperiod->id;
@@ -320,5 +320,56 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
             array('worksheet', 'worst', 1, 1),
 
         );
+    }
+
+    public function testTopLevelManagerQuotaEqualToWorksheetData()
+    {
+        $obj = new SugarForecasting_Chart_Manager(self::$args);
+        $data = $obj->process();
+
+        // get the totals;
+
+        // get the quota from the first record
+        $actual = doubleval($data['values'][0]['goalmarkervalue'][0]);
+        $expected = self::$users['manager']['quota']->amount + self::$users['reportee']['quota']->amount;
+
+        $expected = SugarCurrency::convertAmountToBase($expected, self::$currency->id);
+
+        $this->assertEquals($expected, $actual, null, 2);
+    }
+
+    public function testMidLevelManagerQuotaEqualToRollup()
+    {
+        $reportee = SugarTestUserUtilities::createAnonymousUser(false);
+        $reportee->reports_to_id = self::$users['reportee']['user']->id;
+        $reportee->save();
+
+        // add a rollup quota for the reportee user
+        /* @var $quota Quota */
+        $quota = BeanFactory::getBean('Quotas');
+        $quota->amount = 1500;
+        $quota->currency_id = -99;
+        $quota->quota_type = "Rollup";
+        $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
+        $quota->user_id = self::$users['reportee']['user']->id;
+        $quota->save();
+
+        $args = self::$args;
+        $args['user_id'] = self::$users['reportee']['user']->id;
+
+        $obj = new SugarForecasting_Chart_Manager($args);
+        $data = $obj->process();
+
+        // get the quota from the first record
+        $actual = doubleval($data['values'][0]['goalmarkervalue'][0]);
+        $expected = $quota->amount;
+
+        $this->assertEquals($expected, $actual, null, 2);
+
+        $quota->deleted = 1;
+        $quota->save();
+
+        $reportee->reports_to_id = null;
+        $reportee->save();
     }
 }
