@@ -225,6 +225,7 @@ class BoxOfficeClient
         foreach ($this->instance['config'] as $k => $v) {
             $sugar_config[$k] = $v;
         }
+        $sugar_config['dbconfig'] = $this->instance['config']['dbconfig'];
         return $sugar_config;
     }
 
