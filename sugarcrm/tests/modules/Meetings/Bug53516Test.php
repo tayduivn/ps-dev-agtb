@@ -42,6 +42,9 @@ class Bug53516Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user', array(true, 1));
         $this->contact = SugarTestContactUtilities::createContact();
     }
 
@@ -53,6 +56,7 @@ class Bug53516Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestMeetingUtilities::removeAllCreatedMeetings();
         SugarTestMeetingUtilities::removeMeetingContacts();
         SugarTestMeetingUtilities::removeMeetingUsers();
+        SugarTestHelper::tearDown();
     }
 
     /**
