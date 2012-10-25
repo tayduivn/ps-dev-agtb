@@ -82,11 +82,7 @@ class ActivityStreamApi extends ListApi {
         $targetModule = isset($args['module']) ? $args['module'] : '';
         $targetId = isset($args['id']) ? $args['id'] : '';
         $value = isset($args['value']) ? $args['value'] : '';
-        //BEGIN SUGARCRM flav=pro ONLY
-        $teamId = isset($args['team_id']) ? $args['team_id'] : '1';
-        $teamSetId = isset($args['team_set_id']) ? $args['team_set_id'] : '';
-        //END SUGARCRM flav=pro ONLY        
-        
+
         if($targetModule == "ActivityStream") {
             // Make sure we have a valid activity id
             if(empty($targetId) || !$seed->retrieve($targetId, true, false)) {
@@ -96,12 +92,7 @@ class ActivityStreamApi extends ListApi {
             return $seed->addComment($value);
         }
         else {
-            return $seed->addPost($targetModule, $targetId, $value
-                //BEGIN SUGARCRM flav=pro ONLY
-                ,$teamId
-                ,$teamSetId
-                //END SUGARCRM flav=pro ONLY 
-            );
+            return $seed->addPost($targetModule, $targetId, $value);
         }
     }
 
