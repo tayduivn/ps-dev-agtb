@@ -399,7 +399,7 @@ class TimePeriod extends SugarBean {
             $db = DBManagerFactory::getInstance();
             $queryDate = $timedate->getNow();
             $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_leaf = 1 and is_fiscal_year = 0 and deleted = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_leaf = 0 and is_fiscal_year = 0 and deleted = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
         }
         return $currentId;
     }

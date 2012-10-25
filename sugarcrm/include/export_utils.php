@@ -400,7 +400,14 @@ function getExportContentForRow($val, $focus, $isAdminUser, $fields_array)
     $db = DBManagerFactory::getInstance();
 
     //order the values in the record array
-    $val = get_field_order_mapping($focus->module_dir, $val);
+    if ($focus instanceof ForecastWorksheet || $focus instanceof ForecastManagerWorksheet)
+    {
+        $val = get_field_order_mapping($focus->object_name, $val);
+    }
+    else
+    {
+        $val = get_field_order_mapping($focus->module_dir, $val);
+    }
 
     $new_arr = array();
 
@@ -892,7 +899,10 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
     $field_order_array['meetings'] =array( 'name'=>'Subject', 'id'=>'ID', 'description'=>'Description', 'status'=>'Status', 'location'=>'Location', 'date_start'=>'Date', 'date_end'=>'Date End', 'duration_hours'=>'Duration Hours', 'duration_minutes'=>'Duration Minutes', 'reminder_time'=>'Reminder Time', 'type'=>'Meeting Type', 'external_id'=>'External ID', 'password'=>'Meeting Password', 'join_url'=>'Join Url', 'host_url'=>'Host Url', 'displayed_url'=>'Displayed Url', 'creator'=>'Meeting Creator', 'parent_type'=>'Related to', 'parent_id'=>'Related to', 'outlook_id'=>'Outlook ID','assigned_user_name' =>'Assigned to','assigned_user_id' => 'Assigned User ID', 'team_name' => 'Teams', 'team_id' => 'Team id', 'team_set_id' => 'Team Set ID', 'date_entered' => 'Date Created', 'date_modified' => 'Date Modified', 'created_by' => 'Created By ID', 'modified_user_id' => 'Modified By ID', 'deleted' => 'Deleted');
     $field_order_array['cases'] =array( 'case_number'=>'Case Number', 'id'=>'ID', 'name'=>'Subject', 'description'=>'Description', 'status'=>'Status', 'type'=>'Type', 'priority'=>'Priority', 'resolution'=>'Resolution', 'work_log'=>'Work Log', 'portal_viewable'=>'Portal Viewable', 'account_name'=>'Account Name', 'account_id'=>'Account ID', 'assigned_user_id'=>'Assigned User ID', 'team_name'=>'Teams', 'team_id'=>'Team id', 'team_set_id'=>'Team Set ID', 'date_entered'=>'Date Created', 'date_modified'=>'Date Modified', 'created_by'=>'Created By ID', 'modified_user_id'=>'Modified By ID', 'deleted'=>'Deleted');
     $field_order_array['prospects'] =array( 'first_name'=>'First Name', 'last_name'=>'Last Name', 'id'=>'ID', 'salutation'=>'Salutation', 'title'=>'Title', 'department'=>'Department', 'account_name'=>'Account Name', 'email_address'=>'Email Address', 'phone_mobile' => 'Phone Mobile', 'phone_work' => 'Phone Work', 'phone_home' => 'Phone Home', 'phone_other' => 'Phone Other', 'phone_fax' => 'Phone Fax',  'primary_address_street' => 'Primary Address Street', 'primary_address_city' => 'Primary Address City', 'primary_address_state' => 'Primary Address State', 'primary_address_postalcode' => 'Primary Address Postal Code', 'primary_address_country' => 'Primary Address Country', 'alt_address_street' => 'Alternate Address Street', 'alt_address_city' => 'Alternate Address City', 'alt_address_state' => 'Alternate Address State', 'alt_address_postalcode' => 'Alternate Address Postal Code', 'alt_address_country' => 'Alternate Address Country', 'description' => 'Description', 'birthdate' => 'Birthdate', 'assistant'=>'Assistant', 'assistant_phone'=>'Assistant Phone', 'campaign_id'=>'campaign_id', 'tracker_key'=>'Tracker Key', 'do_not_call'=>'Do Not Call', 'lead_id'=>'Lead Id', 'assigned_user_name'=>'Assigned User Name', 'assigned_user_id'=>'Assigned User ID', 'team_id' =>'Team Id', 'team_name' =>'Teams', 'team_set_id' =>'Team Set ID', 'date_entered' =>'Date Created', 'date_modified' =>'Date Modified', 'modified_user_id' =>'Modified By', 'created_by' =>'Created By', 'deleted' =>'Deleted');
-
+    //BEGIN SUGARCRM flav=pro ONLY
+    $field_order_array['forecastworksheet'] = array('id' => 'ID', 'product_id' => 'Product ID', 'date_closed' => 'Expected Close', 'sales_stage' => 'Stage', 'assigned_user_id' => 'Assigned To', 'amount' => 'Amount', 'worksheet_id' => 'Worksheet ID', 'name' => 'Name', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'version' => 'Version', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'commit_stage' => 'Commit Stage', 'probability' => 'Probability');
+    $field_order_array['forecastmanagerworksheet'] = array('amount' => 'Amount', 'quota' => 'Quota', 'quota_id' => 'Quota ID', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'best_adjusted' => 'Best Adjusted', 'likely_adjusted' => 'Likely Adjusted', 'worst_adjusted' => 'Worst Adjusted', 'forecast' => 'Forecast', 'forecast_id' => 'Forecast ID', 'worksheet_id' => 'Worksheet ID', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'show_opps' => 'Show Opps', 'timeperiod_id' => 'Timeperiod ID', 'id' => 'ID', 'user_id' => 'User ID', 'version' => 'Version', 'name' => 'Name', 'date_modified' => 'Date Modified', 'commit_stage' => 'Commit Stage', 'label' => 'Label');
+    //END SUGARCRM flav=pro ONLY
     $fields_to_exclude = array();
     $fields_to_exclude['accounts'] = array('account_name');
     $fields_to_exclude['bugs'] = array('system_id');

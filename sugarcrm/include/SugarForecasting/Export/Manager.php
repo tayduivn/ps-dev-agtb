@@ -73,24 +73,23 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
             'best_case'=>'best_case',
             'likely_case'=>'likely_case',
             'worst_case'=>'worst_case',
-            'label'=>'label',
-            'date_modified'=>'date_modified',
             'best_adjusted'=>'best_adjusted',
             'likely_adjusted'=>'likely_adjusted',
             'worst_adjusted'=>'worst_adjusted',
             'forecast'=>'forecast',
             'forecast_id'=>'forecast_id',
             'worksheet_id'=>'worksheet_id',
-            'commit_stage'=>'commit_stage',
             'currency_id'=>'currency_id',
             'base_rate'=>'base_rate',
             'show_opps'=>'show_opps',
             'timeperiod_id'=>'timeperiod_id',
             'id'=>'id',
-            'label'=>'label',
-            'name'=>'name',
             'user_id'=>'user_id',
-            'version'=>'version'
+            'version'=>'version',
+            'name'=>'name',
+            'date_modified'=>'date_modified',
+            'commit_stage'=>'commit_stage',
+            'label'=>'label'
         );
 
         $seed = BeanFactory::getBean('ForecastManagerWorksheets');
