@@ -24,12 +24,10 @@
         if(self.context && self.context.forecasts) {
             self.context.forecasts.on("forecasts:worksheetmanager:render", function() {
                 self.mDeferred.resolve();
-                self.handleDeferredRender();
 
             });
             self.context.forecasts.on("forecasts:committed:updatedTotals", function() {
                 self.wDeferred.resolve();
-                self.handleDeferredRender();
             });
         }
 
@@ -40,6 +38,8 @@
         var self = this;
         $.when(self.wDeferred, self.mDeferred).done(function() {
             self._render();
+            self.wDeferred = self.mDeferred = $.Deferred();
+            self.handleDeferredRender();
         });
     },
 
