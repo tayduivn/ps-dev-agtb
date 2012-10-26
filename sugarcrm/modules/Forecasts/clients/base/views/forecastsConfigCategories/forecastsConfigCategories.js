@@ -129,7 +129,7 @@
                         _.find(
                             _.first(this.view.meta.panels).fields,
                             function(field) {
-                                return field.name ==  'category_ranges';
+                                return field.name == 'category_ranges';
                             }
                         ).ranges,
                         function(range) {
@@ -149,7 +149,7 @@
 
                 // now give the view a way to get at this field's model, so it can be used to set the value on the
                 // real model.
-                 view.fieldRanges[key] = rangeField;
+                view.fieldRanges[key] = rangeField;
 
                 // this gives the field a way to save to the view's real model.  It's wrapped in a closure to allow us to
                 // ensure we have everything when switching contexts from this handler back to the view.
@@ -192,7 +192,12 @@
         this.model.set(catRange, setting);
     },
 
-    //graphically connect the sliders
+    /**
+     * Graphically connects the sliders to the one below, so that they move in unison when changed, based on category.
+     * @param category - the forecasts category that was selected, i. e. 'show_binary' or 'show_buckets'
+     * @param sliders - an object containing the sliders that have been set up in the page.  This is created in the
+     * selection handler when the user selects a category type.
+     */
     connectSliders: function(category, sliders) {
         if(category == 'show_binary') {
             sliders.include.sliderChangeDelegate = function (value, type) {

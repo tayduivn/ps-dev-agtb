@@ -60,6 +60,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
                             'default' => true,
                             'enabled' => true,
                         ),
+// TODO-sfa: 6.8 - SFA-196: implement custom buckets
 //BEGIN SUGARCRM flav=int ONLY
                         array(
                             'name' => 'custom',
@@ -89,6 +90,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigCategories'] = array(
                     'options' => array(
                         'show_binary' => 'commit_stage_binary_dom',
                         'show_buckets' => 'commit_stage_dom',
+// TODO-sfa: 6.8 - SFA-196: implement custom buckets
 //BEGIN SUGARCRM flav=int ONLY
                         'show_custom_buckets' => 'commit_stage_custom_dom'
 //END SUGARCRM flav=int ONLY
