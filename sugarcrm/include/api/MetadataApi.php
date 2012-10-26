@@ -274,9 +274,10 @@ class MetadataApi extends SugarApi {
                             $data['full_module_list'][$fieldDef['module']] = $fieldDef['module'];
                         }
                     } elseif (isset($fieldDef['type']) && ($fieldDef['type'] == 'link')) {
-                        $bean->load_relationship($fieldDef['name']);
-                        $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
-                        $data['full_module_list'][$otherSide] = $otherSide;
+                        if($bean->load_relationship($fieldDef['name'])) {
+                            $otherSide = $bean->$fieldDef['name']->getRelatedModuleName();
+                            $data['full_module_list'][$otherSide] = $otherSide;
+                        }
                     }
                 }
             }
