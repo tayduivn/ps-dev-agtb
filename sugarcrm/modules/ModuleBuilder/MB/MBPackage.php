@@ -501,23 +501,23 @@ function buildInstall($path){
         {
             return;
         }
+        
+        $recursiveIterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($path . $generalPath),
+                RecursiveIteratorIterator::SELF_FIRST
+        );
 
-            $recursiveIterator = new RecursiveIteratorIterator(
-                    new RecursiveDirectoryIterator($path . $generalPath),
-                    RecursiveIteratorIterator::SELF_FIRST
+        /* @var $fInfo SplFileInfo */
+        foreach (new RegexIterator($recursiveIterator, "/\.php$/i") as $fInfo)
+        {
+
+            $newPath = substr($fInfo->getPathname(), strrpos($fInfo->getPathname(), $generalPath));
+
+            $installdefs['copy'][] = array(
+                'from' => '<basepath>' . $newPath,
+                'to' => 'custom' . $newPath
             );
-
-            /* @var $fInfo SplFileInfo */
-            foreach (new RegexIterator($recursiveIterator, "/\.php$/i") as $fInfo)
-            {
-
-                $newPath = substr($fInfo->getPathname(), strrpos($fInfo->getPathname(), $generalPath));
-
-                $installdefs['copy'][] = array(
-                    'from' => '<basepath>' . $newPath,
-                    'to' => 'custom' . $newPath
-                );
-            }
+        }
     }
 
     //return an array which contain the name of fields_meta_data table's columns 
@@ -745,6 +745,7 @@ function buildInstall($path){
             return $result;
         }
 
+
         if (is_array($includeRelationships))
         {
             $includeMask = array();
@@ -778,7 +779,8 @@ function buildInstall($path){
                 if ($includeMask === false)
                 {
                     $result[] = $fileInfo->getPathname();
-                }else
+                } 
+                else 
                 {
                     foreach ($includeMask as $v)
                     {
@@ -788,9 +790,9 @@ function buildInstall($path){
                             break;
                         }
                     }
-                    }
                 }
             }
+        }
 
         return $result;
     }
@@ -923,12 +925,12 @@ function buildInstall($path){
                 'custom' . DIRECTORY_SEPARATOR;
         $result = array();
 
+
         //do not process if path is not a valid directory, or recursiveIterator will break.
         if(!is_dir($path))
         {
             return $result;
         }
-
 
         $relationships = $this->getCustomRelationshipsByModuleName($moduleName, $lhs);
         
