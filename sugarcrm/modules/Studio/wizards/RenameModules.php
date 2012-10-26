@@ -37,7 +37,7 @@ class RenameModules
      *
      * @var string
      */
-    private $selectedLanguage;
+    public $selectedLanguage;
 
     /**
      * An array containing the modules which should be renamed.
@@ -701,7 +701,7 @@ class RenameModules
      * @param  $replacementLabels
      * @return void
      */
-    private function changeModuleModStrings($moduleName, $replacementLabels)
+    public function changeModuleModStrings($moduleName, $replacementLabels)
     {
         $GLOBALS['log']->info("Begining to change module labels for: $moduleName");
         $currentModuleStrings = return_module_language($this->selectedLanguage, $moduleName);
@@ -925,7 +925,7 @@ class RenameModules
      * @param  string $moduleName
      * @return string The 'singular' name of a module.
      */
-    private function getModuleSingularKey($moduleName)
+    public function getModuleSingularKey($moduleName)
     {
         $className = isset($GLOBALS['beanList'][$moduleName]) ? $GLOBALS['beanList'][$moduleName] : null;
         if( is_null($className) || ! class_exists($className) )
