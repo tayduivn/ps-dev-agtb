@@ -47,15 +47,13 @@ class PdfManagerHelper
 
     public static function getBannnedFieldsAndLinks()
     {
-    
+
         $bannedPdfManagerFieldsAndLinks = array();
 
-        include 'modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
-        
-        if (file_exists('custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php')) {
-            include 'custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
+        foreach(SugarAutoLoader::existingCustom('modules/PdfManager/metadata/pdfmanagermodulesdefs.php') as $file) {
+            include $file;
         }
-            
+
         return $bannedPdfManagerFieldsAndLinks;
     }
 
@@ -68,15 +66,13 @@ class PdfManagerHelper
 
     public static function getBannnedModules()
     {
-    
+
         $bannedPdfManagerModules = array();
 
-        include 'modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
-        
-        if (file_exists('custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php')) {
-            include 'custom/modules/PdfManager/metadata/pdfmanagermodulesdefs.php';
+        foreach(SugarAutoLoader::existingCustom('modules/PdfManager/metadata/pdfmanagermodulesdefs.php') as $file) {
+            include $file;
         }
-            
+
         return $bannedPdfManagerModules;
     }
 
@@ -111,7 +107,7 @@ class PdfManagerHelper
      * @return string
      */
     public static function getModuleName($moduleKey)
-    {        
+    {
         return translate('moduleList', 'application', $moduleKey);
     }
 
@@ -155,7 +151,7 @@ class PdfManagerHelper
     public static function getLinksForModule($module)
     {
         global $app_list_strings;
-        
+
         $bannedFieldsAndLinks = PdfManagerHelper::getBannnedFieldsAndLinks();
 
         $focus = BeanFactory::newBean($module);
@@ -215,8 +211,8 @@ class PdfManagerHelper
 
                     if (isset($bannedFieldsAndLinks[$module]) && isset($bannedFieldsAndLinks[$module]['relationships']) && in_array($name, $bannedFieldsAndLinks[$module]['relationships'])) {
                         continue;
-                    }                    
-                    
+                    }
+
                     $label = empty($def['vname']) ? $name : str_replace(":" , "", translate($def['vname'], $module));
                     $links[$name] = array(
                         "label" => "$label ($relatedModule)",
@@ -315,7 +311,7 @@ class PdfManagerHelper
             if (isset($bannedFieldsAndLinks[$moduleName]) && isset($bannedFieldsAndLinks[$moduleName]['fields']) && in_array($fieldName, $bannedFieldsAndLinks[$moduleName]['fields'])) {
                 continue;
             }
-            
+
             //Check the studio property of the field def.
             if (isset($def['studio']) && (self::isFalse($def['studio']) || (is_array($def['studio']) && (
                 (isset($def['studio']['formula']) && self::isFalse($def['studio']['formula'])) ||

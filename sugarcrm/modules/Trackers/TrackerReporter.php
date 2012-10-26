@@ -62,9 +62,10 @@ class TrackerReporter{
 	 * 	return '<SOME_QUERY_TO_RUN>';
 	 * }
 	 */
-	public function __construct(){
+	public function __construct()
+	{
 		//here we should check if anything exists in custom/Tracker dir.
-		if(file_exists('custom/modules/Trackers/tracker_reporter.php')){
+		if(SugarAutoLoader::existing('custom/modules/Trackers/tracker_reporter.php')){
 			require_once('custom/modules/Trackers/tracker_reporter.php');
 			//merge queries from custom file
 			$all_queries = array_merge_recursive($this->default_queries, $queries);
@@ -84,14 +85,12 @@ class TrackerReporter{
 	 * Default method is the override is not defined.  Check the $queries variable
 	 * to see if the method is defined in there if so then run the query and return the result set.
 	 */
-	public function __call($method, $args){
+	public function __call($method, $args)
+	{
 		//first check if the function is defined in the custom file;
-		if(file_exists('custom/modules/Trackers/tracker_reporter.php')){
-			$functions = $this->getFileMethods('custom/modules/Trackers/tracker_reporter.php');
-			if(in_array($method, $functions)){
-				$query = call_user_func($method);
-				return $this->execute($query);
-			}
+		if(!empty($this->included_methods) && in_array($method, $this->included_methods)) {
+			$query = call_user_func($method);
+			return $this->execute($query);
 		}
 		return $this->execute($this->setup($method, $args));
 	}

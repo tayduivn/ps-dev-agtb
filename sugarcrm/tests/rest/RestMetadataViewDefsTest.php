@@ -33,27 +33,23 @@ class RestMetadataViewDefsTest extends RestTestBase {
         //END SUGARCRM flav=ent ONLY
     );
 
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
     public function tearDown()
     {
         foreach($this->testMetaDataFiles as $file ) {
             if (file_exists($file)) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
-                @unlink($file);
-                
+                @SugarAutoLoader::unlink($file);
+
                 // Remove the stray directory since metadata manager will pick it up
                 $dirname = dirname($file);
                 rmdir($dirname);
+                SugarAutoLoader::delFromMap($dirname);
             }
         }
 
         parent::tearDown();
     }
-    
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group rest
@@ -63,7 +59,7 @@ class RestMetadataViewDefsTest extends RestTestBase {
         // Hash should always be set
         $this->assertTrue(isset($restReply['reply']['modules']['Contacts']['layouts']['_hash']), "Portal layouts missing hash empty");
         unset($restReply['reply']['modules']['Contacts']['layouts']['_hash']);
-        
+
         // Now the layouts should be empty
         $this->assertTrue(empty($restReply['reply']['modules']['Contacts']['layouts']), "Portal layouts are not empty");
     }
@@ -80,12 +76,8 @@ class RestMetadataViewDefsTest extends RestTestBase {
      * @group rest
      */
     public function testAdditionalPortalLayoutMetaData() {
-        $dir = dirname($this->testMetaDataFiles['contacts']);
-        if (!is_dir($dir)) {
-            sugar_mkdir($dir, null, true);
-        }
-
-        sugar_file_put_contents($this->testMetaDataFiles['contacts'], "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');");
+        SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['contacts']));
+        SugarAutoLoader::put($this->testMetaDataFiles['contacts'], "<?php\n\$viewdefs['Contacts']['portal']['layout']['banana'] = array('yummy' => 'Banana Split');", true);
 
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
         $this->assertEquals('Banana Split',$restReply['reply']['modules']['Contacts']['layouts']['banana']['meta']['yummy'], "Failed to retrieve all layout metadata");
@@ -95,22 +87,18 @@ class RestMetadataViewDefsTest extends RestTestBase {
      * @group rest
      */
     public function testAdditionalPortalViewMetaData() {
-        $dir = dirname($this->testMetaDataFiles['cases']);
-        if (!is_dir($dir)) {
-            sugar_mkdir($dir, null, true);
-        }
-
-        sugar_file_put_contents($this->testMetaDataFiles['cases'], "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');");
+        SugarAutoLoader::ensureDir(dirname($this->testMetaDataFiles['cases']));
+        SugarAutoLoader::put($this->testMetaDataFiles['cases'], "<?php\n\$viewdefs['Cases']['portal']['view']['ghostrider'] = array('pattern' => 'Full');", true);
 
         $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Cases&platform=portal');
         $this->assertEquals('Full',$restReply['reply']['modules']['Cases']['views']['ghostrider']['meta']['pattern'], "Failed to retrieve all view metadata");
     }
     //END SUGARCRM flav=ent ONLY
-    
+
     /**
      * Test addresses a case related to the metadata location move that caused
      * metadatamanager to not roll up to sugar objects properly
-     * 
+     *
      * @group rest
      */
     public function testMobileMetaDataRollsUp()

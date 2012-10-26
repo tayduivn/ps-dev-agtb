@@ -33,14 +33,11 @@ class EmailSugarFieldTeamsetCollection extends ViewSugarFieldTeamsetCollection {
 
 	var $user_id;
 
-    function EmailSugarFieldTeamsetCollection($bean, $field_defs, $customMethod="", $form_name='EditView') {
+    function EmailSugarFieldTeamsetCollection($bean, $field_defs, $customMethod="", $form_name='EditView')
+    {
         parent::ViewSugarFieldTeamsetCollection(false);
 
-    	if(file_exists('custom/include/SugarFields/Fields/Teamset/TeamsetCollectionEmailView.tpl')) {
-    	   $this->tpl_path = 'custom/include/SugarFields/Fields/Teamset/TeamsetCollectionEmailView.tpl';
-    	} else {
-    	   $this->tpl_path = 'include/SugarFields/Fields/Teamset/TeamsetCollectionEmailView.tpl';
-    	}
+    	$this->tpl_path = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/Teamset/TeamsetCollectionEmailView.tpl');
     	//$this->module_dir = $module;
         $this->bean_id = $bean->id;
         $this->form_name = $form_name;

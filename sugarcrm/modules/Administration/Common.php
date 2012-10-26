@@ -20,56 +20,42 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-// $Id: Common.php 45763 2009-04-01 19:16:18Z majed $
-
-
 require_once('include/utils/array_utils.php');
 
 /**
  * @return bool
+ * @deprecated
  * @desc Creates the include language directory under the custom directory.
  */
 function create_include_lang_dir()
 {
-
-	if(!is_dir("custom/include/language"))
-	   return sugar_mkdir("custom/include/language", null, true);
-
-   return true;
+    return SugarAutoLoader::ensureDir("custom/include/language");
 }
 
 /**
  * @return bool
  * @param module string
+ * @deprecated
  * @desc Creates the module's language directory under the custom directory.
  */
 function create_module_lang_dir($module)
 {
-
-	if(!is_dir("custom/modules/$module/language"))
-       return sugar_mkdir("custom/modules/$module/language", null, true);
-
-   return true;
+    return SugarAutoLoader::ensureDir("custom/modules/$module/language");
 }
 
 /**
- * @return string&
+ * @return string
  * @param the_array array, language string, module string
  * @desc Returns the contents of the customized language pack.
  */
-function &create_field_lang_pak_contents($old_contents, $key, $value, $language, $module)
+function create_field_lang_pak_contents($old_contents, $key, $value, $language, $module)
 {
 	if(!empty($old_contents))
 	{
-
 		$old_contents = preg_replace("'[^\[\n\r]+\[\'{$key}\'\][^\;]+;[\ \r\n]*'i", '', $old_contents);
 		$contents = str_replace("\n?>","\n\$mod_strings['{$key}'] = '$value';\n?>", $old_contents);
-
-
-	}
-	else
-	{
-   	$contents = "<?php\n"
+	} else {
+   	    $contents = "<?php\n"
 			. '// Creation date: ' . date('Y-m-d H:i:s') . "\n"
 			. "// Module: $module\n"
 			. "// Language: $language\n\n"
@@ -138,42 +124,22 @@ function create_field_label($module, $language, $key, $value, $overwrite=false)
    {
       $mod_strings = array_merge($mod_strings, array($key => $value));
       $dirname = "custom/modules/$module/language";
-      $dir_exists = is_dir($dirname);
 
-      if(!$dir_exists)
-      {
-
-         $dir_exists = create_module_lang_dir($module);
-      }
-
-      if($dir_exists)
+      if(SugarAutoLoader::ensureDir($dirname))
       {
          $filename = "$dirname/$language.lang.php";
-         	if(is_file($filename) && filesize($filename) > 0){
-				$old_contents = file_get_contents($filename);
-         	}else{
-         		$old_contents = '';
-         	}
-			$handle = sugar_fopen($filename, 'wb');
-
-
-         if($handle)
-         {
-            $contents =create_field_lang_pak_contents($old_contents, $key,
-					$value, $language, $module);
-
-            if(fwrite($handle, $contents))
-            {
-               $return_value = true;
-               $GLOBALS['log']->info("Successful write to: $filename");
-            }
-
-            fclose($handle);
+         if(is_file($filename) && filesize($filename) > 0){
+		    $old_contents = file_get_contents($filename);
+         }else{
+             $old_contents = '';
          }
-         else
-         {
-            $GLOBALS['log']->info("Unable to write edited language pak to file: $filename");
+         $contents =create_field_lang_pak_contents($old_contents, $key,
+         		$value, $language, $module);
+         if(!SugarAutoLoader::put($filename, $contents, true)) {
+             $GLOBALS['log']->fatal("Unable to write edited language pak to file: $filename");
+             return false;
          }
+         return true;
       }
       else
       {
@@ -181,7 +147,7 @@ function create_field_label($module, $language, $key, $value, $overwrite=false)
       }
    }
 
-   return $return_value;
+   return false;
 }
 
 /**
@@ -208,53 +174,27 @@ function create_dropdown_type_all_lang($dropdown_name)
 
 /**
  * @return bool
- * @param app_list_strings array
+ * @param array contents $app_list_strings
+ * @param string $language
+ * @param string $custom_dir_name
  * @desc Saves the app_list_strings to file in the 'custom' dir.
  */
-function save_custom_app_list_strings_contents(&$contents, $language, $custom_dir_name = '')
+function save_custom_app_list_strings_contents($contents, $language, $custom_dir_name = '')
 {
-	$return_value = false;
-   $dirname = 'custom/include/language';
-   if(!empty($custom_dir_name))
-		$dirname = $custom_dir_name;
-
-   $dir_exists = is_dir($dirname);
-
-   if(!$dir_exists)
-   {
-      $dir_exists = create_include_lang_dir($dirname);
-   }
-
-   if($dir_exists)
-   {
-      $filename = "$dirname/$language.lang.php";
-      $handle = @sugar_fopen($filename, 'wt');
-
-      if($handle)
-      {
-         if(fwrite($handle, $contents))
-         {
-            $return_value = true;
-            $GLOBALS['log']->info("Successful write to: $filename");
-         }
-
-         fclose($handle);
-      }
-      else
-      {
-         $GLOBALS['log']->info("Unable to write edited language pak to file: $filename");
-      }
-   }
-   else
-   {
-      $GLOBALS['log']->info("Unable to create dir: $dirname");
-   }
-if($return_value){
-   	$cache_key = 'app_list_strings.'.$language;
-   	sugar_cache_clear($cache_key);
-   }
-
-	return $return_value;
+    $dirname = 'custom/include/language';
+    if(SugarAutoLoader::ensureDir($dirname)) {
+        $filename = "$dirname/$language.lang.php";
+        if(!SugarAutoLoader::put($filename, $contents, true)) {
+            $GLOBALS['log']->fatal("Unable to write edited language pak to file: $filename");
+        } else {
+            $cache_key = 'app_list_strings.' . $language;
+            sugar_cache_clear($cache_key);
+            return true;
+        }
+    } else {
+        $GLOBALS['log']->fatal("Unable to create dir: $dirname");
+    }
+    return false;
 }
 
 /**
@@ -264,49 +204,20 @@ if($return_value){
  */
 function save_custom_app_list_strings(&$app_list_strings, $language)
 {
-	$return_value = false;
-   	$dirname = 'custom/include/language';
-
-   $dir_exists = is_dir($dirname);
-
-   if(!$dir_exists)
-   {
-      $dir_exists = create_include_lang_dir($dirname);
-   }
-
-   if($dir_exists)
-   {
-      $filename = "$dirname/$language.lang.php";
-      $handle = @sugar_fopen($filename, 'wt');
-
-      if($handle)
-      {
-         $contents =create_dropdown_lang_pak_contents($app_list_strings,
-         					$language);
-
-         if(fwrite($handle, $contents))
-         {
-            $return_value = true;
-            $GLOBALS['log']->info("Successful write to: $filename");
-         }
-
-         fclose($handle);
-      }
-      else
-      {
-         $GLOBALS['log']->info("Unable to write edited language pak to file: $filename");
-      }
-   }
-   else
-   {
-      $GLOBALS['log']->info("Unable to create dir: $dirname");
-   }
-if($return_value){
-   	$cache_key = 'app_list_strings.'.$language;
-   	sugar_cache_clear($cache_key);
-   }
-
-	return $return_value;
+    $dirname = 'custom/include/language';
+    if(SugarAutoLoader::ensureDir($dirname)) {
+        $filename = "$dirname/$language.lang.php";
+        if(!write_array_to_file('app_list_strings', $app_list_strings, $filename)) {
+            $GLOBALS['log']->fatal("Unable to write edited language pak to file: $filename");
+        } else {
+            $cache_key = 'app_list_strings.'.$language;
+            sugar_cache_clear($cache_key);
+            return true;
+        }
+    } else {
+        $GLOBALS['log']->fatal("Unable to create dir: $dirname");
+    }
+    return false;
 }
 
 function return_custom_app_list_strings_file_contents($language, $custom_filename = '')
@@ -317,7 +228,7 @@ function return_custom_app_list_strings_file_contents($language, $custom_filenam
 	if(!empty($custom_filename))
 		$filename = $custom_filename;
 
-	if (is_file($filename))
+	if (SugarAutoLoader::fileExists($filename))
 	{
 		$contents = file_get_contents($filename);
 	}
@@ -362,11 +273,11 @@ function create_dropdown_type($dropdown_name, $language)
 }
 
 /**
- * @return string&
+ * @return string
  * @param identifier string, pairs array, first_entry string, selected_key string
  * @desc Generates the HTML for a dropdown list.
  */
-function &create_dropdown_html($identifier, &$pairs, $first_entry='', $selected_key='')
+function create_dropdown_html($identifier, $pairs, $first_entry='', $selected_key='')
 {
    $html = "<select name=\"$identifier\">\n";
 
@@ -687,5 +598,3 @@ function app_string_duplicate_check($name, &$file_contents)
 	return $file_contents;
 
 }
-
-?>

@@ -33,18 +33,14 @@ class ViewConvertLead extends SugarView
         )
     {
         parent::SugarView($bean, $view_object_map);
-    	$this->medataDataFile = $this->fileName;
-        if (file_exists("custom/$this->fileName"))
-        {
-            $this->medataDataFile = "custom/$this->fileName";
-        }
+    	$this->medataDataFile = SugarAutoLoader::existingCustomOne($this->fileName);
     }
 
     public function preDisplay()
     {
         if (!$this->bean->ACLAccess('edit')) {
             ACLController::displayNoAccess();
-            sugar_die('');
+            sugar_cleanup(true);
         }
     }
 
@@ -62,12 +58,7 @@ class ViewConvertLead extends SugarView
 
     	// get the EditView defs to check if opportunity_name exists, for a check below for populating data
     	$opportunityNameInLayout = false;
-    	$editviewFile = 'modules/Leads/metadata/editviewdefs.php';
-        $this->medataDataFile = $editviewFile;
-        if (file_exists("custom/{$editviewFile}"))
-        {
-            $this->medataDataFile = "custom/{$editviewFile}";
-        }
+        $this->medataDataFile = SugarAutoLoader::loadWithMetafiles('Leads', "editviewdefs");
     	include($this->medataDataFile);
     	foreach($viewdefs['Leads']['EditView']['panels'] as $panel_index => $section){
     	    foreach($section as $row_array){
@@ -79,11 +70,7 @@ class ViewConvertLead extends SugarView
     	    }
     	}
 
-        $this->medataDataFile = $this->fileName;
-        if (file_exists("custom/$this->fileName"))
-        {
-            $this->medataDataFile = "custom/$this->fileName";
-        }
+        $this->medataDataFile = SugarAutoLoader::existingCustomOne($this->fileName);
     	$this->loadDefs();
         $this->getRecord();
         $this->checkForDuplicates($this->focus);
@@ -120,18 +107,18 @@ class ViewConvertLead extends SugarView
 
         global $sugar_config, $app_list_strings, $app_strings;
         $smarty->assign('lead_conv_activity_opt', $sugar_config['lead_conv_activity_opt']);
-        
+
         //Switch up list depending on copy or move
         if($sugar_config['lead_conv_activity_opt'] == 'move')
         {
-        	$smarty->assign('convertModuleListOptions', get_select_options_with_id(array('None'=>$app_strings['LBL_NONE'], 'Contacts' => $app_list_strings["moduleListSingular"]['Contacts']), ''));	
+        	$smarty->assign('convertModuleListOptions', get_select_options_with_id(array('None'=>$app_strings['LBL_NONE'], 'Contacts' => $app_list_strings["moduleListSingular"]['Contacts']), ''));
         }
         else if($sugar_config['lead_conv_activity_opt'] == 'copy')
         {
         	$smarty->assign('convertModuleListOptions', get_select_options_with_id(array('Contacts' => $app_list_strings["moduleListSingular"]['Contacts']), ''));
         }
-        
-        
+
+
 
         foreach($this->defs as $module => $vdef)
         {
@@ -162,7 +149,7 @@ class ViewConvertLead extends SugarView
 	                else if ($module == "Opportunities" && $field == 'amount')
 	                {
 	                    $focus->amount = unformat_number($this->focus->opportunity_amount);
-	                } 
+	                }
                  	else if ($module == "Opportunities" && $field == 'name') {
                  		if ($opportunityNameInLayout && !empty($this->focus->opportunity_name)){
                            $focus->name = $this->focus->opportunity_name;
@@ -179,7 +166,7 @@ class ViewConvertLead extends SugarView
 	                	//Special case where company and person have the same field with a different name
 	                	$focus->phone_office = $this->focus->phone_work;
 	                }
-					else if (strpos($field, "billing_address") !== false && $focus->field_defs[$field]["type"] == "varchar") /* Bug 42219 fix */         
+					else if (strpos($field, "billing_address") !== false && $focus->field_defs[$field]["type"] == "varchar") /* Bug 42219 fix */
 					{
 						$tmp_field = str_replace("billing_", "primary_", $field);
 						$focus->field_defs[$field]["type"] = "text";
@@ -195,7 +182,7 @@ class ViewConvertLead extends SugarView
                             $focus->$field = $this->focus->$tmp_field;
                         }
 						$focus->field_defs[$field]["type"] = "text";
-					}    					
+					}
                     else if (isset($this->focus->$field))
                     {
                         $focus->$field = $this->focus->$field;
@@ -351,7 +338,7 @@ class ViewConvertLead extends SugarView
                 unset($_POST["convert_create_Contacts"]);
             }
         }
-        elseif (!empty($_REQUEST["convert_create_Contacts"]) && $_REQUEST["convert_create_Contacts"] != "false" && !isset($_POST['ContinueContact'])) 
+        elseif (!empty($_REQUEST["convert_create_Contacts"]) && $_REQUEST["convert_create_Contacts"] != "false" && !isset($_POST['ContinueContact']))
         {
             require_once('modules/Contacts/ContactFormBase.php');
             $contactForm = new ContactFormBase();
@@ -402,7 +389,7 @@ class ViewConvertLead extends SugarView
                 }
             }
             //If an existing bean was selected, relate it to the contact
-            else if (!empty($vdef['ConvertLead']['select'])) 
+            else if (!empty($vdef['ConvertLead']['select']))
             {
                 //Save the new record
                 $select = $vdef['ConvertLead']['select'];
@@ -459,7 +446,7 @@ class ViewConvertLead extends SugarView
                         $id_field = $relObject->rhs_key;
                         $lead->$id_field = $bean->id;
                     }
-                    else 
+                    else
                     {
                         $bean->$leadsRel->add($lead->id);
                     }
@@ -487,7 +474,7 @@ class ViewConvertLead extends SugarView
             $this->copyAddressFields($bean, $beans['Contacts']);
 
             $bean->save();
-            //if campaign id exists then there should be an entry in campaign_log table for the newly created contact: bug 44522	
+            //if campaign id exists then there should be an entry in campaign_log table for the newly created contact: bug 44522
             if (isset($lead->campaign_id) && $lead->campaign_id != null && $bean->object_name == "Contact")
             {
                 campaign_log_lead_or_contact_entry($lead->campaign_id, $lead, $beans['Contacts'], 'contact');
@@ -872,7 +859,7 @@ class ViewConvertLead extends SugarView
     	require_once("modules/TableDictionary.php");
     	foreach ($from->field_defs as $field=>$def)
         {
-            if (isset($def['type']) && $def['type'] == "link" && isset($def['relationship'])) 
+            if (isset($def['type']) && $def['type'] == "link" && isset($def['relationship']))
 			{
                 $rel_name = $def['relationship'];
                 $rel_def = "";
@@ -910,7 +897,7 @@ class ViewConvertLead extends SugarView
         require_once("modules/TableDictionary.php");
         foreach ($from->field_defs as $field => $def)
         {
-            if (isset($def['relationship']) && $def['relationship'] == $rel_name) 
+            if (isset($def['relationship']) && $def['relationship'] == $rel_name)
             {
                 return $field;
             }

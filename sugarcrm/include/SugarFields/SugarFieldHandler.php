@@ -52,18 +52,13 @@ class SugarFieldHandler
 
         if(!isset($sugarFieldObjects[$field])) {
         	//check custom directory
-        	if(file_exists('custom/include/SugarFields/Fields/' . $field . '/SugarField' . $field. '.php')){
-        		$file = 'custom/include/SugarFields/Fields/' . $field . '/SugarField' . $field. '.php';
+        	$file = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/{$field}/SugarField{$field}.php");
+        	if($file) {
                 $type = $field;
-			//else check the fields directory
-			}else if(file_exists('include/SugarFields/Fields/' . $field . '/SugarField' . $field. '.php')){
-           		$file = 'include/SugarFields/Fields/' . $field . '/SugarField' . $field. '.php';
-                $type = $field;
-        	}else{
+        	} else {
                 // No direct class, check the directories to see if they are defined
         		if( $returnNullIfBase &&
-                    !is_dir('custom/include/SugarFields/Fields/'.$field) &&
-                    !is_dir('include/SugarFields/Fields/'.$field) ) {
+        		    !SugarAutoLoader::existing('include/SugarFields/Fields/'.$field)) {
                     return null;
                 }
         		$file = 'include/SugarFields/Fields/Base/SugarFieldBase.php';
@@ -71,14 +66,9 @@ class SugarFieldHandler
         	}
 			require_once($file);
 
-			$class = 'SugarField' . $type;
+			$class = SugarAutoLoader::customClass('SugarField' . $type);
 			//could be a custom class check it
-			$customClass = 'Custom' . $class;
-        	if(class_exists($customClass)){
-        		$sugarFieldObjects[$field] = new $customClass($field);
-        	}else{
-        		$sugarFieldObjects[$field] = new $class($field);
-        	}
+       		$sugarFieldObjects[$field] = new $class($field);
         }
         return $sugarFieldObjects[$field];
     }

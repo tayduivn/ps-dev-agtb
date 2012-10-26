@@ -21,13 +21,13 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('modules/Emails/EmailUI.php');
 
 class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
 {
     private $_folders = null;
-    
+
     public function setUp()
     {
         SugarTestHelper::setUp('beanList');
@@ -42,7 +42,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $this->eui = new EmailUIMock();
         $this->_folders = array();
     }
-    
+
     public function tearDown()
     {
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$GLOBALS['current_user']->id}'");
@@ -52,7 +52,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE assigned_user_id='{$this->_user->id}'");
-            
+
         foreach ($this->_folders as $f) {
             $GLOBALS['db']->query("DELETE FROM folders_subscriptions WHERE folder_id='{$f}'");
             $GLOBALS['db']->query("DELETE FROM folders WHERE id='{$f}'");
@@ -62,7 +62,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * Save a SugarFolder 
+     * Save a SugarFolder
      */
     public function testSaveNewFolder()
     {
@@ -70,11 +70,11 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $rs = $this->eui->saveNewFolder($newFolderName,'Home',0);
         $newFolderID = $rs['id'];
         $this->_folders[] = $newFolderID;
-        
+
         $sf = new SugarFolder();
         $sf->retrieve($newFolderID);
         $this->assertEquals($newFolderName, $sf->name);
-        
+
     }
 
     /**
@@ -88,23 +88,23 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
         $sortBy = 'last_name';
         $dir = "DESC";
         $rs = $this->eui->saveListViewSortOrder($tmpId,$folderName,$sortBy,$dir);
-        
+
         //Check against the saved preferences.
         $prefs = unserialize($GLOBALS['current_user']->getPreference('folderSortOrder', 'Emails'));
         $this->assertEquals($sortBy, $prefs[$tmpId][$folderName]['current']['sort']);
         $this->assertEquals($dir, $prefs[$tmpId][$folderName]['current']['direction']);
-        
-        
+
+
     }
     public function testGetRelatedEmail()
     {
-    	
+
     	$account = new Account();
     	$account->name = "emailTestAccount";
     	$account->save(false);
 
     	$relatedBeanInfo = array('related_bean_id' => $account->id,  "related_bean_type" => "Accounts");
-    	
+
     	//First pass should return a blank query as are no related items
     	$qArray = $this->eui->getRelatedEmail("LBL_DROPDOWN_LIST_ALL", array(), $relatedBeanInfo);
     	$this->assertEquals("", $qArray['query']);
@@ -132,7 +132,7 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals("test@test.com", $person['email']);
     }
-    
+
     /**
      * @ticket 29521
      */
@@ -152,11 +152,11 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        file_put_contents(
+        SugarAutoLoader::put(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules[] = "Users"; ?>'
             );
-        
+
         $qArray = $this->eui->_loadQuickCreateModules();
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
@@ -164,9 +164,9 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         else {
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
+            SugarAutoLoader::unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
-        
+
         $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities','Leads', 'Tasks', 'Users'), $qArray);
     }
 
@@ -179,11 +179,11 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        file_put_contents(
+        SugarAutoLoader::put(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules[] = "EmailUIUnitTest"; ?>'
             );
-        
+
         $qArray = $this->eui->_loadQuickCreateModules();
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
@@ -191,9 +191,9 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         else {
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
+            SugarAutoLoader::unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
-        
+
         $this->assertEquals(array('Bugs','Cases','Contacts', 'Opportunities', 'Leads', 'Tasks'), $qArray);
     }
 
@@ -206,11 +206,11 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             copy('custom/modules/Emails/metadata/qcmodulesdefs.php','custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         sugar_mkdir("custom/modules/Emails/metadata/",null,true);
-        file_put_contents(
+        SugarAutoLoader::put(
             'custom/modules/Emails/metadata/qcmodulesdefs.php',
             '<?php $QCModules = array("Users"); ?>'
             );
-        
+
         $qArray = $this->eui->_loadQuickCreateModules();
 
         if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak')) {
@@ -218,9 +218,9 @@ class EmailUITest extends Sugar_PHPUnit_Framework_TestCase
             unlink('custom/modules/Emails/metadata/qcmodulesdefs.php.test.bak');
         }
         else {
-            unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
+            SugarAutoLoader::unlink('custom/modules/Emails/metadata/qcmodulesdefs.php');
         }
-        
+
         $this->assertEquals(array("Users"), $qArray);
     }
 

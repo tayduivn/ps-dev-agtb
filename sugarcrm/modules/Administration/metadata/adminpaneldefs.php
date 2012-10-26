@@ -269,7 +269,7 @@ $admin_group_header[]= array($app_list_strings['moduleList']['Contracts'],'',fal
 
 
 
-if(file_exists('custom/modules/Administration/Ext/Administration/administration.ext.php')){
+if(SugarAutoLoader::existing('custom/modules/Administration/Ext/Administration/administration.ext.php')){
 	include('custom/modules/Administration/Ext/Administration/administration.ext.php');
 }
 

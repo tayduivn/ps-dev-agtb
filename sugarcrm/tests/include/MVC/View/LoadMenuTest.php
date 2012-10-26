@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once('include/MVC/View/SugarView.php');
 
 class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
@@ -56,6 +56,8 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
     		    rmdir_recursive("modules/{$this->_moduleName}");
     		if ( is_dir("custom/modules/{$this->_moduleName}") )
     		    rmdir_recursive("custom/modules/{$this->_moduleName}");
+    		SugarAutoLoader::delFromMap("modules/{$this->_moduleName}");
+    		SugarAutoLoader::delFromMap("custom/modules/{$this->_moduleName}");
         }
 		unset($GLOBALS['current_user']);
 	}
@@ -66,7 +68,7 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
         $module_menu = $view->getMenu($this->_moduleName);
         $this->assertTrue(empty($module_menu),'Assert the module menu array is empty');
 	}
-	
+
 	/**
 	 * @ticket 43497
 	 */
@@ -81,6 +83,7 @@ class LoadMenuTest extends Sugar_PHPUnit_Framework_TestCase
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
+            SugarAutoLoader::addToMap("modules/{$this->_moduleName}/Menu.php", false);
         }
 
         $view = new SugarView;
@@ -97,7 +100,7 @@ EOQ;
         		}
         	}
         }
-        
+
         $this->assertTrue($found_menu, "Assert that menu was detected");
         $this->assertFalse($found_menu_twice, "Assert that menu item wasn't listed twice");
 	}
@@ -118,6 +121,7 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
+            SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;
@@ -155,6 +159,7 @@ global \$module_menu;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
+            SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;
@@ -171,11 +176,11 @@ EOQ;
         		}
         	}
         }
-        
+
         $this->assertTrue($found_custom_menu, "Assert that custom menu was detected");
         $this->assertFalse($found_custom_menu_twice, "Assert that custom menu item wasn't listed twice");
-    }    
-    
+    }
+
     /**
      * @ticket 43497
      */
@@ -198,6 +203,7 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
+            SugarAutoLoader::addToMap("custom/application/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;
@@ -214,16 +220,18 @@ EOQ;
         		}
         	}
         }
-        
+
         $this->assertTrue($found_application_custom_menu, "Assert that application custom menu was detected");
         $this->assertFalse($found_application_custom_menu_twice, "Assert that application custom menu item wasn't duplicated");
-        
+
         if($backupCustomMenu) {
             copy('custom/application/Ext/Menus/menu.ext.php.backup', 'custom/application/Ext/Menus/menu.ext.php');
             unlink('custom/application/Ext/Menus/menu.ext.php.backup');
         }
-        else
+        else {
             unlink('custom/application/Ext/Menus/menu.ext.php');
+            SugarAutoLoader::delFromMap('custom/application/Ext/Menus/menu.ext.php', false);
+        }
 	}
 
 	/**
@@ -240,6 +248,7 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
+            SugarAutoLoader::addToMap("modules/{$this->_moduleName}/Menu.php", false);
         }
 
         // Create module ext menu
@@ -252,6 +261,7 @@ EOQ;
 EOQ;
             fputs( $fh, $string);
             fclose( $fh );
+            SugarAutoLoader::addToMap("custom/modules/{$this->_moduleName}/Ext/Menus/menu.ext.php", false);
         }
 
         $view = new SugarView;

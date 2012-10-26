@@ -32,8 +32,8 @@ require_once('include/SubPanel/SubPanelDefinitions.php');
  * @ticket 41853
  * @ticket 40171
  */
-class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase 
-{   	
+class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
+{
     protected $bean;
 
 	public function setUp()
@@ -50,7 +50,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
         unset($GLOBALS['current_user']);
 
         foreach ($this->filename_check as $filename) {
-            @unlink($filename);
+            @SugarAutoLoader::unlink($filename);
         }
   		require_once('ModuleInstall/ModuleInstaller.php');
   		$moduleInstaller = new ModuleInstaller();
@@ -69,7 +69,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
             'sort_by' => 'id',
             'title_key' => 'LBL_CONTACTS_CASES_1_FROM_CASES_TITLE',
             'get_subpanel_data' => 'contacts_cases_1',
-            'top_buttons' => 
+            'top_buttons' =>
             array (
                 0 => array (
                       'widget_class' => 'SubPanelTopButtonQuickCreate',
@@ -81,7 +81,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
         $subpanel_list_fields_1['list_fields'] = array (
-            'priority' => 
+            'priority' =>
             array (
                 'type' => 'enum',
                 'vname' => 'LBL_PRIORITY',
@@ -97,7 +97,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
   		$path_1     = 'custom/modules/'. $subpanel_def_1->_instance_properties['module'] . '/metadata/subpanels';
   		$filename_1 = $subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_1->name;
   		$extname_1  = '_override'.$subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_1->name;
-  	
+
         // Create SubPane 2
         $subpanel_2 = array(
             'order' => 100,
@@ -107,7 +107,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
             'sort_by' => 'id',
             'title_key' => 'LBL_CONTACTS_CASES_2_FROM_CASES_TITLE',
             'get_subpanel_data' => 'contacts_cases_2',
-            'top_buttons' => 
+            'top_buttons' =>
             array (
                 0 => array (
                       'widget_class' => 'SubPanelTopButtonQuickCreate',
@@ -119,7 +119,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
             ),
         );
         $subpanel_list_fields_2 = array (
-            'case_number' => 
+            'case_number' =>
             array (
                 'vname' => 'LBL_LIST_NUMBER',
                 'width' => '6%',
@@ -133,7 +133,7 @@ class Bug40171Test extends Sugar_PHPUnit_Framework_TestCase
   		$path_2     = 'custom/modules/'. $subpanel_def_2->_instance_properties['module'] . '/metadata/subpanels';
   		$filename_2 = $subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_2->name;
   		$extname_2  = '_override'.$subpanel_def_1->parent_bean->object_name . "_subpanel_" . $subpanel_def_2->name;
-  		
+
         // Check files genertaed by subpanel overriding : layout override and subpanel overire
         $this->filename_check[] = 'custom/Extension/modules/'. $subpanel_def_1->parent_bean->module_dir . "/Ext/Layoutdefs/$extname_1.php";
         $this->assertTrue(file_exists(end($this->filename_check)));

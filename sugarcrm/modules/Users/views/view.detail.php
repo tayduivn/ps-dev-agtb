@@ -122,8 +122,9 @@ class UsersViewDetail extends ViewDetail {
             echo "</div></div>";
 
             //BEGIN SUGARCRM flav=pro ONLY
-            if(file_exists('custom/modules/Users/Ext/UserPage/userpage.ext.php')) {
-                include_once('custom/modules/Users/Ext/UserPage/userpage.ext.php');
+            $file = SugarAutoLoader::loadExtension("userpage");
+            if($file) {
+                include $file;
             }
             //END SUGARCRM flav=pro ONLY
 

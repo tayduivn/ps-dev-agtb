@@ -69,8 +69,8 @@ else{
 */
 function traceTableRelations($table_name,$check_relation){
 	include ('include/modules.php') ;
-	
-	
+
+
 	global $current_user, $beanFiles;
 	global $dictionary;
 
@@ -100,11 +100,9 @@ function traceTableRelations($table_name,$check_relation){
 	}
 	if(!$table_found){
 	    $dictionary = array ( ) ;
-	    require ('modules/TableDictionary.php') ;
-	    //for module installer incase we alredy loaded the table dictionary
-	    if (file_exists ( 'custom/application/Ext/TableDictionary/tabledictionary.ext.php' ))
-	    {
-	        include ('custom/application/Ext/TableDictionary/tabledictionary.ext.php') ;
+	    foreach(SugarAutoLoader::existing('modules/TableDictionary.php',
+	        'custom/application/Ext/TableDictionary/tabledictionary.ext.php') as $file) {
+	        include $file;
 	    }
 	    $rel_dictionary = $dictionary ;
 	    foreach ( $rel_dictionary as $rel_name => $rel_data )
@@ -179,9 +177,7 @@ function traceRelations($key,$tablename,$dictionary,$module_dir)
 if(function_exists('checkSchema')){
 	$GLOBALS['log']->fatal('************RELs TABLE ***** '.function_exists('checkSchema').' '.$relsDrop);
 }
-//traceDuplicateRelations($relsDrop);
 $checkThisRel = $relsDrop;
-//print_r($checkThisRel);
 $relScan = checkSchema(false,false,$checkThisRel);
 $relScan .="\n";
 $relScan .=checkTableComments($table_name);
@@ -189,24 +185,10 @@ $relScan .="\n";
 $relScan .=checkTableComments($table_name);
 
 $GLOBALS['log']->fatal('************REL SCAN ***** '.$relScan);
-/*
-if($relsDrop != null){
-	$relsDropDown = "<option value=".$_REQUEST['selectedTable']."_Relationships>".$_REQUEST['selectedTable']." Relationships</option>";
-	foreach($relsDrop as $rel){
-		$relsDropDown .="<option value={$rel}>{$rel}</option>";
-	}
-}
-*/
-
-//$response = "<script>document.getElementById('schemaResults').style.display = ''</script>";
-//$response .= "<script>document.getElementById('scanResult').value = $relScan</script>";
 $response=$relScan;
-
-//$response = $relsDropDown;
 
 if (!empty($response)) {
 	echo $response;
 }
 sugar_cleanup();
 exit();
-?>
