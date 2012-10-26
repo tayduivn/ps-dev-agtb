@@ -158,7 +158,7 @@
                 }
             }
         });
-    }
+    };
 
     app.view.Field = app.view.Field.extend({
         /**
@@ -249,7 +249,7 @@
                     field: fileField,
                     success: function() {
                         filesToUpload--;
-                        if (filesToUpload == 0) {
+                        if (filesToUpload === 0) {
                             app.alert.dismiss('upload');
                             if (callbacks.success) {
                                 callbacks.success();
@@ -274,5 +274,37 @@
                 callbacks.success();
             }
         }
+    };
+
+    app._loadAnalytics = function() {
+        // Analytics Initialization for browser environments
+        Analytics = function () {};
+
+        Analytics.prototype.start = function(id) {
+            _gaq.push(['_setAccount', id]);
+            // allow localhost
+            _gaq.push(['_setDomainName', 'none']);
+        };
+        Analytics.prototype.trackPageView = function(pageUri) {
+            _gaq.push(['_trackPageview', pageUri]);
+        };
+        Analytics.prototype.trackEvent = function(category,action,label,value) {
+            _gaq.push(['_trackEvent', category, action, label, value]);
+        };
+        Analytics.prototype.setCustomVar = function(index,slot,name,value,scope) {
+            _gaq.push(['_setCustomVar',
+                slot ? slot : 1,  // This custom var is set to slot #1.  Required parameter.
+                name,             // The name acts as a kind of category for the user activity.  Required parameter.
+                value,            // This value of the custom variable.  Required parameter.
+                scope             // Sets the scope to session-level.  Optional parameter.
+            ]);
+        };
+        analytics = new Analytics();
+
+        (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
     };
 })(SUGAR.App);
