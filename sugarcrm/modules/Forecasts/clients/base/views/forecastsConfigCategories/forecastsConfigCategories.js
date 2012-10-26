@@ -114,6 +114,7 @@
 
         if (showElement.children().length == 0) {
             // add the things here...
+            showElement.append('<p>' + app.lang.get('LBL_FORECASTS_CONFIG_' + this.value.toUpperCase() + '_RANGES_DESCRIPTION', 'Forecasts') + '</p>');
             _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
                 var rangeField,
                     model = new Backbone.Model(),
@@ -144,7 +145,7 @@
                     meta: app.metadata.getField('range')
                 };
                 rangeField = app.view.createField(fieldSettings);
-                this.showElement.append(rangeField.el);
+                this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
                 rangeField.render();
 
                 // now give the view a way to get at this field's model, so it can be used to set the value on the
