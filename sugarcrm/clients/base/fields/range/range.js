@@ -132,7 +132,8 @@
      * @param jqel the jQuery wrapped element that has a noUiSlider attached to it.
      */
     _addStyle: function(jqel) {
-        var start = this._setupSliderStartPositions();
+        var start = this._setupSliderStartPositions(),
+            endpoints = this._setupSliderEndpoints();
         jqel.append(function(){
             var html = "",
                 segments = 11,
@@ -152,6 +153,8 @@
             $(this).append('<div class="tooltip fade top in infoBox"><div class="tooltip-arrow"></div><div class="tooltip-inner">' + start[i] + '%'+'</div></div>');
             i++;
         });
+
+        this.$('.noUiSlider').attr('data-content-before', _.first(endpoints) + '%').attr('data-content-after', _.last(endpoints) + '%')
     },
 
     /**
