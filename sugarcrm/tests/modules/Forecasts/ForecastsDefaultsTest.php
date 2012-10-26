@@ -60,6 +60,9 @@ class ForecastsDefaultsTest extends Sugar_PHPUnit_Framework_TestCase
 
         $admin = BeanFactory::getBean('Administration');
         self::saveConfig(self::$currentConfig, $admin);
+        SugarTestHelper::tearDown();
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
     /**
