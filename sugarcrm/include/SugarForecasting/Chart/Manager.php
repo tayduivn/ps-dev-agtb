@@ -184,7 +184,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
     /**
      * Get the quota from the sum of all the rows in the dataset
      *
-     * @return int
+     * @return float
      */
     protected function getQuotaTotalFromData()
     {
@@ -198,9 +198,10 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
     }
 
     /**
-     * Get the roll up quota for a manager.
+     * Get the roll up quota for a manager from the quota table.  If one doesn't exist it
+     * will call @see getQuotaTotalFromData to return the quota total from the worksheet dataset
      *
-     * @return int
+     * @return float
      */
     protected function getRollupQuota()
     {

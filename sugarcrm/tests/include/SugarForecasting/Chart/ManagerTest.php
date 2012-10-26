@@ -76,6 +76,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
+        SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
     }
 
@@ -352,11 +353,9 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $reportee->reports_to_id = self::$users['reportee']['user']->id;
         $reportee->save();
 
-        // add a rollup quota for the reportee user
+        // add a rollup quota for the new reportee user
         /* @var $quota Quota */
-        $quota = BeanFactory::getBean('Quotas');
-        $quota->amount = 1500;
-        $quota->currency_id = -99;
+        $quota = SugarTestQuotaUtilities::createQuota(1500);
         $quota->quota_type = "Rollup";
         $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
         $quota->user_id = self::$users['reportee']['user']->id;
@@ -374,9 +373,8 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         $this->assertEquals($expected, $actual, null, 2);
 
-        $quota->deleted = 1;
-        $quota->save();
-
+        // this just un-sets the report_to for the reportee that was created in this test
+        // this will get deleted when the test cleans up
         $reportee->reports_to_id = null;
         $reportee->save();
     }
