@@ -63,7 +63,7 @@
 			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
 			//bootstrap
-            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',			
+            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
             //jquery for moddule menus
             'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery.js',
@@ -79,7 +79,7 @@
             'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
 
-            
+
 			),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
@@ -241,6 +241,7 @@
     /**
      * Check for custom additions to this code
      */
-    if(file_exists("custom/application/Ext/JSGroupings/jsgroups.ext.php")) {
-        require("custom/application/Ext/JSGroupings/jsgroups.ext.php");
+
+    foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
+        require $file;
     }

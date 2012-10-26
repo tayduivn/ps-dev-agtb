@@ -80,7 +80,8 @@ class SugarTinyMCE {
 	 * @param string target Comma delimited list of DOM ID's, <textarea id='someTarget'>
 	 * @return string
 	 */
-	function getInstance($targets = "") {
+	function getInstance($targets = "")
+	{
 		global $json;
 
 		if(empty($json)) {
@@ -90,7 +91,7 @@ class SugarTinyMCE {
 		$config = $this->defaultConfig;
 		//include tinymce lang file
         $lang = substr($GLOBALS['current_language'], 0, 2);
-        if(file_exists('include/javascript/tiny_mce/langs/'.$lang.'.js'))
+        if(SugarAutoLoader::existing('include/javascript/tiny_mce/langs/'.$lang.'.js'))
         {
 			$config['language'] = $lang;
         }
@@ -147,7 +148,7 @@ eoq;
         $config = $this->defaultConfig;
         //include tinymce lang file
         $lang = substr($GLOBALS['current_language'], 0, 2);
-        if(file_exists('include/javascript/tiny_mce/langs/'.$lang.'.js'))
+        if(SugarAutoLoader::existing('include/javascript/tiny_mce/langs/'.$lang.'.js'))
 			$config['language'] = $lang;
 		$config['theme_advanced_buttons1'] = $this->buttonConfigs[$type]['buttonConfig'];
        	$config['theme_advanced_buttons2'] = $this->buttonConfigs[$type]['buttonConfig2'];
@@ -182,8 +183,7 @@ eoq;
      */
     private function overloadButtonConfigs()
     {
-        if( file_exists( $this->customConfigFile ) )
-        {
+        if(SugarAutoLoader::existing($this->customConfigFile)) {
             require_once($this->customConfigFile);
 
             if(!isset($buttonConfigs))
@@ -196,34 +196,33 @@ eoq;
             }
         }
     }
-    
+
     /**
-     * Reload the default tinyMCE config, preserving our default extended 
+     * Reload the default tinyMCE config, preserving our default extended
      * allowable tag set.
      *
      */
-    private function overloadDefaultConfigs() 
+    private function overloadDefaultConfigs()
     {
-        if( file_exists( $this->customDefaultConfigFile ) )    
-        {
+        if(SugarAutoLoader::existing($this->customDefaultConfigFile)) {
             require_once($this->customDefaultConfigFile);
-            
+
             if(!isset($defaultConfig))
                 return;
-            
+
             foreach ($defaultConfig as $k => $v)
             {
                 if( isset($this->defaultConfig[$k]) ){
-                	
+
                 	if($k == "extended_valid_elements"){
                 		$this->defaultConfig[$k] .= "," . $v;
                 	}
                 	else{
                 		$this->defaultConfig[$k] = $v;
                 	}
-                }  	
+                }
             }
         }
     }
-    
+
 } // end class def

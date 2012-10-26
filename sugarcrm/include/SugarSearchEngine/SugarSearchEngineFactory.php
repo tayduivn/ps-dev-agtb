@@ -93,9 +93,7 @@ class SugarSearchEngineFactory
         $defaultTemplateLocation = "include/SugarSearchEngine/%s/SugarSearchEngine%s.php";
 
         $searchEngineLocations = array(
-            "custom" . DIRECTORY_SEPARATOR . sprintf($defaultTemplateLocation, $name,$name),
             sprintf($defaultTemplateLocation, $name,$name),
-            "custom" . DIRECTORY_SEPARATOR . sprintf($defaultTemplateLocation, '',''),
             sprintf($defaultTemplateLocation, '','')
         );
 
@@ -117,9 +115,8 @@ class SugarSearchEngineFactory
      */
     protected static function loadSearchEngineFromLocation($filePath, $config)
     {
-        if( is_file($filePath) )
+        if( SugarAutoLoader::requireWithCustom($filePath) )
         {
-            require_once($filePath);
             $engineClass = basename($filePath, ".php");
             $engineInstance = new $engineClass($config);
 

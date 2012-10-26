@@ -184,7 +184,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
 
     require_once('include/ListView/ListViewSmarty.php');
-	require_once('modules/KBDocuments/metadata/listviewdefs.php');
+	require_once SugarAutoLoader::loadWithMetafiles('KBDocuments', 'listviewdefs');
     require_once('modules/KBDocuments/KBListViewData.php');
 
 
@@ -816,7 +816,7 @@ function get_admin_fts_list($where,$isMultiSelect=false){
 
         $qry_arr['custom_from'] .=  ") derived_table ON kbdocuments.id = derived_table.id ";
 
-     
+
         $search_str = ' ';
 
         $tag_display =' ';

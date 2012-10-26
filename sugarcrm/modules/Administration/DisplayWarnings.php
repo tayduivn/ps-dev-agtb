@@ -41,7 +41,7 @@ if(!empty($_SESSION['display_lotuslive_alert'])){
 }
 
 //BEGIN SUGARCRM flav=pro ONLY
-if( is_admin($current_user) && file_exists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
+if( is_admin($current_user) && SugarAutoLoader::fileExists('include/SugarSearchEngine/SugarSearchEngineFactory.php') )
 {
     require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
     $ftsType = SugarSearchEngineFactory::getFTSEngineNameFromConfig();

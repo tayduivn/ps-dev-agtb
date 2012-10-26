@@ -34,7 +34,7 @@ require_once('modules/Studio/wizards/StudioWizard.php');
 
 $wizard = !empty($_REQUEST['wizard'])? $_REQUEST['wizard']: 'StudioWizard';
 
-if(file_exists('modules/Studio/wizards/'. $wizard . '.php')){
+if(SugarAutoLoader::fileExists('modules/Studio/wizards/'. $wizard . '.php')){
 	require_once('modules/Studio/wizards/'. $wizard . '.php');
 	$thewiz = new $wizard();
 }else{
@@ -49,7 +49,7 @@ if(!empty($_REQUEST['option'])){
 	$thewiz->process($_REQUEST['option']);
 }else{
 	$thewiz->display();
-	
+
 }
 
 

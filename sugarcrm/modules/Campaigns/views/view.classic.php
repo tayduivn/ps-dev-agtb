@@ -29,13 +29,13 @@ require_once('include/MVC/View/SugarView.php');
 require_once('include/MVC/Controller/SugarController.php');
 
 class CampaignsViewClassic extends SugarView
-{	
+{
  	function CampaignsViewClassic()
  	{
  		parent::SugarView();
  		$this->type = $this->action;
- 	}	
- 	
+ 	}
+
  	/**
 	 * @see SugarView::display()
 	 */
@@ -43,16 +43,14 @@ class CampaignsViewClassic extends SugarView
 	{
  		// Call SugarController::getActionFilename to handle case sensitive file names
  		$file = SugarController::getActionFilename($this->action);
- 		if(file_exists('custom/modules/' . $this->module . '/'. $file . '.php')){
-			$this->includeClassicFile('custom/modules/'. $this->module . '/'. $file . '.php');
-			return true;
-		}elseif(file_exists('modules/' . $this->module . '/'. $file . '.php')){
-			$this->includeClassicFile('modules/'. $this->module . '/'. $file . '.php');
-			return true;
-		}
+ 		$classic = SugarAutoLoader::existingCustomOne('modules/' . $this->module . '/'. $file . '.php');
+ 		if($classic) {
+ 		    $this->includeClassicFile($classic);
+ 		    return true;
+ 		}
 		return false;
- 	} 	
-	
+ 	}
+
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
@@ -81,20 +79,20 @@ class CampaignsViewClassic extends SugarView
 				    	break;
     				case 'CampaignDiagnostic':
     					$params[] = $GLOBALS['mod_strings']['LBL_CAMPAIGN_DIAGNOSTICS'];
-    					break;  
+    					break;
     				case 'WizardEmailSetup':
     					$params[] = $GLOBALS['mod_strings']['LBL_EMAIL_SETUP_WIZARD_TITLE'];
-    					break;    
+    					break;
     				case 'TrackDetailView':
     					if(!empty($this->bean->id))
     					{
 	    					$params[] = "<a href='index.php?module={$this->module}&action=DetailView&record={$this->bean->id}'>".$this->bean->name."</a>";
     					}
 	    				$params[] = $GLOBALS['mod_strings']['LBL_LIST_TO_ACTIVITY'];
-    					break;			  					    					
+    					break;
     		}//switch
     	}//fi
- 		
+
     	return $params;
     }
 }

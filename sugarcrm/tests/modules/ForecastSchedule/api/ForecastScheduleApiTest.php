@@ -37,12 +37,12 @@ class ForecastScheduleApiTest extends RestTestBase
 	 * @var object Manager user
 	 */
 	protected static $manager;
-	
+
 	/**
 	 * @var object Reportee user
 	 */
 	protected static $reportee;
-	
+
 	/**
 	 * @var string Timeperiod ID
 	 */
@@ -75,7 +75,7 @@ class ForecastScheduleApiTest extends RestTestBase
         self::$reportee = SugarTestUserUtilities::createAnonymousUser();
         self::$reportee->reports_to_id = self::$manager->id;
         self::$reportee->save();
-        
+
         //create Timeperiod
         self::$timeperiod = SugarTestTimePeriodUtilities::createTimePeriod();
 
@@ -85,14 +85,14 @@ class ForecastScheduleApiTest extends RestTestBase
 
     	parent::setUpBeforeClass();
     }
-    
+
     public static function tearDownAfterClass(){
     	SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         //SugarTestForecastScheduleUtilities::removeAllCreatedForecastSchedules();
     	parent::tearDownAfterClass();
     }
-    
+
     public function setUp()
     {
     	$this->markTestSkipped("Skipped becuase this was pulled out to be done in 6.8.  Preserving work.");

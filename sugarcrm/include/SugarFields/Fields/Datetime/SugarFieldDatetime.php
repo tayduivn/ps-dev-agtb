@@ -86,10 +86,6 @@ class SugarFieldDatetime extends SugarFieldBase {
            $this->ss->assign('id_range_start', "start_range_{$id}");
            $this->ss->assign('id_range_end', "end_range_{$id}");
            $this->ss->assign('id_range_choice', "{$id}_range_choice");
-           if(file_exists('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl'))
-           {
-              return $this->fetch('custom/include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
-           }
            return $this->fetch('include/SugarFields/Fields/Datetimecombo/RangeSearchForm.tpl');
         }
     	return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
@@ -102,17 +98,17 @@ class SugarFieldDatetime extends SugarFieldBase {
             $user = $context['notify_user'];
         } else {
             $user = $GLOBALS['current_user'];
-        }       
+        }
         if($vardef['type'] == 'date') {
             if(!$timedate->check_matching_format($inputField, TimeDate::DB_DATE_FORMAT)) {
                 return $inputField;
-            }            
+            }
             // convert without TZ
             return $timedate->to_display($inputField, $timedate->get_db_date_format(),  $timedate->get_date_format($user));
         } else {
             if(!$timedate->check_matching_format($inputField, TimeDate::DB_DATETIME_FORMAT)) {
                 return $inputField;
-            }            
+            }
             return $timedate->to_display_date_time($inputField, true, true, $user);
         }
     }

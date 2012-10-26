@@ -33,9 +33,9 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
         'pizzle' => 'clients/mobile/layouts/dizzle/dazzle.php', // Tests improperly named metadata files
         'pozzle' => 'custom/clients/mobile/layouts/pozzle/pozzle.php',
     );
-    
+
     protected $_testFilesCreated = array();
-    
+
     protected $_oldFileContents = array();
 
     public function setUp()
@@ -51,27 +51,24 @@ class RestPublicMetadataSugarLayoutsTest extends RestTestBase {
                 $this->_oldFileContents[$file] = file_get_contents($file);
             } else {
                 $this->_testFilesCreated[] = $file;
-                
-                $dirname  = dirname($file);
-                if (!is_dir($dirname)) {
-                    mkdir($dirname, 0777, true);
-                }
+                SugarAutoLoader::ensureDir(dirname($file));
             }
-            
-            file_put_contents($file, $contents);
+
+            SugarAutoLoader::put($file, $contents);
         }
+        SugarAutoLoader::saveMap();
     }
 
     public function tearDown()
     {
         foreach ($this->_oldFileContents as $file => $contents) {
-            file_put_contents($file, $contents);
-        }
-        
-        foreach ($this->_testFilesCreated as $file) {
-            unlink($file);
+            SugarAutoLoader::put($file, $contents);
         }
 
+        foreach ($this->_testFilesCreated as $file) {
+             SugarAutoLoader::unlink($file);
+        }
+        SugarAutoLoader::saveMap();
         parent::tearDown();
     }
     /**

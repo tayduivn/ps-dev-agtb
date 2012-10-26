@@ -26,15 +26,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: QueryBuilder.php 45763 2009-04-01 19:16:18Z majed $
- * Description:
- ********************************************************************************/
-
-
-
-
-
 
 require_once('include/ListView/ReportListView.php');
 require_once('modules/QueryBuilder/QueryGlue.php');
@@ -276,52 +267,24 @@ class QueryBuilder extends SugarBean {
     }
 
 
-    function get_column_select($drop_down_module=""){
+    function get_column_select($drop_down_module="")
+    {
+        $this->column_options = array();
+        if(!empty($drop_down_module)){
+            $column_module = $drop_down_module;
+        } else {
+            $column_module = $this->base_module;
+        }
+        //Get dictionary data for base bean and all connected beans
 
-    //global $dictionary;
-    //global $current_language;
-    global $beanList;
-    $this->column_options = array();
-    if(!empty($drop_down_module)){
-        $column_module = $drop_down_module;
-    } else {
-        $column_module = $this->base_module;
-    }
-
-
-
-    //$vardef_array = $dictionary[$vardef_name]['fields'];
-
-    //eliminate this because we wont need this anymore  The loop below should take care of this
-    //Start Base Bean
-    //if(file_exists('modules/'. $this->base_module . '/vardefs.php')){
-    //	include_once('modules/'. $this->base_module . '/vardefs.php');
-    //}
-
-
-    //Get dictionary data for base bean and all connected beans
-
-    //Get dictionary and focus data for base bean
-        $vardef_name = $beanList[$column_module];
-
-        if(!file_exists('modules/'. $column_module . '/vardefs.php')){
+        //Get dictionary and focus data for base bean
+        $temp_focus = BeanFactory::newBean($column_module);
+        if(!SugarAutoLoader::fileExists('modules/'. $column_module . '/vardefs.php') || empty($temp_focus)){
             return;
         }
 
-        include_once('modules/'. $column_module . '/'.$vardef_name.'.php');
-        $temp_focus = new $vardef_name();
         $this->add_to_column_select($temp_focus, $column_module);
-
-
-    //Loop through existing columns for connecting beans
-
-
-
-    //end loop
-
-    return $this->column_options;
-
-    //end function get_column_select
+        return $this->column_options;
     }
 
 
@@ -368,35 +331,9 @@ class QueryBuilder extends SugarBean {
     }
 
 
-    function get_module_info($module_name){
-
-        //expand this function to return other types of module information based on the name
-
-        global $beanList;
-        global $dictionary;
-
-        //Get dictionary and focus data for module
-        $vardef_name = $beanList[$module_name];
-
-        //if(!file_exists('modules/'. $module_name . '/vardefs.php')){
-        //	return;
-        //}
-
-        if(!file_exists('modules/'. $module_name . '/'.$vardef_name.'.php')){
-            return;
-        }
-
-        //include_once('modules/'. $module_name . '/vardefs.php');
-
-        include_once('modules/'. $module_name . '/'.$vardef_name.'.php');
-
-        $module_bean = new $vardef_name();
-
-        return $module_bean;
-
-        //return $dictionary[$vardef_name]['table'];
-
-    //end function get_module_table
+    function get_module_info($module_name)
+    {
+        return BeanFactory::newBean($module_name);
     }
 
     function get_field_table($module, $field){
@@ -437,7 +374,7 @@ class QueryBuilder extends SugarBean {
 
         global $dictionary, $current_language;
 
-        if(!file_exists('modules/'. $focus->module_dir . '/'.$focus->object_name.'.php')){
+        if(!SugarAutoLoader::fileExists('modules/'. $focus->module_dir . '/'.$focus->object_name.'.php')){
             return $field;
         }
 

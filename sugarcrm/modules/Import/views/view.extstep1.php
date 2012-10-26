@@ -35,7 +35,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 require_once('modules/Import/views/view.step3.php');
 require_once('modules/Import/ImportCacheFiles.php');
-        
+
 class ImportViewExtStep1 extends ImportViewStep3
 {
 
@@ -44,7 +44,7 @@ class ImportViewExtStep1 extends ImportViewStep3
     protected $previousAction = 'Step1';
     protected $nextAction = 'extdupcheck';
 
- 	/** 
+ 	/**
      * @see SugarView::display()
      */
  	public function display()
@@ -52,7 +52,7 @@ class ImportViewExtStep1 extends ImportViewStep3
         $source = !empty($_REQUEST['external_source']) ? $_REQUEST['external_source'] : '';
         $importModule = $_REQUEST['import_module'];
         global $mod_strings, $app_strings, $current_user, $sugar_config;
-        
+
         // Clear out this user's last import
         $seedUsersLastImport = new UsersLastImport();
         $seedUsersLastImport->mark_deleted_by_user_id($current_user->id);
@@ -182,13 +182,11 @@ class ImportViewExtStep1 extends ImportViewStep3
     private function getMappingFile($source)
     {
         $classname = 'ImportMap' . ucfirst(strtolower($source));
-
-        if ( file_exists("modules/Import/maps/{$classname}.php") )
-            require_once("modules/Import/maps/{$classname}.php");
-        elseif ( file_exists("custom/modules/Import/maps/{$classname}.php") )
-            require_once("custom/modules/Import/maps/{$classname}.php");
-        else
-            return null;
+        if (! SugarAutoLoader::requireWithCustom("modules/Import/maps/{$classname}.php") ) {
+        	SugarAutoLoader::requireWithCustom("modules/Import/maps/ImportMapOther.php");
+        	$classname = 'ImportMapOther';
+        	$importSource = 'other';
+        }
 
         if ( class_exists($classname) )
         {

@@ -18,7 +18,7 @@ class ViewClassic extends SugarView
  		parent::SugarView();
  		$this->type = $this->action;
  	}
- 	
+
  	/**
  	 * @see SugarView::display()
  	 */
@@ -31,14 +31,11 @@ class ViewClassic extends SugarView
 		}
  		// Call SugarController::getActionFilename to handle case sensitive file names
  		$file = SugarController::getActionFilename($this->action);
- 		if(file_exists('custom/modules/' . $this->module . '/'. $file . '.php')){
-			$this->includeClassicFile('custom/modules/'. $this->module . '/'. $file . '.php');
-			return true;
-		}
-		elseif(file_exists('modules/' . $this->module . '/'. $file . '.php')){
-			$this->includeClassicFile('modules/'. $this->module . '/'. $file . '.php');
-			return true;
-		}
+ 		$classic_file = SugarAutoLoader::existingCustomOne('modules/' . $this->module . '/'. $file . '.php');
+ 		if($classic_file) {
+ 		    $this->includeClassicFile($classic_file);
+ 		    return true;
+ 		}
 		return false;
  	}
 }

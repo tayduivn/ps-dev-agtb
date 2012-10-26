@@ -36,28 +36,17 @@ require_once('include/EditView/EditView2.php');
 class SubpanelQuickEdit{
 	var $defaultProcess = true;
 
-	function SubpanelQuickEdit($module, $view='QuickEdit', $proccessOverride = false){
+	function SubpanelQuickEdit($module, $view='QuickEdit', $proccessOverride = false)
+	{
         //treat quickedit and quickcreate views as the same
         if($view == 'QuickEdit') {$view = 'QuickCreate';}
 
 		// locate the best viewdefs to use: 1. custom/module/quickcreatedefs.php 2. module/quickcreatedefs.php 3. custom/module/editviewdefs.php 4. module/editviewdefs.php
-		$base = 'modules/' . $module . '/metadata/';
-		$source = 'custom/' . $base . strtolower($view) . 'defs.php';
-		if (!file_exists( $source))
-		{
-			$source = $base . strtolower($view) . 'defs.php';
-			if (!file_exists($source))
-			{
-				//if our view does not exist default to EditView
-				$view = 'EditView';
-				$source = 'custom/' . $base . 'editviewdefs.php';
-				if (!file_exists($source))
-				{
-					$source = $base . 'editviewdefs.php';
-				}
-			}
-		}
-
+        $source = SugarAutoLoader::existingCustomOne("modules/{$module}/metadata/".strtolower($view) . 'defs.php');
+        if(!$source) {
+        	$source = SugarAutoLoader::loadWithMetafiles($module, "editviewdefs");
+        	$view = 'EditView';
+        }
 
 		$this->ev = new EditView();
 		$this->ev->view = $view;
@@ -89,12 +78,9 @@ class SubpanelQuickEdit{
         $this->ev->defs['templateMeta']['form']['hideAudit'] = true;
 
 
-		$viewEditSource = 'modules/'.$module.'/views/view.edit.php';
-		if (file_exists('custom/'. $viewEditSource)) {
-			$viewEditSource = 'custom/'. $viewEditSource;
-		}
+        $viewEditSource = SugarAutoLoader::existingCustomOne('modules/'.$module.'/views/view.edit.php');
 
-		if(file_exists($viewEditSource) && !$proccessOverride) {
+		if(!empty($viewEditSource) && !$proccessOverride) {
             include($viewEditSource);
             $c = $module . 'ViewEdit';
             
@@ -109,12 +95,12 @@ class SubpanelQuickEdit{
 	            	$this->defaultProcess = false;
 
 	            	//Check if we should use the module's QuickCreate.tpl file.
-	            	if($view->useModuleQuickCreateTemplate && file_exists('modules/'.$module.'/tpls/QuickCreate.tpl')) {
+	            	if($view->useModuleQuickCreateTemplate &&  SugarAutoLoader::fileExists('modules/'.$module.'/tpls/QuickCreate.tpl')) {
 	            	   $this->ev->defs['templateMeta']['form']['headerTpl'] = 'modules/'.$module.'/tpls/QuickCreate.tpl';
 	            	}
 
-		            $view->ev = & $this->ev;
-		            $view->ss = & $this->ev->ss;
+		            $view->ev = $this->ev;
+		            $view->ss = $this->ev->ss;
 					$class = $GLOBALS['beanList'][$module];
 					if(!empty($GLOBALS['beanFiles'][$class])){
 						require_once($GLOBALS['beanFiles'][$class]);
