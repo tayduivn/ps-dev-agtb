@@ -39,7 +39,7 @@ class Audit extends SugarBean {
 	var $additional_column_fields = Array();
 
 	function Audit() {
-		parent::SugarBean();
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
 		//END SUGARCRM flav=pro ONLY

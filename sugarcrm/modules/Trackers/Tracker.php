@@ -67,7 +67,7 @@ class Tracker extends SugarBean
             if(defined('TEMPLATE_URL'))$path = SugarTemplateUtilities::getFilePath($path);
             require_once($path);
         }
-        parent::SugarBean();
+        parent::__construct();
     }
 
     /*

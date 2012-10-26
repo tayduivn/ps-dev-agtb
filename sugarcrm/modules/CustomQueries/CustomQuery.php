@@ -74,7 +74,7 @@ class CustomQuery extends SugarBean {
 	var $additional_column_fields = Array();
 
 	function CustomQuery() {
-		parent::SugarBean();
+		parent::__construct();
         $this->db_slave = DBManagerFactory::getInstance('reports');
 		$this->disable_row_level_security =false;
 

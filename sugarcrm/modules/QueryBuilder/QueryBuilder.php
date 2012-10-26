@@ -70,7 +70,7 @@ class QueryBuilder extends SugarBean {
     var $additional_column_fields = Array();
 
     function QueryBuilder() {
-        parent::SugarBean();
+        parent::__construct();
 
         $this->disable_row_level_security =true;
 

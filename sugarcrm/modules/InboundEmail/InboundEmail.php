@@ -151,7 +151,7 @@ class InboundEmail extends SugarBean {
 	function InboundEmail() {
 	    $this->InboundEmailCachePath = sugar_cached('modules/InboundEmail');
 	    $this->EmailCachePath = sugar_cached('modules/Emails');
-	    parent::SugarBean();
+	    parent::__construct();
 		if(function_exists("imap_timeout")) {
 			/*
 			 * 1: Open

@@ -101,7 +101,7 @@ class WorkFlowAlertShell extends SugarBean {
 	var $required_fields =  array("name"=>1, 'alert_type'=>1);
 
 	function WorkFlowAlertShell() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

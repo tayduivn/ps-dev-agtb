@@ -159,7 +159,7 @@ class Expression extends SugarBean {
 	var $required_fields =  array();
 
 	function Expression() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

@@ -85,7 +85,7 @@ class Bug extends SugarBean {
 									'call_id'=>'calls', 'email_id'=>'emails');
 
 	function Bug() {
-		parent::SugarBean();
+		parent::__construct();
 
 
 		$this->setupCustomFields('Bugs');

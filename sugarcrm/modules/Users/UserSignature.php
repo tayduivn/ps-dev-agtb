@@ -45,7 +45,7 @@ class UserSignature extends SugarBean
 		global $dictionary;
 		require_once SugarAutoLoader::existingCustomOne('metadata/users_signaturesMetaData.php');
 
-		parent::SugarBean();
+		parent::__construct();
 	}
 
 	/**

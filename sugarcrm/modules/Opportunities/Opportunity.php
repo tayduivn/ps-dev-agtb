@@ -109,7 +109,7 @@ class Opportunity extends SugarBean
 
 	function Opportunity()
 	{
-		parent::SugarBean();
+		parent::__construct();
 		global $sugar_config;
 		if ( !$sugar_config['require_accounts'] ) {
 			unset($this->required_fields['account_name']);

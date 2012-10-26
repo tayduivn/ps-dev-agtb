@@ -73,7 +73,7 @@ class Currency extends SugarBean
      */
     function __construct()
 	{
-		parent::SugarBean();
+		parent::__construct();
 		global $app_strings, $current_user, $sugar_config, $locale;
 		$this->field_defs['hide'] = array('name'=>'hide', 'source'=>'non-db', 'type'=>'varchar','len'=>25);
 		$this->field_defs['unhide'] = array('name'=>'unhide', 'source'=>'non-db', 'type'=>'varchar','len'=>25);

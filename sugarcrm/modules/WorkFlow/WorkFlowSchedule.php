@@ -54,6 +54,7 @@ class WorkFlowSchedule extends SugarBean {
     var $table_name = "workflow_schedules";
     var $module_dir = "WorkFlow";
     var $object_name = "WorkFlowSchedule";
+    var $module_name = 'WorkFlowScheudle';
     var $disable_custom_fields = true;
 
     var $rel_triggershells_table = 	"workflow_triggershells";
@@ -102,7 +103,7 @@ class WorkFlowSchedule extends SugarBean {
             require SugarAutoLoader::existingCustomOne('metadata/workflow_schedulesMetaData.php');
         }
 
-        parent::SugarBean();
+        parent::__construct();
     }
 
 

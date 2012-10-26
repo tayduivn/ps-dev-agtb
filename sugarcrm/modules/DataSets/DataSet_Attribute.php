@@ -118,7 +118,7 @@ class DataSet_Attribute extends SugarBean {
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
             require('metadata/dataset_attributesMetaData.php');
         }
-        parent::SugarBean();
+        parent::__construct();
 
         $this->disable_row_level_security =true;
 

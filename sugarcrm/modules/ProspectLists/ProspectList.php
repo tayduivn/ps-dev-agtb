@@ -77,7 +77,7 @@ class ProspectList extends SugarBean {
     
 	function ProspectList() {
 		global $sugar_config;
-		parent::SugarBean();
+		parent::__construct();
 		
 	}
 

@@ -75,7 +75,7 @@ class ReportMaker extends SugarBean {
 	var $additional_column_fields = Array();
 
 	function ReportMaker() {
-		parent::SugarBean();
+		parent::__construct();
 
 		//make sure only people in the same team can see the reports
 		$this->disable_row_level_security =false;

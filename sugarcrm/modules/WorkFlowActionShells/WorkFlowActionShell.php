@@ -120,7 +120,7 @@ class WorkFlowActionShell extends SugarBean {
 	var $required_fields =  array();
 
 	function WorkFlowActionShell() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

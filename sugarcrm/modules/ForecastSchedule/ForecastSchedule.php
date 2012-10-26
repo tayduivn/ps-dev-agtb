@@ -49,7 +49,8 @@ class ForecastSchedule extends SugarBean {
     var $expected_worst_case;
 
 	var $module_dir = 'ForecastSchedule';
-	var $object_name = "ForecastSchedule";
+    var $module_name = 'ForecastSchedule';
+	var $object_name = 'ForecastSchedule';
 	var $current_user;
 	var $table_name = "forecast_schedule";
 
@@ -63,7 +64,7 @@ class ForecastSchedule extends SugarBean {
 	var $new_schema = true;
 
 	function ForecastSchedule() {
-		parent::SugarBean();
+		parent::__construct();
 		$this->setupCustomFields('ForecastSchedule');  //parameter is module name
 		$this->disable_row_level_security =true;
 	}

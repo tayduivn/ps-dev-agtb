@@ -32,6 +32,7 @@ require_once('data/SugarBean.php');
 class TrackerQuery extends SugarBean {
 
     var $module_dir = 'Trackers';
+    var $module_name = 'TrackerQueries';
     var $object_name = 'tracker_queries';
     var $table_name = 'tracker_queries';
     var $acltype = 'TrackerQuery';
@@ -43,7 +44,7 @@ class TrackerQuery extends SugarBean {
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
             require('metadata/tracker_queriesMetaData.php');
         }
-        parent::SugarBean();
+        parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY

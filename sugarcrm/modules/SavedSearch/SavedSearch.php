@@ -48,7 +48,7 @@ class SavedSearch extends SugarBean {
     var $columns;
 
 	function SavedSearch($columns = array(), $orderBy = null, $sortOrder = 'DESC') {
-		parent::SugarBean();
+		parent::__construct();
         $this->columns = $columns;
         $this->orderBy = $orderBy;
         $this->sortOrder = $sortOrder;

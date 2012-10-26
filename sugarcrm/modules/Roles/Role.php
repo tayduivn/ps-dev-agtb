@@ -54,7 +54,7 @@ class Role extends SugarBean {
 
 	function Role()
 	{
-		parent::SugarBean();
+		parent::__construct();
 	}
 	
 	function get_summary_text()

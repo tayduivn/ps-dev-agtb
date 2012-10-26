@@ -57,7 +57,7 @@ class Manufacturer extends SugarBean {
 
 	function Manufacturer() {
 	
-		parent::SugarBean();
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;
 		//END SUGARCRM flav=pro ONLY

@@ -107,7 +107,7 @@ class WorkFlowAction extends SugarBean {
 	var $required_fields =  array();
 
 	function WorkFlowAction() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

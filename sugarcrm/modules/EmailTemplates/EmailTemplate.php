@@ -100,7 +100,7 @@ class EmailTemplate extends SugarBean {
 	);
 
 	function EmailTemplate() {
-		parent::SugarBean();
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;
 		if(!empty($current_user)) {

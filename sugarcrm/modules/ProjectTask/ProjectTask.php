@@ -91,7 +91,7 @@ class ProjectTask extends SugarBean {
 	 */
 	function ProjectTask($init=true)
 	{
-		parent::SugarBean();
+		parent::__construct();
 		if ($init) {
 			// default value for a clean instantiation
 			$this->utilization = 100;

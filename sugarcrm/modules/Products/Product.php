@@ -138,7 +138,7 @@ class Product extends SugarBean {
 
 	function Product() {
 
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->team_id = 1; // make the item globally accessible
 

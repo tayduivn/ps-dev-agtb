@@ -146,7 +146,7 @@ class Email extends SugarBean {
 	{
 	    global $current_user;
 	    $this->cachePath = sugar_cached('modules/Emails');
-		parent::SugarBean();
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
 		//END SUGARCRM flav=pro ONLY

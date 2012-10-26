@@ -51,6 +51,7 @@ class ForecastOpportunities extends SugarBean {
     var $current_timeperiod_id;
 
     var $object_name = 'ForecastOpportunities';
+    var $module_name = 'ForecastOpportunities';
     var $module_dir = 'Forecasts';
 
     var $table_name = 'opportunities';
@@ -70,7 +71,7 @@ class ForecastOpportunities extends SugarBean {
     function ForecastOpportunities() {
         global $current_user, $db;
 
-        parent::SugarBean();
+        parent::__construct();
         $this->disable_row_level_security =true;
 
 

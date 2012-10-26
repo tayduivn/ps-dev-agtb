@@ -47,6 +47,7 @@ class Worksheet extends SugarBean {
     public $table_name = "worksheet";
 
     public $object_name = "Worksheet";
+    public $module_name = 'Worksheet';
     public $disable_custom_fields = true;
 
     // This is used to retrieve related fields from form posts.

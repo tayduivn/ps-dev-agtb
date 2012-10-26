@@ -89,7 +89,7 @@ class ForecastDirectReports extends SugarBean {
     function ForecastDirectReports() {
         global $current_user, $db;
 
-        parent::SugarBean();
+        parent::__construct();
         $this->disable_row_level_security =true;
 
 

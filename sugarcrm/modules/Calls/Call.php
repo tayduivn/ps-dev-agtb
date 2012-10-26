@@ -109,7 +109,7 @@ class Call extends SugarBean {
 								);
 
 	function Call() {
-		parent::SugarBean();
+		parent::__construct();
 		global $app_list_strings;
 
        	$this->setupCustomFields('Calls');

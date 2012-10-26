@@ -45,6 +45,7 @@ class ContactQuoteRelationship extends SugarBean {
 
 	var $table_name = "quotes_contacts";
 	var $object_name = "ContactQuoteRelationship";
+    var $module_name = "ContactQuoteRelationship";
 	var $column_fields = Array("id"
 		,"contact_id"
 		,"quote_id"
@@ -57,7 +58,7 @@ class ContactQuoteRelationship extends SugarBean {
 
 	function ContactQuoteRelationship() {
 		;
-		parent::SugarBean();
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;
 		//END SUGARCRM flav=pro ONLY

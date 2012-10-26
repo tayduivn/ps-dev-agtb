@@ -73,7 +73,7 @@ class Task extends SugarBean {
 
 
 	function Task() {
-		parent::SugarBean();
+		parent::__construct();
 	}
 
 	var $new_schema = true;

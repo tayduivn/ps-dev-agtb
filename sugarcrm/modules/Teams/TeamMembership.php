@@ -47,6 +47,7 @@ class TeamMembership extends SugarBean {
 
     var $table_name = "team_memberships";
     var $object_name = "TeamMembership";
+    var $module_name = 'TeamMembership';
     var $module_dir = 'Teams';
     var $disable_custom_fields = true;
 
@@ -59,7 +60,7 @@ class TeamMembership extends SugarBean {
     var $new_schema = true;
 
     function TeamMembership() {
-        parent::SugarBean();
+        parent::__construct();
         $this->disable_row_level_security =true;
     }
 

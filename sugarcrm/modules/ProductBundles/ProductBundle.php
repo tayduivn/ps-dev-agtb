@@ -105,7 +105,7 @@ class ProductBundle extends SugarBean {
 		return parent::mark_deleted($id);
 	}
 	function ProductBundle() {
-		parent::SugarBean();
+		parent::__construct();
 		$this->team_id = 1; // make the item globally accessible
 	}
 

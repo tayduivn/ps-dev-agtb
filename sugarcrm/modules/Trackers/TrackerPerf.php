@@ -33,6 +33,7 @@ class TrackerPerf extends SugarBean {
 
     var $module_dir = 'Trackers';
     var $object_name = 'tracker_perf';
+    var $module_name = 'TrackerPerfs';
     var $table_name = 'tracker_perf';
     var $acltype = 'TrackerPerf';
     var $acl_category = 'TrackerPerfs';
@@ -43,7 +44,7 @@ class TrackerPerf extends SugarBean {
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
             require('metadata/tracker_perfMetaData.php');
         }
-        parent::SugarBean();
+        parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;
         //END SUGARCRM flav=pro ONLY

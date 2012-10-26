@@ -150,7 +150,7 @@ class Quote extends SugarBean {
 	 * sole constructor
 	 */
 	function Quote() {
-		parent::SugarBean();
+		parent::__construct();
 	}
 
 	/**

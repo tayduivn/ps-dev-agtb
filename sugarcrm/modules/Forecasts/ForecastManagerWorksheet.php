@@ -41,6 +41,7 @@ class ForecastManagerWorksheet extends SugarBean
     var $likely_adjusted;
     var $worst_adjusted;
     var $object_name = 'ForecastManagerWorksheet';
+    var $module_name = 'ForecastManagerWorksheets';
     var $module_dir = 'Forecasts';
     var $table_name = 'forecasts';
     var $disable_custom_fields = true;

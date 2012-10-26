@@ -55,7 +55,7 @@ class TeamNotice extends SugarBean {
 	var $additional_column_fields = Array();
 
 	function TeamNotice() {
-		parent::SugarBean();
+		parent::__construct();
 		foreach ($this->field_defs as $field) {
 			$this->field_name_map[$field['name']] = $field;
 		}
