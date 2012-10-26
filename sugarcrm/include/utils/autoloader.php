@@ -572,6 +572,9 @@ class SugarAutoLoader
         	$data = $data[$part];
         }
         $result = array();
+        if(!is_array($data)) {
+            return $result;
+        }
         foreach($data as $file => $data) {
             // check extension if given
             if(!empty($extension) && pathinfo($file, PATHINFO_EXTENSION) != $extension) continue;
@@ -634,8 +637,9 @@ class SugarAutoLoader
 	 * Add filename to list of existing files
 	 * @param string $filename
 	 * @param bool $save should we save it to file?
+	 * @param bool $dir should it be empty directory?
 	 */
-	public static function addToMap($filename, $save = true)
+	public static function addToMap($filename, $save = true, $dir = false)
 	{
 	    if(self::existing($filename))
 	        return;
@@ -661,7 +665,7 @@ class SugarAutoLoader
 	    if(!is_array($data)) {
 	        $data = array();
 	    }
-	    $data[$filename] = 1;
+	    $data[$filename] = $dir?array():1;
 	    if($save) {
 	        write_array_to_file("existing_files", self::$filemap, sugar_cached(self::CACHE_FILE));
 	    }
@@ -789,7 +793,7 @@ class SugarAutoLoader
 	        return true;
 	    }
 	    if(sugar_mkdir($dir, null, true)) {
-	        self::addToMap($dir, true);
+	        self::addToMap($dir, true, true);
 	        return true;
 	    }
 	    return false;

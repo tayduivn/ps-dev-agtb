@@ -24,22 +24,12 @@
 
 require_once('tests/rest/RestFileTestBase.php');
 
-class RestFileTest extends RestFileTestBase {
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-
+class RestFileTest extends RestFileTestBase
+{
     /**
      * @group rest
      */
-    public function testGetList() 
+    public function testGetList()
     {
         //BEGIN SUGARCRM flav=pro ONLY
         $restReply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/');
@@ -55,7 +45,7 @@ class RestFileTest extends RestFileTestBase {
     /**
      * @group rest
      */
-    public function testPostUploadImageToContact() 
+    public function testPostUploadImageToContact()
     {
         $post = array('picture' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', $post);
@@ -68,11 +58,11 @@ class RestFileTest extends RestFileTestBase {
         $this->assertEquals($this->_contact_id, $fetch['reply']['id'], 'Known contact id and fetched contact id do not match');
         $this->assertEquals($reply['reply']['picture']['name'], $fetch['reply']['picture'], 'Contact picture field and picture file name do not match');
     }
-    
+
     /**
      * @group rest
      */
-    public function testPostUploadImageToContactWithHTMLJSONResponse() 
+    public function testPostUploadImageToContactWithHTMLJSONResponse()
     {
         $post = array('picture' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture?format=sugar-html-json', $post);
@@ -90,7 +80,7 @@ class RestFileTest extends RestFileTestBase {
     /**
      * @group rest
      */
-    public function testPutUploadImageToContact() 
+    public function testPutUploadImageToContact()
     {
         $filename = 'include/images/badge_256.png';
         $opts = array(CURLOPT_INFILESIZE => filesize($filename), CURLOPT_INFILE => fopen($filename, 'r'));
@@ -109,7 +99,7 @@ class RestFileTest extends RestFileTestBase {
     /**
      * @group rest
      */
-    public function testDeleteImageFromContact() 
+    public function testDeleteImageFromContact()
     {
         $reply = $this->_restCall('Contacts/' . $this->_contact_id . '/file/picture', '', 'DELETE');
         $this->assertArrayHasKey('picture', $reply['reply'], 'Reply is missing fields');
@@ -118,7 +108,7 @@ class RestFileTest extends RestFileTestBase {
     /**
      * @group rest
      */
-    public function testPostUploadFileToNote() 
+    public function testPostUploadFileToNote()
     {
         $post = array('filename' => '@' . $this->_testfile1);
         $restReply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $post);
@@ -135,7 +125,7 @@ class RestFileTest extends RestFileTestBase {
     /**
      * @group rest
      */
-    public function testPutUploadFileToNote() 
+    public function testPutUploadFileToNote()
     {
         $params = array('filename' => $this->_testfile2, 'type' => 'text/plain');
         $restReply = $this->_restCallFilePut('Notes/' . $this->_note_id . '/file/filename', $params);
@@ -152,16 +142,16 @@ class RestFileTest extends RestFileTestBase {
     /**
      * @group rest
      */
-    public function testDeleteFileFromNote() 
+    public function testDeleteFileFromNote()
     {
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'DELETE');
         $this->assertArrayHasKey('filename', $reply['reply'], 'Reply is missing fields');
     }
-    
+
     /**
      * @group rest
      */
-    public function testSimulateFileTooLarge() 
+    public function testSimulateFileTooLarge()
     {
         // We need to skip for now, IIS doesn't appreciate this level of trickery
         $this->markTestSkipped();
@@ -170,7 +160,7 @@ class RestFileTest extends RestFileTestBase {
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('request_too_large', $reply['reply']['error'], 'Expected error string not returned');
-        
+
         // One more time, this time without sending the oauth_token (simulates a clobbered body)
         $reply = $this->_restCallNoAuthHeader('Notes/' . $this->_note_id . '/file/filename', '', 'POST');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
@@ -180,7 +170,7 @@ class RestFileTest extends RestFileTestBase {
     /**
      * @group rest
      */
-    public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest() 
+    public function testNeedLoginWhenNoAuthTokenAndNotAFileRequest()
     {
         // We need to skip for now, IIS doesn't appreciate this level of trickery
         $this->markTestSkipped();
@@ -189,7 +179,7 @@ class RestFileTest extends RestFileTestBase {
         $reply = $this->_restCallNoAuthHeader('Notes');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');
-        
+
         $reply = $this->_restCallNoAuthHeader('Notes', '', 'POST');
         $this->assertArrayHasKey('error', $reply['reply'], 'No error message returned');
         $this->assertEquals('need_login', $reply['reply']['error'], 'Expected error string not returned');

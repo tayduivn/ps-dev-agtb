@@ -455,66 +455,7 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens, Suga
 	 */
 	public function checkUserCredentials($client_id, $username, $password)
     {
-        $clientInfo = $this->getClientDetails($client_id);
-        if ( $clientInfo === false ) {
-            return false;
-        }
-
-        if ( $clientInfo['client_type'] != 'support_portal' ) {
-            // Is just a regular Sugar User
-            $auth = new AuthenticationController((!empty($sugar_config['authenticationClass'])? $sugar_config['authenticationClass'] : 'SugarAuthenticate'));
-            $loginSuccess = $auth->login($username,$password,array('passwordEncrypted'=>false,'noRedirect'=>true));
-            if ( $loginSuccess && !empty($auth->nextStep) ) {
-                // Set it here, and then load it in to the session on the next pass
-                // TODO: How do we pass the next required step to the client via the REST API?
-                $GLOBALS['nextStep'] = $auth->nextStep;
-            }
-            if ( $loginSuccess ) {
-                $userBean = BeanFactory::newBean('Users');
-                $userBean = $userBean->retrieve_by_string_fields(array('user_name'=>$username));
-                if ( $userBean == null ) {
-                    throw new SugarApiExceptionNeedLogin();
-                }
-                $this->userBean = $userBean;
-                return array('user_id' => $this->userBean->id);
-            } else {
-                throw new SugarApiExceptionNeedLogin();
-            }
-        } else {
-            $portalApiUser = $this->findPortalApiUser($client_id);
-            if ( $portalApiUser == null ) {
-                // Can't login as a portal user if there is no API user
-                throw new SugarApiExceptionPortalNotConfigured();
-            }
-            // It's a portal user, log them in against the Contacts table
-            $contact = BeanFactory::newBean('Contacts');
-            //BEGIN SUGARCRM flav=pro ONLY
-            $contact->disable_row_level_security = true;
-            //END SUGARCRM flav=pro ONLY
-            $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username, 'deleted'=>0) );
-            if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
-                $contact = null;
-            }
-            //Do Portal active check AFTER password check to prevent malicious discovery of portal user ids
-            if( !empty($contact) && $contact->getFieldValue('portal_active') == 0){
-                throw new SugarApiExceptionPortalUserInactive();
-            }
-            if ( !empty($contact) ) {
-                //BEGIN SUGARCRM flav=pro ONLY
-                $sessionManager = new SessionManager();
-                if(!$sessionManager->canAddSession()){
-                    //not able to add another session right now
-                    $GLOBALS['log']->error("Unable to add new session");
-                    throw new SugarApiExceptionNeedLogin('Too many concurrent sessions', null, null, 0, 'too_many_concurrent_connections');
-                }
-                //END SUGARCRM flav=pro ONLY
-                $this->contactBean = $contact;
-                return array('user_id'=>$contact->id);
-            } else {
-                throw new SugarApiExceptionNeedLogin();
-            }
-        }
-
+        return $this->getPlatformStore()->checkUserCredentials($this, $client_id, $username, $password);
     }
     // END METHODS FROM IOAuth2GrantUser
 

@@ -56,12 +56,12 @@ class RestFileTestBase extends RestTestBase {
         $this->_note = $note;
         $GLOBALS['db']->commit();
     }
-    
+
     public function tearDown()
     {
         unlink($this->_testfile1);
         unlink($this->_testfile2);
-        
+
         parent::tearDown();
 
         $GLOBALS['db']->query("DELETE FROM contacts WHERE id= '{$this->_contact_id}'");
@@ -88,7 +88,7 @@ class RestFileTestBase extends RestTestBase {
                 $httpAction = 'GET';
             }
         }
-        
+
         // Only set a custom request for not POST with a body
         // This affects the server and how it sets its superglobals
         if (empty($requestMethodSet)) {
