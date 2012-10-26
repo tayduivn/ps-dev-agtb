@@ -18,6 +18,11 @@
             }
         });
         app.events.on("app:sync:complete", function() {
+            if( app.user.get("show_tour") ) {
+                // disable the tour flag on initial app sync
+                app.api.call("update", app.api.buildURL("me/tour"));
+                self.$(".system-tour").modal("show");
+            }
             // can't call loadData() on an additionalComponent
             // so we call a custom getData() on app:sync:complete
             self.getData();
