@@ -1,7 +1,6 @@
 ({
     fieldTag: "select",
     _render: function() {
-        this.app.view.Field.prototype._render.call(this);
         var optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
         //After rendering the dropdown, the selected value should be the value set in the model,
         //or the default value. The default value fallbacks to the first option if no other is selected.
@@ -16,9 +15,15 @@
         }
 
         var chosenOptions = {};
-        if (_.indexOf(optionsKeys, "") !== -1) {
+        var emptyIdx = _.indexOf(optionsKeys, "");
+        if (emptyIdx !== -1) {
             chosenOptions.allow_single_deselect = true;
+            // if the blank option isnt at the top of the list we have to add it manually
+            if (emptyIdx > 1) {
+                this.hasBlank = true;
+            }
         }
+        this.app.view.Field.prototype._render.call(this);
 
         this.$(this.fieldTag).chosen(chosenOptions);
         this.$(".chzn-container").addClass("tleft");
