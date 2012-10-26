@@ -433,9 +433,13 @@ class SugarOAuth2Storage implements IOAuth2GrantUser, IOAuth2RefreshTokens {
             //BEGIN SUGARCRM flav=pro ONLY
             $contact->disable_row_level_security = true;
             //END SUGARCRM flav=pro ONLY
-            $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username,  'portal_active'=>'1', 'deleted'=>0) );
+            $contact = $contact->retrieve_by_string_fields(array('portal_name'=>$username, 'deleted'=>0) );
             if ( !empty($contact) && !User::checkPassword($password, $contact->portal_password) ) {
                 $contact = null;
+            }
+            //Do Portal active check AFTER password check to prevent malicious discovery of portal user ids
+            if( !empty($contact) && $contact->getFieldValue('portal_active') == 0){
+                throw new SugarApiExceptionPortalUserInactive();
             }
             if ( !empty($contact) ) {
                 //BEGIN SUGARCRM flav=pro ONLY

@@ -107,10 +107,12 @@ class SugarACLSupportPortal extends SugarACLStatic
 
             $accounts = $this->getAccountIds($bean);
 
+            //bug57022 : Retrieve of KB articles return 0 records when no account is associated to a portal contact
             if ( count($accounts) == 0 
                  && $bean->module_dir != 'Notes'
                  && $bean->module_dir != 'Contacts' 
-                 && $bean->module_dir != 'Bugs' ) {
+                 && $bean->module_dir != 'Bugs'
+                 && $bean->module_dir != 'KBDocuments' ) {
                 return false;
             }
 

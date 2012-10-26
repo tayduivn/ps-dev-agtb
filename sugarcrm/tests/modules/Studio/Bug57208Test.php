@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -24,52 +23,38 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * Your Warranty, Limitations of liability and Indemnity are expressly stated
  * in the License.  Please refer to the License for the specific language
  * governing these rights and limitations under the License.  Portions created
- * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
+ * by SugarCRM are Copyright (C) 2004-2011 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-$viewdefs['Bugs']['listview'] = array(
-	'BUG_NUMBER' => array(
-		'width' => '5',
-		//'label' => 'LBL_LIST_NUMBER',
-		'label' => 'LBL_BUG_NUMBER',
-        'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '30',
-		'label' => 'LBL_LIST_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_LIST_STATUS',
-        'default' => true),
-    'TYPE' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_TYPE',
-        'default' => true),
-    'PRIORITY' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_PRIORITY',
-        'default' => false),
-/*
-    'RELEASE_NAME' => array(
-        'width' => '10',
-        'label' => 'LBL_FOUND_IN_RELEASE',
-        'default' => false,
-        'related_fields' => array('found_in_release'),
-        'module' => 'Releases',
-        'id' => 'FOUND_IN_RELEASE',),
-    'FIXED_IN_RELEASE_NAME' => array(
-        'width' => '15',
-        'label' => 'LBL_LIST_FIXED_IN_RELEASE',
-        'default' => true,
-        'related_fields' => array('fixed_in_release'),
-        'module' => 'Releases',
-        'id' => 'FIXED_IN_RELEASE',),
-*/
-        'RESOLUTION' => array(
-        'width' => '10',
-        'label' => 'LBL_LIST_RESOLUTION',
-        'default' => false),
-);
-?>
+require_once 'modules/ModuleBuilder/Module/StudioModule.php';
+
+class Bug57208Test extends Sugar_PHPUnit_Framework_TestCase
+{
+    protected $_testModule = 'Bug57208Test';
+    
+    public function setUp() 
+    {
+        sugar_mkdir("modules/{$this->_testModule}");
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('moduleList');
+    }
+    
+    public function tearDown()
+    {
+        rmdir("modules/{$this->_testModule}");
+        SugarTestHelper::tearDown();
+    }
+
+    /**
+     * @group Bug57208
+     */
+    public function testModuleTypeIsBasicForModuleWithNoBeanListEntry()
+    {
+        $sm = new StudioModule($this->_testModule);
+        $type = $sm->getType();
+        
+        $this->assertEquals('basic', $type, "Type should be 'basic' but '$type' was returned from StudioModule :: getType()");
+    }
+}

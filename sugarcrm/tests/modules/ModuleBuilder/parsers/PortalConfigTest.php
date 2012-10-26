@@ -65,8 +65,24 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
             $retrievedSettings[$row['name']] = $row['value'];
         }
 
+        // Add additional assertions for oddball failures on CI
         foreach ($this->requestVars as $varKey => $value) {
-            $this->assertEquals(json_decode(html_entity_decode($retrievedSettings[$varKey])), $value);
+            // Grab our value
+            $test = $retrievedSettings[$varKey];
+            
+            // First assertion
+            $this->assertNotEmpty($test, "DB result for key $varKey should not be empty");
+            
+            //  Decode step one
+            $he = html_entity_decode($test);
+            $this->assertNotEmpty($he, "HTML Entity Decoded value for key $varKey should not be empty: start value - $test");
+            
+            // Decode step two
+            $jd = json_decode($he);
+            $this->assertNotEmpty($jd, "JSON Decoded value for $varKey should not be empty: start value - $test, html_entity_decode value - $he");
+            
+            // Actual assertion
+            $this->assertEquals($jd, $value, "JSON Decoded value for $varKey should be equal to $value, actual value is $jd: start value - $test, html_entity_decode value - $he");
         }
 
 

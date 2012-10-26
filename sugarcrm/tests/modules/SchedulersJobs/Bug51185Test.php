@@ -42,6 +42,7 @@ class Bug51185Test extends Sugar_PHPUnit_Framework_TestCase
         $current_user = SugarTestUserUtilities::createAnonymousUser();
         //Change the datef value in user preference so that it is not the default db format
         $current_user->setPreference('datef','d/m/Y', 0, 'global');
+        $current_user->setPreference('timef','H:i',0,'global');
         $current_user->save();
     }
 
