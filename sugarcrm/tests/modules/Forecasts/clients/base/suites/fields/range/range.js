@@ -73,7 +73,8 @@ describe("Range field", function() {
                 return this[key];
             };
             field.def = {
-                updateOn: 'done'
+                updateOn: 'done',
+                hideStyle: true
             };
             sinon.spy(field, "data");
             sinon.spy(field.model, 'set');
@@ -82,6 +83,7 @@ describe("Range field", function() {
 
         afterEach(function() {
             delete field.def.updateOnChange;
+            delete field.def.hideStyle;
             field.data.restore();
             field.model.set.restore();
             field.getSliderValues.restore();
@@ -144,7 +146,9 @@ describe("Range field", function() {
                 return this[key];
             };
             field.def = {
-                updateOn: 'change'
+                updateOn: 'change',
+                hideStyle: true
+
             };
             sinon.spy(field, "data");
             sinon.spy(field.model, 'set');
@@ -152,6 +156,7 @@ describe("Range field", function() {
         });
 
         afterEach(function() {
+            delete field.def.hideStyle;
             delete field.def.updateOnChange;
             field.data.restore();
             field.model.set.restore();
@@ -361,18 +366,22 @@ describe("Range field", function() {
             sinon.stub(field, "_setupHandleConnections");
             sinon.stub(field, "_setupSliderEndpoints");
             sinon.stub(field, "_setupSliderStartPositions");
+            sinon.stub(field, "_addStyle");
             el = {
                 noUiSlider: function() { return this; }
             };
             sinon.spy(el, "noUiSlider");
+            field.def.hideStyle = true;
             field._setupSlider(el);
         });
 
         afterEach(function() {
+            delete field.def.hideStyle;
             field._setupHandleConnections.restore();
             field._calculateHandles.restore();
             field._setupSliderEndpoints.restore();
             field._setupSliderStartPositions.restore();
+            field._addStyle.restore();
             el.noUiSlider.restore();
             delete el;
         });
@@ -403,6 +412,22 @@ describe("Range field", function() {
 
         it("should set the starting point of the slider", function() {
             expect(field._setupSliderStartPositions).toHaveBeenCalled();
+        });
+
+        it("should add styles to the slider if hideStyle is false metadata", function(){
+            field.def.hideStyle = false;
+            field._setupSlider(el);
+            expect(field._addStyle).toHaveBeenCalledWith(el);
+        });
+
+        it("should add styles to the slider if hideStyle is not set in metadata", function(){
+            delete field.def.hideStyle;
+            field._setupSlider(el);
+            expect(field._addStyle).toHaveBeenCalledWith(el);
+        });
+
+        it("should not add styles to the slider if hideStyle is true metadata", function(){
+            expect(field._addStyle).not.toHaveBeenCalled();
         });
 
         it("should show a disabled slider if not rendering in an edit view", function() {

@@ -107,38 +107,50 @@
      */
     _setupSlider: function(jqel) {
 
-        var start = this._setupSliderStartPositions();
         jqel.noUiSlider('init', {
             knobs: this._calculateHandles(),
             connect: this._setupHandleConnections(this.def.sliderType || 'single'),
             scale: this._setupSliderEndpoints(),
-            start: start,
+            start: this._setupSliderStartPositions(),
             change: this._sliderChange,
             end: this._sliderChangeComplete,
             field: this
-        }).append(function(){
-                var html = "";
-                var segments = 11;
-                var w = $(this).width();
-                var segmentWidth = w/(segments-1);
-                var acum = 0;
-                for(i=0;i<segments;i++) {
-                    acum = (segmentWidth * i)-2;
-                    html += "<div class='ticks' style='left:"+acum+"px'></div>";
-                }
-                return html;
+        });
 
-            })
-            .find('.noUi-handle div').each(function(index){
-                if(i>1) {i=0;}
-                $(this).append('<div class="tooltip fade top in infoBox"><div class="tooltip-arrow"></div><div class="tooltip-inner">' + start[i] + '%'+'</div></div>');
-                i++;
-            });
+        if(!this.def.hideStyle){
+            this._addStyle(jqel);
+        }
 
 
         if(this.def.enabled == false || this.def.view != 'edit') {
             jqel.noUiSlider('disable');
         }
+    },
+
+    /**
+     * Adds the style elements to the slider fields
+     * @param jqel the jQuery wrapped element that has a noUiSlider attached to it.
+     */
+    _addStyle: function(jqel) {
+        var start = this._setupSliderStartPositions();
+        jqel.append(function(){
+            var html = "";
+            var segments = 11;
+            var w = $(this).width();
+            var segmentWidth = w/(segments-1);
+            var acum = 0;
+            for(i=0;i<segments;i++) {
+                acum = (segmentWidth * i)-2;
+                html += "<div class='ticks' style='left:"+acum+"px'></div>";
+            }
+            return html;
+
+        })
+        .find('.noUi-handle div').each(function(index){
+            if(i>1) {i=0;}
+            $(this).append('<div class="tooltip fade top in infoBox"><div class="tooltip-arrow"></div><div class="tooltip-inner">' + start[i] + '%'+'</div></div>');
+            i++;
+        });
     },
 
     /**
@@ -222,17 +234,22 @@
      */
     _sliderChange: function(type) {
         var field = this.data('api').options.field,
-            values = $(this).noUiSlider( 'value' );
+            values;
 
         if(field.def.updateOn && (field.def.updateOn == 'change' || field.def.updateOn == 'both')) {
             field.model.set(field.name, field.getSliderValues(this));
         }
 
-        $(this).find('.noUi-lowerHandle .infoBox .tooltip-inner').text(values[0]+"%");
-        $(this).find('.noUi-upperHandle .infoBox .tooltip-inner').text(values[1]+"%");
+        if(!field.def.hideStyle) {
+            values = $(this).noUiSlider( 'value' );
+            $(this).find('.noUi-lowerHandle .infoBox .tooltip-inner').text(values[0]+"%");
+            $(this).find('.noUi-upperHandle .infoBox .tooltip-inner').text(values[1]+"%");
+        }
 
-
-        // todo - add onChange hook here
+        // disables the hook if moved by another slider, to prevent circular references
+        if(type != 'move' && _.isFunction(field.sliderChangeDelegate)) {
+            field.sliderChangeDelegate(field.getSliderValues(this));
+        }
     },
 
     /**
@@ -256,7 +273,10 @@
             field.model.set(field.name, field.getSliderValues(this));
         }
 
-        // todo - add onDone hook here
+        // if this is set, this hook will be called when slider is done moving.
+        if(_.isFunction(field.sliderDoneDelegate)) {
+            field.sliderDoneDelegate(field.getSliderValues(this));
+        }
     }
 
 })

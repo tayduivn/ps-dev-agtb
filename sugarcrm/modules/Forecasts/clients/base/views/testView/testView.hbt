@@ -1,5 +1,0 @@
-{{#each meta.panels}}
-    {{#each fields}}
-        {{field ../../this ../../model}}
-    {{/each}}
-{{/each}}

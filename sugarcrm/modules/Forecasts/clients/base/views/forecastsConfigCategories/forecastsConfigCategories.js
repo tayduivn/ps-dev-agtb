@@ -29,6 +29,11 @@
     selection: '',
 
     /**
+     * a placeholder for the individual range sliders that will be used to build the range setting
+     */
+    fieldRanges: {},
+
+    /**
      * Initializes the view, and then initializes up the parameters for the field metadata holder parameters that get
      * used to render the fields in the view, since they are not rendered in a standard way.
      * @param options
@@ -59,10 +64,12 @@
         }
     },
 
-    _renderHtml: function(ctx, options) {
-        app.view.View.prototype._renderHtml.call(this, ctx, options);
+    _render: function() {
+        app.view.View.prototype._render.call(this);
 
         this._addForecastCategorySelectionHandler();
+
+        return this;
     },
 
     /**
@@ -105,8 +112,6 @@
         hideElement = view.$el.find('#' + oldValue + '_ranges');
         showElement = view.$el.find('#' + this.value + '_ranges');
 
-        view.fieldRanges = {}; // a placeholder for the individual ranges that will be used to build the range setting
-
         if (showElement.children().length == 0) {
             // add the things here...
             _.each(app.lang.getAppListStrings(bucket_dom), function(label, key) {
@@ -114,7 +119,10 @@
                     model = new Backbone.Model(),
                     fieldSettings;
 
+                // get the value in the current model and use it to display the slider
                 model.set(key, this.view.model.get(this.category + '_ranges')[key]);
+
+                // build a range field
                 fieldSettings = {
                     view: this.view,
                     def: _.find(
@@ -135,18 +143,24 @@
                     model: model,
                     meta: app.metadata.getField('range')
                 };
-
                 rangeField = app.view.createField(fieldSettings);
                 this.showElement.append(rangeField.el);
                 rangeField.render();
+
                 // now give the view a way to get at this field's model, so it can be used to set the value on the
                 // real model.
                  view.fieldRanges[key] = rangeField;
 
+                // this gives the field a way to save to the view's real model.  It's wrapped in a closure to allow us to
+                // ensure we have everything when switching contexts from this handler back to the view.
+                rangeField.sliderDoneDelegate = function(category, key, view) {
+                    return function (value) {
+                        view.updateRangeSettings(category, key, value);
+                    };
+                }(this.category, key, this.view);
+
             }, {view: view, showElement:showElement, category: this.value});
         }
-
-
 
         if (hideElement) {
             hideElement.toggleClass('hide', true);
@@ -155,41 +169,60 @@
             showElement.toggleClass('hide', false);
         }
 
-        view.connectSliders(view.fieldRanges, this.value);
-
+        // use call to set context back to the view for connecting the sliders
+        view.connectSliders.call(view, this.value, view.fieldRanges);
 
         // set the forecast category and associated dropdown dom on the model
         view.model.set(this.name, this.value);
         view.model.set(view.buckets_dom_field.name, bucket_dom);
     },
 
-    connectSliders: function(sliders, category) {
+    /**
+     * updates the setting in the model for the specific range types.
+     * This gets triggered when the range after the user changes a range slider
+     * @param category - the selected category: `show_buckets` or `show_binary`
+     * @param range - the range being set, i. e. `include`, `exclude` or `upside` for `show_buckets` category
+     * @param value - the value being set
+     */
+    updateRangeSettings: function(category, range, value) {
+        var catRange = category + '_ranges',
+            setting = this.model.get(catRange);
+        setting[range] = value;
+        this.model.unset(catRange, {silent: true});
+        this.model.set(catRange, setting);
+    },
+
+    //graphically connect the sliders
+    connectSliders: function(category, sliders) {
         if(category == 'show_binary') {
-            sliders.include.sliderDelegate = sliders.exclude.moveSlider;
-            sliders.include.model.on('change', function(includeModel) {
-                var excludeVal = this.model.get('exclude');
-                excludeVal.max = includeModel.get('include').min - 1;
-                // theshark - remove
-                console.log('exclude max: ' + excludeVal.max);
-                this.model.set({exclude: excludeVal}, {silent: true});
-            }, sliders.exclude);
-            sliders.exclude.model.on('change', function(excludeModel) {
-                var includeVal = this.model.get('include');
-                includeVal.min = excludeModel.get('exclude').max + 1;
-                // theshark - remove
-                console.log('include min: ' + includeVal.min);
-                this.model.set({include: includeVal}, {silent: true});
-            }, sliders.include);
-        } else if(category == 'show_buckets') {
-//            sliders.include.model.on('change', function() {
-//
-//            });
-//            sliders.upside.model.on('change', function() {
-//
-//            });
-//            sliders.exclude.model.on('change', function() {
-//
-//            });
+            sliders.include.sliderChangeDelegate = function (value, type) {
+                if (type!= 'move') {
+                    sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
+                }
+            };
+            sliders.exclude.sliderChangeDelegate = function (value, type) {
+                if (type!= 'move') {
+                    sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
+                }
+            }
+        } else if (category == 'show_buckets') {
+            sliders.include.sliderChangeDelegate = function (value, type) {
+                if (type!= 'move') {
+                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+                }
+            };
+            sliders.upside.sliderChangeDelegate = function (value, type) {
+                if (type!= 'move') {
+                    sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
+                    sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
+                }
+            };
+            sliders.exclude.sliderChangeDelegate = function (value, type) {
+                if (type!= 'move') {
+                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+                }
+            }
         }
+
     }
 })
