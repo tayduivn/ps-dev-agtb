@@ -143,13 +143,43 @@ class ForecastsDefaults
         $db = DBManagerFactory::getInstance();
 
         //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
-        $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'forecast_schedule', 'quotes', 'quota');
+        $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'forecast_schedule', 'quotes', 'quotas');
         foreach($tables as $table)
         {
-            //Update base_rate for existing records with currency_id values that are not the base currency
-            $db->query("UPDATE {$table} t, currencies c SET t.base_rate = c.conversion_rate WHERE t.currency_id IS NOT NULL AND t.currency_id <> '-99' AND t.currency_id = c.id");
-            //Update currency_id and base_rate for records with NULL values or where currency_id is base (-99)
-            $db->query("UPDATE {$table} SET currency_id = '-99', base_rate = 1 WHERE currency_id IS NULL OR currency_id = '-99'");
+            $isUsDollar = true; // set false if table has no usdollar fields
+            switch($table) {
+                case 'opportunities':
+                    $amount = 'amount';
+                    $amount_usdollar = 'amount_usdollar';
+                    break;
+                case 'products':
+                    $amount = 'discount_amount';
+                    $amount_usdollar = 'discount_amount_usdollar';
+                    break;
+                case 'worksheet':
+                case 'forecasts':
+                case 'forecast_schedule':
+                    $isUsDollar = false;
+                    break;
+                case 'quotes':
+                    $amount = 'subtotal';
+                    $amount_usdollar = 'subtotal_usdollar';
+                    break;
+                case 'quotas':
+                    $amount = 'amount';
+                    $amount_usdollar = 'amount_base_currency';
+                    break;
+            }
+            if($isUsDollar) {
+                //update base_rate where usdollar fields exist, reverse calculate the rate
+                $db->query("UPDATE {$table} t SET t.base_rate = t.{$amount_usdollar} / t.{$amount} WHERE t.base_rate IS NULL AND t.{$amount_usdollar} IS NOT NULL and t.{$amount} IS NOT NULL");
+            }
+            // Update currency_id to base (-99) with NULL values
+            $db->query("UPDATE {$table} t SET t.currency_id='-99' WHERE t.currency_id IS NULL");
+            // Update base_rate for from currency table for NULL values
+            $db->query("UPDATE {$table} t, currencies c SET t.base_rate = c.conversion_rate WHERE t.base_rate IS NULL AND t.currency_id IS NOT NULL AND t.currency_id <> '-99' AND t.currency_id = c.id");
+            // Update remaining base_rate for records with NULL values
+            $db->query("UPDATE {$table} SET base_rate = 1 WHERE base_rate IS NULL");
         }
     }
 
