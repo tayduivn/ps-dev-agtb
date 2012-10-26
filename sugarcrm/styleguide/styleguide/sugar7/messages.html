@@ -97,8 +97,8 @@
       </div>
     </div>
     <div class="alert alert-danger alert-block">
-      <strong>Error!</strong> The core is in meltdown!! This will message persist. <a href="">Link example</a>.
       <a class="close" data-dismiss="alert">×</a>
+      <strong>Error!</strong> The core is in meltdown!! This will message persist. <a href="">Link example</a>.
     </div>
     <div class="alert alert-warning alert-block timeten">
       <a class="close" data-dismiss="alert">×</a>
@@ -112,14 +112,17 @@
       <a class="close" data-dismiss="alert">×</a>
       <strong>Notice!</strong> You did something. This will go away after 10 seconds. <a href="">Link example</a>.
     </div>
-    <div class="alert alert-warning alert-block span4">
-      <a class="close" data-dismiss="alert">×</a>
-      <p><strong>Notice!</strong> Are you sure you want to leave this page?<br />Your unsaved changes will be lost.</p>
-      <a class="btn" data-dismiss="alert">Leave</a>
-      <a class="btn btn-primary pull-right" data-dismiss="alert">Return</a>
-    </div>
-  </div>
 
+
+    <div class="alert alert-confirm alert-warning alert-block span4 modal hide">
+      <a class="close">×</a>
+      <p><strong>Notice!</strong> Are you sure you want to leave this page?<br />Your unsaved changes will be lost.</p>
+      <a class="btn leave">Leave</a>
+      <a class="btn btn-primary pull-right return">Return</a>
+    </div>
+
+
+  </div>
   <div class="container-fluid">
     <div class="row-fluid">
       <div class="span12 main-pane">
@@ -229,15 +232,28 @@
     // keybinding ESC
     $(document).keyup( function (e){
         if(e.keyCode === 27) {
-          $(".alert-top .timeten")
-          $(".alert-top").hide();
+          $(".alert-top .timeten").hide();
+          $('.alert-confirm').modal('hide');
         }
     });
 
     // timeout the alerts
     setTimeout( function (){ $('.timeten').fadeOut().remove(); }, 9000);
 
+    $('.alert-confirm')
+      .on('show', function(){
+        var modal = $(this);
+        modal.find('a.close').off('click').on('click', function(e) {modal.modal('hide'); });
+        modal.find('a.leave').off('click').on('click', function(e) {modal.modal('hide'); /*trigger leave action*/});
+        modal.find('a.return').off('click').on('click', function(e) {modal.modal('hide'); /*trigger return action*/});
+      }).modal({"backdrop":"static","show":false});
 
+    $('a').on('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      $('.alert-confirm').modal('show');
+      $('.alert-confirm a.leave').attr('href',e.target.href);
+    });
   </script>
 
 </body>
