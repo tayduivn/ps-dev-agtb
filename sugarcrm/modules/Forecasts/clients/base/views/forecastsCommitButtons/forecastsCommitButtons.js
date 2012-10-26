@@ -223,7 +223,7 @@
     triggerExport : function(evt) {
         var url = 'index.php?module=Forecasts&action=';
         url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
-        url += '&user_id=' + app.user.get('id');
+        url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
         url += '&timeperiod_id=' + $("#date_filter").val();
         document.location.href = url;
     },
