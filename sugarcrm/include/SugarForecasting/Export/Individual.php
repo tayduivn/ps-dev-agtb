@@ -75,7 +75,6 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
             'name'=>'name',
             'currency_id'=>'currency_id',
             'base_rate'=>'base_rate',
-            'version'=>'version',
             'best_case'=>'best_case',
             'worst_case'=>'worst_case',
             'likely_case'=>'likely_case',
@@ -85,32 +84,7 @@ class SugarForecasting_Export_Individual extends SugarForecasting_Export_Abstrac
 
         $seed = BeanFactory::getBean('ForecastWorksheets');
 
-        require_once('include/export_utils.php');
-
-        //set up labels to be used for the header row
-        $field_labels = array();
-        foreach($fields_array as $key=>$label)
-        {
-             $field_labels[$key] = translateForExport($label, $seed);
-        }
-
-        // setup the "header" line with proper delimiters
-        $content = "\"".implode("\"".getDelimiter()."\"", array_values($field_labels))."\"\r\n";
-
-        if(!empty($data))
-        {
-            //process retrieved record
-            //BEGIN SUGARCRM flav=pro ONLY
-            $isAdminUser = is_admin($current_user);
-            //END SUGARCRM flav=pro ONLY
-
-            foreach($data as $val)
-            {
-                $content .= getExportContentForRow($val, $seed, $isAdminUser, $fields_array);
-            }
-        }
-
-        return $content;
+        return $this->getContent($data, $seed, $fields_array);
     }
 
 }

@@ -46,7 +46,7 @@ $mod_strings = array (
     'LBL_REPORTS_TO_USER_NAME' => 'Reports To',
 
     //forecast table
-    'LBL_FORECAST_ID' => 'ID',
+    'LBL_FORECAST_ID' => 'Forecast ID',
     'LBL_FORECAST_TIME_ID' => 'Time Period ID',
     'LBL_FORECAST_TYPE' => 'Forecast Type',
     'LBL_FORECAST_OPP_COUNT' => 'Opportunities',
@@ -265,6 +265,7 @@ $mod_strings = array (
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
+    'LBL_WORKSHEET_ID' => 'Worksheet ID',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',

@@ -59,73 +59,8 @@ function export($type, $records = null, $members = false, $sample=false) {
     global $timedate;
     global $mod_strings;
     global $current_language;
+    $sampleRecordNum = 5;
 
-    $contact_fields = array(
-        "id"=>"Contact ID"
-        ,"lead_source"=>"Lead Source"
-        ,"date_entered"=>"Date Entered"
-        ,"date_modified"=>"Date Modified"
-        ,"first_name"=>"First Name"
-        ,"last_name"=>"Last Name"
-        ,"salutation"=>"Salutation"
-        ,"birthdate"=>"Lead Source"
-        ,"do_not_call"=>"Do Not Call"
-        ,"email_opt_out"=>"Email Opt Out"
-        ,"title"=>"Title"
-        ,"department"=>"Department"
-        ,"birthdate"=>"Birthdate"
-        ,"do_not_call"=>"Do Not Call"
-        ,"phone_home"=>"Phone (Home)"
-        ,"phone_mobile"=>"Phone (Mobile)"
-        ,"phone_work"=>"Phone (Work)"
-        ,"phone_other"=>"Phone (Other)"
-        ,"phone_fax"=>"Fax"
-        ,"email1"=>"Email"
-        ,"email2"=>"Email (Other)"
-        ,"assistant"=>"Assistant"
-        ,"assistant_phone"=>"Assistant Phone"
-        ,"primary_address_street"=>"Primary Address Street"
-        ,"primary_address_city"=>"Primary Address City"
-        ,"primary_address_state"=>"Primary Address State"
-        ,"primary_address_postalcode"=>"Primary Address Postalcode"
-        ,"primary_address_country"=>"Primary Address Country"
-        ,"alt_address_street"=>"Other Address Street"
-        ,"alt_address_city"=>"Other Address City"
-        ,"alt_address_state"=>"Other Address State"
-        ,"alt_address_postalcode"=>"Other Address Postalcode"
-        ,"alt_address_country"=>"Other Address Country"
-        ,"description"=>"Description"
-    );
-
-    $account_fields = array(
-        "id"=>"Account ID",
-        "name"=>"Account Name",
-        "website"=>"Website",
-        "industry"=>"Industry",
-        "account_type"=>"Type",
-        "ticker_symbol"=>"Ticker Symbol",
-        "employees"=>"Employees",
-        "ownership"=>"Ownership",
-        "phone_office"=>"Phone",
-        "phone_fax"=>"Fax",
-        "phone_alternate"=>"Other Phone",
-        "email1"=>"Email",
-        "email2"=>"Other Email",
-        "rating"=>"Rating",
-        "sic_code"=>"SIC Code",
-        "annual_revenue"=>"Annual Revenue",
-        "billing_address_street"=>"Billing Address Street",
-        "billing_address_city"=>"Billing Address City",
-        "billing_address_state"=>"Billing Address State",
-        "billing_address_postalcode"=>"Billing Address Postalcode",
-        "billing_address_country"=>"Billing Address Country",
-        "shipping_address_street"=>"Shipping Address Street",
-        "shipping_address_city"=>"Shipping Address City",
-        "shipping_address_state"=>"Shipping Address State",
-        "shipping_address_postalcode"=>"Shipping Address Postalcode",
-        "shipping_address_country"=>"Shipping Address Country",
-        "description"=>"Description"
-    );
     //Array of fields that should not be exported, and are only used for logic
     $remove_from_members = array("ea_deleted", "ear_deleted", "primary_address");
     $focus = 0;
@@ -195,19 +130,15 @@ function export($type, $records = null, $members = false, $sample=false) {
         }
     }
 
-    $result = '';
-    $populate = false;
+    $result = null;
     if($sample) {
        $result = $db->limitQuery($query, 0, $sampleRecordNum, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
-        if( $focus->_get_num_rows_in_query($query)<1 ){
-            $populate = true;
-        }
-    }
-    else {
-        $result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
+       $sample = $focus->_get_num_rows_in_query($query) < 1;
+    } else {
+       $result = $db->query($query, true, $app_strings['ERR_EXPORT_TYPE'].$type.": <BR>.".$query);
     }
 
-	return getExportContentFromResult($focus, $result, $members, $remove_from_members);
+	return getExportContentFromResult($focus, $result, $members, $remove_from_members, $sample);
 }
 
 
@@ -233,6 +164,7 @@ function getExportContentFromResult(
 
     global $current_user;
     $sampleRecordNum = 5;
+    $delimiter = getDelimiter();
     $timedate = TimeDate::getInstance();
     $db = DBManagerFactory::getInstance();
     $fields_array = $db->getFieldsArray($result,true);
@@ -253,7 +185,7 @@ function getExportContentFromResult(
     }
 
     // setup the "header" line with proper delimiters
-    $content = "\"".implode("\"".getDelimiter()."\"", array_values($field_labels))."\"\r\n";
+    $content = "\"".implode("\"". $delimiter ."\"", array_values($field_labels))."\"\r\n";
     $pre_id = '';
 
     if($populate){
@@ -298,6 +230,7 @@ function getExportContentFromResult(
             }
             $pre_id = isset($val['id']) ? $val['id'] : '';
 
+            require_once('include/SugarFields/SugarFieldHandler.php');
             foreach ($val as $key => $value)
             {
                 //getting content values depending on their types
@@ -305,44 +238,8 @@ function getExportContentFromResult(
 
                 if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
                 {
-                    $fieldType = $focus->field_name_map[$fieldNameMapKey]['type'];
-                    switch ($fieldType)
-                    {
-                        //if our value is a currency field, then apply the users locale
-                        case 'currency':
-                            require_once('modules/Currencies/Currency.php');
-                            $value = currency_format_number($value);
-                            break;
-
-                        //if our value is a datetime field, then apply the users locale
-                        case 'datetime':
-                        case 'datetimecombo':
-                            $value = $timedate->to_display_date_time($db->fromConvert($value, 'datetime'));
-                            $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
-                            break;
-
-                        //kbrill Bug #16296
-                        case 'date':
-                            $value = $timedate->to_display_date($db->fromConvert($value, 'date'), false);
-                            break;
-
-                        // Bug 32463 - Properly have multienum field translated into something useful for the client
-                        case 'multienum':
-                            $value = str_replace("^","",$value);
-                            if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) )
-                            {
-                                $valueArray = explode(",",$value);
-                                foreach ($valueArray as $multikey => $multivalue )
-                                {
-                                    if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) )
-                                    {
-                                        $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
-                                    }
-                                }
-                                $value = implode(",",$valueArray);
-                            }
-                            break;
-                    }
+                    $sfh = SugarFieldHandler::getSugarField($focus->field_name_map[$fieldNameMapKey]['type']);
+                    $value = $sfh->exportSanitize($value, $focus->field_defs[$key], $focus);
                 }
 
                 //BEGIN SUGARCRM flav=pro ONLY
@@ -371,7 +268,7 @@ function getExportContentFromResult(
                 array_push($new_arr, preg_replace("/\"/","\"\"", $value));
             } //foreach
 
-            $line = implode("\"".getDelimiter()."\"", $new_arr);
+            $line = implode("\"". $delimiter ."\"", $new_arr);
             $line = "\"" .$line;
             $line .= "\"\r\n";
             $content .= $line;
@@ -379,125 +276,6 @@ function getExportContentFromResult(
     }
 
     return $content;
-}
-
-
-/**
- * getExportContentForRow
- *
- * @param $val
- * @param $focus
- * @param $isAdminUser
- * @param $fields_array
- * @param $members
- *
- * @return string
- */
-function getExportContentForRow($val, $focus, $isAdminUser, $fields_array)
-{
-    global $current_user;
-    $timedate = TimeDate::getInstance();
-    $db = DBManagerFactory::getInstance();
-
-    //order the values in the record array
-    if ($focus instanceof ForecastWorksheet || $focus instanceof ForecastManagerWorksheet)
-    {
-        $val = get_field_order_mapping($focus->object_name, $val);
-    }
-    else
-    {
-        $val = get_field_order_mapping($focus->module_dir, $val);
-    }
-
-    $new_arr = array();
-
-    //BEGIN SUGARCRM flav=pro ONLY
-    if(!$isAdminUser)
-    {
-        $focus->id = (!empty($val['id']))?$val['id']:'';
-        $focus->assigned_user_id = (!empty($val['assigned_user_id']))?$val['assigned_user_id']:'' ;
-        $focus->created_by = (!empty($val['created_by']))?$val['created_by']:'';
-        $focus->ACLFilterFieldList($val, array(), array("blank_value" => true));
-    }
-    //END SUGARCRM flav=pro ONLY
-
-    foreach ($val as $key => $value)
-    {
-        //getting content values depending on their types
-        $fieldNameMapKey = $fields_array[$key];
-
-        if (isset($focus->field_name_map[$fieldNameMapKey])  && $focus->field_name_map[$fieldNameMapKey]['type'])
-        {
-            $fieldType = $focus->field_name_map[$fieldNameMapKey]['type'];
-            switch ($fieldType)
-            {
-                //if our value is a currency field, then apply the users locale
-                case 'currency':
-                    require_once('modules/Currencies/Currency.php');
-                    $value = currency_format_number($value);
-                    break;
-
-                //if our value is a datetime field, then apply the users locale
-                case 'datetime':
-                case 'datetimecombo':
-                    $value = $timedate->to_display_date_time($db->fromConvert($value, 'datetime'));
-                    $value = preg_replace('/([pm|PM|am|AM]+)/', ' \1', $value);
-                    break;
-
-                //kbrill Bug #16296
-                case 'date':
-                    $value = $timedate->to_display_date($db->fromConvert($value, 'date'), false);
-                    break;
-
-                // Bug 32463 - Properly have multienum field translated into something useful for the client
-                case 'multienum':
-                    $value = str_replace("^","",$value);
-                    if (isset($focus->field_name_map[$fields_array[$key]]['options']) && isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']]) )
-                    {
-                        $valueArray = explode(",",$value);
-                        foreach ($valueArray as $multikey => $multivalue )
-                        {
-                            if (isset($app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue]) )
-                            {
-                                $valueArray[$multikey] = $app_list_strings[$focus->field_name_map[$fields_array[$key]]['options']][$multivalue];
-                            }
-                        }
-                        $value = implode(",",$valueArray);
-                    }
-                    break;
-            }
-        }
-
-        //BEGIN SUGARCRM flav=pro ONLY
-        if(isset($focus->field_name_map[$fields_array[$key]]['custom_type']) && $focus->field_name_map[$fields_array[$key]]['custom_type'] == 'teamset'){
-            require_once('modules/Teams/TeamSetManager.php');
-            $value = TeamSetManager::getCommaDelimitedTeams($val['team_set_id'], !empty($val['team_id']) ? $val['team_id'] : '');
-        }
-
-        //replace user_name with full name if use_real_name preference setting is enabled
-        //and this is a user name field
-        $useRealNames = $current_user->getPreference('use_real_names');
-        if(!empty($useRealNames) && ($useRealNames &&  $useRealNames !='off' )
-          && !empty($focus->field_name_map[$fields_array[$key]]['type']) && $focus->field_name_map[$fields_array[$key]]['type'] == 'relate'
-          && !empty($focus->field_name_map[$fields_array[$key]]['module'])&& $focus->field_name_map[$fields_array[$key]]['module'] == 'Users'
-          && !empty($focus->field_name_map[$fields_array[$key]]['rname']) && $focus->field_name_map[$fields_array[$key]]['rname'] == 'user_name'
-        ){
-           global $locale;
-           $userFocus = new User();
-           $userFocus->retrieve_by_string_fields(array('user_name' => $value ));
-           if ( !empty($userFocus->id) ) {
-               $value = $locale->getLocaleFormattedName($userFocus->first_name, $userFocus->last_name);
-           }
-        }
-
-        //END SUGARCRM flav=pro ONLY
-        array_push($new_arr, preg_replace("/\"/","\"\"", $value));
-    } //foreach
-
-    $line = implode("\"".getDelimiter()."\"", $new_arr);
-    $line = "\"" .$line;
-    $line .= "\"\r\n";
-    return $line;
 }
 
 
@@ -884,7 +662,7 @@ function generateSearchWhere($module, $query) {//this function is similar with f
 //call this function to return the desired order to display columns for export in.
 //if you pass in an array, it will reorder the array and send back to you.  It expects the array
 //to have the db names as key values, or as labels
-function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
+function get_field_order_mapping($name='', $reorderArr = '', $exclude = true){
 
     //define the ordering of fields, note that the key value is what is important, and should be the db field name
     $field_order_array = array();
@@ -900,8 +678,8 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
     $field_order_array['cases'] =array( 'case_number'=>'Case Number', 'id'=>'ID', 'name'=>'Subject', 'description'=>'Description', 'status'=>'Status', 'type'=>'Type', 'priority'=>'Priority', 'resolution'=>'Resolution', 'work_log'=>'Work Log', 'portal_viewable'=>'Portal Viewable', 'account_name'=>'Account Name', 'account_id'=>'Account ID', 'assigned_user_id'=>'Assigned User ID', 'team_name'=>'Teams', 'team_id'=>'Team id', 'team_set_id'=>'Team Set ID', 'date_entered'=>'Date Created', 'date_modified'=>'Date Modified', 'created_by'=>'Created By ID', 'modified_user_id'=>'Modified By ID', 'deleted'=>'Deleted');
     $field_order_array['prospects'] =array( 'first_name'=>'First Name', 'last_name'=>'Last Name', 'id'=>'ID', 'salutation'=>'Salutation', 'title'=>'Title', 'department'=>'Department', 'account_name'=>'Account Name', 'email_address'=>'Email Address', 'phone_mobile' => 'Phone Mobile', 'phone_work' => 'Phone Work', 'phone_home' => 'Phone Home', 'phone_other' => 'Phone Other', 'phone_fax' => 'Phone Fax',  'primary_address_street' => 'Primary Address Street', 'primary_address_city' => 'Primary Address City', 'primary_address_state' => 'Primary Address State', 'primary_address_postalcode' => 'Primary Address Postal Code', 'primary_address_country' => 'Primary Address Country', 'alt_address_street' => 'Alternate Address Street', 'alt_address_city' => 'Alternate Address City', 'alt_address_state' => 'Alternate Address State', 'alt_address_postalcode' => 'Alternate Address Postal Code', 'alt_address_country' => 'Alternate Address Country', 'description' => 'Description', 'birthdate' => 'Birthdate', 'assistant'=>'Assistant', 'assistant_phone'=>'Assistant Phone', 'campaign_id'=>'campaign_id', 'tracker_key'=>'Tracker Key', 'do_not_call'=>'Do Not Call', 'lead_id'=>'Lead Id', 'assigned_user_name'=>'Assigned User Name', 'assigned_user_id'=>'Assigned User ID', 'team_id' =>'Team Id', 'team_name' =>'Teams', 'team_set_id' =>'Team Set ID', 'date_entered' =>'Date Created', 'date_modified' =>'Date Modified', 'modified_user_id' =>'Modified By', 'created_by' =>'Created By', 'deleted' =>'Deleted');
     //BEGIN SUGARCRM flav=pro ONLY
-    $field_order_array['forecastworksheet'] = array('id' => 'ID', 'product_id' => 'Product ID', 'date_closed' => 'Expected Close', 'sales_stage' => 'Stage', 'assigned_user_id' => 'Assigned To', 'amount' => 'Amount', 'worksheet_id' => 'Worksheet ID', 'name' => 'Name', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'version' => 'Version', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'commit_stage' => 'Commit Stage', 'probability' => 'Probability');
-    $field_order_array['forecastmanagerworksheet'] = array('amount' => 'Amount', 'quota' => 'Quota', 'quota_id' => 'Quota ID', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'best_adjusted' => 'Best Adjusted', 'likely_adjusted' => 'Likely Adjusted', 'worst_adjusted' => 'Worst Adjusted', 'forecast' => 'Forecast', 'forecast_id' => 'Forecast ID', 'worksheet_id' => 'Worksheet ID', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'show_opps' => 'Show Opps', 'timeperiod_id' => 'Timeperiod ID', 'id' => 'ID', 'user_id' => 'User ID', 'version' => 'Version', 'name' => 'Name', 'date_modified' => 'Date Modified', 'commit_stage' => 'Commit Stage', 'label' => 'Label');
+    $field_order_array['forecastworksheet'] = array('id' => 'ID', 'product_id' => 'Product ID', 'date_closed' => 'Expected Close', 'sales_stage' => 'Stage', 'assigned_user_id' => 'Assigned To', 'amount' => 'Amount', 'worksheet_id' => 'Worksheet ID', 'name' => 'Name', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'commit_stage' => 'Commit Stage', 'probability' => 'Probability');
+    $field_order_array['forecastmanagerworksheet'] = array('amount' => 'Amount', 'quota' => 'Quota', 'quota_id' => 'Quota ID', 'best_case' => 'Best Case', 'likely_case' => 'Likely Case', 'worst_case' => 'Worst Case', 'best_adjusted' => 'Best Adjusted', 'likely_adjusted' => 'Likely Adjusted', 'worst_adjusted' => 'Worst Adjusted', 'forecast_id' => 'Forecast ID', 'worksheet_id' => 'Worksheet ID', 'currency_id' => 'Currency ID', 'base_rate' => 'Base Rate', 'show_opps' => 'Show Opps', 'timeperiod_id' => 'Timeperiod ID', 'user_id' => 'User ID', 'name' => 'Name', 'date_modified' => 'Date Modified');
     //END SUGARCRM flav=pro ONLY
     $fields_to_exclude = array();
     $fields_to_exclude['accounts'] = array('account_name');
@@ -910,7 +688,6 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
     $fields_to_exclude['notes'] = array('first_name','last_name', 'file_mime_type','embed_flag');
     $fields_to_exclude['tasks'] = array('date_start_flag', 'date_due_flag');
 
-    //of array is passed in for reordering, process array
     if(!empty($name) && !empty($reorderArr) && is_array($reorderArr)){
 
         //make sure reorderArr has values as keys, if not then iterate through and assign the value as the key
@@ -925,10 +702,9 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
 
         //if module is not defined, lets default the order to another module of the same type
         //this would apply mostly to custom modules
-        if(!isset($field_order_array[strtolower($name)]) && isset($_REQUEST['module'])){
-
-            $exemptModuleList = array('ProspectLists');
-            if(in_array($name, $exemptModuleList))
+        if(!isset($field_order_array[strtolower($name)]) && isset($_REQUEST['module']))
+        {
+            if($name == 'ProspectLists')
             {
                 return $newReorder;
             }
@@ -951,7 +727,7 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
                 $name = 'bugs';
             }//all others including type File can use basic
             else{
-                $name = 'Notes';
+                $name = 'notes';
             }
 
         }
@@ -960,9 +736,8 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
         //the  newly formatted copy of passed in array
         $temp_result_arr = array();
         $lname = strtolower($name);
-        if(!empty($field_order_array[$lname])) {
+        if(isset($field_order_array[$lname])) {
 	        foreach($field_order_array[$lname] as $fk=> $fv){
-
 	            //if the value exists as a key in the passed in array, add to temp array and remove from reorder array.
 	            //Do not force into the temp array as we don't want to violate acl's
 	            if(array_key_exists($fk,$newReorder)){
@@ -971,12 +746,12 @@ function get_field_order_mapping($name='',$reorderArr = '', $exclude = true){
 	            }
 	        }
         }
+
         //add in all the left over values that were not in our ordered list
         //array_splice($temp_result_arr, count($temp_result_arr), 0, $newReorder);
         foreach($newReorder as $nrk=>$nrv){
             $temp_result_arr[$nrk] = $nrv;
         }
-
 
         if($exclude){
             //Some arrays have values we wish to exclude

@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,21 +21,16 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once('include/SugarForecasting/Export/AbstractExport.php');
+require_once('include/SugarFields/SugarFieldHandler.php');
 
-class SugarForecasting_Export_AbstractExportTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldMultienumTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    /**
-     * @var MockSugarForecasting_Abstract
-     */
-    protected static $obj;
 
     public static function setUpBeforeClass()
     {
-        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        self::$obj = new MockSugarForecasting_AbstractExport(array());
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('app_list_strings');
     }
 
     public static function tearDownAfterClass()
@@ -45,49 +39,28 @@ class SugarForecasting_Export_AbstractExportTest extends Sugar_PHPUnit_Framework
     }
 
     /**
-     * getFilenameProvider
-     *
-     */
-    public function getFilenameProvider()
-    {
-        return array
-        (
-            array(false, '', '', false, '/\d+\.csv/'),
-            array(true, 'abc', '123', false, '/individual\.csv/'),
-            array(true, 'abc', '123', true, '/manager\.csv/'),
-        );
-    }
-
-    /**
-     * This is a function to test the getFilename function
      * @group export
-     * @group forecasts
-     * @dataProvider getFileNameProvider
      */
-    public function testGetFilename($setArgs, $timePeriod, $userId, $isManager, $expectedRegex)
+    public function testExportSanitize()
     {
-        if($setArgs)
-        {
-            self::$obj->setArg('timeperiod_id', $timePeriod);
-            self::$obj->setArg('user_id', $userId);
-            self::$obj->isManager = $isManager;
-        }
-        $this->assertRegExp($expectedRegex, self::$obj->getFilename());
+        global $app_list_strings;
+        $app_list_strings['multienum_test'] = array(
+            'a' => 'A',
+            'b' => 'B',
+            'c' => 'C'
+        );
+
+        $obj = BeanFactory::getBean('Opportunities');
+        $vardef = $obj->field_defs['sales_stage'];
+        $vardef['options'] = 'multienum_test';
+
+        $field = SugarFieldHandler::getSugarField('multienum');
+        $value = $field->exportSanitize('^a^,^b^,^c^', $vardef, $obj);
+        $this->assertEquals('A,B,C', $value);
+
+        $value = $field->exportSanitize('a', $vardef, $obj);
+        $this->assertEquals('A', $value);
+
     }
-}
-
-class MockSugarForecasting_AbstractExport extends SugarForecasting_Export_AbstractExport
-{
-    public $isManager;
-
-    public function getFilename()
-    {
-        return parent::getFilename();
-    }
-
-    public function process() {
-        return parent::process();
-    }
-
 
 }

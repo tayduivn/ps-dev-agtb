@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,72 +21,45 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
-require_once('include/SugarForecasting/Export/AbstractExport.php');
+require_once('include/SugarFields/SugarFieldHandler.php');
 
-class SugarForecasting_Export_AbstractExportTest extends Sugar_PHPUnit_Framework_TestCase
+class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {
-
-    /**
-     * @var MockSugarForecasting_Abstract
-     */
-    protected static $obj;
+    static $currency;
 
     public static function setUpBeforeClass()
     {
-        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('beanFiles');
-        self::$obj = new MockSugarForecasting_AbstractExport(array());
+        SugarTestHelper::setUp('beanList');
+        self::$currency = SugarTestCurrencyUtilities::createCurrency('foo', 'f', 'f', .5);
     }
 
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
 
     /**
-     * getFilenameProvider
+     * @group export
      *
      */
-    public function getFilenameProvider()
+    public function testExportSanitize()
     {
-        return array
-        (
-            array(false, '', '', false, '/\d+\.csv/'),
-            array(true, 'abc', '123', false, '/individual\.csv/'),
-            array(true, 'abc', '123', true, '/manager\.csv/'),
-        );
+        $obj = BeanFactory::getBean('Opportunities');
+        $obj->amount = '1000';
+        $obj->base_rate = 1;
+        $obj->currency_id = '-99';
+
+        $vardef = $obj->field_defs['amount'];
+
+        $field = SugarFieldHandler::getSugarField('currency');
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
+        $this->assertEquals('$1,000.00', $value);
+
+        $obj->currency_id = self::$currency->id;
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
+        $this->assertEquals('f1,000.00', $value);
     }
-
-    /**
-     * This is a function to test the getFilename function
-     * @group export
-     * @group forecasts
-     * @dataProvider getFileNameProvider
-     */
-    public function testGetFilename($setArgs, $timePeriod, $userId, $isManager, $expectedRegex)
-    {
-        if($setArgs)
-        {
-            self::$obj->setArg('timeperiod_id', $timePeriod);
-            self::$obj->setArg('user_id', $userId);
-            self::$obj->isManager = $isManager;
-        }
-        $this->assertRegExp($expectedRegex, self::$obj->getFilename());
-    }
-}
-
-class MockSugarForecasting_AbstractExport extends SugarForecasting_Export_AbstractExport
-{
-    public $isManager;
-
-    public function getFilename()
-    {
-        return parent::getFilename();
-    }
-
-    public function process() {
-        return parent::process();
-    }
-
 
 }

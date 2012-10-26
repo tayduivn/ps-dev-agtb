@@ -73,53 +73,22 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
             'best_case'=>'best_case',
             'likely_case'=>'likely_case',
             'worst_case'=>'worst_case',
-            'best_adjusted'=>'best_adjusted',
-            'likely_adjusted'=>'likely_adjusted',
-            'worst_adjusted'=>'worst_adjusted',
-            'forecast'=>'forecast',
+            'best_adjusted'=>'best_case_adjusted',
+            'likely_adjusted'=>'likely_case_adjusted',
+            'worst_adjusted'=>'worst_case_adjusted',
             'forecast_id'=>'forecast_id',
             'worksheet_id'=>'worksheet_id',
             'currency_id'=>'currency_id',
             'base_rate'=>'base_rate',
-            'show_opps'=>'show_opps',
             'timeperiod_id'=>'timeperiod_id',
-            'id'=>'id',
             'user_id'=>'user_id',
-            'version'=>'version',
             'name'=>'name',
             'date_modified'=>'date_modified',
-            'commit_stage'=>'commit_stage',
-            'label'=>'label'
         );
 
         $seed = BeanFactory::getBean('ForecastManagerWorksheets');
 
-        require_once('include/export_utils.php');
-
-        //set up labels to be used for the header row
-        $field_labels = array();
-        foreach($fields_array as $key=>$label)
-        {
-             $field_labels[$key] = translateForExport($label, $seed);
-        }
-
-        // setup the "header" line with proper delimiters
-        $content = "\"".implode("\"".getDelimiter()."\"", array_values($field_labels))."\"\r\n";
-
-        if(!empty($data))
-        {
-            //process retrieved record
-            //BEGIN SUGARCRM flav=pro ONLY
-            $isAdminUser = is_admin($current_user);
-            //END SUGARCRM flav=pro ONLY
-
-            foreach($data as $val)
-            {
-                $content .= getExportContentForRow($val, $seed, $isAdminUser, $fields_array);
-            }
-        }
-
-        return $content;
+        return $this->getContent($data, $seed, $fields_array);
     }
 
 }

@@ -155,7 +155,6 @@ class SugarForecasting_Export_IndividualTest extends Sugar_PHPUnit_Framework_Tes
      * @group export
      *
      * @dataProvider exportForecastWorksheetProvider
-     * @outputBuffering disabled
      */
    public function testExport($hide, $method, $expectedRegex)
    {

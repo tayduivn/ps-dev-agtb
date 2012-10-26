@@ -813,7 +813,7 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
     'best_case_adjusted' =>
     array(
         'name' => 'best_case_adjusted',
-        'vname' => 'LBL_BEST_CASE_ADJUSTED',
+        'vname' => 'LBL_BEST_CASE_VALUE',
         'type' => 'currency',
     ),
     'likely_case' =>
@@ -825,7 +825,7 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
     'likely_case_adjusted' =>
     array(
         'name' => 'likely_case_adjusted',
-        'vname' => 'LBL_LIKELY_CASE_ADJUSTED',
+        'vname' => 'LBL_LIKELY_CASE_VALUE',
         'type' => 'currency',
     ),
     'worst_case' =>
@@ -837,13 +837,19 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
     'worst_case_adjusted' =>
     array(
         'name' => 'worst_case_adjusted',
-        'vname' => 'LBL_WORST_CASE_ADJUSTED',
+        'vname' => 'LBL_WORST_CASE_VALUE',
         'type' => 'currency',
     ),
     'currency_id' =>
     array(
         'name' => 'currency_id',
         'vname' => 'LBL_CURRENCY_ID',
+        'type' => 'id',
+    ),
+    'timeperiod_id' =>
+    array(
+        'name' => 'timeperiod_id',
+        'vname' => 'LBL_FORECAST_TIME_ID',
         'type' => 'id',
     ),
     'base_rate' =>
@@ -861,7 +867,7 @@ $dictionary['ForecastManagerWorksheet'] = array('table'=>'does_not_exist',
     'user_id' =>
     array(
         'name' => 'user_id',
-        'vname' => 'LBL_USER_ID',
+        'vname' => 'LBL_FS_USER_ID',
         'type' => 'id',
     ),
     'commit_stage' =>

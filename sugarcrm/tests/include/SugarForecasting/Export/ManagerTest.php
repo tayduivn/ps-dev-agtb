@@ -191,7 +191,6 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
      * @group export
      *
      * @dataProvider exportForecastWorksheetProvider
-     * @outputBuffering disabled
      */
    public function testExport($hide, $method, $expectedRegex)
    {
@@ -209,7 +208,6 @@ class SugarForecasting_Export_ManagerTest extends Sugar_PHPUnit_Framework_TestCa
 
         $obj = new SugarForecasting_Export_Manager($args);
         $content = $obj->process();
-        //echo $content . "\n";
 
         $this->assertNotEmpty($content, "content empty. Rep data should have returned csv file contents.");
         $this->$method($expectedRegex, $content);

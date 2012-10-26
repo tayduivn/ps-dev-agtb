@@ -551,6 +551,21 @@ class SugarFieldBase {
         return $value;
     }
 
+
+    /**
+     * Handles export field sanitizing for field type
+     *
+     * @param $value string value to be sanitized
+     * @param $vardef array representing the vardef definition
+     * @param $focus SugarBean object
+     *
+     * @return string sanitized value
+     */
+    public function exportSanitize($value, $vardef, $focus)
+    {
+        return $value;
+    }
+
     /**
      * isRangeSearchView
      * This method helps determine whether or not to display the range search view code for the sugar field
