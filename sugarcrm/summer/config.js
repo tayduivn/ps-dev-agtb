@@ -200,7 +200,15 @@
         syncConfig: true,
         authStore: "sugarAuthStore",
         loadCss: "url",
-        themeName: "default"
+        themeName: "default",
+
+        analytics: {
+            enabled: true,
+            id: 'UA-35865358-1',
+            dryRun: false,
+            debug: false
+        }
+
     }, false);
 
 })(SUGAR.App);
