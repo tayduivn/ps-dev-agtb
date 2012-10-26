@@ -20,6 +20,8 @@
     _collection:{},
     columnDefs : [],
     needsRelaoded : false,
+    mgrNeedsCommitted : false,
+    commitButtonEnabled : false,
 
     /**
      * Initialize the View
@@ -59,8 +61,12 @@
      *
      * @return {String}
      */
-    createURL:function() {
-        var url = this.url;
+    createURL:function(type) {
+        if(_.isUndefined(type)){
+        	type = "normal";
+        }
+        
+    	var url = this.url;
         var args = {};
         if(this.timePeriod) {
            args['timeperiod_id'] = this.timePeriod;
@@ -70,12 +76,17 @@
         {
            args['user_id'] = this.selectedUser.id;
         }
-
-        url = app.api.buildURL('ForecastWorksheets', '', '', args);
+        
+        if(type == "mgrCheck"){
+        	url = app.api.buildURL('Forecasts/committed/mgrNeedsCommitted', '', '', args);
+        }
+        else{
+        	url = app.api.buildURL('ForecastWorksheets', '', '', args);
+        }
         
         return url;
     },
-
+        
     /**
      * Sets up the save event and handler for the commit_stage dropdown fields in the worksheet.
      *
@@ -196,6 +207,16 @@
             	}
             	
             }, this);
+            
+            this.context.forecasts.on("forecasts:commitButtons:enabled", function(){
+            	if(_.isEqual(app.user.get('id'), self.selectedUser.id)){
+            		self.commitButtonEnabled = true;
+            	}
+            },this);
+            
+            this.context.forecasts.on("forecasts:commitButtons:disabled", function(){
+            	self.commitButtonEnabled = false;
+            },this);
 
             /*
              * // TODO: tagged for 6.8 see SFA-253 for details
@@ -269,13 +290,18 @@
      * @param fetch {boolean} Tells the function to go ahead and fetch if true, or runs dirty checks (saving) w/o fetching if false 
      */
     safeFetch: function(fetch){
-
+    	
         if(typeof fetch == 'undefined')
         {
             fetch = true;
         }
     	var collection = this._collection; 
     	var self = this;
+    	
+    	/*
+    	 * First we need to see if the collection is dirty. This is marked if any of the models 
+    	 * is marked as dirty. This will show the "unsaved changes" dialog
+    	 */
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
     		if(confirm(app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM", "Forecasts"))){
@@ -296,8 +322,9 @@
     		});
 			
 		}
+    		//user clicked cancel, ignore and fetch if fetch is enabled
     		else{
-    			//ignore, fetch still
+    			
     			collection.isDirty = false;
     			self.context.forecasts.set({reloadCommitButton: true});
     			if(fetch){
@@ -305,14 +332,23 @@
     			}
     		}
     	}
+    	/*
+    	 * Next, we need to check to see if the user is a manager.  They have their own requirements and dialogs (those described below)
+    	 */
     	else if(self.selectedUser.isManager){
-    		//check to see if we just have a draft version saved, and show message about committing
-    		if(self.context.forecasts.get("currentWorksheet") == "worksheet" && self.context.forecasts.get("commitButtonEnabled")){
+    		/*
+    		 * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+    		 * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
+    		 * is enabled and they are on the rep worksheet.
+    		 */
+    		if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
     			var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
+    			//show dialog
     			if(confirm(msg[0] + "\n\n" + msg[1])){
     				self.needsReloaded = true;
     				self.context.forecasts.trigger("forecasts:forecastcommitbuttons:triggerCommit");
     			}
+    			//canceled, continue fetching
     			else{
     				if(fetch){
         				collection.fetch();
@@ -320,15 +356,23 @@
     			}
     				
     		}
+    		else if(self.mgrNeedsCommitted){
+    			alert(app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts"));
+    			self.mgrNeedsCommitted = false;
+    			if(fetch){
+    				collection.fetch();
+    			}
+    			
+    		}
+    		//No popups needed, fetch like normal
     		else{
-    			//No popups needed, fetch like normal
         		if(fetch){
     				collection.fetch();
     			}
     		}
     	}
-    	else{
-    		//no changes, fetch like normal.
+    	//default case, fetch like normal
+    	else{	
     		if(fetch){
 				collection.fetch();
 			}	
@@ -368,11 +412,16 @@
         }
         $("#view-sales-rep").addClass('show').removeClass('hide');
         $("#view-manager").addClass('hide').removeClass('show');
-             
-        //check to see if the commit buttons were enabled by the committed widget, if not, disable them.
-        if(!this.context.forecasts.get("commitButtonEnabledFromCommitted")){
-        	this.context.forecasts.set({commitButtonEnabled: false});
-        }
+        
+        /*
+         * if the user is a manager, we need to go find out if this worksheet's committed date is newer
+         * than the manager sheet.
+         */
+        if(this.selectedUser.isManager){
+	        app.api.call("read", this.createURL("mgrCheck"), {}, {success:function(data){
+				self.mgrNeedsCommitted = data["needsCommitted"];
+			}});
+        }          
         
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
 		this.context.forecasts.set({currentWorksheet: "worksheet"});
@@ -616,7 +665,7 @@
             'included_opp_count' : includedCount,
             'total_opp_count' : self._collection.models.length
         };
-
+       
         this.context.forecasts.set("updatedTotals", totals);
     },
 
@@ -627,7 +676,6 @@
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
         this.selectedUser = selectedUser;
-        this.context.forecasts.set({commitButtonEnabledFromCommitted: false});
         if(this.selectedUser && !this.selectedUser){
         	return false;
         }

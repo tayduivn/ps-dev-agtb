@@ -73,7 +73,6 @@
      * @param params is always a context
      */
     updateWorksheetBySelectedUser:function (selectedUser) {
-    	this.context.forecasts.set({commitButtonEnabledFromCommitted: false});
         this.selectedUser = selectedUser;
         if(!this.showMe()){
         	return false;
@@ -273,7 +272,6 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
-        this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         
@@ -328,7 +326,7 @@
         	}
         });
         if (enableCommit) {
-        	self.context.forecasts.set({commitButtonEnabled: true});
+        	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
         }
         
         this.calculateTotals();

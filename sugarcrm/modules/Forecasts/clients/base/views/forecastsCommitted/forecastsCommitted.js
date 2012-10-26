@@ -169,18 +169,8 @@
      * @param totals
      */
     updateTotals : function (totals) {
-        var self = this;
-
-        var allZero = true;
-        _.each(totals, function(value, key) {
-            if(key == "timeperiod_id") return;
-            if(value != 0) {
-                allZero = false;
-            }
-        });
-
-        if(allZero == true) return;
-
+        var self = this;    
+        
         // these fields don't matter when it comes to tracking these values so just 0 them out.
         // we don't care about this field
         if(!_.isUndefined(totals.quota)) {
@@ -230,8 +220,7 @@
             
             if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
             {
-            	self.context.forecasts.set({commitButtonEnabled: true});
-            	self.context.forecasts.set({commitButtonEnabledFromCommitted: true});
+            	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
             }
 
             self.bestCaseCls = best.bestCaseCls;
@@ -292,11 +281,7 @@
         	worksheetData = {"current": worksheetDataCurrent, "new": worksheetDataNew};
         } 
         
-        if(!self.context.forecasts.get('commitButtonEnabled')) {
-            return false;
-        }
-
-        self.context.forecasts.set({commitButtonEnabled : false});
+        self.context.forecasts.trigger("forecasts:commitButtons:disabled");
 
         //If the totals have not been set, don't save
         if(!self.totals)
