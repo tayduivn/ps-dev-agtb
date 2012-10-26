@@ -523,7 +523,7 @@
             if (note.file_mime_type) {
                 note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token=" + app.api.getOAuthToken());
                 note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
+                note.newline = (i % 2) == 1 && (i + 1) != model.get("notes").length; // display two items in each row
             }
         };
         var processPicture = function(obj) {
