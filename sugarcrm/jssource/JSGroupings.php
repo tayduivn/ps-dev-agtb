@@ -72,6 +72,7 @@
                 "sidecar/src/core/acl.js" => "summer/summer.min.js",
                 "sidecar/src/core/user.js" => "summer/summer.min.js",
                 "summer/user.js" => "summer/summer.min.js",
+                "summer/analytics.js" => "summer/summer.min.js",
                 "sidecar/src/utils/logger.js" => "summer/summer.min.js",
                 "summer/config.js" => "summer/summer.min.js",
                 "sidecar/src/data/bean.js" => "summer/summer.min.js",
