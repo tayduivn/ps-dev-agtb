@@ -27,13 +27,22 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 {
     static $currency;
 
+    /**
+     *
+     * @access public
+     */
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
         self::$currency = SugarTestCurrencyUtilities::createCurrency('foo', 'f', 'f', .5);
     }
 
+    /**
+     *
+     * @access public
+     */
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
@@ -41,11 +50,14 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * @group export
      *
+     * @group export
+     * @group currency
+     * @access public
      */
     public function testExportSanitize()
     {
+        global $sugar_config;
         $obj = BeanFactory::getBean('Opportunities');
         $obj->amount = '1000';
         $obj->base_rate = 1;
@@ -55,11 +67,13 @@ class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
 
         $field = SugarFieldHandler::getSugarField('currency');
         $value = $field->exportSanitize($obj->amount, $vardef, $obj);
-        $this->assertEquals('$1,000.00', $value);
+        $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, -99);
+        $this->assertEquals($expectedValue, $value);
 
         $obj->currency_id = self::$currency->id;
+        $expectedValue = SugarCurrency::formatAmountUserLocale($obj->amount, self::$currency->id);
         $value = $field->exportSanitize($obj->amount, $vardef, $obj);
-        $this->assertEquals('f1,000.00', $value);
+        $this->assertEquals($expectedValue, $value);
     }
 
 }
