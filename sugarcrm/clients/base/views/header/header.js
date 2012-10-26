@@ -78,7 +78,6 @@
      * Takes user to full search results page 
      */
     gotoFullSearchResultsPage: function(evt) {
-        debugger;
         var term;
         // Don't let plugin kick in. Navigating directly to search results page
         // when clicking on adjacent button is, to my mind, special case portal
