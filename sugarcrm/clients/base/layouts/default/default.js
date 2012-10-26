@@ -39,11 +39,13 @@
     },
 
     showPreview: function() {
-        this.togglePreview();
+        this.$(".side-pane").addClass("hide");
+        this.$(".preview-pane").removeClass("hide");
     },
 
     hidePreview: function() {
-        this.togglePreview();
+        this.$(".preview-pane").addClass("hide");
+        this.$(".side-pane").removeClass("hide");
     },
 
     togglePreview: function() {
