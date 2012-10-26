@@ -42,6 +42,7 @@
     },
     login: function() {
         var self = this;
+        // hack - for some unknown reason, app is undefined in success/error hooks below. This rectifies that.
         self.__app = app;
 
         if (this.model.isValid()) {
