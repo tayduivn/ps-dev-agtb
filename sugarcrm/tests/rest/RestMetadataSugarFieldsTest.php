@@ -60,6 +60,8 @@ class RestMetadataSugarFieldsTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataSugarFieldsController() {
+        $this->markTestSkipped('This test will no longer work due to changes in bug 56665');
+
         $filesToCheck = array(
             //BEGIN SUGARCRM flav=pro ONLY
             'clients/mobile/fields/address/address.js',

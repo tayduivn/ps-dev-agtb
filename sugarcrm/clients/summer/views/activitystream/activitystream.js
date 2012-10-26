@@ -19,13 +19,11 @@
         'mouseover ul.typeahead.activitystream-tag-dropdown li': 'switchActiveTypeahead',
         'click ul.typeahead.activitystream-tag-dropdown li': 'addTag',
         'click .showAnchor': 'showAnchor',
-        'click .preview-stream': 'previewRecord',
-        'click .toggleView': 'toggleView'
+        'click .preview-stream': 'previewRecord'
     },
 
     initialize: function(options) {
         this.opts = {params: {}};
-        this.collection = {};
 
         _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
@@ -33,24 +31,25 @@
         // Check to see if we need to make a related activity stream.
         // Currently the "Home" module is dubbed ActivityStreem
         if (this.module !== "ActivityStream") {
+            this.subcontext = this.context.getChildContext({module: "ActivityStream"});
+            this.subcontext.prepare();
+
             if (this.context.get("modelId")) {
                 this.opts = { params: { module: this.module, id: this.context.get("modelId") }};
             } else {
                 this.opts = { params: { module: this.module }};
             }
-        }
 
-        this.viewId = this.getViewId();
-        this.calendarId = this.getCalendarId();
-        this.timelineId = this.getTimelineId();
+            this.streamCollection = this.subcontext.get("collection");
+        } else {
+            this.streamCollection = this.collection;
+        }
 
         if (this.context.get("link")) {
             this.opts.params.link = this.context.get("link");
             this.opts.params.parent_module = this.layout.layout.module;
             this.opts.params.parent_id = this.layout.layout.model.id;
         }
-
-        this.collection = app.data.createBeanCollection("ActivityStream");
 
         // By default, show all posts.
         this.showAllActivities();
@@ -67,55 +66,11 @@
         jQuery.event.props.push('dataTransfer');
     },
 
-    // There may be more than one activity stream widget on one page
-    getViewId: function() {
-        var viewId = app.controller.context.get('module');
-        if(app.controller.context.get('modelId')) {
-            viewId += '-'+app.controller.context.get('modelId'); 
-        }
-        if(this.context.get("link")) {
-            viewId += '-'+this.context.get("link");
-        }
-        return viewId;
-    },
-    
-    getTimelineId: function() {
-        this.viewId = this.viewId || this.getViewId();
-        return 'activitystream-timeline-'+this.viewId;
-    },
-
-    getCalendarId: function() {
-        this.viewId = this.viewId || this.getViewId();
-        return 'activitystream-calendar-'+this.viewId;
-    },
-    
-    toggleView: function(event) {
-        var view = this.$(event.currentTarget).data('view');
-        event.preventDefault();
-
-        if (view == 'timeline') {
-            this.$('#'+this.timelineId).show();
-            this.$('#'+this.calendarId).hide();
-            if (this.$('#'+this.timelineId).html() === "") {
-                this._renderTimeline();
-            }
-        } else if(view == 'calendar') {
-            this.$('#'+this.calendarId).show();
-            this.$('#'+this.timelineId).hide();
-            if (this.$('#'+this.calendarId).html() === "") {
-                this._renderCalendar();
-            }
-        } else {
-            this.$('#'+this.timelineId).hide();
-            this.$('#'+this.calendarId).hide();
-        }
-    },
-
     showAnchor: function(event) {
         var myId = this.$(event.currentTarget).data('id');
 
         event.preventDefault();
-        $('html, body').animate({ scrollTop: $('#'+myId).offset().top - 50 }, 'slow');
+        $('html, body').animate({ scrollTop: $('#' + myId).offset().top - 50 }, 'slow');
     },
 
     showMoreRecords: function() {
@@ -124,7 +79,7 @@
         app.alert.show('show_more_records', {level: 'process', title: app.lang.getAppString('LBL_PORTAL_LOADING')});
 
         options.params = this.opts.params;
-        options.params.offset = this.collection.next_offset;
+        options.params.offset = this.streamCollection.next_offset;
         options.params.limit = ""; // use default
         options.add = true; // Indicates records will be added to those already loaded in to view
 
@@ -135,7 +90,7 @@
             window.scrollTo(0, document.body.scrollHeight);
         };
 
-        this.collection.paginate(options);
+        this.streamCollection.paginate(options);
     },
 
     showAllComments: function(event) {
@@ -170,7 +125,7 @@
                         data.append("filename", app.drag_drop[id]);
 
                         var url = app.api.buildURL("Notes/" + model.get("id") + "/file/filename");
-                        url += "?oauth_token="+app.api.getOAuthToken();
+                        url += "?oauth_token=" + app.api.getOAuthToken();
 
                         $.ajax({
                             url: url,
@@ -251,19 +206,19 @@
         this.opts.params.filter = 'all';
         this.opts.params.offset = 0;
         this.opts.params.limit = 20;
-        this.collection.fetch(this.opts);
+        this.streamCollection.fetch(this.opts);
     },
 
     showMyActivities: function() {
         this.opts.params.filter = 'myactivities';
         this.opts.params.offset = 0;
-        this.collection.fetch(this.opts);
+        this.streamCollection.fetch(this.opts);
     },
 
     showFavoritesActivities: function() {
         this.opts.params.filter = 'favorites';
         this.opts.params.offset = 0;
-        this.collection.fetch(this.opts);
+        this.streamCollection.fetch(this.opts);
     },
 
     expandNewPost: function(event) {
@@ -418,28 +373,28 @@
         var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown");
         // Coerce integer to a boolean.
         var dropdownOpen = !!(dropdown.length);
-        if(dropdownOpen) {
+        if (dropdownOpen) {
             var active = dropdown.find('.active');
             // Enter or tab. Tab doesn't work in some browsers.
-            if(event.keyCode == 13 || event.keyCode == 9) {
+            if (event.keyCode == 13 || event.keyCode == 9) {
                 event.preventDefault();
                 event.stopPropagation();
                 dropdown.find('.active').click();
             }
             // Up arrow.
-            if(event.keyCode == 38) {
+            if (event.keyCode == 38) {
                 var prev = active.prev();
-                if(!prev.length) {
-                  prev = dropdown.find('li').last();
+                if (!prev.length) {
+                    prev = dropdown.find('li').last();
                 }
                 active.removeClass('active');
                 prev.addClass('active');
             }
             // Down arrow.
-            if(event.keyCode == 40) {
+            if (event.keyCode == 40) {
                 var next = active.next();
-                if(!next.length) {
-                  next = dropdown.find('li').first();
+                if (!next.length) {
+                    next = dropdown.find('li').first();
                 }
                 active.removeClass('active');
                 next.addClass('active');
@@ -448,17 +403,17 @@
 
         $(event.currentTarget).find('.label').each(function() {
             var el = $(this);
-            if(el.data('name') !== el.text()) {
+            if (el.data('name') !== el.text()) {
                 el.remove();
             }
         });
 
         // If we're typing text.
-        if(event.keyCode > 47) {
+        if (event.keyCode > 47) {
             this._getEntities(event);
         } else {
             // Fixes issue where a random font tag appears. ABE-128.
-            if(this.$(event.currentTarget).text().length === 0) {
+            if (this.$(event.currentTarget).text().length === 0) {
                 this.$(event.currentTarget).html('');
             }
         }
@@ -493,7 +448,7 @@
         // Since the data is stored as an object, it's not preserved when we add the tag.
         // For this reason, we need to add it again.
         body.children().each(function(i) {
-            if(originalChildren[i]) {
+            if (originalChildren[i]) {
                 var tagChild = this;
                 _($.data(originalChildren[i])).each(function(value, key) {
                     $.data(tagChild, key, value);
@@ -512,7 +467,7 @@
     },
 
     _parseTags: function(text) {
-        if(!text || text.length === 0) {
+        if (!text || text.length === 0) {
             return text;
         }
         var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g);
@@ -522,175 +477,6 @@
             }).name || "A record";
             return "<span class='label label-" + module + "'><a href='#" + module + '/' + id + "'>" + name + "</a></span>";
         });
-    },
-
-    _addTimelineEvent: function(model) {
-        var events = [], self = this;
-        var parseDate = function(dateString) {
-            var t = dateString.split(/[- :]/);
-            return t[1]+'/'+t[2]+'/'+t[0]+' '+t[3]+':'+t[4]+':'+t[5];
-        };
-
-        _.each(model.get('comments'), function(comment) {
-            if(comment.value) {
-                var event = {};
-                event.tag = "commented";
-                event.startDate = parseDate(comment.date_created);
-                event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + comment.created_by_name+'</a>';
-                event.headline = comment.value;
-                event.asset = {
-                        media: '<a href=\'#Users/'+comment.created_by+'\'><img src=\''+comment.created_by_picture_url+'\' /></a>',
-                        caption: comment.created_by_name
-                    };
-                events.push(event);
-            }
-            _.each(comment.notes, function(attachment) {
-                var event = {};
-                event.tag = "attached";
-                event.startDate = parseDate(attachment.date_entered);
-                event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + attachment.created_by_name+'</a>';
-                event.headline = attachment.filename;
-                events.push(event);
-            });
-        });
-
-        if(model.get("target_name") || self._parseTags(model.get("activity_data").value)) {
-            var event = {};
-            event.startDate = parseDate(model.get("date_created"));
-            event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+model.get("activity_type") + " by " + model.get("created_by_name")+'</a>';
-            event.headline = model.get("target_name") || self._parseTags(model.get("activity_data").value);
-            event.tag = model.get("activity_type");
-            event.asset = {
-                media: '<a href=\'#Users/'+model.get("created_by")+'\'><img src=\''+model.get("created_by_picture_url")+'\' /></a>',
-                caption: model.get("created_by_name")
-            };
-            events.push(event);
-        }
-        _.each(model.get('notes'), function(attachment) {
-            var event = {};
-            event.tag = "attached";
-            event.startDate = parseDate(attachment.date_entered);
-            event.text = '<a href="" data-id="'+model.get("id")+'" class="showAnchor">'+event.tag + " by " + attachment.created_by_name+'</a>';
-            event.headline = attachment.filename;
-            if(attachment.file_type == "image") {
-                event.asset = {
-                    media: "<img src='"+attachment.url+"' />",
-                    caption: attachment.filename
-                };
-            }
-            events.push(event);
-        });
-        return events;
-    },
-
-    _addCalendarMonthEvent: function(models) {
-        var events = [], counts = {};
-        var getDate = function(dateString) {
-            var d = app.date.parse(dateString, 'Y-m-d H:i:s');
-            d.setHours(0);
-            d.setMinutes(0);
-            d.setSeconds(0);
-            return d.toDateString();
-        };
-
-        $.each(models, function(index, model) {
-            var dateStr = getDate(model.get('date_created'));
-            if(typeof counts[dateStr] != 'undefined') {
-                counts[dateStr].count += 1;
-            }
-            else {
-                counts[dateStr] = {};
-                counts[dateStr].count = 1;
-                counts[dateStr].id = model.get('id');
-                counts[dateStr].start = new Date(dateStr);
-            }
-        });
-
-        $.each(counts, function(dateStr, data) {
-            var event = {"allDay":true,"id":data.id};
-            event.start = data.start;
-            event.title = data.count + ' event(s)';
-            events.push(event);
-        });
-
-        return events;
-    },
-
-    _addCalendarWeekEvent: function(models) {
-        var events = [], numEvents = 5, dateFormat = 'Y-m-d H:i:s';
-
-        // We want to display events in reversed order here
-        for(var i = models.length -1; i >= 0; i--) { 
-            var model = models[i];
-            if(events.length < numEvents) {
-                var event = {allDay:false};
-                event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), dateFormat);
-                event.title =  model.get("created_by_name") + " " + model.get("activity_type") + "...";
-                events.push(event);
-            }
-            else if(events.length == numEvents) {
-                var event = {allDay:true};
-                event.id = model.get('id');
-                event.start = app.date.parse(model.get("date_created"), dateFormat);
-                event.title = (models.length - numEvents)+" more event(s)";
-                events.push(event);
-                break;
-            }
-        };
-
-        return events;
-    },
-
-    _addCalendarDayEvent: function(models) {
-        var events = [], numEvents = 5;
-
-        // We want to display events in reversed order here
-        for(var i = models.length -1; i >= 0; i--) { 
-            var model = models[i];
-            var activityType = model.get('activity_type');
-            var event = {allDay:false};
-            event.id = model.get('id');
-            event.start = app.date.parse(model.get("date_created"), 'Y-m-d H:i:s');
-            if(events.length < numEvents) {
-                event.title = model.get("created_by_name") + " " + model.get("activity_type") + " ";
-
-                switch (activityType) {
-                    case "posted":
-                        event.title += model.get('activity_data').value;
-                        if(model.get('target_name')) {
-                            event.title += "on " + model.get('target_name');
-                        }
-                        break;
-                    case "created":
-                        event.title += model.get('target_name');
-                        break;
-                    case "related":
-                        event.title += model.get('activity_data').relate_name + " to " + model.get('target_name');
-                        break;
-                    case "updated":
-                        $.each(model.get('activity_data'), function(index, value) {
-                            if(index !== 0) {
-                                event.title += ', ';
-                            }
-                            event.title += value.field_name;
-                        });
-                        event.title += " on "+model.get('target_name');
-                        break;
-                    default:
-                        break;
-                }
-                events.push(event);
-            }
-            else if(events.length == numEvents) {
-                event.allDay = true;
-                event.title = (models.length - numEvents)+" more event(s)";
-                events.push(event);
-                break;
-            }
-        };
-
-        return events;
     },
 
     previewRecord: function(event) {
@@ -703,7 +489,7 @@
 
         // If module/id data attributes don't exist, this user
         // doesn't have access to that record due to team security.
-        if( module.length && id.length ) {
+        if (module.length && id.length) {
             var model = app.data.createBean(module);
 
             model.set("id", id);
@@ -716,7 +502,7 @@
             });
         }
         else {
-            app.alert.show("no_access", {level: "error", title:"Permission Denied",
+            app.alert.show("no_access", {level: "error", title: "Permission Denied",
                 messages: "Sorry, you do not have access to preview this specific record.", autoClose: true});
             return;
         }
@@ -734,31 +520,31 @@
     _renderHtml: function() {
         var self = this;
         var processAttachment = function(note, i) {
-            if(note.file_mime_type) {
-                note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token="+app.api.getOAuthToken());
+            if (note.file_mime_type) {
+                note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token=" + app.api.getOAuthToken());
                 note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                note.newline = (index % 2) == 1 && (index + 1) != model.get("notes").length; // display two items in each row
+                note.newline = (i % 2) == 1 && (i + 1) != model.get("notes").length; // display two items in each row
             }
         };
         var processPicture = function(obj) {
             var isModel = (obj instanceof Backbone.Model);
             var created_by = obj.created_by || obj.get('created_by');
             var url = "../clients/summer/views/imagesearch/anonymous.jpg";
-            if(obj.created_by_picture || obj.get('created_by_picture')) {
+            if (obj.created_by_picture || obj.get('created_by_picture')) {
                 url = app.api.buildFileURL({
                     module: 'Users',
                     id: created_by,
                     field: 'picture'
                 });
             }
-            if(isModel) {
+            if (isModel) {
                 obj.set('created_by_picture_url', url);
             } else {
                 obj.created_by_picture_url = url;
             }
         };
 
-        _.each(this.collection.models, function(model) {
+        _.each(this.streamCollection.models, function(model) {
             var activity_data = model.get("activity_data");
             var comments = model.get("comments");
 
@@ -784,9 +570,9 @@
 
         // Sets correct offset and limit for future fetch if we are 'showing more'
         this.opts.params.offset = 0;
-        if (this.collection.models.length > 0) {
-            this.opts.params.limit = this.collection.models.length;
-            this.opts.params.max_num = this.collection.models.length;
+        if (this.streamCollection.models.length > 0) {
+            this.opts.params.limit = this.streamCollection.models.length;
+            this.opts.params.max_num = this.streamCollection.models.length;
         }
 
         // Start the user focused in the activity stream input.
@@ -795,82 +581,15 @@
         return app.view.View.prototype._renderHtml.call(this);
     },
 
-    _renderTimeline: function() {
-        var self = this;
-        // Construct the timeline data.
-        var timeline ={
-            "timeline": {
-                "type":"default"
-            }
-        };
-
-        var objarrays = _.map(this.collection.models, this._addTimelineEvent);
-        timeline.timeline.date = _.flatten(objarrays);
-
-        //var objarrays = _.map(this.collection.models, this._addTimelineEvent);
-        //timeline.timeline.date = _.flatten(objarrays);
-
-        if(timeline.timeline.date.length) {
-            createStoryJS({
-                type:       'timeline',
-                width:      '100%',
-                height:     '400',
-                start_at_end:true,
-                js: 'lib/TimelineJS/js/timeline.js',
-                source: timeline,
-                id: 'storyjs-'+self.timelineId,
-                embed_id: self.timelineId           // ID of the DIV you want to load the timeline into
-            });
-        }
-    },
-
-    _renderCalendar: function() {
-        var self = this;
-        // Construct the calendar data.
-        var calendar ={
-                height:'400',
-                header: {
-                    left: 'prev,next,today',
-                    center: 'title',
-                    right: 'month,basicWeek,basicDay'
-                },
-                editable: false,
-                viewDisplay: function(view) {
-                    $('#'+self.calendarId).fullCalendar( 'refetchEvents' );
-                },
-                events: function(start, end, callback) {
-                    var events = [], view = $('#'+self.calendarId).fullCalendar('getView'), objarrays;
-                    if(view.name == 'month') {
-                        events = self._addCalendarMonthEvent(self.collection.models);
-                    }
-                    else if(view.name == 'basicWeek') {
-                        events = self._addCalendarWeekEvent(self.collection.models);
-                    }
-                    else {
-                        events = self._addCalendarDayEvent(self.collection.models);
-                    }
-                    callback(events);
-                },
-                eventClick: function(calEvent, jsEvent, view) {
-                    $('html, body').animate({ scrollTop: $('#'+calEvent.id).offset().top - 50 }, 'slow');
-                }
-        };
-
-        if(typeof self.collection.models != 'undefined' && self.collection.models.length) {
-            $('#'+self.calendarId).html('');
-            $('#'+self.calendarId).fullCalendar(calendar);
-        }
-    },
-
     bindDataChange: function() {
         if (this.model) {
             this.model.on("change", function() {
-                this.collection.fetch(this.opts);
+                this.streamCollection.fetch(this.opts);
             }, this);
         }
 
-        if (this.collection) {
-            this.collection.on("reset", this.render, this);
+        if (this.streamCollection) {
+            this.streamCollection.on("reset", this.render, this);
         }
     }
 })

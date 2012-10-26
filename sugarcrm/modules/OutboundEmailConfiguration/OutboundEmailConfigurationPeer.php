@@ -109,6 +109,24 @@ class OutboundEmailConfigurationPeer
     /**
      * @access public
      * @param User         $user    required
+     * @param string       $configuration_id  Outbound_Email Id  or  Inbound_Email Id
+     * @param Localization $locale
+     * @param string       $charset
+     * @return OutboundEmailConfiguration or null if not found
+     */
+    public static function getMailConfigurationFromId(User $user, $configuration_id, Localization $locale = null, $charset = null) {
+        $mailConfigurations = self::listMailConfigurations($user, $locale, $charset);
+        foreach($mailConfigurations AS $mailConfiguration) {
+            if ($mailConfiguration->getConfigId() == $configuration_id || $mailConfiguration->getInboxId() == $configuration_id) {
+                return $mailConfiguration;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @access public
+     * @param User         $user    required
      * @param Localization $locale
      * @param string       $charset
      * @return array MailConfigurations

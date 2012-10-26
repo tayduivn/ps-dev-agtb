@@ -486,9 +486,8 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'vname' => 'LBL_DATE_CLOSED',
     'type' => 'date',
     'audited'=>true,
-    'comment' => 'Expected or actual date the oppportunity will close',
+    'comment' => 'Expected or actual date the product (for opportunity) will close',
 	'importable' => 'required',
-    'required' => true,
     'enable_range_search' => true,
     'options' => 'date_range_search_dom',
   ),
@@ -497,8 +496,6 @@ $dictionary['Product'] = array('table' => 'products','audited'=>true,
     'name' => 'date_closed_timestamp',
     'vname' => 'LBL_DATE_CLOSED',
     'type' => 'int',
-    'required' => true,
-    'enable_range_search' => true,
     'studio' => false
   ),
   'commit_stage' =>
@@ -734,9 +731,9 @@ array (
 	    'source'=>'non-db',
 	    'vname'=>'LBL_PROJECTS',
 	),
-    'products' =>
+    'product_bundles' =>
       array (
-        'name' => 'products',
+        'name' => 'product_bundles',
         'type' => 'link',
         'relationship' => 'product_bundle_product',
         'module'=>'ProductBundles',

@@ -50,7 +50,7 @@ $viewdefs['Bugs']['listview'] = array(
     'PRIORITY' => array(
         'width' => '10',
         'label' => 'LBL_LIST_PRIORITY',
-        'default' => true),
+        'default' => false),
 /*
     'RELEASE_NAME' => array(
         'width' => '10',

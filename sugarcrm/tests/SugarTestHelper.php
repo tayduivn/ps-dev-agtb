@@ -116,7 +116,6 @@ require_once 'SugarTestJobQueueUtilities.php';
 
 //BEGIN SUGARCRM flav=pro ONLY
 require_once 'SugarTestForecastUtilities.php';
-require_once 'SugarTestForecastScheduleUtilities.php';
 require_once 'SugarTestProductUtilities.php';
 require_once 'SugarTestProductCategoryUtilities.php';
 require_once 'SugarTestProductTypeUtilities.php';
@@ -483,7 +482,7 @@ class SugarTestHelper
 
         // Restoring of theme
         SugarThemeRegistry::set(self::$systemVars['SugarThemeRegistry']->dirName);
-
+        SugarCache::$isCacheReset = false;
         return true;
     }
 

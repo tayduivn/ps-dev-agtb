@@ -542,3 +542,14 @@ background-image:url("../../../../index.php?entryPoint=getImage&imageName=dp-bd.
 tr.yui-dt-selected td, tr.yui-dt-selected td.yui-dt-asc, tr.yui-dt-selected td.yui-dt-desc {
 background-color: #ffe0ef;
 }
+
+#glblSearchBtn .searchIconLink {
+    background-color: #EF3067;
+    border: 1px solid rgba(73, 15, 31, 0.25);
+    top: 0px;
+    height: 15px
+}
+
+
+
+

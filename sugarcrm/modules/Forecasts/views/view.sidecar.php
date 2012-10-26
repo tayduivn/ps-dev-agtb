@@ -132,44 +132,34 @@ class ForecastsViewSidecar extends SidecarView
     {
         parent::_displayJavascript();
 
-echo "<script src='sidecar/lib/jquery-ui/js/jquery-ui-1.8.18.custom.min.js'></script>
-<script src='sidecar/lib/backbone/underscore.js'></script>
-<script src='sidecar/lib/backbone/backbone.js'></script>
-<script src='sidecar/lib/handlebars/handlebars-1.0.rc.1.js'></script>
-<script src='sidecar/lib/stash/stash.js'></script>
-<script src='sidecar/lib/async/async.js'></script>
-<script src='sidecar/lib/chosen/chosen.jquery.js'></script>
-<script src='sidecar/lib/sinon/sinon.js'></script>
-<script src='sidecar/lib/sugarapi/sugarapi.js'></script>
-<script src='sidecar/src/app.js'></script>
-<script src='sidecar/src/utils/utils.js'></script>
-<script src='sidecar/src/utils/date.js'></script>
-<script src='sidecar/src/utils/file.js'></script>
-<script src='sidecar/src/utils/currency.js'></script>
-<script src='sidecar/src/core/cache.js'></script>
-<script src='sidecar/src/core/events.js'></script>
-<script src='sidecar/src/core/error.js'></script>
-<script src='sidecar/src/view/template.js'></script>
-<script src='sidecar/src/core/context.js'></script>
-<script src='sidecar/src/core/controller.js'></script>
-<script src='sidecar/src/core/router.js'></script>
-<script src='sidecar/src/core/language.js'></script>
-<script src='sidecar/src/core/metadata-manager.js'></script>
-<script src='sidecar/src/core/acl.js'></script>
-<script src='sidecar/src/core/user.js'></script>
-<script src='sidecar/src/utils/logger.js'></script>
-<script src='sidecar/src/data/bean.js'></script>
-<script src='sidecar/src/data/bean-collection.js'></script>
-<script src='sidecar/src/data/data-manager.js'></script>
-<script src='sidecar/src/data/validation.js'></script>
-<script src='sidecar/src/view/hbt-helpers.js'></script>
-<script src='sidecar/src/view/view-manager.js'></script>
-<script src='sidecar/src/view/component.js'></script>
-<script src='sidecar/src/view/view.js'></script>
-<script src='sidecar/src/view/field.js'></script>
-<script src='sidecar/src/view/layout.js'></script>
-<script src='sidecar/src/view/alert.js'></script>";
-
+        /**
+         * load js files for sidecar forecasts
+         * @see jssource/JSGroupings.php - $sidecar_forecasts
+         * @see sidecar/src/include-manifest.php - files defined for sidecar
+         * it will be better if we load sidecar.min.js
+         * but it (sidecar.min.js) loads jquery library that is loaded and extended already in sugar_grp1_jquery.js -
+         * so in this case we have errors on the page
+         */
+        if ( !inDeveloperMode() )
+        {
+            if  ( !is_file(sugar_cached("include/javascript/sidecar_forecasts.js")) ) {
+                $_REQUEST['root_directory'] = ".";
+                require_once("jssource/minify_utils.php");
+                ConcatenateFiles(".");
+            }
+            echo getVersionedScript('cache/include/javascript/sidecar_forecasts.js');
+        }
+        else
+        {
+            require_once('jssource/JSGroupings.php');
+            if ( !empty($sidecar_forecasts) && is_array($sidecar_forecasts) )
+            {
+                foreach ( $sidecar_forecasts as $_file => $dist )
+                {
+                    echo "<script src='".$_file."'></script>";
+                }
+            }
+        }
     }
 
 }

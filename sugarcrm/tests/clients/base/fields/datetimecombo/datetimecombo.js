@@ -19,7 +19,7 @@ describe("datetimecombo field", function() {
     describe("datetimecombo test with 'H:i' time format", function() {
         beforeEach(function() {
             myUser.set('timepref','H:i'); 
-            field = SugarTest.createField("base","datetimecombo", "datetimecombo", "detail");
+            field = SugarTest.createField("base","datetimecombo", "datetimecombo", "edit");
         });
 
         it("should format the date time combo", function() {

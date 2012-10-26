@@ -32,18 +32,34 @@ describe("Module List", function() {
             view.render();
 
             _.each(SugarTest.app.metadata.data.module_list, function(module, key) {
-                expect(view.$el.find('.' + key).length).not.toBe(0);
+                if (key !== '_hash') {
+                    expect(view.$el.find('.' + key).length).not.toBe(0);
+                }
             });
         });
 
-        it("Should select the current module to be active", function() {
+        it("Should select Cases module to be currently active module", function() {
             var getModuleStub = sinon.stub(SugarTest.app.controller.context, 'get', function() {
                     return moduleName;
                 });
 
+            view.activeModule._moduleList = view;
             view.render();
 
-            expect(view.$el.find('.active').hasClass(moduleName)).toBe(true);
+            expect(view.activeModule.isActive(view.$el.find('.' + moduleName))).toBe(true);
+
+            getModuleStub.restore();
+        });
+
+        it("Should know that Contacts module is next to the Cases module", function() {
+            var getModuleStub = sinon.stub(SugarTest.app.controller.context, 'get', function() {
+                return moduleName;
+            });
+
+            view.activeModule._moduleList = view;
+            view.render();
+
+            expect(view.activeModule.isNext(view.$el.find('.Contacts'))).toBe(true);
 
             getModuleStub.restore();
         });

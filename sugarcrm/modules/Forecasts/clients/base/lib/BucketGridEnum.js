@@ -12,8 +12,6 @@
     	var self = this;
            
         this.field.changed = function(){
-        	var el = this.$el.find(this.fieldTag);
-        	var value = "";
         	var values = {};
         	var moduleName = self.moduleName;
         	
@@ -41,7 +39,7 @@
         this.field.events = _.extend(events, {
             'change'  : 'changed'
         });
-        
+                
         this.field.delegateEvents();
 
         return this.field;

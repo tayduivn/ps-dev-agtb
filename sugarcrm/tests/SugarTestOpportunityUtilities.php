@@ -53,7 +53,7 @@ class SugarTestOpportunityUtilities
     
     private function _createOpportunity($id, $time, $account)
     {
-        global $timedate;
+        $timedate = TimeDate::getInstance();
         $name = 'SugarOpportunity';
 
         $opportunity = new Opportunity();
@@ -68,7 +68,7 @@ class SugarTestOpportunityUtilities
         $opportunity->amount       = 10000;
         $opportunity->account_id   = $account->id;
         $opportunity->account_name = $account->name;
-        $opportunity->date_closed  = $timedate->to_display_date_time(gmdate("Y-m-d H:i:s"));
+        $opportunity->date_closed  = $timedate->nowDbDate();
         $opportunity->save();
 
         $GLOBALS['db']->commit();

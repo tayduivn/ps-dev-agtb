@@ -25,6 +25,8 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
      * of the metadata will come from the 6.6+ style metadata.
      */
     public function convertLegacyViewDefsToSidecar() {
+        $this->logUpgradeStatus('Converting ' . $this->client . ' list view defs for ' . $this->module);
+        
         // Leave the original legacy viewdefs in tact
         $defs = $this->legacyViewdefs;
         
@@ -133,7 +135,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             }
             
             // Set the new panel defs from the fields that were just converted
-            $paneldefs = array(array('label' => $this->viewtype == 'edit' ? 'LBL_EDIT' : 'LBL_DETAIL', 'fields' => $fields));
+            $paneldefs = array(array('label' => 'LBL_PANEL_DEFAULT', 'fields' => $fields));
             
             // Kill the data (old defs) and panels (new defs) elements from the defs
             unset($newdefs['data'], $newdefs['panels']);
@@ -143,7 +145,7 @@ class SidecarGridMetaDataUpgrader extends SidecarAbstractMetaDataUpgrader
             
             // Clean up the module name for saving
             $module = $this->getNormalizedModuleName();
-            
+            $this->logUpgradeStatus("Setting new $client {$this->type} view defs internally for $module");
             // Setup the new defs
             $this->sidecarViewdefs[$module][$client]['view'][$this->viewtype] = $newdefs;
         }
