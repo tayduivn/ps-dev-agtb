@@ -214,26 +214,19 @@ class aSubPanel
      * Load the Sub-Panel objects if it can from the metadata files.
      *
      * call this function for sub-panels that have unions.
+     * 
+     * @todo Decide whether to make all activities modules exempt from visibility
+     *       checking or not. As of 6.4.5, Notes was no longer exempt but the
+     *       other activities modules were which is causing causing rendering of
+     *       subpanels for these modules even when these modules should not be shown.
      *
      * @return bool         True by default if the subpanel was loaded.  Will return false if none in the collection are
      *                      allowed by the current user.
      */
 	function load_sub_subpanels ()
 	{
-
-		global $modListHeader ;
-		// added a check for security of tabs to see if an user has access to them
-		// this prevents passing an "unseen" tab to the query string and pulling up its contents
-		if (! isset ( $modListHeader ))
-		{
-			global $current_user ;
-			if (isset ( $current_user ))
-			{
-				$modListHeader = query_module_access_list ( $current_user ) ;
-			}
-		}
-
-        //by default all the activities modules are exempt, so hiding them won't affect their appearance unless the 'activity' subpanel itself is hidden.
+        //by default all the activities modules are exempt, so hiding them won't 
+        //affect their appearance unless the 'activity' subpanel itself is hidden.
         //add email to the list temporarily so it is not affected in activities subpanel
         global $modules_exempt_from_availability_check ;
         $modules_exempt_from_availability_check['Emails'] = 'Emails';
@@ -242,6 +235,8 @@ class aSubPanel
 
 		if (empty ( $this->sub_subpanels ))
 		{
+            // Bug 57699 - Notes subpanel missing from Calls module after upgrade
+            // Originally caused by the fix for Bug 49439
             // Get the shown subpanel module list 
             $subPanelDefinitions = new SubPanelDefinitions($this->parent_bean);
             $subPanelModules = $subPanelDefinitions->get_all_subpanels(true);
@@ -252,12 +247,13 @@ class aSubPanel
                 // Lowercase the collection module to check against the subpanel list
                 $lcModule = strtolower($properties['module']);
                 
-                // Add a check for submodule visibility
-                if (array_key_exists ( $properties [ 'module' ], $modListHeader ) or array_key_exists ( $properties [ 'module' ], $modules_exempt_from_availability_check ) || isset($subPanelModules[$lcModule]))
+                // Add a check for submodule visibility. If not visible, but exempt, pass it
+                if (isset($subPanelModules[$lcModule]) || isset($modules_exempt_from_availability_check[$properties['module']]))
 				{
 					$this->sub_subpanels [ $panel ] = new aSubPanel ( $panel, $properties, $this->parent_bean ) ;
 				}
 			}
+            
             // if it's empty just dump out as there is nothing to process.
             if(empty($this->sub_subpanels)) return false;
 			//Sync displayed list fields across the subpanels
