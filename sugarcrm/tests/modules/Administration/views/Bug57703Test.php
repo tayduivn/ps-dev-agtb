@@ -32,7 +32,7 @@ require_once('modules/Administration/views/view.configureshortcutbar.php');
  * Bug #57703
  * @ticket 57703
  */
-class Bug49878Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug57703Test extends Sugar_PHPUnit_Framework_TestCase
 {
 	public function setUp()
 	{
