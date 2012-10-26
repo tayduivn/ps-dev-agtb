@@ -201,6 +201,16 @@
             count++;
         });
 
+        /**
+         * log records are sorted by date_entered last to first (last at the top of list)
+         * for the last log record there is no other record with which it can be compared,
+         * so add new log record that is compared with empty value - it is first commit
+         */
+        if ( previousModel )
+        {
+            self.historyLog.push(app.forecasts.utils.createHistoryLog('', previousModel));
+        }
+
         self.render();
     }
 })

@@ -244,6 +244,14 @@ $mod_strings = array (
     'LBL_COMMITTED_HISTORY_CHANGED' => 'Updated forecast worst, likely and best all stayed the same',
     'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
     'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
+    'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_SETUP' => 'Setup forecast likely to {5}, best to {2} and worst to {8}',
+    'LBL_COMMITTED_HISTORY_BEST_LIKELY_SETUP' => 'Setup forecast likely to {5} and best to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_WORST_SETUP' => 'Setup forecast likely to {2} and worst to {5}',
+    'LBL_COMMITTED_HISTORY_BEST_WORST_SETUP' => 'Setup forecast best to {2} and worst to {5}',
+    'LBL_COMMITTED_HISTORY_BEST_SETUP' => 'Setup forecast best to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_SETUP' => 'Setup forecast likely to {2}',
+    'LBL_COMMITTED_HISTORY_WORST_SETUP' => 'Setup forecast worst to {2}',
+    'LBL_COMMITTED_HISTORY_SETUP' => 'Setup forecast likely, best and worst all stayed the same',
 
     //Labels for jsTree implementation
     'LBL_TREE_PARENT' => 'Parent',
