@@ -134,7 +134,7 @@ class EmailReminder
         if(empty($admin->settings['notify_send_from_assigning_user']))
         {
             $from_address = $admin->settings['notify_fromaddress'];
-            $from_name = $admin->settings['notify_fromname'])) ? "" : $admin->settings['notify_fromname'];
+            $from_name = $admin->settings['notify_fromname'] ? " " : $admin->settings['notify_fromname'];
         }
         else
         {
