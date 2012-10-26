@@ -27,17 +27,17 @@
 require_once('tests/rest/RestFileTestBase.php');
 
 /**
- * Bug 57210: 
- * Need to be able to mark a related record 'deleted=1' when a file uploads fails. 
- * delete_if_fails flag is an optional query string which can trigger this behavior. An example 
- * use case might be: user's in a modal and client: 1. POST's related record 2. uploads file... 
- * If the file was too big, the user may still want to go back and select a smaller file < max; 
- * but now, upon saving, the client will attempt to PUT related record first and if their ACL's 
- * may prevent edit/deletes it would fail. This rectifies such a scenario. 
+ * Bug 57210:
+ * Need to be able to mark a related record 'deleted=1' when a file uploads fails.
+ * delete_if_fails flag is an optional query string which can trigger this behavior. An example
+ * use case might be: user's in a modal and client: 1. POST's related record 2. uploads file...
+ * If the file was too big, the user may still want to go back and select a smaller file < max;
+ * but now, upon saving, the client will attempt to PUT related record first and if their ACL's
+ * may prevent edit/deletes it would fail. This rectifies such a scenario.
  */
 class RestBug57210Test extends RestFileTestBase {
     private $_config_override_existed = false;
-    private $_config_override_name = 'config_override.php'; 
+    private $_config_override_name = 'config_override.php';
 
     public function setUp()
     {
@@ -60,9 +60,9 @@ class RestBug57210Test extends RestFileTestBase {
             $value = ($value) ? $value : '0';
             $newContents .= '$sugar_config["'.$key.'"] = "'.$value.'"' . ";\n";
         }
-        sugar_file_put_contents($this->_config_override_name, $newContents);
+        SugarAutoLoader::put($this->_config_override_name, $newContents, true);
     }
-    
+
     public function tearDown()
     {
         parent::tearDown();
@@ -73,15 +73,15 @@ class RestBug57210Test extends RestFileTestBase {
         } else {
             // If it didn't exist before, we need to remove the one we created
             if (file_exists($this->_config_override_name)) {
-                unlink($this->_config_override_name);
+                SugarAutoLoader::unlink($this->_config_override_name, true);
             }
-        }    
+        }
     }
 
    /**
     * @group rest
     */
-    public function testSimulateFileTooLargeWithDeleteIfFails() 
+    public function testSimulateFileTooLargeWithDeleteIfFails()
     {
         $fileToPost = array('filename' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename' . '?delete_if_fails=true', $fileToPost, 'POST');
@@ -100,7 +100,7 @@ class RestBug57210Test extends RestFileTestBase {
    /**
     * @group rest
     */
-    public function testSimulateFileTooLargeWithOutDeleteIfFails() 
+    public function testSimulateFileTooLargeWithOutDeleteIfFails()
     {
         $fileToPost = array('filename' => '@include/images/badge_256.png');
         $reply = $this->_restCall('Notes/' . $this->_note_id . '/file/filename', $fileToPost, 'POST');
