@@ -185,6 +185,7 @@ class SugarTestForecastUtilities
                 $opp->best_case = ($opp_amount + 200);
                 $opp->worst_case = ($opp_amount - 400);
                 $opp->probability = rand(50, 90);
+                $opp->sales_stage = 'Prospecting';
                 $opp->commit_stage = ($include == 1) ? 'include' : 'exclude';
                 $opp->date_closed = $date_closed;
                 $opp->team_id = '1';
