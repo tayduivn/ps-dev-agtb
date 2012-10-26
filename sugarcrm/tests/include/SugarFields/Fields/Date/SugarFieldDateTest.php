@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,40 +21,46 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once('include/SugarFields/SugarFieldHandler.php');
 
-require_once('tests/rest/RestTestBase.php');
+class SugarFieldDateTest extends Sugar_PHPUnit_Framework_TestCase
+{
 
-class RestMetadataJssourceTest extends RestTestBase {
-
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        parent::setUp();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
     }
-    
-    public function tearDown()
+
+    public static function tearDownAfterClass()
     {
-        parent::tearDown();
+        SugarTestHelper::tearDown();
     }
-    
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * @group rest
-     */
-    public function testJssource() {
-        $restReply = $this->_restCall('metadata?type_filter=jssource&platform=portal');
-        // Hash should always be set
-        $this->assertTrue(isset($restReply['reply']['jssource']), "Jssource is missing");
-        
-    }
-    //END SUGARCRM flav=ent ONLY
 
     /**
-     * @group rest
+     * @group export
      */
-    public function testNoJssource() {
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
-        // Hash should always be set
-        $this->assertTrue(!isset($restReply['reply']['jssource']), "Jssource should not be here");
+    public function testExportSanitize()
+    {
+        $db = DBManagerFactory::getInstance();
+        $timedate = TimeDate::getInstance();
+        $now = $timedate->getNow();
+        $isoDate = $timedate->asIso($now);
+        $dbDate = $timedate->asDbDate($now);
+
+        $expectedTime = $timedate->to_display_date($db->fromConvert($dbDate, 'date'));
+        $obj = BeanFactory::getBean('Opportunities');
+        $obj->date_closed = $isoDate;
+
+        $vardef = $obj->field_defs['date_closed'];
+
+        $field = SugarFieldHandler::getSugarField('date');
+        $value = $field->exportSanitize($obj->date_closed, $vardef, $obj);
+        $this->assertEquals($expectedTime, $value);
+
+        $obj->date_closed = $dbDate;
+        $value = $field->exportSanitize($obj->date_closed, $vardef, $obj);
+        $this->assertEquals($expectedTime, $value);
     }
 
 }

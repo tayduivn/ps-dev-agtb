@@ -46,7 +46,7 @@ $mod_strings = array (
     'LBL_REPORTS_TO_USER_NAME' => 'Reports To',
 
     //forecast table
-    'LBL_FORECAST_ID' => 'ID',
+    'LBL_FORECAST_ID' => 'Forecast ID',
     'LBL_FORECAST_TIME_ID' => 'Time Period ID',
     'LBL_FORECAST_TYPE' => 'Forecast Type',
     'LBL_FORECAST_OPP_COUNT' => 'Opportunities',
@@ -191,7 +191,10 @@ $mod_strings = array (
     'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
     'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
     'LBL_CURRENCY' => 'Currency',
+    'LBL_CURRENCY_ID' => 'Currency ID',
     'LBL_CURRENCY_RATE' => 'Currency Rate',
+    'LBL_BASE_RATE' => 'Base Rate',
+
     'LBL_BEST_CASE_BASE_CURRENCY' => 'Best (Adjusted) base currency',
     'LBL_LIKELY_CASE_BASE_CURRENCY' => 'Likely (Adjusted) base currency',
     'LBL_WORST_CASE_BASE_CURRENCY' => 'Worst (Adjusted) base currency',
@@ -228,6 +231,9 @@ $mod_strings = array (
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
     'LBL_PROBABILITY' => 'Probability',
+    'LBL_PRODUCT_ID' => 'Product ID',
+    'LBL_QUOTA_ID' => 'Quota ID',
+    'LBL_VERSION' => 'Version',
 
     //Labels for forecasting history log and endpoint
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
@@ -267,6 +273,7 @@ $mod_strings = array (
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
+    'LBL_WORKSHEET_ID' => 'Worksheet ID',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
@@ -310,7 +317,6 @@ $mod_strings = array (
 
     // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',
-    'LBL_EXPORT_PDF' => 'Export PDF',
     'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
 

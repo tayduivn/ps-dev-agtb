@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,40 +21,45 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once('include/SugarFields/SugarFieldHandler.php');
 
-require_once('tests/rest/RestTestBase.php');
+class SugarFieldCurrencyTest extends Sugar_PHPUnit_Framework_TestCase
+{
+    static $currency;
 
-class RestMetadataJssourceTest extends RestTestBase {
-
-    public function setUp()
+    public static function setUpBeforeClass()
     {
-        parent::setUp();
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        self::$currency = SugarTestCurrencyUtilities::createCurrency('foo', 'f', 'f', .5);
     }
-    
-    public function tearDown()
+
+    public static function tearDownAfterClass()
     {
-        parent::tearDown();
+        SugarTestHelper::tearDown();
+        SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
     }
-    
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * @group rest
-     */
-    public function testJssource() {
-        $restReply = $this->_restCall('metadata?type_filter=jssource&platform=portal');
-        // Hash should always be set
-        $this->assertTrue(isset($restReply['reply']['jssource']), "Jssource is missing");
-        
-    }
-    //END SUGARCRM flav=ent ONLY
 
     /**
-     * @group rest
+     * @group export
+     *
      */
-    public function testNoJssource() {
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
-        // Hash should always be set
-        $this->assertTrue(!isset($restReply['reply']['jssource']), "Jssource should not be here");
+    public function testExportSanitize()
+    {
+        $obj = BeanFactory::getBean('Opportunities');
+        $obj->amount = '1000';
+        $obj->base_rate = 1;
+        $obj->currency_id = '-99';
+
+        $vardef = $obj->field_defs['amount'];
+
+        $field = SugarFieldHandler::getSugarField('currency');
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
+        $this->assertEquals('$1,000.00', $value);
+
+        $obj->currency_id = self::$currency->id;
+        $value = $field->exportSanitize($obj->amount, $vardef, $obj);
+        $this->assertEquals('f1,000.00', $value);
     }
 
 }

@@ -90,4 +90,33 @@ class SugarFieldMultienum extends SugarFieldEnum
 
         return $value;
     }
+
+    /**
+     * Handles export field sanitizing for field type
+     *
+     * @param $value string value to be sanitized
+     * @param $vardef array representing the vardef definition
+     * @param $focus SugarBean object
+     *
+     * @return string sanitized value
+     */
+    public function exportSanitize($value, $vardef)
+    {
+        global $app_list_strings;
+
+        $value = str_replace("^","", $value);
+        if (isset($vardef['options']) && isset($app_list_strings[$vardef['options']]))
+        {
+            $valueArray = explode(",",$value);
+            foreach ($valueArray as $multikey => $multivalue )
+            {
+                if (isset($app_list_strings[$vardef['options']][$multivalue]) )
+                {
+                    $valueArray[$multikey] = $app_list_strings[$vardef['options']][$multivalue];
+                }
+            }
+            return implode(",",$valueArray);
+        }
+        return $value;
+    }
 }
