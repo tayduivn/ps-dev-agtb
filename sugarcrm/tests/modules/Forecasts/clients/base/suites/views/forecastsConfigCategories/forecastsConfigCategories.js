@@ -188,7 +188,7 @@ describe("The forecastsConfigCategories view", function(){
         });
 
         it("should have a handler to do the necessary actions when a bucket type is selected", function() {
-            view._render({}, {});
+            view._render();
             expect(testStub).toHaveBeenCalled();
             expect(addHandlerStub).toHaveBeenCalled();
         });
