@@ -9,12 +9,14 @@
     <div class="tabbable todo-list-view">
         <div class="todo-header">
             <div class="input-prepend">
-                <span class="add-on"><i class="icon-edit"></i></span><input class="span9 todo-subject" type="text" placeholder="What needs to be done?">
+                <span class="add-on"><i class="icon-edit"></i></span><input class="todo-subject" type="text" placeholder="What needs to be done?">
+                <div class="input-append todo-add-container">
+                    <button class="btn btn-primary todo-add" type="button">{{str "LBL_ADD"}}</button>
+                </div>
             </div>
-            <div class="input-prepend">
-                <span class="add-on"><i class="icon-calendar"></i></span><input class="span9 todo-date" type="text" placeholder="By when?">
+            <div class="input-prepend todo-date-container">
+                <span class="add-on"><i class="icon-calendar"></i></span><input class="todo-date" type="text" placeholder="By when?">
             </div>
-            <button class="btn btn-primary todo-add" type="button">{{str "LBL_ADD"}}</button>
         </div>
         <div class="tab-content todo-content">
             <div id="todo-overdue" class="tab-pane {{#if overduePillActive}}active{{/if}}">
