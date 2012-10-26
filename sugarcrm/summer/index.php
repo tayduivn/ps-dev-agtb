@@ -63,6 +63,7 @@ if(!empty($_REQUEST['demo'])){
         <div id="content"></div>
         <div id="footer"></div>
         <div id="todo-widget-container" class="btn-group"></div>
+        <div id="tourguide"></div>
     </div>
 </div>
 
@@ -82,11 +83,12 @@ if(!empty($_REQUEST['demo'])){
     }
 ?>
 <script language="javascript">
+    var _gaq = _gaq || []; // Used for Google Analytics
     var App, syncResult, view, layout, html;
 
     SUGAR.App[SUGAR.App.config.authStore || "cache"].set('AuthAccessToken', '<?php echo session_id();?>');
     SUGAR.App[SUGAR.App.config.authStore || "cache"].set('AuthRefreshToken', '<?php echo session_id();?>');
-
+    SUGAR.App._loadAnalytics();
     App = SUGAR.App.init({
         el: "#sidecar",
         callback: function(app) {
@@ -127,7 +129,6 @@ if(!empty($_REQUEST['demo'])){
                     app.entityList = o;
                 }});
             }
-
         }
 
     });

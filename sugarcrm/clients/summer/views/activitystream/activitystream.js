@@ -619,7 +619,9 @@
     _addCalendarWeekEvent: function(models) {
         var events = [], numEvents = 5, dateFormat = 'Y-m-d H:i:s';
 
-        $.each(models, function(index, model) {
+        // We want to display events in reversed order here
+        for(var i = models.length -1; i >= 0; i--) { 
+            var model = models[i];
             if(events.length < numEvents) {
                 var event = {allDay:false};
                 event.id = model.get('id');
@@ -633,9 +635,9 @@
                 event.start = app.date.parse(model.get("date_created"), dateFormat);
                 event.title = (models.length - numEvents)+" more event(s)";
                 events.push(event);
-                return false;
+                break;
             }
-        });
+        };
 
         return events;
     },
@@ -643,7 +645,9 @@
     _addCalendarDayEvent: function(models) {
         var events = [], numEvents = 5;
 
-        $.each(models, function(index, model) {
+        // We want to display events in reversed order here
+        for(var i = models.length -1; i >= 0; i--) { 
+            var model = models[i];
             var activityType = model.get('activity_type');
             var event = {allDay:false};
             event.id = model.get('id');
@@ -682,9 +686,9 @@
                 event.allDay = true;
                 event.title = (models.length - numEvents)+" more event(s)";
                 events.push(event);
-                return false;
+                break;
             }
-        });
+        };
 
         return events;
     },
