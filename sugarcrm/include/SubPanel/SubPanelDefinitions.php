@@ -242,10 +242,18 @@ class aSubPanel
 
 		if (empty ( $this->sub_subpanels ))
 		{
+            // Get the shown subpanel module list 
+            $subPanelDefinitions = new SubPanelDefinitions($this->parent_bean);
+            $subPanelModules = $subPanelDefinitions->get_all_subpanels(true);
+            
 			$panels = $this->get_inst_prop_value ( 'collection_list' ) ;
 			foreach ( $panels as $panel => $properties )
 			{
-				if (array_key_exists ( $properties [ 'module' ], $modListHeader ) or array_key_exists ( $properties [ 'module' ], $modules_exempt_from_availability_check ))
+                // Lowercase the collection module to check against the subpanel list
+                $lcModule = strtolower($properties['module']);
+                
+                // Add a check for submodule visibility
+                if (array_key_exists ( $properties [ 'module' ], $modListHeader ) or array_key_exists ( $properties [ 'module' ], $modules_exempt_from_availability_check ) || isset($subPanelModules[$lcModule]))
 				{
 					$this->sub_subpanels [ $panel ] = new aSubPanel ( $panel, $properties, $this->parent_bean ) ;
 				}
