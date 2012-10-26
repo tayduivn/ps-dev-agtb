@@ -10,7 +10,7 @@
         'click #module_list li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
         'click .typeahead a': 'clearSearch',
-        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
+        'click .navbar-search .btn': 'gotoFullSearchResultsPage'
     },
 
     /**
@@ -78,6 +78,7 @@
      * Takes user to full search results page 
      */
     gotoFullSearchResultsPage: function(evt) {
+        debugger;
         var term;
         // Don't let plugin kick in. Navigating directly to search results page
         // when clicking on adjacent button is, to my mind, special case portal
