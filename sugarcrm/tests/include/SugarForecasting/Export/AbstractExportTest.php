@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro || flav=ent ONLY
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,40 +22,72 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
+require_once('include/SugarForecasting/Export/AbstractExport.php');
 
-require_once('tests/rest/RestTestBase.php');
-
-class RestMetadataJssourceTest extends RestTestBase {
-
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
-    public function tearDown()
-    {
-        parent::tearDown();
-    }
-    
-    //BEGIN SUGARCRM flav=ent ONLY
-    /**
-     * @group rest
-     */
-    public function testJssource() {
-        $restReply = $this->_restCall('metadata?type_filter=jssource&platform=portal');
-        // Hash should always be set
-        $this->assertTrue(isset($restReply['reply']['jssource']), "Jssource is missing");
-        
-    }
-    //END SUGARCRM flav=ent ONLY
+class SugarForecasting_Export_AbstractExportTest extends Sugar_PHPUnit_Framework_TestCase
+{
 
     /**
-     * @group rest
+     * @var MockSugarForecasting_Abstract
      */
-    public function testNoJssource() {
-        $restReply = $this->_restCall('metadata?type_filter=modules&module_filter=Contacts&platform=portal');
-        // Hash should always be set
-        $this->assertTrue(!isset($restReply['reply']['jssource']), "Jssource should not be here");
+    protected static $obj;
+
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        self::$obj = new MockSugarForecasting_AbstractExport(array());
     }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestHelper::tearDown();
+    }
+
+    /**
+     * getFilenameProvider
+     *
+     */
+    public function getFilenameProvider()
+    {
+        return array
+        (
+            array(false, '', '', false, '/\d+\.csv/'),
+            array(true, 'abc', '123', false, '/individual\.csv/'),
+            array(true, 'abc', '123', true, '/manager\.csv/'),
+        );
+    }
+
+    /**
+     * This is a function to test the getFilename function
+     * @group export
+     * @group forecasts
+     * @dataProvider getFileNameProvider
+     */
+    public function testGetFilename($setArgs, $timePeriod, $userId, $isManager, $expectedRegex)
+    {
+        if($setArgs)
+        {
+            self::$obj->setArg('timeperiod_id', $timePeriod);
+            self::$obj->setArg('user_id', $userId);
+            self::$obj->isManager = $isManager;
+        }
+        $this->assertRegExp($expectedRegex, self::$obj->getFilename());
+    }
+}
+
+class MockSugarForecasting_AbstractExport extends SugarForecasting_Export_AbstractExport
+{
+    public $isManager;
+
+    public function getFilename()
+    {
+        return parent::getFilename();
+    }
+
+    public function process() {
+        return parent::process();
+    }
+
 
 }

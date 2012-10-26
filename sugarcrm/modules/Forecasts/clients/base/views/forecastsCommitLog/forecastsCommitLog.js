@@ -60,7 +60,7 @@
     /**
      * Stores the historical log of the Forecast entries
      */
-    historyLog : Array(),
+    historyLog: [],
 
     /**
      * Stores the Forecast totals to use when creating a new entry
@@ -175,41 +175,41 @@
         return cls
     },
 
-    buildForecastsCommitted: function() {
+    buildForecastsCommitted:function () {
         var self = this;
         var count = 0;
         var previousModel;
 
         //Reset the history log
         self.historyLog = [];
-        self.moreLog = [];
 
-        _.each(self._collection.models, function(model)
-        {
-            //Get the first entry
-            if(count == 0) {
-                previousModel = model;
-                var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
-                if (dateEntered == 'Invalid Date') {
-                    dateEntered = previousModel.get('date_entered');
-                }
-                self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
-            } else {
-                self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
-                previousModel = model;
-            }
-            count++;
-        });
-
-        /**
-         * log records are sorted by date_entered last to first (last at the top of list)
-         * for the last log record there is no other record with which it can be compared,
-         * so add new log record that is compared with empty value - it is first commit
-         */
-        if ( previousModel )
-        {
-            self.historyLog.push(app.forecasts.utils.createHistoryLog('', previousModel));
+        // if we have no models, exit out of the method
+        if (_.isEmpty(self._collection.models)) {
+            return;
         }
+
+        // get the first model so we can get the previous date entered
+        previousModel = _.first(self._collection.models);
+
+        // parse out the previous date entered
+        var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
+        if (dateEntered == 'Invalid Date') {
+            dateEntered = previousModel.get('date_entered');
+        }
+        // set the previous date entered in the users format
+        self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
+
+        // set the start point in the history log
+        self.historyLog.push(app.forecasts.utils.createHistoryLog('', previousModel));
+
+        // get the rest of the models to loop over
+        // by using the length of the models array minus 1 for the first one we already took off
+        models = _.last(self._collection.models, self._collection.models.length-1);
+
+        _.each(models, function (model) {
+            self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
+            previousModel = model;
+        });
 
         self.render();
     }

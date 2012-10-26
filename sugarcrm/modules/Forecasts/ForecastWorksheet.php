@@ -222,6 +222,5 @@ class ForecastWorksheet extends SugarBean {
 
         return $affected_rows;
     }
-
 }
 
