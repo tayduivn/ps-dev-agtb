@@ -48,15 +48,19 @@ class SugarFieldDateTest extends Sugar_PHPUnit_Framework_TestCase
         $isoDate = $timedate->asIso($now);
         $dbDate = $timedate->asDbDate($now);
 
+        $expectedTime = $timedate->to_display_date($db->fromConvert($dbDate, 'date'));
         $obj = BeanFactory::getBean('Opportunities');
+        $obj->date_closed = $isoDate;
+
         $vardef = $obj->field_defs['date_closed'];
 
         $field = SugarFieldHandler::getSugarField('date');
-        $value = $field->exportSanitize($isoDate, $vardef, $obj);
-        $this->assertNotRegExp('/[am|pm|AM|PM]/', $value);
+        $value = $field->exportSanitize($obj->date_closed, $vardef, $obj);
+        $this->assertEquals($expectedTime, $value);
 
-        $value = $field->exportSanitize($dbDate, $vardef, $obj);
-        $this->assertNotRegExp('/[am|pm|AM|PM]/', $value);
+        $obj->date_closed = $dbDate;
+        $value = $field->exportSanitize($obj->date_closed, $vardef, $obj);
+        $this->assertEquals($expectedTime, $value);
     }
 
 }

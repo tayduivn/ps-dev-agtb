@@ -25,9 +25,6 @@ class SugarFieldHandler
                case 'tinyint':
                     $field = 'int';
                     break;
-               case 'date':
-                    $field = 'datetime';
-                    break;
                case 'url':
                		$field = 'link';
                		break;
@@ -53,6 +50,7 @@ class SugarFieldHandler
         if(!isset($sugarFieldObjects[$field])) {
         	//check custom directory
         	$file = SugarAutoLoader::existingCustomOne("include/SugarFields/Fields/{$field}/SugarField{$field}.php");
+
         	if($file) {
                 $type = $field;
         	} else {
