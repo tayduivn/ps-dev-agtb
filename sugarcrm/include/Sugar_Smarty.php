@@ -52,7 +52,7 @@ class Sugar_Smarty extends Smarty
 		$this->cache_dir = SUGAR_SMARTY_DIR . 'cache';
 		$this->request_use_auto_globals = true; // to disable Smarty from using long arrays
 
-		if(file_exists('custom/include/Smarty/plugins'))
+		if(SugarAutoLoader::fileExists('custom/include/Smarty/plugins'))
         {
 			$plugins_dir[] = 'custom/include/Smarty/plugins';
         }
@@ -66,6 +66,31 @@ class Sugar_Smarty extends Smarty
 	}
 
 	/**
+	 * Fetch template or custom double
+	 * @see Smarty::fetch()
+     * @param string $resource_name
+     * @param string $cache_id
+     * @param string $compile_id
+     * @param boolean $display
+	 */
+	public function fetchCustom($resource_name, $cache_id = null, $compile_id = null, $display = false)
+	{
+	    return $this->fetch(SugarAutoLoader::existingCustomOne($resource_name), $cache_id, $compile_id, $display);
+	}
+
+	/**
+	 * Display template or custom double
+	 * @see Smarty::display()
+     * @param string $resource_name
+     * @param string $cache_id
+     * @param string $compile_id
+	 */
+	function displayCustom($resource_name, $cache_id = null, $compile_id = null)
+	{
+	    return $this->display(SugarAutoLoader::existingCustomOne($resource_name), $cache_id, $compile_id);
+	}
+
+	/**
 	 * Override default _unlink method call to fix Bug 53010
 	 *
 	 * @param string $resource
@@ -76,7 +101,7 @@ class Sugar_Smarty extends Smarty
         if(file_exists($resource)) {
             return parent::_unlink($resource, $exp_time);
         }
-        
+
         // file wasn't found, so it must be gone.
         return true;
     }

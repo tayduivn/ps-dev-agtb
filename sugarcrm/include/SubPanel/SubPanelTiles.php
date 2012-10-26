@@ -72,7 +72,7 @@ class SubPanelTiles
         if(isset($_REQUEST['subpanelTabs']))
             $_SESSION['subpanelTabs'] = $_REQUEST['subpanelTabs'];
 
-        require_once 'include/tabConfig.php' ; // include/tabConfig.php in turn includes the customized file at custom/include/tabConfig.php...
+        SugarAutoLoader::requireWithCustom('include/tabConfig.php', true) ; // include custom/ too
 
         $subpanelTabsPref = $current_user->getPreference('subpanel_tabs');
         if(!isset($subpanelTabsPref)) $subpanelTabsPref = $GLOBALS['sugar_config']['default_subpanel_tabs'];

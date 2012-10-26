@@ -21,7 +21,7 @@
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'include/SugarTheme/SugarTheme.php';
 require_once 'include/dir_inc.php';
 
@@ -173,6 +173,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     {
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/css/');
         sugar_file_put_contents('custom/themes/'.$this->_themeObject->__toString().'/css/style.css','h3 { color: red; }');
+        SugarAutoLoader::addToMap('custom/themes/'.$this->_themeObject->__toString().'/css/style.css', false);
 
         $matches = array();
         preg_match_all('/href="([^"]+)"/',$this->_themeObject->getCSS(),$matches);
@@ -232,7 +233,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetJSCustom()
     {
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/js/');
-        sugar_file_put_contents('custom/themes/'.$this->_themeObject->__toString().'/js/style.js','var x = 1;');
+        SugarAutoLoader::put('custom/themes/'.$this->_themeObject->__toString().'/js/style.js','var x = 1;');
 
         $matches = array();
         preg_match_all('/src="([^"]+)"/',$this->_themeObject->getJS(),$matches);
@@ -286,7 +287,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetImageURLCustom()
     {
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/images/');
-        sugar_touch('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.gif');
+        SugarAutoLoader::touch('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.gif');
 
         $this->assertEquals('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.gif',
             $this->_themeObject->getImageURL('Accounts.gif',false));
@@ -295,8 +296,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetImageURLCustomDifferentExtension()
     {
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/images/');
-        sugar_touch('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.png');
-
+        SugarAutoLoader::touch('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.png');
         $this->assertEquals('custom/themes/'.$this->_themeObject->__toString().'/images/Accounts.png',
             $this->_themeObject->getImageURL('Accounts.gif',false));
     }
@@ -309,12 +309,12 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetImageURLDefaultCustom()
     {
         create_custom_directory('themes/default/images/');
-        sugar_touch('custom/themes/default/images/Emails.gif');
+        SugarAutoLoader::touch('custom/themes/default/images/Emails.gif');
 
         $this->assertEquals('custom/themes/default/images/Emails.gif',
             $this->_themeObject->getImageURL('Emails.gif',false));
 
-        unlink('custom/themes/default/images/Emails.gif');
+        SugarAutoLoader::unlink('custom/themes/default/images/Emails.gif');
     }
 
     public function testGetImageURLNotFound()
@@ -347,7 +347,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetTemplateCustom()
     {
         create_custom_directory('themes/'.$this->_themeObject->__toString().'/tpls/');
-        sugar_touch('custom/themes/'.$this->_themeObject->__toString().'/tpls/header.tpl');
+        SugarAutoLoader::touch('custom/themes/'.$this->_themeObject->__toString().'/tpls/header.tpl');
 
         $this->assertEquals('custom/themes/'.$this->_themeObject->__toString().'/tpls/header.tpl',
             $this->_themeObject->getTemplate('header.tpl'));
@@ -356,7 +356,7 @@ class SugarThemeTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetTemplateDefaultCustom()
     {
         create_custom_directory('themes/default/tpls/');
-        sugar_touch('custom/themes/default/tpls/SomeDefaultTemplate.tpl');
+        SugarAutoLoader::touch('custom/themes/default/tpls/SomeDefaultTemplate.tpl');
 
         $this->assertEquals('custom/themes/default/tpls/SomeDefaultTemplate.tpl',
             $this->_themeObject->getTemplate('SomeDefaultTemplate.tpl'));

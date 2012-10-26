@@ -46,7 +46,7 @@ $mod_strings = array (
     'LBL_REPORTS_TO_USER_NAME' => 'Reports To',
 
     //forecast table
-    'LBL_FORECAST_ID' => 'ID',
+    'LBL_FORECAST_ID' => 'Forecast ID',
     'LBL_FORECAST_TIME_ID' => 'Time Period ID',
     'LBL_FORECAST_TYPE' => 'Forecast Type',
     'LBL_FORECAST_OPP_COUNT' => 'Opportunities',
@@ -191,7 +191,10 @@ $mod_strings = array (
     'LBL_LIKELY_CASE_VALUE' => 'Likely (Adjusted)',
     'LBL_WORST_CASE_VALUE' => 'Worst (Adjusted)',
     'LBL_CURRENCY' => 'Currency',
+    'LBL_CURRENCY_ID' => 'Currency ID',
     'LBL_CURRENCY_RATE' => 'Currency Rate',
+    'LBL_BASE_RATE' => 'Base Rate',
+
     'LBL_BEST_CASE_BASE_CURRENCY' => 'Best (Adjusted) base currency',
     'LBL_LIKELY_CASE_BASE_CURRENCY' => 'Likely (Adjusted) base currency',
     'LBL_WORST_CASE_BASE_CURRENCY' => 'Worst (Adjusted) base currency',
@@ -228,6 +231,9 @@ $mod_strings = array (
     'LBL_AMOUNT' => 'Amount',
     'LBL_DATE_CLOSED' => 'Expected Close',
     'LBL_PROBABILITY' => 'Probability',
+    'LBL_PRODUCT_ID' => 'Product ID',
+    'LBL_QUOTA_ID' => 'Quota ID',
+    'LBL_VERSION' => 'Version',
 
     //Labels for forecasting history log and endpoint
     'LBL_ERROR_NOT_MANAGER' => 'Error: user {0} does not have manager access to request forecasts for {1}',
@@ -244,6 +250,14 @@ $mod_strings = array (
     'LBL_COMMITTED_HISTORY_CHANGED' => 'Updated forecast worst, likely and best all stayed the same',
     'LBL_COMMITTED_THIS_MONTH' => 'This month on {0}',
     'LBL_COMMITTED_MONTHS_AGO' => '{0} months ago on {1}',
+    'LBL_COMMITTED_HISTORY_BEST_LIKELY_WORST_SETUP' => 'Setup forecast likely to {5}, best to {2} and worst to {8}',
+    'LBL_COMMITTED_HISTORY_BEST_LIKELY_SETUP' => 'Setup forecast likely to {5} and best to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_WORST_SETUP' => 'Setup forecast likely to {2} and worst to {5}',
+    'LBL_COMMITTED_HISTORY_BEST_WORST_SETUP' => 'Setup forecast best to {2} and worst to {5}',
+    'LBL_COMMITTED_HISTORY_BEST_SETUP' => 'Setup forecast best to {2}',
+    'LBL_COMMITTED_HISTORY_LIKELY_SETUP' => 'Setup forecast likely to {2}',
+    'LBL_COMMITTED_HISTORY_WORST_SETUP' => 'Setup forecast worst to {2}',
+    'LBL_COMMITTED_HISTORY_SETUP' => 'Setup forecast likely, best and worst all stayed the same',
 
     //Labels for jsTree implementation
     'LBL_TREE_PARENT' => 'Parent',
@@ -259,6 +273,7 @@ $mod_strings = array (
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
+    'LBL_WORKSHEET_ID' => 'Worksheet ID',
 
     // Labels for Chart Options
     'LBL_DATA_SET' => 'Data Set:',
@@ -302,7 +317,6 @@ $mod_strings = array (
 
     // Actions Dropdown
     'LBL_ACTIONS' => 'Actions',
-    'LBL_EXPORT_PDF' => 'Export PDF',
     'LBL_EXPORT_CSV' => 'Export CSV',
     'LBL_CANCEL' => 'Cancel',
 
@@ -344,9 +358,9 @@ $mod_strings = array (
     // category config
     'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
     'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS' => 'Select the way you would like to categorize opportunities.',
-    'LBL_FORECASTS_CONFIG_SHOW_2_CATEGORIES' => 'Two Categories: This option gives a user the ability to be included or omitted from a forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_3_CATEGORIES' => 'Three Categories: This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be omitted from the forecast.',
-    'LBL_FORECASTS_CONFIG_SHOW_N_CATEGORIES' => 'N Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
+    'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or omitted from a forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be omitted from the forecast.',
+    'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
 
     // range config
     'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Show these ranges on the worksheets',

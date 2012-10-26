@@ -40,9 +40,9 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 		{
 		   $this->hasExistingCustomSearchFields = true;
 		   copy('custom/modules/Opportunities/metadata/SearchFields.php', 'custom/modules/Opportunities/metadata/SearchFields.php.bak');
-		   unlink('custom/modules/Opportunities/metadata/SearchFields.php');
+		   SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php');
 		} else if(!file_exists('custom/modules/Opportunities/metadata')) {
-		   mkdir_recursive('custom/modules/Opportunities/metadata');
+		   SugarAutoLoader::ensureDir('custom/modules/Opportunities/metadata');
 		}
 
     	//Setup Opportunities module and date_closed field
@@ -103,7 +103,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 
     	if(!$this->hasExistingCustomSearchFields)
 		{
-		   unlink('custom/modules/Opportunities/metadata/SearchFields.php');
+		   SugarAutoLoader::unlink('custom/modules/Opportunities/metadata/SearchFields.php');
 		}
 
 		if(file_exists('custom/modules/Opportunities/metadata/SearchFields.php.bak')) {
@@ -113,7 +113,7 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 
 		if(file_exists($this->smartyTestFile))
 		{
-			unlink($this->smartyTestFile);
+			SugarAutoLoader::unlink($this->smartyTestFile);
 		}
 
     }
@@ -178,13 +178,13 @@ class RangeSearchTest extends Sugar_PHPUnit_Framework_TestCase
 	            'value' => '10000',
 	            'operator' => '=',
 
-	    );    
+	    );
 
-		$where_clauses = $this->searchForm->generateSearchWhere();		
+		$where_clauses = $this->searchForm->generateSearchWhere();
 		$this->assertEquals("(opportunities.amount >= 9999.99 AND opportunities.amount <= 10000.01)", $where_clauses[0]);
-		
+
     }
-    
+
     /**
      * testRangeSearchWithSavedReportValues
      * This test attempts to simulate testing what would happen should a saved report be invoked against

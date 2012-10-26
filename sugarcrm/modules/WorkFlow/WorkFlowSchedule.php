@@ -26,14 +26,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: WorkFlowSchedule.php 56268 2010-05-05 16:49:49Z clee $
- * Description:
- ********************************************************************************/
 require_once('include/workflow/workflow_utils.php');
 require_once('include/workflow/action_utils.php');
 
-// WorkFlowSchedule is used to process workflow time cron objects
+/**
+ *  WorkFlowSchedule is used to process workflow time cron objects
+ */
 class WorkFlowSchedule extends SugarBean {
     var $field_name_map;
     // Stored fields
@@ -94,21 +92,17 @@ class WorkFlowSchedule extends SugarBean {
     // This is the list of fields that are required
     var $required_fields =  array("module"=>1, 'bean_id'=>1, 'workflow_id'=>1);
 
+    //BEGIN SUGARCRM flav=pro ONLY
+    var $disable_row_level_security = true;
+    //END SUGARCRM flav=pro ONLY
+
     function WorkFlowSchedule() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
-            if(file_exists('custom/metadata/workflow_schedulesMetaData.php')) {
-            require('custom/metadata/workflow_schedulesMetaData.php');
-            } else {
-            require('metadata/workflow_schedulesMetaData.php');
-            }
+            require SugarAutoLoader::existingCustomOne('metadata/workflow_schedulesMetaData.php');
         }
 
-
         parent::SugarBean();
-
-        $this->disable_row_level_security =true;
-
     }
 
 

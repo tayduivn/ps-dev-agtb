@@ -23,7 +23,9 @@ class SugarFieldBase {
     	$this->type = $type;
         $this->ss = new Sugar_Smarty();
     }
-    function fetch($path){
+
+    function fetch($path)
+    {
     	$additional = '';
     	if(!$this->hasButton && !empty($this->button)){
     		$additional .= '<input type="button" class="button" ' . $this->button . '>';
@@ -37,7 +39,7 @@ class SugarFieldBase {
         if(!empty($this->image)){
             $additional .= ' <img ' . $this->image . '>';
         }
-    	return $this->ss->fetch($path) . $additional;
+    	return $this->ss->fetchCustom($path) . $additional;
     }
 
     function findTemplate($view){
@@ -57,21 +59,13 @@ class SugarFieldBase {
         foreach ( $classList as $className ) {
             global $current_language;
             if(isset($current_language)) {
-                $tplName = 'include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl';
-                if ( file_exists('custom/'.$tplName) ) {
-                    $tplName = 'custom/'.$tplName;
-                    break;
-                }
-                if ( file_exists($tplName) ) {
+                $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl');
+                if ($tplName) {
                     break;
                 }
             }
-            $tplName = 'include/SugarFields/Fields/'. $className .'/'. $view .'.tpl';
-            if ( file_exists('custom/'.$tplName) ) {
-                $tplName = 'custom/'.$tplName;
-                break;
-            }
-            if ( file_exists($tplName) ) {
+            $tplName = SugarAutoLoader::existingCustomOne('include/SugarFields/Fields/'. $className .'/'. $view .'.tpl');
+            if ($tplName) {
                 break;
             }
         }
@@ -88,7 +82,7 @@ class SugarFieldBase {
 
     /**
      * Formats a field for the Sugar API
-     * 
+     *
      * @param array     $data
      * @param SugarBean $bean
      * @param array     $args
@@ -125,7 +119,7 @@ class SugarFieldBase {
 
     function getListViewSmarty($parentFieldArray, $vardef, $displayParams, $col) {
         $tabindex = 1;
-        //fixing bug #46666: don't need to format enum and radioenum fields 
+        //fixing bug #46666: don't need to format enum and radioenum fields
         //because they are already formated in SugarBean.php in the function get_list_view_array() as fix of bug #21672
         if ($this->type != 'Enum' && $this->type != 'Radioenum')
         {
@@ -135,7 +129,7 @@ class SugarFieldBase {
         {
         	$vardef['name'] = strtoupper($vardef['name']);
         }
-        
+
     	$this->setup($parentFieldArray, $vardef, $displayParams, $tabindex, false);
 
         $this->ss->left_delimiter = '{';
@@ -182,7 +176,7 @@ class SugarFieldBase {
 	// If readonly is set in displayParams, the vardef will be displayed as in DetailView.
 	if (isset($displayParams['readonly']) && $displayParams['readonly']) {
 		return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'DetailView');
-	}	
+	}
 	// ~ jpereira@dri - #Bug49513 - Readonly type not working as expected
        return $this->getSmartyView($parentFieldArray, $vardef, $displayParams, $tabindex, 'EditView');
     }
@@ -548,6 +542,21 @@ class SugarFieldBase {
             $value = sugar_substr($value, $vardef['len']);
         }
 
+        return $value;
+    }
+
+
+    /**
+     * Handles export field sanitizing for field type
+     *
+     * @param $value string value to be sanitized
+     * @param $vardef array representing the vardef definition
+     * @param $focus SugarBean object
+     *
+     * @return string sanitized value
+     */
+    public function exportSanitize($value, $vardef, $focus)
+    {
         return $value;
     }
 

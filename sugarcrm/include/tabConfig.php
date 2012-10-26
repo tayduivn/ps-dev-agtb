@@ -57,7 +57,7 @@ $GLOBALS['tabStructure'] = array(
             "Home",
             "Accounts",
             "Contacts",
-            "Leads",    
+            "Leads",
             "Campaigns",
             "Prospects",
             "ProspectLists",
@@ -119,7 +119,3 @@ $GLOBALS['tabStructure'] = array(
 //END SUGARCRM flav=pro || flav=sales ONLY
 );
 
-if(file_exists('custom/include/tabConfig.php')){
-	require_once('custom/include/tabConfig.php');
-}
-?>

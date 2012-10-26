@@ -24,9 +24,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $in_total_group_stages =  $GLOBALS['app_list_strings']['in_total_group_stages'];
 $pdf_group_subtotal = true;
 
-if (file_exists('custom/modules/Quotes/config.php'))
+if (SugarAutoLoader::existing('custom/modules/Quotes/config.php'))
 {
 	include_once('custom/modules/Quotes/config.php');
 }
-
-?>

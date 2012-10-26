@@ -34,7 +34,8 @@ class default_formatter {
 
    public function __construct() {}
 
-   public function getDetailViewFormat() {
+   public function getDetailViewFormat()
+   {
    	  $source = $this->_component->getSource();
    	  $class = get_class($source);
    	  $dir = str_replace('_', '/', $class);
@@ -46,15 +47,13 @@ class default_formatter {
    	  $mapping = !empty($mapping['beans'][$this->_module]) ? implode(',', array_values($mapping['beans'][$this->_module])) : '';
    	  $this->_ss->assign('mapping', $mapping);
 
-   	  if(file_exists("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl")) {
-   	  	 return $this->_ss->fetch("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl");
-      } else if(file_exists("modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl")) {
-      	 return $this->_ss->fetch("modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl");
-      } else if(file_exists("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl")) {
-      	 return $this->_ss->fetch("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl");
-      } else if(file_exists("modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl")) {
-      	 return $this->_ss->fetch("modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl");
-      } else if(preg_match('/_soap_/', $class)) {
+   	  $tpl = SugarAutoLoader::existingCustomOne("modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl",
+   	      "modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl");
+   	  if(!empty($tpl)) {
+   	  	return  $this->_ss->fetch($tpl);
+   	  }
+
+   	  if(strpos('_soap_', $class) !== false) {
       	 return $this->_ss->fetch("include/connectors/formatters/ext/soap/tpls/default.tpl");
       } else {
       	 return $this->_ss->fetch("include/connectors/formatters/ext/rest/tpls/default.tpl");
@@ -73,7 +72,8 @@ class default_formatter {
    	  return '';
    }
 
-   protected function fetchSmarty(){
+   protected function fetchSmarty()
+   {
    	  $source = $this->_component->getSource();
    	  $class = get_class($source);
    	  $dir = str_replace('_', '/', $class);
@@ -81,15 +81,14 @@ class default_formatter {
    	  $this->_ss->assign('config', $config);
 	  $this->_ss->assign('source', $class);
 	  $this->_ss->assign('module', $this->_module);
-   	  if(file_exists("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl")) {
-	  	return $this->_ss->fetch("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl");
-	  } else if(file_exists("modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl")) {
-	   	return $this->_ss->fetch("modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl");
-	  } else if(file_exists("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl")) {
-	   	return $this->_ss->fetch("custom/modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl");
-	  } else {
-	   	return $this->_ss->fetch("modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl");
+
+	  $tpl = SugarAutoLoader::existingCustomOne("modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl",
+	      "modules/Connectors/connectors/formatters/{$dir}/tpls/{$this->_module}.tpl");
+	  if(!empty($tpl)) {
+	  	return $this->_ss->fetch($tpl);
 	  }
+
+	  return $this->_ss->fetch("modules/Connectors/connectors/formatters/{$dir}/tpls/default.tpl");
    }
 
    public function getSourceMapping(){

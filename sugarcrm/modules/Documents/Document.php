@@ -19,12 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry)
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
-/*********************************************************************************
- * $Id: Document.php 23743 2007-06-19 01:21:46Z clee $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
  ********************************************************************************/
 require_once ('include/upload_file.php');
 

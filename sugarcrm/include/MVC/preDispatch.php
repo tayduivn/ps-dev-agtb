@@ -20,7 +20,7 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *Portions created by SugarCRM are Copyright(C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/* 
+/*
  * First step in removing getimage and getYUIComboFile -- at least this bypasses most of the app,
  * making assets load faster.
  */
@@ -28,8 +28,10 @@ if( isset($_GET["entryPoint"]) )
 {
 	if($_GET["entryPoint"] == "getImage")
     {
-		require_once('include/SugarTheme/SugarTheme.php');
 		require_once('include/utils.php');
+        require_once('include/SugarTheme/SugarTheme.php');
+        require_once('include/utils/autoloader.php');
+        SugarAutoLoader::init();
 		include("include/SugarTheme/getImage.php");
 		die();
 	}

@@ -26,20 +26,11 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: UnifiedSearchAdvanced.php 56345 2010-05-10 21:19:37Z jenny $
- * Description:  TODO: To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
-
 
 class UnifiedSearchAdvanced {
 
     var $query_string = '';
-    
+
     /* path to search form */
     var $searchFormPath = 'include/SearchForm/SearchForm2.php';
 
@@ -151,7 +142,7 @@ class UnifiedSearchAdvanced {
      *
      * Search function run when user goes to Show All and runs a search again.  This outputs the search results
      * calling upon the various listview display functions for each module searched on.
-     * 
+     *
      * Todo: Sync this up with SugarSpot.php search method.
      *
      *
@@ -206,11 +197,7 @@ class UnifiedSearchAdvanced {
 		}
 
 
-		$templateFile = 'modules/Home/UnifiedSearchAdvancedForm.tpl';
-		if(file_exists('custom/' . $templateFile))
-		{
-		   $templateFile = 'custom/'.$templateFile;
-		}
+		$templateFile = SugarAutoLoader::existingCustomOne('modules/Home/UnifiedSearchAdvancedForm.tpl');
 
 		echo $this->getDropDownDiv($templateFile);
 
@@ -230,10 +217,9 @@ class UnifiedSearchAdvanced {
                 //retrieve the original list view defs and store for processing in case of custom layout changes
                 require('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
 				$orig_listViewDefs = $listViewDefs;
-
-                if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
-                {
-                    require('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+                $defs = SugarAutoLoader::loadWithMetafiles($seed->module_dir, 'listviewdefs');
+                if($defs) {
+                    require $defs;
                 }
 
                 if ( !isset($listViewDefs) || !isset($listViewDefs[$seed->module_dir]) )
@@ -287,7 +273,7 @@ class UnifiedSearchAdvanced {
                  */
                 require_once $beanFiles[$beanName] ;
                 $seed = new $beanName();
-                
+
 				require_once $this->searchFormPath;
                 $searchForm = new $this->searchFormClass ( $seed, $moduleName ) ;
 
@@ -385,25 +371,10 @@ class UnifiedSearchAdvanced {
 			$manager->loadVardef( $moduleName , $beanName ) ;
 
 			// obtain the field definitions used by generateSearchWhere (duplicate code in view.list.php)
-			if(file_exists('custom/modules/'.$moduleName.'/metadata/metafiles.php')){
-                require('custom/modules/'.$moduleName.'/metadata/metafiles.php');
-            }elseif(file_exists('modules/'.$moduleName.'/metadata/metafiles.php')){
-                require('modules/'.$moduleName.'/metadata/metafiles.php');
-            }
-
-
-			if(!empty($metafiles[$moduleName]['searchfields']))
-			{
-				require $metafiles[$moduleName]['searchfields'] ;
-			} else if(file_exists("modules/{$moduleName}/metadata/SearchFields.php")) {
-				require "modules/{$moduleName}/metadata/SearchFields.php" ;
+			$defs = SugarAutoLoader::loadWithMetafiles($moduleName, 'SearchFields', 'searchfields');
+			if($defs) {
+			    require $defs;
 			}
-
-			//Load custom SearchFields.php if it exists
-			if(file_exists("custom/modules/{$moduleName}/metadata/SearchFields.php"))
-			{
-				require "custom/modules/{$moduleName}/metadata/SearchFields.php" ;
-			}				
 
             //If there are $searchFields are empty, just continue, there are no search fields defined for the module
             if(empty($searchFields[$moduleName]))
@@ -563,7 +534,7 @@ class UnifiedSearchAdvanced {
     		unlink($cache_search);
     	}
 	}
-    
+
 
     /**
      * getUnifiedSearchModules
@@ -604,7 +575,7 @@ class UnifiedSearchAdvanced {
      */
     public function getUnifiedSearchModulesDisplay()
     {
-		if(!file_exists('custom/modules/unified_search_modules_display.php'))
+		if(!SugarAutoLoader::existing('custom/modules/unified_search_modules_display.php'))
 		{
             $unified_search_modules = $this->getUnifiedSearchModules();
 

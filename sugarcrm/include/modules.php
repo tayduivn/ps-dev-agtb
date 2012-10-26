@@ -18,10 +18,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************gf
- * $Id: modules.php 56945 2010-06-14 19:51:27Z jmertic $
- * Description:  Executes a step in the installation process.
- ********************************************************************************/
 
 $moduleList = array();
 // this list defines the modules shown in the top tab list of the app
@@ -548,12 +544,6 @@ $modInvisList[] = 'PdfManager';
 $adminOnlyList['PdfManager'] = array('all' => 1);
 //END SUGARCRM flav=pro ONLY
 
-if (file_exists('include/modules_override.php'))
-{
-    include('include/modules_override.php');
+foreach(SugarAutoLoader::existing('include/modules_override.php', SugarAutoLoader::loadExtension("modules")) as $file) {
+    include $file;
 }
-if (file_exists('custom/application/Ext/Include/modules.ext.php'))
-{
-    include('custom/application/Ext/Include/modules.ext.php');
-}
-?>

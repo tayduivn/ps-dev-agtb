@@ -153,22 +153,15 @@ class LoggerManager
  	 */
  	protected function _findAvailableLoggers()
  	{
- 	    $locations = array('include/SugarLogger','custom/include/SugarLogger');
+ 	    $locations = SugarAutoLoader::getFilesCustom('include/SugarLogger');
  	    foreach ( $locations as $location ) {
-            if (sugar_is_dir($location) && $dir = opendir($location)) {
-                while (($file = readdir($dir)) !== false) {
-                    if ($file == ".."
-                            || $file == "."
-                            || $file == "LoggerTemplate.php"
-                            || $file == "LoggerManager.php"
-                            || !is_file("$location/$file")
-                            )
-                        continue;
-                    require_once("$location/$file");
-                    $loggerClass = basename($file, ".php");
-                    if ( class_exists($loggerClass) && class_implements($loggerClass,'LoggerTemplate') )
-                        self::$_loggers[$loggerClass] = new $loggerClass();
-                }
+ 	        $loggerClass = basename($location, ".php");
+            if($loggerClass == "LoggerTemplate" || $loggerClass == "LoggerManager") {
+                continue;
+            }
+            require_once $location;
+            if ( class_exists($loggerClass) && class_implements($loggerClass,'LoggerTemplate') ) {
+                self::$_loggers[$loggerClass] = new $loggerClass();
             }
         }
  	}

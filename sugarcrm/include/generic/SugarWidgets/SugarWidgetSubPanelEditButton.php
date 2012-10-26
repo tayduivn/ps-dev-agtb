@@ -29,10 +29,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2005 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: SugarWidgetSubPanelEditButton.php 54581 2010-02-18 00:01:21Z dwheeler $
-
-
-//TODO Rename this to edit link
 class SugarWidgetSubPanelEditButton extends SugarWidgetField
 {
     protected static $defs = array();
@@ -81,11 +77,14 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
     protected function getSubpanelDefs($module_dir)
     {
         if(!isset(self::$defs[$module_dir])) {
-            if (file_exists ( "modules/$module_dir/metadata/subpaneldefs.php" ))
-                require "modules/$module_dir/metadata/subpaneldefs.php";
-
-            if (file_exists ( "custom/modules/$module_dir/Ext/Layoutdefs/layoutdefs.ext.php" ))
-                require "custom/modules/$module_dir/Ext/Layoutdefs/layoutdefs.ext.php";
+            $defs = SugarAutoLoader::loadWithMetafiles($module_dir, 'subpaneldefs');
+            if($defs) {
+                require $defs;
+            }
+            $defs = SugarAutoLoader::loadExtension("layoutdefs", $module_dir);
+            if($defs) {
+            	require $defs;
+            }
 
             if(!isset($layout_defs))
             {
@@ -122,10 +121,8 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
                 }
                 //include the button class and see if it extends quick create
                 $className = 'SugarWidget'.$buttonClass;
-                $widgetClass = get_custom_file_if_exists('include/generic/SugarWidgets/'.$className.'.php');
-                if (file_exists($widgetClass)){
-                    include_once($widgetClass);
-                    if (class_exists($className,true)){
+                if (SugarAutoLoader::requireWithCustom('include/generic/SugarWidgets/'.$className.'.php')) {
+                    if (class_exists($className)){
                         $button = new $className();
                         //set valid flag to true if this class extends quickcreate button
                         if($button instanceof SugarWidgetSubPanelTopButtonQuickCreate){
@@ -143,7 +140,7 @@ class SugarWidgetSubPanelEditButton extends SugarWidgetField
         }
 
         //So our create buttons are defined, now lets check for the proper quick create meta files
-        if(file_exists('custom/modules/'.$module.'/metadata/quickcreatedefs.php') || file_exists('modules/'.$module.'/metadata/quickcreatedefs.php')){
+        if(SugarAutoLoader::existingCustomOne('modules/'.$module.'/metadata/quickcreatedefs.php')) {
             return true;
         }
 

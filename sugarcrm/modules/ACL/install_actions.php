@@ -38,14 +38,16 @@ $GLOBALS['db']->query("UPDATE acl_actions set acltype = 'TrackerQuery' where cat
 if(is_admin($current_user)){
     foreach($ACLbeanList as $module=>$class){
 
-        if(empty($installed_classes[$class]) && isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
+        if(empty($installed_classes[$class]) && isset($beanFiles[$class])){
             if($class == 'Tracker'){
                 //BEGIN SUGARCRM flav=pro ONLY
                 ACLAction::addActions('Trackers', 'Tracker');
                 //END SUGARCRM flav=pro ONLY
             } else {
-                require_once($beanFiles[$class]);
-                $mod = new $class();
+                $mod = BeanFactory::newBean($module);
+                if(empty($mod)) {
+                    continue;
+                }
                 $GLOBALS['log']->debug("DOING: $class");
                 if($mod->bean_implements('ACL') && empty($mod->acl_display_only)){
                     // BUG 10339: do not display messages for upgrade wizard
