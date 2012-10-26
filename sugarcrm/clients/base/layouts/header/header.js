@@ -29,14 +29,17 @@
      * that tells the module list to resize
      */
     resize: function() {
-        var totalWidth = 100, //100px: spacing for submegamenu, padding and border lines
-            modulelist, maxMenuWidth,
+        var totalWidth = 0,
+            modulelist, maxMenuWidth, componentElement,
             container = this.$('.container-fluid');
 
         _.each(this._components, function(component) {
+            componentElement = component.$el.children().first();
             if (component.name !== 'modulelist') {
-                totalWidth += component.$el.children().first().outerWidth(true);
-                component.$el.children().first().attr('log',component.$el.children().first().outerWidth(true));
+                // only calculate width for visible components
+                if (componentElement.is(':visible')) {
+                    totalWidth += componentElement.outerWidth(true);
+                }
             } else {
                 modulelist = component.$el;
                 modulelist.hide();

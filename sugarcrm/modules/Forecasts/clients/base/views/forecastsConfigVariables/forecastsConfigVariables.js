@@ -1,5 +1,11 @@
 ({
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
 
+        if(!_.isUndefined(options.meta.registerLabelAsBreadCrumb) && options.meta.registerLabelAsBreadCrumb == true) {
+            this.layout.registerBreadCrumbLabel(options.meta.panels[0].label);
+        }
+    },
     /**
      * Overriding _renderField because we need to set up the multiselect fields to work properly
      * @param field
@@ -10,6 +16,10 @@
             field = this._setUpMultiselectField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
+
+        // fix the width of the field's container
+        field.$el.find('.chzn-container').css("width", "100%");
+        field.$el.find('.chzn-drop').css("width", "100%");
     },
 
     /**

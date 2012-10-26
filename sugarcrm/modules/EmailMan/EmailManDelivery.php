@@ -21,7 +21,9 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 //FILE SUGARCRM flav!=sales ONLY
 
-require_once('include/SugarPHPMailer.php');
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
+
+global $current_user;
 
 $test=false;
 if (isset($_REQUEST['mode']) && $_REQUEST['mode']=='test') {
@@ -34,7 +36,16 @@ else  {
 	$send_all=false; //if set to true email delivery will continue..to run until all email have been delivered.
 }
 $GLOBALS['log'] = LoggerManager::getLogger('SugarCRM');
-$mail = new SugarPHPMailer();
+
+$mailer = null;
+
+try {
+    $mailer = MailerFactory::getMailerForUser($current_user);
+} catch (MailerException $me) {
+    $GLOBALS['log']->fatal("Email delivery error:" . $me->getMessage());
+    return;
+}
+
 $admin = new Administration();
 $admin->retrieveSettings();
 if (isset($admin->settings['massemailer_campaign_emails_per_run'])) {
@@ -50,11 +61,6 @@ if (isset($admin->settings['massemailer_email_copy'])) {
 }
 
 $emailsPerSecond = 10;
-
-$mail->setMailerForSystem();
-$mail->From     = "no-reply@example.com";
-$mail->FromName = "no-reply";
-$mail->ContentType="text/html";
 
 $campaign_id=null;
 if (isset($_REQUEST['campaign_id']) && !empty($_REQUEST['campaign_id'])) {
@@ -106,7 +112,7 @@ do {
 	$no_items_in_queue=true;
 
 	$result = $db->limitQuery($select_query,0,$max_emails_per_run);
-	global $current_user;
+
 	if(isset($current_user)){
 		$temp_user = $current_user;
 	}
@@ -215,23 +221,26 @@ do {
 			}
 		}
 
-		if(!$emailman->sendEmail($mail,$massemailer_email_copy,$test)){
-			$GLOBALS['log']->fatal("Email delivery FAILURE:" . print_r($row,true));
-		} else {
-			$GLOBALS['log']->debug("Email delivery SUCCESS:" . print_r($row,true));
-	 	}
-		if($mail->isError()){
-			$GLOBALS['log']->fatal("Email delivery error:" . print_r($row,true). $mail->ErrorInfo);
-		}
+        try {
+            $emailman->sendEmail($mailer, $massemailer_email_copy, $test);
+            $GLOBALS['log']->debug("Email delivery SUCCESS:" . print_r($row,true));
+        } catch (MailerException $me) {
+            switch ($me->getCode()) {
+                case MailerException::FailedToSend:
+                    $GLOBALS['log']->fatal("Email delivery FAILURE:" . print_r($row,true));
+                    break;
+                default:
+                    break;
+            }
+
+            $GLOBALS['log']->fatal("Email delivery error:" . print_r($row,true). $me->getMessage());
+        }
 	}
 
 	$send_all=$send_all?!$no_items_in_queue:$send_all;
 
 }while ($send_all == true);
 
-if ($admin->settings['mail_sendtype'] == "SMTP") {
-	$mail->SMTPClose();
-}
 if(isset($temp_user)){
 	$current_user = $temp_user;
 }

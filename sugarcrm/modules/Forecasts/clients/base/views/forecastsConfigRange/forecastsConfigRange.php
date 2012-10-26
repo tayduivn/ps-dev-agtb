@@ -23,9 +23,10 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * All Rights Reserved.
  ********************************************************************************/
 $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
+    'registerLabelAsBreadCrumb' => true,
     'panels' => array(
         array(
-            'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE',
+            'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_RANGE',
             'fields' => array(
                 array(
                     'name' => 'show_worksheet_likely',

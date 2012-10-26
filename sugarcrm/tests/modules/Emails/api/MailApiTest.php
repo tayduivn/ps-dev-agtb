@@ -179,6 +179,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi01
      * @group mailer
      */
@@ -192,7 +193,7 @@ class MailApiTest extends RestTestBase {
         $http_status = $post_response['info']['http_code'];
         $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -211,6 +212,7 @@ class MailApiTest extends RestTestBase {
     }
 
     /**
+     * @group email
      * @group mailapi02
      * @group mailer
      */
@@ -228,7 +230,7 @@ class MailApiTest extends RestTestBase {
         $http_status = $post_response['info']['http_code'];
         $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -254,6 +256,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi03
      * @group mailer
      */
@@ -272,7 +275,7 @@ class MailApiTest extends RestTestBase {
         $http_status = $post_response['info']['http_code'];
         $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -292,6 +295,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi04
      * @group mailer
      */
@@ -311,7 +315,7 @@ class MailApiTest extends RestTestBase {
         $http_status = $post_response['info']['http_code'];
         $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -334,6 +338,7 @@ class MailApiTest extends RestTestBase {
     }
 
     /**
+     * @group email
      * @group mailapi05
      * @group mailer
      */
@@ -353,7 +358,7 @@ class MailApiTest extends RestTestBase {
         $http_status = $post_response['info']['http_code'];
         $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -372,6 +377,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi06
      * @group mailer
      */
@@ -388,7 +394,7 @@ class MailApiTest extends RestTestBase {
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -411,6 +417,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi07
      * @group mailer
      */
@@ -435,7 +442,7 @@ class MailApiTest extends RestTestBase {
         $post_response = $this->_restCall("/Mail/", json_encode($this->input), 'POST');
         $this->assertEquals(200, $post_response['info']['http_code'], "Bad Http Status Code");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -456,6 +463,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi08
      * @group mailer
      */
@@ -482,7 +490,7 @@ class MailApiTest extends RestTestBase {
         $http_status = $post_response['info']['http_code'];
         $this->assertEquals(200, $http_status, "Unexpected HTTP Status: " . $http_status."\n");
         if (isset($reply['error'])) {
-            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_description']."\n";
+            echo "Error Type: " . $reply['error'] . " Error Message: " . $reply['error_message']."\n";
         }
         if (isset($reply['EMAIL']['id'])) {
             $this->email_id = $reply['EMAIL']['id'];
@@ -501,6 +509,7 @@ class MailApiTest extends RestTestBase {
 
 
     /**
+     * @group email
      * @group mailapi09
      * @group mailer
      */
@@ -512,7 +521,7 @@ class MailApiTest extends RestTestBase {
 
         $this->assertEquals(412, $post_response['info']['http_code'], "Expected Request Failure Http Status Code");
         $this->assertEquals("request_failure", $post_response['reply']['error'], "Expected Request Failure Response");
-        $this->assertEquals("Invalid Status Property", $post_response['reply']['error_description'], "Expected Request Failure Response");
+        $this->assertEquals("Invalid Status Property", $post_response['reply']['error_message'], "Expected Request Failure Response");
     }
 
 

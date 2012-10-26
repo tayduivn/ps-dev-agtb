@@ -40,7 +40,7 @@ if (empty($templatesArray)) {
     $modStringSrc = return_module_language($GLOBALS['current_language'], 'PdfManager');
     
     $logoUrl = './themes/default/images/pdf_logo.jpg';
-    if (defined(PDF_HEADER_LOGO)) {
+    if (defined('PDF_HEADER_LOGO')) {
         $logoUrl = K_PATH_CUSTOM_IMAGES.PDF_HEADER_LOGO;
         $imsize = @getimagesize($logoUrl);
         if ($imsize === FALSE) {

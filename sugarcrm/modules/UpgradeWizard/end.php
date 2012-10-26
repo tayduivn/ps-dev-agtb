@@ -365,8 +365,8 @@ if($_SESSION['current_db_version'] < '620')
 //setup forecast defualt settings
 if($_SESSION['current_db_version'] < '670')
 {
-    require_once('modules/Forecasts/ForecastsSeedData.php');
-    ForecastsSeedData::setupForecastSettings();
+    require_once('modules/Forecasts/ForecastsDefaults.php');
+    ForecastsDefaults::setupForecastSettings(true,$_SESSION['current_db_version'],$_SESSION['target_db_version']);
 }
 //END SUGARCRM flav=PRO ONLY
 

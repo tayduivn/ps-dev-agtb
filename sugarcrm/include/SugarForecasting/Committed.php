@@ -48,8 +48,6 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
      */
     protected function loadCommitted()
     {
-        global $current_user;
-
         $db = DBManagerFactory::getInstance();
 
         $args = $this->getArgs();
@@ -66,10 +64,9 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $results = $db->query($query);
 
         $forecasts = array();
-        $timedate = TimeDate::getInstance();
         while (($row = $db->fetchByAssoc($results))) {
-            $row['date_entered'] = $timedate->asIso($timedate->fromDb($row['date_entered']), $current_user);
-            $row['date_modified'] = $timedate->asIso($timedate->fromDb($row['date_modified']), $current_user);
+            $row['date_entered'] = $this->convertDateTimeToISO($row['date_entered']);
+            $row['date_modified'] = $this->convertDateTimeToISO($row['date_modified']);
             $forecasts[] = $row;
         }
 
@@ -86,7 +83,8 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         global $current_user;
 
         $args = $this->getArgs();
-
+		$db = DBManagerFactory::getInstance();
+		
         $args['opp_count'] = (!isset($args['opp_count'])) ? 0 : $args['opp_count'];
 
         /* @var $forecast Forecast */
@@ -95,6 +93,7 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         $forecast->timeperiod_id = $args['timeperiod_id'];
         $forecast->best_case = $args['best_case'];
         $forecast->likely_case = $args['likely_case'];
+        $forecast->worst_case = $args['worst_case'];
         $forecast->forecast_type = $args['forecast_type'];
         $forecast->opp_count = $args['opp_count'];
         $forecast->currency_id = $args['currency_id'];
@@ -105,9 +104,78 @@ class SugarForecasting_Committed extends SugarForecasting_AbstractForecast imple
         }
         $forecast->save();
 
+		//If there are any new worksheet entries that need created, do that here.
+        foreach($args["worksheetData"]["new"] as $sheet)
+        {
+        	//Update the Worksheet bean
+			$worksheet  = BeanFactory::getBean("Worksheet");
+			$worksheet->timeperiod_id = $args["timeperiod_id"];
+			$worksheet->user_id = $current_user->id;
+	        $worksheet->best_case = $sheet["best_case"];
+	        $worksheet->likely_case = $sheet["likely_case"];
+	        $worksheet->worst_case = $sheet["worst_case"];
+	        $worksheet->op_probability = $sheet["probability"];
+	        $worksheet->commit_stage = $sheet["commit_stage"];
+	        $worksheet->forecast_type = "Direct";
+	        $worksheet->related_forecast_type = "Product";
+	        $worksheet->related_id = $sheet["product_id"];
+	        $worksheet->currency_id = $args["currency_id"];
+	        $worksheet->base_rate = $args["base_rate"];
+	        $worksheet->version = 1;
+	        $worksheet->save();
+        }
+        
+        //Now we need to update any existing sheets using an ANSI standard update join
+        //that should work across all DBs
+        $worksheetIds = array();
+        foreach($args["worksheetData"]["current"] as $sheet)
+        {
+        	$worksheetIds[] = $sheet["worksheet_id"];
+        }
+        
+        if(count($worksheetIds) > 0)
+        {
+        	$sql = "update worksheet " .
+        	   		"set best_case = 	(" .
+        	   								"select p.best_case " .
+        	   								"from products p " .
+        	   								"where p.id = related_id" .
+        	   							"), " .
+        	   			"likely_case = (" .
+        	   								"select p.likely_case " .
+        	   								"from products p " .
+        	   								"where p.id = related_id" .
+        	   							"), " .
+        	   			"worst_case = (" .
+        	   								"select p.worst_case " .
+        	   								"from products p " .
+        	   								"where p.id = related_id" .
+        	   							"), " .
+        	   			"op_probability = (" .
+        	   									"select p.probability " .
+        	   									"from products p " .
+        	   									"where p.id = related_id" .
+        	   								"), " .
+        	   			"commit_stage = (" .
+        	   								"select p.commit_stage " .
+        	   								"from products p " .
+        	   								"where p.id = related_id" .
+        	   							  "), " .
+        	   			"version = 1 " .
+        	   	"where exists (" .
+        	   					"select * " .
+        	   					"from products p " .
+        	   					"where p.id = related_id" .
+        	   				  ") " .
+        	    "and id in ('" . implode("', '", $worksheetIds) . "')";
+        	        	        	
+        	$db->query($sql, true);      	        	
+        }
+        
+
         $timedate = TimeDate::getInstance();
-        $forecast->date_entered = $timedate->asIso($timedate->fromDb($forecast->date_entered), $current_user);
-        $forecast->date_modified = $timedate->asIso($timedate->fromDb($forecast->date_modified), $current_user);
+        $forecast->date_entered = $this->convertDateTimeToISO($forecast->date_entered);
+        $forecast->date_modified = $this->convertDateTimeToISO($forecast->date_modified);
 
         return $forecast->toArray(true);
     }

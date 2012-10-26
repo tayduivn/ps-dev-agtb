@@ -132,6 +132,10 @@ class RestBug54528Test extends RestTestPortalBase {
         //BEGIN SUGARCRM flav=pro ONLY
         $this->assertEquals($this->_user->default_team, $case->team_id, "Team ID doesn't match");
         $this->assertEquals($this->_user->default_team, $case->team_set_id, "Team Set ID doesn't match");
+
+//        $this->assertEquals($this->contact->team_id, $case->team_id, "Team ID doesn't match");
+//        $this->assertEquals($this->contact->team_set_id, $case->team_set_id, "Team Set ID doesn't match");
+
         //END SUGARCRM flav=pro ONLY
 
         $this->assertEquals($this->contact->assigned_user_id, $case->assigned_user_id, "Assigned user id doesn't match.");
@@ -152,6 +156,10 @@ class RestBug54528Test extends RestTestPortalBase {
         //BEGIN SUGARCRM flav=pro ONLY
         $this->assertEquals($this->_user->default_team, $bug->team_id, "Team ID doesn't match");
         $this->assertEquals($this->_user->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");        
+
+//        $this->assertEquals($this->contact->team_id, $bug->team_id, "Team ID doesn't match");
+//        $this->assertEquals($this->contact->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
+
         //END SUGARCRM flav=pro ONLY
 
         $this->assertEquals($this->contact->assigned_user_id, $bug->assigned_user_id, "Assigned user id doesn't.");

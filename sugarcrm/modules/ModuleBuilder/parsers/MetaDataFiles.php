@@ -143,6 +143,17 @@ class MetaDataFiles
     public static $viewsPath = 'views/';
 
     /**
+     * Listing of module name placeholders in SugarObject templates metadata
+     * 
+     * @var array
+     * @static
+     */
+    public static $moduleNamePlaceholders = array(
+        '<object_name>', '<_object_name>', '<OBJECT_NAME>',
+        '<module_name>', '<_module_name>', '<MODULE_NAME>',
+    );
+
+    /**
      * Gets the file base names array
      *
      * @static
@@ -228,7 +239,16 @@ class MetaDataFiles
         return '';
     }
 
-
+    /**
+     * Gets the listing of SugarObject template placeholders
+     * 
+     * @static
+     * @return array
+     */
+    public static function getModuleNamePlaceholders() {
+        return self::$moduleNamePlaceholders;
+    }
+    
     /**
      * helper to give us a parameterized path to create viewdefs for saving to file
      * @param string | array $path (path of keys to use for array)

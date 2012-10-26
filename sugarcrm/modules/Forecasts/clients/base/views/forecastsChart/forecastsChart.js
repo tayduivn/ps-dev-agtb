@@ -6,7 +6,7 @@
  */
 ({
     values:{},
-    url: app.api.buildURL('Forecasts/chart'),
+    url:'rest/v10/Forecasts/chart',
 
     chart: null,
 
@@ -22,45 +22,68 @@
     chartTitle: '',
     timeperiod_label: '',
 
+    stopRender: false,
+
     /**
      * events on the view to watch for
      */
     events : {
-        'click #forecastsChartDisplayOptions div.datasetOptions input[type=radio]' : 'changeDisplayOptions',
-        'click #forecastsChartDisplayOptions div.groupByOptions input[type=radio]' : 'changeGroupByOptions'
+        'click #forecastsChartDisplayOptions div.datasetOptions label.radio' : 'changeDisplayOptions',
+        'click #forecastsChartDisplayOptions div.groupByOptions label.radio' : 'changeGroupByOptions'
     },
 
     /**
      * event handler to update which dataset is used.
      */
-    changeDisplayOptions : function()
-    {
-        this.handleRenderOptions({dataset: this.getCheckedOptions('datasetOptions')});
+    changeDisplayOptions : function(evt) {
+        this.handleRenderOptions({dataset: this.handleOptionChange(evt)})
     },
 
     /**
      * Handle any group by changes
      */
-    changeGroupByOptions: function()
-    {
-        this.handleRenderOptions({group_by:_.first(this.getCheckedOptions('groupByOptions'))});
+    changeGroupByOptions: function(evt) {
+        this.handleRenderOptions({group_by:_.first(this.handleOptionChange(evt))});
+    },
+
+    /**
+     * Handle the click event for the optins menu
+     *
+     * @param evt
+     * @return {Array}
+     */
+    handleOptionChange: function(evt) {
+        el = $(evt.currentTarget);
+        // get the parent
+        pel = el.parents('div:first');
+
+        // un-check the one that is currently checked
+        pel.find('label.checked').removeClass('checked');
+
+        // check the one that was clicked
+        el.addClass('checked');
+
+        // return the dataset from the one that was clicked
+        return [el.attr('data-set')];
     },
 
     /**
      * find all the checkedOptions in a give option class
      *
-     * @param {string}
+     * @param {string} divClass
      * @return {Array}
      */
-    getCheckedOptions : function(divClass)
-    {
-        var chkOptions = this.$el.find("div." + divClass + " input[type=radio]:checked");
+    getCheckedOptions : function(divClass) {
+        // find the checked options
+        var chkOptions = this.$el.find("div." + divClass + " label.checked");
 
+        // parse the array to get the data-set attribute
         var options = [];
         _.each(chkOptions, function(o) {
-            options.push(o.value);
+            options.push($(o).attr('data-set'));
         });
 
+        // return the found options
         return options;
     },
 
@@ -73,10 +96,16 @@
         //this.chartTitle = app.lang.get("LBL_CHART_FORECAST_FOR", "Forecasts") + ' ' + app.defaultSelections.timeperiod_id.label;
         this.timeperiod_label = app.defaultSelections.timeperiod_id.label;
 
-        this.chartDataSet = app.metadata.getStrings('app_list_strings').forecasts_chart_options_dataset || [];
+        this.chartDataSet = this.getChartDatasets();
         this.chartGroupByOptions = app.metadata.getStrings('app_list_strings').forecasts_chart_options_group || [];
         this.defaultDataset = app.defaultSelections.dataset;
         this.defaultGroupBy = app.defaultSelections.group_by;
+
+        // make sure that the default data set is actually shown, if it's not then we need
+        // to set it to the first available option from the allowed dataset.
+        if(_.isUndefined(this.chartDataSet[this.defaultDataset])) {
+            this.defaultDataset = _.first(_.keys(this.chartDataSet));
+        }
 
         app.view.View.prototype._renderHtml.call(this, ctx, options);
 
@@ -88,6 +117,7 @@
             dataset : this.getCheckedOptions('datasetOptions'),
             category : app.defaultSelections.category
         };
+
 
         this.handleRenderOptions(values);
     },
@@ -149,7 +179,16 @@
             self.handleRenderOptions({group_by: groupBy});
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category:_.first(value)});
+            self.handleRenderOptions({category: value});
+        });
+        this.context.forecasts.on('change:hiddenSidebar', function(context, value){
+            // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
+            self.stopRender = value;
+            // if the sidebar is not hidden
+            if(value == false){
+                // we need to force the render to happen again
+                self.renderChart();
+            }
         });
     },
 
@@ -175,10 +214,31 @@
     updateChart: function() {
         var self = this;
         SUGAR.charts.update(self.chart, self.url, self.values, _.bind(function(chart){
-            SUGAR.charts.generateLegend(chart, chart.config.injectInto);
+            SUGAR.charts.generateLegend(chart, chart.config.injectInto)
             // update the chart title
             self.$el.find('h4').html(self.chartTitle);
         }, self));
+    },
+
+    /**
+     * Get the Chart Datasets that are only shown in the Worksheet
+     *
+     * @return {Object}
+     */
+    getChartDatasets: function() {
+        var self = this;
+        var ds = app.metadata.getStrings('app_list_strings').forecasts_chart_options_dataset || [];
+
+        cfg = this.context.forecasts.config;
+        cfg_key = 'show_worksheet_';
+
+        var returnDs = {};
+        _.each(ds, function(value, key){
+            if(cfg.get(cfg_key + key) == 1) {
+                returnDs[key] = value
+            }
+        }, self);
+        return returnDs;
     },
 
     /**
@@ -188,6 +248,11 @@
      * @private
      */
     _initializeChart:function () {
+
+        if(this.stopRender) {
+            return {};
+        }
+
         var chart,
             chartId = "db620e51-8350-c596-06d1-4f866bfcfd5b",
             css = {
@@ -229,7 +294,7 @@
         );
 
         if(this.values.display_manager === true) {
-            this.values.category = "Committed";
+            this.values.category = "include";
         }
 
         // update the chart title
@@ -237,7 +302,12 @@
         var text = hb({'key' : "LBL_CHART_FORECAST_FOR", 'module' : 'Forecasts', 'args' : this.timeperiod_label});
         this.$el.find('h4').html(text);
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, this.values);
+        var params = this.values || {};
+        params.contentEl = 'chart';
+        params.minColumnWidth = 120;
+        params.adjustLegendWidthByParent = true;
+
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params);
         this.chartRendered = true;
         return chart.chartObject;
     }

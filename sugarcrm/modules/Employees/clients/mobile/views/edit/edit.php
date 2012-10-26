@@ -36,7 +36,7 @@ $viewdefs['Employees']['mobile']['view']['edit'] = array(
     ),
     'panels' => array(
         array(
-            'label' => 'LBL_PANEL_1',
+            'label' => 'LBL_PANEL_DEFAULT',
             'fields' => array(
                 array(
                     'name' => 'first_name',

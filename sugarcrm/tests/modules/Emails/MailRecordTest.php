@@ -86,6 +86,7 @@ class MailRecordTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
+     * @group email
      * @group mailer
      */
     public function testSaveAsDraft_Success ()

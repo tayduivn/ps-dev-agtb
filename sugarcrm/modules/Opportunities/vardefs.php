@@ -161,8 +161,15 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
     'duplicate_merge'=>'0',
     'audited'=>true,
     'comment' => 'Formatted amount of the opportunity',
-    'studio' => array('wirelesseditview'=>false, 'wirelessdetailview'=>false, 'editview'=>false, 'detailview'=>false, 'quickcreate'=>false,),
-    'validation' => array('type' => 'range', 'min' => 0)
+    'studio' => array(
+//BEGIN SUGARCRM flav=pro ONLY
+        'wirelesseditview'=>false,
+        'wirelessdetailview'=>false,
+//END SUGARCRM flav=pro ONLY
+        'editview'=>false,
+        'detailview'=>false,
+        'quickcreate'=>false,
+    ),
   ),
   'currency_id' =>
   array (
@@ -221,8 +228,6 @@ $dictionary['Opportunity'] = array('table' => 'opportunities','audited'=>true, '
         'name' => 'date_closed_timestamp',
         'vname' => 'LBL_DATE_CLOSED',
         'type' => 'int',
-        'required' => true,
-        'enable_range_search' => true,
         'studio' => false
     ),
   'next_step' =>

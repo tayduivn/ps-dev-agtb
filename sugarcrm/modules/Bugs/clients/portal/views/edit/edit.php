@@ -86,7 +86,7 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
         'panels' =>
         array(
             array(
-                'label' => 'default',
+                'label' => 'LBL_PANEL_DEFAULT',
                 'fields' =>
                 array(
                     array(
@@ -102,7 +102,8 @@ $viewdefs ['Bugs']['portal']['view']['edit'] =
                         array(
                             'colspan' => 2,
                         ),
-                    ), 
+                    ),
+                    'status',
                     'type',
                     'product_category',
                     'priority',

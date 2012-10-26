@@ -43,7 +43,7 @@ class TemplateDatetimecombo extends TemplateRange
         'next friday'=>'next friday',
         'two weeks'=> '+2 weeks',
         'next month'=> '+1 month',
-        'first day of next month'=> 'first of next month', // must handle this non-GNU date string in SugarBean->populateDefaultValues; if we don't this will evaluate to 1969...
+        'first day of next month'=> 'first day of next month', // must handle this non-GNU date string in SugarBean->populateDefaultValues; if we don't this will evaluate to 1969...
         'three months'=> '+3 months',  //kbrill Bug #17023
         'six months'=> '+6 months',
         'next year'=> '+1 year',
@@ -151,10 +151,15 @@ class TemplateDatetimecombo extends TemplateRange
 		foreach($this->vardef_map as $vardef=>$field){
 			if(isset($_REQUEST[$vardef])){
                 //  Bug #48826. Some fields are allowed to have special characters and must be decoded from the request
+                // Bug 49774, 49775: Strip html tags from 'formula' and 'dependency'.
                 if (is_string($_REQUEST[$vardef]) && in_array($vardef, $this->decode_from_request_fields_map))
-                    $this->$vardef = html_entity_decode($_REQUEST[$vardef]);
+                {
+                    $this->$vardef = html_entity_decode(strip_tags(from_html($_REQUEST[$vardef])));
+                }
                 else
+                {
                     $this->$vardef = $_REQUEST[$vardef];
+                }
 
 				if($vardef != $field){
 					$this->$field = $this->$vardef;

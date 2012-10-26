@@ -41,6 +41,7 @@ class CurrentUserPortalApi extends CurrentUserApi {
         $user_data['type'] = 'support_portal';
         $user_data['user_id'] = $current_user->id;
         $user_data['user_name'] = $current_user->user_name;
+        $user_data['acl'] = $this->getAcls('portal');
         $user_data['id'] = $_SESSION['contact_id'];
         
         // We need to ask the visibility system for the list of account ids
@@ -106,5 +107,44 @@ class CurrentUserPortalApi extends CurrentUserApi {
      */
     protected function getUserLoginExpirationPreference() {
         return null;
+    }
+
+
+    /**
+     * Manipulates the ACLs for portal
+     * 
+     * @param array $acls
+     * @return array
+     */
+    protected function verifyACLs(Array $acls) {
+        $acls['admin'] = 'no';
+        $acls['developer'] = 'no';
+        $acls['edit'] = 'no';
+        $acls['delete'] = 'no';
+        $acls['import'] = 'no';
+        $acls['export'] = 'no';
+        $acls['massupdate'] = 'no';
+        
+        return $acls;
+    }
+
+    /**
+     * Enforces module specific ACLs for users without accounts
+     * 
+     * @param array $acls
+     * @return array
+     */
+    protected function enforceModuleACLs(Array $acls) {
+        $apiPerson = BeanFactory::getBean('Contacts', $_SESSION['contact_id']);
+        // This is a change in the ACL's for users without Accounts
+        $vis = new SupportPortalVisibility($apiPerson);
+        $accounts = $vis->getAccountIds();
+        if (count($accounts)==0) {
+            // This user has no accounts, modify their ACL's so that they match up with enforcement
+            $acls['Accounts']['access'] = 'no';
+            $acls['Cases']['access'] = 'no';
+        }
+        
+        return $acls;
     }
 }

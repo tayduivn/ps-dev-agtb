@@ -6,9 +6,9 @@
      * Initializes field and binds all function calls to this
      * @param {Object} options
      */
-    initialize: function(opts) {
+    initialize: function(options) {
         _.bindAll(this);
-        app.view.Field.prototype.initialize.call(this, opts);
+        app.view.Field.prototype.initialize.call(this, options);
         this.optionsTemplateC = app.template.getField(this.type, "options");
     },
     /**

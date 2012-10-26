@@ -52,7 +52,7 @@ class EmailIdentity
      */
     public function setEmail($email) {
         // validate the email address
-        if (!is_string($email)) {
+        if (!is_string($email) || trim($email) == "") {
             //@todo stringify $email and add it to the message
             throw new MailerException("Invalid email address", MailerException::InvalidEmailAddress);
         }

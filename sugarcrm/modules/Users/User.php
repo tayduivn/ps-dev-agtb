@@ -28,7 +28,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 require_once('include/SugarObjects/templates/person/Person.php');
-
+require_once "modules/Mailer/MailerFactory.php"; // imports all of the Mailer classes that are needed
 
 // User is used to store customer information.
 class User extends Person {
@@ -529,10 +529,8 @@ class User extends Person {
 		}
 
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
-		$setNewUserPreferences = empty($this->id);
-		//END SUGARCRM flav=sales ONLY
+		$setNewUserPreferences = empty($this->id) || !empty($this->new_with_id);
 
 		//BEGIN SUGARCRM flav=pro ONLY
 
@@ -579,14 +577,17 @@ class User extends Person {
 		}
 		//END SUGARCRM flav=pro ONLY
 
-		//BEGIN SUGARCRM flav=sales ONLY
 		// set some default preferences when creating a new user
 		if ( $setNewUserPreferences ) {
+		//BEGIN SUGARCRM flav=sales ONLY
 		    // set default reminder time to 30 minutes
 		    $this->setPreference('reminder_time', 1800);
 		    $this->setPreference('mailmerge_on', 'on');
-		}
 		//END SUGARCRM flav=sales ONLY
+	        if(!$this->getPreference('calendar_publish_key')) {
+		        $this->setPreference('calendar_publish_key', create_guid());
+	        }
+		}
 
         $this->savePreferencesToDB();
         return $this->id;
@@ -1846,55 +1847,6 @@ EOQ;
         }
 	}
 
-	//BEGIN SUGARCRM flav!=com ONLY
-	function preprocess_fields_on_save(){
-		parent::preprocess_fields_on_save();
-        require_once('include/upload_file.php');
-		$upload_file = new UploadFile("picture");
-
-		//remove file
-		if (isset($_REQUEST['remove_imagefile_picture']) && $_REQUEST['remove_imagefile_picture'] == 1)
-		{
-			$upload_file->unlink_file($this->picture);
-			$this->picture="";
-		}
-
-		//uploadfile
-		if (isset($_FILES['picture']) && !empty($_FILES['picture']["name"]))
-		{
-			//confirm only image file type can be uploaded
-			$imgType = array('image/gif', 'image/png', 'image/bmp', 'image/jpeg', 'image/jpg', 'image/pjpeg');
-			if (in_array($_FILES['picture']["type"], $imgType))
-			{
-				if ($upload_file->confirm_upload())
-				{
-					$this->picture = create_guid().".png";
-					$upload_file->final_move( $this->picture);
-					$path=$upload_file->get_upload_path($this->picture);
-					if(!verify_image_file($path)) {
-					    $this->picture = '';
-					}
-				}
-			} else {
-				$this->picture = create_guid().".png";
-				$file = "include/images/default-profile.png";
-				$newfile = "upload://$this->picture";
-				if (!copy($file, $newfile)) {
-		   			global $app_strings;
-		        	$GLOBALS['log']->fatal(string_format($app_strings['ERR_FILE_NOT_FOUND'], array($file)));
-
-				}
-			}
-		}
-
-		//duplicate field handling (in the event the Duplicate button was pressed)
-		if(empty($this->picture) && !empty($_REQUEST['picture_duplicate'])) {
-           $this->picture = $_REQUEST['picture_duplicate'];
-		}
-	}
-	//END SUGARCRM flav!=com ONLY
-
-
    function create_new_list_query($order_by, $where,$filter=array(),$params=array(), $show_deleted = 0,$join_type='', $return_array = false,$parentbean=null, $singleSelect = false)
    {	//call parent method, specifying for array to be returned
    	$ret_array = parent::create_new_list_query($order_by, $where,$filter,$params, $show_deleted,$join_type, true,$parentbean, $singleSelect);
@@ -2076,128 +2028,114 @@ EOQ;
     /**
      * Send new password or link to user
      *
-     * @param string $templateId Id of email template
-     * @param array $additionalData additional params: link, url, password
+     * @param string $templateId     Id of email template
+     * @param array  $additionalData additional params: link, url, password
      * @return array status: true|false, message: error message, if status = false and message = '' it means that send method has returned false
      */
-    public function sendEmailForPassword($templateId, array $additionalData = array())
-    {
-        global $sugar_config, $current_user;
+    public function sendEmailForPassword($templateId, array $additionalData = array()) {
+        global $current_user,
+               $app_strings;
+
         $mod_strings = return_module_language('', 'Users');
+
         $result = array(
-            'status' => false,
+            'status'  => false,
             'message' => ''
         );
 
-        $emailTemp = new EmailTemplate();
-        $emailTemp->disable_row_level_security = true;
-        if ($emailTemp->retrieve($templateId) == '')
-        {
+        $emailTemplate                             = new EmailTemplate();
+        $emailTemplate->disable_row_level_security = true;
+
+        if ($emailTemplate->retrieve($templateId) == '') {
             $result['message'] = $mod_strings['LBL_EMAIL_TEMPLATE_MISSING'];
             return $result;
         }
 
-        //replace instance variables in email templates
-        $htmlBody = $emailTemp->body_html;
-        $body = $emailTemp->body;
-        if (isset($additionalData['link']) && $additionalData['link'] == true)
-        {
-            $htmlBody = str_replace('$contact_user_link_guid', $additionalData['url'], $htmlBody);
-            $body = str_replace('$contact_user_link_guid', $additionalData['url'], $body);
-        }
-        else
-        {
-            $htmlBody = str_replace('$contact_user_user_hash', $additionalData['password'], $htmlBody);
-            $body = str_replace('$contact_user_user_hash', $additionalData['password'], $body);
-        }
-        // Bug 36833 - Add replacing of special value $instance_url
-        $htmlBody = str_replace('$config_site_url', $sugar_config['site_url'], $htmlBody);
-        $body = str_replace('$config_site_url', $sugar_config['site_url'], $body);
+        $emailTemplate->body = $this->replaceInstanceVariablesInEmailTemplates($emailTemplate->body, $additionalData);
 
-        $htmlBody = str_replace('$contact_user_user_name', $this->user_name, $htmlBody);
-        $htmlBody = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $htmlBody);
-        $body = str_replace('$contact_user_user_name', $this->user_name, $body);
-        $body = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
-        $emailTemp->body_html = $htmlBody;
-        $emailTemp->body = $body;
+        // in case the email is text-only and $emailTemplate->body_html is not empty, use a local variable for the HTML
+        // part to ignore the body_html property and prevent changing it on the EmailTemplate object
+        $htmlBody = null;
 
-        $itemail = $this->emailAddress->getPrimaryAddress($this);
-        //retrieve IT Admin Email
-        //_ppd( $emailTemp->body_html);
-        //retrieve email defaults
-        $emailObj = new Email();
-        $defaults = $emailObj->getSystemDefaultEmail();
-        require_once('include/SugarPHPMailer.php');
-        $mail = new SugarPHPMailer();
-        $mail->setMailerForSystem();
-        //$mail->IsHTML(true);
-        $mail->From = $defaults['email'];
-        $mail->FromName = $defaults['name'];
-        $mail->ClearAllRecipients();
-        $mail->ClearReplyTos();
-        $mail->Subject = from_html($emailTemp->subject);
-        if ($emailTemp->text_only != 1)
-        {
-            $mail->IsHTML(true);
-            $mail->Body = from_html($emailTemp->body_html);
-            $mail->AltBody = from_html($emailTemp->body);
-        }
-        else
-        {
-            $mail->Body_html = from_html($emailTemp->body_html);
-            $mail->Body = from_html($emailTemp->body);
-        }
-        if ($mail->Body == '' && $current_user->is_admin)
-        {
-            global $app_strings;
-            $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
-            return $result;
-        }
-        if ($mail->Mailer == 'smtp' && $mail->Host =='' && $current_user->is_admin)
-        {
-            $result['message'] = $mod_strings['ERR_SERVER_SMTP_EMPTY'];
-            return $result;
+        if ($emailTemplate->text_only != 1) {
+            $emailTemplate->body_html = $this->replaceInstanceVariablesInEmailTemplates(
+                $emailTemplate->body_html,
+                $additionalData
+            );
+            $htmlBody                 = $emailTemplate->body_html;
         }
 
-        $mail->prepForOutbound();
-        $hasRecipients = false;
+        try {
+            $mailer = MailerFactory::getMailerForUser($GLOBALS["current_user"]);
 
-        if (!empty($itemail))
-        {
-            if ($hasRecipients)
-            {
-                $mail->AddBCC($itemail);
+            // set the subject
+            $mailer->setSubject($emailTemplate->subject);
+
+            // set the plain-text body
+            $mailer->setTextBody($emailTemplate->body);
+
+            // set the HTML body... it will be null in the text-only case, but that's okay
+            $mailer->setHtmlBody($htmlBody);
+
+            // get the recipient's email address
+            $itemail = $this->emailAddress->getPrimaryAddress($this);
+
+            if (!empty($itemail)) {
+                // add the recipient
+                $mailer->addRecipientsTo(new EmailIdentity($itemail));
+
+                // if send doesn't raise an exception then set the result status to true
+                $mailer->send();
+                $result["status"] = true;
+
+                // save the email record
+                $email                   = new Email();
+                $email->team_id          = 1;
+                $email->to_addrs         = '';
+                $email->type             = 'archived';
+                $email->deleted          = '0';
+                $email->name             = $emailTemplate->subject;
+                $email->description      = $emailTemplate->body;
+                $email->description_html = $htmlBody;
+                $email->from_addr        = $mailer->getHeader(EmailHeaders::From)->getEmail();
+                $email->parent_type      = 'User';
+                $email->date_sent        = TimeDate::getInstance()->nowDb();
+                $email->modified_user_id = '1';
+                $email->created_by       = '1';
+                $email->status           = 'sent';
+                $email->save();
+
+                if (!isset($additionalData['link']) || $additionalData['link'] == false) {
+                    $this->setNewPassword($additionalData['password'], '1');
+                }
+            } else {
+                // this exception is ignored as part of the default case in the switch statement in the catch block
+                // but it adds documentation as to what is happening
+                throw new MailerException("There are no recipients", MailerException::FailedToSend);
             }
-            else
-            {
-                $mail->AddAddress($itemail);
-            }
-            $hasRecipients = true;
-        }
-        if ($hasRecipients)
-        {
-            $result['status'] = @$mail->Send();
-        }
+        } catch (MailerException $me) {
+            switch ($me->getCode()) {
+                case MailerException::FailedToConnectToRemoteServer:
+                    if ($current_user->is_admin) {
+                        // the smtp host may not be empty, but this is the best error message for now
+                        $result['message'] = $mod_strings['ERR_SERVER_SMTP_EMPTY'];
+                    } else {
+                        // status=failed to send, but no message is returned to non-admin users
+                    }
 
-        if ($result['status'] == true)
-        {
-            $emailObj->team_id = 1;
-            $emailObj->to_addrs = '';
-            $emailObj->type = 'archived';
-            $emailObj->deleted = '0';
-            $emailObj->name = $mail->Subject ;
-            $emailObj->description = $mail->Body;
-            $emailObj->description_html = null;
-            $emailObj->from_addr = $mail->From;
-            $emailObj->parent_type = 'User';
-            $emailObj->date_sent = TimeDate::getInstance()->nowDb();
-            $emailObj->modified_user_id = '1';
-            $emailObj->created_by = '1';
-            $emailObj->status = 'sent';
-            $emailObj->save();
-            if (!isset($additionalData['link']) || $additionalData['link'] == false)
-            {
-                $this->setNewPassword($additionalData['password'], '1');
+                    break;
+                case MailerException::InvalidMessageBody:
+                    if ($current_user->is_admin) {
+                        // both the plain-text and HTML parts are empty, but this is the best error message for now
+                        $result['message'] = $app_strings['LBL_EMAIL_TEMPLATE_EDIT_PLAIN_TEXT'];
+                    } else {
+                        // status=failed to send, but no message is returned to non-admin users
+                    }
+
+                    break;
+                default:
+                    // status=failed to send, but no message is returned
+                    break;
             }
         }
 
@@ -2314,4 +2252,29 @@ EOQ;
         return $ids;
     }
     //END SUGARCRM flav=pro ONLY
+
+    /**
+     * Replace instance variables in email templates for a particular message part.
+     *
+     * @param string $body                    required The plain-text or HTML part.
+     * @param array  $additionalData          Additional parameters: link, url, password.
+     * @return string
+     */
+    private function replaceInstanceVariablesInEmailTemplates($body, $additionalData = array()) {
+        global $sugar_config;
+
+        if (isset($additionalData['link']) && $additionalData['link'] == true) {
+            $body = str_replace('$contact_user_link_guid', $additionalData['url'], $body);
+        } else {
+            $body = str_replace('$contact_user_user_hash', $additionalData['password'], $body);
+        }
+
+        // Bug 36833 - Add replacing of special value $instance_url
+        $body = str_replace('$config_site_url', $sugar_config['site_url'], $body);
+
+        $body = str_replace('$contact_user_user_name', $this->user_name, $body);
+        $body = str_replace('$contact_user_pwd_last_changed', TimeDate::getInstance()->nowDb(), $body);
+
+        return $body;
+    }
 }

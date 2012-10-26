@@ -99,6 +99,35 @@ class Quarter454TimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group forecasts
      * @group timeperiods
      */
+    public function testCreatePreviousTimePeriod()
+    {
+        global $app_strings;
+
+        $timedate = TimeDate::getInstance();
+        //get current timeperiod
+        $baseTimePeriod = self::$tp;
+
+        $previousTimePeriod = $baseTimePeriod->createPreviousTimePeriod();
+        $previousTimePeriod->name = "SugarTestCreatedPriorQuarter454TimePeriods";
+        $previousTimePeriod->save();
+        SugarTestTimePeriodUtilities::addTimePeriod($previousTimePeriod);
+        $previousTimePeriod = BeanFactory::getBean('Quarter454TimePeriods', $previousTimePeriod->id);
+
+        //next timeperiod (1 quarter ago today)
+        $priorStartDate = $timedate->fromDBDate($baseTimePeriod->start_date);
+        $priorStartDate = $priorStartDate->modify("-13 week");
+        $priorEndDate = $timedate->fromDBDate($baseTimePeriod->start_date);
+        $priorEndDate = $priorEndDate->modify("-1 day");
+
+        $this->assertEquals($timedate->fromDBDate($previousTimePeriod->start_date), $priorStartDate);
+
+        $this->assertEquals($timedate->fromDBDate($previousTimePeriod->end_date), $priorEndDate);
+    }
+
+    /**
+     * @group forecasts
+     * @group timeperiods
+     */
     public function testGetNextPeriod()
     {
 
