@@ -134,11 +134,12 @@
     _addStyle: function(jqel) {
         var start = this._setupSliderStartPositions();
         jqel.append(function(){
-            var html = "";
-            var segments = 11;
-            var w = $(this).width();
-            var segmentWidth = w/(segments-1);
-            var acum = 0;
+            var html = "",
+                segments = 11,
+                w = $(this).width(),
+                segmentWidth = w/(segments-1),
+                acum = 0;
+
             for(i=0;i<segments;i++) {
                 acum = (segmentWidth * i)-2;
                 html += "<div class='ticks' style='left:"+acum+"px'></div>";
