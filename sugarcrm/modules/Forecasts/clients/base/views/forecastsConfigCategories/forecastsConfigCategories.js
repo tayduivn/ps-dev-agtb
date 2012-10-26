@@ -200,31 +200,33 @@
      */
     connectSliders: function(category, sliders) {
         if(category == 'show_binary') {
-            sliders.include.sliderChangeDelegate = function (value, type) {
-                if (type!= 'move') {
-                    sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
-                }
+            sliders.include.sliderChangeDelegate = function (value) {
+                sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
             };
-            sliders.exclude.sliderChangeDelegate = function (value, type) {
-                if (type!= 'move') {
-                    sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
-                }
+            sliders.exclude.sliderChangeDelegate = function (value) {
+                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
             }
         } else if (category == 'show_buckets') {
-            sliders.include.sliderChangeDelegate = function (value, type) {
-                if (type!= 'move') {
-                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+            sliders.include.sliderChangeDelegate = function (value) {
+                sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.min-1});
+                if(value.min <= sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('value')[0] + 1) {
+                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.min-2});
+                }
+                if(value.min <= sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('value')[1] + 2) {
+                    sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-3});
                 }
             };
-            sliders.upside.sliderChangeDelegate = function (value, type) {
-                if (type!= 'move') {
-                    sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
-                    sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
-                }
+            sliders.upside.sliderChangeDelegate = function (value) {
+                sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+1});
+                sliders.exclude.$el.find(sliders.exclude.fieldTag).noUiSlider('move', {to: value.min-1});
             };
-            sliders.exclude.sliderChangeDelegate = function (value, type) {
-                if (type!= 'move') {
-                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+            sliders.exclude.sliderChangeDelegate = function (value) {
+                sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'lower', to: value.max+1});
+                if(value.max >= sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('value')[1] - 1) {
+                    sliders.upside.$el.find(sliders.upside.fieldTag).noUiSlider('move', {handle: 'upper', to: value.max+2});
+                }
+                if(value.max >= sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('value')[0] - 2) {
+                    sliders.include.$el.find(sliders.include.fieldTag).noUiSlider('move', {to: value.max+3});
                 }
             }
         }
