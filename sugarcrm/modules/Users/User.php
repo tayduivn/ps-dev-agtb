@@ -1014,6 +1014,18 @@ EOQ;
 		}
 		
         //BEGIN SUGARCRM flav=pro ONLY
+        $query = "SELECT team_id, teams.name, teams.name_2 FROM team_memberships rel RIGHT JOIN teams ON (rel.team_id = teams.id) WHERE rel.user_id = '{$this->id}' AND rel.team_id = '{$this->default_team}'";
+        $result = $this->db->query($query, false, "Error retrieving team name: ");
+
+        $row = $this->db->fetchByAssoc($result);
+        if (!empty ($row['team_id'])) {
+            $this->default_team = $row['team_id'];
+            $this->default_team_name = Team::getDisplayName($row['name'], $row['name_2'], $this->showLastNameFirst());
+        } else {
+            $this->default_team = '';
+            $this->default_team_name = '';
+            $this->team_set_id = '';
+        }
 
         // Must set team_id for team widget purposes (default_team is primary team id)
         if (empty($this->team_id))
