@@ -548,6 +548,7 @@ class SubPanelDefinitions
 	var $_visible_tabs_array ;
 	var $panels ;
 	var $layout_defs ;
+    static $refreshHiddenSubpanels = false;
 
 	/**
 	 * Enter description here...
@@ -740,12 +741,18 @@ class SubPanelDefinitions
         // Append on the CampaignLog module, because that is where the subpanels point, not directly to Campaigns
         $modules_to_check['campaignlog'] = "CampaignLog";
 
-
-		$spd = '';
+        // Get hidden subpanels to make sure they are not included
+        $hidden = self::get_hidden_subpanels();
+        
+        $spd = '';
 		$spd_arr = array();
 		//iterate through modules and build subpanel array
 		foreach($modules_to_check as $mod_name){
-
+            // If the module is hidden from subpanels don't add it to this list
+            if (isset($hidden[strtolower($mod_name)])) {
+                    continue;
+            }
+            
 			//skip if module name is not in bean list, otherwise get the bean class name
 			if(!isset($beanList[$mod_name])) continue;
 			$class = $beanList[$mod_name];
@@ -788,6 +795,8 @@ class SubPanelDefinitions
 		$administration = new Administration();
 		$serialized = base64_encode(serialize($panels));
 		$administration->saveSetting('MySettings', 'hide_subpanels', $serialized);
+        // Allow the hidden subpanel cache to refresh
+        self::$refreshHiddenSubpanels = true;
 	}
 
 	/*
@@ -800,7 +809,7 @@ class SubPanelDefinitions
 		static $hidden_subpanels = null;
 
 		// if the static value is not already cached, then retrieve it.
-		if(empty($hidden_subpanels))
+		if(empty($hidden_subpanels) || self::$refreshHiddenSubpanels)
 		{
 
 			//create Administration object and retrieve any settings for panels
@@ -825,7 +834,7 @@ class SubPanelDefinitions
 						$hidden_subpanels[] = $pref_hidden_panel;
 					}
 
-
+                    self::$refreshHiddenSubpanels = false;
 				}else{
 					//no settings found, return empty
 					return $hidden_subpanels;
@@ -840,6 +849,12 @@ class SubPanelDefinitions
 		return $hidden_subpanels;
 	}
 
-
+    /**
+     * Allows refresh of the hidden subpanels list from outside of this class
+     * 
+     * @param $bool
+     */
+    public static function setRefreshHiddenSubpanels($bool) {
+        self::$refreshHiddenSubpanels = (bool) $bool;
+    }
 }
-?>

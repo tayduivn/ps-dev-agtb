@@ -29,26 +29,14 @@ class Bug57699Test extends Sugar_PHPUnit_Framework_TestCase
 {
     protected $_tabController;
     protected $_currentTabs;
+    protected $_currentSubpanels = array('hidden' => array(), 'shown' => array());
+    protected $_modListGlobal;
+    protected $_subPanelDefinitions;
+    protected $_testDefs;
     
     public function setUp() {
-        // Get the current module and subpanel settings
-        $this->_tabController = new TabController();
-        $this->_currentTabs = $this->_tabController->get_system_tabs();
-        SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('app_list_strings');
-        SugarTestHelper::setUp('current_user');
-    }
-    
-    public function tearDown() {
-        $this->_tabController->set_system_tabs($this->_currentTabs);
-        // Set the tabs back
-        SugarTestHelper::tearDown();
-    }
-    
-    public function testNotesSubpanelAllowedWhenNotesNotShown() {
-        $subpaneldef = array(
+        // Set up our test defs
+        $this->_testDefs = array(
             'order' => 40,
             'title_key' => 'LBL_HISTORY_SUBPANEL_TITLE',
             'type' => 'collection',
@@ -69,15 +57,89 @@ class Bug57699Test extends Sugar_PHPUnit_Framework_TestCase
             ), 
         );
         
-        $subpanel = new aSubPanel('history', $subpaneldef, BeanFactory::getBean('Calls'));
-        $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel");
+        // Globals setup
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('current_user');
         
-        // Now adjust the module list by removing Notes and prove it's still there
+        // @hack - Projects totally overrides the exempt module list in its subpanel
+        // viewdefs, so to run this test effectively, Projects needs to be 
+        // disabled if it is enabled. - rgonzalez
+        $this->_modListGlobal = $GLOBALS['moduleList'];
+        $key = array_search('Project', $GLOBALS['moduleList']);
+        unset($GLOBALS['moduleList'][$key]);
+        
+        // Get the current module and subpanel settings
+        $this->_tabController = new TabController();
+        $this->_currentTabs = $this->_tabController->get_system_tabs();
+        $this->_subPanelDefinitions = new SubPanelDefinitions(BeanFactory::getBean('Calls'));
+        $subpanels = $this->_subPanelDefinitions->get_all_subpanels();
+        $subpanels_hidden = $this->_subPanelDefinitions->get_hidden_subpanels();
+
+        if (!empty($subpanels)) {
+            $this->_currentSubpanels['shown'] = $subpanels;
+        }
+        
+        if (!empty($subpanels_hidden)) {
+            $this->_currentSubpanels['hidden'] = $subpanels_hidden;
+        }
+    }
+    
+    public function tearDown() {
+        // Restore the globals module after the Projects removal hack
+        $GLOBALS['moduleList'] = $this->_modListGlobal;
+        
+        // Restore the system tabs to pre-test state
+        $this->_tabController->set_system_tabs($this->_currentTabs);
+        
+        // Restore the hidden subpanels to pre-test state
+        $this->_subPanelDefinitions->set_hidden_subpanels($this->_currentSubpanels['hidden']);
+        
+        // Clean up the rest
+        SugarTestHelper::tearDown();
+    }
+
+    /**
+     * Tests that Notes is a shown subpanel for Calls out of the box
+     * 
+     * @group Bug57699
+     */
+    public function testNotesSubpanelOnCallsAllowedOnDefaultInstallation() {
+        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::getBean('Calls'));
+        $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel");
+    }
+    
+    /**
+     * Tests that Notes is a shown subpanel for Calls even when removed from the
+     * module tabs
+     * 
+     * @group Bug57699
+     */
+    public function testNotesSubpanelOnCallsAllowedWhenNotesIsHiddenFromNav() {
+        // Adjust the module list by removing Notes from nav and prove it's still there
         $currentTabs = $this->_currentTabs;
         unset($currentTabs['Notes']);
         $this->_tabController->set_system_tabs($currentTabs);
         
-        $subpanel = new aSubPanel('history', $subpaneldef, BeanFactory::getBean('Calls'));
+        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::getBean('Calls'));
         $this->assertArrayHasKey('notes', $subpanel->sub_subpanels, "Notes module not found in History subpanel's Notes subpanel after module list modified");
+    }
+    
+    /**
+     * Tests that Notes is not a shown subpanel for Calls when removed from subpanels
+     * 
+     * @group Bug57699
+     */
+    public function testNotesSubpanelOnCallsNotAllowedWhenNotesIsHiddenFromSubpanels() {
+        // Remove Notes from the subpanel modules and test it is NOT shown
+        $hidden = $this->_currentSubpanels['hidden'];
+        $hidden['notes'] = 'notes';
+        $hiddenKeyArray = TabController::get_key_array($hidden);
+        $this->_subPanelDefinitions->set_hidden_subpanels($hiddenKeyArray);
+        
+        $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::getBean('Calls'));
+        $this->assertEmpty($subpanel->sub_subpanels, "History subpanel's subpanel should be empty after Notes removed from subpanel module list");
     }
 }
