@@ -24,7 +24,7 @@
                 app.file.checkFileFieldsAndProcessUpload(self.model, {
                     success: function () {
                         app.alert.dismiss('save_edit_view');
-                        self.app.navigate(self.context, self.model, 'detail');
+                        app.navigate(self.context, self.model, 'detail');
                     }
                 });
 
