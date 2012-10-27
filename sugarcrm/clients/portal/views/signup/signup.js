@@ -80,7 +80,7 @@
             if (pref_lang) {
                 contactData.preferred_language = pref_lang;
             }
-            this.app.api.signup(contactData, null,
+            app.api.signup(contactData, null,
                 {
                     error: function() {
                         app.alert.dismiss('signup');
