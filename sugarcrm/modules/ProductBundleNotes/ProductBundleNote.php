@@ -109,7 +109,7 @@ class ProductBundleNote extends SugarBean {
 */
 		return parent::mark_deleted($id);
 	}
-	function ProductBundleNote() {
+	public function __construct() {
 		parent::__construct();
 
 		$this->disable_row_level_security=true;

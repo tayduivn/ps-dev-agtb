@@ -39,7 +39,7 @@ class UserSignature extends SugarBean
 	var $disable_row_level_security = true;
 	//END SUGARCRM flav=pro ONLY
 
-	function UserSignature()
+	public function __construct()
 	{
 		//Ensure the vardefs get loaded.
 		global $dictionary;

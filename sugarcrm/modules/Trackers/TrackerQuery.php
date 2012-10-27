@@ -39,7 +39,7 @@ class TrackerQuery extends SugarBean {
     var $acl_category = 'TrackerQueries';
     var $disable_custom_fields = true;
 
-    function TrackerQuery() {
+    public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
             require('metadata/tracker_queriesMetaData.php');

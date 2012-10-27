@@ -77,7 +77,7 @@ class Note extends SugarBean {
 
 
 
-	function Note() {
+	public function __construct() {
 		parent::__construct();
 	}
 

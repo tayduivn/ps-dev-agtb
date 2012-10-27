@@ -142,7 +142,7 @@ class Email extends SugarBean {
 	/**
 	 * sole constructor
 	 */
-	function Email()
+	public function __construct()
 	{
 	    global $current_user;
 	    $this->cachePath = sugar_cached('modules/Emails');

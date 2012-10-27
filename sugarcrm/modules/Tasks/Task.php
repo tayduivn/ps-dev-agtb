@@ -72,7 +72,7 @@ class Task extends SugarBean {
 	var $additional_column_fields = Array('assigned_user_name', 'assigned_user_id', 'contact_name', 'contact_phone', 'contact_email', 'parent_name');
 
 
-	function Task() {
+	public function __construct() {
 		parent::__construct();
 	}
 

@@ -81,7 +81,7 @@ class aCase extends Basic {
 									'meeting_id'=>'meetings', 'call_id'=>'calls', 'email_id'=>'emails',
 									);
 
-	function aCase() {
+	public function __construct() {
 		parent::__construct();
 		global $sugar_config;
 		if(!$sugar_config['require_accounts']){

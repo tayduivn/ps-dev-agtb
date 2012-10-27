@@ -55,7 +55,7 @@ class ProductType extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array();
 
-	function ProductType() {
+	public function __construct() {
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;

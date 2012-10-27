@@ -37,7 +37,7 @@ class UnifiedSearchAdvanced {
     /*search form class name*/
     var $searchFormClass = 'SearchForm';
 
-    function __construct(){
+    public function __construct(){
         if(!empty($_REQUEST['query_string'])){
             $query_string = trim($_REQUEST['query_string']);
             if(!empty($query_string)){

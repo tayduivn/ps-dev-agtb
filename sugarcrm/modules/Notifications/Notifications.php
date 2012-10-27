@@ -55,8 +55,8 @@ class Notifications extends Basic {
 		//END SUGARCRM PRO ONLY
 		
 		
-	function Notifications(){	
-		parent::Basic();
+	public function __construct(){
+		parent::__construct();
 	}
 	
 	function bean_implements($interface){

@@ -33,7 +33,7 @@ class TemplateInt extends TemplateRange
 	var $type = 'int';
     var $supports_unified_search = true;
 
-	function __construct(){
+	public function __construct(){
 		parent::__construct();
 		$this->vardef_map['autoinc_next'] = 'autoinc_next';
 		$this->vardef_map['autoinc_start'] = 'autoinc_start';

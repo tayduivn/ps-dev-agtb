@@ -108,7 +108,7 @@ class Call extends SugarBean {
                                         'lead_id'			=> 'leads',
 								);
 
-	function Call() {
+	public function __construct() {
 		parent::__construct();
 		global $app_list_strings;
 

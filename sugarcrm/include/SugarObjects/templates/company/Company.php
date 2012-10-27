@@ -32,7 +32,7 @@ class Company extends Basic
  	/**
  	 * Constructor
  	 */
-    public function Company()
+    public function __construct()
  	{
  		parent::Basic();	
  		$this->emailAddress = new SugarEmailAddress();

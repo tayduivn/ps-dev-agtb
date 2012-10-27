@@ -31,7 +31,7 @@ class Basic extends SugarBean
     /** 
      * Constructor
      */
-	public function Basic()
+	public function __construct()
 	{
 		parent::__construct();
 	}

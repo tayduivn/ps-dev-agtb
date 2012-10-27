@@ -86,7 +86,7 @@ class ForecastDirectReports extends SugarBean {
 
     var $new_schema = true;
 
-    function ForecastDirectReports() {
+    public function __construct() {
         global $current_user, $db;
 
         parent::__construct();

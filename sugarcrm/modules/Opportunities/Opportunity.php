@@ -107,7 +107,7 @@ class Opportunity extends SugarBean
 	);
 
 
-	function Opportunity()
+	public function __construct()
 	{
 		parent::__construct();
 		global $sugar_config;

@@ -136,7 +136,7 @@ class Product extends SugarBean {
 								 'weight',  'support_name', 'support_term',
 								 'support_description', 'support_contact');
 
-	function Product() {
+	public function __construct() {
 
 		parent::__construct();
 

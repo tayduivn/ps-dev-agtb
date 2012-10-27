@@ -83,7 +83,7 @@ class CampaignTracker extends SugarBean {
 
     var $required_fields =  array('tracker_name'=>1,'tracker_url'=>1);
     /*This bean's constructor*/
-    function CampaignTracker() {
+    public function __construct() {
         parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security=true;

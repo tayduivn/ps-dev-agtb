@@ -78,7 +78,7 @@ class ProjectResource extends SugarBean {
 	/**
 	 *
 	 */
-	function ProjectResource()
+	public function __construct()
 	{
 		parent::__construct();
 	}    

@@ -89,7 +89,7 @@ class ProjectTask extends SugarBean {
 	/*
 	 *
 	 */
-	function ProjectTask($init=true)
+	public function __construct($init=true)
 	{
 		parent::__construct();
 		if ($init) {

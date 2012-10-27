@@ -65,7 +65,7 @@ class Quota extends SugarBean
 	var $additional_column_fields = Array();
 
 
-	function Quota()
+	public function __construct()
 	{
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY

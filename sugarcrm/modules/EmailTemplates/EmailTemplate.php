@@ -99,7 +99,7 @@ class EmailTemplate extends SugarBean {
 		'accept_status_name',
 	);
 
-	function EmailTemplate() {
+	public function __construct() {
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		global $current_user;

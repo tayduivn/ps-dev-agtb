@@ -46,7 +46,7 @@ class QueryController extends SugarBean {
     var $disable_custom_fields = true;
     var $module_name = 'QueryController';
 
-    function QueryController() {
+    public function __construct() {
         parent::__construct();
 
         $this->disable_row_level_security =true;

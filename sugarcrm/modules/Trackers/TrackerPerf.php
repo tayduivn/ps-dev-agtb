@@ -39,7 +39,7 @@ class TrackerPerf extends SugarBean {
     var $acl_category = 'TrackerPerfs';
     var $disable_custom_fields = true;
 
-    function TrackerPerf() {
+    public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
             require('metadata/tracker_perfMetaData.php');

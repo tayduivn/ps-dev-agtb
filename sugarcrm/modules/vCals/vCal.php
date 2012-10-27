@@ -46,7 +46,7 @@ class vCal extends SugarBean {
 
 	const UTC_FORMAT = 'Ymd\THi00\Z';
 
-	function vCal()
+	public function __construct()
 	{
 
 		parent::__construct();

@@ -51,7 +51,7 @@ class Holiday extends SugarBean {
 	var $module_dir = 'Holidays';
 	var $new_schema = true;
 
-	function Holiday()
+	public function __construct()
 	{
 		parent::__construct();
 		$this->disable_row_level_security = true;
