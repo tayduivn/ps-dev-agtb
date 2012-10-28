@@ -37,7 +37,7 @@ require_once('modules/Forecasts/WorksheetSeedData.php');
  *
  * @ticket sfa-219
  */
-class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
+class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_OutputTestCase
 {
     private $_users;
     private $_users_ids;
@@ -496,7 +496,7 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 
     /**
      * test worksheets after reassignment rep to rep
-     * @outputBuffering enabled
+     *
      * @group forecasts
      */
     public function testWorksheetRepToRep()
@@ -508,16 +508,22 @@ class ForecastUserReassignmentTest extends  Sugar_PHPUnit_Framework_TestCase
 
         require_once('include/SugarForecasting/Individual.php');
 
+        global $current_user;
+        $this->_users['sally']->is_admin = true;
+        $this->_users['chris']->is_admin = true;
+        $current_user = $this->_users['sally'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sally']->id) );
         $result = $api->process();
         $this->assertEquals(10, sizeof($result));
 
         $this->_doReassign('sally', 'chris');
 
+        $current_user = $this->_users['chris'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['chris']->id) );
         $result = $api->process();
         $this->assertEquals(10, sizeof($result));
 
+        $current_user = $this->_users['sally'];
         $api = new SugarForecasting_Individual( array('timeperiod_id' => $this->_timeperiod->id, 'user_id' => $this->_users['sally']->id) );
         $result = $api->process();
         $this->assertEquals(0, sizeof($result));

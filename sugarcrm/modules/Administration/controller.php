@@ -102,7 +102,7 @@ class AdministrationController extends SugarController
                 }
             }
 
-            $filename = 'custom/include/MVC/Controller/wireless_module_registry.php' ;
+            $filename = create_custom_directory('include/MVC/Controller/wireless_module_registry.php');
 
             mkdir_recursive ( dirname ( $filename ) ) ;
             write_array_to_file ( 'wireless_module_registry', $updated_enabled_modules, $filename );
@@ -129,7 +129,7 @@ class AdministrationController extends SugarController
         $clearData = !empty($_REQUEST['clearData']) ? $_REQUEST['clearData'] : FALSE;
         $modules = !empty($_REQUEST['modules']) ? explode(",", $_REQUEST['modules']) : array();
         $scheduleIndex = !empty($_REQUEST['sched']) ? TRUE : FALSE;
-        
+
         $this->cfg = new Configurator();
         $this->cfg->config['full_text_engine'] = '';
         $this->cfg->saveConfig();
@@ -145,7 +145,7 @@ class AdministrationController extends SugarController
         }
         echo json_encode(array('success' => $scheduled));
     }
-    
+
     public function action_checkFTSConnection()
     {
         $type = !empty($_REQUEST['type']) ? urldecode($_REQUEST['type']) : '';

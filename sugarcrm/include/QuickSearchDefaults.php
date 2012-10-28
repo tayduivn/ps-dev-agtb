@@ -45,14 +45,16 @@ class QuickSearchDefaults
     static public function getQuickSearchDefaults(array $lookup = array())
     {
        $lookup['custom/include/QuickSearchDefaults.php'] = 'QuickSearchDefaultsCustom';
-       foreach ($lookup as $file => $class)
-       {
-           if (file_exists($file))
-           {
-               require_once($file);
-               return new $class();
-           }
+       $files = array_reverse(array_keys($lookup));
+       array_push($files, 'custom/include/QuickSearchDefaults.php');
+
+       $file = SugarAutoLoader::existing($files);
+       if($file && !empty($lookup[$file])) {
+           $klass = $lookup[$file];
+           require_once $file;
+           return new $klass();
        }
+
        return new QuickSearchDefaults();
     }
 

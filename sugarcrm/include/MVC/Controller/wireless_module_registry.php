@@ -21,13 +21,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id$
- * Description:  Defines the English language pack for the base application.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 
 $wireless_module_registry = array(
 	'Accounts' => array(),
@@ -42,4 +35,3 @@ $wireless_module_registry = array(
 	'Reports' => array('disable_create' => true),
     'Users' => array('disable_create' => true),
 );
-?>

@@ -54,6 +54,7 @@ class SugarWidgetFieldCustomName extends SugarWidgetFieldName
 EOQ;
 
         file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $contents);
+        SugarAutoLoader::addToMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', false);
     }
 
     public function tearDown()
@@ -63,6 +64,7 @@ EOQ;
             file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $this->backupContents);
         } else {
             unlink('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php');
+            SugarAutoLoader::delFromMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', false);
         }
     }
 

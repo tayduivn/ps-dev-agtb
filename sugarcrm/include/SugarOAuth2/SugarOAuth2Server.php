@@ -21,7 +21,6 @@
  ********************************************************************************/
 
 require_once('include/oauth2-php/lib/OAuth2.php');
-require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 
 /**
  * Sugar OAuth2.0 server, is a wrapper around the php-oauth2 library
@@ -30,28 +29,20 @@ require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 class SugarOAuth2Server extends OAuth2
 {
     /**
-     * This function will return the OAuth2Server class, it will check 
-     * the custom/ directory so users can customize the authorization 
+     * This function will return the OAuth2Server class, it will check
+     * the custom/ directory so users can customize the authorization
      * types and storage
      */
     public static function getOAuth2Server() {
         static $currentOAuth2Server = null;
 
         if ( ! isset($currentOAuth2Server) ) {
-            $oauthStorageName = 'SugarOAuth2Storage';
-            if ( file_exists('custom/include/SugarOAuth2StorageCstm.php') ) {
-                require_once('custom/include/SugarOAuth2StorageCstm.php');
-                $oauthStorageName = 'SugarOAuth2StorageCstm';
-            }
-            
-            $oauthServerName = 'SugarOAuth2Server';
-            if ( file_exists('custom/include/SugarOAuth2ServerCstm.php') ) {
-                require_once('custom/include/SugarOAuth2ServerCstm.php');
-                $oauthServerName = 'SugarOAuth2ServerCstm';
-            }
-            
+            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Storage.php');
+            $oauthStorageName = SugarAutoLoader::customClass('SugarOAuth2Storage');
             $oauthStorage = new $oauthStorageName();
-            
+
+            SugarAutoLoader::requireWithCustom('include/SugarOAuth2/SugarOAuth2Server.php');
+            $oauthServerName = SugarAutoLoader::customClass('SugarOAuth2Server');
             $currentOAuth2Server = new $oauthServerName($oauthStorage);
         }
 
@@ -67,7 +58,7 @@ class SugarOAuth2Server extends OAuth2
 
     /**
      * Sets the platform for the storage handler
-     * 
+     *
      * @param string $platform
      */
     public function setPlatform($platform) {

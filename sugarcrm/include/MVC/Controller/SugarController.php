@@ -8,7 +8,8 @@ require_once('include/MVC/View/SugarView.php');
  * Main SugarCRM controller
  * @api
  */
-class SugarController{
+class SugarController
+{
 	/**
 	 * remap actions in here
 	 * e.g. make all detail views go to edit views
@@ -130,7 +131,7 @@ class SugarController{
 	 * Constructor. This ie meant tot load up the module, action, record as well
 	 * as the mapping arrays.
 	 */
-	function SugarController(){
+	public function SugarController(){
 	}
 
 	/**
@@ -221,27 +222,13 @@ class SugarController{
 			}else{
 				$$var = array();
 			}
-			if(file_exists('include/MVC/Controller/'. $var . '.php')){
-				require('include/MVC/Controller/'. $var . '.php');
+			foreach(SugarAutoLoader::existingCustom("include/MVC/Controller/{$var}.php", "modules/{$this->module}/{$var}.php") as $file) {
+			    require $file;
 			}
-			if(file_exists('modules/'.$this->module.'/'. $var . '.php')){
-				require('modules/'.$this->module.'/'. $var . '.php');
-			}
-			if(file_exists('custom/modules/'.$this->module.'/'. $var . '.php')){
-				require('custom/modules/'.$this->module.'/'. $var . '.php');
-			}
-			if(file_exists('custom/include/MVC/Controller/'. $var . '.php')){
-				require('custom/include/MVC/Controller/'. $var . '.php');
-			}
-
-            // entry_point_registry -> EntryPointRegistry
 
 			$varname = str_replace(" ","",ucwords(str_replace("_"," ", $var)));
-            if(file_exists("custom/application/Ext/$varname/$var.ext.php")){
-				require("custom/application/Ext/$varname/$var.ext.php");
-	        }
-			if(file_exists("custom/modules/{$this->module}/Ext/$varname/$var.ext.php")){
-				require("custom/modules/{$this->module}/Ext/$varname/$var.ext.php");
+			foreach(SugarAutoLoader::existing("custom/application/Ext/$varname/$var.ext.php", "custom/modules/{$this->module}/Ext/$varname/$var.ext.php") as $file) {
+			    require $file;
 			}
 
 			sugar_cache_put("CONTROLLER_". $var . "_".$this->module, $$var);
@@ -861,11 +848,10 @@ class SugarController{
 	        $action = 'list';
 	    }
 
-		if ((file_exists('modules/' . $this->module . '/'. $file . '.php')
-                && !file_exists('modules/' . $this->module . '/views/view.'. $action . '.php'))
-            || (file_exists('custom/modules/' . $this->module . '/'. $file . '.php')
-                && !file_exists('custom/modules/' . $this->module . '/views/view.'. $action . '.php'))
-            ) {
+	    if((SugarAutoLoader::existing("modules/{$this->module}/{$file}.php") &&
+    	    !SugarAutoLoader::existing("modules/{$this->module}/views/view.{$action}.php")) ||
+    	    (SugarAutoLoader::existing("custom/modules/{$this->module}/{$file}.php") &&
+    	    !SugarAutoLoader::existing("custom/modules/{$this->module}/views/view.{$action}.php"))) {
 			// A 'classic' module, using the old pre-MVC display files
 			// We should now discard the bean we just obtained for tracking as the pre-MVC module will instantiate its own
 			unset($GLOBALS['FOCUS']);

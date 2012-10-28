@@ -92,8 +92,18 @@ class StudioModule
 				$templates [ strtolower ( $filename) ] = strtolower ( $filename ) ;
 		}
 
-		// If a custom module, then its type is determined by the parent SugarObject that it extends
-		$type = $GLOBALS [ 'beanList' ] [ $this->module ] ;
+		if (!isset($GLOBALS [ 'beanList' ] [ $this->module ]))
+        {
+            //If there is no bean at all for this module, use the basic template for base files
+            return "basic" ;
+        }
+        // If a custom module, then its type is determined by the parent SugarObject that it extends
+        $type = $GLOBALS [ 'beanList' ] [ $this->module ] ;
+        if (!isset($GLOBALS [ 'beanFiles' ] [ $type ]))
+        {
+            //If there is no bean at all for this module, use the basic template for base files
+            return "basic" ;
+        }
         require_once $GLOBALS [ 'beanFiles' ] [ $type ] ;
 
         do

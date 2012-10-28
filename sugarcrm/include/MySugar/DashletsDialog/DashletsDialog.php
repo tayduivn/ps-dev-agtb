@@ -59,14 +59,16 @@ class DashletsDialog {
         asort($dashletsFiles);
 
         foreach($dashletsFiles as $className => $files) {
-            if(!empty($files['meta']) && is_file($files['meta'])) {
+            if(!empty($files['meta']) && SugarAutoLoader::fileExists($files['meta'])) {
                 require_once($files['meta']); // get meta file
 
                 $directory = substr($files['meta'], 0, strrpos($files['meta'], '/') + 1);
-                if(is_file($directory . $files['class'] . '.' . $current_language . '.lang.php'))
-                    require_once($directory . $files['class'] . '.' . $current_language . '.lang.php');
-                elseif(is_file($directory . $files['class'] . '.en_us.lang.php'))
-                    require_once($directory . $files['class'] . '.en_us.lang.php');
+                foreach(SugarAutoLoader::existing(
+                    $directory . $files['class'] . '.' . $current_language . '.lang.php',
+                    $directory . $files['class'] . '.en_us.lang.php'
+                ) as $file) {
+                    require $file;
+                }
 
                 // try to translate the string
                 if(empty($dashletStrings[$files['class']][$dashletMeta[$files['class']]['title']]))
@@ -138,7 +140,7 @@ class DashletsDialog {
                 }
 
                 if ($displayDashlet && isset($dashletMeta[$files['class']]['dynamic_hide']) && $dashletMeta[$files['class']]['dynamic_hide']){
-                    if ( file_exists($files['file']) ) {
+                    if ( SugarAutoLoader::fileExists($files['file']) ) {
                         require_once($files['file']);
                         if ( class_exists($files['class']) ) {
                             $dashletClassName = $files['class'];

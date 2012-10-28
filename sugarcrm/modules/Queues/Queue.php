@@ -108,12 +108,12 @@ class Queue extends SugarBean {
 	 */
 	function getWorkflows() {
 		$workflows = array();
-		if(file_exists('custom/modules/Queues/actions_array.php')) {
-			require_once('custom/modules/Queues/actions_array.php');
+		if(SugarAutoLoader::existing('custom/modules/Queues/actions_array.php')) {
+			require('custom/modules/Queues/actions_array.php');
 			$workflows = array_merge($workflows, $action_meta_array);
 		}
-		if(file_exists('modules/Queues/StandardWorkflows.php')) {
-			require_once('modules/Queues/StandardWorkflows.php');
+		foreach(SugarAutoLoader::existingCustom('modules/Queues/StandardWorkflows.php') as $file) {
+			require $file;
 			$workflows = array_merge($workflows, $standards);
 		}
 

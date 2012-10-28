@@ -240,19 +240,28 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
 	    {
 //BEGIN SUGARCRM flav=pro ONLY
 	        case 'wireless':
-	            if (file_exists('custom/modules/'.$module.'/metadata/wireless.subpaneldefs.php'))
-	                 require_once('custom/modules/'.$module.'/metadata/wireless.subpaneldefs.php');
-	            else if (file_exists('modules/'.$module.'/metadata/wireless.subpaneldefs.php'))
-	                 require_once('modules/'.$module.'/metadata/wireless.subpaneldefs.php');
+	            $defs = SugarAutoLoader::existingCustomOne('modules/'.$module.'/metadata/wireless.subpaneldefs.php');
+	            if($defs) {
+	                require $defs;
+	            }
+                //If an Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php file exists, then also load it as well
+                $defs = SugarAutoLoader::loadExtension("wireless_subpanels", $module);
+                if($defs) {
+                    require $defs;
+                }
 	            break;
 
 //END SUGARCRM flav=pro ONLY
 	        case 'default':
 	        default:
-	            if (file_exists ('modules/'.$module.'/metadata/subpaneldefs.php' ))
-	                require ('modules/'.$module.'/metadata/subpaneldefs.php');
-	            if ( file_exists('custom/modules/'.$module.'/Ext/Layoutdefs/layoutdefs.ext.php' ))
-	                require ('custom/modules/'.$module.'/Ext/Layoutdefs/layoutdefs.ext.php');
+	            $defs = SugarAutoLoader::loadWithMetafiles($module, 'subpaneldefs');
+	            if($defs) {
+	            	require $defs;
+	            }
+	            $defs = SugarAutoLoader::loadExtension('layoutdefs', $module);
+	            if($defs) {
+	            	require $defs;
+	            }
 	    }
 
 	    //Filter results for permissions
@@ -348,10 +357,8 @@ class SugarWebServiceUtilv3 extends SoapHelperWebServices {
     function get_visible_mobile_modules($availModules){
         $enabled_modules = array();
         $availModulesKey = array_flip($availModules);
-        foreach ( array ( '','custom/') as $prefix)
-        {
-        	if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php'))
-        		require $prefix.'include/MVC/Controller/wireless_module_registry.php' ;
+        foreach(SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+            require $file;
         }
 
         foreach ( $wireless_module_registry as $e => $def )

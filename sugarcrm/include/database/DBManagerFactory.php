@@ -88,11 +88,7 @@ class DBManagerFactory
         if(!empty($config['db_manager_class'])){
             $my_db_manager = $config['db_manager_class'];
         } else {
-            if(file_exists("custom/include/database/{$my_db_manager}.php")) {
-                require_once("custom/include/database/{$my_db_manager}.php");
-            } else {
-                require_once("include/database/{$my_db_manager}.php");
-            }
+            SugarAutoLoader::requireWithCustom("include/database/{$my_db_manager}.php");
         }
 
         if(class_exists($my_db_manager)) {

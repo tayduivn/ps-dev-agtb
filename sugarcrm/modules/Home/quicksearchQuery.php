@@ -21,15 +21,12 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *$Id: QuickSearchDefaults.php 16849 2006-09-28 00:11:56Z clee $
  ********************************************************************************/
 
-$filePath = 'modules/Home/QuickSearch.php';
-if (file_exists('custom/' . $filePath))
-{
-    require_once('custom/' . $filePath);
+SugarAutoLoader::requireWithCustom('modules/Home/QuickSearch.php');
+if(class_exists('quicksearchQueryCustom')) {
     $quicksearchQuery = new quicksearchQueryCustom();
 }
 else
 {
-    require_once($filePath);
     $quicksearchQuery = new quicksearchQuery();
 }
 
@@ -37,7 +34,7 @@ $json = getJSONobj();
 $data = $json->decode(html_entity_decode($_REQUEST['data']));
 if(isset($_REQUEST['query']) && !empty($_REQUEST['query'])){
     foreach($data['conditions'] as $k=>$v){
-        if (empty($data['conditions'][$k]['value']) && ($data['conditions'][$k]['op'] != quicksearchQuery::CONDITION_EQUAL)) 
+        if (empty($data['conditions'][$k]['value']) && ($data['conditions'][$k]['op'] != quicksearchQuery::CONDITION_EQUAL))
         {
             $data['conditions'][$k]['value']=$_REQUEST['query'];
         }

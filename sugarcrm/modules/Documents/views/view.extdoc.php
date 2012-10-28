@@ -2,23 +2,23 @@
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 /*********************************************************************************
- *The contents of this file are subject to the SugarCRM Professional End User License Agreement 
- *("License") which can be viewed at http://www.sugarcrm.com/EULA.  
- *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may 
- *not use this file except in compliance with the License. Under the terms of the license, You 
- *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or 
- *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or 
- *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit 
- *of a third party.  Use of the Software may be subject to applicable fees and any use of the 
- *Software without first paying applicable fees is strictly prohibited.  You do not have the 
- *right to remove SugarCRM copyrights from the source code or user interface. 
+ *The contents of this file are subject to the SugarCRM Professional End User License Agreement
+ *("License") which can be viewed at http://www.sugarcrm.com/EULA.
+ *By installing or using this file, You have unconditionally agreed to the terms and conditions of the License, and You may
+ *not use this file except in compliance with the License. Under the terms of the license, You
+ *shall not, among other things: 1) sublicense, resell, rent, lease, redistribute, assign or
+ *otherwise transfer Your rights to the Software, and 2) use the Software for timesharing or
+ *service bureau purposes such as hosting the Software for commercial gain and/or for the benefit
+ *of a third party.  Use of the Software may be subject to applicable fees and any use of the
+ *Software without first paying applicable fees is strictly prohibited.  You do not have the
+ *right to remove SugarCRM copyrights from the source code or user interface.
  * All copies of the Covered Code must include on each user interface screen:
- * (i) the "Powered by SugarCRM" logo and 
- * (ii) the SugarCRM copyright notice 
+ * (i) the "Powered by SugarCRM" logo and
+ * (ii) the SugarCRM copyright notice
  * in the same form as they appear in the distribution.  See full license for requirements.
- *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer 
+ *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
- *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.  
+ *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
 require_once('include/Sugar_Smarty.php');
@@ -42,7 +42,7 @@ class DocumentsViewExtdoc extends SugarView
         } else {
             $file_search = '';
         }
-        
+
         if ( !isset($_REQUEST['apiName']) ) {
             $apiName = 'IBMSmartCloud';
         } else {
@@ -88,10 +88,9 @@ class DocumentsViewExtdoc extends SugarView
          if (!$validSession || empty($eapmBean))
          {
              // Bug #49987 : Documents view.extdoc.php doesn't allow custom override
-             $tpl_file = get_custom_file_if_exists('include/externalAPI/'.$apiName.'/'.$apiName.'Signup.'.$GLOBALS['current_language'].'.tpl');
+             $tpl_file = SugarAutoLoader::existingCustomOne('include/externalAPI/'.$apiName.'/'.$apiName.'Signup.'.$GLOBALS['current_language'].'.tpl');
 
-             if (file_exists($tpl_file))
-             {
+             if ($tpl_file) {
                  $smarty = new Sugar_Smarty();
                  echo $smarty->fetch($tpl_file);
              } else  {
@@ -124,7 +123,7 @@ class DocumentsViewExtdoc extends SugarView
                 foreach ( $row as $key => $value ) {
                     $newRow[strtoupper($key)] = $value;
                 }
-                
+
                 if ( $isPopup ) {
                     // We are running as a popup window, we need to replace the direct url with some javascript
                     $newRow['DOC_URL'] = "javascript:window.opener.SUGAR.field.file.populateFromPopup('".addslashes($_REQUEST['elemBaseName'])."','".addslashes($newRow['ID'])."','".addslashes($newRow['NAME'])."','".addslashes($newRow['URL'])."','".addslashes($newRow['URL'])."'); window.close();";
@@ -156,7 +155,7 @@ class DocumentsViewExtdoc extends SugarView
         $ss->assign('displayColumns',$displayColumns);
         $ss->assign('imgPath',SugarThemeRegistry::current()->getImageURL($apiName.'_image_inline.png'));
 
-        if ( $isPopup ) { 
+        if ( $isPopup ) {
             $ss->assign('linkTarget','');
             $ss->assign('isPopup',1);
             $ss->assign('elemBaseName',$_REQUEST['elemBaseName']);
@@ -175,14 +174,14 @@ class DocumentsViewExtdoc extends SugarView
             insert_popup_header($GLOBALS['theme'], false);
             $output_html = ob_get_contents();
             ob_end_clean();
-            
+
             $output_html .= get_form_header(translate('LBL_SEARCH_FORM_TITLE','Documents'), '', false);
-            
+
             echo($output_html);
         }
 
         $ss->display('modules/Documents/tpls/view.extdoc.tpl');
-        
+
         if ( $isPopup ) {
             // Close the dccontent div
             echo('</div>');

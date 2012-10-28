@@ -45,7 +45,8 @@ function sugarDecode($key, $encoded){
  * @param string type
  * @return string key
  */
-function blowfishGetKey($type) {
+function blowfishGetKey($type)
+{
 	$key = array();
 
 	$type = str_rot13($type);

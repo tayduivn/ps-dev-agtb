@@ -32,10 +32,10 @@ class Bug38864Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
         $this->modListHeader = query_module_access_list($GLOBALS['current_user']);
-        
+
         sugar_mkdir("custom/modules/Reports/metadata/",null,true);
-        
-        sugar_file_put_contents(
+
+        SugarAutoLoader::put(
             "custom/modules/Reports/metadata/reportmodulesdefs.php",
             "<?php
 \$additionalModules[] = 'ProspectLists';
@@ -46,7 +46,7 @@ class Bug38864Test extends Sugar_PHPUnit_Framework_TestCase
 
 	public function tearDown()
 	{
-	    unlink("custom/modules/Reports/metadata/reportmodulesdefs.php");
+	    SugarAutoLoader::unlink("custom/modules/Reports/metadata/reportmodulesdefs.php");
 	    unset($GLOBALS['current_user']);
 	    SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 	}
@@ -54,12 +54,12 @@ class Bug38864Test extends Sugar_PHPUnit_Framework_TestCase
 	public function testCustomReportmoduledefsExemptModulesIsParsed()
 	{
 	    $modules = getAllowedReportModules($this->modListHeader,true);
-	    
+
 	    $this->assertArrayNotHasKey('Accounts',$modules);
-	    
+
 	    return $modules;
 	}
-	
+
 	/**
      * @depends testCustomReportmoduledefsExemptModulesIsParsed
      */

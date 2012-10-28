@@ -1,4 +1,6 @@
 <?php
+if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Enterprise End User
  * License Agreement ("License") which can be viewed at
@@ -28,7 +30,7 @@
 
 require_once('include/SearchForm/SearchForm.php');
 
-class SearchFormReports extends SearchForm 
+class SearchFormReports extends SearchForm
 {
     /**
      * @see SearchForm::setup()
@@ -36,35 +38,35 @@ class SearchFormReports extends SearchForm
     function setup()
     {
         parent::setup();
-        
+
         $this->xtpl->assign('LOADING_IMAGE',getStudioIcon('loading', 'loading', 16, 16));
         $this->xtpl->assign('HELP_IMAGE',SugarThemeRegistry::current()->getImageURL('help-dashlet.gif'));
         $this->xtpl->assign('CLOSE_IMAGE',SugarThemeRegistry::current()->getImageURL('close.gif'));
     }
-    
+
     /**
      * @see SearchForm::displayHeader()
      */
-    function displayHeader($view) 
+    function displayHeader($view)
     {
-        global $current_user; 
+        global $current_user;
         $GLOBALS['log']->debug('SearchForm.php->displayHeader()');
         $header_text = '';
-        if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){  
+        if(is_admin($current_user) && $_REQUEST['module'] != 'DynamicLayout' && !empty($_SESSION['editinplace'])){
             $header_text = "<a href='index.php?action=index&module=DynamicLayout&from_action=SearchForm&from_module=".$_REQUEST['module'] ."'>".SugarThemeRegistry::current()->getImage("EditLayout","border='0' align='bottom'",null,null,'.gif',$mod_strings['LBL_EDITLAYOUT'])."</a>";
         }
-        
+
         echo "<form name='search_form' class='search_form'>" .
              "<input type='hidden' name='searchFormTab' value='{$view}'/>" .
              "<input type='hidden' name='module' value='{$_REQUEST['module']}'/>" .
-             "<input type='hidden' name='action' value='{$_REQUEST['action']}'/>" . 
+             "<input type='hidden' name='action' value='{$_REQUEST['action']}'/>" .
              "<input type='hidden' name='query' value='true'/>";
     }
 
     /**
      * @see SearchForm::displayWithHeaders()
-     */    
-    function displayWithHeaders($view, $basic_search_text = '', $advanced_search_text = '', $saved_views_text = '') 
+     */
+    function displayWithHeaders($view, $basic_search_text = '', $advanced_search_text = '', $saved_views_text = '')
     {
         $GLOBALS['log']->debug('SearchForm.php->displayWithHeaders()');
         $this->displayHeader($view);
@@ -75,107 +77,81 @@ class SearchFormReports extends SearchForm
                 <script>
                     function toggleInlineSearch(){
                         if (document.getElementById('inlineSavedSearch').style.display == 'none'){
-                            document.getElementById('showSSDIV').value = 'yes'      
+                            document.getElementById('showSSDIV').value = 'yes'
                             document.getElementById('inlineSavedSearch').style.display = '';
-                
+
                             document.getElementById('up_down_img').src='".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."';
                             document.getElementById('up_down_img').setAttribute('alt','".translate('LBL_ALT_HIDE_OPTIONS')."');
-                
+
                         }else{
-                
+
                             document.getElementById('up_down_img').src='".SugarThemeRegistry::current()->getImageURL('advanced_search.gif')."';
                             document.getElementById('up_down_img').setAttribute('alt','".translate('LBL_ALT_SHOW_OPTIONS')."');
-                            document.getElementById('showSSDIV').value = 'no';      
-                            document.getElementById('inlineSavedSearch').style.display = 'none';        
+                            document.getElementById('showSSDIV').value = 'no';
+                            document.getElementById('inlineSavedSearch').style.display = 'none';
                         }
                     }
-                
-                
+
+
                 </script>
             ";
     }
-    
-    function displayAdvanced($header = true, $return = false, $listViewDefs='', $lv='') 
+
+    function displayAdvanced($header = true, $return = false, $listViewDefs='', $lv='')
     {
         global $app_strings;
-        
+
         $SAVED_SEARCHES_OPTIONS = '';
         $savedSearch = new SavedSearch();
         $SAVED_SEARCHES_OPTIONS = $savedSearch->getSelect($this->module);
         $str = "";
         if(!empty($SAVED_SEARCHES_OPTIONS) && $this->showSavedSearchOptions){
-            $str .= "   <span class='white-space'>                
+            $str .= "   <span class='white-space'>
                         &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<b>{$app_strings['LBL_SAVED_SEARCH_SHORTCUT']}</b>&nbsp;
-                        {$SAVED_SEARCHES_OPTIONS} 
-                        <span id='go_btn_span' style='display:none'><input tabindex='2' title='go_select' id='go_select'  onclick='SUGAR.searchForm.clear_form(this.form); return false;' class='button' type='button' name='go_select' value=' {$app_strings['LBL_GO_BUTTON_LABEL']} '/></span> 
+                        {$SAVED_SEARCHES_OPTIONS}
+                        <span id='go_btn_span' style='display:none'><input tabindex='2' title='go_select' id='go_select'  onclick='SUGAR.searchForm.clear_form(this.form); return false;' class='button' type='button' name='go_select' value=' {$app_strings['LBL_GO_BUTTON_LABEL']} '/></span>
                     </span>";
         }
         $str .= "
                 <script>
                     function toggleInlineSearch(){
                         if (document.getElementById('inlineSavedSearch').style.display == 'none'){
-                            document.getElementById('showSSDIV').value = 'yes'      
+                            document.getElementById('showSSDIV').value = 'yes'
                             document.getElementById('inlineSavedSearch').style.display = '';
 
                             document.getElementById('up_down_img').src='".SugarThemeRegistry::current()->getImageURL('basic_search.gif')."';
                             document.getElementById('up_down_img').setAttribute('alt','".translate('LBL_ALT_HIDE_OPTIONS')."');
-                
+
                         }else{
-                
+
                             document.getElementById('up_down_img').src='".SugarThemeRegistry::current()->getImageURL('advanced_search.gif')."';
                             document.getElementById('up_down_img').setAttribute('alt','".translate('LBL_ALT_SHOW_OPTIONS')."');
-                            document.getElementById('showSSDIV').value = 'no';      
-                            document.getElementById('inlineSavedSearch').style.display = 'none';        
+                            document.getElementById('showSSDIV').value = 'no';
+                            document.getElementById('inlineSavedSearch').style.display = 'none';
                         }
                     }
-                
-                
+
+
                 </script>
-            ";               
+            ";
         $this->xtpl->assign('ADVANCED_BUTTONS',$str);
         $this->xtpl->assign('LBL_DELETE_CONFIRM',translate('LBL_DELETE_CONFIRM', 'SavedSearch'));
         return parent::displayAdvanced($header, $return, $listViewDefs, $lv);
     }
 
-public static function retrieveReportsSearchDefs()
+    public static function retrieveReportsSearchDefs()
      {
          $searchdefs = array();
          $searchFields = array();
 
-         if(file_exists('custom/modules/Reports/metadata/metafiles.php'))
-         {
-             require('custom/modules/Reports/metadata/metafiles.php');
-         }
-         elseif(file_exists('modules/Reports/metadata/metafiles.php'))
-         {
-             require('modules/Reports/metadata/metafiles.php');
+         $defs = SugarAutoLoader::loadWithMetafiles('Reports', 'searchdefs');
+         if($defs) {
+             require $defs;
          }
 
-         if (file_exists('custom/modules/Reports/metadata/searchdefs.php'))
-         {
-             require('custom/modules/Reports/metadata/searchdefs.php');
-         }
-         elseif (!empty($metafiles['Reports']['searchdefs']))
-         {
-             require($metafiles['Reports']['searchdefs']);
-         }
-         elseif (file_exists('modules/Reports/metadata/searchdefs.php'))
-         {
-             require('modules/Reports/metadata/searchdefs.php');
-         }
-
-
-         if(!empty($metafiles['Reports']['searchfields']))
-         {
-             require($metafiles['Reports']['searchfields']);
-         }
-         elseif(file_exists('modules/Reports/metadata/SearchFields.php'))
-         {
-             require('modules/Reports/metadata/SearchFields.php');
-         }
-         if(file_exists('custom/modules/Reports/metadata/SearchFields.php'))
-         {
-             require('custom/modules/Reports/metadata/SearchFields.php');
+         $defs = SugarAutoLoader::loadWithMetafiles('Reports', 'SearchFields', 'searchfields');
+         if($defs) {
+         	require $defs;
          }
 
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );

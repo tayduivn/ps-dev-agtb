@@ -41,23 +41,23 @@ class ViewConfigureshortcutbar extends SugarView
 	protected function _getModuleTitleParams($browserTitle = false)
 	{
 	    global $mod_strings;
-	    
+
     	return array("<a href='index.php?module=Administration&action=index'>".$mod_strings['LBL_MODULE_NAME']."</a>", $mod_strings['LBL_CONFIGURE_SHORTCUT_BAR']);
     }
-    
+
     /**
 	 * @see SugarView::preDisplay()
 	 */
 	public function preDisplay()
 	{
 	    global $current_user;
-        
+
 	    if (!is_admin($current_user))
         {
 	        sugar_die("Unauthorized access to administration.");
         }
 	}
-    
+
     /**
 	 * @see SugarView::display()
 	 */
@@ -65,29 +65,29 @@ class ViewConfigureshortcutbar extends SugarView
 	{
         require_once("include/JSON.php");
         $json = new JSON();
-        
+
         global $mod_strings;
         global $app_list_strings;
         global $app_strings;
         global $current_user;
-        
+
         $title = getClassicModuleTitle(
-                    "Administration", 
+                    "Administration",
                     array("<a href='index.php?module=Administration&action=index'>{$mod_strings['LBL_MODULE_NAME']}</a>",translate('LBL_CONFIGURE_SHORTCUT_BAR')),
                     false
                     );
         $msg = "";
-        
+
         global $theme, $currentModule, $app_list_strings, $app_strings;
         $GLOBALS['log']->info("Administration ConfigureShortcutBar view");
         $actions_path = "include/DashletContainer/Containers/DCActions.php";
-        
+
         //If save is set, save then let the user know if the save worked.
         if (!empty($_REQUEST['enabled_modules']))
         {
             $toDecode = html_entity_decode  ($_REQUEST['enabled_modules'], ENT_QUOTES);
             $modules = json_decode($toDecode);
-            
+
             //fixing bug #49878: XSS - Administration, Configure Shortcut Bar, enabled_modules
             //prevent attempt of html-injection
             global $moduleList;
@@ -98,45 +98,38 @@ class ViewConfigureshortcutbar extends SugarView
                     unset($modules[$key]);
                 }
             }
-            
-            $out = "<?php\n \$DCActions = \n" . var_export_helper ( $modules ) . ";";
-            if (!is_file("custom/" . $actions_path))
-               create_custom_directory("include/DashletContainer/Containers/");
-            if ( file_put_contents ( "custom/" . $actions_path, $out ) === false)
+
+            $actions_path = create_custom_directory($actions_path);
+            if(!write_array_to_file("DCActions", $modules, $actions_path)) {
                echo translate("LBL_SAVE_FAILED");
-            else
-            {
+            } else {
                echo "true";
             }
-            
+
         }
         else
         {
-            include($actions_path);
+            foreach(SugarAutoLoader::existingCustom($actions_path) as $file) {
+                include $file;
+            }
             //Start with the default module
             $availibleModules = $DCActions;
-            //Add the ones currently on the layout
-            if (is_file('custom/' . $actions_path))
-            {
-                include('custom/' . $actions_path);
-                $availibleModules = array_merge($availibleModules, $DCActions);
-            }
             //Next add the ones we detect as having quick create defs.
             $modules = $app_list_strings['moduleList'];
             foreach ($modules as $module => $modLabel)
             {
-                if (is_file("modules/$module/metadata/quickcreatedefs.php") || is_file("custom/modules/$module/metadata/quickcreatedefs.php") )
+                if (SugarAutoLoader::existingCustom("modules/$module/metadata/quickcreatedefs.php"))
                    $availibleModules[$module] = $module;
             }
-            
+
             $availibleModules = array_diff($availibleModules, $DCActions);
-            
+
             $enabled = array();
             foreach($DCActions as $mod)
             {
                 $enabled[] = array("module" => $mod, 'label' => translate($mod));
             }
-            
+
             $disabled = array();
             foreach($availibleModules as $mod)
             {
@@ -148,13 +141,13 @@ class ViewConfigureshortcutbar extends SugarView
             $this->ss->assign('APP', $GLOBALS['app_strings']);
             $this->ss->assign('MOD', $GLOBALS['mod_strings']);
             $this->ss->assign('title',  $title);
-            
+
             $this->ss->assign('enabled_modules', $json->encode ( $enabled ));
             $this->ss->assign('disabled_modules',$json->encode ( $disabled));
             $this->ss->assign('description',  translate("LBL_CONFIGURE_SHORTCUT_BAR"));
             $this->ss->assign('msg',  $msg);
-            
-            echo $this->ss->fetch('modules/Administration/templates/ShortcutBar.tpl');	
+
+            echo $this->ss->fetch('modules/Administration/templates/ShortcutBar.tpl');
         }
     }
 

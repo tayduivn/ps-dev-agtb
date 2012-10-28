@@ -79,6 +79,11 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
      */
     protected static $repData;
 
+    /**
+     * @var Administration
+     */
+    protected static $admin;
+
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
@@ -157,6 +162,8 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
 
         );
 
+        // get current settings
+        self::$admin = BeanFactory::getBean('Administration');
     }
 
     public function setUp()
@@ -165,6 +172,10 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $this->_user = self::$manager['user'];
         $this->_oldUser = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $this->_user;
+        //Reset all columns to be shown
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_likely', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_best', 1, 'base');
+        self::$admin->saveSetting('Forecasts', 'show_worksheet_worst', 1, 'base');
     }
 
     public static function tearDownAfterClass()
@@ -758,5 +769,5 @@ class ForecastsWorksheetManagerApiTest extends RestTestBase
         $GLOBALS["current_user"] = $oldUser;
         $this->authToken = "";
      }	
-}
 
+}
