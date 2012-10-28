@@ -57,30 +57,36 @@
     },
 
     /**
-     * Overwrite the render method
+     * Overwrite the render method.  This function also does some checks to determine whether or not to show an
+     * alert indicating a commit entry.  The alert is shown for a reportee if
+     *
+     * 1) The reportee's forecast was commit at a time after the most recent manager's forecast commit
+     * or
+     * 2) If the manager had no history of a forecast commit
      *
      * @return {*}
      * @private
      */
-
     _render:function () {
-        if(this.context && !_.isEmpty(this.context.forecasts.committed.models)) {
-            var commitDateStr = _.first(this.context.forecasts.committed.models).get('date_modified');
-            var commitDate = new Date(commitDateStr);
-
-            var fieldDateStr = this.model.get('date_modified');
-            var fieldDate = new Date(fieldDateStr);
-
-            // if fieldDate is newer than the forecast commitDate, then we want to show the field
+        if(this.context) {
             this.showFieldAlert = false;
+            this.uid = this.model.get('user_id');
 
-            if (_.isDate(fieldDate) && _.isDate(commitDate)) {
-                this.showFieldAlert = (fieldDate.getTime() > commitDate.getTime());
+            var fieldDate = new Date(this.model.get('date_modified'));
+
+            if(!_.isEmpty(this.context.forecasts.committed.models))
+            {
+                var commitDate = new Date(_.first(this.context.forecasts.committed.models).get('date_modified'));
+
+                // if fieldDate is newer than the forecast commitDate value, then we want to show the field
+                if (_.isDate(fieldDate) && _.isDate(commitDate)) {
+                    this.showFieldAlert = (fieldDate.getTime() > commitDate.getTime());
+                }
+            } else if(this.uid != app.user.get('id')) {
+                this.showFieldAlert = true;
             }
 
-            this.uid = this.model.get('user_id');
-            this.commitDate = commitDate;
-
+            this.commitDate = fieldDate;
             this.options.viewName = 'historyLog';
             app.view.Field.prototype._render.call(this);
         }

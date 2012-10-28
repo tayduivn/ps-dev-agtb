@@ -52,4 +52,104 @@ describe("forecast historyLog field", function() {
         });
     });
 
+    describe("test showFieldAlert is properly set", function() {
+
+        var app, fieldDef, field, committedView;
+
+        beforeEach(function() {
+            app = SugarTest.app;
+
+            fieldDef = {
+                "name": "forecast",
+                "type": "historyLog",
+                "view": "detail"
+            };
+
+            field = SugarTest.createField("../modules/Forecasts/clients/base", "historyLog", "historyLog", "detail", fieldDef, "Forecasts");
+
+            committedView = SugarTest.loadFile("../modules/Forecasts/clients/base/views/forecastsCommitted", "forecastsCommitted", "js", function (d) {
+                return eval(d);
+            });
+
+            sinon.stub(app.view.Field.prototype, "_render");
+        });
+
+        afterEach(function() {
+            delete fieldDef;
+            delete field;
+            delete committedView;
+            app.view.Field.prototype._render.restore();
+        });
+
+        it("should set showFieldAlert to true if the reportee's forecasts is more recent than the manager's", function() {
+
+            var reporteeModifiedDate = new Date();
+
+            field.model = new Backbone.Model({
+                user_id : 'seed_sarah_id',
+                date_modified : reporteeModifiedDate.toISOString()
+            });
+
+            var managerModifiedDate = new Date();
+            managerModifiedDate.setFullYear(reporteeModifiedDate.getFullYear() - 1);
+
+            committedView.models = [new Backbone.Model({
+                date_modified : managerModifiedDate.toISOString()
+            })];
+
+            field.context.forecasts = {
+                committed : committedView
+            };
+
+            field._render();
+
+            expect(field.showFieldAlert).toBeTruthy();
+        });
+
+        it("should not set showFieldAlert to true if the reportee's forecasts is not more recent than the manager's", function() {
+
+            var reporteeModifiedDate = new Date();
+
+            field.model = new Backbone.Model({
+                user_id : 'seed_sarah_id',
+                date_modified : reporteeModifiedDate.toISOString()
+            });
+
+            var managerModifiedDate = new Date();
+            managerModifiedDate.setFullYear(reporteeModifiedDate.getFullYear() + 1);
+
+            committedView.models = [new Backbone.Model({
+                date_modified : managerModifiedDate.toISOString()
+            })];
+
+            field.context.forecasts = {
+                committed : committedView
+            };
+
+            field._render();
+
+            expect(field.showFieldAlert).not.toBeTruthy();
+        });
+
+        it("should set showFieldAlert to true if there is a reportee's forecast, but no manager forecast", function() {
+
+            var reporteeModifiedDate = new Date();
+
+            field.model = new Backbone.Model({
+                user_id : 'seed_sarah_id',
+                date_modified : reporteeModifiedDate.toISOString()
+            });
+
+            committedView.models = [];
+
+            field.context.forecasts = {
+                committed : committedView
+            };
+
+            field._render();
+
+            expect(field.showFieldAlert).toBeTruthy();
+        });
+    })
+
 });
