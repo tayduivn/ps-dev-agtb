@@ -31,7 +31,7 @@ class TemplateTextArea extends TemplateText{
 	var $type = 'text';
 	var $len = '';
 
-	function __construct()
+	public function __construct()
 	{
 		$this->vardef_map['rows'] = 'ext2';
 		$this->vardef_map['cols'] = 'ext3';

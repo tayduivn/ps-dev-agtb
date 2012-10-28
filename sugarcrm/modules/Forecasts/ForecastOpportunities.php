@@ -68,7 +68,7 @@ class ForecastOpportunities extends SugarBean {
 
     var $new_schema = true;
 
-    function ForecastOpportunities() {
+    public function __construct() {
         global $current_user, $db;
 
         parent::__construct();

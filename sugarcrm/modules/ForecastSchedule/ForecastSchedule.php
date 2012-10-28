@@ -63,7 +63,7 @@ class ForecastSchedule extends SugarBean {
 
 	var $new_schema = true;
 
-	function ForecastSchedule() {
+	public function __construct() {
 		parent::__construct();
 		$this->setupCustomFields('ForecastSchedule');  //parameter is module name
 		$this->disable_row_level_security =true;

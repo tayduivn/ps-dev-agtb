@@ -55,8 +55,8 @@ class SugarFeed extends Basic {
 		var $assigned_user_name;
 		var $assigned_user_link;
 
-	function SugarFeed(){
-		parent::Basic();
+	public function __construct(){
+		parent::__construct();
 	}
 
     static function activateModuleFeed( $module, $updateDB = true ) {

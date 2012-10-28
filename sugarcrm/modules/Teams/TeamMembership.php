@@ -59,7 +59,7 @@ class TeamMembership extends SugarBean {
 
     var $new_schema = true;
 
-    function TeamMembership() {
+    public function __construct() {
         parent::__construct();
         $this->disable_row_level_security =true;
     }

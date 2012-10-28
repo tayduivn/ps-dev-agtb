@@ -55,7 +55,7 @@ class SessionManager extends SugarBean {
     var $disable_custom_fields = true;
      var $column_fields = Array( "id", "session_id", "last_request_time");
 
-    function SessionManager() {
+    public function __construct() {
         parent::__construct();
         $this->disable_row_level_security =true;
     }

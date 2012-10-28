@@ -26,7 +26,7 @@ class ViewSelectRelatedField extends SugarView
 {
     var $vars = array("tmodule", "selLink");
 
-    function __construct()
+    public function __construct()
     {
 
         parent::__construct();

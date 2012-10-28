@@ -102,7 +102,7 @@ class FieldsMetaData extends SugarBean {
 	// METHODS
 	//////////////////////////////////////////////////////////////////
 
-	function FieldsMetaData()
+	public function __construct()
 	{
 		parent::__construct();
 		$this->disable_row_level_security = true;

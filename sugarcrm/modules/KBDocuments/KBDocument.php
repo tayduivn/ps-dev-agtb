@@ -84,8 +84,8 @@ class KBDocument extends SugarBean {
 		'lead_id' => 'leads'
 	 );
 
-	function KBDocument() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('KBDocuments'); //parameter is module name
 	}
 

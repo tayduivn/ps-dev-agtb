@@ -68,7 +68,7 @@ class Forecast extends SugarBean
 	var $module_dir = 'Forecasts';
 
 
-	function Forecast()
+	public function __construct()
 	{
 		global $current_user;
 		parent::__construct();

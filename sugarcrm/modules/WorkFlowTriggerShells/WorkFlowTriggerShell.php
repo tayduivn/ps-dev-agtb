@@ -115,7 +115,7 @@ class WorkFlowTriggerShell extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array();
 
-	function WorkFlowTriggerShell() {
+	public function __construct() {
 		parent::__construct();
 
 		$this->disable_row_level_security =true;

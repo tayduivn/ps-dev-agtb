@@ -97,7 +97,7 @@ class WorkFlowSchedule extends SugarBean {
     var $disable_row_level_security = true;
     //END SUGARCRM flav=pro ONLY
 
-    function WorkFlowSchedule() {
+    public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($dictionary[$this->object_name])){
             require SugarAutoLoader::existingCustomOne('metadata/workflow_schedulesMetaData.php');

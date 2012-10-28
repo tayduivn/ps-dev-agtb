@@ -39,7 +39,7 @@ class TrackerSession extends SugarBean {
     var $acl_category = 'TrackerSessions';
     var $disable_custom_fields = true;
 
-    function TrackerSession() {
+    public function __construct() {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
             require('metadata/tracker_sessionsMetaData.php');

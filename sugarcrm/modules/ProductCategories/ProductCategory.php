@@ -90,7 +90,7 @@ class ProductCategory extends SugarBean {
  */
 //END SUGARCRM flav=pro ONLY
 
-	function ProductCategory() {
+	public function __construct() {
 		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;

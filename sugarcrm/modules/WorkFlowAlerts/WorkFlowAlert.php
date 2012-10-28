@@ -114,7 +114,7 @@ class WorkFlowAlert extends SugarBean {
 	// This is the list of fields that are required
 	var $required_fields =  array('user_type'=>1);
 
-	function WorkFlowAlert() {
+	public function __construct() {
 		parent::__construct();
 
 		$this->disable_row_level_security =true;
