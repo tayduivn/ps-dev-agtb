@@ -663,6 +663,10 @@ function get_field_order_mapping($name='', $reorderArr = '', $exclude = true){
     $fields_to_exclude['cases'] = array('system_id', 'modified_by_name', 'modified_by_name_owner', 'modified_by_name_mod', 'created_by_name', 'created_by_name_owner', 'created_by_name_mod', 'assigned_user_name', 'assigned_user_name_owner', 'assigned_user_name_mod', 'team_count', 'team_count_owner', 'team_count_mod', 'team_name_owner', 'team_name_mod', 'account_name_owner', 'account_name_mod', 'modified_user_name',  'modified_user_name_owner', 'modified_user_name_mod');
     $fields_to_exclude['notes'] = array('first_name','last_name', 'file_mime_type','embed_flag');
     $fields_to_exclude['tasks'] = array('date_start_flag', 'date_due_flag');
+    //BEGIN SUGARCRM flav=pro ONLY
+    $field_to_exclude['forecastworksheet'] = array('version'=>'version');
+    $field_to_exclude['forecastmanagerworksheet'] = array('version'=>'version', 'label'=>'label');
+    //END SUGARCRM flav=pro ONLY
 
     if(!empty($name) && !empty($reorderArr) && is_array($reorderArr)){
 

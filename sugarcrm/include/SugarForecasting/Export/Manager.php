@@ -83,7 +83,7 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
             'timeperiod_id'=>'timeperiod_id',
             'user_id'=>'user_id',
             'name'=>'name',
-            'date_modified'=>'date_modified',
+            'date_modified'=>'date_modified'
         );
 
         $seed = BeanFactory::getBean('ForecastManagerWorksheets');
