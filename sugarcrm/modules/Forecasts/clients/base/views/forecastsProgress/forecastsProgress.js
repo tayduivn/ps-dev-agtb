@@ -68,12 +68,14 @@
         }
 
         if (this.context.forecasts) {
-            //update uer
+            //update user
             this.context.forecasts.on("change:selectedUser reset:selectedUser",
             function(context, selectedUser) {
                 this.updateProgressForSelectedUser(selectedUser);
                 this.updateProgress();
             }, this);
+
+            //commits could have changed quotas or any other number being used in the projected panel, do a fresh pull
             this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
                 if(flag) {
                     this.updateProgress();
