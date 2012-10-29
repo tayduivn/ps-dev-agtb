@@ -57,6 +57,7 @@
     save:function (evt) {
         // If button is disabled, do nothing
         if(!$(evt.target).hasClass('disabled')) {
+            this.model.set('is_setup', true);
             this.model.save();
             this.layout.context.trigger("modal:close");
         }
