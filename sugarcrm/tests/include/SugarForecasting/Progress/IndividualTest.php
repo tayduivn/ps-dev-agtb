@@ -24,13 +24,14 @@ class SugarForecasting_Progress_IndividualTest extends Sugar_PHPUnit_Framework_T
 {
 
     /**
-     * @var array
+     * @var array args to be passed onto methods
      */
     protected static $args = array();
 
+    /**
+     * @var array array of users used throughout class
+     */
     protected static $users = array();
-
-    protected static $quotas = array();
 
     /**
      * @var Currency
