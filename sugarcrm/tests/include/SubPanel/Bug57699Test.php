@@ -139,6 +139,10 @@ class Bug57699Test extends Sugar_PHPUnit_Framework_TestCase
         $hiddenKeyArray = TabController::get_key_array($hidden);
         $this->_subPanelDefinitions->set_hidden_subpanels($hiddenKeyArray);
         
+        // Rebuild the cache
+        $this->_subPanelDefinitions->get_all_subpanels(true);
+        $this->_subPanelDefinitions->get_hidden_subpanels();
+        
         $subpanel = new aSubPanel('history', $this->_testDefs, BeanFactory::getBean('Calls'));
         $this->assertEmpty($subpanel->sub_subpanels, "History subpanel's subpanel should be empty after Notes removed from subpanel module list");
     }
