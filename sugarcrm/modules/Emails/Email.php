@@ -536,8 +536,6 @@ class Email extends SugarBean {
             $textBody = str_replace("&nbsp;", " ", $textBody);
             $textBody = str_replace("</p>", "</p><br />", $textBody);
             $textBody = strip_tags(br2nl($textBody));
-            $textBody = str_replace("&amp;", "&", $textBody);
-            $textBody = str_replace("&#39;", "'", $textBody);
 
             $this->description_html = ""; // make sure it's blank to avoid any mishaps
             $htmlBody               = $this->description_html;
