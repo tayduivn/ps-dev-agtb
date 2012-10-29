@@ -4787,10 +4787,6 @@ function addPdfManagerTemplate() {
 function updateOpportunitiesForForecasting()
 {
     global $current_user;
-
-    require_once(get_custom_file_if_exists('include/SugarQueue/jobs/SugarJobUpdateOpportunities.php'));
-    require_once ('modules/SchedulersJobs/SchedulersJob.php');
-
     //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
     $job = BeanFactory::getBean('SchedulersJobs');;
     $job->name = "Update Old Opportunities";
