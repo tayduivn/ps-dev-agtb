@@ -5,6 +5,7 @@
  * @extends View.View
  */
 ({
+    toggled: false,
     fieldsToDisplay: app.config.fieldsToDisplay || 5,
     events: {
         'click .more': 'toggleMoreLess',
@@ -22,8 +23,12 @@
             }, this);
             this.$(".more").removeClass("hide");
         }
+        if (this.toggled) {
+            this.toggleMoreLess();
+        }
     },
     toggleMoreLess: function() {
+        this.toggled = !this.toggled;
         var fieldsArray = this.$("span[sfuuid]") || [];
         var that = this;
         _.each(fieldsArray, function(field, i) {

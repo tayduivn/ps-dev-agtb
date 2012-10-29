@@ -31,18 +31,33 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function configSave($api, $args) {
-        $admin = BeanFactory::getBean('Administration');
 
         //acl check, only allow if they are module admin
         if(!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
         }
 
-        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
+        $platform = (isset($args['platform']) && !empty($args['platform'])) ?$args['platform'] : 'base';
 
+        $admin = BeanFactory::getBean('Administration');
         //track what settings have changed to determine if timeperiods need rebuilt
         $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
-        $new_settings = parent::configSave($api, $args);
+
+        if (empty($prior_forecasts_settings['is_setup']))
+        {
+            $db = DBManagerFactory::getInstance();
+            // check if we need to upgrade opportunities which had been created upon previous versions
+            $upgraded = $db->getOne("SELECT id FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
+            if (!empty($upgraded))
+            {
+                require_once('modules/UpgradeWizard/uw_utils.php');
+                updateOpps();
+            }
+        }
+
+        parent::configSave($api, $args);
+
+        //reload the settings to get the current settings
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
         //if primary settings for timeperiods have changed, then rebuild them
@@ -50,7 +65,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
 //        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
 //            TimePeriod::rebuildForecastingTimePeriods();
 //        }
-        return $new_settings;
+        return $current_forecasts_settings;
     }
 
     /**

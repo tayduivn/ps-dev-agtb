@@ -510,7 +510,9 @@ class EditViewMerge{
         //long term we should not do this and should provide a way for calls/meetings to update themselves.
 	    if( isset($this->customData[$this->module][$this->viewDefs][$this->templateMetaName]) && strcmp(strtolower($this->module), 'calls') != 0 && strcmp(strtolower($this->module), 'meetings') != 0 )
 	    {   
-	    	$this->newData[$this->module][$this->viewDefs][$this->templateMetaName] = $this->customData[$this->module][$this->viewDefs][$this->templateMetaName];
+	    	//We should no longer merge in custom template meta. Using the custom template meta will mean that no new buttons/ect can be added to the top of the edit/detail views.
+            $this->newData[$this->module][$this->viewDefs][$this->templateMetaName] = $this->originalData[$this->module][$this->viewDefs][$this->templateMetaName];
+
 	    }
 
 	}

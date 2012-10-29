@@ -93,7 +93,7 @@ class FieldViewer{
 				require_once('modules/DynamicFields/templates/Fields/Forms/phone.php');
 				return get_body($this->ss, $vardef);
 			default:
-			    if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Template'. ucfirst($type) . '.php')) {
+			    if(SugarAutoLoader::requireWithCustom('modules/DynamicFields/templates/Fields/Template'. ucfirst($vardef['type']) . '.php')) {
 					return get_body($this->ss, $vardef);
 				}else{
 					return $this->ss->fetch('modules/DynamicFields/templates/Fields/Forms/varchar.tpl');
