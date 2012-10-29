@@ -34,6 +34,8 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
 
+    var $module_name = 'AnnualTimePeriods';
+
     public function __construct() {
         parent::__construct();
         //The time period type
@@ -64,11 +66,28 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         $this->leaf_name_template = "Q%d %d";
     }
 
+
+    /**
+     * getTimePeriodName
+     *
+     * Returns the timeperiod name.  The TimePeriod base implementation simply returns the $count argument passed
+     * in from the code
+     *
+     * @param $count The timeperiod series count
+     * @return string The formatted name of the timeperiod
+     */
+    public function getTimePeriodName($count)
+    {
+        $timedate = TimeDate::getInstance();
+        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('Y'));
+    }
+
     /**
      * override parent function so to add a name for the annual time period.  This can
      *
      * @param null $startDate  db format date string to set the start date of the annual time period
      */
+    /*
     public function setStartDate($start_date = null) {
         parent::setStartDate($start_date);
         $timedate = TimeDate::getInstance();
@@ -77,6 +96,7 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         $label = $this->is_fiscal ? 'Fiscal %s' : 'Year %s';
         $this->name = sprintf($label, $start_date_time->format("Y"));
     }
+    */
 
     /**
      * build leaves for the timeperiod by creating the specified types of timeperiods

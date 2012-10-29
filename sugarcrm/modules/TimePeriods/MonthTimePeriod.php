@@ -33,24 +33,41 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    /**
-     * constructor override
-     *
-     * @param null $start_date date string to set the start date of the month time period
-     * @param bool $is_fiscal flag to determine if the month should follow a fiscal pattern vs calendar
-     * @param int $week_count to be used in conjunction with is_fiscal, if fiscal month, then this is how many weeks to include
-     */
-    public function __construct($start_date = null, $is_fiscal = false, $week_count = 4) {
+    var $module_name = 'MonthTimePeriods';
+
+    public function __construct() {
         parent::__construct();
+        //The time period type
+        $this->time_period_type = TimePeriod::MONTH_TYPE;
+
+        //Fiscal is 52-week based, chronological is year based
+        $this->is_fiscal = false;
+
+        //Used to indicate whether or not TimePeriod instance is a leaf type
+        $this->is_leaf = true;
+
+        //The next period modifier
+        $this->next_date_modifier = '1 month';
+
+        //The previous period modifier
+        $this->previous_date_modifier = '-1 month';
+
+        //The name template
+        $this->name_template = "%s %d";
+    }
+
+
+    /**
+     * getTimePeriodName
+     *
+     * Returns the timeperiod name
+     *
+     * @return string The formatted name of the timeperiod
+     */
+    public function getTimePeriodName($count)
+    {
         $timedate = TimeDate::getInstance();
-
-        //set defaults
-        $this->time_period_type = 'Month';
-        $this->is_fiscal = $is_fiscal;
-        $this->is_leaf = false;
-        $this->date_modifier = $this->is_fiscal ? '4 week' : '1 month';
-
-        $this->setStartDate($start_date, $week_count);
+        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('M'), $timedate->fromDbDate($this->start_date)->format('Y'));
     }
 
     /**
@@ -59,6 +76,7 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
      *
      * @param null $startDate  db format date string to set the start date of the quarter time period
      */
+    /*
     public function setStartDate($start_date = null, $week_count = 4) {
         $timedate = TimeDate::getInstance();
         //check start_date, put it to now if it's not passed in
@@ -80,6 +98,7 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         }
         $this->end_date = $timedate->asDbDate($end_date);
     }
+    */
 
     /**
      * creates a new MonthTimePeriod to start to use
@@ -103,17 +122,4 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         return $nextPeriod;
     }
 
-
-    /**
-     * build leaves for the timeperiod by creating the specified types of timeperiods
-     * currently the monthly time period doesn't allow these, so it will throw an exception right now
-     * this can be changed in the future to allow drillable periods if necessary
-     *
-     * @param string $timePeriodType
-     * @return mixed
-     */
-    public function buildLeaves($shownBackwardDifference, $shownForwardDifference)
-    {
-        throw new Exception("This TimePeriod is a leaf only and not allowed to be a leaf");
-    }
 }

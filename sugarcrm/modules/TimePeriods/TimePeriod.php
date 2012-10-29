@@ -32,6 +32,7 @@ require_once('include/SugarQueue/SugarJobQueue.php');
 // User is used to store customer information.
 class TimePeriod extends SugarBean {
 
+    //Constants used by this class
     const ANNUAL_TYPE = 'Annual';
     const QUARTER_TYPE = 'Quarter';
     const MONTH_TYPE = 'Month';
@@ -55,8 +56,8 @@ class TimePeriod extends SugarBean {
 	var $table_name = "timeperiods";
 	var $fiscal_year_checked;
 	var $module_dir = 'TimePeriods';
-    var $time_period_type = 'Annual';
-    var $leaf_period_type = 'Quarter';
+    var $time_period_type;
+    var $leaf_period_type;
     var $leaf_periods = 4;
     var $leaf_name_template;
     var $name_template;
@@ -69,8 +70,9 @@ class TimePeriod extends SugarBean {
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('reports_to_name');
 
-	
 	var $new_schema = true;
+
+    static $currentId = array();
 
 	public function __construct() {
 		parent::__construct();
@@ -91,8 +93,7 @@ class TimePeriod extends SugarBean {
             $date_start_datetime = $timedate->fromUserDate($this->start_date, true);
         }
 
-        $date_start_datetime->setTime(0,0,0);
-        $this->start_date_timestamp = $date_start_datetime->getTimestamp();
+        $this->start_date_timestamp = $date_start_datetime->setTime(0,0,0)->getTimestamp();
 
         //override the unix time stamp setting here for setting end date timestamp by going with 23:59:59 for the time to get the max time of the day
         $date_close_datetime = $this->end_date;
@@ -102,16 +103,20 @@ class TimePeriod extends SugarBean {
             $date_close_datetime = $timedate->fromUserDate($this->end_date, true);
         }
 
-        $date_close_datetime->setTime(23,59,59);
-        $this->end_date_timestamp = $date_close_datetime->getTimestamp();
+        $this->end_date_timestamp = $date_close_datetime->setTime(23,59,59)->getTimestamp();
+
 		return parent::save($check_notify);
 	}
 
 
-
-	public function get_summary_text()
+    /**
+     * Returns the summary text that should show up in the recent history list for this object.
+     *
+     * @return string
+     */
+    public function get_summary_text()
 	{
-		return "$this->name";
+		return $this->name;
 	}
 
     /**
@@ -174,9 +179,7 @@ class TimePeriod extends SugarBean {
 
     public function create_export_query($order_by, $where)
 	{
-		$query = "SELECT
-				timeperiods.*";
-		$query .= " FROM timeperiods ";
+		$query = "SELECT timeperiods.* FROM timeperiods ";
 
 		$where_auto = " timeperiods.deleted = 0";
 
@@ -383,22 +386,28 @@ class TimePeriod extends SugarBean {
      * getCurrentId
      *
      * Returns the current TimePeriod instance's id if a leaf entry is found for the current date
+     *
+     * @param $type String CONSTANT for the TimePeriod type
      * @return $currentId String id of the TimePeriod instance's id
      */
-    public static function getCurrentId()
+    public static function getCurrentId($type=TimePeriod::QUARTER_TYPE)
     {
-        static $currentId;
-
-        if(!isset($currentId))
+        if(!isset(self::$currentId[$type]))
         {
             global $app_strings;
             $timedate = TimeDate::getInstance();
             $db = DBManagerFactory::getInstance();
             $queryDate = $timedate->getNow();
             $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-            $currentId = $db->getOne("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_leaf = 1 and is_fiscal_year = 0 and deleted = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
+            $result = $db->limitQuery("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND time_period_type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp ASC", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())), 0 , 1);
+            if($result)
+            {
+                $row = $db->fetchByAssoc($result);
+                self::$currentId[$type] = $row['id'];
+            }
         }
-        return $currentId;
+        
+        return self::$currentId[$type];
     }
 
     /**
@@ -537,27 +546,29 @@ class TimePeriod extends SugarBean {
     /**
      * Examines the config values and rebuilds the time periods based on the new settings
      *
-     * @param $priorSettings Array of the previous timeperiod admin properties
+     * @param $priorSettings Array of the previous timeperiod admin settings
      * @param $currentSettings Array of the current timeperiod admin settings
      *
      * @return void
      */
     public function rebuildForecastingTimePeriods($priorSettings, $currentSettings)
     {
+       //$this->deleteTimePeriods($priorSettings, $currentSettings);
+
        $timedate = TimeDate::getInstance();
-       $db = DBManagerFactory::getInstance();
 
        //determine today
        $currentDate = $timedate->getNow();
        $targetStartDate = $timedate->getNow();
 
+       //Set the time period parent and leaf types according to the configuration settings
        $this->time_period_type = $currentSettings['timeperiod_interval']; // Annual by default
        $this->leaf_period_type = $currentSettings['timeperiod_leaf_interval']; // Quarter by default
 
        //set the target date
        $targetStartDate->setDate($targetStartDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
 
-       //if the target date is after the current year then set the year to be one back as our start date
+       //if the target date is after the current year then set the year to be one back
        if($currentDate < $targetStartDate)
        {
            $targetStartDate->modify('-1 year');
@@ -573,11 +584,13 @@ class TimePeriod extends SugarBean {
        $shownBackwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
        $shownForwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_forward');
 
-       //The simplest case is if we are just creating additional timeperiods to show
-       if(!$targetDateDifferent && !$targetIntervalDifferent)
-       {
-          $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
-       } else {
+       $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
+
+       if($targetDateDifferent) {
+
+       }
+
+       if($targetIntervalDifferent) {
 
        }
 
@@ -653,6 +666,7 @@ class TimePeriod extends SugarBean {
                   $earliestTimePeriod = TimePeriod::getByType($this->time_period_type);
                   $earliestTimePeriod->setStartDate($this->start_date);
               }
+
               $earliestTimePeriod->buildTimePeriods($shownBackwardDifference, $this->previous_date_modifier);
           }
 
@@ -677,35 +691,35 @@ class TimePeriod extends SugarBean {
     protected function buildTimePeriods($timePeriods, $dateModifier)
     {
         $timedate = TimeDate::getInstance();
+        //$startDate = $timedate->fromDbDate($this->start_date)->asDbDate();
+        $startDate = $timedate->fromDbDate($this->start_date)->modify($dateModifier)->asDbDate();
 
-        for($i=0; $i < $timePeriods; $i++)
+        for($i=1; $i <= $timePeriods; $i++)
         {
-            //Create annual TimePeriod instance
+            //Create the parent TimePeriod instance
             $timePeriod = TimePeriod::getByType($this->time_period_type);
-            $timePeriod->name = sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('Y'));
-            $timePeriod->setStartDate($timedate->fromDbDate($this->start_date)->modify($dateModifier)->asDbDate());
+            $timePeriod->setStartDate($startDate);
+            $timePeriod->name = $timePeriod->getTimePeriodName($i);
             $timePeriod->time_period_type = $this->time_period_type;
             $timePeriod->is_fiscal_year = true;
             $timePeriod->is_fiscal = $this->is_fiscal;
             $timePeriod->save();
 
-            $leafStartDate = $timedate->fromDbDate($timePeriod->start_date);
-            $leafYear = $timedate->fromDbDate($timePeriod->start_date)->format('Y');
+            $leafStartDate = $timePeriod->start_date;
 
             for($x=1; $x <= $this->leaf_periods; $x++)
             {
                 $leafPeriod = TimePeriod::getByType($this->leaf_period_type);
-                $leafPeriod->name = sprintf($this->leaf_name_template, $x, $leafYear);
-                $startDate = ($x == 1) ? $leafStartDate->asDbDate() : $leafStartDate->modify($leafPeriod->next_date_modifier)->asDbDate();
-                $leafPeriod->setStartDate($startDate);
+                $leafPeriod->setStartDate($leafStartDate);
+                $leafPeriod->name = $leafPeriod->getTimePeriodName($x);
                 $leafPeriod->parent_id = $timePeriod->id;
                 $leafPeriod->is_fiscal_year = false;
                 $leafPeriod->is_fiscal = $timePeriod->is_fiscal;
                 $leafPeriod->save();
+                $leafStartDate = $timedate->fromDbDate($leafStartDate)->modify($leafPeriod->next_date_modifier)->asDbDate();
             }
 
-            //Set start_date to be modified with $this->previous_date_modifier
-            $this->start_date = $timedate->fromDbDate($timePeriod->start_date)->asDbDate();
+            $startDate = $timedate->fromDbDate($startDate)->modify($dateModifier)->asDbDate();
         }
     }
 
@@ -762,7 +776,8 @@ class TimePeriod extends SugarBean {
      */
     public function deleteTimePeriods($priorSettings, $currentSettings)
     {
-
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE timeperiods SET deleted = 1");
     }
 
     /**
@@ -831,6 +846,20 @@ class TimePeriod extends SugarBean {
     }
 
     /**
+     * getTimePeriodName
+     *
+     * Returns the timeperiod name.  The TimePeriod base implementation simply returns the $count argument passed
+     * in from the code
+     *
+     * @param $count The timeperiod series count
+     * @return string The formatted name of the timeperiod
+     */
+    public function getTimePeriodName($count)
+    {
+        return $count;
+    }
+
+    /**
      * Returns the TimePeriod bean instance for the given time period id
      *
      * @param $id String id of the bean
@@ -884,14 +913,13 @@ class TimePeriod extends SugarBean {
     {
         $db = DBManagerFactory::getInstance();
         $result = $db->limitQuery(sprintf("SELECT * FROM timeperiods WHERE time_period_type = '%s' AND deleted = 0 ORDER BY start_date_timestamp DESC", $type), 0, 1);
+        //echo sprintf("SELECT * FROM timeperiods WHERE time_period_type = '%s' AND deleted = 0 ORDER BY start_date_timestamp DESC", $type) . "\n";
         if($result)
         {
             $row = $db->fetchByAssoc($result);
             if(!empty($row))
             {
-               $bean = BeanFactory::getBean("{$type}TimePeriods");
-               $bean->retrieve($row['id']);
-               return $bean;
+               return TimePeriod::getByType($type, $row['id']);
             }
         }
         return null;
@@ -901,11 +929,17 @@ class TimePeriod extends SugarBean {
      * Returns a TimePeriod bean instance based on the given interval type
      *
      * @param $type String value of the timeperiod interval type
+     * @param $id String value of optional id for timeperiod
+     *
      * @return bean A TimePeriod instance bean based on the interval type
      */
-    public static function getByType($type)
+    public static function getByType($type, $id='')
     {
-        return BeanFactory::getBean("{$type}TimePeriods");
+        if(empty($id))
+        {
+            return BeanFactory::getBean("{$type}TimePeriods");
+        }
+        return BeanFactory::getBean("{$type}TimePeriods", $id);
     }
 }
 

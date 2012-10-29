@@ -23,6 +23,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
+require_once('modules/TimePeriods/TimePeriod.php');
 
 class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
@@ -256,45 +257,104 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
 
     /**
+     * getTimePeriodNameProvider
+     *
+     * This is the data provider function for the testTimePeriodName function
+     */
+    public function getTimePeriodNameProvider()
+    {
+        return array(
+            array(TimePeriod::ANNUAL_TYPE, '2012-01-01', 1, 'Year 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-01-01', 1, 'Q1 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-04-01', 2, 'Q2 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-07-01', 3, 'Q3 2012'),
+            array(TimePeriod::QUARTER_TYPE, '2012-10-01', 4, 'Q4 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-01-01', 1, 'Jan 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-02-01', 2, 'Feb 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-03-01', 3, 'Mar 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-04-01', 4, 'Apr 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-05-01', 5, 'May 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-06-01', 6, 'Jun 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-07-01', 7, 'Jul 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-08-01', 8, 'Aug 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-09-01', 9, 'Sep 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-10-01', 10, 'Oct 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-11-01', 11, 'Nov 2012'),
+            array(TimePeriod::MONTH_TYPE, '2012-12-01', 12, 'Dec 2012')
+        );
+    }
+
+    /**
+     * testGetTimePeriodName
+     *
+     * This is a test to check that the getTimePeriodName function returns the appropriate names based on the TimePeriod bean instance
+     *
+     * @group forecasts
+     * @group timeperiods
+     * @dataProvider getTimePeriodNameProvider
+     */
+    public function testGetTimePeriodName($type, $startDate, $count, $expectedName)
+    {
+        $timePeriod = TimePeriod::getByType($type);
+        $timePeriod->setStartDate($startDate);
+        $this->assertEquals($expectedName, $timePeriod->getTimePeriodName($count));
+    }
+
+
+    /**
      * testGetLatest
-     * 
+     *
+     * @group forecasts
+     * @group timeperiods
+     * @group testGetLatest
+     * @outputBuffering disabled
      */
     public function testGetLatest()
     {
-        $timePeriod = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
-        //We don't have any existing data so this should be null
-        $this->assertNull($timePeriod);
+        $db = DBManagerFactory::getInstance();
+        //Mark all created test timeperiods as deleted so that they do not interfere with the test
+        $db->query('UPDATE timeperiods SET deleted = 1');
 
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2020-01-01', '2020-03-31');
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2000-01-01', '2000-03-31');
         $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
 
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2021-01-01', '2021-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2001-01-01', '2001-03-31');
         $tp2->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp2->save();
 
+        $tp3 = SugarTestTimePeriodUtilities::createTimePeriod('2002-01-01', '2002-03-31');
+        $tp3->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp3->save();
         $timePeriod = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
-        $this->assertEquals($tp2->id, $timePeriod->id);
+
+        $this->assertEquals($tp3->id, $timePeriod->id);
     }
 
 
     /**
      * testGetEarliest
      *
+     * @group forecasts
+     * @group timeperiods
      */
     public function testGetEarliest()
     {
-        $timePeriod = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
-        //We don't have any existing data so this should be null
-        $this->assertNull($timePeriod);
+        $db = DBManagerFactory::getInstance();
+        //Mark all created test timeperiods as deleted so that they do not interfere with the test
+        $db->query('UPDATE timeperiods SET deleted = 1');
 
-        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2020-01-01', '2020-03-31');
+        $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('1980-01-01', '1980-03-31');
         $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
 
-        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2021-01-01', '2021-03-31');
+        $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('1981-01-01', '1981-03-31');
         $tp2->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp2->save();
+
+        $tp3 = SugarTestTimePeriodUtilities::createTimePeriod('1982-01-01', '1982-03-31');
+        $tp3->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp3->save();
 
         $timePeriod = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
         $this->assertEquals($tp1->id, $timePeriod->id);
@@ -302,104 +362,151 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
 
     /**
-     * testOnlyShownBackwardDifferenceChanged
+     * shownBackwardDifferenceChangedProvider
      *
+     * This is the data provider for the testOnlyShownBackwardDifferenceChanged function
+     * The arguments are as follows
+     * 1) The prior timeperiod_shown_backward argument
+     * 2) The current timeperiod_shown_backward argument
+     * 3) The parent TimePeriod type to create
+     * 4) The leaf TimePeriod type to create
+     * 5) The timeperiod_start_month argument
+     * 6) The timeperiod_start_day argument
+     * 7) The expected number of parent TimePeriod instances to create
+     * 8) The expected number of leaf TimePeriod instances to create
+     * 9) Direction
+     * 10) The expected month of the leaf TimePeriod based on direction
+     * 11) The expected day of the leaf TimePeriod based on direction
      */
-    public function testOnlyShownBackwardDifferenceChanged()
+    public function shownBackwardDifferenceChangedProvider()
     {
-        $admin = BeanFactory::newBean('Administration');
-        $priorForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
-        $currentForecastSettings = $priorForecastSettings;
-        $currentForecastSettings['timeperiod_shown_backward'] = 4;
+        return array
+        (
 
-        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
+            //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
+            array(2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
-        $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
+            //Going from 4 to 6 creates 2 annual timeperiods backwards (2 annual, 8 quarters)
+            array(4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
-        $timedate = TimeDate::getInstance();
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('-2 year')->format('Y'), 1, 1);
+            //Going from 6 to 2 should not create anything
+            array(6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-0 year', 0, 0, 'backward'),
 
-        $earliest = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 new backward timeperiods');
+            //Going from 2 to 4 creates 2 annual timeperiods forward (2 annual, 8 quarters)
+            array(2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward', 1, 1, 10, 1),
 
-        $earliest = TimePeriod::getEarliest(TimePeriod::QUARTER_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 8 leaf timeperiods');
+            //Going from 4 to 6 creates 2 annual timeperiods forward (2 annual, 8 quarters)
+            array(4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward', 1, 1, 10, 1),
 
-        //Now let's go up to 6 from 4 and see if we create 2 more
-        $priorForecastSettings['timeperiod_shown_backward'] = 4;
-        $currentForecastSettings['timeperiod_shown_backward'] = 6;
-        $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('-4 year')->format('Y'), 1, 1);
+            //Going from 6 to 2 should not create anything
+            array(6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'forward', 1, 1, 10, 1),
 
-        $earliest = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 2 more new backward timeperiods');
+            //Create 4 quarters going backward.  Earliest quarter and month should be -1 year from timeperiod
+            array(0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-1 year', 4, 12, 'backward'),
 
-        $earliest = TimePeriod::getEarliest(TimePeriod::QUARTER_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed creating 16 leaf timeperiods');
+            //Create 8 quarters going backward.  Earliest quarter and month should be -2 years from timeperiod
+            array(4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-2 year', 8, 24, 'backward'),
 
-        //Now let's decrement and assert that it does not affect things
-        $priorForecastSettings['timeperiod_shown_backward'] = 6;
-        $currentForecastSettings['timeperiod_shown_backward'] = 2;
-        $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('-4 year')->format('Y'), 1, 1);
+            //Going from 12 to 6 should not create anything
+            array(12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
 
-        $earliest = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed not creating backward timeperiods');
+            array(0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward', 10, 1, 12, 1),
+            array(4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
+            array(12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1)
 
-        $earliest = TimePeriod::getEarliest(TimePeriod::QUARTER_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $earliest->start_date, 'Failed not creating leaf timeperiods');
+        );
     }
 
     /**
-     * testOnlyShownForwardDifferenceChanged
+     * testOnlyShownBackwardDifferenceChanged
      *
+     * @dataProvider shownBackwardDifferenceChangedProvider
+     * @group testOnlyShownDifferenceChanged
+     * @group forecasts
+     * @group timeperiods
+     * @outputBuffering disabled
      */
-    public function testOnlyShownForwardDifferenceChanged()
-    {
+    public function testOnlyShownDifferenceChanged (
+            $previous,
+            $current,
+            $parentType,
+            $leafType,
+            $startMonth,
+            $startDay,
+            $dateModifier,
+            $expectedParents,
+            $expectedLeaves,
+            $direction,
+            $expectedMonth = 1,
+            $expectedDay = 1,
+            $expectedLeafMonth = 1,
+            $expectedLeafDay = 1
+    ) {
         $admin = BeanFactory::newBean('Administration');
+
         $priorForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
+        $priorForecastSettings["timeperiod_shown_{$direction}"] = $previous;
+        $priorForecastSettings['timeperiod_interval'] = $parentType;
+        $priorForecastSettings['timeperiod_leaf_interval'] = $leafType;
+
         $currentForecastSettings = $priorForecastSettings;
-        $currentForecastSettings['timeperiod_shown_forward'] = 4;
+        $currentForecastSettings["timeperiod_shown_{$direction}"] = $current;
+        $currentForecastSettings['timeperiod_interval'] = $parentType;
+        $currentForecastSettings['timeperiod_leaf_interval'] = $leafType;
+        $db = DBManagerFactory::getInstance();
 
-        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
+        //If it's not annual type we need to re-seed with Quarter/Monthly intervals
+        if($parentType != TimePeriod::ANNUAL_TYPE)
+        {
+           $db->query("DELETE FROM timeperiods WHERE deleted = 0");
+           $priorForecastSettings["timeperiod_shown_backward"] = 8;
+           $priorForecastSettings["timeperiod_shown_forward"] = 8;
+           $timePeriod = TimePeriod::getByType($parentType);
+           $timePeriod->rebuildForecastingTimePeriods(array(), $priorForecastSettings);
+           $priorForecastSettings["timeperiod_shown_{$direction}"] = $previous;
+        }
 
+        $expectedSeed = ($direction == 'backward') ? TimePeriod::getEarliest($parentType) :  TimePeriod::getLatest($parentType);
+
+        $expectedSeedLeaf = ($direction == 'backward') ? TimePeriod::getEarliest($leafType) :  TimePeriod::getLatest($leafType);
+
+        $timePeriod = TimePeriod::getByType($parentType);
         $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
 
         $timedate = TimeDate::getInstance();
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('2 year')->format('Y'), 1, 1);
 
-        $latest = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 2 new foward timeperiods');
+        $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeed->start_date)->modify($dateModifier)->format('Y'), $expectedMonth, $expectedDay);
 
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('2 year')->format('Y'), 10, 1);
-        $latest = TimePeriod::getLatest(TimePeriod::QUARTER_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
+        $tp = $direction == 'backward' ? TimePeriod::getEarliest($parentType) : TimePeriod::getLatest($parentType);
 
-        //Now let's go up to 6 from 4 and see if we create 2 more
-        $priorForecastSettings['timeperiod_shown_forward'] = 4;
-        $currentForecastSettings['timeperiod_shown_forward'] = 6;
-        $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 1, 1);
+        $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedParents} new {$direction} timeperiods");
 
-        $latest = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 2 more new backward timeperiods');
+        $tp = $direction == 'backward' ? TimePeriod::getEarliest($leafType) : TimePeriod::getLatest($leafType);
 
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 10, 1);
-        $latest = TimePeriod::getLatest(TimePeriod::QUARTER_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
+        $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeedLeaf->start_date)->modify($dateModifier)->format('Y'), $expectedLeafMonth, $expectedLeafDay);
+        $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
+    }
 
-        //Now let's decrement and assert that it does not affect things
-        $priorForecastSettings['timeperiod_shown_forward'] = 6;
-        $currentForecastSettings['timeperiod_shown_forward'] = 2;
-        $timePeriod->rebuildForecastingTimePeriods($priorForecastSettings, $currentForecastSettings);
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 1, 1);
+    /**
+     * This is a test to get the current id
+     *
+     * @group forecasts
+     * @group timeperiods
+     */
+    public function testGetCurrentId() {
+        $db = DBManagerFactory::getInstance();
+        $timedate = TimeDate::getInstance();
+        $queryDate = $timedate->getNow();
+        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+        $result = $db->limitQuery("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND time_period_type = '" . TimePeriod::ANNUAL_TYPE . "' AND deleted = 0 ORDER BY start_date_timestamp ASC", 0, 1);
+        $expectedAnnualId = '';
 
-        $latest = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed not creating forward timeperiods');
+        if($result) {
+            $row = $db->fetchByAssoc($result);
+            $expectedAnnualId = $row['id'];
+        }
 
-        $expectedDate = $timedate->getNow()->setDate($timedate->getNow()->modify('4 year')->format('Y'), 10, 1);
-        $latest = TimePeriod::getLatest(TimePeriod::QUARTER_TYPE);
-        $this->assertEquals($expectedDate->asDbDate(), $latest->start_date, 'Failed creating 8 leaf timeperiods');
+        $this->assertEquals($expectedAnnualId, TimePeriod::getCurrentId(TimePeriod::ANNUAL_TYPE));
     }
 
     /**
@@ -561,31 +668,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[0]->end_date, "1st Quarter End Dates do not match");
 
         $expectedStartDate = $expectedStartDate->modify("+3 month");
-        //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-        $expectedEndDate = $expectedEndDate->modify("first day of this month");
+        //not every month will have 31 days, or even 30 for that matter
+        $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
         $expectedEndDate = $expectedEndDate->modify("+3 month");
-        //yes this works, and it is awesome. @see SugarDateTime::modify
-        $expectedEndDate = $expectedEndDate->modify("last day of this month");
+        //yes this works, and it is awesome.
+        $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
         $this->assertEquals($expectedStartDate->asDbDate(), $leaves[1]->start_date, "2nd Quarter Start Dates do not match");
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[1]->end_date, "2nd Quarter End Dates do not match");
 
         $expectedStartDate = $expectedStartDate->modify("+3 month");
-        //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-        $expectedEndDate = $expectedEndDate->modify("first day of this month");
+        //not every month will have 31 days, or even 30 for that matter
+        $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
         $expectedEndDate = $expectedEndDate->modify("+3 month");
-        //yes this works, and it is awesome. @see SugarDateTime::modify
-        $expectedEndDate = $expectedEndDate->modify("last day of this month");
+        //yes this works, and it is awesome.
+        $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
         $this->assertEquals($expectedStartDate->asDbDate(), $leaves[2]->start_date, "3rd Quarter Start Dates do not match");
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[2]->end_date, "3rd Quarter End Dates do not match");
 
         $expectedStartDate = $expectedStartDate->modify("+3 month");
-        //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-        $expectedEndDate = $expectedEndDate->modify("first day of this month");
+        //not every month will have 31 days, or even 30 for that matter
+        $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
         $expectedEndDate = $expectedEndDate->modify("+3 month");
-        //yes this works, and it is awesome. @see SugarDateTime::modify
-        $expectedEndDate = $expectedEndDate->modify("last day of this month");
+        //yes this works, and it is awesome.
+        $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
         $this->assertEquals($expectedStartDate->asDbDate(), $leaves[3]->start_date, "4th Quarter Start Dates do not match");
         $this->assertEquals($expectedEndDate->asDbDate(), $leaves[3]->end_date, "4th Quarter End Dates do not match");
@@ -681,31 +788,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[0]->end_date, "1st Quarter of previous year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("first day of this month");
+            //not every month will have 31 days, or even 30 for that matter
+            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("last day of this month");
+            //yes this works, and it is awesome.
+            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[1]->start_date, "2nd Quarter of previous year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[1]->end_date, "2nd Quarter of previous year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("first day of this month");
+            //not every month will have 31 days, or even 30 for that matter
+            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("last day of this month");
+            //yes this works, and it is awesome.
+            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[2]->start_date, "3rd Quarter of previous year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[2]->end_date, "3rd Quarter of previous year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("first day of this month");
+            //not every month will have 31 days, or even 30 for that matter
+            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("last day of this month");
+            //yes this works, and it is awesome.
+            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[3]->start_date, "4th Quarter of previous year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[3]->end_date, "4th Quarter of previous year: ".$i." End Dates do not match");
@@ -743,31 +850,31 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[0]->end_date, "1st Quarter of future year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("first day of this month");
+            //not every month will have 31 days, or even 30 for that matter
+            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("last day of this month");
+            //yes this works, and it is awesome.
+            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[1]->start_date, "2nd Quarter of future year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[1]->end_date, "2nd Quarter of future year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("first day of this month");
+            //not every month will have 31 days, or even 30 for that matter
+            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("last day of this month");
+            //yes this works, and it is awesome.
+            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[2]->start_date, "3rd Quarter of future year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[2]->end_date, "3rd Quarter of future year: ".$i." End Dates do not match");
 
             $expectedStartDate = $expectedStartDate->modify("+3 month");
-            //not every month will have 31 days, or even 30 for that matter. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("first day of this month");
+            //not every month will have 31 days, or even 30 for that matter
+            $expectedEndDate = $expectedEndDate->modify("first day of ".$expectedEndDate->format("M"));
             $expectedEndDate = $expectedEndDate->modify("+3 month");
-            //yes this works, and it is awesome. @see SugarDateTime::modify
-            $expectedEndDate = $expectedEndDate->modify("last day of this month");
+            //yes this works, and it is awesome.
+            $expectedEndDate = $expectedEndDate->modify("last day of ".$expectedEndDate->format("M"));
 
             $this->assertEquals($expectedStartDate->asDbDate(), $leaves[3]->start_date, "4th Quarter of future year: ".$i." Start Dates do not match");
             $this->assertEquals($expectedEndDate->asDbDate(), $leaves[3]->end_date, "4th Quarter of future year: ".$i." End Dates do not match");

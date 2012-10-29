@@ -48,7 +48,7 @@ interface TimePeriodInterface
     public function getLeaves();
 
     //public function buildLeaves($timePeriodType);
-    public function buildLeaves($shownBackwardDifference, $shownForwardDifference);
+    //public function buildLeaves($shownBackwardDifference, $shownForwardDifference);
 
 }
 ?>
