@@ -25,7 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+//FILE SUGARCRM flav=ent ONLY
 require_once 'include/database/DBManagerFactory.php';
 
 class Bug57563Test extends Sugar_PHPUnit_Framework_TestCase
@@ -45,7 +45,6 @@ class Bug57563Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function test_union_query_for_limitQuery()
     {
-        $this->markTestIncomplete('marking incomplete while Joe refactors unit test');
         $query_object = new CustomQuery();
 
         $m_closed = $query_object->db->convert('opportunities.date_closed', 'month');
