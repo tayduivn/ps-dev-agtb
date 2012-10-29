@@ -43,7 +43,7 @@ function test620TemplateMetaMergeOnCases()
    $this->merge->merge('Cases', 'tests/modules/UpgradeWizard/SugarMerge/od_metadata_files/610/oob/modules/Cases/metadata/editviewdefs.php', 'modules/Cases/metadata/editviewdefs.php', 'custom/modules/Cases/metadata/editviewdefs.php');
    $this->assertTrue(file_exists('custom/modules/Cases/metadata/editviewdefs.php.suback.php'));
    require('custom/modules/Cases/metadata/editviewdefs.php');
-   $this->assertTrue(isset($viewdefs['Cases']['EditView']['templateMeta']['form']), 'Assert that the form key is kept on the customized templateMeta section for Cases');
+   $this->assertFalse(isset($viewdefs['Cases']['EditView']['templateMeta']['form']), 'Assert that the templateMeta is pulled from the upgraded view rather than the customized view');
 }
 
 function test620TemplateMetaMergeOnMeetings() 

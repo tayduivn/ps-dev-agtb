@@ -19,20 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Product.php 55090 2010-03-05 05:24:16Z rob $
- * Description:
- ********************************************************************************/
-
-
-
-
-
-
-
-
-
-
 
 // Product is used to store customer information.
 class Product extends SugarBean {
@@ -88,8 +74,13 @@ class Product extends SugarBean {
     var $best_case = 0;
     var $likely_case = 0;
     var $worst_case = 0;
+    var $base_rate;
+    var $probability;
     var $date_closed;
     var $date_closed_timestamp;
+    var $commit_stage;
+    var $assigned_user_id;
+    var $opportunity_id;
 
 	// These are for related fields
 	var $type_name;
@@ -118,7 +109,6 @@ class Product extends SugarBean {
 	var $new_schema = true;
 	var $importable = true;
 
-    var $expert_id;
     var $experts;
 
 	// This is used to retrieve related fields from form posts.

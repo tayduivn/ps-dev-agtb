@@ -150,12 +150,15 @@
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
             components: [{layout:"forecastsTabbedConfig"}],
-            span: 10
+            span: 10,
+            before: {
+                hide: function() {
+                    window.location = 'index.php?module=Forecasts';
+                }
+            }
         };
-        var callback = function(){};
-
         if(app.user.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsTabbedConfig:open", params, callback);
+            this.layout.trigger("modal:forecastsTabbedConfig:open", params);
         }
     },
 
