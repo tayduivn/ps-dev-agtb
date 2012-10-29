@@ -60,7 +60,8 @@ class UpdateOppsJob implements RunnableSchedulerJob {
 
         while (($row = $db->fetchByAssoc($result)) != null)
         {
-            $opp = BeanFactory::getBean('Opportunities', $row['id']);
+            $opp = BeanFactory::getBean('Opportunities');
+            $opp->retrieve($row['id']);
             $opp->save();
         }
 
