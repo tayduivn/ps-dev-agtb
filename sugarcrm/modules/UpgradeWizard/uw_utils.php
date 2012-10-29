@@ -4784,18 +4784,14 @@ function addPdfManagerTemplate() {
  * This function creats job queue for old opportunities to be upgraded w/ commit_stage, date_closed_timestamp,
  * best/worst cases, related product for forecasting
  */
-function updateOpps()
+function updateOpportunitiesForForecasting()
 {
     global $current_user;
-
-    require_once(get_custom_file_if_exists('modules/Opportunities/jobs/UpdateOppsJob.php'));
-    require_once ('modules/SchedulersJobs/SchedulersJob.php');
-
     //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
     $job = BeanFactory::getBean('SchedulersJobs');;
     $job->name = "Update Old Opportunities";
     $job->status = SchedulersJob::JOB_STATUS_QUEUED;
-    $job->target = "class::UpdateOppsJob";
+    $job->target = "class::SugarJobUpdateOpportunities";
     $job->data = '';
     $job->retry_count = 0;
     $job->assigned_user_id = $current_user->id;
