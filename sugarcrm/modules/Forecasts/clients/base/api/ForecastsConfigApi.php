@@ -51,7 +51,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
             if ($upgraded == 1)
             {
                 require_once('modules/UpgradeWizard/uw_utils.php');
-                updateOpps();
+                updateOpportunitiesForForecasting();
             }
         }
 

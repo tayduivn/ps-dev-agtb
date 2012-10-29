@@ -46,10 +46,11 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
     /**
      * Check that for every old opportunity related products are created via job queue
+     *
      * @global type $current_user
 	 * @group forecasts
      */
-    function testUpdateOppsJob()
+    function testSugarJobUpdateOpportunities()
     {
         global $db, $current_user;
 
@@ -87,7 +88,7 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $product->opportunity_id = '';
         $product->save();
 
-        $this->job = updateOpps();
+        $this->job = updateOpportunitiesForForecasting();
 
         $job = new SchedulersJob();
         $job->retrieve($this->job);
