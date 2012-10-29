@@ -293,7 +293,7 @@ class RestMetadataModuleListTest extends RestTestBase {
 
             //Skip for beans that don't have a real table because they don't have indices declared which mean
             //they don't have the sortable key in the field definition by default (not sure why the code operates that way)
-            if($modData['table'] == 'does_not_exist')
+            if(isset($modData['table']) && $modData['table'] == 'does_not_exist')
             {
                continue;
             }

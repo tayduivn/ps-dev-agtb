@@ -34,7 +34,7 @@ class ViewConfigureshortcutbar extends SugarView
      *
      * @var array
      */
-    private $blacklistedModules = array('EAPM', 'Users', 'Employees');
+    private $blacklistedModules = array('EAPM', 'Users', 'Employees', 'PdfManager');
     /**
 	 * @see SugarView::_getModuleTitleParams()
 	 */
