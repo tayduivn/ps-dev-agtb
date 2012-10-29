@@ -228,18 +228,8 @@ class ForecastsCommittedApiTest extends RestTestBase
     	
     	//Now, create a manager forecast so we can test more cases
     	sleep(1); // needed because this is based on creation times
-    	$postData = array(
-        	"amount" => 100,
-        	"base_rate" => 1,
-        	"best_case" => 100,
-        	"currency_id" => -99,
-        	"forecast_type" => "Rollup",
-        	"likely_case" => 100,
-        	"worst_case" => 10,
-        	"opp_count" => 3,
-        	"timeperiod_id" => $timeperiod->id,
-        	"worksheetData" => array());
-      
+    	$postData["forecast_type"] = "Rollup";
+           
         $response = $this->_restCall("Forecasts/committed", json_encode($postData), "POST");
          
         //Now make a mgrNeedsCommitted call with a new mgr sheet and an old rep sheet. 
@@ -250,17 +240,7 @@ class ForecastsCommittedApiTest extends RestTestBase
         
         //Now, create a rep forecast so we can test more cases
         sleep(1); // needed because this is based on creation times
-    	$postData = array(
-        	"amount" => 100,
-        	"base_rate" => 1,
-        	"best_case" => 100,
-        	"currency_id" => -99,
-        	"forecast_type" => "Direct",
-        	"likely_case" => 100,
-        	"worst_case" => 10,
-        	"opp_count" => 3,
-        	"timeperiod_id" => $timeperiod->id,
-        	"worksheetData" => array());
+    	$postData["forecast_type"] = "Direct";
         
         $response = $this->_restCall("Forecasts/committed", json_encode($postData), "POST"); 
          
