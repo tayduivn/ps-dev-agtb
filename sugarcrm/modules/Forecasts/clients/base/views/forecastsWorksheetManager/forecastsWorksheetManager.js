@@ -305,13 +305,7 @@
                     switch(fields[i].name)
                     {
                         case "name":
-                            fieldDef["sWidth"] = "20%";
-                            break;
-                        case "quota":
                             fieldDef["sWidth"] = "30%";
-                            break;
-                        default:
-                            fieldDef["sWidth"] = "10%";
                             break;
                     }
                 }
