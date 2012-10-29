@@ -89,4 +89,65 @@ describe("Forecasts Commit Buttons Component", function(){
             expect(view.showConfigButton).toBeFalsy();
         });
     });
+    describe("Forecasts commitButtons bindings ", function(){
+    	beforeEach(function(){
+    		view.context = {
+                forecasts:{
+                    on: function(event, fcn){},
+                    worksheet:{
+                        on: function(event, fcn){}
+                    },
+                    worksheetmanager:{
+                        on: function(event, fcn){}
+                    }
+                }
+    		};
+    		    		   		
+    		sinon.spy(view.context.forecasts, "on");
+    		sinon.spy(view.context.forecasts.worksheet, "on");
+    		sinon.spy(view.context.forecasts.worksheetmanager, "on");    		
+    		view.bindDataChange();
+    	});
+    	
+    	afterEach(function(){
+    		view.context.forecasts.on.restore();
+    		view.context.forecasts.worksheet.on.restore();
+    		view.context.forecasts.worksheetmanager.on.restore();
+    		delete view.context;
+    		view.context = {};
+    	});
+    	    	    	
+    	it("forecasts.on should have been called with selectedUser", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedUser");
+    	});
+    	
+    	it("forecasts.on should have been called with change:selectedTimePeriod", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:selectedTimePeriod");
+    	});
+    	
+    	it("forecasts.on should have been called with change:reloadCommitButton", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("change:reloadCommitButton");
+    	});
+    	
+    	it("forecasts.on should have been called with forecasts:forecastcommitbuttons:triggerCommit", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:forecastcommitbuttons:triggerCommit");
+    	}); 	
+    	
+    	it("forecasts.worksheet.on should have been called with change", function(){
+    		expect(view.context.forecasts.worksheet.on).toHaveBeenCalledWith("change");
+    	});
+    	
+    	it("forecasts.worksheetmanager.on should have been called with change", function(){
+    		expect(view.context.forecasts.worksheetmanager.on).toHaveBeenCalledWith("change");
+    	});
+    	    	
+    	
+    	it("forecasts.on should have been called with forecasts:commitButtons:enabled", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:enabled");
+    	});
+    	
+    	it("forecasts.on should have been called with forecasts:commitButtons:disabled", function(){
+    		expect(view.context.forecasts.on).toHaveBeenCalledWith("forecasts:commitButtons:disabled");
+    	});
+    });
 });
