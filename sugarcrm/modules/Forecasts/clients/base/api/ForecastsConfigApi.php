@@ -55,9 +55,6 @@ class ForecastsConfigApi extends ConfigModuleApi {
             }
         }
 
-        // Set up is getting saved now so be sure to reflect that in the DB so that the wizard doesn't keep running.
-        $args['is_setup'] = true;
-        
         parent::configSave($api, $args);
 
         //reload the settings to get the current settings
