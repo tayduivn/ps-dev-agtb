@@ -10,7 +10,7 @@
         'click #module_list li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
         'click .typeahead a': 'clearSearch',
-        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
+        'click .navbar-search .btn': 'gotoFullSearchResultsPage'
     },
 
     /**

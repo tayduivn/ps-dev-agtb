@@ -186,7 +186,7 @@
             $(this).click(function() {
                 $('#systemTour '+screenId).toggleClass("hide");
                 $('#systemTour '+lastScreenId).toggleClass("hide");
-                $(arrows[numArrows-1].target).popoverext('show');
+//                $(arrows[numArrows-1].target).popoverext('show');
                 centerModal()
             });
 
@@ -196,7 +196,6 @@
 
 
         function centerModal() {
-            console.log('center')
             $("#systemTour").css("left",$(window).width()/2 - $("#systemTour").width()/2);
             $("#systemTour").css("margin-top",-$("#systemTour").height()/2);
         }
