@@ -43,12 +43,12 @@ class ForecastsConfigApi extends ConfigModuleApi {
         //track what settings have changed to determine if timeperiods need rebuilt
         $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
-        if (empty($prior_forecasts_settings['is_setup']))
+        if (!empty($prior_forecasts_settings['is_upgrade']))
         {
             $db = DBManagerFactory::getInstance();
-            // check if we need to upgrade opportunities which had been created upon previous versions
-            $upgraded = $db->getOne("SELECT id FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
-            if (!empty($upgraded))
+            // check if we need to upgrade opportunities when coming from version below 6.7.x.
+            $upgraded = $db->getOne("SELECT count(id) as total FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
+            if ($upgraded == 1)
             {
                 require_once('modules/UpgradeWizard/uw_utils.php');
                 updateOpps();
