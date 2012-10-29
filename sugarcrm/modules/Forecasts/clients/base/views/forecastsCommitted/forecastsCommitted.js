@@ -33,6 +33,12 @@
     likelyCase : 0,
 
     /**
+     * Stores the likely case to display in the view
+     */
+    worstCase : 0,
+
+
+    /**
      * Used to query for the user_id value in Forecasts
      */
     userId : '',
@@ -50,7 +56,7 @@
     /**
      * Stores the historical log of the Forecast entries
      */
-    historyLog : Array(),
+    historyLog : [],
 
     /**
      * Stores the Forecast totals to use when creating a new entry
@@ -72,6 +78,11 @@
      */
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
 
+    /**
+     * Template to use wen updating the likelyCase on the committed bar
+     */
+    worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
+
     savedTotal : null,
 
     runningFetch : false,
@@ -81,6 +92,20 @@
      */
     timeperiod: {},
 
+    /**
+     * Show The Likely Box
+     */
+    show_likely: true,
+
+    /**
+     * Show The Best Box
+     */
+    show_best: false,
+
+    /**
+     * Show This Wost Box
+     */
+    show_worst: false,
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -96,6 +121,10 @@
         this.likelyCase = 0;
 
         this._collection.url = this.createUrl();
+
+        this.show_likely = options.context.forecasts.config.get('show_worksheet_likely');
+        this.show_best = options.context.forecasts.config.get('show_worksheet_best');
+        this.show_worst = options.context.forecasts.config.get('show_worksheet_worst');
     },
 
     createUrl : function() {
@@ -111,8 +140,10 @@
         this.runningFetch = true;
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.worstCase = 0;
         this.likelyCaseCls = '';
         this.bestCaseCls = '';
+        this.worstCaseCls = '';
         this._collection.url = this.createUrl();
         this._collection.fetch();
     },
@@ -191,6 +222,7 @@
 
             var best = {};
             var likely = {};
+            var worst = {};
             // get the last committed value
             var previousCommit = null;
             if(!_.isEmpty(this._collection.models))
@@ -220,12 +252,16 @@
                 best.bestCase = app.currency.formatAmountLocale(totals.best_adjusted);
                 likely.likelyCaseCls = this.getColorArrow(totals.likely_adjusted, previousCommit.get('likely_case'));
                 likely.likelyCase = app.currency.formatAmountLocale(totals.likely_adjusted);
+                worst.worstCaseCls = this.getColorArrow(totals.worst_adjusted, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(totals.worst_adjusted);
             } else {
                 // sales rep view
                 best.bestCaseCls = this.getColorArrow(totals.best_case, previousCommit.get('best_case'));
                 best.bestCase = app.currency.formatAmountLocale(totals.best_case);
                 likely.likelyCaseCls = this.getColorArrow(totals.amount, previousCommit.get('likely_case'));
                 likely.likelyCase = app.currency.formatAmountLocale(totals.amount);
+                worst.worstCaseCls = this.getColorArrow(totals.worst_case, previousCommit.get('worst_case'));
+                worst.worstCase = app.currency.formatAmountLocale(totals.worst_case);
             }
             
             if(!_.isEmpty(best.bestCaseCls) || !_.isEmpty(likely.likelyCaseCls))
@@ -238,9 +274,12 @@
             self.bestCase = best.bestCase;
             self.likelyCaseCls = likely.likelyCaseCls;
             self.likelyCase = likely.likelyCase;
+            self.worstCaseCls = worst.worstCaseCls;
+            self.worstCase = worst.worstCase;
 
             $('h2#best').html(this.bestTemplate(best));
             $('h2#likely').html(this.likelyTemplate(likely));
+            $('h2#worst').html(this.worstTemplate(worst));
 
         }
 
@@ -335,6 +374,7 @@
         // clear out the arrows
         self.likelyCaseCls = '';
         self.bestCaseCls = '';
+        self.worstCaseCls = '';
 
         self.previous = self.totals;
         self._collection.url = self.url;
