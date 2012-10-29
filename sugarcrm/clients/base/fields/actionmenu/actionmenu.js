@@ -19,7 +19,6 @@
             massCollection = new MassCollection();
             this.context.set('mass_collection', massCollection);
         }
-        return result;
     },
     check: function(evt) {
         this.toggleSelect(this.$(this.fieldTag).is(":checked"));
@@ -57,24 +56,29 @@
             }
         }
     },
-
     bindDataChange: function() {
         var self = this,
             massCollection = this.context.get('mass_collection');
         if (massCollection && this.model.id) { //listeners for each record selection
+            var modelId = this.model.id;
+
+            massCollection.off("add", null, modelId);
+            massCollection.off("remove", null, modelId);
+            massCollection.off("reset", null, modelId);
+
             massCollection.on("add", function(model) {
-                if(model.id == self.model.id) {
+                if(model.id == modelId) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
-            }, this);
+            }, modelId);
             massCollection.on("remove", function(model){
-                if(model.id == self.model.id) {
+                if(model.id == modelId) {
                     self.$(self.fieldTag).attr("checked", false);
                 }
-            });
+            }, modelId);
             massCollection.on("reset", function(){
                 self.$(self.fieldTag).attr("checked", false);
-            });
+            }, modelId);
             if(massCollection.get(this.model) || massCollection.entire) {
                 this.$(self.fieldTag).attr("checked", true);
                 this.selected = true;
