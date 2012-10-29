@@ -43,9 +43,8 @@
                 // and forecasts already has a config model, use that config model
                 // as our current context so we're updating a clone of the same model
                 // the clone lets us not save to a "live" model if you hit cancel
-                var previousSettings = options.context.forecasts.config.attributes;
                 settingsModel = new (Backbone.Model.extend({
-                    defaults: previousSettings,
+                    defaults: options.context.forecasts.config.attributes,
                     url: modelUrl,
                     sync: modelSync
                 }))();
