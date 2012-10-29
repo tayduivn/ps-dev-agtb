@@ -36,7 +36,7 @@ require_once 'modules/ModuleBuilder/parsers/constants.php' ;
 
 class ViewSearchView extends ViewListView
 {
- 	function __construct()
+ 	public function __construct()
  	{
  		parent::__construct();
  		if (!empty($_REQUEST['searchlayout'])) {

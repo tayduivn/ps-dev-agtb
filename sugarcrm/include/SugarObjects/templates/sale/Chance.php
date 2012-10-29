@@ -32,7 +32,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  class Chance extends Basic{
 
  	function Chance(){
- 		parent::SugarBean();
+ 		parent::__construct();
 
  	}
 

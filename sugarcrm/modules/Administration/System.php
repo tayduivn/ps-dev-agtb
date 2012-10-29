@@ -35,6 +35,7 @@ class System extends SugarBean {
     var $new_schema = true;
     var $table_name = "systems";
     var $object_name = "System";
+    var $module_name = "System";
     var $module_dir = 'Administration';
     // Stored fields
     var $system_id;
@@ -57,8 +58,8 @@ class System extends SugarBean {
     * Since system does not have teams, we will disable row_level_security
     * return                  an instance of System
     */
-    function System() {
-        parent::SugarBean();
+    public function __construct() {
+        parent::__construct();
         $this->disable_row_level_security =true;
     }
 

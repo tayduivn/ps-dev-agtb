@@ -46,10 +46,10 @@ class vCal extends SugarBean {
 
 	const UTC_FORMAT = 'Ymd\THi00\Z';
 
-	function vCal()
+	public function __construct()
 	{
 
-		parent::SugarBean();
+		parent::__construct();
 		$this->disable_row_level_security = true;
 	}
 

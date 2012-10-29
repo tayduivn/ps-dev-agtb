@@ -69,8 +69,8 @@ class QueryBuilder extends SugarBean {
     // This is used to retrieve related fields from form posts.
     var $additional_column_fields = Array();
 
-    function QueryBuilder() {
-        parent::SugarBean();
+    public function __construct() {
+        parent::__construct();
 
         $this->disable_row_level_security =true;
 

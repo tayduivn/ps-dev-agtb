@@ -59,7 +59,7 @@ class Tracker extends SugarBean
         "visible"
     );
 
-    function Tracker()
+    public function __construct()
     {
         global $dictionary;
         if(isset($this->module_dir) && isset($this->object_name) && !isset($GLOBALS['dictionary'][$this->object_name])){
@@ -67,7 +67,7 @@ class Tracker extends SugarBean
             if(defined('TEMPLATE_URL'))$path = SugarTemplateUtilities::getFilePath($path);
             require_once($path);
         }
-        parent::SugarBean();
+        parent::__construct();
     }
 
     /*

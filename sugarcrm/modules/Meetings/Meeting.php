@@ -100,8 +100,8 @@ class Meeting extends SugarBean {
 	/**
 	 * sole constructor
 	 */
-	function Meeting() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('Meetings');
 		foreach($this->field_defs as $field) {
 			$this->field_name_map[$field['name']] = $field;

@@ -52,9 +52,9 @@ class Role extends SugarBean {
 	var $module_dir = 'Roles';
 	var $new_schema = true;
 
-	function Role()
+	public function __construct()
 	{
-		parent::SugarBean();
+		parent::__construct();
 	}
 	
 	function get_summary_text()

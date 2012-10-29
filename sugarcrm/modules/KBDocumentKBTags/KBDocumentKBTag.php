@@ -67,14 +67,14 @@ class KBDocumentKBTag extends SugarBean {
 	 );
 	  
 
-	function KBDocumentKBTag() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('KBDocumentKBTags'); //parameter is module name
 		$this->disable_row_level_security = false;
 	}
 
 	function save($check_notify = false) {
-		return parent :: save($check_notify);
+		return parent::save($check_notify);
 	}
 	
 	function fill_in_additional_detail_fields()
