@@ -74,6 +74,11 @@
                 this.updateProgressForSelectedUser(selectedUser);
                 this.updateProgress();
             }, this);
+            this.context.forecasts.on("change:commitForecastFlag", function(context, flag) {
+                if(flag) {
+                    this.updateProgress();
+                }
+            }, this);
 
             //update timeperiod
             this.context.forecasts.on("change:selectedTimePeriod reset:selectedTimePeriod",
