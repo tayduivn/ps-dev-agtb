@@ -224,7 +224,7 @@
             previousModel = model;
         });
 
-        // get the values since from the last object to display the last commit numbers in the data points boxes.
+        // save the values from the last model to display in the dataset line on the interface
         this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
         this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
         this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));

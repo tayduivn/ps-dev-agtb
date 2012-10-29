@@ -74,12 +74,12 @@
     bestTemplate : _.template('<%= bestCase %>&nbsp;<span class="icon-sm committed_arrow<%= bestCaseCls %>"></span>'),
 
     /**
-     * Template to use wen updating the likelyCase on the committed bar
+     * Template to use when updating the likelyCase on the committed bar
      */
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
 
     /**
-     * Template to use wen updating the likelyCase on the committed bar
+     * Template to use when updating the worstCase on the committed bar
      */
     worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
 
