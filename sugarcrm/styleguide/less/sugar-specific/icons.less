@@ -10,15 +10,20 @@ a:hover [class^="icon-"] {color: @gray !important;}
 a:active [class^="icon-"] {color: @black !important;}
 a.active [class^="icon-"] {color: @grayDarker !important;}
 
-table [class^="icon-star"] {
+.icon-favorite:before {
+  content: "\f005";
+}
+table [class^="icon-favorite"] {
   margin: 0 16px
 }
 
-.icon-star {
+.icon-favorite {
   color: @grayLight;
+  cursor: pointer;
 }
-.active .icon-star  {
+.active.icon-favorite {
   color: @orange;
+  cursor: pointer;
 }
 h1 span {margin-left: 5px;}
 

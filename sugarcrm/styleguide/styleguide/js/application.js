@@ -86,6 +86,12 @@
       return false;
     });
 
+    // toggle favorites
+    $('.icon-favorite').on('click', function () {
+      $(this).toggleClass('active');
+      return false;
+    });
+
     // toggle more hide
     $('.more').toggle(
       function () {
