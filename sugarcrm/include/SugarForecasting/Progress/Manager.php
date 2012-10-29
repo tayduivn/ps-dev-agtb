@@ -42,25 +42,45 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
      *
      * @return array
      */
-    protected function getManagerProgress()
+    public function getManagerProgress()
     {
+        global $current_user;
         //create opportunity to use to build queries
         $this->opportunity = new Opportunity();
 
         //get the quota data for user
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
-        $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
+        if($current_user->reports_to_id != "") {
+            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
+        } else {
+            $quotaData["amount"] = $this->getTopLevelManagerQuota($current_user->id, $this->getArg('timeperiod_id'));
+        }
 
         //get data
 		$progressData = array(
             "closed_amount"     => $this->getClosedAmount(),
             "opportunities"     => $this->getPipelineOpportunityCount(),
             "pipeline_revenue"  => $this->getPipelineRevenue(),
-            "quota_amount"      => isset($quotaData["amount"]) ? $quotaData["amount"] : 0
+            "quota_amount"      => isset($quotaData["amount"]) ? ($quotaData["amount"]) : 0
 		);
 
 		return $progressData;
+    }
+
+    public function getTopLevelManagerQuota($user_id, $timeperiod_id)
+    {
+        $db = DBManagerFactory::getInstance();
+
+        $query = "select sum(q.amount) " .
+                 " FROM quotas q " .
+                 " INNER JOIN users u " .
+                 " ON q.user_id = u.id " .
+                 " AND (( u.id = ". $db->quoted($user_id) . " AND quota_type = " . $db->quoted('Direct') . ")" .
+                 " OR ( u.reports_to_id = ". $db->quoted($user_id) ." AND quota_type = " . $db->quoted('Rollup') . "))" .
+                 " WHERE q.deleted = 0 and q.timeperiod_id = " . $db->quoted($timeperiod_id);
+
+        return $db->getOne($query);
     }
 
 
@@ -69,7 +89,7 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
      *
      * @return mixed
      */
-    protected function getPipelineOpportunityCount()
+    public function getPipelineOpportunityCount()
     {
         $db = DBManagerFactory::getInstance();
 

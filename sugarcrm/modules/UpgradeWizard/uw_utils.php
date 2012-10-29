@@ -4038,27 +4038,6 @@ function upgradeModulesForTeam() {
 	//END SUGARCRM flav=pro ONLY
 
 	/**
-	 * upgradeDateTimeFields
-	 *
-	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
-	 * which prevents you from performing timezone offset calculations once the data has been saved.
-	 *
-	 * @param path String location to log file, empty by default
-	 */
-	function upgradeDateTimeFields($path)
-	{
-		//bug: 39757
-		global $db;
-		$meetingsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
-		$callsSql = "UPDATE calls SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
-    	logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-		$db->query($meetingsSql);
-
-		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-		$db->query($callsSql);
-	}
-
-	/**
 	 * upgradeDocumentTypeFields
 	 *
 	 */
@@ -4797,5 +4776,30 @@ function addPdfManagerTemplate() {
     include 'install/seed_data/PdfManager_SeedData.php';
     
     logThis('End addPdfManagerTemplate');
+}
+
+
+/**
+ *
+ * This function creats job queue for old opportunities to be upgraded w/ commit_stage, date_closed_timestamp,
+ * best/worst cases, related product for forecasting
+ */
+function updateOpps()
+{
+    global $current_user;
+
+    require_once(get_custom_file_if_exists('modules/Opportunities/jobs/UpdateOppsJob.php'));
+    require_once ('modules/SchedulersJobs/SchedulersJob.php');
+
+    //Create an entry in the job queue to run UpdateOppsJob which handles updating all opportunities
+    $job = BeanFactory::getBean('SchedulersJobs');;
+    $job->name = "Update Old Opportunities";
+    $job->status = SchedulersJob::JOB_STATUS_QUEUED;
+    $job->target = "class::UpdateOppsJob";
+    $job->data = '';
+    $job->retry_count = 0;
+    $job->assigned_user_id = $current_user->id;
+    $job->save();
+    return $job->id;
 }
 //END SUGARCRM flav=pro ONLY

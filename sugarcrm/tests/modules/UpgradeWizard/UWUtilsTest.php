@@ -23,89 +23,111 @@
  ********************************************************************************/
 
 require_once('modules/UpgradeWizard/uw_utils.php');
+require_once ('modules/SchedulersJobs/SchedulersJob.php');
 
 class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
-var $meeting;
-var $call;
-var $original_current_user;
+    private $job;
 
-function setUp()
-{
-	global $db, $timedate, $current_user;
+    public static function setUpBeforeClass()
+    {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('current_user');
+    }
+
+    public static function tearDownAfterClass()
+    {
+        SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
+        SugarTestProductUtilities::removeAllCreatedProducts();
+        SugarTestHelper::tearDown();
+    }
 
 
-	$this->original_current_user = $current_user;
-	$user = new User();
-	$user->retrieve('1');
-	$current_user = $user;
+    /**
+     * Check that for every old opportunity related products are created via job queue
+     * @global type $current_user
+	 * @group forecasts
+     */
+    function testUpdateOppsJob()
+    {
+        global $db, $current_user;
 
-	if($db->dbType != 'mysql')
-	{
-		$this->markTestSkipped('Skipping for non-mysql dbs');
-	}
+        $opp = SugarTestOpportunityUtilities::createOpportunity();
+        $opp->assigned_user_id = $current_user->id;
+        $opp->save();
 
-	$this->meeting = SugarTestMeetingUtilities::createMeeting();
-	$date_start = $timedate->nowDb();
-	$this->meeting->date_start = $date_start;
-	$this->meeting->duration_hours = 2;
-	$this->meeting->duration_minutes = 30;
-	$this->meeting->save();
+        $exp_opp = array('commit_stage' => $opp->commit_stage,
+                        'best_case' => $opp->best_case,
+                        'worst_case' => $opp->worst_case,
+                        'date_closed_timestamp' => substr($opp->date_closed_timestamp, 0, -2));
 
-	$sql = "UPDATE meetings SET date_end = '{$date_start}' WHERE id = '{$this->meeting->id}'";
-	$db->query($sql);
+        $exp_product = array('name' => $opp->name,
+            'best_case' => $opp->amount,
+            'likely_case' => $opp->amount,
+            'worst_case' => $opp->amount,
+            'cost_price' => $opp->amount,
+            'quantity' => '1',
+            'currency_id' => $opp->currency_id,
+            'base_rate' => $opp->base_rate,
+            'probability' => $opp->probability,
+            'date_closed' => $opp->date_closed,
+            'date_closed_timestamp' => $opp->date_closed_timestamp,
+            'assigned_user_id' => $opp->assigned_user_id,
+            'opportunity_id' => $opp->id,
+            'commit_stage' => $opp->commit_stage);
 
-	$this->call = SugarTestCallUtilities::createCall();
-	$date_start = $timedate->nowDb();
-	$this->call->date_start = $date_start;
-	$this->call->duration_hours = 2;
-	$this->call->duration_minutes = 30;
-	$this->call->save();
+        //unset commit_stage, date_closed_timestamp, best/worst cases
+        $db->query("UPDATE opportunities SET commit_stage = '', date_closed_timestamp = '', best_case = '', worst_case = '' WHERE id = '{$opp->id}'");
 
-	$sql = "UPDATE calls SET date_end = '{$date_start}' WHERE id = '{$this->call->id}'";
-	$db->query($sql);
+        //unset opportunity_id in the product which was automatically created during opp save
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+        $product->opportunity_id = '';
+        $product->save();
+
+        $this->job = updateOpps();
+
+        $job = new SchedulersJob();
+        $job->retrieve($this->job);
+        $job->runnable_ran = true;
+        $job->runnable_data = '';
+        $job->runJob();
+
+        $updated_opp = $opp->retrieve();
+        $act_opp = array('commit_stage' => $opp->commit_stage,
+                        'best_case' => intval($opp->best_case),
+                        'worst_case' => intval($opp->worst_case),
+                        'date_closed_timestamp' => substr($opp->date_closed_timestamp, 0, -2));
+
+        $this->assertEquals($exp_opp, $act_opp, "New forecasts fields hasn't been updated during upgrade process");
+
+        $this->assertTrue($job->runnable_ran);
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        $product = BeanFactory::getBean('Products');
+        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
+        SugarTestProductUtilities::setCreatedProduct(array($product->id));
+
+        $act_product = array('name' => $product->name,
+            'best_case' => $product->best_case,
+            'likely_case' => $product->likely_case,
+            'worst_case' => $product->worst_case,
+            'cost_price' => $product->cost_price,
+            'quantity' => $product->quantity,
+            'currency_id' => $product->currency_id,
+            'base_rate' => $product->base_rate,
+            'probability' => $product->probability,
+            'date_closed' => $product->date_closed,
+            'date_closed_timestamp' => $product->date_closed_timestamp,
+            'assigned_user_id' => $product->assigned_user_id,
+            'opportunity_id' => $product->opportunity_id,
+            'commit_stage' => $product->commit_stage);
+
+        $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
+    }
+
 }
-
-function tearDown() {
-	global $db, $current_user;
-    if($db->dbType != 'mysql') return; // No need to clean up if we skipped the test to begin with
-
-    SugarTestMeetingUtilities::removeAllCreatedMeetings();
-	SugarTestCallUtilities::removeAllCreatedCalls();
-
-	$this->meeting = null;
-	$this->call = null;
-
-	$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-	$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-
-	$db->query($meetingsSql);
-	$db->query($callsSql);
-
-	$current_user = $this->original_current_user;
-}
-
-function testUpgradeDateTimeFields() {
-
-	upgradeDateTimeFields($GLOBALS['sugar_config']['log_file']);
-
-	global $db;
-	$query = "SELECT date_start, date_end FROM meetings WHERE id = '{$this->meeting->id}'";
-	$result = $db->query($query);
-	$row = $db->fetchByAssoc($result);
-	$start_time = strtotime($row['date_start']);
-	$end_time = strtotime($row['date_end']);
-	$this->assertEquals(2.5*60*60, $end_time - $start_time, 'Assert that date_end in meetings table has been properly converted');
-
-	$query = "SELECT date_start, date_end FROM calls WHERE id = '{$this->call->id}'";
-	$result = $db->query($query);
-	$row = $db->fetchByAssoc($result);
-	$start_time = strtotime($row['date_start']);
-	$end_time = strtotime($row['date_end']);
-	$this->assertEquals(2.5*60*60, $end_time - $start_time,  'Assert that date_end in calls table has been properly converted');
-}
-
-
-}
-
 ?>

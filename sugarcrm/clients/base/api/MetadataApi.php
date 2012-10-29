@@ -288,6 +288,7 @@ class MetadataApi extends SugarApi {
         return $sugar_config['site_url'] . "/{$path}";
     }
 
+
     protected function buildJSForComponents(&$data) {
         $firstType = true;
         $js = "";

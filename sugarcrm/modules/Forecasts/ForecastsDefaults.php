@@ -36,6 +36,8 @@ class ForecastsDefaults
         $admin = BeanFactory::getBean('Administration');
 
         $forecastConfig = self::getDefaults();
+        // set is_upgrade
+        $forecastConfig['is_upgrade'] = $isUpgrade ? 1 : 0;
 
         // Any version-specific changes to the defaults can be added here
         // and determined by $currentVersion & $targetVersion
@@ -78,6 +80,8 @@ class ForecastsDefaults
         return array(
             // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
             'is_setup' => $isSetup,
+            // this is used to indicate whether we are coming from an upgraded instance
+            'is_upgrade' => 0,
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
             // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
