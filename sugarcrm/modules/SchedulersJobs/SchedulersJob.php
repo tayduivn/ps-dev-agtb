@@ -516,11 +516,6 @@ class SchedulersJob extends Basic
 		}
         else if ($exJob[0] == 'class')
         {
-            //BEGIN SUGARCRM flav=pro ONLY
-            //TODO-SFA: Hook this up to some generic autoloading framework
-            require_once(get_custom_file_if_exists('modules/Opportunities/jobs/UpdateOppsJob.php'));
-            //END SUGARCRM flav=pro ONLY
-
             // autoloader will look for this class and include it
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
