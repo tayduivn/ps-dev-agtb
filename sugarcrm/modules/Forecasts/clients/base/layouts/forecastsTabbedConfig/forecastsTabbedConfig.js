@@ -31,25 +31,31 @@
         breadCrumbLabels: [],
 
         initialize: function (options) {
-            settingsModel = {};
+            var settingsModel = {},
+                modelUrl = app.api.buildURL("Forecasts", "config"),
+                modelSync = function(method, model, options) {
+                    var url = _.isFunction(model.url) ? model.url() : model.url;
+                    return app.api.call(method, url, model, options);
+                };
+
             if(_.has(options.context,'forecasts') && _.has(options.context.forecasts,'config') ) {
                 // if we're using this layout from inside the Forecasts module
                 // and forecasts already has a config model, use that config model
                 // as our current context so we're updating a clone of the same model
                 // the clone lets us not save to a "live" model if you hit cancel
-                settingsModel = options.context.forecasts.config.clone();
+                var previousSettings = options.context.forecasts.config.attributes;
+                settingsModel = new (Backbone.Model.extend({
+                    defaults: previousSettings,
+                    url: modelUrl,
+                    sync: modelSync
+                }))();
             } else {
                 // if we're not coming in from the Forecasts module (e.g. Admin)
                 // create a new model and use that to change/save
-                var Model = Backbone.Model.extend({
-                    url: app.api.buildURL("Forecasts", "config"),
-                    sync: function(method, model, options) {
-                        var url = _.isFunction(model.url) ? model.url() : model.url;
-                        return app.api.call(method, url, model, options);
-                    }
-                }),
-                settingsModel = new Model();
-
+                settingsModel = new (Backbone.Model.extend({
+                    url: modelUrl,
+                    sync: modelSync
+                }))();
                 settingsModel.fetch();
             }
 
