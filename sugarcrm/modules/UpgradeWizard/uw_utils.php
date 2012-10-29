@@ -4038,27 +4038,6 @@ function upgradeModulesForTeam() {
 	//END SUGARCRM flav=pro ONLY
 
 	/**
-	 * upgradeDateTimeFields
-	 *
-	 * This method came from bug: 39757 where the date_end field is a date field and not a datetime field
-	 * which prevents you from performing timezone offset calculations once the data has been saved.
-	 *
-	 * @param path String location to log file, empty by default
-	 */
-	function upgradeDateTimeFields($path)
-	{
-		//bug: 39757
-		global $db;
-		$meetingsSql = "UPDATE meetings SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
-		$callsSql = "UPDATE calls SET date_end = ".$db->convert("date_start", 'add_time', array('duration_hours', 'duration_minutes'));
-    	logThis('upgradeDateTimeFields Meetings SQL:' . $meetingsSql, $path);
-		$db->query($meetingsSql);
-
-		logThis('upgradeDateTimeFields Calls SQL:' . $callsSql, $path);
-		$db->query($callsSql);
-	}
-
-	/**
 	 * upgradeDocumentTypeFields
 	 *
 	 */

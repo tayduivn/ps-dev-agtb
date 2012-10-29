@@ -287,7 +287,6 @@
                 // in case we add column rearranging
                 var fieldDef = {
                     "sName": fields[i].name,
-                    "sWidth" : (fields[i].name == "name") ? '30%' : '10%',
                     "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
                 };
 
@@ -301,6 +300,18 @@
                             fieldDef["sSortDataType"] = "dom-number";
                             fieldDef["sType"] = "numeric";
                             fieldDef["sClass"] = "number";
+                            break;
+                    }
+                    switch(fields[i].name)
+                    {
+                        case "name":
+                            fieldDef["sWidth"] = "20%";
+                            break;
+                        case "quota":
+                            fieldDef["sWidth"] = "30%";
+                            break;
+                        default:
+                            fieldDef["sWidth"] = "10%";
                             break;
                     }
                 }

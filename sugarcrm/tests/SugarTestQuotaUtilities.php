@@ -78,6 +78,8 @@ class SugarTestQuotaUtilities
         $GLOBALS['db']->query('DELETE FROM quotas WHERE id IN (\'' . implode("', '", $quota_ids) . '\')');
         //remove quotas generated in the worksheets by using the temporary user id's
         $GLOBALS['db']->query('DELETE FROM quotas WHERE user_id IN (\'' . implode("', '", self::getCreatedUserIds()) . '\')');
+
+        self::$_createdQuotas = array();
     }
 
     public static function getCreatedQuotaIds()
