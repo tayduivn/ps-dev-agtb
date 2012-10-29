@@ -5327,3 +5327,29 @@ function getDuplicateRelationListWithTitle($def, $var_def, $module)
     asort($select_array);
     return $select_array;
 }
+
+function getScheduleMeetingBean2Assoc(SugarBean $focus)
+{
+
+    $arr = array(
+        'return_id' => $focus->id,
+        'relate_to' => $focus->module_dir
+    );
+
+    if($focus->object_name=='Contact') {
+        $arr['parent_type'] = 'Accounts';
+
+        $arr['parent_name'] = $focus->account_name;
+        $arr['account_name'] = $focus->account_name;
+
+        $arr['parent_id'] = $focus->account_id;
+        $arr['account_id'] = $focus->account_id;
+
+    } else {
+        $arr['parent_type'] = $focus->module_dir;
+        $arr['parent_name'] = $focus->name;
+        $arr['parent_id'] = $focus->id;
+    }
+
+    return $arr;
+}
