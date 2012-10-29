@@ -39,7 +39,7 @@ class RestListTest extends RestTestBase {
         $this->bugs = array();
         $this->files = array();
         // set the FTS engine as down and make sure the config removes FTS
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         SugarSearchEngineAbstractBase::markSearchEngineStatus();
         //END SUGARCRM flav=pro ONLY
@@ -49,7 +49,7 @@ class RestListTest extends RestTestBase {
         else
             $this->config_file_override= '<?php' . "\r\n";
         $new_line= '$sugar_config[\'full_text_engine\'] = true;';
-        file_put_contents('config_override.php', $this->config_file_override . "\r\n" . $new_line);
+        SugarAutoLoader::put('config_override.php', $this->config_file_override . "\r\n" . $new_line, true);
     }
 
     public function tearDown()
@@ -58,8 +58,8 @@ class RestListTest extends RestTestBase {
         //BEGIN SUGARCRM flav=pro ONLY
         SugarSearchEngineAbstractBase::markSearchEngineStatus(false);
         //END SUGARCRM flav=pro ONLY
-        
-        file_put_contents('config_override.php', $this->config_file_override);
+
+        SugarAutoLoader::put('config_override.php', $this->config_file_override);
 
         // Cleaning up after ourselves, but only if there is cleanup to do
         // Accounts clean up
@@ -74,7 +74,7 @@ class RestListTest extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM accounts_cstm WHERE id_c IN {$accountIds}");
             }
         }
-        
+
         // Opportunities clean up
         if (count($this->opps)) {
             $oppIds = array();
@@ -84,12 +84,12 @@ class RestListTest extends RestTestBase {
             $oppIds = "('".implode("','",$oppIds)."')";
             $GLOBALS['db']->query("DELETE FROM opportunities WHERE id IN {$oppIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_opportunities WHERE opportunity_id IN {$oppIds}");
-            $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");            
+            $GLOBALS['db']->query("DELETE FROM opportunities_contacts WHERE opportunity_id IN {$oppIds}");
             if ($GLOBALS['db']->tableExists('opportunities_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM opportunities_cstm WHERE id_c IN {$oppIds}");
             }
         }
-        
+
         // Contacts cleanup
         if (count($this->contacts)) {
             $contactIds = array();
@@ -97,14 +97,14 @@ class RestListTest extends RestTestBase {
                 $contactIds[] = $contact->id;
             }
             $contactIds = "('".implode("','",$contactIds)."')";
-            
+
             $GLOBALS['db']->query("DELETE FROM contacts WHERE id IN {$contactIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
             if ($GLOBALS['db']->tableExists('contacts_cstm')) {
                 $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c IN {$contactIds}");
             }
         }
-        
+
         // Cases cleanup
         if (count($this->cases)) {
             $caseIds = array();
@@ -112,7 +112,7 @@ class RestListTest extends RestTestBase {
                 $caseIds[] = $aCase->id;
             }
             $caseIds = "('".implode("','",$caseIds)."')";
-            
+
             $GLOBALS['db']->query("DELETE FROM cases WHERE id IN {$caseIds}");
             $GLOBALS['db']->query("DELETE FROM accounts_cases WHERE case_id IN {$caseIds}");
             if ($GLOBALS['db']->tableExists('cases_cstm')) {
@@ -132,15 +132,16 @@ class RestListTest extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM bugs_cstm WHERE id_c IN {$bugIds}");
             }
         }
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         $GLOBALS['db']->query("DELETE FROM sugarfavorites WHERE created_by = '".$GLOBALS['current_user']->id."'");
         //END SUGARCRM flav=pro ONLY
 
         parent::tearDown();
         foreach($this->files AS $file) {
-            unlink($file);
+            SugarAutoLoader::unlink($file);
         }
+        SugarAutoLoader::saveMap();
         $GLOBALS['db']->commit();
     }
 
@@ -191,14 +192,14 @@ class RestListTest extends RestTestBase {
         $restReply3 = $this->_restCall("Accounts/?q=".rawurlencode($this->accounts[17]->name));
 
         $this->assertTrue(is_array($restReply3['reply']['records']), "Reply3 Records is not an array");
-        
+
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->accounts[17]->name,$firstRecord['name'],"The search failed for record: ".$this->accounts[17]->name);
 
         // Sorting descending
         $restReply4 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
-        
+
         $this->assertTrue(is_array($restReply4['reply']['records']), "Reply4 Records is not an array");
 
         $tmp = array_keys($restReply4['reply']['records']);
@@ -208,7 +209,7 @@ class RestListTest extends RestTestBase {
 
         // Sorting ascending
         $restReply5 = $this->_restCall("Accounts?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
-        
+
         $this->assertTrue(is_array($restReply5['reply']['records']), "Reply5 Records is not an array");
 
         $tmp = array_keys($restReply5['reply']['records']);
@@ -220,11 +221,11 @@ class RestListTest extends RestTestBase {
         $restReply = $this->_restCall("Accounts?favorites=1&max_num=10");
         $this->assertEquals(6,count($restReply['reply']['records']));
         //END SUGARCRM flav=pro ONLY
-        
+
         // Test My Items
         $restReply = $this->_restCall("Accounts?my_items=1&max_num=20");
         $this->assertEquals(10,count($restReply['reply']['records']));
-        
+
         // validate each is actually my item
         foreach($restReply['reply']['records'] AS $record) {
             $this->assertEquals($record['assigned_user_id'], $GLOBALS['current_user']->id, "A Record isn't assigned to me");
@@ -272,7 +273,7 @@ class RestListTest extends RestTestBase {
     public function testCaseSearch() {
         // This global only needs to be set for this test
         SugarTestHelper::setUp('mod_strings', array('Administration'));
-        
+
         // Cases searches not only by fields in the module, but by the related account_name so it caused some extra problems so it gets some extra tests.
         // Make sure there is at least one page of cases
         for ( $i = 0 ; $i < 40 ; $i++ ) {
@@ -315,7 +316,7 @@ class RestListTest extends RestTestBase {
 
         // Test finding one record
         $restReply3 = $this->_restCall("Cases/?q=".rawurlencode($this->cases[17]->name));
-        
+
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->cases[17]->name,$firstRecord['name'],"The search failed for record: ".$this->cases[17]->name);
@@ -331,27 +332,27 @@ class RestListTest extends RestTestBase {
 
         // add a search field
         // create a new custom metadata vardef for unified search on status
-        
+
         $metadata = '<?php $dictionary["Case"]["fields"]["status"]["unified_search"] = true; ?>';
         $metadata_dir = 'custom/Extension/modules/Cases/Ext/Vardefs';
         $metadata_file = 'case_status_unified_search.php';
         if(!is_dir($metadata_dir)) {
             mkdir("{$metadata_dir}", 0777, true);
         }
-        
-        file_put_contents( $metadata_dir . '/' . $metadata_file, $metadata );
+
+        SugarAutoLoader::put( $metadata_dir . '/' . $metadata_file, $metadata, true );
         $user = new User();
 
         // save old user
         $old_user = $GLOBALS['current_user'];
         $GLOBALS['current_user'] = $user->getSystemUser();
         $this->files[] = $metadata_dir . '/' . $metadata_file;
-        
+
         // run repair and rebuild
         $_REQUEST['repair_silent']=1;
         $rc = new RepairAndClear();
         $rc->repairAndClearAll(array("rebuildExtensions", "clearVardefs"), array("Cases"),  false, false);
-        
+
         // switch back to the user
         $GLBOALS['current_user'] = $old_user;
 
@@ -366,7 +367,7 @@ class RestListTest extends RestTestBase {
             $test = array( ucwords($status), ucwords($name) );
             $this->assertContains('New', $test, "New does not start either name or status");
         }
-            
+
     }
 
 
@@ -434,7 +435,7 @@ class RestListTest extends RestTestBase {
         for ( $i = 0 ; $i < 30 ; $i++ ) {
             $opportunity = new Opportunity();
             $opportunity->name = "UNIT TEST ".create_guid();
-            
+
             if ( $i > 15 && $i < 26 ) {
                 $opportunity->assigned_user_id = $GLOBALS['current_user']->id;
             } else {
@@ -460,7 +461,7 @@ class RestListTest extends RestTestBase {
         }
 
         $GLOBALS['db']->commit();
-        
+
         // Test searching for a lot of records
         $restReply = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&max_num=5");
         $this->assertEquals(5,$restReply['reply']['next_offset'],"Next offset was set incorrectly.");
@@ -472,14 +473,14 @@ class RestListTest extends RestTestBase {
 
         // Test finding one record
         $restReply3 = $this->_restCall("search/?q=".rawurlencode($this->opps[17]->name));
-        
+
         $tmp = array_keys($restReply3['reply']['records']);
         $firstRecord = $restReply3['reply']['records'][$tmp[0]];
         $this->assertEquals($this->opps[17]->name,$firstRecord['name'],"The search failed for record: ".$this->opps[17]->name);
 
         // Sorting descending
         $restReply4 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:DESC");
-        
+
         $tmp = array_keys($restReply4['reply']['records']);
         $this->assertLessThan($restReply4['reply']['records'][$tmp[0]]['id'],
                               $restReply4['reply']['records'][$tmp[1]]['id'],
@@ -487,7 +488,7 @@ class RestListTest extends RestTestBase {
 
         // Sorting ascending
         $restReply5 = $this->_restCall("search?q=".rawurlencode("UNIT TEST")."&order_by=id:ASC");
-        
+
         $tmp = array_keys($restReply5['reply']['records']);
         $this->assertGreaterThan($restReply5['reply']['records'][$tmp[0]]['id'],
                                  $restReply5['reply']['records'][$tmp[1]]['id'],
@@ -497,11 +498,11 @@ class RestListTest extends RestTestBase {
         $restReply = $this->_restCall("search?favorites=1&max_num=30&max_num_module=10&fields=name");
         $this->assertEquals(18,count($restReply['reply']['records']));
         //END SUGARCRM flav=pro ONLY
-        
+
         // Test My Items
         $restReply = $this->_restCall("search?my_items=1&max_num=50&max_num_module=20");
         $this->assertEquals(30,count($restReply['reply']['records']));
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         // Test Favorites & My Items
         $restReply = $this->_restCall("search?favorites=1&my_items=1&max_num=10");
@@ -511,7 +512,7 @@ class RestListTest extends RestTestBase {
         // Get a list, no searching
         $restReply = $this->_restCall("search?max_num=10");
         $this->assertEquals(10,count($restReply['reply']['records']));
-        
+
     }
 
 }

@@ -22,7 +22,9 @@
         "click a[id=commit_forecast]" : "triggerCommit",
         "click a[id=save_draft]" : "triggerSaveDraft",
         "click a[name=forecastSettings]" : "triggerConfigModal",
-        "click a.drawerTrig" : "triggerRightColumnVisibility"
+        "click a.drawerTrig" : "triggerRightColumnVisibility",
+        "click a[id=export]" : "triggerExport",
+        "click a[id=print]" : "triggerPrint"
     },
 
     initialize: function (options) {
@@ -159,12 +161,15 @@
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
             components: [{layout:"forecastsTabbedConfig"}],
-            span: 10
+            span: 10,
+            before: {
+                hide: function() {
+                    window.location = 'index.php?module=Forecasts';
+                }
+            }
         };
-        var callback = function(){};
-
         if(app.user.getAcls()['Forecasts'].admin == "yes") {
-            this.layout.trigger("modal:forecastsTabbedConfig:open", params, callback);
+            this.layout.trigger("modal:forecastsTabbedConfig:open", params);
         }
     },
 
@@ -217,6 +222,27 @@
 
         // toggle the "event" to make the chart stop rendering if the sidebar is hidden
         this.context.forecasts.set({hiddenSidebar: el.find('i').hasClass('icon-chevron-left')});
+    },
+
+    /**
+     * Trigger the export to send csv data
+     * @param evt
+     */
+    triggerExport : function(evt) {
+        var url = 'index.php?module=Forecasts&action=';
+        url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
+        url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
+        url += '&timeperiod_id=' + $("#date_filter").val();
+        document.location.href = url;
+    },
+
+    /**
+     * Trigger print by calling window.print()
+     *
+     * @param evt
+     */
+    triggerPrint : function(evt) {
+        window.print();
     }
 
 })

@@ -57,8 +57,10 @@ if(!empty($app_list_strings['moduleList'][$_REQUEST['module']])){
 $filename = str_replace(' ','',$filename);
 
 
-if($_REQUEST['members'] == true)
+if(isset($_REQUEST['members']) && $_REQUEST['members'] == true)
+{
 	$filename .= '_'.'members';
+}
 ///////////////////////////////////////////////////////////////////////////////
 ////	BUILD THE EXPORT FILE
 ob_clean();

@@ -43,10 +43,10 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         foreach($this->unitTestFiles as $unitTestFile ) {
             if ( file_exists($unitTestFile) ) {
                 // Ignore the warning on this, the file stat cache causes the file_exist to trigger even when it's not really there
-                unlink($unitTestFile);
+                SugarAutoLoader::unlink($unitTestFile);
             }
         }
-
+        SugarAutoLoader::saveMap();
         parent::tearDown();
     }
     /**
@@ -56,12 +56,10 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata?type_filter=module_list&platform=mobile');
 
-        foreach ( array ( '','custom/') as $prefix) {
-            if(file_exists($prefix.'include/MVC/Controller/wireless_module_registry.php')){
-                require($prefix.'include/MVC/Controller/wireless_module_registry.php');
-            }
+        foreach (SugarAutoLoader::existingCustom('include/MVC/Controller/wireless_module_registry.php') as $file) {
+            require $file;
         }
-        
+
         // $wireless_module_registry is defined in the file loaded above
         $enabledMobile = array_keys($wireless_module_registry);
 
@@ -73,13 +71,11 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
             $this->assertTrue(in_array($module,$restModules),'Module '.$module.' missing from the mobile module list.');
         }
         $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list');
-        
+
         // Create a custom set of wireless modules to test if it is loading those properly
-        if ( !is_dir('custom/include/MVC/Controller/') ) {
-            mkdir('custom/include/MVC/Controller',0755,true);
-        }
-        file_put_contents('custom/include/MVC/Controller/wireless_module_registry.php','<'."?php\n".'$wireless_module_registry = array("Accounts"=>"Accounts","Contacts"=>"Contacts","Opportunities"=>"Opportunities");');
-        
+        SugarAutoLoader::ensureDir('custom/include/MVC/Controller');
+        SugarAutoLoader::put('custom/include/MVC/Controller/wireless_module_registry.php','<'."?php\n".'$wireless_module_registry = array("Accounts"=>"Accounts","Contacts"=>"Contacts","Opportunities"=>"Opportunities");', true);
+
         $enabledMobile = array('Accounts','Contacts','Opportunities');
 
         $this->_clearMetadataCache();
@@ -92,7 +88,7 @@ class RestMetadataModuleListMobileTest extends RestTestBase {
         }
         $this->assertEquals(count($enabledMobile),count($restModules),'There are extra modules in the mobile module list on the second pass');
 
-        
+
     }
 
 }

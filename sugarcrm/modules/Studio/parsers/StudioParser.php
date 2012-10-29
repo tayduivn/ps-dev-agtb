@@ -27,14 +27,10 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2006 SugarCRM, Inc.; All Rights Reserved.
  */
 
-// $Id: StudioParser.php 19512 2007-01-19 19:41:38Z clee $
-
-
 
 /**
  * interface for studio parsers
  */
-
 class StudioParser {
 	var $positions = array ();
 	var $rows = array ();

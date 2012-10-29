@@ -388,6 +388,9 @@ abstract class AbstractMetaDataImplementation
                     foreach ($layout['panels'] as $panel) {
                         if (isset($panel['fields'])) {
                             $this->_mergeFielddefs($fielddefs, $panel['fields']);
+                        } else {
+                            // Bug 57571 - tab index value not shown after save
+                            $this->_mergeFielddefs($fielddefs, $panel);
                         }
                     }
                 }

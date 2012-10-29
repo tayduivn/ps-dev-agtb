@@ -7,13 +7,16 @@
 <h2>Query Parameters:</h2>
     <table>
         <tr><th>Param</th><th>Description</th><th>Optional</th></tr>
-        <tr><td>file</td><td>The local file path to upload</td><td>Required</td></tr>
+        <tr><td>format</td><td>sugar-html-json</td><td>Required</td></tr>
+        <tr><td>delete_if_fails</td><td>Boolean indicating whether the API is to mark related record deleted if the file upload fails.</td><td>Optional (if used oauth_token is also required)</td></tr>
+        <tr><td>oauth_token</td><td>oauth_token_value</td><td>Optional (Required if delete_if_fails is true)</td></tr>
     </table>
 </div>
 <div class="input">
     <h2>Input Example:</h2>
     <code class="codesample">
-        POST /rest/v10/Notes/abcd-1234/file/field/ HTTP/1.1
+        POST /rest/v10/Notes/abcd-1234/file/filename?format=sugar-html-json&delete_if_fails=true&oauth_token=<token> HTTP/1.1
+
         Host: localhost
         Connection: keep-alive
         Content-Length: 10263

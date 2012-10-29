@@ -50,7 +50,7 @@ class Sugar_Connectors_TestCase extends Sugar_PHPUnit_Framework_TestCase {
 	public static function tearDownAfterClass()
 	{
 	    if(self::$drop_lookup_mapping) {
-	        @unlink(HOOVERS_LOOKUP_MAPPING_FILE);
+	        @SugarAutoLoader::unlink(HOOVERS_LOOKUP_MAPPING_FILE, true);
 	    }
 	}
 
@@ -60,7 +60,7 @@ class Sugar_Connectors_TestCase extends Sugar_PHPUnit_Framework_TestCase {
     	$this->original_modules_sources = $modules_sources;
 
     	//Remove the current file and rebuild with default
-    	unlink(CONNECTOR_DISPLAY_CONFIG_FILE);
+    	SugarAutoLoader::unlink(CONNECTOR_DISPLAY_CONFIG_FILE);
     	$this->original_searchdefs = ConnectorUtils::getSearchDefs(true);
 
     	$this->original_connectors = ConnectorUtils::getConnectors(true);

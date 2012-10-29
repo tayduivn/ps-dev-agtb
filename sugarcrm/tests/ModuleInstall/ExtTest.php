@@ -93,6 +93,9 @@ class ExtTest extends Sugar_PHPUnit_Framework_TestCase
      */
     public function testExtFramework($extname, $section, $extdir, $file, $module = '')
     {
+        if(empty($section)) {
+            return;
+        }
         if(empty($module)) {
             $module = 'application';
         }

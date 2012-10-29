@@ -29,6 +29,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
 	var $add_user_private_team = true;
 	var $team_set_id = null;
 	var $team_id = null;
+	var $type = 'TeamsetCollection';
 
 	function ViewSugarFieldTeamsetCollection($fill_data=false){
     	parent::ViewSugarFieldCollection($fill_data);
@@ -101,7 +102,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
         	$this->vardef['name'] = $this->name;
         	if(!empty($GLOBALS['beanList'][$this->module_dir])){
 	        	$class = $GLOBALS['beanList'][$this->module_dir];
-	            if(file_exists($GLOBALS['beanFiles'][$class])){
+	            if(SugarAutoLoader::fileExists($GLOBALS['beanFiles'][$class])){
 		        	$this->bean = loadBean($this->module_dir);
 					$secondaries = array();
 					$primary = false;
@@ -377,42 +378,7 @@ class ViewSugarFieldTeamsetCollection extends ViewSugarFieldCollection {
        return '';
     }
 
-function findTemplate($view){
-        static $tplCache = array();
-
-        if ( isset($tplCache['TeamsetCollection'][$view]) ) {
-            return $tplCache['TeamsetCollection'][$view];
-        }
-
-        $lastClass = get_class($this);
-        $classList = array('Teamset');
-
-        $tplName = '';
-        foreach ( $classList as $className ) {
-            global $current_language;
-            if(isset($current_language)) {
-                $tplName = 'include/SugarFields/Fields/'. $className .'/'. $current_language . '.' . $view .'.tpl';
-                if ( file_exists('custom/'.$tplName) ) {
-                    $tplName = 'custom/'.$tplName;
-                    break;
-                }
-                if ( file_exists($tplName) ) {
-                    break;
-                }
-            }
-            $tplName = 'include/SugarFields/Fields/'. $className .'/'. $view .'.tpl';
-            if ( file_exists('custom/'.$tplName) ) {
-                $tplName = 'custom/'.$tplName;
-                break;
-            }
-            if ( file_exists($tplName) ) {
-                break;
-            }
-        }
-
-        $tplCache['TeamsetCollection'][$view] = $tplName;
-
-        return $tplName;
+    function findTemplate($view) {
+        return parent::findTemplate($view, array('Teamset'));
     }
 }
-?>

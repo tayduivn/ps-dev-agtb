@@ -91,11 +91,10 @@ abstract class source{
 	public function loadMapping() {
  		$mapping = array();
  		$dir = str_replace('_','/',get_class($this));
-		if(file_exists("custom/modules/Connectors/connectors/sources/{$dir}/mapping.php")) {
-			require("custom/modules/Connectors/connectors/sources/{$dir}/mapping.php");
-		} else if(file_exists("modules/Connectors/connectors/sources/{$dir}/mapping.php")){
-			require("modules/Connectors/connectors/sources/{$dir}/mapping.php");
-		}
+ 		$map = SugarAutoLoader::existingCustomOne("modules/Connectors/connectors/sources/{$dir}/mapping.php");
+ 		if(!empty($map)) {
+ 		    require $map;
+ 		}
 	    $this->_mapping = $mapping;
  	}
 
@@ -108,12 +107,10 @@ abstract class source{
      * Load source's vardef file
      */
  	public function loadVardefs() {
-		$class = get_class($this);
-		$dir = str_replace('_','/',$class);
-		if(file_exists("custom/modules/Connectors/connectors/sources/{$dir}/vardefs.php")) {
-			require("custom/modules/Connectors/connectors/sources/{$dir}/vardefs.php");
-		} else if(file_exists("modules/Connectors/connectors/sources/{$dir}/vardefs.php")){
-			require("modules/Connectors/connectors/sources/{$dir}/vardefs.php");
+		$dir = str_replace('_','/',$class = get_class($this));
+		$defs = SugarAutoLoader::existingCustomOne("modules/Connectors/connectors/sources/{$dir}/vardefs.php");
+		if(!empty($defs)) {
+			require $defs;
 		}
 
 		$this->_field_defs = !empty($dictionary[$class]['fields']) ? $dictionary[$class]['fields'] : array();
@@ -168,7 +165,7 @@ abstract class source{
 	    if(!file_exists("custom/modules/Connectors/connectors/sources/{$dir}")) {
 	       mkdir_recursive("custom/modules/Connectors/connectors/sources/{$dir}");
 	    }
-	    file_put_contents("custom/modules/Connectors/connectors/sources/{$dir}/config.php", $config_str);
+	    SugarAutoLoader::put("custom/modules/Connectors/connectors/sources/{$dir}/config.php", $config_str, true);
  	}
 
  	/**
@@ -196,11 +193,8 @@ abstract class source{
 	{
 		$config = array();
 		$dir = str_replace('_','/',get_class($this));
-		if(file_exists("modules/Connectors/connectors/sources/{$dir}/config.php")){
-			require("modules/Connectors/connectors/sources/{$dir}/config.php");
-		}
-		if(file_exists("custom/modules/Connectors/connectors/sources/{$dir}/config.php")) {
-			require("custom/modules/Connectors/connectors/sources/{$dir}/config.php");
+		foreach(SugarAutoLoader::existingCustom("modules/Connectors/connectors/sources/{$dir}/config.php") as $file) {
+		    require $file;
 		}
 		$this->_config = $config;
 
@@ -233,10 +227,8 @@ abstract class source{
 	public function getOriginalMapping() {
  		$mapping = array();
  		$dir = str_replace('_','/',get_class($this));
-		if(file_exists("modules/Connectors/connectors/sources/{$dir}/mapping.php")) {
-			require("modules/Connectors/connectors/sources/{$dir}/mapping.php");
-		} else if(file_exists("custom/modules/Connectors/connectors/sources/{$dir}/mapping.php")){
-			require("custom/modules/Connectors/connectors/sources/{$dir}/mapping.php");
+		foreach(SugarAutoLoader::existingCustom("modules/Connectors/connectors/sources/{$dir}/mapping.php") as $file) {
+		    require $file;
 		}
 		return $mapping;
  	}

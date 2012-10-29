@@ -330,6 +330,8 @@
         }
         
         this.calculateTotals();
+        self.context.forecasts.trigger('forecasts:worksheetmanager:render');
+
     },
 
     /**

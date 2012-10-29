@@ -52,8 +52,14 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                               "currency_id" => '',
                               "base_rate" => 0,
                               "show_opps" => false,
-                              "timeperiod_id" => "",
-                              "id" => ""
+                              "timeperiod_id" => '',
+                              "id" => '',
+                              "user_id" => '',
+                              "version" => 0,
+                              "name" => '',
+                              "date_modified" => '',
+                              "commit_stage" => '',
+                              "label" => '',
                             );
 
 

@@ -67,35 +67,15 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
  	function build(){
  		//we will assume that if the ListView.html file exists we will want to use that one
- 		if(file_exists('modules/'.$this->module.'/ListView.html')){
+ 		if(SugarAutoLoader::fileExists('modules/'.$this->module.'/ListView.html')){
  			$this->type = 1;
  			$this->lv = new ListView();
  			$this->template = 'modules/'.$this->module.'/ListView.html';
- 		}else{
-			$metadataFile = null;
-        	$foundViewDefs = false;
-        	if(file_exists('custom/modules/' . $this->module. '/metadata/listviewdefs.php')){
-            	$metadataFile = 'custom/modules/' .  $this->module . '/metadata/listviewdefs.php';
-            	$foundViewDefs = true;
-        	}else{
-            	if(file_exists('custom/modules/'. $this->module.'/metadata/metafiles.php')){
-                	require_once('custom/modules/'. $this->module.'/metadata/metafiles.php');
-                	if(!empty($metafiles[ $this->module]['listviewdefs'])){
-                    	$metadataFile = $metafiles[ $this->module]['listviewdefs'];
-                    	$foundViewDefs = true;
-                	}
-            	}elseif(file_exists('modules/'. $this->module.'/metadata/metafiles.php')){
-                	require_once('modules/'. $this->module.'/metadata/metafiles.php');
-                	if(!empty($metafiles[ $this->module]['listviewdefs'])){
-                    	$metadataFile = $metafiles[ $this->module]['listviewdefs'];
-                    	$foundViewDefs = true;
-                	}
-            	}
-        	}
-	        if(!$foundViewDefs && file_exists('modules/'. $this->module.'/metadata/listviewdefs.php')){
-	                $metadataFile = 'modules/'. $this->module.'/metadata/listviewdefs.php';
-	        }
-	        require_once($metadataFile);
+ 		} else {
+ 		    $metadataFile = SugarAutoLoader::loadWithMetafiles($this->module, 'listviewdefs');
+            if($metadataFile) {
+ 		        require $metadataFile;
+            }
 
 			//BEGIN SUGARCRM flav=pro ONLY
 			SugarACL::listFilter($this->module, $listViewDefs[ $this->module], array("owner_override" => true));

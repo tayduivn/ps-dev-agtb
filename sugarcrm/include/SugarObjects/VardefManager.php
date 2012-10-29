@@ -55,16 +55,14 @@ class VardefManager{
         if (isset(VardefManager::$custom_disabled_modules[$module]))
         {
             $vardef_paths = array(
-                'custom/modules/' . $module . '/Ext/Vardefs/vardefs.ext.php',
+                SugarAutoLoader::loadExtension("vardefs", $module),
                 'custom/Extension/modules/' . $module . '/Ext/Vardefs/vardefs.php'
             );
 
             //search a predefined set of locations for the vardef files
-            foreach ($vardef_paths as $path)
+            foreach (SugarAutoLoader::existing($vardef_paths) as $path)
             {
-                if (file_exists($path)) {
-                    require($path);
-                }
+                 require($path);
             }
         }
     }
@@ -96,19 +94,15 @@ class VardefManager{
         }
 
         if(empty($templates[$template])){
-            $path = 'include/SugarObjects/templates/' . $template . '/vardefs.php';
-            if(file_exists($path)){
+            foreach(SugarAutoLoader::existing(
+                'include/SugarObjects/templates/' . $template . '/vardefs.php',
+                'include/SugarObjects/implements/' . $template . '/vardefs.php'
+            ) as $path) {
                 require($path);
                 $templates[$template] = $vardefs;
-            }else{
-                $path = 'include/SugarObjects/implements/' . $template . '/vardefs.php';
-                if(file_exists($path)){
-                    require($path);
-                    $templates[$template] = $vardefs;
-                }
             }
         }
-       
+
         if(!empty($templates[$template])){
             if(empty($GLOBALS['dictionary'][$object]['fields']))$GLOBALS['dictionary'][$object]['fields'] = array();
             if(empty($GLOBALS['dictionary'][$object]['relationships']))$GLOBALS['dictionary'][$object]['relationships'] = array();
@@ -234,12 +228,13 @@ class VardefManager{
      * @param string $object the given object we wish to load the vardefs for
      * @param array $additional_search_paths an array which allows a consumer to pass in additional vardef locations to search
      */
-    static function refreshVardefs($module, $object, $additional_search_paths = null, $cacheCustom = true, $params = array()){
+    static function refreshVardefs($module, $object, $additional_search_paths = null, $cacheCustom = true, $params = array())
+    {
         // Some of the vardefs do not correctly define dictionary as global.  Declare it first.
         global $dictionary, $beanList;
         $vardef_paths = array(
                     'modules/'.$module.'/vardefs.php',
-                    'custom/modules/'.$module.'/Ext/Vardefs/vardefs.ext.php',
+                    SugarAutoLoader::loadExtension("vardefs", $module),
                     'custom/Extension/modules/'.$module.'/Ext/Vardefs/vardefs.php'
                  );
 
@@ -250,11 +245,9 @@ class VardefManager{
         }
         $found = false;
         //search a predefined set of locations for the vardef files
-        foreach($vardef_paths as $path){
-            if(file_exists($path)){
-                require($path);
-                $found = true;
-            }
+        foreach(SugarAutoLoader::existing($vardef_paths) as $path){
+            require($path);
+            $found = true;
         }
         //Some modules have multiple beans, we need to see if this object has a module_dir that is different from its module_name
         if(!$found){

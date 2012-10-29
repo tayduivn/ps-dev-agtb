@@ -303,9 +303,8 @@ eoq;
         $QCAvailableModules = array();
         $QCModules = array();
 
-        include('modules/Emails/metadata/qcmodulesdefs.php');
-        if (file_exists('custom/modules/Emails/metadata/qcmodulesdefs.php')) {
-            include('custom/modules/Emails/metadata/qcmodulesdefs.php');
+        foreach(SugarAutoLoader::existingCustom('modules/Emails/metadata/qcmodulesdefs.php') as $file) {
+            include $file;
         }
 
         foreach($QCModules as $module) {
@@ -1368,7 +1367,8 @@ eoq;
 	 * @param bool $addToAddressBook
 	 * @return array
 	 */
-	function getQuickCreateForm($vars, $email, $addToAddressBookButton=false) {
+	function getQuickCreateForm($vars, $email, $addToAddressBookButton=false)
+	{
 		require_once("include/EditView/EditView2.php");
 		global $app_strings;
 		global $mod_strings;
@@ -1445,8 +1445,9 @@ eoq;
 
 		$EditView = new EditView();
 		$EditView->ss = new Sugar_Smarty();
+		$module = $_REQUEST['qc_module'];
 		//MFH BUG#20283 - checks for custom quickcreate fields
-		$EditView->setup($_REQUEST['qc_module'], $focus, get_custom_file_if_exists('modules/'.$focus->module_dir.'/metadata/editviewdefs.php'), 'include/EditView/EditView.tpl');
+		$EditView->setup($module, $focus, SugarAutoLoader::loadWithMetafiles($module, 'editviewdefs'));
 		$EditView->process();
 		$EditView->render();
 
