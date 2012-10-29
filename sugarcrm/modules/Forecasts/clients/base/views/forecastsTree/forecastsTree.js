@@ -57,7 +57,7 @@
     checkRender:function (context, selectedUser) {
         // handle the case for user clicking MyOpportunities first
         if (selectedUser.showOpps) {
-            var nodeId = 'jstree_node_myopps_' + selectedUser.id;
+            var nodeId = (selectedUser.isManager ? 'jstree_node_myopps_' : 'jstree_node_') + selectedUser.user_name;
             this.selectJSTreeNode(nodeId)
             // check before render if we're trying to re-render tree with a fresh root user
             // otherwise do not re-render tree
@@ -77,7 +77,7 @@
                 // we need to "select" the user on the tree to show they're selected
 
                 // create node ID
-                var nodeId = 'jstree_node_' + selectedUser.id;
+                var nodeId = 'jstree_node_' + selectedUser.user_name;
 
                 // select node only if it is not the already selected node
                 if (this.jsTree.jstree('get_selected').attr('id') != nodeId) {
@@ -160,7 +160,7 @@
                     },
                     "ui":{
                         // when the tree re-renders, initially select the root node
-                        "initially_select":[ 'jstree_node_' + self.context.forecasts.get('selectedUser').id ]
+                        "initially_select":[ 'jstree_node_' + self.context.forecasts.get('selectedUser').user_name ]
                     },
                     "types":{
                         "types":{
@@ -189,6 +189,7 @@
 
                         var selectedUser = {
                             'id':userData.id,
+                            'user_name':userData.user_name,
                             'full_name':userData.full_name,
                             'first_name':userData.first_name,
                             'last_name':userData.last_name,
