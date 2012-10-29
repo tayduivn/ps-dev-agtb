@@ -519,18 +519,18 @@
 
     _renderHtml: function() {
         var self = this;
-        var processAttachment = function(note, i) {
+        var processAttachment = function(note, i, all) {
             if (note.file_mime_type) {
-                note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token=" + app.api.getOAuthToken());
+                note.url = app.api.buildFileURL({module: 'Notes', field: 'filename', id: note.id});
                 note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                note.newline = (i % 2) == 1 && (i + 1) != model.get("notes").length; // display two items in each row
+                note.newline = (i % 2) == 1 && (i + 1) != all.length; // display two items in each row
             }
         };
         var processPicture = function(obj) {
             var isModel = (obj instanceof Backbone.Model);
             var created_by = obj.created_by || obj.get('created_by');
             var url = "../clients/summer/views/imagesearch/anonymous.jpg";
-            if (obj.created_by_picture || obj.get('created_by_picture')) {
+            if (obj.created_by_picture || (isModel && obj.get('created_by_picture'))) {
                 url = app.api.buildFileURL({
                     module: 'Users',
                     id: created_by,
