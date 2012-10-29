@@ -54,7 +54,7 @@ class CalendarDisplay {
 	 * @param Calendar $cal
 	 * @param string $dashlet_id for dashlet mode
 	 */
-	function __construct(Calendar $cal,$dashlet_id = ""){
+	public function __construct(Calendar $cal,$dashlet_id = ""){
 		$this->cal = $cal;
 		$this->dashlet_id = $dashlet_id;
 	}

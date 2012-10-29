@@ -78,4 +78,41 @@ describe("The forecastsTabbedConfig layout controller", function(){
             expect(layout.getBreadCrumbLabels()).toContain('Test1');
         })
     });
+
+    describe("initialize", function () {
+        var options, testLayout;
+
+        beforeEach(function() {
+            options = {
+                context: new Backbone.Model({}),
+                meta: {
+                    components: {}
+                }
+            };
+            options.context.forecasts = new Backbone.Model({});
+        });
+
+        afterEach(function() {
+            delete options;
+            delete testLayout;
+        });
+
+        it("should create a new model if one does not exist", function () {
+            testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+            expect(testLayout.options.context.attributes.model).toBeDefined();
+        });
+
+        it("should create a copy of the model if one exists, so a cancel will not keep values lying around", function() {
+
+            options.context.forecasts.config = new Backbone.Model({
+                defaults: {
+                    test: 'test'
+                }
+            });
+
+            testLayout = new app.view.layouts.ForecastsTabbedConfigLayout(options);
+            expect(testLayout.options.context.attributes.model).not.toBe(options.context.forecasts.config);
+            expect(testLayout.options.context.attributes.model.attributes).toEqual(options.context.forecasts.config.attributes);
+        });
+    });
 });

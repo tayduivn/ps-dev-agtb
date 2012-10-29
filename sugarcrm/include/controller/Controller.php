@@ -45,7 +45,7 @@ class Controller extends SugarBean {
 				// New, Save, Delete
 	
 	function Controller() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

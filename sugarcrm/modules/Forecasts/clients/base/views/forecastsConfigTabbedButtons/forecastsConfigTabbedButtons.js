@@ -44,9 +44,6 @@
      * @param evt
      */
     close:function (evt) {
-        if(this.model.hasChanged()) {
-            this.model.set(this.model.previousAttributes());
-        }
         this.layout.context.trigger("modal:close");
     },
 

@@ -27,12 +27,12 @@ require_once ('modules/SchedulersJobs/SchedulersJob.php');
 
 class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
-var $meeting;
-var $call;
-private $job;
+    private $job;
 
     public static function setUpBeforeClass()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
     }
 
@@ -43,81 +43,7 @@ private $job;
         SugarTestHelper::tearDown();
     }
 
-function setUp()
-{
-    global $current_user;
 
-    $db = DBManagerFactory::getInstance();
-    $timedate = TimeDate::getInstance();
-
-	if($db->dbType != 'mysql')
-	{
-		$this->markTestSkipped('Skipping for non-mysql dbs');
-	}
-
-	$this->meeting = SugarTestMeetingUtilities::createMeeting();
-	$date_start = $timedate->nowDb();
-	$this->meeting->date_start = $date_start;
-	$this->meeting->duration_hours = 2;
-	$this->meeting->duration_minutes = 30;
-	$this->meeting->save();
-
-	$sql = "UPDATE meetings SET date_end = '{$date_start}' WHERE id = '{$this->meeting->id}'";
-	$db->query($sql);
-
-	$this->call = SugarTestCallUtilities::createCall();
-	$date_start = $timedate->nowDb();
-	$this->call->date_start = $date_start;
-	$this->call->duration_hours = 2;
-	$this->call->duration_minutes = 30;
-	$this->call->save();
-
-	$sql = "UPDATE calls SET date_end = '{$date_start}' WHERE id = '{$this->call->id}'";
-	$db->query($sql);
-}
-
-function tearDown() {
-	global $db, $current_user;
-    if($db->dbType != 'mysql') return; // No need to clean up if we skipped the test to begin with
-
-    SugarTestMeetingUtilities::removeAllCreatedMeetings();
-	SugarTestCallUtilities::removeAllCreatedCalls();
-
-	$this->meeting = null;
-	$this->call = null;
-
-	$meetingsSql = "UPDATE meetings SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-	$callsSql = "UPDATE calls SET date_end = date_add(date_start, INTERVAL + CONCAT(duration_hours, ':', duration_minutes) HOUR_MINUTE)";
-
-	$db->query($meetingsSql);
-	$db->query($callsSql);
-
-    if(!empty($this->job))
-    {
-        $db->query(sprintf("DELETE FROM job_queue WHERE id = '%s'", $this->job));
-    }
-}
-
-function testUpgradeDateTimeFields() {
-
-	upgradeDateTimeFields($GLOBALS['sugar_config']['log_file']);
-
-	global $db;
-	$query = "SELECT date_start, date_end FROM meetings WHERE id = '{$this->meeting->id}'";
-	$result = $db->query($query);
-	$row = $db->fetchByAssoc($result);
-	$start_time = strtotime($row['date_start']);
-	$end_time = strtotime($row['date_end']);
-	$this->assertEquals(2.5*60*60, $end_time - $start_time, 'Assert that date_end in meetings table has been properly converted');
-
-	$query = "SELECT date_start, date_end FROM calls WHERE id = '{$this->call->id}'";
-	$result = $db->query($query);
-	$row = $db->fetchByAssoc($result);
-	$start_time = strtotime($row['date_start']);
-	$end_time = strtotime($row['date_end']);
-	$this->assertEquals(2.5*60*60, $end_time - $start_time,  'Assert that date_end in calls table has been properly converted');
-}
-//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Check that for every old opportunity related products are created via job queue
      * @global type $current_user
@@ -202,6 +128,6 @@ function testUpgradeDateTimeFields() {
 
         $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
     }
-//END SUGARCRM flav=pro ONLY
+
 }
 ?>

@@ -39,6 +39,7 @@ class ForecastWorksheet extends SugarBean {
     public $assigned_user_id;
     public $draft;
     public $object_name = 'ForecastWorksheet';
+    public $module_name = 'ForecastWorksheets';
     public $module_dir = 'Forecasts';
     public $table_name = 'opportunities';
     public $disable_custom_fields = true;

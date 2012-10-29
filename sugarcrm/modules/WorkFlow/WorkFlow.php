@@ -127,8 +127,8 @@ class WorkFlow extends SugarBean
     // Flag whether
     var $check_controller = true;
 
-	function WorkFlow() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 
 		$this->disable_row_level_security =false;
 	}

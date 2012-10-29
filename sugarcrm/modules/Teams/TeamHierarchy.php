@@ -89,6 +89,7 @@ class TeamHierarchy extends SugarBean{
 
     var $table_name = "team_hierarchies";
     var $object_name = "TeamHierarchy";
+    var $module_name = 'TeamHierarchy';
     var $module_dir = 'Teams';
     var $disable_custom_fields = true;
 
@@ -97,7 +98,7 @@ class TeamHierarchy extends SugarBean{
     *
     */
     public function __construct(){
-        parent::SugarBean();
+        parent::__construct();
         $this->disable_row_level_security =true;
     }
 
