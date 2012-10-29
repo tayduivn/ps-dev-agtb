@@ -118,8 +118,8 @@ class ProductTemplate extends SugarBean {
         //END SUGARCRM flav=pro ONLY
 	);
 
-	function ProductTemplate() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;
 		//END SUGARCRM flav=pro ONLY

@@ -36,7 +36,7 @@ class TemplateRange extends TemplateText
 	 * Constructor for class.  This constructor ensures that TemplateRanage instances have the
 	 * enable_range_search vardef value.
 	 */
-	function __construct()
+	public function __construct()
 	{
 		$this->vardef_map['enable_range_search'] = 'enable_range_search';
 		$this->vardef_map['options'] = 'options';

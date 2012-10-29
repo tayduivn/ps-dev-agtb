@@ -89,8 +89,8 @@ class Employee extends Person {
 
 	var $new_schema = true;
 
-	function Employee() {
-		parent::Person();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('Users');
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;

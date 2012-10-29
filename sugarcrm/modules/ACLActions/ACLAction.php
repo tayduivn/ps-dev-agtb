@@ -31,8 +31,8 @@ class ACLAction  extends SugarBean
     var $table_name = 'acl_actions';
     var $new_schema = true;
     var $disable_custom_fields = true;
-    function ACLAction(){
-        parent::SugarBean();
+    public function __construct(){
+        parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security =true;
         //END SUGARCRM flav=pro ONLY

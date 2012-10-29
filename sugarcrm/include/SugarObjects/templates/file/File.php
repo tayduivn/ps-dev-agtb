@@ -30,8 +30,8 @@ class File extends Basic
 	public $file_url;
 	public $file_url_noimage;
 
-    function File(){
-		parent::Basic();
+    public function __construct(){
+		parent::__construct();
 	}
 
 	/**

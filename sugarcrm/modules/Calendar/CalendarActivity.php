@@ -36,7 +36,7 @@ class CalendarActivity {
 	var $start_time;
 	var $end_time;
 
-	function __construct($args){
+	public function __construct($args){
 		// if we've passed in an array, then this is a free/busy slot
 		// and does not have a sugarbean associated to it
 		global $timedate;
