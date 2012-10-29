@@ -9,6 +9,8 @@
 
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
+        // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
+        this.switching = false;
         this.context.on("togglePreview", this.togglePreview);
     },
 
@@ -51,8 +53,15 @@
             currID = id || this.model.get("postId") || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
+        if(this.switching) {
+            // We're currently switching previews, so ignore any pagination click events.
+            return;
+        }
+        this.switching = true;
+
         if( data.direction === "left" && (currID === _.first(this.collection.models).get("id")) ||
             data.direction === "right" && (currID === _.last(this.collection.models).get("id")) ) {
+            this.switching = false;
             return;
         }
         else {
@@ -65,6 +74,7 @@
                 this.collection.models[currIndex].get("activity_data") ) {
 
                 currID = this.collection.models[currIndex].id;
+                this.switching = false;
                 this.switchPreview(e, currIndex, data, currID, currModule);
             }
             else {
@@ -74,10 +84,10 @@
                 // for "Meetings" module.
                 if( _.isUndefined(app.metadata.getModule(targetModule).views.detail) ) {
                     currID = this.collection.models[currIndex].id;
+                    this.switching = false;
                     this.switchPreview(e, currIndex, data, currID, currModule);
                 }
                 else {
-                    this.closePreview();
                     this.model = app.data.createBean(targetModule);
 
                     if( _.isUndefined(this.collection.models[currIndex].get("target_id")) ) {
@@ -93,6 +103,7 @@
                         success: function(model) {
                             self.model.set("_module", targetModule);
                             self.togglePreview(model, self.collection);
+                            self.switching = false;
                         }
                     });
                 }
@@ -101,6 +112,7 @@
     },
 
     closePreview: function() {
+        this.switching = false;
         this.model.clear();
         this.$el.empty();
     }
