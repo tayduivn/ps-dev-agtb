@@ -6470,6 +6470,23 @@ h1 span { margin-left:5px; }
 input[type=radio] { display:inline-block; }
 .btn-group > .btn.active { z-index:0; }
 .card2 .address > span[sfuuid] { display:block; }
+.urleditable-wrap a.btn-mini.urleditable:not(:hover) {
+  background:transparent;
+  border-color:transparent;
+  -webkit-box-shadow:none;
+  -moz-box-shadow:none;
+  box-shadow:none;
+}
+.urleditable-wrap .urleditable .icon-pencil { visibility:hidden; }
+.urleditable-wrap form { display:inline; }
+.urleditable-wrap form input { width:210px; }
+.urleditable-wrap:hover .icon-pencil { visibility:visible; }
+.urleditable-wrap .urleditable-field > a {
+  width:210px;
+  overflow:hidden;
+  display:inline-block;
+  text-overflow:ellipsis;
+}
 #sales_stage_filter_chzn .chzn-drop, #date_filter_chzn .chzn-drop { padding:10px; }
 #sales_stage_filter_chzn .chzn-single-with-drop div b, #date_filter_chzn .chzn-single-with-drop div b { background-position:0px 0px; }
 .chzn-container-active .chzn-single-with-drop {
