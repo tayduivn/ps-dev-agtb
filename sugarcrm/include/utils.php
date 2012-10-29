@@ -1013,15 +1013,6 @@ function return_app_list_strings_language($language)
             $GLOBALS['log']->info("Found override language file: $lang.lang.php.override");
         }
 
-        if(file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
-            $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php" , $app_list_strings);
-            $GLOBALS['log']->info("Found extended language file: $lang.lang.ext.php");
-        }
-        if(file_exists("custom/include/language/$lang.lang.php")) {
-            include("custom/include/language/$lang.lang.php");
-            $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
-        }
-
         $app_list_strings_array[] = $app_list_strings;
     }
 
@@ -1030,7 +1021,16 @@ function return_app_list_strings_language($language)
         $app_list_strings = sugarLangArrayMerge($app_list_strings, $app_list_strings_item);
     }
 
-	if(!isset($app_list_strings)) {
+    if (file_exists("custom/application/Ext/Language/$lang.lang.ext.php")) {
+        $app_list_strings = _mergeCustomAppListStrings("custom/application/Ext/Language/$lang.lang.ext.php", $app_list_strings);
+        $GLOBALS['log']->info("Found extended language file: $lang.lang.ext.php");
+    }
+    if (file_exists("custom/include/language/$lang.lang.php")) {
+        include("custom/include/language/$lang.lang.php");
+        $GLOBALS['log']->info("Found custom language file: $lang.lang.php");
+    }
+
+    if(!isset($app_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
 		return null;
 	}
