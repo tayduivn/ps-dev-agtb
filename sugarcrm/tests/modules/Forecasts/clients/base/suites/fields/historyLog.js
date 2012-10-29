@@ -150,6 +150,26 @@ describe("forecast historyLog field", function() {
 
             expect(field.showFieldAlert).toBeTruthy();
         });
+
+        it("should set showFieldAlert to false if there is a reportee's forecast but no date_modified entry in the model if when there is no manager forecast", function() {
+
+            var reporteeModifiedDate = new Date();
+
+            field.model = new Backbone.Model({
+                user_id : 'seed_sarah_id'
+            });
+
+            committedView.models = [];
+
+            field.context.forecasts = {
+                committed : committedView
+            };
+
+            field._render();
+
+            expect(field.showFieldAlert).not.toBeTruthy();
+        });
+
     })
 
 });

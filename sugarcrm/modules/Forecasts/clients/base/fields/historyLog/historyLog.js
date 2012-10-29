@@ -72,17 +72,20 @@
             this.showFieldAlert = false;
             this.uid = this.model.get('user_id');
 
-            var fieldDate = new Date(this.model.get('date_modified'));
+            var fieldDate;
 
-            if(!_.isEmpty(this.context.forecasts.committed.models))
-            {
-                var commitDate = new Date(_.first(this.context.forecasts.committed.models).get('date_modified'));
+            if(this.model.get('date_modified')) {
+               fieldDate = new Date(this.model.get('date_modified'));
+            }
+
+            if(!_.isEmpty(this.context.forecasts.committed.models)) {
+                var lastCommittedDate = new Date(_.first(this.context.forecasts.committed.models).get('date_modified'));
 
                 // if fieldDate is newer than the forecast commitDate value, then we want to show the field
-                if (_.isDate(fieldDate) && _.isDate(commitDate)) {
-                    this.showFieldAlert = (fieldDate.getTime() > commitDate.getTime());
+                if (_.isDate(fieldDate) && _.isDate(lastCommittedDate)) {
+                    this.showFieldAlert = (fieldDate.getTime() > lastCommittedDate.getTime());
                 }
-            } else if(this.uid != app.user.get('id')) {
+            } else if(this.uid != app.user.get('id') && _.isDate(fieldDate)) {
                 this.showFieldAlert = true;
             }
 
