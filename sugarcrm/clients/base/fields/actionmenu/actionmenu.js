@@ -7,7 +7,7 @@
     actionDropDownTag: ".dropdown-toggle",
     fieldTag: "input[name=check]",
     initialize: function(options) {
-        var result = app.view.Field.prototype.initialize.call(this, options),
+        app.view.Field.prototype.initialize.call(this, options),
             massCollection = this.context.get('mass_collection');
         if(!massCollection) {
             var MassCollection = app.BeanCollection.extend({
@@ -67,12 +67,12 @@
             massCollection.off("reset", null, modelId);
 
             massCollection.on("add", function(model) {
-                if(model.id == modelId) {
+                if(model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
             }, modelId);
             massCollection.on("remove", function(model){
-                if(model.id == modelId) {
+                if(model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", false);
                 }
             }, modelId);
