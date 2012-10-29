@@ -519,9 +519,9 @@ class Email extends SugarBean {
 		} // if
 
         $forceSave = false;
-        $subject = $this->name;
-        $htmlBody = $this->description_html;
-        $textBody = $this->description;
+        $subject   = $this->name;
+        $textBody  = from_html($this->description);
+        $htmlBody  = from_html($this->description_html);
 
         //------------------- HANDLEBODY() ---------------------------------------------
         if ((isset($_REQUEST['setEditor']) /* from Email EditView navigation */
@@ -530,17 +530,23 @@ class Email extends SugarBean {
             || trim($this->description_html) != '' /* from email templates */
                && $current_user->getPreference('email_editor_option', 'global') !== 'plain' //user preference is not set to plain text
         ) {
-            $htmlBody = $this->decodeDuringSend($htmlBody);
-            $textBody = $this->decodeDuringSend($textBody);
-
+            $textBody = strip_tags(br2nl($htmlBody));
         } else {
+            // plain-text only
             $textBody = str_replace("&nbsp;", " ", $textBody);
             $textBody = str_replace("</p>", "</p><br />", $textBody);
             $textBody = strip_tags(br2nl($textBody));
             $textBody = str_replace("&amp;", "&", $textBody);
             $textBody = str_replace("&#39;", "'", $textBody);
-            $textBody = $this->decodeDuringSend($textBody);
+
+            $this->description_html = ""; // make sure it's blank to avoid any mishaps
+            $htmlBody               = $this->description_html;
         }
+
+        $textBody               = $this->decodeDuringSend($textBody);
+        $htmlBody               = $this->decodeDuringSend($htmlBody);
+        $this->description      = $textBody;
+        $this->description_html = $htmlBody;
 
         $mailConfig = null;
 
