@@ -2,7 +2,6 @@
     fieldTag: "select",
     _render: function() {
 
-        app.view.Field.prototype._render.call(this);
         var optionsKeys = [];
         if(_.isString(this.def.options)) {
             optionsKeys = _.keys(app.lang.getAppListStrings(this.def.options));
@@ -31,7 +30,7 @@
                 this.hasBlank = true;
             }
         }
-        this.app.view.Field.prototype._render.call(this);
+        app.view.Field.prototype._render.call(this);
 
         this.$(this.fieldTag).chosen(chosenOptions);
         this.$(".chzn-container").addClass("tleft");
