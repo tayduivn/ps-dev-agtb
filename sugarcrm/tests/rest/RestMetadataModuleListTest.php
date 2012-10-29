@@ -342,7 +342,7 @@ class RestMetadataModuleListTest extends RestTestBase {
         $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['status']['sortable'], "Bugs 'status' field should be sortable");
         $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['priority']['sortable'], "Bugs 'priority' field should be sortable");
         $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['type']['sortable'], "Bugs type 'field' should be sortable");
-        $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['category']['sortable'], "Bugs 'category' field should be sortable");
+        $this->assertEquals(true, $restReply['reply']['modules']['Bugs']['fields']['product_category']['sortable'], "Bugs 'product_category' field should be sortable");
 
         $this->assertArrayHasKey('Cases', $restReply['reply']['modules'], 'Bugs was not returned in module metadata as expected');
         $this->assertEquals(true, $restReply['reply']['modules']['Cases']['fields']['status']['sortable'], "Cases 'status' field should be sortable");

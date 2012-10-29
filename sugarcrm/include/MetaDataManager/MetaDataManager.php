@@ -281,31 +281,13 @@ class MetaDataManager {
         }
 
         if(!empty($indexes)) {
-            // if the field is indexed set sortable to true
+            // If the field is indexed or built-in, then it should be sortable. (Bug56943, Bug57644)
             foreach($data['fields'] AS $field_name => $info) {
                 $data['fields'][$field_name]['sortable'] = false;
-                if(isset($indexes[$field_name])) {
+                if(isset($indexes[$field_name]) || !preg_match("/.+_c$/",$field_name)) {
                     $data['fields'][$field_name]['sortable'] = true;
                 }
             }
-        }
-        /**
-         * Even though they are not indexed, at the request of PM
-         * the following fields in Bugs, Cases, and KBDocuments are to be sortable too
-         * See Bug57644
-         */
-        if($moduleName == "Bugs"){
-            $data['fields']["status"]['sortable'] = true;
-            $data['fields']["priority"]['sortable'] = true;
-            $data['fields']["type"]['sortable'] = true;
-            $data['fields']["category"]['sortable'] = true;
-        } else if($moduleName == "Cases"){
-            $data['fields']["status"]['sortable'] = true;
-            $data['fields']["priority"]['sortable'] = true;
-            $data['fields']["type"]['sortable'] = true;
-        } else if($moduleName == "KBDocuments"){
-            $data['fields']["active_date"]['sortable'] = true;
-            $data['fields']["exp_date"]['sortable'] = true;
         }
         
         return $data;
