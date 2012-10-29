@@ -396,7 +396,7 @@ class Call extends SugarBean {
         global $timedate;
         //setting default date and time
 		if (is_null($this->date_start)) {
-			$this->date_start = $timedate->now();
+			$this->date_start = $timedate->nowDb();
 		}
 
 		if (is_null($this->duration_hours))
