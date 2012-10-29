@@ -126,6 +126,8 @@ class CommonTest extends Sugar_PHPUnit_Framework_TestCase
      * check my_timeriods has current timeperiod for current user
      *
      * @group forecasts
+     *
+     * @skipped legacy method not to be used in 6.7 as forecast_schedules are out, possibly to be used in 6.8
      */
     public function testGetMyTimeperiods()
     {
