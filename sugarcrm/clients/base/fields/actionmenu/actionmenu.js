@@ -86,6 +86,10 @@
                 delete this.selected;
             }
         } else if (massCollection) { //listeners for entire selection
+            var cid = this.view.cid;
+            massCollection.off("add", null, cid);
+            massCollection.off("remove", null, cid);
+            massCollection.off("reset", null, cid);
             massCollection.on("add", function(model) {
                 if(this.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
@@ -94,14 +98,14 @@
                     self.$(self.fieldTag).attr("checked", true);
                 }
                 self.toggleShowSelectAll();
-            });
+            }, cid);
             massCollection.on("remove reset", function(model) {
                 if(this.length == 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
                 }
                 self.$(self.fieldTag).attr("checked", false);
                 self.toggleShowSelectAll();
-            });
+            }, cid);
             this.action_enabled = (massCollection.length > 0);
             this.selected = (massCollection.entire);
         }
