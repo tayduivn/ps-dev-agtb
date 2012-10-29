@@ -23,9 +23,9 @@
     },
 
     initialize: function(options) {
+        _.bindAll(this);
         this.opts = {params: {}};
 
-        _.bindAll(this);
         app.view.View.prototype.initialize.call(this, options);
 
         // Check to see if we need to make a related activity stream.
@@ -34,11 +34,8 @@
             this.subcontext = this.context.getChildContext({module: "ActivityStream"});
             this.subcontext.prepare();
 
-            if (this.context.get("modelId")) {
-                this.opts = { params: { module: this.module, id: this.context.get("modelId") }};
-            } else {
-                this.opts = { params: { module: this.module }};
-            }
+            this.opts = (this.context.get("modelId")) ? { params: { module: this.module, id: this.context.get("modelId") }} :
+                { params: { module: this.module }};
 
             this.streamCollection = this.subcontext.get("collection");
         } else {
@@ -94,37 +91,45 @@
     },
 
     showAllComments: function(event) {
+        var currentTarget = this.$(event.currentTarget);
+
+        currentTarget.closest('li').hide();
+        currentTarget.closest('ul').find('div.extend').show();
+        currentTarget.closest('ul').closest('li').find('.activitystream-comment').show();
+
         event.preventDefault();
-        this.$(event.currentTarget).closest('li').hide();
-        this.$(event.currentTarget).closest('ul').find('div.extend').show();
-        this.$(event.currentTarget).closest('ul').closest('li').find('.activitystream-comment').show();
     },
 
     showAddComment: function(event) {
+        var currentTarget = this.$(event.currentTarget);
+
+        currentTarget.closest('li').find('.activitystream-comment').toggle();
+        currentTarget.closest('li').find('.activitystream-comment').find('.sayit').focus();
+
         event.preventDefault();
-        this.$(event.currentTarget).closest('li').find('.activitystream-comment').toggle();
-        this.$(event.currentTarget).closest('li').find('.activitystream-comment').find('.sayit').focus();
     },
 
     _addPostComment: function(url, contents, attachments) {
-        var self = this;
-        var callback = _.after(1 + attachments.length, function() {
-            self.collection.fetch(self.opts);
-        });
+        var self = this,
+            callback = _.after(1 + attachments.length, function() {
+                self.streamCollection.fetch(self.opts);
+            });
+
         app.api.call('create', url, {'value': contents}, {success: function(post_id) {
             attachments.each(function(index, el) {
-                var id = $(el).attr('id');
-                var seed = app.data.createBean('Notes', {
-                    'parent_id': post_id,
-                    'parent_type': 'ActivityStream',
-                    'team_id': 1
-                });
+                var id = $(el).attr('id'),
+                    seed = app.data.createBean('Notes', {
+                        'parent_id': post_id,
+                        'parent_type': 'ActivityStream',
+                        'team_id': 1
+                    });
+
                 seed.save({}, {
                     success: function(model) {
-                        var data = new FormData();
-                        data.append("filename", app.drag_drop[id]);
+                        var data = new FormData(),
+                            url = app.api.buildURL("Notes/" + model.get("id") + "/file/filename");
 
-                        var url = app.api.buildURL("Notes/" + model.get("id") + "/file/filename");
+                        data.append("filename", app.drag_drop[id]);
                         url += "?oauth_token=" + app.api.getOAuthToken();
 
                         $.ajax({
@@ -182,7 +187,7 @@
 
         if (myPostModule !== "ActivityStream") {
             myPostUrl += '/' + myPostModule;
-            if (myPostId !== undefined) {
+            if (!_.isUndefined(myPostId)) {
                 myPostUrl += '/' + myPostId;
             }
         }
@@ -194,11 +199,13 @@
 
     deleteRecord: function(event) {
         var self = this,
-            recordId = this.$(event.currentTarget).data('id'),
-            recordModule = this.$(event.currentTarget).data('module'),
+            currentTarget = this.$(event.currentTarget),
+            recordId = currentTarget.data('id'),
+            recordModule = currentTarget.data('module'),
             myPostUrl = 'ActivityStream/' + recordModule + '/' + recordId;
+
         app.api.call('delete', app.api.buildURL(myPostUrl), {}, {success: function() {
-            self.collection.fetch(self.opts);
+            self.streamCollection.fetch(self.opts);
         }});
     },
 
@@ -241,35 +248,44 @@
         event.stopPropagation();
         event.preventDefault();
         this.shrinkNewPost(event);
-        $.each(event.dataTransfer.files, function(i, file) {
+        _.each(event.dataTransfer.files, function(i, file) {
             var fileReader = new FileReader();
 
             // Set up the callback for the FileReader.
             fileReader.onload = (function(file) {
                 return function(e) {
-                    var sizes = ['B', 'KB', 'MB', 'GB'];
-                    var size_index = 0;
-                    var size = file.size;
+                    var container,
+                        sizes = ['B', 'KB', 'MB', 'GB'],
+                        size_index = 0,
+                        size = file.size,
+                        unique = _.uniqueId("activitystream_attachment");
+
                     while (size > 1024 && size_index < sizes.length - 1) {
                         size_index++;
                         size /= 1024;
                     }
+
                     size = Math.round(size);
-                    var unique = _.uniqueId("activitystream_attachment");
+
                     app.drag_drop = app.drag_drop || {};
                     app.drag_drop[unique] = file;
-                    var container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
+                    container = $("<div class='activitystream-pending-attachment' id='" + unique + "'></div>");
+
+                    // TODO: Review creation of inline HTML
                     $('<a class="close">&times;</a>').on('click',function(e) {
                         $(this).parent().remove();
                         delete app.drag_drop[container.attr("id")];
                     }).appendTo(container);
+
                     container.append(file.name + " (" + size + " " + sizes[size_index] + ")");
+
                     if (file.type.indexOf("image/") !== -1) {
                         container.append("<img style='display:block;' src='" + e.target.result + "' />");
                     } else {
                         container.append("<div>No preview available</div>");
                     }
-                    $(event.currentTarget).after(container);
+
+                    this.$(event.currentTarget).after(container);
                 };
             })(file);
 
@@ -309,9 +325,12 @@
     },
 
     _getEntities: _.debounce(function(event) {
-        var el = this.$(event.currentTarget);
+        var list,
+            el = this.$(event.currentTarget),
+            word = event.currentTarget.innerText;
+
         el.parent().find("ul.typeahead.activitystream-tag-dropdown").remove();
-        var word = event.currentTarget.innerText;
+
         if (word.indexOf("@") === -1) {
             // If there's no @, don't do anything.
             return;
@@ -324,7 +343,7 @@
         }
 
         // Do initial list filtering.
-        var list = _.filter(app.entityList, function(entity) {
+        list = _.filter(app.entityList, function(entity) {
             return entity.name.toLowerCase().indexOf(word.toLowerCase()) !== -1;
         });
 
@@ -370,9 +389,11 @@
     }, 250),
 
     getEntities: function(event) {
-        var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown");
+        var dropdown = this.$("ul.typeahead.activitystream-tag-dropdown"),
+            currentTarget = this.$(event.currentTarget);
         // Coerce integer to a boolean.
         var dropdownOpen = !!(dropdown.length);
+
         if (dropdownOpen) {
             var active = dropdown.find('.active');
             // Enter or tab. Tab doesn't work in some browsers.
@@ -401,7 +422,7 @@
             }
         }
 
-        $(event.currentTarget).find('.label').each(function() {
+        currentTarget.find('.label').each(function() {
             var el = $(this);
             if (el.data('name') !== el.text()) {
                 el.remove();
@@ -413,8 +434,8 @@
             this._getEntities(event);
         } else {
             // Fixes issue where a random font tag appears. ABE-128.
-            if (this.$(event.currentTarget).text().length === 0) {
-                this.$(event.currentTarget).html('');
+            if (currentTarget.text().length === 0) {
+                currentTarget.html('');
             }
         }
     },
@@ -432,13 +453,11 @@
     },
 
     addTag: function(event) {
-        event.stopPropagation();
-        event.preventDefault();
-        var el = $(event.currentTarget);
-        var body = $(el.parents()[1]).find(".sayit");
+        var el = this.$(event.currentTarget);
+        var body = this.$(el.parents()[1]).find(".sayit");
         var originalChildren = body.clone(true).children();
         var lastIndex = body.html().lastIndexOf("@");
-        var data = $(event.currentTarget).data();
+        var data = el.data();
 
         var tag = $("<span />").addClass("label").addClass("label-" + data.module).html(data.name);
         tag.data("id", data.id).data("module", data.module).data("name", data.name);
@@ -464,14 +483,15 @@
             selection.addRange(range);
         }
         this.hideTypeahead();
+
+        event.stopPropagation();
+        event.preventDefault();
     },
 
     _parseTags: function(text) {
-        if (!text || text.length === 0) {
-            return text;
-        }
         var pattern = new RegExp(/@\[([\d\w\s-]*):([\d\w\s-]*)\]/g);
-        return text.replace(pattern, function(str, module, id) {
+
+        return (!text || text.length === 0) ? text : text.replace(pattern, function(str, module, id) {
             var name = _(app.entityList).find(function(el) {
                 return el.id == id;
             }).name || "A record";
@@ -497,14 +517,12 @@
             model.fetch({
                 success: function(model) {
                     model.set("_module", module);
-                    self.context.trigger("togglePreview", model, self.collection);
+                    self.context.trigger("togglePreview", model, self.streamCollection);
                 }
             });
-        }
-        else {
+        } else {
             app.alert.show("no_access", {level: "error", title: "Permission Denied",
                 messages: "Sorry, you do not have access to preview this specific record.", autoClose: true});
-            return;
         }
     },
 
@@ -512,41 +530,41 @@
         // Only focus on the home page. Change this when we have a home module.
         if (this.module === "ActivityStream") {
             _.defer(function() {
-                $(".activitystream-post .sayit").focus();
+                this.$(".activitystream-post .sayit").focus();
             });
         }
     }),
 
     _renderHtml: function() {
-        var self = this;
-        var processAttachment = function(note, i) {
-            if (note.file_mime_type) {
-                note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token=" + app.api.getOAuthToken());
-                note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                note.newline = (i % 2) == 1 && (i + 1) != model.get("notes").length; // display two items in each row
-            }
-        };
-        var processPicture = function(obj) {
-            var isModel = (obj instanceof Backbone.Model);
-            var created_by = obj.created_by || obj.get('created_by');
-            var url = "../clients/summer/views/imagesearch/anonymous.jpg";
-            if (obj.created_by_picture || obj.get('created_by_picture')) {
-                url = app.api.buildFileURL({
-                    module: 'Users',
-                    id: created_by,
-                    field: 'picture'
-                });
-            }
-            if (isModel) {
-                obj.set('created_by_picture_url', url);
-            } else {
-                obj.created_by_picture_url = url;
-            }
-        };
+        var self = this,
+            processAttachment = function(note, i) {
+                if (note.file_mime_type) {
+                    note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token=" + app.api.getOAuthToken());
+                    note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
+                    note.newline = (i % 2) == 1 && (i + 1) != model.get("notes").length; // display two items in each row
+                }
+            },
+            processPicture = function(obj) {
+                var isModel = (obj instanceof Backbone.Model);
+                var created_by = obj.created_by || obj.get('created_by');
+                var url = "../clients/summer/views/imagesearch/anonymous.jpg";
+                if (obj.created_by_picture || obj.get('created_by_picture')) {
+                    url = app.api.buildFileURL({
+                        module: 'Users',
+                        id: created_by,
+                        field: 'picture'
+                    });
+                }
+                if (isModel) {
+                    obj.set('created_by_picture_url', url);
+                } else {
+                    obj.created_by_picture_url = url;
+                }
+            };
 
         _.each(this.streamCollection.models, function(model) {
-            var activity_data = model.get("activity_data");
-            var comments = model.get("comments");
+            var activity_data = model.get("activity_data"),
+                comments = model.get("comments");
 
             if (activity_data && activity_data.value) {
                 activity_data.value = self._parseTags(activity_data.value);
@@ -554,22 +572,26 @@
             }
 
             processPicture(model);
+
             if (comments.length > 1) {
                 comments[1]['_starthidden'] = true;
                 comments[comments.length - 1]['_stophidden'] = true;
                 comments[comments.length - 1]['_morecomments'] = comments.length - 1;
             }
+
             _.each(comments, function(comment) {
                 comment.value = self._parseTags(comment.value);
                 processPicture(comment);
                 _.each(comment.notes, processAttachment);
             });
+
             _.each(model.get("notes"), processAttachment);
 
         }, this);
 
         // Sets correct offset and limit for future fetch if we are 'showing more'
         this.opts.params.offset = 0;
+
         if (this.streamCollection.models.length > 0) {
             this.opts.params.limit = this.streamCollection.models.length;
             this.opts.params.max_num = this.streamCollection.models.length;
