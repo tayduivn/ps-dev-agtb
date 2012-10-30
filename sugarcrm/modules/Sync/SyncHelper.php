@@ -310,7 +310,7 @@ function has_error($result=false){
 	global $soapclient;
 	if($result){
 		if(!isset($result['error'])){
-			echo "<br><font color='red'>An error has occured:</font><br>";
+			echo "<br><font color='red'>An error has occurred:</font><br>";
 			print_r($result);
 			echo '<br>';
 			echo $soapclient->error_str;
@@ -331,8 +331,8 @@ function has_error($result=false){
 
 	}else{
 		if($result || !empty($soapclient->error_str)){
-			echo "<br><font color='red'>An error has occured:(".$error['number'] . ") <br>". $error['name'] . "<br>" .$error['description']. '<br></font>';
-			$GLOBALS['log']->fatal("SYNC: An error has occured:(".$error['number'] . ") <br>". $error['name'] . "<br>" .$error['description']);
+			echo "<br><font color='red'>An error has occurred:(".$error['number'] . ") <br>". $error['name'] . "<br>" .$error['description']. '<br></font>';
+			$GLOBALS['log']->fatal("SYNC: An error has occurred:(".$error['number'] . ") <br>". $error['name'] . "<br>" .$error['description']);
 			echo $soapclient->error_str;
 			$GLOBALS['log']->fatal($soapclient->error_str);
 			echo '<br>';

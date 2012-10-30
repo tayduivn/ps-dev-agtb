@@ -276,12 +276,18 @@ class SugarBean
      * @var array
      */
     protected $loaded_relationships = array();
-	
+
 	/**
      * set to true if dependent fields updated
      */
     protected $is_updated_dependent_fields = false;
-	
+
+    /**
+     * Blowfish encryption key
+     * @var string
+     */
+    static protected $field_key;
+
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -507,11 +513,11 @@ class SugarBean
      *
      * Internal function, do not override.
      */
-    public function get_custom_table_name() 
-    { 
-        return $this->getTableName().'_cstm'; 
+    public function get_custom_table_name()
+    {
+        return $this->getTableName().'_cstm';
     }
-    
+
     /**
      * If auditing is enabled, create the audit table.
      *
@@ -2511,7 +2517,7 @@ class SugarBean
         {
             $this->custom_fields->fill_relationships();
         }
-		
+
 		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
         $this->fill_in_relationship_fields();
@@ -2522,7 +2528,7 @@ class SugarBean
              {
                  $this->fetched_rel_row[$rel_field_name['name']] = $this->$rel_field_name['name'];
              }
-         }        
+         }
         //make a copy of fields in the relationship_fields array. These field values will be used to
         //clear relationship.
         foreach ( $this->field_defs as $key => $def )
@@ -2856,12 +2862,12 @@ class SugarBean
         }
 
         $this->load_relationship($related_field_name);
-        
+
         if ($this->$related_field_name instanceof Link) {
-            
+
             $query_array = $this->$related_field_name->getQuery(true);
         } else {
-            
+
             $query_array = $this->$related_field_name->getQuery(array(
                 "return_as_array" => true,
                 'where' => '1=1' // hook for 'where' clause in M2MRelationship file
@@ -4716,6 +4722,12 @@ class SugarBean
             $tracker = new Tracker();
             $tracker->makeInvisibleForAll($id);
 
+            //BEGIN SUGARCRM flav=pro ONLY
+            require_once('include/SugarSearchEngine/SugarSearchEngineFactory.php');
+            $searchEngine = SugarSearchEngineFactory::getInstance();
+            $searchEngine->delete($this);
+            //END SUGARCRM flav=pro ONLY
+
             // call the custom business logic
             $this->call_custom_logic("after_delete", $custom_logic_arguments);
         }
@@ -4989,7 +5001,7 @@ class SugarBean
             if (!empty($listview_meta_file))
             {
                 require $listview_meta_file;
-                
+
                 if (!empty($listViewDefs[$this->module_name]))
                 {
                     $listview_def = $listViewDefs[$this->module_name];
@@ -5010,7 +5022,7 @@ class SugarBean
         static $cache = array();
         // cn: bug 12270 - sensitive fields being passed arbitrarily in listViews
         $sensitiveFields = array('user_hash' => '');
-        
+
         $return_array = Array();
         global $app_list_strings, $mod_strings;
         foreach($this->field_defs as $field=>$value){
@@ -5272,7 +5284,7 @@ class SugarBean
         {
             return;
         }
-                
+
         // The user either has to be an admin, or be assigned to the team that owns the data
         $team_table_alias = 'team_memberships';
 
@@ -5552,8 +5564,23 @@ class SugarBean
         $handler = new WorkFlowHandler($this, 'after_save');
         if(!empty($_SESSION['WORKFLOW_ALERTS']))
         {
-            $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
-            unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+            $id_for_save = true;
+            // Bug 55942 the in-save id gets overwritten during resaveRelatedBeans process
+            // here we want to make sure the correct in-save id is used to send the alert
+            if (isset($_SESSION['WORKFLOW_ALERTS']['id']))
+            {
+                $id_for_save = ($_SESSION['WORKFLOW_ALERTS']['id'] == $this->id ? true : false);
+            }
+
+            if ($id_for_save && !($this instanceof SugarFeed))
+            {
+                $handler->process_alerts($this, $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+                unset( $_SESSION['WORKFLOW_ALERTS'][$this->module_dir]);
+                if (isset($_SESSION['WORKFLOW_ALERTS']['id']))
+                {
+                    unset( $_SESSION['WORKFLOW_ALERTS']['id']);
+                }
+            }
         }
     }
     //END SUGARCRM flav=pro ONLY
@@ -5941,6 +5968,14 @@ class SugarBean
             $this->$street_field = trim($this->$street_field, "\n");
         }
     }
+
+    protected function getEncryptKey()
+    {
+        if(empty(self::$field_key)) {
+            self::$field_key = blowfishGetKey('encrypt_field');
+        }
+    }
+
 /**
  * Encrpyt and base64 encode an 'encrypt' field type in the bean using Blowfish. The default system key is stored in cache/Blowfish/{keytype}
  * @param STRING value -plain text value of the bean field.
@@ -5949,7 +5984,7 @@ class SugarBean
     function encrpyt_before_save($value)
     {
         require_once("include/utils/encryption_utils.php");
-        return blowfishEncode(blowfishGetKey('encrypt_field'),$value);
+        return blowfishEncode($this->getEncryptKey(), $value);
     }
 
 /**
@@ -5959,8 +5994,9 @@ class SugarBean
  */
     function decrypt_after_retrieve($value)
     {
+        if(empty($value)) return $value; // no need to decrypt empty
         require_once("include/utils/encryption_utils.php");
-        return blowfishDecode(blowfishGetKey('encrypt_field'), $value);
+        return blowfishDecode($this->getEncryptKey(), $value);
     }
 
     /**

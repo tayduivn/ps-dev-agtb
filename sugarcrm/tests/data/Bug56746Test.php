@@ -36,7 +36,6 @@
  * @ticket 46230
  * @ticket 54042
  * @ticket 56746
-
  */
 class Bug56746Test extends Sugar_PHPUnit_Framework_TestCase
 {

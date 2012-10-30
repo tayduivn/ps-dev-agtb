@@ -426,6 +426,14 @@ abstract class SugarRelationship
                 {
                     $bean->save();
                 }
+                else
+                {
+                    // Bug 55942 save the in-save id which will be used to send workflow alert later
+                    if (isset($bean->id) && !empty($_SESSION['WORKFLOW_ALERTS']))
+                    {
+                        $_SESSION['WORKFLOW_ALERTS']['id'] = $bean->id;
+                    }
+                }
             }
         }
 
