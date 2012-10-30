@@ -3434,7 +3434,14 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
 
-    //for portal
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
+
+    //theme roller
+    'BorderColor' => 'Border Color',
+    'NavigationBar' => 'Navigation Bar',
+    'PrimaryButton' => 'Primary Button',
+
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
@@ -3505,6 +3512,8 @@ $app_strings = array (
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
     'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
+    //end portal
+    //END SUGARCRM flav=ent ONLY
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
