@@ -105,7 +105,7 @@ describe("The forecastCommitted view", function(){
 
             it("be in the user format", function(){
                 view.buildForecastsCommitted();
-                expect(view.previousDateEntered).toEqual('12/05/2012 10:12:25');
+                expect(view.previousDateEntered.match(/^\d{1,2}\/\d{1,2}\/\d{4} \d{1,2}:\d{1,2}:\d{1,2}$/)).toBeTruthy();
             });
         })
     });
