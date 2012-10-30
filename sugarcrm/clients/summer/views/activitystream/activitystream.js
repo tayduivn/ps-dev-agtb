@@ -35,7 +35,7 @@
             this.subcontext.prepare();
 
             this.opts = (this.context.get("modelId")) ? { params: { module: this.module, id: this.context.get("modelId") }} :
-                { params: { module: this.module }};
+            { params: { module: this.module }};
 
             this.streamCollection = this.subcontext.get("collection");
         } else {
@@ -380,8 +380,9 @@
 
             items[0] = ($(items[0]).addClass('active'))[0];
 
-            var pos = $.extend({}, el.offset(), {
-                height: el[0].offsetHeight
+            ul.css({
+                top: el.position().top + el.height(),
+                left: el.position().left
             });
 
             ul.html(items).appendTo(el.parent()).show();
@@ -537,18 +538,18 @@
 
     _renderHtml: function() {
         var self = this,
-            processAttachment = function(note, i) {
+            processAttachment = function(note, i, all) {
                 if (note.file_mime_type) {
-                    note.url = app.api.buildURL("Notes/" + note.id + "/file/filename?oauth_token=" + app.api.getOAuthToken());
+                    note.url = app.api.buildFileURL({module: 'Notes', field: 'filename', id: note.id});
                     note.file_type = note.file_mime_type.indexOf("image") !== -1 ? 'image' : (note.file_mime_type.indexOf("pdf") !== -1 ? 'pdf' : 'other');
-                    note.newline = (i % 2) == 1 && (i + 1) != model.get("notes").length; // display two items in each row
+                    note.newline = (i % 2) == 1 && (i + 1) != all.length; // display two items in each row
                 }
             },
             processPicture = function(obj) {
                 var isModel = (obj instanceof Backbone.Model);
                 var created_by = obj.created_by || obj.get('created_by');
                 var url = "../clients/summer/views/imagesearch/anonymous.jpg";
-                if (obj.created_by_picture || obj.get('created_by_picture')) {
+                if (obj.created_by_picture || (isModel && obj.get('created_by_picture'))) {
                     url = app.api.buildFileURL({
                         module: 'Users',
                         id: created_by,
