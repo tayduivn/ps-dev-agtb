@@ -247,7 +247,7 @@ class aSubPanel
                 // Lowercase the collection module to check against the subpanel list
                 $lcModule = strtolower($properties['module']);
                 
-                // Add a check for submodule visibility. If not visible, but exempt, pass it
+                // Add a check for module subpanel visibility. If not visible, but exempt, pass it
                 if (isset($subPanelModules[$lcModule]) || isset($modules_exempt_from_availability_check[$properties['module']]))
 				{
 					$this->sub_subpanels [ $panel ] = new aSubPanel ( $panel, $properties, $this->parent_bean ) ;
