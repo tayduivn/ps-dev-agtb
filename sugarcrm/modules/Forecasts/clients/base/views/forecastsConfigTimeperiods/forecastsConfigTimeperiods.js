@@ -81,7 +81,7 @@
             var days = current_date.getDate();
             for (var i = 1; i <= days; i++) {
                 option_html += '<option value="' + i + '"';
-                if(i == this.model.get('timeperiods_start_day')) {
+                if(i == this.model.get('timeperiod_start_day')) {
                     option_html += ' selected ';
                 }
                 option_html += '>' + i + '</option>';

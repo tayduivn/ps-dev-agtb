@@ -60,10 +60,9 @@ class ForecastsConfigApi extends ConfigModuleApi {
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
         //if primary settings for timeperiods have changed, then rebuild them
-        // TODO:  fix this!  Commenting out, for now, so that work can continue on config settings in other areas
-//        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
-//            TimePeriod::rebuildForecastingTimePeriods();
-//        }
+        //if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
+        TimePeriod::rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
+        //}
         return $current_forecasts_settings;
     }
 
@@ -82,10 +81,10 @@ class ForecastsConfigApi extends ConfigModuleApi {
         if(!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiods_start_month']) || (isset($currentSettings['timeperiods_start_month']) && ($currentSettings['timeperiods_start_month'] != $priorSettings['timeperiods_start_month']))) {
+        if(!isset($priorSettings['timeperiod_start_month']) || (isset($currentSettings['timeperiod_start_month']) && ($currentSettings['timeperiod_start_month'] != $priorSettings['timeperiod_start_month']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiods_start_day']) || (isset($currentSettings['timeperiods_start_day']) && ($currentSettings['timeperiods_start_day'] != $priorSettings['timeperiods_start_day']))) {
+        if(!isset($priorSettings['timeperiod_start_day']) || (isset($currentSettings['timeperiod_start_day']) && ($currentSettings['timeperiod_start_day'] != $priorSettings['timeperiod_start_day']))) {
             return true;
         }
         if(!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {

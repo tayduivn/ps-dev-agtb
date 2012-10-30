@@ -239,7 +239,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array(
             array(TimePeriod::ANNUAL_TYPE),
-            array(TimePeriod::QUARTER_TYPE)
+            array(TimePeriod::QUARTER_TYPE),
+            array(TimePeriod::MONTH_TYPE)
         );
     }
 
@@ -366,54 +367,59 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * This is the data provider for the testOnlyShownBackwardDifferenceChanged function
      * The arguments are as follows
-     * 1) The prior timeperiod_shown_backward argument
-     * 2) The current timeperiod_shown_backward argument
-     * 3) The parent TimePeriod type to create
-     * 4) The leaf TimePeriod type to create
-     * 5) The timeperiod_start_month argument
-     * 6) The timeperiod_start_day argument
-     * 7) The expected number of parent TimePeriod instances to create
-     * 8) The expected number of leaf TimePeriod instances to create
-     * 9) Direction
-     * 10) The expected month of the leaf TimePeriod based on direction
-     * 11) The expected day of the leaf TimePeriod based on direction
+     * 1) The is_upgrade setting to use in simulating the call to rebuildForecastingTimePeriods
+     * 2) The prior timeperiod_shown_backward argument
+     * 3) The current timeperiod_shown_backward argument
+     * 4) The parent TimePeriod type to create
+     * 5) The leaf TimePeriod type to create
+     * 6) The timeperiod_start_month argument
+     * 7) The timeperiod_start_day argument
+     * 8) The expected number of parent TimePeriod instances to create
+     * 9) The expected number of leaf TimePeriod instances to create
+     * 10) Direction
+     * 11) The expected month of the leaf TimePeriod based on direction
+     * 12) The expected day of the leaf TimePeriod based on direction
      */
     public function shownBackwardDifferenceChangedProvider()
     {
         return array
         (
-
             //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
-            array(2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
+            array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
             //Going from 4 to 6 creates 2 annual timeperiods backwards (2 annual, 8 quarters)
-            array(4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
+            array(0, 4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
             //Going from 6 to 2 should not create anything
-            array(6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-0 year', 0, 0, 'backward'),
+            array(0, 6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
 
             //Going from 2 to 4 creates 2 annual timeperiods forward (2 annual, 8 quarters)
-            array(2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward', 1, 1, 10, 1),
+            array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward', 1, 1, 10, 1),
 
             //Going from 4 to 6 creates 2 annual timeperiods forward (2 annual, 8 quarters)
-            array(4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward', 1, 1, 10, 1),
+            array(0, 4, 6, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward', 1, 1, 10, 1),
 
             //Going from 6 to 2 should not create anything
-            array(6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'forward', 1, 1, 10, 1),
+            array(0, 6, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'forward', 1, 1, 10, 1),
 
             //Create 4 quarters going backward.  Earliest quarter and month should be -1 year from timeperiod
-            array(0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-1 year', 4, 12, 'backward'),
+            array(0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-1 year', 4, 12, 'backward'),
 
             //Create 8 quarters going backward.  Earliest quarter and month should be -2 years from timeperiod
-            array(4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-2 year', 8, 24, 'backward'),
+            array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '-2 year', 8, 24, 'backward'),
 
             //Going from 12 to 6 should not create anything
-            array(12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
+            array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
 
-            array(0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward', 10, 1, 12, 1),
-            array(4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
-            array(12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1)
+            array(0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward', 10, 1, 12, 1),
+            array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
+            array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1),
 
+            //Simulating upgrades
+
+            //No backward timeperiods will be created
+            array(1, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
+            array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
         );
     }
 
@@ -427,6 +433,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @outputBuffering disabled
      */
     public function testOnlyShownDifferenceChanged (
+            $isUpgrade,
             $previous,
             $current,
             $parentType,
@@ -448,6 +455,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $priorForecastSettings["timeperiod_shown_{$direction}"] = $previous;
         $priorForecastSettings['timeperiod_interval'] = $parentType;
         $priorForecastSettings['timeperiod_leaf_interval'] = $leafType;
+        $priorForecastSettings['is_upgrade'] = $isUpgrade;
 
         $currentForecastSettings = $priorForecastSettings;
         $currentForecastSettings["timeperiod_shown_{$direction}"] = $current;
@@ -487,26 +495,55 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
     }
 
+
+    /**
+     * getCurrentIdProvider
+     *
+     */
+    public function getCurrentIdProvider() {
+        
+    }
+
     /**
      * This is a test to get the current id
      *
      * @group forecasts
      * @group timeperiods
+     *
      */
     public function testGetCurrentId() {
-        $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $result = $db->limitQuery("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND time_period_type = '" . TimePeriod::ANNUAL_TYPE . "' AND deleted = 0 ORDER BY start_date_timestamp ASC", 0, 1);
-        $expectedAnnualId = '';
+        $queryDate = $timedate->getNow()->format('Y');
+        $id = TimePeriod::getCurrentId(TimePeriod::ANNUAL_TYPE);
+        $currentAnnualTimePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE, $id);
+        $expectedAnnualTimePeriodName = sprintf($currentAnnualTimePeriod->name_template, $queryDate);
+        $this->assertEquals($expectedAnnualTimePeriodName, $currentAnnualTimePeriod->name);
 
-        if($result) {
-            $row = $db->fetchByAssoc($result);
-            $expectedAnnualId = $row['id'];
+        $month = $timedate->getNow()->format('m');
+        $currentId = 1;
+
+        switch($month) {
+            case 4:
+            case 5:
+            case 6:
+                $currentId = 2;
+                break;
+            case 7:
+            case 8:
+            case 9:
+                $currentId = 3;
+                break;
+            case 10:
+            case 11:
+            case 12:
+                $currentId = 4;
+                break;
         }
 
-        $this->assertEquals($expectedAnnualId, TimePeriod::getCurrentId(TimePeriod::ANNUAL_TYPE));
+        $id = TimePeriod::getCurrentId(TimePeriod::QUARTER_TYPE);
+        $currentQuarterTimePeriod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE, $id);
+        $expectedQuarterTimePeriodName = sprintf($currentQuarterTimePeriod->name_template, $currentId, $queryDate);
+        $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
     }
 
     /**

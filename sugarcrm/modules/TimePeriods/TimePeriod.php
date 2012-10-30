@@ -392,15 +392,16 @@ class TimePeriod extends SugarBean {
      */
     public static function getCurrentId($type=TimePeriod::QUARTER_TYPE)
     {
-        if(!isset(self::$currentId[$type]))
+        if(empty(self::$currentId[$type]))
         {
             global $app_strings;
             $timedate = TimeDate::getInstance();
             $db = DBManagerFactory::getInstance();
             $queryDate = $timedate->getNow();
             $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-            $result = $db->limitQuery("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND time_period_type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp ASC", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())), 0 , 1);
-            if($result)
+
+            $result = $db->limitQuery("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND time_period_type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp DESC", 0 , 1);
+            if(!empty($result))
             {
                 $row = $db->fetchByAssoc($result);
                 self::$currentId[$type] = $row['id'];
@@ -581,16 +582,16 @@ class TimePeriod extends SugarBean {
        $targetIntervalDifferent = $this->isTargetIntervalDifferent($priorSettings, $currentSettings);
 
        //Now check if we need to add more timeperiods
-       $shownBackwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
+       //If we are coming from an upgrade, we do not create any backward timeperiods
+       $shownBackwardDifference = !empty($priorSettings['is_upgrade']) ? 0 : $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
+
        $shownForwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_forward');
 
-       $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
-
-       if($targetDateDifferent) {
-
-       }
-
-       if($targetIntervalDifferent) {
+       //If this is not an upgrade, we can build the timeperiods
+       if(empty($priorSettings['is_upgrade']))
+       {
+           $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
+       } else {
 
        }
 
