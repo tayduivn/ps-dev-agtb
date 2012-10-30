@@ -33,6 +33,7 @@ class Bug57699Test extends Sugar_PHPUnit_Framework_TestCase
     protected $_modListGlobal;
     protected $_subPanelDefinitions;
     protected $_testDefs;
+    protected $_exemptModules;
     
     public function setUp() {
         // Set up our test defs
@@ -85,11 +86,46 @@ class Bug57699Test extends Sugar_PHPUnit_Framework_TestCase
         if (!empty($subpanels_hidden)) {
             $this->_currentSubpanels['hidden'] = $subpanels_hidden;
         }
+        
+        // Handle exempt modules, since this global gets set in other places in
+        // the code base and is causing the last unit test to fail because of the
+        // override that happens in the Project module subpaneldefs.php file.
+        $this->_exemptModules = empty($GLOBALS['modules_exempt_from_availability_check']) ? array() : $GLOBALS['modules_exempt_from_availability_check'];
+        unset($GLOBALS['modules_exempt_from_availability_check']);
+        
+        // Copied from include/utils/security_utils.php
+        $modules_exempt_from_availability_check['Activities']='Activities';
+        $modules_exempt_from_availability_check['History']='History';
+        $modules_exempt_from_availability_check['Calls']='Calls';
+        $modules_exempt_from_availability_check['Meetings']='Meetings';
+        $modules_exempt_from_availability_check['Tasks']='Tasks';
+        
+        //BEGIN SUGARCRM flav!=sales ONLY
+        $modules_exempt_from_availability_check['CampaignLog']='CampaignLog';
+        $modules_exempt_from_availability_check['CampaignTrackers']='CampaignTrackers';
+        $modules_exempt_from_availability_check['Prospects']='Prospects';
+        $modules_exempt_from_availability_check['ProspectLists']='ProspectLists';
+        $modules_exempt_from_availability_check['EmailMarketing']='EmailMarketing';
+        $modules_exempt_from_availability_check['EmailMan']='EmailMan';
+        $modules_exempt_from_availability_check['ProjectTask']='ProjectTask';
+        //END SUGARCRM flav!=sales ONLY
+        $modules_exempt_from_availability_check['Users']='Users';
+        $modules_exempt_from_availability_check['Teams']='Teams';
+        $modules_exempt_from_availability_check['SchedulersJobs']='SchedulersJobs';
+        $modules_exempt_from_availability_check['DocumentRevisions']='DocumentRevisions';
+        //BEGIN SUGARCRM flav=dce ONLY
+        $modules_exempt_from_availability_check['DCEActions']='DCEActions';
+        //END SUGARCRM flav=dce ONLY
+        
+        $GLOBALS['modules_exempt_from_availability_check'] = $modules_exempt_from_availability_check;
     }
     
     public function tearDown() {
-        // Restore the globals module after the Projects removal hack
+        // Restore the globals 
         $GLOBALS['moduleList'] = $this->_modListGlobal;
+        if (!empty($this->_exemptModules)) {
+            $GLOBALS['modules_exempt_from_availability_check'] = $this->_exemptModules;
+        }
         
         // Restore the system tabs to pre-test state
         $this->_tabController->set_system_tabs($this->_currentTabs);
