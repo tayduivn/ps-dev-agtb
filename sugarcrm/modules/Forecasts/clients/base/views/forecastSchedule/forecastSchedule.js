@@ -111,7 +111,7 @@
 
         if (this._collection) {
             this._collection.on("change", function() {
-            	self.context.forecast.trigger("forecasts:commitButtons:enabled");
+            	self.context.forecasts.trigger("forecasts:commitButtons:enabled");
                 _.each(this._collection.models, function(model, index) {
                     if(model.hasChanged("expected_commit_stage") || model.hasChanged("expected_amount") || model.hasChanged("expected_best_case") || model.hasChanged("expected_worst_case")) {
                        this._collection.url = this.url;
