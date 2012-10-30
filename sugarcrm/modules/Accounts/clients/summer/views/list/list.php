@@ -62,6 +62,11 @@ $viewdefs['Accounts']['summer']['view']['list'] = array(
                     'label' => 'LBL_ASSIGNED_TO',
                     'default' => false,
                 ),
+                array(
+                    'type' => 'preview',
+                    'sortable' => false,
+                    'default' => true,
+                ),
             )
         )
     )
