@@ -43,6 +43,9 @@
         var self = this,
             showEvent = options.meta.showEvent;
 
+        if(!_.isFunction(this.$el.modal)) {
+            app.logger.error("Unable to load modal.js: Needs bootstrap modal plugin.");
+        }
 
         this.metaComponents = options.meta.components;
         options.meta.components = this.baseComponents;
@@ -195,21 +198,24 @@
             return false;
         this.loadData();
         this.render();
-        var span = params ? params.span : null,
+        var width = params ? params.width : null,
             options = params ? params.options || {} : {},
-            modal_container = this.$(".modal:first"),
-            //Clean out previous span css class
-            original_css = modal_container.attr("class").replace(/span\d+/g, "");
-        modal_container.attr("class", original_css);
-        if(_.isNumber(span) && span > 0 && span <= 12) {
-            modal_container.addClass('span' + span);
+            modal_container = this.$(".modal:first");
+
+        //Clean out previous span css class
+        modal_container.attr("style", "");
+        if(_.isNumber(width)) {
+            modal_container.width(width);
+            modal_container.css('marginLeft', -(width/2) + 'px');
         }
-        if(_.isFunction(this.$el.modal)) {
-            modal_container.modal(params.options ? params.options.modal : {});
-            modal_container.modal('show');
-        } else {
-            modal_container.show();
+        if(!_.isFunction(modal_container.modal)) {
+            app.logger.error("Unable to load modal.js: Needs bootstrap modal plugin.");
+            return false;
         }
+
+        modal_container.modal(_.extend({keyboard:false, backdrop:'static'}, options.modal));
+        modal_container.modal('show');
+
         this.trigger("show");
         return true;
     },
@@ -217,12 +223,13 @@
         if (!this.triggerBefore("hide")) return false;
         //restore back to the scroll position at the top
         var modal_container = this.$(".modal:first");
-        this.$(".modal-body:first").scrollTop(0);
-        if(_.isFunction(this.$el.modal)) {
-            modal_container.modal('hide');
-        } else {
-            modal_container.hide();
+        modal_container.scrollTop(0);
+
+        if(!_.isFunction(modal_container.modal)) {
+            app.logger.error("Unable to load modal.js: Needs bootstrap modal plugin.");
+            return false;
         }
+        modal_container.modal('hide');
         this.trigger("hide");
         return true;
     }
