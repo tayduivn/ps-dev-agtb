@@ -182,6 +182,6 @@ class SummerApi extends SugarApi {
         }
         $q = (!empty($args['q']))?$args['q']:'';
         $limit = (!empty($args['limit']))?$args['limit']:5;
-        return $this->box->getMails($args['email'], $q, $limit);
+        return $this->box->getMails($args['email'], $q, '-1 month', $limit);
     }
 }
