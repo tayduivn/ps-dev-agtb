@@ -42,7 +42,7 @@ class RestCurrentUserPortalTest extends RestTestBase {
 
         $this->_user->portal_only = '1';
         $this->_user->save();
-
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
         // A little bit destructive, but necessary.
         $db->query("DELETE FROM contacts WHERE portal_name = 'unittestportal'");
 
@@ -104,6 +104,9 @@ class RestCurrentUserPortalTest extends RestTestBase {
         }
         $GLOBALS['db']->query("DELETE FROM accounts_contacts WHERE contact_id IN {$contactIds}");
 
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
+        $GLOBALS ['system_config']->saveSetting('portal', 'on', 0);
+        $GLOBALS['db']->commit();
 
         parent::tearDown();
     }
