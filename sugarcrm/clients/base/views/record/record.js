@@ -8,7 +8,8 @@
         'click .record-cancel': 'cancelClicked',
         'click .record-delete': 'deleteClicked',
         'click .more': 'toggleMoreLess',
-        'click .less': 'toggleMoreLess'
+        'click .less': 'toggleMoreLess',
+        'click .drawerTrig': 'toggleSidePanel'
     },
 
     // button states
@@ -274,13 +275,14 @@
     },
 
     handleDelete: function() {
-        // Open up a modal
-        var self = this,
-            modal = this.$("#delete-confirmation").modal();
-
-        this.$(".confirm-delete").on("click", function() {
-            self.model.destroy();
-            app.router.navigate("#" + self.module, {trigger: true});
+        var self = this;
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
+            onConfirm: function() {
+                self.model.destroy();
+                app.router.navigate("#" + self.module, {trigger: true});
+            }
         });
     },
 
@@ -405,5 +407,26 @@
                 $buttons.del.toggleClass('hide', true);
                 break;
         }
+    },
+
+    /**
+     * Hide / show the side panel
+     */
+    toggleSidePanel: function() {
+        var chevron = this.$('.drawerTrig span'),
+            pointRightClass = 'icon-chevron-right',
+            pointLeftClass = 'icon-chevron-left';
+
+        if (chevron.hasClass(pointRightClass)) {
+            chevron
+                .removeClass(pointRightClass)
+                .addClass(pointLeftClass);
+        } else {
+            chevron
+                .removeClass(pointLeftClass)
+                .addClass(pointRightClass);
+        }
+
+        //TODO: toggle panes
     }
 })
