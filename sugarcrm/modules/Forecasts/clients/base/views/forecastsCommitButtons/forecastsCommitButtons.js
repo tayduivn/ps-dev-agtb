@@ -142,7 +142,9 @@
     				model.save({}, {success:function(){
     					saveCount++;
     					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
+    						if(worksheet == "worksheetmanager"){
+    							self.context.forecasts.set({reloadWorksheetFlag: true});
+    						}
     					}
     				}});
     				worksheet.isDirty = false;
