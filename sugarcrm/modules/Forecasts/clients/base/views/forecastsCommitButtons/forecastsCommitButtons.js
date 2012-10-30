@@ -153,7 +153,16 @@
             span: 10,
             before: {
                 hide: function() {
-                    window.location = 'index.php?module=Forecasts';
+                    // Check to see if we're closing modal via cancel button
+                    // We have no event passed here to get which button was clicked
+                    if(!this.context.forecasts.config.get('cancelClicked')) {
+                        // cancel was not clicked, so refresh the page redirecting to the Forecasts module
+                        window.location = 'index.php?module=Forecasts';
+                    } else {
+                        // reset without a change event in case they click settings again
+                        // before refreshing the page
+                        this.context.forecasts.config.set({ cancelClicked : false }, {silent:true});
+                    }
                 }
             }
         };
