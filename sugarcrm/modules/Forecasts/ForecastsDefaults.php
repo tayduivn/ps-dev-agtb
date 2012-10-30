@@ -36,6 +36,8 @@ class ForecastsDefaults
         $admin = BeanFactory::getBean('Administration');
 
         $forecastConfig = self::getDefaults();
+        // set is_upgrade
+        $forecastConfig['is_upgrade'] = $isUpgrade ? 1 : 0;
 
         // Any version-specific changes to the defaults can be added here
         // and determined by $currentVersion & $targetVersion
@@ -44,7 +46,7 @@ class ForecastsDefaults
             // get current settings
             $adminConfig = $admin->getConfigForModule('Forecasts');
             // if admin has already been set up
-            if($adminConfig['is_setup'] == 1) {
+            if(!empty($adminConfig['is_setup'])) {
                 foreach($adminConfig as $key => $val) {
                     $forecastConfig[$key] = $val;
                 }
@@ -78,6 +80,8 @@ class ForecastsDefaults
         return array(
             // this is used to indicate whether the admin wizard should be shown on first run (for admin only, otherwise a message telling a non-admin to tell their admin to set it up)
             'is_setup' => $isSetup,
+            // this is used to indicate whether we are coming from an upgraded instance
+            'is_upgrade' => 0,
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
             // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
@@ -131,4 +135,56 @@ class ForecastsDefaults
         $forecastsDefault = self::getDefaults();
         return $forecastsDefault[$key];
     }
+
+
+    /**
+     * Runs SQL to upgrade columns specific for Forecasts modules.  This is a helper function called from silentUpgrade_step2.php and end.php
+     * for upgrade script code that runs SQL to update tables.
+     *
+     * @static
+     */
+    public static function upgradeColumns() {
+        $db = DBManagerFactory::getInstance();
+
+        //Update the currency_id and base_rate columns for existing records so that we have currency_id and base_rate values set up correctly
+        $tables = array('opportunities', 'products', 'worksheet', 'forecasts', 'forecast_schedule', 'quotes', 'quotas');
+        foreach($tables as $table)
+        {
+            $isUsDollar = true; // set false if table has no usdollar fields
+            switch($table) {
+                case 'opportunities':
+                    $amount = 'amount';
+                    $amount_usdollar = 'amount_usdollar';
+                    break;
+                case 'products':
+                    $amount = 'discount_amount';
+                    $amount_usdollar = 'discount_amount_usdollar';
+                    break;
+                case 'worksheet':
+                case 'forecasts':
+                case 'forecast_schedule':
+                    $isUsDollar = false;
+                    break;
+                case 'quotes':
+                    $amount = 'subtotal';
+                    $amount_usdollar = 'subtotal_usdollar';
+                    break;
+                case 'quotas':
+                    $amount = 'amount';
+                    $amount_usdollar = 'amount_base_currency';
+                    break;
+            }
+            if($isUsDollar) {
+                //update base_rate where usdollar fields exist, reverse calculate the rate
+                $db->query("UPDATE {$table} t SET t.base_rate = t.{$amount_usdollar} / t.{$amount} WHERE t.base_rate IS NULL AND t.{$amount_usdollar} IS NOT NULL and t.{$amount} IS NOT NULL");
+            }
+            // Update currency_id to base (-99) with NULL values
+            $db->query("UPDATE {$table} t SET t.currency_id='-99' WHERE t.currency_id IS NULL");
+            // Update base_rate for from currency table for NULL values
+            $db->query("UPDATE {$table} t, currencies c SET t.base_rate = c.conversion_rate WHERE t.base_rate IS NULL AND t.currency_id IS NOT NULL AND t.currency_id <> '-99' AND t.currency_id = c.id");
+            // Update remaining base_rate for records with NULL values
+            $db->query("UPDATE {$table} SET base_rate = 1 WHERE base_rate IS NULL");
+        }
+    }
+
 }

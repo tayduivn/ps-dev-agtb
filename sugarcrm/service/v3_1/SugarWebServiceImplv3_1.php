@@ -21,13 +21,12 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  ********************************************************************************/
 
-/**
- * This class is an implemenatation class for all the rest services
- */
 require_once('service/v3/SugarWebServiceImplv3.php');
 require_once('SugarWebServiceUtilv3_1.php');
 
-
+/**
+ * This class is an implemenatation class for all the rest services
+ */
 class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
     public function __construct()
@@ -366,6 +365,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
             $nameValueArray['mobile_max_list_entries'] = self::$helperObject->get_name_value('mobile_max_list_entries', $sugar_config['wl_list_max_entries_per_page'] );
             $nameValueArray['mobile_max_subpanel_entries'] = self::$helperObject->get_name_value('mobile_max_subpanel_entries', $sugar_config['wl_list_max_entries_per_subpanel'] );
 
+//BEGIN SUGARCRM flav=pro ONLY
             if($application == 'mobile')
             {
                 $modules = $availModuleNames = array();
@@ -378,6 +378,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
                 $nameValueArray['vardefs_md5'] = self::get_module_fields_md5(session_id(), $availModuleNames);
             }
+//END SUGARCRM flav=pro ONLY
 
             $currencyObject = new Currency();
             $currencyObject->retrieve($cur_id);
@@ -418,9 +419,11 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     	    case 'default':
     	        $modules = self::$helperObject->get_visible_modules($availModules);
     	       break;
+//BEGIN SUGARCRM flav=pro ONLY
     	    case 'mobile':
     	        $modules = self::$helperObject->get_visible_mobile_modules($availModules);
     	        break;
+//END SUGARCRM flav=pro ONLY
     	    case 'all':
     	    default:
     	        $modules = self::$helperObject->getModulesFromList(array_flip($availModules), $availModules);
@@ -858,10 +861,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     				if(count($select_fields) > 0)
     				    $filterFields = $select_fields;
     				else {
-    				    if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
-    					   require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-        				else
-        					require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+    				    require_once SugarAutoLoader::loadWithMetafiles($seed->module_dir, 'listviewdefs');
 
         				$filterFields = array();
         				foreach($listViewDefs[$seed->module_dir] as $colName => $param) {

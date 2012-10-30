@@ -31,6 +31,7 @@
         var self = this;
         var selectedUser = {
             id: '',
+            user_name:'',
             full_name: '',
             first_name: '',
             last_name: '',
@@ -43,6 +44,7 @@
             context: selectedUser,
             success: function(data) {
                 selectedUser.id = data.id;
+                selectedUser.user_name = data.user_name;
                 selectedUser.full_name = data.full_name;
                 selectedUser.first_name = data.first_name;
                 selectedUser.last_name = data.last_name;

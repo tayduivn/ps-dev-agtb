@@ -55,8 +55,8 @@ class SugarFeed extends Basic {
 		var $assigned_user_name;
 		var $assigned_user_link;
 
-	function SugarFeed(){
-		parent::Basic();
+	public function __construct(){
+		parent::__construct();
 	}
 
     static function activateModuleFeed( $module, $updateDB = true ) {
@@ -116,31 +116,23 @@ class SugarFeed extends Basic {
     }
 
 
-    static function getModuleFeedFiles( $module ) {
-        $baseDirList = array('modules/'.$module.'/SugarFeeds/', 'custom/modules/'.$module.'/SugarFeeds/');
-
+    static function getModuleFeedFiles( $module )
+    {
         // We store the files in a list sorted by the filename so you can override a default feed by
         // putting your replacement feed in the custom directory with the same filename
         $fileList = array();
 
-        foreach ( $baseDirList as $baseDir ) {
-            if ( ! file_exists($baseDir) ) {
-                continue;
-            }
-            $d = dir($baseDir);
-            while ( $file = $d->read() ) {
-                if ( $file{0} == '.' ) { continue; }
-                if ( substr($file,-4) == '.php' ) {
-                    // We found one
-                    $fileList[$file] = $baseDir.$file;
-                }
+        foreach(SugarAutoLoader::getFilesCustom('modules/'.$module.'/SugarFeeds/') as $file) {
+            if ( substr($file,-4) == '.php' ) {
+                $fileList[basename($file)] = $file;
             }
         }
 
-        return($fileList);
+        return $fileList;
     }
 
-    static function getActiveFeedModules( ) {
+    static function getActiveFeedModules( )
+    {
         // Stored in a cache somewhere
         $feedModules = sugar_cache_retrieve('SugarFeedModules');
         if ( $feedModules != null ) {
@@ -185,31 +177,22 @@ class SugarFeed extends Basic {
         return $feedModules;
     }
 
-    static function getAllFeedModules( ) {
+    static function getAllFeedModules( )
+    {
         // Uncached, only used from the admin panel and during installation currently
         $feedModules = array('UserFeed'=>'UserFeed');
 
-        $baseDirList = array('modules/', 'custom/modules/');
-        foreach ( $baseDirList as $baseDir ) {
-            if ( ! file_exists($baseDir) ) {
-                continue;
-            }
-            $d = dir($baseDir);
-            while ( $module = $d->read() ) {
-                if ( file_exists($baseDir.$module.'/SugarFeeds/') ) {
-                    $dFeed = dir($baseDir.$module.'/SugarFeeds/');
-                    while ( $file = $dFeed->read() ) {
-                        if ( $file{0} == '.' ) { continue; }
-                        if ( substr($file,-4) == '.php' ) {
-                            // We found one
-                            $feedModules[$module] = $module;
-                        }
-                    }
+        foreach(SugarAutoLoader::getFilesCustom("modules", true) as $module) {
+            foreach(SugarAutoLoader::getDirFiles($module.'/SugarFeeds/') as $file) {
+                if ( substr($file,-4) == '.php' ) {
+                	// We found one
+                	$modulename = basename($module);
+                	$feedModules[$modulename] = $modulename;
                 }
             }
         }
 
-        return($feedModules);
+        return $feedModules;
     }
 
     /**
@@ -302,30 +285,20 @@ class SugarFeed extends Basic {
         }
 
         // Slow, have to actually collect the data
-        $baseDirs = array('custom/modules/SugarFeed/linkHandlers/','modules/SugarFeed/linkHandlers');
-
         $linkTypeList = array();
 
-        foreach ( $baseDirs as $dirName ) {
-            if ( !file_exists($dirName) ) { continue; }
-            $d = dir($dirName);
-            while ( $file = $d->read() ) {
-                if ( $file{0} == '.' ) { continue; }
-                if ( substr($file,-4) == '.php' ) {
-                    // We found one
-                    $typeName = substr($file,0,-4);
-                    $linkTypeList[$typeName] = $typeName;
-                }
+        foreach(SugarAutoLoader::getFilesCustom('modules/SugarFeed/linkHandlers') as $file) {
+            if ( substr($file,-4) == '.php' ) {
+            	// We found one
+            	$typeName = substr(basename($file),0,-4);
+            	$linkTypeList[$typeName] = $typeName;
             }
         }
 
         sugar_cache_put('SugarFeedLinkType',$linkTypeList);
-        if ( ! file_exists($cachedir = sugar_cached('modules/SugarFeed')) ) {
-            mkdir_recursive($cachedir);
-        }
-        $fd = fopen("$cachedir/linkTypeCache.php",'w');
-        fwrite($fd,'<'."?php\n\n".'$linkTypeList = '.var_export($linkTypeList,true).';');
-        fclose($fd);
+
+        create_cache_directory($cachedfile);
+        write_array_to_file('linkTypeList', $linkTypeList, $cachedfile);
 
         return $linkTypeList;
     }
@@ -339,17 +312,11 @@ class SugarFeed extends Basic {
             return FALSE;
         }
 
-        if ( file_exists('custom/modules/SugarFeed/linkHandlers/'.$linkName.'.php') ) {
-            require_once('custom/modules/SugarFeed/linkHandlers/'.$linkName.'.php');
-        } else {
-            require_once('modules/SugarFeed/linkHandlers/'.$linkName.'.php');
-        }
-
+        SugarAutoLoader::requireWithCustom('modules/SugarFeed/linkHandlers/'.$linkName.'.php');
         $linkClassName = 'FeedLinkHandler'.$linkName;
-
         $linkClass = new $linkClassName();
 
-        return($linkClass);
+        return $linkClass;
     }
 
 	function get_list_view_data(){

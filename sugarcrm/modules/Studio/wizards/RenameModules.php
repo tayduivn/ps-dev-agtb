@@ -450,13 +450,16 @@ class RenameModules
 
 		$layout_defs = array();
 
-        if ( file_exists( 'modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') )
-            require('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php');
+        foreach( SugarAutoLoader::existingCustom('modules/' . $bean->module_dir . '/metadata/subpaneldefs.php') as $file ) {
+            require $file;
+        }
 
-        if ( file_exists( 'custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
-            require('custom/modules/' . $bean->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');
+        $defs = SugarAutoLoader::loadExtension('layoutdefs', $bean->module_dir);
+        if($defs) {
+            require $defs;
+        }
 
-         return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
+        return isset($layout_defs[$bean->module_dir]['subpanel_setup']) ? $layout_defs[$bean->module_dir]['subpanel_setup'] : $layout_defs;
 	}
 
     /**
@@ -520,12 +523,15 @@ class RenameModules
 
                     $replaceKey = $linkEntry['vname'];
                     $oldStringValue = $mod_strings[$replaceKey];
-                    //At this point we don't know if we should replace the string with the plural or singular version of the new
-                    //strings so we'll try both but with the plural version first since it should be longer than the singular.
-                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_plural'], ENT_QUOTES), $renameFields['plural'], $oldStringValue);
-                    if ($replacedString == $oldStringValue) {
-                        $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_singular'], ENT_QUOTES), $renameFields['singular'], $replacedString);
+                   // Use the plural value of the two only if it's longer and the old language string contains it,
+                   // singular otherwise
+                    if (strlen($renameFields['prev_plural']) > strlen($renameFields['prev_singular']) && strpos($oldStringValue, $renameFields['prev_plural']) !== false) {
+                        $key = 'plural';
+                    } else {
+                       $key = 'singular';
+
                     }
+                    $replacedString = str_replace(html_entity_decode_utf8($renameFields['prev_' . $key], ENT_QUOTES), $renameFields[$key], $oldStringValue);
                     $replacementStrings[$replaceKey] = $replacedString;
                 }
             }
@@ -774,7 +780,7 @@ class RenameModules
             $search = call_user_func($modifier, $search);
             $replace = call_user_func($modifier, $replace);
         }
-        
+
         // Bug 47957
         // If nothing was replaced - try to replace original string
         $result = '';

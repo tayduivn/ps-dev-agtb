@@ -123,6 +123,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertTrue(!empty($result['id']) && $result['id'] != -1,$this->_returnLastRawResponse());
     }
 
+//BEGIN SUGARCRM flav=pro ONLY
     /**
      * Test the available modules returned from the login call to make sure they are correct.
      *
@@ -140,6 +141,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
     }
+//END SUGARCRM flav=pro ONLY
 
     public function testGetSingleModuleLanguage()
     {
@@ -225,7 +227,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
 
         $this->assertTrue( !empty($results['file_contents']) );
     }
-    //END SUGARCRM flav=pro ONLY
+
      /**
      * Test the available modules returned from the login call to make sure they are correct.
      *
@@ -259,7 +261,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
         }
         $this->assertEquals(count($actualModuleList), count($expectedModuleList), "Could not get available modules during login" );
     }
-
+    //END SUGARCRM flav=pro ONLY
 
     function _aclEditViewFieldProvider()
     {

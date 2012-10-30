@@ -84,7 +84,9 @@
         }
         app.view.View.prototype._renderField.call(this, field);
 
-        field.$el.find('.chzn-container').css("width", "100%").append('<div class="indicator">Filter <span class="caret"></span></div>');
+        field.$el.find('.chzn-container').css("width", "100%");
+        field.$el.find('.chzn-choices').prepend('<legend class="chzn-select-legend">Filter <i class="icon-caret-down"></i></legend>');
+        field.$el.find('.chzn-results li').after("<span class='icon-ok' />");
 
         this.fields[field.name] = field;
     },

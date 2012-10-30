@@ -493,7 +493,7 @@ function get_quick_sync_data($session, $module_name, $related_module_name, $star
 	if(empty($related_module_name) || !isset($related_module_name)){
 		$params['include_custom_fields'] = true;
 		
-		$query_list = $seed->create_new_list_query($seed->process_order_by('', null), '1=1', array(), $params, (int)$deleted, '', true, $seed );
+		$query_list = $seed->create_new_list_query($seed->process_order_by('', null), '', array(), $params, (int)$deleted, '', true, $seed );
 
 	
 			
@@ -501,27 +501,12 @@ function get_quick_sync_data($session, $module_name, $related_module_name, $star
 		
 		$query = "SELECT " . $seed->table_name . ".*";
 	        
-		$custom_join = false;
-		
-		if(isset($seed->custom_fields)){
-			
-			$custom_join = $seed->custom_fields->getJOIN();
-			
-			if($custom_join)
-				
-				$query .= ' '.$custom_join['select'];
-		
-		}
-		
 		if(empty($query_list['from_min'])){
         	$query .= ' '.$query_list['from'];
         }else{
         	$query .= ' '.$query_list['from_min'];
         }
 
-		if($custom_join)
-			
-			$query .= ' '.$custom_join['join'];
 
 		
 		

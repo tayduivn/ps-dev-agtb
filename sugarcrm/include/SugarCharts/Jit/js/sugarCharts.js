@@ -29,16 +29,29 @@
 
 function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callback) {
     this.chartObject = "";
-                //Bug#45831
-                if(document.getElementById(chartId) == null) {
-                    return false;
-                }
+
+    //Bug#45831
+    if(document.getElementById(chartId) == null) {
+        return false;
+    }
 
     var labelType = 'Native',
         useGradients = false,
         animate = false,
-        that = this;
+        that = this,
+        /**
+         * the main container to render chart
+         */
+        contentEl = 'content',
+        /**
+         * with of one column to render bars
+         */
+        minColumnWidth = 40;
+
     params = params ? params : {};
+
+    contentEl = params.contentEl || contentEl;
+    minColumnWidth = params.minColumnWidth || minColumnWidth;
 
 			switch(chartConfig["chartType"]) {
 			case "barChart":
@@ -54,27 +67,32 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         {
                             function fixChartContainer(event, itemsCount)
                             {
-                                var region = YAHOO.util.Dom.getRegion('content');
-                                if ( region && region.width )
+                                var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
+                                var chartContainer = YAHOO.util.Dom.getElementsByClassName('chartContainer', 'div');
+                                var region = YAHOO.util.Dom.getRegion(contentEl);
+                                if ( chartContainer.length > 0 && chartCanvas.length > 0 )
                                 {
-                                    // one bar needs about 40 px to correct display data and labels
-                                    var realWidth = itemsCount * 40;
-                                    if ( realWidth > region.width )
+                                    if ( region && region.width )
                                     {
-                                        var chartCanvas = YAHOO.util.Dom.getElementsByClassName('chartCanvas', 'div');
-                                        var chartContainer = YAHOO.util.Dom.getElementsByClassName('chartContainer', 'div');
-                                        if ( chartContainer.length > 0 && chartCanvas.length > 0 )
+                                        // one bar needs about minColumnWidth px to correct display data and labels
+                                        var realWidth = itemsCount * parseInt(minColumnWidth, 10);
+                                        chartContainer = YAHOO.util.Dom.get(chartContainer[0]);
+                                        chartCanvas = YAHOO.util.Dom.get(chartCanvas[0]);
+                                        if ( realWidth > region.width )
                                         {
-                                            chartContainer = YAHOO.util.Dom.get(chartContainer[0])
                                             YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
-                                            chartCanvas = YAHOO.util.Dom.get(chartCanvas[0]);
                                             YAHOO.util.Dom.setStyle(chartCanvas, 'width', realWidth+'px');
-                                            if (!event)
-                                            {
-                                                YAHOO.util.Event.addListener(window, "resize", fixChartContainer, json.values.length);
-                                            }
+                                        }
+                                        else
+                                        {
+                                            YAHOO.util.Dom.setStyle(chartContainer, 'width', region.width+'px')
+                                            YAHOO.util.Dom.setStyle(chartCanvas, 'width', region.width+'px');
                                         }
                                     }
+                                }
+                                if (!event)
+                                {
+                                    YAHOO.util.Event.addListener(window, "resize", fixChartContainer, json.values.length);
                                 }
                             }
                             fixChartContainer(null, json.values.length);
@@ -716,7 +734,8 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
 
             //adjust legend width to chart width
             jQuery('#legend'+chartId).ready(function() {
-                var chartWidth = jQuery('#'+chartId).width() - 20;
+                var chartWidth = jQuery('#'+chartId).width();
+                chartWidth = chartWidth - 20;
                 $('#legend'+chartId).width(chartWidth);
                 var legendGroupWidth = new Array();
                 $('.col .legendGroup').each(function(index) {

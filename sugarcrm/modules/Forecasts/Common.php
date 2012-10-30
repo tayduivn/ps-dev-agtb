@@ -158,15 +158,15 @@ class Common {
     //todo add date format for sqlserver.
 	function get_my_timeperiods() {
 
-        $nowdate = $this->db->now();
+        $nowdate = $this->db->quoted(TimeDate::getInstance()->nowDbDate());
         //current system date must fall between forecast start date (forecast schedule) and end date (time period)
         //not checking systemdate against the time period start date because users may  want to start forecasting before the actual
         //time period begins.
         $query = "SELECT a.timeperiod_id, b.name, b.start_date, b.end_date, a.user_id, a.cascade_hierarchy"
             . " FROM forecast_schedule a, timeperiods b"
             . " WHERE a.timeperiod_id = b.id"
-            . " AND b.start_date <= $nowdate "
-            . " AND b.end_date >= $nowdate "
+            . " AND b.start_date <= {$nowdate} "
+            . " AND b.end_date >= {$nowdate} "
             . " AND a.deleted = 0"
             . " AND b.deleted = 0"
             . " AND a.status = 'Active'"

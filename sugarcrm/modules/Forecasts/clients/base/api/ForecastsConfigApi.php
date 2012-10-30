@@ -31,25 +31,41 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @param $args 'module' is required, 'platform' is optional and defaults to 'base'
      */
     public function configSave($api, $args) {
-        $admin = BeanFactory::getBean('Administration');
 
         //acl check, only allow if they are module admin
         if(!parent::hasAccess("Forecasts")) {
             throw new SugarApiExceptionNotAuthorized("Current User not authorized to change Forecasts configuration settings");
         }
 
-        $platform = (isset($args['platform']) && !empty($args['platform']))?$args['platform']:'base';
+        $platform = (isset($args['platform']) && !empty($args['platform'])) ?$args['platform'] : 'base';
 
+        $admin = BeanFactory::getBean('Administration');
         //track what settings have changed to determine if timeperiods need rebuilt
         $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
-        $new_settings = parent::configSave($api, $args);
+
+        if (!empty($prior_forecasts_settings['is_upgrade']))
+        {
+            $db = DBManagerFactory::getInstance();
+            // check if we need to upgrade opportunities when coming from version below 6.7.x.
+            $upgraded = $db->getOne("SELECT count(id) as total FROM upgrade_history WHERE type = 'patch' AND status = 'installed' AND version LIKE '6.7.%'");
+            if ($upgraded == 1)
+            {
+                require_once('modules/UpgradeWizard/uw_utils.php');
+                updateOpportunitiesForForecasting();
+            }
+        }
+
+        parent::configSave($api, $args);
+
+        //reload the settings to get the current settings
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
         //if primary settings for timeperiods have changed, then rebuild them
-        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
-            TimePeriod::rebuildForecastingTimePeriods();
-        }
-        return $new_settings;
+        // TODO:  fix this!  Commenting out, for now, so that work can continue on config settings in other areas
+//        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
+//            TimePeriod::rebuildForecastingTimePeriods();
+//        }
+        return $current_forecasts_settings;
     }
 
     /**

@@ -25,7 +25,7 @@
 
 require_once 'modules/Administration/updater_utils.php';
 
-class Bugs38912 extends Sugar_PHPUnit_Framework_TestCase
+class Bug38912 extends Sugar_PHPUnit_Framework_TestCase
 {
 	/**
 	 * Test whitelist of modules and actions 

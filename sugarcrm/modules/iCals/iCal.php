@@ -55,7 +55,7 @@ class iCal extends vCal {
     */
     public function __construct()
     {
-        parent::vCal();
+        parent::__construct();
     }
 
     /**

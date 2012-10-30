@@ -118,8 +118,8 @@ class ProductTemplate extends SugarBean {
         //END SUGARCRM flav=pro ONLY
 	);
 
-	function ProductTemplate() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->disable_row_level_security =true;
 		//END SUGARCRM flav=pro ONLY
@@ -549,6 +549,7 @@ function getProductTypes($focus, $field='type_id', $value,$view='DetailView') {
 
 function getPricingFormula($focus, $field='pricing_formula', $value, $view='DetailView') {
 	require_once('modules/ProductTemplates/Formulas.php');
+    refresh_price_formulas();
 	if($view == 'EditView' || $view == 'MassUpdate') {
 		global $app_list_strings;
 	    $html = "<select id=\"$field\" name=\"$field\"";

@@ -21,7 +21,7 @@
 
 describe("The forecasts worksheet totals calculation test", function(){
 
-    var app, view, context;
+    var app, view, context, formatWithRateStub;
 
     beforeEach(function() {
         SugarTest.seedMetadata(true);
@@ -38,6 +38,13 @@ describe("The forecasts worksheet totals calculation test", function(){
         view.includedModel = new Backbone.Model();
         view.overallModel = new Backbone.Model();
 
+        formatWithRateStub = sinon.stub(app.currency, "convertWithRate", function(amount, rate) {
+            return Math.round(parseFloat(amount / rate) * Math.pow(10, 2)) / Math.pow(10, 2);
+        });
+    });
+
+    afterEach(function() {
+        formatWithRateStub.restore();
     });
 
     /*

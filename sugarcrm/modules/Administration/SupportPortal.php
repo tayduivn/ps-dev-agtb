@@ -46,16 +46,16 @@ switch ($_REQUEST['view']) {
 		$GLOBALS['log']->info("Administration SupportPortal");
 
 		$iframe_url = add_http("www.sugarcrm.com/network/redirect.php?tmpl=network");
-        
+
         echo getClassicModuleTitle(
-            "Administration", 
+            "Administration",
             array(
                 "<a href='index.php?module=Administration&action=index'>".translate('LBL_MODULE_NAME','Administration')."</a>",
                $mod_strings['LBL_SUPPORT_TITLE'],
-               ), 
+               ),
             false
             );
-        
+
         $sugar_smarty = new Sugar_Smarty();
         $sugar_smarty->assign('iframeURL', $iframe_url);
         $sugar_smarty->assign('langHeader', get_language_header());
@@ -80,20 +80,17 @@ switch ($_REQUEST['view']) {
         if ($send_module == 'TargetLists')
                 $send_module = 'ProspectLists';
         if ($send_module == 'Targets')
-                $send_module = 'Prospects';                            
+                $send_module = 'Prospects';
         //END SUGARCRM flav!=sales ONLY
 		// FG - Bug 39819 - Check for custom help files
-		$helpPath = 'modules/'.$send_module.'/language/'.$send_lang.'.help.'.$send_action.'.html';
-		if (sugar_is_file("custom/" . $helpPath)) {
-		    $helpPath = 'custom/' . $helpPath;
-		}
-		$sugar_smarty = new Sugar_Smarty();
+		$helpPath = SugarAutoLoader::existingCustomOne('modules/'.$send_module.'/language/'.$send_lang.'.help.'.$send_action.'.html');
 
 		//go to the support portal if the file is not found.
 		// FG - Bug 39820 - Devs can write help files also in english, so skip check for language not equals "en_us" !
-		if (file_exists($helpPath))
+		if (!empty($helpPath))
 		{
-			$sugar_smarty->assign('helpFileExists', TRUE);
+		    $sugar_smarty = new Sugar_Smarty();
+		    $sugar_smarty->assign('helpFileExists', TRUE);
 			$sugar_smarty->assign('MOD', $mod_strings);
 			$sugar_smarty->assign('modulename', $send_module);
 			$sugar_smarty->assign('helpPath', $helpPath);
@@ -104,13 +101,13 @@ switch ($_REQUEST['view']) {
 			$sugar_smarty->assign('endtable', "</td></tr></table>");
 			$sugar_smarty->assign('charset', $app_strings['LBL_CHARSET']);
             $sugar_smarty->assign('langHeader', get_language_header());
-			echo $sugar_smarty->fetch('modules/Administration/SupportPortal.tpl');			
-			
+			echo $sugar_smarty->fetchCustom('modules/Administration/SupportPortal.tpl');
+
 		} else {
 			if(empty($send_module)){
 				$send_module = 'toc';
 			}
-			
+
 			$dev_status = 'GA';
 			//If there is an alphabetic portion between the decimal prefix and integer suffix, then use the
 			//value there as the dev_status value
@@ -120,7 +117,7 @@ switch ($_REQUEST['view']) {
 			if(!empty($editionMap[$send_edition])){
 				$send_edition = $editionMap[$send_edition];
 			}
-			
+
 			//map certain modules
 			$sendModuleMap = array(
 								'administration' => array(
@@ -129,7 +126,9 @@ switch ($_REQUEST['view']) {
 													array('name' => 'Administration', 'action' => 'licensesettings', 'anchor' => '1910574'),
 													array('name' => 'Administration', 'action' => 'diagnostic', 'anchor' => '1111949'),
 													array('name' => 'Administration', 'action' => 'listviewofflineclient', 'anchor' => '1111949'),
+//BEGIN SUGARCRM flav=pro ONLY
 													array('name' => 'Administration', 'action' => 'enablewirelessmodules', 'anchor' => '1111949'),
+//END SUGARCRM flav=pro ONLY
 													array('name' => 'Administration', 'action' => 'backups', 'anchor' => '1111949'),
 													array('name' => 'Administration', 'action' => 'upgrade', 'anchor' => '1111949'),
 													array('name' => 'Administration', 'action' => 'locale', 'anchor' => '1111949'),
@@ -140,9 +139,9 @@ switch ($_REQUEST['view']) {
 													array('name' => 'Administration', 'action' => 'configuresubpanels', 'anchor' => '1168410'),
 													array('name' => 'Administration', 'action' => 'wizard', 'anchor' => '1168410'),
 												),
-								'calls' => array(array('name' => 'Activities')), 
-								'tasks' => array(array('name' => 'Activities')), 
-								'meetings' => array(array('name' => 'Activities')), 
+								'calls' => array(array('name' => 'Activities')),
+								'tasks' => array(array('name' => 'Activities')),
+								'meetings' => array(array('name' => 'Activities')),
 								'notes' => array(array('name' => 'Activities')),
 								'calendar' => array(array('name' => 'Activities')),
 								'configurator' => array(array('name' => 'Administration', 'anchor' => '1878359')),
@@ -185,10 +184,10 @@ switch ($_REQUEST['view']) {
 								'employees' => array(array('name' => 'Administration', 'anchor' => '1957677')),
 								'kbdocuments' => array(array('name' => 'Administration', 'action' => 'kbadminview', 'anchor' => '1957677')),
 							 );
-							 
+
 			if(!empty($sendModuleMap[strtolower($send_module)])){
 				$mappings = $sendModuleMap[strtolower($send_module)];
-				
+
 				foreach($mappings as $map){
 					if(!empty($map['action'])){
 						if($map['action'] == strtolower($send_action)){
@@ -209,9 +208,9 @@ switch ($_REQUEST['view']) {
 
 
             $iframe_url = get_help_url($send_edition, $send_version, $send_lang, $send_module, $send_action, $dev_status, $send_key, $send_anchor);
-			
+
 			header("Location: {$iframe_url}");
-			
+
 			//$sugar_smarty->assign('helpFileExists', FALSE);
 			//$sugar_smarty->assign('iframeURL', $iframe_url);
 		}

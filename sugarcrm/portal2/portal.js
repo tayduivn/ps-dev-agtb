@@ -45,6 +45,25 @@
         });
     });
 
+    // bug57318: Mulitple alert warning when multiple views get render denied on same page.
+    var oHandleRenderError = app.error.handleRenderError;
+    app.error.handleRenderError = function(component, method, additionalInfo) {
+        function handlePortalRenderDenied(c) {
+            var title, message;
+            title = app.lang.getAppString('ERR_NO_VIEW_ACCESS_TITLE');
+            message = app.utils.formatString(app.lang.getAppString('ERR_NO_VIEW_ACCESS_MSG'),[c.module]);
+            // TODO: We can later create some special case handlers if we DO wish to alert warn,
+            // but since we have recursive views that's usually going to be overbearing.
+            app.logger.warn(title + ":\n" + message);
+        }
+        // Only hijack view_render_denied error case, otherwise, delegate all else to sidecar handler
+        if(method === 'view_render_denied') {
+            handlePortalRenderDenied(component);
+        } else {
+            oHandleRenderError(component, method, additionalInfo);
+        }
+    };
+
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
         var dm, nonModuleRoutes;
@@ -139,7 +158,7 @@
 
             // Email is special case as each input email is a sort of field within the one email 
             // field itself; and we need to append errors directly beneath said sub-fields
-            if(self.type==='email') {
+            if(self.type==='email' && self.view.name != "signup") {
                 self.handleEmailValidationError(errors.email);
                 return;
             }
@@ -252,5 +271,70 @@
         // Register portal specific routes
         app.router.route("signup", "signup", _rrh.signup);
     });
+
+    /**
+     * Checks if there are `file` type fields in the view. If yes, process upload of the files
+     *
+     * @param {Object} model Model
+     * @param {callbacks} callbacks(optional) success and error callbacks
+     */
+    // TODO: This piece of code may move in the core files
+    app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+        var file, $file, $files, filesToUpload, fileField, successFn, errorFn;
+
+        callbacks = callbacks || {};
+
+        // Check if there are attachments
+        $files = _.filter($(":file"), function(file) {
+            var $file = $(file);
+            return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
+        });
+
+        filesToUpload = $files.length;
+
+        successFn = function() {
+            filesToUpload--; 
+            if (filesToUpload===0) {
+                app.alert.dismiss('upload'); 
+                if (callbacks.success) callbacks.success();
+            }
+        };
+
+        errorFn = function(error) {
+            var errors = {};
+            
+            // Set model to new by removing it's id attribute. Note that in our initial attempt
+            // to upload file(s) we set delete_if_fails true so server has marked record deleted: 1
+            // Since we may have only create privs (e.g. we can't edit/delete Notes), we'll start anew.  
+            model.unset('id', {silent: true});
+
+            // All or nothing .. if uploading 1..* attachments, if any one fails the whole atomic
+            // operation has failed; so we really want to trigger error and possibly and start over.
+            filesToUpload = 0;
+            app.alert.dismiss('upload');
+            errors[error.responseText] = {};
+            model.trigger('error:validation:' + this.field, errors);
+            model.trigger('error:validation');
+        };
+
+        // Process attachment uploads
+        if (filesToUpload > 0) {
+            app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
+
+            // Field by field
+            for (file in $files) {
+                $file = $($files[file]);
+                fileField = $file.attr("name");
+
+                model.uploadFile(fileField, $file, {
+                    field: fileField,
+                    success: successFn,
+                    error: errorFn
+                });
+            }
+        } else {
+            if (callbacks.success) callbacks.success();
+        }
+    };
 
 })(SUGAR.App);

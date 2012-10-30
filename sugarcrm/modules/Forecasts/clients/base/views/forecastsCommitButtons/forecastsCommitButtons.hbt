@@ -9,15 +9,17 @@
     </div>
     {{/if}}
     <div class="btn-group pull-left">
-        <a class="btn">{{str "LBL_EXPORT_CSV" "Forecasts"}}</a>
-        {{#if showConfigButton}}
+        <a id="export" class="btn">{{str "LBL_EXPORT_CSV" "Forecasts"}}</a>
         <a href="#" data-toggle="dropdown" class="btn dropdown-toggle">
             <i class="caret"></i>
         </a>
+
         <ul class="dropdown-menu">
-            <li><a href="#" name="forecastSettings">Settings</a></li>
-        </ul>
+        {{#if showConfigButton}}
+            <li><a href="#" name="forecastSettings">{{str "LBL_FORECAST_SETTINGS" "Forecasts"}}</a></li>
         {{/if}}
+            <li><a id="print">{{str "LBL_PRINT" "Forecasts"}}</a></li>
+        </ul>
     </div>
     <a class="btn btn-invisible drawerTrig" href="#">
         <i class="icon-chevron-right one"></i>

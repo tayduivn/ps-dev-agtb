@@ -24,7 +24,7 @@
 
 require_once('include/utils/LogicHook.php');
 
-class Bu48369Test extends Sugar_PHPUnit_Framework_TestCase
+class Bug48369Test extends Sugar_PHPUnit_Framework_TestCase
 {
     var $backupContents;
 
@@ -54,6 +54,7 @@ class SugarWidgetFieldCustomName extends SugarWidgetFieldName
 EOQ;
 
         file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $contents);
+        SugarAutoLoader::addToMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', false);
     }
 
     public function tearDown()
@@ -63,6 +64,7 @@ EOQ;
             file_put_contents('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', $this->backupContents);
         } else {
             unlink('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php');
+            SugarAutoLoader::delFromMap('custom/include/generic/SugarWidgets/SugarWidgetFieldcustomname.php', false);
         }
     }
 

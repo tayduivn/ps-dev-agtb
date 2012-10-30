@@ -51,18 +51,18 @@ class KBContent extends SugarBean {
 	var $module_dir = 'KBContents';
 	 
 
-	function KBContent() {
-		parent :: SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('KBContents'); //parameter is module name
 		$this->disable_row_level_security = false;
 	}
 
 	function save($check_notify = false) {
-		return parent :: save($check_notify);
+		return parent::save($check_notify);
 	}
 	
 	function retrieve($id, $encode = false) {
-		$ret = parent :: retrieve($id, $encode);
+		$ret = parent::retrieve($id, $encode);
 		return $ret;
 	}
 

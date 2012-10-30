@@ -25,6 +25,8 @@ require_once('modules/Users/User.php');
 class ForecastManagerWorksheet extends SugarBean
 {
 	var $args;
+    var $user_id;
+    var $version;
     var $id;
     var $currency_id;
     var $base_rate;
@@ -33,28 +35,30 @@ class ForecastManagerWorksheet extends SugarBean
     var $best_case;
     var $likely_case;
     var $worst_case;
+    var $timeperiod_id;
+    var $quota_id;
+    var $best_adjusted;
+    var $likely_adjusted;
+    var $worst_adjusted;
     var $object_name = 'ForecastManagerWorksheet';
+    var $module_name = 'ForecastManagerWorksheets';
     var $module_dir = 'Forecasts';
     var $table_name = 'forecasts';
     var $disable_custom_fields = true;
     var $isManager = false;
-
-    function __construct() {
-        parent::__construct();
-    }
 
     public function save($check_notify = false)
     {
     	$version = 1;
     	$worksheetID = null;
     	$relatedType = null;
-    	$this->isManager = User::isManager($this->args["user_id"]);
+    	$this->isManager = User::isManager($this->user_id);
     	
-    	if(isset($this->args["draft"]) && $this->args["draft"] == 1){
+    	if(isset($this->draft) && $this->draft == 1){
 			$version = 0;
 		}
 		
-		if(($this->args["user_id"] == $GLOBALS["current_user"]->id) || !$this->isManager)
+		if(($this->user_id == $GLOBALS["current_user"]->id) || !$this->isManager)
 		{
 			$relatedType = "Direct";
 		}
@@ -64,14 +68,14 @@ class ForecastManagerWorksheet extends SugarBean
 		}
 		
 		$worksheetID = $this->getWorksheetID($version);
-		$isManager = User::isManager($this->args["current_user"]);
+		$isManager = User::isManager($this->current_user);
 		
     	//skip this because nothing in the click to edit makes the worksheet modify the forecasts.
     	//leaving this here just in case we need it in the future.
     	//save forecast
     	/*if(isset($this->id)){
 	    	$forecast = new Forecast();
-			$forecast->retrieve($this->args["forecast_id"]);
+			$forecast->retrieve($this->forecast_id);
 			$forecast->best_case = $this->best_case;
 			$forecast->likely_case = $this->likely_case;
 			$forecast->forecast = ($this->forecast) ? 1 : 0;
@@ -80,19 +84,20 @@ class ForecastManagerWorksheet extends SugarBean
 
 		//save quota
         /* @var $quota Quota */
+        
         if($version != 0)
         {
         	$quota = BeanFactory::getBean('Quotas', (isset($this->args['quota_id'])) ? $this->args['quota_id'] : null );
-			$quota->timeperiod_id = $this->args["timeperiod_id"];
-			$quota->user_id = $this->args["user_id"];
+			$quota->timeperiod_id = $this->timeperiod_id;
+			$quota->user_id = $this->user_id;
 	        $quota->committed = 1;
-			if($this->args["user_id"] == $this->args["current_user"]) {
+			if($this->user_id == $this->current_user) {
 				$quota->quota_type = 'Direct';
 			} else {
 				$quota->quota_type = 'Rollup';
 			}
 	
-			$quota->amount = $this->args["quota"];
+			$quota->amount = $this->quota;
 	
 			$quota->save();
 	       
@@ -102,16 +107,16 @@ class ForecastManagerWorksheet extends SugarBean
 		
 		//save worksheet
         $worksheet = BeanFactory::getBean("Worksheet", $worksheetID);
-		$worksheet->timeperiod_id = $this->args["timeperiod_id"];
-		$worksheet->user_id = $this->args["current_user"];
-        $worksheet->best_case = $this->args["best_adjusted"];
-        $worksheet->likely_case = $this->args["likely_adjusted"];
-        $worksheet->commit_stage = $this->args["commit_stage"];
+		$worksheet->timeperiod_id = $this->timeperiod_id;
+		$worksheet->user_id = $this->current_user;
+        $worksheet->best_case = $this->best_adjusted;
+        $worksheet->likely_case = $this->likely_adjusted;
+        $worksheet->commit_stage = $this->commit_stage;
         $worksheet->forecast_type = "Rollup";
         $worksheet->related_forecast_type = $relatedType;
-        $worksheet->worst_case = (isset($this->args["worst_adjusted"])) ? $this->args["worst_adjusted"] : 0;
-        $worksheet->related_id = $this->args["user_id"];
-        $worksheet->quota = $this->args["quota"];
+        $worksheet->worst_case = (isset($this->worst_adjusted)) ? $this->worst_adjusted : 0;
+        $worksheet->related_id = $this->user_id;
+        $worksheet->quota = $this->quota;
         $worksheet->version = $version;
         $worksheet->currency_id = $this->currency_id;
         $worksheet->base_rate = $this->base_rate;
@@ -124,7 +129,13 @@ class ForecastManagerWorksheet extends SugarBean
      */
 	public function setWorksheetArgs($args)
 	{
+        // save the args variable
 		$this->args = $args;
+
+        // loop though the args and assign them to the corresponding key on the object
+        foreach($args as $arg_key => $arg) {
+            $this->$arg_key = $arg;
+        }
 	}
 
 	/**
@@ -137,10 +148,10 @@ class ForecastManagerWorksheet extends SugarBean
 	{
 		$id = null;
 		$sql = "select id from worksheet " .
-				"where deleted = 0 and timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
-					"and user_id = '" . $this->args["current_user"] . "' " .
+				"where deleted = 0 and timeperiod_id = '" . $this->timeperiod_id . "' " .
+					"and user_id = '" . $this->current_user . "' " .
 					"and version = '" . $version . "' " .
-					"and related_id = '" . $this->args["user_id"] . "'";
+					"and related_id = '" . $this->user_id . "'";
 		
 		$result = $GLOBALS['db']->query($sql);
 		while(($row=$GLOBALS['db']->fetchByAssoc($result))!=null){
@@ -161,7 +172,7 @@ class ForecastManagerWorksheet extends SugarBean
 				"FROM `quotas` q " .
 				"INNER JOIN users u ON u.reports_to_id = '" . $userId . "' " .
 				"AND q.user_id = u.id " .
-				"AND q.timeperiod_id = '" . $this->args["timeperiod_id"] . "' " .
+				"AND q.timeperiod_id = '" . $this->timeperiod_id . "' " .
 				"AND q.quota_type = 'Rollup'";
 		$amount = 0;
 
@@ -196,7 +207,7 @@ class ForecastManagerWorksheet extends SugarBean
 					"and q1.timeperiod_id = q2.timeperiod_id " .
 					"and q2.quota_type = 'Direct' " .
 				"where q1.user_id = '" . $userId . "' " .
-					"and q1.timeperiod_id = '" . $this->args["timeperiod_id"] . "'" .
+					"and q1.timeperiod_id = '" . $this->timeperiod_id . "'" .
 					"and q1.quota_type = 'Rollup' " .
 				"union all " .
 				"SELECT q2.amount, q1.id FROM quotas q1 " .
@@ -205,7 +216,7 @@ class ForecastManagerWorksheet extends SugarBean
 					"and q1.timeperiod_id = q2.timeperiod_id " .
 					"and q2.quota_type = 'Rollup' " .
 				"where q1.user_id = '" . $userId . "' " .
-					"and q1.timeperiod_id = '" . $this->args["timeperiod_id"] . "'" .
+					"and q1.timeperiod_id = '" . $this->timeperiod_id . "'" .
 					"and q1.quota_type = 'Direct'";
 
 		$quota = array();
@@ -225,13 +236,13 @@ class ForecastManagerWorksheet extends SugarBean
 	 protected function recalcQuotas()
 	 {
 	 	//don't recalc if we are editing the manager row
-	 	if($this->args["user_id"] != $this->args["current_user"])
+	 	if($this->user_id != $this->current_user)
 	 	{
 			//Recalc Manager direct
-			$this->recalcUserQuota($this->args["current_user"]);
+			$this->recalcUserQuota($this->current_user);
 			
 			//Recalc reportee direct
-			$this->recalcUserQuota($this->args["user_id"]);	
+			$this->recalcUserQuota($this->user_id);	
 	 	}
 	 }
 
@@ -253,10 +264,10 @@ class ForecastManagerWorksheet extends SugarBean
 	 	//save Manager quota
 		$quota = BeanFactory::getBean('Quotas', isset($managerQuota['id']) ? $managerQuota['id'] : null);
 		$quota->user_id = $userId;
-		$quota->timeperiod_id = $this->args["timeperiod_id"];
+		$quota->timeperiod_id = $this->timeperiod_id;
 		$quota->quota_type = "Direct";
 		$quota->amount = $newTotal;
-		$quota->save();		
+		$quota->save();
 	  }
 
 

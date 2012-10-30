@@ -47,8 +47,14 @@
      * @param evt
      */
     save:function (evt) {
-        this.model.save();
-        this.layout.context.trigger("modal:close");
+        // If button is disabled, do nothing
+        if(!$(evt.target).hasClass('disabled')) {
+            this.model.set('is_setup', true);
+            // push this model back to the main config model
+            this.context.forecasts.config.set(this.model.toJSON());
+            this.context.forecasts.config.save();
+            this.layout.context.trigger("modal:close");
+        }
     },
 
 
@@ -78,15 +84,9 @@
 
     breadcrumb:function (evt) {
         // ignore the click if the crumb is already active
-        if ($(evt.target).parent().is(".active,.disabled") == false) {
-            // figure out which crumb was checked
-            var clickedCrumb = 0;
-            _.each(this.navTabs, function (tab, index) {
-                // figure out which tab has the a that was clicked
-                if ($(tab).has(evt.toElement).length) {
-                    clickedCrumb = index;
-                }
-            });
+        if ($(evt.target).parent().is(".disabled") == true) {
+            // get the index of the clicked crumb
+            var clickedCrumb = $(evt.target).data('index');
 
             if (clickedCrumb != this.activePanel) {
                 this.switchPanel(clickedCrumb);
@@ -168,9 +168,7 @@
      * @param next
      */
     switchNavigationTab:function (next) {
-        $(this.navTabs[next]).removeClass('disabled');
-
-        $(this.navTabs[this.activePanel]).toggleClass('active');
-        $(this.navTabs[next]).toggleClass('active');
+        $(this.navTabs[this.activePanel]).toggleClass('active disabled');
+        $(this.navTabs[next]).toggleClass('active disabled');
     }
 })

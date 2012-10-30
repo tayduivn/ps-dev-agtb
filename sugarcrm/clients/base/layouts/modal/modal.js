@@ -46,6 +46,11 @@
 
         this.metaComponents = options.meta.components;
         options.meta.components = this.baseComponents;
+        if (options.meta.before){
+            _.each(options.meta.before, function(callback, event){
+                self.before(event, callback);
+            });
+        }
         app.view.Layout.prototype.initialize.call(this, options);
         if(_.isArray(showEvent)) {
             //Bind the multiple event handler names
@@ -177,6 +182,15 @@
     },
 
     show: function(params, callback) {
+        if (!this.triggerBefore("show")) return false;
+        var self = this;
+        if (params.before){
+            _.each(params.before, function(callback, event){
+                self.offBefore(event);
+                self.before(event, callback);
+            });
+        }
+
         if (this._buildComponentsBeforeShow(params, callback) === false)
             return false;
         this.loadData();
@@ -186,7 +200,6 @@
             modal_container = this.$(".modal:first"),
             //Clean out previous span css class
             original_css = modal_container.attr("class").replace(/span\d+/g, "");
-        this._beforeShow(options);
         modal_container.attr("class", original_css);
         if(_.isNumber(span) && span > 0 && span <= 12) {
             modal_container.addClass('span' + span);
@@ -197,35 +210,20 @@
         } else {
             modal_container.show();
         }
-        this._afterShow(options);
+        this.trigger("show");
         return true;
     },
     hide: function(event) {
+        if (!this.triggerBefore("hide")) return false;
         //restore back to the scroll position at the top
         var modal_container = this.$(".modal:first");
-        this._beforeHide(event);
         this.$(".modal-body:first").scrollTop(0);
         if(_.isFunction(this.$el.modal)) {
             modal_container.modal('hide');
         } else {
             modal_container.hide();
         }
-        this._afterHide(event);
-    },
-    _beforeShow: function(options) {
-        //All 3rd party plugin goes here
-        return;
-    },
-    _afterShow: function(options) {
-        //All 3rd party plugin goes here
-        return;
-    },
-    _beforeHide: function(event) {
-        //All 3rd party plugin goes here
-        return;
-    },
-    _afterHide: function(event) {
-        //All 3rd party plugin goes here
-        return;
+        this.trigger("hide");
+        return true;
     }
 })

@@ -125,16 +125,7 @@ class ImportViewExtimport extends ImportView
         $externalSourceName = ucfirst($this->externalSource);
         $externalSourceClassName = "ExternalSource{$externalSourceName}Adapter";
         $externalSourceFile = "modules/Import/sources/{$externalSourceClassName}.php";
-        if( file_exists("custom/" . $externalSourceFile) )
-        {
-            require_once("custom/" . $externalSourceFile);
-        }
-        else if( file_exists($externalSourceFile) )
-        {
-            require_once($externalSourceFile);
-        }
-        else
-        {
+        if(!SugarAutoLoader::requireWithCustom($externalSourceFile)) {
             $GLOBALS['log']->fatal("Unable to load external source adapter, file does not exist: {$externalSourceFile} ");
             return FALSE;
         }
@@ -174,7 +165,7 @@ class ImportViewExtimport extends ImportView
             //$defaultValue = $_REQUEST[$sugarKey];
             $userMapping[$sugarKey] = $extKey;
         }
-        
+
         return $userMapping;
     }
 }

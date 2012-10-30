@@ -1,4 +1,4 @@
-v<?php
+<?php
 //FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
@@ -22,7 +22,7 @@ v<?php
  * Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.;
  * All Rights Reserved.
  ********************************************************************************/
- 
+
 require_once 'modules/Teams/Team.php';
 require_once 'modules/Users/User.php';
 require_once "modules/Notes/Note.php";
@@ -40,7 +40,7 @@ class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
 	public $_user = null;
 	public $_team = null;
 
-	public function setUp() 
+	public function setUp()
     {
 		global $current_user;
 		$time = date($GLOBALS['timedate']->get_db_date_time_format());
@@ -56,7 +56,7 @@ class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
 		$current_user=$this->_user;
 	}
 
-	public function tearDown() 
+	public function tearDown()
     {
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         SugarTestTeamUtilities::removeAllCreatedAnonymousTeams();
@@ -65,33 +65,33 @@ class Bug20955Test extends Sugar_PHPUnit_Framework_TestCase
 	public function testDisabledNewNoteDefaultTeam()
     {
 		global $current_user;
-		$temp_note=new Note();  
+		$temp_note=new Note();
 		$temp_note->save();
 		return $this->assertEquals($temp_note->team_id, $current_user->default_team, "The note default team is not the current user's default team! ");
 	}
 
-	public function testDisabledNewTaskDefaultTeam() 
+	public function testDisabledNewTaskDefaultTeam()
     {
 		global $current_user;
-		$temp_task=new Task();  
+		$temp_task=new Task();
 		$temp_task->save();
 		return $this->assertEquals($temp_task->team_id,$current_user->default_team, "The task default team is not the current user's default team! ");
 	}
 
-	public function testDisabledNewBugDefaultTeam() 
+	public function testDisabledNewBugDefaultTeam()
     {
 		global $current_user;
-		$temp_bug=new Bug();  
+		$temp_bug=new Bug();
 		$temp_bug->save();
 		return $this->assertEquals($temp_bug->team_id,$current_user->default_team, "The bug default team is not the current user's default team! ");
 	}
 
 	//BEGIN SUGARCRM flav!=sales ONLY
-	public function testDisabledNewCampaignDefaultTeam() 
+	public function testDisabledNewCampaignDefaultTeam()
     {
 		global $current_user;
         $timedate = TimeDate::getInstance();
-		$temp_campaign=new Campaign();  
+		$temp_campaign=new Campaign();
 		$temp_campaign->end_date = $timedate->nowDbDate();
         $temp_campaign->save();
 		return $this->assertEquals($temp_campaign->team_id,$current_user->default_team, "The campaign default team is not the current user's default team! ");

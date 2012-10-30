@@ -26,7 +26,6 @@ $config['builds']['pro']['languages']= array(
 'de_DE',
 'el_EL',
 'es_ES',
-'et_EE',
 'fr_FR',
 'he_IL',
 'hu_HU',

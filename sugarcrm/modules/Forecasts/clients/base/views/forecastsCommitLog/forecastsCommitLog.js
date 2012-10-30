@@ -38,6 +38,11 @@
     likelyCase : 0,
 
     /**
+     * Stores the worst case to display in the view
+     */
+    worstCase : 0,
+
+    /**
      * Used to query for the user_id value in Forecasts
      */
     userId : '',
@@ -55,7 +60,7 @@
     /**
      * Stores the historical log of the Forecast entries
      */
-    historyLog : Array(),
+    historyLog: [],
 
     /**
      * Stores the Forecast totals to use when creating a new entry
@@ -71,6 +76,11 @@
      * Template to use wen updating the likelyCase on the committed bar
      */
     likelyTemplate : _.template('<%= likelyCase %>&nbsp;<span class="icon-sm committed_arrow<%= likelyCaseCls %>"></span>'),
+
+    /**
+     * Template to use wen updating the WorstCase on the committed bar
+     */
+    worstTemplate : _.template('<%= worstCase %>&nbsp;<span class="icon-sm committed_arrow<%= worstCaseCls %>"></span>'),
 
     runningFetch : false,
 
@@ -89,6 +99,19 @@
      */
     timeperiod: {},
 
+    /**
+     * Store the Best Case Number from the very last commit in the log
+     */
+    previousBestCase: '',
+    /**
+     * Store the Likely Case Number from the very last commit in the log
+     */
+    previousLikelyCase: '',
+    /**
+     * Store the Worst Case Number from the very last commit in the log
+     */
+    previousWorstCase: '',
+
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog'
     },
@@ -105,6 +128,7 @@
 
         this.bestCase = 0;
         this.likelyCase = 0;
+        this.worstCase = 0;
         this.showHistoryLog = false;
     },
 
@@ -133,6 +157,7 @@
 
         this.$el.parents('div.topline').find("span.lastBestCommit").html(this.previousBestCase);
         this.$el.parents('div.topline').find("span.lastLikelyCommit").html(this.previousLikelyCase);
+        this.$el.parents('div.topline').find("span.lastWorstCommit").html(this.previousWorstCase);
     },
 
 
@@ -163,31 +188,46 @@
         return cls
     },
 
-    buildForecastsCommitted: function() {
+    buildForecastsCommitted:function () {
         var self = this;
         var count = 0;
         var previousModel;
 
         //Reset the history log
         self.historyLog = [];
-        self.moreLog = [];
 
-        _.each(self._collection.models, function(model)
-        {
-            //Get the first entry
-            if(count == 0) {
-                previousModel = model;
-                var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
-                if (dateEntered == 'Invalid Date') {
-                    dateEntered = previousModel.get('date_entered');
-                }
-                self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
-            } else {
-                self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
-                previousModel = model;
-            }
-            count++;
+        // if we have no models, exit out of the method
+        if (_.isEmpty(self._collection.models)) {
+            return;
+        }
+
+        // get the first model so we can get the previous date entered
+        previousModel = _.first(self._collection.models);
+
+        // parse out the previous date entered
+        var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
+        if (dateEntered == 'Invalid Date') {
+            dateEntered = previousModel.get('date_entered');
+        }
+        // set the previous date entered in the users format
+        self.previousDateEntered = app.date.format(dateEntered, app.user.get('datepref') + ' ' + app.user.get('timepref'));
+
+        // set the start point in the history log
+        self.historyLog.push(app.forecasts.utils.createHistoryLog('', previousModel));
+
+        // get the rest of the models to loop over
+        // by using the length of the models array minus 1 for the first one we already took off
+        models = _.last(self._collection.models, self._collection.models.length-1);
+
+        _.each(models, function (model) {
+            self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
+            previousModel = model;
         });
+
+        // save the values from the last model to display in the dataset line on the interface
+        this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
+        this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
+        this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));
 
         self.render();
     }

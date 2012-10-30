@@ -142,11 +142,11 @@ class Email extends SugarBean {
 	/**
 	 * sole constructor
 	 */
-	function Email()
+	public function __construct()
 	{
 	    global $current_user;
 	    $this->cachePath = sugar_cached('modules/Emails');
-		parent::SugarBean();
+		parent::__construct();
 		//BEGIN SUGARCRM flav=pro ONLY
 		$this->team_id = 1; // make the item globally accessible
 		//END SUGARCRM flav=pro ONLY
@@ -1191,7 +1191,7 @@ class Email extends SugarBean {
                 continue;
             }
             if(!empty($parts["name"])) {
-                $res[] = "{$parts["name"]} <{$parts["email"]}>";
+                $res[] = "{$parts['name']} <{$parts['email']}>";
             } else {
                 $res[] .= $parts["email"];
             }
@@ -1433,7 +1433,7 @@ class Email extends SugarBean {
 		if(empty($text)) {
 			return '';
 		}
-		$text = str_replace("\n", "\n<BR/>", $text);
+		$text = str_replace("\n", "<BR/>", $text);
 		$out = "<div style='border-left:1px solid #00c; padding:5px; margin-left:10px;'>{$text}</div>";
 
 		return $out;

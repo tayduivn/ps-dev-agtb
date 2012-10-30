@@ -128,6 +128,8 @@
 
             }, this);
 
+            /*
+             * // TODO: tagged for 6.8 see SFA-253 for details
             this.context.forecasts.config.on('change:show_worksheet_likely', function(context, value) {
                 // only trigger if this component is rendered
                 if(!_.isEmpty(self.el.innerHTML)) {
@@ -148,6 +150,7 @@
                     self.setColumnVisibility(['worst_case', 'worst_adjusted'], value, self);
                 }
             });
+            */
             
             var worksheet = this;
             $(window).bind("beforeunload",function(){
@@ -269,6 +272,7 @@
         }
         $("#view-sales-rep").addClass('hide').removeClass('show');
         $("#view-manager").addClass('show').removeClass('hide');
+        this.context.forecasts.set({commitButtonEnabled: false});
         this.context.forecasts.set({checkDirtyWorksheetFlag: true});
         this.context.forecasts.set({currentWorksheet: "worksheetmanager"});
         app.view.View.prototype._render.call(this);
@@ -278,15 +282,11 @@
         var columnDefs = [];
         var fields = this.meta.panels[0].fields;
 
-        var _colIndex = 0;
-
         for( var i = 0; i < fields.length; i++ )  {
             if(fields[i].enabled) {
                 // in case we add column rearranging
                 var fieldDef = {
                     "sName": fields[i].name,
-                    "aTargets": [ _colIndex++ ],
-                    "sWidth" : (fields[i].name == "name") ? '40%' : '10%',
                     "bVisible" : this.checkConfigForColumnVisibility(fields[i].name)
                 };
 
@@ -299,6 +299,13 @@
                         case "currency":
                             fieldDef["sSortDataType"] = "dom-number";
                             fieldDef["sType"] = "numeric";
+                            fieldDef["sClass"] = "number";
+                            break;
+                    }
+                    switch(fields[i].name)
+                    {
+                        case "name":
+                            fieldDef["sWidth"] = "30%";
                             break;
                     }
                 }
@@ -311,7 +318,7 @@
             {
                 "bAutoWidth": false,
                 "aaSorting": [],
-                "aoColumnDefs": columnDefs,
+                "aoColumns": columnDefs,
                 "bInfo":false,
                 "bPaginate":false
             }
@@ -325,11 +332,11 @@
         });
         if (enableCommit) {
         	self.context.forecasts.set({commitButtonEnabled: true});
-        } else {
-        	self.context.forecasts.set({commitButtonEnabled: false});
         }
-
+        
         this.calculateTotals();
+        self.context.forecasts.trigger('forecasts:worksheetmanager:render');
+
     },
 
     /**

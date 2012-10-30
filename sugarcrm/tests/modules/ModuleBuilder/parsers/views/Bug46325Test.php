@@ -60,11 +60,11 @@ class Bug46325Test extends Sugar_PHPUnit_Framework_TestCase
     {
         if (is_file($this->accountsFile))
         {
-            unlink($this->accountsFile);
+            SugarAutoLoader::unlink($this->accountsFile);
         }
         if (is_file($this->prospectsFile))
         {
-            unlink($this->prospectsFile);
+            SugarAutoLoader::unlink($this->prospectsFile);
         }
         unset($GLOBALS['beanList']);
         unset($GLOBALS['beanFiles']);

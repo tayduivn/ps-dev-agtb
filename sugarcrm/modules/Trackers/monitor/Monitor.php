@@ -56,7 +56,7 @@ class Monitor implements Trackable {
      */
     function Monitor($name='', $monitorId='', $metadata='', $store='') {
 
-    	if(empty($metadata) || !file_exists($metadata)) {
+    	if(empty($metadata) || !SugarAutoLoader::fileExists($metadata)) {
     	   $GLOBALS['log']->error($GLOBALS['app_strings']['ERR_MONITOR_FILE_MISSING'] . "($metadata)");
     	   throw new Exception($GLOBALS['app_strings']['ERR_MONITOR_FILE_MISSING'] . "($metadata)");
     	}
@@ -191,12 +191,11 @@ class Monitor implements Trackable {
 		   return $this->cachedStores[$store];
 		}
 
-        if(!file_exists("modules/Trackers/store/$store.php")) {
+        if(!SugarAutoLoader::requireWithCustom("modules/Trackers/store/$store.php")) {
            $GLOBALS['log']->error($GLOBALS['app_strings']['ERR_STORE_FILE_MISSING'] . "($store)");
            throw new Exception($GLOBALS['app_strings']['ERR_STORE_FILE_MISSING'] . "($store)");
         }
 
-		require_once("modules/Trackers/store/$store.php");
 		$s = new $store();
 		$this->cachedStores[$store] = $s;
 		return $s;

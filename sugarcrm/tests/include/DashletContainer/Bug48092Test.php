@@ -56,16 +56,16 @@ class Bug48092Test extends Sugar_PHPUnit_Framework_TestCase
             array(
                 array(
                         'module' => 'Meetings',
-                        'label' => 'View Upcoming LotusLive� Meetings',
-                        'action' => "DCMenu.hostMeetingUrl=''; DCMenu.loadView('Upcoming LotusLive� Meetings','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'');",
+                        'label' => 'View Upcoming IBM SmartCloud� Meetings',
+                        'action' => "DCMenu.hostMeetingUrl=''; DCMenu.loadView('Upcoming IBM SmartCloud� Meetings','index.php?module=Meetings&action=listbytype&type=LotusLive',undefined,undefined,undefined,'');",
                         'icon' => 'icon_LotusMeetings_bar_32.png',
                 ),
             ),
             array(
                 array(
                         'module' => 'Documents',
-                        'label' => 'View LotusLive� Files',
-                        'action' => "DCMenu.loadView('LotusLive� Files','index.php?module=Documents&action=extdoc&type=LotusLive');",
+                        'label' => 'View IBM SmartCloud� Files',
+                        'action' => "DCMenu.loadView('IBM SmartCloud� Files','index.php?module=Documents&action=extdoc&type=LotusLive');",
                         'icon' => 'icon_LotusDocuments_bar_32.png',
                 ),
             ),

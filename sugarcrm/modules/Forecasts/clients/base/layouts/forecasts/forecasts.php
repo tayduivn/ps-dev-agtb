@@ -35,6 +35,12 @@ $viewdefs['Forecasts']['base']['layout']['forecasts'] = array(
             ),
         ),
         array(
+            'layout' => array(
+                'type' => 'modal',
+                'showEvent' => 'modal:forecastsTabbedConfig:open',
+            ),
+        ),
+        array(
             'view' => 'forecastsTitle',
         ),
         array(

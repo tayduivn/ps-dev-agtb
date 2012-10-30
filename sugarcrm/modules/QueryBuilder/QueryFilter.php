@@ -79,6 +79,7 @@ class QueryFilter extends QueryBuilder {
 	
 	var $table_name = "query_filters";
 	var $module_dir = "QueryBuilder";
+    var $module_name = 'QueryFilter';
 	var $object_name = "QueryFilter";
 	
 	var $new_schema = true;
@@ -116,7 +117,7 @@ class QueryFilter extends QueryBuilder {
 	var $required_fields =  array();
 
 	function QueryFilter() {
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->disable_row_level_security =true;
 

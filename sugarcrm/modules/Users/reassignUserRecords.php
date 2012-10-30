@@ -18,7 +18,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Your Warranty, Limitations of liability and Indemnity are expressly stated in the License.  Please refer
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
- * $Id: additionalDetails.php 13782 2006-06-06 17:58:55Z majed $
  *********************************************************************************/
 //BEGIN SUGARCRM flav=pro ONLY
 require_once('include/SugarFields/Fields/Teamset/SugarFieldTeamset.php');
@@ -53,9 +52,8 @@ else
 echo "<h2 class='moduleTitle' style=\"margin-bottom:0px;\">{$mod_strings_users['LBL_REASS_SCRIPT_TITLE']}</h2>";
 
 // Include Metadata for processing
-require_once("modules/Users/metadata/reassignScriptMetadata.php");
-if(file_exists("custom/modules/Users/reassignScriptMetadata_override.php")){
-	include("custom/modules/Users/reassignScriptMetadata_override.php");
+foreach(SugarAutoLoader::existingCustom('modules/Users/metadata/reassignScriptMetadata.php', 'modules/Users/reassignScriptMetadata_override.php') as $file) {
+    include $file;
 }
 
 if(!empty($_GET['record'])){
@@ -300,7 +298,7 @@ else if(!isset($_GET['execute'])){
 	$sugar_smarty = new Sugar_Smarty();
         $help_img = smarty_function_sugar_help(array("text"=>$mod_strings['LBL_REASS_VERBOSE_HELP']),$sugar_smarty);
 	echo "<BR><input type=checkbox name=verbose> {$mod_strings_users['LBL_REASS_VERBOSE_OUTPUT']}".$help_img."<BR>\n";
-	
+
 	//END SUGARCRM flav!=sales ONLY
 	unset($_SESSION['reassignRecords']['modules']);
 	$beanListFlip = array_flip($_SESSION['reassignRecords']['assignedModuleListCache']);

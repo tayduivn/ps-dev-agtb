@@ -71,7 +71,7 @@ class SidecarTheme
             // We compile it if a we have the custom theme in the file system in /custom/themes or /themes
             $customThemeVars = $this->paths['custom'] . 'variables.less';
             $baseThemeVars = $this->paths['base'] . 'variables.less';
-            if ( file_exists($customThemeVars) || file_exists($baseThemeVars) ) {
+            if ( SugarAutoLoader::fileExists($customThemeVars) || SugarAutoLoader::fileExists($baseThemeVars) ) {
                 $this->compileTheme();
             }
             else {

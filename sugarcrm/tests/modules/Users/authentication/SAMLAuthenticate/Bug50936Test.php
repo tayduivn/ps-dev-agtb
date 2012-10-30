@@ -93,6 +93,7 @@ EOQ;
         }
 
         file_put_contents('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $contents);
+        SugarAutoLoader::addToMap('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', false);
 	}
 
 	public function tearDown()
@@ -103,12 +104,14 @@ EOQ;
             file_put_contents('custom/modules/Users/authentication/SAMLAuthenticate/settings.php', $this->customContents);
         } else {
             unlink('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
+            SugarAutoLoader::delFromMap('custom/modules/Users/authentication/SAMLAuthenticate/settings.php');
         }
 
         //Remove the test index.php file
         if(file_exists('custom/modules/Users/authentication/SAMLAuthenticate/index.php'))
         {
             unlink('custom/modules/Users/authentication/SAMLAuthenticate/index.php');
+            SugarAutoLoader::delFromMap('custom/modules/Users/authentication/SAMLAuthenticate/index.php');
         }
 
 	    unset($GLOBALS['current_user']);

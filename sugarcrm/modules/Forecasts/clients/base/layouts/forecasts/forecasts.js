@@ -83,6 +83,11 @@
                  * boolean to use across components to enable commit button or not
                  */
                 commitButtonEnabled : false,
+                
+                /**
+                 * boolean to use across components to determine if the commit button was enabled by the committed widget
+                 */
+                commitButtonEnabledFromCommitted : false,
 
                 /**
                  * forecastsCommitButtons triggers this flag to tell forecastsCommitted to call commitForecast()
@@ -265,53 +270,6 @@
                 $('#drawer').toggleClass('span2');
                 $('#charts').toggleClass('span10').toggleClass('span12');
             });
-        },
-
-
-        /**
-         * Dropping in to _render to insert some code to display the config wizard for a user's first run on forecasts.  The render process itself is unchanged.
-         *
-         * @return {*}
-         * @private
-         */
-        _render: function () {
-            var mdata;
-
-            app.view.Layout.prototype._render.call(this);
-
-            mdata = app.metadata.getModule("Forecasts");
-            if (!mdata.config.is_setup) {
-                this._showConfigModal(true);
-            }
-
-            return this;
-        },
-
-
-        /**
-         * This is used by the forecasts layout to show the modal with the config views.
-         * @param showWizard Boolean true shows forecasts config wizard, false shows forecasts config view with tabs.
-         * @private
-         */
-        _showConfigModal: function(showWizard) {
-            // callback is only used if the user is not an admin, gets to the modal,
-            // sees the "Not configured yet" message and clicks ok.  Not used if
-            // user is an admin, but needs to be passed
-            var callback = function(){};
-
-            // begin building params to pass to modal
-            var params = {
-                title : app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-                span: 10
-            };
-
-            if(app.user.getAcls()['Forecasts'].admin == "yes") {
-                params.components = [{layout:"forecastsWizardConfig"}];
-            } else {
-                params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
-            }
-
-            this.trigger("modal:forecastsWizardConfig:open", params, callback);
         },
 
         /**

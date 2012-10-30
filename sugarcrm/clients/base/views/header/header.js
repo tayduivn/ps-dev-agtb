@@ -10,7 +10,7 @@
         'click #module_list li a': 'onModuleTabClicked',
         'click #createList li a': 'onCreateClicked',
         'click .typeahead a': 'clearSearch',
-        'click .navbar-search span.add-on': 'gotoFullSearchResultsPage'
+        'click .navbar-search .btn': 'gotoFullSearchResultsPage'
     },
 
     /**
@@ -139,7 +139,7 @@
         var self = this;
         this.createListLabels = [];
         this.currentModule = this.module;
-        this.module_list = app.metadata.getModuleNames(true);
+        this.module_list = app.metadata.getModuleNames(true, 'list');
         this.creatableModuleList = app.metadata.getModuleNames(true,"create");
     },
 

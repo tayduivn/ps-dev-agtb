@@ -63,7 +63,7 @@
 			'include/javascript/jquery/jquery-ui-min.js'          => 'include/javascript/sugar_grp1_jquery.js',
 			'include/javascript/jquery/jquery.json-2.3.js'        => 'include/javascript/sugar_grp1_jquery.js',
 			//bootstrap
-            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',			
+            'include/javascript/jquery/bootstrap/bootstrap.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
             //jquery for moddule menus
             'include/javascript/jquery/jquery.hoverIntent.js'            => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.hoverscroll.js'            => 'include/javascript/sugar_grp1_jquery.js',
@@ -78,8 +78,9 @@
             'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.chosen.min.js'             => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jstree.js'              	 => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.nouislider.js'          	 => 'include/javascript/sugar_grp1_jquery.js',
 
-            
+
 			),
            $sugar_field_grp = array(
                'include/SugarFields/Fields/Collection/SugarFieldCollection.js' => 'include/javascript/sugar_field_grp.js',
@@ -221,36 +222,28 @@
     // exclude lib/jquery/jquery.min.js b/s jquery is loaded and extended with sugar_grp1_jquery.js
     $sidecar_forecasts = array();
     $cached_file = 'include/javascript/sidecar_forecasts.js';
-    if ( file_exists('sidecar/src/include-manifest.php') )
-    {
-        require_once('sidecar/src/include-manifest.php');
-        if ( !empty($buildFiles) )
-        {
-            $sidecar_forecasts = array();
-            $buildFiles = array_diff($buildFiles['sidecar'], array('lib/jquery/jquery.min.js'));
-            foreach ( $buildFiles as $_ind => $_file )
-            {
-                $sidecar_forecasts['sidecar/'.$_file] = $cached_file;
-            }
-            $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
-            $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
-            $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
-            $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
-            $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
-            $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
-            $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
-            $sidecar_forecasts['modules/Forecasts/clients/base/views/alert-view/alert-view.js'] = $cached_file;
-            $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
-            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
-            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
-            $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
-        }
-    }
+
+    $sidecar_forecasts = array();
+    $sidecar_forecasts['include/javascript/sugarAuthStore.js'] = $cached_file;
+    $sidecar_forecasts['include/SugarCharts/Jit/js/Jit/jit.js'] = $cached_file;
+    $sidecar_forecasts['include/SugarCharts/Jit/js/sugarCharts.js'] = $cached_file;
+    $sidecar_forecasts['modules/Forecasts/clients/base/helper/hbt-helpers.js'] = $cached_file;
+    $sidecar_forecasts['modules/Forecasts/clients/base/lib/ClickToEdit.js'] = $cached_file;
+    $sidecar_forecasts['modules/Forecasts/clients/base/lib/BucketGridEnum.js'] = $cached_file;
+    $sidecar_forecasts['modules/Forecasts/clients/base/lib/ForecastsUtils.js'] = $cached_file;
+    $sidecar_forecasts['modules/Forecasts/clients/base/views/alert-view/alert-view.js'] = $cached_file;
+    $sidecar_forecasts['modules/Forecasts/tpls/SidecarView.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-tooltip.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrap-popover.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/twitterbootstrap/js/bootstrapx-clickover.js'] = $cached_file;
+    $sidecar_forecasts['include/javascript/jquery/jquery.nouislider.js'] = $cached_file;
+
     $js_groupings[] = $sidecar_forecasts;
 
     /**
      * Check for custom additions to this code
      */
-    if(file_exists("custom/application/Ext/JSGroupings/jsgroups.ext.php")) {
-        require("custom/application/Ext/JSGroupings/jsgroups.ext.php");
+
+    foreach(SugarAutoLoader::existing("custom/jssource/JSGroupings.php", SugarAutoLoader::loadExtension("jsgroupings")) as $file) {
+        require $file;
     }

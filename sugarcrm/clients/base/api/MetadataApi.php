@@ -87,7 +87,7 @@ class MetadataApi extends SugarApi {
         }
 
         // Default the type filter to everything
-        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies');
+        $this->typeFilter = array('modules','full_module_list','fields','view_templates','labels','mod_strings','app_strings','app_list_strings','module_list', 'views', 'layouts','relationships','currencies', 'jssource');
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
             $types = explode(",", $args['type_filter']);
@@ -156,7 +156,7 @@ class MetadataApi extends SugarApi {
             generateETagHeader($data['_hash']);
         }
 
-        $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies');
+        $baseChunks = array('view_templates','fields','app_strings','app_list_strings','module_list', 'views', 'layouts', 'full_module_list','relationships', 'currencies', 'jssource');
         $perModuleChunks = array('modules','mod_strings');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks, $perModuleChunks, $moduleFilter);
@@ -200,7 +200,7 @@ class MetadataApi extends SugarApi {
 
 
         // Default the type filter to everything available to the public, no module info at this time
-        $this->typeFilter = array('fields','view_templates','app_strings','views', 'layouts', 'config');
+        $this->typeFilter = array('fields','view_templates','app_strings','views', 'layouts', 'config', 'jssource');
 
         if ( !empty($args['type_filter']) ) {
             // Explode is fine here, we control the list of types
@@ -245,7 +245,7 @@ class MetadataApi extends SugarApi {
         $data['jssource'] = $this->buildJSFileFromMD($data, $this->platforms[0]);        
         $data["_hash"] = md5(serialize($data));
 
-        $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config');
+        $baseChunks = array('view_templates','fields','app_strings','views', 'layouts', 'config', 'jssource');
 
         return $this->filterResults($args, $data, $onlyHash, $baseChunks);
     }
@@ -287,6 +287,7 @@ class MetadataApi extends SugarApi {
         $sugar_config['site_url'];
         return $sugar_config['site_url'] . "/{$path}";
     }
+
 
     protected function buildJSForComponents(&$data) {
         $firstType = true;

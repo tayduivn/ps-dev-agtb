@@ -45,7 +45,7 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
         $this->_indexName = strtolower($GLOBALS['sugar_config']['unique_key']);
 
         //Elastica client uses own auto-load schema similar to ZF.
-        spl_autoload_register(array($this, 'loader'));
+        SugarAutoLoader::addPrefixDirectory('Elastica', 'include/SugarSearchEngine/Elastic/');
         if (empty($this->_config['timeout']))
         {
             $this->_config['timeout'] = 15;
@@ -379,16 +379,25 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 foreach ($fieldDef as $fieldName => $def) {
                     // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
                     if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
+                        if(isset($options['addSearchBoosts']) && $options['addSearchBoosts'] == true && isset($def['full_text_search']['boost'])) {
+                            $fieldName .= '^' . $def['full_text_search']['boost'];
+                            $fieldName = $mod . '.' . $fieldName;
+                        }
+
                         $fields[] = $fieldName;
                     }
                 }
             }
         } else {
             $allFieldDef = SugarSearchEngineMetadataHelper::retrieveFtsEnabledFieldsForAllModules();
-            foreach ($allFieldDef as $fieldDef) {
+            foreach ($allFieldDef as $module => $fieldDef) {
                 foreach ($fieldDef as $fieldName => $def) {
                     // we are currently using datetimecombo which breaks field based search in Elastic, we don't want to include datetimecombo in searches
-                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {
+                    if (!in_array($fieldName, $fields) && $def['type'] != 'datetimecombo') {               
+                        if(isset($options['addSearchBoosts']) && $options['addSearchBoosts'] == true && isset($def['full_text_search']['boost'])) {
+                            $fieldName .= '^' . $def['full_text_search']['boost'];
+                            $fieldName = $mod . '.' . $fieldName;
+                        }                        
                         $fields[] = $fieldName;
                     }
                 }
@@ -739,7 +748,9 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
                 }
 
                 // set query string fields
+                $options['addSearchBoosts'] = true;
                 $fields = $this->getSearchFields($options);
+                $options['addSearchBoosts'] = false;
                 $queryObj->setFields($fields);
             }
             $s = new Elastica_Search($this->_client);
@@ -832,23 +843,6 @@ class SugarSearchEngineElastic extends SugarSearchEngineAbstractBase
     protected function cleanTeamSetID($teamSetID)
     {
         return str_replace("-", "", strtolower($teamSetID));
-    }
-
-    /**
-     * This function loads the desired file/class from Elastic directory.
-     *
-     * @param $teamSetID
-     * @return mixed
-     */
-    protected function loader($className)
-    {
-        // FIXME: convert to use autoloader
-        $fileName = str_replace('_', '/', $className);
-        $path = 'include/SugarSearchEngine/Elastic/' . $fileName . '.php';
-        if( file_exists($path) )
-            require_once($path);
-        else
-            return FALSE;
     }
 
     /**
