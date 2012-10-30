@@ -361,8 +361,9 @@
 
             items[0] = ($(items[0]).addClass('active'))[0];
 
-            var pos = $.extend({}, el.offset(), {
-                height: el[0].offsetHeight
+            ul.css({
+                top: el.position().top + el.height(),
+                left: el.position().left
             });
 
             ul.html(items).appendTo(el.parent()).show();
