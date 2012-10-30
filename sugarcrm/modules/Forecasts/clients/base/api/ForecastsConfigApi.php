@@ -52,6 +52,8 @@ class ForecastsConfigApi extends ConfigModuleApi {
             {
                 require_once('modules/UpgradeWizard/uw_utils.php');
                 updateOpportunitiesForForecasting();
+
+                //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
                 $args['has_commits'] = true;
             }
         }
@@ -61,7 +63,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
         //if primary settings for timeperiods have changed, then rebuild them
-        // TODO:  fix this!  Commenting out, for now, so that work can continue on config settings in other areas
+        // TODO-sfa:  fix this!  Commenting out, for now, so that work can continue on config settings in other areas
 //        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
 //            TimePeriod::rebuildForecastingTimePeriods();
 //        }
