@@ -1,10 +1,5 @@
 <div class="block filtered tabbable tabs-left" id="moduleActivity">
   <div class="row">
-    <div class="btn-group pull-left activitystream-header">
-        <a href="" rel="tooltip" title="Timeline" class="btn toggleView" data-view="timeline" data-tour="tour-stream-timeline"><i class="icon-indent-right"></i></a>
-        <a href="" rel="tooltip" title="Calendar" class="btn toggleView" data-view="calendar" data-tour="tour-stream-calendar"><i class="icon-calendar"></i></a>
-        <a href="" rel="tooltip" title="List Only" class="btn toggleView" data-view="none" data-tour="tour-stream-list"><i class='icon-align-left'></i></a>
-    </div>
     <ul class="pull-right nav nav-pills" data-tour="tour-{{module}}-stream-filter">
           <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
           <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
@@ -30,8 +25,8 @@
     <input value="" class="wide tleft" placeholder="Search activity...">
   </form>
   <ul class="nav nav-tabs results activitystream-list">
-    {{#if collection.models.length}}
-      {{#each collection.models}}
+    {{#if streamCollection.models.length}}
+      {{#each streamCollection.models}}
       <li id="{{attributes.id}}" data-id="{{attributes.id}}" class="{{#eq user_id attributes.created_by}}{{#eq attributes.activity_type "posted"}}hasDeleteButton{{/eq}}{{/eq}}">
         <a href="#Users/{{attributes.created_by}}" class="avatar avatar42 pull-left">
           <img src="{{attributes.created_by_picture_url}}" alt="{{attributes.created_by_name}}">
@@ -205,8 +200,8 @@
       <em>No recent activity found.</em>
     {{/if}}
   </ul>
-  {{#if collection.models.length}}
-  {{#notEq collection.next_offset "-1"}}
+  {{#if streamCollection.models.length}}
+  {{#notEq streamCollection.next_offset "-1"}}
     <a href="javascript:void(0)" name="show_more_button" class="loading wide ">Show More</a>
   {{/notEq}}
   {{/if}}

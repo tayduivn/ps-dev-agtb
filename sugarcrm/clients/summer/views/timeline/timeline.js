@@ -7,6 +7,15 @@
         app.view.View.prototype.initialize.call(this, opts);
 
         this.id = _.uniqueId("timeline-");
+
+        if (this.module != "ActivityStream") {
+            this.subcontext = this.context.getChildContext({module: "ActivityStream"});
+            this.subcontext.prepare();
+
+            this.eventCollection = this.subcontext.get("collection");
+        } else {
+            this.eventCollection = this.collection;
+        }
     },
 
     _renderTimeline: function() {
@@ -16,7 +25,7 @@
             }
         };
 
-        timelineObj.timeline.date = _.flatten(_.map(this.collection.models, this._addTimelineEvent));
+        timelineObj.timeline.date = _.flatten(_.map(this.eventCollection.models, this._addTimelineEvent));
 
         // Initialize the timeline
         createStoryJS({
@@ -48,7 +57,7 @@
                 var event = {
                     tag: "commented",
                     startDate: self.parseDate(comment.date_created),
-                    text: '<a href="" data-id="' + model.get("id") + '" class="showAnchor">' + tag + " by " + comment.created_by_name + '</a>',
+                    text: '<a href="" data-id="' + model.get("id") + '" class="showAnchor">' + "commented by " + comment.created_by_name + '</a>',
                     headline: comment.value,
                     asset: {
                         media: '<a href=\'#Users/' + comment.created_by + '\'><img src=\'' + comment.created_by_picture_url + '\' /></a>',
@@ -63,7 +72,7 @@
                 var event = {
                     tag: "attached",
                     startDate: self.parseDate(attachment.date_entered),
-                    text: '<a href="" data-id="' + model.get("id") + '" class="showAnchor">' + tag + " by " + attachment.created_by_name + '</a>',
+                    text: '<a href="" data-id="' + model.get("id") + '" class="showAnchor">' + "attached by " + attachment.created_by_name + '</a>',
                     headline: attachment.filename
                 };
 
@@ -91,7 +100,7 @@
             var event = {
                 tag: "attached",
                 startDate: self.parseDate(attachment.date_entered),
-                text: '<a href="" data-id="' + model.get("id") + '" class="showAnchor">' + tag + " by " + attachment.created_by_name + '</a>',
+                text: '<a href="" data-id="' + model.get("id") + '" class="showAnchor">' + "attached by " + attachment.created_by_name + '</a>',
                 headline: attachment.filename
             };
 
