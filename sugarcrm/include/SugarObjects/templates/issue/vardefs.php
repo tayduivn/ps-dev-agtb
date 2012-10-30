@@ -106,6 +106,7 @@ $vardefs = array (
 			'audited' => true,
 			'comment' => 'An indication of how the issue was resolved',
 			'merge_filter' => 'enabled',
+            'sortable' => true,
 			
 		),
 
