@@ -38,8 +38,9 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
     public static function tearDownAfterClass()
     {
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'is_setup', '0', 'base');
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
-        SugarTestProductUtilities::removeAllCreatedProducts();
         SugarTestHelper::tearDown();
     }
 
@@ -56,37 +57,16 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
         $opp = SugarTestOpportunityUtilities::createOpportunity();
         $opp->assigned_user_id = $current_user->id;
+        $opp->probability = '80';
         $opp->save();
 
-        $exp_opp = array('commit_stage' => $opp->commit_stage,
-                        'best_case' => $opp->best_case,
-                        'worst_case' => $opp->worst_case,
-                        'date_closed_timestamp' => substr($opp->date_closed_timestamp, 0, -2));
+        $this->assertEmpty($opp->commit_stage, 'Commit stage should be empty for old opp');
 
-        $exp_product = array('name' => $opp->name,
-            'best_case' => $opp->amount,
-            'likely_case' => $opp->amount,
-            'worst_case' => $opp->amount,
-            'cost_price' => $opp->amount,
-            'quantity' => '1',
-            'currency_id' => $opp->currency_id,
-            'base_rate' => $opp->base_rate,
-            'probability' => $opp->probability,
-            'date_closed' => $opp->date_closed,
-            'date_closed_timestamp' => $opp->date_closed_timestamp,
-            'assigned_user_id' => $opp->assigned_user_id,
-            'opportunity_id' => $opp->id,
-            'commit_stage' => $opp->commit_stage);
+        //unset best/worst cases
+        $db->query("UPDATE opportunities SET best_case = '', worst_case = '' WHERE id = '{$opp->id}'");
 
-        //unset commit_stage, date_closed_timestamp, best/worst cases
-        $db->query("UPDATE opportunities SET commit_stage = '', date_closed_timestamp = '', best_case = '', worst_case = '' WHERE id = '{$opp->id}'");
-
-        //unset opportunity_id in the product which was automatically created during opp save
-        $product = BeanFactory::getBean('Products');
-        $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-        SugarTestProductUtilities::setCreatedProduct(array($product->id));
-        $product->opportunity_id = '';
-        $product->save();
+        $admin = BeanFactory::getBean('Administration');
+        $admin->saveSetting('Forecasts', 'is_setup', '1', 'base');
 
         $this->job = updateOpportunitiesForForecasting();
 
@@ -97,12 +77,23 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
         $job->runJob();
 
         $updated_opp = $opp->retrieve();
-        $act_opp = array('commit_stage' => $opp->commit_stage,
-                        'best_case' => intval($opp->best_case),
-                        'worst_case' => intval($opp->worst_case),
-                        'date_closed_timestamp' => substr($opp->date_closed_timestamp, 0, -2));
+        $this->assertNotEmpty($updated_opp->commit_stage, "Updated opp's commit stage should be not empty");
 
-        $this->assertEquals($exp_opp, $act_opp, "New forecasts fields hasn't been updated during upgrade process");
+        $timedate = TimeDate::getInstance();
+        $exp_product = array('name' => $updated_opp->name,
+            'best_case' => $updated_opp->best_case,
+            'likely_case' => $updated_opp->amount,
+            'worst_case' => $updated_opp->worst_case,
+            'cost_price' => $updated_opp->amount,
+            'quantity' => '1',
+            'currency_id' => $updated_opp->currency_id,
+            'base_rate' => $updated_opp->base_rate,
+            'probability' => $updated_opp->probability,
+            'date_closed' => $timedate->to_db_date($updated_opp->date_closed),
+            'date_closed_timestamp' => $updated_opp->date_closed_timestamp,
+            'assigned_user_id' => $updated_opp->assigned_user_id,
+            'opportunity_id' => $updated_opp->id,
+            'commit_stage' => $updated_opp->commit_stage);
 
         $this->assertTrue($job->runnable_ran);
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
@@ -110,7 +101,6 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
         $product = BeanFactory::getBean('Products');
         $product->retrieve_by_string_fields(array('opportunity_id' => $opp->id));
-        SugarTestProductUtilities::setCreatedProduct(array($product->id));
 
         $act_product = array('name' => $product->name,
             'best_case' => $product->best_case,
@@ -129,6 +119,5 @@ class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
         $this->assertEquals($exp_product, $act_product, "Product info doesn't equal to related opp's one");
     }
-
 }
 ?>
