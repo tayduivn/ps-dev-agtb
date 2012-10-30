@@ -88,7 +88,7 @@ class ForecastsDefaults
             'timeperiod_interval' => 'Annual',
             // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_quarterly_options_dom, (first, middle, last)
             'timeperiod_leaf_interval' => 'Quarter',
-            'timeperiod_start_month' => '7',
+            'timeperiod_start_month' => '1',
             'timeperiod_start_day' => '1',
             // number of timeperiods forward from the current that are displayed
             'timeperiods_shown_forward' => 4,
