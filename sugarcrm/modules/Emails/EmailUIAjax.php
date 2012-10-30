@@ -213,7 +213,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 	                $sigs[$k] = $v;
 	            }
 	        }
-	        $out['signatures'] = $signatureArray;
+	        $out['signatures'] = $sigs;
             $ret = $json->encode($out);
             echo $ret;
         } else {
