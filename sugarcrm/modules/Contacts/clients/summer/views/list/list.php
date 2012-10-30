@@ -44,6 +44,11 @@ $viewdefs['Contacts']['summer']['view']['list'] = array(
                 'email1',
                 'phone_mobile',
                 'assigned_user_name',
+                array(
+                    'type' => 'preview',
+                    'sortable' => false,
+                    'default' => true,
+                ),
             )
         )
     )
