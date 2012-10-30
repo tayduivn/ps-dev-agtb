@@ -3434,13 +3434,13 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
 
-    //begin portal
-    //BEGIN SUGARCRM flav=ent ONLY
-
     //theme roller
     'BorderColor' => 'Border Color',
     'NavigationBar' => 'Navigation Bar',
     'PrimaryButton' => 'Primary Button',
+
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
 
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
