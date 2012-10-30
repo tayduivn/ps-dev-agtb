@@ -245,9 +245,26 @@
 
             var worksheet = this;
             $(window).bind("beforeunload",function(){
+            	//if the record is dirty, warn the user.
                 if(worksheet._collection.isDirty){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
-                }            	
+                }
+                //special manager cases for messages
+                else if(self.selectedUser.isManager){
+            		/*
+            		 * If the manager has a draft version saved, but hasn't committed that yet, they need to be shown a dialog that 
+            		 * lets them know, and gives them the option of committing before the page reloads. This happens if the commit button
+            		 * is enabled and they are on the rep worksheet.
+            		 */
+            		if((self.context.forecasts.get("currentWorksheet") == "worksheet") && self.commitButtonEnabled){
+            			var msg = app.lang.get("LBL_WORKSHEET_COMMIT_CONFIRM", "Forecasts").split("<br>");
+            			//show dialog
+            			return msg[0];			           				
+            		}
+            		else if(self.mgrNeedsCommitted){
+            			return app.lang.get("LBL_WORKSHEET_COMMIT_ALERT", "Forecasts");
+            		}
+                }
             });
         }
     },
