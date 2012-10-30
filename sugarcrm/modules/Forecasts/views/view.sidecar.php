@@ -98,10 +98,6 @@ class ForecastsViewSidecar extends SidecarView
             // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
             $admin = BeanFactory::getBean("Administration");
             $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
-            // INVESTIGATE:  these need to be more dynamic and deal with potential customizations based on how filters are built in admin and/or studio
-            $admin = BeanFactory::getBean("Administration");
-            $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
-
             $defaultSelections["category"] = array("include");
             $defaultSelections["group_by"] = 'forecast';
             $defaultSelections["dataset"] = 'likely';
