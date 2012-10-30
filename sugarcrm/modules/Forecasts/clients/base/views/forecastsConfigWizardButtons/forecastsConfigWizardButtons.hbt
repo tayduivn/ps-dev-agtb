@@ -1,7 +1,7 @@
 <div class="modal-navigation hide">
     <ul class="breadcrumb two">
         {{#each breadCrumbLabels}}
-        <li class="disabled"><a href="#">{{str this "Forecasts"}}</a></li>
+            <li class="disabled"><a href="#" data-index={{index}}>{{str label "Forecasts"}}</a></li>
         {{/each}}
     </ul>
 </div>
