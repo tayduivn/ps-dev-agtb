@@ -346,6 +346,7 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_BREADCRUMB_VARIABLES' => 'Variables',
 
     // timeperiod config
+    //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_SETUP_NOTICE' => 'Please note that Time Period page will be read only after the first commit or save draft; for this reason the time period should be set up carefully.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_DESC' => 'Configure the timeperiods users can forecast over.',
     'LBL_FORECASTS_CONFIG_TIMEPERIOD_TYPE' => 'Select the type of year your organization uses for accounting.',
@@ -357,8 +358,9 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD' => 'Choose how many past time periods you want users to see:',
 
     // category config
-    'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
+    //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
     'LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE' => 'Please note that Category page will be read only after the first commit or save draft; for this reason the Category should be set up carefully.',
+    'LBL_FORECASTS_CONFIG_CATEGORIES' => 'Forecast Category Options:',
     'LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS' => 'Select the way you would like to categorize opportunities.',
     'LBL_FORECASTS_CONFIG_SHOW_BINARY_RANGES_DESCRIPTION' => 'This option gives a user the ability to be included or omitted from a forecast.',
     'LBL_FORECASTS_CONFIG_SHOW_BUCKETS_RANGES_DESCRIPTION' => 'This option gives a user the ability to categorize their opportunities that are not included in the commit but are upside and have the potential of closing if everything goes well and opportunities that are to be omitted from the forecast.',

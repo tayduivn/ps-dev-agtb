@@ -1,4 +1,5 @@
 <div class="modal-content hide">
+    <!--TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).-->
     <p><em>{{str "LBL_FORECASTS_CONFIG_CATEGORY_SETUP_NOTICE" "Forecasts"}}</em></p>
     <p>{{str "LBL_FORECASTS_CONFIG_CATEGORY_OPTIONS" "Forecasts"}}</p>
     {{#with forecast_categories_field}}

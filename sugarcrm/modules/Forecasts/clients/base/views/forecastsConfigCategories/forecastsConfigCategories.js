@@ -33,6 +33,7 @@
      */
     fieldRanges: {},
 
+    //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
     /**
      * This is used to determine whether we need to lock the module or not, based on whether forecasts has been set up already
      */
