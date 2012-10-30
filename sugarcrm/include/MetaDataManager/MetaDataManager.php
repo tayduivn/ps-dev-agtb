@@ -284,13 +284,22 @@ class MetaDataManager {
             // If the field is indexed or built-in, then it should be sortable. (Bug56943, Bug57644)
             foreach($data['fields'] AS $field_name => $info) {
                 $data['fields'][$field_name]['sortable'] = false;
-                if(isset($indexes[$field_name]) || !preg_match("/.+_c$/",$field_name)) {
+                if(isset($indexes[$field_name]) || !$this->isCustomField($field_name)) {
                     $data['fields'][$field_name]['sortable'] = true;
                 }
             }
         }
         
         return $data;
+    }
+
+    /**
+     * Tests a fieldName to determine if it is for a custom field
+     * @param string $fieldName Name of field
+     * @return bool TRUE if the fieldName is custom
+     */
+    private function isCustomField($fieldName){
+        return substr($fieldName, -2) == "_c";
     }
 
     /**
