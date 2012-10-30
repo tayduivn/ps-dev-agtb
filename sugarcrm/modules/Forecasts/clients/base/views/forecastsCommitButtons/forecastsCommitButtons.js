@@ -137,7 +137,10 @@
     				worksheet.isDirty = false;
     			}    			    				
     		});
-    		
+
+            self.context.forecasts.config.set('no_commits', false);
+            self.context.forecasts.config.save();
+
     		savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
@@ -197,7 +200,10 @@
     				worksheet.isDirty = false;
     			}    			    				
     		});
-    		
+
+            self.context.forecasts.config.set('no_commits', false);
+            self.context.forecasts.config.save();
+
     		savebtn.addClass("disabled");
     		this.context.forecasts.set({commitButtonEnabled: true});
     	}

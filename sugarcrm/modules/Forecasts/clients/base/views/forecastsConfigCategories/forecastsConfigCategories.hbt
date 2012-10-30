@@ -4,7 +4,7 @@
         {{#eachOptions options}}
         <fieldset class="{{{key}}}Fields">
             <p>
-                <input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}}>
+                <input type="radio" name="{{../name}}" value="{{{key}}}" {{#eq key ../value}}checked{{/eq}} {{#if ../../disableCategories}}disabled="true"{{/if}}>
                 <b>{{value}}</b>
             </p>
 

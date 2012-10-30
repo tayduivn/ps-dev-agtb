@@ -52,9 +52,9 @@ class ForecastsConfigApi extends ConfigModuleApi {
             {
                 require_once('modules/UpgradeWizard/uw_utils.php');
                 updateOpportunitiesForForecasting();
+                $args['has_commits'] = true;
             }
         }
-
         parent::configSave($api, $args);
 
         //reload the settings to get the current settings

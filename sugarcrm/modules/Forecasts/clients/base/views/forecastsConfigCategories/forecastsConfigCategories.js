@@ -34,12 +34,21 @@
     fieldRanges: {},
 
     /**
+     * This is used to determine whether we need to lock the module or not, based on whether forecasts has been set up already
+     */
+    disableCategories: false,
+
+    /**
      * Initializes the view, and then initializes up the parameters for the field metadata holder parameters that get
      * used to render the fields in the view, since they are not rendered in a standard way.
      * @param options
      */
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented.
+        // This will be set to true if the forecasts category setup should be disabled
+        this.disableCategories = this.context.forecasts.config.get('has_commits');
 
         this.selection = this.context.forecasts.config.get('forecast_categories');
 
@@ -144,6 +153,10 @@
                     model: model,
                     meta: app.metadata.getField('range')
                 };
+                if(this.view.disableCategories) {
+                    fieldSettings.viewName = 'detail';
+                    fieldSettings.def.view = 'detail';
+                }
                 rangeField = app.view.createField(fieldSettings);
                 this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
                 rangeField.render();

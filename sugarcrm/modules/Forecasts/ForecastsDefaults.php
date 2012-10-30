@@ -82,6 +82,8 @@ class ForecastsDefaults
             'is_setup' => $isSetup,
             // this is used to indicate whether we are coming from an upgraded instance
             'is_upgrade' => 0,
+            // this is used to indicate whether any user has made commits since the forecasts module has been set up.
+            'has_commits' => 0,
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
             // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
