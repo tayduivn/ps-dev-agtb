@@ -19,19 +19,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: User.php 56851 2010-06-07 22:17:02Z jenny $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
-
 require_once('include/SugarObjects/templates/person/Person.php');
-
-//BEGIN SUGARCRM flav=dce ONLY
-
-//END SUGARCRM flav=dce ONLY
 
 // User is used to store customer information.
 class User extends Person {
@@ -1771,6 +1759,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForAnyModule() {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1800,6 +1792,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
@@ -1832,6 +1828,10 @@ EOQ;
      * @return bool
      */
     public function isAdminForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no admin
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
