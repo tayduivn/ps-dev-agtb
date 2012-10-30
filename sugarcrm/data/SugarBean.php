@@ -6162,6 +6162,7 @@ class SugarBean
         if(empty(self::$field_key)) {
             self::$field_key = blowfishGetKey('encrypt_field');
         }
+        return self::$field_key;
     }
 
 /**
