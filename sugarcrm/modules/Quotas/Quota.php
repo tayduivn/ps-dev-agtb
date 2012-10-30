@@ -344,7 +344,7 @@ class Quota extends SugarBean
 				"FROM quotas INNER JOIN users ON quotas.user_id = users.id, timeperiods " .
 				"WHERE quotas.timeperiod_id = timeperiods.id " .
 				"AND quotas.user_id = '" . $user . "' " .
-				"AND (quotas.created_by <> '" . $user . "' " .
+				"AND ((quotas.created_by <> '" . $user . "' AND quotas.quota_type = 'Direct')" .
 				"OR (users.reports_to_id IS NULL AND quotas.quota_type = 'Rollup')) " . //for top-level manager
 				"AND timeperiods.id = '" . $timeperiod_id . "' " .
 				"AND quotas.committed = 1";
