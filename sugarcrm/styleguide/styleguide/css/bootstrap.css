@@ -6493,6 +6493,7 @@ input[type=radio] { display:inline-block; }
   display:inline-block;
   text-overflow:ellipsis;
 }
+.mu.extend span[sfid=new] { margin-left:4px; }
 #sales_stage_filter_chzn .chzn-drop, #date_filter_chzn .chzn-drop { padding:10px; }
 #sales_stage_filter_chzn .chzn-single-with-drop div b, #date_filter_chzn .chzn-single-with-drop div b { background-position:0px 0px; }
 .chzn-container-active .chzn-single-with-drop {
