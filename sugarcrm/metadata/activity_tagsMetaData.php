@@ -31,7 +31,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 $dictionary['ActivityTags'] = 
 array ( 'table' => 'activity_tags',
           'fields' => array (
-              'id'=> array('name' =>'id', 'type' =>'id', 'len'=>'36','required'=>true),
               'activity_id'=>array('name' =>'activity_id', 'type' =>'id', 'len'=>'36'),
               'tag'=>array('name' =>'tag', 'type' =>'varchar', 'len'=>'100'),
               'count'=>array('name' =>'count','type' => 'int', 'len'=>'10'),
@@ -39,7 +38,6 @@ array ( 'table' => 'activity_tags',
             ),
             'indices' => array (
                   //name will be re-constructed adding idx_ and table name as the prefix like 'idx_accounts_'
-                  array ('name' => 'pk', 'type' => 'primary', 'fields' => array('id')),
                   array ('name' => 'tag_activity', 'type' => 'unique', 'fields' => array('tag', 'activity_id')),
             )
 )

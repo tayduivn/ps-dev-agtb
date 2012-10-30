@@ -471,15 +471,14 @@ class ActivityStream extends SugarBean {
         $tags = $this->getTags($text);
 
         foreach($tags as $tag) {
-            $id = $this->db->massageValue(create_guid(),$fieldDefs['id']);
             $date = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_modified']);
             $tag = $this->db->massageValue($tag, $fieldDefs['tag']);
             $actId = $this->db->massageValue($activityId, $fieldDefs['activity_id']);
-            $sql = "SELECT id FROM ".$tableName." WHERE tag = ".$tag." AND activity_id = ".$actId;
+            $sql = "SELECT activity_id FROM ".$tableName." WHERE tag = ".$tag." AND activity_id = ".$actId;
             $result = $this->db->getOne($sql);
             
             if(empty($result)) {
-                $sql = "INSERT INTO ".$tableName." (id, tag, activity_id, count, date_modified) VALUES (".$id.",".$tag.",".$actId.",1,".$date.")";
+                $sql = "INSERT INTO ".$tableName." (tag, activity_id, count, date_modified) VALUES (".$tag.",".$actId.",1,".$date.")";
             }
             else {
                 $sql = "UPDATE ".$tableName." SET count = (count + 1), date_modified = ".$date." WHERE tag = ".$tag." AND activity_id = ".$actId;
