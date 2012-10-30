@@ -41,11 +41,11 @@ class SugarACLUsers extends SugarACLStrategy
 
         $current_user = $this->getCurrentUser($context);
 
+        if(is_admin($current_user)) {
+            return true;
+        }
 
         $bean = self::loadBean($module, $context);
-
-
-
 
         if(empty($view) || empty($current_user->id)) {
             return true;
@@ -60,12 +60,16 @@ class SugarACLUsers extends SugarACLStrategy
         }
 
         if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security' ) {
+            if($view == 'field' && $context['field'] == 'password') {
+                return false;
+            }
+            if($view == 'field' && $context['field'] == 'is_admin' && ($context['action'] == 'edit' || $context['action'] == 'massupdate' || $context['action'] == 'delete')) {
+                return false;
+            }
             return true;
         }
 
-        if(is_admin($current_user)) {
-            return true;
-        }
+
 
         return false;
     }
