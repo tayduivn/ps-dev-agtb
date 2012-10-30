@@ -70,10 +70,10 @@
          */
         registerBreadCrumbLabel : function(label) {
             var labelObj = {
-                'index': this.breadCrumbLabels.length,
-                'label': label
-            };
-            var found = false;
+                    'index': this.breadCrumbLabels.length,
+                    'label': label
+                },
+                found = false;
             _.each(this.breadCrumbLabels, function(crumb) {
                 if(crumb.label == label) {
                     found = true;
