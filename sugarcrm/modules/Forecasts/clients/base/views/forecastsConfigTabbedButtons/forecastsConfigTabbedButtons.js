@@ -44,6 +44,8 @@
      * @param evt
      */
     close:function (evt) {
+        // set the cancelClicked flag without dispatching change events
+        this.context.forecasts.config.set({ cancelClicked : true }, {silent:true});
         this.layout.context.trigger("modal:close");
     },
 
