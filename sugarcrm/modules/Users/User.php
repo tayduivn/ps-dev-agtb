@@ -1791,6 +1791,10 @@ EOQ;
      * @return bool
      */
     public function isDeveloperForModule($module) {
+        if(empty($this->id)) {
+            // empty user is no developer
+            return false;
+        }
         if ($this->isAdmin()) {
             return true;
         }
