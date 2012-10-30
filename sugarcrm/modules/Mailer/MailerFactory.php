@@ -21,11 +21,9 @@ if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once "MailerException.php";                      // requires MailerException in order to throw exceptions of
-                                                         // that type
-require_once "EmailHeaders.php";                         // email headers are contained in an EmailHeaders object
-require_once "EmailIdentity.php";                        // requires EmailIdentity to build the From header
-require_once "SmtpMailer.php";                           // requires SmtpMailer in order to create a SmtpMailer
+require_once "MailerException.php"; // requires MailerException in order to throw exceptions of that type
+require_once "EmailHeaders.php";    // email headers are contained in an EmailHeaders object
+require_once "EmailIdentity.php";   // requires EmailIdentity to build the From header
 
 // external imports
 require_once "modules/OutboundEmailConfiguration/OutboundEmailConfigurationPeer.php"; // needs the constants that
@@ -46,11 +44,11 @@ class MailerFactory
     // key = mode; value = mailer class
     protected static $modeToMailerMap = array(
         OutboundEmailConfigurationPeer::MODE_SMTP => array(
-            "path"  => ".",          // the path to the class file without trailing slash ("/")
-            "class" => "SmtpMailer", // the name of the class
+            "path"  => "modules/Mailer", // the path to the class file without trailing slash ("/")
+            "class" => "SmtpMailer",     // the name of the class
         ),
         OutboundEmailConfigurationPeer::MODE_WEB  => array(
-            "path"  => ".",
+            "path"  => "modules/Mailer",
             "class" => "WebMailer",
         ),
     );
@@ -116,8 +114,12 @@ class MailerFactory
 
         $path  = self::$modeToMailerMap[$mode]["path"];
         $class = self::$modeToMailerMap[$mode]["class"];
-        $file  = "{$path}/{$class}.php";
-        @include_once $file; // suppress errors
+
+        if (!class_exists($class)) {
+            // import the file where the class is defined
+            $file = "{$path}/{$class}.php";
+            @include_once $file; // suppress errors
+        }
 
         if (!class_exists($class)) {
             throw new MailerException(
