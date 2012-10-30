@@ -38,7 +38,7 @@ class SugarEmailAddress extends SugarBean
      */
     function SugarEmailAddress()
     {
-        parent::SugarBean();
+        parent::__construct();
         $this->index = self::$count;
         self::$count++;
     }

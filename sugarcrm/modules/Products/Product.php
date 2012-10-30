@@ -126,9 +126,9 @@ class Product extends SugarBean {
 								 'weight',  'support_name', 'support_term',
 								 'support_description', 'support_contact');
 
-	function Product() {
+	public function __construct() {
 
-		parent::SugarBean();
+		parent::__construct();
 
 		$this->team_id = 1; // make the item globally accessible
 

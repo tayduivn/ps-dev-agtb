@@ -35,7 +35,7 @@ require_once('modules/ModuleBuilder/views/view.listview.php');
 
 class ViewPortalListView extends ViewListView 
 {
-    function __construct()
+    public function __construct()
     {
         $this->editModule = $_REQUEST['view_module'];
         $this->editLayout = $_REQUEST['view'];

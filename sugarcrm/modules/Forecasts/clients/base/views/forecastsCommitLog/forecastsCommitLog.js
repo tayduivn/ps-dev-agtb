@@ -99,6 +99,19 @@
      */
     timeperiod: {},
 
+    /**
+     * Store the Best Case Number from the very last commit in the log
+     */
+    previousBestCase: '',
+    /**
+     * Store the Likely Case Number from the very last commit in the log
+     */
+    previousLikelyCase: '',
+    /**
+     * Store the Worst Case Number from the very last commit in the log
+     */
+    previousWorstCase: '',
+
     events : {
         'click i[id=show_hide_history_log]' : 'showHideHistoryLog'
     },
@@ -210,6 +223,11 @@
             self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));
             previousModel = model;
         });
+
+        // save the values from the last model to display in the dataset line on the interface
+        this.previousBestCase = app.currency.formatAmountLocale(previousModel.get('best_case'));
+        this.previousLikelyCase = app.currency.formatAmountLocale(previousModel.get('likely_case'));
+        this.previousWorstCase = app.currency.formatAmountLocale(previousModel.get('worst_case'));
 
         self.render();
     }

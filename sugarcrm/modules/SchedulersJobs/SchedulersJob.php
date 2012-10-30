@@ -75,9 +75,9 @@ class SchedulersJob extends Basic
 	/**
 	 * Job constructor.
 	 */
-	function SchedulersJob()
+	public function __construct()
 	{
-        parent::Basic();
+        parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -516,11 +516,6 @@ class SchedulersJob extends Basic
 		}
         else if ($exJob[0] == 'class')
         {
-            //BEGIN SUGARCRM flav=pro ONLY
-            //TODO-SFA: Hook this up to some generic autoloading framework
-            require_once(get_custom_file_if_exists('modules/Opportunities/jobs/UpdateOppsJob.php'));
-            //END SUGARCRM flav=pro ONLY
-
             // autoloader will look for this class and include it
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
