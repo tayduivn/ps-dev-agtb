@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=pro ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -25,18 +26,21 @@
 require_once 'modules/ModuleBuilder/controller.php';
 require_once 'modules/ModuleBuilder/parsers/ParserFactory.php';
 
-class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
+/**
+ * Bug 57260 - Panel label of mobile layout in module builder is wrong
+ */
+class Bug57260Test extends Sugar_PHPUnit_Framework_TestCase {
     public $mbController;
     public $mbPackage;
     public $mbModule;
-    public $dirname  = 'custom/modulebuilder/packages/test/modules/test/clients/';
+    
 
     public function setUp() {
         SugarTestHelper::setUp('current_user');
         $GLOBALS['current_user']->is_admin = true;
         SugarTestHelper::setUp('app_list_strings');
-        // Cannot use the SugarTestHelper because it requires a module name
-        $GLOBALS['mod_strings'] = array();
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('mod_strings', array('ModuleBuilder'));
 
         $_REQUEST['name'] = 'test';
         $_REQUEST['view'] = 'advanced_search';
@@ -58,7 +62,6 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
         unset($_REQUEST['readme']);
         unset($_REQUEST['author']);
         unset($_REQUEST['description']);
-
     }
 
     public function tearDown() {
@@ -84,45 +87,34 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
     }
 
 	/**
-     * @group Bug56675
+     * @group Bug57260
      * 
-     * Tests that a clients directory and metadata files for clients exist after
-     * creating a custom module
+     * Tests that the default panel label of LBL_PANEL_DEFAULT correctly translates
+     * to 'Default' when rendered for undeployed modules in studio
 	 */
-    public function testClientsDirectoryCreatedWhenCustomModuleSaved() {
-        // Make sure the clients directory is there
-        $this->assertFileExists($this->dirname, "$this->dirname was not created when the custom module was saved.");
+    public function testUndeployedModuleHasDefaultLabelInStudioLayoutEditor() {
+        // Mock the request
+        $_REQUEST['module'] = 'ModuleBuilder';
+        $_REQUEST['MB'] = true;
+        $_REQUEST['action'] = 'editLayout';
+        $_REQUEST['view'] = 'wirelessdetailview';
+        $_REQUEST['view_module'] = 'test';
+        $_REQUEST['view_package']= 'test';
         
-        //BEGIN SUGARCRM flav=pro ONLY
-        // Make sure the child directories and files are there for mobile
-        $types = array('list', 'edit', 'detail');
-        foreach ($types as $type) {
-            $dir = $this->dirname . 'mobile/views/' . $type;
-            $this->assertFileExists($dir, "$dir directory was not created when the module was saved");
-            
-            $file = $dir . '/' . $type . '.php';
-            $this->assertFileExists($file, "$file was not created when module was saved");
-        }
-        //END SUGARCRM flav=pro ONLY
+        // Get the view we need
+        require_once 'modules/ModuleBuilder/views/view.layoutview.php';
+        $view = new ViewLayoutView();
         
-        //BEGIN SUGARCRM flav=ent ONLY
-        // Modified this test for Bug 57259 to test NOT exists for portal viewdefs
-        $dir = $this->dirname . 'portal';
-        $this->assertFileNotExists($dir, "$dir directory was created when the module was saved but should not have been");
-        //END SUGARCRM flav=ent ONLY
+        // Get the output
+        ob_start();
+        $view->display();
+        $output = ob_get_clean();
+        $output = json_decode($output);
+        
+        // Test that our output is what we wanted
+        $this->assertNotEmpty($output->center->content, "Expected output from parsing layout editor not returned");
+
+        // Test the actual output
+        $this->assertRegExp("|<span class='panel_name'?.*>\s*Default\s*</span>|", $output->center->content, "'Default' was not found in the rendered view");
     }
-    
-    //BEGIN SUGARCRM flav=pro ONLY
-    /**
-     * @group Bug56675
-     */
-    public function testUndeployedMobileListViewsHavePanelDefs()
-    {
-        $parser = ParserFactory::getParser(MB_WIRELESSLISTVIEW, 'test', 'test', null, MB_WIRELESS);
-        $paneldefs = $parser->getPanelDefs();
-        $this->assertNotEmpty($paneldefs, "Undeployed Module list view defs have no panel defs");
-        $this->assertTrue(is_array($paneldefs), "Undeployed Module List view panel defs are not of type ARRAY");
-        $this->assertTrue(isset($paneldefs[0]['label']), "Undeployed Module List view panel defs do not have a label");
-    }
-    //END SUGARCRM flav=pro ONLY
 }

@@ -302,7 +302,6 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             if (!empty($_POST['existing_contact_invitees'])) {
                 $existingContacts =  explode(",", trim($_POST['existing_contact_invitees'], ','));
             }        
-
             if (!empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == 'Contacts') {
                 if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $contactInvitees)) {
                     $contactInvitees[] = $_REQUEST['relate_id'];
@@ -316,7 +315,6 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
             if (!empty($_POST['existing_lead_invitees'])) {
                 $existingLeads =  explode(",", trim($_POST['existing_lead_invitees'], ','));
             }
-
             if (!empty($_REQUEST['relate_to']) && $_REQUEST['relate_to'] == 'Leads') {
                 if (!empty($_REQUEST['relate_id']) && !in_array($_REQUEST['relate_id'], $leadInvitees)) {
                     $leadInvitees[] = $_REQUEST['relate_id'];
@@ -326,7 +324,6 @@ function handleSave($prefix,$redirect=true,$useRequired=false) {
 
             // Call the Call module's save function to handle saving other fields besides
             // the users and contacts relationships
-
             $focus->update_vcal = false;    // Bug #49195 : don't update vcal b/s related users aren't saved yet, create vcal cache below
             
             $focus->users_arr = $userInvitees;

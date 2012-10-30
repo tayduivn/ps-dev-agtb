@@ -22,62 +22,61 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once ('include/SugarFields/Fields/Datetime/SugarFieldDatetime.php');
 
 /**
- * @group Bug49691
+ * Bug57252Test.php
+ * @author Matt Marum
+ *
+ * This unit test checks to make sure that we are pulling the Admin panel date/time format
+ * preferences when a user does not have an existing date/time format preference.
+ *
  */
-class Bug49691bTest extends Sugar_PHPUnit_Framework_TestCase {
+class Bug57252Test extends Sugar_PHPUnit_Framework_TestCase
+{
 
-    var $bean;
-    var $sugarField;
+    static $testUser;
 
-    var $oldDate;
-    var $oldTime;
+    public static function setUpBeforeClass()
+    {
 
-    public function setUp() {
-        global $sugar_config;
-        $this->oldDate = $sugar_config['default_date_format'];
-        $sugar_config['default_date_format'] = 'm/d/Y';
-        $this->oldTime = $sugar_config['default_time_format'];
-        $sugar_config['default_time_format'] = 'H:i';
-        $this->bean = new Bug49691bMockBean();
-        $this->sugarField = new SugarFieldDatetime("Account");
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser();
+        Bug57252Test::$testUser = SugarTestUserUtilities::createAnonymousUser();
+        Bug57252Test::$testUser->save();
     }
 
-    public function tearDown() {
-        global $sugar_config;
-        unset($GLOBALS['current_user']);
-        $sugar_config['default_date_format'] = $this->oldDate;
-        $sugar_config['default_time_format'] = $this->oldTime;
+    public static function tearDownAfterClass()
+    {
+
+        Bug57252Test::$testUser->resetPreferences();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
-        unset($this->sugarField);
     }
 
     /**
-     * @dataProvider providerFunction
-     * @return void
+     * @group bug57252
+     *
      */
-    public function testDBDateConversion($dateValue, $expected) {
-        global $current_user;
+    public function testDefaultDateTimeFormatFromSystemConfig()
+    {
+        global $sugar_config;
 
-        $this->bean->test_c = $dateValue;
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('datef'), $sugar_config['default_date_format']);
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('timef'), $sugar_config['default_time_format']);
 
-        $this->sugarField->save($this->bean, array('test_c'=>$dateValue),'test_c', null, '');
-
-        $this->assertNotEmpty($this->bean->test_c);
-        $this->assertSame($expected, $this->bean->test_c);
     }
 
-    public function providerFunction() {
-        return array(
-            array('01/01/2012', '2012-01-01'),
-            array('2012-01-01', '2012-01-01'),
-        );
-    }
-}
+    /**
+     * @group bug57252
+     *
+     */
+    public function testDefaultDateTimeFormatFromUserPref()
+    {
 
-class Bug49691bMockBean {
-    var $test_c;
+        Bug57252Test::$testUser->setPreference('datef','d/m/Y', 0, 'global');
+        Bug57252Test::$testUser->setPreference('timef','h.iA',0,'global');
+
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('datef'), 'd/m/Y');
+        $this->assertEquals(Bug57252Test::$testUser->getPreference('timef'), 'h.iA');
+
+    }
+
+
 }
