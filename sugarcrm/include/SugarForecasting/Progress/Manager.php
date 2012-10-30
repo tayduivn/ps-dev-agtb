@@ -44,17 +44,21 @@ class SugarForecasting_Progress_Manager extends SugarForecasting_Progress_Abstra
      */
     public function getManagerProgress()
     {
-        global $current_user;
         //create opportunity to use to build queries
         $this->opportunity = new Opportunity();
 
         //get the quota data for user
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
-        if($current_user->reports_to_id != "") {
+
+        //grab user that is the target of this call to check if it is the top level manager
+        $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
+
+        //top level manager has to receive special treatment, but all others can be routed through quota function.
+        if($targetedUser->reports_to_id != "") {
             $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
         } else {
-            $quotaData["amount"] = $this->getTopLevelManagerQuota($current_user->id, $this->getArg('timeperiod_id'));
+            $quotaData["amount"] = $this->getTopLevelManagerQuota($targetedUser->id, $this->getArg('timeperiod_id'));
         }
 
         //get data

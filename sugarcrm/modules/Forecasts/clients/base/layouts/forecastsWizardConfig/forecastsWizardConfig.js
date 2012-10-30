@@ -69,8 +69,19 @@
          * @param {string} label
          */
         registerBreadCrumbLabel : function(label) {
-            this.breadCrumbLabels.push(label);
-            this.breadCrumbLabels = _.uniq(this.breadCrumbLabels);
+            var labelObj = {
+                    'index': this.breadCrumbLabels.length,
+                    'label': label
+                },
+                found = false;
+            _.each(this.breadCrumbLabels, function(crumb) {
+                if(crumb.label == label) {
+                    found = true;
+                }
+            })
+            if(!found) {
+                this.breadCrumbLabels.push(labelObj);
+            }
         },
 
         /**

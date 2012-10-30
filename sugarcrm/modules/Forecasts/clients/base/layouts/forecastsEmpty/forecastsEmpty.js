@@ -24,10 +24,6 @@
 (function (app) {
 
     app.view.layouts.ForecastsEmptyLayout = app.view.layouts.ForecastsLayout.extend({
-        /**
-         * location for the window to redirect to when OK or Cancel is clicked by default
-         */
-        loc: 'index.php?module=Forecasts',
 
         initialize:function (options) {
             options.context = _.extend(options.context, this.initializeAllModels(options.context));
@@ -88,10 +84,11 @@
          * Checks the is_setup config setting and determines where to send the user
          */
         checkSettingsAndRedirect: function() {
+            var loc = 'index.php?module=Forecasts';
             if(!this.context.forecasts.config.get('is_setup')) {
-                this.loc = 'index.php?module=Home';
+                loc = 'index.php?module=Home';
             }
-            window.location = this.loc;
+            window.location = loc;
         }
     });
 

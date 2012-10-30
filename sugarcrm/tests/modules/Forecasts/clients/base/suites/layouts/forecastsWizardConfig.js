@@ -68,14 +68,20 @@ describe("The forecastsWizardConfig layout controller", function(){
 
         it("should return an array containing passed in value", function() {
             layout.registerBreadCrumbLabel('Test1');
-            expect(layout.getBreadCrumbLabels()).toContain('Test1');
+            expect(layout.getBreadCrumbLabels()).toContain({
+                'index': 0,
+                'label': 'Test1'
+            });
         });
 
         it("should only contain contain 1 unique value", function() {
             layout.registerBreadCrumbLabel('Test1');
             layout.registerBreadCrumbLabel('Test1');
             expect(layout.getBreadCrumbLabels().length).toEqual(1);
-            expect(layout.getBreadCrumbLabels()).toContain('Test1');
+            expect(layout.getBreadCrumbLabels()).toContain({
+                'index': 0,
+                'label': 'Test1'
+            });
         })
     });
 

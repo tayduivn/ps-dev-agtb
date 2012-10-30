@@ -5,7 +5,7 @@
  * @extends View.View
  */
 ({
-    values:{},
+    values: new Backbone.Model(),
     url:'rest/v10/Forecasts/chart',
 
     chart: null,
@@ -118,7 +118,6 @@
             category : app.defaultSelections.category
         };
 
-
         this.handleRenderOptions(values);
     },
 
@@ -129,7 +128,7 @@
     },
 
     toggleRepOptionsVisibility : function() {
-        if(this.values.display_manager === true) {
+        if(this.values.get('display_manager') === true) {
             this.$el.find('div.groupByOptions').hide();
         } else {
             this.$el.find('div.groupByOptions').show();
@@ -168,18 +167,26 @@
             }
         }, this);
         this.context.forecasts.on('change:selectedUser', function (context, user) {
-            self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
-            self.toggleRepOptionsVisibility();
+            if(!_.isEmpty(self.chart)) {
+                self.handleRenderOptions({user_id: user.id, display_manager : (user.showOpps === false && user.isManager === true)});
+                self.toggleRepOptionsVisibility();
+            }
         });
         this.context.forecasts.on('change:selectedTimePeriod', function (context, timePeriod) {
-            self.timeperiod_label = timePeriod.label;
-            self.handleRenderOptions({timeperiod_id: timePeriod.id});
+            if(!_.isEmpty(self.chart)) {
+                self.timeperiod_label = timePeriod.label;
+                self.handleRenderOptions({timeperiod_id: timePeriod.id});
+            }
         });
         this.context.forecasts.on('change:selectedGroupBy', function (context, groupBy) {
-            self.handleRenderOptions({group_by: groupBy});
+            if(!_.isEmpty(self.chart)) {
+                self.handleRenderOptions({group_by: groupBy});
+            }
         });
         this.context.forecasts.on('change:selectedCategory', function(context, value) {
-            self.handleRenderOptions({category: value});
+            if(!_.isEmpty(self.chart)) {
+                self.handleRenderOptions({category: value});
+            }
         });
         this.context.forecasts.on('change:hiddenSidebar', function(context, value){
             // set the value of the hiddenSidecar to we can stop the render if the sidebar is hidden
@@ -190,15 +197,21 @@
                 self.renderChart();
             }
         });
+        // watch for the change event to fire.  if it fires make sure something actually changed in the array
+        this.values.on('change', function(context, value) {
+            if(!_.isEmpty(value.changes)) {
+                self.renderChart();
+            }
+        });
     },
 
+    /**
+     * Handle putting the optoins into the values array that is used to keep track of what changes
+     * so we only render when something changes.
+     * @param options
+     */
     handleRenderOptions:function (options) {
-        var self = this;
-        _.each(options, function (value, key) {
-            self.values[key] = value;
-        });
-
-        self.renderChart();
+        this.values.set(options);
     },
 
     /**
@@ -206,18 +219,6 @@
      */
     renderChart:function () {
         this.chart = this._initializeChart();
-    },
-
-    /**
-     * Only update the json on the chart
-     */
-    updateChart: function() {
-        var self = this;
-        SUGAR.charts.update(self.chart, self.url, self.values, _.bind(function(chart){
-            SUGAR.charts.generateLegend(chart, chart.config.injectInto)
-            // update the chart title
-            self.$el.find('h4').html(self.chartTitle);
-        }, self));
     },
 
     /**
@@ -262,7 +263,7 @@
             },
             chartConfig = {
                 "orientation":"vertical",
-                "barType": this.values.display_manager ? "grouped" : "stacked",
+                "barType": this.values.get('display_manager') ? "grouped" : "stacked",
                 "tip":"name",
                 "chartType":"barChart",
                 "imageExportType":"png",
@@ -293,8 +294,8 @@
             }
         );
 
-        if(this.values.display_manager === true) {
-            this.values.category = "include";
+        if(this.values.get('display_manager') === true) {
+            this.values.set({category: 'include'}, {silent: true});
         }
 
         // update the chart title
@@ -302,7 +303,7 @@
         var text = hb({'key' : "LBL_CHART_FORECAST_FOR", 'module' : 'Forecasts', 'args' : this.timeperiod_label});
         this.$el.find('h4').html(text);
 
-        var params = this.values || {};
+        var params = this.values.toJSON() || {};
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
 

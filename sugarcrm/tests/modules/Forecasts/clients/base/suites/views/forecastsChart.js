@@ -98,4 +98,138 @@ describe("The forecasts chart view", function () {
             expect(_.keys(ds)).toEqual(['likely', 'best', 'worst']);
         });
     });
+
+    describe("handleRenderOptions", function(){
+        var renderStub, valuesSpy;
+        beforeEach(function() {
+            renderStub = sinon.stub(view, "renderChart", function(){});
+            valuesSpy = sinon.spy(view.values, "on");
+            view.context.forecasts = {
+                'on': function() {},
+                'worksheetmanager' : {
+                    'on' : function() {}
+                },
+                'worksheet' : {
+                    'on' : function() {}
+                }
+            };
+            view.values.set({hello : 'world'}, {silent: true});
+            view.bindDataChange();
+        });
+
+        afterEach(function() {
+            valuesSpy.restore();
+            renderStub.restore();
+            delete view.context;
+        });
+
+        it("should cause values model to fire change event", function(){
+            view.handleRenderOptions({hello: 'jon'});
+            expect(valuesSpy).toHaveBeenCalled();
+            expect(renderStub).toHaveBeenCalled();
+            expect(view.values.get('hello')).toEqual('jon');
+        });
+
+        it("should cause values model not fire change event", function(){
+            view.handleRenderOptions({hello: 'world'});
+            expect(valuesSpy).toHaveBeenCalled();
+            expect(renderStub).not.toHaveBeenCalled();
+            expect(view.values.get('hello')).toEqual('world');
+        });
+    });
+
+    describe("forecasts context change events", function() {
+        var handleRenderOptionsStub, toggleRepOptionsVisibilityStub, valuesSpy;
+        beforeEach(function() {
+            handleRenderOptionsStub = sinon.stub(view, "handleRenderOptions", function(){});
+            toggleRepOptionsVisibilityStub = sinon.stub(view, "toggleRepOptionsVisibility", function(){});
+            valuesSpy = sinon.spy(view.values, "on");
+            view.context.forecasts = new Backbone.Model({});
+
+            view.context.forecasts.worksheetmanager = {
+                    'on' : function() {}
+                };
+            view.context.forecasts.worksheet = {
+                    'on' : function() {}
+                };
+            view.bindDataChange();
+        });
+
+        afterEach(function() {
+            handleRenderOptionsStub.restore();
+            toggleRepOptionsVisibilityStub.restore();
+            delete view.context;
+            view.chart = null;
+        });
+
+        it("trigger change:selectedUser should not call handleRenderOptions", function() {
+            view.context.forecasts.set('selectedUser', {hello: 'world'});
+            expect(handleRenderOptionsStub).not.toHaveBeenCalled()
+        });
+
+        it("trigger change:selectedUser should call handleRenderOptions", function() {
+            view.chart = {'chart_object' : 'obj'};
+            view.context.forecasts.set('selectedUser', {hello: 'world'});
+            expect(handleRenderOptionsStub).toHaveBeenCalled()
+        });
+
+        it("trigger change:selectedTimePeriod should not call handleRenderOptions", function() {
+            view.context.forecasts.set('selectedTimePeriod', {hello: 'world'});
+            expect(handleRenderOptionsStub).not.toHaveBeenCalled()
+        });
+
+        it("trigger change:selectedTimePeriod should call handleRenderOptions", function() {
+            view.chart = {'chart_object' : 'obj'};
+            view.context.forecasts.set('selectedTimePeriod', {hello: 'world'});
+            expect(handleRenderOptionsStub).toHaveBeenCalled()
+        });
+
+        it("trigger change:selectedGroupBy should not call handleRenderOptions", function() {
+            view.context.forecasts.set('selectedGroupBy', {hello: 'world'});
+            expect(handleRenderOptionsStub).not.toHaveBeenCalled()
+        });
+
+        it("trigger change:selectedGroupBy should call handleRenderOptions", function() {
+            view.chart = {'chart_object' : 'obj'};
+            view.context.forecasts.set('selectedGroupBy', {hello: 'world'});
+            expect(handleRenderOptionsStub).toHaveBeenCalled()
+        });
+
+        it("trigger change:selectedCategory should not call handleRenderOptions", function() {
+            view.context.forecasts.set('selectedCategory', {hello: 'world'});
+            expect(handleRenderOptionsStub).not.toHaveBeenCalled()
+        });
+
+        it("trigger change:selectedCategory should call handleRenderOptions", function() {
+            view.chart = {'chart_object' : 'obj'};
+            view.context.forecasts.set('selectedCategory', {hello: 'world'});
+            expect(handleRenderOptionsStub).toHaveBeenCalled()
+        });
+
+        describe("hiddenSidebar listener, stopRender value", function(){
+
+            var renderChartStub;
+
+            beforeEach(function(){
+                renderChartStub = sinon.stub(view, "renderChart", function(){})
+            });
+
+            afterEach(function(){
+                renderChartStub.restore();
+            });
+
+            it("should be true", function(){
+                view.context.forecasts.set('hiddenSidebar', true);
+
+                expect(view.stopRender).toBeTruthy();
+                expect(renderChartStub).not.toHaveBeenCalled();
+            });
+            it("should be false", function(){
+                view.context.forecasts.set('hiddenSidebar', false);
+
+                expect(view.stopRender).toBeFalsy();
+                expect(renderChartStub).toHaveBeenCalled();
+            });
+        })
+    })
 });
