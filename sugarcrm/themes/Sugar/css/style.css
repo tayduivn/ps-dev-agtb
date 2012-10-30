@@ -3939,6 +3939,7 @@ button.id-ff-remove {
 #moduleList 
 {
 	float: left;
+        width:auto !important;
 }
 
 
