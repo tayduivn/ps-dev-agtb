@@ -678,6 +678,11 @@ class SugarSNIP
 				foreach($data["fields"] as $key => $value) {
 					$obj->$key = str_replace(array_keys($emaildata), array_values($emaildata), $value);
 				}
+                // special case for Opportunity
+                if ( $obj instanceof Opportunity && empty($obj->date_closed) )
+                {
+                    $obj->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
+                }
 				// save
 				$obj->save();
 				// associate email to new object

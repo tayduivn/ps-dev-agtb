@@ -110,7 +110,7 @@ class RestRelateTest extends RestTestBase {
             $opp = new Opportunity();
             $opp->name = "UNIT TEST ".($i+1)." - ".create_guid();
             $opp->amount = (10000*$i)+500;
-            $opp->date_closed = '2014-12-'.($i+1);
+            $opp->date_closed = sprintf('2014-12-%02d', ($i+1));
             $opp->sales_stage = $GLOBALS['app_list_strings']['sales_stage_dom']['Qualification'];
             $opp->save();
             $this->opps[] = $opp;

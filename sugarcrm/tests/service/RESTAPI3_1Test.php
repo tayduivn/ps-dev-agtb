@@ -213,6 +213,7 @@ class RESTAPI3_1Test extends Sugar_PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $quote->name = "Test " . uniqid();
+        $quote->date_quote_expected_closed = TimeDate::getInstance()->getNow()->asDbDate();
         $quote->save(FALSE);
 
         $result = $this->_login(); // Logging in just before the REST call as this will also commit any pending DB changes
