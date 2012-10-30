@@ -213,6 +213,8 @@ function loadSugarChart (chartId, jsonFilename, css, chartConfig, params, callba
                         barChart.json = json;
                         that.chartObject = barChart;
 
+                        SUGAR.charts.setChartObject(barChart);
+
                     }
                     SUGAR.charts.callback(callback);
                 });
@@ -688,6 +690,10 @@ function swapChart(chartId,jsonFilename,css,chartConfig){
                 // if the call back is fired, include the chart as the only param
                 callback(this.chart);
             }
+        },
+
+        setChartObject : function(chart) {
+            this.chart = chart;
         },
 
         /**
