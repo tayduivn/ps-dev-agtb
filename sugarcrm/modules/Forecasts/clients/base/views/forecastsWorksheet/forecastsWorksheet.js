@@ -636,6 +636,8 @@
                         selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim();
                     }
 
+                    self.context.forecasts.trigger('forecasts:worksheet:render');
+
                     return (_.contains(params, selectVal));
 
                 }
@@ -646,6 +648,7 @@
 	        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
 	        // fix the style on the rows that contain a checkbox
 	        this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
+            this.context.forecasts.trigger('forecasts:worksheet:render');
     	}
     },
 
