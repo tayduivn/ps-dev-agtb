@@ -41,6 +41,11 @@ class Bug54098Test extends Sugar_PHPUnit_Framework_TestCase
     private $_aProspectlists_Prospects;
     private $_aProspectlists_Campaigns;
 
+    public function setUp()
+    {
+        SugarTestHelper::setUp('current_user');
+    }
+
     public function tearDown()
     {
         SugarTestContactUtilities::removeAllCreatedContacts();
@@ -48,6 +53,7 @@ class Bug54098Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestProspectListsUtilities::removeCreatedProspectLists();
         $this->deleteProspectlistToCampaignRelationRecords();
         $this->deleteProspectlistToContactRelationRecords();
+        SugarTestHelper::tearDown();
     }
 
     /**

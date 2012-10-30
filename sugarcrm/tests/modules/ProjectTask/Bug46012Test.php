@@ -46,6 +46,8 @@ class Bug46012Test extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
         $GLOBALS['current_user'] = $this->user = SugarTestUserUtilities::createAnonymousUser();
         $this->project = new Project();
         $this->project->name = 'Bug46012Test';
@@ -61,6 +63,7 @@ class Bug46012Test extends Sugar_PHPUnit_Framework_TestCase
 
         $GLOBALS['db']->query("DELETE FROM project WHERE id='{$this->project->id}'");
         $GLOBALS['db']->query("DELETE FROM project_task WHERE id='{$this->task->id}'");
+        SugarTestHelper::tearDown();
     }
 
 
