@@ -184,7 +184,15 @@
                 }
                 else {
                     self.tourData = tourData;
-                    self.overviewData = self.tourData[self.module][self.viewType]["tour_overview_data"];
+                    if(!self.tourData[self.module]) {
+                        app.logger.debug("Tour data does not contain current module: " + self.module);
+                    } else if(!self.tourData[self.module][self.viewType]) {
+                        app.logger.debug("Tour data does not contain current view: " + self.viewType);
+                    } else if(!self.tourData[self.module][self.viewType]["tour_overview_data"]) {
+                        app.logger.debug("Tour data does not contain an overview for the current view.");
+                    } else {
+                        self.overviewData = self.tourData[self.module][self.viewType]["tour_overview_data"];
+                    }
                 }
         });
     },
@@ -267,7 +275,7 @@
             // shift left or right
             case "top":
             case "bottom":
-                var rightPos = xyOffset.left + popoverWidth
+                var rightPos = xyOffset.left + popoverWidth;
 
                 if( xyOffset.left < 0 ) {
                     var leftOffset = (xyOffset.left)*(-1) + buffer;
