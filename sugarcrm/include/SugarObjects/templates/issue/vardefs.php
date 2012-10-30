@@ -68,6 +68,7 @@ $vardefs = array (
     'len'=>255,
     'comment' => 'The type of issue (ex: issue, feature)',
     'merge_filter' => 'enabled',
+    'sortable' => true,
   ),
 
 		'status' => array (
@@ -79,7 +80,8 @@ $vardefs = array (
 			'audited' => true,
 			'comment' => 'The status of the issue',
 			'merge_filter' => 'enabled',
-		    'unified_search' => true,	
+		    'unified_search' => true,
+            'sortable' => true,
 		),
 
 		'priority' => array (
@@ -91,7 +93,8 @@ $vardefs = array (
 			'audited' => true,
 			'comment' => 'An indication of the priorty of the issue',
 			'merge_filter' => 'enabled',
-		    'unified_search' => true,	
+		    'unified_search' => true,
+            'sortable' => true,
 		),
 
 		'resolution' => array (

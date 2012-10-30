@@ -280,26 +280,27 @@ class MetaDataManager {
             }
         }
 
+        // If sortable isn't already set,
+        //      If the field is indexed, we should set it sortable to TRUE
+        //      Otherwise, set sortable to FALSE (Bug56943, Bug57644)
         if(!empty($indexes)) {
-            // If the field is indexed or built-in, then it should be sortable. (Bug56943, Bug57644)
             foreach($data['fields'] AS $field_name => $info) {
-                $data['fields'][$field_name]['sortable'] = false;
-                if(isset($indexes[$field_name]) || !$this->isCustomField($field_name)) {
-                    $data['fields'][$field_name]['sortable'] = true;
+                if(!isset($data['fields'][$field_name]['sortable'])){
+                    $data['fields'][$field_name]['sortable'] = false;
+                    if(isset($indexes[$field_name])) {
+                        $data['fields'][$field_name]['sortable'] = true;
+                    }
+                }
+            }
+        } else {
+            foreach($data['fields'] AS $field_name => $info) {
+                if(!isset($data['fields'][$field_name]['sortable'])){
+                    $data['fields'][$field_name]['sortable'] = false;
                 }
             }
         }
         
         return $data;
-    }
-
-    /**
-     * Tests a fieldName to determine if it is for a custom field
-     * @param string $fieldName Name of field
-     * @return bool TRUE if the fieldName is custom
-     */
-    private function isCustomField($fieldName){
-        return substr($fieldName, -2) == "_c";
     }
 
     /**
