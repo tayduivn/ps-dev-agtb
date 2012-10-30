@@ -87,7 +87,7 @@
     	
 		_.each(worksheet.models, function(model, index){
 			var isDirty = model.get("isDirty");
-			if(typeof(isDirty) == "boolean" && isDirty ){
+			if(_.isBoolean(isDirty) && isDirty){
 				self.enableCommitButton();
 				self.$el.find('a[id=save_draft]').removeClass('disabled');
 				//if something in the worksheet is dirty, we need to flag the entire worksheet as dirty.
@@ -190,7 +190,7 @@
     		var saveCount = 0;
     		_.each(worksheet.models, function(model, index){
     			var isDirty = model.get("isDirty");
-    			if(typeof(isDirty) == "boolean" && isDirty ){
+    			if(_.isBoolean(isDirty) && isDirty){
     				modelCount++;
     				model.set({draft: 1}, {silent:true});
     				model.save();

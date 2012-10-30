@@ -308,7 +308,7 @@
      */
     safeFetch: function(fetch){
     	
-        if(typeof fetch == 'undefined')
+        if(_.isUndefined(fetch))
         {
             fetch = true;
         }
@@ -326,7 +326,7 @@
     			var saveCount = 0;
     			_.each(collection.models, function(model, index){
 					var isDirty = model.get("isDirty");
-					if(typeof(isDirty) == "boolean" && isDirty ){
+					if(_.isBoolean(isDirty) && isDirty){
 						modelCount++;
         				model.set({draft: 1}, {silent:true});
         				model.save({}, {success:function(){
