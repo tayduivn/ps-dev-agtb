@@ -107,7 +107,7 @@ describe("The forecastCommitted view", function(){
             it("be in the user format", function(){
                 view.buildForecastsCommitted();
                 var testDate = new Date('2012-12-05T11:14:25-04:00');
-                var dateFormatted = app.date.format(testDate,'m/d/Y h:m:s');
+                var dateFormatted = app.date.format(testDate,app.user.get('datepref') + ' ' +  app.user.get('timepref'));
                 expect(view.previousDateEntered).toEqual(dateFormatted);
             });
         })
