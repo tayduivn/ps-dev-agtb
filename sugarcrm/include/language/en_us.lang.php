@@ -3481,6 +3481,28 @@ $app_strings = array (
     'LBL_PORTAL_TOUR_DONE_TITLE' => 'You\'re Done!',
     'LBL_PORTAL_TOUR_DONE_BODY' => 'You can always retake the tour or read documentation for more information.',
 
+    //in app tour
+    'LBL_TOUR_PDF_MANAGER' => 'New PDF Manager',
+    'LBL_TOUR_PDF_MANAGER_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 157px; margin-right: 20px;"><img src="themes/default/images/pt-pdf-manager.png" width="157" height="167"><div class="caption">PDF Manager link in Admin</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Admin users can modify predefined Quote and Invoice Templates</li><li class="icon-ok">Admin users can add new templates for standard or custom modules utilizing a flexible HTML editor</li><li class="icon-ok">The new PDF Manager enables companies to create custom, personalized PDF documents by merging data from any record in any module</li></ul><p>Click on Admin under Profile menu to find a link to the PDF Manager under the System settings</p><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 444px; top: -92px;"></i></div></div><div class="clear"></div>',
+    'LBL_TOUR_MEETINGS_CALLS' => 'Meetings and Calls',
+    'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION' => '<ul><li class="icon-ok">Recurring Meetings and Calls can now be scheduled from the detail view</li><li class="icon-ok">Invitees for Meetings or Calls can now be selected by searching for contacts associated with accounts</li></ul>',
+    'LBL_TOUR_NOTIFICATIONS' => 'Notifications',
+    'LBL_TOUR_NOTIFICATIONS_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 317px; margin-right: 20px;"><img src="themes/default/images/pt-notifications.png" width="317" height="212"><div class="caption">Notifications</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Administrators now receive a notification when the full text search indexing is completed</li></ul></div></div><div class="clear"></div>',
+    'LBL_TOUR_SPELL_CHECK' => 'Spell Check',
+    'LBL_TOUR_SPELL_CHECK_DESCRIPTION' => '<div style="float: left;"><div class="well" style="float: left; width: 112px; margin-right: 20px;"><img src="themes/default/images/pt-spell-check.png" width="112" height="212"><div class="caption">Spell check menu</div></div><div style="float: left; width: 400px;"><ul><li class="icon-ok">Spell checking is now available when composing emails,  editing PDF Manager templates, and when editing email templates in the Emails, Campaigns and Workflow modules.</li></ul></div></div><div class="clear"></div>',
+    'LBL_TOUR_IE8' => 'Internet Explorer 8',
+    'LBL_TOUR_IE8_DESCRIPTION' => '<ul><li class="icon-ok">Internet Explorer 8 web browser is no longer supported</li></ul>',
+    'LBL_TOUR_WELCOME' => 'Welcome to Sugar',
+    'LBL_TOUR_WATCH' => 'Watch What\'s New in Sugar',
+    'LBL_TOUR_FEATURES' => '<ul style=""><li class="icon-ok">Apply custom PDF templates to all modules</li><li class="icon-ok">Create recurring Meetings and Calls from detail view</li><li class="icon-ok">Search for invitees by account when scheduling Meetings and Calls</li><li class="icon-ok">Administrators are notified when Global Search indexing completes</li><li class="icon-ok">Spell Check is available in TinyMCE Editor</li><li class="icon-ok">IE 8 is no longer supported</li></ul><p>and much more!</p>',
+    'LBL_TOUR_VISIT' => 'For more information please visit our application',
+    'LBL_TOUR_DONE' => 'You\'re Done!',
+    'LBL_TOUR_REFERENCE_1' => 'You can always reference our',
+    'LBL_TOUR_REFERENCE_2' => 'through the "Support" link under the profile menu.',
+    'LNK_TOUR_DOCUMENTATION' => 'documentation',
+    'LBL_TOUR_CALENDAR_URL_1' => 'Do you share your SugarCRM calendar with 3rd party applications, such as Microsoft Outlook or Exchange? If so, you have a new URL. This new, more secure URL includes a personal key which will prevent unauthorized publishing of your calendar.',
+    'LBL_TOUR_CALENDAR_URL_2' => 'Retrieve your new shared calendar URL.',
+
     //for portal errors
     'LBL_PORTAL_INVALID_CREDS' => 'The username/password combination provided is incorrect, please try again.',
     'LBL_PORTAL_INVALID_CREDS_TITLE' => 'Invalid Credentials',

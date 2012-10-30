@@ -29,26 +29,26 @@ var rtl = rtl == "undefined" ? false : rtl;
 var modals=new Array();
 modals[0] = {
     target: "#globalLinksModule",
-    title: SUGAR.language.get('Home', 'LBL_TOUR_PDF_MANAGER'),
-    content: SUGAR.language.get('Home', 'LBL_TOUR_PDF_MANAGER_DESCRIPTION'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_PDF_MANAGER'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_PDF_MANAGER_DESCRIPTION'),
     placement: "bottom"
 };
 modals[1] = {
-    title: SUGAR.language.get('Home', 'LBL_TOUR_MEETINGS_CALLS'),
-    content: SUGAR.language.get('Home', 'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION')
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_MEETINGS_CALLS'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_MEETINGS_CALLS_DESCRIPTION')
 };
 modals[2] = {
     target: "#dcmenuSugarCube",
-    title: SUGAR.language.get('Home', 'LBL_TOUR_NOTIFICATIONS'),
-    content: SUGAR.language.get('Home', 'LBL_TOUR_NOTIFICATIONS_DESCRIPTION'),
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_NOTIFICATIONS'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_NOTIFICATIONS_DESCRIPTION'),
     placement: "bottom"
 };
 modals[3] = {
-    title: SUGAR.language.get('Home', 'LBL_TOUR_SPELL_CHECK'),
-    content: SUGAR.language.get('Home', 'LBL_TOUR_SPELL_CHECK_DESCRIPTION')
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_SPELL_CHECK'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_SPELL_CHECK_DESCRIPTION')
 };
 modals[4] = {
-    title: SUGAR.language.get('Home', 'LBL_TOUR_IE8'),
-    content: SUGAR.language.get('Home', 'LBL_TOUR_IE8_DESCRIPTION')
+    title: SUGAR.language.get('app_strings', 'LBL_TOUR_IE8'),
+    content: SUGAR.language.get('app_strings', 'LBL_TOUR_IE8_DESCRIPTION')
 };
 
