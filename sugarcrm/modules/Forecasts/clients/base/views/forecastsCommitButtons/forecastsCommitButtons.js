@@ -138,6 +138,7 @@
     			}    			    				
     		});
 
+            //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
             self.context.forecasts.config.set('no_commits', false);
             self.context.forecasts.config.save();
 
@@ -201,6 +202,7 @@
     			}    			    				
     		});
 
+            //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
             self.context.forecasts.config.set('no_commits', false);
             self.context.forecasts.config.save();
 

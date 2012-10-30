@@ -46,7 +46,7 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented.
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
         // This will be set to true if the forecasts category setup should be disabled
         this.disableCategories = this.context.forecasts.config.get('has_commits');
 
@@ -153,10 +153,13 @@
                     model: model,
                     meta: app.metadata.getField('range')
                 };
+
+                //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
                 if(this.view.disableCategories) {
                     fieldSettings.viewName = 'detail';
                     fieldSettings.def.view = 'detail';
                 }
+
                 rangeField = app.view.createField(fieldSettings);
                 this.showElement.append('<b>'+ label +':</b>').append(rangeField.el);
                 rangeField.render();
