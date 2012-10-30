@@ -23,14 +23,17 @@
     _renderHtml: function() {
         var self = this,
             menuTemplate;
+
         if (!app.api.isAuthenticated() || app.config.appStatus == 'offline') return;
 
         self.setModuleInfo();
         self.setCreateTasksList();
         self.setCurrentUserName();
         app.view.View.prototype._renderHtml.call(self);
+
         // Search ahead drop down menu stuff
         menuTemplate = app.template.getView('dropdown-menu');
+
         this.$('.search-query').searchahead({
             request:  self.fireSearchRequest,
             compiler: menuTemplate,
@@ -61,8 +64,10 @@
      */
     fireSearchRequest: function (term) {
         var plugin = this, mlist, params;
+
         mlist = app.metadata.getModuleNames(true).join(','); // visible
         params = {q: term, fields: 'name, id', module_list: mlist, max_num: app.config.maxSearchQueryResult};
+
         app.api.search(params, {
             success:function(data) {
                 data.module_list = app.metadata.getModuleNames(true,"create");
@@ -84,10 +89,15 @@
         // application requirements so I'd rather do here than change plugin.
         evt.preventDefault();
         evt.stopPropagation();
+
         // URI encode search query string so that it can be safely
         // decoded by search handler (bug55572)
         term = encodeURIComponent(this.$('.search-query').val());
+
         if(term && term.length) {
+            // Bug 57853 Shouldn't show the search result pop up window after click the global search button.
+            // This prevents anymore dropdowns (note we re-init if/when _renderHtml gets called again)
+            this.$('.search-query').searchahead('disable', 1000);
             app.router.navigate('#search/'+term, {trigger: true});
         }
     },
