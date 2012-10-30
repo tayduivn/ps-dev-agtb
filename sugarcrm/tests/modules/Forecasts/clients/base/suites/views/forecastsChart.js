@@ -125,14 +125,14 @@ describe("The forecasts chart view", function () {
 
         it("should cause values model to fire change event", function(){
             view.handleRenderOptions({hello: 'jon'});
-            expect(valuesSpy.called).toBeTruthy();
+            expect(valuesSpy).toHaveBeenCalled();
             expect(renderStub).toHaveBeenCalled();
             expect(view.values.get('hello')).toEqual('jon');
         });
 
         it("should cause values model not fire change event", function(){
             view.handleRenderOptions({hello: 'world'});
-            expect(valuesSpy.called).toBeTruthy();
+            expect(valuesSpy).toHaveBeenCalled();
             expect(renderStub).not.toHaveBeenCalled();
             expect(view.values.get('hello')).toEqual('world');
         });
