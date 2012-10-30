@@ -218,7 +218,7 @@
      * Initialize or update the chart
      */
     renderChart:function () {
-        this.chart = this._initializeChart();
+        this._initializeChart();
     },
 
     /**
@@ -307,8 +307,9 @@
         params.contentEl = 'chart';
         params.minColumnWidth = 120;
 
-        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params);
+        chart = new loadSugarChart(chartId, this.url, css, chartConfig, params, _.bind(function(chart){
+            this.chart = chart;
+        }, this));
         this.chartRendered = true;
-        return chart.chartObject;
     }
 })
