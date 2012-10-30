@@ -44,21 +44,7 @@ parse_str($remove_tabs_def,$REMOVE_ARR);
 
 
 
-if (isset($_POST['id']))
-	sugar_die("Unauthorized access to administration.");
-if (isset($_POST['record']) && !is_admin($current_user)
-     && !$GLOBALS['current_user']->isAdminForModule('Users')
-     //BEGIN SUGARCRM flav=sales ONLY
-     && $GLOBALS['current_user']->user_type != 'UserAdministrator'
-     //END SUGARCRM flav=sales ONLY
-     && $_POST['record'] != $current_user->id)
-sugar_die("Unauthorized access to administration.");
-elseif (!isset($_POST['record']) && !is_admin($current_user)
-     //BEGIN SUGARCRM flav=sales ONLY
-     && $GLOBALS['current_user']->user_type != 'UserAdministrator'
-     //END SUGARCRM flav=sales ONLY
-     && !$GLOBALS['current_user']->isAdminForModule('Users'))
-sugar_die ("Unauthorized access to user administration.");
+
 $focus = new User();
 $focus->retrieve($_POST['record']);
 
