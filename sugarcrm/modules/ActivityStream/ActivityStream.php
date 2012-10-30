@@ -87,7 +87,14 @@ class ActivityStream extends SugarBean {
         $sql = "INSERT INTO ".$tableName;
         $sql .= "(".implode(",", array_keys($values)).") ";
         $sql .= "VALUES(".implode(",", $values).")";
-        return $this->db->query($sql,true) ? $id : false;
+        $result = $this->db->query($sql,true) ? $id : false;
+        
+        // Save tags contained in comment for future queries
+        if($result) {
+            $this->saveTags($this->id, $text);
+        }
+        
+        return $result;
     }
 
     /**
@@ -99,7 +106,19 @@ class ActivityStream extends SugarBean {
         global $current_user, $dictionary;
         $tableName = $dictionary['ActivityComments']['table'];
         $sql = "UPDATE ".$tableName." SET deleted = 1 WHERE id = '".$commentId."' AND created_by = '".$current_user->id."'";
-        return $this->db->query($sql,true);
+        $result = $this->db->query($sql,true);
+        
+        if($result) {
+            // Update tag count in table 'activity_tags'
+            $sql = "SELECT activity_id, value FROM ".$tableName." WHERE id ='".$commentId."' AND created_by = '".$current_user->id."'";
+            $comment = $this->db->query($sql,true);
+            
+            if($comment && ($comment = $this->db->fetchRow($comment))) {
+                $this->deleteTags($comment['activity_id'], $comment['value']);
+            }
+        }
+        
+        return $result;
     }
 
     /**
@@ -161,7 +180,14 @@ class ActivityStream extends SugarBean {
 
         $text = strip_tags($text);
         $activityData = array('value'=>Link2Tag::convert($text));
-        return $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
+        $id = $this->addActivity($bean, self::ACTIVITY_TYPE_POST, $activityData);
+        
+        if($id) {
+            //Save tags conatined in post for future queries
+            $this->saveTags($id, $text);
+        }
+        
+        return $id;
     }
 
     /**
@@ -173,7 +199,20 @@ class ActivityStream extends SugarBean {
         global $current_user;
         $sql = "UPDATE ".$this->getTableName()." SET deleted = 1 WHERE id = '".$postId."' AND created_by = '".$current_user->id."' AND activity_type = '".self::ACTIVITY_TYPE_POST."'";
         // Should we also delete comments or attachments for this post???
-        return $this->db->query($sql,true);
+        $result = $this->db->query($sql,true);
+        
+        if($result) {
+            // Update tag count in table 'activity_tags'
+            $sql = "SELECT activity_data FROM ".$this->getTableName()." WHERE id ='".$postId."' AND created_by = '".$current_user->id."' AND activity_type = '".self::ACTIVITY_TYPE_POST."'";
+            $post = $this->db->fetchOne($sql);
+                
+            if($post) {
+                $post = json_decode(from_html($post['activity_data']), true);;
+                $this->deleteTags($postId, $post['value']);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -234,7 +273,9 @@ class ActivityStream extends SugarBean {
         global $dictionary, $current_language, $current_user;
         $tableName = $dictionary['ActivityStream']['table'];
         $fieldDefs = $dictionary['ActivityStream']['fields'];
-
+        $tagTableName = $dictionary['ActivityTags']['table'];
+        $tagFieldDefs = $dictionary['ActivityTags']['fields'];
+        
         // This combination is not supportable
         if(empty($targetModule) && !empty($targetId)) {
             $GLOBALS['log']->debug("target_module cannot be empty when target_id is.");
@@ -288,9 +329,8 @@ class ActivityStream extends SugarBean {
             $where .= " AND ((a.target_module = ".$GLOBALS['db']->massageValue($targetModule, $fieldDefs['target_module']);
             if(!empty($targetId)) {
                 $where .= " AND a.target_id = ".$GLOBALS['db']->massageValue($targetId, $fieldDefs['target_id']);
-                $post_tag = "@[".$targetModule.":".$targetId."]";
-                $where .= ") OR (a.activity_data LIKE '%".$post_tag."%'";
-                $where .= ") OR (a.id IN (SELECT activity_id FROM activity_comments where value LIKE '%".$post_tag."%')";
+                $postTag = "@[".$targetModule.":".$targetId."]";
+                $where .= ") OR (a.id IN (SELECT activity_id FROM ".$tagTableName." WHERE tag = ".$GLOBALS['db']->massageValue($postTag,$tagFieldDefs['tag'])." AND count > 0)";
             }
             $where .= "))";
         }
@@ -416,6 +456,74 @@ class ActivityStream extends SugarBean {
         if(!empty($bean) && $bean->field_defs['last_activity_date'])$GLOBALS['db']->query("UPDATE " . $bean->table_name . " SET last_activity_date='" . $date .  "' WHERE id= '{$bean->id}'");
     }
 
+    /**
+     * Saves tags contained in post or comment in table 'activity_tags'. 
+     * This table is used to get activities containing these tags.
+     * @param string $activityId
+     * @param string $text
+     * @see ActivityStream::getActivities()
+     */
+    protected function saveTags($activityId, $text) {
+        global $dictionary;
+        $fieldDefs = $dictionary['ActivityTags']['fields'];
+        $tableName = $dictionary['ActivityTags']['table'];  
+              
+        $tags = $this->getTags($text);
+
+        foreach($tags as $tag) {
+            $id = $this->db->massageValue(create_guid(),$fieldDefs['id']);
+            $date = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_modified']);
+            $tag = $this->db->massageValue($tag, $fieldDefs['tag']);
+            $actId = $this->db->massageValue($activityId, $fieldDefs['activity_id']);
+            $sql = "SELECT id FROM ".$tableName." WHERE tag = ".$tag." AND activity_id = ".$actId;
+            $result = $this->db->getOne($sql);
+            
+            if(empty($result)) {
+                $sql = "INSERT INTO ".$tableName." (id, tag, activity_id, count, date_modified) VALUES (".$id.",".$tag.",".$actId.",1,".$date.")";
+            }
+            else {
+                $sql = "UPDATE ".$tableName." SET count = (count + 1), date_modified = ".$date." WHERE tag = ".$tag." AND activity_id = ".$actId;
+            }
+            
+            $result = $this->db->query($sql);
+        }
+    }
+    
+    /**
+     * Updates tag counts in table 'activity_tags' when a post or comment containing tags is deleted
+     * @param string $activityId
+     * @param string $text
+     */
+    protected function deleteTags($activityId, $text) {
+        global $dictionary;
+        $fieldDefs = $dictionary['ActivityTags']['fields'];
+        $tableName = $dictionary['ActivityTags']['table'];  
+        $tags = $this->getTags($text); 
+
+        foreach($tags as $tag) {
+            $tag = $this->db->massageValue($tag, $fieldDefs['tag']);
+            $actId = $this->db->massageValue($activityId, $fieldDefs['activity_id']);
+            $date = $this->db->massageValue(TimeDate::getInstance()->nowDb(), $fieldDefs['date_modified']);
+            $sql = "UPDATE ".$tableName." SET count = (count - 1), date_modified = ".$date." WHERE tag = ".$tag." AND activity_id = ".$actId;
+            $result = $this->db->query($sql);
+        }        
+    }
+    
+    /**
+     * Extracts tags in the format of @[xxxxx] from text.
+     * @param string $text
+     * @return array tags
+     */
+    protected function getTags($text) {
+        $tags = array();
+        
+        if(preg_match_all("/@\[.*?\]/",$text,$matches)) {
+            $tags = $matches[0];
+        }
+        
+        return $tags;
+    }
+    
     /**
      * This function will remove our video or image tags so we need to disable it.
      * @see SugarBean::cleanBean()
