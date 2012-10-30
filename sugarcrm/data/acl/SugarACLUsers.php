@@ -47,16 +47,23 @@ class SugarACLUsers extends SugarACLStrategy
 
 
 
-        if(empty($view) && empty($bean->id) && empty($current_user->id)) {
+        if(empty($view) || empty($current_user->id)) {
             return true;
         }
 
         // we can update ourselves
-        if($bean->id == $current_user->id) {
+        if(!empty($bean->id) && $bean->id == $current_user->id) {
+            if ( $view == 'delete' ) {
+                return false;
+            }
             return true;
         }
 
-        if(is_admin($current_user) || $current_user->isAdminForModule($module)) {
+        if($view == 'view' || $view == 'ListView' || $view == 'list' || $view == 'field' || $view == 'DetailView' || $view == 'detail' || $view == 'team_security' ) {
+            return true;
+        }
+
+        if(is_admin($current_user)) {
             return true;
         }
 
