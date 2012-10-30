@@ -24,6 +24,11 @@
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
+
+        //Minimize ID column, maximize name column and fix datetime columns
+        this.$("th[data-fieldname*=number],th[data-fieldname*=id]").css("width","1%");
+        this.$("th[data-fieldname*=name]").css("width","50%");
+        this.$("th[data-fieldname*=entered],th[data-fieldname*=created],th[data-fieldname*=modified]").css("width","10%");
     },
     filterToggled: function(isOpened) {
         this.filterOpened = isOpened;
