@@ -1,9 +1,7 @@
 ({
 
     events: {
-        'click .tour': 'systemTourModal',
-        'click .tour-module-start': 'startSystemTour',
-        'click .tour-full-start': 'startSystemTour'
+        'click .tour': 'showTourModal'
     },
     tagName: "span",
     initialize: function(options) {
@@ -15,25 +13,9 @@
         this.isAuthenticated = app.api.isAuthenticated();
         app.view.View.prototype._renderHtml.call(this);
     },
-    systemTourModal: function() {
-        // check to make sure you're not already touring the system
-        if(app.view.views.TourView) {
-            if(app.view.views.TourView.prototype.tourMode !== true){
-                $('.system-tour').modal('show');
-            }
-        } else {  // Show default tour modal
-            $('.system-tour').modal('show');
-        }
-    },
-    startSystemTour: function(e) {
-        // If "Full Tour" was clicked, relay this to startTour(),
-        // to determine whether or not to route to the homepage
-        var fullTour = this.$(e.target).hasClass("tour-full-start") ? true: false,
-            currentModule = app.controller.layout.options.module,
-            viewType = app.controller.layout.options.name;
-
-        $('.system-tour').modal('hide');
-        app.view.views.TourView.prototype.startTour(currentModule, viewType, fullTour);
+    showTourModal: function() {
+        // TODO: When the <footer> tags have been replaced/start respecting z-indexes
+        // call this.layout.trigger(eventName, ...) to show a modal layout instead
+        $('.system-tour').modal('show');
     }
-
 })

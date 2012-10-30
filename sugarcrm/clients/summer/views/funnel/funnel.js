@@ -22,13 +22,13 @@
             var d1 = new Date(today.getTime() + 31*day_ms);
             var data, sum;
             if(self.collection) {
-                var data = self.collection.filter(function(model) {
+                data = self.collection.filter(function(model) {
                     // Filter for 30 days from now.
                     var d2 = new Date(model.get("date_closed") || "1970-01-01");
                     return (d2-d1)/day_ms <= 30;
                 });
                 sum = _.reduce(data, function(memo, model) {
-                    return memo + parseInt(model.get('amount_usdollar'));
+                    return memo + parseInt(model.get('amount_usdollar'), 10);
                 }, 0);
                 data = _.groupBy(data, function(m) {
                     return m.get("sales_stage");
@@ -45,7 +45,7 @@
                     scale: scale,
                     title: "Pipeline",
                     units: "$",
-                    total: parseInt(sum/scale)
+                    total: parseInt(sum/scale, 10)
                 },
                 data: []
             };
@@ -56,7 +56,7 @@
                 var subtotal = 0;
                 if(data && data[stage]) {
                     subtotal = _.reduce(data[stage], function(memo, model) {
-                        return memo + parseInt(model.get('amount_usdollar'));
+                        return memo + parseInt(model.get('amount_usdollar'), 10);
                     }, 0)/scale;
                 }
                 root.data.push({
@@ -72,7 +72,6 @@
                 cumulative += subtotal;
             });
 
-            console.log(root);
             nv.addGraph(function() {
                 var chart = nv.models.funnelChart();
 
