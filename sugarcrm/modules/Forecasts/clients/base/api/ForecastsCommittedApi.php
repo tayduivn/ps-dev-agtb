@@ -136,7 +136,7 @@ class ForecastsCommittedApi extends ModuleApi
      */
     public function forecastsCommittedMgrNeedsCommitted($api, $args)
     {
-    	$obj = $this->getClass($args);
+        $obj = $this->getClass($args);
         return $obj->mgrNeedsCommitted();
     }
 }
