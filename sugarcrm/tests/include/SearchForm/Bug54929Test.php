@@ -55,6 +55,7 @@ class Bug54929Test extends Sugar_PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        SugarTestHelper::setUp('app_strings');
         SugarTestHelper::setUp('app_list_strings');
         $this->seed = new Opportunity();
         $this->module = 'Opportunities';
@@ -72,6 +73,7 @@ class Bug54929Test extends Sugar_PHPUnit_Framework_TestCase
     protected function tearDown()
     {
         $GLOBALS['app_list_strings']['sales_stage_dom'] = $this->normalAppListStringsOfSalesStageDom;
+        SugarTestHelper::tearDown();
     }
 
     /**
