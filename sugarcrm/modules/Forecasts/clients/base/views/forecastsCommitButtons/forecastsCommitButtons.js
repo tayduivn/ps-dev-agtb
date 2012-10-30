@@ -98,11 +98,14 @@
     },
     
     /**
-     * Event handler to disable/reset the commit button
+     * Event handler to disable/reset the commit/save button
      */
     disableCommitButton: function(){
     	var commitbtn =  this.$el.find('#commit_forecast');
+    	var savebtn = this.$el.find('#save_draft');
     	commitbtn.addClass("disabled");
+    	savebtn.addClass("disabled");
+    	
     	this.commitButtonEnabled = true;
     },
     
