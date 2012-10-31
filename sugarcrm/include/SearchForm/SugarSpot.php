@@ -390,7 +390,7 @@ class SugarSpot
                 $custom_where .= "{$seed->table_name}.assigned_user_id = '{$GLOBALS['current_user']->id}'";
                 $allowBlankSearch = true;
             }
-            $GLOBALS['log']->fatal(var_export($options, true));
+
             if (!empty($options['untouched']) && $options['untouched'] !== false && isset($GLOBALS['dictionary'][$class]['fields']['last_activity_date'])) {
                 if (!empty($custom_where)) {
                     $custom_where .= " AND ";
@@ -613,7 +613,7 @@ class SugarSpot
 
                 $main_query = $ret_array['select'] . $ret_array['from'] . $ret_array['where'] . $ret_array['order_by'];
             }
-            $GLOBALS['log']->fatal($main_query);
+
             $totalCount = null;
             if ($limit < -1) {
                 $result = $seed->db->query($main_query);

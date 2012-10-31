@@ -116,11 +116,14 @@
             });
 
         app.api.call('create', url, {'value': contents}, {success: function(post_id) {
+            // TODO: Fix this to be less hacky. Perhaps a flag in arguments?
+            var parent_type = (url.indexOf("ActivityStream/ActivityStream") === -1)? 'ActivityStream' : 'ActivityComments';
+
             attachments.each(function(index, el) {
                 var id = $(el).attr('id'),
                     seed = app.data.createBean('Notes', {
                         'parent_id': post_id,
-                        'parent_type': 'ActivityStream',
+                        'parent_type': parent_type,
                         'team_id': 1
                     });
 
@@ -229,8 +232,9 @@
         event.stopPropagation();
         event.preventDefault();
         this.shrinkNewPost(event);
-        _.each(event.dataTransfer.files, function(i, file) {
+        _.each(event.dataTransfer.files, function(file, i) {
             var fileReader = new FileReader();
+            var self = this;
 
             // Set up the callback for the FileReader.
             fileReader.onload = (function(file) {
@@ -266,12 +270,12 @@
                         container.append("<div>No preview available</div>");
                     }
 
-                    this.$(event.currentTarget).after(container);
+                    self.$(event.currentTarget).after(container);
                 };
             })(file);
 
             fileReader.readAsDataURL(file);
-        });
+        }, this);
     },
 
     saveAttachment: function(event) {
