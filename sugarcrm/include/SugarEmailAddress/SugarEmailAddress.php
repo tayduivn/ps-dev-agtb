@@ -642,27 +642,25 @@ class SugarEmailAddress extends SugarBean {
         // unless workflow made changes, assume parameters are what to use.
         $new_opt_out = $opt_out;
         $new_invalid = $invalid;
-        if (isset($current_email['id']) && !empty($current_email['id'])) {
+        if (!empty($current_email['id']) && isset($this->stateBeforeWorkflow[$current_email['id']])) {
             if ($current_email['invalid_email'] != $invalid ||
                 $current_email['opt_out'] != $opt_out) {
 
                 // workflow could be in play
-                $before_email = (isset($this->stateBeforeWorkflow[$current_email['id']])) ?
-                    $this->stateBeforeWorkflow[$current_email['id']] :
-                    $current_email;
+                $before_email = $this->stateBeforeWorkflow[$current_email['id']];
 
                 // our logic is as follows: choose from parameter, unless workflow made a change to the value, then choose final value
                 if (intval($before_email['opt_out']) != intval($current_email['opt_out'])) {
                     $new_opt_out = intval($current_email['opt_out']);
                 }
                 if (intval($before_email['invalid_email']) != intval($current_email['invalid_email'])) {
-                    $new_invalid = intval($current_email['invalid']);
+                    $new_invalid = intval($current_email['invalid_email']);
                 }
             }
         }
 
         // determine how we are going to put in this address - UPDATE or INSERT
-        if (isset($duplicate_email['id']) && !empty($duplicate_email['id'])) {
+        if (!empty($duplicate_email['id'])) {
 
             // address_caps matches - see if we're changing fields
             if ($duplicate_email['invalid_email'] != $new_invalid ||
@@ -672,7 +670,7 @@ class SugarEmailAddress extends SugarBean {
                     'SET email_address=\'' . $address . '\', ' .
                     'invalid_email=' . $new_invalid . ', ' .
                     'opt_out=' . $new_opt_out . ', ' .
-                    'date_modified=\'' . gmdate($GLOBALS['timedate']->get_db_date_time_format()) . '\' ' .
+                    'date_modified=' . $this->db->now() . ' ' .
                     'WHERE id=\'' . $this->db->quote($duplicate_email['id']) . '\'';
                 $upd_r = $this->db->query($upd_q);
             }
