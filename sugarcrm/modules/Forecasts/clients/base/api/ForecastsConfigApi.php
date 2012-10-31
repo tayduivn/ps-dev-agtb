@@ -59,9 +59,11 @@ class ForecastsConfigApi extends ConfigModuleApi {
             {
                 require_once('modules/UpgradeWizard/uw_utils.php');
                 updateOpportunitiesForForecasting();
+
+                //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+                $args['has_commits'] = true;
             }
         }
-
         parent::configSave($api, $args);
 
         //reload the settings to get the current settings
