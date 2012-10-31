@@ -1,1 +1,0 @@
-<i class="icon-favorite{{#if value}} active{{/if}}"></i>
