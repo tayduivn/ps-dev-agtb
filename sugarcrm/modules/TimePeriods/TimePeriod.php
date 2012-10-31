@@ -523,64 +523,89 @@ class TimePeriod extends SugarBean {
     public function rebuildForecastingTimePeriods($priorSettings, $currentSettings)
     {
        //$this->deleteTimePeriods($priorSettings, $currentSettings);
-
        $timedate = TimeDate::getInstance();
 
        //determine today
        $currentDate = $timedate->getNow();
-       $targetStartDate = $timedate->getNow();
-
-       //Set the time period parent and leaf types according to the configuration settings
-       $this->time_period_type = $currentSettings['timeperiod_interval']; // Annual by default
-       $this->leaf_period_type = $currentSettings['timeperiod_leaf_interval']; // Quarter by default
-
-       //set the target date
-       $targetStartDate->setDate($targetStartDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
-
-       //if the target date is after the current year then set the year to be one back
-       if($currentDate < $targetStartDate)
-       {
-           $targetStartDate->modify($this->previous_date_modifier);
-       }
-
-       $this->setStartDate($targetStartDate->asDbDate());
-
-       //First check if they have changed the start date and/or month to be different than what was previously set
-       //$targetDateDifferent = $this->isTargetDateDifferentFromPrevious($targetStartDate, $priorSettings);
-       //$targetIntervalDifferent = $this->isTargetIntervalDifferent($priorSettings, $currentSettings);
 
        $isUpgrade = !empty($priorSettings['is_upgrade']);
-
-       //Now check if we need to add more timeperiods
-       //If we are coming from an upgrade, we do not create any backward timeperiods
-       $shownBackwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
-
-       $shownForwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_forward');
 
        $existingTimePeriods = TimePeriod::get_timeperiods_dom();
 
        //If this is not an upgrade or if there are no existing time periods, we can build the timeperiods
        if(!$isUpgrade || empty($existingTimePeriods))
        {
+           //set the target date
+           $targetStartDate = $timedate->getNow()->setDate($currentDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
+
+           //if the target date is after the current year then set the year to be one back
+           if($currentDate < $targetStartDate)
+           {
+               $targetStartDate->modify($this->previous_date_modifier);
+           }
+
+           //Set the time period parent and leaf types according to the configuration settings
+           $this->time_period_type = $currentSettings['timeperiod_interval']; // TimePeriod::Annual by default
+           $this->leaf_period_type = $currentSettings['timeperiod_leaf_interval']; // TimePeriod::Quarter by default
+
+           $this->setStartDate($targetStartDate->asDbDate());
+
+           //Now check if we need to add more timeperiods
+           //If we are coming from an upgrade, we do not create any backward timeperiods
+           $shownBackwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
+           $shownForwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_forward');
            $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
        } else {
            //In the case of upgrades we take the following steps:
            //1) We find out what the current timeperiod is (if one exists); otherwise we get the latest leaf timeperiod
            //2) We then take the timeperiod found in step 1 and augment the end date of that timeperiod to be the day before the new timeperiod
            //3) We then build out the new forward timeperiod
+
+
+           $admin = BeanFactory::getBean('Administration');
+           $config = $admin->getConfigForModule('Forecasts', 'base');
            $timeperiodInterval = $config['timeperiod_interval'];
            $timeperiodLeafInterval = $config['timeperiod_leaf_interval'];
-           $currentId = TimePeriod::getCurrentId($timeperiodLeafInterval);
-           if(!empty($currentId)) {
-               $currentTimePeriod = TimePeriod::getByType($timeperiodLeafInterval, $currentId);
-           } else {
-               $currentTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
+           $startMonth = $config['timeperiod_start_month'];
+           $startDay = $config['timeperiod_start_day'];
+
+           //Now try to find the current leaf timeperiod.  We have no way of knowing what the leaf type is so we cannot use TimePeriod::getCurrentId since
+           //that assumes a type is passed or will use the defaults from the config
+           $timedate = TimeDate::getInstance();
+           $db = DBManagerFactory::getInstance();
+           $queryDate = $timedate->getNow();
+           $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
+
+           $result = $db->limitQuery("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND parent_id IS NOT NULL AND deleted = 0 ORDER BY start_date_timestamp DESC", 0 , 1);
+
+           $currentTimePeriod = null;
+
+           if(!empty($result)) {
+               $row = $db->fetchByAssoc($result);
+               if(!empty($row)) {
+                   $currentTimePeriod = new TimePeriod();
+                   $currentTimePeriod->retrieve($row['id']);
+               }
            }
 
-           $endDate = $timedate->fromDbDate($currentTimePeriod->end_date);
-           if($targetStartDate < $endDate) {
+           if(!empty($currentTimePeriod)) {
+               //set the target date
+               echo $currentTimePeriod->end_date . "\n";
+               $currentEndDate = $timedate->fromDb($currentTimePeriod->end_date);
+               $currentEndDate->modify()
 
+               $targetStartDate = $timedate->getNow()->setDate($currentEndDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
+               if($targetStartDate < $currentEndDate) {
+                  $targetStartDate->modify('+1 year');
+               }
+               $targetStartDate->modify('+1 day');
+
+               //$targetStartDate = $timedate->fromDbDate($currentTimePeriod->end_date)->modify('+1 day');
+               echo $targetStartDate->asDbDate() . "\n";
            }
+
+
+
        }
 
         //clear job scheduler

@@ -272,6 +272,8 @@ $mod_strings = array (
     'LBL_TOTAL' => 'Total',
     'LBL_CLICKTOEDIT_INVALID' => 'Invalid',
     'LBL_WORKSHEET_SAVE_CONFIRM' => 'You have unsaved changes in your Worksheet. Press Ok to save these as a draft and continue, or Cancel to discard these changes continue.',
+    'LBL_WORKSHEET_COMMIT_CONFIRM' => 'You have saved changes that have not been committed in the rep view. The saved changes will not be visible in the Manager view until you commit.<br>Press OK to commit the changes and continue, or Cancel to not commit the changes and continue.',
+    'LBL_WORKSHEET_COMMIT_ALERT' => 'You have committed your Rep view, but you have not yet committed your Manager view.  Your managers will not see the changes to your Manager view until you commit.',
     'LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD' => 'You have unsaved changes in your Worksheet.',
     'LBL_WORKSHEET_ID' => 'Worksheet ID',
 

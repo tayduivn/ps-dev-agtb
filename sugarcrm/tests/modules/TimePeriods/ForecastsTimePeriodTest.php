@@ -384,6 +384,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array
         (
+            /*
             //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
@@ -414,7 +415,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             array(0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward', 10, 1, 12, 1),
             array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
             array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1),
-
+            */
             //Simulating upgrades
 
             //No backward timeperiods will be created

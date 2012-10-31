@@ -58,8 +58,8 @@ describe("The forecasts committed view", function () {
         	}	
         };
         
-        forecastsSetStub = sinon.stub(view.context.forecasts, "set", function(){});
-        sinon.spy(view.context.forecasts.set);
+        forecastsSetStub = sinon.stub(view.context.forecasts, "trigger", function(){});
+        sinon.spy(view.context.forecasts.trigger);
         stubs.push(forecastsSetStub);
         
         context = app.context.getContext({
@@ -119,8 +119,8 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-up');
             expect(view.likelyCaseCls).toContain('icon-arrow-up');
-            expect(view.worstCaseCls).toContain('icon-arrow-up');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-up');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
 
         it("should show down for  best, worst and likely", function () {
@@ -138,8 +138,8 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-down');
             expect(view.likelyCaseCls).toContain('icon-arrow-down');
-            expect(view.worstCaseCls).toContain('icon-arrow-down');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-down');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
     });
 
@@ -168,8 +168,8 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-up');
             expect(view.likelyCaseCls).toContain('icon-arrow-up');
-            expect(view.worstCaseCls).toContain('icon-arrow-up');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-up');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
 
         it("should show down for  best, worst and likely", function () {
@@ -187,8 +187,8 @@ describe("The forecasts committed view", function () {
 
             expect(view.bestCaseCls).toContain('icon-arrow-down');
             expect(view.likelyCaseCls).toContain('icon-arrow-down');
-            expect(view.worstCaseCls).toContain('icon-arrow-down');
-            expect(view.context.forecasts.set).toHaveBeenCalled();
+			expect(view.worstCaseCls).toContain('icon-arrow-down');
+            expect(view.context.forecasts.trigger).toHaveBeenCalled();
         });
     });
 
@@ -244,7 +244,7 @@ describe("The forecasts committed view", function () {
                 expect(view.totals.amount).toEqual(1000);
                 expect(view.totals.best_case).toEqual(1100);
                 expect(view.totals.worst_case).toEqual(900);
-                expect(view.context.forecasts.set).toHaveBeenCalled();
+                expect(view.context.forecasts.trigger).toHaveBeenCalled();
             });
         });
     });
