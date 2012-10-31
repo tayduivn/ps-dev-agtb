@@ -44,10 +44,7 @@
             success: function(o) {
                 self.results = {};
                 _(o).each(function(el) {
-                    var country = el.country;
-                    if (country == "USA") {
-                        country = "United States of America";
-                    }
+                    var country = self._checkCountry(el.country);
                     self.results[country] = parseInt(el.amount, 10);
                 });
 
@@ -60,5 +57,12 @@
         if (this.collection) {
             this.collection.on("change", this.loadData);
         }
+    },
+
+    _checkCountry: function(country) {
+        if (country == "USA") {
+            country = "United States of America";
+        }
+        return country;
     }
 })
