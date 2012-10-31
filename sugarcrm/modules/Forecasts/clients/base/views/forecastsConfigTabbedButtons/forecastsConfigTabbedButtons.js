@@ -44,8 +44,6 @@
      * @param evt
      */
     close:function (evt) {
-        // set the cancelClicked flag without dispatching change events
-        this.context.forecasts.config.set({ cancelClicked : true }, {silent:true});
         this.layout.context.trigger("modal:close");
     },
 
@@ -58,6 +56,12 @@
         if(!$(evt.target).hasClass('disabled')) {
             // push this model back to the main config model
             this.context.forecasts.config.set(this.model.toJSON());
+
+            // set the saveClicked flag without dispatching change events separate from
+            // the set event below be this is silent, in the future we might have things
+            // listening for when config changes and we dont care about anyone knowing saveClicked happened
+            this.context.forecasts.config.set({ saveClicked : true }, {silent:true});
+
             this.context.forecasts.config.save();
             this.layout.context.trigger("modal:close");
         }

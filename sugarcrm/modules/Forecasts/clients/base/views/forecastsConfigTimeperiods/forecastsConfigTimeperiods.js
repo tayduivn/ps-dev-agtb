@@ -156,8 +156,6 @@
      */
     _setUpTimeperiodIntervalBind: function(field) {
 
-        var self = this;
-
         field.def.value = this.model.get(field.name);
 
         // ensure selected day functions like it should
@@ -181,8 +179,8 @@
                 selected_interval = input.selected;
             }
             this.def.value = selected_interval;
-            self.model.set(this.name, selected_interval);
-            self.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
+            this.model.set(this.name, selected_interval);
+            this.model.set('timeperiod_leaf_interval', selected_interval == 'Annual' ? 'Quarter' : 'Month');
         }
         return field;
 

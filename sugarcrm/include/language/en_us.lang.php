@@ -4301,13 +4301,10 @@ $app_list_strings['forecasts_timeperiod_types_dom'] = array(
     'chronological' => 'Date Based Year',
 );
 $app_list_strings['forecasts_timeperiod_options_dom'] = array(
-    'Annual' => 'Yearly',
-    'Quarter' => 'Quarterly',
+    'Annual' => 'Yearly (Quarterly leaf periods)',
+    'Quarter' => 'Quarterly (Monthly leaf periods)',
 );
-$app_list_strings['forecasts_timeperiod_leaf_quarterly_options_dom'] = array(
-    'Quarter' => 'Quarterly',
 
-);
 $app_list_strings['forecasts_timeperiod_month_options_dom'] = array(
    			'' => '',
    			'1' => 'January',
