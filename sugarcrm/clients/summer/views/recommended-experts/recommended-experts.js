@@ -3,17 +3,21 @@
         "click .find-experts": "getRecommendations",
         "keyup .job-title": "submit"
     },
+
     initialize: function(opts) {
         app.view.View.prototype.initialize.call(this, opts);
         this.getJobTitles();
         this.collection = app.data.createBeanCollection("Users");
     },
-    _render: function() {
-        app.view.View.prototype._render.call(this);
-        if( this.$(".job-title") && this.typeahead_collection ) {
+
+    render: function() {
+        app.view.View.prototype.render.call(this);
+
+        if (this.$(".job-title") && this.typeahead_collection) {
             this.$(".job-title").typeahead({source: this.typeahead_collection});
         }
     },
+
     getJobTitles: function() {
         var self = this,
             url = app.api.buildURL(this.module, "expertsTypeahead",
@@ -26,11 +30,13 @@
             }
         }});
     },
+
     submit: function(e) {
         if( this.$(".job-title").val().length && e.keyCode === 13 ) {
             this.getRecommendations();
         }
     },
+
     getRecommendations: function() {
         var self = this,
             jobTitle = this.$(".job-title").val();

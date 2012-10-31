@@ -1,5 +1,5 @@
 <div class="block thumbnail padded">
   <h4 data-tour="tour-recommended-contacts">Recommended contacts:</h4>
-  <ul id="{{this.guid}}">
+  <ul class="recommended-contacts">
   </ul>
 </div>

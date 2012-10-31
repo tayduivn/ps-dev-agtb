@@ -10,12 +10,15 @@
         'click .todo-status': 'changeStatus',
         'click .todo-remove': 'removeTodo'
     },
+
+    open: false,
+
     initialize: function(options) {
         var self = this;
-        this.open = false;
-        app.view.View.prototype.initialize.call(this, options);
-        app.events.on("app:sync:complete", function() {
 
+        app.view.View.prototype.initialize.call(this, options);
+
+        app.events.on("app:sync:complete", function() {
             self.collection = app.data.createBeanCollection("Tasks");
             self.collection.fetch({myItems: true, success: function(collection) {
 
@@ -28,6 +31,7 @@
                 _.each(collection.models, function(model) {
                     collection.modelList[self.getTaskType(model.attributes.date_due)].push(model);
                 });
+
                 self.overduePillActive = true;
                 self.render();
             }});
@@ -332,12 +336,10 @@
             this.validateTodo(e);
         }
     },
+
     bindDataChange: function() {
-        var self = this;
         if( this.collection ) {
-            this.collection.on("reset", function() {
-                self.render();
-            }, this);
+            this.collection.on("reset", this.render, this);
         }
     }
 })

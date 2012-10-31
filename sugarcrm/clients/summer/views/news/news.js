@@ -5,12 +5,13 @@
     },
 
     render: function() {
-        if (!this.responseData || this.responseData.results.length < 0) {
-            this.$el.hide();
+        if (_.isEmpty(this.responseData)) {
+            this.hide();
             return;
         }
 
-        this.$el.show();
+        this.show();
+
         app.view.View.prototype.render.call(this);
     },
 
@@ -32,11 +33,8 @@
     },
 
     bindDataChange: function() {
-        var self = this;
         if (this.model) {
-            this.model.on("change", function() {
-                self.getData();
-            }, this);
+            this.model.on("change", this.getData, this);
         }
     }
 })

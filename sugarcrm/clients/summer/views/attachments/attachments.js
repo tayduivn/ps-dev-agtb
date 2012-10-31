@@ -6,17 +6,14 @@
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
 
-        this.collection = new Backbone.Collection();
-        this.collection.link = {
+        this.attachments = new Backbone.Collection();
+        this.attachments.link = {
             bean: this.model,
             name: 'attachments'
         };
 
-        this.collection.sync = app.BeanCollection.prototype.sync;
-
-        this.collection.fetch({relate:true})
-
-        this.collection.on('change', this.render);
+        this.attachments.sync = app.BeanCollection.prototype.sync;
+        this.attachments.fetch({relate:true});
 
         /**
          * Sharing Manager
@@ -24,8 +21,7 @@
          * @param event
          * @constructor
          */
-        this.ShareNote = function (event) {
-
+        this.ShareNote = function(event) {
             var self = this;
 
             this.quitFlag = false;
@@ -39,7 +35,7 @@
              *
              * @type {Object}
              */
-            this.alertViews =  {
+            this.alertViews = {
 
                 /**
                  * upload success alert view
@@ -49,7 +45,6 @@
                  * @param {Object} params - undo options
                  */
                 uploadSuccess: function (title, msg, params) {
-
                     if(!params || !params.undo) params.undo = false;
 
                     app.alert.show('uploadSuccess', {
@@ -293,13 +288,6 @@
         this.$('.dropbox').css({"background": '#C0C0C0', "width": '300px', "height":'30px'});
     },
 
-
-    /**
-     * This is where all the actions happen when a file is dropped on the drop box
-     *
-     * @param event
-     * @param ui
-     */
     dropOnDropbox: function (event) {
         event.stopPropagation();
         event.preventDefault();
@@ -378,15 +366,11 @@
         collection.fetch(options);
     },
 
-    /**
-     *
-     */
     bindDataChange: function() {
-        if (this.collection) {
-            this.collection.on("reset", this.render, this);
-            this.collection.on("change", this.render, this);
+        if (this.attachments) {
+            this.attachments.on("reset", this.render, this);
+            this.attachments.on("change", this.render, this);
         }
-
     }
 
 })

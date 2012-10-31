@@ -1,18 +1,16 @@
 ({
-    events: {
+    initialize: function(options) {
+        app.view.View.prototype.initialize.call(this, options);
+        this.untouchedCollection = app.data.createBeanCollection(this.module);
+        this.untouchedCollection.fetch({limit: 5, params: {untouched: 7, fields: {'Opportunities': ['name', 'last_activity_date']}, order_by: 'last_activity_date'}});
     },
 
-    initialize: function(options) {
-            app.view.View.prototype.initialize.call(this, options);
-            this.collection = app.data.createBeanCollection(this.model.module);
-            this.collection.fetch({limit:5, params:{untouched: 7, fields:{'Opportunities':['name', 'last_activity_date']}, order_by:'last_activity_date'}});
-
+    render: function() {
+        if (this.untouchedCollection.isEmpty()) { return; }
+        app.view.View.prototype.render.call(this);
     },
 
     bindDataChange: function() {
-        var self = this;
-        if (this.collection) {
-            this.collection.on("reset", self.render, this);
-        }
+        this.untouchedCollection.on("reset", this.render, this);
     }
 })

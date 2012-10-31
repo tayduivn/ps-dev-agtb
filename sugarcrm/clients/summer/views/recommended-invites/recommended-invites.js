@@ -1,6 +1,4 @@
 ({
-    events: {
-    },
     initialize: function(options) {
         app.events.on("app:sync:complete", this.render, this);
         app.events.on("app:login:success", this.render, this);
