@@ -416,7 +416,7 @@ class FileApi extends SugarApi {
      * 
      * @param SugarBean $bean Bean 
      * @param array $args The request args
-     * @return true if no deletion occured because delete_if_fails was not set otherwise false.
+     * @return false if no deletion occured because delete_if_fails was not set otherwise true.
      */                   
     private function deleteIfFails($bean, $args) {
         // Bug 57210: Need to be able to mark a related record 'deleted=1' when a file uploads fails. 
@@ -430,10 +430,10 @@ class FileApi extends SugarApi {
             // First ensure user owns record
             if($bean->created_by == $GLOBALS['current_user']->id) {
                 $bean->mark_deleted($bean->id);
-                return false;
+                return true;
             } 
         }
-        return true;
+        return false;
     }
 
     /**
