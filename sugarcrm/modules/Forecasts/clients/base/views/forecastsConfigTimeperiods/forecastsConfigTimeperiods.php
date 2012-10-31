@@ -37,7 +37,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'options' => 'forecasts_timeperiod_types_dom',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'forecastsTimeperiod'
                 ),
                 //END SUGARCRM flav=int ONLY
                 array(
@@ -47,16 +47,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIOD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
-                ),
-                array(
-                    'name' => 'timeperiod_leaf_interval',
-                    'type' => 'enum',
-                    'options' => 'forecasts_timeperiod_leaf_quarterly_options_dom',
-                    'label' => 'LBL_FORECASTS_CONFIG_LEAFPERIOD',
-                    'default' => false,
-                    'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'forecastsTimeperiod'
                 ),
                 array(
                     'name' => 'timeperiod_start_month',
