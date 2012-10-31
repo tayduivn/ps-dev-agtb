@@ -183,7 +183,7 @@ class FileApi extends SugarApi {
                 $this->deleteIfFails($bean, $args);
 
                 // @TODO Localize this exception message
-                 throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
+                throw new SugarApiExceptionRequestTooLarge('Attachment is too large');
             }
         } else {
             throw new SugarApiExceptionMissingParameter('Attachment is missing');
