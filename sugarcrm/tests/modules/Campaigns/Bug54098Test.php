@@ -99,8 +99,8 @@ class Bug54098Test extends Sugar_PHPUnit_Framework_TestCase
         {
             $id = 'BUg54098' . mt_rand();
             $this->_aProspectlists_Campaigns[] = $id;
-            $sDate = date('Y-m-d H:i:s');
-            $GLOBALS['db']->query("INSERT INTO prospect_list_campaigns VALUES ('{$id}','{$oProspectList->id})', '{$oCampaign->id}','{$sDate}',0)");
+            $sDate = $GLOBALS['db']->convert(date('\'Y-m-d H:i:s\''), 'datetime');
+            $GLOBALS['db']->query("INSERT INTO prospect_list_campaigns VALUES ('{$id}','{$oProspectList->id}', '{$oCampaign->id}', {$sDate}, 0)");
         }
     }
 
@@ -118,8 +118,8 @@ class Bug54098Test extends Sugar_PHPUnit_Framework_TestCase
         {
             $id = 'BUg54098' . mt_rand();
             $this->_aProspectlists_Prospects[] = $id;
-            $sDate = date('Y-m-d H:i:s');
-            $GLOBALS['db']->query("INSERT INTO prospect_lists_prospects VALUES ('{$id}','{$oProspectList->id})', '{$oContact->id}','Contacts','{$sDate}',0)");
+            $sDate = $GLOBALS['db']->convert(date('\'Y-m-d H:i:s\''), 'datetime');
+            $GLOBALS['db']->query("INSERT INTO prospect_lists_prospects VALUES ('{$id}','{$oProspectList->id}', '{$oContact->id}','Contacts',{$sDate}, 0)");
         }
     }
 
