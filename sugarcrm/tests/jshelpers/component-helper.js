@@ -178,6 +178,14 @@
             }
         },
 
+        addModuleViewDefinition: function(module, name, viewDef) {
+            if (this.isInitialized()) {
+                this._data.modules[module].views = this._data.modules[module].views || {};
+                this._data.modules[module].views[name] = this._data.modules[module].views[name] || {};
+                this._data.modules[module].views[name].meta = viewDef;
+            }
+        },
+
         addFieldTemplate: function(type, name, template) {
             if (this.isInitialized()) {
                 this._data.fields[type] = this._data.fields[type] || {};
@@ -195,6 +203,9 @@
 
         set: function() {
             if (this.isInitialized()) {
+                _.each(this._data.modules, function(module) {
+                    module._patched = false;
+                });
                 SugarTest.app.metadata.set(this._data, true, true);
             }
         },
@@ -216,6 +227,10 @@
             } else {
                 return false;
             }
+        },
+
+        get: function() {
+            return this._data;
         }
     };
 }(SugarTest));
