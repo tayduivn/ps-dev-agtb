@@ -23,8 +23,6 @@ require_once('data/SugarACLStrategy.php');
 
 class SugarACLUsers extends SugarACLStrategy
 {
-    public function __construct() {}
-
     /**
      * Check access a current user has on Users and Employees
      * @param string $module
@@ -45,11 +43,11 @@ class SugarACLUsers extends SugarACLStrategy
             return true;
         }
 
-        $bean = self::loadBean($module, $context);
-
         if(empty($view) || empty($current_user->id)) {
             return true;
         }
+
+        $bean = self::loadBean($module, $context);
 
         // we can update ourselves
         if(!empty($bean->id) && $bean->id == $current_user->id) {
