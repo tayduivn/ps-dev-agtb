@@ -3,7 +3,7 @@
         "click .imagesearch-widget-choice": "selectImage"
     },
 
-    profile: "../clients/summer/fields/img/profile.png",
+    profile: "../styleguide/assets/img/profile.png",
 
     initialize: function(options) {
         app.view.Field.prototype.initialize.call(this, options);
