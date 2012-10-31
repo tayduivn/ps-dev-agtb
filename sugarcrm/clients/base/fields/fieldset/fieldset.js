@@ -57,6 +57,32 @@
     },
 
     /**
+     * {@inheritdoc}
+     *
+     * We need this empty so it won't affect the nested fields that have the
+     * same `fieldTag` of this fieldset due the usage of `find()` method.
+     */
+    bindDomChange: function() {
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * Keep empty because you cannot set a value of a type `fieldset`.
+     */
+    bindDataChange: function() {
+    },
+
+    /**
+     * {@inheritdoc}
+     *
+     * We need this empty so it won't affect the nested fields that have the
+     * same `fieldTag` of this fieldset due the usage of `find()` method.
+     */
+    unbindDom: function() {
+    },
+
+    /**
      * Toggles focus between "internal" fields
      * TODO: FIX THE LOGIC, unintuitive
      * @param last {Boolean} Soft focus to check if last element or no
