@@ -633,7 +633,7 @@
                         checkState = rowCategory.find('input').attr('checked');
                         selectVal = ((checkState == "checked") || (checkState == "on") || (checkState == "1")) ? 'include' : 'exclude';
                     } else {
-                        selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim();
+                        selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim().toLowerCase();
                     }
 
                     self.context.forecasts.trigger('forecasts:worksheet:render');
