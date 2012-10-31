@@ -102,6 +102,10 @@ function getEncryptedPassword(login, password, mailbox) {
 	return words;
 } // fn
 
+function close_ie_test_popup() {
+    SUGAR.inboundEmail.ie_test_popup_dialog.hide();
+}
+
 function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, height, mail_server, protocol, port, login, password, mailbox, ssl, personal, formName, ie_id)
 {
 	if (!formName) formName = "testSettingsView";
@@ -150,6 +154,9 @@ function ie_test_open_popup_with_submit(module_name, action, pageTarget, width, 
 	          SUGAR.util.evalScript(o.responseText);
 	        if (!SUGAR.isIE)
 	            this.body.style.width = w
+
+            SUGAR.inboundEmail.ie_test_popup_dialog = this;
+            window.setTimeout(function(){close_ie_test_popup()},3000);
 	    }
 	}
 	var title = SUGAR.language.get('Emails', 'LBL_TEST_SETTINGS');

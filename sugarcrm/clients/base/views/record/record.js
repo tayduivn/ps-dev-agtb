@@ -45,8 +45,9 @@
                 rows = [],
                 row = [];
 
+            // Set flag so that show more link can be displayed to show hidden panel.
             if (panel.hide) {
-                this.hide = true;
+                this.hiddenPanel = true;
             }
 
             _.each(panel.fields, function(field) {

@@ -321,15 +321,18 @@ class SmtpMailer extends BaseMailer
      * @throws MailerException
      */
     protected function transferBody(PHPMailer &$mailer) {
-        $hasText = $this->hasMessagePart($this->textBody); // is there a plain-text part?
-        $hasHtml = $this->hasMessagePart($this->htmlBody); // is there an HTML part?
+        // this is a hack to make sure that from_html is called on each message part prior to any future code that
+        // needs HTML entities converted to real HTML characters
+        $textBody = from_html($this->textBody);
+        $htmlBody = from_html($this->htmlBody);
+
+        $hasText = $this->hasMessagePart($textBody); // is there a plain-text part?
+        $hasHtml = $this->hasMessagePart($htmlBody); // is there an HTML part?
 
         // make sure there is at least one message part
         if (!$hasText && !$hasHtml) {
             throw new MailerException("No email body was provided", MailerException::InvalidMessageBody);
         }
-
-        $textBody = null; // initialize it so that it's available for use later in the method
 
         if ($hasText) {
             // perform character set translations on the plain-text body
@@ -338,7 +341,7 @@ class SmtpMailer extends BaseMailer
 
         if ($hasHtml) {
             // perform character set translations HTML body
-            $htmlBody = $this->prepareHtmlBody($this->htmlBody);
+            $htmlBody = $this->prepareHtmlBody($htmlBody);
 
             // there is an HTML part so set up PHPMailer appropriately for sending a multi-part email
             $mailer->IsHTML(true);
