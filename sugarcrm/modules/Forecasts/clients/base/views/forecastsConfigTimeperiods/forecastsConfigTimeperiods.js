@@ -109,13 +109,13 @@
      * @private
      */
     _setUpTimeperiodStartDayBind: function(field) {
-        var days,
-            current_date = new Date();
+        var current_date = new Date(),
+            days;
 
         field.def.value = this.model.get(field.name);
 
         //build the day options based on the initially selected month
-        days = new Date(current_date.getFullYear(), this.model.get('timeperiod_start_month') - 1, 0);
+        days = new Date(current_date.getFullYear(), this.model.get('timeperiod_start_month') - 1, 0).getDate();
 
         field.def.options = {};
         for (var i = 1; i <= days; i++) {
