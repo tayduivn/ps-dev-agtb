@@ -59,8 +59,9 @@
          */
         field._updateDaysForMonth = function(event, input) {
             //get the timeperiod day selector
-            var timeperiod_start_day = $('select[name="timeperiod_start_day"]');
-            var selected_month = 1;
+            var timeperiod_start_day = $('select[name="timeperiod_start_day"]'),
+                selected_month = 1;
+
             //trash the current options
             $('option', timeperiod_start_day).remove();
             if(_.has(input, "selected")) {
@@ -107,15 +108,15 @@
      * @private
      */
     _setUpTimeperiodStartDayBind: function(field) {
+        var days,
+            current_date = new Date();
 
         field.def.value = this.model.get(field.name);
 
         //build the day options based on the initially selected month
-        var current_date = new Date();
-        current_date.setMonth(this.model.get('timeperiod_start_month') - 1);
-        current_date.setDate(0);
+        days = new Date(current_date.getFullYear(), this.model.get('timeperiod_start_month') - 1, 0);
+
         field.def.options = {};
-        var days = current_date.getDate();
         for (var i = 1; i <= days; i++) {
             field.def.options[i] = i;
         }
