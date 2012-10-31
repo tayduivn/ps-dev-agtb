@@ -20,10 +20,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-/**
- * This class lists the current user's agenda either globally or related to a specific module
- */
-class AgendaApi extends SugarApi {
+class MeetingsSummerApi extends SugarApi {
     public function registerApiRest() {
         return array(
             'getAgenda' => array(
