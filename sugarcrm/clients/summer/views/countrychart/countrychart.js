@@ -1,6 +1,5 @@
 ({
     results: {},
-    values: [],
 
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
@@ -9,13 +8,14 @@
 
     render: function() {
         var self = this,
-            node, color, xy, svg, path;
+            node, max, color, xy, svg, path;
 
         app.view.View.prototype.render.call(this);
 
         if (!_.isEmpty(this.results)) {
             node = $('#' + this.guid);
-            color = d3.scale.linear().domain([0, _.max(this.values)]).range(["gray", "blue"]);
+            max = _.max(_(this.results).values());
+            color = d3.scale.linear().domain([0, max]).range(["gray", "blue"]);
             xy = d3.geo.equirectangular().scale(node.width()).translate([node.width() / 2, 150]);
             svg = d3.select("#" + this.guid).append("svg").attr("style", "height: 250px;");
             path = d3.geo.path().projection(xy);
@@ -45,7 +45,6 @@
                 var i;
 
                 self.results = {};
-                self.values = [];
 
                 for (i = 0; i < o.length; i++) {
                     var country = o[i]['country'];
@@ -53,7 +52,6 @@
                         country = "United States of America";
                     }
                     self.results[country] = parseInt(o[i]['amount'], 10);
-                    self.values.push(self.results[country]);
                 }
 
                 self.render();
