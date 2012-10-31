@@ -67,24 +67,45 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
         $data = $obj->process();
 
         $fields_array = array(
-            'amount'=>'amount',
+            //'amount'=>'amount',
             'quota'=>'quota',
-            'quota_id'=>'quota_id',
-            'best_case'=>'best_case',
-            'likely_case'=>'likely_case',
-            'worst_case'=>'worst_case',
-            'best_adjusted'=>'best_case_adjusted',
-            'likely_adjusted'=>'likely_case_adjusted',
-            'worst_adjusted'=>'worst_case_adjusted',
-            'forecast_id'=>'forecast_id',
-            'worksheet_id'=>'worksheet_id',
-            'currency_id'=>'currency_id',
-            'base_rate'=>'base_rate',
-            'timeperiod_id'=>'timeperiod_id',
-            'user_id'=>'user_id',
+            //'quota_id'=>'quota_id',
+            //'best_case'=>'best_case',
+//            'likely_case'=>'likely_case',
+//            'worst_case'=>'worst_case',
+//            'best_adjusted'=>'best_case_adjusted',
+//            'likely_adjusted'=>'likely_case_adjusted',
+//            'worst_adjusted'=>'worst_case_adjusted',
+            //'forecast_id'=>'forecast_id',
+            //'worksheet_id'=>'worksheet_id',
+            //'currency_id'=>'currency_id',
+            //'base_rate'=>'base_rate',
+            //'timeperiod_id'=>'timeperiod_id',
+            //'user_id'=>'user_id',
             'name'=>'name',
-            'date_modified'=>'date_modified',
+            //'date_modified'=>'date_modified',
         );
+
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+
+        if ($settings['show_worksheet_best'])
+        {
+            $fields_array['best_case'] = 'best_case';
+            $fields_array['best_adjusted'] = 'best_case_adjusted';
+        }
+
+        if ($settings['show_worksheet_likely'])
+        {
+            $fields_array['likely_case'] = 'likely_case';
+            $fields_array['likely_adjusted'] = 'likely_case_adjusted';
+        }
+
+        if ($settings['show_worksheet_worst'])
+        {
+            $fields_array['worst_case'] = 'worst_case';
+            $fields_array['worst_adjusted'] = 'worst_case_adjusted';
+        }
 
         $seed = BeanFactory::getBean('ForecastManagerWorksheets');
 
