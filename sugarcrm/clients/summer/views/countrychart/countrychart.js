@@ -42,17 +42,14 @@
 
         app.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {
             success: function(o) {
-                var i;
-
                 self.results = {};
-
-                for (i = 0; i < o.length; i++) {
-                    var country = o[i]['country'];
+                _(o).each(function(el) {
+                    var country = el.country;
                     if (country == "USA") {
                         country = "United States of America";
                     }
-                    self.results[country] = parseInt(o[i]['amount'], 10);
-                }
+                    self.results[country] = parseInt(el.amount, 10);
+                });
 
                 self.render();
             }
