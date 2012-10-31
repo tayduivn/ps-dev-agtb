@@ -3,11 +3,11 @@
         'click .search': 'showSearch',
         'keyup .dataTables_filter input': 'filterEmail'
     },
+
     initialize: function(o) {
         app.view.View.prototype.initialize.call(this, o);
         this.getData();
         this.hasData = false;
-
     },
 
     render: function() {

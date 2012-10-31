@@ -3,6 +3,7 @@
         app.view.View.prototype.initialize.call(this,options);
         this.collections = {};
     },
+
     loadData: function() {
         var self = this,
             url = app.api.buildURL(this.module, "influencers", {"id": app.controller.context.get("model").id});
@@ -13,7 +14,7 @@
                     module: "Users",
                     id: data[value]["id"],
                     field: "picture"
-                }) : "../clients/summer/views/imagesearch/anonymous.jpg";
+                }) : "../styleguide/assets/img/profile.png";
             });
 
             self.collections = data;

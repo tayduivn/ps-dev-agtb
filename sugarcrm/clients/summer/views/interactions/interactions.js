@@ -2,6 +2,7 @@
     events: {
         'click .interactions-link': 'contentSwitcher'
     },
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this,options);
         this.collections = {
@@ -22,6 +23,7 @@
         this.emailsActive = false;
         this.meetingsActive = false;
     },
+
     loadData: function() {
         var self = this,
             url = app.api.buildURL(this.module, "interactions", {"id": app.controller.context.get("model").id});
@@ -34,6 +36,7 @@
             self.render();
         }});
     },
+
     contentSwitcher: function(e) {
         var $target = this.$(e.target);
         if( !($target.parents(".interactions-link").is(".active")) ) {

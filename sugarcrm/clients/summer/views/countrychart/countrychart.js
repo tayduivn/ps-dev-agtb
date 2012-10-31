@@ -1,50 +1,76 @@
 ({
+    results: {},
+    values: [],
+
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
         this.guid = _.uniqueId("countrychart");
     },
 
-    _render: function() {
-        var self = this;
+    render: function() {
+        var layoutData = {guid: this.guid, title: this.options['title']},
+            self = this,
+            node, color, xy, svg, path;
 
-        this.$el.show();
+        app.view.View.prototype.render.call(this);
 
-        app.view.View.prototype._render.call(this);
-
-        var layoutData = {guid: this.guid, title: this.options['title']};
-
-        if (typeof(this.options['urls']) != 'undefined') {
+        if (!_.isUndefined(this.options['urls'])) {
             layoutData['urls'] = this.options['urls'];
         }
 
-        app.view.View.prototype._render.call(this);
+        this.$('.chartSelector').val(this.options['url']);
 
-        $('.chartSelector').val(this.options['url']);
+        if (!_.isEmpty(this.results)) {
+            node = $('#' + this.guid);
+            color = d3.scale.linear().domain([0, _.max(this.values)]).range(["gray", "blue"]);
+            xy = d3.geo.equirectangular().scale(node.width()).translate([node.width() / 2, 150]);
+            svg = d3.select("#" + this.guid).append("svg").attr("style", "height: 250px;");
+            path = d3.geo.path().projection(xy);
 
-        app.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {success: function(o) {
-            var results = {};
-            var values = [];
-            for (i = 0; i < o.length; i++) {
-                var country = o[i]['country'];
-                if("USA" == country) country = "United States of America";
-                results[country] = parseInt(o[i]['amount'], 10);
-                values.push(results[country]);
-            }
-
-            var color = d3.scale.linear().domain([0, _.max(values)]).range(["gray", "blue"]);
-            var xy = d3.geo.equirectangular().scale($('#'+self.guid).width()).translate([$('#'+self.guid).width()/2, 150]);
-            var svg = d3.select("#"+self.guid).append("svg").attr("style", "height: 250px;");
-            var path = d3.geo.path().projection(xy);
             d3.json("../clients/summer/views/countrychart/world-countries.json", function(collection) {
                 var g = svg.selectAll("path")
-                  .data(collection.features)
-                .enter().append("g");
+                    .data(collection.features)
+                    .enter().append("g");
                 g.append("path")
-                  .attr("d", function(d) { return path(d); })
-                  .style("fill", function(d) {
-                    return color(results[d.properties.name] || 0);
-                  }).attr("title", function(d) { return d.properties.name; });
+                    .attr("d", function(d) {
+                        return path(d);
+                    })
+                    .style("fill",function(d) {
+                        return color(self.results[d.properties.name] || 0);
+                    }).attr("title", function(d) {
+                        return d.properties.name;
+                    });
             });
-        }});
+        }
+    },
+
+    loadData: function() {
+        var self = this;
+
+        app.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {
+            success: function(o) {
+                var i;
+
+                self.results = {};
+                self.values = [];
+
+                for (i = 0; i < o.length; i++) {
+                    var country = o[i]['country'];
+                    if (country == "USA") {
+                        country = "United States of America";
+                    }
+                    self.results[country] = parseInt(o[i]['amount'], 10);
+                    self.values.push(self.results[country]);
+                }
+
+                self.render();
+            }
+        });
+    },
+
+    bindDataChange: function() {
+        if (this.collection) {
+            this.collection.on("change", this.loadData);
+        }
     }
 })
