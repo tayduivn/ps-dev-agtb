@@ -55,7 +55,7 @@
 
     bindDataChange: function() {
         if (this.collection) {
-            this.collection.on("change", this.loadData);
+            this.collection.on("change", this.loadData, this);
         }
     },
 
