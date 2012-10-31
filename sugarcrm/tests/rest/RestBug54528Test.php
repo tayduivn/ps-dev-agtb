@@ -22,9 +22,9 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('tests/rest/RestTestPortalBase.php');
 
-class RestBug54528Test extends RestTestBase {
+class RestBug54528Test extends RestTestPortalBase {
     public function setUp()
     {
         parent::setUp();
