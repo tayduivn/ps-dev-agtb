@@ -45,13 +45,21 @@
                 if(self.showCommitButton != oldShowButtons) {
                     self._render();
                 }
-            });
-            this.context.forecasts.on("change:commitButtonEnabled", this.commitButtonStateChangeHandler, self);
+            });           
             this.context.forecasts.on("change:reloadCommitButton", function(){
             	self._render();
             }, self);
             this.context.forecasts.worksheet.on("change", this.showSaveButton, self);
             this.context.forecasts.worksheetmanager.on("change", this.showSaveButton, self);
+            this.context.forecasts.on("forecasts:forecastcommitbuttons:triggerCommit", this.triggerCommit, self);
+            this.context.forecasts.on("change:selectedUser", function(){
+            	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
+            }, this);
+            this.context.forecasts.on("change:selectedTimePeriod", function(){
+            	this.context.forecasts.trigger("forecasts:commitButtons:disabled");
+            }, this);
+            this.context.forecasts.on("forecasts:commitButtons:enabled", this.enableCommitButton, this);
+            this.context.forecasts.on("forecasts:commitButtons:disabled", this.disableCommitButton, this);
         }
     },
 
@@ -79,8 +87,8 @@
     	
 		_.each(worksheet.models, function(model, index){
 			var isDirty = model.get("isDirty");
-			if(typeof(isDirty) == "boolean" && isDirty ){
-				self.context.forecasts.set({commitButtonEnabled: true});
+			if(_.isBoolean(isDirty) && isDirty){
+				self.enableCommitButton();
 				self.$el.find('a[id=save_draft]').removeClass('disabled');
 				//if something in the worksheet is dirty, we need to flag the entire worksheet as dirty.
 				worksheet.isDirty = true;
@@ -88,20 +96,26 @@
 		});
     	
     },
-
+    
     /**
-     * Event Handler for when the context commitButtonEnabled variable changes
-     * @param context
-     * @param commitButtonEnabled boolean value for the changed commitButtonEnabled from the context
+     * Event handler to disable/reset the commit/save button
      */
-    commitButtonStateChangeHandler: function(context, commitButtonEnabled){
+    disableCommitButton: function(){
     	var commitbtn =  this.$el.find('#commit_forecast');
-    	if(commitButtonEnabled){
-    		commitbtn.removeClass("disabled");
-    	}
-    	else{
-    		commitbtn.addClass("disabled");
-    	}
+    	var savebtn = this.$el.find('#save_draft');
+    	commitbtn.addClass("disabled");
+    	savebtn.addClass("disabled");
+    	
+    	this.commitButtonEnabled = true;
+    },
+    
+    /**
+     * Event handler to disable/reset the commit button
+     */
+    enableCommitButton: function(){
+    	var commitbtn =  this.$el.find('#commit_forecast');
+    	commitbtn.removeClass("disabled");
+    	this.commitButtonEnabled = false;
     },
 
     /**
@@ -131,7 +145,9 @@
     				model.save({}, {success:function(){
     					saveCount++;
     					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
+    						if(worksheet == "worksheetmanager"){
+    							self.context.forecasts.set({reloadWorksheetFlag: true});
+    						}
     					}
     				}});
     				worksheet.isDirty = false;
@@ -179,7 +195,6 @@
      * Handles Save Draft button being clicked
      */
     triggerSaveDraft: function() {
-        //todo: implement save draft functionality, or trigger flag on context if save is handled elsewhere
     	var savebtn = this.$el.find('#save_draft');
     	if(!savebtn.hasClass("disabled")){
     		var worksheet = this.context.forecasts[this.context.forecasts.get("currentWorksheet")];
@@ -188,15 +203,10 @@
     		var saveCount = 0;
     		_.each(worksheet.models, function(model, index){
     			var isDirty = model.get("isDirty");
-    			if(typeof(isDirty) == "boolean" && isDirty ){
+    			if(_.isBoolean(isDirty) && isDirty){
     				modelCount++;
     				model.set({draft: 1}, {silent:true});
-    				model.save({}, {success:function(){
-    					saveCount++;
-    					if(saveCount === modelCount){
-    						self.context.forecasts.set({reloadWorksheetFlag: true});
-    					}
-    				}});
+    				model.save();
     				model.set({isDirty: false}, {silent:true});
     				worksheet.isDirty = false;
     			}    			    				
@@ -207,7 +217,7 @@
             self.context.forecasts.config.save();
 
     		savebtn.addClass("disabled");
-    		this.context.forecasts.set({commitButtonEnabled: true});
+    		this.enableCommitButton();
     	}
     	
     },

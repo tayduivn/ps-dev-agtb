@@ -37,6 +37,14 @@ class ForecastsCommittedApi extends ModuleApi
                 'shortHelp' => 'A list of forecasts entries matching filter criteria',
                 'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommitted',
             ),
+            'forecastsCommittedMgrNeedsCommitted' => array(
+                'reqType' => 'GET',
+                'path' => array('Forecasts', 'committed', 'mgrNeedsCommitted'),
+                'pathVars' => array('', ''),
+                'method' => 'forecastsCommittedMgrNeedsCommitted',
+                'shortHelp' => 'True or False if the manager worksheet commit is older than the rep worksheet committed date.',
+                'longHelp' => 'include/api/html/modules/Forecasts/ForecastWorksheetApi.html#forecastsCommittedDateCheck',
+            ),
             'forecastsCommit' => array(
                 'reqType' => 'POST',
                 'path' => array('Forecasts', 'committed'),
@@ -118,5 +126,17 @@ class ForecastsCommittedApi extends ModuleApi
 
         return $obj;
     }
-
+    
+    /**
+     * forecastsCommittedMgrNeedsCommitted
+     *
+     * @param $api
+     * @param $args
+     * @return boolean
+     */
+    public function forecastsCommittedMgrNeedsCommitted($api, $args)
+    {
+        $obj = $this->getClass($args);
+        return $obj->mgrNeedsCommitted();
+    }
 }
