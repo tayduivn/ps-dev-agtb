@@ -75,6 +75,7 @@
 
         field._buildDaysOptions = function(selected_month) {
             var option_html,
+                selectedDay = this.model.get('timeperiod_start_day') || 1,
                 current_date = new Date(),
                 days;
 
@@ -89,7 +90,7 @@
 
             for (var i = 1; i <= days; i++) {
                 option_html += '<option value="' + i + '"';
-                if(i == this.model.get('timeperiods_start_day')) {
+                if(i == selectedDay) {
                     option_html += ' selected ';
                 }
                 option_html += '>' + i + '</option>';
