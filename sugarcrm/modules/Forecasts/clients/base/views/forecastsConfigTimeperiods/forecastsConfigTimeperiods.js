@@ -90,7 +90,7 @@
         };
         // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
         //field.def.value = this.model.get(field.name)+'';
-        field.def.value = this.model.get(field.name);
+        field.def.value = this.model.get(field.name) || 1;
         return field;
     },
 

@@ -544,6 +544,14 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentQuarterTimePeriod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE, $id);
         $expectedQuarterTimePeriodName = sprintf($currentQuarterTimePeriod->name_template, $currentId, $queryDate);
         $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
+
+        //Test without passing any arguments
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('Forecasts', 'base');
+        $type = $config['timeperiod_leaf_interval'];
+        $id = TimePeriod::getCurrentId();
+        $currentTimePeriod = TimePeriod::getByType($type, $id);
+        $this->assertNotNull($currentTimePeriod);
     }
 
 

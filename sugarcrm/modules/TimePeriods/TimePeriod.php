@@ -324,26 +324,24 @@ class TimePeriod extends SugarBean {
 
 
     /**
-     * getCurrentName
-     *
      * Returns the current timeperiod name if a timeperiod entry is found
      *
+     * @param $type String CONSTANT for the TimePeriod type; if none supplied it will use the leaf type as defined in config settings
+     * @return String name of the current TimePeriod for given type; null if none found
      */
-    public static function getCurrentName()
+    public static function getCurrentName($type='')
     {
-        global $app_strings;
-        $timedate = TimeDate::getInstance();
-        //get current timeperiod
-        $db = DBManagerFactory::getInstance();
-        $queryDate = $timedate->getNow();
-        $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-        $timeperiod = $db->getOne("SELECT name FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_leaf = 1 and is_fiscal_year = 0 and deleted = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-        $timeperiods = array();
-        if(!empty($timeperiod))
+        if(empty($type))
         {
-            $timeperiods[$timeperiod] = $app_strings['LBL_CURRENT_TIMEPERIOD'];
+            $admin = BeanFactory::getBean('Administration');
+            $config = $admin->getConfigForModule('Forecasts', 'base');
+            $type = $config['timeperiod_leaf_interval'];
         }
-        return $timeperiods;
+
+        $id = TimePeriod::getCurrentId($type);
+        $tp = TimePeriod::getByType($type, $id);
+
+        return (!empty($tp)) ? $tp->name : null;
     }
 
     /**
@@ -351,14 +349,20 @@ class TimePeriod extends SugarBean {
      *
      * Returns the current TimePeriod instance's id if a leaf entry is found for the current date
      *
-     * @param $type String CONSTANT for the TimePeriod type
+     * @param $type String CONSTANT for the TimePeriod type; if none supplied it will use the leaf type as defined in config settings
      * @return $currentId String id of the TimePeriod instance's id
      */
-    public static function getCurrentId($type=TimePeriod::QUARTER_TYPE)
+    public static function getCurrentId($type='')
     {
+        if(empty($type))
+        {
+            $admin = BeanFactory::getBean('Administration');
+            $config = $admin->getConfigForModule('Forecasts', 'base');
+            $type = $config['timeperiod_leaf_interval'];
+        }
+
         if(empty(self::$currentId[$type]))
         {
-            global $app_strings;
             $timedate = TimeDate::getInstance();
             $db = DBManagerFactory::getInstance();
             $queryDate = $timedate->getNow();
@@ -410,7 +414,7 @@ class TimePeriod extends SugarBean {
     {
         static $timeperiods;
 
-        if(!isset($timeperiods))
+        if(empty($timeperiods))
         {
             $db = DBManagerFactory::getInstance();
             $timeperiods = array();
@@ -542,60 +546,45 @@ class TimePeriod extends SugarBean {
        $this->setStartDate($targetStartDate->asDbDate());
 
        //First check if they have changed the start date and/or month to be different than what was previously set
-       $targetDateDifferent = $this->isTargetDateDifferentFromPrevious($targetStartDate, $priorSettings);
-       $targetIntervalDifferent = $this->isTargetIntervalDifferent($priorSettings, $currentSettings);
+       //$targetDateDifferent = $this->isTargetDateDifferentFromPrevious($targetStartDate, $priorSettings);
+       //$targetIntervalDifferent = $this->isTargetIntervalDifferent($priorSettings, $currentSettings);
 
        $isUpgrade = !empty($priorSettings['is_upgrade']);
 
-       $GLOBALS['log']->fatal('isUpgrade:' . $isUpgrade);
-
        //Now check if we need to add more timeperiods
        //If we are coming from an upgrade, we do not create any backward timeperiods
-       $shownBackwardDifference = $isUpgrade ? 0 : $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
+       $shownBackwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
 
        $shownForwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_forward');
 
-       //If this is not an upgrade, we can build the timeperiods
-       if(!$isUpgrade)
+       $existingTimePeriods = TimePeriod::get_timeperiods_dom();
+
+       //If this is not an upgrade or if there are no existing time periods, we can build the timeperiods
+       if(!$isUpgrade || empty($existingTimePeriods))
        {
            $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
        } else {
-           die("fuck!");
+           //In the case of upgrades we take the following steps:
+           //1) We find out what the current timeperiod is (if one exists); otherwise we get the latest leaf timeperiod
+           //2) We then take the timeperiod found in step 1 and augment the end date of that timeperiod to be the day before the new timeperiod
+           //3) We then build out the new forward timeperiod
+           $timeperiodInterval = $config['timeperiod_interval'];
+           $timeperiodLeafInterval = $config['timeperiod_leaf_interval'];
+           $currentId = TimePeriod::getCurrentId($timeperiodLeafInterval);
+           if(!empty($currentId)) {
+               $currentTimePeriod = TimePeriod::getByType($timeperiodLeafInterval, $currentId);
+           } else {
+               $currentTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
+           }
+
+           $endDate = $timedate->fromDbDate($currentTimePeriod->end_date);
+           if($targetStartDate < $endDate) {
+
+           }
        }
-
-       //Right now we only support chronological AnnualTimePeriods so just hard code this for now
-       //$currentTimePeriod = BeanFactory::newBean($periodsInterval . 'TimePeriods');
-       /*
-       $currentTimePeriod = BeanFactory::newBean('AnnualTimePeriods');
-
-       //Set the start date for the current time period
-       $currentTimePeriod->setStartDate($targetStartDate->asDbDate());
-
-       //Save the current timeperiod
-       $currentTimePeriod->save();
-
-       //Now build out the leaves (Quarter based for now)
-       $currentTimePeriod->buildLeaves($periodsLeafInterval);
-        */
-       /*
-       $currentTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
-
-       //create the back periods
-       $priorTimePeriod = BeanFactory::getBean($forecastSettings['timeperiod_interval']."TimePeriods",$currentTimePeriod->id);
-       $forwardTimePeriod = BeanFactory::getBean($forecastSettings['timeperiod_interval']."TimePeriods",$currentTimePeriod->id);
-
-       for($i = 1; $i <= $periodsBack; $i++) {
-           $priorTimePeriod = $priorTimePeriod->createPreviousTimePeriod();
-           $priorTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
-       }
-
-       //create the forward periods
-       for($i = 1; $i <= $periodsForward; $i++) {
-           $forwardTimePeriod = $forwardTimePeriod->createNextTimePeriod();
-           $forwardTimePeriod->buildLeaves($forecastSettings['timeperiod_leaf_interval']);
-        }
 
         //clear job scheduler
+        /*
         $job_id = $db->getOne("SELECT id FROM job_queue WHERE name = ".$db->quoted('TimePeriodAutomationJob'));
 
         $jobQueue = new SugarJobQueue();

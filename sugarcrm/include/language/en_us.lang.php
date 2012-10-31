@@ -2384,6 +2384,7 @@ $app_strings = array (
     'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
     'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has leaves',
     'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Leaf Time Periods cannot have leaves',
+    'ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST' => 'Unable to retrieve any timeperiods of type: {0}',
     'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',

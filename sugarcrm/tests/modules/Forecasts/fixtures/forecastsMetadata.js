@@ -19,7 +19,7 @@ fixtures.metadata.modules.Forecasts.config = {
     "timeperiod_type":"fiscal",
     "timeperiod_interval":"Annual",
     "timeperiod_leaf_interval":"Quarter",
-    "timeperiod_start_month":"July",
+    "timeperiod_start_month":"January",
     "timeperiod_start_day":"1",
     "timeperiod_shown_forward":4,
     "timeperiod_shown_backward":4,

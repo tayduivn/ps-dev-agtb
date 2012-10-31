@@ -56,32 +56,46 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
      */
     public function run($data)
     {
-        $db = DBManagerFactory::getInstance();
+        global $app_strings, $language;
+        $app_strings = return_application_language($language);
 
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('Forecasts', 'base');
+
+        $timeperiodInterval = $config['timeperiod_interval'];
+        $timeperiodLeafInterval = $config['timeperiod_leaf_interval'];
+        $shownBackwards = $config['timperiod_shown_backward'];
+
+        $intervalTimePeriod = TimePeriod::getByType($timeperiodInterval);
+        $latestTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
+        $currentId = TimePeriod::getCurrentId($timeperiodLeafInterval);
+        $currentTimePeriod = TimePeriod::getByType($timeperiodLeafInterval, $currentId);
+
+        if(empty($latestTimePeriod))
+        {
+            $GLOBALS['log']->error(string_format($app_strings['ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST'], array($timeperiodLeafInterval)));
+            return false;
+        }
+
+        $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
 
-        //fetch the last timeperiod
-        $query = "select id from timeperiods where parent_id IS NULL and deleted = 0 order by end_date_timestamp desc";
-        $id = $db->getOne($query);
-        //load it from the bean factory
-        $lastTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(), $id);
-        //determine leaf type, if none are currently on timeperiod, it will build the default
-        $leaf_type = "";
-        if($lastTimePeriod->hasLeaves()) {
-            $leaves = $lastTimePeriod->getLeaves();
-            $leaf_type = $leaves[0]->time_period_type;
-        }
-        $lastTimePeriod = $lastTimePeriod->createNextTimePeriod();
-        $lastTimePeriod->buildLeaves($leaf_type);
+        //We run the rebuild command if the latest TimePeriod is less than the specified configuration interval from the current TimePeriod
+        $currentStartDate = $timedate->setNow($timedate->fromDbDate($currentTimePeriod->start_date));
+        $latestStartDate = $timedate->setNow($timedate->fromDbDate($latestTimePeriod->start_date));
 
-        //reschedule myself
-        //get current timeperiod
-        $currentTimePeriod = BeanFactory::getBean(TimePeriod::getCurrentTypeClass(),TimePeriod::getCurrentId());
-        //advance one
-        $currentTimePeriod = $currentTimePeriod->getNextTimePeriod();
-        $nextEndDate = $timedate->fromDbDate($currentTimePeriod->end_date);
-        $this->job->execute_time = $timedate->asUserDate($nextEndDate,true);
-        $this->job->save();
+        $cutoffDate = $latestStartDate;
+        //For the number of shown backwards period, modify the latest date accordingly
+        for($x=0; $x < $shownBackwards; $x++) {
+            $cutoffDate->modify($timeperiodInterval->previous_date_modifier);
+        }
+        $cutoffDate->modify($latestTimePeriod->next_date_modifier);
+
+        if($latestStartDate->getTimestamp() - $currentStartDate->getTimestamp() > $latestStartDate->getTimestamp() - $cutoffDate->getTimestamp())
+        {
+
+        }
+
         return true;
     }
 
