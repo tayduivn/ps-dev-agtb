@@ -34,7 +34,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'detail',
                 ),
                 array(
                     'name' => 'show_worksheet_best',
@@ -42,7 +42,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'forecastsWorksheet',
                 ),
                 array(
                     'name' => 'show_worksheet_worst',
@@ -50,7 +50,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'forecastsWorksheet',
                 ),
             ),
         ),
@@ -65,7 +65,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigRange'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit',
+                    'view' => 'detail',
                 ),
                 array(
                     'name' => 'show_projected_best',
