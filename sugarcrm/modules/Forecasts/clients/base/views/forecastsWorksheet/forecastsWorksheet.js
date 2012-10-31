@@ -441,8 +441,8 @@
 			}});
         }          
         
-        this.context.forecasts.set({checkDirtyWorksheetFlag: true});
-		this.context.forecasts.set({currentWorksheet: "worksheet"});
+        this.context.forecasts.set({checkDirtyWorksheetFlag: true, 
+        							currentWorksheet: "worksheet"});
         this.isEditableWorksheet = this.isMyWorksheet();
         this._setForecastColumn(this.meta.panels[0].fields);
 
