@@ -248,8 +248,9 @@
         event.stopPropagation();
         event.preventDefault();
         this.shrinkNewPost(event);
-        _.each(event.dataTransfer.files, function(i, file) {
+        _.each(event.dataTransfer.files, function(file, i) {
             var fileReader = new FileReader();
+            var self = this;
 
             // Set up the callback for the FileReader.
             fileReader.onload = (function(file) {
@@ -285,12 +286,12 @@
                         container.append("<div>No preview available</div>");
                     }
 
-                    this.$(event.currentTarget).after(container);
+                    self.$(event.currentTarget).after(container);
                 };
             })(file);
 
             fileReader.readAsDataURL(file);
-        });
+        }, this);
     },
 
     saveAttachment: function(event) {
