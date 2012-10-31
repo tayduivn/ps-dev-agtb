@@ -47,7 +47,7 @@
 
             // Set flag so that show more link can be displayed to show hidden panel.
             if (panel.hide) {
-                this.hiddenPanel = true;
+                this.hiddenPanelExists = true;
             }
 
             _.each(panel.fields, function(field) {
