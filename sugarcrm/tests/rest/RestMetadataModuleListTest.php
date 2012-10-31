@@ -315,6 +315,32 @@ class RestMetadataModuleListTest extends RestTestBase {
         
         return $data;
     }
+
+    /**
+     * @group Bug57644
+     */
+    public function testMetadataModulesWithoutIndex() {
+
+        require_once("data/BeanFactory.php");
+        $obj = BeanFactory::getObjectName("Bugs");
+
+        require_once("include/SugarObjects/VardefManager.php");
+        VardefManager::loadVardef("Bugs", $obj);
+        global $dictionary;
+
+        // Blank the indices
+        if(isset($dictionary[$obj]['indices'])) {
+            $dictionary[$obj]['indices'] = array();
+        }
+        $reply = $this->_getModuleListsLikeTheAPIDoes();
+        $this->assertNotEmpty($reply);
+        $this->assertNotEmpty($reply['modules']['Bugs']);
+        foreach($reply['modules']['Bugs']['fields'] as $fieldName => $fieldDef){
+            $this->assertTrue(isset($fieldDef['sortable']), 'Bugs field ' . $fieldName . ' does not have sortable set');
+        }
+
+    }
+
     //BEGIN SUGARCRM flav=ent ONLY
     /**
      * @group rest

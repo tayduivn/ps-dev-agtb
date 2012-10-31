@@ -280,25 +280,19 @@ class MetaDataManager {
             }
         }
 
-        // If sortable isn't already set,
-        //      If the field is indexed, we should set it sortable to TRUE
-        //      Otherwise, set sortable to FALSE (Bug56943, Bug57644)
-        if(!empty($indexes)) {
-            foreach($data['fields'] AS $field_name => $info) {
-                if(!isset($data['fields'][$field_name]['sortable'])){
-                    $data['fields'][$field_name]['sortable'] = false;
-                    if(isset($indexes[$field_name])) {
-                        $data['fields'][$field_name]['sortable'] = true;
-                    }
-                }
-            }
-        } else {
-            foreach($data['fields'] AS $field_name => $info) {
-                if(!isset($data['fields'][$field_name]['sortable'])){
-                    $data['fields'][$field_name]['sortable'] = false;
+        // If sortable isn't already set THEN
+        //      Set it sortable to TRUE, if the field is indexed.
+        //      Set sortable to FALSE, otherwise. (Bug56943, Bug57644)
+        $isIndexed = !empty($indexes);
+        foreach($data['fields'] AS $field_name => $info) {
+            if(!isset($data['fields'][$field_name]['sortable'])){
+                $data['fields'][$field_name]['sortable'] = false;
+                if($isIndexed && isset($indexes[$field_name])) {
+                    $data['fields'][$field_name]['sortable'] = true;
                 }
             }
         }
+
         
         return $data;
     }
