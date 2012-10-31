@@ -2,8 +2,8 @@
 
 // Users
 $seed = BeanFactory::getBean("Users");
-$result = $seed->get_list();
-foreach($result['list'] as $bean) {
+$result = $seed->get_full_list();
+foreach($result as $bean) {
     if(!empty($bean->first_name)) {
         $data[] = array(
             'module' => $bean->module_name,
@@ -15,8 +15,8 @@ foreach($result['list'] as $bean) {
 
 // Contacts
 $seed = BeanFactory::getBean("Contacts");
-$result = $seed->get_list();
-foreach($result['list'] as $bean) {
+$result = $seed->get_full_list();
+foreach($result as $bean) {
     if(!empty($bean->first_name)) {
         $data[] = array(
             'module' => $bean->module_name,
@@ -28,8 +28,8 @@ foreach($result['list'] as $bean) {
 
 // Opportunities
 $seed = BeanFactory::getBean("Opportunities");
-$result = $seed->get_list();
-foreach($result['list'] as $bean) {
+$result = $seed->get_full_list();
+foreach($result as $bean) {
     $data[] = array(
         'module' => $bean->module_name,
         'name' => $bean->name,
@@ -39,8 +39,8 @@ foreach($result['list'] as $bean) {
 
 // Accounts
 $seed = BeanFactory::getBean("Accounts");
-$result = $seed->get_list();
-foreach($result['list'] as $bean) {
+$result = $seed->get_full_list();
+foreach($result as $bean) {
     $data[] = array(
         'module' => $bean->module_name,
         'name' => $bean->name,
