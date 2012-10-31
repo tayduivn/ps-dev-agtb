@@ -20,7 +20,7 @@
             return false;
         }
 
-        level = options.level ? options.level : 'info';
+        level = options.level ? options.level : this.type.INFO;
         title = options.title ? options.title : null;
         msg = (_.isString(options.messages)) ? [options.messages] : options.messages;
         autoClose = options.autoClose ? options.autoClose : false;
