@@ -435,7 +435,7 @@
          * if the user is a manager, we need to go find out if this worksheet's committed date is newer
          * than the manager sheet.
          */
-        if(this.selectedUser.isManager){
+        if(this.selectedUser.isManager && (app.user.get('id') === this.selectedUser.id ) ){
 	        app.api.call("read", this.createURL("mgrCheck"), {}, {success:function(data){
 				self.mgrNeedsCommitted = data["needsCommitted"];
 			}});
