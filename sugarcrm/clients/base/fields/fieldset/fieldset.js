@@ -3,9 +3,15 @@
     focusIndex: 0,
     length: 0,
 
+    /**
+     * {@inheritdoc}
+     */
     getPlaceholder: function() {
-        var ret = "",
-            self = this;
+
+        var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
+        var $container = $(placeholder.toString());
+
+        var self = this;
 
         if (!this.fields) {
             this.fields = [];
@@ -18,13 +24,13 @@
                 });
                 self.fields.push(field);
                 field.parent = self;
-                ret += field.getPlaceholder();
+                $container.append(field.getPlaceholder().toString());
             });
         }
 
         this.length = this.fields.length;
 
-        return new Handlebars.SafeString(app.view.Field.prototype.getPlaceholder.call(this) + ret);
+        return new Handlebars.SafeString($container.get(0).outerHTML);
     },
 
     render: function() {
