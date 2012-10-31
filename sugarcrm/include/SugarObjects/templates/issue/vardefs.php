@@ -27,7 +27,7 @@
  ********************************************************************************/
 $vardefs = array (
 	'fields' => array (
-		$_object_name . '_number' => array (
+        $_object_name . '_number' => array (
 			'name' => $_object_name . '_number',
 			'vname' => 'LBL_NUMBER',
 			'type' => 'int',
@@ -43,7 +43,7 @@ $vardefs = array (
 			'studio' => array('quickcreate' => false),
 		),
 
-		'name' => array (
+        'name' => array (
 			'name' => 'name',
 			'vname' => 'LBL_SUBJECT',
 			'type' => 'name',
@@ -59,32 +59,31 @@ $vardefs = array (
             'importable' => 'required',
 			
 		),
-		  'type' => 
-  array (
-    'name' => 'type',
-    'vname' => 'LBL_TYPE',
-    'type' => 'enum',
-    'options' => strtolower($object_name) . '_type_dom',
-    'len'=>255,
-    'comment' => 'The type of issue (ex: issue, feature)',
-    'merge_filter' => 'enabled',
-    'sortable' => true,
-  ),
+        'type' => array (
+            'name' => 'type',
+            'vname' => 'LBL_TYPE',
+            'type' => 'enum',
+            'options' => strtolower($object_name) . '_type_dom',
+            'len'=>255,
+            'comment' => 'The type of issue (ex: issue, feature)',
+            'merge_filter' => 'enabled',
+            'sortable' => true,
+        ),
 
 		'status' => array (
-			'name' => 'status',
-			'vname' => 'LBL_STATUS',
-			'type' => 'enum',
-			'options' => strtolower($object_name) . '_status_dom',
-			'len' => 100,
-			'audited' => true,
-			'comment' => 'The status of the issue',
-			'merge_filter' => 'enabled',
-		    'unified_search' => true,
+            'name' => 'status',
+            'vname' => 'LBL_STATUS',
+            'type' => 'enum',
+            'options' => strtolower($object_name) . '_status_dom',
+            'len' => 100,
+            'audited' => true,
+            'comment' => 'The status of the issue',
+            'merge_filter' => 'enabled',
+            'unified_search' => true,
             'sortable' => true,
 		),
 
-		'priority' => array (
+        'priority' => array (
 			'name' => 'priority',
 			'vname' => 'LBL_PRIORITY',
 			'type' => 'enum',
@@ -97,7 +96,7 @@ $vardefs = array (
             'sortable' => true,
 		),
 
-		'resolution' => array (
+        'resolution' => array (
 			'name' => 'resolution',
 			'vname' => 'LBL_RESOLUTION',
 			'type' => 'enum',
@@ -111,7 +110,7 @@ $vardefs = array (
 		),
 
 			//BEGIN SUGARCRM flav=pro ONLY
-	'system_id' => array (
+	    'system_id' => array (
 			'name' => 'system_id',
 			'vname' => 'LBL_SYSTEM_ID',
 			'type' => 'int',
@@ -121,7 +120,7 @@ $vardefs = array (
 
 
 			//not in cases.
-	'work_log' => array (
+	    'work_log' => array (
 			'name' => 'work_log',
 			'vname' => 'LBL_WORK_LOG',
 			'type' => 'text',
