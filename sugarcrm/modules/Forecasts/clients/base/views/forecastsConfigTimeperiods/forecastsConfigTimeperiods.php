@@ -28,8 +28,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
         array(
             'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS',
             'fields' => array(
-                //TODO-sfa - 6.8 work with PM to determine whether custom date types are being added as ent feature or not.
                 //BEGIN SUGARCRM flav=int ONLY
+                //TODO-sfa - 6.8 work with PM to determine whether custom date types are being added as ent feature or not.
                 array(
                     'name' => 'timeperiod_type',
                     'type' => 'enum',
