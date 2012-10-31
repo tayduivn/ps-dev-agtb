@@ -254,7 +254,7 @@
         var url = 'index.php?module=Forecasts&action=';
         url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
-        url += '&timeperiod_id=' + $("#date_filter").val();
+        url += '&timeperiod_id=' + $("#timeperiod").val();
         window.open(url, "_blank");
     },
 
