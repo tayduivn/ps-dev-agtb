@@ -8,17 +8,10 @@
     },
 
     render: function() {
-        var layoutData = {guid: this.guid, title: this.options['title']},
-            self = this,
+        var self = this,
             node, color, xy, svg, path;
 
         app.view.View.prototype.render.call(this);
-
-        if (!_.isUndefined(this.options['urls'])) {
-            layoutData['urls'] = this.options['urls'];
-        }
-
-        this.$('.chartSelector').val(this.options['url']);
 
         if (!_.isEmpty(this.results)) {
             node = $('#' + this.guid);
