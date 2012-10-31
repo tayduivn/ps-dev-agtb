@@ -116,11 +116,14 @@
             });
 
         app.api.call('create', url, {'value': contents}, {success: function(post_id) {
+            // TODO: Fix this to be less hacky. Perhaps a flag in arguments?
+            var parent_type = (url.indexOf("ActivityStream/ActivityStream") === -1)? 'ActivityStream' : 'ActivityComments';
+
             attachments.each(function(index, el) {
                 var id = $(el).attr('id'),
                     seed = app.data.createBean('Notes', {
                         'parent_id': post_id,
-                        'parent_type': 'ActivityStream',
+                        'parent_type': parent_type,
                         'team_id': 1
                     });
 
