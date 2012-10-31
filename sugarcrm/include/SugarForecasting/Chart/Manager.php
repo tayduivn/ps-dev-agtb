@@ -208,12 +208,18 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         //get the quota data for user
         /* @var $quota Quota */
         $quota = BeanFactory::getBean('Quotas');
-        $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
 
-        // If we have the amount, we need to use it.  if the row is empty, just get the quota from the loaded data
-        return isset($quotaData["amount"]) ?
-                    SugarCurrency::convertAmountToBase($quotaData["amount"], $quotaData['currency_id'])
-            : $this->getQuotaTotalFromData();
+        //grab user that is the target of this call to check if it is the top level manager
+        $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
+
+        if($targetedUser->reports_to_id != "") {
+            $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
+            return SugarCurrency::convertAmountToBase($quotaData["amount"], $quotaData['currency_id']);
+        }
+        // get the quota from the loaded data for a manager that has no manager
+        return $this->getQuotaTotalFromData();
+
+
     }
 
     /**
