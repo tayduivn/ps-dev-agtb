@@ -44,9 +44,9 @@
         app.api.call('GET', url, null, {
             success: function(o) {
                 self.results = {};
-                _(o).each(function(el) {
-                    var country = self._checkCountry(el.country);
-                    self.results[country] = parseInt(el.amount, 10);
+                _(o).each(function(amount, country) {
+                    country = self._checkCountry(country);
+                    self.results[country] = parseInt(amount, 10);
                 });
 
                 self.render();
