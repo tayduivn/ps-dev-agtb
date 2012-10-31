@@ -2,6 +2,21 @@
     fields: null,
 
     /**
+     * Initializes the fieldset field component.
+     *
+     * Initializes the fields property.
+     *
+     * @param {Object} options
+     *
+     * @see app.view.Field.initialize
+     */
+    initialize: function(options) {
+        app.view.Field.prototype.initialize.call(this, options);
+
+        this.fields = [];
+    },
+
+    /**
      * {@inheritdoc}
      */
     getPlaceholder: function() {
@@ -9,22 +24,17 @@
         var placeholder = app.view.Field.prototype.getPlaceholder.call(this);
         var $container = $(placeholder.toString());
 
-        var self = this;
-
-        if (!this.fields) {
-            this.fields = [];
-            _.each(this.def.fields, function(fieldDef) {
-                var field = app.view.createField({
-                    def: fieldDef,
-                    view: self.view,
-                    viewName: self.options.viewName,
-                    model: self.model
-                });
-                self.fields.push(field);
-                field.parent = self;
-                $container.append(field.getPlaceholder().toString());
+        _.each(this.def.fields, function(fieldDef) {
+            var field = app.view.createField({
+                def: fieldDef,
+                view: this.view,
+                viewName: this.options.viewName,
+                model: this.model
             });
-        }
+            this.fields.push(field);
+            field.parent = this;
+            $container.append(field.getPlaceholder().toString());
+        }, this);
 
         return new Handlebars.SafeString($container.get(0).outerHTML);
     },
@@ -36,9 +46,6 @@
      * support for templates on fieldset widgets.
      */
     _render: function() {
-        if (this.options.viewName == "detail") {
-            this.focusIndex = 0;
-        }
 
         _.each(this.fields, function(field) {
             field.render();
