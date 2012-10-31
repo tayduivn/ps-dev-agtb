@@ -50,9 +50,6 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         //Fiscal is 52-week based, chronological is year based
         $this->is_fiscal = false;
 
-        //Used to indicate whether or not TimePeriod instance is a leaf type
-        $this->is_leaf = false;
-
         //The next period modifier
         $this->next_date_modifier = $this->is_fiscal ? '52 week' : '1 year';
 

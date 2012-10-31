@@ -42,6 +42,14 @@ class ForecastsConfigApi extends ConfigModuleApi {
         //track what settings have changed to determine if timeperiods need rebuilt
         $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
+        //If this is a first time setup, default prior settings for timeperiods to 0 so we may correctly recalculate
+        //how many timeperiods to build forward and backward.  If we don't do this we would need the defaults to be 0
+        if (empty($prior_forecasts_settings['is_setup']))
+        {
+            $prior_forecasts_settings['timeperiod_shown_forward'] = 0;
+            $prior_forecasts_settings['timeperiod_shown_backward'] = 0;
+        }
+
         if (!empty($prior_forecasts_settings['is_upgrade']))
         {
             $db = DBManagerFactory::getInstance();
@@ -60,9 +68,12 @@ class ForecastsConfigApi extends ConfigModuleApi {
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
         //if primary settings for timeperiods have changed, then rebuild them
-        //if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
-        TimePeriod::rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
-        //}
+        if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
+            $timePeriod = TimePeriod::getByType($current_forecasts_settings['timeperiod_interval']);
+            $timePeriod->time_period_type = $current_forecasts_settings['timeperiod_interval']; // Annual by default
+            $timePeriod->leaf_period_type = $current_forecasts_settings['timeperiod_leaf_interval']; // Quarter by default
+            $timePeriod->rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
+        }
         return $current_forecasts_settings;
     }
 
@@ -75,6 +86,12 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @return boolean
      */
     private function timePeriodSettingsChanged($priorSettings, $currentSettings) {
+        if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_interval']))) {
+            return true;
+        }
+        if(!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_type']))) {
+            return true;
+        }
         if(!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {
             return true;
         }

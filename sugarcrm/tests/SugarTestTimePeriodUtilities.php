@@ -105,7 +105,6 @@ class SugarTestTimePeriodUtilities
         $timeperiod->setStartDate($timedate->asDbDate($start_date));
 
         $timeperiod->name = $name;
-        $timeperiod->is_leaf = 0;
         $timeperiod->save();
         self::$_createdTimePeriods[] = $timeperiod;
         return $timeperiod;

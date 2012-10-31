@@ -51,9 +51,6 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         //Fiscal is 52-week based, chronological is year based
         $this->is_fiscal = false;
 
-        //Used to indicate whether or not TimePeriod instance is a leaf type
-        $this->is_leaf = false;
-
         //The next period modifier
         $this->next_date_modifier = '3 month';
 

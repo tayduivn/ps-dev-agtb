@@ -38,17 +38,5 @@ interface TimePeriodInterface
     public function getPreviousTimePeriod();
 
     public function setStartDate($start_date=null);
-
-    public function createNextTimePeriod();
-
-    public function createPreviousTimePeriod();
-
-    public function hasLeaves();
-
-    public function getLeaves();
-
-    //public function buildLeaves($timePeriodType);
-    //public function buildLeaves($shownBackwardDifference, $shownForwardDifference);
-
 }
 ?>

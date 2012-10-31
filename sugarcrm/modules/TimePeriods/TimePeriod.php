@@ -66,6 +66,8 @@ class TimePeriod extends SugarBean {
     var $date_modifier;
     var $is_leaf = false;
 	var $encodeFields = Array("name");
+    var $priorSettings;
+    var $currentSettings;
 
 	// This is used to retrieve related fields from form posts.
 	var $additional_column_fields = Array('reports_to_name');
@@ -195,44 +197,6 @@ class TimePeriod extends SugarBean {
 
 		return $query;
 	}
-
-    /**
-     * creates a new timeperiod to start to use
-     *
-     * @return mixed
-     */
-    public function createNextTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $nextStartDate = $timedate->fromDbDate($this->end_date);
-        $nextStartDate = $nextStartDate->modify('+1 day');
-        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $nextPeriod->is_leaf = $this->is_leaf;
-        $nextPeriod->is_fiscal = $this->is_fiscal;
-        $nextPeriod->name = "";
-        $nextPeriod->setStartDate($timedate->asDbDate($nextStartDate));
-        $nextPeriod->save();
-
-        return $nextPeriod;
-    }
-
-    /**
-     * creates a new timeperiod to keep past records
-     *
-     * @return mixed
-     */
-    public function createPreviousTimePeriod() {
-        $timedate = TimeDate::getInstance();
-        $previousStartDate = $timedate->fromDbDate($this->start_date);
-        $previousStartDate = $previousStartDate->modify('-'.$this->date_modifier);
-        $previousPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $previousPeriod->name = "";
-        $previousPeriod->is_leaf = $this->is_leaf;
-        $previousPeriod->is_fiscal = $this->is_fiscal;
-        $previousPeriod->setStartDate($timedate->asDbDate($previousStartDate));
-        $previousPeriod->save();
-
-        return $previousPeriod;
-    }
 
     /**
      * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
@@ -470,7 +434,7 @@ class TimePeriod extends SugarBean {
         {
             $db = DBManagerFactory::getInstance();
             $not_fiscal_timeperiods = array();
-            $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 0 AND is_leaf = 1 AND deleted=0');
+            $result = $db->query('SELECT id, name FROM timeperiods WHERE is_fiscal_year = 0 AND parent_id IS NOT NULL AND deleted=0 ORDER BY start_date_timestamp ASC');
             while(($row = $db->fetchByAssoc($result)))
             {
                 if(!isset($not_fiscal_timeperiods[$row['id']]))
@@ -572,7 +536,7 @@ class TimePeriod extends SugarBean {
        //if the target date is after the current year then set the year to be one back
        if($currentDate < $targetStartDate)
        {
-           $targetStartDate->modify('-1 year');
+           $targetStartDate->modify($this->previous_date_modifier);
        }
 
        $this->setStartDate($targetStartDate->asDbDate());
@@ -581,18 +545,22 @@ class TimePeriod extends SugarBean {
        $targetDateDifferent = $this->isTargetDateDifferentFromPrevious($targetStartDate, $priorSettings);
        $targetIntervalDifferent = $this->isTargetIntervalDifferent($priorSettings, $currentSettings);
 
+       $isUpgrade = !empty($priorSettings['is_upgrade']);
+
+       $GLOBALS['log']->fatal('isUpgrade:' . $isUpgrade);
+
        //Now check if we need to add more timeperiods
        //If we are coming from an upgrade, we do not create any backward timeperiods
-       $shownBackwardDifference = !empty($priorSettings['is_upgrade']) ? 0 : $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
+       $shownBackwardDifference = $isUpgrade ? 0 : $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_backward');
 
        $shownForwardDifference = $this->getShownDifference($priorSettings, $currentSettings, 'timeperiod_shown_forward');
 
        //If this is not an upgrade, we can build the timeperiods
-       if(empty($priorSettings['is_upgrade']))
+       if(!$isUpgrade)
        {
            $this->buildLeaves($shownBackwardDifference, $shownForwardDifference);
        } else {
-
+           die("fuck!");
        }
 
        //Right now we only support chronological AnnualTimePeriods so just hard code this for now
@@ -692,8 +660,8 @@ class TimePeriod extends SugarBean {
     protected function buildTimePeriods($timePeriods, $dateModifier)
     {
         $timedate = TimeDate::getInstance();
-        //$startDate = $timedate->fromDbDate($this->start_date)->asDbDate();
         $startDate = $timedate->fromDbDate($this->start_date)->modify($dateModifier)->asDbDate();
+        //$startDate = $timedate->fromDbDate($this->start_date)->asDbDate();
 
         for($i=1; $i <= $timePeriods; $i++)
         {
@@ -728,7 +696,6 @@ class TimePeriod extends SugarBean {
      * Checks if the targetStartDate is different based on prior settings
      *
      * @param $targetStartDate SugarDateTime instance of start date based on current settings
-     * @param $priorSettings Array of previous forecast settings
      *
      * @return bool true if different false otherwise
      */

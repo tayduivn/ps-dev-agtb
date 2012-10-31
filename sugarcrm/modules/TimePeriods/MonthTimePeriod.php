@@ -43,9 +43,6 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         //Fiscal is 52-week based, chronological is year based
         $this->is_fiscal = false;
 
-        //Used to indicate whether or not TimePeriod instance is a leaf type
-        $this->is_leaf = true;
-
         //The next period modifier
         $this->next_date_modifier = '1 month';
 
@@ -116,7 +113,6 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
         $nextPeriod->is_fiscal = $this->is_fiscal;
         $nextPeriod->setStartDate($nextStartDate, $week_length);
-        $nextPeriod->is_leaf = $this->is_leaf;
         $nextPeriod->save();
 
         return $nextPeriod;

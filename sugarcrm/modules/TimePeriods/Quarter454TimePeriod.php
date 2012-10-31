@@ -46,7 +46,6 @@ class Quarter454TimePeriod extends TimePeriod implements TimePeriodInterface {
         //set defaults
         $this->time_period_type = 'Quarter454';
         $this->is_fiscal = true;
-        $this->is_leaf = false;
         $this->date_modifier = '13 week';
 
         $this->setStartDate($start_date);
@@ -63,17 +62,12 @@ class Quarter454TimePeriod extends TimePeriod implements TimePeriodInterface {
             throw new Exception("This TimePeriod already has leaves");
         }
 
-        if($this->is_leaf) {
-            throw new Exception("Leaf Time Periods cannot have leaves");
-        }
-
         $this->load_relationship('related_timeperiods');
 
         //1st month leaf
         $leafPeriod = BeanFactory::newBean('MonthTimePeriods');
         $leafPeriod->is_fiscal = true;
         $leafPeriod->setStartDate($this->start_date, 4);
-        $leafPeriod->is_leaf = true;
         $leafPeriod->save();
         $this->related_timeperiods->add($leafPeriod->id);
 

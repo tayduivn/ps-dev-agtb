@@ -225,7 +225,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Check if timeperiod_leaf_interval chagnes
         $currentForecastSettings['timeperiod_interval'] = TimePeriod::QUARTER_TYPE;
-        $currentForecastSettings['timeperiod_leaf_interval'] = 'Month';
+        $currentForecastSettings['timeperiod_leaf_interval'] = TimePeriod::MONTH_TYPE;
         $this->assertTrue($timeperiod->isTargetIntervalDifferent($priorForecastSettings, $currentForecastSettings));
     }
 
@@ -544,21 +544,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentQuarterTimePeriod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE, $id);
         $expectedQuarterTimePeriodName = sprintf($currentQuarterTimePeriod->name_template, $currentId, $queryDate);
         $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
-    }
-
-    /**
-     * testTimePeriodDeleteTimePeriodsWithDifferentPreviousSettings
-     *
-     * This test simulates incrementing the shown_forward and show_backward configuration parameters from 2 to 4
-     *
-     * This test will check
-     * 1) That we have not deleted the previous timeperiods
-     * 2) That we create new timeperiods since the show_forward and show_backward values have increased from 2 to 4
-     *
-     */
-    public function testTimePeriodDeleteTimePeriodsWithDifferentPreviousSettings()
-    {
-
     }
 
 
