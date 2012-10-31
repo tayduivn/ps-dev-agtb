@@ -25,12 +25,12 @@
             }
         //END SUGARCRM flav=pro ONLY
 
+        // TODO-sfa this will get removed when the timeperiod mapping functionality is added (SFA-214)
         /**
-         * This is needed to make sure that this view is read only
-         * when viewing it in the Tabbed Config View
+         * This is needed to make sure that this view is read only when forecasts module has been set up.
          */
-        if(!_.isUndefined(this.layout) && this.layout.meta.type == "forecastsTabbedConfig") {
-            // if we are on the tabbed config, this is read only!
+        if(this.model.get('is_setup')) {
+            // if forecasts has been setup, this is read only!
             field.options.def.view = 'detail';
         }
         app.view.View.prototype._renderField.call(this, field);
@@ -60,7 +60,7 @@
         field._updateDaysForMonth = function(event, input) {
             //get the timeperiod day selector
             var timeperiod_start_day = $('select[name="timeperiod_start_day"]');
-            var selected_month = 0
+            var selected_month = 1;
             //trash the current options
             $('option', timeperiod_start_day).remove();
             if(_.has(input, "selected")) {
@@ -73,12 +73,19 @@
         };
 
         field._buildDaysOptions = function(selected_month) {
-            var option_html
-            var current_date = new Date();
-            current_date.setMonth(selected_month);
-            current_date.setDate(0);
+            var option_html,
+                current_date = new Date(),
+                days;
+
+            /*
+             selected_month will be the value as selected from the dropdown, i. e. January == 1,
+             JS Date equates 0 to January, so to get the days in the month, we can do month + 1, with day 0, which is why
+             we don't adjust for the -1 offset from the dropdown here.
+              */
+            days = new Date(current_date.getFullYear(), selected_month, 0).getDate();
+
             option_html = '<option value=""></option>';
-            var days = current_date.getDate();
+
             for (var i = 1; i <= days; i++) {
                 option_html += '<option value="' + i + '"';
                 if(i == this.model.get('timeperiods_start_day')) {
@@ -88,8 +95,7 @@
             }
             return option_html;
         };
-        // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
-        //field.def.value = this.model.get(field.name)+'';
+
         field.def.value = this.model.get(field.name) || 1;
         return field;
     },
@@ -102,12 +108,11 @@
      */
     _setUpTimeperiodStartDayBind: function(field) {
 
-        // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
         field.def.value = this.model.get(field.name);
 
         //build the day options based on the initially selected month
         var current_date = new Date();
-        current_date.setMonth(this.model.get('timeperiod_start_month'));
+        current_date.setMonth(this.model.get('timeperiod_start_month') - 1);
         current_date.setDate(0);
         field.def.options = {};
         var days = current_date.getDate();
@@ -150,7 +155,7 @@
     _setUpTimeperiodIntervalBind: function(field) {
 
         var self = this;
-        // INVESTIGATE:  This is to get around what may be a bug in sidecar. The field.value gets overriden somewhere and it shouldn't.
+
         field.def.value = this.model.get(field.name);
 
         // ensure selected day functions like it should

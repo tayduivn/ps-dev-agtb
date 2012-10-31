@@ -54,9 +54,15 @@ describe("The forecastsConfigTimeperiods view", function(){
             testIntervalMethodStub = sinon.stub(view, "_setUpTimeperiodIntervalBind", function() {return field;});
             field = {
             }
+            view.model = {
+                get: function(key) {
+                    return (key == 'is_setup')?false:key;
+                }
+            }
         });
 
         afterEach(function() {
+            delete view.model;
             testMonthMethodStub.restore();
             testDayMethodStub.restore();
             testIntervalMethodStub.restore();
@@ -101,7 +107,7 @@ describe("The forecastsConfigTimeperiods view", function(){
     describe("timeperiod date field setup", function() {
 
         beforeEach(function() {
-            testValue = 3;
+            testValue = 3;  //Simulate March as selected in the dropdown
             testIntervalValue = "Annual";
             testLeafIntervalValue = "Quarter";
             view.model = new Backbone.Model({
@@ -181,9 +187,9 @@ describe("The forecastsConfigTimeperiods view", function(){
         it("should change the number of days in the day selector when the user selects a month", function() {
             var options = monthField._buildDaysOptions(testValue);
 
-            //build expected string
+            //build expected string, based on month of March,
             var expectedOptions = '<option value=""></option>';
-            for(var i = 1; i <= 31; i++) {
+            for(var i = 1; i < 32; i++) {
                 expectedOptions +='<option value="'+i+'">'+i+'</option>';
             }
             expect(options).toEqual(expectedOptions);

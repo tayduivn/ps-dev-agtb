@@ -28,7 +28,8 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
         array(
             'label' => 'LBL_FORECASTS_CONFIG_BREADCRUMB_TIMEPERIODS',
             'fields' => array(
-                //BEGIN SUGARCRM flav=ent ONLY
+                //TODO-sfa - 6.8 work with PM to determine whether custom date types are being added as ent feature or not.
+                //BEGIN SUGARCRM flav=int ONLY
                 array(
                     'name' => 'timeperiod_type',
                     'type' => 'enum',
@@ -38,7 +39,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'enabled' => true,
                     'view' => 'edit',
                 ),
-                //END SUGARCRM flav=ent ONLY
+                //END SUGARCRM flav=int ONLY
                 array(
                     'name' => 'timeperiod_interval',
                     'type' => 'enum',
@@ -48,7 +49,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'enabled' => true,
                     'view' => 'edit',
                 ),
-                //BEGIN SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'timeperiod_leaf_interval',
                     'type' => 'enum',
@@ -58,7 +58,6 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'enabled' => true,
                     'view' => 'edit',
                 ),
-                //END SUGARCRM flav=ent ONLY
                 array(
                     'name' => 'timeperiod_start_month',
                     'type' => 'enum',
@@ -66,7 +65,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_START_MONTH',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    'view' => 'forecastsTimeperiod'
                 ),
                 array(
                     'name' => 'timeperiod_start_day',
@@ -78,7 +77,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_START_DAY',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    'view' => 'forecastsTimeperiod'
                 ),
                 array(
                     'name' => 'timeperiods_shown_forward',
@@ -86,7 +85,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    'view' => 'forecastsTimeperiod'
                 ),
                 array(
                     'name' => 'timeperiods_shown_backward',
@@ -94,7 +93,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD',
                     'default' => false,
                     'enabled' => true,
-                    'view' => 'edit'
+                    'view' => 'forecastsTimeperiod'
                 ),
             ),
         ),
