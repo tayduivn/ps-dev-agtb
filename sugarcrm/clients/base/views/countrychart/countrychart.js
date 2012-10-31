@@ -20,7 +20,7 @@
             svg = d3.select("#" + this.guid).append("svg").attr("style", "height: 250px;");
             path = d3.geo.path().projection(xy);
 
-            d3.json("../clients/summer/views/countrychart/world-countries.json", function(collection) {
+            d3.json("../clients/base/views/countrychart/world-countries.json", function(collection) {
                 var g = svg.selectAll("path")
                     .data(collection.features)
                     .enter().append("g");
