@@ -367,10 +367,11 @@ $mod_strings = array (
     'LBL_FORECASTS_CONFIG_SHOW_CUSTOM_BUCKETS_CATEGORIES' => 'Custom Categories: This option gives a user the ability to categorize their opportunities to be committed into the forecast into a committed category, omitted category and any other categories that you setup.',
 
     // range config
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Show these ranges on the worksheets',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Show Likely Case Column',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Show Best Case Column',
-    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Show Worst Case Column',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE' => 'Select the column you would like the user to fill out for their forecast for each opportunity.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_LIKELY_INFO' => 'Please note the Likely amount is tied to the amount shown in Opportunities; for this reason the Likely column cannot be hidden.',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_LIKELY' => 'Likely',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_BEST' => 'Best',
+    'LBL_FORECASTS_CONFIG_WORKSHEET_RANGE_WORST' => 'Worst',
     'LBL_FORECASTS_CONFIG_PROJECTED_RANGE' => 'Show projected ranges in the totals',
     'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_LIKELY' => 'Show Likely Case Totals',
     'LBL_FORECASTS_CONFIG_PROJECTED_RANGE_BEST' => 'Show Best Case Totals',
