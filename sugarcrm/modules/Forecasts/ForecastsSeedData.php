@@ -185,5 +185,10 @@ class ForecastsSeedData {
 
         $admin = BeanFactory::getBean('Administration');
         $admin->saveSetting('Forecasts', 'is_setup', 1, 'base');
+
+
+        // this locks the forecasts category configs if the apps is installed with demo data and already has commits
+        // TODO-sfa - theshark -  post demo 10/31/2012, uncomment this
+        //$admin->saveSetting('Forecasts', 'has_commits', 1, 'base');
     }
 }
