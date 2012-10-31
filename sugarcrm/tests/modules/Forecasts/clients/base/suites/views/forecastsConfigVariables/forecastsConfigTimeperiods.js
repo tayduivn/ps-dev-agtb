@@ -189,7 +189,7 @@ describe("The forecastsConfigTimeperiods view", function(){
 
             //build expected string, based on month of March,
             var expectedOptions = '<option value=""></option>';
-            for(var i = 1; i < 32; i++) {
+            for(var i = 1; i <= 31; i++) {
                 expectedOptions +='<option value="'+i+'">'+i+'</option>';
             }
             expect(options).toEqual(expectedOptions);
