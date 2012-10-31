@@ -317,11 +317,12 @@ class Quota extends SugarBean {
 		if ($id == NULL)
 			$id = $current_user->id;
 		
-		$query = "SELECT SUM(quotas.amount_base_currency) as group_amount" .
+	    $query = "SELECT {$this->db->convert('SUM(quotas.amount_base_currency)', 'ifnull', array(0))} as group_amount" .
 				" FROM users, quotas " .
 				" WHERE quotas.timeperiod_id = '" . $timeperiod_id . "'" .
 				" AND quotas.deleted = 0" .
 				" AND users.id = quotas.user_id" .
+                " AND users.deleted = 0" .
 				" AND quotas.created_by = '" .$id . "'" .
 				" AND (users.reports_to_id = '" . $id . "' " .
 				" OR (users.id = '" . $id . "'" .
@@ -355,25 +356,9 @@ class Quota extends SugarBean {
  */		
 	function getUserManagedSelectList($timeperiod_id, $id = ''){
 		global $mod_strings;
-		global $current_user;
 		global $locale;
 		
-		$qry = "SELECT U.id as user_id, Q.id as quota_id, Q.timeperiod_id as timeperiod_id, user_name, first_name, last_name " .
-			   "FROM users U " .
-			   "LEFT OUTER JOIN (SELECT quotas.id, quotas.user_id, quotas.timeperiod_id, quotas.quota_type " .
-			   					"FROM quotas, users " .
-			   					"WHERE quotas.timeperiod_id = '" . $timeperiod_id . "' " .
-			   					"AND quotas.user_id = users.id " .
-			   					"AND quotas.created_by = '" . $current_user->id . "' " .
-			   					"AND (users.reports_to_id = '" . $current_user->id . "' " .
-			   						"OR (quotas.quota_type = 'Direct' AND users.id = '" . $current_user->id . "') ) ) Q " .
-			   					"ON Q.user_id = U.id  " .
-			   "WHERE U.reports_to_id = '" . $current_user->id . "' " .
-			   " OR U.id = '" . $current_user->id . "' " .
-			   "ORDER BY first_name";
-
-		$result = $this->db->query($qry, true, 'Error retrieving quotas for managed users for current user: ');
-
+        $data = $this->getUserManagedSelectData($timeperiod_id);
 		$options = '';
 
 		if ($id == NULL)
@@ -381,7 +366,8 @@ class Quota extends SugarBean {
 						 . $mod_strings['LBL_SELECT_USER']  
 						 . '</option>' ;
 						 		
-		while ($row = $this->db->fetchByAssoc($result)){
+        foreach($data as $row)
+        {
 			
 			if ($row['user_id'] == $id)
 				$options .= '<option value="?edit=true&action=index&module=Quotas&record=' 
@@ -415,6 +401,35 @@ class Quota extends SugarBean {
 		return $options;
 	}
 
+    /**
+     * Return data for building options in Quota::getUserManagedSelectList
+     * @param string $timeperiod_id
+     * @return array
+     */
+    protected function getUserManagedSelectData($timeperiod_id)
+    {
+        $result = array();
+        global $current_user;
+        $query = "SELECT U.id as user_id, Q.id as quota_id, Q.timeperiod_id as timeperiod_id, user_name, first_name, last_name " .
+                "FROM users U " .
+                "LEFT OUTER JOIN (SELECT quotas.id, quotas.user_id, quotas.timeperiod_id, quotas.quota_type " .
+                "FROM quotas, users " .
+                "WHERE quotas.timeperiod_id = {$this->db->quoted($timeperiod_id)}" .
+                "AND quotas.user_id = users.id " .
+                "AND quotas.created_by = {$this->db->quoted($current_user->id)}" .
+                "AND (users.reports_to_id = {$this->db->quoted($current_user->id)}" .
+                "OR (quotas.quota_type = 'Direct' AND users.id = {$this->db->quoted($current_user->id)}) ) ) Q " .
+                "ON Q.user_id = U.id  " .
+                "WHERE (U.reports_to_id = {$this->db->quoted($current_user->id)}" .
+                " OR U.id = {$this->db->quoted($current_user->id)}) AND U.deleted = 0  " .
+                "ORDER BY first_name";
+        $resource = $this->db->query($query, true, 'Error retrieving quotas for managed users for current user: ');
+        while($row = $this->db->fetchByAssoc($resource))
+        {
+            array_push($result, $row);
+        }
+        return $result;
+    }
 /**
  * function isManager. The purpose of this function is to determine whether
  * the given user is a manager  

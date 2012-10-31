@@ -120,7 +120,7 @@ $selectTimePeriod .= "</td>\n";
 $listViewHeader = $selectTimePeriod . $currentUserQuotaRow;
 $listViewHeader .= "</tr>\n";
 
-$where  = "quotas.deleted=0 ";
+$where  = "quotas.deleted=0 AND users.deleted = 0 ";
 if (!empty($_REQUEST['timeperiod_id']))
 	$where .= " AND quotas.timeperiod_id = '" . $_REQUEST['timeperiod_id'] ."'";
 
