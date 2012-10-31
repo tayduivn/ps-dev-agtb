@@ -8,7 +8,7 @@
 
     _render: function() {
         var self = this;
-
+        var selector = "#"+this.guid;
         this.$el.show();
 
         var layoutData = {guid: this.guid, title: this.options['title']};
@@ -17,8 +17,8 @@
         // Set up variables for d3 treemap.
         var margin = {top: 20, right: 0, bottom: 0, left: 0},
             // TODO: Fix the following
-            width = parseInt($("#"+this.guid).width(), 10),
-            height = 400,
+            width = parseInt($(selector).width(), 10),
+            height = parseInt($(selector + " svg").css('max-height'), 10),
             transitioning;
 
         var x = d3.scale.linear()
@@ -37,7 +37,7 @@
             }).round(false);
 
         // Actually create the DOM elements.
-        var svg = d3.select("#"+self.guid).append("svg")
+        var svg = d3.select(selector + " svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.bottom + margin.top)
             .style("margin-left", -margin.left+"px")

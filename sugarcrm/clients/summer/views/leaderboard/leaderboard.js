@@ -1,48 +1,46 @@
 ({
     initialize: function(options) {
         app.view.View.prototype.initialize.call(this, options);
+        this.results = [];
         this.guid = _.uniqueId("leaderboard");
+        this.loadData();
     },
 
     _render: function() {
         var self = this;
+        $("#" + this.guid + " svg").css("width", $("#" + this.guid).width());
+        $("#" + this.guid + " svg").css("min-height", "300px");
+    },
 
-        this.$el.show();
-
-        var layoutData = {guid: this.guid, title: this.options['title']};
-
-        app.view.View.prototype._render.call(this);
-        this.results = '';
-
-        app.api.call('GET', '../rest/v10/CustomReport/OpportunityLeaderboard', null, {success: function(o) {
-            this.results = [{
-                key: "Opportunity Leaderboard",
-                values: []
-            }];
+    loadData: function() {
+        var self = this,
+            url = app.api.buildURL('CustomReport/OpportunityLeaderboard');
+        app.api.call('GET', url, null, {success: function(o) {
+            self.results = {
+                properties: {
+                    title: 'Opportunity Leaderboard'
+                },
+                data: []
+            };
             for (i = 0; i < o.length; i++) {
-                this.results[0].values.push({
-                    label: o[i]['user_name'],
+                self.results.data.push({
+                    key: o[i]['user_name'],
                     value: parseInt(o[i]['amount'], 10)
                 });
             }
 
-            $("#" + self.guid + " svg").css("width", $("#" + self.guid).width());
-            $("#" + self.guid + " svg").css("min-height", "300px");
+            app.view.View.prototype._render.call(self);
             nv.addGraph(function() {
                 var chart = nv.models.pieChart()
                   .x(function(d) { return d.label; })
-                  .y(function(d) { return d.value; })
-                  .showLabels(true);
+                  .y(function(d) { return d.value; });
 
                 d3.select("#" + self.guid + " svg")
-                  .datum(this.results)
+                  .datum(self.results)
                   .transition().duration(1200)
                   .call(chart);
-
                 return chart;
             });
-
-            app.view.View.prototype._render.call(self);
         }});
     }
 })
