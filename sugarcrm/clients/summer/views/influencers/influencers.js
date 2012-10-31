@@ -14,7 +14,7 @@
                     module: "Users",
                     id: data[value]["id"],
                     field: "picture"
-                }) : "../clients/summer/views/imagesearch/anonymous.jpg";
+                }) : "../styleguide/assets/img/profile.png";
             });
 
             self.collections = data;

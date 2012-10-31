@@ -57,7 +57,7 @@
             module: 'Users',
             id: app.user.get('id'),
             field: 'picture'
-        }) : "../clients/summer/views/imagesearch/anonymous.jpg";
+        }) : "../styleguide/assets/img/profile.png";
 
         // Expose the dataTransfer object for drag and drop file uploads.
         jQuery.event.props.push('dataTransfer');
@@ -548,7 +548,7 @@
             processPicture = function(obj) {
                 var isModel = (obj instanceof Backbone.Model);
                 var created_by = obj.created_by || obj.get('created_by');
-                var url = "../clients/summer/views/imagesearch/anonymous.jpg";
+                var url = "../styleguide/assets/img/profile.png";
                 if (obj.created_by_picture || (isModel && obj.get('created_by_picture'))) {
                     url = app.api.buildFileURL({
                         module: 'Users',

@@ -14,7 +14,7 @@
                     module: "Users",
                     id: data[value]["assigned_user_id"],
                     field: "picture"
-                }) : "../clients/summer/views/imagesearch/anonymous.jpg";
+                }) : "../styleguide/assets/img/profile.png";
                 data[value]['amount'] = app.currency.formatAmountLocale(data[value]['amount'], data[value]['currency_id']);
             });
 

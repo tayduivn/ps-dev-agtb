@@ -56,7 +56,7 @@
                             module: "Users",
                             id: data[value]["id"],
                             field: "picture"
-                        }) : "../clients/summer/views/imagesearch/anonymous.jpg";
+                        }) : "../styleguide/assets/img/profile.png";
 
                         var model = app.data.createBean("User");
                         model.attributes = data[value];
