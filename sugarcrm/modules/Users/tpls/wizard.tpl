@@ -434,7 +434,14 @@ var SugarWizard = new function()
                 {/if}
                 {literal}
                 break;
+            case 'locale':
+                if (document.getElementById("default_number_grouping_seperator").value == document.getElementById("default_decimal_seperator").value) {
+	            	alert(SUGAR.language.get('app_strings','ERR_DECIMAL_SEP_EQ_THOUSANDS_SEP'));
+		            isError = true
+                }
+                break
             }
+
             if (isError == true)
                 return false;
         }
