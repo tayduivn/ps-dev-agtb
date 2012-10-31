@@ -38,9 +38,10 @@
     },
 
     loadData: function() {
-        var self = this;
+        var self = this,
+            url = app.api.buildURL('Accounts/by_country');
 
-        app.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {
+        app.api.call('GET', url, null, {
             success: function(o) {
                 self.results = {};
                 _(o).each(function(el) {
