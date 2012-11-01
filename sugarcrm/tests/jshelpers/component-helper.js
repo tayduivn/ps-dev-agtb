@@ -201,6 +201,12 @@
             }
         },
 
+        addModuleDefinition: function(module, moduleDef) {
+            if (this.isInitialized()) {
+                this._data.modules[module] = moduleDef;
+            }
+        },
+
         set: function() {
             if (this.isInitialized()) {
                 _.each(this._data.modules, function(module) {
