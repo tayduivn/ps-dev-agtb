@@ -4,9 +4,6 @@
         'click .postReply': 'addComment',
         'click .addPost': 'addPost',
         'click .more': 'showAllComments',
-        'click .filterAll': 'showAllActivities',
-        'click .filterMyActivities': 'showMyActivities',
-        'click .filterFavorites': 'showFavoritesActivities',
         'dragenter .sayit': 'expandNewPost',
         'dragover .sayit': 'dragoverNewPost',
         'dragleave .sayit': 'shrinkNewPost',
@@ -49,7 +46,10 @@
         }
 
         // By default, show all posts.
-        this.showAllActivities();
+        this.opts.params.filter = 'all';
+        this.opts.params.offset = 0;
+        this.opts.params.limit = 20;
+        this.streamCollection.fetch(this.opts);
 
         this.user_id = app.user.get('id');
         this.full_name = app.user.get('full_name');
@@ -210,25 +210,6 @@
         app.api.call('delete', app.api.buildURL(myPostUrl), {}, {success: function() {
             self.streamCollection.fetch(self.opts);
         }});
-    },
-
-    showAllActivities: function() {
-        this.opts.params.filter = 'all';
-        this.opts.params.offset = 0;
-        this.opts.params.limit = 20;
-        this.streamCollection.fetch(this.opts);
-    },
-
-    showMyActivities: function() {
-        this.opts.params.filter = 'myactivities';
-        this.opts.params.offset = 0;
-        this.streamCollection.fetch(this.opts);
-    },
-
-    showFavoritesActivities: function() {
-        this.opts.params.filter = 'favorites';
-        this.opts.params.offset = 0;
-        this.streamCollection.fetch(this.opts);
     },
 
     expandNewPost: function(event) {

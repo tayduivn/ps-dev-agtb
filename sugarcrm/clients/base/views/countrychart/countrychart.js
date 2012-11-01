@@ -20,7 +20,7 @@
             svg = d3.select("#" + this.guid).append("svg").attr("style", "height: 250px;");
             path = d3.geo.path().projection(xy);
 
-            d3.json("../clients/summer/views/countrychart/world-countries.json", function(collection) {
+            d3.json("../clients/base/views/countrychart/world-countries.json", function(collection) {
                 var g = svg.selectAll("path")
                     .data(collection.features)
                     .enter().append("g");
@@ -38,14 +38,15 @@
     },
 
     loadData: function() {
-        var self = this;
+        var self = this,
+            url = app.api.buildURL('Accounts/by_country');
 
-        app.api.call('GET', '../rest/v10/CustomReport/SalesByCountry', null, {
+        app.api.call('GET', url, null, {
             success: function(o) {
                 self.results = {};
-                _(o).each(function(el) {
-                    var country = self._checkCountry(el.country);
-                    self.results[country] = parseInt(el.amount, 10);
+                _(o).each(function(amount, country) {
+                    country = self._checkCountry(country);
+                    self.results[country] = parseInt(amount, 10);
                 });
 
                 self.render();

@@ -31,14 +31,21 @@ class MeetingsApi extends UnifiedSearchApi {
                 'shortHelp' => 'Search records in this module',
                 'longHelp' => 'include/api/help/getListModule.html',
             ),
-
+            'getAgenda' => array(
+                'reqType' => 'GET',
+                'path' => array('Meetings','Agenda'),
+                'pathVars' => array('',''),
+                'method' => 'getAgenda',
+                'shortHelp' => 'Fetch an agenda for a user',
+                'longHelp' => 'include/api/html/ping_base_help.html',
+            ),
         );
     }
 
 
     public function __construct() {
     }
-    
+
     /**
      * This function is the global search
      * @param $api ServiceBase The API class of the request
@@ -74,7 +81,7 @@ class MeetingsApi extends UnifiedSearchApi {
             $options['filter']['range']['to'] = gmdate('Y-m-d',strtotime('+10 years'));
             $options['filter']['range']['include_lower'] = true;
             $options['filter']['range']['include_upper'] = true;
-            $options['sort'][] = array('date_start' => array('order' => 'asc')); 
+            $options['sort'][] = array('date_start' => array('order' => 'asc'));
 
             $recordSet = $this->globalSearchFullText($api,$args,$searchEngine,$options);
             $sortByDateModified = false;
@@ -82,5 +89,40 @@ class MeetingsApi extends UnifiedSearchApi {
 
         return $recordSet;
 
+    }
+
+    public function getAgenda($api, $args) {
+        // Fetch the next 14 days worth of meetings (limited to 20)
+        $end_time = new SugarDateTime("+14 days");
+        $start_time = new SugarDateTime("-1 hour");
+
+
+        $meeting = BeanFactory::newBean('Meetings');
+        $meetingList = $meeting->get_list('date_start',"date_start > '".db_convert($start_time->asDb(),'datetime')."' AND date_start < '".db_convert($end_time->asDb(),'datetime')."'");
+
+
+        // Setup the breaks for the various time periods
+        $datetime = new SugarDateTime();
+        $today_stamp = $datetime->get_day_end()->getTimestamp();
+        $tomorrow_stamp = $datetime->setDate($datetime->year,$datetime->month,$datetime->day+1)->get_day_end()->getTimestamp();
+
+
+        $timeDate = TimeDate::getInstance();
+
+        $returnedMeetings = array('today'=>array(),'tomorrow'=>array(),'upcoming'=>array());
+        foreach ( $meetingList['list'] as $meetingBean ) {
+            $meetingStamp = $timeDate->fromUser($meetingBean->date_start)->getTimestamp();
+            $meetingData = $this->formatBean($api,$args,$meetingBean);
+
+            if ( $meetingStamp < $today_stamp ) {
+                $returnedMeetings['today'][] = $meetingData;
+            } else if ( $meetingStamp < $tomorrow_stamp ) {
+                $returnedMeetings['tomorrow'][] = $meetingData;
+            } else {
+                $returnedMeetings['upcoming'][] = $meetingData;
+            }
+        }
+
+        return $returnedMeetings;
     }
 }

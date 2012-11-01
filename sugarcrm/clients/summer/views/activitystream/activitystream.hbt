@@ -1,14 +1,4 @@
 <div class="block filtered tabbable tabs-left" id="moduleActivity">
-  <div class="row">
-    <ul class="pull-right nav nav-pills" data-tour="tour-{{module}}-stream-filter">
-          <li class="filterAll{{#eq opts.params.filter "all"}} active{{/eq}}"><a><span>All Activities</span></a></li>
-          <li class="filterMyActivities{{#eq opts.params.filter "myactivities"}} active{{/eq}}"><a><span>My Activities</span></a></li>
-          {{#if opts.params.id}}
-          {{else}}
-              <li class="filterFavorites{{#eq opts.params.filter "favorites"}} active{{/eq}}"><a><span>My Favorites</span></a></li>
-          {{/if}}
-    </ul>
-  </div>
   <div class="activitystream-post row omnibar">
       <a href="#Users/{{user_id}}" class="avatar avatar42 pull-left">
         <img src="{{picture_url}}" alt="{{full_name}}">
