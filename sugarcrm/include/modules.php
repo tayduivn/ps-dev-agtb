@@ -42,7 +42,6 @@ $moduleList[] = 'Leads';
 $moduleList[] = 'Contacts';
 $moduleList[] = 'Accounts';
 $moduleList[] = 'Opportunities';
-$moduleList[] = 'Employees';
 
 //BEGIN SUGARCRM flav!=sales ONLY
 $moduleList[] = 'Emails';

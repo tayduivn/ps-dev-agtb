@@ -81,21 +81,33 @@ class AdministrationViewEnablewirelessmodules extends SugarView
         {
             if (in_array($e, $GLOBALS['moduleList']))
             {
-                $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
+                $enabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? $e : ($app_list_strings['moduleList'][$e]);
             }
         }
+
+        // Employees should be in the mobile module list by default
+        if (!empty($wireless_module_registry['Employees']))
+        {
+            $enabled_modules ['Employees'] = $app_strings['LBL_EMPLOYEES'];
+        }
+
         require_once('modules/ModuleBuilder/Module/StudioBrowser.php');
         $browser = new StudioBrowser();
         $browser->loadModules();
         
         foreach ( $browser->modules as $e => $def)
         {
-            if ( empty ( $enabled_modules [ $e ]) && in_array($e, $GLOBALS['moduleList']))
+            if ( empty ( $enabled_modules [ $e ]) && in_array($e, $GLOBALS['moduleList']) )
             {
-                $disabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? (($e == "Employees") ? $app_strings['LBL_EMPLOYEES'] : $e) : ($app_list_strings['moduleList'][$e]);
+                $disabled_modules [ $e ] = empty($app_list_strings['moduleList'][$e]) ? $e : ($app_list_strings['moduleList'][$e]);
             }
         }
-        
+
+        if (empty($wireless_module_registry['Employees']))
+        {
+            $disabled_modules ['Employees'] = $app_strings['LBL_EMPLOYEES'];
+        }
+
         natcasesort($enabled_modules);
         natcasesort($disabled_modules);
         
