@@ -67,23 +67,8 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
         $data = $obj->process();
 
         $fields_array = array(
-            //'amount'=>'amount',
             'quota'=>'quota',
-            //'quota_id'=>'quota_id',
-            //'best_case'=>'best_case',
-//            'likely_case'=>'likely_case',
-//            'worst_case'=>'worst_case',
-//            'best_adjusted'=>'best_case_adjusted',
-//            'likely_adjusted'=>'likely_case_adjusted',
-//            'worst_adjusted'=>'worst_case_adjusted',
-            //'forecast_id'=>'forecast_id',
-            //'worksheet_id'=>'worksheet_id',
-            //'currency_id'=>'currency_id',
-            //'base_rate'=>'base_rate',
-            //'timeperiod_id'=>'timeperiod_id',
-            //'user_id'=>'user_id',
             'name'=>'name',
-            //'date_modified'=>'date_modified',
         );
 
         $admin = BeanFactory::getBean('Administration');
