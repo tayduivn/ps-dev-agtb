@@ -322,6 +322,17 @@ class TimePeriod extends SugarBean {
     }
 
 
+    /**
+     * Return the current TimePeriod instance for the given TimePeriod type
+     *
+     * @param $type The TimePeriod string type constant (TimePeriod::Annual, TimePeriod::Quarter, TimePeriod::Month)
+     */
+    public static function getCurrentTimePeriod($type)
+    {
+        $id = TimePeriod::getCurrentId($type);
+        return !empty($id) ? TimePeriod::getByType($type, $id) : null;
+    }
+
 
     /**
      * Returns the current timeperiod name if a timeperiod entry is found
@@ -379,31 +390,6 @@ class TimePeriod extends SugarBean {
         return self::$currentId[$type];
     }
 
-    /**
-     * getCurrentType
-     *
-     * Returns the current timeperiod type if a timeperiod entry is found
-     *
-     */
-    public static function getCurrentType()
-    {
-        static $currentType;
-        if(!isset($currentType))
-        {
-            global $app_strings;
-            $timedate = TimeDate::getInstance();
-            //get current timeperiod
-            $db = DBManagerFactory::getInstance();
-            $queryDate = $timedate->getNow();
-            $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-            $currentType = $db->getOne("SELECT time_period_type FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} and is_leaf = 0 and is_fiscal_year = 0 and deleted = 0", false, string_format($app_strings['ERR_TIMEPERIOD_UNDEFINED_FOR_DATE'], array($queryDate->asDbDate())));
-        }
-        return $currentType;
-    }
-
-    public static function getCurrentTypeClass() {
-        return TimePeriod::getCurrentType()."TimePeriods";
-    }
 
     /**
      * get_timeperiods_dom
@@ -563,9 +549,6 @@ class TimePeriod extends SugarBean {
 
 
            $timeperiodInterval = $currentSettings['timeperiod_interval'];
-           $timeperiodLeafInterval = $currentSettings['timeperiod_leaf_interval'];
-           $startMonth = $currentSettings['timeperiod_start_month'];
-           $startDay = $currentSettings['timeperiod_start_day'];
 
            //Now try to find the current leaf timeperiod.  We have no way of knowing what the leaf type is so we cannot use TimePeriod::getCurrentId since
            //that assumes a type is passed or will use the defaults from the config

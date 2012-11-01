@@ -113,6 +113,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * This test will check
      * 1) That the count of the the timeperiods in the database will be the same before and after the deleteTimePeriods call
      * 2) That the count of the deleted timeperiods will remain the same before and after the deleteTimePeriods calls
+     * @group timeperiods
+     * @group forecasts
      *
      */
     public function testTimePeriodDeleteTimePeriodsWithSamePreviousSettings()
@@ -146,6 +148,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * This function tests the getShownDifference method in TimePeriod
      *
+     * @group timeperiods
+     * @group forecasts
      * @dataProvider getShownDifferenceProvider
      */
     public function testGetShownDifference($previous, $current, $key, $expected)
@@ -167,6 +171,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      *
      * This test will check the accuracy of the timedate->isTargetDateDifferentFromPrevious method
      *
+     * @group timeperiods
+     * @group forecasts
      */
     public function testIsTargetDateDifferentFromPrevious()
     {
@@ -209,6 +215,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     /**
      * testIsTargetIntervalDifferent
      *
+     * @group timeperiods
+     * @group forecasts
      */
     public function testIsTargetIntervalDifferent()
     {
@@ -238,6 +246,8 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * getByTypeDataProvider
      *
      * This is the data provider function for the testGetByType function
+     * @group timeperiods
+     * @group forecasts
      */
     public function getByTypeDataProvider()
     {
@@ -250,6 +260,9 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * testGetByType
+     *
+     * @group timeperiod
+     * @group forecasts
      *
      * This is a test to check that the TimePeriod::getByType function returns the appropriate TimePeriod bean instance
      * @dataProvider getByTypeDataProvider
@@ -308,11 +321,10 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * testGetLatest
+     * This is a test for TimePeriod::getLatest function
      *
      * @group forecasts
      * @group timeperiods
-     * @group testGetLatest
-     * @outputBuffering disabled
      */
     public function testGetLatest()
     {
@@ -320,6 +332,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         //Mark all created test timeperiods as deleted so that they do not interfere with the test
         $db->query('UPDATE timeperiods SET deleted = 1');
 
+        //Create 3 timeperiods.  The latest should be the last one
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2000-01-01', '2000-03-31');
         $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
@@ -339,6 +352,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     /**
      * testGetEarliest
+     * This is a test for the TimePeriod::getEarliest function
      *
      * @group forecasts
      * @group timeperiods
@@ -349,6 +363,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         //Mark all created test timeperiods as deleted so that they do not interfere with the test
         $db->query('UPDATE timeperiods SET deleted = 1');
 
+        //Create three timeperiods.  The earliest should be $tp1
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('1980-01-01', '1980-03-31');
         $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
@@ -367,9 +382,9 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
 
     /**
-     * shownBackwardDifferenceChangedProvider
+     * buildTimePeriodsProvider
      *
-     * This is the data provider for the testOnlyShownBackwardDifferenceChanged function
+     * This is the data provider for the the testBuildTimePeriodsProvider function
      * The arguments are as follows
      * 1) The is_upgrade setting to use in simulating the call to rebuildForecastingTimePeriods
      * 2) The prior timeperiod_shown_backward argument
@@ -384,7 +399,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * 11) The expected month of the leaf TimePeriod based on direction
      * 12) The expected day of the leaf TimePeriod based on direction
      */
-    public function shownBackwardDifferenceChangedProvider()
+    public function buildTimePeriodsProvider()
     {
         return array
         (
@@ -432,15 +447,13 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     }
 
     /**
-     * testOnlyShownBackwardDifferenceChanged
+     * This is a test for checking the creation of time periods based on various scenarios
      *
-     * @dataProvider shownBackwardDifferenceChangedProvider
-     * @group testOnlyShownDifferenceChanged
      * @group forecasts
      * @group timeperiods
-     * @outputBuffering disabled
+     * @dataProvider buildTimePeriodsProvider
      */
-    public function testOnlyShownDifferenceChanged (
+    public function testBuildTimePeriods (
             $isUpgrade,
             $previous,
             $current,
@@ -497,7 +510,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeed->start_date)->modify($dateModifier)->format('Y'), $expectedMonth, $expectedDay);
 
         if($isUpgrade) {
-            $currentTimePeriod = TimePeriod::getEarliest($parentType);
+            $currentTimePeriod = TimePeriod::getCurrentTimePeriod($parentType);
             $expectedDate = $timedate->fromDbDate($currentTimePeriod->start_date);
             for($x=0; $x < $expectedParents; $x++) {
                 $expectedDate->modify($currentTimePeriod->next_date_modifier);
@@ -523,27 +536,16 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
     }
 
-
     /**
-     * getCurrentIdProvider
-     *
-     */
-    public function getCurrentIdProvider() {
-        
-    }
-
-    /**
-     * This is a test to get the current id
+     * This is a test for TimePeriod::getCurrentId
      *
      * @group forecasts
      * @group timeperiods
-     *
      */
     public function testGetCurrentId() {
         $timedate = TimeDate::getInstance();
         $queryDate = $timedate->getNow()->format('Y');
-        $id = TimePeriod::getCurrentId(TimePeriod::ANNUAL_TYPE);
-        $currentAnnualTimePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE, $id);
+        $currentAnnualTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::ANNUAL_TYPE);
         $expectedAnnualTimePeriodName = sprintf($currentAnnualTimePeriod->name_template, $queryDate);
         $this->assertEquals($expectedAnnualTimePeriodName, $currentAnnualTimePeriod->name);
 
@@ -568,8 +570,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
                 break;
         }
 
-        $id = TimePeriod::getCurrentId(TimePeriod::QUARTER_TYPE);
-        $currentQuarterTimePeriod = TimePeriod::getByType(TimePeriod::QUARTER_TYPE, $id);
+        $currentQuarterTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::QUARTER_TYPE);
         $expectedQuarterTimePeriodName = sprintf($currentQuarterTimePeriod->name_template, $currentId, $queryDate);
         $this->assertEquals($expectedQuarterTimePeriodName, $currentQuarterTimePeriod->name);
 
@@ -577,14 +578,14 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $admin = BeanFactory::getBean('Administration');
         $config = $admin->getConfigForModule('Forecasts', 'base');
         $type = $config['timeperiod_leaf_interval'];
-        $id = TimePeriod::getCurrentId();
-        $currentTimePeriod = TimePeriod::getByType($type, $id);
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod($type);
         $this->assertNotNull($currentTimePeriod);
     }
 
 
     /**
      * test that the forecasting
+     *
      * @group timeperiods
      */
     /*
