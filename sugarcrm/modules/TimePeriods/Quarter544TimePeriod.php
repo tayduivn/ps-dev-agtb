@@ -41,14 +41,10 @@ class Quarter544TimePeriod extends TimePeriod implements TimePeriodInterface {
      */
     public function __construct($start_date = null) {
         parent::__construct();
-        $timedate = TimeDate::getInstance();
-
         //set defaults
         $this->time_period_type = 'Quarter544';
         $this->is_fiscal = true;
         $this->date_modifier = '13 week';
-
-        $this->setStartDate($start_date);
     }
 
     /**

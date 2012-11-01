@@ -64,7 +64,6 @@ class TimePeriod extends SugarBean {
 	var $object_name = "TimePeriod";
 	var $user_preferences;
     var $date_modifier;
-    var $is_leaf = false;
 	var $encodeFields = Array("name");
     var $priorSettings;
     var $currentSettings;
@@ -221,8 +220,6 @@ class TimePeriod extends SugarBean {
     }
 
 
-	//Fiscal year domain is stored in the timeperiods table, and not statically defined like the rest of the
-	//domains, This method builds the domain array.
     public static function get_fiscal_year_dom() {
 
 		static $fiscal_years;
@@ -274,7 +271,7 @@ class TimePeriod extends SugarBean {
     {
         $leaves = array();
         $db = DBManagerFactory::getInstance();
-        $query = "select id, time_period_type from timeperiods WHERE parent_id = '{$this->id}' AND is_leaf = 1 AND deleted = 0 order by start_date_timestamp AND time_period_type = '{$this->time_period_type}'";
+        $query = "select id, time_period_type from timeperiods WHERE parent_id = '{$this->id}' AND parent_id IS NOT NULL AND deleted = 0 order by start_date_timestamp AND time_period_type = '{$this->time_period_type}'";
         $result = $db->query($query);
         while($row = $db->fetchByAssoc($result))
         {
