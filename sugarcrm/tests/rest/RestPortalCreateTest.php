@@ -132,7 +132,7 @@ class RestPortalCreateTest extends RestTestPortalBase
      * @group bug57775
      * @group rest
      */
-    public function testAddingNoteAttachmentToBugAsSupportPortal()
+    public function testAddingNoteToBugAsSupportPortal()
     {
         $bugReply = $this->_restCall(
             "Bugs/",
