@@ -6476,6 +6476,7 @@ h1 span { margin-left:5px; }
 input[type=radio] { display:inline-block; }
 .btn-group > .btn.active { z-index:0; }
 .card2 .address > span[sfuuid] { display:block; }
+.urleditable-wrap { height:30px; }
 .urleditable-wrap a.btn-mini.urleditable:not(:hover) {
   background:transparent;
   border-color:transparent;
@@ -6486,12 +6487,19 @@ input[type=radio] { display:inline-block; }
 .urleditable-wrap .urleditable .icon-pencil { visibility:hidden; }
 .urleditable-wrap form { display:inline; }
 .urleditable-wrap form input { width:210px; }
+.urleditable-wrap .editable-trigger { margin-right:6px; }
 .urleditable-wrap:hover .icon-pencil { visibility:visible; }
-.urleditable-wrap .urleditable-field > a {
+.urleditable-wrap .urleditable-field> a {
   width:210px;
   overflow:hidden;
   display:inline-block;
   text-overflow:ellipsis;
+}
+.urleditable-wrap .urleditable-field form input {
+  padding-top:0px;
+  top:2px;
+  left:1px;
+  height:20px;
 }
 .mu.extend .fieldPlaceHolder { margin-left:4px; }
 #sales_stage_filter_chzn .chzn-drop, #date_filter_chzn .chzn-drop { padding:10px; }
@@ -8395,3 +8403,87 @@ li.ui-timepicker-selected .ui-timepicker-duration, .ui-timepicker-list li:hover 
   position:relative;
 }
 .record .record-cell:hover > span > a { display:inline; }
+.highlightit img {
+  filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+  -moz-opacity:0.5;
+  opacity:0.5;
+}
+.highlightit:hover img {
+  filter:progid:DXImageTransform.Microsoft.Alpha(opacity=100);
+  -moz-opacity:1;
+  opacity:1;
+}
+span.influencers-stat {
+  display:inline-block;
+  width:25%;
+  text-align:center;
+}
+h4.interactions-header { margin-bottom:0; }
+.interactions-links-container { width:100%; }
+article[class^="interactions-"] {
+  width:33%;
+  display:inline-block;
+  text-align:center;
+}
+article[class^="interactions-"]:hover { cursor:pointer; }
+.interactions-link.active article[class^="interactions-"] { background:#bfe5f7; }
+.interactions-calls, .interactions-emails { border-right:1px solid #f5f5f5; }
+span[class^="interactions-"] { color:#595a5c; }
+.interactions-count {
+  margin-top:8px;
+  font-size:18px;
+  font-weight:bold;
+}
+.interactions-type {
+  font-size:80%;
+  text-transform:uppercase;
+}
+.interactions-list-container { padding-top:10px; }
+.opportunity-metrics-wrapper { padding:0 10px 0 10px; }
+.opportunity-metric {
+  width:100%;
+  height:20px;
+  border-bottom:1px solid whiteSmoke;
+}
+.opportunity-metric > i, .opportunity-metric > h6 { display:inline; }
+.opportunity-metric-description { color:gray; }
+.deal-amount-metric {
+  float:right;
+  font-size:14px;
+}
+.deal-amount-metric.won { color:#3fb300; }
+.deal-amount-metric.lost { color:#e61718; }
+.deal-amount-metric.active { color:#177ee5; }
+.recommended-experts-input-wrapper { padding:0 15px 0 15px; }
+.recommended-experts-list {
+  display:table;
+  width:100%;
+  border-spacing:8px 0;
+  padding:10px 15px 15px 8px;
+}
+article[class^='recommended-experts-item'] {
+  padding:10px;
+  display:table-row;
+}
+.recommended-experts-cell {
+  display:table-cell;
+  vertical-align:middle;
+}
+a.recommended-experts-link { border-top:1px solid #f5f5f5; }
+a.recommended-experts-link:hover { text-decoration:none; }
+.opportunities-treemap svg { background-color:#f5f5f5; }
+.opportunities-treemap svg text { pointer-events:none; }
+.opportunities-treemap svg .depth text { fill:#ffffff; }
+.opportunities-treemap svg .grandparent text { font-weight:bold; }
+.opportunities-treemap svg rect {
+  fill:none;
+  stroke:#ffffff;
+}
+.opportunities-treemap svg rect.stage_closedwon { fill:#369a00; }
+.opportunities-treemap svg rect.stage_prospecting { fill:#ce6815; }
+.opportunities-treemap svg rect.stage_closedlost { fill:#cf1516; }
+.opportunities-treemap svg rect.stage_qualification { fill:#1265b7; }
+.opportunities-treemap svg rect.parent, .opportunities-treemap svg .grandparent rect { stroke-width:3px; }
+.opportunities-treemap svg .grandparent rect { fill:#ffffff; }
+.opportunities-treemap svg .children rect.parent, .opportunities-treemap svg .grandparent rect { cursor:pointer; }
+.opportunities-treemap svg rect.parent { pointer-events:all; }

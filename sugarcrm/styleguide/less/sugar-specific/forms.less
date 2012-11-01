@@ -180,6 +180,7 @@ input[type=radio] {
 
 /* Editable URLs */
 .urleditable-wrap {
+	height:30px;
 	a.btn-mini.urleditable:not(:hover) {
 	  background:transparent;
 	  border-color:transparent;
@@ -198,15 +199,27 @@ input[type=radio] {
 			  width:210px;
 			}
 	}
+	.editable-trigger {
+		margin-right:6px;
+	}
 	&:hover .icon-pencil {
 		visibility:visible;
 	}
-	.urleditable-field > a {
-	  width:210px;
-	  overflow:hidden;
-	  display:inline-block;
-	  text-overflow:ellipsis;
+	.urleditable-field {
+		&> a {
+			width:210px;
+			overflow:hidden;
+			display:inline-block;
+			text-overflow:ellipsis;
+		}
+		form input {
+			padding-top:0px;
+			top:2px;
+			left:1px;
+			height:20px;
+		}
 	}
+
 }
 
 .mu.extend .fieldPlaceHolder {
