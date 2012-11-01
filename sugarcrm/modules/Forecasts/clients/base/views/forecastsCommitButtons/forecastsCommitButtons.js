@@ -145,7 +145,7 @@
     				model.save({}, {success:function(){
     					saveCount++;
     					if(saveCount === modelCount){
-    						if(worksheet == "worksheetmanager"){
+    						if(self.context.forecasts.get("currentWorksheet") == "worksheetmanager"){
     							self.context.forecasts.set({reloadWorksheetFlag: true});
     						}
     					}
