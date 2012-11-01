@@ -1,11 +1,10 @@
 <?php
-//FILE SUGARCRM flav=free ONLY
 if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 require_once 'clients/base/api/ListApi.php';
 require_once 'data/BeanFactory.php';
 
-class ContactsSummerApi extends ListApi
+class ContactsApi extends ListApi
 {
     public function registerApiRest()
     {

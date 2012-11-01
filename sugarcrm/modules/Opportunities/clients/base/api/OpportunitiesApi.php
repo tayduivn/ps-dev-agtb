@@ -4,7 +4,7 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 require_once 'clients/base/api/ListApi.php';
 require_once 'data/BeanFactory.php';
 
-class OpportunitiesSummerApi extends ListApi
+class OpportunitiesApi extends ListApi
 {
     public function registerApiRest()
     {
