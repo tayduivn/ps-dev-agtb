@@ -33,7 +33,9 @@ require_once('data/SugarBeanApiHelper.php');
 class NotesApiHelper extends SugarBeanApiHelper
 {
     /**
-     * This function adds the contact relationship for new Notes submitted via portal users
+     * This function sets the team & assigned user and sets up the contact & account relationship
+     * for new Notes submitted via portal users.
+     *
      * @param SugarBean $bean
      * @param array $submittedData
      * @param array $options
@@ -51,6 +53,13 @@ class NotesApiHelper extends SugarBeanApiHelper
             }
             $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
             $account = $contact->account_id;
+
+            $bean->assigned_user_id = $contact->assigned_user_id;
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            $bean->team_id = $contact->fetched_row['team_id'];
+            $bean->team_set_id = $contact->fetched_row['team_set_id'];
+            //END SUGARCRM flav=pro ONLY
 
             $bean->account_id = $account;
             $bean->contact_id= $contact->id;
