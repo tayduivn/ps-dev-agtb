@@ -556,7 +556,7 @@ function buildInstall($path){
             }
 
             $extensions = $this->getExtensionsList($module, $modules);
-            $relMetaFiles = $this->getCustomRelationshipsMetaFilesByModuleName($module, true);
+            $relMetaFiles = $this->getCustomRelationshipsMetaFilesByModuleName($module, true,true);
             $extensions = array_merge($extensions, $relMetaFiles);
 
             foreach ($extensions as $file) {
@@ -776,16 +776,41 @@ function buildInstall($path){
 
             if ($fileInfo->isFile() && !in_array($fileInfo->getPathname(), $result))
             {
-                if ($includeMask === false)
+                //get the filename in lowercase for easier comparison
+                $fn = $fileInfo->getFilename();
+                if(!empty($fn))
+                {
+                    $fn = strtolower($fn);
+                }
+
+                //if file name does not contain the current module name then it is not a relationship file, just add it and move on
+                if (strpos($fn, strtolower($module)) === false)
                 {
                     $result[] = $fileInfo->getPathname();
-                } 
-                else 
-                {
-                    foreach ($includeMask as $v)
+                }else{
+
+                    if(!is_array($includeRelationships))
                     {
-                        if (strpos($fileInfo->getFilename(), $v) !== false)
+                        //includeRelationships is not an array, skip adding relationships
+                        break;
+                    }
+                    
+                    //grab only rels that have both modules in the export list
+                    foreach ($includeRelationships as $relatedModule)
+                    {
+                        //skip if the related module is empty
+                        if(empty($relatedModule))
                         {
+                            continue;
+                        }
+
+                        //remove the found module name for comparison
+                        $fn = str_replace(strtolower($module),'', $fn);
+
+                        //if the filename also has the related module name, then add the relationship file
+                        if (strpos($fn, strtolower($relatedModule)) !== false)
+                        {
+                            //both modules exist in the filename and list of related modules, lets include in the results array
                             $result[] = $fileInfo->getPathname();
                             break;
                         }
