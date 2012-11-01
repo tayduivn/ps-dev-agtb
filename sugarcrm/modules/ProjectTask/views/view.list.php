@@ -194,9 +194,9 @@ class ProjectTaskViewList extends ViewList{
 
 
 			if(!empty($metafiles[$this->module]['searchfields']))
-				require_once($metafiles[$this->module]['searchfields']);
+                require($metafiles[$this->module]['searchfields']);
 			elseif(file_exists('modules/'.$this->module.'/metadata/SearchFields.php'))
-				require_once('modules/'.$this->module.'/metadata/SearchFields.php');
+                require('modules/'.$this->module.'/metadata/SearchFields.php');
 
 
 			$searchForm = new SearchForm($this->seed, $this->module, $this->action);
@@ -242,6 +242,10 @@ class ProjectTaskViewList extends ViewList{
 		}
 		if(!$headers)
 			return;
+         /*
+         * Bug 50575 - related search columns not inluded in query in a proper way
+         */
+         $lv->searchColumns = $searchForm->searchColumns;
 
 		if(empty($_REQUEST['search_form_only']) || $_REQUEST['search_form_only'] == false){
 			if (!is_admin($current_user)){
