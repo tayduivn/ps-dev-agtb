@@ -25,8 +25,8 @@ require_once('modules/SchedulersJobs/SchedulersJob.php');
 /**
  * SugarJobCreateNextTimePeriod.php
  *
- * This class implements RunnableSchedulerJob and provides the support for
- * automating creating time periods.
+ * This class implements RunnableSchedulerJob and provides the support for automating the creation of timeperiod
+ * entries.
  *
  */
 class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
@@ -64,12 +64,11 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
 
         $timeperiodInterval = $config['timeperiod_interval'];
         $timeperiodLeafInterval = $config['timeperiod_leaf_interval'];
-        $shownBackwards = $config['timperiod_shown_backward'];
+        $shownForward = $config['timeperiod_shown_forward'];
 
-        $intervalTimePeriod = TimePeriod::getByType($timeperiodInterval);
+        $parentTimePeriod = TimePeriod::getLatest($timeperiodInterval);
         $latestTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
-        $currentId = TimePeriod::getCurrentId($timeperiodLeafInterval);
-        $currentTimePeriod = TimePeriod::getByType($timeperiodLeafInterval, $currentId);
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod($timeperiodLeafInterval);
 
         if(empty($latestTimePeriod))
         {
@@ -77,25 +76,26 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
             return false;
         }
 
-        $db = DBManagerFactory::getInstance();
         $timedate = TimeDate::getInstance();
 
         //We run the rebuild command if the latest TimePeriod is less than the specified configuration interval from the current TimePeriod
-        $currentStartDate = $timedate->setNow($timedate->fromDbDate($currentTimePeriod->start_date));
-        $latestStartDate = $timedate->setNow($timedate->fromDbDate($latestTimePeriod->start_date));
+        $currentStartDate = $timedate->fromDbDate($currentTimePeriod->start_date);
+        $latestStartDate = $timedate->fromDbDate($latestTimePeriod->start_date);
 
-        $cutoffDate = $latestStartDate;
-        //For the number of shown backwards period, modify the latest date accordingly
-        for($x=0; $x < $shownBackwards; $x++) {
-            $cutoffDate->modify($timeperiodInterval->previous_date_modifier);
+        //Move the current start date forward by the leaf period amounts
+        for($x=0; $x < $shownForward; $x++) {
+            $currentStartDate->modify($parentTimePeriod->next_date_modifier);
         }
-        $cutoffDate->modify($latestTimePeriod->next_date_modifier);
 
-        if($latestStartDate->getTimestamp() - $currentStartDate->getTimestamp() > $latestStartDate->getTimestamp() - $cutoffDate->getTimestamp())
+        $GLOBALS['log']->fatal(">>>>" . $currentStartDate->asDbDate());
+        $GLOBALS['log']->fatal($latestStartDate->asDbDate());
+
+        //If the current start data that was modified according to the shown forward period is past the latest leaf period we need to build more timeperiods
+        if($currentStartDate > $latestStartDate)
         {
+            $parentTimePeriod->
 
         }
-
         return true;
     }
 

@@ -64,6 +64,7 @@ class AnnualTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('skipped test for now.  timeperiod functionality will be enhanced in future versions');
     }
 
     public function tearDown()

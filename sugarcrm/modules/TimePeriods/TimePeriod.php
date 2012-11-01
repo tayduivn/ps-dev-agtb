@@ -375,8 +375,8 @@ class TimePeriod extends SugarBean {
             $db = DBManagerFactory::getInstance();
             $queryDate = $timedate->getNow();
             $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
-
-            $result = $db->limitQuery("SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND time_period_type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp DESC", 0 , 1);
+            $query = "SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND time_period_type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp DESC";
+            $result = $db->limitQuery($query, 0 , 1);
             if(!empty($result))
             {
                 $row = $db->fetchByAssoc($result);
@@ -593,27 +593,6 @@ class TimePeriod extends SugarBean {
                $timePeriod->buildTimePeriods($currentSettings['timeperiod_shown_forward'], $timePeriod->next_date_modifier);
            }
        }
-
-        //clear job scheduler
-        /*
-        $job_id = $db->getOne("SELECT id FROM job_queue WHERE name = ".$db->quoted('TimePeriodAutomationJob'));
-
-        $jobQueue = new SugarJobQueue();
-        if($job_id) {
-            $jobQueue->deleteJob($job_id);
-        }
-
-        //schedule job to run on the end_date of the last time period
-        global $current_user;
-        $job = BeanFactory::newBean('SchedulersJobs');
-        $job->name = "TimePeriodAutomationJob";
-        $job->target = "class::SugarJobCreateNextTimePeriod";
-        $endDate = $timedate->fromDbDate($currentTimePeriod->end_date);
-        $job->execute_time = $timedate->asUserDate($endDate,true);
-        $job->retry_count = 0;
-        $job->assigned_user_id = $current_user->id;
-        $jobQueue->submitJob($job);
-       */
     }
 
     /**
