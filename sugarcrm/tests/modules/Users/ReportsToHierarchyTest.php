@@ -74,6 +74,13 @@ class ReportsToHierarchyTest extends Sugar_PHPUnit_Framework_TestCase
     public function testReportsToHierarchyFunction()
     {
         global $current_user;
+        $db = DBManagerFactory::getInstance();
+        if ( !$db->supports('recursive_query') )
+        {
+            // @see User::get_reports_to_hierarchy()
+            $this->markTestSkipped('DBManager does not support recursive query');
+        }
+
         $ids = $current_user->get_reports_to_hierarchy();
         $this->assertEquals(5, count($ids));
 

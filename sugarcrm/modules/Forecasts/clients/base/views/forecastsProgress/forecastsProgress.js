@@ -40,9 +40,9 @@
             quota_worst_amount : 0,
             quota_worst_percent : 0,
             quota_worst_above : 0,
-            show_projected_likely: options.context.forecasts.config.get('show_projected_likely'),
-            show_projected_best: options.context.forecasts.config.get('show_projected_best'),
-            show_projected_worst: options.context.forecasts.config.get('show_projected_worst'),
+            show_likely: options.context.forecasts.config.get('show_worksheet_likely'),
+            show_best: options.context.forecasts.config.get('show_worksheet_best'),
+            show_worst: options.context.forecasts.config.get('show_worksheet_worst'),
             pipeline : 0
         });
 

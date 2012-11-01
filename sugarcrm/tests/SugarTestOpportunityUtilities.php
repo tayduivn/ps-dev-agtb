@@ -68,7 +68,7 @@ class SugarTestOpportunityUtilities
         $opportunity->amount       = 10000;
         $opportunity->account_id   = $account->id;
         $opportunity->account_name = $account->name;
-        $opportunity->date_closed  = $timedate->nowDbDate();
+        $opportunity->date_closed  = $timedate->getNow()->asDbDate();
         $opportunity->save();
 
         $GLOBALS['db']->commit();
