@@ -442,6 +442,7 @@ class RestListTest extends RestTestBase {
                 // The rest are assigned to admin
                 $opportunity->assigned_user_id = '1';
             }
+            $opportunity->date_closed = TimeDate::getInstance()->getNow()->asDbDate();
             $opportunity->save();
             $this->opps[] = $opportunity;
             //BEGIN SUGARCRM flav=pro ONLY

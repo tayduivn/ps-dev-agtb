@@ -43,11 +43,11 @@ class ChartDisplayTest extends Sugar_PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-
-        global $app_list_strings, $app_strings, $current_user;
-        $app_list_strings = return_app_list_strings_language('en');
-        $app_strings = return_application_language('en');
-        $current_user = SugarTestUserUtilities::createAnonymousUser(true, 1);
+        SugarTestHelper::setUp('beanList');
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('app_list_strings');
+        SugarTestHelper::setUp('app_strings');
+        SugarTestHelper::setUp('current_user', array(true, 1));
 
         // create 5 accounts with shipping_states equal to Indiana
         $x=0;

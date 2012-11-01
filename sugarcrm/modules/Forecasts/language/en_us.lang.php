@@ -335,6 +335,7 @@ $mod_strings = array (
 
     // config panels strings
     // splash screens
+    'LBL_FORECASTS_SETUP' => 'Forecasts Setup',
     'LBL_FORECASTS_CONFIG_TITLE' => 'Forecasts Configuration',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_1' => 'Welcome to the forecasting setup. We\'ll guide you through step by step in setting up x,y and z so you\'ll be on your way in no time. Click next to get started.',
     'LBL_FORECASTS_CONFIG_ADMIN_SPLASH_2' => 'You can also do manual setup by clicking ',
