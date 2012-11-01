@@ -60,9 +60,8 @@
             this.context.forecasts.config.set(this.model.toJSON());
 
             // set the saveClicked flag without dispatching change events separate from
-            // the set event below be this is silent, in the future we might have things
-            // listening for when config changes and we dont care about anyone knowing saveClicked happened
-            this.context.forecasts.config.set({ saveClicked : true }, {silent:true});
+            // the set event below, this is silent
+            this.context.forecasts.set({ saveClicked : true }, {silent:true});
 
             this.context.forecasts.config.save({}, {
                 success: function() {
