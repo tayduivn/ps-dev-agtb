@@ -528,7 +528,7 @@ class TimePeriod extends SugarBean {
        //determine today
        $currentDate = $timedate->getNow();
 
-       $isUpgrade = !empty($priorSettings['is_upgrade']);
+       $isUpgrade = !empty($currentSettings['is_upgrade']);
 
        $existingTimePeriods = TimePeriod::get_timeperiods_dom();
 
@@ -562,12 +562,10 @@ class TimePeriod extends SugarBean {
            //3) We then build out the new forward timeperiod
 
 
-           $admin = BeanFactory::getBean('Administration');
-           $config = $admin->getConfigForModule('Forecasts', 'base');
-           $timeperiodInterval = $config['timeperiod_interval'];
-           $timeperiodLeafInterval = $config['timeperiod_leaf_interval'];
-           $startMonth = $config['timeperiod_start_month'];
-           $startDay = $config['timeperiod_start_day'];
+           $timeperiodInterval = $currentSettings['timeperiod_interval'];
+           $timeperiodLeafInterval = $currentSettings['timeperiod_leaf_interval'];
+           $startMonth = $currentSettings['timeperiod_start_month'];
+           $startDay = $currentSettings['timeperiod_start_day'];
 
            //Now try to find the current leaf timeperiod.  We have no way of knowing what the leaf type is so we cannot use TimePeriod::getCurrentId since
            //that assumes a type is passed or will use the defaults from the config
@@ -590,22 +588,30 @@ class TimePeriod extends SugarBean {
 
            if(!empty($currentTimePeriod)) {
                //set the target date
-               echo $currentTimePeriod->end_date . "\n";
-               $currentEndDate = $timedate->fromDb($currentTimePeriod->end_date);
-               $currentEndDate->modify()
+               $currentEndDate = $timedate->fromDbDate($currentTimePeriod->end_date);
 
                $targetStartDate = $timedate->getNow()->setDate($currentEndDate->format("Y"), $currentSettings["timeperiod_start_month"], $currentSettings["timeperiod_start_day"]);
+
+               //If the target starting date is before the current year's starting date, add a year
                if($targetStartDate < $currentEndDate) {
                   $targetStartDate->modify('+1 year');
                }
-               $targetStartDate->modify('+1 day');
 
-               //$targetStartDate = $timedate->fromDbDate($currentTimePeriod->end_date)->modify('+1 day');
-               echo $targetStartDate->asDbDate() . "\n";
+               //We now set the current TimePeriod's end_date to be the day before the target date
+               $currentEndDate = $timedate->fromDbDate($targetStartDate->asDbDate())->modify('-1 day');
+               $currentTimePeriod->end_date = $currentEndDate->asDbDate();
+               $currentTimePeriod->save();
+
+               //Now mark all timeperiods that start after the current TimePeriod to be deleted
+               $date = $db->convert($db->quoted($currentTimePeriod->start_date), 'date');
+               $db->query(sprintf("UPDATE timeperiods SET deleted = 1 WHERE start_date >= %s AND id <> '%s'", $date, $currentTimePeriod->id));
+
+               //Now create the new timeperiods with the forward date modifier
+               $timePeriod = TimePeriod::getByType($timeperiodInterval);
+               //We set it back once here since the buildTimePeriods code triggers the modification immediately
+               $timePeriod->setStartDate($targetStartDate->modify($timePeriod->previous_date_modifier)->asDbDate());
+               $timePeriod->buildTimePeriods($currentSettings['timeperiod_shown_forward'], $timePeriod->next_date_modifier);
            }
-
-
-
        }
 
         //clear job scheduler
@@ -675,7 +681,6 @@ class TimePeriod extends SugarBean {
     {
         $timedate = TimeDate::getInstance();
         $startDate = $timedate->fromDbDate($this->start_date)->modify($dateModifier)->asDbDate();
-        //$startDate = $timedate->fromDbDate($this->start_date)->asDbDate();
 
         for($i=1; $i <= $timePeriods; $i++)
         {
@@ -895,7 +900,6 @@ class TimePeriod extends SugarBean {
     {
         $db = DBManagerFactory::getInstance();
         $result = $db->limitQuery(sprintf("SELECT * FROM timeperiods WHERE time_period_type = '%s' AND deleted = 0 ORDER BY start_date_timestamp DESC", $type), 0, 1);
-        //echo sprintf("SELECT * FROM timeperiods WHERE time_period_type = '%s' AND deleted = 0 ORDER BY start_date_timestamp DESC", $type) . "\n";
         if($result)
         {
             $row = $db->fetchByAssoc($result);

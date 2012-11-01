@@ -49,10 +49,17 @@
     save:function (evt) {
         // If button is disabled, do nothing
         if(!$(evt.target).hasClass('disabled')) {
+            var self = this;
+
             this.model.set('is_setup', true);
             // push this model back to the main config model
             this.context.forecasts.config.set(this.model.toJSON());
-            this.context.forecasts.config.save();
+            this.context.forecasts.config.save({}, {
+                success: function() {
+                    // only trigger modal close after save api call has returned
+                    self.layout.context.trigger("modal:close");
+                }
+            });
             this.layout.context.trigger("modal:close");
         }
     },

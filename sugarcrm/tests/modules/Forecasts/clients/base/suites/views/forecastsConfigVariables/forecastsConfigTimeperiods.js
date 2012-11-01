@@ -112,7 +112,11 @@ describe("The forecastsConfigTimeperiods view", function(){
             testLeafIntervalValue = "Quarter";
             view.model = new Backbone.Model({
                 timeperiod_interval: '',
-                timeperiod_leaf_interval: ''
+                timeperiod_leaf_interval: '',
+                get: function(param) {
+                    return {};
+                },
+                set: function(key, value) {}
                 });
             monthField = {
                 model: {
@@ -139,12 +143,6 @@ describe("The forecastsConfigTimeperiods view", function(){
                 }
             }
             intervalField = {
-                model: {
-                    get: function(param) {
-                        return {};
-                    },
-                    set: function(key, value) {}
-                },
                 name: 'timeperiod_interval',
                 def: {
                     options: {}
@@ -153,6 +151,7 @@ describe("The forecastsConfigTimeperiods view", function(){
             monthField = view._setUpTimeperiodStartMonthBind(monthField);
             dayField = view._setUpTimeperiodStartDayBind(dayField);
             intervalField = view._setUpTimeperiodIntervalBind(intervalField);
+            intervalField.model = view.model;
 
         });
 

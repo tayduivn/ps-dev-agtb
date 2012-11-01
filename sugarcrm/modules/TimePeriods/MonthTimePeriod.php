@@ -55,10 +55,9 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
 
     /**
-     * getTimePeriodName
-     *
      * Returns the timeperiod name
      *
+     * @param $count int value of the time period count (not used in MonthTimePeriod class)
      * @return string The formatted name of the timeperiod
      */
     public function getTimePeriodName($count)
@@ -66,56 +65,4 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
         $timedate = TimeDate::getInstance();
         return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('M'), $timedate->fromDbDate($this->start_date)->format('Y'));
     }
-
-    /**
-     * sets the start date, based on a db formatted date string passed in.  If null is passed in, now is used.
-     * The end date is adjusted as well to hold to the contract of this being an quarter time period
-     *
-     * @param null $startDate  db format date string to set the start date of the quarter time period
-     */
-    /*
-    public function setStartDate($start_date = null, $week_count = 4) {
-        $timedate = TimeDate::getInstance();
-        //check start_date, put it to now if it's not passed in
-        if(is_null($start_date)) {
-            $start_date = $timedate->getNow()->asDbDate();
-        }
-
-        $end_date = $timedate->fromDbDate($start_date);
-
-        //set the start/end date
-        $this->start_date = $start_date;
-
-        if($this->is_fiscal) {
-            $end_date = $end_date->modify('+'.$week_count.' week');
-            $end_date = $end_date->modify('-1 day');
-        } else {
-            $end_date = $end_date->modify('+1 month');
-            $end_date = $end_date->modify('-1 day');
-        }
-        $this->end_date = $timedate->asDbDate($end_date);
-    }
-    */
-
-    /**
-     * creates a new MonthTimePeriod to start to use
-     *
-     * @param int $week_length denotes how many weeks should be included in month for a fiscal month
-     *
-     * @return MonthTimePeriod
-     */
-    public function createNextTimePeriod($week_length=4) {
-        $timedate = TimeDate::getInstance();
-        $nextEndDate = $timedate->fromDbDate($this->end_date);
-
-        $nextStartDate = $nextEndDate->modify('+1 day');
-        $nextStartDate = $timedate->asDbDate($nextStartDate);
-        $nextPeriod = BeanFactory::newBean($this->time_period_type."TimePeriods");
-        $nextPeriod->is_fiscal = $this->is_fiscal;
-        $nextPeriod->setStartDate($nextStartDate, $week_length);
-        $nextPeriod->save();
-
-        return $nextPeriod;
-    }
-
 }

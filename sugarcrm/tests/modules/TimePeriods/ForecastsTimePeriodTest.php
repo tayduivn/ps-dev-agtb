@@ -27,6 +27,8 @@ require_once('modules/TimePeriods/TimePeriod.php');
 
 class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 {
+    private $preTestIds = array();
+
     //These are the default forecast configuration settings we will use to test
     protected $forecastConfigSettings = array (
         array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
@@ -59,7 +61,10 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function setUp()
     {
+        $this->preTestIds = TimePeriod::get_timeperiods_dom();
+
         $db = DBManagerFactory::getInstance();
+
         $db->query('UPDATE timeperiods set deleted = 1');
 
         $admin = BeanFactory::getBean('Administration');
@@ -90,17 +95,16 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $db = DBManagerFactory::getInstance();
-        //Remove all created timeperiods used in the test run
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
 
         //Remove any job_queue entries
         $db->query("DELETE FROM job_queue where name = ".$db->quoted("TimePeriodAutomationJob"));
 
-        //Clean up anything else left in timeperiods table that was not deleted
-        $db->query("DELETE FROM timeperiods WHERE deleted = 0");
+        $db->query("UPDATE timeperiods set deleted = 1");
 
-        //Restore all previously timeperiod entries marked as deleted
-        $db->query("UPDATE timeperiods set deleted = 0 WHERE deleted = 1");
+        //Clean up anything else left in timeperiods table that was not deleted
+        $db->query("UPDATE timeperiods SET deleted = 0 WHERE id IN ('" . implode("', '", array_keys($this->preTestIds))  . "')");
+
+        $db->query("DELETE FROM timeperiods WHERE deleted = 1");
     }
 
     /**
@@ -384,7 +388,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     {
         return array
         (
-            /*
             //Going from 2 to 4 creates 2 additional annual timeperiods backwards (2 annual, 8 quarters)
             array(0, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '-2 year', 2, 8, 'backward'),
 
@@ -415,12 +418,16 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
             array(0, 0, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward', 10, 1, 12, 1),
             array(0, 4, 12, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '2 year', 8, 24, 'forward', 10, 1, 12, 1),
             array(0, 12, 6, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'forward', 10, 1, 12, 1),
-            */
             //Simulating upgrades
 
             //No backward timeperiods will be created
+
             array(1, 2, 4, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
             array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '0 year', 0, 0, 'backward'),
+
+            //On upgrades the date modifier (2 year) won't matter... it checks against the expected parents and leaves
+            array(1, 2, 2, TimePeriod::ANNUAL_TYPE, TimePeriod::QUARTER_TYPE, 1, 1, '2 year', 2, 8, 'forward'),
+            array(1, 2, 4, TimePeriod::QUARTER_TYPE, TimePeriod::MONTH_TYPE, 1, 1, '1 year', 4, 12, 'forward'),
         );
     }
 
@@ -462,12 +469,16 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $currentForecastSettings["timeperiod_shown_{$direction}"] = $current;
         $currentForecastSettings['timeperiod_interval'] = $parentType;
         $currentForecastSettings['timeperiod_leaf_interval'] = $leafType;
+        $currentForecastSettings['is_upgrade'] = $isUpgrade;
+
         $db = DBManagerFactory::getInstance();
 
         //If it's not annual type we need to re-seed with Quarter/Monthly intervals
         if($parentType != TimePeriod::ANNUAL_TYPE)
         {
-           $db->query("DELETE FROM timeperiods WHERE deleted = 0");
+           $admin->saveSetting('Forecasts', 'timeperiod_interval', $parentType, 'base');
+           $admin->saveSetting('Forecasts', 'timeperiod_leaf_interval', $leafType, 'base');
+           $db->query("UPDATE timeperiods SET deleted = 0");
            $priorForecastSettings["timeperiod_shown_backward"] = 8;
            $priorForecastSettings["timeperiod_shown_forward"] = 8;
            $timePeriod = TimePeriod::getByType($parentType);
@@ -476,7 +487,6 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         $expectedSeed = ($direction == 'backward') ? TimePeriod::getEarliest($parentType) :  TimePeriod::getLatest($parentType);
-
         $expectedSeedLeaf = ($direction == 'backward') ? TimePeriod::getEarliest($leafType) :  TimePeriod::getLatest($leafType);
 
         $timePeriod = TimePeriod::getByType($parentType);
@@ -486,6 +496,14 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeed->start_date)->modify($dateModifier)->format('Y'), $expectedMonth, $expectedDay);
 
+        if($isUpgrade) {
+            $currentTimePeriod = TimePeriod::getEarliest($parentType);
+            $expectedDate = $timedate->fromDbDate($currentTimePeriod->start_date);
+            for($x=0; $x < $expectedParents; $x++) {
+                $expectedDate->modify($currentTimePeriod->next_date_modifier);
+            }
+        }
+
         $tp = $direction == 'backward' ? TimePeriod::getEarliest($parentType) : TimePeriod::getLatest($parentType);
 
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedParents} new {$direction} timeperiods");
@@ -493,6 +511,15 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $tp = $direction == 'backward' ? TimePeriod::getEarliest($leafType) : TimePeriod::getLatest($leafType);
 
         $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeedLeaf->start_date)->modify($dateModifier)->format('Y'), $expectedLeafMonth, $expectedLeafDay);
+
+        //If this is an upgrade the expectedDate should be forward from what the current time period is
+        if($isUpgrade) {
+            $currentTimePeriod = TimePeriod::getEarliest($leafType);
+            $expectedDate = $timedate->fromDbDate($currentTimePeriod->start_date);
+            for($x=0; $x < $expectedLeaves; $x++) {
+                $expectedDate->modify($currentTimePeriod->next_date_modifier);
+            }
+        }
         $this->assertEquals($expectedDate->asDbDate(), $tp->start_date, "Failed creating {$expectedLeaves} leaf timeperiods");
     }
 

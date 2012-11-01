@@ -65,10 +65,9 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
     }
 
     /**
-     * getTimePeriodName
-     *
      * Returns the timeperiod name
      *
+     * @param $count int value of the time period count (not used in MonthTimePeriod class)
      * @return string The formatted name of the timeperiod
      */
     public function getTimePeriodName($count)
@@ -77,46 +76,4 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         return sprintf($this->name_template, $count, $timedate->fromDbDate($this->start_date)->format('Y'));
     }
 
-    /**
-     * build leaves for the timeperiod by creating the specified types of timeperiods
-     *
-     * @param string $timePeriodType ignored for now as current requirements only allow monthly for quarters.  Left in place in case it is used in the future for weeks/fortnights/etc
-     * @return mixed
-     */
-    /*
-    public function buildLeaves($timePeriodType) {
-        if($this->hasLeaves()) {
-            throw new Exception("This TimePeriod already has leaves");
-        }
-
-        if($this->is_leaf) {
-            throw new Exception("Leaf Time Periods cannot have leaves");
-        }
-
-        $this->load_relationship('related_timeperiods');
-
-        switch($timePeriodType) {
-            case "Monthly";
-                $n = 3;
-                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
-                $leafPeriod->is_fiscal = $this->is_fiscal;
-                break;
-            default;
-                $n = 3;
-                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
-                $leafPeriod->is_fiscal = $this->is_fiscal;
-                break;
-        }
-        $leafPeriod->setStartDate($this->start_date);
-        $leafPeriod->is_leaf = true;
-        $leafPeriod->save();
-        $this->related_timeperiods->add($leafPeriod->id);
-
-        //loop the count to create the next n leaves to fill out the relationship
-        for($i = 1; $i < $n; $i++) {
-            $leafPeriod = $leafPeriod->createNextTimePeriod();
-            $this->related_timeperiods->add($leafPeriod->id);
-        }
-    }
-    */
 }
