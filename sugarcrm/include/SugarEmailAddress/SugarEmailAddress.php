@@ -66,8 +66,8 @@ class SugarEmailAddress extends SugarBean
                         $primaryE = (isset($emailAddr['primary_address']) && $emailAddr['primary_address'] == "1") ? true : false;
                         $this->addAddress($address, $primaryE, false, $invalidE, $optO);
                     }
-
-                } else {
+                } else if (!isset($bean->email)) {
+                    // Special case if not bean->email - removing results in legacy breakage, broken tests, and general sadness. 
                     for ($i = 1; $i <= 10; $i++) {
                         $email = 'email' . $i;
                         if (isset($bean->$email) && !empty($bean->$email)) {
@@ -78,9 +78,13 @@ class SugarEmailAddress extends SugarBean
                             $this->addAddress($bean->$email, $isPrimary, false, $field_invalid, $field_optOut);
                             $isPrimary = false;
                         }
-                    }
+                    } 
+                } else {
+                    // bug57601 - All but first two email addresses removed; settings changed e.g. opt out isn't marked
+                    $mod_dir = $this->getCorrectedModule($bean->module_dir);
+                    $this->addresses = $this->getAddressesByGUID($bean->id, $mod_dir);
+                    $this->populateLegacyFields($bean);
                 }
-
             }
         }
         $this->populateAddresses($bean->id, $bean->module_dir, array(), '');

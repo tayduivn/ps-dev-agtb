@@ -3955,6 +3955,7 @@ button.id-ff-remove {
 #moduleList 
 {
 	float: left;
+        width:auto !important;
 }
 
 
@@ -7429,6 +7430,27 @@ div.hoverscroll div.fixed-arrow.bottom {
 	bottom:0px;
 	background-image:url('../../../../index.php?entryPoint=getImage&imageName=arrow-down-small.png');
 }
+#defaultUser_chzn.chzn-container-single .chzn-single span {
+  margin-right:30px !important;
+}
+#defaultUser_chzn.chzn-container-single .chzn-single .search-choice-close {
+  border:0;
+  cursor:pointer;
+  right:18px;
+}
+
+.defaultUser .chzn-container {
+  width:250px !important;
+}
+
+.defaultUser .chzn-drop {
+  width:248px !important;
+}
+
+.defaultUser .chzn-search > input {
+  width:213px !important;
+}
+
 
 
 

@@ -1,5 +1,4 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -28,42 +27,49 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  ********************************************************************************/
 
 
-// Test for Bug 57216 - on demand upgrade fails
-$module_name = '<module_name>';
-$object_name = '<object_name>';
+require_once('modules/Administration/views/view.configureshortcutbar.php');
+/**
+ * Bug #57703
+ * @ticket 57703
+ */
+class Bug57703Test extends Sugar_PHPUnit_Framework_TestCase
+{
+	public function setUp()
+	{
+        parent::setUp();
+        SugarTestHelper::setUp('moduleList');
+        SugarTestHelper::setUp('current_user');
+    }
 
-$listViewDefs[$module_name] = array(
-	'BUG_NUMBER' => array(
-        'name' => 'Garbage', // Test this is removed bug 57414
-		'width' => '5',
-		'label' => 'LBL_NUMBER',
-		'link' => true,
-        'default' => true),
-	'NAME' => array(
-		'width' => '32',
-		'label' => 'LBL_SUBJECT',
-		'default' => true,
-        'link' => true),
-	'STATUS' => array(
-		'width' => '10',
-		'label' => 'LBL_STATUS',
-        'default' => true),
-    'PRIORITY' => array(
-        'width' => '10',
-        'label' => 'LBL_PRIORITY',
-        'default' => true),
-    'RESOLUTION' => array(
-        'width' => '10',
-        'label' => 'LBL_RESOLUTION',
-        'default' => true),
-	'TEAM_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_TEAM',
-        'default' => true),
-	'ASSIGNED_USER_NAME' => array(
-		'width' => '9',
-		'label' => 'LBL_ASSIGNED_USER',
-        'default' => false), // Test default false, enabled true bug 57414
+	public function tearDown()
+	{
+        parent::tearDown();
 
-);
+        SugarTestHelper::tearDown();
+    }
+
+    /**
+    * @group 57703
+    */
+    public function testCheckEnabledModules()
+    {
+        SugarTestHelper::setUp('moduleList');
+        $moduleList[] = array('module'=>'PdfManager');
+        $obj = new ViewConfigureshortcutbarMock();
+        $results = $obj->filterModules($moduleList);
+
+        $this->assertEquals(0, count($results), 'Should return empty array');
+    }
+}
+
+/**
+ * Mock class
+ */
+class ViewConfigureshortcutbarMock extends ViewConfigureshortcutbar
+{
+    public function filterModules($moduleList)
+    {
+        return parent::filterModules($moduleList);
+    }
+}
 ?>

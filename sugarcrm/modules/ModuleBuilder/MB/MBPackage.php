@@ -496,6 +496,12 @@ function buildInstall($path){
         $installdefs['copy'] = array();
         $generalPath = DIRECTORY_SEPARATOR . 'Extension' . DIRECTORY_SEPARATOR . 'modules';
 
+        //do not process if path is not a valid directory, or recursiveIterator will break.
+        if(!is_dir($path.$generalPath))
+        {
+            return;
+        }
+        
         $recursiveIterator = new RecursiveIteratorIterator(
                 new RecursiveDirectoryIterator($path . $generalPath),
                 RecursiveIteratorIterator::SELF_FIRST
@@ -733,6 +739,13 @@ function buildInstall($path){
         $includeMask = false;
         $extPath = sprintf('custom%1$sExtension%1$smodules%1$s' . $module . '%1$sExt', DIRECTORY_SEPARATOR);
 
+        //do not process if path is not a valid directory, or recursiveIterator will break.
+        if(!is_dir($extPath))
+        {
+            return $result;
+        }
+
+
         if (is_array($includeRelationships))
         {
             $includeMask = array();
@@ -911,6 +924,13 @@ function buildInstall($path){
                 'custom' . DIRECTORY_SEPARATOR . 'metadata' . DIRECTORY_SEPARATOR :
                 'custom' . DIRECTORY_SEPARATOR;
         $result = array();
+
+
+        //do not process if path is not a valid directory, or recursiveIterator will break.
+        if(!is_dir($path))
+        {
+            return $result;
+        }
 
         $relationships = $this->getCustomRelationshipsByModuleName($moduleName, $lhs);
         

@@ -2454,6 +2454,7 @@ $app_strings = array (
     'EXCEPTION_FATAL_ERROR'             => 'Your request failed to complete.  A fatal error occurred.  Check logs for more details.',
     'EXCEPTION_NEED_LOGIN'              => 'You need to be logged in to perform this action.',
     'EXCEPTION_NOT_AUTHORIZED'          => 'You are not authorized to perform this action. Contact your administrator if you need access.',
+    'EXCEPTION_INACTIVE_PORTAL_USER'    => 'You cannot access Portal because your portal account is inactive. Please contact customer support if you need access.',
     'EXCEPTION_PORTAL_NOT_CONFIGURED'   => 'Portal is not configured properly.  Contact your Portal Administrator for assistance.',
     'EXCEPTION_NO_METHOD'               => 'Your request was not supported. Could not find the HTTP method of your request for this path.',
     'EXCEPTION_NOT_FOUND'               => 'Your requested resource was not found.  Could not find a handler for the path specified in the request.',
@@ -3434,7 +3435,14 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
 
-    //for portal
+    //theme roller
+    'BorderColor' => 'Border Color',
+    'NavigationBar' => 'Navigation Bar',
+    'PrimaryButton' => 'Primary Button',
+
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
+
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
@@ -3459,27 +3467,23 @@ $app_strings = array (
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
 
     //for portal system tour
-    'LBL_PORTAL_TOUR_WELCOME_TITLE' => 'Welcome to Portal',
-    'LBL_PORTAL_TOUR_WATCH_VIDEO' => 'Watch: What\'s new in Portal',
-    'LBL_PORTAL_TOUR_FEATURES_1' => 'Feature 1',
-    'LBL_PORTAL_TOUR_FEATURES_2' => 'Feature 2',
-    'LBL_PORTAL_TOUR_FEATURES_3' => 'Feature 3',
-    'LBL_PORTAL_TOUR_FEATURES_4' => 'Feature 4',
-    'LBL_PORTAL_TOUR_MORE_INFO_1' => 'And much more!',
-    'LBL_PORTAL_TOUR_MORE_INFO_2' => 'For a full list visit the What\'s New in Portal',
+    'LBL_PORTAL_TOUR_SCREEN1_TITLE' => 'Welcome to Portal Tour',
+    'LBL_PORTAL_TOUR_SCREEN1_BODY' => '<ul class="features"><li class="icon-ok">Faster and Interactive user experience</li><li class="icon-ok">Introducing internationalization</li><li class="icon-ok">Dashboard views to track new and updated Bugs, Cases and Knowledge Base articles</li><li class="icon-ok">Global Search</li><li class="icon-ok">Ability to change password</li></ul><p class="small">And much more!</p><p class="small">For a full list visit the <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">What\'s New in Portal</a>. </p>',
     'LBL_PORTAL_TOUR_TAKE_TOUR_LNK' => 'Take the tour',
     'LBL_PORTAL_TOUR_SKIP_LNK' => 'Skip',
     'LBL_PORTAL_TOUR_NEXT_LNK' => 'Next',
     'LBL_PORTAL_TOUR_BACK_LNK' => 'Back',
     'LBL_PORTAL_TOUR_DONE_LNK' => 'Done',
-    'LBL_PORTAL_TOUR_CASES_TITLE' => 'Cases',
-    'LBL_PORTAL_TOUR_CASES_BODY' => 'All your cases go here',
-    'LBL_PORTAL_TOUR_SEARCH_TITLE' => 'Search',
-    'LBL_PORTAL_TOUR_SEARCH_BODY' => 'Search keywords or case numbers',
-    'LBL_PORTAL_TOUR_QUICK_TITLE' => 'Quick Create',
-    'LBL_PORTAL_TOUR_QUICK_BODY' => 'You can perform all your quick actions here',
-    'LBL_PORTAL_TOUR_DONE_TITLE' => 'You\'re Done!',
-    'LBL_PORTAL_TOUR_DONE_BODY' => 'You can always retake the tour or read documentation for more information.',
+    'LBL_PORTAL_TOUR_SCREEN2_TITLE' => 'Dashboard',
+    'LBL_PORTAL_TOUR_SCREEN2_BODY' => '<p>The Dashboards represent your home page. It displays a quick synopsis of your company’s Cases, KB Articles, and Bugs.</p> <p>Click the Sugar cube icon on the top left corner of any Portal page to navigate back to the Dashboard.</p> <p>Each Dashboard shows the five last modified records per module. To view additional records, click on the module link.</p>',
+    'LBL_PORTAL_TOUR_SCREEN3_TITLE' => 'Footer',
+    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Language: When you have selected your preferred language, all labels in the Portal will be translated. Note: Language can only be selected from footer during login.</li><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
+    'LBL_PORTAL_TOUR_SCREEN4_TITLE' => 'Search',
+    'LBL_PORTAL_TOUR_SCREEN4_BODY' => '<p>There are two types of search:</p><ul class="features"><li class="icon-ok">Global Search – located in the navigation bar. Here you can search for Cases, Bugs, and Knowledge Base Documents by their names and numbers.</li> <li class="icon-ok">Specific module Search – located in the top of the list view in each module. <br><img src="../themes/default/images/ppt-search.png" height="200" width="530" style="margin-top: 10px;"><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 311px; top: -147px;"></i></li></ul>',
+    'LBL_PORTAL_TOUR_SCREEN5_TITLE' => 'Profile',
+    'LBL_PORTAL_TOUR_SCREEN5_BODY' => '<p>From the profile page you will, for instance, be able to change password, update email address, and change preferred language. </p>',
+    'LBL_PORTAL_TOUR_SCREEN6_TITLE' => 'You\'re Done!',
+    'LBL_PORTAL_TOUR_SCREEN6_BODY' => 'You can always retake the tour or read <a href="javascript:void window.open(\'http://support.sugarcrm.com/02_Documentation/01_Sugar_Editions/\')">documentation</a> for more information.',
 
     //in app tour
     'LBL_TOUR_PDF_MANAGER' => 'New PDF Manager',
@@ -3531,6 +3535,8 @@ $app_strings = array (
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
     'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
+    //end portal
+    //END SUGARCRM flav=ent ONLY
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',
