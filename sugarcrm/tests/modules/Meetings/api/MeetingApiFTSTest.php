@@ -38,7 +38,6 @@ class MeetingsApiFTSTest extends RestTestBase
         {
             $meeting = new Meeting();
             $meeting->name = "Test Meeting {$x}";
-            $meeting->save();
             $meeting->date_start = gmdate("Y-m-d H:i:s", strtotime("+{$x} days"));
             $meeting->date_end  = gmdate("Y-m-d H:i:s", strtotime("+{$x} days"));
             $meeting->assigned_user_id = $this->_user->id;

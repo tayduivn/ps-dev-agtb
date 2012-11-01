@@ -179,14 +179,15 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
      * Test that the base_rate field is populated with rate of currency_id
      * @group forecasts
      */
-    public function testCurrencyRate() {
+    public function testCurrencyRate()
+    {
         $opportunity = SugarTestOpportunityUtilities::createOpportunity();
         $currency = SugarTestCurrencyUtilities::getCurrencyByISO('MOD');
         // if Euro does not exist, will use default currency
         $opportunity->currency_id = $currency->id;
         $opportunity->name = "Test Opportunity Delete Me";
         $opportunity->amount = "5000.00";
-        $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        $opportunity->date_closed = TimeDate::getInstance()->getNow()->modify("+10 days")->asDbDate();
         //BEGIN SUGARCRM flav=pro ONLY
         $opportunity->best_case = "1000.00";
         $opportunity->worst_case = "600.00";
@@ -210,7 +211,7 @@ class OpportunityTest extends Sugar_PHPUnit_Framework_TestCase
         $opportunity->currency_id = $currency->id;
         $opportunity->name = "Test Opportunity Delete Me";
         $opportunity->amount = "5000.00";
-        $opportunity->date_closed = strftime('%m-%d-%Y',strtotime('+10 days'));
+        $opportunity->date_closed = TimeDate::getInstance()->getNow()->modify("+10 days")->asDbDate();
         //BEGIN SUGARCRM flav=pro ONLY
         $opportunity->best_case = "1000.00";
         $opportunity->worst_case = "600.00";
