@@ -2379,13 +2379,12 @@ private function dir_file_count($path){
                     'target' => '#footer',
                     'layout' => 'footer'
                 ),
-                'alert' => array(
-                    'target' => '#alert'
-                ),
                 'tourguide' => array(
                     'target' => '#tourguide'
                 )
             ),
+            'alertsEl' => '#alerts',
+            'alertAutoCloseDelay' => 9000,
             'serverUrl' => $sugar_config['site_url'] . '/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('signup', 'error'),
@@ -2418,13 +2417,12 @@ private function dir_file_count($path){
                     'target' => '#footer',
                     'layout' => 'footer'
                 ),
-                'alert' => array(
-                    'target' => '#alert'
-                ),
                 'tourguide' => array(
                     'target' => '#tourguide'
                 )
             ),
+            'alertsEl' => '#alerts',
+            'alertAutoCloseDelay' => 9000,
             'serverUrl' => $sugar_config['site_url'].'/rest/v10',
             'siteUrl' => $sugar_config['site_url'],
             'unsecureRoutes' => array('login', 'error'),
