@@ -5,7 +5,7 @@
         className: '', //override default class
 
         events:{
-            'click .cancel': 'close',
+            'click .cancel': 'cancel',
             'click .confirm': 'confirm'
         },
 
@@ -53,11 +53,15 @@
             this.$el.fadeOut().remove();
         },
 
+        cancel: function() {
+            this.$('.close').click(); //need to click close to call app.alert.dismiss()
+        },
+
         confirm: function() {
             if (_.isFunction(this.onConfirm)) {
                 this.onConfirm();
             }
-            this.close();
+            this.cancel();
         },
 
         /**
