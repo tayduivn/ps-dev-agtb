@@ -475,6 +475,8 @@
             'worst_adjusted' : worst_adjusted
         };
 
+        // we need to remove it, just in case it's the same to force it to re-render
+        this.context.forecasts.unset("updatedManagerTotals", {silent: true});
         this.context.forecasts.set("updatedManagerTotals", totals);
     },
 

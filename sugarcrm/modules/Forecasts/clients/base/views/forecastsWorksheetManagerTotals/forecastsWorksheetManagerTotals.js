@@ -34,6 +34,11 @@
             self._render();
         });
 
+        // re-render when the worksheet is rendered as well,
+        this.context.forecasts.on('forecasts:worksheetmanager:render', function() {
+            self._render();
+        });
+
         /*
          * // TODO: tagged for 6.8 see SFA-253 for details
         //Listen for config changes
