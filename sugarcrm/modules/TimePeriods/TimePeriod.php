@@ -74,7 +74,7 @@ class TimePeriod extends SugarBean {
 
 	var $new_schema = true;
 
-    static $currentId = array();
+    public static $currentId = array();
 
 	public function __construct() {
 		parent::__construct();
@@ -377,6 +377,7 @@ class TimePeriod extends SugarBean {
             $queryDate = $timedate->getNow();
             $date = $db->convert($db->quoted($queryDate->asDbDate()), 'date');
             $query = "SELECT id FROM timeperiods WHERE start_date <= {$date} AND end_date >= {$date} AND type = '{$type}' AND deleted = 0 ORDER BY start_date_timestamp DESC";
+
             $result = $db->limitQuery($query, 0 , 1);
             if(!empty($result))
             {
