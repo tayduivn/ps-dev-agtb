@@ -73,6 +73,15 @@
                  */
                 updatedManagerTotals : {},
 
+                /**
+                 * todo-sfa keep track of changes to modal.js and when they have proper events being passed
+                 * we can do away with this
+                 *
+                 * set by forecastsConfigTabbedButtons.js when the saved button is clicked so that it's callback
+                 * can check this variable to know which button was clicked
+                 */
+                saveClicked : false,
+
                 // todo: the following three booleans need to be refactored out and made into events, not flags/booleans
                 /**
                  * boolean to use across components to enable commit button or not
