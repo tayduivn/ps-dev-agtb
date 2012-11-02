@@ -611,7 +611,7 @@
 
         if(!this.showMe()){
             // if we don't show this worksheet set it all to zero
-        	this.context.forecasts.set("updatedTotals", {
+        	this.context.forecasts.set({
                 updatedTotals : {
                     'amount' : includedAmount,
                     'best_case' : includedBest,
@@ -683,7 +683,8 @@
             'included_opp_count' : includedCount,
             'total_opp_count' : self._collection.models.length
         };
-       
+
+        this.context.forecasts.unset("updatedTotals", {silent: true});
         this.context.forecasts.set("updatedTotals", totals);
     },
 
