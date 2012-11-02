@@ -25,10 +25,24 @@
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
 
-        //Minimize ID column, maximize name column and fix datetime columns
-        this.$("th[data-fieldname*=number],th[data-fieldname*=id]").css("width","1%");
-        this.$("th[data-fieldname*=name]").css("width","50%");
-        this.$("th[data-fieldname*=entered],th[data-fieldname*=created],th[data-fieldname*=modified]").css("width","10%");
+        //Calculate relative column widths.
+        if (_.keys(this.fields).length > 0) {
+            var totalWidth = 0;
+            for (var p in this.meta.panels) {
+                for (var f in this.meta.panels[p].fields) {
+                    var field = this.meta.panels[p].fields[f];
+                    totalWidth += parseInt(field.width) || 10;
+                }
+                var adjustment = 100 / totalWidth;
+                //Adjust to make sure total is 100
+                for (var f in this.meta.panels[p].fields) {
+                    var field = this.meta.panels[p].fields[f];
+                    var width = Math.floor((parseInt(field.width) || 10) * adjustment);
+
+                    this.$("th[data-fieldname=" + field.name + "]").css("width", width + "%");
+                }
+            }
+        }
     },
     filterToggled: function(isOpened) {
         this.filterOpened = isOpened;
