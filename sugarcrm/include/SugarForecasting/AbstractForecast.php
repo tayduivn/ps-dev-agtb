@@ -94,8 +94,6 @@ abstract class SugarForecasting_AbstractForecast extends SugarForecasting_Abstra
 
         while ($row = $db->fetchByAssoc($result)) {
 
-            $GLOBALS['log']->fatal(var_export($row, true));
-
             if ($row['_level'] > 2) continue;
 
             if ($row['_level'] == 1) {
