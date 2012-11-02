@@ -37,44 +37,9 @@ class AnnualTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     protected static $fiscalTP;
     protected static $fiscalLeaves;
 
-    public static function setUpBeforeClass() {
-        SugarTestHelper::setUp('beanFiles');
-        SugarTestHelper::setUp('beanList');
-        SugarTestHelper::setUp('app_strings');
-        SugarTestHelper::setup('app_list_strings');
-        self::$calendarTP = SugarTestTimePeriodUtilities::createITimePeriod("Annual", false);
-        self::$fiscalTP = SugarTestTimePeriodUtilities::createITimePeriod("Annual", true);
-        self::$calendarTP->buildLeaves('Quarter');
-        self::$calendarLeaves = self::$calendarTP->getLeaves();
-        self::$fiscalTP->buildLeaves('Quarter544');
-        self::$fiscalLeaves = self::$fiscalTP->getLeaves();
-
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$calendarLeaves[0]);
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$calendarLeaves[1]);
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$calendarLeaves[2]);
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$calendarLeaves[3]);
-
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$fiscalLeaves[0]);
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$fiscalLeaves[1]);
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$fiscalLeaves[2]);
-        SugarTestTimePeriodUtilities::addTimePeriod(self::$fiscalLeaves[3]);
-        parent::setUpBeforeClass();
-    }
-
-
     public function setUp()
     {
-        $this->markTestSkipped('skipped test for now.  timeperiod functionality will be enhanced in future versions');
-    }
-
-    public function tearDown()
-    {
-    }
-
-    public static function tearDownAfterClass() {
-        SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
-        SugarTestHelper::tearDown();
-        parent::tearDownAfterClass();
+        $this->markTestIncomplete('Marked as incomplete for now.');
     }
 
     /**
