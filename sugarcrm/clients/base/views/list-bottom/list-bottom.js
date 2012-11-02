@@ -36,6 +36,8 @@
         var self = this, options;
         app.alert.show('show_more_records', {level:'process', title:app.lang.getAppString('LBL_PORTAL_LOADING')});
         
+        // save current screen position
+        var screenPosition = $('html').offset().top;
 
         // If in "search mode" (the search filter is toggled open) set q:term param
         options = self.filterOpened ? self.getSearchOptions() : {};
@@ -47,7 +49,8 @@
             app.alert.dismiss('show_more_records');
             self.layout.trigger("list:paginate:success");
             self.render();
-            window.scrollTo(0, document.body.scrollHeight);
+            // retrieve old screen position
+            window.scrollTo(0, -1*screenPosition);
         };
         options.limit = this.limit;
         this.collection.paginate(options);
