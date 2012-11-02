@@ -556,9 +556,8 @@ if(typeof(SUGAR.collection) == "undefined") {
 	                	if(input_els[x].id && input_els[x].name == (this.field + '_collection_' + i) && trim(input_els[x].value) == '') {
 	                		if(divCount == 0){
 	                			isFirstFieldEmpty = true;
-	                		} else {
-	                			divsToClean.push(i);
-	                		}
+	                		} 
+                            divsToClean.push(i);
 	                	}
 	                	
 	                }
