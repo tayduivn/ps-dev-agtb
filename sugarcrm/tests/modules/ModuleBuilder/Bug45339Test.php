@@ -185,15 +185,15 @@ class Bug45339Test extends Sugar_PHPUnit_Framework_TestCase
         );
 
         /* @var $this->mbPackage MBPackage */
-        $accountsAllFiles = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Accounts');
-        $accountsOnlyMetaFile = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Accounts', true, true);
+        $accountsAllFiles = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Accounts',false,false, array('Accounts','Contacts'));
+        $accountsOnlyMetaFile = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Accounts', true, true, array('Accounts'));
         $wrongModuleName = $this->mbPackage->getCustomRelationshipsMetaFilesByModuleNameTest('Wrong_module_name');
 
         $this->assertContains($accountContactMetaPath, $accountsAllFiles);
         $this->assertContains($accountContactTablePath, $accountsAllFiles);
         $this->assertContains($contactAccountMetaPath, $accountsAllFiles);
 
-        $this->assertContains($accountContactMetaPath, $accountsOnlyMetaFile);
+        $this->assertNotContains($accountContactMetaPath, $accountsOnlyMetaFile);
         $this->assertNotContains($contactAccountMetaPath, $accountsOnlyMetaFile);
 
         $this->assertInternalType('array', $wrongModuleName);
@@ -335,9 +335,9 @@ class Bug45339MBPackageMock extends MBPackage
         return $this->getExtensionsList($module, $includeRelationships);
     }
 
-    public function getCustomRelationshipsMetaFilesByModuleNameTest($moduleName, $lhs = false, $metadataOnly = false)
+    public function getCustomRelationshipsMetaFilesByModuleNameTest($moduleName, $lhs = false, $metadataOnly = false,$exportModules=array())
     {
-        return $this->getCustomRelationshipsMetaFilesByModuleName($moduleName, $lhs, $metadataOnly);
+        return $this->getCustomRelationshipsMetaFilesByModuleName($moduleName, $lhs, $metadataOnly,$exportModules);
     }
 
     public function getCustomRelationshipsByModuleNameTest($moduleName, $lhs = false)
