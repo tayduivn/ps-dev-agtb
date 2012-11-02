@@ -2221,7 +2221,7 @@ EOQ;
         return false;
     }
 
-    //BEGIN SUGARCRM flav=pro ONLY
+    //BEGIN SUGARCRM flav=int ONLY
     /**
      * This is a convenience function to get all the user ids that report to the invoking user instance
      *
@@ -2229,6 +2229,7 @@ EOQ;
      * @param $fromCache boolean value indicating whether or not to use the available cached values (true by default)
      *
      */
+    /*
     function get_reports_to_hierarchy($returnSelf=true, $fromCache=true)
     {
 
@@ -2265,5 +2266,6 @@ EOQ;
         set_register_value('reports_to_hierarchy', $this->id, $ids);
         return $ids;
     }
-    //END SUGARCRM flav=pro ONLY
+    */
+    //END SUGARCRM flav=int ONLY
 }
