@@ -81,7 +81,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
 
         //add all of the newly created timePeriods to the test utils
-        $result = $db->query('SELECT id, start_date, end_date, time_period_type FROM timeperiods WHERE deleted = 0');
+        $result = $db->query('SELECT id, start_date, end_date, type FROM timeperiods WHERE deleted = 0');
         $createdTimePeriods = array();
 
         while($row = $db->fetchByAssoc($result))
@@ -267,7 +267,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
     public function testGetByType($type)
     {
         $bean = TimePeriod::getByType($type);
-        $this->assertEquals($type, $bean->time_period_type);
+        $this->assertEquals($type, $bean->type);
     }
 
 
@@ -331,15 +331,15 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Create 3 timeperiods.  The latest should be the last one
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('2000-01-01', '2000-03-31');
-        $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp1->type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
 
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('2001-01-01', '2001-03-31');
-        $tp2->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp2->type = TimePeriod::ANNUAL_TYPE;
         $tp2->save();
 
         $tp3 = SugarTestTimePeriodUtilities::createTimePeriod('2002-01-01', '2002-03-31');
-        $tp3->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp3->type = TimePeriod::ANNUAL_TYPE;
         $tp3->save();
         $timePeriod = TimePeriod::getLatest(TimePeriod::ANNUAL_TYPE);
 
@@ -362,15 +362,15 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //Create three timeperiods.  The earliest should be $tp1
         $tp1 = SugarTestTimePeriodUtilities::createTimePeriod('1980-01-01', '1980-03-31');
-        $tp1->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp1->type = TimePeriod::ANNUAL_TYPE;
         $tp1->save();
 
         $tp2 = SugarTestTimePeriodUtilities::createTimePeriod('1981-01-01', '1981-03-31');
-        $tp2->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp2->type = TimePeriod::ANNUAL_TYPE;
         $tp2->save();
 
         $tp3 = SugarTestTimePeriodUtilities::createTimePeriod('1982-01-01', '1982-03-31');
-        $tp3->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $tp3->type = TimePeriod::ANNUAL_TYPE;
         $tp3->save();
 
         $timePeriod = TimePeriod::getEarliest(TimePeriod::ANNUAL_TYPE);
@@ -510,7 +510,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $expectedDate = $timedate->getNow()->setDate($timedate->fromDbDate($expectedSeed->start_date)->modify($dateModifier)->format('Y'), $expectedMonth, $expectedDay);
 
         if($isUpgrade && $direction == 'forward') {
-            $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE time_period_type = '{$parentType}' AND deleted = 0");
+            $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE type = '{$parentType}' AND deleted = 0");
             $expectedDate = $timedate->fromDbDate($start_date);
         }
 
@@ -524,7 +524,7 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         //If this is an upgrade the expectedDate should be forward from what the current time period is
         if($isUpgrade && $direction == 'forward') {
-            $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE time_period_type = '{$leafType}' AND deleted = 0");
+            $start_date = $db->getOne("SELECT max(start_date) FROM timeperiods WHERE type = '{$leafType}' AND deleted = 0");
             $expectedDate = $timedate->fromDbDate($start_date);
         }
 
@@ -577,4 +577,34 @@ class ForecastsTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotNull($currentTimePeriod);
     }
 
+
+    /**
+     * This is a test to see how the TimePeriod code handles specifying corner cases like a leap year as the starting forecasting date
+     * It turns out that specifying the leap year will only result in PHP creating the starting timeperiod on March 1.
+     *
+     * @group timeperiods
+     * @group forecasts
+     */
+    public function testCreateLeapYearTimePeriods() {
+        $db = DBManagerFactory::getInstance();
+        $db->query("UPDATE timeperiods SET deleted = 1");
+
+        $settings['timeperiod_start_month'] = 2;
+        $settings['timeperiod_start_day'] = 29;
+        $settings['timeperiod_interval'] = TimePeriod::ANNUAL_TYPE;
+        $settings['timeperiod_leaf_interval'] = TimePeriod::QUARTER_TYPE;
+        $settings['timeperiod_shown_backward'] = 2;
+        $settings['timeperiod_shown_forward'] = 2;
+
+        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
+        $timePeriod->setStartDate('2012-02-29');
+        $timePeriod->rebuildForecastingTimePeriods(array(), $settings);
+
+        $timePeriods = TimePeriod::get_fiscal_year_dom();
+
+        foreach($timePeriods as $id=>$name) {
+            $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE, $id);
+            $this->assertRegExp('/\d{4}\-03-01/', $timePeriod->start_date, "Failed asserting that parent timeperiods were created on March 1st");
+        }
+    }
 }

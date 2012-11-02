@@ -63,6 +63,11 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
 
         $db->query('UPDATE timeperiods set deleted = 1');
 
+        $this->postSetUp();
+    }
+
+    protected function postSetUp($timePeriodType=TimePeriod::ANNUAL_TYPE)
+    {
         $admin = BeanFactory::getBean('Administration');
 
         foreach($this->forecastConfigSettings as $config)
@@ -71,7 +76,7 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
         }
 
         //Run rebuildForecastingTimePeriods which takes care of creating the TimePeriods based on the configuration data
-        $timePeriod = TimePeriod::getByType(TimePeriod::ANNUAL_TYPE);
+        $timePeriod = TimePeriod::getByType($timePeriodType);
         $currentForecastSettings = $admin->getConfigForModule('Forecasts', 'base');
         $timePeriod->rebuildForecastingTimePeriods(array(), $currentForecastSettings);
     }
@@ -95,18 +100,135 @@ class SugarJobCreateNextTimePeriodTest extends Sugar_PHPUnit_Framework_TestCase
      * @group timeperiods
      * @group forecasts
      */
-    public function testSugarJobCreateNextTimePeriodJob()
+    public function testSugarJobCreateNextTimePeriodJobForAnnualParent()
     {
         global $current_user;
+        $admin = BeanFactory::getBean('Administration');
+        $config = $admin->getConfigForModule('Forecasts', 'base');
+
+        $timeperiodInterval = $config['timeperiod_interval'];
+        $timeperiodLeafInterval = $config['timeperiod_leaf_interval'];
+
+        $parentTimePeriod = TimePeriod::getLatest($timeperiodInterval);
+        $latestTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod($timeperiodLeafInterval);
+
+        $timedate = TimeDate::getInstance();
+
+        //We run the rebuild command if the latest TimePeriod is less than the specified configuration interval from the current TimePeriod
+        $correctStartDate = $timedate->fromDbDate($currentTimePeriod->start_date);
+        $latestStartDate = $timedate->fromDbDate($latestTimePeriod->start_date);
+
+        $shownForward = $config['timeperiod_shown_forward'];
+        //Move the current start date forward by the leaf period amounts
+        for($x=0; $x < $shownForward; $x++) {
+            $correctStartDate->modify($parentTimePeriod->next_date_modifier);
+        }
+
+        $this->assertTrue($correctStartDate > $latestStartDate);
 
         $job = SugarTestJobQueueUtilities::createAndRunJob(
-            'TestJobQueue',
+            'SugarJobCreateNextTimePeriod',
             'class::SugarJobCreateNextTimePeriod',
             '',
             $current_user);
 
         $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
         $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        $latestTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
+        $latestStartDate = $timedate->fromDbDate($latestTimePeriod->start_date);
+
+        //After the job runs, the $correctStartDate should be set and this should no longer be greater than $latestStartDate
+        $this->assertFalse($correctStartDate > $latestStartDate);
+
+        //Now if we run the queue again, retrieving the latest TimePeriod a second time should return the newly created leaf timeperiod
+        $job = SugarTestJobQueueUtilities::createAndRunJob(
+            'SugarJobCreateNextTimePeriod',
+            'class::SugarJobCreateNextTimePeriod',
+            '',
+            $current_user);
+
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        $latestTimePeriod2 = TimePeriod::getLatest($timeperiodLeafInterval);
+        $this->assertEquals($latestTimePeriod->id, $latestTimePeriod2->id);
     }
+
+
+    /**
+     * @group timeperiods
+     * @group forecasts
+     */
+    public function testSugarJobCreateNextTimePeriodJobForQuarterParent()
+    {
+        $db = DBManagerFactory::getInstance();
+
+        $db->query('UPDATE timeperiods set deleted = 1');
+
+        $this->forecastConfigSettings = array (
+            array('name' => 'timeperiod_type', 'value' => 'chronological', 'platform' => 'base', 'category' => 'Forecasts'),
+            array('name' => 'timeperiod_interval', 'value' => TimePeriod::QUARTER_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
+            array('name' => 'timeperiod_leaf_interval', 'value' => TimePeriod::MONTH_TYPE, 'platform' => 'base', 'category' => 'Forecasts'),
+            array('name' => 'timeperiod_start_month', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
+            array('name' => 'timeperiod_start_day', 'value' => '1', 'platform' => 'base', 'category' => 'Forecasts'),
+            array('name' => 'timeperiod_shown_forward', 'value' => '8', 'platform' => 'base', 'category' => 'Forecasts'),
+            array('name' => 'timeperiod_shown_backward', 'value' => '8', 'platform' => 'base', 'category' => 'Forecasts')
+        );
+
+        $this->postSetUp(TimePeriod::QUARTER_TYPE);
+        global $current_user;
+        $timeperiodLeafInterval = TimePeriod::MONTH_TYPE;
+
+        $parentTimePeriod = TimePeriod::getLatest(TimePeriod::QUARTER_TYPE);
+        $latestTimePeriod = TimePeriod::getLatest(TimePeriod::MONTH_TYPE);
+        $currentTimePeriod = TimePeriod::getCurrentTimePeriod(TimePeriod::MONTH_TYPE);
+
+        $timedate = TimeDate::getInstance();
+
+        //We run the rebuild command if the latest TimePeriod is less than the specified configuration interval from the current TimePeriod
+        $correctStartDate = $timedate->fromDbDate($currentTimePeriod->start_date);
+        $latestStartDate = $timedate->fromDbDate($latestTimePeriod->start_date);
+
+
+
+        $shownForward = 8;
+        //Move the current start date forward by the leaf period amounts
+        for($x=0; $x < $shownForward; $x++) {
+            $correctStartDate->modify($parentTimePeriod->next_date_modifier);
+        }
+
+        $this->assertTrue($correctStartDate > $latestStartDate);
+
+        $job = SugarTestJobQueueUtilities::createAndRunJob(
+            'SugarJobCreateNextTimePeriod',
+            'class::SugarJobCreateNextTimePeriod',
+            '',
+            $current_user);
+
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        $latestTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
+        $latestStartDate = $timedate->fromDbDate($latestTimePeriod->start_date);
+
+        //After the job runs, the $correctStartDate should be set and this should no longer be greater than $latestStartDate
+        $this->assertFalse($correctStartDate > $latestStartDate);
+
+        //Now if we run the queue again, retrieving the latest TimePeriod a second time should return the newly created leaf timeperiod
+        $job = SugarTestJobQueueUtilities::createAndRunJob(
+            'SugarJobCreateNextTimePeriod',
+            'class::SugarJobCreateNextTimePeriod',
+            '',
+            $current_user);
+
+        $this->assertEquals(SchedulersJob::JOB_SUCCESS, $job->resolution, "Wrong resolution");
+        $this->assertEquals(SchedulersJob::JOB_STATUS_DONE, $job->status, "Wrong status");
+
+        $latestTimePeriod2 = TimePeriod::getLatest($timeperiodLeafInterval);
+        $this->assertEquals($latestTimePeriod->id, $latestTimePeriod2->id);
+    }
+
 
 }

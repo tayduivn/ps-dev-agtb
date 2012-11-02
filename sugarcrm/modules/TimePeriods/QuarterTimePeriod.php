@@ -40,7 +40,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
     public function __construct() {
         parent::__construct();
         //The time period type
-        $this->time_period_type = TimePeriod::QUARTER_TYPE;
+        $this->type = TimePeriod::QUARTER_TYPE;
 
         //The leaf period type
         $this->leaf_period_type = TimePeriod::MONTH_TYPE;
@@ -48,8 +48,12 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         //The number of leaf periods
         $this->leaf_periods = 3;
 
+        $this->periods_in_year = 4;
+
         //Fiscal is 52-week based, chronological is year based
         $this->is_fiscal = false;
+
+        $this->is_fiscal_year = false;
 
         //The next period modifier
         $this->next_date_modifier = '3 month';

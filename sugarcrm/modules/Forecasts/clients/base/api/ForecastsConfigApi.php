@@ -72,7 +72,7 @@ class ForecastsConfigApi extends ConfigModuleApi {
         //if primary settings for timeperiods have changed, then rebuild them
         if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
             $timePeriod = TimePeriod::getByType($current_forecasts_settings['timeperiod_interval']);
-            $timePeriod->time_period_type = $current_forecasts_settings['timeperiod_interval']; // Annual by default
+            $timePeriod->type = $current_forecasts_settings['timeperiod_interval']; // Annual by default
             $timePeriod->leaf_period_type = $current_forecasts_settings['timeperiod_leaf_interval']; // Quarter by default
             $timePeriod->rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
         }

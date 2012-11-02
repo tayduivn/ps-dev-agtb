@@ -127,9 +127,17 @@ $dictionary['TimePeriod'] = array('table' => 'timeperiods'
     'vname' => 'LBL_TP_IS_FISCAL_YEAR',
     'type' => 'bool',
     ),
-'time_period_type' =>
+'leaf_cycle' =>
     array (
-    'name' => 'time_period_type',
+    'name' => 'leaf_cycle',
+    'vname' => 'LBL_LEAF_CYCLE',
+    'type' => 'int',
+    'len' => '2',
+    'studio' => false
+    ),
+'type' =>
+    array (
+    'name' => 'type',
     'vname' => 'LBL_TP_TYPE',
     'type' => 'enum',
     'options' => 'time_period_dom',

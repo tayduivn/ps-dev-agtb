@@ -93,14 +93,14 @@ class SugarTestTimePeriodUtilities
     /*
      * magic tardis function
      */
-    public static function createITimePeriod ($time_period_type, $is_fiscal=false){
+    public static function createITimePeriod ($type, $is_fiscal=false){
 
         global $timedate;
         $timedate = TimeDate::getInstance();
         $time = mt_rand();
-        $name = 'Sugar'.$time_period_type.'TimePeriod' . $time;
+        $name = 'Sugar'.$type.'TimePeriod' . $time;
         $start_date = self::getRandDate();
-        $timeperiod = BeanFactory::newBean($time_period_type."TimePeriods");
+        $timeperiod = TimePeriod::getByType($type);
         $timeperiod->is_fiscal = $is_fiscal;
         $timeperiod->setStartDate($timedate->asDbDate($start_date));
 

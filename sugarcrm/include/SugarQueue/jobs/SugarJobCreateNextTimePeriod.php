@@ -64,7 +64,6 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
 
         $timeperiodInterval = $config['timeperiod_interval'];
         $timeperiodLeafInterval = $config['timeperiod_leaf_interval'];
-        $shownForward = $config['timeperiod_shown_forward'];
 
         $parentTimePeriod = TimePeriod::getLatest($timeperiodInterval);
         $latestTimePeriod = TimePeriod::getLatest($timeperiodLeafInterval);
@@ -79,22 +78,39 @@ class SugarJobCreateNextTimePeriod implements RunnableSchedulerJob
         $timedate = TimeDate::getInstance();
 
         //We run the rebuild command if the latest TimePeriod is less than the specified configuration interval from the current TimePeriod
-        $currentStartDate = $timedate->fromDbDate($currentTimePeriod->start_date);
+        $correctStartDate = $timedate->fromDbDate($currentTimePeriod->start_date);
         $latestStartDate = $timedate->fromDbDate($latestTimePeriod->start_date);
 
+        $shownForward = $config['timeperiod_shown_forward'];
         //Move the current start date forward by the leaf period amounts
         for($x=0; $x < $shownForward; $x++) {
-            $currentStartDate->modify($parentTimePeriod->next_date_modifier);
+            $correctStartDate->modify($parentTimePeriod->next_date_modifier);
         }
 
-        $GLOBALS['log']->fatal(">>>>" . $currentStartDate->asDbDate());
-        $GLOBALS['log']->fatal($latestStartDate->asDbDate());
+        $leafCycle = $latestTimePeriod->leaf_cycle;
 
         //If the current start data that was modified according to the shown forward period is past the latest leaf period we need to build more timeperiods
-        if($currentStartDate > $latestStartDate)
+        while($correctStartDate > $latestStartDate)
         {
-            $parentTimePeriod->
+           //We need to keep creating leaf periods until we are in sync.
+           //If the leaf period we need to create is the start of the leaf cycle
+           //then we should also create the parent TimePeriod record.
+           $startDate = $latestStartDate->modify($latestTimePeriod->next_date_modifier);
 
+           $leafCycle = ($leafCycle == $parentTimePeriod->leaf_periods) ? 1 : $leafCycle + 1;
+
+           if($leafCycle == 1) {
+              $parentTimePeriod = TimePeriod::getByType($timeperiodInterval);
+              $parentTimePeriod->setStartDate($startDate->asDbDate());
+              $parentTimePeriod->name = $parentTimePeriod->getTimePeriodName($leafCycle);
+              $parentTimePeriod->save();
+           }
+
+           $leafTimePeriod = TimePeriod::getByType($timeperiodLeafInterval);
+           $leafTimePeriod->setStartDate($startDate->asDbDate());
+           $leafTimePeriod->name = $leafTimePeriod->getTimePeriodName($leafCycle);
+           $leafTimePeriod->leaf_cycle = $leafCycle;
+           $leafTimePeriod->save();
         }
         return true;
     }

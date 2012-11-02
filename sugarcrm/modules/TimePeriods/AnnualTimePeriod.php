@@ -39,7 +39,7 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
     public function __construct() {
         parent::__construct();
         //The time period type
-        $this->time_period_type = TimePeriod::ANNUAL_TYPE;
+        $this->type = TimePeriod::ANNUAL_TYPE;
 
         //The leaf period type
         $this->leaf_period_type = TimePeriod::QUARTER_TYPE;
@@ -47,8 +47,12 @@ class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
         //The number of leaf periods
         $this->leaf_periods = 4;
 
+        $this->periods_in_year = 1;
+
         //Fiscal is 52-week based, chronological is year based
         $this->is_fiscal = false;
+
+        $this->is_fiscal_year = true;
 
         //The next period modifier
         $this->next_date_modifier = $this->is_fiscal ? '52 week' : '1 year';

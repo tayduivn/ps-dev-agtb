@@ -38,10 +38,14 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
     public function __construct() {
         parent::__construct();
         //The time period type
-        $this->time_period_type = TimePeriod::MONTH_TYPE;
+        $this->type = TimePeriod::MONTH_TYPE;
 
         //Fiscal is 52-week based, chronological is year based
         $this->is_fiscal = false;
+
+        $this->is_fiscal_year = false;
+
+        $this->periods_in_year = 12;
 
         //The next period modifier
         $this->next_date_modifier = '1 month';
