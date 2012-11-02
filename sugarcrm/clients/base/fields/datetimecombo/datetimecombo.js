@@ -84,6 +84,7 @@
                 self.$(".ui-timepicker-input").attr('placeholder', self.userTimePrefs);
                 self.$(".ui-timepicker-input").timepicker({
                     'timeFormat': self.userTimePrefs,
+                    'scrollDefaultNow': true, // detects user's time (e.g if 1pm drodown jumps to 1:00 location)
                     'step': 15 // 15 minute intervals consistent w/Sugar proper
                 });
 
@@ -99,7 +100,7 @@
             myUser = app.user;
 
         if(value) {
-            jsDate = app.date.parse(value, myUser.get('datepref')+' '+ myUser.get('timepref'));
+            jsDate = app.date.parse(value);
             if(jsDate && _.isFunction(jsDate.toISOString)) {
                 return jsDate.toISOString();
             } else {
