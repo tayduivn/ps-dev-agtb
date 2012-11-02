@@ -2838,17 +2838,13 @@ SUGAR.util = function () {
 
 			return el;
 		},
-        paramsToUrl : function (params) {
-            var parts = [];
-            for (var i in params)
-            {
-                if (params.hasOwnProperty(i))
-                {
-                    parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(params[i]));
-                }
-            }
-            return parts.join("&");
-        },
+		paramsToUrl : function (params) {
+			url = "";
+			for (i in params) {
+				url += i + "=" + params[i] + "&";
+			}
+			return url;
+		},
         // Evaluates a script in a global context
         // Workarounds based on findings by Jim Driscoll
         // http://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context
