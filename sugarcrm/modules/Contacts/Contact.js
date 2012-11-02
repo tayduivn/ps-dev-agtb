@@ -101,27 +101,21 @@ function set_campaignlog_and_save_background(popup_reply_data)
 //END SUGARCRM flav!=sales ONLY
 
 function validatePortalName(e) {
-    var portalName = document.getElementById('portal_name'); 
-    var portalNameExisting = document.getElementById("portal_name_existing"); 
+    var portalName = document.getElementById('portal_name');
+    var portalNameExisting = document.getElementById("portal_name_existing");
     var portalNameVerified = document.getElementById('portal_name_verified');
-	if(typeof(portalName.parentNode.lastChild) != 'undefined' &&
-        portalName.parentNode.lastChild.tagName =='SPAN'){
-	   portalName.parentNode.lastChild.innerHTML = '';
-	}
 
     if(portalName.value == portalNameExisting.value) {
        return;
     }
+
+    $(".validation-message",portalName.parentNode).remove();
     
 	var callbackFunction = function success(data) {
 	    //data.responseText contains the count of portal_name that matches input field
 		count = data.responseText;	
 		if(count != 0) {
-		   add_error_style('EditView', 'portal_name', SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'));
-		   for(wp = 1; wp <= 10; wp++) {
-			   window.setTimeout('fade_error_style(style, ' + wp * 10 + ')', 1000 + (wp * 50));
-		   }
-		   portalName.focus();
+		   add_error_style('EditView', 'portal_name', SUGAR.language.get('app_strings', 'ERR_EXISTING_PORTAL_USERNAME'), false, true);
 		}
 		
 	    if(portalNameVerified.parentNode.childNodes.length > 1) {
@@ -146,7 +140,7 @@ function validatePortalName(e) {
 	   portalNameVerified.parentNode.appendChild(verifiedTextNode);
        verifiedTextNode.innerHTML = SUGAR.language.get('app_strings', 'LBL_VERIFY_PORTAL_NAME');
        verifyingPortalName = true;
-	   var cObj = YAHOO.util.Connect.asyncRequest('POST', 'index.php?module=Contacts&action=ValidPortalUsername&portal_name=' + portalName.value, {success: callbackFunction, failure: callbackFunction});
+	   YAHOO.util.Connect.asyncRequest('POST', 'index.php?module=Contacts&action=ValidPortalUsername&portal_name=' + portalName.value, {success: callbackFunction, failure: callbackFunction});
     }
 }
 
