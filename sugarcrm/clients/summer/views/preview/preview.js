@@ -1,17 +1,18 @@
 ({
     events: {
-        'click .closeSubdetail': 'closePreview',
-        'click [data-direction]': 'switchPreview'
+        'click .closeSubdetail': 'closePreview'
     },
+
+    // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
+    switching: false,
 
     initialize: function(options) {
         _.bindAll(this);
 
         app.view.View.prototype.initialize.call(this, options);
         this.fallbackFieldTemplate = "detail";
-        // "binary semaphore" for the pagination click event, this is needed for async changes to the preview model
-        this.switching = false;
         this.context.on("togglePreview", this.togglePreview);
+        this.layout.on("preview:pagination:fire", this.switchPreview);
     },
 
     _render: function() {
@@ -45,15 +46,13 @@
         }
     },
 
-    switchPreview: function(e, index, directionData, id, module) {
+    switchPreview: function(data, index, id, module) {
         var self = this,
-            target = this.$(e.currentTarget),
-            data = directionData || target.data(),
             currModule = module || this.model.get("_module"),
             currID = id || this.model.get("postId") || this.model.get("id"),
             currIndex = index || _.indexOf(this.collection.models, this.collection.get(currID));
 
-        if(this.switching) {
+        if( this.switching ) {
             // We're currently switching previews, so ignore any pagination click events.
             return;
         }
@@ -75,17 +74,18 @@
 
                 currID = this.collection.models[currIndex].id;
                 this.switching = false;
-                this.switchPreview(e, currIndex, data, currID, currModule);
+                this.switchPreview(data, currIndex, currID, currModule);
             }
             else {
-                var targetModule = this.collection.models[currIndex].get("target_module") || currModule;
+                var targetModule = this.collection.models[currIndex].get("target_module") || currModule,
+                    moduleMeta = app.metadata.getModule(targetModule);
 
                 // Some activity stream items aren't previewable - e.g. no detail views
                 // for "Meetings" module.
-                if( _.isUndefined(app.metadata.getModule(targetModule).views.detail) ) {
+                if( moduleMeta && _.isUndefined(moduleMeta.views.detail) ) {
                     currID = this.collection.models[currIndex].id;
                     this.switching = false;
-                    this.switchPreview(e, currIndex, data, currID, currModule);
+                    this.switchPreview(data, currIndex, currID, currModule);
                 }
                 else {
                     this.model = app.data.createBean(targetModule);

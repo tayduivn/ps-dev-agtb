@@ -19,6 +19,7 @@ class SideBarLayout {
 
         $this->mainPane->set("span", 8);
         $this->sidePane->set("span", 4);
+        $this->previewPane->set("span", 4);
     }
 
     public function push($section, $component) {
@@ -32,8 +33,6 @@ class SideBarLayout {
     }
 
     public function getLayout() {
-        $this->push("preview", array("view" => "preview"));
-        $this->push("preview", array("view" => "preview-stream"));
         $this->layout->push(array("layout" => $this->mainPane->getLayout()));
         $this->layout->push(array("layout" => $this->sidePane->getLayout()));
         $this->layout->push(array("layout" => $this->previewPane->getLayout()));

@@ -6,4 +6,5 @@ $layout->push('side', array('view' => 'agenda'));
 $layout->push('side', array('view' => 'gdrive'));
 $layout->push('side', array('view' => 'recommended-contacts'));
 $layout->push('side', array('view' => 'recommended-invites'));
+$layout->push('preview', array('layout' => 'preview'));
 $viewdefs['summer']['layout']['dashboard'] = $layout->getLayout();
