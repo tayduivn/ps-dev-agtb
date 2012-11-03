@@ -1,5 +1,4 @@
-(function(app) {
-    app.view.BaseAlertView = app.view.AlertView.extend({
+({
         extendsFrom: 'AlertView',
 
         className: '', //override default class
@@ -158,5 +157,4 @@
                     return '';
             }
         }
-    });
-})(SUGAR.App)
+})
