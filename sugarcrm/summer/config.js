@@ -155,9 +155,6 @@
             header: {
                 target: '#header'
             },
-            alert: {
-                target: '#alert'
-            },
             footer: {
                 target: '#footer',
                 layout: 'footer'

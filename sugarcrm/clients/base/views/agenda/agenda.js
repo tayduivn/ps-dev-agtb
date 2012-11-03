@@ -27,7 +27,6 @@
 
         app.api.call('read', app.api.buildURL('Meetings/Agenda'), null, {
             success: function(data) {
-                console.log("LoadData", data);
                 var models = {'today': [], 'tomorrow': [], 'upcoming': []};
 
                 for (var modelType in models) {

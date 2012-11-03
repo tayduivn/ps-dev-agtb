@@ -2,7 +2,12 @@
 
     // Add custom events here for now
     app.events.on("app:init", function() {
-        // app.data.declareModels();
+
+        // TODO: Check if this is still necessary.
+        app.template.compile("alert",
+            "<div class=\"{{alertClass}} {{#if autoClose}}timeten{{/if}}\">" +
+                "<a class=\"close\" data-dismiss=\"alert\">x</a>{{#if title}}<strong>{{str title}}</strong>{{/if}}" +
+                "{{#each messages}}<p>{{str this}}</p>{{/each}}</div>");
 
         // Override detail/edit view routes
         function recordHandler(module, id, action) {

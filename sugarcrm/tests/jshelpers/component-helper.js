@@ -193,6 +193,12 @@
             }
         },
 
+        addModuleDefinition: function(module, moduleDef) {
+            if (this.isInitialized()) {
+                this._data.modules[module] = moduleDef;
+            }
+        },
+
         set: function() {
             if (this.isInitialized()) {
                 SugarTest.app.metadata.set(this._data, true, true);
