@@ -57,7 +57,7 @@ if(!empty($_REQUEST['demo'])){
 <body>
 <div>
     <div id="sidecar">
-        <div id="alert" class="alert-top"></div>
+        <div id="alerts" class="alert-top"></div>
         <div id="header"></div>
         <div id="subnav"></div>
         <div id="content"></div>
