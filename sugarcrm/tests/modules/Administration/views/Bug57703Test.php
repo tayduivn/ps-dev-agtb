@@ -25,7 +25,7 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-
+//FILE SUGARCRM flav=PRO only
 
 require_once('modules/Administration/views/view.configureshortcutbar.php');
 /**
