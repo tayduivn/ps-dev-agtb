@@ -62,7 +62,8 @@
 
         $(function() {
             var prettyNow;
-            if(self.view.name === 'edit') {
+
+            if (self.view.name === 'edit') {
 
                 /**
                  * Set up the the Datepicker
@@ -99,9 +100,9 @@
         var jsDate, 
             myUser = app.user;
 
-        if(value) {
+        if (value) {
             jsDate = app.date.parse(value);
-            if(jsDate && _.isFunction(jsDate.toISOString)) {
+            if (jsDate && _.isFunction(jsDate.toISOString)) {
                 return jsDate.toISOString();
             } else {
                 app.logger.error("Issue converting date to iso string; no toISOString available for date created for value: "+value);
@@ -113,12 +114,12 @@
     format:function(value) {
         var jsDate, output, myUser = app.user, d, parts, before24Hours;
 
-        // If there is a default 'string' value like "yesterday", format it as a date
-        if(this.model.isNew() && !value && this.def.display_default && this.view.name === 'edit') {
-            value  = app.date.parseDisplayDefault(this.def.display_default);
-            jsDate = app.date.dateFromDisplayDefaultString(value);
-            this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
-        } else if(!value) {
+        if (this.model.isNew() && !value) {
+            jsDate = this._setDateIfDefaultValue();
+            if (!jsDate) {
+                return value;
+            }
+        } else if (!value) {
             return value;
         } else {
             // In case ISO 8601 get it back to js native date which date.format understands
@@ -130,7 +131,7 @@
         value  = app.date.format(jsDate, this.usersDatePrefs)+' '+app.date.format(jsDate, this.userTimePrefs);
         jsDate = app.date.parse(value);
         // round time to the nearest 15th if this is a edit which is consitent with rest of app
-        if(this.view.name === 'edit') {
+        if (this.view.name === 'edit') {
             jsDate = app.date.roundTime(jsDate);
         }
 
@@ -154,8 +155,7 @@
         this.lastAmPmSelected   = value.amPm;
 
         // 0am must be shown as 12am if we're on a 12 hour based time format
-        // if(!_.isUndefined(value.amPm) && value.amPm === 'am' && value.hours == 0) {
-        if(value.time.toLowerCase().indexOf('am') !== -1 && value.hours == 0) {
+        if (value.time.toLowerCase().indexOf('am') !== -1 && value.hours == 0) {
 
             // Now for 00 to 12 since we want 12am
             value.hours = '12';
@@ -294,7 +294,29 @@
         $timepickerElement.timepicker('setTime', date);
         this.timeValue = $timepickerElement.val();// so hbt template will pick up on next render
     },
+    /**
+     * If the field def has a display_default property, or, is required, this
+     * will set the model with corresponding date time.
+     */
+    _setDateIfDefaultValue: function() {
+        var value, jsDate; 
 
+        // If there's a display default 'string' value like "yesterday", format it as a date
+        if (this.def.display_default) {
+            value  = app.date.parseDisplayDefault(this.def.display_default);
+            jsDate = app.date.dateFromDisplayDefaultString(value);
+            this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
+        } else if (this.def.required) {
+            // Per the FDD: When the Datetime field is mandatory, the default value
+            // should be SYSDATE and all zeros for Time value
+            jsDate = new Date();
+            jsDate.setHours(0, 0, 0, 0);
+            this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
+        } else {
+            return null;  
+        }
+        return jsDate;
+    },
     /**
      * Takes the time value and returns hours and minutes parts.
      * @param String timeValue time value within timepicker field. 
@@ -345,7 +367,7 @@
     _setIfNoTime: function(h, m, ampm) {
         var o = {};
         // Essentially, if we have no time parts, we're going to default to 12:00am
-        if(!h && !m) {
+        if (!h && !m) {
             o.amPm = ampm ? ampm : 'am';
         }
         o.hours = h ? h : '00'; // will downstream turn to 12am but internally needs to be 00
@@ -362,7 +384,7 @@
      * user's prefs. Otherwise, just returns dateStringToCheck.
      */
     _getTodayDateStringIfNoDate: function(dateStringToCheck) {
-        if(!dateStringToCheck) {
+        if (!dateStringToCheck) {
             var d = new Date();
             return app.date.format(d, this.usersDatePrefs);
         } 
@@ -374,11 +396,11 @@
      */
     _patchHour: function (ampm, hour) {
         var hr = hour ? parseInt(hour, 10) : 0;
-        if(this.showAmPm) {
+        if (this.showAmPm) {
             // Patch 12am to 00am as we need it this way internally though we present 12am (if on 12 hr time format)
-            if(ampm && ampm === 'am' && hr === 12) {
+            if (ampm && ampm === 'am' && hr === 12) {
                 return '00';
-            } else if(hr < 12 && ampm === 'pm') {
+            } else if (hr < 12 && ampm === 'pm') {
                 // add 12 e.g. 4pm becomes 16 - again for internal iso representation
                 return hr+12+'';
             }
