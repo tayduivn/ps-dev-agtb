@@ -38,11 +38,6 @@ class ContactsViewEdit extends ViewEdit
  	 */
  	public function display()
  	{
-         $admin = new Administration();
-         $admin->retrieveSettings();
-         if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
-
-         }
         $this->ev->process();
 		if ( !empty($_REQUEST['contact_name']) && !empty($_REQUEST['contact_id'])
             && $this->ev->fieldDefs['report_to_name']['value'] == ''
@@ -50,6 +45,8 @@ class ContactsViewEdit extends ViewEdit
             $this->ev->fieldDefs['report_to_name']['value'] = $_REQUEST['contact_name'];
             $this->ev->fieldDefs['reports_to_id']['value'] = $_REQUEST['contact_id'];
         }
+         $admin = new Administration();
+         $admin->retrieveSettings();
 		if(empty($admin->settings['portal_on']) || !$admin->settings['portal_on']) {
 		   unset($this->ev->sectionPanels[strtoupper('lbl_portal_information')]);
 		} else {
