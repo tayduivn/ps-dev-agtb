@@ -26,61 +26,31 @@
  ********************************************************************************/
 ({
     // date
-    events: {
-        'click .icon-calendar': 'toggleDatepicker'
-    },
-    datepickerVisible: false,
+    extendsFrom:'BasedateField',
+
     _render: function(value) {
-        var self, viewName, usersDateFormatPreference;
-        self = this;
+        var self = this, viewName;
 
-        // Although the server serves up iso date string with Z and all .. for date types going back it wants this
-        self.serverDateFormat = 'Y-m-d';
-
-        usersDateFormatPreference = app.user.get('datepref');
-        
+        self._presetDateValues();
         app.view.Field.prototype._render.call(this);//call proto render
-
-        viewName = self.view.meta && self.view.meta.type ? self.view.meta.type : self.view.name;
+        viewName = self._getViewName();
         $(function() {
-            if(self.options.def.view === 'edit' || self.options.viewName === 'edit' ||
-                viewName === 'edit') {
-                self.$(".datepicker").attr('placeholder', app.date.toDatepickerFormat(usersDateFormatPreference));
-                self.$(".datepicker").datepicker({
-                    format: (usersDateFormatPreference) ? app.date.toDatepickerFormat(usersDateFormatPreference) : 'mm-dd-yyyy',
-                    show: function(evt) {
-                        self.datepickerVisible = true;
-                    },
-                    hide: function(evt) {
-                        self.datepickerVisible = false;
-                    }
-                });
+            if (self._isEditView(viewName)) {
+                self._setupDatepicker();
             }
         });
     },
-    toggleDatepicker: function() {
-        var action = (this.datepickerVisible) ? 'hide' : 'show';
-        this.$(".datepicker").datepicker(action);
-    },
-    unformat:function(value) {
-        var jsDate, 
-            usersDateFormatPreference = app.user.get('datepref');
-        // In case ISO 8601 get it back to js native date which date.format understands
-        jsDate = new Date(value);
-        return app.date.format(jsDate, this.serverDateFormat);
-    },
-
     format:function(value) {
-        var jsDate, parts,
-            usersDateFormatPreference = app.user.get('datepref');
+        var jsDate, parts;
 
-        // If there is a default 'string' value like "yesterday", format it as a date
-        if(this.model.isNew() && !value && this.def.display_default && this.view.name === 'edit') {
-            value = app.date.parseDisplayDefault(this.def.display_default);
-            parts = value.match(/(\d+)/g);
-            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
-            this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
-        } else if(!value) {
+        if (this._isNewEditViewWithNoValue(value)) {
+            // If there is a default 'string' value like "yesterday", format it as a date
+            jsDate = this._setDateIfDefaultValue();
+            if (!jsDate) {
+                return value;
+            }
+            value  = app.date.format(jsDate, this.usersDatePrefs);
+        } else if (!value) {
             return value;
         } else {
             // Bug 56249 .. Date constructor doesn't reliably handle yyyy-mm-dd
@@ -88,11 +58,42 @@
             // Sun Oct 09 2011 17:00:00 GMT-0700 (PDT)
             parts = value.match(/(\d+)/g);
             jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
-            value  = app.date.format(jsDate, usersDateFormatPreference);
+            value  = app.date.format(jsDate, this.usersDatePrefs);
         }
-
+        this.dateValue = value;
+        this.$(".datepicker").datepicker('update', this.dateValue);
         jsDate = app.date.parse(value);
-        return app.date.format(jsDate, usersDateFormatPreference);
+        return app.date.format(jsDate, this.usersDatePrefs);
+    },
+    /**
+     * Overrides basedate
+     */
+    unformat:function(value) {
+        // In case ISO 8601 get it back to js native date which date.format understands
+        var jsDate = new Date(value);
+        return app.date.format(jsDate, this.serverDateFormat);
+
+    },
+
+    /**
+     * If the field def has a display_default property, or, is required, this
+     * will set the model with corresponding date time.
+     */
+    _setDateIfDefaultValue: function() {
+        var value, jsDate; 
+
+        if (this.def.display_default) {
+            value = app.date.parseDisplayDefault(this.def.display_default);
+            parts = value.match(/(\d+)/g);
+            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
+            this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
+        } else if (this.def.required) {
+            return this._setDateNow();
+        } else {
+            return null;  
+        }
+        return jsDate;
     }
 
 })
+
