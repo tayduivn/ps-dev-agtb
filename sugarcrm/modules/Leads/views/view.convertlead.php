@@ -361,10 +361,6 @@ class ViewConvertLead extends SugarView
         $beans['Contacts']->id = create_guid();
         $beans['Contacts']->new_with_id = true;
 
-        $beans['Accounts'] = new Account();
-        $beans['Accounts']->id = create_guid();
-        $beans['Accounts']->new_with_id = true;
-
         // Bug 39287 - Check for Duplicates on selected modules before save
         if (!empty($_REQUEST['selectedContact']))
         {
@@ -394,8 +390,6 @@ class ViewConvertLead extends SugarView
         if (!empty($_REQUEST['selectedAccount']))
         {
             $_REQUEST['account_id'] = $_REQUEST['selectedAccount'];
-            $beans['Accounts'] = new Account();
-            $beans['Accounts']->retrieve($_REQUEST['selectedAccount']);
             unset($_REQUEST["convert_create_Accounts"]);
             unset($_POST["convert_create_Accounts"]);
         }
