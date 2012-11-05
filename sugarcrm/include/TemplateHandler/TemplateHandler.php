@@ -531,6 +531,7 @@ class TemplateHandler {
        return '';
     }
 
+    //BEGIN SUGARCRM flav=pro ONLY
     /**
      * prepare Calculation Fields for creation formula
      *
@@ -559,8 +560,7 @@ class TemplateHandler {
         }
         return $fieldDefs;
     }
-	
-	//BEGIN SUGARCRM flav=pro ONLY
+
     /**
      * createDependencyJavascript
      * Builds the javascript required to execute calculated/dependent fields
