@@ -79,7 +79,7 @@
     _renderField:function (field) {
         if (field.name == 'category') {
             field.def.options = this.context.forecasts.config.get('buckets_dom') || 'show_binary_dom';
-            field.def.value = app.defaultSelections.category;
+            field.def.value = this.context.forecasts.has("selectedCategory") ? this.context.forecasts.get("selectedCategory") : app.defaultSelections.category;
             field = this._setUpCategoryField(field);
         }
         app.view.View.prototype._renderField.call(this, field);
