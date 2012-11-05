@@ -255,7 +255,14 @@
         url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
         url += '&timeperiod_id=' + $("#timeperiod").val();
-        window.open(url, "_blank");
+
+        $(window).bind("beforeunload",function(){
+            //Prevent the event from propogating any further so that we don't trigger any dialogs/alerts
+            event.stopPropogation();
+            return false;
+        });
+
+        document.location.href = url;
     },
 
     /**
