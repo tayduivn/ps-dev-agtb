@@ -255,14 +255,18 @@
         url += (this.context.forecasts.get("currentWorksheet") == 'worksheetmanager') ?  'ExportManagerWorksheet' : 'ExportWorksheet';
         url += '&user_id=' + this.context.forecasts.get('selectedUser').id;
         url += '&timeperiod_id=' + $("#timeperiod").val();
-
-        $(window).bind("beforeunload",function(){
-            //Prevent the event from propogating any further so that we don't trigger any dialogs/alerts
-            event.stopPropogation();
-            return false;
-        });
-
-        document.location.href = url;
+        
+        var dlFrame = $("#forecastsDlFrame");
+        //check to see if we got something back
+        if(dlFrame.length == 0)
+        {
+        	//if not, create an element
+        	dlFrame = $("<iframe>");
+        	dlFrame.attr("id", "forecastsDlFrame");
+        	dlFrame.css("display", "none");
+        	$("body").append(dlFrame);
+        }
+        dlFrame.attr("src", url);
     },
 
     /**
