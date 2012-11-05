@@ -85,6 +85,7 @@ class ThemeApi extends SugarApi
         if (isset($args['preview'])) {
             $variables = $theme->getThemeVariables(true);
             $variables = array_merge($variables, $args);
+            $variables['baseUrl'] = '"../../styleguide/assets"';
             $css = $theme->compileBootstrapCss($variables, $minify);
 
             header('Content-type: text/css');
