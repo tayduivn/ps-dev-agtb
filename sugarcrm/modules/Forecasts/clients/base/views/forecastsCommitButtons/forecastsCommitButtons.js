@@ -137,20 +137,20 @@
 
     				modelCount++;
 
-                    var values = {};
-                    values["draft"] = 0;
-                    values["isDirty"] = false;
-                    values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
-        			values["current_user"] = app.user.get('id');
-
-        			model.set(values, {silent:true});
+        			model.set({
+                        draft : 0,
+                        isDirty : false,
+                        timeperiod_id : self.context.forecasts.get("selectedTimePeriod").id,
+                        current_user : app.user.get('id')},
+                        {silent:true}
+                    );
     				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
     				model.save({}, {success:function(){
     					saveCount++;
-    					if(saveCount === modelCount){
-    						if(self.context.forecasts.get("currentWorksheet") == "worksheetmanager"){
+                        //The saveCount === modelCount is being done so that the call to reloadWorksheetFlag is only done after the last
+                        //Ajax request is made.  In the future this could perhaps be altered to use the deferred architecture in JQuery
+    					if(saveCount === modelCount && self.context.forecasts.get("currentWorksheet") == "worksheetmanager") {
     							self.context.forecasts.set({reloadWorksheetFlag: true});
-    						}
     					}
     				}});
     				worksheet.isDirty = false;
