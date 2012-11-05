@@ -1,15 +1,15 @@
 @import "components/preview-stream.less";
 @import "components/activitystream.less";
-@import "components/record.less";
+@import "../base/components/record.less";
 @import "components/list.less";
 @import "components/todo.less";
 @import "components/tour.less";
-@import "components/treemap.less";
-@import "components/img.less";
-@import "components/influencers.less";
-@import "components/interactions.less";
-@import "components/opportunity_metrics.less";
-@import "components/recommended_experts.less";
+@import "../base/components/treemap.less";
+@import "../base/components/img.less";
+@import "../base/components/influencers.less";
+@import "../base/components/interactions.less";
+@import "../base/components/opportunity-metrics.less";
+@import "../base/components/recommended-experts.less";
 
 /* Instances pop up box */
 #instancesContainer {
@@ -30,4 +30,8 @@
 *:focus {
     outline: 0;
     -webkit-box-sizing:border-box;
+}
+
+svg {
+    max-height: 500px;
 }
