@@ -30,19 +30,36 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['ProspectLists']['base']['view']['record'] = array(
-    'buttons' =>
-    array(
+    'buttons' => array(
         array(
-            'name' => 'edit_button',
-            'type' => 'button',
-            'label' => 'Edit',
-            'route' => array(
-                'action' => 'edit'
-            ),
-            'primary' => true,
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'hide btn-primary record-save',
+        ),
+        array(
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'hide record-cancel',
+        ),
+        array(
+            'type'    => 'button',
+            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'css_class' => 'record-edit',
+        ),
+        array(
+            'type'    => 'button',
+            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'css_class' => 'record-delete',
         ),
     ),
     'panels' => array(
+        array(
+            'name' => 'panel_header',
+            'header' => true,
+            'fields' => array(
+                'name',
+            )
+        ),
         array(
             'name' => 'panel_body',
             'label' => 'LBL_PANEL_2',
@@ -51,7 +68,6 @@ $viewdefs['ProspectLists']['base']['view']['record'] = array(
             'labelsOnTop' => false,
             'placeholders' => true,
             'fields' => array(
-                array('name' => 'name', 'displayParams' => array('required' => true)),
                 'description',
                 array('name' => 'list_type', 'displayParams' => array('required' => true)),
                 array(

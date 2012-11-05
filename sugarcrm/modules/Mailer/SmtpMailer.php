@@ -337,6 +337,24 @@ class SmtpMailer extends BaseMailer
         if ($hasText) {
             // perform character set translations on the plain-text body
             $textBody = $this->prepareTextBody($this->textBody);
+
+            // wp: if plain text version has lines greater than 998, use base64 encoding
+            // use the config's wordwrap limit instead of 998 to increase flexibility
+            // all newlines must be LF in order for this work; CRLF works too
+            $useBase64Encoding = false;
+            $wordWrap          = $this->config->getWordwrap();
+            $textBodyLines     = explode("\n", $textBody);
+            $numberOfLines     = count($textBodyLines);
+
+            for ($i = 0; !$useBase64Encoding && $i < $numberOfLines; $i++) {
+                if (strlen($textBodyLines[$i]) > $wordWrap) {
+                    $useBase64Encoding = true;
+                }
+            }
+
+            if ($useBase64Encoding) {
+                $mailer->Encoding = Encoding::Base64;
+            }
         }
 
         if ($hasHtml) {

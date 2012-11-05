@@ -40,11 +40,17 @@ class AttachmentPeer
      * @throws MailerException
      */
     public static function attachmentFromSugarBean(SugarBean $bean) {
-        $beanName = get_class($bean);
         $filePath = null;
         $fileName = null;
         $mimeType = "application/octet-stream";
 
+        if (($bean instanceof Document) && (!empty($bean->document_revision_id))) {
+            $documentRevision = new DocumentRevision();
+            $documentRevision->retrieve($bean->document_revision_id);
+            $bean = $documentRevision;
+        }
+
+        $beanName = get_class($bean);
         switch ($beanName) {
             case "Note":
             case "DocumentRevision":

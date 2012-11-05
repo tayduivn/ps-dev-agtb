@@ -49,14 +49,14 @@
     <body>
     	<div id="sugarcrm">
 			<div id="sidecar">
-                <div id="alert" class="alert-top"></div>
+                <div id="alerts" class="alert-top"></div>
                 <div id="header"></div>
                 <div id="content">
                     <div class="container welcome">
                         <div class="row">
                             <div class="span4 offset4 thumbnail">
                                 <div class="modal-header tcenter">
-                                    <img src="include/javascript/twitterbootstrap/img/throbber.gif"></img>
+                                    <img src="include/javascript/twitterbootstrap/img/throbber.gif" />
                                 </div>
                                 <div class="modal-footer">
                                     Loading...
