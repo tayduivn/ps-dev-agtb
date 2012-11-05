@@ -176,7 +176,9 @@ class SidecarTheme
         }
         //Relative path from /cache/themes/clients/PLATFORM/THEMENAME/bootstrap.css
         //              to   /styleguide/assets/
-        $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        if (!isset($variables['baseUrl'])) {
+            $variables['baseUrl'] = '"../../../../../styleguide/assets"';
+        }
 
         try {
             $css = $less->parse($variables);

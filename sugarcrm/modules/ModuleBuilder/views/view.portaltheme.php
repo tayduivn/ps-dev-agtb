@@ -70,7 +70,7 @@ class ViewPortalTheme extends SugarView
 
         $ajax = new AjaxCompose();
         $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.main("sugarportal")');
-        $ajax->addCrumb(translate('LBL_SUGARPORTAL', 'ModuleBuilder'), 'ModuleBuilder.getContent("module=ModuleBuilder&action=portaltheme")');
+        $ajax->addCrumb(ucwords(translate('LBL_PORTAL_THEME')), '');
         $ajax->addSection('center', translate('LBL_SUGARPORTAL', 'ModuleBuilder'), $smarty->fetch('modules/ModuleBuilder/tpls/portaltheme.tpl'));
         echo $ajax->getJavascript();
 	}
