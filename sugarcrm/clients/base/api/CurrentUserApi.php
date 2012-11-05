@@ -474,7 +474,9 @@ class CurrentUserApi extends SugarApi {
             $category = $args['category'];
         }
 
-        return $current_user->getPreference($args['preference_name'], $category);
+        $pref = $current_user->getPreference($args['preference_name'], $category);
+
+        return (!is_null($pref)) ? $pref : "";
     }
 
     /**

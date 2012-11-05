@@ -117,6 +117,16 @@ class RestCurrentUserPreferenceTest extends RestTestBase {
         $this->assertEquals('hello', $reply['reply']);
     }
 
+    /**
+     * @group rest
+     */
+    public function testGetNonExistantPreferenceReturnsEmptyValue()
+    {
+        $reply = $this->_restCall('me/preference/this_pref_does_not_exist');
+
+        $this->assertSame("", $reply['reply']);
+    }
+
 
     public static function dataProviderGetSpecificPreference() {
         $return = array();
