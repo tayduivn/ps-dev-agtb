@@ -35,10 +35,12 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    var $module_name = 'QuarterTimePeriods';
-
     public function __construct() {
+        //Override module_name to distinguish bean for BeanFactory
+        $this->module_name = 'QuarterTimePeriods';
+
         parent::__construct();
+
         //The time period type
         $this->type = TimePeriod::QUARTER_TYPE;
 
@@ -48,6 +50,7 @@ class QuarterTimePeriod extends TimePeriod implements TimePeriodInterface {
         //The number of leaf periods
         $this->leaf_periods = 3;
 
+        //The number of periods in a year
         $this->periods_in_year = 4;
 
         //Fiscal is 52-week based, chronological is year based

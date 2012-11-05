@@ -34,10 +34,11 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    var $module_name = 'AnnualTimePeriods';
-
     public function __construct() {
+        $this->module_name = 'AnnualTimePeriods';
+
         parent::__construct();
+
         //The time period type
         $this->type = TimePeriod::ANNUAL_TYPE;
 

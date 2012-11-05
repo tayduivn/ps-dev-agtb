@@ -33,10 +33,12 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    var $module_name = 'MonthTimePeriods';
-
     public function __construct() {
+        //Override module_name to distinguish bean for BeanFactory
+        $this->module_name = 'MonthTimePeriods';
+
         parent::__construct();
+
         //The time period type
         $this->type = TimePeriod::MONTH_TYPE;
 
@@ -45,6 +47,7 @@ class MonthTimePeriod extends TimePeriod implements TimePeriodInterface {
 
         $this->is_fiscal_year = false;
 
+        //The number of periods in a year
         $this->periods_in_year = 12;
 
         //The next period modifier
