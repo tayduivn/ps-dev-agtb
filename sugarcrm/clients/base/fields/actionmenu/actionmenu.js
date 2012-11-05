@@ -7,7 +7,7 @@
     actionDropDownTag: ".dropdown-toggle",
     fieldTag: "input[name=check]",
     initialize: function(options) {
-        var result = app.view.Field.prototype.initialize.call(this, options),
+        app.view.Field.prototype.initialize.call(this, options),
             massCollection = this.context.get('mass_collection');
         if(!massCollection) {
             var MassCollection = app.BeanCollection.extend({
@@ -19,7 +19,6 @@
             massCollection = new MassCollection();
             this.context.set('mass_collection', massCollection);
         }
-        return result;
     },
     check: function(evt) {
         this.toggleSelect(this.$(this.fieldTag).is(":checked"));
@@ -57,24 +56,29 @@
             }
         }
     },
-
     bindDataChange: function() {
         var self = this,
             massCollection = this.context.get('mass_collection');
         if (massCollection && this.model.id) { //listeners for each record selection
+            var modelId = this.model.id;
+
+            massCollection.off("add", null, modelId);
+            massCollection.off("remove", null, modelId);
+            massCollection.off("reset", null, modelId);
+
             massCollection.on("add", function(model) {
                 if(model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", true);
                 }
-            }, this);
+            }, modelId);
             massCollection.on("remove", function(model){
                 if(model.id == self.model.id) {
                     self.$(self.fieldTag).attr("checked", false);
                 }
-            });
+            }, modelId);
             massCollection.on("reset", function(){
                 self.$(self.fieldTag).attr("checked", false);
-            });
+            }, modelId);
             if(massCollection.get(this.model) || massCollection.entire) {
                 this.$(self.fieldTag).attr("checked", true);
                 this.selected = true;
@@ -82,6 +86,10 @@
                 delete this.selected;
             }
         } else if (massCollection) { //listeners for entire selection
+            var cid = this.view.cid;
+            massCollection.off("add", null, cid);
+            massCollection.off("remove", null, cid);
+            massCollection.off("reset", null, cid);
             massCollection.on("add", function(model) {
                 if(this.length > 0) {
                     self.$(self.actionDropDownTag).removeClass("disabled");
@@ -90,14 +98,14 @@
                     self.$(self.fieldTag).attr("checked", true);
                 }
                 self.toggleShowSelectAll();
-            });
+            }, cid);
             massCollection.on("remove reset", function(model) {
                 if(this.length == 0) {
                     self.$(self.actionDropDownTag).addClass("disabled");
                 }
                 self.$(self.fieldTag).attr("checked", false);
                 self.toggleShowSelectAll();
-            });
+            }, cid);
             this.action_enabled = (massCollection.length > 0);
             this.selected = (massCollection.entire);
         }
