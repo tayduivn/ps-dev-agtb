@@ -134,12 +134,15 @@
     		_.each(models, function(model, index){
     			var isDirty = model.get("isDirty");
     			if(model.get("version") == 0 || (typeof(isDirty) == "boolean" && isDirty)){
-    				var values = {};
+
     				modelCount++;
+
+                    var values = {};
                     values["draft"] = 0;
                     values["isDirty"] = false;
                     values["timeperiod_id"] = self.context.forecasts.get("selectedTimePeriod").id;
         			values["current_user"] = app.user.get('id');
+
         			model.set(values, {silent:true});
     				model.url = worksheet.url.split("?")[0] + "/" + model.get("id");
     				model.save({}, {success:function(){
