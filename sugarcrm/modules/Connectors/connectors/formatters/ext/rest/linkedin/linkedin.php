@@ -27,7 +27,6 @@ class ext_rest_linkedin_formatter extends default_formatter {
 public function getDetailViewFormat() {
    $mapping = $this->getSourceMapping();
    $mapping_name = !empty($mapping['beans'][$this->_module]['name']) ? $mapping['beans'][$this->_module]['name'] : '';
-   $GLOBALS['log']->fatal("MAP: $mapping_name");
    if(!empty($mapping_name)) {
 	   $this->_ss->assign('mapping_name', $mapping_name);
 	   return $this->fetchSmarty();

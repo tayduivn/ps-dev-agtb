@@ -1,5 +1,5 @@
 <?php
-if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -27,61 +27,44 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
 
-require_once('modules/TimePeriods/TimePeriodInterface.php');
-/**
- * Implements the annual representation of a time period
- * @api
- */
-class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    public function __construct() {
-        $this->module_name = 'AnnualTimePeriods';
+require_once('data/SugarBeanApiHelper.php');
 
-        parent::__construct();
-
-        //The time period type
-        $this->type = TimePeriod::ANNUAL_TYPE;
-
-        //The leaf period type
-        $this->leaf_period_type = TimePeriod::QUARTER_TYPE;
-
-        //The number of leaf periods
-        $this->leaf_periods = 4;
-
-        $this->periods_in_year = 1;
-
-        //Fiscal is 52-week based, chronological is year based
-        $this->is_fiscal = false;
-
-        $this->is_fiscal_year = true;
-
-        //The next period modifier
-        $this->next_date_modifier = $this->is_fiscal ? '52 week' : '1 year';
-
-        //The previous period modifier
-        $this->previous_date_modifier = $this->is_fiscal ? '-52 week' : '-1 year';
-
-        //The name template
-        $this->name_template = "Year %d";
-
-        //The leaf name template
-        $this->leaf_name_template = "Q%d %d";
-    }
-
-
+class NotesApiHelper extends SugarBeanApiHelper
+{
     /**
-     * getTimePeriodName
+     * This function sets the team & assigned user and sets up the contact & account relationship
+     * for new Notes submitted via portal users.
      *
-     * Returns the timeperiod name.  The TimePeriod base implementation simply returns the $count argument passed
-     * in from the code
-     *
-     * @param $count The timeperiod series count
-     * @return string The formatted name of the timeperiod
+     * @param SugarBean $bean
+     * @param array $submittedData
+     * @param array $options
+     * @return array
      */
-    public function getTimePeriodName($count)
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
-        $timedate = TimeDate::getInstance();
-        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('Y'));
-    }
+        $data = parent::populateFromApi($bean, $submittedData, $options);
 
+        //Only needed for Portal sessions
+        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+            if (empty($bean->id)) {
+                $bean->id = create_guid();
+                $bean->new_with_id = true;
+            }
+            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+            $account = $contact->account_id;
+
+            $bean->assigned_user_id = $contact->assigned_user_id;
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            $bean->team_id = $contact->fetched_row['team_id'];
+            $bean->team_set_id = $contact->fetched_row['team_set_id'];
+            //END SUGARCRM flav=pro ONLY
+
+            $bean->account_id = $account;
+            $bean->contact_id= $contact->id;
+        }
+
+        return $data;
+    }
 }

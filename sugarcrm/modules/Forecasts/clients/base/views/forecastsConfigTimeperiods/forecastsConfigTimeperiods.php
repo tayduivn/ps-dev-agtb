@@ -71,7 +71,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'forecastsTimeperiod'
                 ),
                 array(
-                    'name' => 'timeperiods_shown_forward',
+                    'name' => 'timeperiod_shown_forward',
                     'type' => 'int',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_FORWARD',
                     'default' => false,
@@ -79,7 +79,7 @@ $viewdefs['Forecasts']['base']['view']['forecastsConfigTimeperiods'] = array(
                     'view' => 'edit'
                 ),
                 array(
-                    'name' => 'timeperiods_shown_backward',
+                    'name' => 'timeperiod_shown_backward',
                     'type' => 'int',
                     'label' => 'LBL_FORECASTS_CONFIG_TIMEPERIODS_BACKWARD',
                     'default' => false,

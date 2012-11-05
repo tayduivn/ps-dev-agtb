@@ -217,7 +217,7 @@ class Administration extends SugarBean {
             }
         }
 
-        return $this->db->getAffectedRowCount($result);
+        return $result;
     }
 
     /**

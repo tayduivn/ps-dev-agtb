@@ -53,6 +53,7 @@ class RestTestPortalBase extends RestTestBase {
 
         $this->_user->portal_only = '1';
         $this->_user->save();
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', $this->_user->id);
         $this->role = $this->_getPortalACLRole();
         if (!($this->_user->check_role_membership($this->role->name))) {
             $this->_user->load_relationship('aclroles');
@@ -215,6 +216,8 @@ class RestTestPortalBase extends RestTestBase {
         if(!empty($this->currentPortalBean->id)) {
             $this->currentPortalBean->save();
         }
+
+        $GLOBALS ['system_config']->saveSetting('supportPortal', 'RegCreatedBy', '');
 
         parent::tearDown();
     }

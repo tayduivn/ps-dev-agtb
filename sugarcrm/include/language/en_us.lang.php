@@ -2382,10 +2382,14 @@ $app_strings = array (
 
     //Forecast specific error messages
     'ERR_TIMEPERIOD_UNDEFINED_FOR_DATE' => 'Error Timeperiod undefined for date {0}',
+    'ERR_TIMEPERIOD_ALREADY_HAS_LEAVES' => 'This TimePeriod already has leaves',
+    'ERR_TIMEPERIOD_ALREADY_LEAF' => 'Leaf Time Periods cannot have leaves',
+    'ERR_TIMEPERIOD_TYPE_DOES_NOT_EXIST' => 'Unable to retrieve any timeperiods of type: {0}',
     'LBL_CURRENT_TIMEPERIOD' => 'Current Time Period',
     'LBL_PREVIOUS_TIMEPERIOD' => 'Previous Time Period',
     'LBL_NEXT_TIMEPERIOD' => 'Next Time Period',
     'LBL_PREVIOUS_CURRENT_NEXT_TIMEPERIODS' => 'Previous,Current,Next',
+
 
     //END SUGARCRM flav=pro ONLY
 
@@ -3337,7 +3341,14 @@ $app_strings = array (
     'LBL_LOADING_LANGUAGE' => 'Loading language pack',
     'LBL_UPLOADING' => 'Uploading',
 
-    //for portal
+    //theme roller
+    'BorderColor' => 'Border Color',
+    'NavigationBar' => 'Navigation Bar',
+    'PrimaryButton' => 'Primary Button',
+
+    //begin portal
+    //BEGIN SUGARCRM flav=ent ONLY
+
     'LBL_PORTAL_SEARCH' => 'Search by Name, Number',
     'LBL_SIGNUP_BUTTON_LABEL' => 'Sign Up',
     'LBL_PORTAL_SIGNUP_PROCESS' => 'Registering',
@@ -3372,7 +3383,7 @@ $app_strings = array (
     'LBL_PORTAL_TOUR_SCREEN2_TITLE' => 'Dashboard',
     'LBL_PORTAL_TOUR_SCREEN2_BODY' => '<p>The Dashboards represent your home page. It displays a quick synopsis of your company’s Cases, KB Articles, and Bugs.</p> <p>Click the Sugar cube icon on the top left corner of any Portal page to navigate back to the Dashboard.</p> <p>Each Dashboard shows the five last modified records per module. To view additional records, click on the module link.</p>',
     'LBL_PORTAL_TOUR_SCREEN3_TITLE' => 'Footer',
-    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
+    'LBL_PORTAL_TOUR_SCREEN3_BODY' => '<p>Your footer bar can be used for the following: <ul class="features"><li class="icon-ok">Language: When you have selected your preferred language, all labels in the Portal will be translated. Note: Language can only be selected from footer during login.</li><li class="icon-ok">Tour: Familiarize yourself with the new Sugar Portal features.</li><li class="icon-ok">Print: Create a print out of the Sugar Portal page for your personal records.</li> <li class="icon-ok">Top: Navigate to the top of the Sugar Portal page you are in.</li></ul></p>',
     'LBL_PORTAL_TOUR_SCREEN4_TITLE' => 'Search',
     'LBL_PORTAL_TOUR_SCREEN4_BODY' => '<p>There are two types of search:</p><ul class="features"><li class="icon-ok">Global Search – located in the navigation bar. Here you can search for Cases, Bugs, and Knowledge Base Documents by their names and numbers.</li> <li class="icon-ok">Specific module Search – located in the top of the list view in each module. <br><img src="../themes/default/images/ppt-search.png" height="200" width="530" style="margin-top: 10px;"><i class="icon-arrow-left icon-lg" style="float: right; position: relative; right: 311px; top: -147px;"></i></li></ul>',
     'LBL_PORTAL_TOUR_SCREEN5_TITLE' => 'Profile',
@@ -3408,6 +3419,8 @@ $app_strings = array (
     'LBL_PORTAL_PASSWORD_UPDATE_FAILED' => 'Update password failed. Please try again or contact technical support.',
     'LBL_PORTAL_PASSWORD_VERIFICATION_FAILED' => 'Password entered does not match that in our system.', 
     'LBL_PORTAL_PASSWORD_SUCCESS_CHANGED' => 'Your password has been successfully updated.',
+    //end portal
+    //END SUGARCRM flav=ent ONLY
 
     //sidecar errors
     'ERR_HTTP_DEFAULT_TYPE' => 'Unknown',

@@ -29,6 +29,8 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
 
 require_once('soap/SoapHelperFunctions.php');
 require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
+require_once 'include/SugarFields/SugarFieldHandler.php';
+
 /**
  * This class is for access metadata for all sugarcrm modules in a read only
  * state.  This means that you can not modifiy any of the metadata using this
@@ -42,6 +44,13 @@ require_once 'modules/ModuleBuilder/parsers/MetaDataFiles.php';
  *
  */
 class MetaDataManager {
+    /**
+     * SugarFieldHandler, to assist with cleansing default sugar field values
+     * 
+     * @var SugarFieldHandler
+     */
+    protected $sfh;
+    
     /**
      * The user bean for the logged in user
      *
@@ -278,6 +287,10 @@ class MetaDataManager {
         if (!isset($data['fields']) ) {
             $data['fields'] = array();
         }
+        
+        // Bug 56505 - multiselect fields default value wrapped in '^' character
+        $data['fields'] = $this->normalizeFielddefs($data['fields']);
+        
         if (!isset($data['relationships'])) {
             $data['relationships'] = array();
         }
@@ -294,11 +307,14 @@ class MetaDataManager {
             }
         }
 
-        if(!empty($indexes)) {
-            // if the field is indexed set sortable to true
-            foreach($data['fields'] AS $field_name => $info) {
+        // If sortable isn't already set THEN
+        //      Set it sortable to TRUE, if the field is indexed.
+        //      Set sortable to FALSE, otherwise. (Bug56943, Bug57644)
+        $isIndexed = !empty($indexes);
+        foreach($data['fields'] AS $field_name => $info) {
+            if(!isset($data['fields'][$field_name]['sortable'])){
                 $data['fields'][$field_name]['sortable'] = false;
-                if(isset($indexes[$field_name])) {
+                if($isIndexed && isset($indexes[$field_name])) {
                     $data['fields'][$field_name]['sortable'] = true;
                 }
             }
@@ -706,5 +722,45 @@ class MetaDataManager {
         }
 
         return array_keys($platforms);
+    }
+    
+    /**
+     * Cleans field def default values before returning them as a member of the 
+     * metadata response payload
+     * 
+     * Bug 56505
+     * Cleans default value of fields to strip out metacharacters used by the app.
+     * Used initially for cleaning default multienum values.
+     * 
+     * @param array $fielddefs
+     * @return array
+     */
+    protected function normalizeFielddefs(Array $fielddefs) {
+        $this->getSugarFieldHandler();
+        
+        foreach ($fielddefs as $name => $def) {
+            if (isset($def['type'])) {
+                $type = !empty($def['custom_type']) ? $def['custom_type'] : $def['type'];
+                
+                $field = $this->sfh->getSugarField($type);
+                
+                $fielddefs[$name] = $field->getNormalizedDefs($def);
+            }
+        }
+        
+        return $fielddefs;
+    }
+    
+    /**
+     * Gets the SugarFieldHandler object
+     * 
+     * @return SugarFieldHandler The SugarFieldHandler
+     */
+    protected function getSugarFieldHandler() {
+        if (!$this->sfh instanceof SugarFieldHandler) {
+            $this->sfh = new SugarFieldHandler;
+        }
+        
+        return $this->sfh;
     }
 }

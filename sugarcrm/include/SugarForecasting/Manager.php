@@ -57,9 +57,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                               "user_id" => '',
                               "version" => 0,
                               "name" => '',
-                              "date_modified" => '',
-                              "commit_stage" => '',
-                              "label" => '',
+                              "date_modified" => ''
                             );
 
 
@@ -204,7 +202,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
         //getting data from worksheet table for reportees
 		$reportees_query = "SELECT u2.user_name, " .
 						   "w.id worksheet_id, " .
-						   "w.commit_stage, " .
 						   "w.best_case best_adjusted, " .
 						   "w.likely_case likely_adjusted, " .
 						   "w.worst_case worst_adjusted, " .
@@ -250,7 +247,6 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
             $this->dataArray[$row['user_name']]['worst_adjusted'] = $row['worst_adjusted'];
             $this->dataArray[$row['user_name']]['currency_id'] = $row['currency_id'];
             $this->dataArray[$row['user_name']]['base_rate'] = $row['base_rate'];
-            $this->dataArray[$row['user_name']]['commit_stage'] = $row['commit_stage'];
             $this->dataArray[$row['user_name']]['version'] = $row['version'];
             if($row['version'] == 0)
             {

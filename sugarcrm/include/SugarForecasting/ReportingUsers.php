@@ -56,23 +56,30 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
         // Boolean do we want to return a Parent link with the result set
         $returnParent = false;
 
+        /*
         $sql = $db->getRecursiveSelectSQL('users', 'id', 'reports_to_id',
             'id, user_name, first_name, last_name, reports_to_id, _level', false,
             "id = '{$id}' AND status = 'Active' AND deleted = 0", null, " AND status = 'Active' AND deleted = 0"
         );
-
+        */
+        $sql = sprintf("SELECT id, user_name, first_name, last_name, reports_to_id FROM users WHERE (reports_to_id = '%s' OR id = '%s') AND status = 'Active' AND deleted = 0", $id, $id);
         $result = $db->query($sql);
 
         // Final array to be returned
         $treeData = '';
 
         $flatUsers = array();
+
+        $users[0] = array();
+        $users[1] = array();
+
         while($row = $db->fetchByAssoc($result))
         {
+            /*
             if(empty($users[$row['_level']]))  {
                 $users[$row['_level']] = array();
             }
-
+            */
             $fullName = $locale->getLocaleFormattedName($row['first_name'], $row['last_name']);
 
             $user = array(
@@ -85,7 +92,8 @@ class SugarForecasting_ReportingUsers extends SugarForecasting_AbstractForecast
                     "first_name" => $row['first_name'],
                     "last_name" => $row['last_name'],
                     "reports_to_id" => $row['reports_to_id'],
-                    "level" => $row['_level']
+                    //"level" => $row['_level']
+                    "level" => ($id == $row['id']) ? 0 : 1
                 ),
                 'state' => '',
                 'attr' => array(

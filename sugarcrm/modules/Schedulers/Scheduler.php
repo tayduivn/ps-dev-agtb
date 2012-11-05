@@ -928,6 +928,18 @@ class Scheduler extends SugarBean {
         $sched13->modified_user_id   = '1';
         $sched13->catch_up           = '0';
         $sched13->save();
+
+        $sched14 = new Scheduler();
+        $sched14->name               = $mod_strings['LBL_OOTB_CREATE_NEXT_TIMEPERIOD'];
+        $sched14->job                = 'class::SugarJobCreateNextTimePeriod';
+        $sched14->date_time_start    = create_date(2012,1,1) . ' ' . create_time(0,0,1);
+        $sched14->date_time_end      = create_date(2030,12,31) . ' ' . create_time(23,59,59);
+        $sched14->job_interval       = '0::23::*::*::*';
+        $sched14->status             = 'Active';
+        $sched14->created_by         = '1';
+        $sched14->modified_user_id   = '1';
+        $sched14->catch_up           = '0';
+        $sched14->save();
 	}
 
 	////	END SCHEDULER HELPER FUNCTIONS

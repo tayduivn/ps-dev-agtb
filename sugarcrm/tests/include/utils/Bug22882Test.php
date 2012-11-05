@@ -90,6 +90,22 @@ class Bug22882Test extends Sugar_PHPUnit_Framework_TestCase
         $this->assertNotEquals(count($resultfr), count($resulten), 'The 2 drop down list have the same size.');
     }
 
+
+    /**
+     * Bug 57431 : the custom default language overrides the current language
+     */
+    public function testMultiLanguagesCustomValueEnOnly()
+    {
+        $this->loadFilesAddedCustomValueEnOnly();
+        $resultfr = return_app_list_strings_language('fr_test');
+        $resulten = return_app_list_strings_language('en_us');
+        $resultfr = $resultfr['account_type_dom']['Analyst'];
+        $resulten = $resulten['account_type_dom']['Analyst'];
+        $this->assertNotEquals($resultfr, $resulten, 'The custom default language overrides french lang.');
+        $this->cleanupFiles();
+    }
+
+
     public function loadFilesDeletedValue(){
             $file_fr = <<<FRFR
 <?php
@@ -297,6 +313,30 @@ ENEN;
             file_put_contents('custom/include/language/en_us.lang.php', $file_en);
         }
         SugarAutoLoader::addToMap('custom/include/language/en_us.lang.php', false);
+    }
+
+
+    public function loadFilesAddedCustomValueEnOnly(){
+        $file_en = <<<ENEN
+<?php
+\$app_list_strings['account_type_dom']['Analyst'] = 'Test';
+ENEN;
+        if(!file_exists('include/language/fr_test.lang.php')){
+            $this->file = file_get_contents('include/language/en_us.lang.php');
+            file_put_contents('include/language/fr_test.lang.php', $this->file);
+        }
+        if(!file_exists('custom/include/language/fr_test.lang.php')){
+            file_put_contents('custom/include/language/fr_test.lang.php', '');
+        }else{
+            $this->file_fr_tmp = file_get_contents('custom/include/language/fr_test.lang.php');
+            file_put_contents('custom/include/language/fr_test.lang.php', '');
+        }
+        if(!file_exists('custom/include/language/en_us.lang.php')){
+            file_put_contents('custom/include/language/en_us.lang.php', $file_en);
+        }else{
+            $this->file_en_tmp = file_get_contents('custom/include/language/en_us.lang.php');
+            file_put_contents('custom/include/language/en_us.lang.php', $file_en);
+        }
     }
 
     public function cleanupFiles(){

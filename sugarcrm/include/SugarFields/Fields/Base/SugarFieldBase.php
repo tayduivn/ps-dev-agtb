@@ -604,5 +604,30 @@ class SugarFieldBase {
         return $parentFieldArray;
     }
 
+    /**
+     * Gets normalized values for defs. Used by the MetaDataManager at first for
+     * API responses, but can be used througout the app.
+     * 
+     * @param array $vardef
+     * @return array A transformed vardef with normalizations applied   
+     */
+    public function getNormalizedDefs($vardef) {
+        // Handle normalizations that need to be applied
+        if (isset($vardef['default'])) {
+            $vardef['default'] = $this->normalizeDefaultValue($vardef['default']);
+        }
+        
+        return $vardef;
+    }
+    
+    /**
+     * Normalizes a default value
+     * 
+     * @param mixed $value The value to normalize
+     * @return string
+     */
+    public function normalizeDefaultValue($value) {
+        return $value;
+    }
 }
 ?>

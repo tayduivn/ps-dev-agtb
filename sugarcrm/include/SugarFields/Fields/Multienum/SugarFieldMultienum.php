@@ -96,7 +96,6 @@ class SugarFieldMultienum extends SugarFieldEnum
      *
      * @param $value string value to be sanitized
      * @param $vardef array representing the vardef definition
-     * @param $focus SugarBean object
      *
      * @return string sanitized value
      */
@@ -117,6 +116,20 @@ class SugarFieldMultienum extends SugarFieldEnum
             }
             return implode(",",$valueArray);
         }
+        return $value;
+    }
+    
+    /**
+     * Normalizes a default value
+     * 
+     * @param string $value The value to normalize
+     * @return string
+     */
+    public function normalizeDefaultValue($value) {
+        if (is_string($value) && preg_match('#\^(.*)\^#', $value)) {
+            return substr($value, 1, strlen($value) - 2);
+        }
+        
         return $value;
     }
 }

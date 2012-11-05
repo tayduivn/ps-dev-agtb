@@ -3939,6 +3939,7 @@ button.id-ff-remove {
 #moduleList 
 {
 	float: left;
+        width:auto !important;
 }
 
 
@@ -7983,6 +7984,19 @@ li[class*=" icon-"].icon-large:before {
   margin-right:30px !important;
 }
 #defaultUser_chzn.chzn-container-single .chzn-single .search-choice-close {
+  border:0;
+  cursor:pointer;
   right:18px;
 }
 
+.defaultUser .chzn-container {
+  width:250px !important;
+}
+
+.defaultUser .chzn-drop {
+  width:248px !important;
+}
+
+.defaultUser .chzn-search > input {
+  width:213px !important;
+}

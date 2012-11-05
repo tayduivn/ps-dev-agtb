@@ -40,6 +40,9 @@ $mod_strings = array (
 'LBL_UPDATE_TRACKER_SESSIONS' => 'Update tracker_sessions Table',
 'LBL_OOTB_SEND_EMAIL_REMINDERS'	=> 'Run Email Reminder Notifications',
 'LBL_OOTB_CLEANUP_QUEUE' => 'Clean Jobs Queue',
+//BEGIN SUGARCRM flav=pro ONLY
+'LBL_OOTB_CREATE_NEXT_TIMEPERIOD' => 'Create Future TimePeriods',
+//END SUGARCRM flav=pro ONLY
 
 // List Labels
 'LBL_LIST_JOB_INTERVAL' => 'Interval:',
