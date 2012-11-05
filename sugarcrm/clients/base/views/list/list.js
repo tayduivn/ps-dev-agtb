@@ -156,6 +156,7 @@
         return options;
     },
     previewRecord: function(e) {
+        debugger;
         var self = this,
             el = this.$(e.currentTarget),
             data = el.data(),
@@ -168,12 +169,13 @@
             success: function(model) {
                 model.set("_module", module);
 
-                if( _.isUndefined(self.context._callbacks) ) {
+                if( _.isUndefined(self.context._callbacks) || !_.isUndefined(self.context.parent) ) {
                     // Clicking preview on a related module, need the
                     // parent context instead
                     self.context.parent.trigger("togglePreview", model, self.collection);
                 }
                 else {
+
                     self.context.trigger("togglePreview", model, self.collection);
                 }
             }

@@ -17,6 +17,7 @@
         // Fires on shared parent layout .. nice alternative to app.events for relatively simple page 
         this.layout.layout.off("search:preview", null, this);
         this.layout.layout.on("search:preview", this.togglePreview, this);
+        this.context.on('togglePreview',this.togglePreview, this);
 
         this.$el.parent().parent().addClass("container-fluid tab-content").attr("id", "folded");
     },

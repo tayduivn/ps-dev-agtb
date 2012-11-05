@@ -112,18 +112,18 @@
 
         context.prepare();
 
-        debugger;
         var view = app.view.createView({
             context: context,
             name: def.view,
-            //module: self.context.get("module"),
-            submodule: moduleName,
+            module: moduleName,
+           // submodule: moduleName,
             layout: self
         });
 
         var dupView = $('#collapse' + moduleName).find('.' + contentType + 'View');
         dupView.append(view.$el);
         view.render();
+        view.loadData();
     },
 
     /**
