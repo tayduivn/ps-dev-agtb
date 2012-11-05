@@ -92,7 +92,10 @@ class User extends Person {
 	var $user_preferences;
 
 	var $importable = true;
-	var $_userPreferenceFocus;
+    /**
+     * @var UserPreference
+     */
+    var $_userPreferenceFocus;
 
 	var $encodeFields = Array ("first_name", "last_name", "description");
 
