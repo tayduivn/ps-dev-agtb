@@ -34,119 +34,54 @@ require_once('modules/TimePeriods/TimePeriodInterface.php');
  */
 class AnnualTimePeriod extends TimePeriod implements TimePeriodInterface {
 
-    /**
-     * constructor override
-     *
-     * @param null $start_date date string to set the start date of the annual time period
-     * @param bool $fiscal_period flag to determine if the timeperiod is meant to be a fiscal or calendar based period
-     */
-    public function __construct($start_date = null, $fiscal_period = false) {
+    public function __construct() {
+        $this->module_name = 'AnnualTimePeriods';
+
         parent::__construct();
-        $timedate = TimeDate::getInstance();
 
-        //set defaults
-        $this->time_period_type = 'Annual';
-        $this->is_fiscal = $fiscal_period;
-        $this->is_leaf = false;
-        $this->date_modifier = $this->is_fiscal ? '52 week' : '1 year';
+        //The time period type
+        $this->type = TimePeriod::ANNUAL_TYPE;
 
-        $this->setStartDate($start_date);
+        //The leaf period type
+        $this->leaf_period_type = TimePeriod::QUARTER_TYPE;
+
+        //The number of leaf periods
+        $this->leaf_periods = 4;
+
+        $this->periods_in_year = 1;
+
+        //Fiscal is 52-week based, chronological is year based
+        $this->is_fiscal = false;
+
+        $this->is_fiscal_year = true;
+
+        //The next period modifier
+        $this->next_date_modifier = $this->is_fiscal ? '52 week' : '1 year';
+
+        //The previous period modifier
+        $this->previous_date_modifier = $this->is_fiscal ? '-52 week' : '-1 year';
+
+        //The name template
+        $this->name_template = "Year %d";
+
+        //The leaf name template
+        $this->leaf_name_template = "Q%d %d";
     }
+
 
     /**
-     * override parent function so to add a name for the annual time period.  This can
+     * getTimePeriodName
      *
-     * @param null $startDate  db format date string to set the start date of the annual time period
-     */
-    public function setStartDate($start_date = null) {
-        parent::setStartDate($start_date);
-
-        if(empty($this->name)) {
-            $timedate = TimeDate::getInstance();
-            $start_date_time = $timedate->fromDbDate($this->start_date);
-            $this->name = $this->is_fiscal ? "Fiscal " : "Year ".$start_date_time->format("Y");
-        }
-    }
-
-    /**
-     * build leaves for the timeperiod by creating the specified types of timeperiods
+     * Returns the timeperiod name.  The TimePeriod base implementation simply returns the $count argument passed
+     * in from the code
      *
-     * @param string $timePeriodType
-     * @return mixed
+     * @param $count The timeperiod series count
+     * @return string The formatted name of the timeperiod
      */
-    public function buildLeaves($timePeriodType) {
-        if($this->hasLeaves()) {
-            throw new Exception("This TimePeriod already has leaves");
-        }
-
-        if($this->is_leaf) {
-            throw new Exception("Leaf Time Periods cannot have leaves");
-        }
-
-        $n = 0;
+    public function getTimePeriodName($count)
+    {
         $timedate = TimeDate::getInstance();
-        $start_date_time = $timedate->fromDbDate($this->start_date);
-        $nameStart = "Q";
-
-        $this->load_relationship('related_timeperiods');
-        //valid time periods to be leaves of this period
-        switch($timePeriodType) {
-            //set up the first leaf
-            case "Quarter";
-                $n = 4;
-                $nameStart = "Q";
-                $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
-                break;
-            case "Quarter544";
-                $n = 4;
-                $nameStart = "FQ";
-                $leafPeriod = BeanFactory::newBean("Quarter544TimePeriods");
-                break;
-            case "Quarter454";
-                $n = 4;
-                $nameStart = "FQ";
-                $leafPeriod = BeanFactory::newBean("Quarter454TimePeriods");
-                break;
-            case "Quarter445";
-                $n = 4;
-                $nameStart = "FQ";
-                $leafPeriod = BeanFactory::newBean("Quarter445TimePeriods");
-                break;
-            case "Month";
-                $n = 12;
-                $nameStart = $this->is_fiscal ? "FM" : "M";
-                $leafPeriod = BeanFactory::newBean("MonthTimePeriods");
-                $leafPeriod->is_fiscal = $this->is_fiscal;
-                break;
-            default;
-                $n = 4;
-                if($this->is_fiscal) {
-                    $leafPeriod = BeanFactory::newBean("QuarterTimePeriods445");
-                    $nameStart = "FQ";
-                } else {
-                    $leafPeriod = BeanFactory::newBean("QuarterTimePeriods");
-                    $nameStart = "Q";
-                }
-                break;
-
-        }
-        $leafPeriod->setStartDate($this->start_date);
-        $leafPeriod->is_leaf = true;
-        $leafPeriod->name = $nameStart."1 ".$start_date_time->format("Y");
-        $leafPeriod->save();
-        $this->related_timeperiods->add($leafPeriod->id);
-
-        //loop the count to create the next n leaves to fill out the relationship
-        for($i = 2; $i <= $n; $i++) {
-            if($timePeriodType == "Month" && ((i) % 3 == 0)) {
-                // leaf is monthly and need to even out the fiscal numbering
-                $leafPeriod = $leafPeriod->createNextTimePeriod(5);
-            } else {
-                $leafPeriod = $leafPeriod->createNextTimePeriod();
-            }
-            $leafPeriod->name = $nameStart.$i." ".$start_date_time->format("Y");
-            $this->related_timeperiods->add($leafPeriod->id);
-        }
-
+        return sprintf($this->name_template, $timedate->fromDbDate($this->start_date)->format('Y'));
     }
+
 }

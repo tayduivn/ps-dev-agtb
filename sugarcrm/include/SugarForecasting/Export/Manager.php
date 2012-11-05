@@ -76,7 +76,7 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
 
         $fields_array = array(
             'quota'=>'quota',
-            'name'=>'name',
+            'name'=>'name'
         );
 
         $admin = BeanFactory::getBean('Administration');

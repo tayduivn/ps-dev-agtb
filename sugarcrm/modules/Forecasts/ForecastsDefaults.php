@@ -88,15 +88,15 @@ class ForecastsDefaults
             // sets whether forecasting timeperiods will be set up based on fiscal or calendar periods, options come from forecasts_timeperiod_types_dom
             'timeperiod_type' => 'chronological', //options:  'chronological' or 'fiscal'
             // the timeperiod intervals users can forecasts over, options come from forecasts_timeperiod_options_dom
-            'timeperiod_interval' => 'Annual',
+            'timeperiod_interval' => TimePeriod::ANNUAL_TYPE,
             // the leaf interval that gets the extra week if main period is fiscal + quaterly, options come from forecasts_timeperiod_leaf_quarterly_options_dom, (first, middle, last)
-            'timeperiod_leaf_interval' => 'Quarter',
+            'timeperiod_leaf_interval' => TimePeriod::QUARTER_TYPE,
             'timeperiod_start_month' => '1',
             'timeperiod_start_day' => '1',
             // number of timeperiods forward from the current that are displayed
-            'timeperiods_shown_forward' => 4,
+            'timeperiod_shown_forward' => 2,
             // number of timeperiods in the past from the current that are displayed
-            'timeperiods_shown_backward' => 4,
+            'timeperiod_shown_backward' => 2,
             // used to indicate the available option for grouping opportunities
             'forecast_categories' => 'show_binary',  // options:  'show_binary', 'show_buckets', 'show_custom_buckets'
             // used to reference the app_list_string entry to indicate the commit stage list to use
@@ -105,10 +105,10 @@ class ForecastsDefaults
             'show_binary_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
             // the defined bucket ranges the different buckets opportunities will fall in by default based on their probability
             'show_buckets_ranges' => array('include' => array('min' => 85, 'max' => 100), 'upside' => array('min' => 70, 'max' => 84), 'exclude' => array('min' => 0, 'max' => 69)),
-            //BEGIN SUGARCRM flav=ent ONLY
+            //BEGIN SUGARCRM flav=int ONLY
             // the defined custom ranges the different buckets opportunities will fall in by default based on their probability
             'show_custom_ranges' => array('include' => array('min' => 70, 'max' => 100), 'exclude' => array('min' => 0, 'max' => 69)),
-            //END SUGARCRM flav=ent ONLY
+            //END SUGARCRM flav=int ONLY
 
             //sales_stage_won are all sales_stage opportunity values indicating the opportunity is won
             'sales_stage_won' => array('Closed Won'),

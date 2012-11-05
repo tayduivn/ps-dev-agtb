@@ -24,7 +24,6 @@ require_once('include/api/ConfigModuleApi.php');
 
 class ForecastsConfigApi extends ConfigModuleApi {
 
-
     /**
      * Save function for the config settings for a given module.
      * @param $api
@@ -42,6 +41,14 @@ class ForecastsConfigApi extends ConfigModuleApi {
         $admin = BeanFactory::getBean('Administration');
         //track what settings have changed to determine if timeperiods need rebuilt
         $prior_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
+
+        //If this is a first time setup, default prior settings for timeperiods to 0 so we may correctly recalculate
+        //how many timeperiods to build forward and backward.  If we don't do this we would need the defaults to be 0
+        if (empty($prior_forecasts_settings['is_setup']))
+        {
+            $prior_forecasts_settings['timeperiod_shown_forward'] = 0;
+            $prior_forecasts_settings['timeperiod_shown_backward'] = 0;
+        }
 
         if (!empty($prior_forecasts_settings['is_upgrade']))
         {
@@ -63,12 +70,12 @@ class ForecastsConfigApi extends ConfigModuleApi {
         $current_forecasts_settings = $admin->getConfigForModule('Forecasts', $platform);
 
         //if primary settings for timeperiods have changed, then rebuild them
-        // TODO-sfa:  fix this!  Commenting out, for now, so that work can continue on config settings in other areas
-        /*
         if($this->timePeriodSettingsChanged($prior_forecasts_settings, $current_forecasts_settings)) {
-            TimePeriod::rebuildForecastingTimePeriods();
+            $timePeriod = TimePeriod::getByType($current_forecasts_settings['timeperiod_interval']);
+            $timePeriod->type = $current_forecasts_settings['timeperiod_interval']; // Annual by default
+            $timePeriod->leaf_period_type = $current_forecasts_settings['timeperiod_leaf_interval']; // Quarter by default
+            $timePeriod->rebuildForecastingTimePeriods($prior_forecasts_settings, $current_forecasts_settings);
         }
-        */
         return $current_forecasts_settings;
     }
 
@@ -81,16 +88,22 @@ class ForecastsConfigApi extends ConfigModuleApi {
      * @return boolean
      */
     private function timePeriodSettingsChanged($priorSettings, $currentSettings) {
+        if(!isset($priorSettings['timeperiod_shown_backward']) || (isset($currentSettings['timeperiod_shown_backward']) && ($currentSettings['timeperiod_shown_backward'] != $priorSettings['timeperiod_interval']))) {
+            return true;
+        }
+        if(!isset($priorSettings['timeperiod_shown_forward']) || (isset($currentSettings['timeperiod_shown_forward']) && ($currentSettings['timeperiod_shown_forward'] != $priorSettings['timeperiod_type']))) {
+            return true;
+        }
         if(!isset($priorSettings['timeperiod_interval']) || (isset($currentSettings['timeperiod_interval']) && ($currentSettings['timeperiod_interval'] != $priorSettings['timeperiod_interval']))) {
             return true;
         }
         if(!isset($priorSettings['timeperiod_type']) || (isset($currentSettings['timeperiod_type']) && ($currentSettings['timeperiod_type'] != $priorSettings['timeperiod_type']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiods_start_month']) || (isset($currentSettings['timeperiods_start_month']) && ($currentSettings['timeperiods_start_month'] != $priorSettings['timeperiods_start_month']))) {
+        if(!isset($priorSettings['timeperiod_start_month']) || (isset($currentSettings['timeperiod_start_month']) && ($currentSettings['timeperiod_start_month'] != $priorSettings['timeperiod_start_month']))) {
             return true;
         }
-        if(!isset($priorSettings['timeperiods_start_day']) || (isset($currentSettings['timeperiods_start_day']) && ($currentSettings['timeperiods_start_day'] != $priorSettings['timeperiods_start_day']))) {
+        if(!isset($priorSettings['timeperiod_start_day']) || (isset($currentSettings['timeperiod_start_day']) && ($currentSettings['timeperiod_start_day'] != $priorSettings['timeperiod_start_day']))) {
             return true;
         }
         if(!isset($priorSettings['timeperiod_leaf_interval']) || (isset($currentSettings['timeperiod_leaf_interval']) && ($currentSettings['timeperiod_leaf_interval'] != $priorSettings['timeperiod_leaf_interval']))) {

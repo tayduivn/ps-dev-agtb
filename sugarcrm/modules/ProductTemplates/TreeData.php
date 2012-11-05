@@ -58,9 +58,6 @@ function get_categories_and_products($parent_id) {
         $query.=" union select id, name , 'product' type from product_templates where category_id ='$parent_id' and deleted=0";
     }
 
-    $GLOBALS['log']->fatal($query);
-
-
     $result=$GLOBALS['db']->query($query);
     while (($row=$GLOBALS['db']->fetchByAssoc($result))!= null) {
         $node = new Node($row['id'], $row['name']); 
