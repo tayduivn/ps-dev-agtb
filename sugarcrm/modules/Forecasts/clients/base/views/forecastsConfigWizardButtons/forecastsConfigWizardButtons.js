@@ -47,7 +47,6 @@
         // hide the start button
         $(evt.target).addClass('hide');
 
-        this.$el.find('a[name=close_button]').toggleClass('hide show');
         this.$el.find('a[name=next_button]').toggleClass('hide show');
         this.$el.find('a[name=previous_button]').toggleClass('hide show');
 
