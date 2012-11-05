@@ -5960,7 +5960,7 @@ footer .btn-toolbar.pull-left {
   height:20px;
 }
 .card2 div [class^="span"] { position:relative; }
-.card2 .icon-pencil {
+.bcard1 .icon-pencil {
   position:absolute;
   right:0;
   top:6px;
@@ -5970,7 +5970,10 @@ footer .btn-toolbar.pull-left {
   margin:-2px 0 0 -2px !important;
   width:auto !important;
 }
-.editable { margin:0; }
+.inlined {
+  margin:0;
+  position:absolute !important;
+}
 tr .dropdown.hide { display:none; }
 tr:hover .dropdown.hide {
   display:block;
@@ -6057,6 +6060,18 @@ tr:hover td { overflow:display; }
   overflow-x:hidden;
   position:absolute !important;
   top:47px;
+}
+.bcard1 { padding:20px; }
+.bcard1 .span6 label {
+  color:#58595b;
+  font-size:11px;
+  margin-bottom:0;
+}
+.bcard1 .span6 span {
+  font-size:15px;
+  line-height:18px;
+  margin-bottom:10px;
+  display:block;
 }
 .container-fluid.contentflex, .main-pane {
   margin:0;
@@ -6606,15 +6621,15 @@ input[type=radio] { display:inline-block; }
   margin-top:12px;
   margin-left:20px;
 }
-#contentflex #headerbar .btn, .headerpane .btn { margin:10px 8px 0 0; }
 #contentflex #headerbar .dropdown-toggle, .headerpane .dropdown-toggle {
   -webkit-box-shadow:none;
   -moz-box-shadow:none;
   box-shadow:none;
 }
 #contentflex #headerbar .span12, .headerpane .span12 { margin-left:0px; }
-#contentflex #headerbar .btn-group .btn.dropdown-toggle, .headerpane .btn-group .btn.dropdown-toggle { margin-left:-12px !important; }
-#contentflex #headerbar .btn-toolbar, .headerpane .btn-toolbar { margin-top:5px; }
+#contentflex #headerbar .drawerTrig, .headerpane .drawerTrig { margin-right:10px; }
+#contentflex #headerbar .btn-toolbar, .headerpane .btn-toolbar { margin-top:15px; }
+#contentflex #headerbar .avatar, .headerpane .avatar { margin:10px -5px 0 20px; }
 .cube {
   background:url('../../assets/img/badge_256g.png') 50% 8px no-repeat;
   float:left;
