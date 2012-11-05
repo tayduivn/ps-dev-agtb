@@ -49,6 +49,11 @@ $viewdefs['Leads']['base']['view']['leadrecord'] = array(
         ),
         array(
             'type'    => 'button',
+            'label'   => 'LBL_CONVERT_BUTTON_LABEL',
+            'css_class' => 'btn-primary lead-convert',
+        ),
+        array(
+            'type'    => 'button',
             'label'   => 'LBL_DELETE_BUTTON_LABEL',
             'css_class' => 'record-delete',
         ),

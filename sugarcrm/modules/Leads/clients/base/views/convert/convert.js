@@ -1,8 +1,7 @@
 ({
     events: {
-        'click [name=convert_continue_button]': 'initiateContinue'
+        'click [name=convert_continue_button]': 'showNextStep'
     },
-
 
     /**
      * Initialize convert layout
@@ -59,7 +58,6 @@
         });
 
         this.context.steps = convertSteps;
-        this.context.currentStep = convertSteps.getHead();
 
         //create parent convert model to hold all sub-models
         leadId = this.context.get('modelId');
@@ -73,36 +71,18 @@
 
     render: function() {
         app.view.View.prototype.render.call(this);
+
+        var self = this,
+            moduleName = this.context.steps.getHead().key;
+
+        $('.accordion').on('show', function (e) {
+            self.initiateContinue(e);
+        });
+
+        this.initiateAccordion();
+        this.initiateSubComponents();
+        this.populateSubModelsFromLeadsData();
         this.showAccordion(moduleName);
-        var moduleName = this.context.steps.getHead().key,
-            def = {
-            'view' : 'list',
-            'context' : {'module' : moduleName}
-        };
-
-        this.insertViewInAccordionBody(moduleName, 'duplicate', def);
-
-        def = {
-            'view' : 'edit',
-            'context' : {'module' : moduleName}
-        };
-
-        this.insertViewInAccordionBody(moduleName, 'record', def);
-
-
-        $('#collapse' + moduleName).css('height', 'auto');
-
-   /*     $('.accordion').on('show', function (e) {
-           // $(e.target).prev('.accordion-heading').find('.accordion-toggle').addClass('active');
-            debugger;
-        });*/
-
-        /*
-                $('.accordion').on('hide', function (e) {
-                    $(this).find('.accordion-toggle').not($(e.target)).removeClass('active');
-                });
-        */
-
     },
 
     insertViewInAccordionBody: function(moduleName, contentType, def) {
@@ -123,7 +103,12 @@
         var dupView = $('#collapse' + moduleName).find('.' + contentType + 'View');
         dupView.append(view.$el);
         view.render();
-        view.loadData();
+
+        if(contentType === 'duplicate') {
+            view.loadData();
+        }
+
+        return view;
     },
 
     /**
@@ -132,7 +117,7 @@
      */
     initiateContinue: function(callback) {
         var self = this;
-
+    /*
         async.waterfall([
             _.bind(this.showNextStep, this)
         ], function(error) {
@@ -143,22 +128,65 @@
                 callback();
             }
         });
+        */
+
+        this.context.currentStep = this.context.steps.search(callback.target.dataset.module);
+
+        var result = true;
+
+        return result;
+    },
+
+    initiateAccordion: function() {
+        _.each(this.meta.modules, function(element, index, list) {
+            var accordionBody = '#collapse' + element.module;
+            $(accordionBody).collapse({
+                parent: '#convert-accordion'
+            });
+        });
+    },
+
+    /**
+     * Add sub-views defined by the convert metadata to the layout
+     */
+    initiateSubComponents: function() {
+        var self = this;
+
+        _.each(this.meta.modules, function(element, index, list) {
+            var duplicateView,
+                recordView,
+                def = {
+                    'view' : 'list',
+                    'context' : {'module' : element.module}
+                };
+
+            duplicateView = self.insertViewInAccordionBody(element.module, 'duplicate', def);
+
+            def = {
+                'view' : 'edit',
+                'context' : {'module' : element.module}
+            };
+
+            recordView = self.insertViewInAccordionBody(element.module, 'record', def);
+
+            //add sub-model to the parent object for later saving
+            self.context.convertModel.addSubModel(element.module, {duplicateView: duplicateView.context.get('model')});
+        });
     },
 
     showNextStep: function() {
         var currentStep = this.context.currentStep;
 
         if(!_.isEmpty(currentStep.next)) {
-            this.context.currentStep = currentStep.next;
             this.showAccordion(currentStep.next.key);
         }
-        return true;
     },
 
     showAccordion: function(moduleName) {
         var accordionBody = '#collapse' + moduleName;
-        $(accordionBody).collapse({});
+
         $(accordionBody).collapse('show');
+        $(accordionBody).css('height', 'auto');
     },
 
     /**
@@ -213,38 +241,31 @@
     },
 
     /**
-     * Fetch Leads data to the parent model
-     */
-    loadData: function() {
-        var self = this;
-
-        self.model.fetch({
-            success: function() {
-                self.populateSubModelsFromLeadsData();
-            },
-            error: function() {
-                //todo: handle error case
-            }
-        });
-    },
-
-    /**
      * Iterate over the sub-models and copy Leads data to the sub-models
      */
     populateSubModelsFromLeadsData: function() {
         var self = this,
             leadModel = self.model;
 
+        debugger;
         //iterate over sub-models
-        _.each(self.meta, function(moduleMetadata, moduleName) {
-            var subModel = self.context.convertModel.get(moduleName);
+        _.each(self.meta.modules, function(element, index, list) {
+            var subModel = self.context.convertModel.get(element.module);
 
             //field mappings: copy over data according to the metadata field mapping
-            _.each(moduleMetadata.fieldMapping, function(sourceField, targetField) {
+            _.each(element.fieldMapping, function(sourceField, targetField) {
                 if (leadModel.has(sourceField)) {
                     subModel.set(targetField, leadModel.get(sourceField));
                 }
             });
         });
     }
+
+    /*
+    *         app.view.View.prototype.initialize.call(this, options);
+     this.fallbackFieldTemplate = "edit";
+     this.$el.addClass('tab-pane');
+     this.$el.attr('id', 'tab-pane-' + options.submodule);
+     this.meta = app.metadata.getView(options.submodule, 'edit') || {};
+     */
 })

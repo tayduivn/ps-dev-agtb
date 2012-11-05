@@ -7,19 +7,9 @@
 ({
     extendsFrom: 'RecordView',
     events: {
-       'click .record-convert': 'showConvert'
+       'click .lead-convert': 'showConvert'
     },
-/*
-    render: function() {
-        app.view.View.prototype.render.call(this);
 
-        var convert = this.model.get('status');
-        if(convert === 'Converted') {
-            $('.record-convert').addClass('hide');
-        }
-
-    },
-*/
     showConvert: function() {
         var view = app.view.createView({
             context: this.context,
@@ -27,8 +17,7 @@
             name: "convert"
         });
 
-       $('.record-button-bar').before(view.$el);
+       $('.headerpane').parent().before(view.$el);
        view.render();
-
     }
 })

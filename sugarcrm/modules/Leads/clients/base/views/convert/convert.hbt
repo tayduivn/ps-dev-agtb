@@ -24,7 +24,7 @@
                  <span class="ignore-duplicate pull-right" id="ignore-duplicate-xxx"></span>
                 </a>
           </div>
-          <div id="collapse{{this.module}}" class="accordion-body collapse">
+          <div id="collapse{{this.module}}" data-module="{{this.module}}" class="accordion-body collapse">
             <div class="accordion-inner">
                 <div class="duplicateView"></div>
                 <div class="recordView"></div>
