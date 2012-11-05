@@ -156,8 +156,7 @@
         return options;
     },
     previewRecord: function(e) {
-        debugger;
-        var self = this,
+         var self = this,
             el = this.$(e.currentTarget),
             data = el.data(),
             module = data.module,
