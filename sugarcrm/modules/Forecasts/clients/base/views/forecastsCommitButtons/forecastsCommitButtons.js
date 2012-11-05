@@ -154,11 +154,7 @@
     			}    			    				
     		});
 
-            //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-            self.context.forecasts.config.set('has_commits', true);
-            self.context.forecasts.config.save();
-
-    		savebtn.addClass("disabled");
+            savebtn.addClass("disabled");
     		self.context.forecasts.set({commitForecastFlag: true});
     	}        
     },
@@ -212,11 +208,7 @@
     			}    			    				
     		});
 
-            //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
-            self.context.forecasts.config.set('has_commits', true);
-            self.context.forecasts.config.save();
-
-    		savebtn.addClass("disabled");
+            savebtn.addClass("disabled");
     		this.enableCommitButton();
     	}
     	
