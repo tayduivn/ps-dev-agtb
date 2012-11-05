@@ -20,8 +20,9 @@
 
     events:{
         'click [name=close_button]':'close',
-        'click [name=save_button]':'save',
+        'click [name=done_button]':'save',
         'click [name=next_button]':'next',
+        'click [name=start_button]':'start',
         'click [name=previous_button]':'previous',
         'click .breadcrumb.two li a':'breadcrumb'
     },
@@ -40,6 +41,17 @@
      */
     close:function (evt) {
         this.layout.context.trigger("modal:close");
+    },
+
+    start : function(evt) {
+        // hide the start button
+        $(evt.target).addClass('hide');
+
+        this.$el.find('a[name=close_button]').toggleClass('hide show');
+        this.$el.find('a[name=next_button]').toggleClass('hide show');
+        this.$el.find('a[name=previous_button]').toggleClass('hide show');
+
+        this.next(evt);
     },
 
     /**
@@ -158,10 +170,17 @@
         if (nextPanel > 0 && nextPanel != this.totalPanels) {
             this.$el.find('[name=next_button]').removeClass('disabled');
             this.$el.find('[name=previous_button]').removeClass('disabled');
+            if(this.$el.find('[name=done_button]').hasClass('show')) {
+                this.$el.find('[name=done_button]').toggleClass('hide show');
+            }
+            if(this.$el.find('[name=next_button ]').hasClass('hide')) {
+                this.$el.find('[name=next_button]').toggleClass('hide show');
+            }
         } else if (nextPanel == 0) {
             this.$el.find('[name=previous_button]').addClass('disabled');
         } else if (nextPanel == this.totalPanels) {
-            this.$el.find('[name=next_button]').addClass('disabled')
+            this.$el.find('[name=next_button]').toggleClass('hide show');
+            this.$el.find('[name=done_button]').toggleClass('hide show');
         }
 
         // hide the current active panel
