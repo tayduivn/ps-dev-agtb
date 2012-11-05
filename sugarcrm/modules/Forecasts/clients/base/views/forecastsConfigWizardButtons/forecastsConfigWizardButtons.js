@@ -102,7 +102,7 @@
 
     breadcrumb:function (evt) {
         // ignore the click if the crumb is already active
-        if ($(evt.target).parent().is(".disabled") == true) {
+        if ($(evt.target).parent().is(".active,.disabled") == false) {
             // get the index of the clicked crumb
             var clickedCrumb = $(evt.target).data('index');
 
@@ -193,7 +193,9 @@
      * @param next
      */
     switchNavigationTab:function (next) {
-        $(this.navTabs[this.activePanel]).toggleClass('active disabled');
-        $(this.navTabs[next]).toggleClass('active disabled');
+        $(this.navTabs[next]).removeClass('disabled');
+
+        $(this.navTabs[this.activePanel]).toggleClass('active');
+        $(this.navTabs[next]).toggleClass('active');
     }
 })
