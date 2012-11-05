@@ -52,7 +52,7 @@ class Bug56505Test extends Sugar_PHPUnit_Framework_TestCase
             'type' => 'multienum',
             'name' => 'aaa_test_c',
             'options' => 'aaa_list',
-            'default' => '^bobby^',
+            'default' => '^bobby^,^billy^',
         );
         
         $mm = new MetaDataManagerBug56505($GLOBALS['current_user']);
@@ -60,7 +60,9 @@ class Bug56505Test extends Sugar_PHPUnit_Framework_TestCase
         
         $this->assertArrayHasKey('aaa_test_c', $newdefs, "New defs did not return custom test field");
         $this->assertArrayHasKey('default', $newdefs['aaa_test_c'], "Test field def default value is missing");
-        $this->assertEquals('bobby', $newdefs['aaa_test_c']['default'], "Expected 'bobby' but got {$newdefs['aaa_test_c']['default']}");
+        $this->assertInternalType('array', $newdefs['aaa_test_c']['default'], "Expected the default value to be an array");
+        $this->assertTrue(in_array('bobby', $newdefs['aaa_test_c']['default']), "Expected the string 'bobby' to be in the default value array");
+        $this->assertTrue(in_array('billy', $newdefs['aaa_test_c']['default']), "Expected the string 'billy' to be in the default value array");
     }
 }
 

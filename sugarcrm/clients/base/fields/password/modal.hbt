@@ -1,6 +1,2 @@
-<div class="control-group">
-    <div class="controls">
-    <input type="password" class="center" value="{{value}}" placeholder="{{label}}">
-    </div>
-    <p class="help-block"></p>
-</div>
+<input type="password" class="center" value="{{value}}" placeholder="{{label}}">
+<p class="help-block"></p>
