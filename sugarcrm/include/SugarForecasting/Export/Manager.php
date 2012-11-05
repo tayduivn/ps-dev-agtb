@@ -66,6 +66,14 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
         $obj = new $klass($this->args);
         $data = $obj->process();
 
+        //We need to set the keys for the adjusted values to be the same as the vardefs' name so that we may
+        //associate them with the appropriate types for formatting
+        foreach($data as $key=>$row) {
+            $data[$key]['best_case_adjusted'] = $row['best_adjusted'];
+            $data[$key]['likely_case_adjusted'] = $row['likely_adjusted'];
+            $data[$key]['worst_case_adjusted'] = $row['worst_adjusted'];
+        }
+
         $fields_array = array(
             'quota'=>'quota',
             'name'=>'name',
@@ -77,19 +85,19 @@ class SugarForecasting_Export_Manager extends SugarForecasting_Export_AbstractEx
         if ($settings['show_worksheet_best'])
         {
             $fields_array['best_case'] = 'best_case';
-            $fields_array['best_adjusted'] = 'best_case_adjusted';
+            $fields_array['best_case_adjusted'] = 'best_case_adjusted';
         }
 
         if ($settings['show_worksheet_likely'])
         {
             $fields_array['likely_case'] = 'likely_case';
-            $fields_array['likely_adjusted'] = 'likely_case_adjusted';
+            $fields_array['likely_case_adjusted'] = 'likely_case_adjusted';
         }
 
         if ($settings['show_worksheet_worst'])
         {
             $fields_array['worst_case'] = 'worst_case';
-            $fields_array['worst_adjusted'] = 'worst_case_adjusted';
+            $fields_array['worst_case_adjusted'] = 'worst_case_adjusted';
         }
 
         $seed = BeanFactory::getBean('ForecastManagerWorksheets');
