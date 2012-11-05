@@ -297,7 +297,7 @@ class SugarFeed extends Basic {
 
         sugar_cache_put('SugarFeedLinkType',$linkTypeList);
 
-        create_cache_directory($cachedfile);
+        create_cache_directory('modules/SugarFeed/linkTypeCache.php');
         write_array_to_file('linkTypeList', $linkTypeList, $cachedfile);
 
         return $linkTypeList;
