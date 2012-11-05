@@ -30,29 +30,38 @@ if (!defined('sugarEntry') || !sugarEntry) {
  ********************************************************************************/
 
 $viewdefs['Bugs']['base']['view']['record'] = array(
-    'buttons' =>
-    array(
+    'buttons' => array(
         array(
-            'name' => 'edit_button',
-            'type' => 'button',
-            'label' => 'Edit',
-            'route' => array(
-                'action' => 'edit'
-            ),
-            'primary' => true,
+            'type'    => 'button',
+            'label'   => 'LBL_SAVE_BUTTON_LABEL',
+            'css_class' => 'hide btn-primary record-save',
+        ),
+        array(
+            'type'    => 'button',
+            'label'   => 'LBL_CANCEL_BUTTON_LABEL',
+            'css_class' => 'hide record-cancel',
+        ),
+        array(
+            'type'    => 'button',
+            'label'   => 'LBL_EDIT_BUTTON_LABEL',
+            'css_class' => 'record-edit',
+        ),
+        array(
+            'type'    => 'button',
+            'label'   => 'LBL_DELETE_BUTTON_LABEL',
+            'css_class' => 'record-delete',
         ),
     ),
     'panels' => array(
         array(
-            'name' => 'panel_head',
-            'label' => 'LBL_PANEL_1',
-            'columns' => 2,
-            'labels' => false,
-            'labelsOnTop' => false,
-            'placeholders' => true,
+            'name' => 'panel_header',
+            'header' => true,
             'fields' => array(
-                array('name' => 'img', 'noedit' => true, 'span' => 2, 'label' => ''),
-                array('name' => 'name', 'cell_css' => 'bigcell', 'css' => 'big', 'span' => 10, 'label' => '', 'placeholder' => 'LBL_NAME'),
+                array(
+                    'name' => 'img',
+                    'noedit' => true,
+                ),
+                'name',
             )
         ),
         array(
@@ -64,7 +73,6 @@ $viewdefs['Bugs']['base']['view']['record'] = array(
             'placeholders' => true,
             'fields' => array(
                 array('name'=>'bug_number', 'noedit'=>true),
-                array('name'=>'name', 'displayParams' => array ('size'=>75),),
                 'priority',
                 'type',
                 'source',

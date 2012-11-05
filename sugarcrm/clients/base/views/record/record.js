@@ -1,34 +1,38 @@
 ({
-    extendsFrom: "DetailView",
     editMode: false,
 
-    initialize: function(options) {
-        var extraEvents = {
-            "click .record-edit": "toggleEdit",
-            "click .record-edit-link-wrapper": "handleEdit",
-            "click .record-save": "handleSave",
-            "click .record-cancel": "handleCancel",
-            "click .record-delete": "handleDelete"
-        };
+    events: {
+        'click .record-edit': 'editClicked',
+        'click .record-edit-link-wrapper': 'handleEdit',
+        'click .record-save': 'saveClicked',
+        'click .record-cancel': 'cancelClicked',
+        'click .record-delete': 'deleteClicked',
+        'click .more': 'toggleMoreLess',
+        'click .less': 'toggleMoreLess',
+        'click .drawerTrig': 'toggleSidePanel'
+    },
 
+    // button states
+    STATE: {
+        EDIT: 'edit',
+        VIEW: 'view'
+    },
+
+    initialize: function(options) {
         _.bindAll(this);
 
-        app.view.views.DetailView.prototype.initialize.call(this, options);
-
-        // Re delegate events adding some of our custom
-        this.delegateEvents(_.extend(this.events, extraEvents));
+        app.view.View.prototype.initialize.call(this, options);
 
         // Set the save button to show if the model has been edited.
         this.model.on("change", function() {
             if (this.editMode || this.editAllMode) {
                 this.previousModelState = this.model.previousAttributes();
-                this.$(".record-save-btns-bar").show();
+                this.setButtonStates(this.STATE.EDIT);
             }
         }, this);
 
         if (this.context.get("create") === true) {
             this.model.isNotEmpty = true;
-            this.editable = true;
         }
     },
 
@@ -43,7 +47,7 @@
 
             // Set flag so that show more link can be displayed to show hidden panel.
             if (panel.hide) {
-                this.hiddenPanel = true;
+                this.hiddenPanelExists = true;
             }
 
             _.each(panel.fields, function(field) {
@@ -84,20 +88,25 @@
         // Check if this is a new record, if it is, enable the edit view
         if (this.context.has("create") && this.model.isNew) {
             this.editAllMode = false;
-            this.toggleEdit();
+            this.toggleEdit(true);
         }
     },
 
-    // Overloaded functions
-    _renderHtml: function() { // Use original original
+    _renderHtml: function() {
+        this.checkAclForButtons();
         app.view.View.prototype._renderHtml.call(this);
     },
 
-    checkReadOnly: function() {
-        if (this.context.get("model").module == "Users") {
-            this.editable = (app.user.get("id") == this.context.get("model").id);
+    /**
+     * Check to see if the buttons should be displayed
+     */
+    checkAclForButtons: function() {
+        if (this.context.get("model").module === "Users") {
+            this.hasAccess = (app.user.get("id") == this.context.get("model").id);
+        } else if (this.context.get("create") === true) {
+            this.hasAccess = true;
         } else {
-            this.editable = app.acl.hasAccessToModel("edit", this.model);
+            this.hasAccess = app.acl.hasAccessToModel("edit", this.model);
         }
     },
 
@@ -112,7 +121,6 @@
             this.model.on("change", function() {
                 if (this.model.isNotEmpty !== true) {
                     this.model.isNotEmpty = true;
-                    this.checkReadOnly();
                     this.render();
                 }
             }, this);
@@ -147,8 +155,34 @@
         return false;
     },
 
+    editClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.toggleEdit();
+        }
+    },
+
+    saveClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleSave();
+        }
+    },
+
+    cancelClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.setButtonStates(this.STATE.VIEW);
+            this.handleCancel();
+        }
+    },
+
+    deleteClicked: function(event) {
+        if (!this.$(event.target).hasClass('disabled')) {
+            this.handleDelete();
+        }
+    },
+
     // Handler functions
-    toggleEdit: function() {
+    toggleEdit: function(isEdit) {
         _.each(this.fields, function(field) {
 
             // Exclude image picker,
@@ -157,7 +191,12 @@
                 return;
             }
 
-            field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+            if (_.isUndefined(isEdit)) {
+                field.options.viewName = (!this.editAllMode) ? "edit" : "detail";
+            } else {
+                field.options.viewName = isEdit ? "edit" : "detail";
+            }
+
             field.render();
         }, this);
 
@@ -210,6 +249,7 @@
         var self = this;
 
         this.editMode = false;
+        this.editAllMode = false;
         this.model.save({}, {
             success: function() {
                 if (self.context.get("create") === true) {
@@ -226,22 +266,24 @@
 
     handleCancel: function() {
         this.editMode = false;
+        this.editAllMode = false;
 
         if (!_.isEmpty(this.previousModelState)) {
             this.model.set(this.previousModelState);
         }
 
-        this.toggleEdit();
+        this.toggleEdit(false);
     },
 
     handleDelete: function() {
-        // Open up a modal
-        var self = this,
-            modal = this.$(".delete-confirmation").modal();
-
-        this.$(".confirm-delete").on("click", function() {
-            self.model.destroy();
-            app.router.navigate("#" + self.module, {trigger: true});
+        var self = this;
+        app.alert.show('delete_confirmation', {
+            level: 'confirmation',
+            messages: app.lang.get('NTC_DELETE_CONFIRMATION'),
+            onConfirm: function() {
+                self.model.destroy();
+                app.router.navigate("#" + self.module, {trigger: true});
+            }
         });
     },
 
@@ -332,5 +374,60 @@
         } else if (e.which == 27) { // If esc
             this.toggleCell(field, cell, true);
         }
+    },
+
+    /**
+     * Change the behavior of buttons depending on the state that they should be in
+     * @param state
+     */
+    setButtonStates: function(state) {
+        var $buttons = {
+            edit:   this.$('.record-edit'),
+            save:   this.$('.record-save'),
+            cancel: this.$('.record-cancel'),
+            del:    this.$('.record-delete')
+        };
+
+        switch (state) {
+            case this.STATE.EDIT:
+                $buttons.edit.toggleClass('hide', false).addClass('disabled');
+                $buttons.save.toggleClass('hide', false);
+                $buttons.cancel.toggleClass('hide', false);
+                $buttons.del.toggleClass('hide', false);
+                break;
+            case this.STATE.VIEW:
+                $buttons.edit.toggleClass('hide', false).removeClass('disabled');
+                $buttons.save.toggleClass('hide', true);
+                $buttons.cancel.toggleClass('hide', true);
+                $buttons.del.toggleClass('hide', false);
+                break;
+            default:
+                $buttons.edit.toggleClass('hide', true).removeClass('disabled');
+                $buttons.save.toggleClass('hide', true);
+                $buttons.cancel.toggleClass('hide', true);
+                $buttons.del.toggleClass('hide', true);
+                break;
+        }
+    },
+
+    /**
+     * Hide / show the side panel
+     */
+    toggleSidePanel: function() {
+        var chevron = this.$('.drawerTrig span'),
+            pointRightClass = 'icon-chevron-right',
+            pointLeftClass = 'icon-chevron-left';
+
+        if (chevron.hasClass(pointRightClass)) {
+            chevron
+                .removeClass(pointRightClass)
+                .addClass(pointLeftClass);
+        } else {
+            chevron
+                .removeClass(pointLeftClass)
+                .addClass(pointRightClass);
+        }
+
+        //TODO: toggle panes
     }
 })

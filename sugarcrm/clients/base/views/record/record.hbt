@@ -1,72 +1,73 @@
-<div class="record" data-tour="tour-{{module}}-businesscard">
-    {{#if editable}}
-    <div class="row-fluid record-button-bar">
-        <div class="btn-group pull-right" data-tour="tour-{{module}}-button-bar">
-            <a class="btn btn-small record-edit">Edit</a>
-            <a class="btn btn-small record-delete" data-toggle="modal" href="#delete-confirmation">Delete</a>
-        </div>
-        <div class="btn-group pull-right record-save-btns-bar hide">
-            <a class="btn btn-small record-save btn-primary btn-disabled record-changed">Save</a>
-            <a class="btn btn-small record-cancel btn-disabled record-changed">Cancel</a>
-        </div>
-    </div>
-    {{/if}}
-
+<div data-tour="tour-{{module}}-businesscard">
     {{#if model.isNotEmpty}}
-        {{#each meta.panels}}
-            {{#each grid}}
-                <div class="row-fluid {{../name}} {{#if ../hiddenPanels}}hide{{/if}}">
-                    {{#each this}}
-                        <span>
-                            {{#unless ../../this.labelsOnTop}}
-                                {{#if ../../../this.labels}}
-                                    <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
-                                {{/if}}
-                            {{/unless}}
-                            <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
-                                {{#if ../../this.labelsOnTop}}
-                                <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
-                                {{/if}}
-                                {{#if name}}
-                                    <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
-                                        {{field ../../../../../this}}
-                                    </span>
-                                {{/if}}
+        <div class="headerpane">
+            {{#each meta.panels}}
+                {{#if header}}
+                    {{#each fields}}
+                        <span class="record-cell" data-type="{{type}}" data-name="{{name}}">
+                            <h1>
+                                <span class='index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../this.module}}-{{name}}">
+                                    {{field ../../../this}}
+                                </span>
                                 {{#unless noedit}}
-                                    <span class="record-edit-link-wrapper" data-name="{{../name}}">
-                                        <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                                    <span class="record-edit-link-wrapper" data-name="{{name}}">
+                                        <a class="record-edit-link icon-pencil" data-type="{{type}}" data-name="{{name}}"></a>
                                     </span>
                                 {{/unless}}
-                            </div>
+                            </h1>
                         </span>
                     {{/each}}
-                </div>
+                {{/if}}
             {{/each}}
+            <div class="btn-toolbar pull-right dropdown">
+                {{#if hasAccess}}
+                    {{#each meta.buttons}}
+                        {{field ../this}}
+                    {{/each}}
+                {{/if}}
+                <a class="btn btn-invisible drawerTrig" href="javascript:void(0);"><span class="icon-chevron-right"></span></a>
+            </div>
+        </div>
+        {{#each meta.panels}}
+            {{#unless header}}
+                {{#each grid}}
+                    <div class="row-fluid {{../name}} {{#if ../hide}}hide{{/if}}">
+                        {{#each this}}
+                            <span>
+                                {{#unless ../../this.labelsOnTop}}
+                                    {{#if ../../../this.labels}}
+                                        <div class="span{{../this.labelSpan}} tright record-label" >{{str ../this.label ../../../../../../this.model.module}}</div>
+                                    {{/if}}
+                                {{/unless}}
+                                <div class="span{{this.span}} record-cell{{#if cell_css}} {{cell_css}}{{/if}}" data-type="{{type}}" data-name="{{name}}">
+                                    {{#if ../../this.labelsOnTop}}
+                                    <div class='record-label'>{{str this.label ../../../../../this.model.module}}</div>
+                                    {{/if}}
+                                    {{#if name}}
+                                        <span class='normal{{#if css}} {{css}}{{/if}} index{{index}}' data-fieldname="{{name}}" data-index="{{index}}" data-tour="tour-{{../../../../this.module}}-{{name}}">
+                                            {{field ../../../../../this}}
+                                        </span>
+                                    {{/if}}
+                                    {{#unless noedit}}
+                                        <span class="record-edit-link-wrapper" data-name="{{../name}}">
+                                            <a class="record-edit-link icon-pencil" data-type="{{../type}}" data-name="{{../name}}"></a>
+                                        </span>
+                                    {{/unless}}
+                                </div>
+                            </span>
+                        {{/each}}
+                    </div>
+                {{/each}}
+            {{/unless}}
         {{/each}}
     {{else}}
         {{#if context._dataFetched}}{{str "LBL_DETAILVIEW_NO_RECORDS"}}{{else}}{{str "LBL_LOADING"}}{{/if}}
     {{/if}}
 
-    <div class="row-fluid{{#unless hiddenPanels}} hide{{/unless}}">
+    <div class="row-fluid{{#unless hiddenPanelExists}} hide{{/unless}}">
        <div class="record-cell">
              <a href="javascript:void(0)" class="more">{{str "LBL_SHOW_MORE"}} <i class="icon-chevron-down"></i></a>
              <a href="javascript:void(0)" class="less hide">{{str "LBL_SHOW_LESS"}} <i class="icon-chevron-up"></i></a>
        </div>
     </div>
-</div>
-
-<div id="delete-confirmation" class="modal hide">
-  <div class="modal-header">
-    <a class="close" data-dismiss="modal">×</a>
-    <h3>Delete Confirmation</h3>
-  </div>
-  <div class="modal-body">
-    <div class="modal-scroll">
-      <p>Are you sure you want to delete this record?</p>
-    </div>
-    <div class="modal-footer">
-      <a class="btn btn-danger confirm-delete" data-dismiss="modal">Delete</a>
-      <a class="btn" data-dismiss="modal">Close</a>
-    </div>
-  </div>
 </div>
