@@ -71,6 +71,61 @@
 
     },
 
+    render: function() {
+        app.view.View.prototype.render.call(this);
+        this.showAccordion(moduleName);
+        var moduleName = this.context.steps.getHead().key,
+            def = {
+            'view' : 'list',
+            'context' : {'module' : moduleName}
+        };
+
+        this.insertViewInAccordionBody(moduleName, 'duplicate', def);
+
+        def = {
+            'view' : 'edit',
+            'context' : {'module' : moduleName}
+        };
+
+        this.insertViewInAccordionBody(moduleName, 'record', def);
+
+
+        $('#collapse' + moduleName).css('height', 'auto');
+
+   /*     $('.accordion').on('show', function (e) {
+           // $(e.target).prev('.accordion-heading').find('.accordion-toggle').addClass('active');
+            debugger;
+        });*/
+
+        /*
+                $('.accordion').on('hide', function (e) {
+                    $(this).find('.accordion-toggle').not($(e.target)).removeClass('active');
+                });
+        */
+
+    },
+
+    insertViewInAccordionBody: function(moduleName, contentType, def) {
+        //initialize child context for sub-model
+        var self = this,
+            context = self.context.getChildContext(def.context);
+
+        context.prepare();
+
+        debugger;
+        var view = app.view.createView({
+            context: context,
+            name: def.view,
+            //module: self.context.get("module"),
+            submodule: moduleName,
+            layout: self
+        });
+
+        var dupView = $('#collapse' + moduleName).find('.' + contentType + 'View');
+        dupView.append(view.$el);
+        view.render();
+    },
+
     /**
      * Check for possible duplicates before creating a new record
      * @param callback
@@ -100,67 +155,9 @@
         return true;
     },
 
-    render: function() {
-        var self = this;
-        app.view.View.prototype.render.call(this);
-
-        var moduleName = this.context.steps.getHead().key;
-        this.showAccordion(moduleName);
-        var context,
-            def = {
-            'view' : 'list',
-            'context' : {'module' : moduleName}
-        };
-
-        //initialize child context for sub-model
-        context = self.context.getChildContext(def.context);
-        context.prepare();
-
-        var view = app.view.createView({
-            context: context,
-            name: def.view,
-            module: self.context.get("module"),
-            submodule: moduleName,
-            layout: self
-        });
-
-        var dupView = $('#collapse' + moduleName).find('.duplicateView');
-        dupView.append(view.$el);
-        view.render();
-
-        var view2 = app.view.createView({
-            context: context,
-            name: 'edit',
-            module: self.context.get("module"),
-            submodule: moduleName,
-            layout: self
-        });
-
-        var dupView = $('#collapse' + moduleName).find('.recordView');
-        dupView.append(view2.$el);
-        view2.render();
-
-
-
-
-        $('#collapse' + moduleName).css('height', 'auto');
-
-
-   /*     $('.accordion').on('show', function (e) {
-           // $(e.target).prev('.accordion-heading').find('.accordion-toggle').addClass('active');
-            debugger;
-        });*/
-
-        /*
-                $('.accordion').on('hide', function (e) {
-                    $(this).find('.accordion-toggle').not($(e.target)).removeClass('active');
-                });
-        */
-
-    },
-
     showAccordion: function(moduleName) {
         var accordionBody = '#collapse' + moduleName;
+        $(accordionBody).collapse({});
         $(accordionBody).collapse('show');
     },
 
