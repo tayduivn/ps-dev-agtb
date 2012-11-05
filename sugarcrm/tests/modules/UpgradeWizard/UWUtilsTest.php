@@ -28,18 +28,24 @@ require_once ('modules/SchedulersJobs/SchedulersJob.php');
 class UWUtilsTest extends Sugar_PHPUnit_Framework_TestCase  {
 
     private $job;
+    private static $isSetup;
 
     public static function setUpBeforeClass()
     {
         SugarTestHelper::setUp('beanFiles');
         SugarTestHelper::setUp('beanList');
         SugarTestHelper::setUp('current_user');
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        self::$isSetup = $settings['is_setup'];
+        //Set is_setup to 0 for testing purposes
+        $admin->saveSetting('Forecasts', 'is_setup', 0, 'base');
     }
 
     public static function tearDownAfterClass()
     {
         $admin = BeanFactory::getBean('Administration');
-        $admin->saveSetting('Forecasts', 'is_setup', '0', 'base');
+        $admin->saveSetting('Forecasts', 'is_setup', self::$isSetup, 'base');
         SugarTestOpportunityUtilities::removeAllCreatedOpportunities();
         SugarTestHelper::tearDown();
     }

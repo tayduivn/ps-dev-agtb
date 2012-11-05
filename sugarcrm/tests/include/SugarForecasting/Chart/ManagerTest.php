@@ -54,7 +54,8 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         self::$users['manager'] = SugarTestForecastUtilities::createForecastUser(array(
             'timeperiod_id' => $timeperiod->id,
-            'currency_id' => self::$currency->id
+            'currency_id' => self::$currency->id,
+            //'createQuota' => false
         ));
 
         global $current_user;
@@ -64,6 +65,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
         $config = array(
             'timeperiod_id' => $timeperiod->id,
             'currency_id' => self::$currency->id,
+            //'createQuota' => false,
             'user' =>
             array('manager', 'reports_to' => self::$users['manager']['user']->id)
         );
@@ -73,6 +75,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     public static function tearDownAfterClass()
     {
         SugarTestHelper::tearDown();
+        SugarTestQuotaUtilities::removeAllCreatedQuotas();
         SugarTestTimePeriodUtilities::removeAllCreatedTimePeriods();
         SugarTestForecastUtilities::cleanUpCreatedForecastUsers();
         SugarTestCurrencyUtilities::removeAllCreatedCurrencies();
@@ -418,6 +421,7 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
     /**
      * @group forecasts
      * @group forecastschart
+     * @outputBuffering disabled
      */
     public function testMidLevelManagerQuotaEqualToRollup()
     {
@@ -435,11 +439,29 @@ class SugarForecasting_Chart_ManagerTest extends Sugar_PHPUnit_Framework_TestCas
 
         // add a rollup quota for the new reportee user
         /* @var $quota Quota */
-        $quota = SugarTestQuotaUtilities::createQuota(1500);
-        $quota->quota_type = "Rollup";
-        $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
-        $quota->user_id = self::$users['reportee']['user']->id;
-        $quota->save();
+        $result = $db->limitQuery(sprintf("SELECT id FROM quotas WHERE quota_type = 'Rollup' AND user_id = '%s' AND timeperiod_id = '%s' AND deleted = 0 ORDER BY date_modified DESC",
+            self::$users['reportee']['user']->id,
+            SugarTestForecastUtilities::getCreatedTimePeriod()->id),
+            0,
+            1
+        );
+
+        if(!empty($result)) {
+            $row = $db->fetchByAssoc($result);
+            $quota = BeanFactory::getBean('Quotas', $row['id']);
+            $quota->amount = 1500;
+            $quota->currency_id = '-99';
+            $quota->quota_type = "Rollup";
+            $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
+            $quota->user_id = self::$users['reportee']['user']->id;
+            $quota->save();
+        } else {
+            $quota = SugarTestQuotaUtilities::createQuota(1500);
+            $quota->quota_type = "Rollup";
+            $quota->timeperiod_id = SugarTestForecastUtilities::getCreatedTimePeriod()->id;
+            $quota->user_id = self::$users['reportee']['user']->id;
+            $quota->save();
+        }
 
         $args = self::$args;
         $args['user_id'] = self::$users['reportee']['user']->id;

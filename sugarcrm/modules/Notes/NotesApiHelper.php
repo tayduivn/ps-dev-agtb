@@ -1,4 +1,5 @@
 <?php
+if (!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Master Subscription
  * Agreement ("License") which can be viewed at
@@ -25,51 +26,45 @@
  * governing these rights and limitations under the License.  Portions created
  * by SugarCRM are Copyright (C) 2004-2012 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-//FILE SUGARCRM flav=PRO only
 
-require_once('modules/Administration/views/view.configureshortcutbar.php');
-/**
- * Bug #57703
- * @ticket 57703
- */
-class Bug57703Test extends Sugar_PHPUnit_Framework_TestCase
+
+require_once('data/SugarBeanApiHelper.php');
+
+class NotesApiHelper extends SugarBeanApiHelper
 {
-	public function setUp()
-	{
-        parent::setUp();
-        SugarTestHelper::setUp('moduleList');
-        SugarTestHelper::setUp('current_user');
-    }
-
-	public function tearDown()
-	{
-        parent::tearDown();
-
-        SugarTestHelper::tearDown();
-    }
-
     /**
-    * @group 57703
-    */
-    public function testCheckEnabledModules()
+     * This function sets the team & assigned user and sets up the contact & account relationship
+     * for new Notes submitted via portal users.
+     *
+     * @param SugarBean $bean
+     * @param array $submittedData
+     * @param array $options
+     * @return array
+     */
+    public function populateFromApi(SugarBean $bean, array $submittedData, array $options = array())
     {
-        SugarTestHelper::setUp('moduleList');
-        $moduleList[] = array('module'=>'PdfManager');
-        $obj = new ViewConfigureshortcutbarMock();
-        $results = $obj->filterModules($moduleList);
+        $data = parent::populateFromApi($bean, $submittedData, $options);
 
-        $this->assertEquals(0, count($results), 'Should return empty array');
+        //Only needed for Portal sessions
+        if (isset($_SESSION['type']) && $_SESSION['type'] == 'support_portal') {
+            if (empty($bean->id)) {
+                $bean->id = create_guid();
+                $bean->new_with_id = true;
+            }
+            $contact = BeanFactory::getBean('Contacts',$_SESSION['contact_id']);
+            $account = $contact->account_id;
+
+            $bean->assigned_user_id = $contact->assigned_user_id;
+
+            //BEGIN SUGARCRM flav=pro ONLY
+            $bean->team_id = $contact->fetched_row['team_id'];
+            $bean->team_set_id = $contact->fetched_row['team_set_id'];
+            //END SUGARCRM flav=pro ONLY
+
+            $bean->account_id = $account;
+            $bean->contact_id= $contact->id;
+        }
+
+        return $data;
     }
 }
-
-/**
- * Mock class
- */
-class ViewConfigureshortcutbarMock extends ViewConfigureshortcutbar
-{
-    public function filterModules($moduleList)
-    {
-        return parent::filterModules($moduleList);
-    }
-}
-?>

@@ -72,7 +72,7 @@ class PortalConfigParserTest extends Sugar_PHPUnit_Framework_TestCase
             $test = $retrievedSettings[$varKey];
             
             // First assertion
-            $this->assertNotEmpty($test, "DB result for key $varKey should not be empty");
+            $this->assertNotEmpty($test, "DB result for key $varKey should not be empty. Retrieved: ".print_r($retrievedSettings, true));
             
             //  Decode step one
             $he = html_entity_decode($test);

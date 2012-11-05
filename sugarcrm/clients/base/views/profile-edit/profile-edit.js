@@ -59,7 +59,7 @@
             });
             
             // Bypass subnav click handler
-            $('.save-profile').on('click', function(e) {
+            $('.subnav').find('[name=save_button]').on('click', function(e) {
                 e.stopPropagation();
                 e.preventDefault();
                 self.saveModel();

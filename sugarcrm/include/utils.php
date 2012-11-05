@@ -1003,6 +1003,7 @@ function return_app_list_strings_language($language)
         $app_list_strings = sugarLangArrayMerge($app_list_strings, $app_list_strings_item);
     }
 
+
     foreach ( $langs as $lang ) {
         foreach(SugarAutoLoader::existing(
             "custom/application/Ext/Language/$lang.lang.ext.php",
@@ -1013,7 +1014,7 @@ function return_app_list_strings_language($language)
         }
     }
 
-	if(!isset($app_list_strings)) {
+    if(!isset($app_list_strings)) {
 		$GLOBALS['log']->fatal("Unable to load the application language file for the selected language ($language) or the default language ($default_language) or the en_us language");
 		return null;
 	}

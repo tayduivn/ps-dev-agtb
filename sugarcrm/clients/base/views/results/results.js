@@ -32,7 +32,11 @@
     _render: function() {
         var self = this;
         self.lastQuery = self.context.get('query');
+
         self.fireSearchRequest(function(collection) {
+            // Bug 57853: Will brute force dismiss search dropdown if still present.
+            $('.search-query').searchahead('hide');
+
             // Add the records to context's collection
             if(collection && collection.length) {
                 app.view.View.prototype._render.call(self);

@@ -212,7 +212,7 @@ class SugarForecasting_Chart_Manager extends SugarForecasting_Chart_AbstractChar
         //grab user that is the target of this call to check if it is the top level manager
         $targetedUser = BeanFactory::getBean("Users", $this->getArg('user_id'));
 
-        if($targetedUser->reports_to_id != "") {
+        if(!empty($targetedUser->reports_to_id)) {
             $quotaData = $quota->getRollupQuota($this->getArg('timeperiod_id'), $this->getArg('user_id'), true);
             return SugarCurrency::convertAmountToBase($quotaData["amount"], $quotaData['currency_id']);
         }

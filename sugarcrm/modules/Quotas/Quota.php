@@ -412,13 +412,13 @@ class Quota extends SugarBean
 	 * fetching user quota data when you're unsure about whether or not the given user is a manager.
 	 * If you would like to force a direct quota, pass a false value to $should_rollup.
 	 *
-	 * @param      $timeperiod_id
-	 * @param      $user_id
-	 * @param bool $should_rollup
+	 * @param $timeperiod_id String id of the TimePeriod to retrieve quota for
+	 * @param $user_id String value of the user id to retrieve.  If NULL, the $current_user is used
+	 * @param $should_rollup boolean value indicating whether or not the quota should be a rollup calculation; false by default
 	 *
 	 * @return array [currency_id => int, amount => number, timeperiod_name => String, formatted_amount => String]
 	 */
-	function getRollupQuota( $timeperiod_id, $user_id = NULL, $should_rollup = FALSE )
+	function getRollupQuota($timeperiod_id, $user_id = NULL, $should_rollup = FALSE)
 	{
 		global $current_user;
 		$rollup_filter = "AND quotas.quota_type = 'Direct' ";
@@ -431,25 +431,22 @@ class Quota extends SugarBean
 			$rollup_filter = "AND quotas.quota_type = 'Rollup' ";
 		}
 
-		$qry = "SELECT quotas.currency_id, quotas.amount, timeperiods.name as timeperiod_name "
+		$qry = "SELECT quotas.currency_id, quotas.amount "
 				. "FROM quotas INNER JOIN users ON quotas.user_id = users.id, timeperiods "
 				. "WHERE quotas.timeperiod_id = timeperiods.id "
 				. "AND quotas.user_id = '" . $user_id . "' "
 				. $rollup_filter
 				. "AND timeperiods.id = '" . $timeperiod_id . "' "
-				. "AND quotas.deleted = 0";
+				. "AND quotas.deleted = 0 ORDER BY quotas.date_modified DESC";
 
-		$result = $this->db->query($qry, true, 'Error retrieving user quota information: ');
+		$result = $this->db->limitQuery($qry, 0, 1);
 		$row    = $this->db->fetchByAssoc($result);
 
-		if ( !empty($row) ) {
-			if ( $row['currency_id'] == -99 ) { // print the default currency
-				$row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => true));
-			}
-			else { // print the foreign currency, must retrieve currency symbol
-				$row['formatted_amount'] = format_number($row['amount'], 2, 2, array('convert' => true, 'currency_symbol' => false)) . " ( " . $this->getCurrencySymbol($row['currency_id']) . " )";
-			}
+		if(!empty($row)) {
+            $row['formatted_amount'] = SugarCurrency::formatAmountUserLocale($row['amount'], $row['currency_id']);
 		}
+
+
 
 		return $row;
 	}
