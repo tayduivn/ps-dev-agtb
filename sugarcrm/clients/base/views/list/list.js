@@ -11,7 +11,26 @@
         'mouseenter tr': 'showActions',
         'mouseleave tr': 'hideActions'
     },
+    calculateRelativeWidths: function() {
+        var totalWidth = 0;
+        for (var p in this.meta.panels) {
+            for (var f in this.meta.panels[p].fields) {
+                var field = this.meta.panels[p].fields[f];
+                totalWidth += parseInt(field.width) || 10;
+            }
+            var adjustment = 100 / totalWidth;
+            //Adjust to make sure total is 100
+            for (var f in this.meta.panels[p].fields) {
+                var field = this.meta.panels[p].fields[f];
+                field.width = Math.floor((parseInt(field.width) || 10) * adjustment);
+            }
+        }
+    },
     _renderHtml: function() {
+        
+        //Calculate relative column widths.
+        this.calculateRelativeWidths();
+
         app.view.View.prototype._renderHtml.call(this);
         // off prevents multiple bindings for each render
         this.layout.off("list:search:fire", null, this);
@@ -24,25 +43,6 @@
         // Dashboard layout injects shared context with limit: 5. 
         // Otherwise, we don't set so fetches will use max query in config.
         this.limit = this.context.get('limit') ? this.context.get('limit') : null;
-
-        //Calculate relative column widths.
-        if (_.keys(this.fields).length > 0) {
-            var totalWidth = 0;
-            for (var p in this.meta.panels) {
-                for (var f in this.meta.panels[p].fields) {
-                    var field = this.meta.panels[p].fields[f];
-                    totalWidth += parseInt(field.width) || 10;
-                }
-                var adjustment = 100 / totalWidth;
-                //Adjust to make sure total is 100
-                for (var f in this.meta.panels[p].fields) {
-                    var field = this.meta.panels[p].fields[f];
-                    var width = Math.floor((parseInt(field.width) || 10) * adjustment);
-
-                    this.$("th[data-fieldname=" + field.name + "]").css("width", width + "%");
-                }
-            }
-        }
     },
     filterToggled: function(isOpened) {
         this.filterOpened = isOpened;
