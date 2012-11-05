@@ -10,21 +10,55 @@
 
   nvtooltip.show = function(pos, content, gravity, dist, parentContainer, classes) {
 
-    var container = document.createElement('div');
+    var container = document.createElement('div'),
+        body = document.getElementsByTagName('body')[0];
         container.className = 'nvtooltip ' + (classes ? classes : 'xy-tooltip');
 
     gravity = gravity || 's';
     dist = dist || 20;
 
     //var body = parentContainer ? parentContainer : document.getElementsByTagName('body')[0];
-    var body = document.getElementsByTagName('body')[0];
 
     container.innerHTML = content;
     container.style.left = 0;
     container.style.top = 0;
     container.style.opacity = 0;
+    container.style.position = 'absolute'; //fix scroll bar issue
+    container.style.pointerEvents = 'none'; //fix scroll bar issue
 
+    nvtooltip.position(container,pos,gravity,dist);
     body.appendChild(container);
+
+    container.style.opacity = 1;
+
+    return container;
+  };
+
+  nvtooltip.cleanup = function() {
+
+      // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
+      var tooltips = document.getElementsByClassName('nvtooltip');
+      var purging = [];
+      while(tooltips.length) {
+        purging.push(tooltips[0]);
+        tooltips[0].style.transitionDelay = '0 !important';
+        tooltips[0].style.opacity = 0;
+        tooltips[0].className = 'nvtooltip-pending-removal';
+      }
+
+      setTimeout(function() {
+
+          while (purging.length) {
+             var removeMe = purging.pop();
+              removeMe.parentNode.removeChild(removeMe);
+          }
+      }, 500);
+  };
+
+  nvtooltip.position = function(container,pos,gravity,dist) {
+    var body = document.getElementsByTagName('body')[0];
+    gravity = gravity || 's';
+    dist = dist || 20;
 
     var height = parseInt(container.offsetHeight),
         width = parseInt(container.offsetWidth),
@@ -65,39 +99,8 @@
         break;
     }
 
-// console.log(pos[1]+'-('+height+'/2)'+'}'+top)
-// console.log(document.body.scrollTop)
-
     container.style.left = left+'px';
     container.style.top = top+'px';
-    container.style.opacity = 1;
-    container.style.position = 'absolute'; //fix scroll bar issue
-    container.style.pointerEvents = 'none'; //fix scroll bar issue
-
-    return container;
   };
-
-  nvtooltip.cleanup = function() {
-
-      // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
-      var tooltips = document.getElementsByClassName('nvtooltip');
-      var purging = [];
-      while(tooltips.length) {
-        purging.push(tooltips[0]);
-        tooltips[0].style.transitionDelay = '0 !important';
-        tooltips[0].style.opacity = 0;
-        tooltips[0].className = 'nvtooltip-pending-removal';
-      }
-
-
-      setTimeout(function() {
-
-          while (purging.length) {
-             var removeMe = purging.pop();
-              removeMe.parentNode.removeChild(removeMe);
-          }
-    }, 500);
-  };
-
 
 })();

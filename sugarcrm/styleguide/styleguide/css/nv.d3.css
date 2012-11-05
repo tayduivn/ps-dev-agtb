@@ -1,3 +1,25 @@
+.clearfix { *zoom:1; }
+.clearfix:before, .clearfix:after {
+  display:table;
+  content:"";
+}
+.clearfix:after { clear:both; }
+.hide-text {
+  font:0/0 a;
+  color:transparent;
+  text-shadow:none;
+  background-color:transparent;
+  border:0;
+}
+.input-block-level {
+  display:block;
+  width:100%;
+  min-height:28px;
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  -ms-box-sizing:border-box;
+  box-sizing:border-box;
+}
 .chartWrap {
   margin:0;
   padding:0;
@@ -25,14 +47,6 @@
   z-index:10000;
   font-family:Arial;
   font-size:13px;
-  transition-delay:500ms;
-  -moz-transition-delay:500ms;
-  -webkit-transition-delay:500ms;
-  -moz-box-shadow:4px 4px 8px rgba(0,0,0,0.5);
-  -webkit-box-shadow:4px 4px 8px rgba(0,0,0,0.5);
-  box-shadow:4px 4px 8px rgba(0,0,0,0.5);
-  -moz-border-radius:10px;
-  border-radius:10px;
   pointer-events:none;
   -webkit-touch-callout:none;
   -webkit-user-select:none;
@@ -40,13 +54,30 @@
   -moz-user-select:none;
   -ms-user-select:none;
   user-select:none;
+  -webkit-transition:opacity 10ms linear;
+  -moz-transition:opacity 10ms linear;
+  -ms-transition:opacity 10ms linear;
+  -o-transition:opacity 10ms linear;
+  transition:opacity 10ms linear;
+  -webkit-box-shadow:4px 4px 8px rgba(0,0,0,.5);
+  -moz-box-shadow:4px 4px 8px rgba(0,0,0,.5);
+  box-shadow:4px 4px 8px rgba(0,0,0,.5);
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
+  border-radius:10px;
 }
 .nvtooltip h3 {
   margin:0;
   padding:0;
   text-align:center;
 }
+.nvtooltip h4 {
+  color:#ffffff;
+  text-align:center;
+  margin-bottom:6px;
+}
 .nvtooltip p {
+  color:#dddddd;
   margin:0;
   padding:0;
   text-align:center;
@@ -116,19 +147,38 @@ svg .title { font:bold 14px Arial; }
   zfill:steelblue;
   cursor:pointer;
   fill-opacity:.75;
+  -webkit-transition:fill-opacity 250ms linear;
+  -moz-transition:fill-opacity 250ms linear;
+  -ms-transition:fill-opacity 250ms linear;
+  -o-transition:fill-opacity 250ms linear;
+  transition:fill-opacity 250ms linear;
 }
 .nvd3 .nv-bars rect:hover { fill-opacity:1; }
 .nvd3 .nv-bars .hover rect { fill:lightblue; }
 .nvd3 .nv-bars text { fill:rgba(0,0,0,0); }
 .nvd3 .nv-bars .hover text { fill:#000000; }
-.nvd3 .nv-multibar .nv-groups rect, .nvd3 .nv-multibarHorizontal .nv-groups rect, .nvd3 .nv-discretebar .nv-groups rect { stroke-opacity:0; }
+.nvd3 .nv-multibar .nv-groups rect, .nvd3 .nv-multibarHorizontal .nv-groups rect, .nvd3 .nv-discretebar .nv-groups rect {
+  stroke-opacity:0;
+  -webkit-transition:fill-opacity 250ms linear;
+  -moz-transition:fill-opacity 250ms linear;
+  -ms-transition:fill-opacity 250ms linear;
+  -o-transition:fill-opacity 250ms linear;
+  transition:fill-opacity 250ms linear;
+}
 .nvd3 .nv-multibar .nv-groups rect:hover, .nvd3 .nv-multibarHorizontal .nv-groups rect:hover, .nvd3 .nv-discretebar .nv-groups rect:hover { fill-opacity:1; }
 .nvd3 .nv-discretebar .nv-groups text, .nvd3 .nv-multibarHorizontal .nv-groups text {
   font-weight:bold;
   fill:#000000;
   stroke:rgba(0,0,0,0);
 }
-.nvd3.nv-pie path { stroke-opacity:0; }
+.nvd3.nv-pie path {
+  stroke-opacity:0;
+  -webkit-transition:fill-opacity 250ms linear, stroke-width 250ms linear, stroke-opacity 250ms linear;
+  -moz-transition:fill-opacity 250ms linear, stroke-width 250ms linear, stroke-opacity 250ms linear;
+  -ms-transition:fill-opacity 250ms linear, stroke-width 250ms linear, stroke-opacity 250ms linear;
+  -o-transition:fill-opacity 250ms linear, stroke-width 250ms linear, stroke-opacity 250ms linear;
+  transition:fill-opacity 250ms linear, stroke-width 250ms linear, stroke-opacity 250ms linear;
+}
 .nvd3.nv-pie .nv-slice text {
   stroke:#000000;
   stroke-width:0;
@@ -163,6 +213,13 @@ svg .title { font:bold 14px Arial; }
   fill-opacity:.5;
   stroke-opacity:.5;
 }
+.nvd3 .nv-groups .nv-point {
+  -webkit-transition:stroke-width 250ms linear, stroke-opacity 250ms linear;
+  -moz-transition:stroke-width 250ms linear, stroke-opacity 250ms linear;
+  -ms-transition:stroke-width 250ms linear, stroke-opacity 250ms linear;
+  -o-transition:stroke-width 250ms linear, stroke-opacity 250ms linear;
+  transition:stroke-width 250ms linear, stroke-opacity 250ms linear;
+}
 .nvd3.nv-scatter .nv-groups .nv-point.hover, .nvd3 .nv-groups .nv-point.hover {
   stroke-width:20px;
   fill-opacity:.5 !important;
@@ -185,6 +242,11 @@ svg .title { font:bold 14px Arial; }
 .nvd3.nv-stackedarea path.nv-area {
   fill-opacity:.7;
   stroke-opacity:0;
+  -webkit-transition:fill-opacity 250ms linear, stroke-opacity 250ms linear;
+  -moz-transition:fill-opacity 250ms linear, stroke-opacity 250ms linear;
+  -ms-transition:fill-opacity 250ms linear, stroke-opacity 250ms linear;
+  -o-transition:fill-opacity 250ms linear, stroke-opacity 250ms linear;
+  transition:fill-opacity 250ms linear, stroke-opacity 250ms linear;
 }
 .nvd3.nv-stackedarea path.nv-area.hover { fill-opacity:.9; }
 .nvd3.nv-stackedarea .nv-groups .nv-point {
@@ -233,6 +295,25 @@ svg .title { font:bold 14px Arial; }
   stroke-width:2;
 }
 .nvd3 .nv-lineLegend .nv-series { cursor:default; }
+.nv-treemap svg { background-color:#f5f5f5; }
+.nv-treemap svg text { pointer-events:none; }
+.nv-treemap svg .nv-depth text { fill:#ffffff; }
+.nv-treemap svg .nv-grandparent text { font-weight:bold; }
+.nv-treemap svg rect { stroke:#ffffff; }
+.nv-treemap svg .nv-children.hover .nv-parent {
+  fill:#ffffff;
+  opacity:0.3;
+}
+.nv-treemap svg .nv-parent, .nv-treemap svg .nv-grandparent rect { stroke-width:3px; }
+.nv-treemap svg .nv-child { stroke-width:1px; }
+.nv-treemap svg .nv-parent { fill:none; }
+.nv-treemap svg .nv-grandparent rect { fill:#ffffff; }
+.nv-treemap svg .nv-children .nv-parent, .nv-treemap svg .nv-grandparent rect { cursor:pointer; }
+.nv-treemap svg .nv-parent { pointer-events:all; }
+.stage_closedwon { fill:#369a00; }
+.stage_prospecting { fill:#ce6815; }
+.stage_closedlost { fill:#cf1516; }
+.stage_qualification { fill:#1265b7; }
 body.full-screen {
   overflow-y:scroll;
   padding:20px;

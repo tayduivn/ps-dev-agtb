@@ -1,6 +1,6 @@
 var nv = {
   version: '0.0.1a',
-  dev: true //set false when in production
+  dev: false //set false when in production
 };
 
 window.nv = nv;

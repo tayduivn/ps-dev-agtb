@@ -1,4 +1,6 @@
-
+// Variables
+@import "../fixed_variables.less";
+@import "../twitter-bootstrap/mixins.less";
 /********************
  * General CSS
  */
@@ -57,19 +59,11 @@
 
   font-family: Arial;
   font-size: 13px;
-  @transition: opacity 500ms linear;
+  @transition: opacity 10ms linear;
   .transition(@transition);
 
-  transition-delay: 500ms;
-  -moz-transition-delay: 500ms;
-  -webkit-transition-delay: 500ms;
-
-  -moz-box-shadow: 4px 4px 8px rgba(0,0,0,.5);
-  -webkit-box-shadow: 4px 4px 8px rgba(0,0,0,.5);
-  box-shadow: 4px 4px 8px rgba(0,0,0,.5);
-
-  -moz-border-radius: 10px;
-  border-radius: 10px;
+  .box-shadow(~"4px 4px 8px rgba(0,0,0,.5)");
+  .border-radius(10px);
 
   pointer-events: none;
 
@@ -79,23 +73,30 @@
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-}
 
-.nvtooltip h3 {
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
+  h3 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
 
-.nvtooltip p {
-  margin: 0;
-  padding: 0;
-  text-align: center;
-}
+  h4 {
+    color: #fff;
+    text-align: center;
+    margin-bottom:6px
+  }
 
-.nvtooltip span {
-  display: inline-block;
-  margin: 2px 0;
+  p {
+    color: #ddd;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+  }
+
+  span {
+    display: inline-block;
+    margin: 2px 0;
+  }
 }
 
 .nvtooltip-pending-removal {
@@ -473,7 +474,7 @@ svg .title {
 
 
 /**********
-* Forecast
+* Pareto
 */
 
 .nv-quotaWrap line {
@@ -491,6 +492,72 @@ svg .title {
 
 .nvd3 .nv-lineLegend .nv-series {
   cursor: default;
+}
+
+/**********
+* Treemap
+*/
+.nv-treemap svg {
+  background-color: @grayLighter;
+
+  text {
+    pointer-events: none;
+  }
+
+  .nv-depth text {
+    fill: @white;
+  }
+
+  .nv-grandparent text {
+    font-weight: bold;
+  }
+
+  rect {
+    //fill: none;
+    stroke: #fff;
+  }
+
+  .nv-children.hover .nv-parent {
+    fill: #fff;
+    opacity: 0.3;
+  }
+
+  .nv-parent,
+  .nv-grandparent rect {
+    stroke-width: 3px;
+  }
+  .nv-child {
+    stroke-width: 1px;
+  }
+  .nv-parent {
+    fill: none;
+  }
+  .nv-grandparent rect {
+    fill: #fff;
+  }
+
+  .nv-children .nv-parent,
+  .nv-grandparent rect {
+    cursor: pointer;
+  }
+
+  .nv-parent {
+    pointer-events: all;
+  }
+}
+
+//Opportunities Treemap
+.stage_closedwon {
+  fill: darken(@green, 5%);
+}
+.stage_prospecting {
+  fill: darken(@orange, 5%);
+}
+.stage_closedlost {
+  fill: darken(@red, 5%);
+}
+.stage_qualification {
+  fill: darken(@blueDark, 5%);
 }
 
 /**********

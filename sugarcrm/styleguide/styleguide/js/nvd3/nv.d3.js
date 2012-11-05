@@ -122,21 +122,55 @@ d3.time.monthEnds = d3_time_range(d3.time.monthEnd, function(date) {
 
   nvtooltip.show = function(pos, content, gravity, dist, parentContainer, classes) {
 
-    var container = document.createElement('div');
+    var container = document.createElement('div'),
+        body = document.getElementsByTagName('body')[0];
         container.className = 'nvtooltip ' + (classes ? classes : 'xy-tooltip');
 
     gravity = gravity || 's';
     dist = dist || 20;
 
     //var body = parentContainer ? parentContainer : document.getElementsByTagName('body')[0];
-    var body = document.getElementsByTagName('body')[0];
 
     container.innerHTML = content;
     container.style.left = 0;
     container.style.top = 0;
     container.style.opacity = 0;
+    container.style.position = 'absolute'; //fix scroll bar issue
+    container.style.pointerEvents = 'none'; //fix scroll bar issue
 
+    nvtooltip.position(container,pos,gravity,dist);
     body.appendChild(container);
+
+    container.style.opacity = 1;
+
+    return container;
+  };
+
+  nvtooltip.cleanup = function() {
+
+      // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
+      var tooltips = document.getElementsByClassName('nvtooltip');
+      var purging = [];
+      while(tooltips.length) {
+        purging.push(tooltips[0]);
+        tooltips[0].style.transitionDelay = '0 !important';
+        tooltips[0].style.opacity = 0;
+        tooltips[0].className = 'nvtooltip-pending-removal';
+      }
+
+      setTimeout(function() {
+
+          while (purging.length) {
+             var removeMe = purging.pop();
+              removeMe.parentNode.removeChild(removeMe);
+          }
+      }, 500);
+  };
+
+  nvtooltip.position = function(container,pos,gravity,dist) {
+    var body = document.getElementsByTagName('body')[0];
+    gravity = gravity || 's';
+    dist = dist || 20;
 
     var height = parseInt(container.offsetHeight),
         width = parseInt(container.offsetWidth),
@@ -177,40 +211,9 @@ d3.time.monthEnds = d3_time_range(d3.time.monthEnd, function(date) {
         break;
     }
 
-// console.log(pos[1]+'-('+height+'/2)'+'}'+top)
-// console.log(document.body.scrollTop)
-
     container.style.left = left+'px';
     container.style.top = top+'px';
-    container.style.opacity = 1;
-    container.style.position = 'absolute'; //fix scroll bar issue
-    container.style.pointerEvents = 'none'; //fix scroll bar issue
-
-    return container;
   };
-
-  nvtooltip.cleanup = function() {
-
-      // Find the tooltips, mark them for removal by this class (so others cleanups won't find it)
-      var tooltips = document.getElementsByClassName('nvtooltip');
-      var purging = [];
-      while(tooltips.length) {
-        purging.push(tooltips[0]);
-        tooltips[0].style.transitionDelay = '0 !important';
-        tooltips[0].style.opacity = 0;
-        tooltips[0].className = 'nvtooltip-pending-removal';
-      }
-
-
-      setTimeout(function() {
-
-          while (purging.length) {
-             var removeMe = purging.pop();
-              removeMe.parentNode.removeChild(removeMe);
-          }
-    }, 500);
-  };
-
 
 })();
 
@@ -9001,6 +9004,801 @@ nv.models.stackedAreaChart = function() {
     if (!arguments.length) return yAxisTickFormat;
     yAxisTickFormat = _;
     return yAxis;
+  };
+
+  //============================================================
+
+
+  return chart;
+}
+
+nv.models.treemap = function() {
+
+  //============================================================
+  // Public Variables with Default Settings
+  //------------------------------------------------------------
+
+  var margin = {top: 20, right: 0, bottom: 0, left: 0}
+    , width = 0
+    , height = 0
+    , color = nv.utils.defaultColor() // a function that returns a color
+    , id = Math.floor(Math.random() * 10000) //Create semi-unique ID incase user doesn't select one
+    , getSize = function(d) { return d.size; } // accessor to get the size value from a data point
+    , getName = function(d) { return d.name; } // accessor to get the name value from a data point
+    , clipEdge = true // if true, masks lines within x and y scale
+    , x //can be accessed via chart.xScale()
+    , y //can be accessed via chart.yScale()
+    , color = nv.utils.defaultColor()
+    , fill = function (d,i) { return color(d,i); }
+    , gradient = function (d,i) { return color(d,i); }
+    , className = function(d,i) { return 'nv-fill' + (i%20>9?'':'0') + i%20; }
+    , groups = []
+    , useClass = false
+    , leafClick = function () { return false; }
+    , dispatch = d3.dispatch('chartClick', 'elementClick', 'elementDblClick', 'elementMouseover', 'elementMouseout', 'elementMousemove')
+
+  //============================================================
+
+
+  //============================================================
+  // Private Variables
+  //------------------------------------------------------------
+
+  var x0, y0 //used to store previous scales
+      ;
+
+  //============================================================
+
+
+  function chart(selection) {
+    selection.each(function(chartData) {
+
+      var data = chartData[0];
+
+      function reduceGroups(d) {
+        var i, l, g = groups.length;
+        if ( d.children && getName(d,g) && groups.indexOf(getName(d,g))===-1 )
+        {
+          groups.push(getName(d,g));
+          l = d.children.length;
+          for (i=0;i<l;i++) {
+            reduceGroups(d.children[i]);
+          }
+        }
+      }
+      reduceGroups(data);
+
+      var availableWidth = width - margin.left - margin.right
+        , availableHeight = height - margin.top - margin.bottom
+        , container = d3.select(this)
+        , transitioning
+        , fillGradient = function(d,i) {
+            return nv.utils.colorLinearGradient( d, i, 'vertical', color(d,i), wrap.select('defs') );
+          }
+        ;
+      chart.gradient( fillGradient );
+
+      data.dx = availableWidth;
+      data.dy = availableHeight;
+
+      x = d3.scale.linear()
+            .domain([0, availableWidth])
+            .range([0, availableWidth]);
+
+      y = d3.scale.linear()
+            .domain([0, availableHeight])
+            .range([0, availableHeight]);
+
+      x0 = x0 || x;
+      y0 = y0 || y;
+
+      //------------------------------------------------------------
+
+      //------------------------------------------------------------
+      // Setup containers and skeleton of chart
+
+      var wrap = container.selectAll('g.nv-wrap.nv-treemap').data([data]);
+      var wrapEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-treemap');
+      var defsEnter = wrapEnter.append('defs');
+      var gEnter = wrapEnter.append('g');
+      var g = wrap.select('g');
+
+      //wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+      //------------------------------------------------------------
+      // Clip Path
+
+      // defsEnter.append('clipPath')
+      //     .attr('id', 'nv-edge-clip-' + id)
+      //   .append('rect');
+      // wrap.select('#nv-edge-clip-' + id + ' rect')
+      //     .attr('width', width)
+      //     .attr('height', height);
+      // g.attr('clip-path', clipEdge ? 'url(#nv-edge-clip-' + id + ')' : '');
+
+
+      //------------------------------------------------------------
+      // Main Chart
+
+      var grandparent = gEnter.append("g").attr("class", "nv-grandparent");
+
+      grandparent.append("rect")
+          //.attr("y", -margin.top)
+          .attr("width", width)
+          .attr("height", margin.top);
+
+      grandparent.append("text")
+          .attr("x", 6)
+          .attr("y", 6)
+          .attr("dy", '.75em');
+
+      display(data);
+
+      function display(d) {
+
+          var treemap = d3.layout.treemap()
+              .value(getSize)
+              .sort(function(a, b) { return getSize(a) - getSize(b); })
+              .round(false)
+
+          layout(d);
+
+          grandparent.datum(d.parent).on("click", transition).select("text").text(name(d));
+
+          var g1 = gEnter.insert("g", ".nv-grandparent")
+            .attr("class", "nv-depth")
+            .attr("height",availableHeight)
+            .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+          var g = g1.selectAll("g").data(d.children).enter().append("g");
+
+          // Transition for nodes with children.
+          g.filter(function(d) {
+                return d.children;
+            })
+            .classed("nv-children", true)
+            .on('click', transition);
+
+          // Navigate for nodes without children (leaves).
+          g.filter(function(d) {
+                return !(d.children);
+            })
+            .on("click", leafClick);
+
+          g.on('mouseover', function(d,i){
+              d3.select(this).classed('hover', true);
+              dispatch.elementMouseover({
+                  point: d,
+                  pointIndex: i,
+                  pos: [d3.event.pageX, d3.event.pageY],
+                  id: id
+              });
+            })
+            .on('mouseout', function(d,i){
+              d3.select(this).classed('hover', false);
+              dispatch.elementMouseout();
+            })
+            .on('mousemove', function(d,i){
+              dispatch.elementMousemove({
+                  point: d,
+                  pointIndex: i,
+                  pos: [d3.event.pageX, d3.event.pageY],
+                  id: id
+              });
+            });
+
+
+          var child_rects = g.selectAll(".nv-child").data(function(d) {
+                return d.children || [d];
+            }).enter().append("rect").attr("class", "nv-child").call(rect);
+
+          child_rects
+            .on('mouseover', function(d,i){
+              d3.select(this).classed('hover', true);
+              dispatch.elementMouseover({
+                  label: getName(d),
+                  value: getSize(d),
+                  point: d,
+                  pointIndex: i,
+                  pos: [d3.event.pageX, d3.event.pageY],
+                  id: id
+              });
+            })
+            .on('mouseout', function(d,i){
+              d3.select(this).classed('hover', false);
+              dispatch.elementMouseout();
+            });
+
+          g.append("rect")
+            .attr("class", "nv-parent")
+            .call(rect);
+
+          g.append("text")
+            .attr("dy", ".75em")
+            .text(function(d){
+                  return getName(d);
+            }).call(text);
+
+
+          function transition(d) {
+              dispatch.elementMouseout();
+              if (transitioning || !d) return;
+              transitioning = true;
+
+              var g2 = display(d),
+                t1 = g1.transition().duration(750),
+                t2 = g2.transition().duration(750);
+
+              // Update the domain only after entering new elements.
+              x.domain([d.x, d.x + d.dx]);
+              y.domain([d.y, d.y + d.dy]);
+
+              // Enable anti-aliasing during the transition.
+              container.style("shape-rendering", null);
+
+              // Draw child nodes on top of parent nodes.
+              container.selectAll(".nv-depth").sort(function(a, b) { return a.depth - b.depth; });
+
+              // Fade-in entering text.
+              g2.selectAll("text").style("fill-opacity", 0);
+
+              // Transition to the new view.
+              t1.selectAll("text").call(text).style("fill-opacity", 0);
+              t2.selectAll("text").call(text).style("fill-opacity", 1);
+              t1.selectAll("rect").call(rect);
+              t2.selectAll("rect").call(rect);
+
+              // Remove the old node when the transition is finished.
+              t1.remove().each("end", function() {
+                  container.style("shape-rendering", "crispEdges");
+                  transitioning = false;
+              });
+          }
+
+          function layout(d) {
+              if(d.children) {
+                  treemap.nodes({children: d.children});
+                  d.children.forEach(function(c) {
+                      c.x = d.x + c.x * d.dx;
+                      c.y = d.y + c.y * d.dy;
+                      c.dx *= d.dx;
+                      c.dy *= d.dy;
+                      c.parent = d;
+                      layout(c);
+                  });
+              }
+          }
+
+          function text(t) {
+              t.attr("x", function(d) { return x(d.x) + 6; })
+                  .attr("y", function(d) { return y(d.y) + 6; });
+          }
+
+          function rect(r) {
+              r.attr("x", function(d) { return x(d.x); })
+                .attr("y", function(d) { return y(d.y); })
+                .attr("width", function(d) { return x(d.x + d.dx) - x(d.x); })
+                .attr("height", function(d) { return y(d.y + d.dy) - y(d.y); })
+                .attr("class", function(d,i) {
+                    // if (!el.classed('nv-parent'))
+                    if ( useClass && className(d,i) )
+                    {
+                      d3.select(this).classed(className(d,i),true);
+                    }
+                    return this.getAttribute('class');
+                })
+                .attr('fill', function(d,i){
+                  return (!d3.select(this).classed('nv-parent')) ? this.getAttribute('fill') || fill(d,groups.indexOf(className(d,i))) : this.getAttribute('fill');
+                })
+          }
+
+          function name(d) {
+              if(d.parent) {
+                  return name(d.parent) + " / " + getName(d);
+              }
+              return getName(d);
+          }
+
+          return g;
+      }
+
+    });
+
+    return chart;
+  }
+
+
+  //============================================================
+  // Expose Public Variables
+  //------------------------------------------------------------
+
+  chart.dispatch = dispatch;
+
+
+  chart.color = function(_) {
+    if (!arguments.length) return color;
+    color = _;
+    return chart;
+  };
+  chart.fill = function(_) {
+    if (!arguments.length) return fill;
+    fill = _;
+    return chart;
+  };
+  chart.gradient = function(_) {
+    if (!arguments.length) return gradient;
+    gradient = _;
+    return chart;
+  };
+  chart.useClass = function(_) {
+    if (!arguments.length) return useClass;
+    useClass = _;
+    return chart;
+  };
+
+  chart.x = function(_) {
+    if (!arguments.length) return getX;
+    getX = _;
+    return chart;
+  };
+
+  chart.y = function(_) {
+    if (!arguments.length) return getY;
+    getY = _;
+    return chart;
+  };
+
+  chart.margin = function(_) {
+    if (!arguments.length) return margin;
+    margin = _;
+    return chart;
+  };
+
+  chart.width = function(_) {
+    if (!arguments.length) return width;
+    width = _;
+    return chart;
+  };
+
+  chart.height = function(_) {
+    if (!arguments.length) return height;
+    height = _;
+    return chart;
+  };
+
+  chart.xScale = function(_) {
+    if (!arguments.length) return x;
+    x = _;
+    return chart;
+  };
+
+  chart.yScale = function(_) {
+    if (!arguments.length) return y;
+    y = _;
+    return chart;
+  };
+
+  chart.xDomain = function(_) {
+    if (!arguments.length) return xDomain;
+    xDomain = _;
+    return chart;
+  };
+
+  chart.yDomain = function(_) {
+    if (!arguments.length) return yDomain;
+    yDomain = _;
+    return chart;
+  };
+
+  chart.id = function(_) {
+    if (!arguments.length) return id;
+    id = _;
+    return chart;
+  };
+
+  chart.leafClick = function(_) {
+    if (!arguments.length) return leafClick;
+    leafClick = _;
+    return chart;
+  };
+
+  chart.getSize = function(_) {
+    if (!arguments.length) return getSize;
+    getSize = _;
+    return chart;
+  };
+
+  chart.getName = function(_) {
+    if (!arguments.length) return getName;
+    getName = _;
+    return chart;
+  };
+
+  chart.className = function(_) {
+    if (!arguments.length) return className;
+    className = _;
+    return chart;
+  };
+
+  chart.groups = function(_) {
+    if (!arguments.length) return groups;
+    groups = _;
+    return chart;
+  };
+
+  //============================================================
+
+
+  return chart;
+}
+
+nv.models.treemapChart = function() {
+
+  //============================================================
+  // Public Variables with Default Settings
+  //------------------------------------------------------------
+
+  var treemap = nv.models.treemap()
+    , legend = nv.models.legend()
+    ;
+
+  var margin = {top: 10, right: 10, bottom: 10, left: 10}
+    , width = null
+    , height = null
+    , color = nv.utils.defaultColor()
+    , showLegend = false
+    , showTitle = false
+    , tooltip = null
+    , tooltips = true
+    , tooltipContent = function(point) {
+        var tt = '<p>Value: <b>' + d3.format(',.2s')(point.value) + '</b></p>' +
+          '<p>Name: <b>' + point.name + '</b></p>';
+        return tt;
+      }
+    , x //can be accessed via chart.xScale()
+    , y //can be accessed via chart.yScale()
+    , noData = "No Data Available."
+    , dispatch = d3.dispatch('tooltipShow', 'tooltipHide', 'tooltipMove','elementMousemove')
+    ;
+
+
+  //============================================================
+
+
+  //============================================================
+  // Private Variables
+  //------------------------------------------------------------
+
+  var showTooltip = function(e, offsetElement) {
+    //console.log(e.pos)
+    var left = e.pos[0],// + ( (offsetElement && offsetElement.offsetLeft) || 0 ),
+        top = e.pos[1],// + ( (offsetElement && offsetElement.offsetTop) || 0 ),
+        content = tooltipContent(e.point);
+    tooltip = nv.tooltip.show( [left, top], content, null, null, offsetElement );
+  };
+
+  //============================================================
+
+
+  function chart(selection) {
+
+    selection.each(function(chartData) {
+      var data = [chartData];
+
+      var container = d3.select(this),
+          that = this;
+
+      var availableWidth = (width  || parseInt(container.style('width')) || 960)
+                             - margin.left - margin.right,
+          availableHeight = (height || parseInt(container.style('height')) || 400)
+                             - margin.top - margin.bottom;
+
+      //------------------------------------------------------------
+      // Display noData message if there's nothing to show.
+
+      if (!data || !data.length || !data.filter(function(d) { return d.children.length }).length) {
+        container.append('text')
+          .attr('class', 'nvd3 nv-noData')
+          .attr('x', availableWidth / 2)
+          .attr('y', availableHeight / 2)
+          .attr('dy', '-.7em')
+          .style('text-anchor', 'middle')
+          .text(noData);
+          return chart;
+      } else {
+        container.select('.nv-noData').remove();
+      }
+
+
+      //------------------------------------------------------------
+      // Setup Scales
+
+      x = treemap.xScale();
+      y = treemap.yScale(); //see below
+
+
+      //------------------------------------------------------------
+      // Setup containers and skeleton of chart
+
+      var wrap = container.selectAll('g.nv-wrap.nv-treemapWithLegend').data([data]);
+      var gEnter = wrap.enter().append('g').attr('class', 'nvd3 nv-wrap nv-treemapWithLegend').append('g');
+      var g = wrap.select('g');
+
+      gEnter.append('g').attr('class', 'nv-treemapWrap');
+
+      //------------------------------------------------------------
+
+
+      //------------------------------------------------------------
+      // Title & Legend
+
+      var titleHeight = 0
+        , legendHeight = 0;
+
+      if (showLegend)
+      {
+        gEnter.append('g').attr('class', 'nv-legendWrap');
+
+        legend.width(availableWidth+margin.left);
+
+        g.select('.nv-legendWrap')
+            .datum(data)
+            .call(legend);
+
+        legendHeight = legend.height() + 10;
+
+        if ( margin.top !== legendHeight + titleHeight ) {
+          margin.top = legendHeight + titleHeight;
+          availableHeight = (height || parseInt(container.style('height')) || 400)
+                             - margin.top - margin.bottom;
+        }
+
+        g.select('.nv-legendWrap')
+            .attr('transform', 'translate('+ (-margin.left) +',' + (-margin.top) +')');
+      }
+
+      if (showTitle && properties.title )
+      {
+        gEnter.append('g').attr('class', 'nv-titleWrap');
+
+        g.select('.nv-title').remove();
+
+        g.select('.nv-titleWrap')
+          .append('text')
+            .attr('class', 'nv-title')
+            .attr('x', 0)
+            .attr('y', 0 )
+            .attr('text-anchor', 'start')
+            .text(properties.title)
+            .attr('stroke', 'none')
+            .attr('fill', 'black')
+          ;
+
+        titleHeight = parseInt( g.select('.nv-title').style('height') ) +
+          parseInt( g.select('.nv-title').style('margin-top') ) +
+          parseInt( g.select('.nv-title').style('margin-bottom') );
+
+        if ( margin.top !== titleHeight + legendHeight )
+        {
+          margin.top = titleHeight + legendHeight;
+          availableHeight = (height || parseInt(container.style('height')) || 400)
+                             - margin.top - margin.bottom;
+        }
+
+        g.select('.nv-titleWrap')
+            .attr('transform', 'translate(0,' + (-margin.top+parseInt( g.select('.nv-title').style('height') )) +')');
+      }
+
+
+      //------------------------------------------------------------
+
+      wrap.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+
+      //------------------------------------------------------------
+      // Main Chart Component(s)
+
+      treemap
+        .width(availableWidth)
+        .height(availableHeight);
+
+
+      var treemapWrap = g.select('.nv-treemapWrap')
+          .datum( data.filter(function(d) { return !d.disabled }) );
+
+      d3.transition(treemapWrap).call(treemap);
+
+      //------------------------------------------------------------
+
+
+
+      //============================================================
+      // Event Handling/Dispatching (in chart's scope)
+      //------------------------------------------------------------
+
+      legend.dispatch.on('legendClick', function(d,i) {
+        d.disabled = !d.disabled;
+
+        if (!data.filter(function(d) { return !d.disabled }).length) {
+          data.map(function(d) {
+            d.disabled = false;
+            wrap.selectAll('.nv-series').classed('disabled', false);
+            return d;
+          });
+        }
+
+        selection.transition().call(chart);
+      });
+
+      dispatch.on('tooltipShow', function(e) {
+        if (tooltips) showTooltip(e, that.parentNode)
+      });
+
+      //============================================================
+
+      //TODO: decide if this makes sense to add into all the models for ease of updating (updating without needing the selection)
+      chart.update = function() { selection.transition().call(chart) };
+      chart.container = this; // I need a reference to the container in order to have outside code check if the chart is visible or not
+
+    });
+
+    return chart;
+  }
+
+
+  //============================================================
+  // Event Handling/Dispatching (out of chart's scope)
+  //------------------------------------------------------------
+
+  treemap.dispatch.on('elementMouseover', function(e) {
+    e.pos = [e.pos[0] + margin.left, e.pos[1] + margin.top];
+    dispatch.tooltipShow(e);
+  });
+
+  treemap.dispatch.on('elementMouseout', function(e) {
+    dispatch.tooltipHide(e);
+  });
+  dispatch.on('tooltipHide', function() {
+    if (tooltips) {
+      nv.tooltip.cleanup();
+    }
+  });
+
+  treemap.dispatch.on('elementMousemove', function(e) {
+    dispatch.tooltipMove(e);
+  });
+  dispatch.on('tooltipMove', function(e) {
+    if (tooltip) {
+      nv.tooltip.position(tooltip,e.pos);
+    }
+  });
+  //============================================================
+
+
+  //============================================================
+  // Expose Public Variables
+  //------------------------------------------------------------
+
+  // expose chart's sub-components
+  chart.dispatch = dispatch;
+  chart.legend = legend;
+  chart.treemap = treemap;
+
+  d3.rebind(chart, treemap, 'x', 'y', 'xDomain', 'yDomain', 'forceX', 'forceY', 'clipEdge', 'id', 'delay', 'color', 'gradient', 'useClass', 'leafClick', 'getSize', 'getName', 'className', 'groups');
+
+  chart.colorData = function(_) {
+    if (arguments[0] === 'graduated')
+    {
+      var c1 = arguments[1].c1
+        , c2 = arguments[1].c2
+        , l = arguments[1].l;
+      var color = function (d,i) { return d3.interpolateHsl( d3.rgb(c1), d3.rgb(c2) )(i/l) };
+    }
+    else if (_ === 'class')
+    {
+      treemap.useClass(true);
+      legend.useClass(true);
+      var color = function (d,i) { return 'inherit' };
+    }
+    else
+    {
+      var color = nv.utils.defaultColor();
+    }
+
+    treemap.color(color);
+    legend.color(color);
+
+    return chart;
+  };
+
+  chart.colorFill = function(_) {
+    if (_ === 'gradient')
+    {
+      var fill = function (d,i) { return chart.gradient()(d,i); };
+    }
+    else
+    {
+      var fill = chart.color();
+    }
+
+    treemap.fill(fill);
+
+    return chart;
+  };
+
+  chart.x = function(_) {
+    if (!arguments.length) return getX;
+    getX = _;
+    treemap.x(_);
+    return chart;
+  };
+
+  chart.y = function(_) {
+    if (!arguments.length) return getY;
+    getY = _;
+    treemap.y(_);
+    return chart;
+  };
+
+  chart.margin = function(_) {
+    if (!arguments.length) return margin;
+    margin = _;
+    return chart;
+  };
+
+  chart.width = function(_) {
+    if (!arguments.length) return width;
+    width = _;
+    return chart;
+  };
+
+  chart.height = function(_) {
+    if (!arguments.length) return height;
+    height = _;
+    return chart;
+  };
+
+  chart.color = function(_) {
+    if (!arguments.length) return color;
+    color = nv.utils.getColor(_);
+    legend.color(color);
+    return chart;
+  };
+
+  chart.showLegend = function(_) {
+    if (!arguments.length) return showLegend;
+    showLegend = _;
+    return chart;
+  };
+
+  chart.showTitle = function(_) {
+    if (!arguments.length) return showTitle;
+    showTitle = _;
+    return chart;
+  };
+
+  chart.tooltip = function(_) {
+    if (!arguments.length) return tooltip;
+    tooltip = _;
+    return chart;
+  };
+
+  chart.tooltips = function(_) {
+    if (!arguments.length) return tooltips;
+    tooltips = _;
+    return chart;
+  };
+
+  chart.tooltipContent = function(_) {
+    if (!arguments.length) return tooltipContent;
+    tooltipContent = _;
+    return chart;
+  };
+
+  chart.noData = function(_) {
+    if (!arguments.length) return noData;
+    noData = _;
+    return chart;
   };
 
   //============================================================

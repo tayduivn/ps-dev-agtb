@@ -25,6 +25,8 @@ JS_FILES = \
 	src/models/sparklinePlus.js \
 	src/models/stackedArea.js \
 	src/models/stackedAreaChart_sugar.js \
+	src/models/treemap.js \
+	src/models/treemapChart.js \
 	src/outro.js
 
 JS_COMPILER = \
