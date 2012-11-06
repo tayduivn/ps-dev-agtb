@@ -26,7 +26,7 @@ require_once('include/api/SugarApi.php');
 require_once('include/api/RestService.php');
 require_once('clients/base/api/UnifiedSearchApi.php');
 
-class RestBug57679Test extends Sugar_PHPUnit_Framework_TestCase
+class RestBug56791Test extends Sugar_PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
