@@ -44,7 +44,7 @@
         });
         */
 
-        this.context.forecasts.on('forecasts:worksheet:render', function() {
+        this.context.forecasts.on('forecasts:worksheet:rendered forecasts:worksheet:filtered', function() {
             self._render();
         })
     },

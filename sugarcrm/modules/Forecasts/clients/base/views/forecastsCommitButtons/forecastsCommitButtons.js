@@ -1,3 +1,14 @@
+/**
+ * Events Triggered
+ *
+ * forecasts:commitButtons:disabled
+ *      on: context.forecasts
+ *      by: change:selectedUser, change:selectedTimePeriod
+ *
+ * modal:forecastsTabbedConfig:open - to cause modal.js to pop up
+ *      on: layout
+ *      by: triggerConfigModal()
+ */
 ({
 
     /**
