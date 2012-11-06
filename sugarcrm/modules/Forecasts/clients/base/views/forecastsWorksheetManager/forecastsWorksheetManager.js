@@ -3,6 +3,19 @@
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: _render()
+ *      when: done rendering if enableCommit is true
+ *
+ * forecasts:worksheetmanager:rendered
+ *      on: context.forecasts
+ *      by: _render()
+ *      when: done rendering
  */
 ({
     url: 'rest/v10/ForecastManagerWorksheets',
@@ -337,7 +350,7 @@
         }
         
         this.calculateTotals();
-        self.context.forecasts.trigger('forecasts:worksheetmanager:render');
+        self.context.forecasts.trigger('forecasts:worksheetmanager:rendered');
 
     },
 

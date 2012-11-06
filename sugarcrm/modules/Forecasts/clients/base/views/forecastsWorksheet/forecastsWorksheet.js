@@ -4,6 +4,29 @@
  * @class View.Views.WorksheetView
  * @alias SUGAR.App.layout.WorksheetView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:forecastcommitbuttons:triggerCommit
+ *      on: context.forecasts
+ *      by: safeFetch()
+ *      when: user clicks ok on confirm dialog that they want to commit data
+ *
+ * forecasts:worksheet:rendered
+ *      on: context.forecasts
+ *      by: _render
+ *      when: the worksheet is done rendering
+ *
+ * forecasts:worksheet:filtered
+ *      on: context.forecasts
+ *      by: updateWorksheetBySelectedCategory()
+ *      when: dataTable is finished filtering itself
+ *
+ * forecasts:worksheet:filtered
+ *      on: context.forecasts
+ *      by: updateWorksheetBySelectedCategory()
+ *      when: dataTable is finished filtering itself and has destroyed and redrawn itself
  */
 ({
 
@@ -559,7 +582,7 @@
         this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
                 
         // Trigger event letting other components know worksheet finished rendering
-        self.context.forecasts.trigger("forecasts:worksheet:render");
+        self.context.forecasts.trigger("forecasts:worksheet:rendered");
 
         return this;
     },
@@ -736,7 +759,7 @@
                         selectVal = editable ? rowCategory.find("select").attr("value") : rowCategory.text().trim().toLowerCase();
                     }
 
-                    self.context.forecasts.trigger('forecasts:worksheet:render');
+                    self.context.forecasts.trigger('forecasts:worksheet:filtered');
 
                     return (_.contains(params, selectVal));
 
@@ -748,7 +771,7 @@
 	        this.gTable = this.$('.worksheetTable').dataTable(self.gTableDefs);
 	        // fix the style on the rows that contain a checkbox
 	        this.$el.find('td:has(span>input[type=checkbox])').addClass('center');
-            this.context.forecasts.trigger('forecasts:worksheet:render');
+            this.context.forecasts.trigger('forecasts:worksheet:filtered');
     	}
     },
 

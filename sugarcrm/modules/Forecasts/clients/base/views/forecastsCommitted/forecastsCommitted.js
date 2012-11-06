@@ -5,7 +5,25 @@
  * @class View.Views.GridView
  * @alias SUGAR.App.layout.GridView
  * @extends View.View
+ *
+ *
+ * Events Triggered
+ *
+ * forecasts:commitButtons:enabled
+ *      on: context.forecasts
+ *      by: updateTotals()
+ *
+ * forecasts:commitButtons:disabled
+ *      on: context.forecasts
+ *      by: commitForecast()
+ *
+ * forecasts:committed:saved
+ *      on: context.forecasts
+ *      by: commitForecast()
+ *      when: the new forecast model has saved successfully
  */
+
+
 ({
     /**
      * The url for the REST endpoint

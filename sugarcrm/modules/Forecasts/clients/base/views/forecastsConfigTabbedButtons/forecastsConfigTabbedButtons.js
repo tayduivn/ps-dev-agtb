@@ -1,3 +1,16 @@
+/**
+ * Events Triggered
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: close()
+ *      when: the user closes the modal
+ *
+ * modal:close
+ *      on: layout.context
+ *      by: save()
+ *      when: the new config model has saved successfully
+ */
 ({
     /**
      * The Current Active Panel Index
