@@ -431,6 +431,13 @@ GROUP BY u.user_name";
             }
         }
 
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
+            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+        }
+
         $seed->setWorksheetArgs($this->getArgs());
         $seed->save();
         return $seed->id;
