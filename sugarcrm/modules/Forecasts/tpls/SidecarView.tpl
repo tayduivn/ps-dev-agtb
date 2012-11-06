@@ -1,3 +1,5 @@
+
+<link rel="stylesheet" type="text/css" href="{$css_url}" />
 <div class="content" id="forecasts"></div>
 <footer>
     <div class="row-fluid">

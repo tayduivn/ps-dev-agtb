@@ -188,6 +188,15 @@ class SugarForecasting_Individual extends SugarForecasting_AbstractForecast impl
                $field->save($seed, $this->args, $fieldName, $properties);
             }
         }
+
+        //TODO-sfa remove this once the ability to map buckets when they get changed is implemented (SFA-215).
+        $admin = BeanFactory::getBean('Administration');
+        $settings = $admin->getConfigForModule('Forecasts');
+        if (!isset($settings['has_commits']) || !$settings['has_commits']) {
+            $admin->saveSetting('Forecasts', 'has_commits', true, 'base');
+        }
+
+
 		$seed->setWorksheetArgs($this->args);
         $seed->save();
         return $seed->id;
