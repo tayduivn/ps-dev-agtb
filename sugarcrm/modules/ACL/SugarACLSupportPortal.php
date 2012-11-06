@@ -62,29 +62,34 @@ class SugarACLSupportPortal extends SugarACLStatic
     protected function isPortalOwner(SugarBean $bean) {
         if ( empty($bean->id) || $bean->new_with_id ) {
             // New record, they are the owner.
-            return true;
+            $bean->portal_owner = true;
         }
-        switch( $bean->module_dir ) {
-            case 'Contacts':
-                return $bean->id == $_SESSION['contact_id'];
-                break;
-                // Cases & Bugs work the same way, so handily enough we can share the code.
-            case 'Cases':
-            case 'Bugs':
-                $bean->load_relationship('contacts');
-                $rows = $bean->contacts->query(array(
-                                                   'where'=>array(
-                                                       // query adds the prefix so we don't need contact.id
-                                                       'lhs_field'=>'id',
-                                                       'operator'=>'=',
-                                                       'rhs_value'=>$GLOBALS['db']->quote($_SESSION['contact_id']),
-                                                       )));
-                return count($rows) > 0;
-                break;
-            default:
-                // Unless we know how to find the "owner", they can't own it.
-                return false;
+        // Cache portal owner on bean so that we aren't loading Contacts for each acl check
+        // Performance Bug58133
+        if(!isset($bean->portal_owner)){
+            switch( $bean->module_dir ) {
+                case 'Contacts':
+                    return $bean->id == $_SESSION['contact_id'];
+                    break;
+                    // Cases & Bugs work the same way, so handily enough we can share the code.
+                case 'Cases':
+                case 'Bugs':
+                    $bean->load_relationship('contacts');
+                    $rows = $bean->contacts->query(array(
+                                                       'where'=>array(
+                                                           // query adds the prefix so we don't need contact.id
+                                                           'lhs_field'=>'id',
+                                                           'operator'=>'=',
+                                                           'rhs_value'=>$GLOBALS['db']->quote($_SESSION['contact_id']),
+                                                           )));
+                    $bean->portal_owner = count($rows) > 0;
+                    break;
+                default:
+                    // Unless we know how to find the "owner", they can't own it.
+                    $bean->portal_owner = false;
+            }
         }
+        return $bean->portal_owner;
     }
 
     /**
@@ -115,7 +120,6 @@ class SugarACLSupportPortal extends SugarACLStatic
                  && $bean->module_dir != 'KBDocuments' ) {
                 return false;
             }
-
             $context['owner_override'] = $this->isPortalOwner($bean);
             
             if(isset(self::$action_translate[$action])) {
