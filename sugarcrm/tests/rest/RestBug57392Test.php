@@ -1,5 +1,4 @@
 <?php
-//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -26,7 +25,7 @@
 require_once('tests/rest/RestTestBase.php');
 
 
-class RestBug55655Test extends RestTestBase
+class RestBug57392Test extends RestTestBase
 {
 
     public function setUp()
