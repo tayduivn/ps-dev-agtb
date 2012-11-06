@@ -6502,6 +6502,40 @@ input[type=radio] { display:inline-block; }
   height:20px;
 }
 .mu.extend .fieldPlaceHolder { margin-left:4px; }
+.upload-field-custom {
+  overflow:hidden;
+  display:inline-block;
+  position:relative;
+  vertical-align:middle;
+  text-align:center;
+  height:18px !important;
+  padding-right:0 !important;
+  padding-left:0 !important;
+}
+.upload-field-custom input {
+  position:absolute;
+  top:0;
+  left:0;
+  margin:0;
+  font-size:70px;
+  opacity:0;
+  filter:1;
+}
+.upload-field-custom:active strong { color:#ffffff; }
+.upload-field-custom span {
+  position:absolute;
+  top:0;
+  left:0;
+  display:inline-block;
+  padding-top:.45em;
+}
+.upload-field-custom span> strong { white-space:nowrap; }
+.upload-field-custom, .upload-field-custom span { width:100px; }
+.file-upload-status {
+  padding:0 0 0 .5em;
+  position:relative;
+  top:2 px;
+}
 #sales_stage_filter_chzn .chzn-drop, #date_filter_chzn .chzn-drop { padding:10px; }
 #sales_stage_filter_chzn .chzn-single-with-drop div b, #date_filter_chzn .chzn-single-with-drop div b { background-position:0px 0px; }
 .chzn-container-active .chzn-single-with-drop {

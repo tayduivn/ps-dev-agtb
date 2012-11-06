@@ -225,3 +225,65 @@ input[type=radio] {
 .mu.extend .fieldPlaceHolder {
 margin-left:4px;
 }
+
+
+
+
+/* Customize look of upload button */
+.upload-field-custom {
+	overflow: hidden;
+	display: inline-block;
+	position: relative; 
+	vertical-align: middle;
+	text-align: center;
+	height:18px !important;
+	padding-right: 0 !important;
+	padding-left: 0 !important;
+	input {
+		position: absolute;
+		top: 0;
+		left: 0;
+		margin: 0;
+		font-size: 70px;
+
+		/* Loses tab index in webkit if width is set to 0 */
+		opacity: 0;
+		filter: alpha(opacity=0);
+	}
+	/*
+	&.focus { 
+	  outline: 2px solid yellow;
+	  }
+	*/
+
+	&:active strong {
+		color:#ffffff;
+	}
+
+	span {
+	  position: absolute;
+	  top: 0;
+	  left: 0;
+	  display: inline-block;
+
+	  /* Adjust button text vertical alignment */
+	  padding-top: .45em;
+
+	  &> strong {
+	  	white-space:nowrap;
+
+	  }
+	}
+
+	&,
+	& span {
+		width: 100px;
+	}
+}  
+
+.file-upload-status {
+  padding:0 0 0 .5em;
+  position:relative;
+  top:2 px;
+}
+
