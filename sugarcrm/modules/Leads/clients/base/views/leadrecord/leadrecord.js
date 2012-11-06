@@ -11,13 +11,14 @@
     },
 
     showConvert: function() {
-        var view = app.view.createView({
+        var layout = app.view.createLayout({
             context: this.context,
             module: this.context.get("module"),
-            name: "convert"
+            name: "convert",
+            layout: this.layout
         });
 
-       $('.headerpane').parent().before(view.$el);
-       view.render();
+        $('.headerpane').parent().before(layout.$el);
+        layout.render();
     }
 })

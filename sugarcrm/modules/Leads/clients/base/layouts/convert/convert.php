@@ -1,6 +1,6 @@
 <?php
 
-$viewdefs['Leads']['base']['view']['convert'] = array(
+$viewdefs['Leads']['base']['layout']['convert'] = array(
     'firstStep' => 'Contacts',
     'modules' => array(
         array(

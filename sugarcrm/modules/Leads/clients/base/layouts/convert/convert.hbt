@@ -10,9 +10,10 @@
         </div>
     </div>
 </div>
-
+{{log this}}
 <div class="accordion" id="convert-accordion">
     {{#each meta.modules}}
+    {{log this}}
         <div class="accordion-group">
           <div class="accordion-heading">
             <a class="accordion-toggle {{#eq ../firstStep this.module}}active{{/eq}}" data-id="collapse{{this.module}}" data-toggle="collapse" data-parent="#convert-accordion" data-target="#collapse{{this.module}}">
