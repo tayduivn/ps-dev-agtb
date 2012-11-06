@@ -130,7 +130,6 @@
 
         this._collection = this.context.forecasts.committed;
 
-        this.userId = app.user.get('id');
         this.forecastType = (app.user.get('isManager') == true && app.user.get('showOpps') == false) ? 'Rollup' : 'Direct';
         this.timePeriodId = app.defaultSelections.timeperiod_id.id;
         this.selectedUser = {id: app.user.get('id'), "isManager":app.user.get('isManager'), "showOpps": false};
@@ -147,7 +146,7 @@
 
     createUrl : function() {
         var urlParams = {
-            user_id: this.userId,
+            user_id: this.selectedUser.id,
             timeperiod_id : this.timePeriodId,
             forecast_type : this.forecastType
         };
@@ -179,8 +178,6 @@
 
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
-                self.userId = user.id;
-                self.fullName = user.full_name;
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
                 self.selectedUser = user;
                 // when ever the users changes, empty out the saved totals
@@ -348,11 +345,10 @@
 
         var forecast = new this._collection.model();
         forecast.url = self.url;
-        var user = this.context.forecasts.get('selectedUser');
-
+        
         var forecastData = {};
        
-        if(user.isManager == true && user.showOpps == false) {
+        if(self.selectedUser.isManager == true && self.selectedUser.showOpps == false) {
             forecastData.best_case = self.totals.best_adjusted;
             forecastData.likely_case = self.totals.likely_adjusted;
             forecastData.worst_case = self.totals.worst_adjusted;
