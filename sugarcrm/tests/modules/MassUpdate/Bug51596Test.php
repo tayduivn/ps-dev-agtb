@@ -54,7 +54,8 @@ class Bug51596Test extends Sugar_PHPUnit_Framework_TestCase
     */
     public function setUp()
     {
-        $GLOBALS['current_user'] = SugarTestUserUtilities::createAnonymousUser(true, true);
+        SugarTestHelper::setUp('mod_strings', array('Administration'));
+        SugarTestHelper::setUp('current_user', array(true, true));
 
         // add an extra relationship that will be used for search
         self::registerExtension('Contacts', 'bug51596test.php', array(
@@ -147,6 +148,7 @@ class Bug51596Test extends Sugar_PHPUnit_Framework_TestCase
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
 
         unset($GLOBALS['reload_vardefs'], $_SESSION['developerMode']);
+        SugarTestHelper::tearDown();
     }
 
     /**
