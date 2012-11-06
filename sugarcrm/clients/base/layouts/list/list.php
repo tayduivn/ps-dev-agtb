@@ -1,18 +1,10 @@
 <?php
-$viewdefs['base']['layout']['list'] = array(
-    'type' => 'fluid',
-    'components' => array(
-        array(
-            'view' => 'list-top',
-        ),
-        array(
-            'view' => 'filter',
-        ),
-        array(
-            'view' => 'list',
-        ),
-        array(
-            'view' => 'list-bottom',
-        )
-    ),
-);
+
+$layout = MetaDataManager::getLayout('SideBarLayout');
+$layout->push('main', array('view'=>'headerpane'));
+$layout->push('main', array('view'=>'list-top'));
+$layout->push('main', array('view'=>'filter'));
+$layout->push('main', array('view'=>'list'));
+$layout->push('main', array('view'=>'list-bottom'));
+$layout->push('side', array('layout'=>'sidebar'));
+$viewdefs['base']['layout']['list'] = $layout->getLayout();
