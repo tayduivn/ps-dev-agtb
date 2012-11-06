@@ -64,12 +64,12 @@ class SugarACLSupportPortal extends SugarACLStatic
             // New record, they are the owner.
             $bean->portal_owner = true;
         }
-        // Cache portal owner on bean so that we aren't loading Contacts for each acl check
+        // Cache portal owner on bean so that we aren't loading Contacts for each ACL check
         // Performance Bug58133
         if(!isset($bean->portal_owner)){
             switch( $bean->module_dir ) {
                 case 'Contacts':
-                    return $bean->id == $_SESSION['contact_id'];
+                    $bean->portal_owner = $bean->id == $_SESSION['contact_id'];
                     break;
                     // Cases & Bugs work the same way, so handily enough we can share the code.
                 case 'Cases':
