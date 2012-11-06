@@ -96,6 +96,8 @@ class ForecastsCurrentUserApi extends CurrentUserApi {
         $admin = BeanFactory::getBean("Administration");
         $forecastsSettings = $admin->getConfigForModule("Forecasts", "base");
 
+        $returnInitData["initData"]['forecasts_setup'] = $forecastsSettings['is_setup'];
+
         $defaultSelections["category"] = array("include");
         $defaultSelections["group_by"] = 'forecast';
         $defaultSelections["dataset"] = 'likely';

@@ -52,11 +52,17 @@
          */
         _render: function () {
             app.view.Layout.prototype._render.call(this);
-            this._showConfigModal();
+            if(this.context.forecasts.config.get('is_setup') == 1) {
+                window.location.hash = "";
+            } else {
+                this._showConfigModal();
+            }
+            // initialize the alerts again.
+            app.alert.init();
             return this;
         },
 
-        _showConfigModal: function(showWizard) {
+        _showConfigModal: function() {
             var self = this;
 
             // begin building params to pass to modal
@@ -76,7 +82,7 @@
 
             // callback has to be a function returning the checkSettingsAndRedirect function
             // to maintain the proper context otherwise from modal, "this" is the Window
-            var callback = function() { return self.checkSettingsAndRedirect }
+            var callback = function() { return self.checkSettingsAndRedirect };
             this.trigger("modal:forecastsWizardConfig:open", params, callback);
         },
 
@@ -84,11 +90,16 @@
          * Checks the is_setup config setting and determines where to send the user
          */
         checkSettingsAndRedirect: function() {
-            var loc = 'index.php?module=Forecasts';
             if(!this.context.forecasts.config.get('is_setup')) {
-                loc = 'index.php?module=Home';
+                window.location = 'index.php?module=Home';
             }
-            window.location = loc;
+            // we have a success save, so we need to call the app.sync() and then redirect back to the index
+            //app.alert.show('loading', {level: 'process', title : 'Loading'});
+            app.alert.show('success', {level: 'success', title :'Success:', messages: ['You successfully set up your forecasting module. Please wait while it loads.']})
+            app.sync({callback: function() {
+                window.location.hash = "#";
+            }});
+
         }
     });
 

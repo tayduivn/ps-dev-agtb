@@ -46,26 +46,12 @@ class ForecastsViewSidecar extends SidecarView
      */
     public function display()
     {
-        global $current_user, $sugar_config;
-
-        $admin = BeanFactory::getBean('Administration');
-        $adminCfg = $admin->getConfigForModule('Forecasts');
-
         $module = $this->module;
         $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView.tpl");
-
-        if($adminCfg['is_setup'])  {
-            $initData = json_encode($this->forecastsInitialization());
-        } else {
-            $initData = json_encode($this->forecastsInitialization(true));
-            $module = 'forecastsEmpty';
-            $displayTemplate = get_custom_file_if_exists("modules/Forecasts/tpls/SidecarView_empty.tpl");
-        }
 
         // begin initializing all default params
         $this->ss->assign("token", session_id());
         $this->ss->assign("module", $module);
-        $this->ss->assign("initData" ,$initData);
         $this->ss->display($displayTemplate);
     }
 
@@ -79,6 +65,9 @@ class ForecastsViewSidecar extends SidecarView
         global $current_user, $app_list_strings;
 
         $returnInitData = array();
+
+        return $returnInitData;
+
         $defaultSelections = array();
 
         require_once('modules/Forecasts/clients/base/api/ForecastsCurrentUserApi.php');

@@ -107,8 +107,6 @@
             app.initData = null;
 
             app.view.Layout.prototype.initialize.call(this, options);
-
-            this.initializeDrawer();
         },
 
         /**
@@ -251,24 +249,6 @@
             if (!target[namespace]) {
                 target[namespace] = {};
             }
-        },
-
-        /**
-         * Initializes the drawer on the left of the forecasts page that contains the filters
-         */
-        initializeDrawer: function() {
-            $('.drawerTrig').on('click', function () {
-                // hide and show drawer
-                $(this).toggleClass('pull-right').toggleClass('pull-left');
-                $('.bordered').toggleClass('hide');
-
-                // toggle icon
-                $(this).find('i').toggleClass('icon-chevron-left').toggleClass('icon-chevron-right');
-
-                // widen the rest of the page
-                $('#drawer').toggleClass('span2');
-                $('#charts').toggleClass('span10').toggleClass('span12');
-            });
         },
 
         /**
