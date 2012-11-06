@@ -77,6 +77,8 @@
             'include/javascript/jquery/jquery.jeditable.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.chosen.min.js'              => 'include/javascript/sugar_grp1_jquery.js',
             'include/javascript/jquery/jquery.jstree.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.popoverext.js'              => 'include/javascript/sugar_grp1_jquery.js',
+            'include/javascript/jquery/jquery.effects.custombounce.js'              => 'include/javascript/sugar_grp1_jquery.js',
 
             
 			),
