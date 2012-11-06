@@ -43,6 +43,7 @@ class vCardApi extends SugarApi {
                 'path' => array('VCardDownload'),
                 'pathVars' => array(''),
                 'method' => 'vCardSave',
+                'rawReply' => true,
                 'shortHelp' => 'An API to download a contact as a vCard.',
                 'longHelp' => 'include/api/help/vCard.html',
             ),
