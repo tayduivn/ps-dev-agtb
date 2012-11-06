@@ -17,10 +17,10 @@
  *      on: context.forecasts
  *      by: commitForecast()
  *
- * forecasts:committed:saved - when the new forecast model has saved successfully
+ * forecasts:committed:saved
  *      on: context.forecasts
  *      by: commitForecast()
- *
+ *      when: the new forecast model has saved successfully
  */
 
 
