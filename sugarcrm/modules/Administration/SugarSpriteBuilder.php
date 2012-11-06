@@ -538,7 +538,7 @@ class SpritePlacement
 	*/
 	var $config = array();
 
-	function __construct($spriteSrc, $config) {
+	public function __construct($spriteSrc, $config) {
 
 		// convert spriteSrc to flat array
 		foreach($spriteSrc as $dir => $files) {

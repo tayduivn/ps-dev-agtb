@@ -1062,44 +1062,32 @@ class Link {
 
 	/*
 	 */
-	function _get_link_table_definition($table_name,$def_name) {
+	function _get_link_table_definition($table_name,$def_name)
+	{
 	    global $dictionary;
 
 		include_once('modules/TableDictionary.php');
 	    // first check to see if already loaded - assumes hasn't changed in the meantime
-        if (isset($dictionary[$table_name][$def_name]))
-        {
+        if (isset($dictionary[$table_name][$def_name])) {
             return $dictionary[$table_name][$def_name];
         }
-        else {
- 			if (isset($dictionary[$this->_relationship_name][$def_name])) {
- 				return ($dictionary[$this->_relationship_name][$def_name]);
- 			}
-            // custom metadata is found in custom/metadata (naturally) and the naming follows the convention $relationship_name_c, and $relationship_name = $table_name$locations = array( 'metadata/' , 'custom/metadata/' ) ;
-            $relationshipName = preg_replace( '/_c$/' , '' , $table_name ) ;
 
-            $locations = array ( 'metadata/' , 'custom/metadata/' ) ;
+		if (isset($dictionary[$this->_relationship_name][$def_name])) {
+			return ($dictionary[$this->_relationship_name][$def_name]);
+		}
+        // custom metadata is found in custom/metadata (naturally) and the naming follows the convention $relationship_name_c, and $relationship_name = $table_name
+        $relationshipName = preg_replace( '/_c$/' , '' , $table_name ) ;
 
-            foreach ( $locations as $basepath )
-            {
-                $path = $basepath . $relationshipName . 'MetaData.php' ;
-
-                if (file_exists($path))
-                {
-                    include($path);
-                    if (isset($dictionary[$relationshipName][$def_name])) {
-                        return $dictionary[$relationshipName][$def_name];
-                    }
-                }
-            }
-            // couldn't find the metadata for the table in either the standard or custom locations
-            $GLOBALS['log']->debug('Error fetching field defs for join table '.$table_name);
-
-            return null;
+        foreach(SugarAutoLoader::existingCustom("metadata/{$relationshipName}MetaData.php") as $file) {
+            include $file;
         }
+        if (isset($dictionary[$relationshipName][$def_name])) {
+            return $dictionary[$relationshipName][$def_name];
+        }
+        // couldn't find the metadata for the table in either the standard or custom locations
+        $GLOBALS['log']->debug('Error fetching field defs for join table '.$table_name);
 
-
-
+        return null;
 	}
     /*
      * Return the name of the role field for the passed many to many table.

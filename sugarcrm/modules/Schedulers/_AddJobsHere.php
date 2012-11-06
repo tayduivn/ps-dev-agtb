@@ -46,32 +46,26 @@ $job_strings = array (
 	0 => 'refreshJobs',
 //BEGIN SUGARCRM flav!=sales ONLY
 	1 => 'pollMonitoredInboxes',
-//BEGIN SUGARCRM flav!=dce ONLY
 	2 => 'runMassEmailCampaign',
     5 => 'pollMonitoredInboxesForBouncedCampaignEmails',
-//END SUGARCRM flav!=dce ONLY
 //END SUGARCRM flav!=sales ONLY
 	3 => 'pruneDatabase',
 	4 => 'trimTracker',
 //BEGIN SUGARCRM flav!=sales ONLY
 	/*4 => 'securityAudit()',*/
 	//BEGIN SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=dce ONLY
     6 => 'processWorkflow',
-//END SUGARCRM flav!=dce ONLY
 	7 => 'processQueue',
     9 => 'updateTrackerSessions',
 	//END SUGARCRM flav=pro ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    8 => 'dceActionCleanup',
-    10 => 'dceCreateReportData',
-    11 => 'dceCreateSalesReport',
-    //END SUGARCRM flav=dce ONLY
     12 => 'sendEmailReminders',
     //BEGIN SUGARCRM flav=pro ONLY
     13 => 'performFullFTSIndex',
     //END SUGARCRM flav=pro ONLY
     14 => 'cleanJobQueue',
+    //BEGIN SUGARCRM flav=pro ONLY
+    15 => 'checkTimePeriods',
+    //END SUGARCRM flav=pro ONLY
 	//BEGIN SUGARCRM flav=int ONLY
 	999 => 'testEmail',
     //END SUGARCRM flav=int ONLY
@@ -300,7 +294,6 @@ function pollMonitoredInboxes() {
 	return true;
 }
 
-//BEGIN SUGARCRM flav!=dce ONLY
 /**
  * Job 2
  */
@@ -326,7 +319,6 @@ function runMassEmailCampaign() {
 	require('modules/EmailMan/EmailManDelivery.php');
 	return true;
 }
-//END SUGARCRM flav!=dce ONLY
 
 /**
  *  Job 3
@@ -435,7 +427,6 @@ function trimTracker()
     return true;
 }
 
-//BEGIN SUGARCRM flav!=dce ONLY
 /* Job 5
  *
  */
@@ -478,10 +469,8 @@ function pollMonitoredInboxesForBouncedCampaignEmails() {
 
 	return true;
 }
-//END SUGARCRM flav!=dce ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=dce ONLY
 /**
  * Job 6
  */
@@ -489,7 +478,6 @@ function processWorkflow() {
 	include_once('process_workflow.php');
 	return true;
 }
-//END SUGARCRM flav!=dce ONLY
 
 /**
  * Job 7
@@ -499,15 +487,6 @@ function processQueue() {
     return true;
 }
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-/**
- * Job 8
- */
-function dceActionCleanup() {
-    include_once('dceActionCleanup.php');
-    return true;
-}
-//END SUGARCRM flav=dce ONLY
 
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -527,23 +506,6 @@ function updateTrackerSessions() {
 	return true;
 }
 //END SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-/**
- * Job 10
- */
-function dceCreateReportData() {
-    include_once('dceCreateReportData.php');
-    return true;
-}
-
-/**
- * Job 11
- */
-function dceCreateSalesReport() {
-    include_once('dceCreateSalesReport.php');
-    return true;
-}
-//END SUGARCRM flav=dce ONLY
 
 /**
  * Job 12
@@ -621,12 +583,11 @@ function cleanJobQueue($job)
     return true;
 }
 
-if (file_exists('custom/modules/Schedulers/_AddJobsHere.php')) {
+if (SugarAutoLoader::existing('custom/modules/Schedulers/_AddJobsHere.php')) {
 	require('custom/modules/Schedulers/_AddJobsHere.php');
 }
 
-if (file_exists('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php'))
-{
-	require('custom/modules/Schedulers/Ext/ScheduledTasks/scheduledtasks.ext.php');
+$extfile = SugarAutoLoader::loadExtension('schedulers');
+if($extfile) {
+    require $extfile;
 }
-?>

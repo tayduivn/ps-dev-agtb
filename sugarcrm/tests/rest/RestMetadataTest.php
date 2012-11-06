@@ -25,16 +25,19 @@
 require_once('tests/rest/RestTestBase.php');
 
 class RestMetadataTest extends RestTestBase {
-    public function setUp()
-    {
-        parent::setUp();
-    }
-    
+    public $createdFiles = array();
+
     public function tearDown()
     {
+        // Cleanup
+        foreach($this->createdFiles as $file)
+        {
+        	if (is_file($file))
+        		SugarAutoLoader::unlink($file, true);
+        }
+
         parent::tearDown();
     }
-    
     /**
      * @group rest
      */
@@ -43,11 +46,12 @@ class RestMetadataTest extends RestTestBase {
 
         $this->assertTrue(isset($restReply['reply']['_hash']),'Primary hash is missing.');
         $this->assertTrue(isset($restReply['reply']['modules']),'Modules are missing.');
-    
+
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
-
         $this->assertTrue(isset($restReply['reply']['currencies']),'Currencies are missing.');
+        $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
+
     }
 
     //BEGIN SUGARCRM flav=ent ONLY
@@ -60,8 +64,9 @@ class RestMetadataTest extends RestTestBase {
         $this->assertTrue(isset($restReply['reply']['config']), 'Portal Configs are missing.');
         $this->assertTrue(isset($restReply['reply']['fields']),'SugarFields are missing.');
         $this->assertTrue(isset($restReply['reply']['view_templates']),'ViewTemplates are missing.');
+        $this->assertTrue(isset($restReply['reply']['jssource']),'JSSource is missing.');
     }
-    
+
     /**
      * @group rest
      */
@@ -75,7 +80,7 @@ EOQ;
 
         $fileLoc = "include/language/ua_UA.lang.php";
         $this->createdFiles[] = $fileLoc;
-        file_put_contents($fileLoc, $langContent);
+        SugarAutoLoader::put($fileLoc, $langContent, true);
         // No current user
         $restReply = $this->_restCall('metadata/public?lang=ua_UA&app_name=superAwesome&platform=portal');
         $this->assertEquals($restReply['reply']['app_strings']['LBL_KEYBOARD_SHORTCUTS_HELP_TITLE'], "UnitTest");
@@ -87,12 +92,6 @@ EOQ;
 
         // TODO add test for user pref when that field gets added
 
-        // Cleanup
-        foreach($this->createdFiles as $file)
-        {
-            if (is_file($file))
-                unlink($file);
-        }
     }
     //END SUGARCRM flav=ent ONLY
 }

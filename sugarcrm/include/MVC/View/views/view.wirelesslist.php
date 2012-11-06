@@ -35,15 +35,8 @@ require_once('include/SugarWireless/SugarWirelessListView.php');
  * ViewWirelesslist extends SugarWirelessView and is the view for wireless list views.
  *
  */
-class ViewWirelesslist extends SugarWirelessListView{
-
-	/**
-	 * Constructor for the view, it runs the constructor of SugarWirelessView
-	 */
- 	public function __construct(){
- 		parent::__construct();
- 	}
-
+class ViewWirelesslist extends SugarWirelessListView
+{
 
  	/**
  	 * Private function for wireless list view
@@ -66,12 +59,12 @@ class ViewWirelesslist extends SugarWirelessListView{
 			$this->ss->assign('SAVED_SEARCH_NAME', $savedSearch->name);
 		}
 		// set up Search Form to attain where clause
-		if (file_exists('modules/'.$GLOBALS['module'].'/metadata/searchdefs.php')){
+		$defs = SugarAutoLoader::loadWithMetafiles($GLOBALS['module'], 'searchdefs');
+		if ($defs) {
 			require_once('include/SearchForm/SearchForm2.php');
 			$searchForm = new SearchForm($this->bean, $GLOBALS['module'], 'wirelesslist');
-			require_once('modules/'.$GLOBALS['module'].'/metadata/searchdefs.php');
-			require_once('modules/'.$GLOBALS['module'].'/metadata/SearchFields.php');
-			$searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');
+			$defs = SearchForm::retrieveSearchDefs($GLOBALS['module']);
+			$searchForm->setup($defs['searchdefs'], $defs['searchFields'], 'SearchFormGeneric.tpl');
 		}
 		else{
 			require_once('include/SearchForm/SearchForm.php');
@@ -138,7 +131,7 @@ class ViewWirelesslist extends SugarWirelessListView{
  	 */
  	protected function wl_subpanel_list_view_display(){
  		// instantiate a child seed object
- 	    	
+
         $layout_defs = $this->getSubpanelDefs();
         $subpanel = isset($_REQUEST['subpanel']) ? $_REQUEST['subpanel'] : "";
         if (!empty($layout_defs['subpanel_setup'][$subpanel]))

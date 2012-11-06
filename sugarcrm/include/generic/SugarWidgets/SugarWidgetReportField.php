@@ -151,7 +151,11 @@ class SugarWidgetReportField extends SugarWidgetField
  {
 	if(!empty($this->reporter->all_fields[$layout_def['column_key']])) $field_def = $this->reporter->all_fields[$layout_def['column_key']];
 
-	if ( ! empty( $field_def['sort_on']))
+    if (!empty($layout_def['group_function']))
+    {
+        $order_by = $this->_get_column_alias($layout_def);
+    }
+    elseif (!empty($field_def['sort_on']))
 	{
 			$order_by = $layout_def['table_alias'].".".$field_def['sort_on'];
             if(!empty($field_def['sort_on2']))
@@ -321,6 +325,16 @@ class SugarWidgetReportField extends SugarWidgetField
  {
      $column = $this->_get_column_select($layout_def);
      return "($column IS NOT NULL AND $column <> ".$this->reporter->db->emptyValue($layout_def['type']).")";
+ }
+
+ protected function getInputValue($layout_def)
+ {
+     $input_name0 = $layout_def['input_name0'];
+     if (is_array($layout_def['input_name0']))
+     {
+         $input_name0 = $layout_def['input_name0'][0];
+     }
+     return $input_name0;
  }
 
 }

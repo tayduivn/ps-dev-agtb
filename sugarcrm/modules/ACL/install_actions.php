@@ -26,12 +26,6 @@ global $current_user,$beanList, $beanFiles, $mod_strings;
 
 $installed_classes = array();
 $ACLbeanList=$beanList;
-//BEGIN SUGARCRM flav=dce ONLY
-if($GLOBALS['sugar_flavor']=='DCE'){
-    global $DCEbeanList;
-    $ACLbeanList=$DCEbeanList;
-}
-//END SUGARCRM flav=dce ONLY
 
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -44,14 +38,16 @@ $GLOBALS['db']->query("UPDATE acl_actions set acltype = 'TrackerQuery' where cat
 if(is_admin($current_user)){
     foreach($ACLbeanList as $module=>$class){
 
-        if(empty($installed_classes[$class]) && isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
+        if(empty($installed_classes[$class]) && isset($beanFiles[$class])){
             if($class == 'Tracker'){
                 //BEGIN SUGARCRM flav=pro ONLY
                 ACLAction::addActions('Trackers', 'Tracker');
                 //END SUGARCRM flav=pro ONLY
             } else {
-                require_once($beanFiles[$class]);
-                $mod = new $class();
+                $mod = BeanFactory::newBean($module);
+                if(empty($mod)) {
+                    continue;
+                }
                 $GLOBALS['log']->debug("DOING: $class");
                 if($mod->bean_implements('ACL') && empty($mod->acl_display_only)){
                     // BUG 10339: do not display messages for upgrade wizard
@@ -66,16 +62,6 @@ if(is_admin($current_user)){
 
                     $installed_classes[$class] = true;
                 }
-    //BEGIN SUGARCRM flav=dce ONLY
-                if($mod->bean_implements('DCEACL') && empty($mod->acl_display_only)){
-                    if(!isset($_REQUEST['upgradeWizard'])){
-                        echo translate('LBL_ADDING','ACL','') . $mod->module_dir . '<br>';
-                    }
-                    ACLAction::addActions($mod->getACLCategory(), 'DCE');
-                    $installed_classes[$class] = true;
-
-                }
-    //END SUGARCRM flav=dce ONLY
             }
         }
     }

@@ -93,8 +93,8 @@ class KBDocumentRevision extends SugarBean {
 	
 	
 
-	function KBDocumentRevision() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 		$this->setupCustomFields('KBDocumentRevisions');  //parameter is module name
 		$this->disable_row_level_security =true; //no direct access to this module. 
 	}

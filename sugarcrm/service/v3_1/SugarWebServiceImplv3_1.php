@@ -21,13 +21,12 @@ if(!defined('sugarEntry'))define('sugarEntry', true);
  *
  ********************************************************************************/
 
-/**
- * This class is an implemenatation class for all the rest services
- */
 require_once('service/v3/SugarWebServiceImplv3.php');
 require_once('SugarWebServiceUtilv3_1.php');
 
-
+/**
+ * This class is an implemenatation class for all the rest services
+ */
 class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
 
     public function __construct()
@@ -862,10 +861,7 @@ class SugarWebServiceImplv3_1 extends SugarWebServiceImplv3 {
     				if(count($select_fields) > 0)
     				    $filterFields = $select_fields;
     				else {
-    				    if(file_exists('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php'))
-    					   require_once('custom/modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
-        				else
-        					require_once('modules/'.$seed->module_dir.'/metadata/listviewdefs.php');
+    				    require_once SugarAutoLoader::loadWithMetafiles($seed->module_dir, 'listviewdefs');
 
         				$filterFields = array();
         				foreach($listViewDefs[$seed->module_dir] as $colName => $param) {

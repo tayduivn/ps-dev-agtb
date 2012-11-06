@@ -23,8 +23,8 @@
  ********************************************************************************/
 
 require_once('tests/rest/RestTestBase.php');
-require_once('include/api/SugarApi/SugarApi.php');
-require_once('include/api/ThemeApi.php');
+require_once('include/api/SugarApi.php');
+require_once('clients/base/api/ThemeApi.php');
 
 class RestThemeTest extends RestTestBase
 {
@@ -105,11 +105,17 @@ class RestThemeTest extends RestTestBase
         $restReply = $this->_restCall('theme?platform=' . $this->platformTest);
 
         // TEST we get a hash of variables
+        $this->assertEquals(array('name' => 'BorderColor', 'value' => '#E61718'), $restReply['reply']['hex'][0]);
+        $this->assertEquals(array('name' => 'NavigationBar', 'value' => '#000000'), $restReply['reply']['hex'][1]);
+        $this->assertEquals(array('name' => 'PrimaryButton', 'value' => '#177EE5'), $restReply['reply']['hex'][2]);
+
+        /*
         $this->assertEquals($restReply['reply']['hex'], array(
             0 => array('name' => 'BorderColor', 'value' => '#E61718'),
             1 => array('name' => 'NavigationBar', 'value' => '#000000'),
             2 => array('name' => 'PrimaryButton', 'value' => '#177EE5'),
         ));
+        */
     }
 
     /**

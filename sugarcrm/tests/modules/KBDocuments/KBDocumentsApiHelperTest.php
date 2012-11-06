@@ -28,9 +28,10 @@
      ********************************************************************************/
 
 require_once 'modules/KBDocuments/KBDocument.php';
-require_once 'include/api/SugarApi/ApiHelper.php';
-require_once 'include/api/SugarApi/RestService.php';
+require_once 'include/api/ApiHelper.php';
+require_once 'include/api/RestService.php';
 require_once('data/SugarBeanApiHelper.php');
+
 
 class KBDocumentsApiHelperTest extends Sugar_PHPUnit_Framework_TestCase
 {

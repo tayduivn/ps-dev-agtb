@@ -254,13 +254,10 @@ require_once('include/EditView/EditView2.php');
     public function setOptions($options = null)
     {
         $defaults = array(
-            'locator_class' => 'FileLocator',
             'locator_class_params' => array(
                 array(
-                    'custom/modules/' . $this->module . '/tpls/SearchForm',
                     'modules/' . $this->module . '/tpls/SearchForm',
-                    'custom/include/SearchForm/tpls',
-                    'include/SearchForm/tpls'
+                    'include/SearchForm/tpls',
                 )
             )
         );
@@ -287,14 +284,10 @@ require_once('include/EditView/EditView2.php');
       */
      protected function locateFile($file)
      {
-        $paths = isset($this->options['locator_class_params'])?$this->options['locator_class_params'][0]:array();
-        foreach ($paths as $path) {
-             if (is_file($path . '/' . $file)) {
-                 return $path . '/' . $file;
-             }
-         }
-
-         return false;
+        if(empty($this->options['locator_class_params'][0]) || !is_array($this->options['locator_class_params'][0])) {
+            return false;
+        }
+        return SugarAutoLoader::lookupFile($this->options['locator_class_params'][0], $file);
      }
 
      function displaySavedSearch()
@@ -463,7 +456,7 @@ require_once('include/EditView/EditView2.php');
 
 	}
 
-	    /**
+	/**
      * Populate the searchFields from an array
      *
      * @param array $array array to search through
@@ -1060,9 +1053,10 @@ require_once('include/EditView/EditView2.php');
                                      if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'UnifiedSearch'){
                                          $UnifiedSearch = true;
                                      }
+
                                      // If it is a unified search and if the search contains more then 1 word (contains space)
                                      // and if it's the last element from db_field (so we do the concat only once, not for every db_field element)
-                                     // we concat the db_field array() (both original, and in reverse order) and search for the whole string in it  
+                                     // we concat the db_field array() (both original, and in reverse order) and search for the whole string in it
                                      if ( $UnifiedSearch && strpos($field_value, ' ') !== false && strpos($db_field, $parms['db_field'][count($parms['db_field']) - 1]) !== false )
                                      {
                                          // Get the table name used for concat
@@ -1070,7 +1064,7 @@ require_once('include/EditView/EditView2.php');
                                          $concat_table = $concat_table[0];
                                          // Get the fields for concatenating
                                          $concat_fields = $parms['db_field'];
-                                         
+
                                          // If db_fields (e.g. contacts.first_name) contain table name, need to remove it
                                          for ($i = 0; $i < count($concat_fields); $i++)
                                          {
@@ -1079,7 +1073,7 @@ require_once('include/EditView/EditView2.php');
                                          		$concat_fields[$i] = substr($concat_fields[$i], strlen($concat_table) + 1);
                                          	}
                                          }
-                                         
+
                                          // Concat the fields and search for the value
                                          $where .= $this->seed->db->concat($concat_table, $concat_fields) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);
                                          $where .= ' OR ' . $this->seed->db->concat($concat_table, array_reverse($concat_fields)) . " LIKE " . $this->seed->db->quoted($field_value . $like_char);
@@ -1235,40 +1229,14 @@ require_once('include/EditView/EditView2.php');
          $searchdefs = array();
          $searchFields = array();
 
-         if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php'))
-         {
-             require('custom/modules/'.$module.'/metadata/metafiles.php');
-         }
-         elseif(file_exists('modules/'.$module.'/metadata/metafiles.php'))
-         {
-             require('modules/'.$module.'/metadata/metafiles.php');
+         $defsfile = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
+         if($defsfile) {
+             require $defsfile;
          }
 
-         if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
-         {
-             require('custom/modules/'.$module.'/metadata/searchdefs.php');
-         }
-         elseif (!empty($metafiles[$module]['searchdefs']))
-         {
-             require($metafiles[$module]['searchdefs']);
-         }
-         elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
-         {
-             require('modules/'.$module.'/metadata/searchdefs.php');
-         }
-
-
-         if(!empty($metafiles[$module]['searchfields']))
-         {
-             require($metafiles[$module]['searchfields']);
-         }
-         elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php'))
-         {
-             require('modules/'.$module.'/metadata/SearchFields.php');
-         }
-         if(file_exists('custom/modules/'.$module.'/metadata/SearchFields.php'))
-         {
-             require('custom/modules/'.$module.'/metadata/SearchFields.php');
+         $fieldsfile = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
+         if($fieldsfile) {
+         	require $fieldsfile;
          }
 
          return array('searchdefs' => $searchdefs, 'searchFields' => $searchFields );

@@ -39,11 +39,12 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $GLOBALS['module'] = $moduleName; //WirelessView keys off global variable not instance variable...
                     $v = new SugarWirelessListView();
                     $results = $v->getMetaDataFile();
-                    //$results = self::formatWirelessListViewResultsToArray($results);
                     
                     // Needed for conversion
                     require_once 'include/MetaDataManager/MetaDataConverter.php';
                     $results = MetaDataConverter::toLegacy('list', $results);
+                    $results = self::formatWirelessListViewResultsToArray($results);
+                    
                 }
                 elseif ($view == 'subpanel')
                     $results = $this->get_subpanel_defs($moduleName, $type);
@@ -55,7 +56,7 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
                     $meta = $v->getMetaDataFile('Wireless' . $fullView);
                     $metadataFile = $meta['filename'];
                     require($metadataFile);
-                    
+
                     // For handling view def conversion
                     $viewtype = strtolower($view);
 
@@ -175,19 +176,13 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
      */
     function is_favorites_enabled($module_name)
     {
-        global $beanList, $beanFiles;
-
-        $fav = FALSE;
         //BEGIN SUGARCRM flav=pro ONLY
-        $class_name = $beanList[$module_name];
-        if( file_exists($beanFiles[$class_name]) )
-        {
-            require_once($beanFiles[$class_name]);
-            $mod = new $class_name();
-            $fav = $mod->isFavoritesEnabled();
+        $mod = BeanFactory::newBean($module_name);
+        if(!empty($mod) && is_callable(array($mod, "isFavoritesEnabled"))) {
+            return $mod->isFavoritesEnabled();
         }
         //END SUGARCRM flav=pro ONLY
-        return $fav;
+        return false;
     }
 
 //BEGIN SUGARCRM flav=pro ONLY
@@ -591,11 +586,8 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	//BEGIN SUGARCRM flav=pro ONLY
 	function get_mobile_login_data(&$nameValueArray)
 	{
-	    if( file_exists('modules/Quotes/Layouts.php') )
-	    {
-    	    require_once('modules/Quotes/Layouts.php');
-    	    $nameValueArray['avail_quotes_layouts'] = get_layouts();
-	    }
+   	    require_once('modules/Quotes/Layouts.php');
+   	    $nameValueArray['avail_quotes_layouts'] = get_layouts();
 
         require('sugar_version.php');
         $nameValueArray['sugar_flavor'] = $GLOBALS['sugar_flavor'];
@@ -665,25 +657,29 @@ class SugarWebServiceUtilv4 extends SugarWebServiceUtilv3_1
 	    switch ($type)
 	    {
 	        case 'wireless':
-
-                if (file_exists('custom/modules/'.$module.'/metadata/wireless.subpaneldefs.php'))
-	                 require_once('custom/modules/'.$module.'/metadata/wireless.subpaneldefs.php');
-	            else if (file_exists('modules/'.$module.'/metadata/wireless.subpaneldefs.php'))
-	                 require_once('modules/'.$module.'/metadata/wireless.subpaneldefs.php');
+                $defs = SugarAutoLoader::existingCustomOne('modules/'.$module.'/metadata/wireless.subpaneldefs.php');
+                if($defs) {
+                    require $defs;
+                }
 
                 //If an Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php file exists, then also load it as well
-                if(file_exists('custom/modules/'.$module.'/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php'))
-                {
-                    require_once('custom/modules/'.$module.'/Ext/WirelessLayoutdefs/wireless.subpaneldefs.ext.php');
+                $defs = SugarAutoLoader::loadExtension("wireless_subpanels", $module);
+                if($defs) {
+                    require $defs;
                 }
 	            break;
 
 	        case 'default':
 	        default:
-	            if (file_exists ('modules/'.$module.'/metadata/subpaneldefs.php' ))
-	                require ('modules/'.$module.'/metadata/subpaneldefs.php');
-	            if ( file_exists('custom/modules/'.$module.'/Ext/Layoutdefs/layoutdefs.ext.php' ))
-	                require ('custom/modules/'.$module.'/Ext/Layoutdefs/layoutdefs.ext.php');
+	            $defs = SugarAutoLoader::loadWithMetafiles($module, 'subpaneldefs');
+	            if($defs) {
+	            	require $defs;
+	            }
+	            $defs = SugarAutoLoader::loadExtension("layoutdefs", $module);
+	            if($defs) {
+	            	require $defs;
+	            }
+
 	    }
 
 	    //Filter results for permissions

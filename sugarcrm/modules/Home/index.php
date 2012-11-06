@@ -35,7 +35,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
 
 global $current_user, $sugar_version, $sugar_config, $beanFiles;
 
-
 require_once('include/MySugar/MySugar.php');
 
 // build dashlet cache file if not found
@@ -47,7 +46,9 @@ if(!is_file($cachefile = sugar_cached('dashlets/dashlets.php'))) {
 }
 require_once $cachefile;
 
-require('modules/Home/dashlets.php');
+foreach(SugarAutoLoader::existingCustom('modules/Home/dashlets.php') as $file) {
+    include $file;
+}
 
 $pages = $current_user->getPreference('pages', 'Home');
 $dashlets = $current_user->getPreference('dashlets', 'Home');
@@ -58,7 +59,6 @@ $defaultHomepage = false;
 $hasUserPreferences = (!isset($pages) || empty($pages) || !isset($dashlets) || empty($dashlets)) ? false : true;
 
 if(!$hasUserPreferences){
-//BEGIN SUGARCRM flav!=dce ONLY
 	//BEGIN SUGARCRM flav=pro ONLY
 	// BEGIN 'My Sugar'
 	$defaultHomepage = true;
@@ -401,78 +401,9 @@ if(!$hasUserPreferences){
 
 	// END 'Tracker'
 	//END SUGARCRM flav=pro ONLY
-//END SUGARCRM flav!=dce ONLY
-//BEGIN SUGARCRM flav=dce ONLY
-// BEGIN 'DCE page'
-
-    foreach ($defaultdceReportDashlets as $dceReportDashlets=>$module){
-        $savedReport = new SavedReport();
-        $reportId = $savedReport->retrieveReportIdByName($dceReportDashlets);
-		// clint - fixes bug #20398
-		// only display dashlets that are from visibile modules and that the user has permission to list
-		$myDashlet = new MySugar($module);
-		$displayDashlet = $myDashlet->checkDashletDisplay();
-
-        if (isset($reportId) && $displayDashlet){
-	        $dceDashlets[create_guid()] = array('className' => 'ChartsDashlet',
-									 		 		'module'=>$module,
-                                                    'fileLocation' => $dashletsFiles['ChartsDashlet']['file'],
-                                                    'reportId' => $reportId, );
-		}
-    }
-
-    foreach($defaultdceDashlets as $DCEDashletName=>$module){
-		// clint - fixes bug #20398
-		// only display dashlets that are from visibile modules and that the user has permission to list
-		$myDashlet = new MySugar($module);
-		$displayDashlet = $myDashlet->checkDashletDisplay();
-
-        if (isset($dashletsFiles[$DCEDashletName]) && $displayDashlet){
-            $options = array();/*
-            $prefsforthisdashlet = array_keys($prefstomove,$DCEDashletName);
-            foreach ( $prefsforthisdashlet as $pref ) {
-               $options[$pref] = $current_user->getPreference($pref);
-            }*/
-            $dceDashlets[create_guid()] = array('className' => $DCEDashletName,
-									 		 'module'=>$module,
-                                             'fileLocation' => $dashletsFiles[$DCEDashletName]['file'],
-                                             'options' => $options);
-        }
-    }
-//1 column
-    $count = 0;
-    $dceColumns = array();
-    $dceColumns[0] = array();
-    $dceColumns[0]['width'] = '100%';
-    $dceColumns[0]['dashlets'] = array();
-
-    foreach($dceDashlets as $guid=>$dashlet){
-        array_push($dceColumns[0]['dashlets'], $guid);
-    }
-//2 columns
-    /*$count = 0;
-    $dceColumns = array();
-    $dceColumns[0] = array();
-    $dceColumns[0]['width'] = '60%';
-    $dceColumns[0]['dashlets'] = array();
-    $dceColumns[1] = array();
-    $dceColumns[1]['width'] = '40%';
-    $dceColumns[1]['dashlets'] = array();
-    foreach($dceDashlets as $guid=>$dashlet){
-        if($count % 2 == 0) array_push($dceColumns[0]['dashlets'], $guid);
-        else array_push($dceColumns[1]['dashlets'], $guid);
-        $count++;
-    }*/
-// END 'DCE page'
-if ($GLOBALS['sugar_flavor'] == 'DCE'){
-    $dashlets = array_merge($dceDashlets);
-}
-//END SUGARCRM flav=dce ONLY
-//BEGIN SUGARCRM flav!=dce ONLY
     //BEGIN SUGARCRM flav=pro ONLY
     $dashlets = array_merge($dashlets, $salesDashlets, $marketingDashlets, $supportDashlets, $trackingDashlets);
     //END SUGARCRM flav=pro ONLY
-//END SUGARCRM flav!=dce ONLY
 
 
     $current_user->setPreference('dashlets', $dashlets, 0, 'Home');
@@ -503,12 +434,6 @@ if ( !empty($pagesDashboard) || !empty($dashletsDashboard) )
 if (empty($pages)){
 	$pages = array();
 	$pageIndex = 0;
-//BEGIN SUGARCRM flav=dce ONLY
-    $pages[0]['columns'] = $dceColumns;
-    $pages[0]['numColumns'] = '2';
-    $pages[0]['pageTitleLabel'] = 'LBL_HOME_PAGE_5_NAME';  // "DCE"
-//END SUGARCRM flav=dce ONLY
-//BEGIN SUGARCRM flav!=dce ONLY
 	$pages[0]['columns'] = $columns;
 	$pages[0]['numColumns'] = '2';
 	$pages[0]['pageTitleLabel'] = 'LBL_HOME_PAGE_1_NAME';	// "My Sugar"
@@ -543,7 +468,6 @@ if (empty($pages)){
 
 
 //END SUGARCRM flav=pro ONLY
-//END SUGARCRM flav!=dce ONLY
 	$current_user->setPreference('pages', $pages, 0, 'Home');
 //BEGIN SUGARCRM flav=pro ONLY
     $_COOKIE[$current_user->id . '_activePage'] = '0';
@@ -737,11 +661,7 @@ if((empty($viewed_tour) || $viewed_tour == 'false') && $theme != "Sugar5") {
     $sugar_smarty->assign('view_tour', true);
 }
 //END SUGARCRM flav=pro ONLY
-if (file_exists("custom/include/MySugar/tpls/MySugar.tpl")) {
-	echo $sugar_smarty->fetch('custom/include/MySugar/tpls/MySugar.tpl');
-} else {
-	echo $sugar_smarty->fetch('include/MySugar/tpls/MySugar.tpl');
-}
+echo $sugar_smarty->fetchCustom('include/MySugar/tpls/MySugar.tpl');
 
 //init the quickEdit listeners after the dashlets have loaded on home page the first time
 echo"<script>if(typeof(qe_init) != 'undefined'){qe_init();}</script>";

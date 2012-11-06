@@ -67,7 +67,7 @@ class Scheduler extends SugarBean {
 
     public function __construct($init=true)
     {
-        parent::SugarBean();
+        parent::__construct();
         $job = new SchedulersJob();
         $this->job_queue_table = $job->table_name;
         //BEGIN SUGARCRM flav=pro ONLY
@@ -803,7 +803,6 @@ class Scheduler extends SugarBean {
 		$this->db->query('DELETE FROM schedulers');
 
 		//BEGIN SUGARCRM flav=pro ONLY
-//BEGIN SUGARCRM flav!=dce ONLY
 		$sched1 = new Scheduler();
 		$sched1->name				= $mod_strings['LBL_OOTB_WORKFLOW'];
 		$sched1->job				= 'function::processWorkflow';
@@ -815,7 +814,6 @@ class Scheduler extends SugarBean {
 		$sched1->modified_user_id	= '1';
 		$sched1->catch_up			= '0';
 		$sched1->save();
-//END SUGARCRM flav!=dce ONLY
 		$sched2 = new Scheduler();
 		$sched2->name				= $mod_strings['LBL_OOTB_REPORTS'];
 		$sched2->job				= 'function::processQueue';
@@ -852,8 +850,6 @@ class Scheduler extends SugarBean {
 		$sched4->modified_user_id	= '1';
 		$sched4->catch_up			= '0';
 		$sched4->save();
-//END SUGARCRM flav!=sales ONLY
-//BEGIN SUGARCRM flav!=dce && flav!=sales ONLY
 
 		$sched5 = new Scheduler();
 		$sched5->name				= $mod_strings['LBL_OOTB_BOUNCE'];
@@ -879,7 +875,7 @@ class Scheduler extends SugarBean {
 		$sched6->catch_up			= '1';
 		$sched6->save();
 
-//END SUGARCRM flav!=dce && flav!=sales ONLY
+//END SUGARCRM flav!=sales ONLY
 
         $sched7 = new Scheduler();
         $sched7->name               = $mod_strings['LBL_OOTB_PRUNE'];
@@ -893,19 +889,6 @@ class Scheduler extends SugarBean {
         $sched7->catch_up           = '0';
         $sched7->save();
 
-//BEGIN SUGARCRM flav=dce ONLY
-        $sched8 = new Scheduler();
-        $sched8->name               = $mod_strings['LBL_OOTB_DCE_CLNUP'];
-        $sched8->job                = 'function::dceActionCleanup';
-        $sched8->date_time_start    = create_date(2008,1,1) . ' ' . create_time(0,0,1);
-        $sched8->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched8->job_interval       = '*::*::*::*::*';
-        $sched8->status             = 'Active';
-        $sched8->created_by         = '1';
-        $sched8->modified_user_id   = '1';
-        $sched8->catch_up           = '0';
-        $sched8->save();
-//END SUGARCRM flav=dce ONLY
 
 //BEGIN SUGARCRM flav=pro ONLY
         $sched9 = new Scheduler();
@@ -921,31 +904,6 @@ class Scheduler extends SugarBean {
         $sched9->save();
 //END SUGARCRM flav=pro ONLY
 
-//BEGIN SUGARCRM flav=dce ONLY
-        $sched10 = new Scheduler();
-        $sched10->name               = $mod_strings['LBL_OOTB_DCE_REPORT'];
-        $sched10->job                = 'function::dceCreateReportData';
-        $sched10->date_time_start    = create_date(2008,1,1) . ' ' . create_time(0,0,1);
-        $sched10->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched10->job_interval       = '0::2::*::*::*';
-        $sched10->status             = 'Active';
-        $sched10->created_by         = '1';
-        $sched10->modified_user_id   = '1';
-        $sched10->catch_up           = '0';
-        $sched10->save();
-
-        $sched11 = new Scheduler();
-        $sched11->name               = $mod_strings['LBL_OOTB_DCE_SALES_REPORT'];
-        $sched11->job                = 'function::dceCreateSalesReport';
-        $sched11->date_time_start    = create_date(2008,1,1) . ' ' . create_time(0,0,1);
-        $sched11->date_time_end      = create_date(2020,12,31) . ' ' . create_time(23,59,59);
-        $sched11->job_interval       = '0::4::*::*::4';
-        $sched11->status             = 'Active';
-        $sched11->created_by         = '1';
-        $sched11->modified_user_id   = '1';
-        $sched11->catch_up           = '0';
-        $sched11->save();
-//END SUGARCRM flav=dce ONLY
 
         $sched12 = new Scheduler();
         $sched12->name               = $mod_strings['LBL_OOTB_SEND_EMAIL_REMINDERS'];
@@ -970,6 +928,18 @@ class Scheduler extends SugarBean {
         $sched13->modified_user_id   = '1';
         $sched13->catch_up           = '0';
         $sched13->save();
+
+        $sched14 = new Scheduler();
+        $sched14->name               = $mod_strings['LBL_OOTB_CREATE_NEXT_TIMEPERIOD'];
+        $sched14->job                = 'class::SugarJobCreateNextTimePeriod';
+        $sched14->date_time_start    = create_date(2012,1,1) . ' ' . create_time(0,0,1);
+        $sched14->date_time_end      = create_date(2030,12,31) . ' ' . create_time(23,59,59);
+        $sched14->job_interval       = '0::23::*::*::*';
+        $sched14->status             = 'Active';
+        $sched14->created_by         = '1';
+        $sched14->modified_user_id   = '1';
+        $sched14->catch_up           = '0';
+        $sched14->save();
 	}
 
 	////	END SCHEDULER HELPER FUNCTIONS

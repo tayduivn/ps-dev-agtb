@@ -1,4 +1,5 @@
 <?php
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -22,33 +23,22 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-require_once('tests/rest/RestTestBase.php');
+require_once('tests/rest/RestTestPortalBase.php');
 
-class RestBug54528Test extends RestTestBase {
+class RestBug54528Test extends RestTestPortalBase {
     public function setUp()
     {
         parent::setUp();
         // Create a portal API user
-        $this->apiuser = BeanFactory::newBean('Users');
-        $this->apiuser->id = create_guid();
-        $this->apiuser->new_with_id = true;
-        $this->apiuser->first_name = "Portal";
-        $this->apiuser->last_name = "Apiuserson";
-        $this->apiuser->username = "_unittest_apiuser";
-        $this->apiuser->portal_only = true;
-        $this->apiuser->status = 'Active';
-        $this->apiuser->team_id = 1;
-        $this->apiuser->default_team = 1;
-        $this->apiuser->team_set_id = 1;
-        $this->apiuser->save();
-
-
+        // Created in portal base as this->_user
+        
         // create account
         $account = new Account();
         $account->name = create_guid();
         $account->billing_address_postalcode = sprintf("%08d", 1);
         $account->save();
         $this->account = $account;
+        
         // create contact
         $this->contact = BeanFactory::newBean('Contacts');
         $this->contact->id = create_guid();
@@ -99,13 +89,6 @@ class RestBug54528Test extends RestTestBase {
                 $GLOBALS['db']->query("DELETE FROM contacts_cstm WHERE id_c = '{$this->contact->id}'");
             }
         } 
-        if(isset($this->apiuser->id))
-        {
-            $GLOBALS['db']->query("DELETE FROM users WHERE id = '{$this->apiuser->id}'");
-            if ($GLOBALS['db']->tableExists('users_cstm')) {
-                $GLOBALS['db']->query("DELETE FROM users_cstm WHERE id_c = '{$this->apiuser->id}'");
-            }
-        }
         parent::tearDown();
         
     }
@@ -123,6 +106,7 @@ class RestBug54528Test extends RestTestBase {
             'password' => 'unittest',
             'client_id' => 'support_portal',
             'client_secret' => '',
+            'platform' => 'portal',
         );
         // reload user
 
@@ -146,8 +130,12 @@ class RestBug54528Test extends RestTestBase {
         $case = BeanFactory::getBean('Cases',$this->case_id);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertEquals($this->contact->team_id, $case->team_id, "Team ID doesn't match");
-        $this->assertEquals($this->contact->team_set_id, $case->team_set_id, "Team Set ID doesn't match");
+        $this->assertEquals($this->_user->default_team, $case->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->_user->default_team, $case->team_set_id, "Team Set ID doesn't match");
+
+//        $this->assertEquals($this->contact->team_id, $case->team_id, "Team ID doesn't match");
+//        $this->assertEquals($this->contact->team_set_id, $case->team_set_id, "Team Set ID doesn't match");
+
         //END SUGARCRM flav=pro ONLY
 
         $this->assertEquals($this->contact->assigned_user_id, $case->assigned_user_id, "Assigned user id doesn't match.");
@@ -166,8 +154,12 @@ class RestBug54528Test extends RestTestBase {
         $bug = BeanFactory::getBean('Bugs', $this->bug_id);
 
         //BEGIN SUGARCRM flav=pro ONLY
-        $this->assertEquals($this->contact->team_id, $bug->team_id, "Team ID doesn't match");
-        $this->assertEquals($this->contact->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
+        $this->assertEquals($this->_user->default_team, $bug->team_id, "Team ID doesn't match");
+        $this->assertEquals($this->_user->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");        
+
+//        $this->assertEquals($this->contact->team_id, $bug->team_id, "Team ID doesn't match");
+//        $this->assertEquals($this->contact->team_set_id, $bug->team_set_id, "Team Set ID doesn't match");
+
         //END SUGARCRM flav=pro ONLY
 
         $this->assertEquals($this->contact->assigned_user_id, $bug->assigned_user_id, "Assigned user id doesn't.");

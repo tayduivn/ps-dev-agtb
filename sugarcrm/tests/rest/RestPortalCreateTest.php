@@ -64,7 +64,14 @@ class RestPortalCreateTest extends RestTestPortalBase
     {
         // we need to be an admin to get at the relationship data
         $GLOBALS['current_user']->is_admin = 1;
-        $this->_restLogin($this->contact->portal_name,'unittest');
+        $args = array(
+            'grant_type' => 'password',
+            'username' => $this->contact->portal_name,
+            'password' => 'unittest',
+            'client_id' => 'support_portal',
+            'client_secret' => '',
+            'platform' => 'portal',
+        );
         $GLOBALS['db']->commit();
 
         // create case
@@ -126,4 +133,45 @@ class RestPortalCreateTest extends RestTestPortalBase
         $this->assertContains('Cases',$caseReply['reply']['error_message'], "The error message should mention the module name.");
 
     }
+
+//BEGIN SUGARCRM flav=ent ONLY
+    /**
+     * @group bug57775
+     * @group rest
+     */
+    public function testAddingNoteToBugAsSupportPortal()
+    {
+        $bugReply = $this->_restCall(
+            "Bugs/",
+            json_encode(array(
+                'name' => 'UNIT TEST CREATE BUG PORTAL USER',
+                'portal_viewable' => '1',
+                'team_id' => '1'
+            )),
+            'POST'
+        );
+
+        $this->bugId = $bugReply['reply']['id'];
+
+        // Create a note on the bug without an attachment
+        $bugNoteReply = $this->_restCall(
+            "Bugs/{$this->bugId}/link/notes",
+            json_encode(array(
+                'name' => 'UNIT TEST BUG NOTE PORTAL USER',
+                'portal_flag' => '1'
+            )),
+            'POST'
+        );
+
+        $contactTeamId    = $this->contact->team_id;
+        $contactTeamSetId = $this->contact->team_set_id;
+        $this->assertEquals($contactTeamId, $bugNoteReply['reply']['related_record']['team_id']);
+        $this->assertEquals($contactTeamSetId, $bugNoteReply['reply']['related_record']['team_set_id']);
+
+        $this->assertEquals($this->account->id, $bugNoteReply['reply']['related_record']['account_id'], "account id should have been set in Note");
+        $this->assertEquals($this->contact->id, $bugNoteReply['reply']['related_record']['contact_id'], "contact id should have been set in Note");
+        $this->assertEquals($this->bugId, $bugNoteReply['reply']['related_record']['parent_id'], "Note should have been attached to Bug");
+
+    }
+//END SUGARCRM flav=ent ONLY
 }

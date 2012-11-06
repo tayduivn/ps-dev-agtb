@@ -293,42 +293,10 @@ upgrade_connectors();
 logThis('End upgrade_connectors', $path);
 
 
-// Enable the InsideView connector by default
-if($_SESSION['current_db_version'] < '621' && function_exists('upgradeEnableInsideViewConnector')) {
-    upgradeEnableInsideViewConnector();
-}
-
-/*
-if ($_SESSION['current_db_version'] < '620' && ($sugar_config['dbconfig']['db_type'] == 'mssql' || $sugar_config['dbconfig']['db_type'] == 'oci8'))
-{
-    repair_long_relationship_names($path);
-}
-*/
-
-//Global search support
-/*
-if($_SESSION['current_db_version'] < '620' && function_exists('add_unified_search_to_custom_modules_vardefs'))
-{
-   logThis('Add global search for custom modules start .', $path);
-   add_unified_search_to_custom_modules_vardefs();
-   logThis('Add global search for custom modules finished .', $path);
-}
-*/
-
 //Upgrade system displayed tabs and subpanels
 if(function_exists('upgradeDisplayedTabsAndSubpanels'))
 {
 	upgradeDisplayedTabsAndSubpanels($_SESSION['current_db_version']);
-}
-
-if ($_SESSION['current_db_version'] < '650')
-{
-    // Bug 53650 - Workflow Type Templates not saving Type upon upgrade to 6.5.0, usable as Email Templates
-    $db->query("UPDATE email_templates SET type = 'workflow' WHERE
-        coalesce(" . $db->convert("base_module", "length") . ",0) > 0
-        AND
-        coalesce(" . $db->convert("type", "length") . ",0) = 0
-    ");
 }
 
 //Unlink files that have been removed
@@ -342,24 +310,20 @@ if(function_exists('rebuildSprites') && function_exists('imagecreatetruecolor'))
     rebuildSprites(true);
 }
 
-//Run repairUpgradeHistoryTable
-if($_SESSION['current_db_version'] < '650' && function_exists('repairUpgradeHistoryTable'))
-{
-    repairUpgradeHistoryTable();
-}
-
 require_once('modules/Administration/upgrade_custom_relationships.php');
 upgrade_custom_relationships();
 
 require_once('modules/UpgradeWizard/uw_utils.php');
 
-/*
-if($_SESSION['current_db_version'] < '620')
+//BEGIN SUGARCRM flav=PRO ONLY
+//setup forecast defualt settings
+if($_SESSION['current_db_version'] < '670')
 {
-	upgradeDateTimeFields($path);
-	upgradeDocumentTypeFields($path);
+    require_once('modules/Forecasts/ForecastsDefaults.php');
+    ForecastsDefaults::setupForecastSettings(true,$_SESSION['current_db_version'],$_SESSION['target_db_version']);
+    ForecastsDefaults::upgradeColumns();
 }
-*/
+//END SUGARCRM flav=PRO ONLY
 
 //Update the license
 logThis('Start Updating the license ', $path);

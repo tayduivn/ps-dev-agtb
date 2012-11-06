@@ -66,6 +66,9 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
+        SugarTestHelper::setUp('beanFiles');
+        SugarTestHelper::setUp('beanList');
+
         global $mod_strings;
         $mod_strings = return_module_language($GLOBALS['current_language'], 'EmailTemplates');
 
@@ -90,7 +93,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
             mkdir($dirName, 0777, true);
         }
 
-        file_put_contents($this->file, implode(PHP_EOL, $data));
+        SugarAutoLoader::put($this->file, implode(PHP_EOL, $data));
     }
 
     /**
@@ -101,7 +104,7 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
      */
     public function tearDown()
     {
-        unlink($this->file);
+        SugarAutoLoader::unlink($this->file, true);
 
         unset($GLOBALS['mod_strings']);
     }
@@ -125,7 +128,6 @@ class Bug46763Test extends Sugar_PHPUnit_Framework_TestCase
         global $mod_strings, $app_strings, $sugar_config;
         $app_list_strings = return_app_list_strings_language($this->language);
         $xtpl = null;
-
         require 'modules/EmailTemplates/EditView.php';
 
         // clean up created global variables

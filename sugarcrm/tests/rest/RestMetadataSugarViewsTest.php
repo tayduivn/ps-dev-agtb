@@ -30,19 +30,19 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         parent::setUp();
         $this->oldFiles = array();
     }
-    
+
     public function tearDown()
     {
         foreach ( $this->oldFiles as $filename => $filecontents ) {
             if ( $filecontents == '_NO_FILE' ) {
                 if ( file_exists($filename) ) {
-                    unlink($filename);
+                    SugarAutoLoader::unlink($filename);
                 }
             } else {
-                file_put_contents($filename,$filecontents);
+                SugarAutoLoader::put($filename,$filecontents);
             }
         }
-        
+        SugarAutoLoader::saveMap();
         SugarTestUserUtilities::removeAllCreatedAnonymousUsers();
         parent::tearDown();
     }
@@ -59,6 +59,8 @@ class RestMetadataSugarViewsTest extends RestTestBase {
      * @group rest
      */
     public function testMetadataSugarViewsController() {
+        $this->markTestIncomplete('This test will no longer work due to changes in bug 56665');
+
         $filesToCheck = array(
                               'clients/base/views/address/address.js',
                               'custom/clients/base/views/address/address.js',
@@ -71,7 +73,7 @@ class RestMetadataSugarViewsTest extends RestTestBase {
                               'custom/clients/portal/views/address/address.js',
 //END SUGARCRM flav=ent ONLY
         );
-        
+
         foreach ( $filesToCheck as $filename ) {
             if ( file_exists($filename) ) {
                 $this->oldFiles[$filename] = file_get_contents($filename);
@@ -94,20 +96,18 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         );
 
         foreach ($dirsToMake as $dir ) {
-            if (!is_dir($dir) ) {
-                mkdir($dir,0777,true);
-            }
+            SugarAutoLoader::ensureDir($dir);
         }
-        
+
         //BEGIN SUGARCRM flav=pro ONLY
         // Make sure we get it when we ask for mobile
-        file_put_contents('clients/mobile/views/address/address.js','MOBILE CODE');
+        SugarAutoLoader::put('clients/mobile/views/address/address.js','MOBILE CODE', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when that was the direct option");
-        
+
         // Make sure we get it when we ask for mobile, even though there is base code there
-        file_put_contents('clients/base/views/address/address.js','BASE CODE');
+        SugarAutoLoader::put('clients/base/views/address/address.js','BASE CODE', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't get mobile code when base code was there.");
@@ -115,7 +115,7 @@ class RestMetadataSugarViewsTest extends RestTestBase {
 
         // Make sure we get the base code when we ask for it.
         //BEGIN SUGARCRM flav=com ONLY
-        file_put_contents('clients/base/views/address/address.js','BASE CODE');
+        SugarAutoLoader::put('clients/base/views/address/address.js','BASE CODE', true);
         //END SUGARCRM flav=com ONLY
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');
@@ -123,20 +123,20 @@ class RestMetadataSugarViewsTest extends RestTestBase {
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Delete the mobile address and make sure it falls back to base
-        unlink('clients/mobile/views/address/address.js');
+        SugarAutoLoader::unlink('clients/mobile/views/address/address.js', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('BASE CODE',$restReply['reply']['views']['address']['controller'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
-        file_put_contents('custom/clients/mobile/views/address/address.js','CUSTOM MOBILE CODE');
+        SugarAutoLoader::put('custom/clients/mobile/views/address/address.js','CUSTOM MOBILE CODE', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE CODE',$restReply['reply']['views']['address']['controller'],"Didn't use the custom mobile code.");
 
         // Make sure custom portal code works
-        file_put_contents('custom/clients/portal/views/address/address.js','CUSTOM PORTAL CODE');
+        SugarAutoLoader::put('custom/clients/portal/views/address/address.js','CUSTOM PORTAL CODE', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=portal');
         $this->assertEquals('CUSTOM PORTAL CODE',$restReply['reply']['views']['address']['controller'],"Didn't use the custom portal code.");
@@ -166,10 +166,10 @@ class RestMetadataSugarViewsTest extends RestTestBase {
             'clients/portal/views/address/detailView.hbt',
             //END SUGARCRM flav=ent ONLY
         );
-        
+
         foreach ( $filesToCheck as $filename ) {
             if ( file_exists($filename) ) {
-                $this->oldFiles[$filename] = file_get_contents($filename);
+                $this->oldFiles[$filename] = SugarAutoLoader::put($filename);
             } else {
                 $this->oldFiles[$filename] = '_NO_FILE';
             }
@@ -189,26 +189,24 @@ class RestMetadataSugarViewsTest extends RestTestBase {
         );
 
         foreach ($dirsToMake as $dir ) {
-            if (!is_dir($dir) ) {
-                mkdir($dir,0777,true);
-            }
+            SugarAutoLoader::ensureDir($dir);
         }
         //BEGIN SUGARCRM flav=pro ONLY
         // Make sure we get it when we ask for mobile
-        file_put_contents('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW');
+        SugarAutoLoader::put('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 
-        file_put_contents('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW');
+        SugarAutoLoader::put('clients/mobile/views/address/editView.hbt','MOBILE EDITVIEW', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when that was the direct option");
 
 
         // Make sure we get it when we ask for mobile, even though there is base code there
-        file_put_contents('clients/base/views/address/editView.hbt','BASE EDITVIEW');
+        SugarAutoLoader::put('clients/base/views/address/editView.hbt','BASE EDITVIEW', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't get mobile code when base code was there.");
@@ -217,7 +215,7 @@ class RestMetadataSugarViewsTest extends RestTestBase {
 
         // Make sure we get the base code when we ask for it.
         //BEGIN SUGARCRM flav=com ONLY
-        file_put_contents('clients/base/views/address/editView.hbt','BASE EDITVIEW');
+        SugarAutoLoader::put('clients/base/views/address/editView.hbt','BASE EDITVIEW', true);
         //END SUGARCRM flav=com ONLY
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');
@@ -225,21 +223,21 @@ class RestMetadataSugarViewsTest extends RestTestBase {
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Delete the mobile address and make sure it falls back to base
-        unlink('clients/mobile/views/address/editView.hbt');
+        SugarAutoLoader::unlink('clients/mobile/views/address/editView.hbt', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't fall back to base code when mobile code wasn't there.");
 
 
         // Make sure the mobile code is loaded before the non-custom base code
-        file_put_contents('custom/clients/mobile/views/address/editView.hbt','CUSTOM MOBILE EDITVIEW');
+        SugarAutoLoader::put('custom/clients/mobile/views/address/editView.hbt','CUSTOM MOBILE EDITVIEW', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=mobile');
         $this->assertEquals('CUSTOM MOBILE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom mobile code.");
         //END SUGARCRM flav=pro ONLY
 
         // Make sure custom base code works
-        file_put_contents('custom/clients/base/views/address/editView.hbt','CUSTOM BASE EDITVIEW');
+        SugarAutoLoader::put('custom/clients/base/views/address/editView.hbt','CUSTOM BASE EDITVIEW', true);
         $this->_clearMetadataCache();
         $restReply = $this->_restCall('metadata/?type_filter=views&platform=base');
         $this->assertEquals('CUSTOM BASE EDITVIEW',$restReply['reply']['views']['address']['templates']['editView'],"Didn't use the custom base code.");

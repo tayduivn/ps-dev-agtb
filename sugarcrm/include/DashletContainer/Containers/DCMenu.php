@@ -51,7 +51,7 @@ class DCMenu extends DashletContainer
         } else {
 	    	$imageName = "icon_generic_bar_32.png";
         }
-        
+
 	    $module = !empty($def['module']) ? $def['module'] : "";
 	    $label = isset($def['label']) ? translate($def['label'], $module) : "";
         $modal = isset($def['modal']) ? $def['modal'] : true;
@@ -65,10 +65,10 @@ class DCMenu extends DashletContainer
 
 	public function getSearchIcon() {
 		$iconSearchUrl = "javascript: DCMenu.spot(document.getElementById('sugar_spot_search').value);";
-		$iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', 'class="searchIconLink"', "dcMenuSearchBtn.png", 'class="icon searchicon" align="top"',null,null,'');
+        $iconSearch = SugarThemeRegistry::current()->getLink($iconSearchUrl, '', 'class="searchIconLink"', "", '',null,null,'','','<i class="icon icon-search"></i>');
 		return $iconSearch;
 	}
-	
+
 	public function getNotifications()
     {
 		global $current_user;
@@ -101,11 +101,11 @@ class DCMenu extends DashletContainer
         {
             $image = '<span class="dc_notif_icon" border="0" style="background-image: url('.$iconImage.');  "></span>';
 		}
-		
-		return array('class'=>$class,'icon'=>$image, 'code'=> $code);	
+
+		return array('class'=>$class,'icon'=>$image, 'code'=> $code);
 	}
-	
-	
+
+
 	public function getScript() {
 		$record = !empty($_REQUEST['record'])?$_REQUEST['record']:'';
 		$module = !empty($_REQUEST['module'])?$_REQUEST['module']:'';
@@ -154,11 +154,11 @@ class DCMenu extends DashletContainer
 		//END SUGARCRM flav=sugarsurvey ONLY
 EOQ;
 
-	return $html;	
+	return $html;
 	}
-	
+
 	public function getLayout() {
-		
+
 	}
 
     /**
@@ -168,18 +168,15 @@ EOQ;
 	{
         $DCActions = array();
 
-		$actions_path = "include/DashletContainer/Containers/DCActions.php";
-		if (is_file('custom/' . $actions_path))
-        {
-		    include('custom/' . $actions_path);
+		$actions_path = SugarAutoLoader::existingCustomOne("include/DashletContainer/Containers/DCActions.php");
+		if(!empty($actions_path)) {
+		    include $actions_path;
+		}
+
+        foreach(SugarAutoLoader::existing('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php') as $file) {
+			include $file;
         }
-		else
-        {
-		    include($actions_path);
-        }
-        if (is_file('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php'))
-			include 'custom/application/Ext/DashletContainer/Containers/dcactions.ext.php';
-		
+
 		$filterDCActions = array();
 		foreach($DCActions as $action)
         {
@@ -206,18 +203,14 @@ EOQ;
     {
         $dynamicDCActions = array();
         $filterDynamicDCActions = array();
-        $dyn_actions_path = "include/DashletContainer/Containers/DynamicDCActions.php";
-        if (is_file('custom/' . $dyn_actions_path))
-        {
-            include('custom/' . $dyn_actions_path);
+        $dyn_actions_path = SugarAutoLoader::existingCustomOne("include/DashletContainer/Containers/DynamicDCActions.php");
+        if($dyn_actions_path) {
+            include $dyn_actions_path;
         }
-        else if ( is_file($dyn_actions_path) )
+
+        foreach(SugarAutoLoader::existing('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php') as $file)
         {
-            include($dyn_actions_path);
-        }
-        if (is_file('custom/application/Ext/DashletContainer/Containers/dcactions.ext.php'))
-        {
-            include 'custom/application/Ext/DashletContainer/Containers/dcactions.ext.php';
+            include $file;
         }
 
         foreach($dynamicDCActions as $def)

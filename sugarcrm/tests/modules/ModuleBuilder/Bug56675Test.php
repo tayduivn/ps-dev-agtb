@@ -106,12 +106,9 @@ class Bug56675Test extends Sugar_PHPUnit_Framework_TestCase {
         //END SUGARCRM flav=pro ONLY
         
         //BEGIN SUGARCRM flav=ent ONLY
-        // Now make sure list copied over for portal (list is only portal view def for basic)
-        $dir = $this->dirname . 'portal/views/list';
-        $this->assertFileExists($dir, "$dir directory was not created when the module was saved");
-        
-        $file = $dir . '/list.php';
-        $this->assertFileExists($file, "$file was not created when module was saved");
+        // Modified this test for Bug 57259 to test NOT exists for portal viewdefs
+        $dir = $this->dirname . 'portal';
+        $this->assertFileNotExists($dir, "$dir directory was created when the module was saved but should not have been");
         //END SUGARCRM flav=ent ONLY
     }
     

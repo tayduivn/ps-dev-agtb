@@ -1,5 +1,5 @@
 <?php
-//FILE SUGARCRM flav=pro ONLY
+//FILE SUGARCRM flav=ent ONLY
 /*********************************************************************************
  * The contents of this file are subject to the SugarCRM Professional End User
  * License Agreement ("License") which can be viewed at
@@ -23,11 +23,17 @@
  * All Rights Reserved.
  ********************************************************************************/
  
-require_once('include/SugarOAuth2Storage.php');
+require_once('include/SugarOAuth2/SugarOAuth2Storage.php');
 require_once('tests/rest/RestTestPortalBase.php');
 
 class SugarOAuth2StorageTest extends RestTestPortalBase
 {
+    public static function setUpBeforeClass()
+    {
+        $GLOBALS['db']->query("DELETE FROM oauth_consumer WHERE c_key = 'support_portal'");
+        parent::setUpBeforeClass();
+    }
+
     public function setUp()
     {
         SugarTestHelper::setUp('current_user');
@@ -77,6 +83,47 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
         SugarTestHelper::tearDown();
 
         parent::tearDown();
+    }
+
+    /**
+     * @group bug57572
+     */
+    public function testPortalInactiveError(){
+        $contact1 = BeanFactory::newBean('Contacts');
+        $contact1->first_name = 'UNIT';
+        $contact1->last_name = 'UNIT1';
+        $contact1->portal_active = true;
+        $contact1->portal_name = "unittestportal1";
+        $contact1->portal_password = User::getPasswordHash("unittestportal1");
+        $contact1->save();
+        $this->contacts[] = $contact1;
+        $contact2 = BeanFactory::newBean('Contacts');
+        $contact2->first_name = 'portal';
+        $contact2->last_name = 'inactive';
+        $contact2->portal_active = false;
+        $contact2->portal_name = "unittestportal2";
+        $contact2->portal_password = User::getPasswordHash("unittestportal2");
+        $contact2->save();
+        $this->contacts[] = $contact2;
+
+        $storage = new SugarOAuth2Storage();
+        $ex = null;
+        try{
+            $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
+        } catch(SugarApiExceptionPortalUserInactive $e){
+            $ex = $e;
+        }
+        $this->assertTrue(empty($ex), "SugarApiExceptionPortalUserInactive SHOULD NOT have been thrown.");
+
+
+        $ex = null;
+        try{
+            $storage->checkUserCredentials('support_portal','unittestportal2','unittestportal2');
+        } catch(SugarApiExceptionPortalUserInactive $e){
+            $ex = $e;
+        }
+        $this->assertTrue(!empty($ex), "SugarApiExceptionPortalUserInactive SHOULD have been thrown.");
+
     }
 
     public function testTooManyUsers()
@@ -132,6 +179,11 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
 
         // For some reason this really wants a remote address set
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        
+        // SESSION platform needs to be set because it is expected for portal
+        // storage. This is usually set in the API before any calls to storage,
+        // OR it is set by the storage once it reads the platform type
+        $_SESSION['platform'] = 'portal';        
 
         // First login should work.
         $firstCheck = $storage->checkUserCredentials('support_portal','unittestportal1','unittestportal1');
@@ -149,7 +201,7 @@ class SugarOAuth2StorageTest extends RestTestPortalBase
             
             $errorLabel = 'no_error';
         } catch ( SugarApiException $e ) {
-            $errorLabel = $e->errorLabel;
+            $errorLabel = $e->messageLabel;
         }
 
         // We need to make sure this errored out here

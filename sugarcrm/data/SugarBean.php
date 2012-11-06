@@ -288,12 +288,29 @@ class SugarBean
      * @var array
      */
     protected $loaded_relationships = array();
-	
+
 	/**
      * set to true if dependent fields updated
      */
     protected $is_updated_dependent_fields = false;
-	
+
+    /**
+     * Blowfish encryption key
+     * @var string
+     */
+    static protected $field_key;
+
+    /**
+     * This method has been moved into the __construct() method to follow php standards
+     *
+     * @see __construct()
+     * @deprecated
+     */
+    function SugarBean()
+    {
+        self::__construct();
+    }
+
     /**
      * Constructor for the bean, it performs following tasks:
      *
@@ -304,7 +321,7 @@ class SugarBean
      * All implementing classes  must call this constructor using the parent::SugarBean() class.
      *
      */
-    function SugarBean()
+    public function __construct()
     {
         global  $dictionary, $current_user;
         static $loaded_defs = array();
@@ -401,7 +418,8 @@ class SugarBean
 
         //BEGIN SUGARCRM flav=pro ONLY
         // Verify that current user is not null then do an ACL check.  The current user check is to support installation.
-        if(!empty($current_user->id) && !isset($this->disable_team_security) && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
+        if(!empty($current_user->id) && !isset($this->disable_team_security) &&  empty($this->disable_row_level_security)
+            && !SugarACL::checkAccess($this->module_dir, 'team_security', array('bean' => $this))) {
         	// We can disable team security for this module
         	$this->disable_row_level_security =true;
         }
@@ -889,7 +907,7 @@ class SugarBean
         if ((!isset($dictionary) or empty($dictionary)) && !empty($module_dir))
         {
             $filename='modules/'. $module_dir . '/vardefs.php';
-            if(file_exists($filename))
+            if(SugarAutoLoader::fileExists($filename))
             {
                 include($filename);
             }
@@ -1362,42 +1380,17 @@ class SugarBean
         }
         else
         {
-            if(!$this->db->tableExists($this->table_name))
-            {
+            if(!$this->db->tableExists($this->table_name)) {
                 $this->db->createTable($this);
-//BEGIN SUGARCRM flav=dce ONLY
-                if($GLOBALS['sugar_flavor']=='DCE'){
-                    global $DCEbeanList, $beanFiles;
-                    foreach($DCEbeanList as $module=>$class){
-                        if(isset($beanFiles[$class]) && file_exists($beanFiles[$class])){
-                            require_once($beanFiles[$class]);
-                            $mod = new $class();
-                            if($this->module_dir === $mod->module_dir){
-                                if($this->bean_implements('ACL')){
-                                    ACLAction::addActions($this->module_dir);
-                                }
-                                if($this->bean_implements('DCEACL')){
-                                    ACLAction::addActions($this->module_dir, 'DCE');
-                                }
-                            }
-                        }
+                if($this->bean_implements('ACL')) {
+                    if(!empty($this->acltype)) {
+                        ACLAction::addActions($this->getACLCategory(), $this->acltype);
+                    } else {
+                        ACLAction::addActions($this->getACLCategory());
                     }
-                }else{
-//END SUGARCRM flav=dce ONLY
-                    if($this->bean_implements('ACL')){
-                        if(!empty($this->acltype)){
-                            ACLAction::addActions($this->getACLCategory(), $this->acltype);
-                        }else{
-                            ACLAction::addActions($this->getACLCategory());
-                        }
-                    }
-//BEGIN SUGARCRM flav=dce ONLY
                 }
-//END SUGARCRM flav=dce ONLY
-            }
-            else
-            {
-                echo "Table already exists : $this->table_name<br>";
+            } else {
+                display_notice("Table already exists : {$this->table_name}<br>");
             }
             if($this->is_AuditEnabled()){
                     if (!$this->db->tableExists($this->get_audit_table_name())) {
@@ -2594,14 +2587,14 @@ class SugarBean
 
         // ADD FAVORITES LEFT JOIN, this will add favorites to the bean
         // TODO: add global vardef for my_favorite field
-        // We should only add Favorites if we know what module we are using and if we have a user. 
+        // We should only add Favorites if we know what module we are using and if we have a user.
 
         if(isset($this->module_name) && !empty($this->module_name) && !empty($GLOBALS['current_user']) && $this->isFavoritesEnabled()) {
             $query_select .= ', sf.id AS my_favorite';
             $query_from .= " LEFT JOIN sugarfavorites sf ON sf.deleted = 0 AND sf.module = '{$this->module_name}' AND sf.record_id = '{$id}' AND sf.assigned_user_id = '{$GLOBALS['current_user']->id}'";
         }
         //END SUGARCRM flav=pro ONLY
-        
+
         $query = "SELECT $query_select FROM $query_from ";
         //BEGIN SUGARCRM flav=pro ONLY
         if(!$this->disable_row_level_security)
@@ -2650,7 +2643,7 @@ class SugarBean
         {
             $this->custom_fields->fill_relationships();
         }
-		
+
 		$this->is_updated_dependent_fields = false;
         $this->fill_in_additional_detail_fields();
         $this->fill_in_relationship_fields();
@@ -2661,7 +2654,7 @@ class SugarBean
              {
                  $this->fetched_rel_row[$rel_field_name['name']] = $this->$rel_field_name['name'];
              }
-         }        
+         }
         //make a copy of fields in the relationship_fields array. These field values will be used to
         //clear relationship.
         foreach ( $this->field_defs as $key => $def )
@@ -2972,12 +2965,12 @@ class SugarBean
         }
 
         $this->load_relationship($related_field_name);
-        
+
         if ($this->$related_field_name instanceof Link) {
-            
+
             $query_array = $this->$related_field_name->getQuery(true);
         } else {
-            
+
             $query_array = $this->$related_field_name->getQuery(array(
                 "return_as_array" => true,
                 'where' => '1=1' // hook for 'where' clause in M2MRelationship file
@@ -3422,10 +3415,8 @@ class SugarBean
         }
         $jtcount = 0;
         //LOOP AROUND FOR FIXIN VARDEF ISSUES
-        require('include/VarDefHandler/listvardefoverride.php');
-        if (file_exists('custom/include/VarDefHandler/listvardefoverride.php'))
-        {
-            require('custom/include/VarDefHandler/listvardefoverride.php');
+        foreach(SugarAutoLoader::existingCustom('include/VarDefHandler/listvardefoverride.php') as $file) {
+            require $file;
         }
 
         $joined_tables = array();
@@ -4699,7 +4690,8 @@ class SugarBean
     /**
     * Fill in fields where type = relate
     */
-    function fill_in_relationship_fields(){
+    function fill_in_relationship_fields()
+    {
         global $fill_in_rel_depth;
         if(empty($fill_in_rel_depth) || $fill_in_rel_depth < 0)
             $fill_in_rel_depth = 0;
@@ -4726,25 +4718,17 @@ class SugarBean
                     }
                     if(!empty($this->$id_name) && ( $this->object_name != $related_module || ( $this->object_name == $related_module && $this->$id_name != $this->id ))){
                         if(isset($GLOBALS['beanList'][ $related_module])){
-                            $class = $GLOBALS['beanList'][$related_module];
 
-                            if(!empty($this->$id_name) && file_exists($GLOBALS['beanFiles'][$class]) && isset($this->$name)){
-                                require_once($GLOBALS['beanFiles'][$class]);
-                                $mod = new $class();
-
+                            if(!empty($this->$id_name) && isset($this->$name)){
+                                $mod = BeanFactory::newBean($related_module);
                                 // disable row level security in order to be able
                                 // to retrieve related bean properties (bug #44928)
 
                                 //BEGIN SUGARCRM flav=pro ONLY
-                                $backup = $mod->disable_row_level_security;
                                 $mod->disable_row_level_security = true;
                                 //END SUGARCRM flav=pro ONLY
                                 $mod->retrieve($this->$id_name);
 
-                                //BEGIN SUGARCRM flav=pro ONLY
-                                // restore row level security settings
-                                $mod->disable_row_level_security = $backup;
-                                //END SUGARCRM flav=pro ONLY
                                 if (!empty($field['rname'])) {
                                     $this->$name = $mod->$field['rname'];
                                 } else if (isset($mod->name)) {
@@ -5114,7 +5098,7 @@ class SugarBean
             }
             $module_name = $this->module_name;
         }
-        
+
         if (!empty($listview_def))
         {
             $temp_field_defs = $this->field_defs;
@@ -5125,6 +5109,7 @@ class SugarBean
             $this->updateDependentField();
         }
 		$this->is_updated_dependent_fields = true;
+
     }
 	//END SUGARCRM flav=pro ONLY
     /**
@@ -5551,19 +5536,18 @@ class SugarBean
     function loadLayoutDefs()
     {
         global $layout_defs;
-        if(empty( $this->layout_def) && file_exists('modules/'. $this->module_dir . '/layout_defs.php'))
-        {
-            include_once('modules/'. $this->module_dir . '/layout_defs.php');
-            if(file_exists('custom/modules/'. $this->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php'))
-            {
-                include_once('custom/modules/'. $this->module_dir . '/Ext/Layoutdefs/layoutdefs.ext.php');
+        if(empty($this->layout_def)) {
+            foreach(SugarAutoLoader::existing("modules/{$this->module_dir}/layout_defs.php",
+                "custom/modules/{$this->module_dir}/Ext/Layoutdefs/layoutdefs.ext.php") as $file) {
+                require $file;
             }
             if ( empty( $layout_defs[get_class($this)]))
             {
-                echo "\$layout_defs[" . get_class($this) . "]; does not exist";
+                $GLOBALS['log']->fatal("\$layout_defs[" . get_class($this) . "]; does not exist");
+                $this->layout_def = array();
+            } else {
+                $this->layout_def = $layout_defs[get_class($this)];
             }
-
-            $this->layout_def = $layout_defs[get_class($this)];
         }
     }
     //BEGIN SUGARCRM flav=pro ONLY
@@ -5874,22 +5858,6 @@ class SugarBean
                 return ACLController::checkAccess($this->module_dir,'export', $is_owner, $this->acltype);
             case 'import':
                 return ACLController::checkAccess($this->module_dir,'import', true, $this->acltype);
-//BEGIN SUGARCRM flav=dce ONLY
-            case 'upgrade':
-                return ACLController::checkAccess($this->module_dir, 'upgrade', true, 'DCE');
-            case 'archive':
-                return ACLController::checkAccess($this->module_dir, 'archive', true, 'DCE');
-            case 'clone':
-                return ACLController::checkAccess($this->module_dir, 'clone', true, 'DCE');
-            case 'convert':
-                return ACLController::checkAccess($this->module_dir, 'convert', true, 'DCE');
-            case 'deploy':
-                return ACLController::checkAccess($this->module_dir, 'deploy', true, 'DCE');
-            case 'recover':
-                return ACLController::checkAccess($this->module_dir, 'recover', true, 'DCE');
-            case 'support_user':
-                return ACLController::checkAccess($this->module_dir, 'support_user', true, 'DCE');
-//END SUGARCRM flav=dce ONLY
         }
         //if it is not one of the above views then it should be implemented on the page level
         return true;
@@ -6150,6 +6118,15 @@ class SugarBean
             $this->$street_field = trim($this->$street_field, "\n");
         }
     }
+
+    protected function getEncryptKey()
+    {
+        if(empty(self::$field_key)) {
+            self::$field_key = blowfishGetKey('encrypt_field');
+        }
+        return self::$field_key;
+    }
+
 /**
  * Encrpyt and base64 encode an 'encrypt' field type in the bean using Blowfish. The default system key is stored in cache/Blowfish/{keytype}
  * @param STRING value -plain text value of the bean field.
@@ -6158,7 +6135,7 @@ class SugarBean
     function encrpyt_before_save($value)
     {
         require_once("include/utils/encryption_utils.php");
-        return blowfishEncode(blowfishGetKey('encrypt_field'),$value);
+        return blowfishEncode($this->getEncryptKey(), $value);
     }
 
 /**
@@ -6168,8 +6145,9 @@ class SugarBean
  */
     function decrypt_after_retrieve($value)
     {
+        if(empty($value)) return $value; // no need to decrypt empty
         require_once("include/utils/encryption_utils.php");
-        return blowfishDecode(blowfishGetKey('encrypt_field'), $value);
+        return blowfishDecode($this->getEncryptKey(), $value);
     }
 
     /**
@@ -6327,7 +6305,7 @@ class SugarBean
             return $result;
         }
 
-        if(file_exists('modules/'.$module_dir.'/'.$fileName))
+        if(SugarAutoLoader::fileExists('modules/'.$module_dir.'/'.$fileName))
         {
             // If the data was not loaded, try loading again....
             if(!isset($moduleDefs[$module]))

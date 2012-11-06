@@ -83,6 +83,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     'merge_filter' => 'enabled',
     //END SUGARCRM flav=pro ONLY
     'unified_search' => true,
+    'sortable' => true,
   ),
    'priority' =>
   array (
@@ -96,6 +97,7 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
     //BEGIN SUGARCRM flav=pro ONLY
     'merge_filter' => 'enabled',
     //END SUGARCRM flav=pro ONLY
+    'sortable' => true,
   ),
   'resolution' =>
   array (
@@ -199,17 +201,6 @@ $dictionary['Case'] = array('table' => 'cases','audited'=>true, 'unified_search'
 	    'source'=>'non-db',
 	    'vname'=>'LBL_PROJECTS',
 	),
-//BEGIN SUGARCRM flav=dce ONLY
-  'DCEInstances' =>
-  array (
-    'name' => 'DCEInstances',
-    'type' => 'link',
-    'relationship' => 'dceinstances_cases',
-    'source'=>'non-db',
-        'vname'=>'LBL_INSTANCES',
-  ),
-	
-//END SUGARCRM flav=dce ONLY
 
   ), 'indices' => array (
        //BEGIN SUGARCRM flav=pro ONLY

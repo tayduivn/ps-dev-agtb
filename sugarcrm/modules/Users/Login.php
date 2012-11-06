@@ -19,13 +19,6 @@ if(!defined('sugarEntry') || !sugarEntry) die('Not A Valid Entry Point');
  *to the License for the specific language governing these rights and limitations under the License.
  *Portions created by SugarCRM are Copyright (C) 2004 SugarCRM, Inc.; All Rights Reserved.
  ********************************************************************************/
-/*********************************************************************************
- * $Id: Login.php 56650 2010-05-24 18:53:17Z jenny $
- * Description: TODO:  To be written.
- * Portions created by SugarCRM are Copyright (C) SugarCRM, Inc.
- * All Rights Reserved.
- * Contributor(s): ______________________________________..
- ********************************************************************************/
 /** @var AuthenticationController $authController */
 $authController->authController->pre_login();
 
@@ -58,7 +51,7 @@ global $app_language, $sugar_config;
 global $current_language;
 
 // Get the login page image
-if ( sugar_is_file('custom/include/images/sugar_md.png') ) {
+if ( SugarAutoLoader::existing('custom/include/images/sugar_md.png') ) {
     $login_image = '<IMG src="custom/include/images/sugar_md.png" alt="Sugar" width="340" height="25">';
 }
 else {
@@ -77,9 +70,6 @@ else {
     //BEGIN SUGARCRM flav=com && lic!=sub ONLY
     $login_image = '<IMG src="include/images/sugar_md_open.png" alt="Sugar" width="340" height="25" style="margin: 5px 0;">';
     //END SUGARCRM flav=com && lic!=sub ONLY
-    //BEGIN SUGARCRM flav=dce ONLY
-    $login_image = '<IMG src="include/images/sugar_md_dce.png" alt="Sugar" width="340" height="25">';
-    //END SUGARCRM flav=dce ONLY
     //BEGIN SUGARCRM flav=ent && flav!=dev ONLY
     $login_image = '<IMG src="include/images/sugar_md_ent.png" alt="Sugar" width="340" height="25">';
     //END SUGARCRM flav=ent && flav!=dev ONLY

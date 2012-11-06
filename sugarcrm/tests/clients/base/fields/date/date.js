@@ -18,7 +18,7 @@ describe("date field", function() {
         it("should format the value", function() {
             var myUser = SUGAR.App.user, jsDate, unformatedValue;
             myUser.set('datepref','m/d/Y');
-            jsDate = new Date("March 13, 2012")
+            jsDate = new Date("March 13, 2012 00:00:00 UTC");
             unformatedValue = jsDate.toISOString();
             expect(field.format(unformatedValue)).toEqual('03/13/2012');
         });

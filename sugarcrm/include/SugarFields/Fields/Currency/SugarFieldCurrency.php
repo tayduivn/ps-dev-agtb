@@ -59,6 +59,21 @@ class SugarFieldCurrency extends SugarFieldFloat
     }
 
     /**
+     * Handles export field sanitizing for field type
+     *
+     * @param $value string value to be sanitized
+     * @param $vardef array representing the vardef definition
+     * @param $focus SugarBean object
+     *
+     * @return string sanitized value
+     */
+    public function exportSanitize($value, $vardef, $focus)
+    {
+        require_once('include/SugarCurrency/SugarCurrency.php');
+        return SugarCurrency::formatAmountUserLocale($value, $focus->currency_id);
+    }
+
+    /**
 	 * format the currency field based on system locale values for currency
      * Note that this may be different from the precision specified in the vardefs.
 	 * @param string $rawfield value of the field

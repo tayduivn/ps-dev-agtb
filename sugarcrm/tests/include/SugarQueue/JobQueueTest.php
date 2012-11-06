@@ -100,9 +100,11 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
+        $timedate = TimeDate::getInstance();
         $job = new SchedulersJob();
         $job->status = SchedulersJob::JOB_STATUS_RUNNING;
         $job->scheduler_id = 'unittest';
+        $job->execute_time = $timedate->nowDb();
         $job->name = "Unit test Job 1";
         $job->target = "test::test";
         $job->save();
@@ -128,6 +130,7 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
         $job->date_entered = '2010-01-01 12:00:00';
         $job->name = "Old Job";
         $job->target = "test::test";
+        $job->execute_time = $GLOBALS['timedate']->getNow()->asDb();
         $job->save();
         $jobid1 = $job->id;
         // another job, later date
@@ -137,6 +140,7 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
         $job->date_entered = '2012-01-01 12:00:00';
         $job->name = "Newer Job";
         $job->target = "test::test";
+        $job->execute_time = TimeDate::getInstance()->getNow()->asDb();
         $job->save();
         $jobid2 = $job->id;
         // job with execute date in the future
@@ -156,6 +160,7 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
         $job->date_entered = '2010-01-01 12:00:00';
         $job->name = "Running Job";
         $job->target = "test::test";
+        $job->execute_time = TimeDate::getInstance()->getNow()->asDb();
         $job->save();
         $jobid4 = $job->id;
         // done job
@@ -165,6 +170,7 @@ class JobQueueTest extends Sugar_PHPUnit_Framework_TestCase
         $job->date_entered = '2010-01-01 12:00:00';
         $job->name = "Done Job";
         $job->target = "test::test";
+        $job->execute_time = TimeDate::getInstance()->getNow()->asDb();
         $job->save();
         $jobid5 = $job->id;
         // get the first one

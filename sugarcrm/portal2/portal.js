@@ -45,6 +45,25 @@
         });
     });
 
+    // bug57318: Mulitple alert warning when multiple views get render denied on same page.
+    var oHandleRenderError = app.error.handleRenderError;
+    app.error.handleRenderError = function(component, method, additionalInfo) {
+        function handlePortalRenderDenied(c) {
+            var title, message;
+            title = app.lang.getAppString('ERR_NO_VIEW_ACCESS_TITLE');
+            message = app.utils.formatString(app.lang.getAppString('ERR_NO_VIEW_ACCESS_MSG'),[c.module]);
+            // TODO: We can later create some special case handlers if we DO wish to alert warn,
+            // but since we have recursive views that's usually going to be overbearing.
+            app.logger.warn(title + ":\n" + message);
+        }
+        // Only hijack view_render_denied error case, otherwise, delegate all else to sidecar handler
+        if(method === 'view_render_denied') {
+            handlePortalRenderDenied(component);
+        } else {
+            oHandleRenderError(component, method, additionalInfo);
+        }
+    };
+
     var oRoutingBefore = app.routing.before;
     app.routing.before = function(route, args) {
         var dm, nonModuleRoutes;
@@ -261,47 +280,59 @@
      */
     // TODO: This piece of code may move in the core files
     app.view.View.prototype.checkFileFieldsAndProcessUpload = function(model, callbacks) {
+        var file, $file, $files, filesToUpload, fileField, successFn, errorFn;
 
         callbacks = callbacks || {};
 
-        //check if there are attachments
-        var $files = _.filter($(":file"), function(file) {
+        // Check if there are attachments
+        $files = _.filter($(":file"), function(file) {
             var $file = $(file);
             return ($file.val() && $file.attr("name") && $file.attr("name") !== "") ? $file.val() !== "" : false;
         });
-        var filesToUpload = $files.length;
 
-        //process attachment uploads
+        filesToUpload = $files.length;
+
+        successFn = function() {
+            filesToUpload--; 
+            if (filesToUpload===0) {
+                app.alert.dismiss('upload'); 
+                if (callbacks.success) callbacks.success();
+            }
+        };
+
+        errorFn = function(error) {
+            var errors = {};
+            
+            // Set model to new by removing it's id attribute. Note that in our initial attempt
+            // to upload file(s) we set delete_if_fails true so server has marked record deleted: 1
+            // Since we may have only create privs (e.g. we can't edit/delete Notes), we'll start anew.  
+            model.unset('id', {silent: true});
+
+            // All or nothing .. if uploading 1..* attachments, if any one fails the whole atomic
+            // operation has failed; so we really want to trigger error and possibly and start over.
+            filesToUpload = 0;
+            app.alert.dismiss('upload');
+            errors[error.responseText] = {};
+            model.trigger('error:validation:' + this.field, errors);
+            model.trigger('error:validation');
+        };
+
+        // Process attachment uploads
         if (filesToUpload > 0) {
             app.alert.show('upload', {level: 'process', title: 'LBL_UPLOADING', autoclose: false});
 
-            //field by field
-            for (var file in $files) {
-                var $file = $($files[file]),
-                    fileField = $file.attr("name");
+            // Field by field
+            for (file in $files) {
+                $file = $($files[file]);
+                fileField = $file.attr("name");
+
                 model.uploadFile(fileField, $file, {
                     field: fileField,
-                    success: function() {
-                        filesToUpload--;
-                        if (filesToUpload===0) {
-                            app.alert.dismiss('upload');
-                            if (callbacks.success) callbacks.success();
-                        }
-                    },
-                    error: function(error) {
-                        filesToUpload--;
-                        if (filesToUpload===0) {
-                            app.alert.dismiss('upload');
-                        }
-                        var errors = {};
-                        errors[error.responseText] = {};
-                        model.trigger('error:validation:' + this.field, errors);
-                        model.trigger('error:validation');
-                    }
+                    success: successFn,
+                    error: errorFn
                 });
             }
-        }
-        else {
+        } else {
             if (callbacks.success) callbacks.success();
         }
     };

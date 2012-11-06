@@ -50,8 +50,8 @@ $mod_strings = array (
   'ERR_DELETE_RECORD' => 'You must specify a record number to delete the product type.',
   'NTC_LIST_ORDER' => 'Set the order in which this category will display in the Product Category dropdown lists',
   'LNK_IMPORT_PRODUCT_CATEGORIES'=>'Import Product Categories',
-	'LBL_DISABLE_ALERT' => 'This is not a valid Parent Category',
-	 'NTC_DELETE_PRUNE_CONFIRMATION' => 'Are you sure you want to delete this category and all of its sub-categories and products?',
+  'LBL_DISABLE_ALERT' => 'This is not a valid Parent Category',
+  'NTC_DELETE_PRUNE_CONFIRMATION' => 'Are you sure you want to delete this category and all of its sub-categories and products?',
   'NTC_DELETE_GRAFT_CONFIRMATION' => 'Are you sure you want to delete this category?  All sub-categories and products will remain.',
   'LBL_PARENT_NAME' => 'Parent Category:',
   'LBL_CATEGORIES'=> 'Categories',
@@ -63,5 +63,6 @@ $mod_strings = array (
   'LBL_EXPORT_PARENT_ID'=> 'Parent Category ID',
   'LBL_EXPORT_MODIFIED_USER_ID' => 'Modified User ID',
   'LBL_EXPORT_CREATED_BY' => 'Created By ID',
+  'LBL_ASSIGNED_TO_NAME' => 'Assigned User',
   );
 ?>

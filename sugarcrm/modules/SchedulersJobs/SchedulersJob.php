@@ -75,9 +75,9 @@ class SchedulersJob extends Basic
 	/**
 	 * Job constructor.
 	 */
-	function SchedulersJob()
+	public function __construct()
 	{
-        parent::Basic();
+        parent::__construct();
         //BEGIN SUGARCRM flav=pro ONLY
         $this->disable_row_level_security = true;
         //END SUGARCRM flav=pro ONLY
@@ -516,11 +516,19 @@ class SchedulersJob extends Basic
 		}
         else if ($exJob[0] == 'class')
         {
+            // autoloader will look for this class and include it
             $tmpJob = new $exJob[1]();
             if($tmpJob instanceof RunnableSchedulerJob)
             {
                 $tmpJob->setJob($this);
-                return $tmpJob->run($this->data);
+                $result = $tmpJob->run($this->data);
+                if($result) {
+                    $this->resolveJob(self::JOB_SUCCESS);
+                    return true;
+                }  else {
+                    $this->resolveJob(self::JOB_FAILURE);
+                    return false;
+                }
             }
             else {
                 $this->resolveJob(self::JOB_FAILURE, sprintf(translate('ERR_JOBTYPE', 'SchedulersJobs'), strip_tags($this->target)));

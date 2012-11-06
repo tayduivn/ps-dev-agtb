@@ -77,8 +77,8 @@ class Note extends SugarBean {
 
 
 
-	function Note() {
-		parent::SugarBean();
+	public function __construct() {
+		parent::__construct();
 	}
 
 	function safeAttachmentName() {

@@ -72,15 +72,10 @@ class SubPanelTiles
         if(isset($_REQUEST['subpanelTabs']))
             $_SESSION['subpanelTabs'] = $_REQUEST['subpanelTabs'];
 
-        require_once 'include/tabConfig.php' ; // include/tabConfig.php in turn includes the customized file at custom/include/tabConfig.php...
+        SugarAutoLoader::requireWithCustom('include/tabConfig.php', true) ; // include custom/ too
 
         $subpanelTabsPref = $current_user->getPreference('subpanel_tabs');
         if(!isset($subpanelTabsPref)) $subpanelTabsPref = $GLOBALS['sugar_config']['default_subpanel_tabs'];
-//BEGIN SUGARCRM flav=dce ONLY
-        if($GLOBALS['sugar_flavor'] == 'DCE'){
-            $subpanelTabsPref = false;
-        }
-//END SUGARCRM flav=dce ONLY
         if(!empty($GLOBALS['tabStructure']) && (!empty($_SESSION['subpanelTabs']) || !empty($sugar_config['subpanelTabs']) || !empty($subpanelTabsPref)))
         {
             // Determine selected group

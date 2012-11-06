@@ -157,6 +157,14 @@ class SugarWidgetFieldCurrency extends SugarWidgetFieldInt
  function queryFilterBetween(&$layout_def){
      return $this->_get_column_select($layout_def)." > ".$GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])). " AND ". $this->_get_column_select($layout_def)." < ".$GLOBALS['db']->quote(unformat_number($layout_def['input_name1']))."\n";
  }
+ public function queryFilterGreater_Equal(&$layout_def)
+ {
+     return $this->_get_column_select($layout_def) . " >= " . $GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])) . "\n";
+ }
+ public function queryFilterLess_Equal(&$layout_def)
+ {
+     return $this->_get_column_select($layout_def) . " <= " . $GLOBALS['db']->quote(unformat_number($layout_def['input_name0'])) . "\n";
+ }
 
  function isSystemCurrency(&$layout_def)
  {

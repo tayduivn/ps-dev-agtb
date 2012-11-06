@@ -91,7 +91,8 @@
         var reset    = $.editable.types[settings.type].reset 
                     || $.editable.types['defaults'].reset;
         var callback = settings.callback || function() { };
-        var onedit   = settings.onedit   || function() { }; 
+        var onedit   = settings.onedit   || function() { };
+        var afterform   = settings.afterform   || function() { };
         var onsubmit = settings.onsubmit || function() { };
         var onreset  = settings.onreset  || function() { };
         var onerror  = settings.onerror  || reset;
@@ -123,13 +124,12 @@
             }
             
             $(this).bind(settings.event, function(e) {
-                
                 /* Abort if element is disabled. */
                 if (true === $(this).data('disabled.editable')) {
                     return;
                 }
                 
-                /* Prevent throwing an exeption if edit field is clicked again. */
+                /* Prevent throwing an exception if edit field is clicked again. */
                 if (self.editing) {
                     return;
                 }
@@ -364,12 +364,15 @@
                             }
                         }
                     }
-                    
                     /* Show tooltip again. */
                     $(self).attr('title', settings.tooltip);
-                    
+
                     return false;
                 });
+
+                // apply afterform hook
+                afterform.apply(this, [settings, form]);
+
             });
             
             /* Privileged methods */
@@ -451,7 +454,7 @@
             },
             text: {
                 element : function(settings, original) {
-                    var input = $('<input />');
+                    var input = $('<input type="text" />');
                     if (settings.width  != 'none') { input.attr('width', settings.width);  }
                     if (settings.height != 'none') { input.attr('height', settings.height); }
                     /* https://bugzilla.mozilla.org/show_bug.cgi?id=236791 */

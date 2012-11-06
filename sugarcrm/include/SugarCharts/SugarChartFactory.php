@@ -49,16 +49,9 @@ class SugarChartFactory
         	$chartEngine = $sugar_config['chartEngine'];
         }
 
-        $file = "include/SugarCharts/".$chartEngine."/".$chartEngine.$module.".php";
-
-        if(file_exists('custom/' . $file))
-        {
-          require_once('custom/' . $file);
-        } else if(file_exists($file)) {
-          require_once($file);
-        } else {
-          $GLOBALS['log']->debug("using default engine include/SugarCharts/".$defaultEngine."/".$defaultEngine.$module.".php");
-          require_once("include/SugarCharts/".$defaultEngine."/".$defaultEngine.$module.".php");
+        if(!SugarAutoLoader::requireWithCustom("include/SugarCharts/{$chartEngine}/{$chartEngine}{$module}.php")) {
+          $GLOBALS['log']->debug("using default engine include/SugarCharts/{$defaultEngine}/{$defaultEngine}{$module}.php");
+          require_once("include/SugarCharts/{$defaultEngine}/{$defaultEngine}{$module}.php");
           $chartEngine = $defaultEngine;
         }
 

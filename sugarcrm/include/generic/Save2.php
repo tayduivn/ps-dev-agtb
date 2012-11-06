@@ -92,40 +92,6 @@ if (isset($_REQUEST['return_type'])  && $_REQUEST['return_type'] == 'report') {
     }
 //END SUGARCRM flav!=sales ONLY
 }
-//BEGIN SUGARCRM flav=dce ONLY
-else if(isset($_REQUEST['return_module']) && isset($_REQUEST['subpanel_module_name']) &&
-        $_REQUEST['return_module'] == 'DCEInstances' && $_REQUEST['subpanel_module_name'] == 'Contacts'){
-    global $beanFiles,$beanList;
-    $bean_name = $beanList[$_REQUEST['module']];
-    require_once($beanFiles[$bean_name]);
-    $focus = new $bean_name();
-    $focus->retrieve($_REQUEST['record']);
-    $find=false;
-    $query = "SELECT contact_id, contact_role FROM dceinstances_contacts where deleted = 0 AND instance_id='{$_REQUEST['record']}'";
-    $rows = array();
-    global $db;
-    $result = $db->query($query);
-    while (($row = $db->fetchByAssoc($result)) != null) {
-       if(isset($row["contact_role"]) && $row["contact_role"]=='Primary Decision Maker'){
-           $find=true;
-       }
-    }
-    $add_values =array();
-    if(!$find){
-        $add_values['contact_role']='Primary Decision Maker';
-    }
-    // Find request parameters with with prefix of REL_ATTRIBUTE_,
-    // convert them into an array of name-value pairs and pass them as
-    // parameters to the add method.
-    foreach ($_REQUEST as $key=>$value) {
-        if (strpos($key,"REL_ATTRIBUTE_") !== false) {
-            $add_values[substr($key,14)]=$value;
-        }
-    }
-    $focus->load_relationship($_REQUEST['subpanel_field_name']);
-    $focus->$_REQUEST['subpanel_field_name']->add($_REQUEST['subpanel_id'],$add_values);
-}
-//END SUGARCRM flav=dce ONLY
 else {
 
 	global $beanFiles,$beanList;
@@ -148,31 +114,16 @@ else {
  		$where_clauses = '';
  		require_once('include/SearchForm/SearchForm2.php');
 
- 		if(file_exists('custom/modules/'.$module.'/metadata/metafiles.php')){
-            require('custom/modules/'.$module.'/metadata/metafiles.php');
-        }elseif(file_exists('modules/'.$module.'/metadata/metafiles.php')){
-            require('modules/'.$module.'/metadata/metafiles.php');
-        }
+ 		$searchdefs_file = SugarAutoLoader::loadWithMetafiles($module, 'searchdefs');
+ 		if($searchdefs_file) {
+ 			require $searchdefs_file;
+ 		}
 
-        if (file_exists('custom/modules/'.$module.'/metadata/searchdefs.php'))
-        {
-        	require_once('custom/modules/'.$module.'/metadata/searchdefs.php');
-        }
-        elseif (!empty($metafiles[$module]['searchdefs']))
-        {
-        	require_once($metafiles[$module]['searchdefs']);
-        }
-        elseif (file_exists('modules/'.$module.'/metadata/searchdefs.php'))
-        {
-        	require_once('modules/'.$module.'/metadata/searchdefs.php');
-        }
+ 		$searchfields_file = SugarAutoLoader::loadWithMetafiles($module, 'SearchFields', 'searchfields');
+ 		if($searchfields_file) {
+ 			require $searchfields_file;
+ 		}
 
-        if(!empty($metafiles[$module]['searchfields'])){
-        	require_once($metafiles[$module]['searchfields']);
-        }
-        elseif(file_exists('modules/'.$module.'/metadata/SearchFields.php')){
-        	require_once('modules/'.$module.'/metadata/SearchFields.php');
-        }
         if(!empty($searchdefs) && !empty($searchFields)) {
         	$searchForm = new SearchForm($seed, $module);
 	        $searchForm->setup($searchdefs, $searchFields, 'SearchFormGeneric.tpl');

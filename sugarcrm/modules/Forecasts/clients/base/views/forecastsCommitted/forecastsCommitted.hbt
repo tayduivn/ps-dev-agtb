@@ -1,0 +1,23 @@
+<div class="datapoints">
+    <div class="datapoint">
+        {{str "LBL_LIKELY_CASE" "Forecasts"}}<br>
+        <h2 id="likely">{{likelyCase}}&nbsp;<span class="icon-sm committed_arrow{{likelyCaseCls}}"></span></h2>
+        <br /><span class="lastLikelyCommit"></span>
+    </div>
+    {{#if show_best}}
+    <div class="divider"></div>
+    <div class="datapoint">
+        {{str "LBL_BEST_CASE" "Forecasts"}}<br>
+        <h2 id="best">{{bestCase}}&nbsp;<span class="icon-sm committed_arrow{{bestCaseCls}}"></span></h2>
+        <br /><span class="lastBestCommit"></span>
+    </div>
+    {{/if}}
+    {{#if show_worst}}
+    <div class="divider"></div>
+    <div class="datapoint">
+        {{str "LBL_WORST_CASE" "Forecasts"}}<br>
+        <h2 id="worst">{{worstCase}}&nbsp;<span class="icon-sm committed_arrow{{worstCaseCls}}"></span></h2>
+        <br /><span class="lastWorstCommit"></span>
+    </div>
+    {{/if}}
+</div>

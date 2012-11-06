@@ -39,7 +39,17 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     const MAX_BULK_THRESHOLD = 100;
 
+    /**
+     * Logger to use to report problems
+     * @var LoggerManager
+     */
+    public $logger;
 
+    public function __construct()
+    {
+
+        $this->logger = $GLOBALS['log'];
+    }
     /**
      * Determine if a module is FTS enabled.
      *
@@ -82,7 +92,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     protected function disableFTS()
     {
-        $GLOBALS['log']->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
+        $this->logger->fatal('Full Text Search has been disabled because the system is not able to connect to the search engine.');
         self::markSearchEngineStatus(true);
 
         // notification
@@ -98,7 +108,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
      */
     protected function addRecordsToQueue($records)
     {
-        $GLOBALS['log']->info('addRecordsToQueue');
+        $this->logger->info('addRecordsToQueue');
         $db = DBManagerFactory::getInstance('fts');
         $db->resetQueryCount();
 
@@ -106,7 +116,7 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
         {
             if (empty($rec['bean_id']) || empty($rec['bean_module']))
             {
-                $GLOBALS['log']->error('Error populating fts_queue. Empty bean_id or bean_module.');
+                $this->logger->error('Error populating fts_queue. Empty bean_id or bean_module.');
                 continue;
             }
             $query = "INSERT INTO fts_queue (bean_id,bean_module) values ('{$rec['bean_id']}', '{$rec['bean_module']}')";
@@ -144,5 +154,13 @@ abstract class SugarSearchEngineAbstractBase implements SugarSearchEngineInterfa
     {
         $admin = new Administration();
         $admin->saveSetting('info', 'fts_down', $isDown? 1: 0);
+    }
+
+    protected function reportException($message, $e)
+    {
+        $this->logger->fatal("$message: ".get_class($e));
+    	if($this->logger->wouldLog('debug')) {
+    	    $this->logger->debug($e->getMessage());
+    	}
     }
 }

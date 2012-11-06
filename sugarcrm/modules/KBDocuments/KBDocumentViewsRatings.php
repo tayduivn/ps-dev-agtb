@@ -44,6 +44,7 @@ class KBDocumentViewsRating extends SugarBean {
 
     var $table_name = "kbdocuments_views_ratings";
     var $object_name = "KBDocumentViewsRating";
+    var $module_name = 'KBDocumentsViewsRating';
     var $disable_custom_fields = true;
     var $user_preferences;
 
@@ -52,18 +53,18 @@ class KBDocumentViewsRating extends SugarBean {
     var $new_schema = true;
     var $module_dir = 'KBDocuments';
 
-    function KBDocumentViewsRating() {
-        parent :: SugarBean();
+    public function __construct() {
+        parent::__construct();
         $this->setupCustomFields('KBDocumentViewsRating'); //parameter is module name
         $this->disable_row_level_security = false;
     }
 
     function save($check_notify = false) {
-        return parent :: save($check_notify);
+        return parent::save($check_notify);
     }
 
     function retrieve($id, $encode = false) {
-        $ret = parent :: retrieve($id, $encode);
+        $ret = parent::retrieve($id, $encode);
         return $ret;
     }
 

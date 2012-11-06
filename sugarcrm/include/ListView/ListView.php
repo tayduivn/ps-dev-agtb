@@ -318,6 +318,7 @@ function process_dynamic_listview($source_module, $sugarbean,$subpanel_def)
         }
 		//END SUGARCRM flav=pro ONLY
         $fields = $aItem->get_list_view_data();
+
         //BEGIN SUGARCRM flav=pro ONLY
         $aItem->ACLFilterFieldList($fields);
         //END SUGARCRM flav=pro ONLY
@@ -1615,14 +1616,9 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
             {
     //AED -- some modules do not have their additionalDetails.php established. Add a check to ensure require_once does not fail
     // Bug #2786
-                if($this->_additionalDetails && $aItem->ACLAccess('DetailView') && (file_exists('modules/' . $aItem->module_dir . '/metadata/additionalDetails.php') || file_exists('custom/modules/' . $aItem->module_dir . '/metadata/additionalDetails.php'))) {
-
-                    $additionalDetailsFile = 'modules/' . $aItem->module_dir . '/metadata/additionalDetails.php';
-                    if(file_exists('custom/modules/' . $aItem->module_dir . '/metadata/additionalDetails.php')){
-                        $additionalDetailsFile = 'custom/modules/' . $aItem->module_dir . '/metadata/additionalDetails.php';
-                    }
-
-                    require_once($additionalDetailsFile);
+                $additionalDetailsFile = SugarAutoLoader::existingCustomOne('modules/' . $aItem->module_dir . '/metadata/additionalDetails.php');
+                if($this->_additionalDetails && $aItem->ACLAccess('DetailView') && !empty($additionalDetailsFile)) {
+                    require_once $additionalDetailsFile;
                     $ad_function = (empty($this->additionalDetailsFunction) ? 'additionalDetails' : $this->additionalDetailsFunction) . $aItem->object_name;
                     $results = $ad_function($fields);
                     $results['string'] = str_replace(array("&#039", "'"), '\&#039', $results['string']); // no xss!
@@ -1750,7 +1746,8 @@ $close_inline_img = SugarThemeRegistry::current()->getImage('close_inline', 'bor
 	                $cell_width = empty($widget_args['width']) ? '' : $widget_args['width'];
 	                $this->xTemplate->assign('HEADER_CELL', $widget_contents);
 	                static $count;
-	            if(!isset($count))$count = 0; else $count++;
+                    $count = !isset($count) ? 0 : $count++;
+
 	                $this->xTemplate->assign('CELL_COUNT', $count);
 	                $this->xTemplate->assign('CELL_WIDTH', $cell_width);
 	                $this->xTemplate->parse('dyn_list_view.header_cell');

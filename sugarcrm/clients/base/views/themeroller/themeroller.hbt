@@ -8,7 +8,7 @@
     <tbody>
     {{#each lessVars.hex}}
     <tr>
-        <td class="span2"><code>@{{name}}</code></td>
+        <td>{{str name}}</td>
         <td class="swatch-col" style="background-color: {{value}}"><span class="swatch"></span></td>
         <!--    <td class="swatch-col">{{value}}</td> -->
         <td>
@@ -19,7 +19,7 @@
     {{/each}}
     {{#each lessVars.rgba}}
     <tr>
-        <td class="span2"><code>@{{name}}</code></td>
+        <td>{{str name}}</td>
         <td class="swatch-col"><span class="swatch {{name}}"></span></td>
         <!--    <td class="swatch-col">{{value}}</td>}} -->
         <td><input type="text" name="{{name}}" rel="colorpicker" value="{{value}}" class="rgbavar span10">
@@ -39,7 +39,7 @@
     <tbody>
     {{#each lessVars.rel}}
     <tr>
-        <td class="span2"><code>@{{name}}</code></td>
+        <td>{{str name}}</td>
         <td class="swatch-col"><span class="swatch {{relname}}"></span></td>
         <!--    <td class="swatch-col">{{value}}</td>  -->
         <td><input type="text" name="{{name}}" value="{{value}}" class="span10"></td>
@@ -59,7 +59,7 @@
     <tbody>
     {{#each lessVars.bg}}
     <tr>
-        <td class="span2"><code>@{{name}}</code></td>
+        <td>{{str name}}</td>
         <td class="swatch-col"><span class="swatch {{name}}"></span></td>
         <!--    <td class="swatch-col">{{value}}</td>  -->
         <td><input type="text" name="{{name}}" value="{{value}}" class="bgvar span10"></td>
