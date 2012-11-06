@@ -55,7 +55,7 @@ class SugarForecasting_Manager extends SugarForecasting_AbstractForecast impleme
                               "timeperiod_id" => '',
                               "id" => '',
                               "user_id" => '',
-                              "version" => 0,
+                              "version" => 1,
                               "name" => '',
                               "date_modified" => ''
                             );
