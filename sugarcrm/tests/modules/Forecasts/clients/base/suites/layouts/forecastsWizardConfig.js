@@ -25,16 +25,17 @@ describe("The forecastsWizardConfig layout controller", function(){
 
     beforeEach(function() {
         var options = {
-            context: {
-                set: function() {}
-            },
+            context: new Backbone.Model(),
             meta: {
+                type: 'wizardConfig',
                 components: {}
             }
         };
 
+        options.context.forecasts = new Backbone.Model();
+
         app = SugarTest.app;
-        SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/forecastsWizardConfig", "forecastsWizardConfig", "js", function(d) {
+        var wizardController = SugarTest.loadFile("../modules/Forecasts/clients/base/layouts/wizardConfig", "wizardConfig", "js", function(d) {
             return eval(d);
         });
         stubs = [];
@@ -53,7 +54,13 @@ describe("The forecastsWizardConfig layout controller", function(){
         }));
         stubs.push(sinon.stub(app.view.Layout.prototype, "initialize", function (options) {}));
 
-        layout = new app.view.layouts.ForecastsWizardConfigLayout(options);
+        layout = SugarTest.createComponent('Layout', {
+            name: "wizardConfig",
+            module: "Forecasts",
+            context: options.context,
+            meta : options.meta,
+            controller: wizardController
+        });
     });
 
     afterEach(function() {
