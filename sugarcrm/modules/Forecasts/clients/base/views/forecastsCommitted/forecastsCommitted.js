@@ -161,6 +161,7 @@
         this.likelyCaseCls = '';
         this.bestCaseCls = '';
         this.worstCaseCls = '';
+        this.totals = null;
         this._collection.url = this.createUrl();
         this._collection.fetch();
     },
@@ -179,14 +180,11 @@
         if(this.context && this.context.forecasts) {
             this.context.forecasts.on("change:selectedUser", function(context, user) {
                 self.forecastType = user.showOpps ? 'Direct' : 'Rollup';
-                self.selectedUser = user;
-                // when ever the users changes, empty out the saved totals
-                self.totals = null;
+                self.selectedUser = user;              
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
                 self.timePeriodId = timePeriod.id;
-                self.totals = null;
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
