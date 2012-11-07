@@ -209,17 +209,25 @@ class iCal extends vCal {
         $str = '';
         global $DO_USER_TIME_OFFSET, $sugar_config, $current_user, $timedate;
 
-        $acts_arr = CalendarActivity::get_activities($user_bean->id,
-            false,
-            $start_date_time,
-            $end_date_time,
-            'month');
-
         $hide_calls = false;
         if (!empty($_REQUEST['hide_calls']) && $_REQUEST['hide_calls'] == "true")
         {
             $hide_calls = true;
         }
+
+        $hide_tasks = true;
+        if (!empty($_REQUEST['show_tasks_as_events']) && ($_REQUEST['show_tasks_as_events'] == "1"  || $_REQUEST['show_tasks_as_events'] == "true")
+        {
+            $hide_tasks = false;
+        }
+
+        $acts_arr = CalendarActivity::get_activities($user_bean->id,
+            !$hide_tasks,
+            $start_date_time,
+            $end_date_time,
+            'month',
+            !$hide_calls);
+
 
         // loop thru each activity, get start/end time in UTC, and return iCal strings
         foreach($acts_arr as $act)
@@ -335,20 +343,22 @@ class iCal extends vCal {
             }
         }
 
-        require_once('modules/Tasks/Task.php');
-        $where = "tasks.assigned_user_id='{$user_bean->id}' ".
-            "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
-            "AND (tasks.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('tasks', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
-        $seedTask = new Task();
-        $taskList = $seedTask->get_full_list("", $where);
-        if (is_array($taskList))
-        {
-            foreach($taskList as $task)
+        if (!$hide_tasks) {
+            require_once('modules/Tasks/Task.php');
+            $where = "tasks.assigned_user_id='{$user_bean->id}' ".
+                "AND (tasks.status IS NULL OR (tasks.status!='Deferred')) ".
+                "AND (tasks.date_start IS NULL OR " . CalendarActivity::get_occurs_within_where_clause('tasks', '', $start_date_time, $end_date_time, 'date_start', 'month') . ")";
+            $seedTask = new Task();
+            $taskList = $seedTask->get_full_list("", $where);
+            if (is_array($taskList))
             {
-                $str .= $this->createSugarIcalTodo($user_bean, $task, "Tasks", $dtstamp);
+                foreach($taskList as $task)
+                {
+                    $str .= $this->createSugarIcalTodo($user_bean, $task, "Tasks", $dtstamp);
+                }
             }
         }
-
+        
         return $str;
     }
 
