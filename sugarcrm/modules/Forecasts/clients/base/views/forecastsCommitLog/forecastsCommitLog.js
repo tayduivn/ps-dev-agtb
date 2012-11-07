@@ -20,7 +20,7 @@
     /**
      * Stores the Backbone collection of Forecast models
      */
-    _collection : {},
+    collection : {},
 
     /*
      * Stores the name to display in the view
@@ -118,7 +118,7 @@
 
     initialize : function(options) {
         app.view.View.prototype.initialize.call(this, options);
-        this._collection = this.context.forecasts.committed;
+        this.collection = this.context.forecasts.committed;
 
         this.fullName = app.user.get('full_name');
         this.userId = app.user.get('id');
@@ -164,11 +164,11 @@
 
     bindDataChange: function() {
         var self = this;
-        this._collection = this.context.forecasts.committed;
-        this._collection.on("reset", function() {
+        this.collection = this.context.forecasts.committed;
+        this.collection.on("reset", function() {
             self.buildForecastsCommitted();
         }, this);
-        this._collection.on("change", function() { self.buildForecastsCommitted(); }, this);
+        this.collection.on("change", function() { self.buildForecastsCommitted(); }, this);
     },
 
     /**
@@ -197,12 +197,12 @@
         self.historyLog = [];
 
         // if we have no models, exit out of the method
-        if (_.isEmpty(self._collection.models)) {
+        if (_.isEmpty(self.collection.models)) {
             return;
         }
 
         // get the first model so we can get the previous date entered
-        previousModel = _.first(self._collection.models);
+        previousModel = _.first(self.collection.models);
 
         // parse out the previous date entered
         var dateEntered = new Date(Date.parse(previousModel.get('date_entered')));
@@ -217,7 +217,7 @@
 
         // get the rest of the models to loop over
         // by using the length of the models array minus 1 for the first one we already took off
-        models = _.last(self._collection.models, self._collection.models.length-1);
+        models = _.last(self.collection.models, self.collection.models.length-1);
 
         _.each(models, function (model) {
             self.historyLog.push(app.forecasts.utils.createHistoryLog(model, previousModel));

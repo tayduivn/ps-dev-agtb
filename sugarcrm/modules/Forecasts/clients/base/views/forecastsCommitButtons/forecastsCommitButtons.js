@@ -179,7 +179,7 @@
     triggerConfigModal: function() {
         var params = {
             title: app.lang.get("LBL_FORECASTS_CONFIG_TITLE", "Forecasts"),
-            components: [{layout:"forecastsTabbedConfig"}],
+            components: [{layout:"tabbedConfig"}],
             span: 10,
             before: {
                 hide: function() {
@@ -187,7 +187,10 @@
                     // We have no event passed here to get which button was clicked
                     if(this.context.forecasts.get('saveClicked')) {
                         // cancel was not clicked, so refresh the page redirecting to the Forecasts module
-                        window.location = 'index.php?module=Forecasts';
+                        //window.location = 'index.php?module=Forecasts';
+
+                        // call tell the metadata to sync.
+                        SUGAR.App.sync({});
                     } else {
                         // reset without a change event in case they click settings again
                         // before refreshing the page

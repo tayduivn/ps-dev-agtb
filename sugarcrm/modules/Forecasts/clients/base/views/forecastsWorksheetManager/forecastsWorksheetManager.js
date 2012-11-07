@@ -25,7 +25,7 @@
     gTable:'',
     // boolean for enabled expandable row behavior
     isExpandableRows:'',
-    _collection:{},
+    collection:{},
 
 
     /**
@@ -62,9 +62,9 @@
         this.timePeriod = app.defaultSelections.timeperiod_id.id
         this.category = app.defaultSelections.category.id
 
-        this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
-        this._collection.isDirty = false;
+        this.collection = this.context.forecasts.worksheetmanager;
+        this.collection.url = this.createURL();
+        this.collection.isDirty = false;
 
         this.totalModel = new (Backbone.Model.extend(
             {
@@ -90,15 +90,15 @@
         if(!this.showMe()){
         	return false;
         }
-        this._collection = this.context.forecasts.worksheetmanager;
-        this._collection.url = this.createURL();
+        this.collection = this.context.forecasts.worksheetmanager;
+        this.collection.url = this.createURL();
         this.safeFetch(true);
     },
 
     bindDataChange: function() {
-        if(this._collection)
+        if(this.collection)
         {
-            this._collection.on("reset", function(){
+            this.collection.on("reset", function(){
             	this.render();
             }, this);
         }
@@ -167,7 +167,7 @@
             
             var worksheet = this;
             $(window).bind("beforeunload",function(){
-                if(worksheet._collection.isDirty){
+                if(worksheet.collection.isDirty){
                 	return app.lang.get("LBL_WORKSHEET_SAVE_CONFIRM_UNLOAD", "Forecasts");
                 }            	
             });
@@ -217,7 +217,7 @@
         {
             fetch = true;
         }
-    	var collection = this._collection;
+    	var collection = this.collection;
     	var self = this;
     	if(collection.isDirty){
     		//unsaved changes, ask if you want to save.
@@ -340,7 +340,7 @@
         );
 
         //see if anything in the model is a draft version
-        _.each(this._collection.models, function(model, index){
+        _.each(this.collection.models, function(model, index){
         	if(model.get("version") == 0){
         		enableCommit = true;
         	}
@@ -452,7 +452,7 @@
         }
 
 
-        _.each(self._collection.models, function (model) {
+        _.each(self.collection.models, function (model) {
 
            var base_rate = parseFloat(model.get('base_rate'));
            amount 			+= app.currency.convertWithRate(model.get('amount'), base_rate);
