@@ -177,14 +177,14 @@
                     {
                         "name": "save_button",
                         "type": "button",
-                        "label": "Save",
+                        "label": app.lang.get('LBL_SAVE_BUTTON_LABEL'),
                         "value": "save",
                         "css_class": "btn-primary pull-right save-profile",
                     },
                     {
                         "name": "cancel_button",
                         "type": "button",
-                        "label": "Cancel",
+                        "label": app.lang.get('LBL_CANCEL_BUTTON_LABEL'),
                         "value": "cancel",
                         "css_class": "btn-invisible btn-link",
                     }
