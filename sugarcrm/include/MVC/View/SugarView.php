@@ -46,6 +46,7 @@ class SugarView
     var $type = null;
     var $responseTime;
     var $fileResources;
+    protected $base_menu;
 
     /**
      * Constructor which will peform the setup.
@@ -55,6 +56,7 @@ class SugarView
         $view_object_map = array()
         )
     {
+        $this->base_menu = SugarAutoLoader::loadExtension("menus", "application");
     }
 
     public function init(
@@ -1352,9 +1354,8 @@ EOHTML;
                     $module_menu[] = array("index.php?module=Import&action=Step1&import_module=$module&return_module=$module&return_action=index",
                         $app_strings['LBL_IMPORT'], "Import", $module);
         }
-        $file = SugarAutoLoader::loadExtension("menus", "application");
-        if($file) {
-            require $file;
+        if($this->base_menu) {
+            require $this->base_menu;
         }
 
         $mod_strings = $curr_mod_strings;
