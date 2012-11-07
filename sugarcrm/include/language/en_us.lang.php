@@ -3465,7 +3465,7 @@ $app_strings = array (
     'LBL_PORTAL_SAVING' => 'Saving',
     'LBL_PORTAL_PAGE_NOT_AVAIL' => 'Page Not Available', 
     'LBL_PORTAL_NOT_ENABLED_MSG' => "We're Sorry, but this feature is not available at this time.",
-    'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query]"',
+    'LBL_PORTAL_SEARCH_RESULTS_TITLE' => 'Show search results for "{query}"',
 
     //for portal system tour
     'LBL_PORTAL_TOUR_SCREEN1_TITLE' => 'Welcome to Portal Tour',
