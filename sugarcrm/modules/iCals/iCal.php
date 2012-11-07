@@ -252,7 +252,22 @@ class iCal extends vCal {
                         {
                             if ($attendee->id != $user_bean->id)
                             {
-                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
+                                // Define the participant status
+                                $participant_status = '';
+                                if (!empty($attendee->accept_status)) {
+                                    switch ($attendee->accept_status) {
+                                        case 'accept':
+                                            $participant_status = ';PARTSTAT=ACCEPTED';
+                                            break;
+                                        case 'decline':
+                                            $participant_status = ';PARTSTAT=DECLINED';
+                                            break;
+                                        case 'tentative':
+                                            $participant_status = ';PARTSTAT=TENTATIVE';
+                                            break;
+                                    }
+                                }
+                                $str .= 'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
                             }
                         }
                     }
@@ -268,7 +283,22 @@ class iCal extends vCal {
                         {
                             if ($attendee->id != $user_bean->id)
                             {
-                                $str .= 'ATTENDEE;CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
+                                // Define the participant status
+                                $participant_status = '';
+                                if (!empty($attendee->accept_status)) {
+                                    switch ($attendee->accept_status) {
+                                        case 'accept':
+                                            $participant_status = ';PARTSTAT=ACCEPTED';
+                                            break;
+                                        case 'decline':
+                                            $participant_status = ';PARTSTAT=DECLINED';
+                                            break;
+                                        case 'tentative':
+                                            $participant_status = ';PARTSTAT=TENTATIVE';
+                                            break;
+                                    }
+                                }
+                                $str .= 'ATTENDEE'.$participant_status.';CN="'.$attendee->get_summary_text().'":mailto:'. (!empty($attendee->email1) ? $attendee->email1 : 'none@none.tld') . "\n";
                             }
                         }
                     }
