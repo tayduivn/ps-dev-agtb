@@ -186,6 +186,7 @@
             }, this);
             this.context.forecasts.on("change:selectedTimePeriod", function(context, timePeriod) {
                 self.timePeriodId = timePeriod.id;
+                self.totals = null;
                 self.updateCommitted();
             }, this);
             this.context.forecasts.on("change:updatedTotals", function(context, totals) {
