@@ -4,7 +4,7 @@
     },
 
     _placeComponent: function(component, def) {
-        $('#collapse' + def.moduleName).find('.' + def.contentType + 'View').append(component.el);
+        this.$('#collapse' + def.moduleName).find('.' + def.contentType + 'View').append(component.el);
     },
 
     /**
@@ -12,57 +12,17 @@
      * @param options
      */
     initialize:function (options) {
+        var self = this,
+            leadId, firstModule;
+
+        _.bindAll(this);
+
+        //start major hack
+        app.view.Component.prototype.initialize.call(this, options);
+        this.context.meta = this.meta
+        //end major hack
+
         app.view.Layout.prototype.initialize.call(this, options);
-
-        var leadId,
-            linkedListNode = function (key) {
-            return {
-                key:key,
-                next:null
-            };
-        };
-
-        var linkedList = function () {
-            var head = null;
-            var next = null;
-            var insert = function (node) {
-                if (head == null) {
-                    head = node;
-                }
-                if (next != null) {
-                    next.next = node;
-                }
-
-                next = node;
-            };
-
-            var search = function (key) {
-                var node = head;
-                while (node !== null && node.key !== key) {
-                    node = node.next;
-                }
-                ;
-                return node;
-            };
-
-            var getHead = function () {
-                return head;
-            };
-
-            return {
-                insert:insert,
-                search:search,
-                getHead:getHead
-            };
-        };
-
-        var convertSteps = new linkedList();
-        _.each(this.meta.modules, function (element, index, list) {
-            convertSteps.insert(new linkedListNode(element.module));
-        });
-
-        this.context.meta = this.meta;
-        this.context.steps = convertSteps;
 
         //create parent convert model to hold all sub-models
         leadId = this.context.get('modelId');
@@ -72,23 +32,28 @@
         this.context.off("lead:convert", this.processConvert);
         this.context.on("lead:convert", this.processConvert, this);
 
+        //set up the convert steps to control continue flow
+        this.context.steps = this.buildConvertStepsList(this.meta.modules);
 
+        this.$('.accordion').on('show', function (e) {
+            self.initiateContinue(e);
+        });
     },
 
     render:function () {
         app.view.Layout.prototype.render.call(this);
 
         var self = this,
-            moduleName = this.context.steps.getHead().key;
+            firstModule = this.context.steps.getHead().key;;
 
         $('.accordion').on('show', function (e) {
             self.initiateContinue(e);
         });
 
-        this.initiateAccordion();
-        this.initiateSubComponents();
-      //  this.populateRecordModelsFromLeadsData();
-        this.showAccordion(moduleName);
+        this.initiateAccordion(this.meta.modules);
+        this.initiateSubComponents(this.meta.modules);
+        //  this.populateRecordModelsFromLeadsData();
+        this.showAccordion(firstModule);
     },
 
     /**
@@ -117,10 +82,15 @@
         return result;
     },
 
-    initiateAccordion:function () {
-        _.each(this.meta.modules, function (element, index, list) {
+    /**
+     * Collapse all accordion panels initially
+     */
+    initiateAccordion:function (moduleMetadata) {
+        var self = this;
+
+        _.each(moduleMetadata, function (element, index, list) {
             var accordionBody = '#collapse' + element.module;
-            $(accordionBody).collapse({
+            self.$(accordionBody).collapse({
                 parent:'#convert-accordion'
             });
         });
@@ -129,25 +99,23 @@
     /**
      * Add sub-views defined by the convert metadata to the layout
      */
-    initiateSubComponents:function () {
+    initiateSubComponents:function (moduleMetadata) {
         var self = this;
 
-        _.each(this.meta.modules, function (element, index, list) {
-            var duplicateView,
-                recordView,
-                def = {
+        _.each(moduleMetadata, function (element, index, list) {
+            var def = {
                     'view':'list',
                     'context':{'module':element.module}
                 };
 
-            duplicateView = self.insertViewInAccordionBody(element.module, 'duplicate', def);
+            self.insertViewInAccordionBody(element.module, 'duplicate', def);
 
             def = {
                 'view':'edit',
                 'context':{'module':element.module}
             };
 
-            recordView = self.insertViewInAccordionBody(element.module, 'record', def);
+            self.insertViewInAccordionBody(element.module, 'record', def);
         });
     },
 
@@ -186,9 +154,8 @@
 
     showAccordion:function (moduleName) {
         var accordionBody = '#collapse' + moduleName;
-
-        $(accordionBody).collapse('show');
-        $(accordionBody).css('height', 'auto');
+        this.$(accordionBody).collapse('show');
+        this.$(accordionBody).css('height', 'auto');
     },
 
     /**
@@ -205,7 +172,6 @@
                 self.displayResults(data);
             }
         });
-
     },
 
     /**
@@ -260,5 +226,52 @@
                 }
             });
         });
+    },
+
+    buildConvertStepsList: function(moduleMetadata) {
+        var linkedListNode = function (key) {
+            return {
+                key: key,
+                next: null
+            };
+        };
+        var linkedList = function () {
+            var head = null;
+            var next = null;
+            var insert = function (node) {
+                if (head == null) {
+                    head = node;
+                }
+                if (next != null) {
+                    next.next = node;
+                }
+                next = node;
+            };
+
+            var search = function (key) {
+                var node = head;
+                while (node !== null && node.key !== key) {
+                    node = node.next;
+                };
+                return node;
+            };
+
+            var getHead = function () {
+                return head;
+            };
+
+            return {
+                insert:insert,
+                search:search,
+                getHead:getHead
+            };
+        };
+
+        var convertSteps = new linkedList();
+        _.each(moduleMetadata, function (element, index, list) {
+            convertSteps.insert(new linkedListNode(element.module));
+        });
+
+        return convertSteps;
     }
 })
