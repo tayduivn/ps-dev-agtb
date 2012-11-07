@@ -5,9 +5,9 @@
  *      on: this
  *      by: _showConfigModal()
  */
-(function (app) {
+({
 
-    app.view.layouts.ForecastsEmptyLayout = app.view.layouts.ForecastsLayout.extend({
+        extendsFrom: "ForecastsIndexLayout",
 
         initialize:function (options) {
             options.context = _.extend(options.context, this.initializeAllModels(options.context));
@@ -89,6 +89,4 @@
                 }});
             }
         }
-    });
-
-})(SUGAR.App)
+})

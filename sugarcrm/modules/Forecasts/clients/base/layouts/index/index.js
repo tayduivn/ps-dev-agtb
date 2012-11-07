@@ -1,11 +1,10 @@
-(function(app) {
+({
     /**
      * Layout that places views in columns with each view in a column
-     * @class View.Layouts.ColumnsLayout
-     * @alias SUGAR.App.layout.ColumnsLayout
+     * @class View.Layouts.ForecastsLayout
+     * @alias SUGAR.App.layout.ForecastsLayout
      * @extends View.Layout
      */
-    app.view.layouts.ForecastsLayout = app.view.Layout.extend({
 
         /**
          * Holds the metadata for each of the components used in forecasts
@@ -280,6 +279,5 @@
                 this.$el.append(comp.$el);
             }
         }
-    });
 
-})(SUGAR.App)
+})

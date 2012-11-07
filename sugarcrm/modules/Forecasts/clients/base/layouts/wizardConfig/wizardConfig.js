@@ -21,9 +21,7 @@
  * All Rights Reserved.
  ********************************************************************************/
 
-(function (app) {
-
-    app.view.layouts.ForecastsWizardConfigLayout = app.view.Layout.extend({
+({
 
         /**
          * Saved Labels to use for the Breadcrumbs
@@ -93,7 +91,4 @@
             return this.breadCrumbLabels;
         }
 
-
-    });
-
-})(SUGAR.App)
+})
