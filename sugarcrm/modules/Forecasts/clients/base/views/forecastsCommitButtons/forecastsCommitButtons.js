@@ -200,7 +200,7 @@
                         //window.location = 'index.php?module=Forecasts';
 
                         // call tell the metadata to sync.
-                        SUGAR.App.sync({});
+                        app.sync();
                     } else {
                         // reset without a change event in case they click settings again
                         // before refreshing the page
