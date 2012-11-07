@@ -18,6 +18,7 @@ describe("datetimecombo field", function() {
         // initialize called myUser's datepre/timepref will take precedence)
         field.usersDatePrefs = 'm/d/Y';
         field.userTimePrefs = 'H:i';
+        field.stripIsoTZ = false; // let the browser interpret iso 8601 TZ
     });
 
     afterEach(function() {
@@ -29,7 +30,7 @@ describe("datetimecombo field", function() {
         baseDateField = null;
     });
 
-    describe("datetimecombo init", function() {
+    describe("datetimecombo core", function() {
         var datepickerStub, jqFn, expectedValValue;
         
         // Essentially, the following stubs out this.$('doesnt_matter').<val & datepicker>
@@ -55,6 +56,39 @@ describe("datetimecombo field", function() {
             field._presetDateValues();
             expect(field.dateValue).toEqual(expectedValValue);
             expect(field.timeValue).toEqual(expectedValValue);
+        });
+
+        it("should _stripIsoTZ if stripIsoTZ set true",function() {
+            expect(field._stripIsoTimeDelimterAndTZ("2012-11-06T20:00:06.651Z")).toEqual("2012-11-06 20:00:06");
+            expect(field._stripIsoTimeDelimterAndTZ('2012-11-07T04:28:52+00:00')).toEqual("2012-11-07 04:28:52");
+        });
+
+        it("should unformat to iso 8601 compatible date string", function() {
+            var yr='1999', m='01', d='23', actual;
+            actual = field.unformat(yr+'-'+m+'-'+d);
+            expect(actual.match(/1999\-01\-23T.*Z/)).toBeTruthy();
+        });
+        it("should unformat to same object passed in if falsy", function() {
+            var stub;
+            expect(field.unformat('')).toEqual('');
+            expect(field.unformat(false)).toEqual(false);
+            expect(field.unformat(null)).toEqual(null);
+            stub = sinon.stub(app.logger, 'error')
+            expect(field.unformat('yogabba')).toEqual('yogabba');
+            expect(stub).toHaveBeenCalledOnce();
+            stub.restore();
+        });
+
+        it('should build unformatted string per REST API required input', function() {
+            var actual, expected;
+            actual   = field._buildUnformatted('09/12/1970', '02', '00');
+            expect(/1970\-09\-12T.*\:00\:00.*Z$/.test(actual)).toBeTruthy()
+
+            // Regardless of user's prefs should still be API formatted
+            field.usersDatePrefs = 'Y.m.d';
+            field.userTimePrefs  = 'H.i s';
+            actual   = field._buildUnformatted('1970.09.12', '02', '00');
+            expect(/1970\-09\-12T.*\:00\:00.*Z$/.test(actual)).toBeTruthy()
         });
     });
 

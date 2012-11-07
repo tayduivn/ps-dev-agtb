@@ -9,6 +9,9 @@
 
     serverDateFormat: 'Y-m-d',
 
+    // If true, attempts to strip off ISO 8601 TZ related info 
+    stripIsoTZ: true,
+
     /**
      * Base initialization
      * @param  {Object} options the options
@@ -26,26 +29,6 @@
 
         app.view.Field.prototype.initialize.call(this, options);
     },
-
-    /**
-     * Base unformat
-     * @param  {String} value the value
-     * @return {String} computed value
-     */
-    unformat:function(value) {
-        var jsDate;
-        if (value) {
-            jsDate = app.date.parse(value);
-            if (jsDate && _.isFunction(jsDate.toISOString)) {
-                return jsDate.toISOString();
-            } else {
-                app.logger.error("Issue converting date to iso string; no toISOString available for date created for value: "+value);
-                return value;
-            }
-        }
-        return value;
-    },
-        
     /**
      * NOP - jquery.timepicker (the plugin we use for time part of datetimecombo widget),
      * triggers both a 'change', and, a 'changeTime' event. If we let base Field's bindDomChange
@@ -55,8 +38,9 @@
     bindDomChange: function() {
         // NOP -- pass through to prevent base Field's bindDomChange from handling
     },
-
-    // NOP - Derived fields must implement
+    /**
+     * NOP - Derived fields must implement
+     */
     _setDateIfDefaultValue: function() {
     },
     /**
@@ -78,10 +62,8 @@
         var action = (this.datepickerVisible) ? 'hide' : 'show';
         this.$(".datepicker").datepicker(action);
     },
-
     /**
      * Set up the Datepicker 
-     * @return {[type]} [description]
      */
     _setupDatepicker: function() {
         this.datepickerMap = this._patchDatepickerMeta(); // converts com_cal_* to languageDictionary 
@@ -108,7 +90,7 @@
         });
     },
     /**
-     * Hook when datepicker plugin shown.
+     * Hook for when datepicker plugin shown.
      */
     showDatepicker: function(ev) {
         this.datepickerVisible = true;
@@ -128,13 +110,14 @@
         model      = this.model;
         fieldName  = this.name;
 
-        if (this.type === 'datetimecombo') {
+        // Only if object has a _setTimepickerValue 
+        if (!_.isUndefined(this._setTimepickerValue) && _.isFunction(this._setTimepickerValue)) {
             $timepicker= this.$('.ui-timepicker-input');
             // Get time values. If none, set to default of midnight; also get date, set model, etc.
             hrsMins    = this._getHoursMinutes($timepicker);
             this._setTimepickerValue($timepicker, hrsMins.hours, hrsMins.minutes);
         } else {
-            // For non datetime (likely date) we blank out hours and minutes
+            // For non datetime type widgets (e.g. date) we simply blank out hours and minutes
             hrsMins    = {
                 hours: '00',
                 minutes: '00'
@@ -171,20 +154,51 @@
         date.prop('value', dateValue); 
     },
 
+
+    /**
+     * Set the date string for REST Api. If stripT
+     * @param {Date} The date we want formatted
+     * @return {String} API ready date string 
+     */
+    _setServerDateString: function(jsDate) {
+        var h, m, d;
+
+        /**
+         * If we don't want the timezone info we get something like: 2012-12-31T01:30:00 
+         * which the server will honor. With timezone will be like: "2012-12-31T01:30:00.814Z"
+         */
+        if (this.stripIsoTZ) {
+            d = app.date.format(jsDate, this.serverDateFormat);
+            h = this._forceTwoDigits(jsDate.getHours().toString());
+            m = this._forceTwoDigits(jsDate.getMinutes().toString());
+            return d + 'T' + h + ':' + m + ':00';
+        }
+        if (_.isFunction(jsDate.toISOString)) {
+            
+            // With timezone info
+            return jsDate.toISOString();
+        }
+        return jsDate;
+    },
+
     /**
      * Per FDD: When the Datetime field required, default value should be SYSDATE and all zeros for Time
+     * @return {Date} date created representing today at midnight
      */
     _setDateNow: function() {
         // Per the FDD: When the Datetime field is mandatory, the default value
         // should be SYSDATE and all zeros for Time value
         var jsDate = new Date();
         jsDate.setHours(0, 0, 0, 0);
-        this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
+        this.model.set(this.name, this._setServerDateString(jsDate), {silent: true}); 
+        //this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
         return jsDate;
     },
     /**
      * Checks if dateStringToCheck is falsy..if so, returns today's date as string formatted by
      * user's prefs. Otherwise, just returns dateStringToCheck.
+     * @param {String} dateStringToCheck Date string 
+     * @return {String} Date string
      */
     _getTodayDateStringIfNoDate: function(dateStringToCheck) {
         if (!dateStringToCheck) {
@@ -195,7 +209,7 @@
     },
     /**
      * Gets the name of this view.
-     * @return String view name
+     * @return {String} view name
      */
     _getViewName: function() {
         return this.view.meta && this.view.meta.type ? this.view.meta.type : this.view.name;

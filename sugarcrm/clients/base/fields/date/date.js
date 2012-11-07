@@ -40,9 +40,13 @@
             }
         });
     },
+    /**
+     * Formats value per user's preferences 
+     * @param {String} value The value to format 
+     * @return {String} Formatted value 
+     */
     format:function(value) {
         var jsDate, parts;
-
         if (this._isNewEditViewWithNoValue(value)) {
             // If there is a default 'string' value like "yesterday", format it as a date
             jsDate = this._setDateIfDefaultValue();
@@ -65,8 +69,9 @@
         jsDate = app.date.parse(value);
         return app.date.format(jsDate, this.usersDatePrefs);
     },
+
     /**
-     * Overrides basedate
+     * Overrides basedate's unformat.
      */
     unformat:function(value) {
         // In case ISO 8601 get it back to js native date which date.format understands
@@ -78,14 +83,13 @@
     /**
      * If the field def has a display_default property, or, is required, this
      * will set the model with corresponding date time.
+     * @return {Date} The date created
      */
     _setDateIfDefaultValue: function() {
         var value, jsDate; 
 
         if (this.def.display_default) {
-            value = app.date.parseDisplayDefault(this.def.display_default);
-            parts = value.match(/(\d+)/g);
-            jsDate = new Date(parts[0], parts[1]-1, parts[2]); //months are 0-based
+            jsDate = app.date.parseDisplayDefault(this.def.display_default);
             this.model.set(this.name, app.date.format(jsDate, this.serverDateFormat));
         } else if (this.def.required) {
             return this._setDateNow();

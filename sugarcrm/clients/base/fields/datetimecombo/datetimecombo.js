@@ -27,17 +27,26 @@
 ({
     // datetimecombo
     extendsFrom:'BasedateField',
+
+    // This is dynamically detected and represents whether meridien is appropriate
     showAmPm: false,
-    timeValue: '', // used by hbt template (note we inherit dateValue from basedate)
-    _setTimeValue: function() {
-        this.timeValue = this.$('.ui-timepicker-input').val();
-        this.timeValue = (this.timeValue) ? this.timeValue : '';
-    },
+
+    // used by hbt template (note we inherit dateValue from basedate)
+    timeValue: '', 
+
+
+    /**
+     * Renders widget, sets up date and time pickers, etc.
+     * @param  {String} value  
+     */
     _render:function(value) {
         var self = this, viewName;
 
+        // Set our internal time and date values so hbt picks up
         self._presetDateValues();
+
         app.view.Field.prototype._render.call(self);
+
         viewName = self._getViewName();
 
         $(function() {
@@ -47,8 +56,32 @@
             }
         });
     },
+
+    /**
+     * Strips out the 'T' and, either the 'Z' or +00:00 by, essentially, taking just the first 19 characters
+     * @param  {String} value The value 
+     * @return {String} stripped value 
+     */
+    _stripIsoTimeDelimterAndTZ: function(value) {
+        if(!_.isUndefined(value) && value) {
+            // Since s.replace('T', ' ').replace('Z','') assumes we have Z it's better to do:
+            // str.replace('T', ' ').substr(0, 19) ... which works for both of following formats:
+            // '2012-11-07T04:28:52+00:00'.replace('T', ' ').substr(0, 19)
+            // "2012-11-06 20:00:06.651Z".replace('T', ' ').substring(0, 19)
+            return value.replace("T", " ").substr(0, 19);
+        }
+    },
+    /**
+     * Formats value
+     * @param  {String} value The value
+     * @return {String} formatted value
+     */
     format:function(value) {
         var jsDate, output, myUser = app.user, d, parts, before24Hours;
+
+        if (this.stripIsoTZ) {
+            value = this._stripIsoTimeDelimterAndTZ(value);
+        }
 
         if (this._isNewEditViewWithNoValue(value)) {
             jsDate = this._setDateIfDefaultValue();
@@ -59,6 +92,7 @@
             return value;
         } else {
             // In case ISO 8601 get it back to js native date which date.format understands
+            // Note that if stripIsoTZ is true, time zone won't matter since it was stripped out.
             jsDate = new Date(value);
         }
 
@@ -97,9 +131,47 @@
 
         return value;
     },
- 
+
+    unformat:function(value) {
+        var jsDate;
+        if (value) {
+            jsDate = app.date.parse(value);
+
+            if (jsDate) {
+                return this._setServerDateString(jsDate);
+            } else {
+                app.logger.error("Issue setting the server date string for value: " + value);
+                return value;
+            }
+        }
+        return value;
+    },
+        
+    /**
+     * Sets up the timepicker.
+     */
+    _setupTimepicker: function() {
+        this.$(".ui-timepicker-input").attr('placeholder', this.userTimePrefs);
+        this.$(".ui-timepicker-input").timepicker({
+            // TODO: 'lang' is only used on time "durations" (e.g. 3 horas, etc.) We can later pull 
+            // this from meta, but, this only makes sense if we implement durations. To my mind, this
+            // is really a client specific customization for which they can set this themselves.
+            // "lang": {"decimal": '.', "mins": 'minutos', "hr": 'hora', "hrs": 'horas'},
+            'timeFormat': this.userTimePrefs, // And this will localize their time format anyway ;-)
+            'scrollDefaultNow': true,         // detects user's time (e.g if 1pm, dropdown jumps to 1:00)
+            'step': 15                        // consistent w/Sugar proper ... may need to be dynamic later
+        });
+
+        // Bind Timepicker to proxy functions
+        this.$('.ui-timepicker-input').on({
+            changeTime: _.bind(this.changeTime, this),
+            blur: _.bind(this._handleTimepickerBlur, this)
+        });
+
+    }, 
     /**
      * Main hook to update model when timepicker selected
+     * @param {event} ev The event 
      */
     changeTime: function(ev) {
         var model     = this.model,
@@ -114,23 +186,80 @@
         this._setDatepickerValue(dateValue);
         model.set(fieldName, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
     },
+    /**
+     * Precondition: timeAsDate must be date and hrsMins must be object literal.
+     * No checking done!
+     * 
+     * @param  {HTMLElement} The timepicker element 
+     * @param  {Date} timeAsDate Date representing time portion
+     * @param  {Ojbect} hrsMins Object literal for hours and minutes
+     * @return {Object} Object representing hours and minutes. If not edit view 
+     * this will simply return hrsMins passed in
+     */
+    _forceRoundedTime: function(timepicker, timeAsDate, hrsMins) {
+        var minutes, hours;
 
+        // If edit view we force time to our 15 minutes blocks
+        if (this.view.name === 'edit') {
+            timeAsDate = app.date.roundTime(timeAsDate);
+            minutes    = this._forceTwoDigits(timeAsDate.getMinutes().toString());
+            hours      = this._forceTwoDigits(timeAsDate.getHours().toString());
+
+            // Update timepicker element's value with rounded time
+            this._setTimepickerValue($(timepicker), hours, minutes);
+            hrsMins.hours   = hours;
+            hrsMins.minutes = minutes;
+        }
+        return hrsMins;
+    },
+    /**
+     * The timepicker plugin doesn't provide blur hook for when the user types in
+     * time and then focuses out. Essentially, we update our this.timeValue and model. 
+     * @param {event} ev The event 
+     */
+    _handleTimepickerBlur: function(ev) {
+        var dateValue, hrsMins, timeAsDate, hours, minutes, 
+            timepicker = ev.currentTarget;
+
+        // First get current hours/minutes, then round to blocks (if edit view)
+        hrsMins    = this._getHoursMinutes($(ev.currentTarget));
+        timeAsDate = this._getTimepickerValueAsDate($(timepicker));
+        hrsMins    = this._forceRoundedTime(timepicker, timeAsDate, hrsMins);
+        this._setTimeValue();
+
+        // Get datepicker value and finally set our model
+        dateValue  = this._getDatepickerValue();
+        this.model.set(this.name, this._buildUnformatted(dateValue, hrsMins.hours, hrsMins.minutes), {silent: true});
+    },
+    _setTimeValue: function() {
+        this.timeValue = this.$('.ui-timepicker-input').val();
+        this.timeValue = (this.timeValue) ? this.timeValue : '';
+    },
     /**
      * Returns the current value in the timepicker element. 
-     * @param String $timepickerElement the element. 
-     * @return String timeValue The time value.
+     * @param {String} $timepickerElement the element. 
+     * @return {String} timeValue The time value.
      */
     _getTimepickerValue: function($timepickerElement) {
         var timeValue  = $timepickerElement.val();
         this.timeValue = timeValue; // so hbt template will pick up on next render
+
         return timeValue;
+    },
+    /**
+     * Get the time using a Javascript Date object, relative to today's date.
+     * @param {HTMLElement} $timepickerElement the element. 
+     * @return {Date} time relative to today's date in date object 
+     */
+    _getTimepickerValueAsDate: function($timepickerElement) {
+        return this.$($timepickerElement).timepicker('getTime');
     },
     /**
      * Sets the timepicker element and plugin to hours and minutes passed in. 
      * If neither hours or minutes provided defaults to midnight.
-     * @param String $timepickerElement the element. 
-     * @param String hours optional hours 
-     * @param String minutes optional minutes
+     * @param {Object} jQuery wrapped timepicker element. 
+     * @param {String} hours optional hours 
+     * @param {String} minutes optional minutes
      */
     _setTimepickerValue: function($timepickerElement, hours, minutes) {
         var date = new Date();
@@ -155,15 +284,15 @@
     /**
      * If the field def has a display_default property, or, is required, this
      * will set the model with corresponding date time.
+     * @return {Date} jsDate The date.
      */
     _setDateIfDefaultValue: function() {
         var value, jsDate; 
 
         // If there's a display default 'string' value like "yesterday", format it as a date
         if (this.def.display_default) {
-            value  = app.date.parseDisplayDefault(this.def.display_default);
-            jsDate = app.date.dateFromDisplayDefaultString(value);
-            this.model.set(this.name, jsDate.toISOString(), {silent: true}); 
+            jsDate = app.date.parseDisplayDefault(this.def.display_default);
+            this.model.set(this.name, this._setServerDateString(jsDate), {silent: true}); 
         } else if (this.def.required) {
             return this._setDateNow();
         } else {
@@ -171,34 +300,14 @@
         }
         return jsDate;
     },
-    /**
-     * Sets up the timepicker.
-     */
-    _setupTimepicker: function() {
-        this.$(".ui-timepicker-input").attr('placeholder', this.userTimePrefs);
-        this.$(".ui-timepicker-input").timepicker({
-            // TODO: 'lang' is only used on time "durations" (e.g. 3 horas, etc.) We can later pull 
-            // this from meta, but, this only makes sense if we implement durations. To my mind, this
-            // is really a client specific customization for which they can set this themselves.
-            // "lang": {"decimal": '.', "mins": 'minutos', "hr": 'hora', "hrs": 'horas'},
-            'timeFormat': this.userTimePrefs, // And this will localize their time format anyway ;-)
-            'scrollDefaultNow': true,         // detects user's time (e.g if 1pm, dropdown jumps to 1:00)
-            'step': 15                        // consistent w/Sugar proper ... may need to be dynamic later
-        });
 
-        // Bind Timepicker to proxy functions
-        this.$('.ui-timepicker-input').on({
-            changeTime: _.bind(this.changeTime, this)
-        });
-    },
     /**
      * Takes the time value and returns hours and minutes parts.
-     * @param String timeValue time value within timepicker field. 
-     * @return Object An object literal like: {hours: <hours>, minutes: <minutes>}
+     * @param {HTMLElement} $timepickerElement the element. 
+     * @return {Object} An object literal like: {hours: <hours>, minutes: <minutes>}
      */
     _getHoursMinutes: function(el) {
         var timeParts, hour, hours, minutes, timeValue, amPm = null;
-
         timeValue  = this._getTimepickerValue(el) || '';
         timeParts = timeValue.toLowerCase().match(/(\d+)(?::(\d\d?))?\s*([pa]?)/);
 
@@ -232,15 +341,14 @@
         minutes = this._forceTwoDigits(minutes.toString());
         hours = this._forceTwoDigits(hours.toString());
 
-
         return this._setIfNoTime(hours, minutes, amPm);
     },
     /**
      * Helper to set hours and minutes with 12am and 00pm edge cases in mind.
-     * @param String h hours 
-     * @param String m minutes
-     * @param String ampm optional 'am' or 'pm'  
-     * @return Object object literal with hours, minutes, amPm properties
+     * @param {String} h hours 
+     * @param {String} m minutes
+     * @param {String} ampm optional 'am' or 'pm'  
+     * @return {Object} object literal with hours, minutes, amPm properties
      */
     _setIfNoTime: function(h, m, ampm) {
         var o = {};
