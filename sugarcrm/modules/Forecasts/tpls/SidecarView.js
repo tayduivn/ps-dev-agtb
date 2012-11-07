@@ -4,7 +4,7 @@
         app.router.route("", "index", function(){
             app.controller.loadView({
                 module: 'Forecasts',
-                layout: 'forecasts'
+                layout: 'index'
             });
         });
         app.router.route("config", "config", function(){

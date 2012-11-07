@@ -59,7 +59,7 @@
             };
 
             if(app.user.getAcls()['Forecasts'].admin == "yes") {
-                params.components = [{layout:"forecastsWizardConfig"}];
+                params.components = [{layout:"wizardConfig"}];
             } else {
                 params.message = app.lang.get("LBL_FORECASTS_CONFIG_USER_SPLASH", "Forecasts");
             }
