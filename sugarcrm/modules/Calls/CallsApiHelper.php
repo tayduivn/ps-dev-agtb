@@ -50,10 +50,7 @@ class CallsApiHelper extends SugarBeanApiHelper
             $bean->setUserInvitees($userInvitees);
 
 
-
-            if($GLOBALS['current_user']->id == $bean->assigned_user_id) {
-                vCal::cache_sugar_vcal($GLOBALS['current_user']);
-            }
+            vCal::cache_sugar_vcal(BeanFactory::getBean('Users', $bean->assigned_user_id));
         }
 
 
