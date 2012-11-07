@@ -6,6 +6,7 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
         array(
             'module' => 'Contacts',
             'required' => true,
+            'duplicateCheck' => true,
             'fieldMapping' => array(
                 //contact field => lead field
                 'salutation' => 'salutation',
@@ -30,6 +31,7 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
         array(
             'module' => 'Accounts',
             'required' => true,
+            'duplicateCheck' => true,
             'contactRelateField' => 'account_name',
             'fieldMapping' => array(
                 //account field => lead field
@@ -51,6 +53,7 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
         array(
             'module' => 'Opportunities',
             'required' => false,
+            'duplicateCheck' => false,
             'fieldMapping' => array(
                 //opportunity field => lead field
                 'name' => 'opportunity_name',
@@ -61,5 +64,4 @@ $viewdefs['Leads']['base']['layout']['convert'] = array(
             )
         ),
     )
-
 );

@@ -1,6 +1,6 @@
 ({
     events:{
-        'click [name=convert_continue_button]':'showNextStep'
+        'click [name=convert_continue_button]':'processContinue'
     },
 
     _placeComponent: function(component, def) {
@@ -60,11 +60,15 @@
      * Check for possible duplicates before creating a new record
      * @param callback
      */
-    initiateContinue:function (callback) {
-        var self = this;
-        /*
+    initiateContinue:function (evt) {
+        var self = this,
+            nextModule = evt.target.dataset.module;
+
          async.waterfall([
-         _.bind(this.showNextStep, this)
+         //validation or has selected element
+         //Add logic to process current step and if complete move to next one
+         //check whether or not can continue depending on dependent modules
+         _.bind(this.setNextStepFall, this, nextModule)
          ], function(error) {
          if (error) {
          console.log("Saving failed.");
@@ -73,9 +77,9 @@
          callback();
          }
          });
-         */
 
-        this.context.currentStep = this.context.steps.search(callback.target.dataset.module);
+
+
 
         var result = true;
 
@@ -99,27 +103,43 @@
     /**
      * Add sub-views defined by the convert metadata to the layout
      */
-    initiateSubComponents:function (moduleMetadata) {
+    initiateSubComponents:function (modulesMetadata) {
         var self = this;
 
-        _.each(moduleMetadata, function (element, index, list) {
+        _.each(modulesMetadata, function (moduleMeta, index, list) {
             var def = {
                     'view':'list',
-                    'context':{'module':element.module}
+                    'context':{'module':moduleMeta.module}
                 };
 
-            self.insertViewInAccordionBody(element.module, 'duplicate', def);
+            self.insertDuplicateViewInAccordionBody(moduleMeta, def);
 
             def = {
                 'view':'edit',
-                'context':{'module':element.module}
+                'context':{'module':moduleMeta.module}
             };
 
-            self.insertViewInAccordionBody(element.module, 'record', def);
+            self.insertRecordViewInAccordionBody(moduleMeta, def);
         });
     },
 
-    insertViewInAccordionBody:function (moduleName, contentType, def) {
+    insertDuplicateViewInAccordionBody: function(moduleMeta, def) {
+        var view = this.insertViewInAccordionBody(moduleMeta, 'duplicate', def);
+
+        if (moduleMeta.duplicateCheck) {
+            view.collection.on("reset", function(){
+                this.updateDuplicateMessage(view);
+            }, this);
+            view.$el.parent().removeClass('hide').addClass('show');
+            view.loadData();
+        }
+    },
+
+    insertRecordViewInAccordionBody: function(moduleMeta, def) {
+        var view = this.insertViewInAccordionBody(moduleMeta, 'record', def);
+    },
+
+    insertViewInAccordionBody:function (moduleMeta, contentType, def) {
         var self = this,
             context = self.context.getChildContext(def.context);
 
@@ -128,28 +148,34 @@
         var view = app.view.createView({
             context:context,
             name:def.view,
-            module:moduleName,
+            module:moduleMeta.module,
             layout:self,
             id:def.id
         })
 
-        self.addComponent(view, {moduleName:moduleName, contentType:contentType});
+        self.addComponent(view, {moduleName:moduleMeta.module, contentType:contentType});
 
         view.render();
-
-        if (contentType === 'duplicate') {
-            view.loadData();
-        }
 
         return view;
     },
 
-    showNextStep:function () {
+    updateDuplicateMessage: function(view) {
+    },
+
+    processContinue:function () {
         var currentStep = this.context.currentStep;
 
         if (!_.isEmpty(currentStep.next)) {
             this.showAccordion(currentStep.next.key);
         }
+    },
+
+    setNextStepFall: function(nextModule) {
+        var moduleMeta;
+        this.context.currentStep = this.context.steps.search(nextModule);
+
+        moduleMeta = this._getModuleMeta(nextModule);
     },
 
     showAccordion:function (moduleName) {
@@ -159,7 +185,7 @@
     },
 
     /**
-     * Save the convert model and process the responses
+     * Save the convert model and process the responsessou
      */
     processConvert:function () {
         var self = this;
@@ -273,5 +299,13 @@
         });
 
         return convertSteps;
+    },
+
+    _getModuleMeta: function(nextModule) {
+        _.find(this.meta.module, function(moduleMeta){
+            return moduleMeta.module === nextModule;
+        })
+
+        return {};
     }
 })
