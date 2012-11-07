@@ -10,7 +10,7 @@
         app.router.route("config", "config", function(){
             app.controller.loadView({
                 module: "Forecasts",
-                layout: "forecastsEmpty"
+                layout: "config"
             });
         });
     });
