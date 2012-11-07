@@ -59,6 +59,7 @@ class RestMeetingHelperTest extends RestTestBase {
             'start_date' => date('Y-m-d'),
             'contact_invitees' => array($this->contact_id),
             'lead_invitees' => array($this->lead_id),
+            'assigned_user_id' => $GLOBALS['current_user']->id,
         );
 
         $restReply = $this->_restCall('Meetings/', json_encode($meeting), 'POST');

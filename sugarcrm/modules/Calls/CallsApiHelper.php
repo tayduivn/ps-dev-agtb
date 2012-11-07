@@ -36,27 +36,13 @@ class CallsApiHelper extends SugarBeanApiHelper
         $data = parent::populateFromApi($bean, $submittedData, $options);
 
         if($bean->status != 'Held') {
-            $userInvitees = $submittedData['user_invitees'];
-            $contactInvitees = $submittedData['contact_invitees'];
-            $leadInvitees = $submittedData['lead_invitees'];
+            $userInvitees = (isset($submittedData['user_invitees'])) ? $submittedData['user_invitees'] : array();
+            $contactInvitees = (isset($submittedData['contact_invitees'])) ? $submittedData['contact_invitees'] : array();
+            $leadInvitees = (isset($submittedData['lead_invitees'])) ? $submittedData['lead_invitees'] : array();
 
-            $existingUsers = $submittedData['existing_invitees'];
-            $existingContacts = $submittedData['existing_contact_invitees'];
-            $existingLeads =  $submittedData['existing_lead_invitees'];
-
-            if (!is_array($userInvitees)) {
-                $userInvitees = explode(',', trim($userInvitees, ','));
-            }
-            if (!is_array($existingUsers)) {
-                $existingUsers =  explode(",", trim($existingUsers, ','));
-            }
-
-            if (!is_array($contactInvitees)) {
-                $contactInvitees = explode(',', trim($contactInvitees, ','));
-            }
-            if (!is_array($existingContacts)) {
-                $existingContacts =  explode(",", trim($existingContacts, ','));
-            }
+            $existingUsers = (isset($submittedData['existing_invitees'])) ? $submittedData['existing_invitees'] : array();
+            $existingContacts = (isset($submittedData['existing_contact_invitees'])) ? $submittedData['existing_contact_invitees'] : array();
+            $existingLeads =  (isset($submittedData['existing_lead_invitees'])) ? $submittedData['existing_lead_invitees'] : array();
 
             if (!empty($submittedData['relate_to']) && $submittedData['relate_to'] == 'Contacts') {
                 if (!empty($submittedData['relate_id']) && !in_array($submittedData['relate_id'], $contactInvitees)) {
@@ -65,12 +51,6 @@ class CallsApiHelper extends SugarBeanApiHelper
             }
 
             //BEGIN SUGARCRM flav!=sales ONLY
-            if (!is_array($leadInvitees)) {
-                $leadInvitees = explode(',', trim($leadInvitees, ','));
-            }
-            if (!is_array($existingLeads)) {
-                $existingLeads =  explode(",", trim($existingLeads, ','));
-            }
 
             if (!empty($submittedData['relate_to']) && $submittedData['relate_to'] == 'Leads') {
                 if (!empty($submittedData['relate_id']) && !in_array($submittedData['relate_id'], $leadInvitees)) {
@@ -79,8 +59,8 @@ class CallsApiHelper extends SugarBeanApiHelper
             }
             //END SUGARCRM flav!=sales ONLY
 
-            if(!in_array($GLOBALS['current_user']->id, $userInvitees)) {
-                $userInvitees[] = $GLOBALS['current_user']->id;
+            if(!in_array($bean->assigned_user_id, $userInvitees)) {
+                $userInvitees[] = $bean->assigned_user_id;
             }
 
             // Call the Call module's save function to handle saving other fields besides
