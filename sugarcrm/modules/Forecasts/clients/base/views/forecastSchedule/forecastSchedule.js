@@ -113,6 +113,14 @@
      
     },
 
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts.config) this.context.forecasts.config.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
     bindDataChange: function(params) {
         var self = this;
         this.collection = this.context.forecasts.forecastschedule;

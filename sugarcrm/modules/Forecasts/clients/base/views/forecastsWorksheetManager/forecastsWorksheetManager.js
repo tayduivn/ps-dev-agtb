@@ -95,6 +95,15 @@
         this.safeFetch(true);
     },
 
+    /**
+     * Clean up any left over bound data to our context
+     */
+    unbindData : function() {
+        if(this.context.forecasts) this.context.forecasts.off(null, null, this);
+        if(this.context.forecasts.worksheetmanager) this.context.forecasts.worksheetmanager.off(null, null, this);
+        app.view.View.prototype.unbindData.call(this);
+    },
+
     bindDataChange: function() {
         if(this.collection)
         {
